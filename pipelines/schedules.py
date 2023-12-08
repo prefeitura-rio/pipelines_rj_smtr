@@ -8,8 +8,8 @@ from pytz import timezone
 from prefect.schedules import Schedule
 from prefect.schedules.clocks import IntervalClock, CronClock
 from pipelines.constants import constants as emd_constants
-from pipelines.rj_smtr.br_rj_riodejaneiro_rdo.utils import generate_ftp_schedules
-from pipelines.rj_smtr.constants import constants
+from pipelines.utils import generate_ftp_schedules
+from pipelines.constants import constants
 
 every_minute = Schedule(
     clocks=[
