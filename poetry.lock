@@ -24,6 +24,17 @@ docs = ["Sphinx (>=1.2.2)", "sphinx-rtd-theme (>=0.1.6)"]
 test = ["PyICU (>=2.4.2)", "coverage (>=3.7.1)", "cssselect (>=0.9.1)", "lxml (>=3.6.0)", "pytest", "pytest-cov", "pytz (>=2015.4)"]
 
 [[package]]
+name = "async-timeout"
+version = "4.0.3"
+description = "Timeout context manager for asyncio programs"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "async-timeout-4.0.3.tar.gz", hash = "sha256:4640d96be84d82d02ed59ea2b7105a0f7b33abe8703703cd0ab0bf87c427522f"},
+    {file = "async_timeout-4.0.3-py3-none-any.whl", hash = "sha256:7405140ff1230c310e51dc27b3145b9092d659ce68ff733fb0cefe3ee42be028"},
+]
+
+[[package]]
 name = "attrs"
 version = "23.1.0"
 description = "Classes Without Boilerplate"
@@ -530,6 +541,20 @@ pydantic = ">=1.10,<2.0"
 python-dateutil = ">=2.0,<3.0"
 pyyaml = ">=6.0,<7.0"
 typing-extensions = ">=4.4,<5.0"
+
+[[package]]
+name = "dill"
+version = "0.3.7"
+description = "serialize all of Python"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "dill-0.3.7-py3-none-any.whl", hash = "sha256:76b122c08ef4ce2eedcd4d1abd8e641114bfc6c2867f49f3c41facf65bf19f5e"},
+    {file = "dill-0.3.7.tar.gz", hash = "sha256:cc1c8b182eb3013e24bd475ff2e9295af86c1a38eb1aff128dac8962a9ce3c03"},
+]
+
+[package.extras]
+graph = ["objgraph (>=1.7.2)"]
 
 [[package]]
 name = "distlib"
@@ -2721,6 +2746,39 @@ files = [
 ]
 
 [[package]]
+name = "redis"
+version = "4.6.0"
+description = "Python client for Redis database and key-value store"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "redis-4.6.0-py3-none-any.whl", hash = "sha256:e2b03db868160ee4591de3cb90d40ebb50a90dd302138775937f6a42b7ed183c"},
+    {file = "redis-4.6.0.tar.gz", hash = "sha256:585dc516b9eb042a619ef0a39c3d7d55fe81bdb4df09a52c9cdde0d07bf1aa7d"},
+]
+
+[package.dependencies]
+async-timeout = {version = ">=4.0.2", markers = "python_full_version <= \"3.11.2\""}
+
+[package.extras]
+hiredis = ["hiredis (>=1.0.0)"]
+ocsp = ["cryptography (>=36.0.1)", "pyopenssl (==20.0.1)", "requests (>=2.26.0)"]
+
+[[package]]
+name = "redis-pal"
+version = "1.0.0"
+description = "Store things in Redis without worrying about types or anything, just do it!"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "redis-pal-1.0.0.tar.gz", hash = "sha256:8e20caf8127056a2d1208d6dd0873643efb8357602193e26c1ada8ed6737fa88"},
+    {file = "redis_pal-1.0.0-py3-none-any.whl", hash = "sha256:8cbf55c926c761ce9d60803ed66ef2575f351b43c9554fd66f6458d323430bf0"},
+]
+
+[package.dependencies]
+dill = ">=0.3.5,<0.4.0"
+redis = ">=4.0,<5.0"
+
+[[package]]
 name = "referencing"
 version = "0.32.0"
 description = "JSON Referencing + Python"
@@ -3382,4 +3440,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.11"
-content-hash = "0a2bca3f2d8d0407c108672d731d794d47655801af2585a9d03750a25bc5fbc5"
+content-hash = "85fe9e6473ac4080266366c7979715797c706a03ca5a4beef307ffa3ba9aac85"
