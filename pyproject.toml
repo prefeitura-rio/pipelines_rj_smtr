@@ -10,6 +10,7 @@ dbt-bigquery = "^1.6.1"
 google-cloud-storage = "^2.10.0"
 prefect = "1.4.1"
 prefeitura-rio = "1.1.2"
+redis-pal = "^1.0.0"
 
 
 [tool.poetry.group.dev]
