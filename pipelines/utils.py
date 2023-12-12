@@ -25,6 +25,7 @@ from google.cloud.storage.blob import Blob
 import pymysql
 import psycopg2
 import psycopg2.extras
+from redis_pal import RedisPal
 import time
 
 
@@ -33,15 +34,15 @@ from prefect.schedules.clocks import IntervalClock
 from pipelines.constants import constants as emd_constants
 
 
-from pipelines.rj_smtr.implicit_ftp import ImplicitFtpTls
-from pipelines.rj_smtr.constants import constants
+from pipelines.implicit_ftp import ImplicitFtpTls
+from pipelines.constants import constants
 
-from pipelines.utils.utils import (
+from prefeitura_rio.pipelines_utils.prefect import (
     log,
     get_vault_secret,
     send_discord_message,
     get_redis_client,
-)
+) #TODO: add or relocate imports
 
 
 # Set BD config to run on cloud #
@@ -149,6 +150,21 @@ def get_table_min_max_value(  # pylint: disable=R0913
 
     return result.iloc[0][0]
 
+def get_redis_client(
+    host: str = "redis.redis.svc.cluster.local",
+    port: int = 6379,
+    db: int = 0,  # pylint: disable=C0103
+    password: str = None,
+) -> RedisPal:
+    """
+    Returns a Redis client.
+    """
+    return RedisPal(
+        host=host,
+        port=port,
+        db=db,
+        password=password,
+    )
 
 def get_last_run_timestamp(dataset_id: str, table_id: str, mode: str = "prod") -> str:
     """

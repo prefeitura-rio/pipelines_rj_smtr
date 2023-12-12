@@ -10,8 +10,16 @@ class constants(Enum):  # pylint: disable=c0103
     """
     Constant values for the rj_smtr projects
     """
+    # CONFIGS #
+    DOCKER_TAG = "AUTO_REPLACE_DOCKER_TAG"
+    DOCKER_IMAGE_NAME = "AUTO_REPLACE_DOCKER_IMAGE"
+    DOCKER_IMAGE = f"{DOCKER_IMAGE_NAME}:{DOCKER_TAG}"
+    GCS_FLOWS_BUCKET = "datario-public"
+
+    # AGENT LABELS #
     RJ_SMTR_AGENT_LABEL = 'rj-smtr'
     RJ_SMTR_DEV_AGENT_LABEL = 'rj-smtr-dev'
+    
     # DEFAULT TIMEZONE #
     TIMEZONE = "America/Sao_Paulo"
 
