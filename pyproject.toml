@@ -125,6 +125,8 @@ urllib3 = "1.26.18"
 yarl = "1.9.4"
 zict = "3.0.0"
 zipp = "3.17.0"
+pymysql = "^1.1.0"
+psycopg2-binary = "^2.9.9"
 
 
 [tool.poetry.group.dev]
