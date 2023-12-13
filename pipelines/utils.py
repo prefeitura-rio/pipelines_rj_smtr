@@ -37,16 +37,23 @@ from pipelines.constants import constants as emd_constants
 from pipelines.implicit_ftp import ImplicitFtpTls
 from pipelines.constants import constants
 
-from prefeitura_rio.pipelines_utils.prefect import (
-    log,
-    get_vault_secret,
-    send_discord_message,
-    get_redis_client,
-) #TODO: add or relocate imports
-
+from prefeitura_rio.pipelines_utils.logging import log #TODO: add or relocate imports
+from prefeitura_rio.pipelines_utils.infisical import get_secret
 
 # Set BD config to run on cloud #
 bd.config.from_file = True
+
+def send_discord_message(
+    message: str,
+    webhook_url: str,
+) -> None:
+    """
+    Sends a message to a Discord channel.
+    """
+    requests.post(
+        webhook_url,
+        data={"content": message},
+    )
 
 
 def log_critical(message: str, secret_path: str = constants.CRITICAL_SECRET_PATH.value):
@@ -58,7 +65,7 @@ def log_critical(message: str, secret_path: str = constants.CRITICAL_SECRET_PATH
         Defaults to constants.CRITICAL_SECRETPATH.value.
 
     """
-    url = get_vault_secret(secret_path=secret_path)["data"]["url"]
+    url = get_secret(secret_path=secret_path)["data"]["url"]
     return send_discord_message(message=message, webhook_url=url)
 
 
@@ -215,7 +222,7 @@ def connect_ftp(secret_path: str = None, secure: bool = True):
         ImplicitFTP_TLS: ftp client
     """
 
-    ftp_data = get_vault_secret(secret_path)["data"]
+    ftp_data = get_secret(secret_path)["data"]
     if secure:
         ftp_client = ImplicitFtpTls()
     else:
@@ -563,7 +570,7 @@ def get_raw_data_api(  # pylint: disable=R0912
         if secret_path is None:
             headers = secret_path
         else:
-            headers = get_vault_secret(secret_path)["data"]
+            headers = get_secret(secret_path)["data"]
 
         response = requests.get(
             url,
@@ -684,7 +691,7 @@ def get_raw_data_db(
     filetype = "json"
 
     try:
-        credentials = get_vault_secret(secret_path)["data"]
+        credentials = get_secret(secret_path)["data"]
 
         with connector_mapping[engine](
             host=host,
