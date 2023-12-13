@@ -43,6 +43,7 @@ from pipelines.utils.utils import (
 )
 from pipelines.utils.secret import get_secret
 from prefeitura_rio.pipelines_utils.dbt import run_dbt_model
+from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from prefeitura_rio.pipelines_utils.infisical import inject_bd_credentials
 from prefeitura_rio.pipelines_utils.logging import log
 

@@ -39,6 +39,7 @@ from pipelines.constants import constants
 
 from prefeitura_rio.pipelines_utils.logging import log #TODO: add or relocate imports
 from prefeitura_rio.pipelines_utils.infisical import get_secret
+from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
 # Set BD config to run on cloud #
 bd.config.from_file = True
@@ -156,22 +157,6 @@ def get_table_min_max_value(  # pylint: disable=R0913
     result = bd.read_sql(query=query, billing_project_id=bq_project())
 
     return result.iloc[0][0]
-
-def get_redis_client(
-    host: str = "redis.redis.svc.cluster.local",
-    port: int = 6379,
-    db: int = 0,  # pylint: disable=C0103
-    password: str = None,
-) -> RedisPal:
-    """
-    Returns a Redis client.
-    """
-    return RedisPal(
-        host=host,
-        port=port,
-        db=db,
-        password=password,
-    )
 
 def get_last_run_timestamp(dataset_id: str, table_id: str, mode: str = "prod") -> str:
     """
