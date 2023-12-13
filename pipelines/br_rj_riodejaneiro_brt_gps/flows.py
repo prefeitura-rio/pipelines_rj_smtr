@@ -12,7 +12,7 @@ from prefect.storage import GCS
 from pipelines.constants import constants as emd_constants
 from prefeitura_rio.pipelines_utils.custom import Flow
 # from prefeitura_rio.pipelines_utils.prefect import get_k8s_dbt_client
-from prefeitura_rio.pipelines_utils.tasks import (
+from pipelines.tasks import (
     get_current_flow_labels,
 )
 
@@ -136,7 +136,7 @@ from pipelines.br_rj_riodejaneiro_brt_gps.tasks import (
 
 with Flow(
     "SMTR: GPS BRT - Captura",
-    code_owners=["caio", "fernanda", "boris", "rodrigo"],
+    # code_owners=["caio", "fernanda", "boris", "rodrigo"],
 ) as captura_brt:
     timestamp = get_current_timestamp()
     setup = setup_task()

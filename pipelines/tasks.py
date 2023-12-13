@@ -17,6 +17,7 @@ import pandas as pd
 import pendulum
 import prefect
 from prefect import task, Client
+from prefect.backend import FlowRunView
 from pytz import timezone
 import requests
 
@@ -51,6 +52,15 @@ from prefeitura_rio.pipelines_utils.logging import log
 @task
 def setup_task():
     return inject_bd_credentials()
+
+@task
+def get_current_flow_labels() -> List[str]:
+    """
+    Get the labels of the current flow.
+    """
+    flow_run_id = prefect.context.get("flow_run_id")
+    flow_run_view = FlowRunView.from_flow_run_id(flow_run_id)
+    return flow_run_view.labels
 
 ###############
 #
