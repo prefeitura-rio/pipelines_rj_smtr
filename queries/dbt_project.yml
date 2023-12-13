@@ -2,7 +2,7 @@ name: "rj_smtr"
 version: "1.0.0"
 config-version: 2
 
-profile: "dev"
+profile: "default"
 
 source-paths: ["models"]
 analysis-paths: ["analysis"]
