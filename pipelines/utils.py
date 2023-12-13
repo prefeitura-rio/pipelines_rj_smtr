@@ -31,7 +31,7 @@ import time
 
 from prefect.schedules.clocks import IntervalClock
 
-from pipelines.constants import constants as emd_constants
+from pipelines.constants import constants
 
 
 from pipelines.implicit_ftp import ImplicitFtpTls
@@ -440,7 +440,7 @@ def generate_execute_schedules(  # pylint: disable=too-many-arguments,too-many-l
     table_parameters: Union[list[dict], dict],
     runs_interval_minutes: int = 15,
     start_date: datetime = datetime(
-        2020, 1, 1, tzinfo=pytz.timezone(emd_constants.DEFAULT_TIMEZONE.value)
+        2020, 1, 1, tzinfo=pytz.timezone(constants.TIMEZONE.value)
     ),
     **general_flow_params,
 ) -> List[IntervalClock]:
@@ -453,7 +453,7 @@ def generate_execute_schedules(  # pylint: disable=too-many-arguments,too-many-l
         table_parameters (list): The table parameters to iterate over
         runs_interval_minutes (int, optional): The interval between each schedule. Defaults to 15.
         start_date (datetime, optional): The start date of the schedule.
-            Defaults to datetime(2020, 1, 1, tzinfo=pytz.timezone(emd_constants.DEFAULT_TIMEZONE.value)).
+            Defaults to datetime(2020, 1, 1, tzinfo=pytz.timezone(constants.TIMEZONE.value)).
         general_flow_params: Any param that you want to pass to the flow
     Returns:
         List[IntervalClock]: The list of schedules
@@ -504,7 +504,7 @@ def custom_serialization(obj: Any) -> Any:
         if isinstance(obj, pd.Timestamp):
             if obj.tzinfo is None:
                 obj = obj.tz_localize("UTC").tz_convert(
-                    emd_constants.DEFAULT_TIMEZONE.value
+                    constants.TIMEZONE.value
                 )
         return obj.isoformat()
 
@@ -936,7 +936,7 @@ def build_table_id(mode: str, report_type: str):
     return table_id
 
 def generate_ftp_schedules(
-    interval_minutes: int, label: str = emd_constants.RJ_SMTR_AGENT_LABEL.value
+    interval_minutes: int, label: str = constants.RJ_SMTR_AGENT_LABEL.value
 ):
     """Generates IntervalClocks with the parameters needed to capture
     each report.
@@ -944,7 +944,7 @@ def generate_ftp_schedules(
     Args:
         interval_minutes (int): interval which this flow will be run.
         label (str, optional): Prefect label, defines which agent to use when launching flow run.
-        Defaults to emd_constants.RJ_SMTR_AGENT_LABEL.value.
+        Defaults to constants.RJ_SMTR_AGENT_LABEL.value.
 
     Returns:
         List(IntervalClock): containing the clocks for scheduling runs
