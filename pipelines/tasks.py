@@ -43,8 +43,6 @@ from prefeitura_rio.pipelines_utils.dbt import run_dbt_model
 from prefeitura_rio.pipelines_utils.infisical import get_secret, inject_bd_credentials
 from prefeitura_rio.pipelines_utils.logging import log
 
-from pipelines.tasks import get_now_date
-
 ###############
 #
 # SETUP
@@ -580,7 +578,7 @@ def get_raw(  # pylint: disable=R0912
 
     try:
         if headers is not None:
-            headers = get_vault_secret(headers)["data"]
+            headers = get_secret(headers)["data"]
 
             # remove from headers, if present
             remove_headers = ["host", "databases"]
@@ -666,7 +664,7 @@ def create_request_params(
         request_params = extract_params["filename"]
 
     elif dataset_id == constants.SUBSIDIO_SPPO_RECURSOS_DATASET_ID.value:
-        extract_params["token"] = get_vault_secret(
+        extract_params["token"] = get_secret(
             constants.SUBSIDIO_SPPO_RECURSO_API_SECRET_PATH.value
         )["data"]["token"]
         start = datetime.strftime(
