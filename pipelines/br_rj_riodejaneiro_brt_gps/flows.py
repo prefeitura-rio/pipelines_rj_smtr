@@ -55,7 +55,6 @@ from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_cred
 
 with Flow(
     "SMTR: GPS BRT - Materialização",
-    # code_owners=["caio", "fernanda", "boris", "rodrigo"],
 ) as materialize_brt:
     # Rename flow run
     rename_flow_run = rename_current_flow_run_now_time(
