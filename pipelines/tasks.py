@@ -22,7 +22,7 @@ from pytz import timezone
 import requests
 
 from pipelines.constants import constants
-from pipelines.utils import (
+from pipelines.utils.utils import (
     create_or_append_table,
     bq_project,
     get_table_min_max_value,
@@ -39,9 +39,11 @@ from pipelines.utils import (
     save_treated_local_func,
     save_raw_local_func,
     log_critical,
+    normalize_keys
 )
+from pipelines.utils.secret import get_secret
 from prefeitura_rio.pipelines_utils.dbt import run_dbt_model
-from prefeitura_rio.pipelines_utils.infisical import get_secret, inject_bd_credentials
+from prefeitura_rio.pipelines_utils.infisical import inject_bd_credentials
 from prefeitura_rio.pipelines_utils.logging import log
 
 ###############
@@ -588,8 +590,7 @@ def get_raw(  # pylint: disable=R0912
 
     try:
         if headers is not None:
-            headers = get_secret(headers)["data"]
-
+            headers = get_secret(secret_path=headers)
             # remove from headers, if present
             remove_headers = ["host", "databases"]
             for remove_header in remove_headers:
@@ -675,8 +676,8 @@ def create_request_params(
 
     elif dataset_id == constants.SUBSIDIO_SPPO_RECURSOS_DATASET_ID.value:
         extract_params["token"] = get_secret(
-            constants.SUBSIDIO_SPPO_RECURSO_API_SECRET_PATH.value
-        )["data"]["token"]
+            secret_path=constants.SUBSIDIO_SPPO_RECURSO_API_SECRET_PATH.value
+        )["token"]
         start = datetime.strftime(
             timestamp - timedelta(minutes=interval_minutes), "%Y-%m-%dT%H:%M:%S.%MZ"
         )

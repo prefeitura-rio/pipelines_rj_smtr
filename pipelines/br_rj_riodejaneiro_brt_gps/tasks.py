@@ -15,7 +15,7 @@ from prefeitura_rio.pipelines_utils.logging import log
 # SMTR Imports #
 
 from pipelines.constants import constants
-from pipelines.utils import log_critical, map_dict_keys
+from pipelines.utils.utils import log_critical, map_dict_keys
 
 # Tasks #
 

@@ -34,7 +34,7 @@ from prefect.schedules.clocks import IntervalClock
 from pipelines.constants import constants
 
 
-from pipelines.implicit_ftp import ImplicitFtpTls
+from pipelines.utils.implicit_ftp import ImplicitFtpTls
 from pipelines.constants import constants
 
 from prefeitura_rio.pipelines_utils.logging import log #TODO: add or relocate imports
@@ -214,6 +214,9 @@ def map_dict_keys(data: dict, mapping: dict) -> None:
         data[new_key] = data.pop(old_key)
     return data
 
+def normalize_keys(data:dict):
+    _data = {key.lower():value for key, value in data.items()}
+    return _data
 
 def connect_ftp(secret_path: str = None, secure: bool = True):
     """Connect to FTP
