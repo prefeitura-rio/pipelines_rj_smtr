@@ -133,6 +133,7 @@ materialize_brt.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
 )
+materialize_brt.state_handlers = [handler_inject_bd_credentials]
 # materialize_brt.schedule = every_hour
 
 
