@@ -138,8 +138,8 @@ with Flow(
     "SMTR: GPS BRT - Captura",
     # code_owners=["caio", "fernanda", "boris", "rodrigo"],
 ) as captura_brt:
-    timestamp = get_current_timestamp()
     setup = setup_task()
+    timestamp = get_current_timestamp()
     # Rename flow run
     rename_flow_run = rename_current_flow_run_now_time(
         prefix=captura_brt.name + ": ", now_time=timestamp
@@ -185,7 +185,9 @@ with Flow(
         timestamp=timestamp,
         error=error,
     )
-    captura_brt.set_dependencies(task=partitions, upstream_tasks=[rename_flow_run, setup])
+    captura_brt.set_dependencies(task=timestamp, upstream_tasks=[setup])
+    captura_brt.set_dependencies(task=rename_flow_run, upstream_tasks=[timestamp])
+    captura_brt.set_dependencies(task=partitions, upstream_tasks=[rename_flow_run])
 
 captura_brt.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 captura_brt.run_config = KubernetesRun(
