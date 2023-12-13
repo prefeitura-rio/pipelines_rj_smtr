@@ -43,94 +43,96 @@ from pipelines.tasks import (
     get_current_flow_mode,
     setup_task
 )
-from prefeitura_rio.pipelines_utils.dbt import run_dbt_model
 
 from pipelines.br_rj_riodejaneiro_brt_gps.tasks import (
     pre_treatment_br_rj_riodejaneiro_brt_gps,
 )
+from pipelines.tasks import run_dbt_model_task as run_dbt_model
+from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_credentials
+
 
 # Flows #
 
-# with Flow(
-#     "SMTR: GPS BRT - Materialização",
-#     code_owners=["caio", "fernanda", "boris", "rodrigo"],
-# ) as materialize_brt:
-#     # Rename flow run
-#     rename_flow_run = rename_current_flow_run_now_time(
-#         prefix=materialize_brt.name + ": ", now_time=get_now_time()
-#     )
+with Flow(
+    "SMTR: GPS BRT - Materialização",
+    # code_owners=["caio", "fernanda", "boris", "rodrigo"],
+) as materialize_brt:
+    # Rename flow run
+    rename_flow_run = rename_current_flow_run_now_time(
+        prefix=materialize_brt.name + ": ", now_time=get_now_time()
+    )
 
-#     # Get default parameters #
-#     raw_dataset_id = Parameter(
-#         "raw_dataset_id", default=constants.GPS_BRT_RAW_DATASET_ID.value
-#     )
-#     raw_table_id = Parameter(
-#         "raw_table_id", default=constants.GPS_BRT_RAW_TABLE_ID.value
-#     )
-#     dataset_id = Parameter("dataset_id", default=constants.GPS_BRT_DATASET_ID.value)
-#     table_id = Parameter("table_id", default=constants.GPS_BRT_TREATED_TABLE_ID.value)
-#     rebuild = Parameter("rebuild", False)
+    # Get default parameters #
+    raw_dataset_id = Parameter(
+        "raw_dataset_id", default=constants.GPS_BRT_RAW_DATASET_ID.value
+    )
+    raw_table_id = Parameter(
+        "raw_table_id", default=constants.GPS_BRT_RAW_TABLE_ID.value
+    )
+    dataset_id = Parameter("dataset_id", default=constants.GPS_BRT_DATASET_ID.value)
+    table_id = Parameter("table_id", default=constants.GPS_BRT_TREATED_TABLE_ID.value)
+    rebuild = Parameter("rebuild", False)
 
-#     LABELS = get_current_flow_labels()
-#     MODE = get_current_flow_mode(LABELS)
+    LABELS = get_current_flow_labels()
+    MODE = get_current_flow_mode(LABELS)
 
-#     # Set dbt client #
-#     # dbt_client = get_k8s_dbt_client(mode=MODE, wait=rename_flow_run)
-#     # Use the command below to get the dbt client in dev mode:
-#     # dbt_client = get_local_dbt_client(host="localhost", port=3001)
+    # Set dbt client #
+    # dbt_client = get_k8s_dbt_client(mode=MODE, wait=rename_flow_run)
+    # Use the command below to get the dbt client in dev mode:
+    # dbt_client = get_local_dbt_client(host="localhost", port=3001)
 
-#     # Set specific run parameters #
-#     date_range = get_materialization_date_range(
-#         dataset_id=dataset_id,
-#         table_id=table_id,
-#         raw_dataset_id=raw_dataset_id,
-#         raw_table_id=raw_table_id,
-#         table_run_datetime_column_name="timestamp_gps",
-#         mode=MODE,
-#         delay_hours=constants.GPS_BRT_MATERIALIZE_DELAY_HOURS.value,
-#     )
-#     dataset_sha = fetch_dataset_sha(
-#         dataset_id=dataset_id,
-#     )
+    # Set specific run parameters #
+    date_range = get_materialization_date_range(
+        dataset_id=dataset_id,
+        table_id=table_id,
+        raw_dataset_id=raw_dataset_id,
+        raw_table_id=raw_table_id,
+        table_run_datetime_column_name="timestamp_gps",
+        mode=MODE,
+        delay_hours=constants.GPS_BRT_MATERIALIZE_DELAY_HOURS.value,
+    )
+    dataset_sha = fetch_dataset_sha(
+        dataset_id=dataset_id,
+    )
 
-#     # Run materialization #
-#     with case(rebuild, True):
-#         RUN = run_dbt_model(
-#             dataset_id=dataset_id,
-#             table_id=table_id,
-#             upstream=True,
-#             exclude="+data_versao_efetiva",
-#             _vars=[date_range, dataset_sha],
-#             flags="--full-refresh",
-#         )
-#         set_last_run_timestamp(
-#             dataset_id=dataset_id,
-#             table_id=table_id,
-#             timestamp=date_range["date_range_end"],
-#             wait=RUN,
-#             mode=MODE,
-#         )
-#     with case(rebuild, False):
-#         RUN = run_dbt_model(
-#             dataset_id=dataset_id,
-#             table_id=table_id,
-#             upstream=True,
-#             exclude="+data_versao_efetiva",
-#             _vars=[date_range, dataset_sha],
-#         )
-#         set_last_run_timestamp(
-#             dataset_id=dataset_id,
-#             table_id=table_id,
-#             timestamp=date_range["date_range_end"],
-#             wait=RUN,
-#             mode=MODE,
-#         )
+    # Run materialization #
+    with case(rebuild, True):
+        RUN = run_dbt_model(
+            dataset_id=dataset_id,
+            table_id=table_id,
+            upstream=True,
+            exclude="+data_versao_efetiva",
+            _vars=[date_range, dataset_sha],
+            flags="--full-refresh",
+        )
+        set_last_run_timestamp(
+            dataset_id=dataset_id,
+            table_id=table_id,
+            timestamp=date_range["date_range_end"],
+            wait=RUN,
+            mode=MODE,
+        )
+    with case(rebuild, False):
+        RUN = run_dbt_model(
+            dataset_id=dataset_id,
+            table_id=table_id,
+            upstream=True,
+            exclude="+data_versao_efetiva",
+            _vars=[date_range, dataset_sha],
+        )
+        set_last_run_timestamp(
+            dataset_id=dataset_id,
+            table_id=table_id,
+            timestamp=date_range["date_range_end"],
+            wait=RUN,
+            mode=MODE,
+        )
 
-# materialize_brt.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
-# materialize_brt.run_config = KubernetesRun(
-#     image=emd_constants.DOCKER_IMAGE.value,
-#     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
-# )
+materialize_brt.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+materialize_brt.run_config = KubernetesRun(
+    image=emd_constants.DOCKER_IMAGE.value,
+    labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
+)
 # materialize_brt.schedule = every_hour
 
 
@@ -138,7 +140,6 @@ with Flow(
     "SMTR: GPS BRT - Captura",
     # code_owners=["caio", "fernanda", "boris", "rodrigo"],
 ) as captura_brt:
-    setup = setup_task()
     timestamp = get_current_timestamp()
     # Rename flow run
     rename_flow_run = rename_current_flow_run_now_time(
@@ -185,7 +186,6 @@ with Flow(
         timestamp=timestamp,
         error=error,
     )
-    captura_brt.set_dependencies(task=timestamp, upstream_tasks=[setup])
     captura_brt.set_dependencies(task=rename_flow_run, upstream_tasks=[timestamp])
     captura_brt.set_dependencies(task=partitions, upstream_tasks=[rename_flow_run])
 
@@ -194,4 +194,5 @@ captura_brt.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
 )
+captura_brt.state_handlers = [handler_inject_bd_credentials]
 # captura_brt.schedule = every_minute
