@@ -8,7 +8,7 @@ queries:
       location: US
       method: service-account
       priority: interactive
-      project: rj-smtr
+      project: rj-smtr-dev
       threads: 1
       type: bigquery
   target: dev
