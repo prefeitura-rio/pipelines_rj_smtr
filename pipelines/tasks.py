@@ -1506,3 +1506,7 @@ def get_current_flow_mode(labels: List[str]) -> str:
     if labels[0].endswith("-staging"):
         return "staging"
     return "prod"
+
+@task
+def get_current_flow_project():
+    return prefect.context.get('project')

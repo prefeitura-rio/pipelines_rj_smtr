@@ -15,6 +15,7 @@ class constants(Enum):  # pylint: disable=c0103
     DOCKER_IMAGE_NAME = "AUTO_REPLACE_DOCKER_IMAGE"
     DOCKER_IMAGE = f"{DOCKER_IMAGE_NAME}:{DOCKER_TAG}"
     GCS_FLOWS_BUCKET = "datario-public"
+    PREFECT_DEFAULT_PROJECT='staging'
 
     # AGENT LABELS #
     RJ_SMTR_AGENT_LABEL = 'rj-smtr'
