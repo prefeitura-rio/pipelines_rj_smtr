@@ -12,9 +12,6 @@ from prefect.storage import GCS
 from pipelines.constants import constants as emd_constants
 from prefeitura_rio.pipelines_utils.custom import Flow
 # from prefeitura_rio.pipelines_utils.prefect import get_k8s_dbt_client
-from pipelines.tasks import (
-    
-)
 
 # SMTR Imports #
 
