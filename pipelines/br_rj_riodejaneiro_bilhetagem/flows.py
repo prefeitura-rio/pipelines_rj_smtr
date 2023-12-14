@@ -29,7 +29,7 @@ from pipelines.utils.utils import set_default_parameters
 
 # SMTR Imports #
 
-from pipelines.flows import (
+from pipelines.templates.flows import (
     default_capture_flow,
     default_materialization_flow,
 )

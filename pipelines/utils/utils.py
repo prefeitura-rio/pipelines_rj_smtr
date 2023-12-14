@@ -19,13 +19,12 @@ import basedosdados as bd
 from basedosdados import Table
 from basedosdados import Storage
 from pytz import timezone
-import math
+import prefect
 import pandas as pd
 from google.cloud.storage.blob import Blob
 import pymysql
 import psycopg2
 import psycopg2.extras
-from redis_pal import RedisPal
 import time
 
 
@@ -957,3 +956,14 @@ def generate_ftp_schedules(
                 )
             )
     return clocks
+
+def set_default_parameters(
+    flow: prefect.Flow, default_parameters: dict
+) -> prefect.Flow:
+    """
+    Sets default parameters for a flow.
+    """
+    for parameter in flow.parameters():
+        if parameter.name in default_parameters:
+            parameter.default = default_parameters[parameter.name]
+    return flow
