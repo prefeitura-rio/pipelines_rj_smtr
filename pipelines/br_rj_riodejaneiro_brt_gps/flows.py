@@ -13,7 +13,7 @@ from pipelines.constants import constants as emd_constants
 from prefeitura_rio.pipelines_utils.custom import Flow
 # from prefeitura_rio.pipelines_utils.prefect import get_k8s_dbt_client
 from pipelines.tasks import (
-    get_current_flow_labels,
+    
 )
 
 # SMTR Imports #
@@ -30,7 +30,7 @@ from pipelines.tasks import (
     fetch_dataset_sha,
     get_current_timestamp,
     get_materialization_date_range,
-    # get_local_dbt_client,
+    get_current_flow_labels,
     get_raw,
     parse_timestamp_to_string,
     save_raw_local,
@@ -41,7 +41,6 @@ from pipelines.tasks import (
     get_now_time,
     rename_current_flow_run_now_time,
     get_current_flow_mode,
-    setup_task
 )
 
 from pipelines.br_rj_riodejaneiro_brt_gps.tasks import (
