@@ -678,7 +678,7 @@ def get_raw_data_db(
     filetype = "json"
 
     try:
-        credentials = get_secret(secret_path)["data"]
+        credentials = get_secret(secret_path)
 
         with connector_mapping[engine](
             host=host,
