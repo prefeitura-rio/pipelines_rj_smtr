@@ -1164,7 +1164,7 @@ def get_materialization_date_range(  # pylint: disable=R0913
 
 @task
 def set_last_run_timestamp(
-    dataset_id: str, table_id: str, timestamp: str, wait=None
+    dataset_id: str, table_id: str, timestamp: str, mode: str = "prod", wait=None
 ):  # pylint: disable=unused-argument
     """
     Set the `last_run_timestamp` key for the dataset_id/table_id pair
