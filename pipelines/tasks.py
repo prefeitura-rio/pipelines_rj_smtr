@@ -39,7 +39,7 @@ from pipelines.utils.utils import (
     save_treated_local_func,
     save_raw_local_func,
     log_critical,
-    normalize_keys
+    bq_project
 )
 from pipelines.utils.secret import get_secret
 from prefeitura_rio.pipelines_utils.dbt import run_dbt_model
@@ -1164,7 +1164,7 @@ def get_materialization_date_range(  # pylint: disable=R0913
 
 @task
 def set_last_run_timestamp(
-    dataset_id: str, table_id: str, timestamp: str, mode: str = "prod", wait=None
+    dataset_id: str, table_id: str, timestamp: str, wait=None
 ):  # pylint: disable=unused-argument
     """
     Set the `last_run_timestamp` key for the dataset_id/table_id pair
@@ -1184,9 +1184,10 @@ def set_last_run_timestamp(
     """
     log(f"Saving timestamp {timestamp} on Redis for {dataset_id}.{table_id}")
     redis_client = get_redis_client()
+    project = bq_project()
     key = dataset_id + "." + table_id
-    if mode == "dev":
-        key = f"{mode}.{key}"
+    if project.endswith() == "dev":
+        key = f"dev.{key}"
     content = redis_client.get(key)
     if not content:
         content = {}
