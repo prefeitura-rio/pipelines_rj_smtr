@@ -37,7 +37,7 @@ from pipelines.utils.implicit_ftp import ImplicitFtpTls
 from pipelines.constants import constants
 
 from prefeitura_rio.pipelines_utils.logging import log #TODO: add or relocate imports
-from prefeitura_rio.pipelines_utils.infisical import get_secret
+from pipelines.utils.secret import get_secret
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
 # Set BD config to run on cloud #
