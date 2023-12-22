@@ -14,6 +14,7 @@ import io
 from basedosdados import Storage, Table
 import basedosdados as bd
 import pandas as pd
+from pandas_gbq.exceptions import GenericGBQException
 import pendulum
 import prefect
 from prefect import task, Client
@@ -754,9 +755,9 @@ def create_request_params(
         data_recurso = extract_params.get("data_recurso", timestamp)
         if isinstance(data_recurso, str):
             data_recurso = datetime.fromisoformat(data_recurso)
-        extract_params["token"] = get_vault_secret(
+        extract_params["token"] = get_secret(
             constants.SUBSIDIO_SPPO_RECURSO_API_SECRET_PATH.value
-        )["data"]["token"]
+        )["token"]
         start = datetime.strftime(
             data_recurso - timedelta(minutes=interval_minutes), "%Y-%m-%dT%H:%M:%S.%MZ"
         )
