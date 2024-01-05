@@ -3,19 +3,21 @@
 Tasks for br_rj_riodejaneiro_brt_gps
 """
 
-from datetime import timedelta
 import traceback
+from datetime import timedelta
+
 import pandas as pd
 from prefect import task
+from prefeitura_rio.pipelines_utils.logging import log
+
+from pipelines.constants import constants
+from pipelines.utils.backup.utils import log_critical, map_dict_keys
 
 # EMD Imports #
 
-from prefeitura_rio.pipelines_utils.logging import log
 
 # SMTR Imports #
 
-from pipelines.constants import constants
-from pipelines.utils.utils import log_critical, map_dict_keys
 
 # Tasks #
 
@@ -53,9 +55,7 @@ def pre_treatment_br_rj_riodejaneiro_brt_gps(status: dict, timestamp):
     df = pd.DataFrame(columns=columns)  # pylint: disable=c0103
 
     # map_dict_keys change data keys to match project data structure
-    df["content"] = [
-        map_dict_keys(piece, constants.GPS_BRT_MAPPING_KEYS.value) for piece in data
-    ]
+    df["content"] = [map_dict_keys(piece, constants.GPS_BRT_MAPPING_KEYS.value) for piece in data]
     df[key_column] = [piece[key_column] for piece in data]
     df["timestamp_gps"] = [piece["timestamp_gps"] for piece in data]
     df["timestamp_captura"] = timestamp
@@ -64,9 +64,7 @@ def pre_treatment_br_rj_riodejaneiro_brt_gps(status: dict, timestamp):
     # Remove timezone and force it to be config timezone
     log(f"Before converting, timestamp_gps was: \n{df['timestamp_gps']}")
     df["timestamp_gps"] = (
-        pd.to_datetime(df["timestamp_gps"], unit="ms")
-        .dt.tz_localize("UTC")
-        .dt.tz_convert(timezone)
+        pd.to_datetime(df["timestamp_gps"], unit="ms").dt.tz_localize("UTC").dt.tz_convert(timezone)
     )
     log(f"After converting the timezone, timestamp_gps is: \n{df['timestamp_gps']}")
 
