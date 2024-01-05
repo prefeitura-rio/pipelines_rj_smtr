@@ -14,6 +14,7 @@ import io
 from basedosdados import Storage, Table
 import basedosdados as bd
 import pandas as pd
+from pandas_gbq.exceptions import GenericGBQException
 import pendulum
 import prefect
 from prefect import task, Client
@@ -39,7 +40,7 @@ from pipelines.utils.utils import (
     save_treated_local_func,
     save_raw_local_func,
     log_critical,
-    normalize_keys
+    bq_project
 )
 from pipelines.utils.secret import get_secret
 from prefeitura_rio.pipelines_utils.dbt import run_dbt_model
@@ -652,7 +653,6 @@ def get_raw(  # pylint: disable=R0912
 
     return {"data": data, "error": error}
 
-
 @task(checkpoint=False, nout=2)
 def create_request_params(
     extract_params: dict,
@@ -684,36 +684,97 @@ def create_request_params(
         ]
         request_url = database["host"]
 
-        datetime_range = get_datetime_range(
-            timestamp=timestamp, interval=timedelta(minutes=interval_minutes)
-        )
-
         request_params = {
             "database": extract_params["database"],
             "engine": database["engine"],
-            "query": extract_params["query"].format(**datetime_range),
         }
 
+        if table_id == constants.BILHETAGEM_TRACKING_CAPTURE_PARAMS.value["table_id"]:
+            project = bq_project(kind="bigquery_staging")
+            log(f"project = {project}")
+            try:
+                logs_query = f"""
+                SELECT
+                    timestamp_captura
+                FROM
+                    `{project}.{dataset_id}_staging.{table_id}_logs`
+                WHERE
+                    data <= '{timestamp.strftime("%Y-%m-%d")}'
+                    AND sucesso = "True"
+                ORDER BY
+                    timestamp_captura DESC
+                """
+                last_success_dates = bd.read_sql(
+                    query=logs_query, billing_project_id=project
+                )
+                last_success_dates = last_success_dates.iloc[:, 0].to_list()
+                for success_ts in last_success_dates:
+                    success_ts = datetime.fromisoformat(success_ts)
+                    last_id_query = f"""
+                    SELECT
+                        MAX(id)
+                    FROM
+                        `{project}.{dataset_id}_staging.{table_id}`
+                    WHERE
+                        data = '{success_ts.strftime("%Y-%m-%d")}'
+                        and hora = "{success_ts.hour}";
+                    """
+
+                    last_captured_id = bd.read_sql(
+                        query=last_id_query, billing_project_id=project
+                    )
+                    last_captured_id = last_captured_id.iloc[0][0]
+                    if last_captured_id is None:
+                        print("ID is None, trying next timestamp")
+                    else:
+                        log(f"last_captured_id = {last_captured_id}")
+                        break
+            except GenericGBQException as err:
+                if "404 Not found" in str(err):
+                    log("Table Not found, returning id = 0")
+                    last_captured_id = 0
+
+            request_params["query"] = extract_params["query"].format(
+                last_id=last_captured_id,
+                max_id=int(last_captured_id)
+                + extract_params["page_size"] * extract_params["max_pages"],
+            )
+            request_params["page_size"] = extract_params["page_size"]
+            request_params["max_pages"] = extract_params["max_pages"]
+        else:
+            datetime_range = get_datetime_range(
+                timestamp=timestamp, interval=timedelta(minutes=interval_minutes)
+            )
+
+            request_params["query"] = extract_params["query"].format(**datetime_range)
+
     elif dataset_id == constants.GTFS_DATASET_ID.value:
-        request_params = extract_params["filename"]
+        request_params = {"zip_filename": extract_params["filename"]}
 
     elif dataset_id == constants.SUBSIDIO_SPPO_RECURSOS_DATASET_ID.value:
+        data_recurso = extract_params.get("data_recurso", timestamp)
+        if isinstance(data_recurso, str):
+            data_recurso = datetime.fromisoformat(data_recurso)
         extract_params["token"] = get_secret(
-            secret_path=constants.SUBSIDIO_SPPO_RECURSO_API_SECRET_PATH.value
+            constants.SUBSIDIO_SPPO_RECURSO_API_SECRET_PATH.value
         )["token"]
         start = datetime.strftime(
-            timestamp - timedelta(minutes=interval_minutes), "%Y-%m-%dT%H:%M:%S.%MZ"
+            data_recurso - timedelta(minutes=interval_minutes), "%Y-%m-%dT%H:%M:%S.%MZ"
         )
-        end = datetime.strftime(timestamp, "%Y-%m-%dT%H:%M:%S.%MZ")
+        end = datetime.strftime(data_recurso, "%Y-%m-%dT%H:%M:%S.%MZ")
         log(f" Start date {start}, end date {end}")
         recurso_params = {
-            "dates": f"createdDate ge {start} and createdDate le {end}",
+            "start": start,
+            "end": end,
             "service": constants.SUBSIDIO_SPPO_RECURSO_SERVICE.value,
         }
         extract_params["$filter"] = extract_params["$filter"].format(**recurso_params)
         request_params = extract_params
 
         request_url = constants.SUBSIDIO_SPPO_RECURSO_API_BASE_URL.value
+
+    elif dataset_id == constants.STU_DATASET_ID.value:
+        request_params = {"bucket_name": constants.STU_BUCKET_NAME.value}
 
     return request_params, request_url
 
@@ -1184,9 +1245,10 @@ def set_last_run_timestamp(
     """
     log(f"Saving timestamp {timestamp} on Redis for {dataset_id}.{table_id}")
     redis_client = get_redis_client()
+    project = bq_project()
     key = dataset_id + "." + table_id
-    if mode == "dev":
-        key = f"{mode}.{key}"
+    if project.endswith() == "dev":
+        key = f"dev.{key}"
     content = redis_client.get(key)
     if not content:
         content = {}
@@ -1506,3 +1568,7 @@ def get_current_flow_mode(labels: List[str]) -> str:
     if labels[0].endswith("-staging"):
         return "staging"
     return "prod"
+
+@task
+def get_current_flow_project():
+    return prefect.context.get('project')
