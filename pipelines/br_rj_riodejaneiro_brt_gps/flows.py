@@ -39,9 +39,7 @@ from pipelines.tasks import (  # get_local_dbt_client,; setup_task,
     get_raw,
     parse_timestamp_to_string,
     rename_current_flow_run_now_time,
-)
-from pipelines.tasks import run_dbt_model_task as run_dbt_model
-from pipelines.tasks import (  # get_local_dbt_client,; setup_task,
+    run_dbt_model,
     save_raw_local,
     save_treated_local,
     set_last_run_timestamp,
