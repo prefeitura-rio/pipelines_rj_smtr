@@ -7,17 +7,20 @@ import traceback
 from datetime import timedelta
 
 import pandas as pd
-from prefect import task
-from prefeitura_rio.pipelines_utils.logging import log
 
-from pipelines.constants import constants
-from pipelines.utils.utils import log_critical, map_dict_keys
+# isort: off
+# Prefect Imports #
+
+from prefect import task
 
 # EMD Imports #
 
+from prefeitura_rio.pipelines_utils.logging import log
 
 # SMTR Imports #
 
+from pipelines.constants import constants
+from pipelines.utils.utils import log_critical, map_dict_keys
 
 # Tasks #
 
