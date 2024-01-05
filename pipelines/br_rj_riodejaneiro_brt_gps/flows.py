@@ -3,19 +3,29 @@
 Flows for br_rj_riodejaneiro_brt_gps
 """
 
+# Prefect Imports #
+
 from prefect import Parameter, case
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
+
+# isort: off
+# EMD Imports #
+
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_credentials
+
+# from prefeitura_rio.pipelines_utils.prefect import get_k8s_dbt_client
+
+from pipelines.constants import constants as emd_constants
+
+# isort: on
+# SMTR Imports #
 
 from pipelines.br_rj_riodejaneiro_brt_gps.tasks import (
     pre_treatment_br_rj_riodejaneiro_brt_gps,
 )
 from pipelines.constants import constants
-from pipelines.constants import constants as emd_constants
-
-# from prefeitura_rio.pipelines_utils.prefect import get_k8s_dbt_client
 from pipelines.tasks import (  # get_local_dbt_client,; setup_task,
     bq_upload,
     create_date_hour_partition,
@@ -39,13 +49,6 @@ from pipelines.tasks import (  # get_local_dbt_client,; setup_task,
 )
 
 # from pipelines.schedules import every_hour, every_minute
-
-
-# EMD Imports #
-
-
-# SMTR Imports #
-
 
 # Flows #
 
