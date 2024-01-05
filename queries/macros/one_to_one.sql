@@ -23,11 +23,11 @@ ON m.{{column_name}} = n.{{column_name}}
 )
 SELECT *
 FROM (
-    SELECT 
+    SELECT
         from_col,
         count(to_col) ct
     FROM t
     GROUP BY from_col
-) 
+)
 where ct != 1
 {% endtest %}

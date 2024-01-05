@@ -4,45 +4,39 @@
 General purpose functions for rj_smtr
 """
 
-from ftplib import FTP
-from pathlib import Path
-
-from datetime import timedelta, datetime, date
-from typing import List, Union, Any
-import traceback
 import io
 import json
-import zipfile
-import pytz
-import requests
-import basedosdados as bd
-from basedosdados import Table
-from basedosdados import Storage
-from pytz import timezone
 import math
+import time
+import traceback
+import zipfile
+from datetime import date, datetime, timedelta
+from ftplib import FTP
+from pathlib import Path
+from typing import Any, List, Union
+
+import basedosdados as bd
 import pandas as pd
-from google.cloud.storage.blob import Blob
-import pymysql
 import psycopg2
 import psycopg2.extras
-from redis_pal import RedisPal
-import time
-
-
+import pymysql
+import pytz
+import requests
+from basedosdados import Storage, Table
+from google.cloud.storage.blob import Blob
 from prefect.schedules.clocks import IntervalClock
-
-from pipelines.constants import constants
-
-
-from pipelines.utils.implicit_ftp import ImplicitFtpTls
-from pipelines.constants import constants
-
-from prefeitura_rio.pipelines_utils.logging import log #TODO: add or relocate imports
 from prefeitura_rio.pipelines_utils.infisical import get_secret
+from prefeitura_rio.pipelines_utils.logging import log  # TODO: add or relocate imports
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
+from pytz import timezone
+from redis_pal import RedisPal
+
+from pipelines.constants import constants
+from pipelines.utils.implicit_ftp import ImplicitFtpTls
 
 # Set BD config to run on cloud #
 bd.config.from_file = True
+
 
 def send_discord_message(
     message: str,
@@ -70,9 +64,7 @@ def log_critical(message: str, secret_path: str = constants.CRITICAL_SECRET_PATH
     return send_discord_message(message=message, webhook_url=url)
 
 
-def create_or_append_table(
-    dataset_id: str, table_id: str, path: str, partitions: str = None
-):
+def create_or_append_table(dataset_id: str, table_id: str, path: str, partitions: str = None):
     """Conditionally create table or append data to its relative GCS folder.
 
     Args:
@@ -92,9 +84,7 @@ def create_or_append_table(
         log("Table created in STAGING")
     else:
         log("Table already exists in STAGING, appending to it...")
-        tb_obj.append(
-            filepath=path, if_exists="replace", timeout=600, partitions=partitions
-        )
+        tb_obj.append(filepath=path, if_exists="replace", timeout=600, partitions=partitions)
         log("Appended to table on STAGING successfully.")
 
 
@@ -107,9 +97,7 @@ def generate_df_and_save(data: dict, fname: Path):
     """
     # Generate dataframe
     dataframe = pd.DataFrame()
-    dataframe[data["key_column"]] = [
-        piece[data["key_column"]] for piece in data["data"]
-    ]
+    dataframe[data["key_column"]] = [piece[data["key_column"]] for piece in data["data"]]
     dataframe["content"] = list(data["data"])
 
     # Save dataframe to CSV
@@ -158,6 +146,7 @@ def get_table_min_max_value(  # pylint: disable=R0913
 
     return result.iloc[0][0]
 
+
 def get_last_run_timestamp(dataset_id: str, table_id: str, mode: str = "prod") -> str:
     """
     Query redis to retrive the time for when the last materialization
@@ -199,9 +188,11 @@ def map_dict_keys(data: dict, mapping: dict) -> None:
         data[new_key] = data.pop(old_key)
     return data
 
-def normalize_keys(data:dict):
-    _data = {key.lower():value for key, value in data.items()}
+
+def normalize_keys(data: dict):
+    _data = {key.lower(): value for key, value in data.items()}
     return _data
+
 
 def connect_ftp(secret_path: str = None, secure: bool = True):
     """Connect to FTP
@@ -378,21 +369,11 @@ def check_relation(data: pd.DataFrame, columns: list):
     """
 
     for cols in columns:
-        df_dup = (
-            data[~data.duplicated(subset=cols)]
-            .groupby(cols)
-            .count()
-            .reset_index()
-            .iloc[:, :1]
-        )
+        df_dup = data[~data.duplicated(subset=cols)].groupby(cols).count().reset_index().iloc[:, :1]
 
         for col in cols:
             df_dup_col = (
-                data[~data.duplicated(subset=col)]
-                .groupby(col)
-                .count()
-                .reset_index()
-                .iloc[:, :1]
+                data[~data.duplicated(subset=col)].groupby(col).count().reset_index().iloc[:, :1]
             )
 
             if len(df_dup_col[~df_dup_col[col].duplicated()]) == len(df_dup):
@@ -427,9 +408,7 @@ def generate_execute_schedules(  # pylint: disable=too-many-arguments,too-many-l
     labels: List[str],
     table_parameters: Union[list[dict], dict],
     runs_interval_minutes: int = 15,
-    start_date: datetime = datetime(
-        2020, 1, 1, tzinfo=pytz.timezone(constants.TIMEZONE.value)
-    ),
+    start_date: datetime = datetime(2020, 1, 1, tzinfo=pytz.timezone(constants.TIMEZONE.value)),
     **general_flow_params,
 ) -> List[IntervalClock]:
     """
@@ -456,8 +435,7 @@ def generate_execute_schedules(  # pylint: disable=too-many-arguments,too-many-l
         clocks.append(
             IntervalClock(
                 interval=clock_interval,
-                start_date=start_date
-                + timedelta(minutes=runs_interval_minutes * count),
+                start_date=start_date + timedelta(minutes=runs_interval_minutes * count),
                 labels=labels,
                 parameter_defaults=parameter_defaults,
             )
@@ -491,9 +469,7 @@ def custom_serialization(obj: Any) -> Any:
     if isinstance(obj, (pd.Timestamp, date)):
         if isinstance(obj, pd.Timestamp):
             if obj.tzinfo is None:
-                obj = obj.tz_localize("UTC").tz_convert(
-                    constants.TIMEZONE.value
-                )
+                obj = obj.tz_localize("UTC").tz_convert(constants.TIMEZONE.value)
         return obj.isoformat()
 
     raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
@@ -638,9 +614,7 @@ def get_raw_data_gcs(
         if filetype == "zip":
             with zipfile.ZipFile(io.BytesIO(data), "r") as zipped_file:
                 filenames = zipped_file.namelist()
-                filename = list(
-                    filter(lambda x: x.split(".")[0] == table_id, filenames)
-                )[0]
+                filename = list(filter(lambda x: x.split(".")[0] == table_id, filenames))[0]
                 filetype = filename.split(".")[-1]
                 data = zipped_file.read(filename)
 
@@ -749,9 +723,7 @@ def upload_run_logs_to_bq(  # pylint: disable=R0913
     # Create partition directory
     filename = f"{table_id}_{timestamp.isoformat()}"
     partition = f"data={timestamp.date()}"
-    filepath = Path(
-        f"""data/{mode}/{dataset_id}/{table_id}/{partition}/{filename}.csv"""
-    )
+    filepath = Path(f"""data/{mode}/{dataset_id}/{table_id}/{partition}/{filename}.csv""")
     filepath.parent.mkdir(exist_ok=True, parents=True)
     # Create dataframe to be uploaded
     if not error and recapture is True:
@@ -801,11 +773,7 @@ def get_datetime_range(
         dict: datetime range
     """
 
-    start = (
-        (timestamp - interval)
-        .astimezone(tz=pytz.timezone("UTC"))
-        .strftime("%Y-%m-%d %H:%M:%S")
-    )
+    start = (timestamp - interval).astimezone(tz=pytz.timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S")
 
     end = timestamp.astimezone(tz=pytz.timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S")
 
@@ -898,6 +866,7 @@ def get_raw_recursos(request_url: str, request_params: dict) -> tuple[str, str, 
 
     return error, data, filetype
 
+
 def build_table_id(mode: str, report_type: str):
     """Build table_id based on which table is the target
     of current flow run
@@ -923,9 +892,8 @@ def build_table_id(mode: str, report_type: str):
             table_id = constants.STPL_RHO_TABLE_ID.value
     return table_id
 
-def generate_ftp_schedules(
-    interval_minutes: int, label: str = constants.RJ_SMTR_AGENT_LABEL.value
-):
+
+def generate_ftp_schedules(interval_minutes: int, label: str = constants.RJ_SMTR_AGENT_LABEL.value):
     """Generates IntervalClocks with the parameters needed to capture
     each report.
 

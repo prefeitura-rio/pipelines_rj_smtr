@@ -40,7 +40,7 @@ sources:
 
   - name: br_rj_riodejaneiro_stu_staging
     database: rj-smtr-staging
-    
+
     tables:
       - name: operadora_empresa
       - name: operadora_pessoa_fisica

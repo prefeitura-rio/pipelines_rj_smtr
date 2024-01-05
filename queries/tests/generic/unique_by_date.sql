@@ -1,5 +1,5 @@
 {% test unique_by_date(model, column_name, date_column_name) %}
-SELECT 
+SELECT
     *
 FROM (
     SELECT

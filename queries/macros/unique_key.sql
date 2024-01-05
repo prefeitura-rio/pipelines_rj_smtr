@@ -1,5 +1,5 @@
 {% test unique_key(model, column_name, partition_column, combined_keys) %}
-SELECT 
+SELECT
     *
 FROM (
     SELECT

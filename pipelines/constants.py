@@ -10,6 +10,7 @@ class constants(Enum):  # pylint: disable=c0103
     """
     Constant values for the rj_smtr projects
     """
+
     # CONFIGS #
     DOCKER_TAG = "AUTO_REPLACE_DOCKER_TAG"
     DOCKER_IMAGE_NAME = "AUTO_REPLACE_DOCKER_IMAGE"
@@ -17,9 +18,9 @@ class constants(Enum):  # pylint: disable=c0103
     GCS_FLOWS_BUCKET = "datario-public"
 
     # AGENT LABELS #
-    RJ_SMTR_AGENT_LABEL = 'rj-smtr'
-    RJ_SMTR_DEV_AGENT_LABEL = 'rj-smtr-dev'
-    
+    RJ_SMTR_AGENT_LABEL = "rj-smtr"
+    RJ_SMTR_DEV_AGENT_LABEL = "rj-smtr-dev"
+
     # DEFAULT TIMEZONE #
     TIMEZONE = "America/Sao_Paulo"
 
@@ -44,9 +45,7 @@ class constants(Enum):  # pylint: disable=c0103
     GPS_SPPO_API_BASE_URL = (
         "http://ccomobility.com.br/WebServices/Binder/WSConecta/EnvioInformacoesIplan?"
     )
-    GPS_SPPO_API_BASE_URL_V2 = (
-        "http://ccomobility.com.br/WebServices/Binder/wsconecta/EnvioIplan?"
-    )
+    GPS_SPPO_API_BASE_URL_V2 = "http://ccomobility.com.br/WebServices/Binder/wsconecta/EnvioIplan?"
     GPS_SPPO_API_SECRET_PATH = "sppo_api"
     GPS_SPPO_API_SECRET_PATH_V2 = "sppo_api_v2"
 
