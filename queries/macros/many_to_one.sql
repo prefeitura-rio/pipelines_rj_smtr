@@ -22,7 +22,7 @@ LEFT JOIN (
 ON m.{{column_name}} = n.{{column_name}}
 )
 
-SELECT 
+SELECT
     *
 FROM t
 WHERE to_col is null
