@@ -71,14 +71,14 @@ stu AS (
 
   SELECT
     *,
-    CASE 
+    CASE
       WHEN modo = 'Complementar (cabritinho)' THEN 'Van'
       ELSE modo
     END AS modo_join
   FROM
     stu_pessoa_fisica
 )
-SELECT 
+SELECT
   COALESCE(s.perm_autor, j.cd_operadora_transporte) AS id_operadora,
   UPPER(REGEXP_REPLACE(NORMALIZE(COALESCE(s.nome_operadora, j.nm_cliente), NFD), r"\pM", '')) AS operadora,
   s.tipo_permissao AS tipo_operadora,

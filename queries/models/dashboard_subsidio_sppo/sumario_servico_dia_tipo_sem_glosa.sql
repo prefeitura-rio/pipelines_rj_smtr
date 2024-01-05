@@ -1,13 +1,13 @@
--- TABELA TEMPORÁRIA até decisão judicial final 
+-- TABELA TEMPORÁRIA até decisão judicial final
 -- Valores válidos entre 16-01-2023 e 31-12-2023 (subsidio_km = 2.81)
 
 -- TODO: Consertar parametrizacao para demais datas (separar parametros em subsidio x desconto)
-WITH 
+WITH
 parametros AS (
-  SELECT 
+  SELECT
     MAX(IF(status = 'Licenciado sem ar e não autuado', subsidio_km, NULL)) AS subsidio_km_sem_ar_n_autuado,
-    MAX(IF(status = 'Licenciado com ar e não autuado', subsidio_km, NULL)) AS subsidio_km_sem_glosa 
-  FROM 
+    MAX(IF(status = 'Licenciado com ar e não autuado', subsidio_km, NULL)) AS subsidio_km_sem_glosa
+  FROM
     {{ ref("subsidio_parametros") }}
   WHERE
     data_inicio >= '2023-07-04'

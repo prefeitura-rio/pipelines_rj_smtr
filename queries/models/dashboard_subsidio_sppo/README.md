@@ -17,7 +17,7 @@ Este modelo tem por objetivo calcular o valor diário de subsídio para as empre
 
 A metodologia atual é composta por 2 etapas principais:
 
-1. **Percentual de operação diário (POD)**, que define se o subsídio será ou não pago (ou mesmo se o operador será penalizado); 
+1. **Percentual de operação diário (POD)**, que define se o subsídio será ou não pago (ou mesmo se o operador será penalizado);
 2. **Quilometragem realizada por tipo de viagem**, que define o quanto será pago.
 3. **Remuneração total da linha**, conforme 1 e 2.
 

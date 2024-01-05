@@ -6,7 +6,7 @@
 }}
 
 WITH stu AS (
-  SELECT 
+  SELECT
       perm_autor AS id_consorcio,
       cnpj,
       processo,
@@ -35,4 +35,4 @@ LEFT JOIN
 ON
   j.cd_consorcio = s.cd_consorcio_jae
 
-  
+

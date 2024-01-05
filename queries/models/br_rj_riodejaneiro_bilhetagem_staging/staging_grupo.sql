@@ -4,7 +4,7 @@
   )
 }}
 
-WITH 
+WITH
     grupo AS (
         SELECT
             data,

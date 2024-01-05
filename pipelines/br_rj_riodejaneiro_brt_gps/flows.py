@@ -6,49 +6,45 @@ Flows for br_rj_riodejaneiro_brt_gps
 from prefect import Parameter, case
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
-
-# EMD Imports #
-
-from pipelines.constants import constants as emd_constants
 from prefeitura_rio.pipelines_utils.custom import Flow
-# from prefeitura_rio.pipelines_utils.prefect import get_k8s_dbt_client
-from pipelines.tasks import (
-    get_current_flow_labels,
-)
-
-# SMTR Imports #
-
-from pipelines.constants import constants
-
-from pipelines.schedules import (
-    every_minute,
-    every_hour,
-)
-from pipelines.tasks import (
-    create_date_hour_partition,
-    create_local_partition_path,
-    fetch_dataset_sha,
-    get_current_timestamp,
-    get_materialization_date_range,
-    # get_local_dbt_client,
-    get_raw,
-    parse_timestamp_to_string,
-    save_raw_local,
-    save_treated_local,
-    set_last_run_timestamp,
-    upload_logs_to_bq,
-    bq_upload,
-    get_now_time,
-    rename_current_flow_run_now_time,
-    get_current_flow_mode,
-    setup_task
-)
+from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_credentials
 
 from pipelines.br_rj_riodejaneiro_brt_gps.tasks import (
     pre_treatment_br_rj_riodejaneiro_brt_gps,
 )
+from pipelines.constants import constants
+from pipelines.constants import constants as emd_constants
+
+# from prefeitura_rio.pipelines_utils.prefect import get_k8s_dbt_client
+from pipelines.tasks import (  # get_local_dbt_client,; setup_task,
+    bq_upload,
+    create_date_hour_partition,
+    create_local_partition_path,
+    fetch_dataset_sha,
+    get_current_flow_labels,
+    get_current_flow_mode,
+    get_current_timestamp,
+    get_materialization_date_range,
+    get_now_time,
+    get_raw,
+    parse_timestamp_to_string,
+    rename_current_flow_run_now_time,
+)
 from pipelines.tasks import run_dbt_model_task as run_dbt_model
-from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_credentials
+from pipelines.tasks import (  # get_local_dbt_client,; setup_task,
+    save_raw_local,
+    save_treated_local,
+    set_last_run_timestamp,
+    upload_logs_to_bq,
+)
+
+# from pipelines.schedules import every_hour, every_minute
+
+
+# EMD Imports #
+
+
+# SMTR Imports #
 
 
 # Flows #
@@ -62,12 +58,8 @@ with Flow(
     )
 
     # Get default parameters #
-    raw_dataset_id = Parameter(
-        "raw_dataset_id", default=constants.GPS_BRT_RAW_DATASET_ID.value
-    )
-    raw_table_id = Parameter(
-        "raw_table_id", default=constants.GPS_BRT_RAW_TABLE_ID.value
-    )
+    raw_dataset_id = Parameter("raw_dataset_id", default=constants.GPS_BRT_RAW_DATASET_ID.value)
+    raw_table_id = Parameter("raw_table_id", default=constants.GPS_BRT_RAW_TABLE_ID.value)
     dataset_id = Parameter("dataset_id", default=constants.GPS_BRT_DATASET_ID.value)
     table_id = Parameter("table_id", default=constants.GPS_BRT_TREATED_TABLE_ID.value)
     rebuild = Parameter("rebuild", False)

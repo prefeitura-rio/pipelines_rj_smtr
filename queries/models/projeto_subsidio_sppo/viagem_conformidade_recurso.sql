@@ -1,4 +1,4 @@
-{{ 
+{{
 config(
     materialized='incremental',
     partition_by={
@@ -21,7 +21,7 @@ with recursos as (
   {# {% endif -%} #}
 ),
 gps_viagem as (
-  SELECT 
+  SELECT
     r.protocolo,
     r.data_viagem as data,
     g.id_veiculo,
@@ -38,9 +38,9 @@ gps_viagem as (
     g.distancia,
   from recursos r
   left join  (
-    select 
+    select
       id_veiculo,
-      longitude, 
+      longitude,
       latitude,
       servico,
       timestamp_gps,
@@ -81,13 +81,13 @@ registros_status_viagem as (
     else 'out'
     end status_viagem,
     '{{ var("version") }}' as versao_modelo
-  from 
+  from
     gps_viagem g
   inner join (
-    select 
+    select
       *
     from (
-      select 
+      select
         * except(trip_id, shape_id, shape, distancia_planejada),
         trip_id, shape_id, shape, distancia_planejada
       from
@@ -98,18 +98,18 @@ registros_status_viagem as (
       {# {% endif -%} #}
     )
     union all (
-      select 
+      select
         * except(shape, shape_volta, distancia_planejada, distancia_planejada_volta),
         st_geogfromtext(
           concat(
-            "LINESTRING(", 
-            replace(TRIM(ST_ASTEXT(ST_UNION(shape, shape_volta)), "MULTILINESTRING()"), "), (", ","), 
+            "LINESTRING(",
+            replace(TRIM(ST_ASTEXT(ST_UNION(shape, shape_volta)), "MULTILINESTRING()"), "), (", ","),
             ")"
           )
         ) as shape,
         distancia_planejada + distancia_planejada_volta as distancia_planejada
       from (
-        select 
+        select
           * except(trip_id, shape_id),
           concat(SUBSTR(trip_id, 1, 10), sentido, SUBSTR(trip_id, 12, length(trip_id))) as trip_id,
           concat(SUBSTR(shape_id, 1, 10), sentido, SUBSTR(shape_id, 12, length(shape_id))) as shape_id,
@@ -121,7 +121,7 @@ registros_status_viagem as (
         {# {% if is_incremental() -%} #}
           and data between date('{{ var("recurso_viagem_start")}}') and date('{{ var("recurso_viagem_end")}}')
         {# {% endif -%} #}
-        ) 
+        )
         where sentido_shape = "I"
     )
   ) s
@@ -139,7 +139,7 @@ registros_status_viagem as (
 --    em cada tapa da viagem (inicio, meio, fim, fora), total de
 --    registros de gps e total de minutos da viagem com registros de gps.
 distancia as (
-    select 
+    select
         *,
         n_registros_middle + n_registros_start + n_registros_end as n_registros_shape
     from (
@@ -167,7 +167,7 @@ distancia as (
     )
 ),
 -- 2. Calcula distancia total por viagem - junta distancias corrigidas
---    de ida e volta de viagens circulares. 
+--    de ida e volta de viagens circulares.
 aux_viagem_registros as (
   select *
   from (
@@ -210,7 +210,7 @@ aux_viagem_registros as (
 ),
 -- (Adicional) Junta diferentes serviços informados por GPS ao longo viagem numa única string
 servicos_gps_viagem as (
-  select 
+  select
     protocolo,
     id_viagem,
     STRING_AGG(distinct servico_informado, ', ') as servico_informado
@@ -221,7 +221,7 @@ servicos_gps_viagem as (
 -- 2. Calcula os percentuais de conformidade da distancia, trajeto e GPS
 select distinct
   s.protocolo,
-  v.id_viagem, 
+  v.id_viagem,
   v.data,
   v.id_empresa,
   v.id_veiculo,
@@ -239,9 +239,9 @@ select distinct
   round(100 * d.distancia_aferida/d.distancia_planejada, 2) as perc_conformidade_distancia,
   round(100 * n_registros_minuto/tempo_viagem, 2) as perc_conformidade_registros,
   '{{ var("version") }}' as versao_modelo
-from 
+from
     registros_status_viagem v
-inner join 
+inner join
     aux_viagem_registros d
 on
     v.id_viagem = d.id_viagem

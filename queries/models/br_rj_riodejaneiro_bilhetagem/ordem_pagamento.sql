@@ -57,7 +57,7 @@ ordem_pagamento AS (
         ROUND(r.valor_bruto, 1) AS valor_total_transacao_bruto,
         r.valor_taxa AS valor_desconto_taxa,
         r.valor_liquido AS valor_total_transacao_liquido
-    FROM 
+    FROM
         {{ ref("staging_ordem_ressarcimento") }} r
     LEFT JOIN
         {{ ref("staging_ordem_pagamento") }} p

@@ -4,7 +4,7 @@
   )
 }}
 
-WITH 
+WITH
     operadora_transporte AS (
         SELECT
             data,

@@ -6,7 +6,7 @@ FROM (
         {{ partition_column}},
         COUNT({{ relation_field }}) ct
     FROM {{ model }}
-    WHERE 
+    WHERE
         {{ partition_column }} = (select max({{ partition_column }}) from {{ model }})
     GROUP BY 1, 2
 )

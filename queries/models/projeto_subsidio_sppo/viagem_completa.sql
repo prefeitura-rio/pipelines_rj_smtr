@@ -1,4 +1,4 @@
-{{ 
+{{
 config(
     materialized='incremental',
     partition_by={
@@ -39,13 +39,13 @@ with viagem_periodo as (
         {% endif %}
     ) p
     inner join (
-        select distinct * from {{ ref("viagem_conformidade") }} 
+        select distinct * from {{ ref("viagem_conformidade") }}
         {% if is_incremental() %}
-        WHERE 
+        WHERE
             data = date_sub(date("{{ var("run_date") }}"), interval 1 day)
         {% endif %}
-    ) v 
-    on 
+    ) v
+    on
         v.trip_id = p.trip_id
         and v.data = p.data
 ),
@@ -68,7 +68,7 @@ select distinct
     datetime_chegada,
     inicio_periodo,
     fim_periodo,
-    case 
+    case
         when servico_realizado = servico_informado
         then "Completa linha correta"
         else "Completa linha incorreta"
@@ -86,7 +86,7 @@ select distinct
     0 as perc_conformidade_tempo,
     -- round(100 * tempo_viagem/tempo_planejado, 2) as perc_conformidade_tempo,
     '{{ var("version") }}' as versao_modelo
-from 
+from
     viagem_periodo v
 where (
     perc_conformidade_shape >= {{ var("perc_conformidade_shape_min") }}
@@ -103,9 +103,9 @@ and
     (
         -- 1. Viagens pre fechamento das vias
         (fim_periodo = "22:00:00" and datetime_chegada <= "2022-12-31 22:05:00")
-        or 
+        or
         (fim_periodo = "18:00:00" and datetime_chegada <= "2022-12-31 18:05:00") -- 18h as 5h
-        or 
+        or
         -- 2. Viagens durante fechamento das vias
         (inicio_periodo = "22:00:00" and datetime_partida >= "2022-12-31 21:55:00") -- 22h as 5h/10h
         or
@@ -120,14 +120,14 @@ and
     (
         -- 1. Viagens durante fechamento das vias
         (fim_periodo = "05:00:00" and datetime_partida <= "2023-01-01 05:05:00")
-        or 
+        or
         (fim_periodo = "10:00:00" and datetime_partida <= "2023-01-01 10:05:00")
-        or 
+        or
         -- 2. Viagens pos abertura das vias
         (inicio_periodo = "05:00:00" and datetime_partida >= "2023-01-01 04:55:00")
         or
         (inicio_periodo = "10:00:00" and datetime_partida >= "2023-01-01 09:55:00")
-        or 
+        or
         -- 3. Viagens que nao sao afetadas pelo fechamento das vias
         (inicio_periodo = "00:00:00" and fim_periodo = "23:59:59")
     )
@@ -157,7 +157,7 @@ filtro_partida AS (
     FROM
       filtro_desvio )
   WHERE
-    rn = 1 ) 
+    rn = 1 )
 -- filtro_chegada
 SELECT
   * EXCEPT(rn)

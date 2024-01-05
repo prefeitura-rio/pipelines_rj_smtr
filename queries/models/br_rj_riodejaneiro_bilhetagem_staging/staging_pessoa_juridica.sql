@@ -4,7 +4,7 @@
   )
 }}
 
-WITH 
+WITH
     pessoa_juridica AS (
         SELECT
             data,

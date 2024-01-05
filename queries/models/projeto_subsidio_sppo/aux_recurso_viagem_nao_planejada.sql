@@ -1,4 +1,4 @@
-{{ 
+{{
 config(
     materialized='ephemeral'
 )
@@ -8,7 +8,7 @@ with recursos as (
   select *
   FROM {{ ref("aux_recurso_incorreto") }}
   where id_julgamento is null
-  
+
 ),
 servico_planejado as (
     select data, servico, sentido
@@ -33,6 +33,6 @@ select
   r.* except(id_julgamento, observacao),
   coalesce(r.id_julgamento, rp.id_julgamento) as id_julgamento,
   coalesce(r.observacao, rp.observacao) as observacao
-from {{ ref("aux_recurso_incorreto") }} r 
+from {{ ref("aux_recurso_incorreto") }} r
 left join recursos_nao_planejados rp
 on r.protocolo = rp.protocolo

@@ -4,7 +4,7 @@
   )
 }}
 
-WITH 
+WITH
     operadora_empresa AS (
         SELECT
             data,

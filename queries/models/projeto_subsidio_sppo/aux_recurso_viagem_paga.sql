@@ -18,7 +18,7 @@ with recursos as (
 ),
 -- 1. Avalia recursos cuja viagem ja foi paga
 viagens as (
-    select * 
+    select *
     from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
     {# {% if is_incremental() -%} #}
       where data between date('{{ var("recurso_viagem_start")}}') and date('{{ var("recurso_viagem_end")}}')

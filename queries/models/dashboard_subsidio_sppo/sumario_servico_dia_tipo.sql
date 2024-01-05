@@ -49,7 +49,7 @@ SELECT DISTINCT
         r'\bnao\b', 'n'  -- Substitui "não" por "n"
       ),
   r'[_\s]+', '_' -- Substitui múltiplos espaços ou underscores por um único "_"
-  ) AS status_tratado 
+  ) AS status_tratado
 FROM
   status_principal
 {% endset %}
@@ -142,11 +142,11 @@ WITH
   FROM
     tabela_status_array),
   status_flat AS (
-  SELECT DISTINCT 
-    status_t, 
-    status 
-  FROM 
-    status_update, 
+  SELECT DISTINCT
+    status_t,
+    status
+  FROM
+    status_update,
     UNNEST(status_array) AS status_t),
   servico_km_tipo_atualizado AS (
   SELECT
@@ -156,7 +156,7 @@ WITH
     servico_km_tipo AS k
   LEFT JOIN
     status_flat AS u
-  ON 
+  ON
     u.status_t = k.tipo_viagem),
   servico_km AS (
   SELECT

@@ -1,4 +1,4 @@
-{{ 
+{{
 config(
     materialized='ephemeral'
 )
@@ -17,7 +17,7 @@ with recursos_tratada as (
       then datetime(date_add(data_viagem, interval 1 day), hora_chegada)
       else datetime(data_viagem, hora_chegada)
     end as datetime_chegada,
-    case 
+    case
       -- caso 1: linha regular => SA
       when tipo_servico_extra is null and tipo_servico = "SA" then linha
       -- caso 2: lecd
@@ -35,7 +35,7 @@ with recursos_tratada as (
 recursos_incorretos as (
   select
     *,
-    case 
+    case
       when datetime_partida > datetime_chegada then "Fim da viagem incorreto."
       when datetime_partida > data_recurso then "Início da viagem incorreto."
       when servico like "Não identificado:%" then "Linha e tipo de serviço não correspondem."
@@ -46,9 +46,9 @@ recursos_incorretos as (
 )
 select
   *,
-  case 
+  case
     when observacao is not null
     then 1
-    else null 
+    else null
   end as id_julgamento
 from recursos_incorretos

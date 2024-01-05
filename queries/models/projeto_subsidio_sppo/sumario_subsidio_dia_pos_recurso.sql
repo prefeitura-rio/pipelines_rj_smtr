@@ -14,7 +14,7 @@ with sumario as (
   on r.data = s.data
   and r.servico = s.servico
 )
-select 
+select
   *,
   round(valor_total_subsidio_pos_recurso - valor_total_subsidio_pre_recurso, 2) as valor_total_subsidio_recurso
 from sumario

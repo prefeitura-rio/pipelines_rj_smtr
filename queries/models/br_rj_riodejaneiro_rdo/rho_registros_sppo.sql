@@ -1,4 +1,4 @@
-{{ 
+{{
   config(
       materialized='incremental',
       partition_by={
@@ -14,5 +14,5 @@ FROM {{ref('rho_registros_sppo_view')}}
 
 {% if is_incremental() %}
 WHERE
-    data_particao BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}") 
+    data_particao BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
 {% endif %}

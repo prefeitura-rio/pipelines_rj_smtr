@@ -1,4 +1,4 @@
-select  
+select
     data_versao,
     json_value(content, '$.IDFrotaDeterminada') IDFrotaDeterminada,
     json_value(content, '$.TipoOnibusID') TipoOnibusID,

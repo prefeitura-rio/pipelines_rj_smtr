@@ -4,7 +4,7 @@
   )
 }}
 
-WITH 
+WITH
     linha_consorcio AS (
         SELECT
             data,

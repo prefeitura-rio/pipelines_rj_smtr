@@ -1,5 +1,5 @@
 {% test contained(model, column_name, in, field) %}
-select * 
+select *
 from (
     SELECT DISTINCT
         {{ column_name }} contained,

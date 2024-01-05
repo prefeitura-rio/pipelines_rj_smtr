@@ -3,49 +3,49 @@
 """
 Tasks for rj_smtr
 """
-from datetime import datetime, timedelta, date
+import io
 import json
 import os
-from pathlib import Path
 import traceback
-from typing import Dict, List, Union, Iterable, Any
-import io
+from datetime import date, datetime, timedelta
+from pathlib import Path
+from typing import Any, Dict, Iterable, List, Union
 
-from basedosdados import Storage, Table
 import basedosdados as bd
 import pandas as pd
 import pendulum
 import prefect
-from prefect import task, Client
-from prefect.backend import FlowRunView
-from pytz import timezone
 import requests
-
-from pipelines.constants import constants
-from pipelines.utils.utils import (
-    create_or_append_table,
-    bq_project,
-    get_table_min_max_value,
-    get_last_run_timestamp,
-    data_info_str,
-    dict_contains_keys,
-    get_raw_data_api,
-    get_raw_data_gcs,
-    get_raw_data_db,
-    get_raw_recursos,
-    upload_run_logs_to_bq,
-    get_datetime_range,
-    read_raw_data,
-    save_treated_local_func,
-    save_raw_local_func,
-    log_critical,
-    normalize_keys
-)
-from pipelines.utils.secret import get_secret
+from basedosdados import Storage, Table
+from prefect import Client, task
+from prefect.backend import FlowRunView
 from prefeitura_rio.pipelines_utils.dbt import run_dbt_model
-from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from prefeitura_rio.pipelines_utils.infisical import inject_bd_credentials
 from prefeitura_rio.pipelines_utils.logging import log
+from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
+from pytz import timezone
+
+from pipelines.constants import constants
+from pipelines.utils.secret import get_secret
+from pipelines.utils.utils import (  # normalize_keys,
+    bq_project,
+    create_or_append_table,
+    data_info_str,
+    dict_contains_keys,
+    get_datetime_range,
+    get_last_run_timestamp,
+    get_raw_data_api,
+    get_raw_data_db,
+    get_raw_data_gcs,
+    get_raw_recursos,
+    get_table_min_max_value,
+    log_critical,
+    read_raw_data,
+    save_raw_local_func,
+    save_treated_local_func,
+    upload_run_logs_to_bq,
+)
+
 
 ###############
 #
@@ -56,6 +56,7 @@ from prefeitura_rio.pipelines_utils.logging import log
 def setup_task():
     return inject_bd_credentials()
 
+
 @task
 def get_current_flow_labels() -> List[str]:
     """
@@ -65,14 +66,16 @@ def get_current_flow_labels() -> List[str]:
     flow_run_view = FlowRunView.from_flow_run_id(flow_run_id)
     return flow_run_view.labels
 
+
 ###############
 #
 # DBT
 #
 ###############
 
+
 @task
-def run_dbt_model_task( 
+def run_dbt_model_task(
     dataset_id: str = None,
     table_id: str = None,
     dbt_alias: bool = False,
@@ -80,8 +83,8 @@ def run_dbt_model_task(
     downstream: bool = None,
     exclude: str = None,
     flags: str = None,
-    _vars: dict | List[Dict] = None
-    ):
+    _vars: dict | List[Dict] = None,
+):
     return run_dbt_model(
         dataset_id=dataset_id,
         table_id=table_id,
@@ -90,7 +93,7 @@ def run_dbt_model_task(
         downstream=downstream,
         exclude=exclude,
         flags=flags,
-        _vars=_vars
+        _vars=_vars,
     )
 
 
@@ -140,7 +143,7 @@ def build_incremental_model(  # pylint: disable=too-many-arguments
     if refresh:
         log("Running in full refresh mode")
         log(f"DBT will run the following command:\n{run_command+' --full-refresh'}")
-        run_dbt_model(dataset_id=dataset_id, table_id=mat_table_id, flags='--full-refresh')
+        run_dbt_model(dataset_id=dataset_id, table_id=mat_table_id, flags="--full-refresh")
         last_mat_date = get_table_min_max_value(
             query_project_id, dataset_id, mat_table_id, field_name, "max"
         )
@@ -208,9 +211,7 @@ def create_dbt_run_vars(
         log("Creating date_range variable")
 
         # Set date_range variable manually
-        if dict_contains_keys(
-            dbt_vars["date_range"], ["date_range_start", "date_range_end"]
-        ):
+        if dict_contains_keys(dbt_vars["date_range"], ["date_range_start", "date_range_end"]):
             date_var = {
                 "date_range_start": dbt_vars["date_range"]["date_range_start"],
                 "date_range_end": dbt_vars["date_range"]["date_range_end"],
@@ -490,13 +491,9 @@ def query_logs(
     """
 
     if not datetime_filter:
-        datetime_filter = pendulum.now(constants.TIMEZONE.value).replace(
-            second=0, microsecond=0
-        )
+        datetime_filter = pendulum.now(constants.TIMEZONE.value).replace(second=0, microsecond=0)
     elif isinstance(datetime_filter, str):
-        datetime_filter = datetime.fromisoformat(datetime_filter).replace(
-            second=0, microsecond=0
-        )
+        datetime_filter = datetime.fromisoformat(datetime_filter).replace(second=0, microsecond=0)
 
     datetime_filter = datetime_filter.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -638,13 +635,9 @@ def get_raw(  # pylint: disable=R0912
             elif filetype in ("txt", "csv"):
                 if csv_args is None:
                     csv_args = {}
-                data = pd.read_csv(io.StringIO(response.text), **csv_args).to_dict(
-                    orient="records"
-                )
+                data = pd.read_csv(io.StringIO(response.text), **csv_args).to_dict(orient="records")
             else:
-                error = (
-                    "Unsupported raw file extension. Supported only: json, csv and txt"
-                )
+                error = "Unsupported raw file extension. Supported only: json, csv and txt"
 
     except Exception:
         error = traceback.format_exc()
@@ -750,9 +743,7 @@ def get_raw_from_sources(
 
     source_values = source_type.split("-", 1)
 
-    source_type, filetype = (
-        source_values if len(source_values) == 2 else (source_values[0], None)
-    )
+    source_type, filetype = source_values if len(source_values) == 2 else (source_values[0], None)
 
     log(f"Getting raw data from source type: {source_type}")
 
@@ -779,9 +770,7 @@ def get_raw_from_sources(
         else:
             raise NotImplementedError(f"{source_type} not supported")
 
-        filepath = save_raw_local_func(
-            data=data, filepath=local_filepath, filetype=filetype
-        )
+        filepath = save_raw_local_func(data=data, filepath=local_filepath, filetype=filetype)
 
     except NotImplementedError:
         error = traceback.format_exc()
@@ -927,9 +916,7 @@ def upload_logs_to_bq(  # pylint: disable=R0913
     # Create partition directory
     filename = f"{table_id}_{timestamp.isoformat()}"
     partition = f"data={timestamp.date()}"
-    filepath = Path(
-        f"""data/staging/{dataset_id}/{table_id}/{partition}/{filename}.csv"""
-    )
+    filepath = Path(f"""data/staging/{dataset_id}/{table_id}/{partition}/{filename}.csv""")
     filepath.parent.mkdir(exist_ok=True, parents=True)
     # Create dataframe to be uploaded
     if not error and recapture is True:
@@ -1099,9 +1086,7 @@ def get_materialization_date_range(  # pylint: disable=R0913
     """
     timestr = "%Y-%m-%dT%H:%M:%S"
     # get start from redis
-    last_run = get_last_run_timestamp(
-        dataset_id=dataset_id, table_id=table_id, mode=mode
-    )
+    last_run = get_last_run_timestamp(dataset_id=dataset_id, table_id=table_id, mode=mode)
     # if there's no timestamp set on redis, get max timestamp on source table
     if last_run is None:
         log("Failed to fetch key from Redis...\n Querying tables for last suceeded run")
@@ -1151,9 +1136,7 @@ def get_materialization_date_range(  # pylint: disable=R0913
             tzinfo=None, minute=0, second=0, microsecond=0
         )
 
-    end_ts = (end_ts - timedelta(hours=delay_hours)).replace(
-        minute=0, second=0, microsecond=0
-    )
+    end_ts = (end_ts - timedelta(hours=delay_hours)).replace(minute=0, second=0, microsecond=0)
 
     end_ts = end_ts.strftime(timestr)
 
@@ -1343,15 +1326,9 @@ def transform_raw_to_nested_structure(
                 pk_cols = primary_key + ["timestamp_captura"]
                 data = (
                     data.groupby(pk_cols)
-                    .apply(
-                        lambda x: x[data.columns.difference(pk_cols)].to_json(
-                            orient="records"
-                        )
-                    )
+                    .apply(lambda x: x[data.columns.difference(pk_cols)].to_json(orient="records"))
                     .str.strip("[]")
-                    .reset_index(name="content")[
-                        primary_key + ["content", "timestamp_captura"]
-                    ]
+                    .reset_index(name="content")[primary_key + ["content", "timestamp_captura"]]
                 )
 
                 log(
@@ -1360,9 +1337,7 @@ def transform_raw_to_nested_structure(
                 )
 
             # save treated local
-            filepath = save_treated_local_func(
-                data=data, error=error, filepath=filepath
-            )
+            filepath = save_treated_local_func(data=data, error=error, filepath=filepath)
 
         except Exception:  # pylint: disable=W0703
             error = traceback.format_exc()
@@ -1462,12 +1437,11 @@ def get_scheduled_start_times(
     last_schedule = timestamp
 
     for param in parameters[1:]:
-        last_schedule += intervals.get(
-            param.get("table_id", "default"), intervals["default"]
-        )
+        last_schedule += intervals.get(param.get("table_id", "default"), intervals["default"])
         timestamps.append(last_schedule)
 
     return timestamps
+
 
 @task
 def rename_current_flow_run_now_time(prefix: str, now_time=None, wait=None) -> None:
@@ -1478,6 +1452,7 @@ def rename_current_flow_run_now_time(prefix: str, now_time=None, wait=None) -> N
     client = Client()
     return client.set_flow_run_name(flow_run_id, f"{prefix}{now_time}")
 
+
 @prefect.task(checkpoint=False)
 def get_now_time():
     """
@@ -1487,6 +1462,7 @@ def get_now_time():
 
     return f"{now.hour}:{f'0{now.minute}' if len(str(now.minute))==1 else now.minute}"
 
+
 @prefect.task(checkpoint=False)
 def get_now_date():
     """
@@ -1495,6 +1471,7 @@ def get_now_date():
     now = pendulum.now(pendulum.timezone("America/Sao_Paulo"))
 
     return now.to_date_string()
+
 
 @task
 def get_current_flow_mode(labels: List[str]) -> str:

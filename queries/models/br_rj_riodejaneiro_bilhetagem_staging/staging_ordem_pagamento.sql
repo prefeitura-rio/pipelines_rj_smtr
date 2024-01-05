@@ -4,7 +4,7 @@
   )
 }}
 
-WITH 
+WITH
     ordem_pagamento AS (
         SELECT
             data,

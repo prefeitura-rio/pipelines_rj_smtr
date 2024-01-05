@@ -19,15 +19,15 @@ WITH
   FROM
     {{ ref("sppo_licenciamento") }} --`rj-smtr`.`veiculo`.`sppo_licenciamento`
   {%- if var("stu_data_versao") != "" %}
-  WHERE 
+  WHERE
     data = DATE("{{ var('stu_data_versao') }}")
   {% else -%}
     {%- if execute %}
         {% set licenciamento_date = run_query("SELECT MIN(data) FROM " ~ ref("sppo_licenciamento") ~ " WHERE data >= DATE_ADD(DATE('" ~ var("run_date") ~ "'), INTERVAL 5 DAY)").columns[0].values()[0] %}
     {% endif -%}
-  WHERE 
+  WHERE
     data = DATE("{{ licenciamento_date }}")
-  {% endif -%}  
+  {% endif -%}
   ),
   gps AS (
   SELECT
@@ -174,7 +174,7 @@ SELECT
 FROM
   gps_licenciamento_autuacao AS gla
 LEFT JOIN
-  {{ ref("subsidio_parametros") }} AS p --`rj-smtr.dashboard_subsidio_sppo.subsidio_parametros` 
+  {{ ref("subsidio_parametros") }} AS p --`rj-smtr.dashboard_subsidio_sppo.subsidio_parametros`
 ON
   gla.indicadores.indicador_licenciado = p.indicador_licenciado
   AND gla.indicadores.indicador_ar_condicionado = p.indicador_ar_condicionado

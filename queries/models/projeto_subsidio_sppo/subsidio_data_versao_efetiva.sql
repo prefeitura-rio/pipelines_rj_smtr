@@ -1,4 +1,4 @@
-SELECT 
+SELECT
   data,
   CASE
       WHEN data = "2022-06-16" THEN "Domingo"
@@ -127,7 +127,7 @@ SELECT
       {% endfor %}
     {% endfor %}
   END AS data_versao_frequencies,
-  CASE  
+  CASE
     WHEN EXTRACT(YEAR FROM data) = 2022 THEN (
       CASE
         WHEN EXTRACT(MONTH FROM data) = 6 THEN 2.13

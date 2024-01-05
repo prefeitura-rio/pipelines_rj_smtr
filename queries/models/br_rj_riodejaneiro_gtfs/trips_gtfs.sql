@@ -1,9 +1,9 @@
-{{config( 
+{{config(
     partition_by = { 'field' :'data_versao',
     'data_type' :'date',
     'granularity': 'day' },
     unique_key = ['trip_id','data_versao'],
-    alias = 'trips' 
+    alias = 'trips'
 )}}
 
 

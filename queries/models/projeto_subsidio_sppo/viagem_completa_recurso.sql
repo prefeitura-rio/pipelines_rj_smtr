@@ -1,4 +1,4 @@
-{{ 
+{{
 config(
     materialized='incremental',
     partition_by={
@@ -12,7 +12,7 @@ config(
 }}
 
 with recursos_viagem as (
-    select distinct * 
+    select distinct *
     from {{ ref('viagem_conformidade_recurso') }}
     {% if is_incremental() %}
         where data between date('{{ var("recurso_viagem_start")}}') and date('{{ var("recurso_viagem_end")}}')
@@ -45,13 +45,13 @@ viagem_periodo as (
         0 as tempo_planejado
     from viagem_planejada p
     inner join recursos_viagem v
-    on 
+    on
         v.trip_id = p.trip_id
         and v.data = p.data
     -- where (
     --     ( -- 05:00:00 as 23:00:00
-    --         inicio_periodo < time_sub(fim_periodo, interval p.intervalo minute) 
-    --         and extract (time from datetime_partida) >= inicio_periodo 
+    --         inicio_periodo < time_sub(fim_periodo, interval p.intervalo minute)
+    --         and extract (time from datetime_partida) >= inicio_periodo
     --             and extract (time from datetime_partida) < time_sub(fim_periodo, interval p.intervalo minute)
     --     ) or
     --     ( -- 23:00:00 as 5:00:00
@@ -80,7 +80,7 @@ select distinct
     datetime_chegada,
     inicio_periodo,
     fim_periodo,
-    case 
+    case
         when servico_realizado = servico_informado
         then "Completa linha correta"
         else "Completa linha incorreta"
@@ -98,7 +98,7 @@ select distinct
     0 as perc_conformidade_tempo,
     -- round(100 * tempo_viagem/tempo_planejado, 2) as perc_conformidade_tempo,
     '{{ var("version") }}' as versao_modelo
-from 
+from
     viagem_periodo v
 where (
     perc_conformidade_shape >= {{ var("perc_conformidade_shape_min") }}

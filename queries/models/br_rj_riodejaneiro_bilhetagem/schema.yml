@@ -122,4 +122,3 @@ models:
         description: "Nome da coluna"
       - name: valor
         description: "Valor"
-        

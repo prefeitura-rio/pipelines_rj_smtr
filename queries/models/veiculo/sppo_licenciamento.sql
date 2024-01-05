@@ -10,7 +10,7 @@
 with
     -- Tabela de licenciamento
     stu as (
-        select 
+        select
             *
         from
             {{ ref("sppo_licenciamento_stu") }} as t

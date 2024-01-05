@@ -4,7 +4,7 @@
   )
 }}
 
-WITH 
+WITH
     grupo_linha AS (
         SELECT
             data,

@@ -10,7 +10,7 @@
        incremental_strategy='insert_overwrite'
 )
 }}
-WITH 
+WITH
   infracao AS (
     SELECT
       SAFE_CAST(DATA AS DATE) data,

@@ -38,7 +38,7 @@ ultimas_versoes as (
   on c.route_id = r.route_id
   and c.data_versao = r.data_versao
 )
-select 
+select
   * except(rn)
 from ultimas_versoes
 where rn=1

@@ -54,7 +54,7 @@ WITH transacao_aberta AS (
     {%- endif %}
 ),
 transacao_deduplicada AS (
-    SELECT 
+    SELECT
         * EXCEPT(rn)
     FROM
     (
@@ -67,7 +67,7 @@ transacao_deduplicada AS (
     WHERE
         rn = 1
 )
-SELECT 
+SELECT
     EXTRACT(DATE FROM data_transacao) AS data,
     EXTRACT(HOUR FROM data_transacao) AS hora,
     data_transacao AS datetime_transacao,
@@ -97,28 +97,28 @@ FROM
 LEFT JOIN
     {{ ref("staging_linha") }} AS l
 ON
-    t.cd_linha = l.cd_linha 
+    t.cd_linha = l.cd_linha
     AND t.data_transacao >= l.datetime_inclusao
 LEFT JOIN
     {{ ref("staging_grupo_linha") }} AS gl
-ON 
-    t.cd_linha = gl.cd_linha 
+ON
+    t.cd_linha = gl.cd_linha
     AND t.data_transacao >= gl.datetime_inicio_validade
     AND (t.data_transacao <= gl.datetime_fim_validade OR gl.datetime_fim_validade IS NULL)
 LEFT JOIN
     {{ ref("staging_grupo") }} AS g
-ON 
+ON
     gl.cd_grupo = g.cd_grupo
     AND t.data_transacao >= g.datetime_inclusao
 LEFT JOIN
     {{ ref("staging_linha_consorcio") }} AS lc
-ON 
+ON
     t.cd_linha = lc.cd_linha
     AND t.data_transacao >= lc.datetime_inicio_validade
     AND (t.data_transacao <= lc.datetime_fim_validade OR lc.datetime_fim_validade IS NULL)
 LEFT JOIN
     {{ ref("staging_consorcio") }} AS c
-ON 
+ON
     lc.cd_consorcio = c.cd_consorcio
 LEFT JOIN
     {{ ref("staging_operadora_transporte") }} AS o

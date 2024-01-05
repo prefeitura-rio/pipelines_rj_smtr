@@ -4,7 +4,7 @@
   )
 }}
 
-WITH 
+WITH
     linha AS (
         SELECT
             data,

@@ -1,4 +1,4 @@
-{{ 
+{{
 config(
     materialized='ephemeral'
 )
@@ -16,7 +16,7 @@ recursos_duplicados as (
         concat("Pedidos sobrepostos: ", string_agg(s2.protocolo, ", ")) as observacao
     FROM recursos s1
     inner join recursos s2
-    on 
+    on
         s1.id_veiculo = s2.id_veiculo
         and s1.datetime_partida <= s2.datetime_partida
         and s2.datetime_partida < s1.datetime_chegada

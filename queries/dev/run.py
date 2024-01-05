@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
+# import os
+
 from utils import run_dbt_model
-import os
 
 # Veja os parâmetros disponíveis da função run_dbt_model em util.py
 

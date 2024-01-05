@@ -4,7 +4,7 @@
     'granularity': 'day' },
     unique_key = ['stop_id', 'data_versao'],
     alias = 'stops'
-)}} 
+)}}
 
 
 SELECT SAFE_CAST(data_versao AS DATE) data_versao,

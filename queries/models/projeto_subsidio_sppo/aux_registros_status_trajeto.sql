@@ -1,6 +1,6 @@
 -- 1. Seleciona sinais de GPS registrados no período
 with gps as (
-    select 
+    select
         g.* except(longitude, latitude, servico),
         {% if var("run_date") > "2023-01-16" and var("run_date") < "2023-12-02" %}
         -- Substitui servicos noturnos por regulares, salvo exceções
@@ -14,7 +14,7 @@ with gps as (
         {% endif %}
         substr(id_veiculo, 2, 3) as id_empresa,
         ST_GEOGPOINT(longitude, latitude) posicao_veiculo_geo
-    from 
+    from
         `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo` g -- {{ ref('gps_sppo') }} g
     where (
         data between date_sub(date("{{ var("run_date") }}"), interval 1 day) and date("{{ var("run_date") }}")
@@ -57,22 +57,22 @@ status_viagem as (
             then 'middle'
         else 'out'
         end status_viagem
-    from 
+    from
         gps g
     inner join (
-        select 
+        select
             *
         from
             {{ ref("viagem_planejada") }}
         where
             data between date_sub(date("{{ var("run_date") }}"), interval 1 day) and date("{{ var("run_date") }}")
     ) s
-    on 
+    on
         g.data = s.data
         and g.servico = s.servico
 )
-select 
+select
     *,
     '{{ var("version") }}' as versao_modelo
-from 
+from
     status_viagem

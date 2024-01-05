@@ -16,6 +16,6 @@ with penalidade as (
     select 60 as perc_km_inferior, 80 as perc_km_superior, "Nula" as tipo_penalidade, 0 as valor, date("2023-01-16") as data_inicio, date("2023-12-31") as data_fim
     union all
     select 80 as perc_km_inferior, 100 as perc_km_superior, null as tipo_penalidade, null as valor, date("2023-01-16") as data_inicio, date("2023-12-31") as data_fim
-    
+
 )
 select * from penalidade

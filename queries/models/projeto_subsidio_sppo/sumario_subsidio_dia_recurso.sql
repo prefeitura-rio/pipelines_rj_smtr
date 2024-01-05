@@ -1,5 +1,5 @@
 with sumario as (
-  SELECT 
+  SELECT
     consorcio,
     data,
     tipo_dia,
@@ -23,7 +23,7 @@ valor as (
     `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva` v -- {{ ref("subsidio_data_versao_efetiva")}} v
   on v.data = s.data
 )
-select 
+select
   *,
   case
     when perc_distancia_total_subsidio < {{ var("perc_distancia_total_subsidio") }}

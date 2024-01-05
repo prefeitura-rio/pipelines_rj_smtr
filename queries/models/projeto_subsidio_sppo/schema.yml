@@ -203,7 +203,7 @@ models:
               values: ["I", "V", "C"]
       - name: id_viagem
         description: "Código identificador da viagem (id_veiculo +
-        servico + datetime_partida)" 
+        servico + datetime_partida)"
         tests:
           - not_null
           - unique
@@ -237,7 +237,7 @@ models:
           - not_null
       - name: id_empresa
         description: "Código identificador da empresa que opera o veículo"
-       
+
       - name: servico_informado
         description: "Serviço informado pelo GPS do veículo"
         tests:
@@ -245,7 +245,7 @@ models:
       - name: servico_realizado
         description: "Serviço realizado pelo veículo (com base na
         identificação do trajeto)"
-        
+
       - name: shape_id
         description: "Código identificador do shape (trajeto) do serviço"
         tests:
@@ -265,7 +265,7 @@ models:
               values: ["I", "V", "C"]
       - name: id_viagem
         description: "Código identificador da viagem (id_veiculo +
-        servico + datetime_partida)" 
+        servico + datetime_partida)"
         tests:
           - not_null
           - unique
@@ -357,7 +357,7 @@ models:
               values: ["I", "V", "C"]
       - name: id_viagem
         description: "Código identificador da viagem (id_veiculo +
-        servico + datetime_partida)" 
+        servico + datetime_partida)"
         tests:
           - not_null
           - unique
@@ -380,7 +380,7 @@ models:
     columns:
       - name: id_viagem
         description: "Código identificador da viagem (id_veiculo +
-        servico + datetime_partida)" 
+        servico + datetime_partida)"
         tests:
           - not_null
           - unique
@@ -455,7 +455,7 @@ models:
           - not_null
       - name: id_empresa
         description: "Código identificador da empresa que opera o veículo"
-        
+
       - name: servico_informado
         description: "Serviço informado pelo GPS do veículo"
         tests:
@@ -484,7 +484,7 @@ models:
               values: ["I", "V", "C"]
       - name: id_viagem
         description: "Código identificador da viagem (id_veiculo +
-        servico + datetime_partida)" 
+        servico + datetime_partida)"
         tests:
           - not_null
           - unique
@@ -598,7 +598,7 @@ models:
           - not_null
       - name: id_empresa
         description: "Código identificador da empresa que opera o veículo"
-        
+
       - name: servico_informado
         description: "Serviço informado pelo GPS do veículo"
         tests:
@@ -629,7 +629,7 @@ models:
               values: ["I", "V", "C"]
       - name: id_viagem
         description: "Código identificador da viagem (id_veiculo +
-        servico + datetime_partida)" 
+        servico + datetime_partida)"
         tests:
           - not_null
           - unique
@@ -647,16 +647,16 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ["Completa linha correta", "Completa linha incorreta"]  
+              values: ["Completa linha correta", "Completa linha incorreta"]
       - name: inicio_periodo
         description: "Início do período de operação planejado"
-        
+
       - name: fim_periodo
         description: "Fim do período de operação planejado"
-        
+
       - name: tempo_planejado
         description: "Tempo planejado da viagem (em minutos)"
-        
+
           # - greater_than_zero
       - name: tempo_viagem
         description: "Tempo aferido da viagem (em minutos)"
@@ -707,7 +707,7 @@ models:
           - greater_than_zero
       - name: perc_conformidade_tempo
         description: "Razão do tempo aferido da viagem pelo planejado x 100"
-        
+
       - name: versao_modelo
         description: "Versão da metodologia de cálculo da
         respectiva linha na tabela."

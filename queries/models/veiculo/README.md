@@ -5,7 +5,7 @@
 ![veiculo](https://user-images.githubusercontent.com/66736583/227351937-7fe4113b-1d94-425d-a170-7e49ed40d66e.png)
 
 <div align="justify">
-  
+
   ## Método
 
   ### 1. Captura de Dados
