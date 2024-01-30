@@ -88,12 +88,16 @@ class IncrementalStrategy(ABC):
             else self._redis_value_parser(last_redis_value)
         )
 
-        self._start_value = self._redis_value_parser(
-            overwrite_start_value
-        ) or self._get_start_value(last_redis_value=last_redis_value)
+        self._start_value = (
+            self._redis_value_parser(overwrite_start_value)
+            if overwrite_start_value is not None
+            else self._get_start_value(last_redis_value=last_redis_value)
+        )
 
-        self._end_value = self._redis_value_parser(overwrite_end_value) or self._get_end_value(
-            start_value=self._start_value
+        self._end_value = (
+            self._redis_value_parser(overwrite_end_value)
+            if overwrite_end_value is not None
+            else self._get_end_value(start_value=self._start_value)
         )
 
         assert self._start_value <= self._end_value, "start_value greater than end_value"
