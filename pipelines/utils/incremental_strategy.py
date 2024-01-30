@@ -275,7 +275,7 @@ class DatetimeIncremental(IncrementalStrategy):
 
 
 def incremental_strategy_from_dict(strategy_dict: dict) -> IncrementalStrategy:
-    incremental_type = strategy_dict.keys()[0]
+    incremental_type = list(strategy_dict.keys())[0]
     class_map = {
         "id": IDIncremental,
         "datetime": DatetimeIncremental,
