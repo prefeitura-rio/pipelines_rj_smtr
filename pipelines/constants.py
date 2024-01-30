@@ -39,7 +39,7 @@ class constants(Enum):  # pylint: disable=c0103
 
     # PATTERNS #
     FILENAME_PATTERN = "%Y-%m-%d-%H-%M-%S"
-    SOURCE_DATASET_ID_PATTERN = "{category}_{source_name}_source"
+    SOURCE_DATASET_ID_PATTERN = "{project}_{source_name}_source"
 
     # GPS STPL #
     # GPS_STPL_API_BASE_URL = "http://zn4.m2mcontrol.com.br/api/integracao/veiculos"
