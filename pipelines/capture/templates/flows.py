@@ -199,7 +199,7 @@ def create_default_capture_flow(
             overwrite_end_value=end_value,
         )
 
-        incremental_values = incremental_strategy["incremental_data"]
+        incremental_values = incremental_strategy["incremental_info"]
 
         rename_flow_run = rename_capture_flow(
             dataset_id=dataset_id,

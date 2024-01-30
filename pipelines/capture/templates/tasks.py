@@ -375,6 +375,13 @@ def create_incremental_strategy(
 
         return incremental_strategy
 
+    log(
+        f"""Empty incremental:
+            Mode: full
+            Start Value: {overwrite_start_value}
+            End Value: {overwrite_end_value}
+            """
+    )
     return {
         "incremental_info": IncrementalData(
             start_value=overwrite_start_value,
