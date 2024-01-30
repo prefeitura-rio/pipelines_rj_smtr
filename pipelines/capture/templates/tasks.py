@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from typing import Any, Callable, Union
 
 import pandas as pd
-from prefect import context as prefect_context
+import prefect
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 from pytz import timezone
@@ -33,7 +33,7 @@ from pipelines.utils.utils import create_timestamp_captura, data_info_str
 @task
 def validate_default_capture_flow_params():
     log("Validating Params")
-    params = prefect_context.get("parameters")
+    params = prefect.context.get("parameters")
 
     incremental_type = params["incremental_type"].strip().lower()
     match incremental_type:
