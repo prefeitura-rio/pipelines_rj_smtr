@@ -365,6 +365,14 @@ def create_incremental_strategy(
             overwrite_end_value=overwrite_end_value,
         )
 
+        log(
+            f"""Incremental Strategy created:
+            Mode: {incremental_strategy.execution_mode}
+            Start Value: {incremental_strategy.start_value}
+            End Value: {incremental_strategy.end_value}
+            """
+        )
+
         return incremental_strategy
 
     return {
