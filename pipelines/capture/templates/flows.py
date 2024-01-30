@@ -48,7 +48,7 @@ def create_default_capture_flow(
             The task to create the data extractor
             Can receive the arguments below:
                 env: dev or prod
-                category: parameter
+                project: parameter
                 table_id: parameter
                 save_filepath: local path to save raw data
                 extract_params: parameter
@@ -70,7 +70,7 @@ def create_default_capture_flow(
 
     Flow Parameters:
         source_name (str): Source system's name (eg.: jae)
-        category (str): Target dataset_id (eg.: bilhetagem, subsidio)
+        project (str): Target dataset_id (eg.: bilhetagem, subsidio)
         table_id (str): Table name on BigQuery
         force_full (bool, optional): Executes the flow to capture all data
         incremental_type (str, optional): id or datetime. If None will always execute full
@@ -100,9 +100,9 @@ def create_default_capture_flow(
             default=default_params.get("source_name"),
             accepted_types=str,
         )
-        category = TypedParameter(
-            name="category",
-            default=default_params.get("category"),
+        project = TypedParameter(
+            name="project",
+            default=default_params.get("project"),
             accepted_types=str,
         )
         table_id = TypedParameter(
@@ -178,7 +178,7 @@ def create_default_capture_flow(
 
         dataset_id = create_source_dataset_id(
             source_name=source_name,
-            category=category,
+            project=project,
             upstream_tasks=[param_validation],
         )
 
@@ -218,7 +218,7 @@ def create_default_capture_flow(
 
         data_extractor = create_extractor_task(
             env=env,
-            category=category,
+            project=project,
             table_id=table_id,
             save_filepath=table["raw_filepath"],
             extract_params=extract_params,
