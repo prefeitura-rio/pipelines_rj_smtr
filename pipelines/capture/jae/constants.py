@@ -43,7 +43,7 @@ class constants(Enum):
 
     TRANSACAO_CAPTURE_PARAMS = {
         "source_name": JAE_SOURCE_NAME,
-        "dataset_id": smtr_constants.BILHETAGEM_DATASET_ID.value,
+        "project": smtr_constants.BILHETAGEM_DATASET_ID.value,
         "table_id": "transacao",
         "partition_date_only": False,
         "incremental_strategy": DatetimeIncremental(max_incremental_window={"hours": 3}).to_dict(),
@@ -73,7 +73,7 @@ class constants(Enum):
 
     AUXILIAR_TABLE_CAPTURE_PARAMS = [
         {
-            "dataset_id": smtr_constants.BILHETAGEM_DATASET_ID.value,
+            "project": smtr_constants.BILHETAGEM_DATASET_ID.value,
             "table_id": "linha",
             "extract_params": {
                 "database": "principal_db",
@@ -92,7 +92,7 @@ class constants(Enum):
             "primary_key": "CD_LINHA",
         },
         {
-            "dataset_id": smtr_constants.BILHETAGEM_DATASET_ID.value,
+            "project": smtr_constants.BILHETAGEM_DATASET_ID.value,
             "table_id": "operadora_transporte",
             "extract_params": {
                 "database": "principal_db",
@@ -111,7 +111,7 @@ class constants(Enum):
             "primary_key": "CD_OPERADORA_TRANSPORTE",
         },
         {
-            "dataset_id": smtr_constants.CADASTRO_DATASET_ID.value,
+            "project": smtr_constants.CADASTRO_DATASET_ID.value,
             "table_id": "consorcio",
             "extract_params": {
                 "database": "principal_db",
@@ -130,7 +130,7 @@ class constants(Enum):
             "primary_key": "CD_CONSORCIO",
         },
         {
-            "dataset_id": smtr_constants.CADASTRO_DATASET_ID.value,
+            "project": smtr_constants.CADASTRO_DATASET_ID.value,
             "table_id": "cliente",
             "extract_params": {
                 "database": "principal_db",
@@ -150,7 +150,7 @@ class constants(Enum):
             "save_bucket_name": BILHETAGEM_PRIVATE_BUCKET,
         },
         {
-            "dataset_id": smtr_constants.BILHETAGEM_DATASET_ID.value,
+            "project": smtr_constants.BILHETAGEM_DATASET_ID.value,
             "table_id": "percentual_rateio_integracao",
             "extract_params": {
                 "database": "ressarcimento_db",
@@ -169,7 +169,7 @@ class constants(Enum):
             "primary_key": "id",
         },
         {
-            "dataset_id": smtr_constants.CADASTRO_DATASET_ID.value,
+            "project": smtr_constants.CADASTRO_DATASET_ID.value,
             "table_id": "conta_bancaria",
             "extract_params": {
                 "database": "principal_db",
@@ -202,7 +202,7 @@ class constants(Enum):
             "save_bucket_name": BILHETAGEM_PRIVATE_BUCKET,
         },
         {
-            "dataset_id": smtr_constants.CADASTRO_DATASET_ID.value,
+            "project": smtr_constants.CADASTRO_DATASET_ID.value,
             "table_id": "contato_pessoa_juridica",
             "extract_params": {
                 "database": "principal_db",

@@ -35,7 +35,7 @@ def extractor_task(func: Callable, **task_init_kwargs):
     def decorator(func):
         expected_arguments = [
             "env",
-            "category",
+            "project",
             "table_id",
             "save_filepath",
             "extract_params",

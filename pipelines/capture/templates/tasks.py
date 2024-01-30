@@ -52,15 +52,15 @@ def validate_default_capture_flow_params():
 
 
 @task
-def create_source_dataset_id(category: str, source_name: str):
+def create_source_dataset_id(project: str, source_name: str):
     """Creates the BQ source table dataset_id according to the standard
 
     Args:
-        category (str): The category that the table fits in (eg.: bilhetagem, subsidio)
+        project (str): The project that the table fits in (eg.: bilhetagem, subsidio)
         source_name (str): The data source name (eg.: jae)
     """
     return constants.SOURCE_DATASET_ID_PATTERN.value.format(
-        category=category,
+        project=project,
         source_name=source_name,
     )
 
