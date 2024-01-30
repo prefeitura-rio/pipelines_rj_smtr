@@ -7,7 +7,6 @@ from datetime import datetime, timedelta
 from typing import Any, Callable, Union
 
 import pandas as pd
-import prefect
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 from pytz import timezone
@@ -28,27 +27,6 @@ from pipelines.utils.utils import create_timestamp_captura, data_info_str
 ############################
 # Flow Configuration Tasks #
 ############################
-
-
-@task
-def validate_default_capture_flow_params():
-    log("Validating Params")
-    params = prefect.context.get("parameters")
-
-    incremental_type = params["incremental_type"].strip().lower()
-    match incremental_type:
-        case "id":
-            assert (
-                params["incremental_reference_column"] is not None
-            ), "For id type incrementals you have to define an incremental_reference_column"
-
-            assert isinstance(
-                params["max_incremental_window"], int
-            ), "For id type incrementals max_incremental_window have to be int"
-        case "datetime":
-            assert isinstance(
-                params["max_incremental_window"], dict
-            ), "For datetime type incrementals max_incremental_window have to be dict"
 
 
 @task

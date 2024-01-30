@@ -24,7 +24,6 @@ from pipelines.capture.templates.tasks import (
     transform_raw_to_nested_structure,
     upload_raw_file_to_gcs,
     upload_source_data_to_gcs,
-    validate_default_capture_flow_params,
 )
 from pipelines.constants import constants
 from pipelines.tasks import get_current_timestamp, get_run_env, task_value_is_none
@@ -172,17 +171,14 @@ def create_default_capture_flow(
 
         # Preparar execução #
 
-        param_validation = validate_default_capture_flow_params()
-
-        timestamp = get_current_timestamp(upstream_tasks=[param_validation])
+        timestamp = get_current_timestamp()
 
         dataset_id = create_source_dataset_id(
             source_name=source_name,
             project=project,
-            upstream_tasks=[param_validation],
         )
 
-        env = get_run_env(upstream_tasks=[param_validation])
+        env = get_run_env()
 
         table = create_table_object(
             env=env,
