@@ -190,7 +190,8 @@ class IDIncremental(IncrementalStrategy):
         return last_redis_value
 
     def _get_end_value(self, start_value: int) -> int:
-        return start_value + int(self._max_incremental_window)
+        if start_value is not None:
+            return start_value + int(self._max_incremental_window)
 
     def get_value_to_save(self, raw_filepath: str) -> int:
         df = read_raw_data(filepath=raw_filepath)
@@ -255,7 +256,9 @@ class DatetimeIncremental(IncrementalStrategy):
         return last_redis_value
 
     def _get_end_value(self, start_value: datetime) -> datetime:
-        return min(self._timestamp, start_value + timedelta(**self._max_incremental_window))
+        if start_value is not None:
+            return min(self._timestamp, start_value + timedelta(**self._max_incremental_window))
+        return self._timestamp
 
     def get_value_to_save(self, raw_filepath: str) -> str:
         if self._incremental_reference_column is None:

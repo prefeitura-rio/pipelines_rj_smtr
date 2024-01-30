@@ -54,10 +54,10 @@ class constants(Enum):
                     *
                 FROM
                     transacao
-                {% if is_incremental() %}
                 WHERE
-                    data_processamento > '{{ start }}'
-                    AND data_processamento <= '{{ end }}'
+                    data_processamento <= '{{ end }}'
+                {% if is_incremental() %}
+                    AND data_processamento > '{{ start }}'
                 {% endif %}
             """,
         },
