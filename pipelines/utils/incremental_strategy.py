@@ -16,7 +16,7 @@ from pipelines.utils.utils import isostr_to_datetime
 
 
 @dataclass
-class IncrementalData:
+class IncrementalInfo:
     start_value: Any
     end_value: Any
     execution_mode: str
@@ -55,12 +55,9 @@ class IncrementalStrategy(ABC):
         self._max_incremental_window = max_incremental_window
         self._incremental_reference_column = incremental_reference_column
         self._first_value = first_value
-        self.execution_mode = None
         self._force_full = None
         self._redis_key = None
-        self.start_value = None
-        self.end_value = None
-        self._initialized = False
+        self.incremental_info = None
 
     def __getitem__(self, key):
         return self.__dict__[key]
@@ -78,7 +75,7 @@ class IncrementalStrategy(ABC):
 
         last_redis_value = self._query_redis().get(constants.REDIS_LAST_CAPTURED_VALUE_KEY.value)
 
-        self.execution_mode = "full" if last_redis_value is None or force_full else "incr"
+        execution_mode = "full" if last_redis_value is None or force_full else "incr"
 
         last_redis_value = last_redis_value or self._first_value
 
@@ -88,32 +85,25 @@ class IncrementalStrategy(ABC):
             else self._redis_value_parser(last_redis_value)
         )
 
-        self.start_value = (
+        start_value = (
             self._redis_value_parser(overwrite_start_value)
             if overwrite_start_value is not None
             else self._get_start_value(last_redis_value=last_redis_value)
         )
 
-        self.end_value = (
+        end_value = (
             self._redis_value_parser(overwrite_end_value)
             if overwrite_end_value is not None
-            else self._get_end_value(start_value=self.start_value)
+            else self._get_end_value(start_value=start_value)
         )
 
-        if self.start_value is not None:
-            assert self.start_value <= self.end_value, "start_value greater than end_value"
+        if start_value is not None:
+            assert start_value <= end_value, "start_value greater than end_value"
 
-        self._initialized = True
-
-    @property
-    def incremental_info(self):
-        if not self._initialized:
-            return AttributeError("You must initilize the strategy, run the method: initialize")
-
-        return IncrementalData(
-            start_value=self.start_value,
-            end_value=self.end_value,
-            execution_mode=self.execution_mode,
+        self.incremental_info = IncrementalInfo(
+            start_value=start_value,
+            end_value=end_value,
+            execution_mode=execution_mode,
         )
 
     @abstractmethod
@@ -263,7 +253,7 @@ class DatetimeIncremental(IncrementalStrategy):
 
     def get_value_to_save(self, raw_filepath: str) -> str:
         if self._incremental_reference_column is None:
-            return self.end_value
+            return self.incremental_info.end_value
 
         df = read_raw_data(filepath=raw_filepath)
         dates = df[self._incremental_reference_column].dropna().astype(str)

@@ -16,7 +16,7 @@ from pipelines.utils.capture.base import DataExtractor
 from pipelines.utils.fs import read_raw_data, save_local_file
 from pipelines.utils.gcp import BQTable
 from pipelines.utils.incremental_strategy import (
-    IncrementalData,
+    IncrementalInfo,
     IncrementalStrategy,
     incremental_strategy_from_dict,
 )
@@ -383,7 +383,7 @@ def create_incremental_strategy(
             """
     )
     return {
-        "incremental_info": IncrementalData(
+        "incremental_info": IncrementalInfo(
             start_value=overwrite_start_value,
             end_value=overwrite_end_value,
             execution_mode="full",
