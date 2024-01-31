@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """Tasks for pipelines.capture.jae"""
+from prefeitura_rio.pipelines_utils.logging import log
+
 from pipelines.capture.jae.constants import constants
 from pipelines.utils.capture.db import DBExtractor
 from pipelines.utils.incremental_strategy import IncrementalInfo
@@ -15,6 +17,8 @@ def create_extractor_jae(
     incremental_info: IncrementalInfo,
 ) -> DBExtractor:
     """Creates the Database Extractor for Jae capture flows"""
+
+    log("oi")
 
     credentials = get_secret("smtr_jae_access_data")
     database = extract_params["database"]
