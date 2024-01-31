@@ -240,12 +240,13 @@ class DatetimeIncremental(IncrementalStrategy):
         }
 
     def _get_end_value(self, start_value: datetime) -> datetime:
+        log("chegou _get_end_value")
         if start_value is not None:
             end_value = min(
                 self._timestamp, start_value + timedelta(**self._max_incremental_window)
             )
         else:
-            print()
+            log("chegou _get_end_value else")
             end_value = self._timestamp
 
         if not end_value.tzinfo:
