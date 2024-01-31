@@ -12,7 +12,7 @@ def render_template(
     normalize: bool = False,
 ):
     def is_incremental() -> bool:
-        return execution_mode == "full"
+        return execution_mode == "incr"
 
     template_env = Environment()
     template_env.globals["is_incremental"] = is_incremental
