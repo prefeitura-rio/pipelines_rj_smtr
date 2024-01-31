@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 from typing import Any
 
 import pandas as pd
-from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
 
@@ -71,14 +70,10 @@ class IncrementalStrategy(ABC):
         self._force_full = force_full
 
         last_redis_value = self.query_redis().get(constants.REDIS_LAST_CAPTURED_VALUE_KEY.value)
-        log(f"last_redis_value = {last_redis_value}")
 
         execution_mode = "full" if last_redis_value is None or force_full else "incr"
 
         last_redis_value = self.parse_redis_value(last_redis_value) or self._first_value
-
-        log(f"overwrite_start_value = {overwrite_start_value}")
-        log(f"overwrite_end_value = {overwrite_end_value}")
 
         start_value = (
             self.parse_redis_value(overwrite_start_value)
@@ -91,9 +86,6 @@ class IncrementalStrategy(ABC):
             if overwrite_end_value is not None
             else self._get_end_value(start_value=start_value)
         )
-        log(f"teste = {self._get_end_value(start_value=start_value)}")
-        log(f"start_value = {overwrite_start_value}")
-        log(f"end_value = {end_value}")
 
         if start_value is not None:
             assert start_value <= end_value, "start_value greater than end_value"
@@ -221,7 +213,6 @@ class DatetimeIncremental(IncrementalStrategy):
         overwrite_end_value: str = None,
     ):
         self._timestamp = table.timestamp
-        log(f"timestamp = {self._timestamp}")
         return super().initialize(
             table=table,
             force_full=force_full,
@@ -240,19 +231,19 @@ class DatetimeIncremental(IncrementalStrategy):
         }
 
     def _get_end_value(self, start_value: datetime) -> datetime:
-        log("chegou _get_end_value")
         if start_value is not None:
             end_value = min(
                 self._timestamp, start_value + timedelta(**self._max_incremental_window)
             )
         else:
-            log("chegou _get_end_value else")
             end_value = self._timestamp
 
         if not end_value.tzinfo:
             end_value = end_value.replace(tzinfo=timezone("UTC"))
         else:
             end_value = end_value.astimezone(tz=timezone("UTC"))
+
+        return end_value
 
     def get_value_to_save(self, raw_filepath: str) -> str:
         if self._incremental_reference_column is None:
@@ -276,7 +267,6 @@ class DatetimeIncremental(IncrementalStrategy):
 
     def parse_redis_value(self, value: str) -> datetime:
         if value is not None:
-            log(f"rodou parse_redis_value valor: {value}")
             return isostr_to_datetime(value)
 
     def parse_value_to_save(self, value: datetime) -> str:

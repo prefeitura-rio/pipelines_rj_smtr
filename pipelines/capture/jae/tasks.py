@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """Tasks for pipelines.capture.jae"""
-from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.capture.jae.constants import constants
 from pipelines.utils.capture.db import DBExtractor
@@ -18,18 +17,18 @@ def create_extractor_jae(
 ) -> DBExtractor:
     """Creates the Database Extractor for Jae capture flows"""
 
-    log("oi")
-
     credentials = get_secret("smtr_jae_access_data")
     database = extract_params["database"]
     database_details = constants.JAE_DATABASES.value[database]
     engine = database_details["engine"]
     host = database_details["host"]
 
+    start = incremental_info.start_value.stftime("%Y-%m-%d %H:%M:%S")
+    end = incremental_info.end_value.stftime("%Y-%m-%d %H:%M:%S")
     query = render_template(
         template_string=extract_params["query"],
         execution_mode=incremental_info.execution_mode,
-        _vars={"start": incremental_info.start_value, "end": incremental_info.end_value},
+        _vars={"start": start, "end": end},
     )
 
     return DBExtractor(
