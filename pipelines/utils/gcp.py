@@ -13,7 +13,6 @@ from typing import Type, TypeVar, Union
 import pandas as pd
 from google.api_core.exceptions import NotFound
 from google.cloud import bigquery, storage
-from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.constants import constants
 from pipelines.utils.fs import (
@@ -121,8 +120,6 @@ class Storage(GCPBase):
         )
 
         blob = self.bucket.blob(blob_name, chunk_size=chunk_size)
-
-        log(f"uploading file to: {blob.bucket}/{blob.name}")
 
         if not blob.exists() or if_exists == "replace":
             upload_kwargs["timeout"] = upload_kwargs.get("timeout", None)
