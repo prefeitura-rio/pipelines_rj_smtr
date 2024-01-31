@@ -27,10 +27,10 @@ def create_extractor_jae(
     start = incremental_info.start_value
     end = incremental_info.end_value
     if isinstance(start, datetime):
-        start = start.stftime("%Y-%m-%d %H:%M:%S")
+        start = start.strftime("%Y-%m-%d %H:%M:%S")
 
     if isinstance(end, datetime):
-        end = end.stftime("%Y-%m-%d %H:%M:%S")
+        end = end.strftime("%Y-%m-%d %H:%M:%S")
     query = render_template(
         template_string=extract_params["query"],
         execution_mode=incremental_info.execution_mode,
