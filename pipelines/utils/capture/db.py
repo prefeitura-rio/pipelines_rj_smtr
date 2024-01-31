@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Module to get data from databases"""
 import pandas as pd
+from prefeitura_rio.pipelines_utils.logging import log
 from sqlalchemy import create_engine
 
 from pipelines.utils.capture.base import DataExtractor
@@ -49,7 +50,7 @@ class DBExtractor(DataExtractor):
         max_retries = 10
         for retry in range(1, max_retries + 1):
             try:
-                print(f"[ATTEMPT {retry}/{max_retries}]: {self.query}")
+                log(f"[ATTEMPT {retry}/{max_retries}]: {self.query}")
                 data = pd.read_sql(sql=self.query, con=self.connection).to_dict(orient="records")
                 for d in data:
                     for k, v in d.items():
