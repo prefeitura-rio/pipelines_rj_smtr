@@ -91,7 +91,7 @@ class IncrementalStrategy(ABC):
             if overwrite_end_value is not None
             else self._get_end_value(start_value=start_value)
         )
-
+        log(f"teste = {self._get_end_value(start_value=start_value)}")
         log(f"start_value = {overwrite_start_value}")
         log(f"end_value = {end_value}")
 
