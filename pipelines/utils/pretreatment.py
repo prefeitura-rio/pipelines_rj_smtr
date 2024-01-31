@@ -41,7 +41,8 @@ def pretreatment_step(func):
         invalid_args = [
             a.name
             for a in func_parameters
-            if a not in expected_arguments or a.annotation != expected_arguments[a.name]
+            if a.name not in expected_arguments
+            or isinstance(a.annotation, expected_arguments[a.name])
         ]
 
         if len(invalid_args) > 0:
