@@ -355,7 +355,7 @@ def create_incremental_strategy(
     force_full: bool,
     overwrite_start_value: Any,
     overwrite_end_value: Any,
-) -> Union[None, IncrementalStrategy]:
+) -> Union[dict, IncrementalStrategy]:
     if strategy_dict:
         incremental_strategy = incremental_strategy_from_dict(strategy_dict=strategy_dict)
         incremental_strategy.initialize(

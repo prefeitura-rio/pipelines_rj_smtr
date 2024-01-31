@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Any, Callable
+from typing import Any
 
 import pandas as pd
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
@@ -42,10 +42,6 @@ class IncrementalStrategy(ABC):
         _redis_value_parser: the function to convert the value that came from redis
     """
 
-    _save_parser: Callable[[Any], Any] = str
-    _redis_value_default = None
-    _redis_value_parser: Callable[[Any], Any] = str
-
     def __init__(
         self,
         max_incremental_window: Any,
@@ -73,26 +69,20 @@ class IncrementalStrategy(ABC):
 
         self._force_full = force_full
 
-        last_redis_value = self._query_redis().get(constants.REDIS_LAST_CAPTURED_VALUE_KEY.value)
+        last_redis_value = self.query_redis().get(constants.REDIS_LAST_CAPTURED_VALUE_KEY.value)
 
         execution_mode = "full" if last_redis_value is None or force_full else "incr"
 
-        last_redis_value = last_redis_value or self._first_value
-
-        last_redis_value = (
-            last_redis_value
-            if last_redis_value is None
-            else self._redis_value_parser(last_redis_value)
-        )
+        last_redis_value = self.parse_redis_value(last_redis_value) or self._first_value
 
         start_value = (
-            self._redis_value_parser(overwrite_start_value)
+            self.parse_redis_value(overwrite_start_value)
             if overwrite_start_value is not None
-            else self._get_start_value(last_redis_value=last_redis_value)
+            else self.parse_redis_value(last_redis_value)
         )
 
         end_value = (
-            self._redis_value_parser(overwrite_end_value)
+            self.parse_redis_value(overwrite_end_value)
             if overwrite_end_value is not None
             else self._get_end_value(start_value=start_value)
         )
@@ -111,10 +101,6 @@ class IncrementalStrategy(ABC):
         pass
 
     @abstractmethod
-    def _get_start_value(self, last_redis_value: Any) -> Any:
-        pass
-
-    @abstractmethod
     def _get_end_value(self, start_value: Any) -> Any:
         pass
 
@@ -122,40 +108,41 @@ class IncrementalStrategy(ABC):
     def get_value_to_save(self, raw_filepath: str) -> Any:
         pass
 
-    def _query_redis(self) -> dict:
+    def query_redis(self) -> dict:
         redis_client = get_redis_client()
         content = redis_client.get(self._redis_key)
         if content is None:
             content = {}
         return content
 
+    @abstractmethod
+    def parse_redis_value(self, value: Any) -> Any:
+        pass
+
+    @abstractmethod
+    def parse_value_to_save(self, value: Any) -> Any:
+        pass
+
     def save_on_redis(
         self,
         value_to_save: Any,
     ) -> str:
-        content = self._query_redis()
-        old_val = content.get(constants.REDIS_LAST_CAPTURED_VALUE_KEY.value)
+        content = self.query_redis()
+        old_value = content.get(constants.REDIS_LAST_CAPTURED_VALUE_KEY.value)
 
-        old_val = (
-            self._redis_value_default if old_val is None else self._redis_value_parser(old_val)
+        if old_value is not None:
+            old_value = self.parse_redis_value(old_value)
+            value_to_save = min(old_value, value_to_save)
+
+        redis_client = get_redis_client()
+        content[constants.REDIS_LAST_CAPTURED_VALUE_KEY.value] = self.parse_value_to_save(
+            value_to_save
         )
-
-        if value_to_save > old_val:
-            redis_client = get_redis_client()
-            content[constants.REDIS_LAST_CAPTURED_VALUE_KEY.value] = self._save_parser(
-                value_to_save
-            )
-            redis_client.set(self._redis_key, content)
-            return "Value saved on Redis!"
-
-        return "Last captured value is lower than value that is on Redis, will not overwrite it"
+        redis_client.set(self._redis_key, content)
+        return f"Value {value_to_save} saved on Redis!"
 
 
 class IDIncremental(IncrementalStrategy):
-    _save_parser: Callable[[Any], Any] = int
-    _redis_value_default = 0
-    _redis_value_parser: Callable[[Any], Any] = int
-
     def __init__(
         self,
         max_incremental_window: int,
@@ -177,9 +164,6 @@ class IDIncremental(IncrementalStrategy):
             }
         }
 
-    def _get_start_value(self, last_redis_value: int) -> int:
-        return last_redis_value
-
     def _get_end_value(self, start_value: int) -> int:
         if start_value is not None:
             return start_value + int(self._max_incremental_window)
@@ -195,12 +179,15 @@ class IDIncremental(IncrementalStrategy):
             .max()
         )
 
+    def parse_redis_value(self, value: Any) -> Any:
+        if value is not None:
+            return int(value)
+
+    def parse_value_to_save(self, value: Any) -> Any:
+        return int(value)
+
 
 class DatetimeIncremental(IncrementalStrategy):
-    _save_parser: Callable[[Any], Any] = datetime.isoformat
-    _redis_value_default = datetime.min
-    _redis_value_parser: Callable[[Any], Any] = isostr_to_datetime
-
     def __init__(
         self,
         max_incremental_window: dict,
@@ -222,8 +209,8 @@ class DatetimeIncremental(IncrementalStrategy):
         self,
         table: BQTable,
         force_full: bool = False,
-        overwrite_start_value: Any = None,
-        overwrite_end_value: Any = None,
+        overwrite_start_value: str = None,
+        overwrite_end_value: str = None,
     ):
         self._timestamp = table.timestamp
         return super().initialize(
@@ -243,17 +230,22 @@ class DatetimeIncremental(IncrementalStrategy):
             }
         }
 
-    def _get_start_value(self, last_redis_value: datetime) -> datetime:
-        return last_redis_value
-
     def _get_end_value(self, start_value: datetime) -> datetime:
         if start_value is not None:
-            return min(self._timestamp, start_value + timedelta(**self._max_incremental_window))
-        return self._timestamp
+            end_value = min(
+                self._timestamp, start_value + timedelta(**self._max_incremental_window)
+            )
+        else:
+            end_value = self._timestamp
+
+        if not end_value.tzinfo:
+            end_value = end_value.replace(tzinfo=timezone("UTC"))
+        else:
+            end_value = end_value.astimezone(tz=timezone("UTC"))
 
     def get_value_to_save(self, raw_filepath: str) -> str:
         if self._incremental_reference_column is None:
-            return self.incremental_info.end_value
+            return self.incremental_info.end_value.isoformat()
 
         df = read_raw_data(filepath=raw_filepath)
         dates = df[self._incremental_reference_column].dropna().astype(str)
@@ -269,7 +261,14 @@ class DatetimeIncremental(IncrementalStrategy):
 
         if dates.dt.tz is None:
             dates.dt.tz_localize(timezone(self._reference_column_tz))
-        return dates.dt.tz_convert(timezone(constants.TIMEZONE.value)).max().isoformat()
+        return dates.dt.tz_convert(timezone("UTC")).max().isoformat()
+
+    def parse_redis_value(self, value: str) -> datetime:
+        if value is not None:
+            return isostr_to_datetime(value)
+
+    def parse_value_to_save(self, value: datetime) -> str:
+        return value.isoformat()
 
 
 def incremental_strategy_from_dict(strategy_dict: dict) -> IncrementalStrategy:

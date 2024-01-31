@@ -206,8 +206,8 @@ def create_default_capture_flow(
             table_id=table_id,
             timestamp=timestamp,
             execution_mode=incremental_info["execution_mode"],
-            start_value=start_value,
-            end_value=end_value,
+            start_value=incremental_info["start_value"],
+            end_value=incremental_info["end_value"],
         )
 
         # Extração #
