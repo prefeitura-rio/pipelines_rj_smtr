@@ -71,7 +71,11 @@ class IncrementalStrategy(ABC):
 
         last_redis_value = self.query_redis().get(constants.REDIS_LAST_CAPTURED_VALUE_KEY.value)
 
-        execution_mode = "full" if last_redis_value is None or force_full else "incr"
+        execution_mode = (
+            constants.MODE_FULL.value
+            if last_redis_value is None or force_full
+            else constants.MODE_INCR.value
+        )
 
         last_redis_value = self.parse_redis_value(last_redis_value) or self._first_value
 

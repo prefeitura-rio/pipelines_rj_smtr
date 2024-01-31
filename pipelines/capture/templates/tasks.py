@@ -380,7 +380,7 @@ def create_incremental_strategy(
 
     log(
         f"""Empty incremental:
-            Mode: full
+            Mode: {constants.MODE_FULL.value}
             Start Value: {overwrite_start_value}
             End Value: {overwrite_end_value}
             """
@@ -389,7 +389,7 @@ def create_incremental_strategy(
         "incremental_info": IncrementalInfo(
             start_value=overwrite_start_value,
             end_value=overwrite_end_value,
-            execution_mode="full",
+            execution_mode=constants.MODE_FULL.value,
         )
     }
 
