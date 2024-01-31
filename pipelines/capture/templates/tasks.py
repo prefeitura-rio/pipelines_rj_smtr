@@ -128,10 +128,7 @@ def get_raw_data(data_extractor: DataExtractor) -> tuple[str, str]:
 ################
 
 
-@task(
-    max_retries=constants.MAX_RETRIES.value,
-    retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
-)
+@task
 def upload_raw_file_to_gcs(error: str, table: BQTable):
     if error is None:
         try:
@@ -144,10 +141,7 @@ def upload_raw_file_to_gcs(error: str, table: BQTable):
     return error
 
 
-@task(
-    max_retries=constants.MAX_RETRIES.value,
-    retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
-)
+@task
 def upload_source_data_to_gcs(error: str, table: BQTable):
     """Conditionally create table or append data to its relative GCS folder.
 
