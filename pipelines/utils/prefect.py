@@ -52,6 +52,7 @@ def extractor_task(func: Callable, **task_init_kwargs):
         def wrapper(**kwargs):
             return func(**{k: v for k, v in kwargs.items() if k in function_arguments})
 
+        task_init_kwargs["checkpoint"] = False
         return prefect.task(wrapper, **task_init_kwargs)
 
     if func is None:
