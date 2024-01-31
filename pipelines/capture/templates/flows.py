@@ -199,13 +199,13 @@ def create_default_capture_flow(
             overwrite_end_value=end_value,
         )
 
-        incremental_values = incremental_strategy["incremental_info"]
+        incremental_info = incremental_strategy["incremental_info"]
 
         rename_flow_run = rename_capture_flow(
             dataset_id=dataset_id,
             table_id=table_id,
             timestamp=timestamp,
-            execution_mode=incremental_values["execution_mode"],
+            execution_mode=incremental_info["execution_mode"],
             start_value=start_value,
             end_value=end_value,
         )
@@ -218,7 +218,7 @@ def create_default_capture_flow(
             table_id=table_id,
             save_filepath=table["raw_filepath"],
             extract_params=extract_params,
-            incremental_data=incremental_values,
+            incremental_info=incremental_info,
         )
 
         data_extractor.set_upstream(rename_flow_run)

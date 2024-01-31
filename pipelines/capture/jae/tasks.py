@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """Tasks for pipelines.capture.jae"""
-from datetime import datetime
-
 from pipelines.capture.jae.constants import constants
 from pipelines.utils.capture.db import DBExtractor
+from pipelines.utils.incremental_strategy import IncrementalInfo
 from pipelines.utils.jinja import render_template
 from pipelines.utils.prefect import extractor_task
 from pipelines.utils.secret import get_secret
@@ -13,9 +12,7 @@ from pipelines.utils.secret import get_secret
 def create_extractor_jae(
     save_filepath: str,
     extract_params: dict,
-    execution_mode: str,
-    start_value: datetime,
-    end_value: datetime,
+    incremental_info: IncrementalInfo,
 ) -> DBExtractor:
     """Creates the Database Extractor for Jae capture flows"""
 
@@ -27,8 +24,8 @@ def create_extractor_jae(
 
     query = render_template(
         template_string=extract_params["query"],
-        execution_mode=execution_mode,
-        _vars={"start": start_value, "end": end_value},
+        execution_mode=incremental_info.execution_mode,
+        _vars={"start": incremental_info.start_value, "end": incremental_info.end_value},
     )
 
     return DBExtractor(

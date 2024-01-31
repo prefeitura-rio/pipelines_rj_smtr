@@ -39,9 +39,7 @@ def extractor_task(func: Callable, **task_init_kwargs):
             "table_id",
             "save_filepath",
             "extract_params",
-            "execution_mode",
-            "start_value",
-            "end_value",
+            "incremental_info",
         ]
 
         function_arguments = [p.name for p in signature.parameters.values()]
