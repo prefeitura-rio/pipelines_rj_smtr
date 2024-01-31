@@ -141,7 +141,7 @@ def upload_raw_file_to_gcs(error: str, table: BQTable):
             error = traceback.format_exc()
             log(f"[CATCHED] Task failed with error: \n{error}", level="error")
 
-        return error
+    return error
 
 
 @task(
@@ -175,6 +175,9 @@ def upload_source_data_to_gcs(error: str, table: BQTable):
         log("Log Table already exists, appending to it...")
         log_table.append()
         log("Appended to log table successfully.")
+
+    if error is not None:
+        raise Exception(error)
 
 
 ######################
