@@ -250,7 +250,6 @@ class Dataset(GCPBase):
             bucket_name=None,
             env=env,
         )
-
         self.location = location
 
     def exists(self) -> bool:
@@ -262,7 +261,8 @@ class Dataset(GCPBase):
 
     def create(self):
         if not self.exists():
-            dataset_obj = bigquery.Dataset(self.dataset_id)
+            dataset_full_name = f"{constants.PROJECT_NAME.value[self.env]}.{self.dataset_id}"
+            dataset_obj = bigquery.Dataset(dataset_full_name)
             dataset_obj.location = self.location
             self.client("bigquery").create_dataset(dataset_obj)
 
