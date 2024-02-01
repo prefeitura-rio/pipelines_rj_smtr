@@ -4,7 +4,6 @@ import inspect
 from typing import Any, Callable, Dict, Type, Union
 
 import prefect
-from prefect.exceptions import AuthorizationError, ClientError
 
 from pipelines.utils.capture.base import DataExtractor
 
@@ -85,13 +84,10 @@ def rename_current_flow_run(name: str) -> bool:
     """
     Rename the current flow run.
     """
-    flow_run_id = prefect.context.get("flow_run_id")
-    client = prefect.Client()
-    try:
+    if not flow_is_running_local():
+        flow_run_id = prefect.context.get("flow_run_id")
+        client = prefect.Client()
         return client.set_flow_run_name(flow_run_id, name)
-    except (AuthorizationError, ClientError) as err:
-        if not flow_is_running_local():
-            raise err
     return False
 
 
