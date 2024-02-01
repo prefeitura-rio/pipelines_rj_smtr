@@ -66,6 +66,6 @@ def strip_string_columns(data: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: Treated Dataframe
     """
     for col in data.columns[data.dtypes == "object"].to_list():
-        if not data[col].isnull().any():
+        if not data[col].isnull().all():
             data[col] = data[col].str.strip()
     return data
