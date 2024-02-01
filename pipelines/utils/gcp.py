@@ -13,6 +13,7 @@ from typing import Type, TypeVar, Union
 import pandas as pd
 from google.api_core.exceptions import NotFound
 from google.cloud import bigquery, storage
+from google.cloud.bigquery.external_config import HivePartitioningOptions
 
 from pipelines.constants import constants
 from pipelines.utils.fs import (
@@ -327,6 +328,13 @@ class BQTable(GCPBase):
         external_config.schema = self._create_table_schema()
         external_config.options.field_delimiter = ","
         external_config.options.allow_jagged_rows = False
+
+        uri = f"gs://{self.bucket_name}/staging/{self.dataset_id}/{self.table_id}/*"
+        external_config.source_uris = uri
+        hive_partitioning = HivePartitioningOptions()
+        hive_partitioning.mode = "STRINGS"
+        hive_partitioning.source_uri_prefix = uri.replace("*", "")
+        external_config.hive_partitioning = hive_partitioning
 
         return external_config
 
