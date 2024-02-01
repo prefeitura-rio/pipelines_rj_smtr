@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Any
+from typing import Any, Union
 
 import pandas as pd
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
@@ -183,11 +183,13 @@ class IDIncremental(IncrementalStrategy):
             .max()
         )
 
-    def parse_redis_value(self, value: Any) -> Any:
+    def parse_redis_value(self, value: Union[int, str]) -> int:
         if value is not None:
-            return int(value)
+            value = int(value)
 
-    def parse_value_to_save(self, value: Any) -> Any:
+        return value
+
+    def parse_value_to_save(self, value: Union[int, str]) -> int:
         return int(value)
 
 
@@ -269,9 +271,19 @@ class DatetimeIncremental(IncrementalStrategy):
             dates.dt.tz_localize(timezone(self._reference_column_tz))
         return dates.dt.tz_convert(timezone("UTC")).max().isoformat()
 
-    def parse_redis_value(self, value: str) -> datetime:
+    def parse_redis_value(self, value: Union[datetime, str]) -> datetime:
         if value is not None:
-            return isostr_to_datetime(value)
+            if isinstance(value, str):
+                value = isostr_to_datetime(value)
+            elif isinstance(value, datetime):
+                if value.tzinfo is None:
+                    value = value.replace(tzinfo=timezone("UTC"))
+                else:
+                    value = value.astimezone(tz=timezone("UTC"))
+            else:
+                raise ValueError("value must be str or datetime")
+
+        return value
 
     def parse_value_to_save(self, value: datetime) -> str:
         return value.isoformat()
