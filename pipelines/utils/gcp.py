@@ -323,13 +323,12 @@ class BQTable(GCPBase):
         external_config = bigquery.ExternalConfig("CSV")
         external_config.options.skip_leading_rows = 1
         external_config.options.allow_quoted_newlines = True
-        external_config.options.allow_jagged_rows = True
         external_config.autodetect = False
         external_config.schema = self._create_table_schema()
         external_config.options.field_delimiter = ","
         external_config.options.allow_jagged_rows = False
 
-        uri = f"gs://{self.bucket_name}/staging/{self.dataset_id}/{self.table_id}/*"
+        uri = f"gs://{self.bucket_name}/source/{self.dataset_id}/{self.table_id}/*"
         external_config.source_uris = uri
         hive_partitioning = HivePartitioningOptions()
         hive_partitioning.mode = "STRINGS"
