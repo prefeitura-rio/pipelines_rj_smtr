@@ -143,7 +143,7 @@ class IncrementalStrategy(ABC):
             value_to_save
         )
         redis_client.set(self._redis_key, content)
-        return f"Value {value_to_save} saved on Redis!"
+        return f"[key: {self._redis_key}] Value {value_to_save} saved on Redis!"
 
 
 class IDIncremental(IncrementalStrategy):
