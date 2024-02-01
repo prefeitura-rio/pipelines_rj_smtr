@@ -136,7 +136,6 @@ def read_raw_data(filepath: str, reader_args: dict = None) -> pd.DataFrame:
         reader_args = {}
 
     file_type = get_filetype(filepath=filepath)
-    reader_args["dtype"] = reader_args.get("dtype", "object")
 
     if file_type == "json":
         data = pd.read_json(filepath, **reader_args)
