@@ -123,10 +123,6 @@ class IncrementalStrategy(ABC):
     def parse_redis_value(self, value: Any) -> Any:
         pass
 
-    @abstractmethod
-    def parse_value_to_save(self, value: Any) -> Any:
-        pass
-
     def save_on_redis(
         self,
         value_to_save: Any,
@@ -139,9 +135,8 @@ class IncrementalStrategy(ABC):
             value_to_save = min(old_value, value_to_save)
 
         redis_client = get_redis_client()
-        content[constants.REDIS_LAST_CAPTURED_VALUE_KEY.value] = self.parse_value_to_save(
-            value_to_save
-        )
+        content[constants.REDIS_LAST_CAPTURED_VALUE_KEY.value] = value_to_save
+
         redis_client.set(self._redis_key, content)
         return f"[key: {self._redis_key}] Value {value_to_save} saved on Redis!"
 
@@ -188,9 +183,6 @@ class IDIncremental(IncrementalStrategy):
             value = int(value)
 
         return value
-
-    def parse_value_to_save(self, value: Union[int, str]) -> int:
-        return int(value)
 
 
 class DatetimeIncremental(IncrementalStrategy):
@@ -284,9 +276,6 @@ class DatetimeIncremental(IncrementalStrategy):
                 raise ValueError("value must be str or datetime")
 
         return value
-
-    def parse_value_to_save(self, value: datetime) -> str:
-        return value.isoformat()
 
 
 def incremental_strategy_from_dict(strategy_dict: dict) -> IncrementalStrategy:
