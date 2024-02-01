@@ -20,7 +20,7 @@ from pipelines.utils.incremental_strategy import (
     IncrementalStrategy,
     incremental_strategy_from_dict,
 )
-from pipelines.utils.prefect import rename_current_flow_run
+from pipelines.utils.prefect import flow_is_running_local, rename_current_flow_run
 from pipelines.utils.pretreatment import transform_to_nested_structure
 from pipelines.utils.utils import create_timestamp_captura, data_info_str
 
@@ -152,7 +152,7 @@ def upload_source_data_to_gcs(error: str, table: BQTable):
     log_table = table.get_log_table(generate_logs=True, error=error)
 
     if error is None:
-        if table.exists():
+        if not table.exists():
             log("Staging Table does not exist, creating table...")
             table.create()
             log("Table created")
@@ -423,7 +423,7 @@ def create_incremental_strategy(
 def save_incremental_redis(
     incremental_strategy: Union[dict, IncrementalStrategy], raw_filepath: str
 ):
-    if isinstance(incremental_strategy, IncrementalStrategy):
+    if isinstance(incremental_strategy, IncrementalStrategy) and not flow_is_running_local():
         last_value = incremental_strategy.get_value_to_save(raw_filepath=raw_filepath)
 
         log(f"Last captured value: {last_value}")
