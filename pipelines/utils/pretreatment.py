@@ -4,6 +4,7 @@ import inspect
 from datetime import datetime
 
 import pandas as pd
+from prefeitura_rio.pipelines_utils.logging import log
 
 
 def transform_to_nested_structure(data: pd.DataFrame, primary_key: list) -> pd.DataFrame:
@@ -66,6 +67,8 @@ def strip_string_columns(data: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: Treated Dataframe
     """
     for col in data.columns[data.dtypes == "object"].to_list():
-        if not data[col].isnull().all():
+        try:
             data[col] = data[col].str.strip()
+        except AttributeError as e:
+            log(f"Error {e} on column {col}")
     return data
