@@ -4,7 +4,6 @@ import inspect
 from typing import Any, Callable, Dict, Type, Union
 
 import prefect
-from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.utils.capture.base import DataExtractor
 
@@ -75,12 +74,7 @@ def run_local(flow: prefect.Flow, parameters: Dict[str, Any] = None):
 
 
 def flow_is_running_local() -> bool:
-    log(f'{prefect.context.get("config").get("engine").get("executor").get("default_class")}')
-    log(f'{prefect.context.get("config")}')
-    return (
-        prefect.context.get("config").get("engine").get("executor").get("default_class")
-        == "prefect.executors.LocalExecutor"
-    )
+    return prefect.context.get("project_name") is None
 
 
 def rename_current_flow_run(name: str) -> bool:
