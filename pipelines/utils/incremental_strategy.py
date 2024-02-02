@@ -130,15 +130,20 @@ class IncrementalStrategy(ABC):
         content = self.query_redis()
         old_value = content.get(constants.REDIS_LAST_CAPTURED_VALUE_KEY.value)
 
-        if old_value is not None:
+        if old_value is None:
+            flag_save = True
+        else:
             old_value = self.parse_redis_value(old_value)
-            value_to_save = min(old_value, value_to_save)
+            flag_save = self.parse_redis_value(value_to_save) > old_value
 
-        redis_client = get_redis_client()
-        content[constants.REDIS_LAST_CAPTURED_VALUE_KEY.value] = value_to_save
+        if flag_save:
+            redis_client = get_redis_client()
+            content[constants.REDIS_LAST_CAPTURED_VALUE_KEY.value] = value_to_save
 
-        redis_client.set(self._redis_key, content)
-        return f"[key: {self._redis_key}] Value {value_to_save} saved on Redis!"
+            redis_client.set(self._redis_key, content)
+            return f"[key: {self._redis_key}] Value {value_to_save} saved on Redis!"
+
+        return "Value already saved greater than value to save, task skiped"
 
 
 class IDIncremental(IncrementalStrategy):
