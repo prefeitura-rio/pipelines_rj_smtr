@@ -26,6 +26,7 @@ from pipelines.br_rj_riodejaneiro_brt_gps.tasks import (
     pre_treatment_br_rj_riodejaneiro_brt_gps,
 )
 from pipelines.constants import constants
+from pipelines.schedules import every_hour, every_minute
 from pipelines.tasks import (  # get_local_dbt_client,; setup_task,
     bq_upload,
     create_date_hour_partition,
@@ -45,8 +46,6 @@ from pipelines.tasks import (  # get_local_dbt_client,; setup_task,
     set_last_run_timestamp,
     upload_logs_to_bq,
 )
-
-# from pipelines.schedules import every_hour, every_minute
 
 # Flows #
 
@@ -126,7 +125,7 @@ materialize_brt.run_config = KubernetesRun(
     labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
 )
 materialize_brt.state_handlers = [handler_inject_bd_credentials]
-# materialize_brt.schedule = every_hour
+materialize_brt.schedule = every_hour
 
 
 with Flow(
@@ -188,4 +187,4 @@ captura_brt.run_config = KubernetesRun(
     labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
 )
 captura_brt.state_handlers = [handler_inject_bd_credentials]
-# captura_brt.schedule = every_minute
+captura_brt.schedule = every_minute
