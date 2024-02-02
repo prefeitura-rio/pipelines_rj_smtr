@@ -423,6 +423,10 @@ def create_incremental_strategy(
 def save_incremental_redis(
     incremental_strategy: Union[dict, IncrementalStrategy], raw_filepath: str
 ):
+    log(f"flow_is_running_local = {flow_is_running_local()}")
+    log(
+        f"isinstance(IncrementalStrategy) = {isinstance(incremental_strategy, IncrementalStrategy)}"
+    )
     if isinstance(incremental_strategy, IncrementalStrategy) and not flow_is_running_local():
         last_value = incremental_strategy.get_value_to_save(raw_filepath=raw_filepath)
 
@@ -432,4 +436,4 @@ def save_incremental_redis(
         msg = incremental_strategy.save_on_redis(value_to_save=last_value)
         log(msg)
     else:
-        log("Incremental_strategy parameter is None, save on Redis skipped")
+        log("incremental_strategy parameter is None, save on Redis skipped")
