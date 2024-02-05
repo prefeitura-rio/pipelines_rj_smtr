@@ -4,7 +4,7 @@ from types import NoneType
 from typing import Callable
 
 import pandas as pd
-from prefect import Parameter
+from prefect import Parameter, unmapped
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.tasks.core.function import FunctionTask
@@ -19,8 +19,10 @@ from pipelines.capture.templates.tasks import (
     create_source_dataset_id,
     create_table_object,
     get_raw_data,
+    join_treated_files,
     rename_capture_flow,
     save_incremental_redis,
+    split_raw_file,
     transform_raw_to_nested_structure,
     upload_raw_file_to_gcs,
     upload_source_data_to_gcs,
@@ -216,7 +218,7 @@ def create_default_capture_flow(
             env=env,
             project=project,
             table_id=table_id,
-            save_filepath=table["raw_filepath"],
+            save_filepath=table["capture_filepath"],
             extract_params=extract_params,
             incremental_info=incremental_info,
         )
@@ -228,16 +230,24 @@ def create_default_capture_flow(
         error = upload_raw_file_to_gcs(error=error, table=table)
 
         # Pré-tratamento #
-
-        error = transform_raw_to_nested_structure(
-            pretreatment_steps=pretreatment_steps,
-            error=error,
-            raw_filepath=table["raw_filepath"],
+        error, filepaths = split_raw_file(
+            error=error, raw_filepath=table["raw_filepath"], reader_args=pretreatment_reader_args
+        )
+        error, treated_filepaths = transform_raw_to_nested_structure.map(
+            pretreatment_steps=unmapped(pretreatment_steps),
+            error=unmapped(error),
+            raw_filepath=filepaths,
             source_filepath=table["source_filepath"],
-            timestamp=timestamp,
-            primary_key=primary_key,
-            print_inputs=task_value_is_none(task_value=save_bucket_name),
-            reader_args=pretreatment_reader_args,
+            timestamp=unmapped(timestamp),
+            primary_key=unmapped(primary_key),
+            print_inputs=unmapped(task_value_is_none(task_value=save_bucket_name)),
+            reader_args=unmapped(pretreatment_reader_args),
+        )
+
+        error = join_treated_files(
+            errors=error,
+            filepaths_to_join=treated_filepaths,
+            filepath_to_save=table["source_filepath"],
         )
 
         upload_source_gcs = upload_source_data_to_gcs(error=error, table=table)

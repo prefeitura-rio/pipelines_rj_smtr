@@ -18,6 +18,7 @@ class constants(Enum):  # pylint: disable=c0103
     GCS_FLOWS_BUCKET = "datario-public"
     PROJECT_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr-staging"}
     DEFAULT_BUCKET_NAME = {"dev": "br-rj-smtr-dev", "prod": "br-rj-smtr-staging"}
+    FILE_MAX_SIZE = 20_000
 
     # AGENT LABELS #
     RJ_SMTR_AGENT_LABEL = "rj-smtr"
