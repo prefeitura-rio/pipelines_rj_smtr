@@ -28,7 +28,12 @@ from pipelines.capture.templates.tasks import (
     upload_source_data_to_gcs,
 )
 from pipelines.constants import constants
-from pipelines.tasks import get_current_timestamp, get_run_env, task_value_is_none
+from pipelines.tasks import (
+    get_current_timestamp,
+    get_run_env,
+    task_value_is_none,
+    unpack_mapped_results_nout2,
+)
 from pipelines.utils.prefect import TypedParameter
 from pipelines.utils.pretreatment import strip_string_columns
 
@@ -233,7 +238,8 @@ def create_default_capture_flow(
         error, filepaths = split_raw_file(
             error=error, raw_filepath=table["raw_filepath"], reader_args=pretreatment_reader_args
         )
-        error, treated_filepaths = transform_raw_to_nested_structure.map(
+
+        pretreatment_results = transform_raw_to_nested_structure.map(
             pretreatment_steps=unmapped(pretreatment_steps),
             error=unmapped(error),
             raw_filepath=filepaths,
@@ -243,6 +249,8 @@ def create_default_capture_flow(
             print_inputs=unmapped(task_value_is_none(task_value=save_bucket_name)),
             reader_args=unmapped(pretreatment_reader_args),
         )
+
+        error, treated_filepaths = unpack_mapped_results_nout2(mapped_results=pretreatment_results)
 
         error = join_treated_files(
             errors=error,
