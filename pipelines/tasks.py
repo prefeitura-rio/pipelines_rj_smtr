@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Module containing general purpose tasks"""
 from datetime import datetime
-from typing import Any, Iterable, Union
+from typing import Any, Union
 
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
@@ -66,22 +66,3 @@ def get_run_env():
 @task
 def flow_log(msg, level: str = "info"):
     log(msg, level=level)
-
-
-@task(checkpoint=False, nout=2)
-def unpack_mapped_results_nout2(
-    mapped_results: Iterable,
-) -> tuple[list[Any], list[Any]]:
-    """
-    Task to unpack the results from an nout=2 tasks in 2 lists when it is mapped
-
-    Args:
-        mapped_results (Iterable): The mapped task return
-
-    Returns:
-        tuple[list[Any], list[Any]]: The task original return splited in 2 lists:
-            - 1st list being all the first return
-            - 2nd list being all the second return
-
-    """
-    return [r[0] for r in mapped_results], [r[1] for r in mapped_results]

@@ -2,7 +2,6 @@
 """
 Tasks for rj_smtr
 """
-import os
 import traceback
 from datetime import datetime, timedelta
 from typing import Any, Callable, Union
@@ -180,35 +179,7 @@ def upload_source_data_to_gcs(error: str, table: BQTable):
 ######################
 
 
-@task(nout=2)
-def split_raw_file(error: str, raw_filepath: str, reader_args: dict) -> tuple[str, list[str]]:
-    filepaths = []
-    if error is None:
-        try:
-            data = read_raw_data(filepath=raw_filepath, reader_args=reader_args)
-            dfs = [
-                data[i : i + constants.FILE_MAX_SIZE]  # noqa
-                for i in range(0, len(data), constants.FILE_MAX_SIZE)
-            ]
-
-            for i, fatia in enumerate(dfs):
-                log(f"Fatia {i+1} tem {len(fatia)} linhas.")
-
-            splitted_folder = os.path.join(os.path.dirname(raw_filepath), "splitted")
-            for i, df in enumerate(dfs):
-                filename = f"{i}_{os.path.splitext(os.path.basename(raw_filepath))[0]}.csv"
-                filepath = os.path.join(splitted_folder, filename)
-                save_local_file(filepath=filepath, data=df)
-                filepaths.append(filepath)
-
-        except Exception:  # pylint: disable=W0703
-            error = traceback.format_exc()
-            log(f"[CATCHED] Task failed with error: \n{error}", level="error")
-
-    return error, filepaths
-
-
-@task(nout=2)
+@task
 def transform_raw_to_nested_structure(
     pretreatment_steps: list[Callable[[pd.DataFrame, datetime, list], pd.DataFrame]],
     error: str,
@@ -218,7 +189,7 @@ def transform_raw_to_nested_structure(
     primary_key: Union[list, str] = None,
     print_inputs: bool = False,
     reader_args: dict = None,
-) -> tuple[str, list[str]]:
+) -> str:
     """
     Task to transform raw data to nested structure
 
@@ -243,7 +214,6 @@ def transform_raw_to_nested_structure(
         str: Error traceback
         str: Path to the saved treated .csv file
     """
-    treated_filepath = None
     if error is None:
         try:
             data = read_raw_data(filepath=raw_filepath, reader_args=reader_args)
@@ -282,37 +252,12 @@ def transform_raw_to_nested_structure(
                 level="info",
             )
 
-            treated_folder = os.path.join(os.path.dirname(source_filepath), "nested")
-
-            treated_filepath = os.path.join(treated_folder, os.path.basename(raw_filepath))
-            save_local_file(filepath=treated_filepath, data=data)
-            log(f"Data saved in {treated_filepath}")
+            save_local_file(filepath=source_filepath, data=data)
+            log(f"Data saved in {source_filepath}")
 
         except Exception:  # pylint: disable=W0703
             error = traceback.format_exc()
             log(f"[CATCHED] Task failed with error: \n{error}", level="error")
-
-    return error, treated_filepath
-
-
-@task
-def join_treated_files(
-    errors: list[str],
-    filepaths_to_join: list[str],
-    filepath_to_save: str,
-) -> str:
-    error = None
-    if any(errors):
-        try:
-            filepaths_to_join = [f"'{path}'" for path in filepaths_to_join]
-            command = f"cat {' '.join(filepaths_to_join)} > '{filepath_to_save}'"
-            os.system(command)
-            log(f"Files merged in {filepath_to_save}")
-        except Exception:  # pylint: disable=W0703
-            error = traceback.format_exc()
-            log(f"[CATCHED] Task failed with error: \n{error}", level="error")
-    else:
-        error = next(e for e in errors if e is not None)
 
     return error
 
