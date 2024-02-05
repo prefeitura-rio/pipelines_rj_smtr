@@ -77,7 +77,11 @@ class IncrementalStrategy(ABC):
             else constants.MODE_INCR.value
         )
 
-        last_redis_value = self.parse_redis_value(last_redis_value) or self._first_value
+        if execution_mode == constants.MODE_INCR.value:
+            last_redis_value = self.parse_redis_value(self._first_value)
+
+        else:
+            last_redis_value = self.parse_redis_value(last_redis_value)
 
         start_value = (
             self.parse_redis_value(overwrite_start_value)
