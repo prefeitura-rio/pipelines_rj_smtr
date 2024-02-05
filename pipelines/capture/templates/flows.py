@@ -223,7 +223,7 @@ def create_default_capture_flow(
             env=env,
             project=project,
             table_id=table_id,
-            save_filepath=table["capture_filepath"],
+            save_filepath=table["raw_filepath"],
             extract_params=extract_params,
             incremental_info=incremental_info,
         )

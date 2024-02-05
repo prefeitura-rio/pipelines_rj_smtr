@@ -77,7 +77,7 @@ class IncrementalStrategy(ABC):
             else constants.MODE_INCR.value
         )
 
-        if execution_mode == constants.MODE_INCR.value:
+        if execution_mode == constants.MODE_FULL.value:
             last_redis_value = self.parse_redis_value(self._first_value)
 
         else:
