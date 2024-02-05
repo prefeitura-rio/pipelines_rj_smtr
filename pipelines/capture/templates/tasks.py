@@ -180,7 +180,7 @@ def upload_source_data_to_gcs(error: str, table: BQTable):
 ######################
 
 
-@task
+@task(nout=2)
 def split_raw_file(error: str, raw_filepath: str, reader_args: dict) -> tuple[str, list[str]]:
     filepaths = []
     if error is None:
@@ -208,7 +208,7 @@ def split_raw_file(error: str, raw_filepath: str, reader_args: dict) -> tuple[st
     return error, filepaths
 
 
-@task
+@task(nout=2)
 def transform_raw_to_nested_structure(
     pretreatment_steps: list[Callable[[pd.DataFrame, datetime, list], pd.DataFrame]],
     error: str,
