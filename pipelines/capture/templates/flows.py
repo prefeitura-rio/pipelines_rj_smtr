@@ -243,7 +243,7 @@ def create_default_capture_flow(
             pretreatment_steps=unmapped(pretreatment_steps),
             error=unmapped(error),
             raw_filepath=filepaths,
-            source_filepath=table["source_filepath"],
+            source_filepath=unmapped(table["source_filepath"]),
             timestamp=unmapped(timestamp),
             primary_key=unmapped(primary_key),
             print_inputs=unmapped(task_value_is_none(task_value=save_bucket_name)),

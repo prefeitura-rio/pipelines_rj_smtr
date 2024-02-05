@@ -196,7 +196,7 @@ def split_raw_file(error: str, raw_filepath: str, reader_args: dict) -> tuple[st
 
             splitted_folder = os.path.join(os.path.dirname(raw_filepath), "splitted")
             for i, df in enumerate(dfs):
-                filename = f"1_{os.path.splitext(os.path.basename(raw_filepath))[0]}.csv"
+                filename = f"{i}_{os.path.splitext(os.path.basename(raw_filepath))[0]}.csv"
                 filepath = os.path.join(splitted_folder, filename)
                 save_local_file(filepath=filepath, data=df)
                 filepaths.append(filepath)
