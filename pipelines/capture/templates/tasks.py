@@ -161,7 +161,7 @@ def upload_source_data_to_gcs(error: str, table: BQTable):
             table.append()
             log("Appended to staging table successfully.")
 
-    if log_table.exists():
+    if not log_table.exists():
         log("Log Table does not exist, creating table...")
         log_table.create()
         log("Table created")
