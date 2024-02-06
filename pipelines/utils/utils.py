@@ -12,13 +12,14 @@ from pipelines.constants import constants
 
 def custom_serialization(obj: Any) -> Any:
     """
-    Function to serialize not JSON serializable objects
+    Função para serializar objetos não serializaveis
+    pela função json.dump
 
     Args:
-        obj (Any): Object to serialize
+        obj (Any): Objeto a ser serializado
 
     Returns:
-        Any: Serialized object
+        Any: Object serializado
     """
     if isinstance(obj, (pd.Timestamp, date)):
         if isinstance(obj, pd.Timestamp):
@@ -31,13 +32,13 @@ def custom_serialization(obj: Any) -> Any:
 
 def data_info_str(data: pd.DataFrame):
     """
-    Return dataframe info as a str to log
+    Retorna as informações de um Dataframe como string
 
     Args:
-        data (pd.DataFrame): dataframe
+        data (pd.DataFrame): Dataframe para extrair as informações
 
     Returns:
-        data.info() as a string
+        str: retorno do método data.info()
     """
     buffer = io.StringIO()
     data.info(buf=buffer)
@@ -45,6 +46,15 @@ def data_info_str(data: pd.DataFrame):
 
 
 def create_timestamp_captura(timestamp: datetime) -> str:
+    """
+    Cria o valor para a coluna timestamp_captura
+
+    Args:
+        timestamp (datetime): timestamp a ser escrita
+
+    Returns:
+        str: Valor a ser escrito na coluna timestamp_captura
+    """
     if timestamp.tzinfo is None:
         timestamp = timestamp.replace(tzinfo=pytz.UTC)
 
@@ -54,6 +64,15 @@ def create_timestamp_captura(timestamp: datetime) -> str:
 
 
 def isostr_to_datetime(datetime_str: str) -> datetime:
+    """
+    Converte uma string de data no formato iso em um datetime em UTC
+
+    Args:
+        datetime_str (str): String a ser convertida
+
+    Returns:
+        datetime: String convertida em datetime
+    """
     converted = datetime.fromisoformat(datetime_str)
     if converted.tzinfo is None:
         converted = converted.replace(tzinfo=pytz.UTC)

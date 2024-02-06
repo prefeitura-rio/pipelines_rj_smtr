@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Constant values for jae data capture
+Valores constantes para captura de dados da JAE
 """
 
 from enum import Enum
@@ -11,7 +11,7 @@ from pipelines.utils.incremental_capture_strategy import DatetimeIncremental
 
 class constants(Enum):
     """
-    Constant values for jae data capture
+    Valores constantes para captura de dados da JAE
     """
 
     JAE_SOURCE_NAME = "jae"

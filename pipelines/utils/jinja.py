@@ -12,7 +12,24 @@ def render_template(
     execution_mode: str,
     _vars: dict,
     normalize: bool = False,
-):
+) -> str:
+    """
+    Renderiza um template Jinja
+
+    a macro is_incremental() pode ser usada da mesma forma que no DBT
+
+    Args:
+        template_string (str): A string a ser tratada
+        execution_mode (str): full ou incr
+        _vars (dict): Dicionário no formato {nome_variavel: valor_variavel, ...}
+        normalize (bool, optional): Se True, remove quebras de linha, espaços duplos e tabs,
+            criando a string final com uma apenas linha. Defaults to False
+
+    Returns:
+        str: A string renderizada
+
+    """
+
     def is_incremental() -> bool:
         return execution_mode == constants.MODE_INCR.value
 

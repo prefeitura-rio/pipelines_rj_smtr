@@ -30,41 +30,32 @@ from pipelines.utils.utils import create_timestamp_captura, data_info_str
 
 
 @task
-def create_source_dataset_id(
-    # dataset_id: str,
-    source_name: str,
-):
-    """Creates the BQ source table dataset_id according to the standard
-
-    Args:
-        dataset_id (str): The final dataset_id that the table fits in (eg.: bilhetagem, subsidio)
-        source_name (str): The data source name (eg.: jae)
-    """
-    return constants.SOURCE_DATASET_ID_PATTERN.value.format(
-        # dataset_id=dataset_id,
-        source_name=source_name,
-    )
-
-
-@task
 def create_table_object(
     env: str,
     dataset_id: str,
     table_id: str,
-    bucket_name: str,
+    bucket_name: Union[None, str],
     timestamp: datetime,
     partition_date_only: bool,
     raw_filetype: str,
 ) -> BQTable:
     """
+    Cria um objeto de tabela para interagir com o BigQuery
     Creates basedosdados Table object
 
     Args:
-        dataset_id (str): dataset_id on BigQuery
-        table_id (str): table_id on BigQuery
+        env (str): dev ou prod,
+        dataset_id (str): dataset_id no BigQuery,
+        table_id (str): table_id no BigQuery,
+        bucket_name (Union[None, str]): Nome do bucket com os dados da tabela no GCS,
+            se for None, usa o bucket padrão do ambiente
+        timestamp (datetime): timestamp gerado pela execução do flow,
+        partition_date_only (bool): True se o particionamento deve ser feito apenas por data
+            False se o particionamento deve ser feito por data e hora,
+        raw_filetype (str): Tipo do arquivo raw (json, csv...),
 
     Returns:
-        BQTable: Table object
+        BQTable: Objeto para manipular a tabela no BigQuery
     """
 
     return BQTable(
@@ -78,16 +69,6 @@ def create_table_object(
     )
 
 
-# @task
-# def create_source_redis_key(
-#     env: str,
-#     dataset_id: str,
-#     table_id: str,
-# ):
-#     assert env in ("staging", "prod"), f"env must be staging or prod, received: {env}"
-#     return f"{env}.{dataset_id}.{table_id}"
-
-
 @task
 def rename_capture_flow(
     dataset_id: str,
@@ -96,7 +77,11 @@ def rename_capture_flow(
     incremental_info: IncrementalInfo,
 ) -> bool:
     """
-    Rename the current capture flow run.
+    Renomeia a run atual do Flow de captura com o formato:
+    [<timestamp> | <FULL / INCR>] <dataset_id>.<table_id>: from <valor inicial> to <valor final>
+
+    Returns:
+        bool: Se o flow foi renomeado
     """
     name = f"[{timestamp.astimezone(tz=timezone(constants.TIMEZONE.value))} | \
 {incremental_info.execution_mode.upper()}] {dataset_id}.{table_id}: from \
@@ -110,7 +95,16 @@ def rename_capture_flow(
 
 
 @task
-def get_raw_data(data_extractor: DataExtractor) -> tuple[str, str]:
+def get_raw_data(data_extractor: DataExtractor) -> Union[None, str]:
+    """
+    Faz a extração dos dados raw e salva localmente
+
+    Args:
+        data_extractor (DataExtractor): Extrator de dados a ser executado
+
+    Returns:
+        Union[str, None]: Mensagem de erro
+    """
     error = None
     try:
         data_extractor.extract()
@@ -129,7 +123,17 @@ def get_raw_data(data_extractor: DataExtractor) -> tuple[str, str]:
 
 
 @task
-def upload_raw_file_to_gcs(error: str, table: BQTable):
+def upload_raw_file_to_gcs(error: Union[None, str], table: BQTable) -> Union[None, str]:
+    """
+    Sobe o arquivo raw para o GCS
+
+    Args:
+        error (Union[None, str]): Retorno de erro de tasks anteriores
+        table (BQTable): Objeto de tabela para BigQuery
+
+    Returns:
+        Union[None, str]: Mensagem de erro
+    """
     if error is None:
         try:
             log(f"Uploading file to: {table.raw_filepath}")
@@ -142,12 +146,13 @@ def upload_raw_file_to_gcs(error: str, table: BQTable):
 
 
 @task
-def upload_source_data_to_gcs(error: str, table: BQTable):
-    """Conditionally create table or append data to its relative GCS folder.
+def upload_source_data_to_gcs(error: Union[None, str], table: BQTable):
+    """
+    Sobe os dados aninhados e o log do Flow para a pasta source do GCS
 
     Args:
-        error (str): Upstream errors
-        table (BQTable): BigQuery table object to create or append
+        error (Union[None, str]): Retorno de erro de tasks anteriores
+        table (BQTable): Objeto de tabela para BigQuery
     """
     log_table = table.get_log_table(generate_logs=True, error=error)
 
@@ -181,38 +186,37 @@ def upload_source_data_to_gcs(error: str, table: BQTable):
 
 @task
 def transform_raw_to_nested_structure(
+    error: Union[None, str],
     pretreat_funcs: list[Callable[[pd.DataFrame, datetime, list], pd.DataFrame]],
-    error: str,
     raw_filepath: str,
     source_filepath: str,
     timestamp: datetime,
-    primary_keys: Union[list, str] = None,
-    print_inputs: bool = False,
-    reader_args: dict = None,
-) -> str:
+    primary_keys: Union[list, str],
+    print_inputs: bool,
+    reader_args: dict,
+) -> Union[None, str]:
     """
-    Task to transform raw data to nested structure
+    Task para aplicar pre-tratamentos e transformar os dados para o formato aninhado
 
     Args:
+        error (Union[None, str]): Retorno de erro de tasks anteriores
         pretreat_funcs (list[Callable[[pd.DataFrame, datetime, list], pd.DataFrame]]):
-            List of pretreatment functions to be executed before the structure nesting.
-            A pretreatment step is a function the can receive the following args:
-                data (pd.DataFrame): the dataframe to treat
-                timestamp (datetime): the timestamp argument
-                primary_keys (list): the list of primary keys
-            and returns the treated pandas dataframe
-
-        raw_filepath (str): Path to the saved raw file
-        source_filepath (str): Path to the saved treated .csv file
-        error (str): Error catched from upstream tasks
-        timestamp (datetime): timestamp for flow run
-        primary_keys (list, optional): Primary key to be used on nested structure
-        print_inputs (bool, optional): Flag to indicate if the task should log the data
-        reader_args (dict): arguments to pass to pandas.read_csv or read_json
+            Lista de funções para serem executadas antes de aninhar os dados
+            A função pode receber os argumentos:
+                data (pd.DataFrame): O DataFrame a ser tratado
+                timestamp (datetime): A timestamp da execução do Flow
+                primary_keys (list): Lista de primary keys da tabela
+            Deve retornar um DataFrame
+        raw_filepath (str): Caminho para ler os dados raw
+        source_filepath (str): Caminho para salvar os dados tratados
+        timestamp (datetime): A timestamp da execução do Flow
+        primary_keys (list): Lista de primary keys da tabela
+        print_inputs (bool): Se a task deve exibir os dados lidos no log ou não
+        reader_args (dict): Dicionário de argumentos para serem passados no leitor de dados raw
+            (pd.read_json ou pd.read_csv)
 
     Returns:
-        str: Error traceback
-        str: Path to the saved treated .csv file
+        Union[None, str]: Mensagem de erro
     """
     if error is None:
         try:
@@ -265,91 +269,31 @@ def transform_raw_to_nested_structure(
 #####################
 
 
-# @task(
-#     nout=4,
-#     max_retries=constants.MAX_RETRIES.value,
-#     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
-# )
-# def create_execution_strategy(
-#     skip_if_running: bool,
-#     redis_key: str,
-#     timestamp: datetime,
-#     incremental_type: Union[None, str],
-#     max_incremental_window: Union[str, dict],
-#     overwrite_start_value: Union[None, str, int],
-#     overwrite_end_value: Union[None, str, int],
-#     force_full: bool,
-# ) -> tuple[Union[int, datetime, None], Union[int, datetime, None], str, bool]:
-#     if incremental_type is None:
-#         log("Incremental type is None, ending task...")
-#         return None, None, "full", False
-
-#     flag_save_redis = None
-#     local_run = flow_is_running_local()
-#     if local_run:
-#         last_captured_value = overwrite_start_value
-#     else:
-#         log("Getting last captured value from Redis...")
-#         redis_client = get_redis_client()
-#         last_captured_value = redis_client.get(redis_key)
-
-#     execution_mode = "full" if last_captured_value is None or force_full else "incr"
-#     incremental_type = incremental_type.strip().lower()
-#     log(f"Executing: {execution_mode}\nType: {incremental_type}")
-
-#     log("Getting start and end values...")
-#     match incremental_type:
-#         case "datetime":
-#             start, end, last_captured_value = datetime_type_incremental(
-#                 last_captured_value=last_captured_value,
-#                 timestamp=timestamp,
-#                 max_incremental_window=max_incremental_window,
-#                 overwrite_start_value=overwrite_start_value,
-#                 overwrite_end_value=overwrite_end_value,
-#                 execution_mode=execution_mode,
-#             )
-#         case "id":
-#             start, end, last_captured_value = id_type_incremental(
-#                 last_captured_value=last_captured_value,
-#                 max_incremental_window=max_incremental_window,
-#                 overwrite_start_value=overwrite_start_value,
-#                 overwrite_end_value=overwrite_end_value,
-#             )
-#         case _:
-#             raise NotImplementedError(
-#                 f"incremental_type must be datetime or id, received {incremental_type}"
-#             )
-
-#     if start is not None and start > end:
-#         raise ValueError(f"Start value is bigger than end value.\n\tstart = {start}\n
-# \tend = {end}")
-
-#     flag_save_redis = (
-#         (last_captured_value is None or last_captured_value < end)
-#         and skip_if_running
-#         and not local_run
-#     )
-
-#     log(
-#         f"""
-#         Execution Strategy Creating finished:
-#             Last Captured Value: {last_captured_value}
-#             Start: {start}
-#             End: {end}
-#             Will save on Redis: {flag_save_redis}
-#         """
-#     )
-
-#     return start, end, execution_mode, flag_save_redis
-
-
 @task
 def create_incremental_strategy(
-    strategy_dict: dict,
+    strategy_dict: Union[None, dict],
     table: BQTable,
     overwrite_start_value: Any,
     overwrite_end_value: Any,
 ) -> Union[dict, IncrementalStrategy]:
+    """
+    Cria a estratégia de captura incremental
+
+    Args:
+        strategy_dict (Union[None, dict]): dicionario retornado pelo
+            método .to_dict() do objeto de IncrementalStrategy
+        table (BQTable): Objeto de tabela para BigQuery
+        overwrite_start_value: Valor para substituir o inicial manualmente
+        overwrite_end_value: Valor para substituir o final manualmente
+
+    Returns:
+        Union[dict, IncrementalStrategy]: Se strategy_dict for None, retorna um Dicionário
+            contendo um objeto IncrementalInfo com os valores de start e end sendo
+            overwrite_start_value e overwrite_end_value respectivamente
+            e execution_mode full
+            Se houver valor no argumento strategy_dict, retorna um objeto IncrementalStrategy
+            de acordo com as especificações descritas no dicionário
+    """
     if strategy_dict:
         incremental_strategy = incremental_strategy_from_dict(strategy_dict=strategy_dict)
         incremental_strategy.initialize(
@@ -384,47 +328,26 @@ def create_incremental_strategy(
     }
 
 
-# @task
-# def get_last_value(
-#     end_value: Union[datetime, str],
-#     raw_filepath: str,
-#     incremental_type: str,
-#     incremental_reference_column: str,
-# ) -> Union[datetime, int]:
-#     match incremental_type.strip().lower():
-#         case "datetime":
-#             last_value = end_value
-#         case "id":
-#             df = read_raw_data(filepath=raw_filepath)
-#             last_value = (
-#                 df[incremental_reference_column]
-#                 .dropna()
-#                 .astype(str)
-#                 .str.replace(".0", "")
-#                 .astype(int)
-#                 .max()
-#             )
-#         case _:
-#             raise NotImplementedError(
-#                 f"incremental_type must be datetime or id, received {incremental_type}"
-#             )
-
-#     return last_value
-
-
 @task(
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
 def save_incremental_redis(
     incremental_capture_strategy: Union[dict, IncrementalStrategy],
-    raw_filepath: str,
 ):
+    """
+    Salva o último valor incremental capturado no Redis
+
+
+    Args:
+        incremental_capture_strategy: Union[dict, IncrementalStrategy]: Objeto de estratégia
+            de captura incremental. apenas salva no Redis se for do tipo IncrementalStrategy
+    """
     if (
         isinstance(incremental_capture_strategy, IncrementalStrategy)
         and not flow_is_running_local()
     ):
-        last_value = incremental_capture_strategy.get_value_to_save(raw_filepath=raw_filepath)
+        last_value = incremental_capture_strategy.get_value_to_save()
 
         log(f"Last captured value: {last_value}")
 

@@ -81,11 +81,13 @@ def create_default_capture_flow(
         # table_id no BigQuery
         table_id = TypedParameter(
             name="table_id",
+            default=overwrite_flow_params.get("table_id"),
             accepted_types=str,
         )
         # Tipo do arquivo raw (json, csv...)
         raw_filetype = TypedParameter(
             name="raw_filetype",
+            default=overwrite_flow_params.get("raw_filetype"),
             accepted_types=str,
         )
 

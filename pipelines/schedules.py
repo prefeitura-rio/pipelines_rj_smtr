@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Schedules for rj_smtr
+Modulo com schedules para os Flows da rj-smtr
 """
 
 from datetime import datetime, timedelta
@@ -15,6 +15,15 @@ from pipelines.utils.backup.utils import generate_ftp_schedules
 
 
 def generate_schedule(interval: timedelta, agent_label: str, params: dict = None) -> Schedule:
+    """
+    Cria um Schedule para os flows do prefect
+
+    Args:
+        interval (timedelta): Frequência do agendamento do flow
+        agent_label (str): Label para executar o flow
+        params (dict, optional): Parâmetros para ser passados ao flow no
+            momento da execução
+    """
     if not params:
         params = {}
     return Schedule(

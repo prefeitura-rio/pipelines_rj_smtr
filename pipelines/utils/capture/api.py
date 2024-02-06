@@ -13,12 +13,13 @@ from pipelines.utils.fs import get_filetype
 
 class APIExtractor(DataExtractor):
     """
-    Class for get raw data from API's
+    Classe para extrair dados de API com uma página
 
     Args:
-        url (str): Endpoint URL
-        headers (Union[None, dict]): Request headers
-        params (Union[None, dict]): Request url params
+        url (str): URL para fazer o request
+        headers (Union[None, dict]): Headers para o request
+        params (Union[None, dict]): Paramêtros para o request
+        save_filepath (str): Caminho para salvar os dados
     """
 
     def __init__(
@@ -35,6 +36,13 @@ class APIExtractor(DataExtractor):
         self.filetype = get_filetype(save_filepath)
 
     def _get_data(self) -> Union[list[dict], dict, str]:
+        """
+        Extrai os dados da API
+
+        Returns:
+            Union[list[dict], dict, str]: list[dict] ou dict para APIs json
+                str para outros tipos
+        """
         for retry in range(constants.MAX_RETRIES.value):
             response = requests.get(
                 self.url,
@@ -63,15 +71,17 @@ class APIExtractor(DataExtractor):
 
 class APIExtractorTopSkip(APIExtractor):
     """
-    Class for get raw data from API's, using top/skip pagination standard
+    Classe para extrair dados de uma API paginada do tipo Top/Skip
 
     Args:
-        url (str): Endpoint URL
-        headers (Union[None, dict]): Request headers
-        params (Union[None, dict]): Request url params
-        top_param_name (str): Parameter that represents the "top"
-        skip_param_name (str): Parameter that represents the "skip"
-        page_size (int): Maximum page size
+        url (str): URL para fazer o request
+        headers (Union[None, dict]): Headers para o request
+        params (Union[None, dict]): Paramêtros para o request (exceto os de top e skip)
+        top_param_name (str): Nome do parâmetro de top (que define o tamanho da página)
+        skip_param_name (str): Nome do parâmetro de skip (quantidade de linhas a serem puladas)
+        page_size (int): Número de registros por página (valor a ser passado no parâmetro de top)
+        max_pages (int): Limite de páginas a ser extraídas
+        save_filepath (str): Caminho para salvar os dados
     """
 
     def __init__(
@@ -102,8 +112,15 @@ class APIExtractorTopSkip(APIExtractor):
         self.max_pages = max_pages
 
     def _prepare_next_page(self):
+        """
+        Incrementa o valor do skip para buscar a próxima página
+        """
         super()._prepare_next_page()
         self.params[self.skip_param_name] += self.page_size
 
     def _check_if_last_page(self) -> bool:
+        """
+        Verifica se a página tem menos registros do que o máximo
+        ou se chegou ao limite de páginas
+        """
         return len(self.page_data) < self.page_data or self.max_pages == self.current_page + 1

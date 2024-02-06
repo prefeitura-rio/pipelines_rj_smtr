@@ -16,7 +16,7 @@ def create_extractor_jae(
     data_extractor_params: dict,
     incremental_info: IncrementalInfo,
 ) -> DBExtractor:
-    """Creates the Database Extractor for Jae capture flows"""
+    """Cria o extrator de dados para capturas da JAE"""
     credentials = get_secret("smtr_jae_access_data")
     database = data_extractor_params["database"]
     database_details = constants.JAE_DATABASES.value[database]

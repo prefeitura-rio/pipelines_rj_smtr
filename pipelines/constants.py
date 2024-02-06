@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Constant values for the rj_smtr projects
+Valores constantes gerais para pipelines da rj-smtr
 """
 
 from enum import Enum
@@ -8,7 +8,7 @@ from enum import Enum
 
 class constants(Enum):  # pylint: disable=c0103
     """
-    Constant values for the rj_smtr projects
+    Valores constantes gerais para pipelines da rj-smtr
     """
 
     # CONFIGS #

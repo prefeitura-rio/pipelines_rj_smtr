@@ -4,6 +4,7 @@ import json
 import os
 from datetime import datetime
 from pathlib import Path
+from typing import Union
 
 import pandas as pd
 import pytz
@@ -13,10 +14,11 @@ from pipelines.utils.utils import custom_serialization
 
 
 def get_data_folder_path() -> str:
-    """Gets the parent path to save data
+    """
+    Retorna a pasta raíz para salvar os dados
 
     Returns:
-        str: Data folder path
+        str: Caminho para a pasta data
     """
     return os.path.join(os.getcwd(), os.getenv("DATA_FOLDER", "data"))
 
@@ -26,14 +28,14 @@ def create_partition(
     partition_date_only: bool,
 ) -> str:
     """
-    Create a date (and hour) Hive partition structure from timestamp.
+    Cria a partição Hive de acordo com a timestamp
 
     Args:
-        timestamp (datetime): timestamp to be used as reference
-        partition_date_only (bool): whether to add hour partition or not
-
+        timestamp (datetime): timestamp de referência
+        partition_date_only (bool): True se o particionamento deve ser feito apenas por data
+            False se o particionamento deve ser feito por data e hora
     Returns:
-        str: partition string
+        str: string com o particionamento
     """
     timestamp = timestamp.astimezone(tz=pytz.timezone(constants.TIMEZONE.value))
     partition = f"data={timestamp.strftime('%Y-%m-%d')}"
@@ -50,16 +52,15 @@ def create_capture_filepath(
     partition: str = None,
 ) -> dict[str, str]:
     """
-    Create the full path sctructure which to save data locally before
-    upload.
+    Cria os caminhos para salvar os dados localmente
 
     Args:
-        dataset_id (str): dataset_id on BigQuery
-        table_id (str): table_id on BigQuery
-        timestamp (datetime): capture timestamp
-        partition (str, optional): Partitioned directory structure, ie "ano=2022/mes=03/data=01"
+        dataset_id (str): dataset_id no BigQuery
+        table_id (str): table_id no BigQuery
+        timestamp (datetime): timestamp da captura
+        partition (str, optional): Partição dos dados em formato Hive, ie "data=2020-01-01/hora=06"
     Returns:
-        dict: raw and source filepaths
+        dict: caminhos para os dados raw e source
     """
     timestamp = timestamp.astimezone(tz=pytz.timezone(constants.TIMEZONE.value))
     data_folder = get_data_folder_path()
@@ -88,16 +89,21 @@ def create_capture_filepath(
 
 
 def get_filetype(filepath: str):
+    """Retorna a extensão de um arquivo
+
+    Args:
+        filepath (str): caminho para o arquivo
+    """
     return os.path.splitext(filepath)[1].removeprefix(".")
 
 
-def save_local_file(filepath: str, data):
+def save_local_file(filepath: str, data: Union[str, dict, list[dict], pd.DataFrame]):
     """
-    Saves the data at the local file path
+    Salva um arquivo localmente
 
     Args:
-        filepath (str): File path
-        data: Data to write on the file
+        filepath (str): Caminho para salvar o arquivo
+        data Union[str, dict, list[dict], pd.DataFrame]: Dados que serão salvos no arquivo
     """
 
     Path(filepath).parent.mkdir(parents=True, exist_ok=True)
@@ -121,14 +127,15 @@ def save_local_file(filepath: str, data):
 
 def read_raw_data(filepath: str, reader_args: dict = None) -> pd.DataFrame:
     """
-    Read raw data from file
+    Lê os dados de um arquivo Raw
 
     Args:
-        filepath (str): filepath to read
-        reader_args (dict): arguments to pass to pandas.read_csv or read_json
+        filepath (str): Caminho do arquivo
+        reader_args (dict, optional): Argumentos para passar na função
+            de leitura (pd.read_csv ou pd.read_json)
 
     Returns:
-        pd.DataFrame: data
+        pd.DataFrame: DataFrame com os dados lidos
     """
     if reader_args is None:
         reader_args = {}

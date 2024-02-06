@@ -11,39 +11,47 @@ from pytz import timezone
 
 @task
 def task_value_is_none(task_value: Union[Any, None]) -> bool:
+    """Testa se o valor retornado por uma Task é None
+
+    Args:
+        task_value (Union[Any, None]): Valor retornado por uma Task
+
+    Returns:
+        bool: Se o valor é None ou não
+    """
     return task_value is None
 
 
 @task
 def get_current_timestamp(
     truncate_minute: bool = True,
-    return_str: bool = False,
-) -> Union[datetime, str]:
+) -> datetime:
     """
-    Get current timestamp for flow run.
+    Retorna a timestamp atual em UTC
 
     Args:
-        truncate_minute: whether to truncate the timestamp to the minute or not
-        return_str: if True, the return will be an isoformatted datetime string
-                    otherwise it returns a datetime object
+        truncate_minute: Se for True, substitui os segundos e os microssegundos por 0
 
     Returns:
-        Union[datetime, str]: timestamp for flow run
+        Union[datetime, str]: A timestamp atual
     """
 
     timestamp = datetime.now(tz=timezone("UTC"))
     if truncate_minute:
         timestamp = timestamp.replace(second=0, microsecond=0)
-    if return_str:
-        timestamp = timestamp.isoformat()
 
     return timestamp
 
 
 @task
-def parse_timestamp_to_string(timestamp: datetime, pattern="%Y-%m-%d-%H-%M-%S") -> str:
+def parse_timestamp_to_string(timestamp: datetime, pattern: str = "%Y-%m-%d-%H-%M-%S") -> str:
     """
-    Parse timestamp to string pattern.
+    Converte um datetime em string
+
+    Args:
+        timestamp (datetime): O datetime a ser convertido
+        pattern (str): O formato da string de data retornado
+
     """
     if pattern.lower() == "iso":
         return timestamp.isoformat()
@@ -51,7 +59,13 @@ def parse_timestamp_to_string(timestamp: datetime, pattern="%Y-%m-%d-%H-%M-%S") 
 
 
 @task
-def get_run_env():
+def get_run_env() -> str:
+    """
+    Retorna o ambiente de execução atual com base no projeto do Prefect
+
+    Returns:
+        str: "dev" ou "prod"
+    """
     try:
         run_mode = get_flow_run_mode()
         if run_mode == "staging":
@@ -65,4 +79,11 @@ def get_run_env():
 
 @task
 def flow_log(msg, level: str = "info"):
+    """
+    Task para Debug, executa a função log no nível do flow
+
+    Args:
+        msg: Texto para exibir no log
+        level (str): Level do log do Prefect
+    """
     log(msg, level=level)

@@ -8,24 +8,25 @@ from pipelines.utils.fs import save_local_file
 
 class DataExtractor(ABC):
     """
-    Abstract class for all Data Extractors
-    For single page extractions:
-        - implement the method "_get_data"
-    For multi page extractions:
-        - implement the method "_get_data" and overwrite the methods
-          "_prepare_next_page" and "_check_if_last_page" according to the extraction logic
+    Classe abstrata para criar Data Extractors
 
+    Para criar extrações com uma página:
+        - Implemente o método "_get_data"
+
+    Para criar extrações com várias páginas:
+        - Implemente o método "_get_data"
+        - Sobrescreva os métodos "_prepare_next_page" and "_check_if_last_page"
+            de acordo com a lógica de paginação da sua extração
 
     Args:
-        filetype (Union[None, str]): The extracted data file type (json, csv...)
+        save_filepath (str): O caminho para salvar os dados extraídos
 
     Attributes:
-        last_page (bool): True if is the last page to capture
-        page_num (int): Current page number
-        data (list): The data extracted from all pages
-        page_data (Union[None, dict, list[dict], str]): The data from the current page
-        error (Union[None, str]): The error traceback
-        save_filepath (str): Local path to save the extracted data
+        save_filepath (str): O caminho para salvar os dados extraídos
+        data (list): Os dados extraídos de todas as páginas
+        last_page (bool): Se é a última página da captura ou não
+        page_data: Os dados extraídos da página atual
+        current_page (int): o número da página atual, iniciando em 0
     """
 
     def __init__(self, save_filepath: str) -> None:
@@ -37,14 +38,24 @@ class DataExtractor(ABC):
 
     @abstractmethod
     def _get_data(self) -> Union[list[dict], dict, str]:
-        """Abstract method to get the data from one page
+        """
+        Método abstrato para extrair dos dados de uma página
+
+        Para implementar, crie a lógica da extração, retornando
+        uma lista de dicionários, um dicionário ou uma string
 
         Returns:
-            Union[list[dict], dict, str]: The extracted data
+            Union[list[dict], dict, str]: Os dados extraídos
         """
 
     def _prepare_next_page(self):
-        """Prepare the object to get the next page"""
+        """
+        Prepara o objeto para extrair a próxima página
+
+        Coloca os dados da página na lista de dados gerais
+        Verifica se é a última página
+        Incrementa o atributo current_page em 1
+        """
         if isinstance(self.page_data, list):
             self.data += self.page_data
         else:
@@ -56,14 +67,18 @@ class DataExtractor(ABC):
 
     def _check_if_last_page(self) -> bool:
         """
-        Method to check if it is the last page.
-        Overwrite it if you want to implement a paginated extractor
+        Verifica se é a última página
+        Para implementar uma extração paginada,
+        sobrescreva esse método com a lógica de verificação
         """
         return True
 
     def extract(self) -> Union[dict, list[dict], str]:
         """
-        Get data from all pages using the methods implemented by concrete classes
+        Extrai os dados completos de todas as páginas
+
+        Returns:
+            Union[dict, list[dict], str]: Os dados retornados
         """
         while not self.last_page:
             self.page_data = self._get_data()
@@ -73,7 +88,7 @@ class DataExtractor(ABC):
 
     def save_raw_local(self):
         """
-        Saves the data at the local file path
+        Salva os dados extraídos localmente
         """
         save_local_file(
             filepath=self.save_filepath,

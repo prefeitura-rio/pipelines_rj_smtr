@@ -10,15 +10,16 @@ from pipelines.utils.fs import get_filetype
 
 class DBExtractor(DataExtractor):
     """
-    Class for get raw data from Databases
+    Classe para extrair dados de banco de dados
 
     Args:
-        query (str): The SQL Query to execute
-        engine (str): The database management system
-        host (str): The database host
-        user (str): The database user
-        password (str): User's password
-        database (str): The database to connect
+        query (str): o SELECT para ser executada
+        engine (str): O banco de dados (postgres ou mysql)
+        host (str): O host do banco de dados
+        user (str): O usuário para se conectar
+        password (str): A senha do usuário
+        database (str): O nome da base (schema)
+        save_filepath (str): Caminho para salvar os dados
     """
 
     def __init__(
@@ -47,6 +48,12 @@ class DBExtractor(DataExtractor):
         self.connection = create_engine(connection_string)
 
     def _get_data(self) -> list[dict]:
+        """
+        Executa a query e retorna os dados como JSON
+
+        Returns:
+            list[dict]: Os dados retornados pela query
+        """
         max_retries = 10
         for retry in range(1, max_retries + 1):
             try:
@@ -66,17 +73,18 @@ class DBExtractor(DataExtractor):
 
 class PaginatedDBExtractor(DBExtractor):
     """
-    Class for get raw data from Databases using top/limit pagination
+    Classe para extrair dados de um banco de dados com paginação offset/limit
 
     Args:
-        query (str): the SQL Query to execute
-        engine (str): The database management system
-        host (str): The database host
-        user (str): The database user
-        password (str): User's password
-        database (str): The database to connect
-        page_size (int): The maximum number of rows returned by the paginated query
-        max_pages (int): The maximum number of paginated queries to execute
+        query (str): o SELECT para ser executada (sem o limit e offset)
+        engine (str): O banco de dados (postgres ou mysql)
+        host (str): O host do banco de dados
+        user (str): O usuário para se conectar
+        password (str): A senha do usuário
+        database (str): O nome da base (schema)
+        page_size (int): Número de linhas por página
+        max_pages (int): Número máximo de páginas para serem extraídas
+        save_filepath (str): Caminho para salvar os dados
     """
 
     def __init__(
@@ -107,9 +115,16 @@ class PaginatedDBExtractor(DBExtractor):
         self.page_size = page_size
 
     def _prepare_next_page(self):
+        """
+        Incrementa o offset e concatena na query
+        """
         super()._prepare_next_page()
         self.offset += self.page_size
         self.query = f"{self.base_query} OFFSET {self.offset}"
 
     def _check_if_last_page(self):
-        return len(self.page_data) < self.page_data or self.max_pages == self.current_page + 1
+        """
+        Verifica se o número de dados retornados na última página é menor que o máximo
+        ou se chegou ao limite de numero de páginas
+        """
+        return len(self.page_data) < self.page_size or self.max_pages == self.current_page + 1

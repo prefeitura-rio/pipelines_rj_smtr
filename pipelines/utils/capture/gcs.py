@@ -6,6 +6,18 @@ from pipelines.utils.gcp import Storage
 
 
 class GCSExtractor(DataExtractor):
+    """
+    Classe para extrair dados do GCS
+
+    Args:
+        env (str): dev ou prod
+        folder (str): pasta que está o arquivo
+        filename (str): nome do arquivo sem extensão
+        save_filepath (str): Caminho para salvar o arquivo
+            (deve ter a mesma extensão do arquivo no GCS)
+        bucket_name (str): Nome do bucket no GCS
+    """
+
     def __init__(
         self,
         env: str,
@@ -20,6 +32,11 @@ class GCSExtractor(DataExtractor):
         self.storage = Storage(env=env, dataset_id=folder, bucket_name=bucket_name)
 
     def _get_data(self) -> str:
+        """Baixa o arquivo como string
+
+        Returns:
+            str: conteúdo do arquivo
+        """
         data = self.storage.get_blob_string(mode="upload", filename=self.complete_filename)
 
         return data

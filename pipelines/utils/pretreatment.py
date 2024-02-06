@@ -9,14 +9,15 @@ from prefeitura_rio.pipelines_utils.logging import log
 
 def transform_to_nested_structure(data: pd.DataFrame, primary_keys: list) -> pd.DataFrame:
     """
-    Transform columns to nested dict
+    Transforma colunas do DataFrame na coluna content no formato Json
+    agrupando pelas primary keys
 
     Args:
-        data (pd.DataFrame): Dataframe to transform
-        primary_keys (list): List of primary keys
+        data (pd.DataFrame): DataFrame para aplicar o tratamento
+        primary_keys (list): Lista de primary keys
 
     Returns:
-        pd.DataFrame: Nested Dataframe
+        pd.DataFrame: Dataframe contendo as colunas listadas nas primary keys + coluna content
     """
     return (
         data.groupby(primary_keys)
@@ -26,8 +27,15 @@ def transform_to_nested_structure(data: pd.DataFrame, primary_keys: list) -> pd.
     )
 
 
-def pretreatment_step(func):
-    """Decorator to help develop pretreatment steps"""
+def pretreatment_func(func):
+    """
+    Decorator para ajudar no desenvolvimento de funções
+    de pre-tratamento para serem passadas no flow generico de captura
+
+    Faz a checagem dos parâmetros e do retorno da função
+    e possibilita a criação da função sem precisar de todos
+    os parâmetros passados pela Task
+    """
 
     def wrapper(**kwargs):
         signature = inspect.signature(func)
@@ -55,16 +63,17 @@ def pretreatment_step(func):
     return wrapper
 
 
-@pretreatment_step
+@pretreatment_func
 def strip_string_columns(data: pd.DataFrame) -> pd.DataFrame:
     """
-    Apply strip function to all string columns in a dataframe
+    Aplica a função strip em todas as colunas do formato string
+    de um DataFrame
 
     Args:
-        data (pd.DataFrame): Dataframe to treat
+        data (pd.DataFrame): Dataframe a ser tratado
 
     Returns:
-        pd.DataFrame: Treated Dataframe
+        pd.DataFrame: Dataframe tratado
     """
     for col in data.columns[data.dtypes == "object"].to_list():
         try:
