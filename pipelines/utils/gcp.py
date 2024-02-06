@@ -277,7 +277,6 @@ class BQTable(GCPBase):
         bucket_name: str = None,
         timestamp: datetime = None,
         partition_date_only: bool = False,
-        partition_date_name: str = "data",
         raw_filetype: str = "json",
     ) -> None:
         super().__init__(
@@ -293,7 +292,6 @@ class BQTable(GCPBase):
 
         self.partition = create_partition(
             timestamp=timestamp,
-            partition_date_name=partition_date_name,
             partition_date_only=partition_date_only,
         )
 

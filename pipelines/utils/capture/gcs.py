@@ -11,11 +11,11 @@ class GCSExtractor(DataExtractor):
         env: str,
         folder: str,
         filename: str,
-        save_path: str,
+        save_filepath: str,
         bucket_name: str = None,
     ) -> None:
-        super().__init__(save_path=save_path)
-        filetype = get_filetype(filepath=save_path)
+        super().__init__(save_filepath=save_filepath)
+        filetype = get_filetype(filepath=save_filepath)
         self.complete_filename = f"{filename}.{filetype}"
         self.storage = Storage(env=env, dataset_id=folder, bucket_name=bucket_name)
 

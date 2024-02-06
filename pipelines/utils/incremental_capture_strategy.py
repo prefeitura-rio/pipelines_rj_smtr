@@ -51,9 +51,9 @@ class IncrementalStrategy(ABC):
         self._max_incremental_window = max_incremental_window
         self._incremental_reference_column = incremental_reference_column
         self._first_value = first_value
-        self._force_full = None
         self._redis_key = None
         self.incremental_info = None
+        self._raw_filepath = None
 
     def __getitem__(self, key):
         return self.__dict__[key]
@@ -61,23 +61,20 @@ class IncrementalStrategy(ABC):
     def initialize(
         self,
         table: BQTable,
-        force_full: bool = False,
         overwrite_start_value: Any = None,
         overwrite_end_value: Any = None,
     ):
         self._redis_key = f"{table.env}.{table.dataset_id}.{table.table_id}"
 
-        self._force_full = force_full
-
         last_redis_value = self.query_redis().get(constants.REDIS_LAST_CAPTURED_VALUE_KEY.value)
 
+        self._raw_filepath = table.raw_filepath
+
         execution_mode = (
-            constants.MODE_FULL.value
-            if last_redis_value is None or force_full
-            else constants.MODE_INCR.value
+            constants.MODE_FULL.value if last_redis_value is None else constants.MODE_INCR.value
         )
 
-        if execution_mode == constants.MODE_FULL.value:
+        if execution_mode == constants.MODE_FULL.value and self._first_value is not None:
             last_redis_value = self.parse_redis_value(self._first_value)
 
         else:
@@ -86,7 +83,7 @@ class IncrementalStrategy(ABC):
         start_value = (
             self.parse_redis_value(overwrite_start_value)
             if overwrite_start_value is not None
-            else self.parse_redis_value(last_redis_value)
+            else last_redis_value
         )
 
         end_value = (
@@ -113,7 +110,7 @@ class IncrementalStrategy(ABC):
         pass
 
     @abstractmethod
-    def get_value_to_save(self, raw_filepath: str) -> Any:
+    def get_value_to_save(self) -> Any:
         pass
 
     def query_redis(self) -> dict:
@@ -176,8 +173,8 @@ class IDIncremental(IncrementalStrategy):
         if start_value is not None:
             return start_value + int(self._max_incremental_window)
 
-    def get_value_to_save(self, raw_filepath: str) -> int:
-        df = read_raw_data(filepath=raw_filepath)
+    def get_value_to_save(self) -> int:
+        df = read_raw_data(filepath=self._raw_filepath)
         return (
             df[self._incremental_reference_column]
             .dropna()
@@ -215,14 +212,12 @@ class DatetimeIncremental(IncrementalStrategy):
     def initialize(
         self,
         table: BQTable,
-        force_full: bool = False,
         overwrite_start_value: str = None,
         overwrite_end_value: str = None,
     ):
         self._timestamp = table.timestamp
         return super().initialize(
             table=table,
-            force_full=force_full,
             overwrite_start_value=overwrite_start_value,
             overwrite_end_value=overwrite_end_value,
         )
@@ -252,11 +247,11 @@ class DatetimeIncremental(IncrementalStrategy):
 
         return end_value
 
-    def get_value_to_save(self, raw_filepath: str) -> str:
+    def get_value_to_save(self) -> str:
         if self._incremental_reference_column is None:
             return self.incremental_info.end_value.isoformat()
 
-        df = read_raw_data(filepath=raw_filepath)
+        df = read_raw_data(filepath=self._raw_filepath)
         dates = df[self._incremental_reference_column].dropna().astype(str)
         match self._reference_column_ts_format:
             case "iso":

@@ -7,22 +7,22 @@ import pandas as pd
 from prefeitura_rio.pipelines_utils.logging import log
 
 
-def transform_to_nested_structure(data: pd.DataFrame, primary_key: list) -> pd.DataFrame:
+def transform_to_nested_structure(data: pd.DataFrame, primary_keys: list) -> pd.DataFrame:
     """
     Transform columns to nested dict
 
     Args:
         data (pd.DataFrame): Dataframe to transform
-        primary_key (list): List of primary keys
+        primary_keys (list): List of primary keys
 
     Returns:
         pd.DataFrame: Nested Dataframe
     """
     return (
-        data.groupby(primary_key)
-        .apply(lambda x: x[data.columns.difference(primary_key)].to_json(orient="records"))
+        data.groupby(primary_keys)
+        .apply(lambda x: x[data.columns.difference(primary_keys)].to_json(orient="records"))
         .str.strip("[]")
-        .reset_index(name="content")[primary_key + ["content"]]
+        .reset_index(name="content")[primary_keys + ["content"]]
     )
 
 
@@ -37,7 +37,7 @@ def pretreatment_step(func):
         ), "return must be pandas DataFrame"
         func_parameter_names = signature.parameters.keys()
         func_parameters = signature.parameters.values()
-        expected_arguments = {"data": pd.DataFrame, "timestamp": datetime, "primary_key": list}
+        expected_arguments = {"data": pd.DataFrame, "timestamp": datetime, "primary_keys": list}
 
         invalid_args = [
             a.name

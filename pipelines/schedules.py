@@ -13,6 +13,24 @@ from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
 from pipelines.utils.backup.utils import generate_ftp_schedules
 
+
+def generate_schedule(interval: timedelta, agent_label: str, params: dict = None) -> Schedule:
+    if not params:
+        params = {}
+    return Schedule(
+        [
+            IntervalClock(
+                interval=interval,
+                start_date=datetime(2021, 1, 1, 0, 0, 0, tzinfo=timezone(constants.TIMEZONE.value)),
+                labels=[
+                    agent_label,
+                ],
+                parameter_defaults=params,
+            )
+        ]
+    )
+
+
 every_minute = Schedule(
     clocks=[
         IntervalClock(

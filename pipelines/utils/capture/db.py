@@ -29,10 +29,10 @@ class DBExtractor(DataExtractor):
         user: str,
         password: str,
         database: str,
-        save_path: str,
+        save_filepath: str,
     ) -> None:
-        super().__init__(save_path=save_path)
-        if get_filetype(save_path) != "json":
+        super().__init__(save_filepath=save_filepath)
+        if get_filetype(save_filepath) != "json":
             raise ValueError("File type must be json")
 
         self.query = query
@@ -89,7 +89,7 @@ class PaginatedDBExtractor(DBExtractor):
         database: str,
         page_size: int,
         max_pages: int,
-        save_path: str,
+        save_filepath: str,
     ) -> None:
         super().__init__(
             query=query,
@@ -98,7 +98,7 @@ class PaginatedDBExtractor(DBExtractor):
             user=user,
             password=password,
             database=database,
-            save_path=save_path,
+            save_filepath=save_filepath,
         )
         self.offset = 0
         self.base_query = f"{query} LIMIT {page_size}"

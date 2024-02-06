@@ -34,10 +34,10 @@ def extractor_task(func: Callable, **task_init_kwargs):
     def decorator(func):
         expected_arguments = [
             "env",
-            "project",
+            "dataset_id",
             "table_id",
             "save_filepath",
-            "extract_params",
+            "data_extractor_params",
             "incremental_info",
         ]
 

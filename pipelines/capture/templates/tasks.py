@@ -15,7 +15,7 @@ from pipelines.constants import constants
 from pipelines.utils.capture.base import DataExtractor
 from pipelines.utils.fs import read_raw_data, save_local_file
 from pipelines.utils.gcp import BQTable
-from pipelines.utils.incremental_strategy import (
+from pipelines.utils.incremental_capture_strategy import (
     IncrementalInfo,
     IncrementalStrategy,
     incremental_strategy_from_dict,
@@ -30,15 +30,18 @@ from pipelines.utils.utils import create_timestamp_captura, data_info_str
 
 
 @task
-def create_source_dataset_id(project: str, source_name: str):
+def create_source_dataset_id(
+    # dataset_id: str,
+    source_name: str,
+):
     """Creates the BQ source table dataset_id according to the standard
 
     Args:
-        project (str): The project that the table fits in (eg.: bilhetagem, subsidio)
+        dataset_id (str): The final dataset_id that the table fits in (eg.: bilhetagem, subsidio)
         source_name (str): The data source name (eg.: jae)
     """
     return constants.SOURCE_DATASET_ID_PATTERN.value.format(
-        project=project,
+        # dataset_id=dataset_id,
         source_name=source_name,
     )
 
@@ -51,7 +54,6 @@ def create_table_object(
     bucket_name: str,
     timestamp: datetime,
     partition_date_only: bool,
-    partition_date_name: str,
     raw_filetype: str,
 ) -> BQTable:
     """
@@ -72,7 +74,6 @@ def create_table_object(
         bucket_name=bucket_name,
         timestamp=timestamp,
         partition_date_only=partition_date_only,
-        partition_date_name=partition_date_name,
         raw_filetype=raw_filetype,
     )
 
@@ -92,15 +93,14 @@ def rename_capture_flow(
     dataset_id: str,
     table_id: str,
     timestamp: datetime,
-    execution_mode: str,
-    start_value: Union[datetime, str],
-    end_value: Union[datetime, str],
+    incremental_info: IncrementalInfo,
 ) -> bool:
     """
     Rename the current capture flow run.
     """
     name = f"[{timestamp.astimezone(tz=timezone(constants.TIMEZONE.value))} | \
-{execution_mode.upper()}] {dataset_id}.{table_id}: from {start_value} to {end_value}"
+{incremental_info.execution_mode.upper()}] {dataset_id}.{table_id}: from \
+{incremental_info.start_value} to {incremental_info.end_value}"
     return rename_current_flow_run(name=name)
 
 
@@ -181,12 +181,12 @@ def upload_source_data_to_gcs(error: str, table: BQTable):
 
 @task
 def transform_raw_to_nested_structure(
-    pretreatment_steps: list[Callable[[pd.DataFrame, datetime, list], pd.DataFrame]],
+    pretreat_funcs: list[Callable[[pd.DataFrame, datetime, list], pd.DataFrame]],
     error: str,
     raw_filepath: str,
     source_filepath: str,
     timestamp: datetime,
-    primary_key: Union[list, str] = None,
+    primary_keys: Union[list, str] = None,
     print_inputs: bool = False,
     reader_args: dict = None,
 ) -> str:
@@ -194,19 +194,19 @@ def transform_raw_to_nested_structure(
     Task to transform raw data to nested structure
 
     Args:
-        pretreatment_steps (list[Callable[[pd.DataFrame, datetime, list], pd.DataFrame]]):
-            List of pretreatment steps to be executed before the structure nesting.
+        pretreat_funcs (list[Callable[[pd.DataFrame, datetime, list], pd.DataFrame]]):
+            List of pretreatment functions to be executed before the structure nesting.
             A pretreatment step is a function the can receive the following args:
                 data (pd.DataFrame): the dataframe to treat
                 timestamp (datetime): the timestamp argument
-                primary_key (list): the list of primary keys
+                primary_keys (list): the list of primary keys
             and returns the treated pandas dataframe
 
         raw_filepath (str): Path to the saved raw file
         source_filepath (str): Path to the saved treated .csv file
         error (str): Error catched from upstream tasks
         timestamp (datetime): timestamp for flow run
-        primary_key (list, optional): Primary key to be used on nested structure
+        primary_keys (list, optional): Primary key to be used on nested structure
         print_inputs (bool, optional): Flag to indicate if the task should log the data
         reader_args (dict): arguments to pass to pandas.read_csv or read_json
 
@@ -232,16 +232,14 @@ def transform_raw_to_nested_structure(
 
             log(f"Raw data:\n{data_info_str(data)}", level="info")
 
-            primary_key = primary_key if isinstance(primary_key, list) else [primary_key]
-
-            for step in pretreatment_steps:
+            for step in pretreat_funcs:
                 log(f"Starting treatment step: {step.__name__}...")
-                data = step(data=data, timestamp=timestamp, primary_key=primary_key)
+                data = step(data=data, timestamp=timestamp, primary_keys=primary_keys)
                 log(f"Step {step.__name__} finished")
 
             log("Creating nested structure...", level="info")
 
-            data = transform_to_nested_structure(data=data, primary_key=primary_key)
+            data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
 
             timestamp = create_timestamp_captura(timestamp=timestamp)
             data["timestamp_captura"] = timestamp
@@ -349,7 +347,6 @@ def transform_raw_to_nested_structure(
 def create_incremental_strategy(
     strategy_dict: dict,
     table: BQTable,
-    force_full: bool,
     overwrite_start_value: Any,
     overwrite_end_value: Any,
 ) -> Union[dict, IncrementalStrategy]:
@@ -357,7 +354,6 @@ def create_incremental_strategy(
         incremental_strategy = incremental_strategy_from_dict(strategy_dict=strategy_dict)
         incremental_strategy.initialize(
             table=table,
-            force_full=force_full,
             overwrite_start_value=overwrite_start_value,
             overwrite_end_value=overwrite_end_value,
         )
@@ -421,19 +417,19 @@ def create_incremental_strategy(
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
 def save_incremental_redis(
-    incremental_strategy: Union[dict, IncrementalStrategy], raw_filepath: str
+    incremental_capture_strategy: Union[dict, IncrementalStrategy],
+    raw_filepath: str,
 ):
-    log(f"flow_is_running_local = {flow_is_running_local()}")
-    log(
-        f"isinstance(IncrementalStrategy) = {isinstance(incremental_strategy, IncrementalStrategy)}"
-    )
-    if isinstance(incremental_strategy, IncrementalStrategy) and not flow_is_running_local():
-        last_value = incremental_strategy.get_value_to_save(raw_filepath=raw_filepath)
+    if (
+        isinstance(incremental_capture_strategy, IncrementalStrategy)
+        and not flow_is_running_local()
+    ):
+        last_value = incremental_capture_strategy.get_value_to_save(raw_filepath=raw_filepath)
 
         log(f"Last captured value: {last_value}")
 
         log("Saving new value on Redis")
-        msg = incremental_strategy.save_on_redis(value_to_save=last_value)
+        msg = incremental_capture_strategy.save_on_redis(value_to_save=last_value)
         log(msg)
     else:
-        log("incremental_strategy parameter is None, save on Redis skipped")
+        log("incremental_capture_strategy parameter is None, save on Redis skipped")

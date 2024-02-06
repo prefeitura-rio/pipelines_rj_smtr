@@ -25,11 +25,11 @@ class DataExtractor(ABC):
         data (list): The data extracted from all pages
         page_data (Union[None, dict, list[dict], str]): The data from the current page
         error (Union[None, str]): The error traceback
-        save_path (str): Local path to save the extracted data
+        save_filepath (str): Local path to save the extracted data
     """
 
-    def __init__(self, save_path: str) -> None:
-        self.save_path = save_path
+    def __init__(self, save_filepath: str) -> None:
+        self.save_filepath = save_filepath
         self.data = []
         self.last_page = False
         self.page_data = None
@@ -76,6 +76,6 @@ class DataExtractor(ABC):
         Saves the data at the local file path
         """
         save_local_file(
-            filepath=self.save_path,
+            filepath=self.save_filepath,
             data=self.data,
         )

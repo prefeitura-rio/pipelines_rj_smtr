@@ -6,7 +6,7 @@ Constant values for jae data capture
 from enum import Enum
 
 from pipelines.constants import constants as smtr_constants
-from pipelines.utils.incremental_strategy import DatetimeIncremental
+from pipelines.utils.incremental_capture_strategy import DatetimeIncremental
 
 
 class constants(Enum):
@@ -39,15 +39,17 @@ class constants(Enum):
         },
     }
 
-    BILHETAGEM_PRIVATE_BUCKET = "rj-smtr-jae-private"
+    JAE_PRIVATE_BUCKET = "rj-smtr-jae-private"
 
-    TRANSACAO_CAPTURE_PARAMS = {
-        "source_name": JAE_SOURCE_NAME,
-        "project": smtr_constants.BILHETAGEM_DATASET_ID.value,
+    JAE_RAW_FILETYPE = "json"
+
+    TRANSACAO_DEFAULT_PARAMS = {
         "table_id": "transacao",
-        "partition_date_only": False,
-        "incremental_strategy": DatetimeIncremental(max_incremental_window={"hours": 3}).to_dict(),
-        "extract_params": {
+        "raw_filetype": JAE_RAW_FILETYPE,
+        "incremental_capture_strategy": DatetimeIncremental(
+            max_incremental_window={"hours": 3}
+        ).to_dict(),
+        "data_extractor_params": {
             "database": "transacao_db",
             "query": """
                 SELECT
@@ -61,21 +63,20 @@ class constants(Enum):
                 {% endif %}
             """,
         },
-        "primary_key": "id",
+        "primary_keys": ["id"],
     }
 
     AUXILIAR_GENERAL_CAPTURE_PARAMS = {
-        "source_name": JAE_SOURCE_NAME,
-        "partition_date_only": True,
-        "incremental_type": "datetime",
-        "max_incremental_window": {"hours": 5},
+        "incremental_capture_strategy": DatetimeIncremental(
+            max_incremental_window={"hours": 5}
+        ).to_dict(),
+        "raw_filetype": JAE_RAW_FILETYPE,
     }
 
     AUXILIAR_TABLE_CAPTURE_PARAMS = [
         {
-            "project": smtr_constants.BILHETAGEM_DATASET_ID.value,
             "table_id": "linha",
-            "extract_params": {
+            "data_extractor_params": {
                 "database": "principal_db",
                 "query": """
                     SELECT
@@ -89,12 +90,11 @@ class constants(Enum):
                     {% endif %}
                 """,
             },
-            "primary_key": "CD_LINHA",
+            "primary_keys": ["CD_LINHA"],
         },
         {
-            "project": smtr_constants.BILHETAGEM_DATASET_ID.value,
             "table_id": "operadora_transporte",
-            "extract_params": {
+            "data_extractor_params": {
                 "database": "principal_db",
                 "query": """
                     SELECT
@@ -108,12 +108,11 @@ class constants(Enum):
                     {% endif %}
                 """,
             },
-            "primary_key": "CD_OPERADORA_TRANSPORTE",
+            "primary_keys": ["CD_OPERADORA_TRANSPORTE"],
         },
         {
-            "project": smtr_constants.CADASTRO_DATASET_ID.value,
             "table_id": "consorcio",
-            "extract_params": {
+            "data_extractor_params": {
                 "database": "principal_db",
                 "query": """
                     SELECT
@@ -127,12 +126,11 @@ class constants(Enum):
                     {% endif %}
                 """,
             },
-            "primary_key": "CD_CONSORCIO",
+            "primary_keys": ["CD_CONSORCIO"],
         },
         {
-            "project": smtr_constants.CADASTRO_DATASET_ID.value,
             "table_id": "cliente",
-            "extract_params": {
+            "data_extractor_params": {
                 "database": "principal_db",
                 "query": """
                     SELECT
@@ -146,13 +144,13 @@ class constants(Enum):
                     {% endif %}
                 """,
             },
-            "primary_key": "CD_CLIENTE",
-            "save_bucket_name": BILHETAGEM_PRIVATE_BUCKET,
+            "primary_keys": ["CD_CLIENTE"],
+            "save_bucket_name": JAE_PRIVATE_BUCKET,
         },
         {
             "project": smtr_constants.BILHETAGEM_DATASET_ID.value,
             "table_id": "percentual_rateio_integracao",
-            "extract_params": {
+            "data_extractor_params": {
                 "database": "ressarcimento_db",
                 "query": """
                     SELECT
@@ -166,12 +164,11 @@ class constants(Enum):
                     {% endif %}
                   """,
             },
-            "primary_key": "id",
+            "primary_keys": ["id"],
         },
         {
-            "project": smtr_constants.CADASTRO_DATASET_ID.value,
             "table_id": "conta_bancaria",
-            "extract_params": {
+            "data_extractor_params": {
                 "database": "principal_db",
                 "query": """
                     SELECT
@@ -198,13 +195,12 @@ class constants(Enum):
                     "c.nr_conta",
                 ],
             },
-            "primary_key": "CD_CLIENTE",
-            "save_bucket_name": BILHETAGEM_PRIVATE_BUCKET,
+            "primary_keys": ["CD_CLIENTE"],
+            "save_bucket_name": JAE_PRIVATE_BUCKET,
         },
         {
-            "project": smtr_constants.CADASTRO_DATASET_ID.value,
             "table_id": "contato_pessoa_juridica",
-            "extract_params": {
+            "data_extractor_params": {
                 "database": "principal_db",
                 "query": """
                     SELECT
@@ -218,10 +214,10 @@ class constants(Enum):
                     {% endif %}
                 """,
             },
-            "primary_key": [
+            "primary_keys": [
                 "NR_SEQ_CONTATO",
                 "CD_CLIENTE",
             ],
-            "save_bucket_name": BILHETAGEM_PRIVATE_BUCKET,
+            "save_bucket_name": JAE_PRIVATE_BUCKET,
         },
     ]

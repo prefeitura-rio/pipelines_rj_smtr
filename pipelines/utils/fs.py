@@ -23,7 +23,6 @@ def get_data_folder_path() -> str:
 
 def create_partition(
     timestamp: datetime,
-    partition_date_name: str,
     partition_date_only: bool,
 ) -> str:
     """
@@ -31,14 +30,13 @@ def create_partition(
 
     Args:
         timestamp (datetime): timestamp to be used as reference
-        partition_date_name (str): partition name. Defaults to "data".
         partition_date_only (bool): whether to add hour partition or not
 
     Returns:
         str: partition string
     """
     timestamp = timestamp.astimezone(tz=pytz.timezone(constants.TIMEZONE.value))
-    partition = f"{partition_date_name}={timestamp.strftime('%Y-%m-%d')}"
+    partition = f"data={timestamp.strftime('%Y-%m-%d')}"
     if not partition_date_only:
         partition = os.path.join(partition, f"hora={timestamp.strftime('%H')}")
     return partition

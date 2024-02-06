@@ -26,13 +26,13 @@ class APIExtractor(DataExtractor):
         url: str,
         headers: Union[None, dict],
         params: Union[None, dict],
-        save_path: str,
+        save_filepath: str,
     ) -> None:
-        super().__init__(save_path=save_path)
+        super().__init__(save_filepath=save_filepath)
         self.url = url
         self.params = params
         self.headers = headers
-        self.filetype = get_filetype(save_path)
+        self.filetype = get_filetype(save_filepath)
 
     def _get_data(self) -> Union[list[dict], dict, str]:
         for retry in range(constants.MAX_RETRIES.value):
@@ -83,13 +83,13 @@ class APIExtractorTopSkip(APIExtractor):
         skip_param_name: str,
         page_size: int,
         max_pages: int,
-        save_path: str,
+        save_filepath: str,
     ) -> None:
         super().__init__(
             url=url,
             headers=headers,
             params=params,
-            save_path=save_path,
+            save_filepath=save_filepath,
         )
 
         if self.filetype != "json":
