@@ -16,7 +16,7 @@ JAE_TRANSACAO_CAPTURE = create_default_capture_flow(
     partition_date_only=False,
     create_extractor_task=create_extractor_jae,
     overwrite_flow_params=constants.TRANSACAO_DEFAULT_PARAMS.value,
-    agent_label=smtr_constants.RJ_SMTR_DEV_AGENT_LABEL.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
 )
 
 JAE_TRANSACAO_CAPTURE.schedule = generate_schedule(
@@ -32,5 +32,5 @@ JAE_AUXILIAR_CAPTURE = create_default_capture_flow(
     partition_date_only=True,
     create_extractor_task=create_extractor_jae,
     overwrite_flow_params=constants.AUXILIAR_GENERAL_CAPTURE_PARAMS.value,
-    agent_label=smtr_constants.RJ_SMTR_DEV_AGENT_LABEL.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
 )

@@ -126,7 +126,7 @@ def create_default_capture_flow(
         # Parâmetros para Captura #
 
         # Dicionário com valores personalizados para serem acessados na task
-        # de criar o DataExtractor
+        # passada no argumento create_extractor_task
         data_extractor_params = Parameter(
             "data_extractor_params",
             default=overwrite_flow_params.get("data_extractor_params"),
@@ -227,7 +227,6 @@ def create_default_capture_flow(
 
         save_incremental_redis(
             incremental_capture_strategy=incremental_capture_strategy,
-            raw_filepath=table["raw_filepath"],
             upstream_tasks=[upload_source_gcs],
         )
 

@@ -16,8 +16,10 @@ class constants(Enum):  # pylint: disable=c0103
     DOCKER_IMAGE_NAME = "AUTO_REPLACE_DOCKER_IMAGE"
     DOCKER_IMAGE = f"{DOCKER_IMAGE_NAME}:{DOCKER_TAG}"
     GCS_FLOWS_BUCKET = "datario-public"
-    PROJECT_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr-staging"}
-    DEFAULT_BUCKET_NAME = {"dev": "br-rj-smtr-dev", "prod": "br-rj-smtr-staging"}
+    # PROJECT_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr"}
+    # DEFAULT_BUCKET_NAME = {"dev": "br-rj-smtr-dev", "prod": "br-rj-smtr"}
+    PROJECT_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr-dev"}
+    DEFAULT_BUCKET_NAME = {"dev": "br-rj-smtr-dev", "prod": "br-rj-smtr-dev"}
     FILE_MAX_SIZE = 20_000
 
     # AGENT LABELS #

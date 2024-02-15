@@ -47,7 +47,7 @@ class constants(Enum):
         "table_id": "transacao",
         "raw_filetype": JAE_RAW_FILETYPE,
         "incremental_capture_strategy": DatetimeIncremental(
-            max_incremental_window={"hours": 3}
+            max_incremental_window={"hours": 3}, first_value="2024-02-15 00:00:00"
         ).to_dict(),
         "data_extractor_params": {
             "database": "transacao_db",
@@ -57,10 +57,8 @@ class constants(Enum):
                 FROM
                     transacao
                 WHERE
-                    data_processamento <= '{{ end }}'
-                {% if is_incremental() %}
-                    AND data_processamento > '{{ start }}'
-                {% endif %}
+                    data_processamento > '{{ start }}'
+                    AND data_processamento <= '{{ end }}'
             """,
         },
         "primary_keys": ["id"],
