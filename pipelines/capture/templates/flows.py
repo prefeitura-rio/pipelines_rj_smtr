@@ -204,30 +204,30 @@ def create_default_capture_flow(
 
         data_extractor.set_upstream(rename_flow_run)
 
-        error = get_raw_data(data_extractor=data_extractor)
+        get_raw = get_raw_data(data_extractor=data_extractor)
 
-        error = upload_raw_file_to_gcs(error=error, table=table)
+        upload_raw_gcs = upload_raw_file_to_gcs(table=table, upstream_tasks=[get_raw])
 
         # Pré-tratamento #
 
-        error = transform_raw_to_nested_structure(
+        pretreatment = transform_raw_to_nested_structure(
             pretreat_funcs=pretreat_funcs,
-            error=error,
             raw_filepath=table["raw_filepath"],
             source_filepath=table["source_filepath"],
             timestamp=timestamp,
             primary_keys=primary_keys,
             print_inputs=task_value_is_none(task_value=save_bucket_name),
             reader_args=pretreatment_reader_args,
+            upstream_tasks=[get_raw],
         )
 
-        upload_source_gcs = upload_source_data_to_gcs(error=error, table=table)
+        upload_source_gcs = upload_source_data_to_gcs(table=table, upstream_tasks=[pretreatment])
 
         # Finalizar Flow #
 
         save_incremental_redis(
             incremental_capture_strategy=incremental_capture_strategy,
-            upstream_tasks=[upload_source_gcs],
+            upstream_tasks=[upload_source_gcs, upload_raw_gcs],
         )
 
     capture_flow.storage = GCS(constants.GCS_FLOWS_BUCKET.value)

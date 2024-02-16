@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """Module to get data from GCS"""
+from prefeitura_rio.pipelines_utils.logging import log
+
 from pipelines.utils.capture.base import DataExtractor
 from pipelines.utils.fs import get_filetype
 from pipelines.utils.gcp import Storage
@@ -37,6 +39,7 @@ class GCSExtractor(DataExtractor):
         Returns:
             str: conteúdo do arquivo
         """
+        log(f"Getting file: {self.complete_filename}")
         data = self.storage.get_blob_string(mode="upload", filename=self.complete_filename)
 
         return data

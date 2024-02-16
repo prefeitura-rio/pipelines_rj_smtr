@@ -8,6 +8,7 @@ from typing import Union
 
 import pandas as pd
 import pytz
+from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.constants import constants
 from pipelines.utils.utils import custom_serialization
@@ -37,10 +38,15 @@ def create_partition(
     Returns:
         str: string com o particionamento
     """
+    log("Creating file partition...")
+    log(f"Timestamp received: {timestamp}")
     timestamp = timestamp.astimezone(tz=pytz.timezone(constants.TIMEZONE.value))
+    log(f"Timestamp converted to {constants.TIMEZONE.value}: {timestamp}")
     partition = f"data={timestamp.strftime('%Y-%m-%d')}"
     if not partition_date_only:
         partition = os.path.join(partition, f"hora={timestamp.strftime('%H')}")
+
+    log(f"Partition created successfully: {partition}")
     return partition
 
 
@@ -62,17 +68,21 @@ def create_capture_filepath(
     Returns:
         dict: caminhos para os dados raw e source
     """
+    log("Creating filepaths...")
+    log(f"Timestamp received: {timestamp}")
     timestamp = timestamp.astimezone(tz=pytz.timezone(constants.TIMEZONE.value))
+    log(f"Timestamp converted to {constants.TIMEZONE.value}: {timestamp}")
     data_folder = get_data_folder_path()
-    template_filepath = f"{os.getcwd()}/{data_folder}/{{mode}}/{dataset_id}/{table_id}"
+    log(f"Data folder: {data_folder}")
     template_filepath = os.path.join(
-        os.getcwd(),
         data_folder,
         "{mode}",
         dataset_id,
         table_id,
     )
+
     if partition is not None:
+        log("Received partition, appending it to filepath template")
         template_filepath = os.path.join(template_filepath, partition)
 
     template_filepath = os.path.join(
@@ -80,10 +90,14 @@ def create_capture_filepath(
         f"{timestamp.strftime(constants.FILENAME_PATTERN.value)}.{{filetype}}",
     )
 
+    log(f"Filepath template: {template_filepath}")
+
     filepath = {
         "raw": template_filepath.format(mode="raw", filetype=raw_filetype),
         "source": template_filepath.format(mode="source", filetype="csv"),
     }
+
+    log(f"Created filepaths successfully: {filepath}")
 
     return filepath
 
@@ -105,24 +119,37 @@ def save_local_file(filepath: str, data: Union[str, dict, list[dict], pd.DataFra
         filepath (str): Caminho para salvar o arquivo
         data Union[str, dict, list[dict], pd.DataFrame]: Dados que serão salvos no arquivo
     """
+    log(f"Saving data on local file: {filepath}")
 
+    log("Creating parent folder...")
     Path(filepath).parent.mkdir(parents=True, exist_ok=True)
+    log("Parent folder created!")
 
     if isinstance(data, pd.DataFrame):
+        log("Received a DataFrame, saving file as CSV")
         data.to_csv(filepath, index=False)
+        log("File saved!")
         return
 
     filetype = get_filetype(filepath)
-
+    log(f"Saving {filetype.upper()}")
     with open(filepath, "w", encoding="utf-8") as file:
         if filetype == "json":
             if isinstance(data, str):
+                log("Converting string to python object")
                 data = json.loads(data)
 
             json.dump(data, file, default=custom_serialization)
 
         elif filetype in ("txt", "csv"):
             file.write(data)
+
+        else:
+            raise NotImplementedError(
+                "Unsupported raw file extension. Supported only: json, csv and txt"
+            )
+
+    log("File saved!")
 
 
 def read_raw_data(filepath: str, reader_args: dict = None) -> pd.DataFrame:
@@ -137,17 +164,22 @@ def read_raw_data(filepath: str, reader_args: dict = None) -> pd.DataFrame:
     Returns:
         pd.DataFrame: DataFrame com os dados lidos
     """
+
+    log(f"Reading raw data in {filepath}")
     if reader_args is None:
         reader_args = {}
 
-    file_type = get_filetype(filepath=filepath)
+    filetype = get_filetype(filepath=filepath)
 
-    if file_type == "json":
+    log(f"Reading {filetype.upper()}")
+    if filetype == "json":
         data = pd.read_json(filepath, **reader_args)
 
-    elif file_type in ("txt", "csv"):
+    elif filetype in ("txt", "csv"):
         data = pd.read_csv(filepath, **reader_args)
     else:
-        raise ValueError("Unsupported raw file extension. Supported only: json, csv and txt")
+        raise NotImplementedError(
+            "Unsupported raw file extension. Supported only: json, csv and txt"
+        )
 
     return data

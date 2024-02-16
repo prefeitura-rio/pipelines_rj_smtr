@@ -127,4 +127,16 @@ class PaginatedDBExtractor(DBExtractor):
         Verifica se o número de dados retornados na última página é menor que o máximo
         ou se chegou ao limite de numero de páginas
         """
-        return len(self.page_data) < self.page_size or self.max_pages == self.current_page + 1
+        page_data_len = len(self.page_data)
+        current_page = self.current_page + 1
+        log(
+            f"""
+            Page size: {self.page_size}
+            Current page: {current_page}/{self.max_pages}
+            Current page returned {page_data_len} rows"""
+        )
+
+        last_page = page_data_len < self.page_size or self.max_pages == current_page
+        if last_page:
+            log("Last page, ending extraction")
+        return last_page

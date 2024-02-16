@@ -2,7 +2,6 @@
 """
 Tasks for rj_smtr
 """
-import traceback
 from datetime import datetime, timedelta
 from typing import Any, Callable, Union
 
@@ -29,7 +28,10 @@ from pipelines.utils.utils import create_timestamp_captura, data_info_str
 ############################
 
 
-@task
+@task(
+    max_retries=constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
+)
 def create_table_object(
     env: str,
     dataset_id: str,
@@ -69,7 +71,10 @@ def create_table_object(
     )
 
 
-@task
+@task(
+    max_retries=constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
+)
 def rename_capture_flow(
     dataset_id: str,
     table_id: str,
@@ -78,7 +83,7 @@ def rename_capture_flow(
 ) -> bool:
     """
     Renomeia a run atual do Flow de captura com o formato:
-    [<timestamp> | <FULL / INCR>] <dataset_id>.<table_id>: from <valor inicial> to <valor final>
+    [<timestamp> | <FULL/INCR>] <dataset_id>.<table_id>: from <valor inicial> to <valor final>
 
     Returns:
         bool: Se o flow foi renomeado
@@ -94,27 +99,19 @@ def rename_capture_flow(
 #####################
 
 
-@task
-def get_raw_data(data_extractor: DataExtractor) -> Union[None, str]:
+@task(
+    max_retries=constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
+)
+def get_raw_data(data_extractor: DataExtractor):
     """
     Faz a extração dos dados raw e salva localmente
 
     Args:
         data_extractor (DataExtractor): Extrator de dados a ser executado
-
-    Returns:
-        Union[str, None]: Mensagem de erro
     """
-    error = None
-    try:
-        data_extractor.extract()
-        data_extractor.save_raw_local()
-        log(f"Data saved to: {data_extractor.save_path}")
-    except Exception:
-        error = traceback.format_exc()
-        log(f"[CATCHED] Task failed with error: \n{error}", level="error")
-
-    return error
+    data_extractor.extract()
+    data_extractor.save_raw_local()
 
 
 ################
@@ -122,61 +119,38 @@ def get_raw_data(data_extractor: DataExtractor) -> Union[None, str]:
 ################
 
 
-@task
-def upload_raw_file_to_gcs(error: Union[None, str], table: BQTable) -> Union[None, str]:
+@task(
+    max_retries=constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
+)
+def upload_raw_file_to_gcs(table: BQTable):
     """
     Sobe o arquivo raw para o GCS
 
     Args:
-        error (Union[None, str]): Retorno de erro de tasks anteriores
         table (BQTable): Objeto de tabela para BigQuery
-
-    Returns:
-        Union[None, str]: Mensagem de erro
     """
-    if error is None:
-        try:
-            log(f"Uploading file to: {table.raw_filepath}")
-            table.upload_raw_file()
-        except Exception:
-            error = traceback.format_exc()
-            log(f"[CATCHED] Task failed with error: \n{error}", level="error")
-
-    return error
+    table.upload_raw_file()
 
 
-@task
-def upload_source_data_to_gcs(error: Union[None, str], table: BQTable):
+@task(
+    max_retries=constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
+)
+def upload_source_data_to_gcs(table: BQTable):
     """
     Sobe os dados aninhados e o log do Flow para a pasta source do GCS
 
     Args:
-        error (Union[None, str]): Retorno de erro de tasks anteriores
         table (BQTable): Objeto de tabela para BigQuery
     """
-    log_table = table.get_log_table(generate_logs=True, error=error)
 
-    if error is None:
-        if not table.exists():
-            log("Staging Table does not exist, creating table...")
-            table.create()
-            log("Table created")
-        else:
-            log("Staging Table already exists, appending to it...")
-            table.append()
-            log("Appended to staging table successfully.")
-
-    if not log_table.exists():
-        log("Log Table does not exist, creating table...")
-        log_table.create()
-        log("Table created")
+    if not table.exists():
+        log("Staging Table does not exist, creating table...")
+        table.create()
     else:
-        log("Log Table already exists, appending to it...")
-        log_table.append()
-        log("Appended to log table successfully.")
-
-    if error is not None:
-        raise Exception(error)
+        log("Staging Table already exists, appending to it...")
+        table.append()
 
 
 ######################
@@ -184,9 +158,11 @@ def upload_source_data_to_gcs(error: Union[None, str], table: BQTable):
 ######################
 
 
-@task
+@task(
+    max_retries=constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
+)
 def transform_raw_to_nested_structure(
-    error: Union[None, str],
     pretreat_funcs: list[Callable[[pd.DataFrame, datetime, list], pd.DataFrame]],
     raw_filepath: str,
     source_filepath: str,
@@ -194,12 +170,11 @@ def transform_raw_to_nested_structure(
     primary_keys: Union[list, str],
     print_inputs: bool,
     reader_args: dict,
-) -> Union[None, str]:
+):
     """
     Task para aplicar pre-tratamentos e transformar os dados para o formato aninhado
 
     Args:
-        error (Union[None, str]): Retorno de erro de tasks anteriores
         pretreat_funcs (list[Callable[[pd.DataFrame, datetime, list], pd.DataFrame]]):
             Lista de funções para serem executadas antes de aninhar os dados
             A função pode receber os argumentos:
@@ -214,54 +189,43 @@ def transform_raw_to_nested_structure(
         print_inputs (bool): Se a task deve exibir os dados lidos no log ou não
         reader_args (dict): Dicionário de argumentos para serem passados no leitor de dados raw
             (pd.read_json ou pd.read_csv)
-
-    Returns:
-        Union[None, str]: Mensagem de erro
     """
-    if error is None:
-        try:
-            data = read_raw_data(filepath=raw_filepath, reader_args=reader_args)
+    data = read_raw_data(filepath=raw_filepath, reader_args=reader_args)
 
-            if print_inputs:
-                log(
-                    f"""
-                    Received inputs:
-                    - timestamp:\n{timestamp}
-                    - data:\n{data.head()}"""
-                )
+    if print_inputs:
+        log(
+            f"""
+            Received inputs:
+            - timestamp:\n{timestamp}
+            - data:\n{data.head()}"""
+        )
 
-            if data.empty:
-                log("Empty dataframe, skipping transformation...")
-                return
+    if data.empty:
+        log("Empty dataframe, skipping transformation...")
+        return
 
-            log(f"Raw data:\n{data_info_str(data)}", level="info")
+    log(f"Raw data:\n{data_info_str(data)}", level="info")
 
-            for step in pretreat_funcs:
-                log(f"Starting treatment step: {step.__name__}...")
-                data = step(data=data, timestamp=timestamp, primary_keys=primary_keys)
-                log(f"Step {step.__name__} finished")
+    for step in pretreat_funcs:
+        log(f"Starting treatment step: {step.__name__}...")
+        data = step(data=data, timestamp=timestamp, primary_keys=primary_keys)
+        log(f"Step {step.__name__} finished")
 
-            log("Creating nested structure...", level="info")
+    log("Creating nested structure...", level="info")
 
-            data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
+    data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
 
-            timestamp = create_timestamp_captura(timestamp=timestamp)
-            data["timestamp_captura"] = timestamp
-            log(f"timestamp column = {timestamp}", level="info")
+    timestamp = create_timestamp_captura(timestamp=timestamp)
+    data["timestamp_captura"] = timestamp
+    log(f"timestamp column = {timestamp}", level="info")
 
-            log(
-                f"Finished nested structure! Data:\n{data_info_str(data)}",
-                level="info",
-            )
+    log(
+        f"Finished nested structure! Data:\n{data_info_str(data)}",
+        level="info",
+    )
 
-            save_local_file(filepath=source_filepath, data=data)
-            log(f"Data saved in {source_filepath}")
-
-        except Exception:  # pylint: disable=W0703
-            error = traceback.format_exc()
-            log(f"[CATCHED] Task failed with error: \n{error}", level="error")
-
-    return error
+    save_local_file(filepath=source_filepath, data=data)
+    log(f"Data saved in {source_filepath}")
 
 
 #####################
@@ -269,7 +233,10 @@ def transform_raw_to_nested_structure(
 #####################
 
 
-@task
+@task(
+    max_retries=constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
+)
 def create_incremental_strategy(
     strategy_dict: Union[None, dict],
     table: BQTable,

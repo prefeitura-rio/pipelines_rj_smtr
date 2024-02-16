@@ -10,18 +10,13 @@ from mimetypes import MimeTypes
 from pathlib import Path
 from typing import Type, TypeVar, Union
 
-import pandas as pd
 from google.api_core.exceptions import NotFound
 from google.cloud import bigquery, storage
 from google.cloud.bigquery.external_config import HivePartitioningOptions
+from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.constants import constants
-from pipelines.utils.fs import (
-    create_capture_filepath,
-    create_partition,
-    save_local_file,
-)
-from pipelines.utils.utils import create_timestamp_captura
+from pipelines.utils.fs import create_capture_filepath, create_partition
 
 T = TypeVar("T")
 
@@ -123,12 +118,14 @@ class Storage(GCPBase):
         blob = self.bucket.blob(blob_name, chunk_size=chunk_size)
 
         if not blob.exists() or if_exists == "replace":
+            log(f"Uploading file {filepath} to {self.bucket.name}/{blob_name}")
             upload_kwargs["timeout"] = upload_kwargs.get("timeout", None)
 
             blob.upload_from_filename(str(filepath), **upload_kwargs)
+            log("File uploaded!")
 
         elif if_exists == "pass":
-            pass
+            log("Blob already exists skipping upload")
 
         else:
             raise FileExistsError("Blob already exists")
@@ -265,7 +262,11 @@ class Dataset(GCPBase):
             dataset_full_name = f"{constants.PROJECT_NAME.value[self.env]}.{self.dataset_id}"
             dataset_obj = bigquery.Dataset(dataset_full_name)
             dataset_obj.location = self.location
+            log(f"Creating dataset {dataset_full_name} | location: {self.location}")
             self.client("bigquery").create_dataset(dataset_obj)
+            log("Dataset created!")
+        else:
+            log("Dataset already exists")
 
 
 class BQTable(GCPBase):
@@ -309,10 +310,16 @@ class BQTable(GCPBase):
         self.timestamp = timestamp
 
     def _create_table_schema(self) -> list[bigquery.SchemaField]:
-        columns = next(csv.reader(open(self.source_filepath, "r", encoding="utf-8")))
-        return [
+        log("Creating table schema...")
+        with open(self.source_filepath, "r", encoding="utf-8") as fi:
+            columns = next(csv.reader(fi))
+
+        log(f"Columns found: {columns}")
+        schema = [
             bigquery.SchemaField(name=col, field_type="STRING", description=None) for col in columns
         ]
+        log("Schema created!")
+        return schema
 
     def _create_table_config(self) -> bigquery.ExternalConfig:
         if self.source_filepath is None:
@@ -354,6 +361,7 @@ class BQTable(GCPBase):
             return False
 
     def create(self, location: str = "southamerica-east1"):
+        log(f"Creating External Table: {self.table_full_name}")
         self.append()
         dataset_obj = self.transfer_gcp_obj(target_class=Dataset, location=location)
         dataset_obj.create()
@@ -365,6 +373,7 @@ class BQTable(GCPBase):
         bq_table.external_data_configuration = self._create_table_config()
 
         client.create_table(bq_table)
+        log("Table created!")
 
     def append(self):
         if self.source_filepath is None:
@@ -378,29 +387,29 @@ class BQTable(GCPBase):
             partition=self.partition,
         )
 
-    def get_log_table(
-        self,
-        generate_logs: bool = False,
-        error: str = None,
-    ):
-        log_table = BQTable(
-            env=self.env,
-            dataset_id=self.dataset_id,
-            table_id=f"{self.table_id}_logs",
-            bucket_name=self.bucket_name,
-            timestamp=self.timestamp,
-            partition_date_only=True,
-        )
+    # def get_log_table(
+    #     self,
+    #     generate_logs: bool = False,
+    #     error: str = None,
+    # ):
+    #     log_table = BQTable(
+    #         env=self.env,
+    #         dataset_id=self.dataset_id,
+    #         table_id=f"{self.table_id}_logs",
+    #         bucket_name=self.bucket_name,
+    #         timestamp=self.timestamp,
+    #         partition_date_only=True,
+    #     )
 
-        if generate_logs:
-            df = pd.DataFrame(
-                {
-                    "timestamp_captura": [create_timestamp_captura(timestamp=log_table.timestamp)],
-                    "sucesso": [error is None],
-                    "erro": [error],
-                }
-            )
+    #     if generate_logs:
+    #         df = pd.DataFrame(
+    #             {
+    #              "timestamp_captura": [create_timestamp_captura(timestamp=log_table.timestamp)],
+    #                 "sucesso": [error is None],
+    #                 "erro": [error],
+    #             }
+    #         )
 
-            save_local_file(filepath=log_table.source_filepath, data=df)
+    #         save_local_file(filepath=log_table.source_filepath, data=df)
 
-        return log_table
+    #     return log_table
