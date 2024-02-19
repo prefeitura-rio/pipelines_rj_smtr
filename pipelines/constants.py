@@ -45,6 +45,7 @@ class constants(Enum):  # pylint: disable=c0103
     SOURCE_DATASET_ID_PATTERN = "{source_name}_source"
     MODE_FULL = "full"
     MODE_INCR = "incr"
+    FLOW_RUN_URL_PATTERN = "https://pipelines.dados.rio/smtr/flow-run/{run_id}"
 
     # GPS STPL #
     # GPS_STPL_API_BASE_URL = "http://zn4.m2mcontrol.com.br/api/integracao/veiculos"

@@ -5,10 +5,12 @@ from typing import Any, Union
 
 import prefect
 from prefect import task
+from prefect.engine.signals import FAIL
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 from pytz import timezone
 
+from pipelines.constants import constants
 from pipelines.utils.prefect import create_subflow_run, wait_subflow_run
 
 
@@ -126,7 +128,7 @@ def run_subflow(
     if idempotency_key and map_index is not None:
         idempotency_key += f"-{map_index}"
 
-    run_signals = []
+    flow_run_results = []
 
     for idx, param_list in enumerate(execution_list):
 
@@ -145,8 +147,19 @@ def run_subflow(
         ]
 
         for run_id in runs_ids:
-            run_signal = wait_subflow_run(flow_run_id=run_id)
-            run_signals.append(run_signal)
+            result = wait_subflow_run(flow_run_id=run_id)
+            flow_run_results.append(result)
 
-    for signal in run_signals:
-        raise signal
+    failed_message = "The following runs failed:"
+    flag_failed_runs = False
+    for res in flow_run_results:
+        if res.state.is_failed():
+            flag_failed_runs = True
+            failed_message += "\n" + constants.FLOW_RUN_URL_PATTERN.value.format(
+                run_id=res.flow_run_id
+            )
+
+    if flag_failed_runs:
+        raise FAIL(failed_message)
+    # for signal in run_signals:
+    #     raise signal

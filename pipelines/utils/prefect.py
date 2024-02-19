@@ -6,10 +6,12 @@ from typing import Any, Callable, Dict, Type, Union
 import prefect
 from prefect import unmapped
 from prefect.backend.flow_run import FlowRunView, FlowView, watch_flow_run
-from prefect.engine.signals import PrefectStateSignal, signal_from_state
+
+# from prefect.engine.signals import PrefectStateSignal, signal_from_state
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefeitura_rio.pipelines_utils.logging import log
 
+from pipelines.constants import constants
 from pipelines.utils.capture.base import DataExtractor
 
 
@@ -153,7 +155,7 @@ def create_subflow_run(
         str: o id da execução do flow
     """
     if prefect.context["flow_name"] == flow_name:
-        raise ValueError("Can not run recursive flows")
+        raise RecursionError("Can not run recursive flows")
 
     if project_name is None:
         project_name = prefect.context.get("project_name")
@@ -181,14 +183,14 @@ def create_subflow_run(
         idempotency_key=idempotency_key,
     )
 
-    run_url = client.get_cloud_url("flow-run", flow_run_id)
+    run_url = constants.FLOW_RUN_URL_PATTERN.value.format(run_id=flow_run_id)
 
     log(f"Created flow run: {run_url}")
 
     return flow_run_id
 
 
-def wait_subflow_run(flow_run_id: str) -> PrefectStateSignal:
+def wait_subflow_run(flow_run_id: str) -> FlowRunView:
     flow_run = FlowRunView.from_flow_run_id(flow_run_id)
 
     for exec_log in watch_flow_run(
@@ -201,11 +203,11 @@ def wait_subflow_run(flow_run_id: str) -> PrefectStateSignal:
 
     flow_run = flow_run.get_latest()
 
-    state_signal = signal_from_state(flow_run.state)(
-        message=f"{flow_run_id} finished in state {flow_run.state}",
-        result=flow_run,
-    )
-    return state_signal
+    # state_signal = signal_from_state(flow_run.state)(
+    #     message=f"{flow_run_id} finished in state {flow_run.state}",
+    #     result=flow_run,
+    # )
+    return flow_run
 
 
 def run_flow_mapped(
