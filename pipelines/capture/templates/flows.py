@@ -75,6 +75,9 @@ def create_default_capture_flow(
         Flow: The capture flow
     """
 
+    if pretreat_funcs is None:
+        pretreat_funcs = []
+
     with Flow(flow_name) as capture_flow:
         # Parâmetros Gerais #
 
