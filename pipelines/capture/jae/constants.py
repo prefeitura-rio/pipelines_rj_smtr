@@ -5,7 +5,6 @@ Valores constantes para captura de dados da JAE
 
 from enum import Enum
 
-from pipelines.constants import constants as smtr_constants
 from pipelines.utils.incremental_capture_strategy import DatetimeIncremental
 
 
@@ -39,7 +38,7 @@ class constants(Enum):
         },
     }
 
-    JAE_PRIVATE_BUCKET = "rj-smtr-jae-private"
+    JAE_PRIVATE_BUCKET = {"dev": "br-rj-smtr-jae-private-dev", "prod": "br-rj-smtr-jae-private-dev"}
 
     JAE_RAW_FILETYPE = "json"
 
@@ -82,9 +81,9 @@ class constants(Enum):
                     FROM
                         LINHA
                     {% if is_incremental() %}
-                    WHERE
-                        DT_INCLUSAO BETWEEN '{{ start }}'
-                        AND '{{ end }}'
+                        WHERE
+                            DT_INCLUSAO BETWEEN '{{ start }}'
+                            AND '{{ end }}'
                     {% endif %}
                 """,
             },
@@ -100,31 +99,13 @@ class constants(Enum):
                     FROM
                         OPERADORA_TRANSPORTE
                     {% if is_incremental() %}
-                    WHERE
-                        DT_INCLUSAO BETWEEN '{{ start }}'
-                        AND '{{ end }}'
+                        WHERE
+                            DT_INCLUSAO BETWEEN '{{ start }}'
+                            AND '{{ end }}'
                     {% endif %}
                 """,
             },
             "primary_keys": ["CD_OPERADORA_TRANSPORTE"],
-        },
-        {
-            "table_id": "consorcio",
-            "data_extractor_params": {
-                "database": "principal_db",
-                "query": """
-                    SELECT
-                        *
-                    FROM
-                        CONSORCIO
-                    {% if is_incremental() %}
-                    WHERE
-                        DT_INCLUSAO BETWEEN '{{ start }}'
-                        AND '{{ end }}'
-                    {% endif %}
-                """,
-            },
-            "primary_keys": ["CD_CONSORCIO"],
         },
         {
             "table_id": "cliente",
@@ -136,9 +117,9 @@ class constants(Enum):
                     FROM
                         CLIENTE c
                     {% if is_incremental() %}
-                    WHERE
-                        DT_CADASTRO BETWEEN '{{ start }}'
-                        AND '{{ end }}'
+                        WHERE
+                            DT_CADASTRO BETWEEN '{{ start }}'
+                            AND '{{ end }}'
                     {% endif %}
                 """,
             },
@@ -146,7 +127,72 @@ class constants(Enum):
             "save_bucket_name": JAE_PRIVATE_BUCKET,
         },
         {
-            "project": smtr_constants.BILHETAGEM_DATASET_ID.value,
+            "table_id": "pessoa_fisica",
+            "data_extractor_params": {
+                "database": "principal_db",
+                "query": """
+                    SELECT
+                        p.*,
+                        c.DT_CADASTRO
+                    FROM
+                        PESSOA_FISICA p
+                    JOIN
+                        CLIENTE c
+                    ON
+                        p.CD_CLIENTE = c.CD_CLIENTE
+                    {% if is_incremental() %}
+                        WHERE
+                            c.DT_CADASTRO BETWEEN '{{ start }}'
+                            AND '{{ end }}'
+                    {% endif %}
+                """,
+            },
+            "primary_key": ["CD_CLIENTE"],
+            "save_bucket_name": JAE_PRIVATE_BUCKET,
+        },
+        {
+            "table_id": "gratuidade",
+            "extract_params": {
+                "database": "gratuidade_db",
+                "query": """
+                    SELECT
+                        g.*,
+                        t.descricao AS tipo_gratuidade
+                    FROM
+                        gratuidade g
+                    LEFT JOIN
+                        tipo_gratuidade t
+                    ON
+                        g.id_tipo_gratuidade = t.id
+                    {% if is_incremental() %}
+                        WHERE
+                            g.data_inclusao BETWEEN '{{ start }}'
+                            AND '{{ end }}'
+                    {% endif %}
+                """,
+            },
+            "primary_key": ["id"],
+            "save_bucket_name": JAE_PRIVATE_BUCKET,
+        },
+        {
+            "table_id": "consorcio",
+            "data_extractor_params": {
+                "database": "principal_db",
+                "query": """
+                    SELECT
+                        *
+                    FROM
+                        CONSORCIO
+                    {% if is_incremental() %}
+                        WHERE
+                            DT_INCLUSAO BETWEEN '{{ start }}'
+                            AND '{{ end }}'
+                    {% endif %}
+                """,
+            },
+            "primary_keys": ["CD_CONSORCIO"],
+        },
+        {
             "table_id": "percentual_rateio_integracao",
             "data_extractor_params": {
                 "database": "ressarcimento_db",
@@ -156,9 +202,9 @@ class constants(Enum):
                     FROM
                         percentual_rateio_integracao
                     {% if is_incremental() %}
-                    WHERE
-                        dt_inclusao BETWEEN '{{ start }}'
-                        AND '{{ end }}'
+                        WHERE
+                            dt_inclusao BETWEEN '{{ start }}'
+                            AND '{{ end }}'
                     {% endif %}
                   """,
             },
@@ -206,9 +252,9 @@ class constants(Enum):
                     FROM
                         CONTATO_PESSOA_JURIDICA
                     {% if is_incremental() %}
-                    WHERE
-                        DT_INCLUSAO BETWEEN '{{ start }}'
-                        AND '{{ end }}'
+                        WHERE
+                            DT_INCLUSAO BETWEEN '{{ start }}'
+                            AND '{{ end }}'
                     {% endif %}
                 """,
             },

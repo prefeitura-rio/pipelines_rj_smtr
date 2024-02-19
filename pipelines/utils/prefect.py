@@ -4,6 +4,7 @@ import inspect
 from typing import Any, Callable, Dict, Type, Union
 
 import prefect
+from prefect.backend import FlowRunView
 
 from pipelines.utils.capture.base import DataExtractor
 
@@ -113,3 +114,12 @@ def rename_current_flow_run(name: str) -> bool:
         client = prefect.Client()
         return client.set_flow_run_name(flow_run_id, name)
     return False
+
+
+def get_current_flow_labels() -> list[str]:
+    """
+    Get the labels of the current flow.
+    """
+    flow_run_id = prefect.context.get("flow_run_id")
+    flow_run_view = FlowRunView.from_flow_run_id(flow_run_id)
+    return flow_run_view.labels
