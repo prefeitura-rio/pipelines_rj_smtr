@@ -29,9 +29,10 @@ class GCPBase:
     env: str
 
     def __post_init__(self):
-        self.bucket_name = (
-            self.bucket_names[self.env] or constants.DEFAULT_BUCKET_NAME.value[self.env]
-        )
+        if self.bucket_names is None:
+            self.bucket_name = constants.DEFAULT_BUCKET_NAME.value[self.env]
+        else:
+            self.bucket_name = self.bucket_names[self.env]
 
     def __getitem__(self, key):
         return self.__dict__[key]
