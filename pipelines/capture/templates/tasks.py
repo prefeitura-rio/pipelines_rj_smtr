@@ -202,27 +202,27 @@ def transform_raw_to_nested_structure(
 
     if data.empty:
         log("Empty dataframe, skipping transformation...")
-        return
+        data = pd.DataFrame()
+    else:
+        log(f"Raw data:\n{data_info_str(data)}", level="info")
 
-    log(f"Raw data:\n{data_info_str(data)}", level="info")
+        for step in pretreat_funcs:
+            log(f"Starting treatment step: {step.__name__}...")
+            data = step(data=data, timestamp=timestamp, primary_keys=primary_keys)
+            log(f"Step {step.__name__} finished")
 
-    for step in pretreat_funcs:
-        log(f"Starting treatment step: {step.__name__}...")
-        data = step(data=data, timestamp=timestamp, primary_keys=primary_keys)
-        log(f"Step {step.__name__} finished")
+        log("Creating nested structure...", level="info")
 
-    log("Creating nested structure...", level="info")
+        data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
 
-    data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
+        timestamp = create_timestamp_captura(timestamp=timestamp)
+        data["timestamp_captura"] = timestamp
+        log(f"timestamp column = {timestamp}", level="info")
 
-    timestamp = create_timestamp_captura(timestamp=timestamp)
-    data["timestamp_captura"] = timestamp
-    log(f"timestamp column = {timestamp}", level="info")
-
-    log(
-        f"Finished nested structure! Data:\n{data_info_str(data)}",
-        level="info",
-    )
+        log(
+            f"Finished nested structure! Data:\n{data_info_str(data)}",
+            level="info",
+        )
 
     save_local_file(filepath=source_filepath, data=data)
     log(f"Data saved in {source_filepath}")
