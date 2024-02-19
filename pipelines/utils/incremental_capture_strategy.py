@@ -184,8 +184,8 @@ class IncrementalCaptureStrategy(ABC):
 
             redis_client.set(self._redis_key, content)
             log(f"[key: {self._redis_key}] Value {value_to_save} saved on Redis!")
-
-        log("Value already saved greater than value to save, task skipped")
+        else:
+            log("Value already saved greater than value to save, task skipped")
 
 
 class IDIncremental(IncrementalCaptureStrategy):

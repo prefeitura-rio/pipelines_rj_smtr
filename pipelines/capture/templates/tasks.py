@@ -310,10 +310,13 @@ def save_incremental_redis(
         incremental_capture_strategy: Union[dict, IncrementalCaptureStrategy]: Objeto de estratégia
             de captura incremental. apenas salva no Redis se for do tipo IncrementalCaptureStrategy
     """
-    if (
-        isinstance(incremental_capture_strategy, IncrementalCaptureStrategy)
-        and not flow_is_running_local()
-    ):
+    is_local_run = flow_is_running_local()
+    if isinstance(incremental_capture_strategy, IncrementalCaptureStrategy) and not is_local_run:
         incremental_capture_strategy.save_on_redis()
     else:
-        log("incremental_capture_strategy parameter is None, save on Redis skipped")
+        log(
+            f"""Save on Redis skipped:
+            incremental_capture_strategy type: {type(incremental_capture_strategy)}
+            flow is running local: {is_local_run}
+            """
+        )
