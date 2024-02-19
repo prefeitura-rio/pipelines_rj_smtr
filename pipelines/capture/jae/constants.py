@@ -147,12 +147,12 @@ class constants(Enum):
                     {% endif %}
                 """,
             },
-            "primary_key": ["CD_CLIENTE"],
+            "primary_keys": ["CD_CLIENTE"],
             "save_bucket_names": JAE_PRIVATE_BUCKET,
         },
         {
             "table_id": "gratuidade",
-            "extract_params": {
+            "data_extractor_params": {
                 "database": "gratuidade_db",
                 "query": """
                     SELECT
@@ -171,7 +171,7 @@ class constants(Enum):
                     {% endif %}
                 """,
             },
-            "primary_key": ["id"],
+            "primary_keys": ["id"],
             "save_bucket_names": JAE_PRIVATE_BUCKET,
         },
         {
