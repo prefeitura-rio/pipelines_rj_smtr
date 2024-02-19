@@ -6,7 +6,6 @@ General purpose functions for rj_smtr
 
 import io
 import json
-import math
 import time
 import traceback
 import zipfile
@@ -22,14 +21,13 @@ import psycopg2.extras
 import pymysql
 import pytz
 import requests
-from basedosdados import Storage, Table
+from basedosdados import Table
 from google.cloud.storage.blob import Blob
 from prefect.schedules.clocks import IntervalClock
 from prefeitura_rio.pipelines_utils.infisical import get_secret
-from prefeitura_rio.pipelines_utils.logging import log  # TODO: add or relocate imports
+from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
-from redis_pal import RedisPal
 
 from pipelines.constants import constants
 from pipelines.utils.implicit_ftp import ImplicitFtpTls
@@ -38,30 +36,30 @@ from pipelines.utils.implicit_ftp import ImplicitFtpTls
 bd.config.from_file = True
 
 
-def send_discord_message(
-    message: str,
-    webhook_url: str,
-) -> None:
-    """
-    Sends a message to a Discord channel.
-    """
-    requests.post(
-        webhook_url,
-        data={"content": message},
-    )
+# def send_discord_message(
+#     message: str,
+#     webhook_url: str,
+# ) -> None:
+#     """
+#     Sends a message to a Discord channel.
+#     """
+#     requests.post(
+#         webhook_url,
+#         data={"content": message},
+#     )
 
 
-def log_critical(message: str, secret_path: str = constants.CRITICAL_SECRET_PATH.value):
-    """Logs message to critical discord channel specified
+# def log_critical(message: str, secret_path: str = constants.CRITICAL_SECRET_PATH.value):
+#     """Logs message to critical discord channel specified
 
-    Args:
-        message (str): Message to post on the channel
-        secret_path (str, optional): Secret path storing the webhook to critical channel.
-        Defaults to constants.CRITICAL_SECRETPATH.value.
+#     Args:
+#         message (str): Message to post on the channel
+#         secret_path (str, optional): Secret path storing the webhook to critical channel.
+#         Defaults to constants.CRITICAL_SECRETPATH.value.
 
-    """
-    url = get_secret(secret_path=secret_path)["data"]["url"]
-    return send_discord_message(message=message, webhook_url=url)
+#     """
+#     url = get_secret(secret_path=secret_path)["data"]["url"]
+#     return send_discord_message(message=message, webhook_url=url)
 
 
 def create_or_append_table(dataset_id: str, table_id: str, path: str, partitions: str = None):
