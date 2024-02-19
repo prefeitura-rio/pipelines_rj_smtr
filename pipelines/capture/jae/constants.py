@@ -124,7 +124,7 @@ class constants(Enum):
                 """,
             },
             "primary_keys": ["CD_CLIENTE"],
-            "save_bucket_name": JAE_PRIVATE_BUCKET,
+            "save_bucket_names": JAE_PRIVATE_BUCKET,
         },
         {
             "table_id": "pessoa_fisica",
@@ -148,7 +148,7 @@ class constants(Enum):
                 """,
             },
             "primary_key": ["CD_CLIENTE"],
-            "save_bucket_name": JAE_PRIVATE_BUCKET,
+            "save_bucket_names": JAE_PRIVATE_BUCKET,
         },
         {
             "table_id": "gratuidade",
@@ -172,7 +172,7 @@ class constants(Enum):
                 """,
             },
             "primary_key": ["id"],
-            "save_bucket_name": JAE_PRIVATE_BUCKET,
+            "save_bucket_names": JAE_PRIVATE_BUCKET,
         },
         {
             "table_id": "consorcio",
@@ -240,7 +240,7 @@ class constants(Enum):
                 ],
             },
             "primary_keys": ["CD_CLIENTE"],
-            "save_bucket_name": JAE_PRIVATE_BUCKET,
+            "save_bucket_names": JAE_PRIVATE_BUCKET,
         },
         {
             "table_id": "contato_pessoa_juridica",
@@ -262,6 +262,6 @@ class constants(Enum):
                 "NR_SEQ_CONTATO",
                 "CD_CLIENTE",
             ],
-            "save_bucket_name": JAE_PRIVATE_BUCKET,
+            "save_bucket_names": JAE_PRIVATE_BUCKET,
         },
     ]

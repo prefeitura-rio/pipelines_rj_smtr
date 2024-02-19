@@ -33,4 +33,5 @@ JAE_AUXILIAR_CAPTURE = create_default_capture_flow(
     create_extractor_task=create_extractor_jae,
     overwrite_flow_params=constants.AUXILIAR_GENERAL_CAPTURE_PARAMS.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    skip_if_running=False,
 )

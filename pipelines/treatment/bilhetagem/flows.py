@@ -10,6 +10,8 @@ from pipelines.constants import constants
 from pipelines.tasks import run_subflow
 
 with Flow("Bilhetagem - Tratamento") as bilhetagem_tratamento:
+
+    params_auxiliar = [p for p in jae_capture_constants.AUXILIAR_TABLE_CAPTURE_PARAMS.value]
     AUXILIAR_CAPTURE = run_subflow(
         flow_name=JAE_AUXILIAR_CAPTURE.name,
         parameters=jae_capture_constants.AUXILIAR_TABLE_CAPTURE_PARAMS.value,

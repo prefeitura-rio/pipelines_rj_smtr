@@ -25,11 +25,13 @@ T = TypeVar("T")
 class GCPBase:
     dataset_id: str
     table_id: str
-    bucket_name: str
+    bucket_names: dict
     env: str
 
     def __post_init__(self):
-        self.bucket_name = self.bucket_name or constants.DEFAULT_BUCKET_NAME.value[self.env]
+        self.bucket_name = (
+            self.bucket_names[self.env] or constants.DEFAULT_BUCKET_NAME.value[self.env]
+        )
 
     def __getitem__(self, key):
         return self.__dict__[key]
@@ -51,12 +53,12 @@ class Storage(GCPBase):
         env: str,
         dataset_id: str,
         table_id: str = None,
-        bucket_name: str = None,
+        bucket_names: str = None,
     ):
         super().__init__(
             dataset_id=dataset_id,
             table_id=table_id,
-            bucket_name=bucket_name,
+            bucket_names=bucket_names,
             env=env,
         )
 
@@ -245,7 +247,7 @@ class Dataset(GCPBase):
         super().__init__(
             dataset_id=dataset_id,
             table_id="",
-            bucket_name=None,
+            bucket_names=None,
             env=env,
         )
         self.location = location
@@ -275,7 +277,7 @@ class BQTable(GCPBase):
         env: str,
         dataset_id: str,
         table_id: str,
-        bucket_name: str = None,
+        bucket_names: dict = None,
         timestamp: datetime = None,
         partition_date_only: bool = False,
         raw_filetype: str = "json",
@@ -283,7 +285,7 @@ class BQTable(GCPBase):
         super().__init__(
             dataset_id=dataset_id,
             table_id=table_id,
-            bucket_name=bucket_name,
+            bucket_names=bucket_names,
             env=env,
         )
 
@@ -386,30 +388,3 @@ class BQTable(GCPBase):
             filepath=self.source_filepath,
             partition=self.partition,
         )
-
-    # def get_log_table(
-    #     self,
-    #     generate_logs: bool = False,
-    #     error: str = None,
-    # ):
-    #     log_table = BQTable(
-    #         env=self.env,
-    #         dataset_id=self.dataset_id,
-    #         table_id=f"{self.table_id}_logs",
-    #         bucket_name=self.bucket_name,
-    #         timestamp=self.timestamp,
-    #         partition_date_only=True,
-    #     )
-
-    #     if generate_logs:
-    #         df = pd.DataFrame(
-    #             {
-    #              "timestamp_captura": [create_timestamp_captura(timestamp=log_table.timestamp)],
-    #                 "sucesso": [error is None],
-    #                 "erro": [error],
-    #             }
-    #         )
-
-    #         save_local_file(filepath=log_table.source_filepath, data=df)
-
-    #     return log_table

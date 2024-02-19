@@ -40,6 +40,7 @@ def create_default_capture_flow(
     overwrite_flow_params: dict,
     agent_label: str,
     pretreat_funcs: list[Callable[[pd.DataFrame, datetime, list], pd.DataFrame]] = None,
+    skip_if_running=True,
 ):  # pylint: disable=R0914, R0913
     """
     Cria um flow de captura
@@ -155,10 +156,10 @@ def create_default_capture_flow(
 
         # Nome do bucket para salvar os dados
         # Se for None, salva no bucket padrão do ambiente atual
-        save_bucket_name = TypedParameter(
-            name="save_bucket_name",
-            default=overwrite_flow_params.get("save_bucket_name"),
-            accepted_types=(str, NoneType),
+        save_bucket_names = TypedParameter(
+            name="save_bucket_names",
+            default=overwrite_flow_params.get("save_bucket_names"),
+            accepted_types=(dict, NoneType),
         )
 
         # Preparar execução #
@@ -172,7 +173,7 @@ def create_default_capture_flow(
             env=env,
             dataset_id=dataset_id,
             table_id=table_id,
-            bucket_name=save_bucket_name,
+            bucket_names=save_bucket_names,
             timestamp=timestamp,
             partition_date_only=partition_date_only,
             raw_filetype=raw_filetype,
@@ -219,7 +220,7 @@ def create_default_capture_flow(
             source_filepath=table["source_filepath"],
             timestamp=timestamp,
             primary_keys=primary_keys,
-            print_inputs=save_bucket_name.is_equal(None),
+            print_inputs=save_bucket_names.is_equal(None),
             reader_args=pretreatment_reader_args,
             upstream_tasks=[get_raw],
         )
@@ -240,7 +241,9 @@ def create_default_capture_flow(
     )
     capture_flow.state_handlers = [
         handler_inject_bd_credentials,
-        handler_skip_if_running,
     ]
+
+    if skip_if_running:
+        capture_flow.state_handlers.append(handler_skip_if_running)
 
     return capture_flow
