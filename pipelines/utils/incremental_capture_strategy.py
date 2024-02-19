@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Any, Union
 
+from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
 
@@ -24,7 +25,7 @@ class IncrementalInfo:
         return self.__dict__[key]
 
 
-class IncrementalStrategy(ABC):
+class IncrementalCaptureStrategy(ABC):
     """
     Classe base para criar estratégias de captura incremental
     Para criar uma nova estratégia incremental:
@@ -158,18 +159,18 @@ class IncrementalStrategy(ABC):
             Any: Valor convertido
         """
 
-    def save_on_redis(
-        self,
-        value_to_save: Any,
-    ) -> str:
+    def save_on_redis(self):
         """
         Salva o valor no Redis se ele for maior que o atual
 
         Args:
             value_to_save: Valor a ser salvo no Redis
         """
+        value_to_save = self.get_value_to_save()
+        log(f"Saving value {value_to_save} on Redis")
         content = self.query_redis()
         old_value = content.get(constants.REDIS_LAST_CAPTURED_VALUE_KEY.value)
+        log(f"Value currently saved on key {self._redis_key} = {old_value}")
 
         if old_value is None:
             flag_save = True
@@ -182,12 +183,12 @@ class IncrementalStrategy(ABC):
             content[constants.REDIS_LAST_CAPTURED_VALUE_KEY.value] = value_to_save
 
             redis_client.set(self._redis_key, content)
-            return f"[key: {self._redis_key}] Value {value_to_save} saved on Redis!"
+            log(f"[key: {self._redis_key}] Value {value_to_save} saved on Redis!")
 
-        return "Value already saved greater than value to save, task skiped"
+        log("Value already saved greater than value to save, task skipped")
 
 
-class IDIncremental(IncrementalStrategy):
+class IDIncremental(IncrementalCaptureStrategy):
     """
     Classe para fazer capturas incrementais com base em um ID sequencial inteiro
 
@@ -280,7 +281,7 @@ class IDIncremental(IncrementalStrategy):
         return value
 
 
-class DatetimeIncremental(IncrementalStrategy):
+class DatetimeIncremental(IncrementalCaptureStrategy):
     """
     Classe para fazer capturas incrementais com base em uma data
 
@@ -394,16 +395,16 @@ class DatetimeIncremental(IncrementalStrategy):
         return value
 
 
-def incremental_strategy_from_dict(strategy_dict: dict) -> IncrementalStrategy:
+def incremental_strategy_from_dict(strategy_dict: dict) -> IncrementalCaptureStrategy:
     """
-    Instancia uma IncrementalStrategy com base em um dicionário
+    Instancia uma IncrementalCaptureStrategy com base em um dicionário
 
     Args:
         strategy_dict (dict): Dicionário com uma key (tipo da incremental: id ou datetime)
             e valores sendo os argumentos para passar ao construtor do objeto
 
     Returns:
-        IncrementalStrategy: classe concreta instanciada
+        IncrementalCaptureStrategy: classe concreta instanciada
     """
     incremental_type = list(strategy_dict.keys())[0]
     class_map = {

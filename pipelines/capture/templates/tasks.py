@@ -15,8 +15,8 @@ from pipelines.utils.capture.base import DataExtractor
 from pipelines.utils.fs import read_raw_data, save_local_file
 from pipelines.utils.gcp import BQTable
 from pipelines.utils.incremental_capture_strategy import (
+    IncrementalCaptureStrategy,
     IncrementalInfo,
-    IncrementalStrategy,
     incremental_strategy_from_dict,
 )
 from pipelines.utils.prefect import flow_is_running_local, rename_current_flow_run
@@ -242,23 +242,23 @@ def create_incremental_strategy(
     table: BQTable,
     overwrite_start_value: Any,
     overwrite_end_value: Any,
-) -> Union[dict, IncrementalStrategy]:
+) -> Union[dict, IncrementalCaptureStrategy]:
     """
     Cria a estratégia de captura incremental
 
     Args:
         strategy_dict (Union[None, dict]): dicionario retornado pelo
-            método .to_dict() do objeto de IncrementalStrategy
+            método .to_dict() do objeto de IncrementalCaptureStrategy
         table (BQTable): Objeto de tabela para BigQuery
         overwrite_start_value: Valor para substituir o inicial manualmente
         overwrite_end_value: Valor para substituir o final manualmente
 
     Returns:
-        Union[dict, IncrementalStrategy]: Se strategy_dict for None, retorna um Dicionário
+        Union[dict, IncrementalCaptureStrategy]: Se strategy_dict for None, retorna um Dicionário
             contendo um objeto IncrementalInfo com os valores de start e end sendo
             overwrite_start_value e overwrite_end_value respectivamente
             e execution_mode full
-            Se houver valor no argumento strategy_dict, retorna um objeto IncrementalStrategy
+            Se houver valor no argumento strategy_dict, retorna um objeto IncrementalCaptureStrategy
             de acordo com as especificações descritas no dicionário
     """
     if strategy_dict:
@@ -300,26 +300,20 @@ def create_incremental_strategy(
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
 def save_incremental_redis(
-    incremental_capture_strategy: Union[dict, IncrementalStrategy],
+    incremental_capture_strategy: Union[dict, IncrementalCaptureStrategy],
 ):
     """
     Salva o último valor incremental capturado no Redis
 
 
     Args:
-        incremental_capture_strategy: Union[dict, IncrementalStrategy]: Objeto de estratégia
-            de captura incremental. apenas salva no Redis se for do tipo IncrementalStrategy
+        incremental_capture_strategy: Union[dict, IncrementalCaptureStrategy]: Objeto de estratégia
+            de captura incremental. apenas salva no Redis se for do tipo IncrementalCaptureStrategy
     """
     if (
-        isinstance(incremental_capture_strategy, IncrementalStrategy)
+        isinstance(incremental_capture_strategy, IncrementalCaptureStrategy)
         and not flow_is_running_local()
     ):
-        last_value = incremental_capture_strategy.get_value_to_save()
-
-        log(f"Last captured value: {last_value}")
-
-        log("Saving new value on Redis")
-        msg = incremental_capture_strategy.save_on_redis(value_to_save=last_value)
-        log(msg)
+        incremental_capture_strategy.save_on_redis()
     else:
         log("incremental_capture_strategy parameter is None, save on Redis skipped")
