@@ -18,3 +18,15 @@ class constants(Enum):  # pylint: disable=c0103
     GPS_BRT_MATERIALIZE_DELAY_HOURS = 0
     GPS_BRT_API_URL = "https://zn4.m2mcontrol.com.br/api/integracao/veiculos"
     GPS_BRT_API_SECRET_PATH = "brt_api_v2"
+
+    GPS_BRT_MAPPING_KEYS = {
+        "codigo": "id_veiculo",
+        "linha": "servico",
+        "latitude": "latitude",
+        "longitude": "longitude",
+        "dataHora": "timestamp_gps",
+        "velocidade": "velocidade",
+        "sentido": "sentido",
+        "trajeto": "vista",
+        # "inicio_viagem": "timestamp_inicio_viagem",
+    }
