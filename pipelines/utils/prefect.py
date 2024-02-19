@@ -6,7 +6,7 @@ from typing import Any, Callable, Dict, Type, Union
 import prefect
 from prefect import unmapped
 from prefect.backend.flow_run import FlowRunView, FlowView, watch_flow_run
-from prefect.engine.signals import signal_from_state
+from prefect.engine.signals import PrefectStateSignal, signal_from_state
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefeitura_rio.pipelines_utils.logging import log
 
@@ -193,7 +193,7 @@ def create_subflow_run(
     return flow_run_id
 
 
-def wait_subflow_run(flow_run_id: str):
+def wait_subflow_run(flow_run_id: str) -> PrefectStateSignal:
     flow_run = FlowRunView.from_flow_run_id(flow_run_id)
 
     for exec_log in watch_flow_run(
@@ -210,7 +210,7 @@ def wait_subflow_run(flow_run_id: str):
         message=f"{flow_run_id} finished in state {flow_run.state}",
         result=flow_run,
     )
-    raise state_signal
+    return state_signal
 
 
 def run_flow_mapped(

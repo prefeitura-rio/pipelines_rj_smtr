@@ -126,6 +126,8 @@ def run_subflow(
     if idempotency_key and map_index is not None:
         idempotency_key += f"-{map_index}"
 
+    run_signals = []
+
     for idx, param_list in enumerate(execution_list):
 
         if not isinstance(param_list, list):
@@ -143,4 +145,8 @@ def run_subflow(
         ]
 
         for run_id in runs_ids:
-            wait_subflow_run(flow_run_id=run_id)
+            run_signal = wait_subflow_run(flow_run_id=run_id)
+            run_signals.append(run_signal)
+
+    for signal in run_signals:
+        raise signal
