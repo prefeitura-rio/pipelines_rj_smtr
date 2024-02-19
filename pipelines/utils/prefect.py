@@ -170,11 +170,6 @@ def create_subflow_run(
     """
     )
 
-    idempotency_key = prefect.context.get("task_run_id")
-    map_index = prefect.context.get("map_index")
-    if idempotency_key and map_index is not None:
-        idempotency_key += f"-{map_index}"
-
     flow = FlowView.from_flow_name(flow_name, project_name=project_name)
 
     client = prefect.Client()
