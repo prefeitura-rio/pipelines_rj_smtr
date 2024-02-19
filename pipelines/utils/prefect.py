@@ -181,6 +181,7 @@ def create_subflow_run(
 
     flow_run_id = client.create_flow_run(
         flow_id=flow.flow_id,
+        parameters=parameters,
         labels=labels,
         idempotency_key=idempotency_key,
     )

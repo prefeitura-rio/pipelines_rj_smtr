@@ -131,14 +131,16 @@ def run_subflow(
         if not isinstance(param_list, list):
             param_list = [param_list]
 
-        for params in param_list:
-            runs_ids = create_subflow_run(
+        runs_ids = [
+            create_subflow_run(
                 flow_name=flow_name,
                 parameters=params,
-                idempotency_key=idempotency_key + f"-{idx}",
+                idempotency_key=idempotency_key + f"-{idx}" + f"-{sub_idx}",
                 project_name=project_name,
                 labels=labels,
             )
+            for sub_idx, params in enumerate(param_list)
+        ]
 
         for run_id in runs_ids:
             wait_subflow_run(flow_run_id=run_id)
