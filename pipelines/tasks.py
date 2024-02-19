@@ -135,7 +135,7 @@ def run_subflow(
             create_subflow_run(
                 flow_name=flow_name,
                 parameters=params,
-                idempotency_key=idempotency_key + f"-{idx}" + f"-{sub_idx}",
+                idempotency_key=idempotency_key + f"-{idx}-{sub_idx}",
                 project_name=project_name,
                 labels=labels,
             )
