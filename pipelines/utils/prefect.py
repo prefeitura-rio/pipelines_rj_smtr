@@ -4,7 +4,11 @@ import inspect
 from typing import Any, Callable, Dict, Type, Union
 
 import prefect
-from prefect.backend import FlowRunView
+from prefect import unmapped
+from prefect.backend.flow_run import FlowRunView, FlowView, watch_flow_run
+from prefect.engine.signals import signal_from_state
+from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
+from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.utils.capture.base import DataExtractor
 
@@ -123,3 +127,148 @@ def get_current_flow_labels() -> list[str]:
     flow_run_id = prefect.context.get("flow_run_id")
     flow_run_view = FlowRunView.from_flow_run_id(flow_run_id)
     return flow_run_view.labels
+
+
+def create_subflow_run(
+    flow_name: str,
+    parameters: dict,
+    idempotency_key: str,
+    project_name: str = None,
+    labels: list[str] = None,
+) -> str:
+    """
+    Executa um subflow
+
+    Args:
+        flow_name (str): Nome do flow a ser executado.
+        parameters (dict): Parâmetros para executar o flow
+        idempotency_key (str): Uma chave única para a run do flow, execuções de flows
+            com a mesma idempotency_key são consideradas a mesma
+        project_name (str, optional): Nome do projeto no Prefect para executar o flow,
+            se não for especificado, é utilizado o nome do projeto do flow atual
+        labels (list[str]): Labels para executar o flow,
+            se não for especificado, são utilizadas as labels do flow atual
+
+    Returns:
+        str: o id da execução do flow
+    """
+    if prefect.context["flow_name"] == flow_name:
+        raise ValueError("Can not run recursive flows")
+
+    if project_name is None:
+        project_name = prefect.context.get("project_name")
+
+    if labels is None:
+        labels = get_current_flow_labels()
+
+    log(
+        f"""Will run flow with the following data:
+        flow name: {flow_name}
+        project name: {project_name}
+        labels: {labels}
+        parameters: {parameters}
+    """
+    )
+
+    idempotency_key = prefect.context.get("task_run_id")
+    map_index = prefect.context.get("map_index")
+    if idempotency_key and map_index is not None:
+        idempotency_key += f"-{map_index}"
+
+    flow = FlowView.from_flow_name(flow_name, project_name=project_name)
+
+    client = prefect.Client()
+
+    flow_run_id = client.create_flow_run(
+        flow_id=flow.flow_id,
+        labels=labels,
+        idempotency_key=idempotency_key,
+    )
+
+    run_url = client.get_cloud_url("flow-run", flow_run_id)
+
+    log(f"Created flow run: {run_url}")
+
+    return flow_run_id
+
+
+def wait_subflow_run(flow_run_id: str):
+    flow_run = FlowRunView.from_flow_run_id(flow_run_id)
+
+    for exec_log in watch_flow_run(
+        flow_run_id,
+        stream_states=True,
+        stream_logs=True,
+    ):
+        message = f"Flow {flow_run.name!r}: {exec_log.message}"
+        prefect.context.logger.log(exec_log.level, message)
+
+    flow_run = flow_run.get_latest()
+
+    state_signal = signal_from_state(flow_run.state)(
+        message=f"{flow_run_id} finished in state {flow_run.state}",
+        result=flow_run,
+    )
+    raise state_signal
+
+
+def run_flow_mapped(
+    flow_name: str,
+    parameters: list[dict],
+    project_name: str = None,
+    labels: list[str] = None,
+    maximum_parallelism: int = None,
+):
+    """
+    Executa e espera várias execuções de um mesmo flow em paralelo
+    com diferentes argumentos
+
+    Args:
+        flow_name (str): Nome do flow a ser executado.
+        parameters (list[dict]): Lista de parâmetros para cada execução do flow.
+        project_name (str, optional): Nome do projeto no Prefect para executar o flow,
+            se não for especificado, é utilizado o nome do projeto do flow atual
+        labels (list[str]): Labels para executar o flow,
+            se não for especificado, são utilizadas as labels do flow atual
+
+    Returns:
+        FunctionTask: retorno da task wait_for_flow_run
+    """
+    if not isinstance(parameters, list):
+        raise ValueError("Parameters must be a list")
+
+    if prefect.context["flow_name"] == flow_name:
+        raise ValueError("Can not run recursive flows")
+
+    if project_name is None:
+        project_name = prefect.context.get("project_name")
+
+    if labels is None:
+        labels = get_current_flow_labels()
+
+    if maximum_parallelism is None:
+        execution_list = [parameters]
+    else:
+        execution_list = [
+            parameters[i : i + maximum_parallelism]  # noqa
+            for i in range(0, len(parameters), maximum_parallelism)
+        ]
+
+    complete_wait = []
+    for params in execution_list:
+        subflow_runs = create_flow_run.map(
+            flow_name=unmapped(flow_name),
+            project_name=unmapped(project_name),
+            labels=unmapped(labels),
+            parameters=params,
+        )
+
+        wait_runs = wait_for_flow_run.map(
+            subflow_runs,
+            stream_states=unmapped(True),
+            stream_logs=unmapped(True),
+            raise_final_state=unmapped(True),
+        )
+        complete_wait.append(wait_runs)
+
+    return complete_wait

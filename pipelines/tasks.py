@@ -5,12 +5,11 @@ from typing import Any, Union
 
 import prefect
 from prefect import task
-from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 from pytz import timezone
 
-from pipelines.utils.prefect import get_current_flow_labels
+from pipelines.utils.prefect import create_subflow_run, wait_subflow_run
 
 
 @task
@@ -94,11 +93,12 @@ def flow_log(msg, level: str = "info"):
 
 
 @task
-def run_flow(
+def run_subflow(
     flow_name: str,
-    parameters: dict,
+    parameters: Union[list[dict], dict],
     project_name: str = None,
     labels: list[str] = None,
+    maximum_parallelism: int = None,
 ):
     """
     Executa e espera a execução de um flow
@@ -110,89 +110,35 @@ def run_flow(
             se não for especificado, é utilizado o nome do projeto do flow atual
         labels (list[str]): Labels para executar o flow,
             se não for especificado, são utilizadas as labels do flow atual
-
-    Returns:
-        FunctionTask: retorno da task wait_for_flow_run
     """
-    if project_name is None:
-        project_name = prefect.context.get("project_name")
 
-    if labels is None:
-        labels = get_current_flow_labels()
+    if not isinstance(parameters, (dict, list)):
+        raise ValueError("parameters must be a list or a dict")
 
-    subflow_run = create_flow_run.run(
-        flow_name=flow_name,
-        project_name=project_name,
-        labels=labels,
-        parameters=parameters,
-    )
-
-    wait_for_flow_run.run(
-        subflow_run,
-        stream_states=True,
-        stream_logs=True,
-        raise_final_state=True,
-    )
-
-
-@task
-def run_flow_mapped(
-    flow_name: str,
-    parameters: list[dict],
-    project_name: str = None,
-    labels: list[str] = None,
-    maximum_parallelism: int = None,
-):
-    """
-    Executa e espera várias execuções de um mesmo flow em paralelo
-    com diferentes argumentos
-
-    Args:
-        flow_name (str): Nome do flow a ser executado.
-        parameters (list[dict]): Lista de parâmetros para cada execução do flow.
-        project_name (str, optional): Nome do projeto no Prefect para executar o flow,
-            se não for especificado, é utilizado o nome do projeto do flow atual
-        labels (list[str]): Labels para executar o flow,
-            se não for especificado, são utilizadas as labels do flow atual
-
-    Returns:
-        FunctionTask: retorno da task wait_for_flow_run
-    """
-    if not isinstance(parameters, list):
-        raise ValueError("Parameters must be a list")
-
-    if prefect.context["flow_name"] == flow_name:
-        raise ValueError("Can not run recursive flows")
-
-    if project_name is None:
-        project_name = prefect.context.get("project_name")
-
-    if labels is None:
-        labels = get_current_flow_labels()
-
-    if maximum_parallelism is None:
-        execution_list = [parameters]
-    else:
+    if maximum_parallelism is not None and isinstance(parameters, list):
         execution_list = [
             parameters[i : i + maximum_parallelism]  # noqa
             for i in range(0, len(parameters), maximum_parallelism)
         ]
 
-    for params in execution_list:
-        subflow_runs = [
-            create_flow_run.run(
+    idempotency_key = prefect.context.get("task_run_id")
+    map_index = prefect.context.get("map_index")
+    if idempotency_key and map_index is not None:
+        idempotency_key += f"-{map_index}"
+
+    for idx, param_list in enumerate(execution_list):
+
+        if not isinstance(param_list, list):
+            param_list = [param_list]
+
+        for params in param_list:
+            runs_ids = create_subflow_run(
                 flow_name=flow_name,
+                parameters=params,
+                idempotency_key=idempotency_key + f"-{idx}",
                 project_name=project_name,
                 labels=labels,
-                parameters=p,
             )
-            for p in params
-        ]
 
-        for r in subflow_runs:
-            wait_for_flow_run.run(
-                r,
-                stream_states=True,
-                stream_logs=True,
-                raise_final_state=True,
-            )
+        for run_id in runs_ids:
+            wait_subflow_run(flow_run_id=run_id)
