@@ -22,14 +22,14 @@ with Flow("Bilhetagem - Tratamento") as bilhetagem_tratamento:
 
     # AUXILIAR_CAPTURE.name = "run_captura_auxiliar_jae"
 
-    runs_captura = create_flow_run.map(
+    runs_captura = create_flow_run(
         flow_name=JAE_AUXILIAR_CAPTURE.name,
         project_name="staging",
         parameters=jae_capture_constants.AUXILIAR_TABLE_CAPTURE_PARAMS.value[0],
         labels=[constants.RJ_SMTR_AGENT_LABEL.value],
     )
 
-    wait_captura_true = wait_for_flow_run.map(
+    wait_captura_true = wait_for_flow_run(
         runs_captura,
         stream_states=True,
         stream_logs=True,
