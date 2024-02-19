@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any, Union
 
 import prefect
-from prefect import task, unmapped
+from prefect import task
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
@@ -158,6 +158,12 @@ def run_flow_mapped(
     Returns:
         FunctionTask: retorno da task wait_for_flow_run
     """
+    if not isinstance(parameters, list):
+        raise ValueError("Parameters must be a list")
+
+    if prefect.context["flow_name"] == flow_name:
+        raise ValueError("Can not run recursive flows")
+
     if project_name is None:
         project_name = prefect.context.get("project_name")
 
@@ -173,17 +179,20 @@ def run_flow_mapped(
         ]
 
     for params in execution_list:
+        subflow_runs = [
+            create_flow_run.run(
+                flow_name=flow_name,
+                project_name=project_name,
+                labels=labels,
+                parameters=p,
+            )
+            for p in params
+        ]
 
-        subflow_run = create_flow_run.map(
-            flow_name=unmapped(flow_name),
-            project_name=unmapped(project_name),
-            labels=unmapped(labels),
-            parameters=params,
-        ).run()
-
-        wait_for_flow_run.map(
-            subflow_run,
-            stream_states=unmapped(True),
-            stream_logs=unmapped(True),
-            raise_final_state=unmapped(True),
-        ).run()
+        for r in subflow_runs:
+            wait_for_flow_run.run(
+                r,
+                stream_states=True,
+                stream_logs=True,
+                raise_final_state=True,
+            )

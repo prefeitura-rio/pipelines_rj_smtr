@@ -16,6 +16,8 @@ with Flow("Bilhetagem - Tratamento") as bilhetagem_tratamento:
         maximum_parallelism=3,
     )
 
+    AUXILIAR_CAPTURE.name = "run_captura_auxiliar_jae"
+
 
 bilhetagem_tratamento.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
 bilhetagem_tratamento.run_config = KubernetesRun(

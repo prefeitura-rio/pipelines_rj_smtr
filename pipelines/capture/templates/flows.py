@@ -26,7 +26,7 @@ from pipelines.capture.templates.tasks import (
     upload_source_data_to_gcs,
 )
 from pipelines.constants import constants
-from pipelines.tasks import get_current_timestamp, get_run_env, task_value_is_none
+from pipelines.tasks import get_current_timestamp, get_run_env
 from pipelines.utils.prefect import TypedParameter
 
 # from pipelines.utils.pretreatment import strip_string_columns
@@ -219,7 +219,7 @@ def create_default_capture_flow(
             source_filepath=table["source_filepath"],
             timestamp=timestamp,
             primary_keys=primary_keys,
-            print_inputs=task_value_is_none(task_value=save_bucket_name),
+            print_inputs=save_bucket_name.is_equal(None),
             reader_args=pretreatment_reader_args,
             upstream_tasks=[get_raw],
         )
