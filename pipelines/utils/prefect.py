@@ -49,6 +49,14 @@ def extractor_task(func: Callable, **task_init_kwargs):
     Decorator para tasks create_extractor_task do flow generico de captura
     Usado da mesma forma que o decorator task padrão do Prefect.
 
+    A função da task pode receber os seguintes argumentos:
+        env: str,
+        dataset_id: str,
+        table_id: str,
+        save_filepath: str,
+        data_extractor_params: dict,
+        incremental_info: IncrementalInfo
+
     Garante que os argumentos e retorno da task estão corretos e
     possibilita que a task seja criada sem precisar de todos os argumentos passados pelo flow
     """

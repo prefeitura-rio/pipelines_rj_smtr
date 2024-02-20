@@ -77,7 +77,7 @@ class constants(Enum):
             max_incremental_window=100_000,
             id_column_name="id",
             first_value=406_064_585,
-        ),
+        ).to_dict(),
         "data_extractor_params": {
             "database": "tracking_db",
             "query": """
