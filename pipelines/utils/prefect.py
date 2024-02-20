@@ -55,10 +55,18 @@ def extractor_task(func: Callable, **task_init_kwargs):
     task_init_kwargs["name"] = task_init_kwargs.get("name", func.__name__)
     signature = inspect.signature(func)
     assert task_init_kwargs.get("nout", 1) == 1, "nout must be 1"
-    assert issubclass(
-        signature.return_annotation,
-        DataExtractor,
-    ), "return must be DataExtractor subclass"
+
+    return_annotation = signature.return_annotation
+
+    if hasattr(return_annotation, "__origin__") and return_annotation.__origin__ is Union:
+        return_assertion = all(issubclass(t, DataExtractor) for t in return_annotation.__args__)
+    else:
+        return_assertion = issubclass(
+            signature.return_annotation,
+            DataExtractor,
+        )
+
+    assert return_assertion, "return must be DataExtractor subclass"
 
     def decorator(func):
         expected_arguments = [
