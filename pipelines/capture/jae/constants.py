@@ -36,6 +36,10 @@ class constants(Enum):
             "engine": "postgresql",
             "host": "10.5.15.127",
         },
+        "gratuidade_db": {
+            "engine": "postgresql",
+            "host": "10.5.12.107",
+        },
     }
 
     JAE_PRIVATE_BUCKET = {"dev": "br-rj-smtr-jae-private-dev", "prod": "br-rj-smtr-jae-private-dev"}
