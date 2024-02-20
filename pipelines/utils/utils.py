@@ -119,7 +119,7 @@ def create_sql_update_filter(
         SELECT
             CONCAT("'", {concat_arg.join(columns_to_concat_bq)}, "'")
         FROM
-            `{project}.{dataset_id}_staging.{table_id}`
+            `{project}.{dataset_id}.{table_id}`
         """
         log(query)
         last_values = bd.read_sql(query=query, billing_project_id=project)

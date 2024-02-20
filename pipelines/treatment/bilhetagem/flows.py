@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """Flows de tratamento da bilhetagem"""
+from datetime import timedelta
+
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefeitura_rio.pipelines_utils.custom import Flow
@@ -11,9 +13,8 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 from pipelines.capture.jae.constants import constants as jae_capture_constants
 from pipelines.capture.jae.flows import JAE_AUXILIAR_CAPTURE
 from pipelines.constants import constants
+from pipelines.schedules import generate_interval_schedule
 from pipelines.tasks import run_subflow
-
-# from pipelines.utils.prefect import handler_cancel_subflows
 
 with Flow("Bilhetagem - Tratamento") as bilhetagem_tratamento:
 
@@ -35,5 +36,9 @@ bilhetagem_tratamento.run_config = KubernetesRun(
 bilhetagem_tratamento.state_handlers = [
     handler_inject_bd_credentials,
     handler_skip_if_running,
-    # handler_cancel_subflows,
 ]
+
+bilhetagem_tratamento.schedule = generate_interval_schedule(
+    interval=timedelta(hours=1),
+    agent_label=constants.RJ_SMTR_AGENT_LABEL.value,
+)

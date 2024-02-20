@@ -5,7 +5,10 @@ Valores constantes para captura de dados da JAE
 
 from enum import Enum
 
-from pipelines.utils.incremental_capture_strategy import DatetimeIncremental
+from pipelines.utils.incremental_capture_strategy import (
+    DatetimeIncremental,
+    IDIncremental,
+)
 
 
 class constants(Enum):
@@ -65,6 +68,31 @@ class constants(Enum):
             """,
         },
         "primary_keys": ["id"],
+    }
+
+    GPS_VALIDADOR_CAPTURE_PARAMS = {
+        "table_id": "gps_validador",
+        "raw_filetype": JAE_RAW_FILETYPE,
+        "incremental_capture_strategy": IDIncremental(
+            max_incremental_window=100_000,
+            id_column_name="id",
+            first_value=406_064_585,
+        ),
+        "data_extractor_params": {
+            "database": "tracking_db",
+            "query": """
+                SELECT
+                    *
+                FROM
+                    tracking_detalhe
+                WHERE
+                    id > {{ start }} AND id <= {{ end }}
+            """,
+            "page_size": 1000,
+            "max_pages": 100,
+        },
+        "primary_key": ["id"],
+        "interval_minutes": 5,
     }
 
     AUXILIAR_GENERAL_CAPTURE_PARAMS = {

@@ -207,7 +207,7 @@ class IDIncremental(IncrementalCaptureStrategy):
         self,
         max_incremental_window: int,
         id_column_name: str,
-        first_value: Any = None,
+        first_value: int = None,
     ) -> None:
         super().__init__(
             max_incremental_window=max_incremental_window,

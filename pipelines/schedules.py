@@ -14,7 +14,9 @@ from pipelines.constants import constants as emd_constants
 from pipelines.utils.backup.utils import generate_ftp_schedules
 
 
-def generate_schedule(interval: timedelta, agent_label: str, params: dict = None) -> Schedule:
+def generate_interval_schedule(
+    interval: timedelta, agent_label: str, params: dict = None
+) -> Schedule:
     """
     Cria um Schedule para os flows do prefect
 

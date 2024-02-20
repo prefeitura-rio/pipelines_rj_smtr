@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """Tasks for pipelines.capture.jae"""
 from datetime import datetime
+from typing import Union
 
 from pipelines.capture.jae.constants import constants as jae_constants
-from pipelines.utils.capture.db import DBExtractor
+from pipelines.utils.capture.db import DBExtractor, PaginatedDBExtractor
 from pipelines.utils.incremental_capture_strategy import IncrementalInfo
 from pipelines.utils.jinja import render_template
 from pipelines.utils.prefect import extractor_task
@@ -19,13 +20,11 @@ def create_extractor_jae(
     save_filepath: str,
     data_extractor_params: dict,
     incremental_info: IncrementalInfo,
-) -> DBExtractor:
+) -> Union[DBExtractor, PaginatedDBExtractor]:
     """Cria o extrator de dados para capturas da JAE"""
     credentials = get_secret("smtr_jae_access_data")
     database = data_extractor_params["database"]
     database_details = jae_constants.JAE_DATABASES.value[database]
-    engine = database_details["engine"]
-    host = database_details["host"]
 
     start = incremental_info.start_value
     end = incremental_info.end_value
@@ -55,12 +54,21 @@ def create_extractor_jae(
         _vars=template_variables,
     )
 
-    return DBExtractor(
-        query=query,
-        engine=engine,
-        host=host,
-        user=credentials["user"],
-        password=credentials["password"],
-        database=database,
-        save_filepath=save_filepath,
-    )
+    extractor_general_args = {
+        "query": query,
+        "engine": database_details["engine"],
+        "host": database_details["host"],
+        "user": credentials["user"],
+        "password": credentials["password"],
+        "database": database,
+        "save_filepath": save_filepath,
+    }
+
+    if table_id == jae_constants.TRACKING_CAPTURE_PARAMS["table_id"]:
+        return PaginatedDBExtractor(
+            page_size=data_extractor_params["page_size"],
+            max_pages=data_extractor_params["max_pages"],
+            **extractor_general_args,
+        )
+
+    return DBExtractor(**extractor_general_args)
