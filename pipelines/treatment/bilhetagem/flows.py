@@ -12,7 +12,8 @@ from pipelines.capture.jae.constants import constants as jae_capture_constants
 from pipelines.capture.jae.flows import JAE_AUXILIAR_CAPTURE
 from pipelines.constants import constants
 from pipelines.tasks import run_subflow
-from pipelines.utils.prefect import handler_cancel_subflows
+
+# from pipelines.utils.prefect import handler_cancel_subflows
 
 with Flow("Bilhetagem - Tratamento") as bilhetagem_tratamento:
 
@@ -34,5 +35,5 @@ bilhetagem_tratamento.run_config = KubernetesRun(
 bilhetagem_tratamento.state_handlers = [
     handler_inject_bd_credentials,
     handler_skip_if_running,
-    handler_cancel_subflows,
+    # handler_cancel_subflows,
 ]
