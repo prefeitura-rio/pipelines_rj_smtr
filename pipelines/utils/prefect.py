@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 """Prefect functions"""
 import inspect
+import json
 from typing import Any, Callable, Dict, Type, Union
 
 import prefect
 from prefect import unmapped
 from prefect.backend.flow_run import FlowRunView, FlowView, watch_flow_run
+from prefect.engine.state import Cancelled, State
 
 # from prefect.engine.signals import PrefectStateSignal, signal_from_state
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
@@ -154,6 +156,7 @@ def create_subflow_run(
     Returns:
         str: o id da execução do flow
     """
+
     if prefect.context["flow_name"] == flow_name:
         raise RecursionError("Can not run recursive flows")
 
@@ -182,6 +185,9 @@ def create_subflow_run(
         labels=labels,
         idempotency_key=idempotency_key,
     )
+
+    with prefect.context.get("_subflow_ids", []) as subflow_ids:
+        subflow_ids.append(flow_run_id)
 
     run_url = constants.FLOW_RUN_URL_PATTERN.value.format(run_id=flow_run_id)
 
@@ -270,3 +276,41 @@ def run_flow_mapped(
         complete_wait.append(wait_runs)
 
     return complete_wait
+
+
+def handler_cancel_subflows(obj, old_state: State, new_state: State) -> State:
+    if isinstance(new_state, Cancelled):
+        client = prefect.Client()
+        subflows = prefect.context.get("_subflow_ids", [])
+        if len(subflows) > 0:
+            query = f"""
+                query {{
+                    flow_run(
+                        where: {{
+                            _and: [
+                                {{state: {{_eq: "Running"}}}},
+                                {{id: {{_in: {json.dumps(subflows)}}}}}
+                            ]
+                        }}
+                    ) {{
+                        id
+                    }}
+                }}
+            """
+            # pylint: disable=no-member
+            response = client.graphql(query=query)
+            active_subflow_runs = response["data"]["flow_run"]
+            if active_subflow_runs:
+                logger = prefect.context.get("logger")
+                logger.info(f"Found {len(active_subflow_runs)} subflows running")
+                for subflow_run_id in active_subflow_runs:
+                    logger.info(f"cancelling run: {subflow_run_id}")
+                    client.cancel_flow_run(flow_run_id=subflow_run_id)
+                    logger("Run cancelled!")
+    return new_state
+
+
+class FailedSubFlow(Exception):
+    """Erro para ser usado quando um subflow falha"""
+
+    pass

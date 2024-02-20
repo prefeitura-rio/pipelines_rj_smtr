@@ -5,13 +5,12 @@ from typing import Any, Union
 
 import prefect
 from prefect import task
-from prefect.engine.signals import FAIL
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 from pytz import timezone
 
 from pipelines.constants import constants
-from pipelines.utils.prefect import create_subflow_run, wait_subflow_run
+from pipelines.utils.prefect import FailedSubFlow, create_subflow_run, wait_subflow_run
 
 
 @task
@@ -160,6 +159,4 @@ def run_subflow(
             )
 
     if flag_failed_runs:
-        raise FAIL(failed_message)
-    # for signal in run_signals:
-    #     raise signal
+        raise FailedSubFlow(failed_message)

@@ -12,6 +12,9 @@ from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.constants import constants
 
+# Set BD config to run on cloud #
+bd.config.from_file = True
+
 
 def custom_serialization(obj: Any) -> Any:
     """
