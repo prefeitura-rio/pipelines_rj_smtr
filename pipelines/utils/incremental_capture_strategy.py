@@ -248,7 +248,7 @@ class IDIncremental(IncrementalCaptureStrategy):
             "id": {
                 "max_incremental_window": self._max_incremental_window,
                 "first_value": self._first_value,
-                "incremental_reference_column": self.id_column_name,
+                "id_column_name": self.id_column_name,
             }
         }
 
