@@ -263,11 +263,12 @@ class constants(Enum):
                         {{ update }}
                 """,
                 "get_updates": [
-                    "c.cd_cliente",
-                    "c.cd_agencia",
-                    "c.cd_tipo_conta",
-                    "c.nr_banco",
-                    "c.nr_conta",
+                    "c.CD_CLIENTE",
+                    "c.CD_AGENCIA",
+                    "c.CD_TIPO_CONTA",
+                    "c.NR_BANCO",
+                    "c.NR_CONTA",
+                    "b.NM_BANCO",
                 ],
             },
             "primary_keys": ["CD_CLIENTE"],

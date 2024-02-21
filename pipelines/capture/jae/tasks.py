@@ -3,6 +3,8 @@
 from datetime import datetime
 from typing import Union
 
+import prefect
+
 from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.utils.capture.db import DBExtractor, PaginatedDBExtractor
 from pipelines.utils.incremental_capture_strategy import IncrementalInfo
@@ -41,21 +43,24 @@ def create_extractor_jae(
     }
 
     if "get_updates" in data_extractor_params.keys():
+        update_columns = data_extractor_params["get_updates"]
+        pks_param = prefect.context["parameters"]["primary_keys"]
+        pks = [col for col in update_columns if col.split(".")[-1] in pks_param]
+        content_cols = [col for col in update_columns if col.split(".")[-1] not in pks_param]
         template_variables["update"] = create_sql_update_filter(
             env=env,
             dataset_id=dataset_id,
             table_id=table_id,
-            columns_to_search=data_extractor_params["get_updates"],
+            primary_keys=pks,
+            content_columns_to_search=content_cols,
         )
 
-    query = render_template(
-        template_string=data_extractor_params["query"],
-        execution_mode=incremental_info.execution_mode,
-        _vars=template_variables,
-    )
-
     extractor_general_args = {
-        "query": query,
+        "query": render_template(
+            template_string=data_extractor_params["query"],
+            execution_mode=incremental_info.execution_mode,
+            _vars=template_variables,
+        ),
         "engine": database_details["engine"],
         "host": database_details["host"],
         "user": credentials["user"],
@@ -67,7 +72,6 @@ def create_extractor_jae(
     if table_id == jae_constants.GPS_VALIDADOR_CAPTURE_PARAMS.value["table_id"]:
         return PaginatedDBExtractor(
             page_size=data_extractor_params["page_size"],
-            max_pages=data_extractor_params["max_pages"],
             **extractor_general_args,
         )
 

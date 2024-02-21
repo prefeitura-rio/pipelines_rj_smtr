@@ -96,7 +96,6 @@ class PaginatedDBExtractor(DBExtractor):
         password: str,
         database: str,
         page_size: int,
-        max_pages: int,
         save_filepath: str,
     ) -> None:
         super().__init__(
@@ -111,7 +110,6 @@ class PaginatedDBExtractor(DBExtractor):
         self.offset = 0
         self.base_query = f"{query} LIMIT {page_size}"
         self.query = f"{self.base_query} OFFSET 0"
-        self.max_pages = max_pages
         self.page_size = page_size
 
     def _prepare_next_page(self):
@@ -132,11 +130,11 @@ class PaginatedDBExtractor(DBExtractor):
         log(
             f"""
             Page size: {self.page_size}
-            Current page: {current_page}/{self.max_pages}
+            Current page: {current_page}
             Current page returned {page_data_len} rows"""
         )
 
-        last_page = page_data_len < self.page_size or self.max_pages == current_page
+        last_page = page_data_len < self.page_size
         if last_page:
             log("Last page, ending extraction")
         return last_page
