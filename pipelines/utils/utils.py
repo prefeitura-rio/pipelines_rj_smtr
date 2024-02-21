@@ -122,7 +122,7 @@ def create_sql_update_filter(
 
     columns_to_concat_bq = pks_to_concat_bq + content_to_concat_bq
 
-    columns_to_search_db = content_columns_to_search + primary_keys
+    columns_to_search_db = primary_keys + content_columns_to_search
 
     try:
         query = f"""
