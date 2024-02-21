@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Schedules for rj_smtr
+Modulo com schedules para os Flows da rj-smtr
 """
 
 from datetime import datetime, timedelta
@@ -11,7 +11,36 @@ from pytz import timezone
 
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
-from pipelines.utils.utils import generate_ftp_schedules
+from pipelines.utils.backup.utils import generate_ftp_schedules
+
+
+def generate_interval_schedule(
+    interval: timedelta, agent_label: str, params: dict = None
+) -> Schedule:
+    """
+    Cria um Schedule para os flows do prefect
+
+    Args:
+        interval (timedelta): Frequência do agendamento do flow
+        agent_label (str): Label para executar o flow
+        params (dict, optional): Parâmetros para ser passados ao flow no
+            momento da execução
+    """
+    if not params:
+        params = {}
+    return Schedule(
+        [
+            IntervalClock(
+                interval=interval,
+                start_date=datetime(2021, 1, 1, 0, 0, 0, tzinfo=timezone(constants.TIMEZONE.value)),
+                labels=[
+                    agent_label,
+                ],
+                parameter_defaults=params,
+            )
+        ]
+    )
+
 
 every_minute = Schedule(
     clocks=[

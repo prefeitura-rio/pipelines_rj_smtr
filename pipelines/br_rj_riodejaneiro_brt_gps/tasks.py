@@ -20,7 +20,10 @@ from prefeitura_rio.pipelines_utils.logging import log
 # SMTR Imports #
 
 from pipelines.constants import constants
-from pipelines.utils.utils import log_critical, map_dict_keys
+from pipelines.utils.backup.utils import log_critical, map_dict_keys
+
+
+from pipelines.br_rj_riodejaneiro_brt_gps.constants import constants as gps_constants
 
 # Tasks #
 
@@ -58,7 +61,9 @@ def pre_treatment_br_rj_riodejaneiro_brt_gps(status: dict, timestamp):
     df = pd.DataFrame(columns=columns)  # pylint: disable=c0103
 
     # map_dict_keys change data keys to match project data structure
-    df["content"] = [map_dict_keys(piece, constants.GPS_BRT_MAPPING_KEYS.value) for piece in data]
+    df["content"] = [
+        map_dict_keys(piece, gps_constants.GPS_BRT_MAPPING_KEYS.value) for piece in data
+    ]
     df[key_column] = [piece[key_column] for piece in data]
     df["timestamp_gps"] = [piece["timestamp_gps"] for piece in data]
     df["timestamp_captura"] = timestamp
