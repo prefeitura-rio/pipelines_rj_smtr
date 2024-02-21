@@ -89,7 +89,6 @@ class constants(Enum):
                     id > {{ start }} AND id <= {{ end }}
             """,
             "page_size": 1000,
-            "max_pages": 100,
         },
         "primary_keys": ["id"],
     }
