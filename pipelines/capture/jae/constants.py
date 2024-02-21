@@ -91,8 +91,7 @@ class constants(Enum):
             "page_size": 1000,
             "max_pages": 100,
         },
-        "primary_key": ["id"],
-        "interval_minutes": 5,
+        "primary_keys": ["id"],
     }
 
     AUXILIAR_GENERAL_CAPTURE_PARAMS = {
