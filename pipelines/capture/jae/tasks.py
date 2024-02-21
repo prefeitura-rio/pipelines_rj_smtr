@@ -64,7 +64,7 @@ def create_extractor_jae(
         "save_filepath": save_filepath,
     }
 
-    if table_id == jae_constants.TRACKING_CAPTURE_PARAMS["table_id"]:
+    if table_id == jae_constants.GPS_VALIDADOR_CAPTURE_PARAMS["table_id"]:
         return PaginatedDBExtractor(
             page_size=data_extractor_params["page_size"],
             max_pages=data_extractor_params["max_pages"],
