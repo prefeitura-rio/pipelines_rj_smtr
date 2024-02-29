@@ -47,7 +47,7 @@ def create_api_url_onibus_realocacao(
 
     headers = get_secret(secret_path=secret_path)
 
-    url = f"{url}guidIdentificacao={headers['GUIDIDENTIFICACAO']}"
+    url = f"{url}guidIdentificacao={headers['guididentificacao']}"
 
     url += f"&dataInicial={date_range['date_range_start']}&dataFinal={date_range['date_range_end']}"
 
@@ -139,7 +139,7 @@ def create_api_url_onibus_gps(timestamp: datetime = None) -> str:
         timestamp = pendulum.now(emd_constants.TIMEZONE.value).replace(second=0, microsecond=0)
 
     headers = get_secret(secret_path=constants.GPS_SPPO_API_SECRET_PATH.value)
-    url = f"{constants.GPS_SPPO_API_BASE_URL.value}guidIdentificacao={headers['GUIDIDENTIFICACAO']}"
+    url = f"{constants.GPS_SPPO_API_BASE_URL.value}guidIdentificacao={headers['guididentificacao']}"
 
     date_range = {
         "start": (timestamp - timedelta(minutes=6)).strftime("%Y-%m-%d+%H:%M:%S"),
