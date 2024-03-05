@@ -5,7 +5,7 @@ from prefect.storage import GCS
 # EMD Imports #
 
 from prefeitura_rio.pipelines_utils.custom import Flow
-from prefeitura_rio.pipelines_utils.state_handlers import handler_initialize_sentry
+from prefeitura_rio.pipelines_utils.state_handlers import handler_initialize_sentry, handler_inject_bd_credentials
 
 from pipelines.constants import constants as emd_constants
 from pipelines.schedules import every_minute
@@ -21,5 +21,5 @@ raise_flow.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
 )
-raise_flow.state_handlers = [handler_initialize_sentry]
+raise_flow.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
 raise_flow.schedule = every_minute
