@@ -13,7 +13,6 @@ from pipelines.utils.backup.utils import log_critical, map_dict_keys
 # SMTR Imports #
 
 
-
 @task
 def test_raise_errors(datetime: datetime):
     if datetime.minute % 5 == 0:
