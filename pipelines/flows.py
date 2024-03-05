@@ -7,3 +7,4 @@ from pipelines.capture.jae.flows import *  # noqa
 from pipelines.capture.templates.flows import *  # noqa
 from pipelines.exemplo import *  # noqa
 from pipelines.treatment.bilhetagem.flows import *  # noqa
+from pipelines.test.flows import *  # noqa
