@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 
@@ -12,7 +13,7 @@ from pipelines.schedules import every_minute
 from pipelines.test.tasks import test_raise_errors
 from pipelines.utils.backup.tasks import get_current_timestamp
 
-with Flow('SMTR - Teste de Erros do Glitch Tip') as raise_flow:
+with Flow("SMTR - Teste de Erros do Glitch Tip") as raise_flow:
     datetime = get_current_timestamp()
     test_raise_errors(datetime=datetime)
 
