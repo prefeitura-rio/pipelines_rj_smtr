@@ -23,14 +23,13 @@ def test_raise_errors(datetime: datetime):
         return datetime.minute / 0
     
 @task
-def glitch_api_get(query='is:unresolved'):
+def glitch_api_get_issues(query='is:unresolved'):
     base_url = constants.GLITCH_API_ENDPOINT.value
 
     headers = get_secret(secret_path=constants.GLITCH_AUTH.value)
-    print(headers)
     if query:
         base_url += f'?query={query}'
-    print(base_url)
+    log(f'Will query glitch tip api at: {base_url}')
     issues = requests.get(base_url, headers=headers)
 
     return issues.json()
