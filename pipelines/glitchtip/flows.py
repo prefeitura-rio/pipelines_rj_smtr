@@ -14,10 +14,10 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 from pipelines.constants import constants as emd_constants
 from pipelines.schedules import every_minute, every_day_noon
 from pipelines.glitchtip.tasks import (
-    test_raise_errors, 
-    glitch_api_get_issues, 
+    test_raise_errors,
+    glitch_api_get_issues,
     format_glitch_issue_messages,
-    send_issue_report 
+    send_issue_report,
 )
 from pipelines.utils.backup.tasks import get_current_timestamp
 
@@ -33,7 +33,7 @@ raise_flow.run_config = KubernetesRun(
 raise_flow.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
 raise_flow.schedule = every_minute
 
-with Flow('SMTR - Report de Issues do Glitch Tip') as glitch_flow:
+with Flow("SMTR - Report de Issues do Glitch Tip") as glitch_flow:
     issues = glitch_api_get_issues()
     messages = format_glitch_issue_messages(issues)
     send_issue_report(messages)
