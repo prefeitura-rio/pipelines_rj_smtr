@@ -114,6 +114,18 @@ every_day = Schedule(
     ]
 )
 
+every_day_noon = Schedule(
+    clocks=[
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(2021, 1, 1, 12, 0, tzinfo=timezone(constants.TIMEZONE.value)),
+            labels=[
+                emd_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        ),
+    ]
+)
+
 ftp_clocks = generate_ftp_schedules(
     interval_minutes=60, label=emd_constants.RJ_SMTR_DEV_AGENT_LABEL
 )

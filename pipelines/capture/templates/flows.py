@@ -11,6 +11,7 @@ from prefect.storage import GCS
 from prefect.tasks.core.function import FunctionTask
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
+    handler_initialize_sentry,
     handler_inject_bd_credentials,
     handler_skip_if_running,
 )
@@ -239,9 +240,7 @@ def create_default_capture_flow(
         image=constants.DOCKER_IMAGE.value,
         labels=[agent_label],
     )
-    capture_flow.state_handlers = [
-        handler_inject_bd_credentials,
-    ]
+    capture_flow.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
     if skip_if_running:
         capture_flow.state_handlers.append(handler_skip_if_running)
