@@ -6,7 +6,7 @@ from typing import Union
 import prefect
 
 from pipelines.capture.jae.constants import constants as jae_constants
-from pipelines.utils.capture.db import DBExtractor, PaginatedDBExtractor
+from pipelines.utils.extractors.db import DBExtractor, PaginatedDBExtractor
 from pipelines.utils.incremental_capture_strategy import IncrementalInfo
 from pipelines.utils.jinja import render_template
 from pipelines.utils.prefect import extractor_task

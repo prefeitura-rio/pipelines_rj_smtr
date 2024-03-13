@@ -39,13 +39,18 @@ class constants(Enum):  # pylint: disable=c0103
 
     # REDIS DEFAULT KEYS #
     REDIS_LAST_CAPTURED_VALUE_KEY = "last_captured_value"
+    REDIS_LAST_MATERIALIZATION_TS_KEY = "last_run_timestamp"
 
     # PATTERNS #
     FILENAME_PATTERN = "%Y-%m-%d-%H-%M-%S"
+    MATERIALIZATION_LAST_RUN_PATTERN = "%Y-%m-%dT%H:%M:%S"
     SOURCE_DATASET_ID_PATTERN = "{source_name}_source"
     MODE_FULL = "full"
     MODE_INCR = "incr"
     FLOW_RUN_URL_PATTERN = "https://pipelines.dados.rio/smtr/flow-run/{run_id}"
+
+    # URLS #
+    REPO_URL = "https://api.github.com/repos/prefeitura-rio/pipelines_rj_smtr"
 
     # GPS STPL #
     # GPS_STPL_API_BASE_URL = "http://zn4.m2mcontrol.com.br/api/integracao/veiculos"

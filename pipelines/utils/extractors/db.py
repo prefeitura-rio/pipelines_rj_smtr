@@ -4,7 +4,7 @@ import pandas as pd
 from prefeitura_rio.pipelines_utils.logging import log
 from sqlalchemy import create_engine
 
-from pipelines.utils.capture.base import DataExtractor
+from pipelines.utils.extractors.base import DataExtractor
 from pipelines.utils.fs import get_filetype
 
 

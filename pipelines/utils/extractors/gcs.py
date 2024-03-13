@@ -2,7 +2,7 @@
 """Module to get data from GCS"""
 from prefeitura_rio.pipelines_utils.logging import log
 
-from pipelines.utils.capture.base import DataExtractor
+from pipelines.utils.extractors.base import DataExtractor
 from pipelines.utils.fs import get_filetype
 from pipelines.utils.gcp import Storage
 

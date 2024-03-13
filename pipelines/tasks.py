@@ -48,6 +48,28 @@ def get_current_timestamp(
 
 
 @task
+def get_scheduled_timestamp(timestamp: str) -> datetime:
+    """
+    Retorna a timestamp do agendamento da run atual
+
+    Returns:
+        datetime: A data e hora do agendamento
+    """
+    if timestamp is not None:
+        timestamp = datetime.fromisoformat(timestamp)
+    else:
+        timestamp = prefect.context["scheduled_start_time"]
+
+    if timestamp.tzinfo is None:
+        timestamp = timestamp.replace(tzinfo=timezone(constants.TIMEZONE.value))
+    else:
+        timestamp = timestamp.astimezone(tz=timezone(constants.TIMEZONE.value))
+
+    log(f"Created timestamp: {timestamp}")
+    return timestamp
+
+
+@task
 def parse_timestamp_to_string(timestamp: datetime, pattern: str = "%Y-%m-%d-%H-%M-%S") -> str:
     """
     Converte um datetime em string
@@ -60,6 +82,27 @@ def parse_timestamp_to_string(timestamp: datetime, pattern: str = "%Y-%m-%d-%H-%
     if pattern.lower() == "iso":
         return timestamp.isoformat()
     return timestamp.strftime(pattern)
+
+
+@task
+def parse_string_to_timestamp(
+    timestamp_str: Union[None, str],
+    pattern: str = "iso",
+    tz: str = constants.TIMEZONE.value,
+) -> Union[None, datetime]:
+    if timestamp_str is None:
+        return timestamp_str
+    if pattern.lower() == "iso":
+        timestamp = datetime.fromisoformat(timestamp_str)
+    else:
+        timestamp = datetime.strptime(timestamp_str, pattern)
+
+    if timestamp.tzinfo is None:
+        timestamp = timestamp.replace(tzinfo=timezone(tz))
+    else:
+        timestamp = timestamp.astimezone(tz=timezone(tz))
+
+    return timestamp
 
 
 @task

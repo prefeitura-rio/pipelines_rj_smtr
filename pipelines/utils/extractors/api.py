@@ -7,7 +7,7 @@ import requests
 from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.constants import constants
-from pipelines.utils.capture.base import DataExtractor
+from pipelines.utils.extractors.base import DataExtractor
 from pipelines.utils.fs import get_filetype
 
 
