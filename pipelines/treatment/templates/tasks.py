@@ -15,7 +15,7 @@ from pipelines.treatment.templates.utils import (
     create_dataplex_log_message,
     send_dataplex_discord_message,
 )
-from pipelines.utils.dataplex import DataQuality
+from pipelines.utils.dataplex import DataQuality, DataQualityCheckArgs
 from pipelines.utils.gcp import BQTable
 from pipelines.utils.prefect import flow_is_running_local
 from pipelines.utils.utils import get_last_materialization_redis_key
@@ -181,25 +181,29 @@ def save_materialization_datetime_redis(redis_key: str, value: datetime):
 
 @task
 def run_data_quality_checks(
-    check_ids: list[str],
-    partition_column_name: str,
+    data_quality_checks: list[DataQualityCheckArgs],
     initial_partition: datetime,
     final_partition: datetime,
 ):
     if flow_is_running_local():
         return
 
-    if not isinstance(check_ids, list):
+    if not isinstance(data_quality_checks, list):
         raise ValueError(
-            f"O argumento check_ids precisa receber uma lista. Tipo passado: {type(check_ids)}"
+            f"data_quality_checks precisa ser uma lista. Recebeu: {type(data_quality_checks)}"
         )
-    for check_id in check_ids:
-        dataplex = DataQuality(data_scan_id=check_id)
-        initial_partition = initial_partition.strftime("%Y-%m-%d")
-        final_partition = final_partition.strftime("%Y-%m-%d")
-        row_filters = (
-            f"{partition_column_name} BETWEEN '{initial_partition}' AND '{final_partition}'"
-        )
+
+    for check in data_quality_checks:
+        dataplex = DataQuality(data_scan_id=check.check_id, project_id="rj-smtr")
+        partition_column_name = check.table_partition_column_name
+        if partition_column_name is None:
+            row_filters = "1=1"
+        else:
+            initial_partition = initial_partition.strftime("%Y-%m-%d")
+            final_partition = final_partition.strftime("%Y-%m-%d")
+            row_filters = (
+                f"{partition_column_name} BETWEEN '{initial_partition}' AND '{final_partition}'"
+            )
         run = dataplex.run_parameterized(
             row_filters=row_filters,
             wait_run_completion=True,
@@ -209,7 +213,7 @@ def run_data_quality_checks(
 
         if not run.data_quality_result.passed:
             send_dataplex_discord_message(
-                dataplex_check_id=check_id,
+                dataplex_check_id=check.check_id,
                 dataplex_run=run,
                 timestamp=datetime.now(tz=timezone(constants.TIMEZONE.value)),
                 initial_partition=initial_partition,

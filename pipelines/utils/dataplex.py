@@ -4,6 +4,7 @@ import base64
 import json
 import os
 import re
+from dataclasses import dataclass
 from time import sleep
 from typing import List, Union
 
@@ -23,6 +24,12 @@ from google.cloud.dataplex_v1 import (
     UpdateDataScanRequest,
 )
 from google.oauth2 import service_account
+
+
+@dataclass
+class DataQualityCheckArgs:
+    check_id: str
+    table_partition_column_name: str = None
 
 
 class Dataplex:

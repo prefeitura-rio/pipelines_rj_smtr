@@ -25,6 +25,7 @@ from pipelines.treatment.templates.tasks import (
     run_dbt_model_task,
     save_materialization_datetime_redis,
 )
+from pipelines.utils.dataplex import DataQualityCheckArgs
 from pipelines.utils.prefect import TypedParameter
 
 
@@ -32,11 +33,10 @@ def create_default_materialization_flow(
     flow_name: str,
     dataset_id: str,
     datetime_column_name: str,
-    partition_column_name: str,
     create_datetime_variables_task: FunctionTask,
     overwrite_flow_params: dict,
     agent_label: str,
-    data_quality_ids: list[str] = None,
+    data_quality_checks: list[DataQualityCheckArgs] = None,
 ) -> Flow:
     with Flow(flow_name) as default_materialization_flow:
         table_id = TypedParameter(
@@ -125,10 +125,9 @@ def create_default_materialization_flow(
             upstream_tasks=[run_dbt],
         )
 
-        if data_quality_ids is not None:
+        if data_quality_checks is not None:
             run_data_quality_checks(
-                check_ids=data_quality_ids,
-                partition_column_name=partition_column_name,
+                data_quality_checks=data_quality_checks,
                 initial_partition=timestamp,
                 final_partition=datetime_end,
                 upstream_tasks=[save_redis],
