@@ -95,7 +95,7 @@ def create_default_materialization_flow(
             timestamp_str=overwrite_initial_datetime
         )
 
-        datetime_vars, datetime_end = create_datetime_variables_task(
+        datetime_vars, datetime_start, datetime_end = create_datetime_variables_task(
             timestamp=timestamp,
             last_materialization_datetime=last_materialization_datetime,
             incremental_delay_hours=incremental_delay_hours,
@@ -128,7 +128,7 @@ def create_default_materialization_flow(
         if data_quality_checks is not None:
             run_data_quality_checks(
                 data_quality_checks=data_quality_checks,
-                initial_partition=timestamp,
+                initial_partition=datetime_start,
                 final_partition=datetime_end,
                 upstream_tasks=[save_redis],
             )

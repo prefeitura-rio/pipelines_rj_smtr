@@ -33,7 +33,7 @@ BILHETAGEM_MATERIALIZACAO = create_default_materialization_flow(
         "upstream": True,
     },
     agent_label=constants.RJ_SMTR_DEV_AGENT_LABEL.value,
-    data_quality_ids=[
+    data_quality_checks=[
         DataQualityCheckArgs(check_id="teste-falha", table_partition_column_name="data")
     ],
 )

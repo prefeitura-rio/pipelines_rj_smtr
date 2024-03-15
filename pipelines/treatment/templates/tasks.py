@@ -193,17 +193,28 @@ def run_data_quality_checks(
             f"data_quality_checks precisa ser uma lista. Recebeu: {type(data_quality_checks)}"
         )
 
+    log(
+        f"""Executando testes de qualidade de dados:
+        partição inicial: {initial_partition}
+        partição final: {final_partition}
+        """
+    )
+
     for check in data_quality_checks:
         dataplex = DataQuality(data_scan_id=check.check_id, project_id="rj-smtr")
         partition_column_name = check.table_partition_column_name
-        if partition_column_name is None:
+        if partition_column_name is None or initial_partition is None:
             row_filters = "1=1"
         else:
             initial_partition = initial_partition.strftime("%Y-%m-%d")
             final_partition = final_partition.strftime("%Y-%m-%d")
-            row_filters = (
-                f"{partition_column_name} BETWEEN '{initial_partition}' AND '{final_partition}'"
-            )
+            row_filters = f"{partition_column_name} "
+            if initial_partition == final_partition:
+                row_filters += f"= '{initial_partition}'"
+            else:
+                row_filters += f"BETWEEN '{initial_partition}' AND '{final_partition}'"
+
+        log(f"Executando check de qualidade de dados {dataplex.id} com o filtro: {row_filters}")
         run = dataplex.run_parameterized(
             row_filters=row_filters,
             wait_run_completion=True,
@@ -221,7 +232,7 @@ def run_data_quality_checks(
             )
 
 
-@task(nout=2)
+@task(nout=3)
 def create_date_range_variable(
     timestamp: datetime,
     last_materialization_datetime: datetime,
@@ -239,15 +250,17 @@ def create_date_range_variable(
     date_range_end = timestamp - timedelta(hours=incremental_delay_hours)
 
     date_range = {
-        "date_range_start": date_range_start,
+        "date_range_start": (
+            date_range_start if date_range_start is None else date_range_start.strftime(pattern)
+        ),
         "date_range_end": date_range_end.strftime(pattern),
     }
     log(f"Got date_range as: {date_range}")
 
-    return date_range, date_range_end
+    return date_range, date_range_start, date_range_end
 
 
-@task(nout=2)
+@task(nout=3)
 def create_run_date_variable(
     timestamp: datetime,
     last_materialization_datetime: datetime,
@@ -257,16 +270,16 @@ def create_run_date_variable(
     log("Creating run_date DBT variable")
     if last_materialization_datetime is None:
         log("last_materialization_datetime é Nulo")
-        return None, timestamp.replace(hour=0, minute=0, second=0, microsecond=0)
+        return None, None, timestamp.replace(hour=0, minute=0, second=0, microsecond=0)
     date_range_start = overwrite_initial_datetime or last_materialization_datetime
     date_range = pd.date_range(start=date_range_start, end=timestamp)
     dates = [{"run_date": d.strftime("%Y-%m-%d")} for d in date_range]
 
     log(f"Created the following dates: {dates}")
-    return dates, date_range[-1].to_pydatetime()
+    return dates, date_range[0].to_pydatetime(), date_range[-1].to_pydatetime()
 
 
-@task(nout=2)
+@task(nout=3)
 def create_run_date_hour_variable(
     timestamp: datetime,
     last_materialization_datetime: datetime,
@@ -283,4 +296,4 @@ def create_run_date_hour_variable(
     dates = [{"run_date_hour": d.strftime("%Y-%m-%d %H:%M:%S")} for d in date_range]
 
     log(f"Created the following dates: {dates}")
-    return dates, date_range[-1].to_pydatetime()
+    return dates, date_range[0].to_pydatetime(), date_range[-1].to_pydatetime()
