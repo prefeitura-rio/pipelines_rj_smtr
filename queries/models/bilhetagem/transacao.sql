@@ -87,7 +87,7 @@ tipo_pagamento AS (
     chave AS id_tipo_pagamento,
     valor AS tipo_pagamento
   FROM
-    `rj-smtr.br_rj_riodejaneiro_bilhetagem.dicionario`
+    `rj-smtr-dev.bilhetagem.dicionario`
   WHERE
     id_tabela = "transacao"
     AND coluna = "id_tipo_pagamento"
