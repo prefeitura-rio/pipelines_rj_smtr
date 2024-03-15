@@ -21,7 +21,7 @@ from pipelines.utils.prefect import flow_is_running_local
 from pipelines.utils.utils import get_last_materialization_redis_key
 
 
-@task
+@task(nout=2)
 def get_last_materialization_datetime(
     env: str,
     dataset_id: str,
@@ -82,7 +82,7 @@ def get_last_materialization_datetime(
         )
 
     log(f"Got value {last_run_timestamp}")
-    return last_run_timestamp
+    return last_run_timestamp, key
 
 
 @task
