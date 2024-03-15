@@ -126,7 +126,7 @@ def create_dbt_run_vars(
     for datetime_variable in datetime_vars:
         var_list.append(datetime_variable | {"version": repo_version})
 
-    return datetime_variable
+    return var_list
 
 
 @task
