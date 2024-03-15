@@ -102,7 +102,7 @@ def create_default_materialization_flow(
             overwrite_initial_datetime=overwrite_initial_datetime,
         )
 
-        repo_version = get_repo_version(dataset_id=dataset_id, table_id=table_id)
+        repo_version = get_repo_version()
 
         dbt_run_vars = create_dbt_run_vars(
             datetime_vars=datetime_vars,
