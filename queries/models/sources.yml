@@ -7,18 +7,22 @@ sources:
     tables:
       - name: transacao
       - name: linha
-      - name: grupo
-      - name: grupo_linha
       - name: dicionario
       - name: consorcio
-      - name: pessoa_juridica
       - name: operadora_transporte
       - name: ordem_pagamento
       - name: ordem_ressarcimento
-      - name: linha_consorcio
       - name: conta_bancaria
       - name: contato_pessoa_juridica
       - name: cliente
+      - name: percentual_rateio_integracao
+      - name: integracao_transacao
+      - name: tipo_modal
+      - name: gps_validador
+      - name: gratuidade
+      - name: ordem_rateio
+      - name: servico_motorista
+      - name: linha_sem_ressarcimento
 
   - name: br_rj_riodejaneiro_gtfs_staging
     database: rj-smtr-staging
@@ -45,8 +49,24 @@ sources:
       - name: operadora_empresa
       - name: operadora_pessoa_fisica
 
-  - name: br_rj_riodejaneiro_recurso_staging
+  - name: br_rj_riodejaneiro_recursos_staging
     database: rj-smtr-staging
 
     tables:
-      - name: recurso_sppo_viagens_individuais
+      - name: recursos_sppo_viagens_individuais
+      - name: recursos_sppo_bloqueio_via
+      - name: recursos_sppo_reprocessamento
+
+  - name: cadastro
+    database: rj-smtr
+
+    tables:
+      - name: modos
+
+  - name: br_rj_riodejaneiro_rdo_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: rho_registros_sppo
+      - name: rho5_registros_stpl
+

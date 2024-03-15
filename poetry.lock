@@ -868,6 +868,24 @@ google-auth = ">=1.25.0,<3.0dev"
 grpc = ["grpcio (>=1.38.0,<2.0dev)", "grpcio-status (>=1.38.0,<2.0.dev0)"]
 
 [[package]]
+name = "google-cloud-dataplex"
+version = "1.12.3"
+description = "Google Cloud Dataplex API client library"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "google-cloud-dataplex-1.12.3.tar.gz", hash = "sha256:c0692b6713fce6180df6d59bfb972d06f9fae264f33e7f2ba781d785f64ab8c3"},
+    {file = "google_cloud_dataplex-1.12.3-py2.py3-none-any.whl", hash = "sha256:2ef7943b331ff254d2a8d2395c6a3b666837a73d32da1c4572a07453c0069dd3"},
+]
+
+[package.dependencies]
+google-api-core = {version = ">=1.34.1,<2.0.dev0 || >=2.11.dev0,<3.0.0dev", extras = ["grpc"]}
+google-auth = ">=2.14.1,<2.24.0 || >2.24.0,<2.25.0 || >2.25.0,<3.0.0dev"
+grpc-google-iam-v1 = ">=0.12.4,<1.0.0dev"
+proto-plus = ">=1.22.3,<2.0.0dev"
+protobuf = ">=3.19.5,<3.20.0 || >3.20.0,<3.20.1 || >3.20.1,<4.21.0 || >4.21.0,<4.21.1 || >4.21.1,<4.21.2 || >4.21.2,<4.21.3 || >4.21.3,<4.21.4 || >4.21.4,<4.21.5 || >4.21.5,<5.0.0dev"
+
+[[package]]
 name = "google-cloud-dataproc"
 version = "5.8.0"
 description = "Google Cloud Dataproc API client library"
@@ -3585,4 +3603,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.11"
-content-hash = "54a8e7450ae4d994a18d35b69b9b9da2fa10b6d881acd774cc4118cd5890b414"
+content-hash = "2cf1d17c1120c868129385df54f3c6e3abb34f0f04f9a4fbcb69bd906ac7839d"

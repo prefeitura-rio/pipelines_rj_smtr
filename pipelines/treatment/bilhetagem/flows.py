@@ -14,9 +14,31 @@ from pipelines.capture.jae.constants import constants as jae_capture_constants
 from pipelines.capture.jae.flows import JAE_AUXILIAR_CAPTURE
 from pipelines.constants import constants
 from pipelines.schedules import generate_interval_schedule
-from pipelines.tasks import run_subflow
+from pipelines.tasks import (
+    get_scheduled_timestamp,
+    parse_timestamp_to_string,
+    run_subflow,
+)
+from pipelines.treatment.templates.flows import create_default_materialization_flow
+from pipelines.treatment.templates.tasks import create_date_range_variable
+
+BILHETAGEM_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="Bilhetagem - Materialização (subflow)",
+    dataset_id="bilhetagem",
+    datetime_column_name="datetime_processamento",
+    partition_column_name="data",
+    create_datetime_variables_task=create_date_range_variable,
+    overwrite_flow_params={
+        "table_id": "transacao",
+        "upstream": True,
+    },
+    agent_label=constants.RJ_SMTR_DEV_AGENT_LABEL.value,
+    data_quality_ids=["teste-falha"],
+)
 
 with Flow("Bilhetagem - Tratamento") as bilhetagem_tratamento:
+
+    timestamp = get_scheduled_timestamp()
 
     AUXILIAR_CAPTURE = run_subflow(
         flow_name=JAE_AUXILIAR_CAPTURE.name,
@@ -25,6 +47,13 @@ with Flow("Bilhetagem - Tratamento") as bilhetagem_tratamento:
     )
 
     AUXILIAR_CAPTURE.name = "run_captura_auxiliar_jae"
+
+    TRANSACAO_MATERIALIZACAO = run_subflow(
+        flow_name=JAE_AUXILIAR_CAPTURE.name,
+        parameters={"timestamp": parse_timestamp_to_string(timestamp=timestamp, pattern="iso")},
+        upstream_tasks=[AUXILIAR_CAPTURE],
+    )
+    TRANSACAO_MATERIALIZACAO.name = "run_materializacao_transacao"
 
 
 bilhetagem_tratamento.storage = GCS(constants.GCS_FLOWS_BUCKET.value)

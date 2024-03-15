@@ -4,6 +4,7 @@ from types import NoneType
 
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
+from prefect.tasks.core.function import FunctionTask
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
@@ -20,6 +21,7 @@ from pipelines.treatment.templates.tasks import (
     create_dbt_run_vars,
     get_last_materialization_datetime,
     get_repo_version,
+    run_data_quality_checks,
     run_dbt_model_task,
     save_materialization_datetime_redis,
 )
@@ -29,9 +31,12 @@ from pipelines.utils.prefect import TypedParameter
 def create_default_materialization_flow(
     flow_name: str,
     dataset_id: str,
-    create_datetime_variables_task,
+    datetime_column_name: str,
+    partition_column_name: str,
+    create_datetime_variables_task: FunctionTask,
     overwrite_flow_params: dict,
     agent_label: str,
+    data_quality_ids: list[str] = None,
 ) -> Flow:
     with Flow(flow_name) as default_materialization_flow:
         table_id = TypedParameter(
@@ -69,11 +74,6 @@ def create_default_materialization_flow(
             default=overwrite_flow_params.get("incremental_delay_hours", 0),
             accepted_types=int,
         )
-        datetime_column_name = TypedParameter(
-            name="datetime_column_name",
-            default=overwrite_flow_params.get("datetime_column_name"),
-            accepted_types=(str, NoneType),
-        )
         overwrite_initial_datetime = TypedParameter(
             name="overwrite_initial_datetime",
             default=overwrite_flow_params.get("overwrite_initial_datetime"),
@@ -95,7 +95,7 @@ def create_default_materialization_flow(
             timestamp_str=overwrite_initial_datetime
         )
 
-        datetime_vars, value_to_save_redis = create_datetime_variables_task(
+        datetime_vars, datetime_end = create_datetime_variables_task(
             timestamp=timestamp,
             last_materialization_datetime=last_materialization_datetime,
             incremental_delay_hours=incremental_delay_hours,
@@ -119,11 +119,20 @@ def create_default_materialization_flow(
             dbt_run_vars=dbt_run_vars,
         )
 
-        save_materialization_datetime_redis(
+        save_redis = save_materialization_datetime_redis(
             redis_key=redis_key,
-            value=value_to_save_redis,
+            value=datetime_end,
             upstream_tasks=[run_dbt],
         )
+
+        if data_quality_ids is not None:
+            run_data_quality_checks(
+                check_ids=data_quality_ids,
+                partition_column_name=partition_column_name,
+                initial_partition=timestamp,
+                final_partition=datetime_end,
+                upstream_tasks=[save_redis],
+            )
 
     default_materialization_flow.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
     default_materialization_flow.run_config = KubernetesRun(

@@ -31,6 +31,8 @@ class constants(Enum):  # pylint: disable=c0103
 
     # WEBHOOK #
     CRITICAL_SECRET_PATH = "critical_webhook"
+    WEBHOOKS_SECRET_PATH = "webhooks"
+    DATAPLEX_WEBHOOK = "dataplex"
 
     # RETRY POLICY #
     MAX_TIMEOUT_SECONDS = 60
@@ -51,6 +53,7 @@ class constants(Enum):  # pylint: disable=c0103
 
     # URLS #
     REPO_URL = "https://api.github.com/repos/prefeitura-rio/pipelines_rj_smtr"
+    DATAPLEX_URL = "https://console.cloud.google.com/dataplex/govern/quality"
 
     # GPS STPL #
     # GPS_STPL_API_BASE_URL = "http://zn4.m2mcontrol.com.br/api/integracao/veiculos"

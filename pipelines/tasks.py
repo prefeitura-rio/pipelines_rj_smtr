@@ -48,7 +48,7 @@ def get_current_timestamp(
 
 
 @task
-def get_scheduled_timestamp(timestamp: str) -> datetime:
+def get_scheduled_timestamp(timestamp: str = None) -> datetime:
     """
     Retorna a timestamp do agendamento da run atual
 

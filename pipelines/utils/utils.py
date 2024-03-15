@@ -149,3 +149,11 @@ def create_sql_update_filter(
             raise err
 
     return update_condition
+
+
+def get_last_materialization_redis_key(env: str, dataset_id: str, table_id: str) -> str:
+    key = dataset_id + "." + table_id
+    if env == "dev":
+        key = f"{env}.{key}"
+
+    return key
