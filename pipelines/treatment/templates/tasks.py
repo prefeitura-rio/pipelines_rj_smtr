@@ -76,7 +76,7 @@ def get_last_materialization_datetime(
             last_run_timestamp.day,
         )
 
-    if not isinstance(last_run_timestamp, datetime):
+    if not isinstance(last_run_timestamp, datetime) and last_run_timestamp is not None:
         raise ValueError(
             f"last_run_timestamp must be datetime. Received: {type(last_run_timestamp)}"
         )
