@@ -99,11 +99,11 @@ SELECT
     data_transacao AS datetime_transacao,
     data_processamento AS datetime_processamento,
     t.timestamp_captura AS datetime_captura,
-    m.modo,
-    dc.id_consorcio,
-    dc.consorcio,
-    do.id_operadora,
-    do.operadora,
+    -- m.modo,
+    -- dc.id_consorcio,
+    -- dc.consorcio,
+    -- do.id_operadora,
+    -- do.operadora,
     l.cd_linha AS id_servico_jae,
     sentido,
     NULL AS id_veiculo,
@@ -128,18 +128,18 @@ LEFT JOIN
 ON
     t.cd_linha = l.cd_linha
     AND t.data_transacao >= l.datetime_inclusao
-LEFT JOIN
-    {{ source("cadastro", "modos") }} m
-ON
-    t.id_tipo_modal = m.id_modo AND m.fonte = "jae"
-LEFT JOIN
-    {{ ref("operadoras") }} AS do
-ON
-    t.cd_operadora = do.id_operadora_jae
-LEFT JOIN
-    {{ ref("consorcios") }} AS dc
-ON
-    t.cd_consorcio = dc.id_consorcio_jae
+-- LEFT JOIN
+--     {{ source("cadastro", "modos") }} m
+-- ON
+--     t.id_tipo_modal = m.id_modo AND m.fonte = "jae"
+-- LEFT JOIN
+--     {{ ref("operadoras") }} AS do
+-- ON
+--     t.cd_operadora = do.id_operadora_jae
+-- LEFT JOIN
+--     {{ ref("consorcios") }} AS dc
+-- ON
+--     t.cd_consorcio = dc.id_consorcio_jae
 LEFT JOIN
     tipo_transacao AS tt
 ON

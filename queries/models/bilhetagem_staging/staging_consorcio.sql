@@ -13,7 +13,7 @@ WITH
             DATETIME(PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%S%Ez', SAFE_CAST(JSON_VALUE(content, '$.DT_INCLUSAO') AS STRING)), "America/Sao_Paulo") AS datetime_inclusao,
             SAFE_CAST(JSON_VALUE(content, '$.NM_CONSORCIO') AS STRING) AS nm_consorcio
         FROM
-            {{ source("br_rj_riodejaneiro_bilhetagem_staging", "consorcio") }}
+            {{ source("jae_source", "consorcio") }}
     ),
     consorcio_rn AS (
         SELECT
