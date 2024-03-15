@@ -141,8 +141,8 @@ def create_default_materialization_flow(
     )
 
     default_materialization_flow.state_handlers = [
-        handler_skip_if_running,
         handler_inject_bd_credentials,
+        handler_skip_if_running,
     ]
 
     return default_materialization_flow

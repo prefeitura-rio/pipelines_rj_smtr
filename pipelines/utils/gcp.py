@@ -297,9 +297,13 @@ class BQTable(GCPBase):
             f"{constants.PROJECT_NAME.value[env]}.{self.dataset_id}.{self.table_id}"
         )
 
-        self.partition = create_partition(
-            timestamp=timestamp,
-            partition_date_only=partition_date_only,
+        self.partition = (
+            None
+            if timestamp is None
+            else create_partition(
+                timestamp=timestamp,
+                partition_date_only=partition_date_only,
+            )
         )
 
         filepaths = create_capture_filepath(
