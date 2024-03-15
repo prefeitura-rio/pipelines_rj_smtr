@@ -240,12 +240,16 @@ def create_date_range_variable(
     overwrite_initial_datetime: datetime,
 ) -> tuple[dict, datetime]:
     log("Creating daterange DBT variables")
+    log(
+        f"""Parâmetros recebidos:
+        timestamp = {timestamp}
+        last_materialization_datetime = {last_materialization_datetime}
+        incremental_delay_hours = {incremental_delay_hours}
+        overwrite_initial_datetime = {overwrite_initial_datetime}
+        """
+    )
     pattern = constants.MATERIALIZATION_LAST_RUN_PATTERN.value
     date_range_start = overwrite_initial_datetime or last_materialization_datetime
-    if last_materialization_datetime is not None:
-        date_range_start = last_materialization_datetime.strftime(pattern)
-    else:
-        log("last_materialization_datetime é Nulo")
 
     date_range_end = timestamp - timedelta(hours=incremental_delay_hours)
 
@@ -268,6 +272,13 @@ def create_run_date_variable(
     overwrite_initial_datetime: datetime,
 ) -> tuple[list[dict], datetime]:
     log("Creating run_date DBT variable")
+    log(
+        f"""Parâmetros recebidos:
+        timestamp = {timestamp}
+        last_materialization_datetime = {last_materialization_datetime}
+        overwrite_initial_datetime = {overwrite_initial_datetime}
+        """
+    )
     if last_materialization_datetime is None:
         log("last_materialization_datetime é Nulo")
         return None, None, timestamp.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -287,9 +298,17 @@ def create_run_date_hour_variable(
     overwrite_initial_datetime: datetime,
 ) -> tuple[list[dict], datetime]:
     log("Creating run_date_hour DBT variable")
+    log(
+        f"""Parâmetros recebidos:
+        timestamp = {timestamp}
+        last_materialization_datetime = {last_materialization_datetime}
+        overwrite_initial_datetime = {overwrite_initial_datetime}
+        """
+    )
     if last_materialization_datetime is None:
         log("last_materialization_datetime é Nulo")
         return None, timestamp.replace(minute=0, second=0, microsecond=0)
+
     date_range_start = overwrite_initial_datetime or last_materialization_datetime
     date_range_end = timestamp - timedelta(hours=incremental_delay_hours)
     date_range = pd.date_range(start=date_range_start, end=date_range_end, freq="H")
