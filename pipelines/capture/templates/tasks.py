@@ -11,7 +11,7 @@ from prefeitura_rio.pipelines_utils.logging import log
 from pytz import timezone
 
 from pipelines.constants import constants
-from pipelines.utils.capture.base import DataExtractor
+from pipelines.utils.extractors.base import DataExtractor
 from pipelines.utils.fs import read_raw_data, save_local_file
 from pipelines.utils.gcp import BQTable
 from pipelines.utils.incremental_capture_strategy import (

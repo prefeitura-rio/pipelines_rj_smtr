@@ -10,6 +10,7 @@ from mimetypes import MimeTypes
 from pathlib import Path
 from typing import Type, TypeVar, Union
 
+import basedosdados as bd
 from google.api_core.exceptions import NotFound
 from google.cloud import bigquery, storage
 from google.cloud.bigquery.external_config import HivePartitioningOptions
@@ -19,6 +20,8 @@ from pipelines.constants import constants
 from pipelines.utils.fs import create_capture_filepath, create_partition
 
 T = TypeVar("T")
+# Set BD config to run on cloud #
+bd.config.from_file = True
 
 
 @dataclass
@@ -293,22 +296,26 @@ class BQTable(GCPBase):
         self.table_full_name = (
             f"{constants.PROJECT_NAME.value[env]}.{self.dataset_id}.{self.table_id}"
         )
+        if timestamp is None:
+            self.partition = None
+            self.raw_filepath = None
+            self.source_filepath = None
+        else:
+            self.partition = create_partition(
+                timestamp=timestamp,
+                partition_date_only=partition_date_only,
+            )
 
-        self.partition = create_partition(
-            timestamp=timestamp,
-            partition_date_only=partition_date_only,
-        )
+            filepaths = create_capture_filepath(
+                dataset_id=dataset_id,
+                table_id=table_id,
+                timestamp=timestamp,
+                raw_filetype=raw_filetype,
+                partition=self.partition,
+            )
 
-        filepaths = create_capture_filepath(
-            dataset_id=dataset_id,
-            table_id=table_id,
-            timestamp=timestamp,
-            raw_filetype=raw_filetype,
-            partition=self.partition,
-        )
-
-        self.raw_filepath = filepaths.get("raw")
-        self.source_filepath = filepaths.get("source")
+            self.raw_filepath = filepaths.get("raw")
+            self.source_filepath = filepaths.get("source")
 
         self.timestamp = timestamp
 
@@ -389,3 +396,14 @@ class BQTable(GCPBase):
             filepath=self.source_filepath,
             partition=self.partition,
         )
+
+    def get_table_min_max_value(self, field_name: str, kind: str):
+        log(f"Getting {kind} value for {self.table_id}")
+        query = f"""
+        SELECT
+            {kind}({field_name})
+        FROM {self.table_full_name}
+        """
+        result = bd.read_sql(query=query)
+
+        return result.iloc[0][0]

@@ -2,7 +2,7 @@
 """Module to get data from GCS"""
 from prefeitura_rio.pipelines_utils.logging import log
 
-from pipelines.utils.capture.base import DataExtractor
+from pipelines.utils.extractors.base import DataExtractor
 from pipelines.utils.fs import get_filetype
 from pipelines.utils.gcp import Storage
 
@@ -26,12 +26,12 @@ class GCSExtractor(DataExtractor):
         folder: str,
         filename: str,
         save_filepath: str,
-        bucket_name: str = None,
+        bucket_names: dict[str] = None,
     ) -> None:
         super().__init__(save_filepath=save_filepath)
         filetype = get_filetype(filepath=save_filepath)
         self.complete_filename = f"{filename}.{filetype}"
-        self.storage = Storage(env=env, dataset_id=folder, bucket_name=bucket_name)
+        self.storage = Storage(env=env, dataset_id=folder, bucket_names=bucket_names)
 
     def _get_data(self) -> str:
         """Baixa o arquivo como string

@@ -7,7 +7,7 @@ import requests
 from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.constants import constants
-from pipelines.utils.capture.base import DataExtractor
+from pipelines.utils.extractors.base import DataExtractor
 from pipelines.utils.fs import get_filetype
 
 
@@ -80,7 +80,6 @@ class APIExtractorTopSkip(APIExtractor):
         top_param_name (str): Nome do parâmetro de top (que define o tamanho da página)
         skip_param_name (str): Nome do parâmetro de skip (quantidade de linhas a serem puladas)
         page_size (int): Número de registros por página (valor a ser passado no parâmetro de top)
-        max_pages (int): Limite de páginas a ser extraídas
         save_filepath (str): Caminho para salvar os dados
     """
 
@@ -92,7 +91,6 @@ class APIExtractorTopSkip(APIExtractor):
         top_param_name: str,
         skip_param_name: str,
         page_size: int,
-        max_pages: int,
         save_filepath: str,
     ) -> None:
         super().__init__(
@@ -109,7 +107,6 @@ class APIExtractorTopSkip(APIExtractor):
         self.skip_param_name = skip_param_name
         self.params[skip_param_name] = 0
         self.page_size = page_size
-        self.max_pages = max_pages
 
     def _prepare_next_page(self):
         """
@@ -128,11 +125,11 @@ class APIExtractorTopSkip(APIExtractor):
         log(
             f"""
             Page size: {self.page_size}
-            Current page: {current_page}/{self.max_pages}
+            Current page: {current_page}
             Current page returned {page_data_len} rows"""
         )
 
-        last_page = page_data_len < self.page_size or self.max_pages == current_page
+        last_page = page_data_len < self.page_size
         if last_page:
             log("Last page, ending extraction")
         return last_page
