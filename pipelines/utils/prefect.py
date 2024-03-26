@@ -14,7 +14,7 @@ from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.constants import constants
-from pipelines.utils.capture.base import DataExtractor
+from pipelines.utils.extractors.base import DataExtractor
 
 # from prefect.engine.state import Cancelled, State
 

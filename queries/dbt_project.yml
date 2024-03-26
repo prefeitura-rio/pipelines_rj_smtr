@@ -147,45 +147,10 @@ models:
     relation: true
     columns: true
   rj_smtr:
-    projeto_subsidio_sppo:
-      +materialized: view
-      +schema: projeto_subsidio_sppo
-    br_rj_riodejaneiro_gtfs:
+    bilhetagem:
       +materialized: incremental
-      +incremental_strategy: insert_overwrite
-      +schema: br_rj_riodejaneiro_gtfs
-    br_rj_riodejaneiro_sigmob:
+      +schema: bilhetagem
+    bilhetagem_staging:
       +materialized: view
-      +schema: br_rj_riodejaneiro_sigmob
-    br_rj_riodejaneiro_onibus_gps:
-      +materialized: view
-      +schema: br_rj_riodejaneiro_onibus_gps
-    br_rj_riodejaneiro_brt_gps:
-      +materialized: view
-      +schema: br_rj_riodejaneiro_brt_gps
-    br_rj_riodejaneiro_veiculos:
-      +materialized: view
-      +schema: br_rj_riodejaneiro_veiculos
-    dashboard_subsidio_sppo:
-      +materialized: view
-      +schema: dashboard_subsidio_sppo
-    veiculo:
-      +materialized: view
-      +schema: veiculo
-    br_rj_riodejaneiro_rdo:
-      +materialized: view
-      +schema: br_rj_riodejaneiro_rdo
-    br_rj_riodejaneiro_bilhetagem:
-      +materialized: incremental
-      +schema: br_rj_riodejaneiro_bilhetagem
-    br_rj_riodejaneiro_bilhetagem_staging:
-      +materialized: view
-      +schema: br_rj_riodejaneiro_bilhetagem_staging
-    br_rj_riodejaneiro_stu:
-      +materialized: view
-      +schema: br_rj_riodejaneiro_stu
-    cadastro:
-      +schema: cadastro
-    br_rj_riodejaneiro_recurso:
-      +materialized: incremental
-      +schema: br_rj_riodejaneiro_recurso
+      +schema: bilhetagem_staging
+
