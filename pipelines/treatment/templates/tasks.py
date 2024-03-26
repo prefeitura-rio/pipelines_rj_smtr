@@ -36,6 +36,13 @@ def rename_materialization_flow(
     Renomeia a run atual do Flow de materialização com o formato:
     [<timestamp>] <dataset_id>.<table_id>: from <valor inicial> to <valor final>
 
+    Args:
+        dataset_id (str): dataset_id no DBT
+        table_id (str): table_id no DBT
+        timestamp (datetime): timestamp de execução do Flow
+        datetime_start (datetime): Partição inicial da materialização
+        datetime_end (datetime): Partição final da materialização
+
     Returns:
         bool: Se o flow foi renomeado
     """
@@ -59,9 +66,12 @@ def get_last_materialization_datetime(
         env (str): dev ou prod
         dataset_id (str): dataset_id no DBT
         table_id (str): table_id no DBT
+        datetime_column_name (str): Nome da coluna para buscar a ultima data caso
+            não exista no Redis
 
     Returns:
         datetime: A última data e hora materializada
+        str: Key do Redis
     """
     key = get_last_materialization_redis_key(env=env, dataset_id=dataset_id, table_id=table_id)
 
@@ -193,6 +203,13 @@ def run_dbt_model_task(
 
 @task
 def save_materialization_datetime_redis(redis_key: str, value: datetime):
+    """
+    Salva o datetime de materialização do Redis
+
+    Args:
+        redis_key (str): Key do Redis para salvar o valor
+        value (datetime): Datetime a ser salvo
+    """
     value = value.strftime(constants.MATERIALIZATION_LAST_RUN_PATTERN.value)
     log(f"Saving timestamp {value} on key: {redis_key}")
     redis_client = get_redis_client()
@@ -208,6 +225,14 @@ def run_data_quality_checks(
     initial_partition: datetime,
     final_partition: datetime,
 ):
+    """
+    Executa os testes de qualidade de dados no Dataplex
+
+    Args:
+        data_quality_checks (list[DataQualityCheckArgs]): Lista de testes para executar
+        initial_partition (datetime): Partição inicial para rodar os testes
+        final_partition (datetime): Partição final para rodar os testes
+    """
     if flow_is_running_local():
         return
 
@@ -264,7 +289,21 @@ def create_date_range_variable(
     last_materialization_datetime: datetime,
     incremental_delay_hours: int,
     overwrite_initial_datetime: datetime,
-) -> tuple[dict, datetime]:
+) -> tuple[dict, datetime, datetime]:
+    """
+    Cria as variáveis date_range_start e data_range_end
+
+    Args:
+        timestamp (datetime): Timestamp de execução do Flow
+        last_materialization_datetime (datetime): Timestamp da última materialização
+        incremental_delay_hours (int): Quantidade de horas a ser subtraído do date_range_end
+        overwrite_initial_datetime (datetime): Valor para sobrescrever o date_range_start
+
+    Returns:
+        dict: Variáveis para serem usadas do DBT
+        datetime: datetime inicial
+        datetime: datetime final
+    """
     log("Creating daterange DBT variables")
     log(
         f"""Parâmetros recebidos:
@@ -296,7 +335,21 @@ def create_run_date_variable(
     last_materialization_datetime: datetime,
     incremental_delay_hours: int,  # pylint: disable=W0613
     overwrite_initial_datetime: datetime,
-) -> tuple[list[dict], datetime]:
+) -> tuple[list[dict], datetime, datetime]:
+    """
+    Cria uma lista de variáveis run_date
+
+    Args:
+        timestamp (datetime): Timestamp de execução do Flow
+        last_materialization_datetime (datetime): Timestamp da última materialização
+        overwrite_initial_datetime (datetime): Valor para sobrescrever a data inicial
+
+    Returns:
+        list[dict]: Variáveis para serem usadas do DBT
+        datetime: datetime inicial
+        datetime: datetime final
+    """
+
     log("Creating run_date DBT variable")
     log(
         f"""Parâmetros recebidos:
@@ -322,7 +375,22 @@ def create_run_date_hour_variable(
     last_materialization_datetime: datetime,
     incremental_delay_hours: int,
     overwrite_initial_datetime: datetime,
-) -> tuple[list[dict], datetime]:
+) -> tuple[list[dict], datetime, datetime]:
+    """
+    Cria uma lista de variáveis run_date_hour
+
+    Args:
+        timestamp (datetime): Timestamp de execução do Flow
+        last_materialization_datetime (datetime): Timestamp da última materialização
+        incremental_delay_hours (int): Quantidade de horas a ser subtraído da data final
+        overwrite_initial_datetime (datetime): Valor para sobrescrever a data inicial
+
+    Returns:
+        list[dict]: Variáveis para serem usadas do DBT
+        datetime: datetime inicial
+        datetime: datetime final
+    """
+
     log("Creating run_date_hour DBT variable")
     log(
         f"""Parâmetros recebidos:

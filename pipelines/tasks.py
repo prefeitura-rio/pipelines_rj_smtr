@@ -90,6 +90,15 @@ def parse_string_to_timestamp(
     pattern: str = "iso",
     tz: str = constants.TIMEZONE.value,
 ) -> Union[None, datetime]:
+    """
+    Converte uma string para um datetime
+
+    Args:
+        timestamp_str (Union[None, str]): String para converter
+        pattern (str, optional): Formato de data da string. Caso seja "iso", aplica a função
+            fromisoformat
+        tz (str, optional): Nome da timezone
+    """
     if timestamp_str is None:
         return timestamp_str
     if pattern.lower() == "iso":

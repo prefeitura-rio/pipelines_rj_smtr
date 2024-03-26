@@ -8,6 +8,15 @@ from pipelines.utils.discord import send_discord_embed_message
 
 
 def create_dataplex_log_message(dataplex_run: DataScanJob) -> str:
+    """
+    Cria a mensagem de log para os testes de qualidade de dados
+
+    Args:
+        dataplex_run(DataScanJob): Resultado da execução dos testes
+
+    Returns:
+        str: mensagem para ser exibida nos logs do Prefect
+    """
     rule_count = len(dataplex_run.data_quality_result.rules)
     failed_rules = [r for r in dataplex_run.data_quality_result.rules if not r.passed]
     failed_rule_count = len(failed_rules)
@@ -30,11 +39,19 @@ def send_dataplex_discord_message(
     initial_partition: str,
     final_partition: str,
 ):
+    """
+    Envia o relatório dos testes de qualidade de dados no Discord
+
+    dataplex_check_id (str): ID do teste no Dataplex
+    dataplex_run (DataScanJob): Resultado da execução dos testes
+    timestamp (datetime): Timestamp de execução do flow
+    initial_partition (str): Partição inicial analisada pelos testes
+    final_partition (str): Partição inicial analisada pelos testes
+    """
     msg_pattern = """**Partições:** {partitions}
 **Porcentagem de registros com erro:** {error_ratio}%
 **Query para verificação:** {failing_rows_query}
 """
-
     embed = [
         {
             "name": f"Regra: {r.rule.name}",

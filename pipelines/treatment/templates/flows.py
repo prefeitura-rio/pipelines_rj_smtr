@@ -35,49 +35,75 @@ def create_default_materialization_flow(
     dataset_id: str,
     datetime_column_name: str,
     create_datetime_variables_task: FunctionTask,
-    overwrite_flow_params: dict,
+    overwrite_flow_param_values: dict,
     agent_label: str,
     data_quality_checks: list[DataQualityCheckArgs] = None,
 ) -> Flow:
+    """
+    Cria um flow de materialização
+
+    Args:
+        flow_name (str): O nome do Flow
+        dataset_id (str): O dataset_id no BigQuery
+        datetime_column_name (str): O nome da coluna de datetime para buscar a
+            última data materializada, caso não tenha registrado no Redis
+        create_datetime_variables_task (FunctionTask): Task de criação das variáveis de
+            data para execuções incrementais
+        overwrite_flow_param_values (dict): Dicionário para substituir os valores padrões dos
+            parâmetros do flow
+        agent_label (str): Label do flow
+        data_quality_checks (list[DataQualityCheckArgs]): Lista de checks do Dataplex para
+            serem executados
+
+        Returns:
+            Flow: Flow de materialização
+    """
     with Flow(flow_name) as default_materialization_flow:
+        # Parâmetros DBT #
         table_id = TypedParameter(
             name="table_id",
-            default=overwrite_flow_params.get("table_id"),
-            accepted_types=(str, NoneType),
-        )
-        timestamp = TypedParameter(
-            name="timestamp",
-            default=overwrite_flow_params.get("timestamp"),
+            default=overwrite_flow_param_values.get("table_id"),
             accepted_types=(str, NoneType),
         )
         upstream = TypedParameter(
             name="upstream",
-            default=overwrite_flow_params.get("upstream", False),
+            default=overwrite_flow_param_values.get("upstream", False),
             accepted_types=bool,
         )
         downstream = TypedParameter(
             name="downstream",
-            default=overwrite_flow_params.get("downstream", False),
+            default=overwrite_flow_param_values.get("downstream", False),
             accepted_types=bool,
         )
         exclude = TypedParameter(
             name="exclude",
-            default=overwrite_flow_params.get("exclude"),
+            default=overwrite_flow_param_values.get("exclude"),
             accepted_types=(str, NoneType),
         )
         rebuild = TypedParameter(
             name="rebuild",
-            default=overwrite_flow_params.get("rebuild", False),
+            default=overwrite_flow_param_values.get("rebuild", False),
             accepted_types=bool,
         )
+
+        # Parâmetros para filtros incrementais #
+
+        # Data de referência da execução, será a data final do filtro incremental
+        timestamp = TypedParameter(
+            name="timestamp",
+            default=overwrite_flow_param_values.get("timestamp"),
+            accepted_types=(str, NoneType),
+        )
+        # Valor em horas a ser subtraído do timestamp final
         incremental_delay_hours = TypedParameter(
             name="incremental_delay_hours",
-            default=overwrite_flow_params.get("incremental_delay_hours", 0),
+            default=overwrite_flow_param_values.get("incremental_delay_hours", 0),
             accepted_types=int,
         )
+        # Substitui a data inicial da execução incremental
         overwrite_initial_datetime = TypedParameter(
             name="overwrite_initial_datetime",
-            default=overwrite_flow_params.get("overwrite_initial_datetime"),
+            default=overwrite_flow_param_values.get("overwrite_initial_datetime"),
             accepted_types=(str, NoneType),
         )
 
