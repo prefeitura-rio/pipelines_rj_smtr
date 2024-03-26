@@ -145,15 +145,17 @@ def run_subflow(
     maximum_parallelism: int = None,
 ):
     """
-    Executa e espera a execução de um flow
+    Executa e espera a execução de um flow.
 
     Args:
         flow_name (str): Nome do flow a ser executado.
-        parameters (Union[list[dict], dict]): Parâmetros para executar o flow
+        parameters (Union[list[dict], dict]): Parâmetros para executar o flow. Caso seja uma lista,
+            irá executar o flow uma vez para cada dict de parâmetros
         project_name (str, optional): Nome do projeto no Prefect para executar o flow,
             se não for especificado, é utilizado o nome do projeto do flow atual
         labels (list[str]): Labels para executar o flow,
             se não for especificado, são utilizadas as labels do flow atual
+        maximum_parallelism (int): Número máximo de runs a serem executadas de uma vez
     """
 
     if not isinstance(parameters, (dict, list)):
