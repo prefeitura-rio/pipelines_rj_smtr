@@ -51,7 +51,7 @@ with Flow("Bilhetagem - Tratamento") as bilhetagem_tratamento:
     AUXILIAR_CAPTURE.name = "run_captura_auxiliar_jae"
 
     TRANSACAO_MATERIALIZACAO = run_subflow(
-        flow_name=JAE_AUXILIAR_CAPTURE.name,
+        flow_name=BILHETAGEM_MATERIALIZACAO.name,
         parameters={"timestamp": parse_timestamp_to_string(timestamp=timestamp, pattern="iso")},
         upstream_tasks=[AUXILIAR_CAPTURE],
     )
