@@ -21,6 +21,7 @@ from pipelines.treatment.templates.tasks import (
     create_dbt_run_vars,
     get_last_materialization_datetime,
     get_repo_version,
+    rename_materialization_flow,
     run_data_quality_checks,
     run_dbt_model_task,
     save_materialization_datetime_redis,
@@ -102,7 +103,15 @@ def create_default_materialization_flow(
             overwrite_initial_datetime=overwrite_initial_datetime,
         )
 
-        repo_version = get_repo_version()
+        rename_flow_run = rename_materialization_flow(
+            dataset_id=dataset_id,
+            table_id=table_id,
+            timestamp=timestamp,
+            datetime_start=datetime_start,
+            datetime_end=datetime_end,
+        )
+
+        repo_version = get_repo_version(upstream_tasks=[rename_flow_run])
 
         dbt_run_vars = create_dbt_run_vars(
             datetime_vars=datetime_vars,

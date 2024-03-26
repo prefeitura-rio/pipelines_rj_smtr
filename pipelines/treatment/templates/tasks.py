@@ -17,8 +17,31 @@ from pipelines.treatment.templates.utils import (
 )
 from pipelines.utils.dataplex import DataQuality, DataQualityCheckArgs
 from pipelines.utils.gcp import BQTable
-from pipelines.utils.prefect import flow_is_running_local
+from pipelines.utils.prefect import flow_is_running_local, rename_current_flow_run
 from pipelines.utils.utils import get_last_materialization_redis_key
+
+
+@task(
+    max_retries=constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
+)
+def rename_materialization_flow(
+    dataset_id: str,
+    table_id: str,
+    timestamp: datetime,
+    datetime_start: datetime,
+    datetime_end: datetime,
+) -> bool:
+    """
+    Renomeia a run atual do Flow de materialização com o formato:
+    [<timestamp>] <dataset_id>.<table_id>: from <valor inicial> to <valor final>
+
+    Returns:
+        bool: Se o flow foi renomeado
+    """
+    name = f"[{timestamp.astimezone(tz=timezone(constants.TIMEZONE.value))}] \
+{dataset_id}.{table_id}: from {datetime_start} to {datetime_end}"
+    return rename_current_flow_run(name=name)
 
 
 @task(nout=2)
