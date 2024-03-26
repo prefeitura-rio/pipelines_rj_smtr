@@ -241,39 +241,6 @@ class constants(Enum):
             "primary_keys": ["id"],
         },
         {
-            "table_id": "conta_bancaria",
-            "data_extractor_params": {
-                "database": "principal_db",
-                "query": """
-                    SELECT
-                        c.*,
-                        b.NM_BANCO
-                    FROM
-                        CONTA_BANCARIA c
-                    JOIN
-                        BANCO b
-                    ON
-                        b.NR_BANCO = c.NR_BANCO
-                    JOIN
-                        OPERADORA_TRANSPORTE o
-                    ON
-                        o.CD_CLIENTE = c.CD_CLIENTE
-                    WHERE
-                        {{ update }}
-                """,
-                "get_updates": [
-                    "c.CD_CLIENTE",
-                    "c.CD_AGENCIA",
-                    "c.CD_TIPO_CONTA",
-                    "c.NR_BANCO",
-                    "c.NR_CONTA",
-                    "b.NM_BANCO",
-                ],
-            },
-            "primary_keys": ["CD_CLIENTE"],
-            "save_bucket_names": JAE_PRIVATE_BUCKET,
-        },
-        {
             "table_id": "contato_pessoa_juridica",
             "data_extractor_params": {
                 "database": "principal_db",
