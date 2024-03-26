@@ -149,7 +149,7 @@ def run_subflow(
 
     Args:
         flow_name (str): Nome do flow a ser executado.
-        parameters (dict): Parâmetros para executar o flow
+        parameters (Union[list[dict], dict]): Parâmetros para executar o flow
         project_name (str, optional): Nome do projeto no Prefect para executar o flow,
             se não for especificado, é utilizado o nome do projeto do flow atual
         labels (list[str]): Labels para executar o flow,
@@ -159,8 +159,11 @@ def run_subflow(
     if not isinstance(parameters, (dict, list)):
         raise ValueError("parameters must be a list or a dict")
 
-    if maximum_parallelism is not None and isinstance(parameters, list):
-        execution_list = [
+    if isinstance(parameters, dict):
+        parameters = [parameters]
+
+    if maximum_parallelism is not None:
+        parameters = [
             parameters[i : i + maximum_parallelism]  # noqa
             for i in range(0, len(parameters), maximum_parallelism)
         ]
@@ -172,7 +175,7 @@ def run_subflow(
 
     flow_run_results = []
 
-    for idx, param_list in enumerate(execution_list):
+    for idx, param_list in enumerate(parameters):
 
         if not isinstance(param_list, list):
             param_list = [param_list]
