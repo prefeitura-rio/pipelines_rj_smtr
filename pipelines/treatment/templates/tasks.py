@@ -201,7 +201,10 @@ def run_data_quality_checks(
     )
 
     for check in data_quality_checks:
-        dataplex = DataQuality(data_scan_id=check.check_id, project_id="rj-smtr")
+        dataplex = DataQuality(
+            data_scan_id=check.check_id,
+            project_id="rj-smtr",
+        )
         partition_column_name = check.table_partition_column_name
         if partition_column_name is None or initial_partition is None:
             row_filters = "1=1"

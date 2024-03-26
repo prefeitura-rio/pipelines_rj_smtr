@@ -5,7 +5,6 @@ from google.cloud.dataplex_v1 import DataScanJob
 
 from pipelines.constants import constants
 from pipelines.utils.discord import send_discord_embed_message
-from pipelines.utils.prefect import flow_is_running_local
 
 
 def create_dataplex_log_message(dataplex_run: DataScanJob) -> str:
@@ -31,9 +30,6 @@ def send_dataplex_discord_message(
     initial_partition: str,
     final_partition: str,
 ):
-    if flow_is_running_local():
-        return
-
     msg_pattern = """**Partições:** {partitions}
 **Porcentagem de registros com erro:** {error_ratio}%
 **Query para verificação:** {failing_rows_query}
@@ -48,8 +44,7 @@ def send_dataplex_discord_message(
                     if final_partition == initial_partition
                     else f"{initial_partition} até {final_partition}"
                 ),
-                error_ratio=(1 - round(dataplex_run.data_quality_result.rules[0].pass_ratio, 2))
-                * 100,
+                error_ratio=(1 - round(r.pass_ratio, 2)) * 100,
                 failing_rows_query=r.failing_rows_query,
             ),
         }
