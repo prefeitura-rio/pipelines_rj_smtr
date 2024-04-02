@@ -70,6 +70,27 @@ class constants(Enum):
         "primary_keys": ["id"],
     }
 
+    TRANSACAO_RIOCARD_DEFAULT_PARAMS = {
+        "table_id": "transacao_riocard",
+        "raw_filetype": JAE_RAW_FILETYPE,
+        "incremental_capture_strategy": DatetimeIncremental(
+            max_incremental_window={"hours": 3}, first_value="2024-04-01 00:00:00"
+        ).to_dict(),
+        "data_extractor_params": {
+            "database": "transacao_db",
+            "query": """
+                SELECT
+                    *
+                FROM
+                    transacao_riocard
+                WHERE
+                    data_processamento > '{{ start }}'
+                    AND data_processamento <= '{{ end }}'
+            """,
+        },
+        "primary_keys": ["id"],
+    }
+
     GPS_VALIDADOR_CAPTURE_PARAMS = {
         "table_id": "gps_validador",
         "raw_filetype": JAE_RAW_FILETYPE,
