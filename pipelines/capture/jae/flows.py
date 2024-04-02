@@ -24,6 +24,21 @@ JAE_TRANSACAO_CAPTURE.schedule = generate_interval_schedule(
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
 )
 
+
+JAE_TRANSACAO_RIOCARD_CAPTURE = create_default_capture_flow(
+    flow_name="Jaé Transação RioCard - Captura",
+    source_name=constants.JAE_SOURCE_NAME.value,
+    partition_date_only=False,
+    create_extractor_task=create_extractor_jae,
+    overwrite_flow_params=constants.TRANSACAO_RIOCARD_DEFAULT_PARAMS.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+)
+
+JAE_TRANSACAO_RIOCARD_CAPTURE.schedule = generate_interval_schedule(
+    interval=timedelta(minutes=5),
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+)
+
 # GPS Validador
 
 JAE_GPS_VALIDADOR_CAPTURE = create_default_capture_flow(
