@@ -43,7 +43,7 @@ JAE_TRANSACAO_RIOCARD_CAPTURE.schedule = generate_interval_schedule(
 
 JAE_GPS_VALIDADOR_CAPTURE = create_default_capture_flow(
     flow_name="Jaé GPS Validador - Captura",
-    source_name=constants.JAE_SOURCE_NAME.value + "_us",
+    source_name=constants.JAE_SOURCE_NAME.value,
     partition_date_only=False,
     create_extractor_task=create_extractor_jae,
     overwrite_flow_params=constants.GPS_VALIDADOR_CAPTURE_PARAMS.value,
