@@ -74,7 +74,7 @@ class constants(Enum):
         "table_id": "transacao_riocard",
         "raw_filetype": JAE_RAW_FILETYPE,
         "incremental_capture_strategy": DatetimeIncremental(
-            max_incremental_window={"hours": 1}, first_value="2024-04-01 00:00:00"
+            max_incremental_window={"hours": 1}, first_value="2024-04-03T01:00:00+00:00"
         ).to_dict(),
         "data_extractor_params": {
             "database": "transacao_db",
@@ -89,6 +89,7 @@ class constants(Enum):
             """,
         },
         "primary_keys": ["id"],
+        "save_bucket_names": {"dev": "rj-smtr-dev", "prod": "rj-smtr-dev"},
     }
 
     GPS_VALIDADOR_CAPTURE_PARAMS = {
