@@ -32,11 +32,8 @@ class constants(Enum):  # pylint: disable=c0103
     # WEBHOOK #
     CRITICAL_SECRET_PATH = "critical_webhook"
     WEBHOOKS_SECRET_PATH = "webhooks"
-<<<<<<< HEAD
-=======
     DATAPLEX_WEBHOOK = "dataplex"
 
->>>>>>> a876e811bdeff6c543c25335bf3dceae2b469e25
     # RETRY POLICY #
     MAX_TIMEOUT_SECONDS = 60
     MAX_RETRIES = 3
