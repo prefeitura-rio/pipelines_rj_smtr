@@ -48,6 +48,28 @@ def get_current_timestamp(
 
 
 @task
+def get_scheduled_timestamp(timestamp: str = None) -> datetime:
+    """
+    Retorna a timestamp do agendamento da run atual
+
+    Returns:
+        datetime: A data e hora do agendamento
+    """
+    if timestamp is not None:
+        timestamp = datetime.fromisoformat(timestamp)
+    else:
+        timestamp = prefect.context["scheduled_start_time"]
+
+    if timestamp.tzinfo is None:
+        timestamp = timestamp.replace(tzinfo=timezone(constants.TIMEZONE.value))
+    else:
+        timestamp = timestamp.astimezone(tz=timezone(constants.TIMEZONE.value))
+
+    log(f"Created timestamp: {timestamp}")
+    return timestamp
+
+
+@task
 def parse_timestamp_to_string(timestamp: datetime, pattern: str = "%Y-%m-%d-%H-%M-%S") -> str:
     """
     Converte um datetime em string
@@ -60,6 +82,36 @@ def parse_timestamp_to_string(timestamp: datetime, pattern: str = "%Y-%m-%d-%H-%
     if pattern.lower() == "iso":
         return timestamp.isoformat()
     return timestamp.strftime(pattern)
+
+
+@task
+def parse_string_to_timestamp(
+    timestamp_str: Union[None, str],
+    pattern: str = "iso",
+    tz: str = constants.TIMEZONE.value,
+) -> Union[None, datetime]:
+    """
+    Converte uma string para um datetime
+
+    Args:
+        timestamp_str (Union[None, str]): String para converter
+        pattern (str, optional): Formato de data da string. Caso seja "iso", aplica a função
+            fromisoformat
+        tz (str, optional): Nome da timezone
+    """
+    if timestamp_str is None:
+        return timestamp_str
+    if pattern.lower() == "iso":
+        timestamp = datetime.fromisoformat(timestamp_str)
+    else:
+        timestamp = datetime.strptime(timestamp_str, pattern)
+
+    if timestamp.tzinfo is None:
+        timestamp = timestamp.replace(tzinfo=timezone(tz))
+    else:
+        timestamp = timestamp.astimezone(tz=timezone(tz))
+
+    return timestamp
 
 
 @task
@@ -102,22 +154,27 @@ def run_subflow(
     maximum_parallelism: int = None,
 ):
     """
-    Executa e espera a execução de um flow
+    Executa e espera a execução de um flow.
 
     Args:
         flow_name (str): Nome do flow a ser executado.
-        parameters (dict): Parâmetros para executar o flow
+        parameters (Union[list[dict], dict]): Parâmetros para executar o flow. Caso seja uma lista,
+            irá executar o flow uma vez para cada dict de parâmetros
         project_name (str, optional): Nome do projeto no Prefect para executar o flow,
             se não for especificado, é utilizado o nome do projeto do flow atual
         labels (list[str]): Labels para executar o flow,
             se não for especificado, são utilizadas as labels do flow atual
+        maximum_parallelism (int): Número máximo de runs a serem executadas de uma vez
     """
 
     if not isinstance(parameters, (dict, list)):
         raise ValueError("parameters must be a list or a dict")
 
-    if maximum_parallelism is not None and isinstance(parameters, list):
-        execution_list = [
+    if isinstance(parameters, dict):
+        parameters = [parameters]
+
+    if maximum_parallelism is not None:
+        parameters = [
             parameters[i : i + maximum_parallelism]  # noqa
             for i in range(0, len(parameters), maximum_parallelism)
         ]
@@ -129,7 +186,7 @@ def run_subflow(
 
     flow_run_results = []
 
-    for idx, param_list in enumerate(execution_list):
+    for idx, param_list in enumerate(parameters):
 
         if not isinstance(param_list, list):
             param_list = [param_list]

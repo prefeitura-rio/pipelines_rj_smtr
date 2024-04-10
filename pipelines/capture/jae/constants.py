@@ -70,6 +70,28 @@ class constants(Enum):
         "primary_keys": ["id"],
     }
 
+    TRANSACAO_RIOCARD_DEFAULT_PARAMS = {
+        "table_id": "transacao_riocard",
+        "raw_filetype": JAE_RAW_FILETYPE,
+        "incremental_capture_strategy": DatetimeIncremental(
+            max_incremental_window={"hours": 1}, first_value="2024-04-03T01:00:00+00:00"
+        ).to_dict(),
+        "data_extractor_params": {
+            "database": "transacao_db",
+            "query": """
+                SELECT
+                    *
+                FROM
+                    transacao_riocard
+                WHERE
+                    data_processamento > '{{ start }}'
+                    AND data_processamento <= '{{ end }}'
+            """,
+        },
+        "primary_keys": ["id"],
+        "save_bucket_names": {"dev": "rj-smtr-dev", "prod": "rj-smtr-dev"},
+    }
+
     GPS_VALIDADOR_CAPTURE_PARAMS = {
         "table_id": "gps_validador",
         "raw_filetype": JAE_RAW_FILETYPE,
@@ -89,7 +111,6 @@ class constants(Enum):
                     id > {{ start }} AND id <= {{ end }}
             """,
             "page_size": 1000,
-            "max_pages": 100,
         },
         "primary_keys": ["id"],
     }
@@ -240,38 +261,6 @@ class constants(Enum):
                   """,
             },
             "primary_keys": ["id"],
-        },
-        {
-            "table_id": "conta_bancaria",
-            "data_extractor_params": {
-                "database": "principal_db",
-                "query": """
-                    SELECT
-                        c.*,
-                        b.NM_BANCO
-                    FROM
-                        CONTA_BANCARIA c
-                    JOIN
-                        BANCO b
-                    ON
-                        b.NR_BANCO = c.NR_BANCO
-                    JOIN
-                        OPERADORA_TRANSPORTE o
-                    ON
-                        o.CD_CLIENTE = c.CD_CLIENTE
-                    WHERE
-                        {{ update }}
-                """,
-                "get_updates": [
-                    "c.cd_cliente",
-                    "c.cd_agencia",
-                    "c.cd_tipo_conta",
-                    "c.nr_banco",
-                    "c.nr_conta",
-                ],
-            },
-            "primary_keys": ["CD_CLIENTE"],
-            "save_bucket_names": JAE_PRIVATE_BUCKET,
         },
         {
             "table_id": "contato_pessoa_juridica",

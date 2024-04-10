@@ -32,6 +32,11 @@ class constants(Enum):  # pylint: disable=c0103
     # WEBHOOK #
     CRITICAL_SECRET_PATH = "critical_webhook"
     WEBHOOKS_SECRET_PATH = "webhooks"
+<<<<<<< HEAD
+=======
+    DATAPLEX_WEBHOOK = "dataplex"
+
+>>>>>>> a876e811bdeff6c543c25335bf3dceae2b469e25
     # RETRY POLICY #
     MAX_TIMEOUT_SECONDS = 60
     MAX_RETRIES = 3
@@ -39,9 +44,11 @@ class constants(Enum):  # pylint: disable=c0103
 
     # REDIS DEFAULT KEYS #
     REDIS_LAST_CAPTURED_VALUE_KEY = "last_captured_value"
+    REDIS_LAST_MATERIALIZATION_TS_KEY = "last_run_timestamp"
 
     # PATTERNS #
     FILENAME_PATTERN = "%Y-%m-%d-%H-%M-%S"
+    MATERIALIZATION_LAST_RUN_PATTERN = "%Y-%m-%dT%H:%M:%S"
     SOURCE_DATASET_ID_PATTERN = "{source_name}_source"
     MODE_FULL = "full"
     MODE_INCR = "incr"
@@ -51,6 +58,9 @@ class constants(Enum):  # pylint: disable=c0103
     GLITCH_URL = "https://glitch.dados.rio/"
     GLITCH_AUTH = "glitch_auth"
     GLITCH_WEBHOOK = "glitch"
+    # URLS #
+    REPO_URL = "https://api.github.com/repos/prefeitura-rio/pipelines_rj_smtr"
+    DATAPLEX_URL = "https://console.cloud.google.com/dataplex/govern/quality"
 
     # GPS STPL #
     # GPS_STPL_API_BASE_URL = "http://zn4.m2mcontrol.com.br/api/integracao/veiculos"
