@@ -34,6 +34,7 @@ from pipelines.utils.backup.tasks import (
     bq_upload,
 )
 from prefeitura_rio.pipelines_utils.custom import Flow
+from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_credentials, handler_initialize_sentry
 # from pipelines.utils.execute_dbt_model.tasks import get_k8s_dbt_client
 
 # SMTR Imports #
@@ -130,6 +131,7 @@ realocacao_sppo.run_config = KubernetesRun(
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 realocacao_sppo.schedule = every_10_minutes
+realocacao_sppo.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
 
 with Flow(
@@ -214,7 +216,7 @@ materialize_sppo.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-
+materialize_sppo.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
 with Flow(
     "SMTR: GPS SPPO - Captura",
@@ -277,6 +279,7 @@ captura_sppo_v2.run_config = KubernetesRun(
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 captura_sppo_v2.schedule = every_minute
+captura_sppo_v2.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
 
 with Flow(
@@ -385,3 +388,4 @@ recaptura.run_config = KubernetesRun(
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 recaptura.schedule = every_hour_minute_six
+recaptura.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
