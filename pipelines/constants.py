@@ -107,59 +107,52 @@ class constants(Enum):  # pylint: disable=c0103
     }
     GPS_BRT_MATERIALIZE_DELAY_HOURS = 0
 
-    # SIGMOB (GTFS) #
-    # SIGMOB_GET_REQUESTS_TIMEOUT = 60
-    # SIGMOB_PAGES_FOR_CSV_FILE = 10
-    # TASK_MAX_RETRIES = 3
-    # TASK_RETRY_DELAY = 10
+     # STU
 
-    # SIGMOB_DATASET_ID = "br_rj_riodejaneiro_sigmob"
-    # SIGMOB_ENDPOINTS = {
-    #     "agency": {
-    #         "url": "http://jeap.rio.rj.gov.br/MOB/get_agency.rule?sys=MOB",
-    #         "key_column": "agency_id",
-    #     },
-    #     "calendar": {
-    #         "url": "http://jeap.rio.rj.gov.br/MOB/get_calendar.rule?sys=MOB",
-    #         "key_column": "service_id",
-    #     },
-    #     "frota_determinada": {
-    #         "url": "http://jeap.rio.rj.gov.br/MOB/get_frota_determinada.rule?sys=MOB",
-    #         "key_column": "route_id",
-    #     },
-    #     "holidays": {
-    #         "url": "http://jeap.rio.rj.gov.br/MOB/get_holiday.rule?sys=MOB",
-    #         "key_column": "Data",
-    #     },
-    #     "linhas": {
-    #         "url": "http://jeap.rio.rj.gov.br/MOB/get_linhas.rule?sys=MOB",
-    #         "key_column": "linha_id",
-    #     },
-    #     "routes": {
-    #         "url": "http://jeap.rio.rj.gov.br/MOB/get_routes.rule?sys=MOB",
-    #         "key_column": "route_id",
-    #     },
-    #     "shapes": {
-    #         "url": "http://jeap.rio.rj.gov.br/MOB/get_shapes.rule?sys=MOB&INDICE=0",
-    #         "key_column": "shape_id",
-    #     },
-    #     "stops": {
-    #         "url": "http://jeap.rio.rj.gov.br/MOB/get_stops.rule?sys=MOB&INDICE=0",
-    #         "key_column": "stop_id",
-    #     },
-    #     "stop_times": {
-    #         "url": "http://jeap.rio.rj.gov.br/MOB/get_stop_times.rule?sys=MOB",
-    #         "key_column": "stop_id",
-    #     },
-    #     "stop_details": {
-    #         "url": "http://jeap.rio.rj.gov.br/MOB/get_stops_details.rule?sys=MOB&INDICE=0",
-    #         "key_column": "stop_id",
-    #     },
-    #     "trips": {
-    #         "url": "http://jeap.rio.rj.gov.br/MOB/get_trips.rule?sys=MOB",
-    #         "key_column": "trip_id",
-    #     },
-    # }
+    STU_DATASET_ID = "br_rj_riodejaneiro_stu"
+
+    STU_BUCKET_NAME = "rj-smtr-stu-private"
+
+    STU_MODE_MAPPING = {
+        "1": "Táxi",
+        "2": "Ônibus",
+        "3": "Escolar",
+        "4": "Complementar (cabritinho)",
+        "6": "Fretamento",
+        "7": "TEC",
+        "8": "Van",
+    }
+
+    STU_TYPE_MAPPING = [
+        "Autônomo",
+        "Empresa",
+        "Cooperativa",
+        "Instituicao de Ensino",
+        "Associações",
+        "Autônomo Provisório",
+        "Contrato Público",
+        "Prestadora de Serviços",
+    ]
+
+    STU_GENERAL_CAPTURE_PARAMS = {
+        "partition_date_only": True,
+        "source_type": "gcs",
+        "dataset_id": STU_DATASET_ID,
+        "save_bucket_name": STU_BUCKET_NAME,
+    }
+
+    STU_TABLE_CAPTURE_PARAMS = [
+        {
+            "table_id": "operadora_empresa",
+            "primary_key": ["Perm_Autor"],
+            "pre_treatment_reader_args": {"dtype": "object"},
+        },
+        {
+            "table_id": "operadora_pessoa_fisica",
+            "primary_key": ["Perm_Autor"],
+            "pre_treatment_reader_args": {"dtype": "object"},
+        },
+    ]
 
     DIRETORIO_MATERIALIZACAO_PARAMS = {
         "dataset_id": "cadastro",
