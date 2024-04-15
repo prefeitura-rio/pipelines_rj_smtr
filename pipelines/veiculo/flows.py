@@ -5,55 +5,58 @@ Flows for veiculos
 """
 
 from copy import deepcopy
+
 from prefect import Parameter
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.utilities.edges import unmapped
-
-# EMD Imports #
-
-from pipelines.constants import constants as emd_constants
 from prefeitura_rio.pipelines_utils.custom import Flow
+
 # from pipelines.utils.execute_dbt_model.tasks import get_k8s_dbt_client
-from prefeitura_rio.pipelines_utils.state_handlers import handler_initialize_sentry, handler_inject_bd_credentials
-
-from pipelines.utils.backup.tasks import (
-    rename_current_flow_run_now_time,
-    get_current_flow_mode,
-    get_current_flow_labels,
+from prefeitura_rio.pipelines_utils.state_handlers import (
+    handler_initialize_sentry,
+    handler_inject_bd_credentials,
 )
 
-# SMTR Imports #
-
+from pipelines.capture.templates.flows import create_default_capture_flow
 from pipelines.constants import constants
-
-from pipelines.schedules import (
-    every_day_hour_seven,
-)
+from pipelines.constants import constants as emd_constants
+from pipelines.schedules import every_day_hour_seven
 from pipelines.utils.backup.tasks import (
+    bq_upload,
     create_date_hour_partition,
     create_local_partition_path,
+    fetch_dataset_sha,
+    get_current_flow_labels,
+    get_current_flow_mode,
     get_current_timestamp,
+    get_join_dict,
+    get_previous_date,
     get_raw,
+    get_run_dates,
     parse_timestamp_to_string,
+    rename_current_flow_run_now_time,
+    run_dbt_model,
     save_raw_local,
     save_treated_local,
     upload_logs_to_bq,
-    bq_upload,
-    fetch_dataset_sha,
-    get_run_dates,
-    get_join_dict,
-    get_previous_date,
 )
-
 from pipelines.veiculo.tasks import (
-    pre_treatment_sppo_licenciamento,
     pre_treatment_sppo_infracao,
+    pre_treatment_sppo_licenciamento,
 )
 
-from pipelines.utils.backup.tasks import run_dbt_model
+# EMD Imports #
 
-from pipelines.capture.templates.flows import create_default_capture_flow
+
+
+
+# SMTR Imports #
+
+
+
+
+
 
 # Flows #
 
@@ -94,9 +97,7 @@ with Flow(
     raw_filepath = save_raw_local(status=raw_status, file_path=filepath)
 
     # TREAT
-    treated_status = pre_treatment_sppo_licenciamento(
-        status=raw_status, timestamp=timestamp
-    )
+    treated_status = pre_treatment_sppo_licenciamento(status=raw_status, timestamp=timestamp)
 
     treated_filepath = save_treated_local(status=treated_status, file_path=filepath)
 
@@ -115,9 +116,7 @@ with Flow(
         timestamp=timestamp,
         error=error,
     )
-    sppo_licenciamento_captura.set_dependencies(
-        task=partitions, upstream_tasks=[rename_flow_run]
-    )
+    sppo_licenciamento_captura.set_dependencies(task=partitions, upstream_tasks=[rename_flow_run])
 
 sppo_licenciamento_captura.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 sppo_licenciamento_captura.run_config = KubernetesRun(
@@ -125,7 +124,10 @@ sppo_licenciamento_captura.run_config = KubernetesRun(
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 sppo_licenciamento_captura.schedule = every_day_hour_seven
-sppo_licenciamento_captura.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
+sppo_licenciamento_captura.state_handlers = [
+    handler_initialize_sentry,
+    handler_inject_bd_credentials,
+]
 
 with Flow(
     f"SMTR: {constants.VEICULO_DATASET_ID.value} {constants.SPPO_INFRACAO_TABLE_ID.value} - Captura",
@@ -182,9 +184,7 @@ with Flow(
         timestamp=timestamp,
         error=error,
     )
-    sppo_infracao_captura.set_dependencies(
-        task=partitions, upstream_tasks=[rename_flow_run]
-    )
+    sppo_infracao_captura.set_dependencies(task=partitions, upstream_tasks=[rename_flow_run])
 
 sppo_infracao_captura.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 sppo_infracao_captura.run_config = KubernetesRun(
@@ -229,9 +229,7 @@ with Flow(
     )
 
     dict_list = get_join_dict(dict_list=run_dates, new_dict=dataset_sha)
-    _vars = get_join_dict(
-        dict_list=dict_list, new_dict={"stu_data_versao": stu_data_versao}
-    )
+    _vars = get_join_dict(dict_list=dict_list, new_dict={"stu_data_versao": stu_data_versao})
 
     # 2. TREAT #
     run_dbt_model.map(
@@ -248,7 +246,7 @@ sppo_veiculo_dia.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-sppo_veiculo_dia.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials] 
+sppo_veiculo_dia.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
 
 veiculo_sppo_registro_agente_verao_captura = create_default_capture_flow(
     flow_name=f"SMTR: {constants.VEICULO_DATASET_ID.value} {constants.SPPO_REGISTRO_AGENTE_VERAO_PARAMS.value['table_id']} - Captura",

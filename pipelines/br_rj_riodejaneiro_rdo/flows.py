@@ -4,37 +4,40 @@ Flows for br_rj_riodejaneiro_rdo
 """
 
 from prefect import Parameter, case
-
-from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
-from prefect.utilities.edges import unmapped
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
-from pipelines.constants import constants as emd_constants
-from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_credentials, handler_initialize_sentry
-from pipelines.br_rj_riodejaneiro_rdo.tasks import (
-    get_file_paths_from_ftp,
-    check_files_for_download,
-    download_and_save_local_from_ftp,
-    pre_treatment_br_rj_riodejaneiro_rdo,
-    get_rdo_date_range,
-    update_rdo_redis,
-)
-from pipelines.constants import constants
-from pipelines.utils.backup.tasks import (
-    bq_upload,
-    get_current_timestamp,
-    set_last_run_timestamp,
-    get_now_time,
-    rename_current_flow_run_now_time,
-    run_dbt_model,
-    get_current_flow_mode,
-    get_current_flow_labels,
-)
-
-from pipelines.schedules import every_day
+from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
+from prefect.utilities.edges import unmapped
 
 # from pipelines.rj_smtr.br_rj_riodejaneiro_rdo.schedules import every_two_weeks
 from prefeitura_rio.pipelines_utils.custom import Flow
+from prefeitura_rio.pipelines_utils.state_handlers import (
+    handler_initialize_sentry,
+    handler_inject_bd_credentials,
+)
+
+from pipelines.br_rj_riodejaneiro_rdo.tasks import (
+    check_files_for_download,
+    download_and_save_local_from_ftp,
+    get_file_paths_from_ftp,
+    get_rdo_date_range,
+    pre_treatment_br_rj_riodejaneiro_rdo,
+    update_rdo_redis,
+)
+from pipelines.constants import constants
+from pipelines.constants import constants as emd_constants
+from pipelines.schedules import every_day
+from pipelines.utils.backup.tasks import (
+    bq_upload,
+    get_current_flow_labels,
+    get_current_flow_mode,
+    get_current_timestamp,
+    get_now_time,
+    rename_current_flow_run_now_time,
+    run_dbt_model,
+    set_last_run_timestamp,
+)
+
 # from pipelines.utils.execute_dbt_model.tasks import get_k8s_dbt_client
 # from pipelines.utils.execute_dbt_model.tasks import run_dbt_model
 
@@ -137,9 +140,7 @@ with Flow(
         partitions=partitions,
         status=status,
     )
-    set_redis = update_rdo_redis(
-        download_files=download_files, table_id=table_id, errors=errors
-    )
+    set_redis = update_rdo_redis(download_files=download_files, table_id=table_id, errors=errors)
 
 captura_sppo_rho.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 captura_sppo_rho.run_config = KubernetesRun(
@@ -226,9 +227,7 @@ with Flow(
         partitions=partitions,
         status=status,
     )
-    set_redis = update_rdo_redis(
-        download_files=download_files, table_id=table_id, errors=errors
-    )
+    set_redis = update_rdo_redis(download_files=download_files, table_id=table_id, errors=errors)
 
 captura_sppo_rdo.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 captura_sppo_rdo.run_config = KubernetesRun(

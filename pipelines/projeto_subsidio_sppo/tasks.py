@@ -8,14 +8,13 @@ from datetime import datetime, timedelta
 from prefect import task
 
 from pipelines.constants import constants
-from pipelines.utils.utils import log, get_vault_secret
-
+from pipelines.constants import constants as smtr_constants
 from pipelines.utils.backup.tasks import (
+    format_send_discord_message,
     perform_check,
     perform_checks_for_table,
-    format_send_discord_message,
 )
-from pipelines.constants import constants as smtr_constants
+from pipelines.utils.utils import get_vault_secret, log
 
 
 @task
@@ -63,9 +62,7 @@ def subsidio_data_quality_check(
 
     if mode == "pos":
         request_params["end_timestamp"] = f"""{params["end_date"]} 00:00:00"""
-        request_params[
-            "dataset_id"
-        ] = smtr_constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value
+        request_params["dataset_id"] = smtr_constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value
 
     checks_list = (
         smtr_constants.SUBSIDIO_SPPO_DATA_CHECKS_PRE_LIST.value
@@ -89,13 +86,11 @@ def subsidio_data_quality_check(
         else f'{params["start_date"]} a {params["end_date"]}'
     )
 
-    webhook_url = get_vault_secret(
-        secret_path=smtr_constants.SUBSIDIO_SPPO_SECRET_PATH.value
-    )["data"]["discord_data_check_webhook"]
+    webhook_url = get_vault_secret(secret_path=smtr_constants.SUBSIDIO_SPPO_SECRET_PATH.value)[
+        "data"
+    ]["discord_data_check_webhook"]
 
-    test_check = all(
-        table["status"] for sublist in checks.values() for table in sublist
-    )
+    test_check = all(table["status"] for sublist in checks.values() for table in sublist)
 
     formatted_messages = [
         ":green_circle: " if test_check else ":red_circle: ",
@@ -142,8 +137,7 @@ def subsidio_data_quality_check(
             f'    - <@{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
             if constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "user"
             else f'    - <@!{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
-            if constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"]
-            == "user_nickname"
+            if constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "user_nickname"
             else f'    - <#{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
             if constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "channel"
             else f'    - <@&{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'

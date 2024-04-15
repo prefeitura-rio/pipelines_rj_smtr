@@ -3,11 +3,13 @@
 General purpose functions for the br_rj_riodejaneiro_rdo project
 """
 
-from datetime import timedelta, datetime
-from pytz import timezone
+from datetime import datetime, timedelta
+
 from prefect.schedules.clocks import IntervalClock
-from pipelines.constants import constants as emd_constants
+from pytz import timezone
+
 from pipelines.constants import constants
+from pipelines.constants import constants as emd_constants
 
 
 def build_table_id(mode: str, report_type: str):

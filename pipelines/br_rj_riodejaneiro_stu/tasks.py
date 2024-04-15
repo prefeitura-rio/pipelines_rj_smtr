@@ -3,12 +3,14 @@
 Tasks for br_rj_riodejaneiro_stu
 """
 from io import StringIO
-from prefect import task
+
+import basedosdados as bd
 import pandas as pd
 from google.cloud.storage.blob import Blob
-import basedosdados as bd
-from pipelines.utils.utils import log
+from prefect import task
+
 from pipelines.constants import constants
+from pipelines.utils.utils import log
 
 
 @task(checkpoint=False)
@@ -34,11 +36,7 @@ def get_stu_raw_blobs(data_versao_stu: str) -> list[Blob]:
         .list_blobs(prefix=f"upload/{bd_storage.dataset_id}/Tptran_")
     )
 
-    blob_list = [
-        b
-        for b in blob_list
-        if b.name.endswith(f"{data_versao_stu.replace('-', '')}.txt")
-    ]
+    blob_list = [b for b in blob_list if b.name.endswith(f"{data_versao_stu.replace('-', '')}.txt")]
 
     log(f"Files found: {', '.join([b.name for b in blob_list])}")
 
@@ -129,6 +127,6 @@ def save_stu_dataframes(df_pf: pd.DataFrame, df_pj: pd.DataFrame):
     for table in constants.STU_TABLE_CAPTURE_PARAMS.value:
         table_id = table["table_id"]
         df = df_mapping[table_id]
-        bucket.blob(
-            f"upload/{bd_storage.dataset_id}/{table_id}.csv"
-        ).upload_from_string(df.to_csv(index=False), "text/csv")
+        bucket.blob(f"upload/{bd_storage.dataset_id}/{table_id}.csv").upload_from_string(
+            df.to_csv(index=False), "text/csv"
+        )

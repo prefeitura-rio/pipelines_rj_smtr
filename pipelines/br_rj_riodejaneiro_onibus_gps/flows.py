@@ -8,52 +8,51 @@ from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefect.utilities.edges import unmapped
+from prefeitura_rio.pipelines_utils.custom import Flow
+from prefeitura_rio.pipelines_utils.state_handlers import (
+    handler_initialize_sentry,
+    handler_inject_bd_credentials,
+)
 
-
-# EMD Imports #
-
+from pipelines.br_rj_riodejaneiro_onibus_gps.tasks import (
+    create_api_url_onibus_gps,
+    create_api_url_onibus_realocacao,
+    pre_treatment_br_rj_riodejaneiro_onibus_gps,
+    pre_treatment_br_rj_riodejaneiro_onibus_realocacao,
+)
+from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
-from pipelines.utils.backup.tasks import (
-    rename_current_flow_run_now_time,
-    get_now_time,
-    get_current_flow_mode,
-    get_current_flow_labels,
+from pipelines.schedules import every_10_minutes, every_hour_minute_six, every_minute
+from pipelines.utils.backup.tasks import (  # get_local_dbt_client,
+    bq_upload,
     create_date_hour_partition,
     create_local_partition_path,
     fetch_dataset_sha,
+    get_current_flow_labels,
+    get_current_flow_mode,
     get_current_timestamp,
     get_materialization_date_range,
-    # get_local_dbt_client,
+    get_now_time,
     get_raw,
     parse_timestamp_to_string,
     query_logs,
+    rename_current_flow_run_now_time,
+    run_dbt_model,
     save_raw_local,
     save_treated_local,
     set_last_run_timestamp,
     upload_logs_to_bq,
-    bq_upload,
 )
-from prefeitura_rio.pipelines_utils.custom import Flow
-from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_credentials, handler_initialize_sentry
+
+# EMD Imports #
+
+
 # from pipelines.utils.execute_dbt_model.tasks import get_k8s_dbt_client
 
 # SMTR Imports #
 
-from pipelines.constants import constants
 
-from pipelines.br_rj_riodejaneiro_onibus_gps.tasks import (
-    pre_treatment_br_rj_riodejaneiro_onibus_gps,
-    create_api_url_onibus_gps,
-    create_api_url_onibus_realocacao,
-    pre_treatment_br_rj_riodejaneiro_onibus_realocacao,
-)
 
-from pipelines.schedules import (
-    every_hour_minute_six,
-    every_minute,
-    every_10_minutes,
-)
-from pipelines.utils.backup.tasks import run_dbt_model
 
 # Flows #
 
@@ -64,16 +63,12 @@ with Flow(
     # SETUP #
 
     # Get default parameters #
-    raw_dataset_id = Parameter(
-        "raw_dataset_id", default=constants.GPS_SPPO_RAW_DATASET_ID.value
-    )
+    raw_dataset_id = Parameter("raw_dataset_id", default=constants.GPS_SPPO_RAW_DATASET_ID.value)
     raw_table_id = Parameter(
         "raw_table_id", default=constants.GPS_SPPO_REALOCACAO_RAW_TABLE_ID.value
     )
     dataset_id = Parameter("dataset_id", default=constants.GPS_SPPO_DATASET_ID.value)
-    table_id = Parameter(
-        "table_id", default=constants.GPS_SPPO_REALOCACAO_TREATED_TABLE_ID.value
-    )
+    table_id = Parameter("table_id", default=constants.GPS_SPPO_REALOCACAO_TREATED_TABLE_ID.value)
     rebuild = Parameter("rebuild", False)
 
     # SETUP
@@ -144,12 +139,8 @@ with Flow(
     )
 
     # Get default parameters #
-    raw_dataset_id = Parameter(
-        "raw_dataset_id", default=constants.GPS_SPPO_RAW_DATASET_ID.value
-    )
-    raw_table_id = Parameter(
-        "raw_table_id", default=constants.GPS_SPPO_RAW_TABLE_ID.value
-    )
+    raw_dataset_id = Parameter("raw_dataset_id", default=constants.GPS_SPPO_RAW_DATASET_ID.value)
+    raw_table_id = Parameter("raw_table_id", default=constants.GPS_SPPO_RAW_TABLE_ID.value)
     dataset_id = Parameter("dataset_id", default=constants.GPS_SPPO_DATASET_ID.value)
     table_id = Parameter("table_id", default=constants.GPS_SPPO_TREATED_TABLE_ID.value)
     rebuild = Parameter("rebuild", False)
@@ -326,9 +317,7 @@ with Flow(
             partitions=partitions,
         )
 
-        url = create_api_url_onibus_gps.map(
-            version=unmapped(version), timestamp=timestamps
-        )
+        url = create_api_url_onibus_gps.map(version=unmapped(version), timestamp=timestamps)
 
         # EXTRACT #
         raw_status = get_raw.map(url)
@@ -342,9 +331,7 @@ with Flow(
             version=unmapped(version),
         )
 
-        treated_filepath = save_treated_local.map(
-            status=trated_status, file_path=filepath
-        )
+        treated_filepath = save_treated_local.map(status=trated_status, file_path=filepath)
 
         # # LOAD #
         error = bq_upload.map(
