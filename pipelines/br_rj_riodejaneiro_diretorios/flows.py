@@ -15,6 +15,7 @@ from prefect import Parameter, task
 
 from pipelines.constants import constants as emd_constants
 from prefeitura_rio.pipelines_utils.custom import Flow
+from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_credentials, handler_initialize_sentry
 from pipelines.utils.backup.tasks import (
     rename_current_flow_run_now_time,
     get_current_flow_labels,
@@ -87,3 +88,4 @@ diretorios_materializacao.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
+diretorios_materializacao.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]

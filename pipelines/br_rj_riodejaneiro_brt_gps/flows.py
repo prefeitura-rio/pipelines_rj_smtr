@@ -13,7 +13,7 @@ from prefect.storage import GCS
 # EMD Imports #
 
 from prefeitura_rio.pipelines_utils.custom import Flow
-from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_credentials
+from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_credentials, handler_initialize_sentry
 
 # from prefeitura_rio.pipelines_utils.prefect import get_k8s_dbt_client
 
@@ -124,7 +124,7 @@ materialize_brt.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
 )
-materialize_brt.state_handlers = [handler_inject_bd_credentials]
+materialize_brt.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 materialize_brt.schedule = every_hour
 
 
@@ -186,5 +186,5 @@ captura_brt.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
 )
-captura_brt.state_handlers = [handler_inject_bd_credentials]
+captura_brt.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 captura_brt.schedule = every_minute
