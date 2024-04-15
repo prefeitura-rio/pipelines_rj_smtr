@@ -11,6 +11,7 @@ from prefect.storage import GCS
 
 from pipelines.constants import constants as emd_constants
 from prefeitura_rio.pipelines_utils.custom import Flow
+from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_credentials, handler_initialize_sentry
 
 # SMTR Imports #
 
@@ -106,5 +107,6 @@ captura_stpl.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
+captura_stpl.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
 # Captura descontinuada (sem dados), avaliar quando voltar
 # captura_stpl.schedule = every_minute
