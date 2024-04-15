@@ -29,6 +29,7 @@ from pipelines.constants import constants
 from pipelines.utils.backup.utils import (
     bq_project,
     create_or_append_table,
+    get_datetime_range,
     data_info_str,
     dict_contains_keys,
     get_last_run_timestamp,
@@ -45,7 +46,7 @@ from pipelines.utils.backup.utils import (
     upload_run_logs_to_bq,
 )
 from pipelines.utils.secret import get_secret
-
+from pandas_gbq.exceptions import GenericGBQException
 
 ###############
 #
@@ -645,6 +646,178 @@ def get_raw(  # pylint: disable=R0912
         log(f"[CATCHED] Task failed with error: \n{error}", level="error")
 
     return {"data": data, "error": error}
+
+
+@task(checkpoint=False, nout=2)
+def create_request_params(
+    extract_params: dict,
+    table_id: str,
+    dataset_id: str,
+    timestamp: datetime,
+    interval_minutes: int,
+) -> tuple[str, str]:
+    """
+    Task to create request params
+
+    Args:
+        extract_params (dict): extract parameters
+        table_id (str): table_id on BigQuery
+        dataset_id (str): dataset_id on BigQuery
+        timestamp (datetime): timestamp for flow run
+        interval_minutes (int): interval in minutes between each capture
+
+    Returns:
+        request_params: host, database and query to request data
+        request_url: url to request data
+    """
+    request_params = None
+    request_url = None
+
+    if dataset_id == constants.BILHETAGEM_DATASET_ID.value:
+        database = constants.BILHETAGEM_GENERAL_CAPTURE_PARAMS.value["databases"][
+            extract_params["database"]
+        ]
+        request_url = database["host"]
+
+        request_params = {
+            "database": extract_params["database"],
+            "engine": database["engine"],
+            "query": extract_params["query"],
+        }
+
+        if table_id == constants.BILHETAGEM_TRACKING_CAPTURE_PARAMS.value["table_id"]:
+            project = bq_project(kind="bigquery_staging")
+            log(f"project = {project}")
+            try:
+                logs_query = f"""
+                SELECT
+                    timestamp_captura
+                FROM
+                    `{project}.{dataset_id}_staging.{table_id}_logs`
+                WHERE
+                    data <= '{timestamp.strftime("%Y-%m-%d")}'
+                    AND sucesso = "True"
+                ORDER BY
+                    timestamp_captura DESC
+                """
+                last_success_dates = bd.read_sql(
+                    query=logs_query, billing_project_id=project
+                )
+                last_success_dates = last_success_dates.iloc[:, 0].to_list()
+                for success_ts in last_success_dates:
+                    success_ts = datetime.fromisoformat(success_ts)
+                    last_id_query = f"""
+                    SELECT
+                        MAX(id)
+                    FROM
+                        `{project}.{dataset_id}_staging.{table_id}`
+                    WHERE
+                        data = '{success_ts.strftime("%Y-%m-%d")}'
+                        and hora = "{success_ts.strftime("%H")}";
+                    """
+
+                    last_captured_id = bd.read_sql(
+                        query=last_id_query, billing_project_id=project
+                    )
+                    last_captured_id = last_captured_id.iloc[0][0]
+                    if last_captured_id is None:
+                        print("ID is None, trying next timestamp")
+                    else:
+                        log(f"last_captured_id = {last_captured_id}")
+                        break
+            except GenericGBQException as err:
+                if "404 Not found" in str(err):
+                    log("Table Not found, returning id = 0")
+                    last_captured_id = 0
+
+            request_params["query"] = request_params["query"].format(
+                last_id=last_captured_id,
+                max_id=int(last_captured_id)
+                + extract_params["page_size"] * extract_params["max_pages"],
+            )
+            request_params["page_size"] = extract_params["page_size"]
+            request_params["max_pages"] = extract_params["max_pages"]
+        else:
+            if "get_updates" in extract_params.keys():
+                project = bq_project()
+                log(f"project = {project}")
+                columns_to_concat_bq = [
+                    c.split(".")[-1] for c in extract_params["get_updates"]
+                ]
+                concat_arg = ",'_',"
+
+                try:
+                    query = f"""
+                    SELECT
+                        CONCAT("'", {concat_arg.join(columns_to_concat_bq)}, "'")
+                    FROM
+                        `{project}.{dataset_id}_staging.{table_id}`
+                    """
+                    log(query)
+                    last_values = bd.read_sql(query=query, billing_project_id=project)
+
+                    last_values = last_values.iloc[:, 0].to_list()
+                    last_values = ", ".join(last_values)
+                    update_condition = f"""CONCAT(
+                            {concat_arg.join(extract_params['get_updates'])}
+                        ) NOT IN ({last_values})
+                    """
+
+                except GenericGBQException as err:
+                    if "404 Not found" in str(err):
+                        log("table not found, setting updates to 1=1")
+                        update_condition = "1=1"
+
+                request_params["query"] = request_params["query"].format(
+                    update=update_condition
+                )
+
+            datetime_range = get_datetime_range(
+                timestamp=timestamp, interval=timedelta(minutes=interval_minutes)
+            )
+
+            request_params["query"] = request_params["query"].format(**datetime_range)
+
+    elif dataset_id == constants.GTFS_DATASET_ID.value:
+        request_params = {"zip_filename": extract_params["filename"]}
+
+    elif dataset_id == constants.SUBSIDIO_SPPO_RECURSOS_DATASET_ID.value:
+        request_params = {}
+        data_recurso = extract_params.get("data_recurso", timestamp)
+        if isinstance(data_recurso, str):
+            data_recurso = datetime.fromisoformat(data_recurso)
+        extract_params["token"] = get_secret(
+            constants.SUBSIDIO_SPPO_RECURSO_API_SECRET_PATH.value
+        )["data"]["token"]
+        start = datetime.strftime(
+            data_recurso - timedelta(minutes=interval_minutes), "%Y-%m-%dT%H:%M:%S.%MZ"
+        )
+        end = datetime.strftime(data_recurso, "%Y-%m-%dT%H:%M:%S.%MZ")
+        log(f" Start date {start}, end date {end}")
+
+        service = constants.SUBSIDIO_SPPO_RECURSO_TABLE_CAPTURE_PARAMS.value[table_id]
+
+        recurso_params = {
+            "start": start,
+            "end": end,
+            "service": service,
+        }
+
+        extract_params["$filter"] = extract_params["$filter"].format(**recurso_params)
+
+        request_params = extract_params
+
+        request_url = constants.SUBSIDIO_SPPO_RECURSO_API_BASE_URL.value
+
+    elif dataset_id == constants.STU_DATASET_ID.value:
+        request_params = {"bucket_name": constants.STU_BUCKET_NAME.value}
+
+    elif dataset_id == constants.VEICULO_DATASET_ID.value:
+        request_url = get_secret(extract_params["secret_path"])["data"][
+            "request_url"
+        ]
+
+    return request_params, request_url
 
 
 # @task(checkpoint=False, nout=2)
