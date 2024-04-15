@@ -20,7 +20,7 @@ from pipelines.utils.backup.tasks import (
     get_current_flow_labels,
     get_rounded_timestamp
 )
-from pipelines.utils.utils import set_default_parameters
+# from pipelines.utils.utils import set_default_parameters
 from pipelines.treatment.templates.flows import create_default_materialization_flow
 
 # SMTR Imports #
