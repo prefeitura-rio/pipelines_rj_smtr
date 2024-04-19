@@ -201,6 +201,8 @@ class constants(Enum):  # pylint: disable=c0103
     STPL_RDO_TABLE_ID = "rdo_registros_stpl"
     STPL_RHO_TABLE_ID = "rho_registros_stpl"
     RDO_MATERIALIZE_START_DATE = "2022-12-07"
+
+
     # ROCK IN RIO
     RIR_DATASET_ID = "dashboards"
     RIR_TABLE_ID = "registros_ocr_rir"
@@ -643,26 +645,3 @@ class constants(Enum):  # pylint: disable=c0103
 
     # VEÍCULO DIA
     SPPO_VEICULO_DIA_TABLE_ID = "sppo_veiculo_dia"
-
-    # AUTUAÇÕES - AGENTES DE VERÃO
-    SPPO_REGISTRO_AGENTE_VERAO_COLUMNS = [
-        "datetime_registro",
-        "email",
-        "id_veiculo",
-        "servico",
-        "link_foto",
-        "validacao",
-    ]
-
-    SPPO_REGISTRO_AGENTE_VERAO_PARAMS = {
-        "partition_date_only": True,
-        "source_type": "api-csv",
-        "dataset_id": VEICULO_DATASET_ID,
-        "table_id": "sppo_registro_agente_verao",
-        "extract_params": {"secret_path": "smtr_agentes_verao"},
-        "pre_treatment_reader_args": {
-            "skiprows": 2,
-            "names": SPPO_REGISTRO_AGENTE_VERAO_COLUMNS,
-        },
-        "primary_key": ["datetime_registro", "email"],
-    }
