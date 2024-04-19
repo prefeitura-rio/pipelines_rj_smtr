@@ -11,6 +11,8 @@ class constants(Enum):  # pylint: disable=c0103
     Valores constantes gerais para pipelines da rj-smtr
     """
 
+    # trigger cd
+
     # CONFIGS #
     DOCKER_TAG = "AUTO_REPLACE_DOCKER_TAG"
     DOCKER_IMAGE_NAME = "AUTO_REPLACE_DOCKER_IMAGE"
