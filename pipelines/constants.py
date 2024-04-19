@@ -107,10 +107,10 @@ class constants(Enum):  # pylint: disable=c0103
     }
     GPS_BRT_MATERIALIZE_DELAY_HOURS = 0
 
-    # VEICULO 
+    # VEICULO
     VEICULO_DATASET_ID = "veiculo"
 
-        # AUTUAÇÕES - AGENTES DE VERÃO
+    # AUTUAÇÕES - AGENTES DE VERÃO
     SPPO_REGISTRO_AGENTE_VERAO_COLUMNS = [
         "datetime_registro",
         "email",

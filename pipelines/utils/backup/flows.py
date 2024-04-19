@@ -3,42 +3,44 @@
 Flows for rj_smtr
 """
 
+from prefect import Parameter, case, task
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
-from prefect import case, Parameter, task
-from prefect.utilities.edges import unmapped
 from prefect.tasks.control_flow import merge
+from prefect.utilities.edges import unmapped
+from prefeitura_rio.pipelines_utils.custom import Flow
+
+from pipelines.constants import constants as emd_constants
+from pipelines.utils.backup.tasks import (
+    check_mapped_query_logs_output,
+    coalesce_task,
+    create_date_hour_partition,
+    create_dbt_run_vars,
+    create_local_partition_path,
+    create_request_params,
+    get_current_flow_labels,
+    get_current_flow_mode,
+    get_now_time,
+    get_raw_from_sources,
+    get_rounded_timestamp,
+    parse_timestamp_to_string,
+    query_logs,
+    rename_current_flow_run_now_time,
+    run_dbt_model,
+    set_last_run_timestamp,
+    transform_raw_to_nested_structure,
+    unpack_mapped_results_nout2,
+    upload_raw_data_to_gcs,
+    upload_staging_data_to_gcs,
+)
 
 # EMD Imports #
 
-from pipelines.constants import constants as emd_constants
-from prefeitura_rio.pipelines_utils.custom import Flow
-from pipelines.utils.backup.tasks import (
-    rename_current_flow_run_now_time,
-    get_now_time,
-    get_current_flow_labels,
-    get_current_flow_mode,
-    create_date_hour_partition,
-    create_local_partition_path,
-    get_rounded_timestamp,
-    parse_timestamp_to_string,
-    transform_raw_to_nested_structure,
-    create_dbt_run_vars,
-    set_last_run_timestamp,
-    coalesce_task,
-    upload_raw_data_to_gcs,
-    upload_staging_data_to_gcs,
-    get_raw_from_sources,
-    create_request_params,
-    query_logs,
-    unpack_mapped_results_nout2,
-    check_mapped_query_logs_output,
-)
+
 # from pipelines.utils.backup.tasks import get_k8s_dbt_client
 
 # SMTR Imports #
 
-from pipelines.utils.backup.tasks import run_dbt_model
 
 with Flow(
     "SMTR: Captura",
@@ -136,9 +138,7 @@ with Flow(
         request_params=request_params,
     )
 
-    errors, raw_filepaths = unpack_mapped_results_nout2(
-        mapped_results=get_raw_from_sources_returns
-    )
+    errors, raw_filepaths = unpack_mapped_results_nout2(mapped_results=get_raw_from_sources_returns)
 
     errors = upload_raw_data_to_gcs.map(
         error=errors,
@@ -167,9 +167,7 @@ with Flow(
         reader_args=unmapped(pre_treatment_reader_args),
     )
 
-    errors, staging_filepaths = unpack_mapped_results_nout2(
-        mapped_results=nested_structure_returns
-    )
+    errors, staging_filepaths = unpack_mapped_results_nout2(mapped_results=nested_structure_returns)
 
     STAGING_UPLOADED = upload_staging_data_to_gcs.map(
         error=errors,

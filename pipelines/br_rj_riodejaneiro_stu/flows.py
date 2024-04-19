@@ -22,10 +22,11 @@ from pipelines.br_rj_riodejaneiro_stu.tasks import (
     read_stu_raw_file,
     save_stu_dataframes,
 )
-# from pipelines.capture.templates.flows import create_default_capture_flow
-from pipelines.utils.backup.flows import default_capture_flow
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
+
+# from pipelines.capture.templates.flows import create_default_capture_flow
+from pipelines.utils.backup.flows import default_capture_flow
 from pipelines.utils.backup.tasks import (
     get_current_flow_labels,
     get_current_timestamp,
@@ -37,7 +38,6 @@ from pipelines.utils.backup.utils import set_default_parameters
 
 
 # SMTR Imports #
-
 
 
 # stu_captura_subflow = create_default_capture_flow(

@@ -18,12 +18,12 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
 )
 
-# from pipelines.capture.templates.flows import create_default_capture_flow
-from pipelines.utils.backup.flows import default_capture_flow
-from pipelines.utils.backup.utils import set_default_parameters
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
 from pipelines.schedules import every_day_hour_seven
+
+# from pipelines.capture.templates.flows import create_default_capture_flow
+from pipelines.utils.backup.flows import default_capture_flow
 from pipelines.utils.backup.tasks import (
     bq_upload,
     create_date_hour_partition,
@@ -43,6 +43,7 @@ from pipelines.utils.backup.tasks import (
     save_treated_local,
     upload_logs_to_bq,
 )
+from pipelines.utils.backup.utils import set_default_parameters
 from pipelines.veiculo.tasks import (
     pre_treatment_sppo_infracao,
     pre_treatment_sppo_licenciamento,
