@@ -48,7 +48,7 @@ from pipelines.utils.backup.tasks import (
 
 with Flow(
     "SMTR: Captura",
-    code_owners=["caio", "fernanda", "boris", "rodrigo", "rafaelpinheiro"],
+    # code_owners=["caio", "fernanda", "boris", "rodrigo", "rafaelpinheiro"],
 ) as default_capture_flow:
     # Configuração #
 
@@ -195,7 +195,7 @@ default_capture_flow.state_handlers = [handler_initialize_sentry, handler_inject
 
 with Flow(
     "SMTR: Materialização",
-    code_owners=["caio", "fernanda", "boris", "rodrigo"],
+    # code_owners=["caio", "fernanda", "boris", "rodrigo"],
 ) as default_materialization_flow:
     # SETUP #
 

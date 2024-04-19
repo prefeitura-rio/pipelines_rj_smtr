@@ -56,7 +56,7 @@ from pipelines.utils.backup.tasks import (  # get_local_dbt_client,
 
 with Flow(
     "SMTR: GPS SPPO Realocação - Captura",
-    code_owners=["caio", "fernanda", "boris", "rodrigo"],
+    # code_owners=["caio", "fernanda", "boris", "rodrigo"],
 ) as realocacao_sppo:
     # SETUP #
 
@@ -129,7 +129,7 @@ realocacao_sppo.state_handlers = [handler_inject_bd_credentials, handler_initial
 
 with Flow(
     "SMTR: GPS SPPO - Materialização (subflow)",
-    code_owners=["caio", "fernanda", "boris", "rodrigo"],
+    # code_owners=["caio", "fernanda", "boris", "rodrigo"],
 ) as materialize_sppo:
     # Rename flow run
     rename_flow_run = rename_current_flow_run_now_time(
@@ -209,7 +209,7 @@ materialize_sppo.state_handlers = [handler_inject_bd_credentials, handler_initia
 
 with Flow(
     "SMTR: GPS SPPO - Captura",
-    code_owners=["caio", "fernanda", "boris", "rodrigo"],
+    # code_owners=["caio", "fernanda", "boris", "rodrigo"],
 ) as captura_sppo_v2:
     version = Parameter("version", default=2)
 
@@ -272,7 +272,7 @@ captura_sppo_v2.state_handlers = [handler_inject_bd_credentials, handler_initial
 
 
 with Flow(
-    "SMTR: GPS SPPO - Tratamento", code_owners=["caio", "fernanda", "boris", "rodrigo"]
+    "SMTR: GPS SPPO - Tratamento", # code_owners=["caio", "fernanda", "boris", "rodrigo"]
 ) as recaptura:
     version = Parameter("version", default=2)
     datetime_filter = Parameter("datetime_filter", default=None)

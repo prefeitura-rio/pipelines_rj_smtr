@@ -61,7 +61,7 @@ from pipelines.veiculo.flows import sppo_veiculo_dia
 
 with Flow(
     "SMTR: Viagens SPPO - Tratamento",
-    code_owners=["caio", "fernanda", "boris", "rodrigo"],
+    # code_owners=["caio", "fernanda", "boris", "rodrigo"],
 ) as viagens_sppo:
     # Rename flow run
     current_date = get_now_date()
@@ -108,7 +108,7 @@ viagens_sppo.schedule = every_day_hour_five
 
 with Flow(
     "SMTR: Subsídio SPPO Apuração - Tratamento",
-    code_owners=smtr_constants.SUBSIDIO_SPPO_CODE_OWNERS.value,
+    # code_owners=smtr_constants.SUBSIDIO_SPPO_CODE_OWNERS.value,
 ) as subsidio_sppo_apuracao:
     # 1. SETUP #
 

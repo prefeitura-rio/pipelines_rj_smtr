@@ -189,7 +189,7 @@ default_capture_flow.run_config = KubernetesRun(
 
 with Flow(
     "SMTR: Materialização",
-    code_owners=["caio", "fernanda", "boris", "rodrigo"],
+    # # code_owners=["caio", "fernanda", "boris", "rodrigo"],
 ) as default_materialization_flow:
     # SETUP #
 

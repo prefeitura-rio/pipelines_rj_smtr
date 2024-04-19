@@ -53,7 +53,7 @@ diretorios_materializacao_subflow = set_default_parameters(
 
 with Flow(
     "SMTR: Diretórios - Materialização",
-    code_owners=["caio", "fernanda", "boris", "rodrigo", "rafaelpinheiro"],
+    # code_owners=["caio", "fernanda", "boris", "rodrigo", "rafaelpinheiro"],
 ) as diretorios_materializacao:
     # Configuração #
 

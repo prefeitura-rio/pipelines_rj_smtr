@@ -43,7 +43,7 @@ from pipelines.utils.backup.tasks import (
 
 with Flow(
     "SMTR: SPPO RHO - Materialização (subflow)",
-    code_owners=constants.DEFAULT_CODE_OWNERS.value,
+    # code_owners=constants.DEFAULT_CODE_OWNERS.value,
 ) as sppo_rho_materialize:
     # Rename flow run
     rename_flow_run = rename_current_flow_run_now_time(
@@ -105,7 +105,7 @@ sppo_rho_materialize.state_handlers = [handler_inject_bd_credentials, handler_in
 
 with Flow(
     "SMTR: RHO - Captura (subflow)",
-    code_owners=constants.DEFAULT_CODE_OWNERS.value,
+    # code_owners=constants.DEFAULT_CODE_OWNERS.value,
 ) as captura_sppo_rho:
     # SETUP
     transport_mode = Parameter("transport_mode", "SPPO")
@@ -151,7 +151,7 @@ captura_sppo_rho.state_handlers = [handler_inject_bd_credentials, handler_initia
 
 with Flow(
     "SMTR: RHO - Captura/Tratamento",
-    code_owners=constants.DEFAULT_CODE_OWNERS.value,
+    # code_owners=constants.DEFAULT_CODE_OWNERS.value,
 ) as rho_captura_tratamento:
     LABELS = get_current_flow_labels()
 
@@ -192,7 +192,7 @@ rho_captura_tratamento.state_handlers = [handler_inject_bd_credentials, handler_
 
 with Flow(
     "SMTR: RDO - Captura",
-    code_owners=constants.DEFAULT_CODE_OWNERS.value,
+    # code_owners=constants.DEFAULT_CODE_OWNERS.value,
 ) as captura_sppo_rdo:
     # SETUP
     transport_mode = Parameter("transport_mode", "SPPO")

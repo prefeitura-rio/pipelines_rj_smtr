@@ -60,7 +60,7 @@ from pipelines.veiculo.tasks import (
 # flake8: noqa: E501
 with Flow(
     f"SMTR: {constants.VEICULO_DATASET_ID.value} {constants.SPPO_LICENCIAMENTO_TABLE_ID.value} - Captura",
-    code_owners=["caio", "fernanda", "boris", "rodrigo"],
+    # code_owners=["caio", "fernanda", "boris", "rodrigo"],
 ) as sppo_licenciamento_captura:
     timestamp = get_current_timestamp()
 
@@ -128,7 +128,7 @@ sppo_licenciamento_captura.state_handlers = [
 
 with Flow(
     f"SMTR: {constants.VEICULO_DATASET_ID.value} {constants.SPPO_INFRACAO_TABLE_ID.value} - Captura",
-    code_owners=["caio", "fernanda", "boris", "rodrigo"],
+    # code_owners=["caio", "fernanda", "boris", "rodrigo"],
 ) as sppo_infracao_captura:
     timestamp = get_current_timestamp()
 
@@ -194,7 +194,7 @@ sppo_infracao_captura.state_handlers = [handler_initialize_sentry, handler_injec
 # flake8: noqa: E501
 with Flow(
     f"SMTR: {constants.VEICULO_DATASET_ID.value} {constants.SPPO_VEICULO_DIA_TABLE_ID.value} - Materialização (subflow)",
-    code_owners=["caio", "fernanda", "boris", "rodrigo"],
+    # code_owners=["caio", "fernanda", "boris", "rodrigo"],
 ) as sppo_veiculo_dia:
     # 1. SETUP #
 

@@ -27,7 +27,7 @@ def check_param(param: str) -> bool:
 
 @task
 def subsidio_data_quality_check(
-    mode: str, params: dict, code_owners: list = None, check_params: dict = None
+    mode: str, params: dict, # code_owners: list = None, check_params: dict = None
 ) -> bool:
     """
     Verifica qualidade de dados para o processo de apuração de subsídio
@@ -35,7 +35,7 @@ def subsidio_data_quality_check(
     Args:
         mode (str): Modo de execução (pre ou pos)
         params (dict): Parameters for the checks
-        code_owners (list): Code owners to be notified
+        # code_owners (list): Code owners to be notified
         check_params (dict): queries and order columns for the checks
 
     Returns:
@@ -48,8 +48,8 @@ def subsidio_data_quality_check(
     if check_params is None:
         check_params = smtr_constants.SUBSIDIO_SPPO_DATA_CHECKS_PARAMS.value
 
-    if code_owners is None:
-        code_owners = smtr_constants.SUBSIDIO_SPPO_CODE_OWNERS.value
+    if # code_owners is None:
+        # code_owners = smtr_constants.SUBSIDIO_SPPO_CODE_OWNERS.value
 
     checks = dict()
 
@@ -133,7 +133,7 @@ def subsidio_data_quality_check(
         )
 
     if not test_check:
-        at_code_owners = [
+        at_# code_owners = [
             f'    - <@{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
             if constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "user"
             else f'    - <@!{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
@@ -141,10 +141,10 @@ def subsidio_data_quality_check(
             else f'    - <#{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
             if constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "channel"
             else f'    - <@&{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
-            for code_owner in code_owners
+            for code_owner in # code_owners
         ]
 
-        formatted_messages.extend(at_code_owners)
+        formatted_messages.extend(at_# code_owners)
 
     format_send_discord_message(formatted_messages, webhook_url)
 

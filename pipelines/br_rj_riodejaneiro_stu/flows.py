@@ -62,7 +62,7 @@ stu_captura_subflow = set_default_parameters(
 
 with Flow(
     "SMTR: STU - Captura",
-    # code_owners=["rodrigo", "rafaelpinheiro"],
+    # # code_owners=["rodrigo", "rafaelpinheiro"],
 ) as stu_captura:
     # SETUP
     data_versao_stu = Parameter("data_versao_stu", required=True)
