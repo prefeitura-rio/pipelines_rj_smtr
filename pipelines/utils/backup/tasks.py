@@ -1492,9 +1492,7 @@ def transform_raw_to_nested_structure(
                         for col in data.columns[data.dtypes == "object"].to_list():
                             data[col] = data[col].str.strip()
 
-                    log(
-                        f"Finished cleaning! Data:\n{data_info_str(data)}", level="info"
-                    )
+                    log(f"Finished cleaning! Data:\n{data_info_str(data)}", level="info")
 
                     log("Creating nested structure...", level="info")
                     pk_cols = primary_key + ["timestamp_captura"]
@@ -1502,14 +1500,10 @@ def transform_raw_to_nested_structure(
                     data = (
                         data.groupby(pk_cols)
                         .apply(
-                            lambda x: x[data.columns.difference(pk_cols)].to_json(
-                                orient="records"
-                            )
+                            lambda x: x[data.columns.difference(pk_cols)].to_json(orient="records")
                         )
                         .str.strip("[]")
-                        .reset_index(name="content")[
-                            primary_key + ["content", "timestamp_captura"]
-                        ]
+                        .reset_index(name="content")[primary_key + ["content", "timestamp_captura"]]
                     )
 
                     log(
@@ -1518,9 +1512,7 @@ def transform_raw_to_nested_structure(
                     )
 
             # save treated local
-            filepath = save_treated_local_func(
-                data=data, error=error, filepath=filepath
-            )
+            filepath = save_treated_local_func(data=data, error=error, filepath=filepath)
 
         except Exception:  # pylint: disable=W0703
             error = traceback.format_exc()
