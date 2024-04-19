@@ -585,7 +585,6 @@ class constants(Enum):  # pylint: disable=c0103
         },
     }
 
-
     # VEÍCULOS LICENCIADOS
     # flake8: noqa: E501
     SPPO_LICENCIAMENTO_URL = (
