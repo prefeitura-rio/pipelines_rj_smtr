@@ -1140,9 +1140,7 @@ def upload_raw_data_to_gcs(
     """
     if error is None:
         try:
-            st_obj = Storage(
-                table_id=table_id, dataset_id=dataset_id, bucket_name=bucket_name
-            )
+            st_obj = Storage(table_id=table_id, dataset_id=dataset_id, bucket_name=bucket_name)
             log(
                 f"""Uploading raw file to bucket {st_obj.bucket_name} at
                 {st_obj.bucket_name}/{dataset_id}/{table_id}"""
