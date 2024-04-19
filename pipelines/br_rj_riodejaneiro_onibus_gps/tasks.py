@@ -144,7 +144,7 @@ def create_api_url_onibus_gps(version: str, timestamp: datetime = None) -> str:
     if not timestamp:
         timestamp = pendulum.now(constants.TIMEZONE.value).replace(second=0, microsecond=0)
 
-    headers = get_secret(source)["data"]
+    headers = get_secret(source)
     key = list(headers)[0]
     url = f"{url}{key}={{secret}}"
 
