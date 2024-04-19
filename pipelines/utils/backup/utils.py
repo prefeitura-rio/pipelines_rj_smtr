@@ -710,6 +710,7 @@ def upload_run_logs_to_bq(  # pylint: disable=R0913
     previous_error: str = None,
     recapture: bool = False,
     mode: str = "raw",
+    bucket_name: str = None,
 ):
     """
     Upload execution status table to BigQuery.
@@ -724,6 +725,7 @@ def upload_run_logs_to_bq(  # pylint: disable=R0913
         previous_error (str): previous error catched during execution
         recapture (bool): if the execution was a recapture
         mode (str): folder to save locally, later folder which to upload to GCS
+        bucket_name (str, Optional): The bucket name to save the data.
 
     Returns:
         None
@@ -732,7 +734,9 @@ def upload_run_logs_to_bq(  # pylint: disable=R0913
     # Create partition directory
     filename = f"{table_id}_{timestamp.isoformat()}"
     partition = f"data={timestamp.date()}"
-    filepath = Path(f"""data/{mode}/{dataset_id}/{table_id}/{partition}/{filename}.csv""")
+    filepath = Path(
+        f"""data/{mode}/{dataset_id}/{table_id}/{partition}/{filename}.csv"""
+    )
     filepath.parent.mkdir(exist_ok=True, parents=True)
     # Create dataframe to be uploaded
     if not error and recapture is True:
@@ -762,6 +766,7 @@ def upload_run_logs_to_bq(  # pylint: disable=R0913
         table_id=table_id,
         path=filepath.as_posix(),
         partitions=partition,
+        bucket_name=bucket_name,
     )
     if error is not None:
         raise Exception(f"Pipeline failed with error: {error}")
