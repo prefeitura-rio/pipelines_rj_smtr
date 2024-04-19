@@ -1199,4 +1199,3 @@ class constants(Enum):  # pylint: disable=c0103
             },
         },
     }
-
