@@ -583,8 +583,6 @@ class constants(Enum):  # pylint: disable=c0103
         },
     }
 
-    # VEICULO
-    VEICULO_DATASET_ID = "veiculo"
 
     # VEÍCULOS LICENCIADOS
     # flake8: noqa: E501
