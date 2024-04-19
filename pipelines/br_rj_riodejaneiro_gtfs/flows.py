@@ -12,19 +12,20 @@ from prefect.tasks.control_flow import merge
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefect.utilities.edges import unmapped
 
-# from pipelines.utils.utils import set_default_parameters
+from pipelines.utils.backup.utils import set_default_parameters
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
     handler_inject_bd_credentials,
 )
 
-from pipelines.capture.templates.flows import create_default_capture_flow
+# from pipelines.capture.templates.flows import create_default_capture_flow
 
 # SMTR Imports #
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
-from pipelines.treatment.templates.flows import create_default_materialization_flow
+
+# from pipelines.treatment.templates.flows import create_default_materialization_flow
 from pipelines.utils.backup.tasks import (
     get_current_flow_labels,
     get_current_timestamp,
@@ -35,48 +36,49 @@ from pipelines.utils.backup.tasks import (
 # Imports #
 
 
-
 # EMD Imports #
 
 
-
-
-# from pipelines.rj_smtr.flows import default_capture_flow, default_materialization_flow
+from pipelines.utils.backup.flows import default_capture_flow, default_materialization_flow
 
 # SETUP dos Flows
 
-gtfs_captura = create_default_capture_flow(
-    flow_name="SMTR: GTFS - Captura (subflow)",
-    agent_label=emd_constants.RJ_SMTR_AGENT_LABEL.value,
-    overwrite_flow_params=constants.GTFS_GENERAL_CAPTURE_PARAMS.value,
-)
-# gtfs_captura.name = "SMTR: GTFS - Captura (subflow)"
-# gtfs_captura.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
-# gtfs_captura.run_config = KubernetesRun(
-#     image=emd_constants.DOCKER_IMAGE.value,
-#     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+# gtfs_captura = create_default_capture_flow(
+#     flow_name="SMTR: GTFS - Captura (subflow)",
+#     agent_label=emd_constants.RJ_SMTR_AGENT_LABEL.value,
+#     overwrite_flow_params=constants.GTFS_GENERAL_CAPTURE_PARAMS.value,
 # )
-# gtfs_captura.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
-# gtfs_captura = set_default_parameters(
-#     flow=gtfs_captura,
-#     default_parameters=constants.GTFS_GENERAL_CAPTURE_PARAMS.value,
+gtfs_captura = deepcopy(default_capture_flow)
+gtfs_captura.name = "SMTR: GTFS - Captura (subflow)"
+gtfs_captura.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+gtfs_captura.run_config = KubernetesRun(
+    image=emd_constants.DOCKER_IMAGE.value,
+    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+)
+gtfs_captura.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
+gtfs_captura = set_default_parameters(
+    flow=gtfs_captura,
+    default_parameters=constants.GTFS_GENERAL_CAPTURE_PARAMS.value,
+)
+
+# gtfs_materializacao = create_default_materialization_flow(
+#     flow_name="SMTR: GTFS - Materialização (subflow)",
+#     agent_label=emd_constants.RJ_SMTR_AGENT_LABEL.value,
+#     overwrite_flow_param_values=constants.GTFS_MATERIALIZACAO_PARAMS.value,
 # )
 
-gtfs_materializacao = create_default_materialization_flow(
-    flow_name="SMTR: GTFS - Materialização (subflow)",
-    agent_label=emd_constants.RJ_SMTR_AGENT_LABEL.value,
-    overwrite_flow_param_values=constants.GTFS_MATERIALIZACAO_PARAMS.value,
+gtfs_materializacao = deepcopy(default_materialization_flow)
+gtfs_materializacao.name = "SMTR: GTFS - Materialização (subflow)"
+gtfs_materializacao.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+gtfs_materializacao.run_config = KubernetesRun(
+    image=emd_constants.DOCKER_IMAGE.value,
+    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-# gtfs_materializacao.name = "SMTR: GTFS - Materialização (subflow)"
-# gtfs_materializacao.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
-# gtfs_materializacao.run_config = KubernetesRun(
-#     image=emd_constants.DOCKER_IMAGE.value,
-#     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
-# )
-# gtfs_materializacao = set_default_parameters(
-#     flow=gtfs_materializacao,
-#     default_parameters=constants.GTFS_MATERIALIZACAO_PARAMS.value,
-# )
+gtfs_materializacao.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
+gtfs_materializacao = set_default_parameters(
+    flow=gtfs_materializacao,
+    default_parameters=constants.GTFS_MATERIALIZACAO_PARAMS.value,
+)
 
 with Flow(
     "SMTR: GTFS - Captura/Tratamento",

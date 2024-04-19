@@ -23,6 +23,7 @@ import pytz
 import requests
 from basedosdados import Table
 from google.cloud.storage.blob import Blob
+import prefect
 from prefect.schedules.clocks import IntervalClock
 from prefeitura_rio.pipelines_utils.infisical import get_secret
 from prefeitura_rio.pipelines_utils.logging import log
@@ -35,6 +36,17 @@ from pipelines.utils.implicit_ftp import ImplicitFtpTls
 # Set BD config to run on cloud #
 bd.config.from_file = True
 
+
+def set_default_parameters(
+    flow: prefect.Flow, default_parameters: dict
+) -> prefect.Flow:
+    """
+    Sets default parameters for a flow.
+    """
+    for parameter in flow.parameters():
+        if parameter.name in default_parameters:
+            parameter.default = default_parameters[parameter.name]
+    return flow
 
 def send_discord_message(
     message: str,

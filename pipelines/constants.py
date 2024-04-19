@@ -107,6 +107,32 @@ class constants(Enum):  # pylint: disable=c0103
     }
     GPS_BRT_MATERIALIZE_DELAY_HOURS = 0
 
+    # VEICULO 
+    VEICULO_DATASET_ID = "veiculo"
+
+        # AUTUAÇÕES - AGENTES DE VERÃO
+    SPPO_REGISTRO_AGENTE_VERAO_COLUMNS = [
+        "datetime_registro",
+        "email",
+        "id_veiculo",
+        "servico",
+        "link_foto",
+        "validacao",
+    ]
+
+    SPPO_REGISTRO_AGENTE_VERAO_PARAMS = {
+        "partition_date_only": True,
+        "source_type": "api-csv",
+        "dataset_id": VEICULO_DATASET_ID,
+        "table_id": "sppo_registro_agente_verao",
+        "extract_params": {"secret_path": "smtr_agentes_verao"},
+        "pre_treatment_reader_args": {
+            "skiprows": 2,
+            "names": SPPO_REGISTRO_AGENTE_VERAO_COLUMNS,
+        },
+        "primary_key": ["datetime_registro", "email"],
+    }
+
     # STU
 
     STU_DATASET_ID = "br_rj_riodejaneiro_stu"

@@ -18,7 +18,9 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
 )
 
-from pipelines.capture.templates.flows import create_default_capture_flow
+# from pipelines.capture.templates.flows import create_default_capture_flow
+from pipelines.utils.backup.flows import default_capture_flow
+from pipelines.utils.backup.utils import set_default_parameters
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
 from pipelines.schedules import every_day_hour_seven
@@ -49,13 +51,7 @@ from pipelines.veiculo.tasks import (
 # EMD Imports #
 
 
-
-
 # SMTR Imports #
-
-
-
-
 
 
 # Flows #
@@ -248,9 +244,20 @@ sppo_veiculo_dia.run_config = KubernetesRun(
 )
 sppo_veiculo_dia.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
 
-veiculo_sppo_registro_agente_verao_captura = create_default_capture_flow(
-    flow_name=f"SMTR: {constants.VEICULO_DATASET_ID.value} {constants.SPPO_REGISTRO_AGENTE_VERAO_PARAMS.value['table_id']} - Captura",
-    agent_label=emd_constants.RJ_SMTR_AGENT_LABEL.value,
-    overwrite_flow_params=constants.SPPO_REGISTRO_AGENTE_VERAO_PARAMS.value,
+veiculo_sppo_registro_agente_verao_captura = deepcopy(default_capture_flow)
+veiculo_sppo_registro_agente_verao_captura.name = f"SMTR: {constants.VEICULO_DATASET_ID.value} {constants.SPPO_REGISTRO_AGENTE_VERAO_PARAMS.value['table_id']} - Captura"
+veiculo_sppo_registro_agente_verao_captura.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+veiculo_sppo_registro_agente_verao_captura.run_config = KubernetesRun(
+    image=emd_constants.DOCKER_IMAGE.value,
+    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+)
+veiculo_sppo_registro_agente_verao_captura.state_handlers = [
+    handler_initialize_sentry,
+    handler_inject_bd_credentials,
+]
+
+veiculo_sppo_registro_agente_verao_captura = set_default_parameters(
+    flow=veiculo_sppo_registro_agente_verao_captura,
+    default_parameters=constants.SPPO_REGISTRO_AGENTE_VERAO_PARAMS.value,
 )
 veiculo_sppo_registro_agente_verao_captura.schedule = every_day_hour_seven

@@ -22,7 +22,8 @@ from pipelines.br_rj_riodejaneiro_stu.tasks import (
     read_stu_raw_file,
     save_stu_dataframes,
 )
-from pipelines.capture.templates.flows import create_default_capture_flow
+# from pipelines.capture.templates.flows import create_default_capture_flow
+from pipelines.utils.backup.flows import default_capture_flow
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
 from pipelines.utils.backup.tasks import (
@@ -30,7 +31,7 @@ from pipelines.utils.backup.tasks import (
     get_current_timestamp,
     rename_current_flow_run_now_time,
 )
-from pipelines.utils.utils import set_default_parameters
+from pipelines.utils.backup.utils import set_default_parameters
 
 # EMD Imports #
 
@@ -42,16 +43,29 @@ from pipelines.utils.utils import set_default_parameters
 
 
 
-stu_captura_subflow = create_default_capture_flow(
-    flow_name="SMTR: STU - Captura (subflow)",
-    agent_label=emd_constants.RJ_SMTR_AGENT_LABEL.value,
-    overwrite_flow_params=constants.STU_GENERAL_CAPTURE_PARAMS.value,
-)
+# stu_captura_subflow = create_default_capture_flow(
+#     flow_name="SMTR: STU - Captura (subflow)",
+#     agent_label=emd_constants.RJ_SMTR_AGENT_LABEL.value,
+#     overwrite_flow_params=constants.STU_GENERAL_CAPTURE_PARAMS.value,
+# )
 
+stu_captura_subflow = deepcopy(default_capture_flow)
+stu_captura_subflow.name = "SMTR: STU - Captura (subflow)"
+stu_captura_subflow.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+stu_captura_subflow.run_config = KubernetesRun(
+    image=emd_constants.DOCKER_IMAGE.value,
+    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+)
+stu_captura_subflow.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
+
+stu_captura_subflow = set_default_parameters(
+    flow=stu_captura_subflow,
+    default_parameters=constants.STU_GENERAL_CAPTURE_PARAMS.value,
+)
 
 with Flow(
     "SMTR: STU - Captura",
-    code_owners=["rodrigo", "rafaelpinheiro"],
+    # code_owners=["rodrigo", "rafaelpinheiro"],
 ) as stu_captura:
     # SETUP
     data_versao_stu = Parameter("data_versao_stu", required=True)

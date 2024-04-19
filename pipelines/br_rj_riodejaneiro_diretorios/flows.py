@@ -20,8 +20,10 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
 
-# from pipelines.utils.utils import set_default_parameters
-from pipelines.treatment.templates.flows import create_default_materialization_flow
+from pipelines.utils.backup.utils import set_default_parameters
+
+# from pipelines.treatment.templates.flows import create_default_materialization_flow
+from pipelines.utils.backup.flows import default_materialization_flow, default_capture_flow
 from pipelines.utils.backup.tasks import (
     get_current_flow_labels,
     get_rounded_timestamp,
@@ -31,23 +33,24 @@ from pipelines.utils.backup.tasks import (
 # EMD Imports #
 
 
+diretorios_materializacao_subflow = deepcopy(default_materialization_flow)
+diretorios_materializacao_subflow.name = "SMTR: Diretórios - Materialização (subflow)"
 
-
-diretorios_materializacao_subflow = create_default_materialization_flow(
-    flow_name="SMTR: Diretórios - Materialização (subflow)",
-    overwrite_flow_param_values=constants.DIRETORIO_MATERIALIZACAO_PARAMS.value,
-    agent_label=emd_constants.RJ_SMTR_AGENT_LABEL.value,
+diretorios_materializacao_subflow.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+diretorios_materializacao_subflow.run_config = KubernetesRun(
+    image=emd_constants.DOCKER_IMAGE.value,
+    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-# diretorios_materializacao_subflow.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
-# diretorios_materializacao_subflow.run_config = KubernetesRun(
-#     image=emd_constants.DOCKER_IMAGE.value,
-#     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
-# )
+diretorios_materializacao_subflow.state_handlers = [
+    handler_initialize_sentry,
+    handler_inject_bd_credentials,
+]
 
-# diretorios_materializacao_subflow = set_default_parameters(
-#     flow=diretorios_materializacao_subflow,
-#     default_parameters=constants.DIRETORIO_MATERIALIZACAO_PARAMS.value,
-# )
+diretorios_materializacao_subflow = set_default_parameters(
+    flow=diretorios_materializacao_subflow,
+    default_parameters=constants.DIRETORIO_MATERIALIZACAO_PARAMS.value,
+)
+
 
 with Flow(
     "SMTR: Diretórios - Materialização",
