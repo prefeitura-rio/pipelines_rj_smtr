@@ -48,8 +48,8 @@ def subsidio_data_quality_check(
     if check_params is None:
         check_params = smtr_constants.SUBSIDIO_SPPO_DATA_CHECKS_PARAMS.value
 
-    if # code_owners is None:
-        # code_owners = smtr_constants.SUBSIDIO_SPPO_CODE_OWNERS.value
+    # if # code_owners is None:
+    #     # code_owners = smtr_constants.SUBSIDIO_SPPO_CODE_OWNERS.value
 
     checks = dict()
 
@@ -132,19 +132,19 @@ def subsidio_data_quality_check(
             else ":warning: **Status:** Testes falharam. Necessidade de revisão dos dados finais!\n"
         )
 
-    if not test_check:
-        at_# code_owners = [
-            f'    - <@{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
-            if constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "user"
-            else f'    - <@!{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
-            if constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "user_nickname"
-            else f'    - <#{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
-            if constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "channel"
-            else f'    - <@&{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
-            for code_owner in # code_owners
-        ]
+    # if not test_check:
+    #     at_# code_owners = [
+    #         f'    - <@{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
+    #         if constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "user"
+    #         else f'    - <@!{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
+    #         if constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "user_nickname"
+    #         else f'    - <#{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
+    #         if constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "channel"
+    #         else f'    - <@&{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
+    #         for code_owner in # code_owners
+    #     ]
 
-        formatted_messages.extend(at_# code_owners)
+    #     formatted_messages.extend(at_# code_owners)
 
     format_send_discord_message(formatted_messages, webhook_url)
 
