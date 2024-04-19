@@ -5,44 +5,51 @@ Flows for gtfs
 from copy import deepcopy
 from datetime import timedelta
 
-# Imports #
-
+from prefect import Parameter, case, task
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
+from prefect.tasks.control_flow import merge
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefect.utilities.edges import unmapped
-from prefect import Parameter, case, task
-from prefect.tasks.control_flow import merge
+
+# from pipelines.utils.utils import set_default_parameters
+from prefeitura_rio.pipelines_utils.custom import Flow
+from prefeitura_rio.pipelines_utils.state_handlers import (
+    handler_initialize_sentry,
+    handler_inject_bd_credentials,
+)
+
+from pipelines.capture.templates.flows import create_default_capture_flow
+
+# SMTR Imports #
+from pipelines.constants import constants
+from pipelines.constants import constants as emd_constants
+from pipelines.treatment.templates.flows import create_default_materialization_flow
+from pipelines.utils.backup.tasks import (
+    get_current_flow_labels,
+    get_current_timestamp,
+    get_scheduled_start_times,
+    rename_current_flow_run_now_time,
+)
+
+# Imports #
+
 
 
 # EMD Imports #
 
-from pipelines.constants import constants as emd_constants
-from prefeitura_rio.pipelines_utils.state_handlers import (
-    handler_inject_bd_credentials,
-    handler_initialize_sentry,
-)
-# from pipelines.utils.utils import set_default_parameters
-from prefeitura_rio.pipelines_utils.custom import Flow
-from pipelines.utils.backup.tasks import (
-    rename_current_flow_run_now_time,
-    get_current_flow_labels,
-    get_current_timestamp, 
-    get_scheduled_start_times
-)
 
-# SMTR Imports #
-from pipelines.constants import constants
-from pipelines.treatment.templates.flows import create_default_materialization_flow
-from pipelines.capture.templates.flows import create_default_capture_flow
+
+
 # from pipelines.rj_smtr.flows import default_capture_flow, default_materialization_flow
 
 # SETUP dos Flows
 
 gtfs_captura = create_default_capture_flow(
     flow_name="SMTR: GTFS - Captura (subflow)",
-    agent_label=emd_constants.RJ_SMTR_AGENT_LABEL.value, 
-    overwrite_flow_params=constants.GTFS_GENERAL_CAPTURE_PARAMS.value)
+    agent_label=emd_constants.RJ_SMTR_AGENT_LABEL.value,
+    overwrite_flow_params=constants.GTFS_GENERAL_CAPTURE_PARAMS.value,
+)
 # gtfs_captura.name = "SMTR: GTFS - Captura (subflow)"
 # gtfs_captura.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 # gtfs_captura.run_config = KubernetesRun(
@@ -58,8 +65,8 @@ gtfs_captura = create_default_capture_flow(
 gtfs_materializacao = create_default_materialization_flow(
     flow_name="SMTR: GTFS - Materialização (subflow)",
     agent_label=emd_constants.RJ_SMTR_AGENT_LABEL.value,
-    overwrite_flow_param_values=constants.GTFS_MATERIALIZACAO_PARAMS.value
-    )
+    overwrite_flow_param_values=constants.GTFS_MATERIALIZACAO_PARAMS.value,
+)
 # gtfs_materializacao.name = "SMTR: GTFS - Materialização (subflow)"
 # gtfs_materializacao.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 # gtfs_materializacao.run_config = KubernetesRun(
@@ -91,8 +98,7 @@ with Flow(
 
     with case(capture, True):
         gtfs_capture_parameters = [
-            {"timestamp": data_versao_gtfs, **d}
-            for d in constants.GTFS_TABLE_CAPTURE_PARAMS.value
+            {"timestamp": data_versao_gtfs, **d} for d in constants.GTFS_TABLE_CAPTURE_PARAMS.value
         ]
 
         run_captura = create_flow_run.map(
@@ -171,4 +177,7 @@ gtfs_captura_tratamento.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-gtfs_captura_tratamento.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry,]
+gtfs_captura_tratamento.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+]

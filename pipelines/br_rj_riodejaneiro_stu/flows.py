@@ -5,44 +5,47 @@ Flows for br_rj_riodejaneiro_stu
 
 from copy import deepcopy
 
+from prefect import Parameter
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefect.utilities.edges import unmapped
-from prefect import Parameter
+from prefeitura_rio.pipelines_utils.custom import Flow
+from prefeitura_rio.pipelines_utils.state_handlers import (
+    handler_initialize_sentry,
+    handler_inject_bd_credentials,
+)
 
+from pipelines.br_rj_riodejaneiro_stu.tasks import (
+    create_final_stu_dataframe,
+    get_stu_raw_blobs,
+    read_stu_raw_file,
+    save_stu_dataframes,
+)
+from pipelines.capture.templates.flows import create_default_capture_flow
+from pipelines.constants import constants
+from pipelines.constants import constants as emd_constants
+from pipelines.utils.backup.tasks import (
+    get_current_flow_labels,
+    get_current_timestamp,
+    rename_current_flow_run_now_time,
+)
+from pipelines.utils.utils import set_default_parameters
 
 # EMD Imports #
 
-from pipelines.constants import constants as emd_constants
-from prefeitura_rio.pipelines_utils.custom import Flow
-from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_credentials, handler_initialize_sentry
-from pipelines.utils.backup.tasks import (
-    rename_current_flow_run_now_time,
-    get_current_flow_labels,
-    get_current_timestamp
-)
 
 
-from pipelines.utils.utils import set_default_parameters
 
 # SMTR Imports #
 
-from pipelines.capture.templates.flows import create_default_capture_flow
 
-from pipelines.br_rj_riodejaneiro_stu.tasks import (
-    get_stu_raw_blobs,
-    read_stu_raw_file,
-    create_final_stu_dataframe,
-    save_stu_dataframes,
-)
 
-from pipelines.constants import constants
 
 stu_captura_subflow = create_default_capture_flow(
-    flow_name="SMTR: STU - Captura (subflow)", 
+    flow_name="SMTR: STU - Captura (subflow)",
     agent_label=emd_constants.RJ_SMTR_AGENT_LABEL.value,
-    overwrite_flow_params=constants.STU_GENERAL_CAPTURE_PARAMS.value
+    overwrite_flow_params=constants.STU_GENERAL_CAPTURE_PARAMS.value,
 )
 
 
@@ -73,8 +76,7 @@ with Flow(
 
     # CAPTURE
     stu_capture_parameters = [
-        {"timestamp": data_versao_stu, **d}
-        for d in constants.STU_TABLE_CAPTURE_PARAMS.value
+        {"timestamp": data_versao_stu, **d} for d in constants.STU_TABLE_CAPTURE_PARAMS.value
     ]
 
     run_captura = create_flow_run.map(

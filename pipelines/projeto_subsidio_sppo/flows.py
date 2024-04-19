@@ -5,33 +5,47 @@ Flows for projeto_subsidio_sppo
 """
 
 from prefect import Parameter, case, task
-from prefect.tasks.control_flow import merge
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
+from prefect.tasks.control_flow import merge
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefect.utilities.edges import unmapped
+from prefeitura_rio.pipelines_utils.custom import Flow
+from prefeitura_rio.pipelines_utils.state_handlers import (
+    handler_initialize_sentry,
+    handler_inject_bd_credentials,
+)
+
+from pipelines.constants import constants
+from pipelines.constants import constants as smtr_constants
+from pipelines.materialize_to_datario.flows import (
+    smtr_materialize_to_datario_viagem_sppo_flow,
+)
+from pipelines.projeto_subsidio_sppo.tasks import (
+    check_param,
+    subsidio_data_quality_check,
+)
+from pipelines.schedules import every_day_hour_five, every_day_hour_seven
+from pipelines.utils.backup.tasks import (
+    fetch_dataset_sha,
+    get_current_flow_labels,
+    get_current_flow_mode,
+    get_join_dict,
+    get_now_date,
+    get_previous_date,
+    get_run_dates,
+    rename_current_flow_run_now_time,
+    run_dbt_model,
+)
+from pipelines.veiculo.flows import sppo_veiculo_dia
 
 # EMD Imports #
 
-from pipelines.constants import constants
-from pipelines.utils.backup.tasks import (
-    rename_current_flow_run_now_time,
-    run_dbt_model,
-    get_now_date,
-    get_current_flow_mode,
-    get_current_flow_labels,
-    fetch_dataset_sha,
-    get_run_dates,
-    get_join_dict,
-    get_previous_date,
-)
-from prefeitura_rio.pipelines_utils.custom import Flow
-from prefeitura_rio.pipelines_utils.state_handlers import handler_initialize_sentry, handler_inject_bd_credentials
+
 # from pipelines.utils.execute_dbt_model.tasks import get_k8s_dbt_client
 
 # SMTR Imports #
 
-from pipelines.constants import constants as smtr_constants
 
 # from pipelines.utils.backup.tasks import (
 #     fetch_dataset_sha,
@@ -42,20 +56,9 @@ from pipelines.constants import constants as smtr_constants
 #     # set_last_run_timestamp,
 # )
 
-from pipelines.materialize_to_datario.flows import (
-    smtr_materialize_to_datario_viagem_sppo_flow,
-)
 
-from pipelines.veiculo.flows import (
-    sppo_veiculo_dia,
-)
 
-from pipelines.schedules import every_day_hour_five, every_day_hour_seven
 
-from pipelines.projeto_subsidio_sppo.tasks import (
-    check_param,
-    subsidio_data_quality_check,
-)
 
 # Flows #
 

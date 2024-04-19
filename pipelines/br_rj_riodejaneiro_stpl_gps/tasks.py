@@ -42,6 +42,8 @@ Tasks for br_rj_riodejaneiro_stpl_gps
 #     """
 #     My task description.
 #     """
+import traceback
+
 #     return np.add(a, b)
 # -----------------------------------------------------------------------------
 #
@@ -49,15 +51,13 @@ Tasks for br_rj_riodejaneiro_stpl_gps
 #
 ###############################################################################
 from datetime import timedelta
-import traceback
 
 import pandas as pd
 import pendulum
 from prefect import task
-
+from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.constants import constants
-from prefeitura_rio.pipelines_utils.logging import log
 from pipelines.utils.backup.utils import log_critical
 
 
@@ -94,9 +94,7 @@ def pre_treatment_br_rj_riodejaneiro_stpl_gps(status_dict, timestamp):
     df["dataHora"] = [piece["dataHora"] for piece in data]
     df["timestamp_captura"] = timestamp_captura
     df["dataHora"] = df["dataHora"].apply(
-        lambda ms: pd.to_datetime(
-            pendulum.from_timestamp(ms / 1000.0, timezone).isoformat()
-        )
+        lambda ms: pd.to_datetime(pendulum.from_timestamp(ms / 1000.0, timezone).isoformat())
     )
 
     # Filter data for 0 <= time diff <= 1min

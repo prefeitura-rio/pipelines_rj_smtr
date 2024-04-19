@@ -1522,6 +1522,7 @@ def transform_raw_to_nested_structure(
 
 #### SUBSIDIO CHECKS
 
+
 def perform_check(desc: str, check_params: dict, request_params: dict) -> dict:
     """
     Perform a check on a query
@@ -1553,9 +1554,7 @@ def perform_check(desc: str, check_params: dict, request_params: dict) -> dict:
 
     if not check_status:
         log(f"Data info:\n{data_info_str(df)}")
-        log(
-            f"Sorted data:\n{df.sort_values(by=order_columns) if order_columns else df}"
-        )
+        log(f"Sorted data:\n{df.sort_values(by=order_columns) if order_columns else df}")
 
     return check_status_dict
 
@@ -1606,9 +1605,7 @@ def format_send_discord_message(formatted_messages: list, webhook_url: str):
     log(formatted_message)
     msg_ext = len(formatted_message)
     if msg_ext > 2000:
-        log(
-            f"** Message too long ({msg_ext} characters), will be split into multiple messages **"
-        )
+        log(f"** Message too long ({msg_ext} characters), will be split into multiple messages **")
         # Split message into lines
         lines = formatted_message.split("\n")
         message_chunks = []
@@ -1629,7 +1626,6 @@ def format_send_discord_message(formatted_messages: list, webhook_url: str):
             message=formatted_message,
             webhook_url=webhook_url,
         )
-
 
 
 ###############

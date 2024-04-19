@@ -13,7 +13,10 @@ from prefect.storage import GCS
 # EMD Imports #
 
 from prefeitura_rio.pipelines_utils.custom import Flow
-from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_credentials, handler_initialize_sentry
+from prefeitura_rio.pipelines_utils.state_handlers import (
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+)
 
 # from prefeitura_rio.pipelines_utils.prefect import get_k8s_dbt_client
 

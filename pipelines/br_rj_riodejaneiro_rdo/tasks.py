@@ -3,34 +3,29 @@
 Tasks for br_rj_riodejaneiro_rdo
 """
 
-from datetime import datetime
-import re
 import os
+import re
+from datetime import datetime
 from pathlib import Path
-from dateutil import parser
-
 
 import pandas as pd
-
 import pendulum
+from dateutil import parser
 from prefect import task
+from prefeitura_rio.pipelines_utils.logging import log
+from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
-from pipelines.constants import constants
-from pipelines.br_rj_riodejaneiro_rdo.constants import (
-    constants as rdo_constants,
-)
+from pipelines.br_rj_riodejaneiro_rdo.constants import constants as rdo_constants
 from pipelines.br_rj_riodejaneiro_rdo.utils import (
     build_table_id,
     merge_file_info_and_errors,
 )
-
+from pipelines.constants import constants
 from pipelines.utils.backup.utils import (
     connect_ftp,
     get_last_run_timestamp,
     set_redis_rdo_files,
 )
-from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
-from prefeitura_rio.pipelines_utils.logging import log
 
 
 @task
@@ -112,9 +107,7 @@ def download_and_save_local_from_ftp(file_info: dict):
         return file_info
 
     dataset_id = constants.RDO_DATASET_ID.value
-    base_path = (
-        f'{os.getcwd()}/{os.getenv("DATA_FOLDER", "data")}/{{bucket_mode}}/{dataset_id}'
-    )
+    base_path = f'{os.getcwd()}/{os.getenv("DATA_FOLDER", "data")}/{{bucket_mode}}/{dataset_id}'
 
     table_id = build_table_id(  # mudar pra task
         mode=file_info["transport_mode"], report_type=file_info["report_type"]
@@ -125,9 +118,7 @@ def download_and_save_local_from_ftp(file_info: dict):
         "local_path"
     ] = f"""{base_path}/{table_id}/{file_info["partitions"]}/{file_info['filename']}.{{file_ext}}"""
     # Get raw data
-    file_info["raw_path"] = file_info["local_path"].format(
-        bucket_mode="raw", file_ext="txt"
-    )
+    file_info["raw_path"] = file_info["local_path"].format(bucket_mode="raw", file_ext="txt")
     Path(file_info["raw_path"]).parent.mkdir(parents=True, exist_ok=True)
     try:
         # Get data from FTP - TODO: create get_raw() error alike
@@ -140,9 +131,7 @@ def download_and_save_local_from_ftp(file_info: dict):
                 )
         ftp_client.quit()
         # Get timestamp of download time
-        file_info["timestamp_captura"] = pendulum.now(
-            constants.TIMEZONE.value
-        ).isoformat()
+        file_info["timestamp_captura"] = pendulum.now(constants.TIMEZONE.value).isoformat()
 
         log(f"Timestamp captura is {file_info['timestamp_captura']}")
         log(f"Update file info: {file_info}")
@@ -171,9 +160,9 @@ def pre_treatment_br_rj_riodejaneiro_rdo(
     for file_info in files:
         log(f"Processing file {files.index(file_info)}")
         try:
-            config = rdo_constants.RDO_PRE_TREATMENT_CONFIG.value[
-                file_info["transport_mode"]
-            ][file_info["report_type"]]
+            config = rdo_constants.RDO_PRE_TREATMENT_CONFIG.value[file_info["transport_mode"]][
+                file_info["report_type"]
+            ]
             # context.log.info(f"Config for ETL: {config}")
             # Load data
             df = pd.read_csv(  # pylint: disable=C0103
@@ -291,9 +280,7 @@ def get_rdo_date_range(dataset_id: str, table_id: str, mode: str = "prod"):
     Returns:
         dict: containing 'date_range_start' and 'date_range_end' keys
     """
-    last_run_date = get_last_run_timestamp(
-        dataset_id=dataset_id, table_id=table_id, mode=mode
-    )
+    last_run_date = get_last_run_timestamp(dataset_id=dataset_id, table_id=table_id, mode=mode)
     if not last_run_date:
         last_run_date = constants.RDO_MATERIALIZE_START_DATE.value
     return {

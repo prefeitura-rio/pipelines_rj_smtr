@@ -6,22 +6,20 @@ Flows for br_rj_riodejaneiro_stpl_gps
 from prefect import Parameter
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
-
-# EMD Imports #
-
-from pipelines.constants import constants as emd_constants
 from prefeitura_rio.pipelines_utils.custom import Flow
-from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_credentials, handler_initialize_sentry
-
-# SMTR Imports #
-
-from pipelines.constants import constants
-
-from pipelines.schedules import (
-    every_minute,
-    # every_hour,
+from prefeitura_rio.pipelines_utils.state_handlers import (
+    handler_initialize_sentry,
+    handler_inject_bd_credentials,
 )
+
+from pipelines.br_rj_riodejaneiro_stpl_gps.tasks import (
+    pre_treatment_br_rj_riodejaneiro_stpl_gps,
+)
+from pipelines.constants import constants
+from pipelines.constants import constants as emd_constants
+from pipelines.schedules import every_minute  # every_hour,
 from pipelines.utils.backup.tasks import (
+    bq_upload,
     create_date_hour_partition,
     create_local_partition_path,
     get_current_timestamp,
@@ -31,12 +29,15 @@ from pipelines.utils.backup.tasks import (
     save_raw_local,
     save_treated_local,
     upload_logs_to_bq,
-    bq_upload,
 )
 
-from pipelines.br_rj_riodejaneiro_stpl_gps.tasks import (
-    pre_treatment_br_rj_riodejaneiro_stpl_gps,
-)
+# EMD Imports #
+
+
+# SMTR Imports #
+
+
+
 
 
 with Flow(
@@ -44,14 +45,10 @@ with Flow(
     code_owners=["caio", "fernanda", "boris", "rodrigo"],
 ) as captura_stpl:
     # DEFAULT PARAMETERS #
-    dataset_id = Parameter(
-        "dataset_id", default=constants.GPS_STPL_RAW_DATASET_ID.value
-    )
+    dataset_id = Parameter("dataset_id", default=constants.GPS_STPL_RAW_DATASET_ID.value)
     table_id = Parameter("table_id", default=constants.GPS_STPL_RAW_TABLE_ID.value)
     url = Parameter("url", default=constants.GPS_STPL_API_BASE_URL.value)
-    secret_path = Parameter(
-        "secret_path", default=constants.GPS_STPL_API_SECRET_PATH.value
-    )
+    secret_path = Parameter("secret_path", default=constants.GPS_STPL_API_SECRET_PATH.value)
 
     # SETUP #
     timestamp = get_current_timestamp()

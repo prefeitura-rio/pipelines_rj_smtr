@@ -5,32 +5,38 @@ Flows for br_rj_riodejaneiro_diretorios
 
 from copy import deepcopy
 
+from prefect import Parameter, task
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
-from prefect.utilities.edges import unmapped
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
-from prefect import Parameter, task
-
-# EMD Imports #
-
-from pipelines.constants import constants as emd_constants
+from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
-from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_credentials, handler_initialize_sentry
-from pipelines.utils.backup.tasks import (
-    rename_current_flow_run_now_time,
-    get_current_flow_labels,
-    get_rounded_timestamp
+from prefeitura_rio.pipelines_utils.state_handlers import (
+    handler_initialize_sentry,
+    handler_inject_bd_credentials,
 )
-# from pipelines.utils.utils import set_default_parameters
-from pipelines.treatment.templates.flows import create_default_materialization_flow
 
 # SMTR Imports #
 from pipelines.constants import constants
+from pipelines.constants import constants as emd_constants
+
+# from pipelines.utils.utils import set_default_parameters
+from pipelines.treatment.templates.flows import create_default_materialization_flow
+from pipelines.utils.backup.tasks import (
+    get_current_flow_labels,
+    get_rounded_timestamp,
+    rename_current_flow_run_now_time,
+)
+
+# EMD Imports #
+
+
+
 
 diretorios_materializacao_subflow = create_default_materialization_flow(
     flow_name="SMTR: Diretórios - Materialização (subflow)",
     overwrite_flow_param_values=constants.DIRETORIO_MATERIALIZACAO_PARAMS.value,
-    agent_label=emd_constants.RJ_SMTR_AGENT_LABEL.value
+    agent_label=emd_constants.RJ_SMTR_AGENT_LABEL.value,
 )
 # diretorios_materializacao_subflow.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 # diretorios_materializacao_subflow.run_config = KubernetesRun(
@@ -88,4 +94,7 @@ diretorios_materializacao.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-diretorios_materializacao.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
+diretorios_materializacao.state_handlers = [
+    handler_initialize_sentry,
+    handler_inject_bd_credentials,
+]

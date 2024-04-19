@@ -4,21 +4,20 @@ Tasks for veiculos
 """
 
 from datetime import datetime
-import pandas as pd
+
 import numpy as np
+import pandas as pd
 from prefect import task
+
+from pipelines.rj_smtr.constants import constants
+from pipelines.rj_smtr.utils import data_info_str, filter_data
+from pipelines.utils.utils import log  # ,get_vault_secret
 
 # EMD Imports #
 
-from pipelines.utils.utils import log  # ,get_vault_secret
 
 # SMTR Imports #
 
-from pipelines.rj_smtr.constants import constants
-from pipelines.rj_smtr.utils import (
-    data_info_str,
-    filter_data,
-)
 
 # Tasks #
 
@@ -78,25 +77,19 @@ def pre_treatment_sppo_licenciamento(status: dict, timestamp: datetime):
 
         log("Update indicador_ar_condicionado based on tipo_veiculo...", level="info")
         data["indicador_ar_condicionado"] = data["tipo_veiculo"].map(
-            lambda x: None
-            if not isinstance(x, str)
-            else bool("C/AR" in x.replace(" ", ""))
+            lambda x: None if not isinstance(x, str) else bool("C/AR" in x.replace(" ", ""))
         )
 
         log("Update status...", level="info")
         data["status"] = "Licenciado"
 
-        log(
-            f"Finished cleaning! Pre-treated data:\n{data_info_str(data)}", level="info"
-        )
+        log(f"Finished cleaning! Pre-treated data:\n{data_info_str(data)}", level="info")
 
         log("Creating nested structure...", level="info")
         pk_cols = primary_key + ["timestamp_captura"]
         data = (
             data.groupby(pk_cols)
-            .apply(
-                lambda x: x[data.columns.difference(pk_cols)].to_json(orient="records")
-            )
+            .apply(lambda x: x[data.columns.difference(pk_cols)].to_json(orient="records"))
             .str.strip("[]")
             .reset_index(name="content")[primary_key + ["content", "timestamp_captura"]]
         )
@@ -171,17 +164,13 @@ def pre_treatment_sppo_infracao(status: dict, timestamp: datetime):
         # check_new_data = f"data_infracao == '{timestamp.strftime('%Y-%m-%d')}'"
         # check_not_null(data, pk_columns, subset_query=check_new_data)
 
-        log(
-            f"Finished cleaning! Pre-treated data:\n{data_info_str(data)}", level="info"
-        )
+        log(f"Finished cleaning! Pre-treated data:\n{data_info_str(data)}", level="info")
 
         log("Creating nested structure...", level="info")
         pk_cols = primary_key + ["timestamp_captura"]
         data = (
             data.groupby(pk_cols)
-            .apply(
-                lambda x: x[data.columns.difference(pk_cols)].to_json(orient="records")
-            )
+            .apply(lambda x: x[data.columns.difference(pk_cols)].to_json(orient="records"))
             .str.strip("[]")
             .reset_index(name="content")[primary_key + ["content", "timestamp_captura"]]
         )

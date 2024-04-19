@@ -6,18 +6,20 @@ Tasks for br_rj_riodejaneiro_onibus_gps
 import traceback
 from datetime import datetime, timedelta
 from typing import Dict
+
 import pandas as pd
-from prefect import task
 import pendulum
+from prefect import task
+from prefeitura_rio.pipelines_utils.logging import log
+
+from pipelines.constants import constants
+from pipelines.utils.secret import get_secret
 
 # EMD Imports #
 
-from pipelines.utils.secret import get_secret
-from prefeitura_rio.pipelines_utils.logging import log
 
 # SMTR Imports #
 
-from pipelines.constants import constants
 
 # Tasks #
 
@@ -53,9 +55,7 @@ def create_api_url_onibus_realocacao(
 
 
 @task
-def pre_treatment_br_rj_riodejaneiro_onibus_realocacao(
-    status: dict, timestamp: datetime
-) -> Dict:
+def pre_treatment_br_rj_riodejaneiro_onibus_realocacao(status: dict, timestamp: datetime) -> Dict:
     """Basic data treatment for bus gps relocation data. Converts unix time to datetime,
     and apply filtering to stale data that may populate the API response.
 
@@ -111,9 +111,7 @@ def pre_treatment_br_rj_riodejaneiro_onibus_realocacao(
         log(f"Treated data: \n{df_realocacao[col]}")
 
     # Ajusta tempo máximo da realocação
-    df_realocacao.loc[
-        df_realocacao.dataSaida == "1971-01-01 00:00:00-0300", "dataSaida"
-    ] = ""
+    df_realocacao.loc[df_realocacao.dataSaida == "1971-01-01 00:00:00-0300", "dataSaida"] = ""
 
     # Renomeia colunas
     cols = {
@@ -144,9 +142,7 @@ def create_api_url_onibus_gps(version: str, timestamp: datetime = None) -> str:
         source = constants.GPS_SPPO_API_SECRET_PATH.value
 
     if not timestamp:
-        timestamp = pendulum.now(constants.TIMEZONE.value).replace(
-            second=0, microsecond=0
-        )
+        timestamp = pendulum.now(constants.TIMEZONE.value).replace(second=0, microsecond=0)
 
     headers = get_secret(source)["data"]
     key = list(headers)[0]
@@ -222,9 +218,9 @@ def pre_treatment_br_rj_riodejaneiro_onibus_gps(
             filter_col = "datahoraenvio"
             time_delay = constants.GPS_SPPO_CAPTURE_DELAY_V2.value
         if recapture:
-            server_mask = (
-                df_gps["datahoraenvio"] - df_gps["datahoraservidor"]
-            ) <= timedelta(minutes=constants.GPS_SPPO_RECAPTURE_DELAY_V2.value)
+            server_mask = (df_gps["datahoraenvio"] - df_gps["datahoraservidor"]) <= timedelta(
+                minutes=constants.GPS_SPPO_RECAPTURE_DELAY_V2.value
+            )
             df_gps = df_gps[server_mask]  # pylint: disable=c0103
 
         mask = (df_gps[filter_col] - df_gps["datahora"]).apply(
