@@ -23,7 +23,7 @@ from pipelines.constants import constants as emd_constants
 from pipelines.utils.backup.utils import set_default_parameters
 
 # from pipelines.treatment.templates.flows import create_default_materialization_flow
-from pipelines.utils.backup.flows import default_materialization_flow, default_capture_flow
+from pipelines.utils.backup.flows import default_materialization_flow
 from pipelines.utils.backup.tasks import (
     get_current_flow_labels,
     get_rounded_timestamp,

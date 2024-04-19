@@ -1123,6 +1123,7 @@ def upload_raw_data_to_gcs(
     table_id: str,
     dataset_id: str,
     partitions: list,
+    bucket_name: str = None,
 ) -> Union[str, None]:
     """
     Upload raw data to GCS.
@@ -1139,7 +1140,9 @@ def upload_raw_data_to_gcs(
     """
     if error is None:
         try:
-            st_obj = Storage(table_id=table_id, dataset_id=dataset_id)
+            st_obj = Storage(
+                table_id=table_id, dataset_id=dataset_id, bucket_name=bucket_name
+            )
             log(
                 f"""Uploading raw file to bucket {st_obj.bucket_name} at
                 {st_obj.bucket_name}/{dataset_id}/{table_id}"""
