@@ -734,9 +734,7 @@ def upload_run_logs_to_bq(  # pylint: disable=R0913
     # Create partition directory
     filename = f"{table_id}_{timestamp.isoformat()}"
     partition = f"data={timestamp.date()}"
-    filepath = Path(
-        f"""data/{mode}/{dataset_id}/{table_id}/{partition}/{filename}.csv"""
-    )
+    filepath = Path(f"""data/{mode}/{dataset_id}/{table_id}/{partition}/{filename}.csv""")
     filepath.parent.mkdir(exist_ok=True, parents=True)
     # Create dataframe to be uploaded
     if not error and recapture is True:

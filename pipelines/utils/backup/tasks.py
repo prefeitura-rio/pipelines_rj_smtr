@@ -1158,7 +1158,6 @@ def upload_raw_data_to_gcs(
     return error
 
 
-
 @task
 def upload_staging_data_to_gcs(
     error: str,
