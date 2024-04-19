@@ -1443,6 +1443,8 @@ def transform_raw_to_nested_structure(
     error: str,
     timestamp: datetime,
     primary_key: list = None,
+    flag_private_data: bool = False,
+    reader_args: dict = None,
 ) -> tuple[str, str]:
     """
     Task to transform raw data to nested structure
@@ -1453,6 +1455,8 @@ def transform_raw_to_nested_structure(
         error (str): Error catched from upstream tasks
         timestamp (datetime): timestamp for flow run
         primary_key (list, optional): Primary key to be used on nested structure
+        flag_private_data (bool, optional): Flag to indicate if the task should log the data
+        reader_args (dict): arguments to pass to pandas.read_csv or read_json
 
     Returns:
         str: Error traceback
@@ -1461,51 +1465,64 @@ def transform_raw_to_nested_structure(
     if error is None:
         try:
             # leitura do dado raw
-            error, data = read_raw_data(filepath=raw_filepath)
+            error, data = read_raw_data(filepath=raw_filepath, reader_args=reader_args)
 
             if primary_key is None:
                 primary_key = []
 
-            log(
-                f"""
-                Received inputs:
-                - timestamp:\n{timestamp}
-                - data:\n{data.head()}"""
-            )
-
-            # Check empty dataframe
-            if data.empty:
-                log("Empty dataframe, skipping transformation...")
-
-            else:
-                log(f"Raw data:\n{data_info_str(data)}", level="info")
-
-                log("Adding captured timestamp column...", level="info")
-                data["timestamp_captura"] = timestamp
-
-                if "customFieldValues" not in data:
-                    log("Striping string columns...", level="info")
-                    for col in data.columns[data.dtypes == "object"].to_list():
-                        data[col] = data[col].str.strip()
-
-                log(f"Finished cleaning! Data:\n{data_info_str(data)}", level="info")
-
-                log("Creating nested structure...", level="info")
-                pk_cols = primary_key + ["timestamp_captura"]
-                data = (
-                    data.groupby(pk_cols)
-                    .apply(lambda x: x[data.columns.difference(pk_cols)].to_json(orient="records"))
-                    .str.strip("[]")
-                    .reset_index(name="content")[primary_key + ["content", "timestamp_captura"]]
-                )
-
+            if not flag_private_data:
                 log(
-                    f"Finished nested structure! Data:\n{data_info_str(data)}",
-                    level="info",
+                    f"""
+                    Received inputs:
+                    - timestamp:\n{timestamp}
+                    - data:\n{data.head()}"""
                 )
+
+            if error is None:
+                # Check empty dataframe
+                if data.empty:
+                    log("Empty dataframe, skipping transformation...")
+
+                else:
+                    log(f"Raw data:\n{data_info_str(data)}", level="info")
+
+                    log("Adding captured timestamp column...", level="info")
+                    data["timestamp_captura"] = timestamp
+
+                    if "customFieldValues" not in data:
+                        log("Striping string columns...", level="info")
+                        for col in data.columns[data.dtypes == "object"].to_list():
+                            data[col] = data[col].str.strip()
+
+                    log(
+                        f"Finished cleaning! Data:\n{data_info_str(data)}", level="info"
+                    )
+
+                    log("Creating nested structure...", level="info")
+                    pk_cols = primary_key + ["timestamp_captura"]
+
+                    data = (
+                        data.groupby(pk_cols)
+                        .apply(
+                            lambda x: x[data.columns.difference(pk_cols)].to_json(
+                                orient="records"
+                            )
+                        )
+                        .str.strip("[]")
+                        .reset_index(name="content")[
+                            primary_key + ["content", "timestamp_captura"]
+                        ]
+                    )
+
+                    log(
+                        f"Finished nested structure! Data:\n{data_info_str(data)}",
+                        level="info",
+                    )
 
             # save treated local
-            filepath = save_treated_local_func(data=data, error=error, filepath=filepath)
+            filepath = save_treated_local_func(
+                data=data, error=error, filepath=filepath
+            )
 
         except Exception:  # pylint: disable=W0703
             error = traceback.format_exc()
