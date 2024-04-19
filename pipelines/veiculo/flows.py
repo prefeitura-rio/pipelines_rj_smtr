@@ -49,13 +49,7 @@ from pipelines.veiculo.tasks import (
 # EMD Imports #
 
 
-
-
 # SMTR Imports #
-
-
-
-
 
 
 # Flows #

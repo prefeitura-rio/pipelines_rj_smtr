@@ -31,8 +31,6 @@ from pipelines.utils.backup.tasks import (
 # EMD Imports #
 
 
-
-
 diretorios_materializacao_subflow = create_default_materialization_flow(
     flow_name="SMTR: Diretórios - Materialização (subflow)",
     overwrite_flow_param_values=constants.DIRETORIO_MATERIALIZACAO_PARAMS.value,

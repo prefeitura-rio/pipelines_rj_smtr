@@ -35,11 +35,7 @@ from pipelines.utils.utils import set_default_parameters
 # EMD Imports #
 
 
-
-
 # SMTR Imports #
-
-
 
 
 stu_captura_subflow = create_default_capture_flow(
