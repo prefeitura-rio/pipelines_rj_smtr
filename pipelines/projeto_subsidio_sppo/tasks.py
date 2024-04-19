@@ -14,8 +14,8 @@ from pipelines.utils.backup.tasks import (
     perform_check,
     perform_checks_for_table,
 )
-from pipelines.utils.utils import log
 from pipelines.utils.secret import get_secret
+from pipelines.utils.utils import log
 
 
 @task
@@ -88,7 +88,9 @@ def subsidio_data_quality_check(
         else f'{params["start_date"]} a {params["end_date"]}'
     )
 
-    webhook_url = get_secret(secret_path=smtr_constants.SUBSIDIO_SPPO_SECRET_PATH.value)["discord_data_check_webhook"]
+    webhook_url = get_secret(secret_path=smtr_constants.SUBSIDIO_SPPO_SECRET_PATH.value)[
+        "discord_data_check_webhook"
+    ]
 
     test_check = all(table["status"] for sublist in checks.values() for table in sublist)
 
