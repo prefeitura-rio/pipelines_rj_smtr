@@ -272,7 +272,7 @@ captura_sppo_v2.state_handlers = [handler_inject_bd_credentials, handler_initial
 
 
 with Flow(
-    "SMTR: GPS SPPO - Tratamento", # code_owners=["caio", "fernanda", "boris", "rodrigo"]
+    "SMTR: GPS SPPO - Tratamento",  # code_owners=["caio", "fernanda", "boris", "rodrigo"]
 ) as recaptura:
     version = Parameter("version", default=2)
     datetime_filter = Parameter("datetime_filter", default=None)
