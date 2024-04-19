@@ -57,9 +57,6 @@ from pipelines.veiculo.flows import sppo_veiculo_dia
 # )
 
 
-
-
-
 # Flows #
 
 with Flow(

@@ -17,6 +17,7 @@ import pendulum
 import prefect
 import requests
 from basedosdados import Storage, Table
+from pandas_gbq.exceptions import GenericGBQException
 from prefect import Client, task
 from prefect.backend import FlowRunView
 from prefeitura_rio.pipelines_utils.dbt import run_dbt_model as run_dbt_model_func
@@ -29,9 +30,9 @@ from pipelines.constants import constants
 from pipelines.utils.backup.utils import (
     bq_project,
     create_or_append_table,
-    get_datetime_range,
     data_info_str,
     dict_contains_keys,
+    get_datetime_range,
     get_last_run_timestamp,
     get_raw_data_api,
     get_raw_data_db,
@@ -46,7 +47,7 @@ from pipelines.utils.backup.utils import (
     upload_run_logs_to_bq,
 )
 from pipelines.utils.secret import get_secret
-from pandas_gbq.exceptions import GenericGBQException
+
 
 ###############
 #
@@ -700,9 +701,7 @@ def create_request_params(
                 ORDER BY
                     timestamp_captura DESC
                 """
-                last_success_dates = bd.read_sql(
-                    query=logs_query, billing_project_id=project
-                )
+                last_success_dates = bd.read_sql(query=logs_query, billing_project_id=project)
                 last_success_dates = last_success_dates.iloc[:, 0].to_list()
                 for success_ts in last_success_dates:
                     success_ts = datetime.fromisoformat(success_ts)
@@ -716,9 +715,7 @@ def create_request_params(
                         and hora = "{success_ts.strftime("%H")}";
                     """
 
-                    last_captured_id = bd.read_sql(
-                        query=last_id_query, billing_project_id=project
-                    )
+                    last_captured_id = bd.read_sql(query=last_id_query, billing_project_id=project)
                     last_captured_id = last_captured_id.iloc[0][0]
                     if last_captured_id is None:
                         print("ID is None, trying next timestamp")
@@ -741,9 +738,7 @@ def create_request_params(
             if "get_updates" in extract_params.keys():
                 project = bq_project()
                 log(f"project = {project}")
-                columns_to_concat_bq = [
-                    c.split(".")[-1] for c in extract_params["get_updates"]
-                ]
+                columns_to_concat_bq = [c.split(".")[-1] for c in extract_params["get_updates"]]
                 concat_arg = ",'_',"
 
                 try:
@@ -768,9 +763,7 @@ def create_request_params(
                         log("table not found, setting updates to 1=1")
                         update_condition = "1=1"
 
-                request_params["query"] = request_params["query"].format(
-                    update=update_condition
-                )
+                request_params["query"] = request_params["query"].format(update=update_condition)
 
             datetime_range = get_datetime_range(
                 timestamp=timestamp, interval=timedelta(minutes=interval_minutes)
@@ -786,9 +779,9 @@ def create_request_params(
         data_recurso = extract_params.get("data_recurso", timestamp)
         if isinstance(data_recurso, str):
             data_recurso = datetime.fromisoformat(data_recurso)
-        extract_params["token"] = get_secret(
-            constants.SUBSIDIO_SPPO_RECURSO_API_SECRET_PATH.value
-        )["data"]["token"]
+        extract_params["token"] = get_secret(constants.SUBSIDIO_SPPO_RECURSO_API_SECRET_PATH.value)[
+            "data"
+        ]["token"]
         start = datetime.strftime(
             data_recurso - timedelta(minutes=interval_minutes), "%Y-%m-%dT%H:%M:%S.%MZ"
         )
@@ -813,9 +806,7 @@ def create_request_params(
         request_params = {"bucket_name": constants.STU_BUCKET_NAME.value}
 
     elif dataset_id == constants.VEICULO_DATASET_ID.value:
-        request_url = get_secret(extract_params["secret_path"])["data"][
-            "request_url"
-        ]
+        request_url = get_secret(extract_params["secret_path"])["data"]["request_url"]
 
     return request_params, request_url
 

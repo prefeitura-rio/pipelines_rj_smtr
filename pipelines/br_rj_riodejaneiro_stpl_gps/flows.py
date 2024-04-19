@@ -37,9 +37,6 @@ from pipelines.utils.backup.tasks import (
 # SMTR Imports #
 
 
-
-
-
 with Flow(
     "SMTR: GPS STPL - Captura",
     code_owners=["caio", "fernanda", "boris", "rodrigo"],
