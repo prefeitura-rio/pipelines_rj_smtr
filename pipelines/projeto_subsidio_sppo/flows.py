@@ -18,6 +18,7 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 
 from pipelines.constants import constants
 from pipelines.constants import constants as smtr_constants
+
 # from pipelines.materialize_to_datario.flows import (
 #     smtr_materialize_to_datario_viagem_sppo_flow,
 # )
