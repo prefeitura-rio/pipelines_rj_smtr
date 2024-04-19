@@ -202,7 +202,6 @@ class constants(Enum):  # pylint: disable=c0103
     STPL_RHO_TABLE_ID = "rho_registros_stpl"
     RDO_MATERIALIZE_START_DATE = "2022-12-07"
 
-
     # ROCK IN RIO
     RIR_DATASET_ID = "dashboards"
     RIR_TABLE_ID = "registros_ocr_rir"
