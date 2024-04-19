@@ -20,15 +20,17 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
 
-from pipelines.utils.backup.utils import set_default_parameters
-
 # from pipelines.treatment.templates.flows import create_default_materialization_flow
-from pipelines.utils.backup.flows import default_materialization_flow, default_capture_flow
+from pipelines.utils.backup.flows import (
+    default_capture_flow,
+    default_materialization_flow,
+)
 from pipelines.utils.backup.tasks import (
     get_current_flow_labels,
     get_rounded_timestamp,
     rename_current_flow_run_now_time,
 )
+from pipelines.utils.backup.utils import set_default_parameters
 
 # EMD Imports #
 

@@ -46,7 +46,6 @@ from pipelines.utils.backup.tasks import (
 # SMTR Imports #
 
 
-
 with Flow(
     "SMTR: Captura",
     code_owners=["caio", "fernanda", "boris", "rodrigo", "rafaelpinheiro"],

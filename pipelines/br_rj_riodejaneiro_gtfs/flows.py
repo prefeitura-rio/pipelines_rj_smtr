@@ -11,35 +11,36 @@ from prefect.storage import GCS
 from prefect.tasks.control_flow import merge
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefect.utilities.edges import unmapped
-
-from pipelines.utils.backup.utils import set_default_parameters
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
     handler_inject_bd_credentials,
 )
 
-# from pipelines.capture.templates.flows import create_default_capture_flow
-
 # SMTR Imports #
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
-
-
-from pipelines.utils.backup.flows import default_capture_flow, default_materialization_flow
+from pipelines.utils.backup.flows import (
+    default_capture_flow,
+    default_materialization_flow,
+)
 from pipelines.utils.backup.tasks import (
     get_current_flow_labels,
     get_current_timestamp,
     get_scheduled_start_times,
     rename_current_flow_run_now_time,
 )
+from pipelines.utils.backup.utils import set_default_parameters
+
+# from pipelines.capture.templates.flows import create_default_capture_flow
+
+
+
 
 # Imports #
 
 
 # EMD Imports #
-
-
 
 
 # from pipelines.rj_smtr.flows import default_capture_flow, default_materialization_flow
