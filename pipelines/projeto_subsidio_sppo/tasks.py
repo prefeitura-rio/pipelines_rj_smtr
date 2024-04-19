@@ -27,7 +27,8 @@ def check_param(param: str) -> bool:
 
 @task
 def subsidio_data_quality_check(
-    mode: str, params: dict, # code_owners: list = None, check_params: dict = None
+    mode: str,
+    params: dict,  # code_owners: list = None, check_params: dict = None
 ) -> bool:
     """
     Verifica qualidade de dados para o processo de apuração de subsídio
