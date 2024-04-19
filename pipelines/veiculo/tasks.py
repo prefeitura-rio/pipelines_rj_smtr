@@ -9,8 +9,8 @@ import numpy as np
 import pandas as pd
 from prefect import task
 
-from pipelines.rj_smtr.constants import constants
-from pipelines.rj_smtr.utils import data_info_str, filter_data
+from pipelines.constants import constants
+from pipelines.utils.backup.utils import data_info_str, filter_data
 from pipelines.utils.utils import log  # ,get_vault_secret
 
 # EMD Imports #
