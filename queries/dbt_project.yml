@@ -134,7 +134,7 @@ vars:
   stu_data_versao: ""
   # Prazo para última vistoria realizada dentro do período válido
   sppo_licenciamento_validade_vistoria_ano: 1
-  # Tolerância de vistoria para veículos novos 
+  # Tolerância de vistoria para veículos novos
   sppo_licenciamento_tolerancia_primeira_vistoria_dia: 15
 
   ### RDO ###

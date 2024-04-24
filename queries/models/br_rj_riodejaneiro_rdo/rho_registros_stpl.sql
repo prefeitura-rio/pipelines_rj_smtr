@@ -1,4 +1,4 @@
-{{ 
+{{
   config(
     materialized='incremental',
     incremental_strategy="insert_overwrite",
@@ -19,14 +19,14 @@
             FROM
                 {{ staging_table }}
             WHERE
-                ano BETWEEN 
-                    EXTRACT(YEAR FROM DATE("{{ var('date_range_start') }}")) 
+                ano BETWEEN
+                    EXTRACT(YEAR FROM DATE("{{ var('date_range_start') }}"))
                     AND EXTRACT(YEAR FROM DATE("{{ var('date_range_end') }}"))
-                AND mes BETWEEN 
-                    EXTRACT(MONTH FROM DATE("{{ var('date_range_start') }}")) 
+                AND mes BETWEEN
+                    EXTRACT(MONTH FROM DATE("{{ var('date_range_start') }}"))
                     AND EXTRACT(MONTH FROM DATE("{{ var('date_range_end') }}"))
-                AND dia BETWEEN 
-                    EXTRACT(DAY FROM DATE("{{ var('date_range_start') }}")) 
+                AND dia BETWEEN
+                    EXTRACT(DAY FROM DATE("{{ var('date_range_start') }}"))
                     AND EXTRACT(DAY FROM DATE("{{ var('date_range_end') }}"))
         {% endset %}
 

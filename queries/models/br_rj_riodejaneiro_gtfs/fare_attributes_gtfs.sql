@@ -4,7 +4,7 @@
     'granularity': 'day' },
     unique_key = ['fare_id', 'data_versao'],
     alias = 'fare_attributes'
-)}} 
+)}}
 
 
 SELECT SAFE_CAST(data_versao AS DATE) data_versao,

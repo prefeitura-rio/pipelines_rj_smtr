@@ -10,7 +10,7 @@
 
 ### Adicionado
 
-- Adicionada descrição dos modelos `subsidio_shapes_geom.sql`, `subsidio_trips_desaninhada.sql` e `subsidio_quadro_horario.sql`, bem como 
+- Adicionada descrição dos modelos `subsidio_shapes_geom.sql`, `subsidio_trips_desaninhada.sql` e `subsidio_quadro_horario.sql`, bem como
 informações sobre sua descontinuidade no `schema.yml` (https://github.com/prefeitura-rio/queries-rj-smtr/pull/261)
 - Adicionada descrição do modelo `ssubsidio_data_versao_efetiva.sql` no `schema.yml` (https://github.com/prefeitura-rio/queries-rj-smtr/pull/261)
 

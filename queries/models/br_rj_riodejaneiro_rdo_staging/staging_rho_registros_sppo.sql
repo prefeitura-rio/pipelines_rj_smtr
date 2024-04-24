@@ -22,5 +22,5 @@ SELECT
     SAFE_CAST(mes AS INT64) mes,
     SAFE_CAST(dia AS INT64) dia,
     DATE(CONCAT(ano,'-', mes, '-', dia)) data_particao
-FROM 
+FROM
     {{ source("br_rj_riodejaneiro_rdo_staging", "rho_registros_sppo") }}

@@ -1,4 +1,4 @@
-{{ 
+{{
   config(
     materialized="incremental",
     partition_by={
@@ -19,7 +19,7 @@
 
 WITH
   dates AS (
-  SELECT 
+  SELECT
     data,
     CASE
         WHEN data = "2022-06-16" THEN "Domingo"
@@ -230,7 +230,7 @@ WITH
         {% endfor %}
       {% endfor %}
     END AS data_versao_frequencies,
-    CASE  
+    CASE
       WHEN EXTRACT(YEAR FROM data) = 2022 THEN (
         CASE
           WHEN EXTRACT(MONTH FROM data) = 6 THEN 2.13
@@ -254,7 +254,7 @@ WITH
   SELECT
     DISTINCT data_versao
   FROM
-    {{ ref("subsidio_trips_desaninhada") }} 
+    {{ ref("subsidio_trips_desaninhada") }}
   {% if is_incremental() %}
   WHERE
     data_versao >= DATE_TRUNC(DATE_SUB(DATE("{{ var("run_date") }}"), INTERVAL 30 DAY), MONTH)
@@ -264,7 +264,7 @@ WITH
   SELECT
     DISTINCT data_versao
   FROM
-    {{ var("subsidio_shapes") }} 
+    {{ var("subsidio_shapes") }}
   {% if is_incremental() %}
   WHERE
     data_versao >= DATE_TRUNC(DATE_SUB(DATE("{{ var("run_date") }}"), INTERVAL 30 DAY), MONTH)
@@ -274,7 +274,7 @@ WITH
   SELECT
     DISTINCT data_versao
   FROM
-    {{ ref("subsidio_quadro_horario") }} 
+    {{ ref("subsidio_quadro_horario") }}
   {% if is_incremental() %}
   WHERE
     data_versao >= DATE_TRUNC(DATE_SUB(DATE("{{ var("run_date") }}"), INTERVAL 30 DAY), MONTH)
@@ -319,7 +319,7 @@ WHERE
 
 WITH
   dates AS (
-  SELECT 
+  SELECT
     data,
     CASE
       WHEN EXTRACT(DAY FROM data) = 20 AND EXTRACT(MONTH FROM data) = 1 THEN "Domingo" -- Dia de São Sebastião -- Art. 8°, I - Lei Municipal nº 5146/2010

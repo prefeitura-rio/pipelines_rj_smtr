@@ -31,7 +31,7 @@ WITH ordem_servico AS (
     SAFE_CAST(SAFE_CAST(JSON_VALUE(content, '$.partidas_volta_domingo') AS FLOAT64) AS INT64) partidas_volta_domingo,
     SAFE_CAST(JSON_VALUE(content, '$.viagens_domingo') AS FLOAT64) viagens_domingo,
     SAFE_CAST(JSON_VALUE(content, '$.km_domingo') AS FLOAT64) km_domingo
-    
+
   FROM {{ source(
       'br_rj_riodejaneiro_gtfs_staging',
       'ordem_servico'
