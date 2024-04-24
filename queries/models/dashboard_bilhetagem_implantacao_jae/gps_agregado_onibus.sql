@@ -22,8 +22,8 @@ WITH gps_agregado AS (
         COUNT(*) OVER (PARTITION BY operadora, id_validador) AS qtde_registros_gps,
         COUNT(DISTINCT FORMAT_TIMESTAMP("%F %H:%M", datetime_gps)) OVER (PARTITION BY operadora, id_validador) AS qtde_min_distintos_houve_transmissao,
         SUM(
-            CASE 
-                WHEN latitude != 0 AND longitude != 0 AND latitude IS NOT NULL AND longitude IS NOT NULL THEN 1 
+            CASE
+                WHEN latitude != 0 AND longitude != 0 AND latitude IS NOT NULL AND longitude IS NOT NULL THEN 1
                 ELSE 0 END
         ) OVER (PARTITION BY operadora, id_validador) AS qtde_registros_gps_georreferenciados,
         ROW_NUMBER() OVER (PARTITION BY operadora, id_validador ORDER BY datetime_gps) AS rn

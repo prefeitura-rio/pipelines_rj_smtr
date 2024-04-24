@@ -129,7 +129,7 @@ WITH
   USING
     (data, servico, id_viagem)
   WHERE
-    indicador_viagem_remunerada IS NULL 
+    indicador_viagem_remunerada IS NULL
     OR indicador_viagem_remunerada IS TRUE
   GROUP BY
     1,

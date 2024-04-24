@@ -1,6 +1,6 @@
 -- 1. Cria colunas identificadoras de início (starts) e fim (ends) de viagens
 with aux_status as (
-    select 
+    select
         *,
         string_agg(status_viagem,"") over (
             partition by id_veiculo, shape_id
@@ -10,44 +10,44 @@ with aux_status as (
             partition by id_veiculo, shape_id
             order by id_veiculo, shape_id, timestamp_gps
             rows between 1 preceding and current row) = 'middleend' ends
-    from 
+    from
         {{ ref('aux_registros_status_trajeto') }}
 ),
 -- 2. Classifica início-fim consecutivos como partida-chegada da viagem
 aux_inicio_fim AS (
-    select 
+    select
         *,
-        case 
+        case
             when
             string_agg(status_viagem,"") over (
                 partition by id_veiculo, shape_id
                 order by id_veiculo, shape_id, timestamp_gps
-                rows between CURRENT row and 1 following) = 'startend' 
-            then timestamp_gps 
+                rows between CURRENT row and 1 following) = 'startend'
+            then timestamp_gps
         end datetime_partida,
-        case 
+        case
             when string_agg(status_viagem,"") over (
                 partition by id_veiculo, shape_id
                 order by id_veiculo, shape_id, timestamp_gps
-                rows between 1 preceding and CURRENT row) = 'startend' 
+                rows between 1 preceding and CURRENT row) = 'startend'
             then timestamp_gps
         end datetime_chegada
-    from 
+    from
         aux_status
-    where 
+    where
         starts = true OR ends = true
 ),
 -- 3. Junta partida-chegada da viagem na mesma linha
 inicio_fim AS (
-    select 
+    select
         * except(datetime_chegada, posicao_veiculo_geo),
         posicao_veiculo_geo as posicao_partida,
         lead(datetime_chegada) over(
-            partition by id_veiculo, shape_id 
+            partition by id_veiculo, shape_id
             order by id_veiculo, shape_id, timestamp_gps
         ) as datetime_chegada,
         lead(posicao_veiculo_geo) over(
-            partition by id_veiculo, shape_id 
+            partition by id_veiculo, shape_id
             order by id_veiculo, shape_id, timestamp_gps
         ) as posicao_chegada,
     from aux_inicio_fim
@@ -71,9 +71,9 @@ select distinct
     datetime_partida,
     datetime_chegada,
     '{{ var("version") }}' as versao_modelo
-from 
+from
     inicio_fim
-where 
+where
     datetime_partida is not null
     {% if var("run_date") > var("DATA_SUBSIDIO_V6_INICIO") %}
     and extract(date from datetime_partida) = date_sub(date("{{ var("run_date") }}"), interval 1 day)

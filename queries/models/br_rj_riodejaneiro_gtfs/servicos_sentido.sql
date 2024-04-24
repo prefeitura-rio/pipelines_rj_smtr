@@ -1,6 +1,6 @@
 {{ config(
   materialized="view"
-) }} 
+) }}
 
 WITH
   servicos_exclusivos_sabado AS (

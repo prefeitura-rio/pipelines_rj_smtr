@@ -19,7 +19,7 @@ with viagem as (
         *,
         datetime_diff(datetime_chegada, datetime_partida, minute) + 1 as tempo_viagem
     from (
-        select 
+        select
             *
         from (
             select
@@ -27,18 +27,18 @@ with viagem as (
                 datetime_chegada,
                 trip_id_planejado as trip_id,
                 shape_id_planejado as shape_id
-            from 
+            from
                 {{ ref("aux_viagem_circular") }} v
-            where 
+            where
                 sentido = "I" or sentido = "V"
         )
         union all (
-            select 
+            select
                 * except(sentido_shape, distancia_inicio_fim, shape_id, shape_id_planejado, trip_id, trip_id_planejado),
                 trip_id_planejado as trip_id,
                 shape_id_planejado as shape_id,
-            from 
-                (select 
+            from
+                (select
                     v.* except(datetime_chegada),
                     lead(datetime_chegada) over (
                         partition by id_viagem order by sentido_shape)
@@ -49,9 +49,9 @@ with viagem as (
                     -- round(distancia_planejada + lead(distancia_planejada) over (
                     --     partition by id_viagem order by sentido_shape), 3)
                     -- as distancia_planejada,
-                from 
+                from
                     {{ ref("aux_viagem_circular") }} v
-                where 
+                where
                     sentido = "C"
                 ) c
             where sentido_shape = "I"
@@ -66,9 +66,9 @@ select distinct
     round(100 * d.distancia_aferida/v.distancia_planejada, 2) as perc_conformidade_distancia,
     round(100 * n_registros_minuto/tempo_viagem, 2) as perc_conformidade_registros,
     '{{ var("version") }}' as versao_modelo
-from 
+from
     viagem v
-inner join 
+inner join
     {{ ref("aux_viagem_registros") }} d
 on
     v.id_viagem = d.id_viagem

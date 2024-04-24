@@ -4,10 +4,10 @@
     'granularity': 'day' },
     unique_key = ['service_id', 'feed_start_date'],
     alias = 'calendar'
-)}} 
+)}}
 
 
-SELECT 
+SELECT
   fi.feed_version,
   SAFE_CAST(c.data_versao AS DATE) feed_start_date,
   fi.feed_end_date,
@@ -27,11 +27,11 @@ SELECT
             'calendar'
         ) }} c
 JOIN
-  {{ ref('feed_info_gtfs2') }} fi 
-ON 
+  {{ ref('feed_info_gtfs2') }} fi
+ON
   c.data_versao = CAST(fi.feed_start_date AS STRING)
 {% if is_incremental() -%}
-  WHERE 
+  WHERE
     c.data_versao = '{{ var("data_versao_gtfs") }}'
     AND fi.feed_start_date = '{{ var("data_versao_gtfs") }}'
 {%- endif %}
