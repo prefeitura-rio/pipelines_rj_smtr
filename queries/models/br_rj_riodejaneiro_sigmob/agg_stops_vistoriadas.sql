@@ -1,11 +1,11 @@
 WITH t AS (
-SELECT
+SELECT 
     data_versao,
-    case
-        when
-        json_value(content, '$.IDPropriedadeParada') is null
-        then false
-    else true
+    case 
+        when 
+        json_value(content, '$.IDPropriedadeParada') is null 
+        then false 
+    else true 
     end flag_vistoriada,
     json_value(content, '$.AP') as AP,
     json_value(content, '$.RA') as RA,
@@ -18,4 +18,4 @@ select data_versao, AP, Bairro,
     count(*) n_pontos
 from t
 group by data_versao, AP, Bairro
-order by 1,2,3
+order by 1,2,3 

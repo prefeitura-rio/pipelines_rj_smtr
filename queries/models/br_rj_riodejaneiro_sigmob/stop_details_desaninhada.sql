@@ -1,5 +1,5 @@
 /*Desaninha os campos presentes em 'content' da tabela stop_details*/
-SELECT
+SELECT 
   stop_id,
   json_value(content, '$.stop_name') stop_name,
   json_value(content, '$.stop_desc') stop_desc,
@@ -40,6 +40,6 @@ SELECT
   json_value(content, '$.parent_station') parent_station,
   json_value(content, '$.nome_ponto') nome_ponto,
   json_value(content, '$.route_type') route_type,
-  data_versao
+  data_versao  
 
 FROM {{ ref("stop_details") }}

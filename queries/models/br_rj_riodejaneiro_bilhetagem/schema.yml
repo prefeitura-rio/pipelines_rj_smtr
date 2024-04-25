@@ -250,7 +250,7 @@ models:
         description: "Valor"
   - name: ordem_pagamento_consorcio_dia
     description: "Tabela com os valores totais de pagamento da Jaé agregados por consorcio e dia"
-    columns:
+    columns: 
       - name: data_ordem
         description: "Data da ordem de pagamento (partição)"
       - name: id_consorcio

@@ -27,8 +27,8 @@
 --         {% if is_incremental() %}
 --             WHERE
 --                 DATE(data) BETWEEN DATE_SUB(DATE("{{var('date_range_start')}}"), INTERVAL 1 DAY) AND DATE("{{var('date_range_end')}}")
---         {% endif %}
---     )
+--         {% endif %}  
+--     )   
 -- ),
 WITH transacao AS (
     SELECT
@@ -63,7 +63,7 @@ WITH transacao AS (
         {% endif %}
 ),
 transacao_deduplicada AS (
-    SELECT
+    SELECT 
         t.* EXCEPT(rn),
         DATE_ADD(data_processamento, INTERVAL 1 DAY) AS data_ordem -- TODO: Regra da data por serviços fechados no modo Ônibus quando começar a operação
     FROM
@@ -130,7 +130,7 @@ ordem_pagamento AS (
         r.valor_bruto AS valor_total_transacao_bruto,
         r.valor_taxa AS valor_desconto_taxa,
         r.valor_liquido AS valor_total_transacao_liquido
-    FROM
+    FROM 
         {{ ref("staging_ordem_ressarcimento") }} r
     LEFT JOIN
         {{ ref("staging_ordem_rateio") }} rat
@@ -162,7 +162,7 @@ ordem_pagamento_transacao AS (
         op.valor_rateio_debito,
         (
             op.quantidade_transacao_debito
-            + op.quantidade_transacao_especie
+            + op.quantidade_transacao_especie 
             + op.quantidade_transacao_gratuidade
             + op.quantidade_transacao_integracao
         ) AS quantidade_total_transacao,
@@ -209,7 +209,7 @@ SELECT
     o.valor_total_transacao_captura,
     COALESCE(
         (
-            o.quantidade_total_transacao_captura = o.quantidade_total_transacao
+            o.quantidade_total_transacao_captura = o.quantidade_total_transacao 
             AND ROUND(o.valor_total_transacao_captura, 2) = ROUND(o.valor_total_transacao_bruto, 2)
         ),
         FALSE

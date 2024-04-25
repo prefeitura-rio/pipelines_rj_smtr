@@ -1,4 +1,4 @@
-{{
+{{ 
   config(
     materialized='incremental',
     incremental_strategy="insert_overwrite",
@@ -15,14 +15,14 @@
 -- Foi criada para não ter o risco de somar os dados do mesmo arquivo mais de uma vez
 
 {% set incremental_filter %}
-    ano BETWEEN
-        EXTRACT(YEAR FROM DATE("{{ var('date_range_start') }}"))
+    ano BETWEEN 
+        EXTRACT(YEAR FROM DATE("{{ var('date_range_start') }}")) 
         AND EXTRACT(YEAR FROM DATE("{{ var('date_range_end') }}"))
-    AND mes BETWEEN
-        EXTRACT(MONTH FROM DATE("{{ var('date_range_start') }}"))
+    AND mes BETWEEN 
+        EXTRACT(MONTH FROM DATE("{{ var('date_range_start') }}")) 
         AND EXTRACT(MONTH FROM DATE("{{ var('date_range_end') }}"))
-    AND dia BETWEEN
-        EXTRACT(DAY FROM DATE("{{ var('date_range_start') }}"))
+    AND dia BETWEEN 
+        EXTRACT(DAY FROM DATE("{{ var('date_range_start') }}")) 
         AND EXTRACT(DAY FROM DATE("{{ var('date_range_end') }}"))
 {% endset %}
 
@@ -36,7 +36,7 @@
             FROM
                 {{ staging_table }}
             WHERE
-                {{ incremental_filter }}
+                {{ incremental_filter }}             
         {% endset %}
 
         {% set partitions = run_query(partitions_query) %}
@@ -70,7 +70,7 @@ rho_complete_partitions AS (
         rho_new
 
     {% if is_incremental() and partition_list|length > 0 %}
-
+    
         UNION ALL
 
         SELECT
@@ -92,10 +92,10 @@ SELECT
     datetime_captura
 FROM
     (
-        SELECT
+        SELECT 
             *,
             ROW_NUMBER() OVER(
-                PARTITION BY
+                PARTITION BY 
                     data_transacao,
                     hora_transacao,
                     data_arquivo_rho,

@@ -12,7 +12,7 @@
 }}
 
 WITH integracao_transacao_deduplicada AS (
-  SELECT
+  SELECT 
     * EXCEPT(rn)
   FROM
   (
@@ -71,7 +71,7 @@ integracao_melt AS (
       ) AS im
 ),
 integracao_rn AS (
-  SELECT
+  SELECT 
     i.data,
     i.hora,
     i.datetime_processamento_integracao,
@@ -102,7 +102,7 @@ integracao_rn AS (
     ROW_NUMBER() OVER (PARTITION BY id_transacao ORDER BY datetime_processamento_integracao DESC) AS rn
   FROM
     integracao_melt i
-  LEFT JOIN
+  LEFT JOIN 
     {{ source("cadastro", "modos") }} m
   ON
     i.id_tipo_modal = m.id_modo AND m.fonte = "jae"

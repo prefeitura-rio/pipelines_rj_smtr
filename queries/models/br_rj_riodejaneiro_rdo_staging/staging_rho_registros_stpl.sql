@@ -4,7 +4,7 @@
   )
 }}
 
-SELECT
+SELECT 
     SAFE_CAST(operadora AS STRING) operadora,
     SAFE_CAST(linha AS STRING) linha,
     SAFE_CAST(data_transacao AS DATE) data_transacao,
@@ -17,5 +17,5 @@ SELECT
     SAFE_CAST(mes AS INT64) mes,
     SAFE_CAST(dia AS INT64) dia,
     DATE(CONCAT(ano,'-', mes, '-', dia)) data_particao
-from
+from 
     {{ source("br_rj_riodejaneiro_rdo_staging", "rho5_registros_stpl") }} as t

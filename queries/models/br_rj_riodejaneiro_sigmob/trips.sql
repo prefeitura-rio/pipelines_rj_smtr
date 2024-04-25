@@ -19,7 +19,7 @@ TIPOS:
 
 */
 
-SELECT
+SELECT 
 SAFE_CAST(trip_id AS STRING) trip_id,
 REPLACE(content,"None","") content,
 SAFE_CAST(data_versao AS DATE) data_versao

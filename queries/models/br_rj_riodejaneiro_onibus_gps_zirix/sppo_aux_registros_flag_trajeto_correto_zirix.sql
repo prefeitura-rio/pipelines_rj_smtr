@@ -14,7 +14,7 @@ distância menor ou igual ao tamanho do buffer em relação ao traçado definido
 considerado fora do trajeto definido se a cada 10 minutos, ele não esteve dentro do traçado planejado pelo menos uma
 vez.
 3. Identifica se a linha informada no registro capturado existe nas definições presentes no SIGMOB.
-4. Definimos em outra tabela uma 'data_versao_efetiva', esse passo serve tanto para definir qual versão do SIGMOB utilizaremos em
+4. Definimos em outra tabela uma 'data_versao_efetiva', esse passo serve tanto para definir qual versão do SIGMOB utilizaremos em 
 caso de falha na captura, quanto para definir qual versão será utilizada para o cálculo retroativo do histórico de registros que temos.
 5. Como não conseguimos identificar o itinerário que o carro está realizando, no passo counts, os resultados de
 intersecções são dobrados, devido ao fato de cada linha apresentar dois itinerários possíveis (ida/volta). Portanto,
@@ -23,16 +23,16 @@ possíveis para a linha informada.
 */
 WITH
   registros AS (
-    SELECT
-      id_veiculo,
-      linha,
-      latitude,
-      longitude,
-      data,
-      posicao_veiculo_geo,
+    SELECT 
+      id_veiculo, 
+      linha, 
+      latitude, 
+      longitude, 
+      data, 
+      posicao_veiculo_geo, 
       timestamp_gps
     FROM
-      {{ ref('sppo_aux_registros_filtrada_zirix') }} r
+      {{ ref('sppo_aux_registros_filtrada_zirix') }} r 
     {% if not flags.FULL_REFRESH -%}
     WHERE
       data between DATE("{{var('date_range_start')}}") and DATE("{{var('date_range_end')}}")
@@ -52,11 +52,11 @@ WITH
       END AS flag_trajeto_correto,
       -- 2. Histórico de intersecções nos últimos 10 minutos a partir da timestamp_gps atual
       CASE
-        WHEN
-          COUNT(CASE WHEN st_dwithin(shape, posicao_veiculo_geo, {{ var('tamanho_buffer_metros') }}) THEN 1 END)
-          OVER (PARTITION BY id_veiculo
-                ORDER BY UNIX_SECONDS(TIMESTAMP(timestamp_gps))
-                RANGE BETWEEN {{ var('intervalo_max_desvio_segundos') }} PRECEDING AND CURRENT ROW) >= 1
+        WHEN 
+          COUNT(CASE WHEN st_dwithin(shape, posicao_veiculo_geo, {{ var('tamanho_buffer_metros') }}) THEN 1 END) 
+          OVER (PARTITION BY id_veiculo 
+                ORDER BY UNIX_SECONDS(TIMESTAMP(timestamp_gps)) 
+                RANGE BETWEEN {{ var('intervalo_max_desvio_segundos') }} PRECEDING AND CURRENT ROW) >= 1 
           THEN True
         ELSE False
       END AS flag_trajeto_correto_hist,
@@ -65,7 +65,7 @@ WITH
     -- 4. Join com data_versao_efetiva para definição de quais shapes serão considerados no cálculo das flags
     FROM registros r
     LEFT JOIN (
-      SELECT *
+      SELECT * 
       FROM {{ ref('shapes_geom') }}
       WHERE id_modal_smtr in ({{ var('sppo_id_modal_smtr')|join(', ') }})
       AND data_versao = "{{ var('versao_fixa_sigmob')}}"
@@ -93,3 +93,4 @@ WITH
       data,
       data_versao,
       timestamp_gps
+  

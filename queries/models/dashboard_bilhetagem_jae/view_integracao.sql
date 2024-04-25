@@ -1,5 +1,5 @@
 WITH dados_filtrados AS (
-    SELECT
+    SELECT 
         i.data,
         i.hora,
         i.id_integracao,
@@ -8,7 +8,7 @@ WITH dados_filtrados AS (
         s.descricao_servico,
         i.consorcio,
         i.datetime_transacao
-    FROM
+    FROM 
         {{ ref("integracao") }} i
     LEFT JOIN
         {{ ref("servicos") }} s

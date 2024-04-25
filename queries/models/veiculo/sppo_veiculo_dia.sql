@@ -16,7 +16,7 @@ WITH
     tipo_veiculo,
     indicador_ar_condicionado,
     TRUE AS indicador_licenciado,
-    CASE
+    CASE 
     WHEN ano_ultima_vistoria_atualizado >= CAST(EXTRACT(YEAR FROM DATE_SUB(DATE("{{ var('run_date') }}"), INTERVAL {{ var('sppo_licenciamento_validade_vistoria_ano') }} YEAR)) AS INT64) THEN TRUE -- Última vistoria realizada dentro do período válido
     WHEN data_ultima_vistoria IS NULL AND DATE_DIFF(DATE("{{ var('run_date') }}"), data_inicio_vinculo, DAY) <=  {{ var('sppo_licenciamento_tolerancia_primeira_vistoria_dia') }} THEN TRUE -- Caso o veículo seja novo, existe a tolerância de 15 dias para a primeira vistoria
     WHEN ano_fabricacao IN (2023, 2024) AND CAST(EXTRACT(YEAR FROM DATE("{{ var('run_date') }}")) AS INT64) = 2024 THEN TRUE -- Caso o veículo tiver ano de fabricação 2023 ou 2024, será considerado como vistoriado apenas em 2024 (regra de transição)
@@ -38,7 +38,7 @@ WITH
         {% set licenciamento_date = run_query("SELECT MIN(data) FROM " ~ ref("sppo_licenciamento") ~ " WHERE data >= DATE_ADD(DATE('" ~ var("run_date") ~ "'), INTERVAL 5 DAY)").columns[0].values()[0] %}
     {% endif -%}
     data = DATE("{{ licenciamento_date }}")
-  {% endif -%}
+  {% endif -%}  
   ),
   gps AS (
   SELECT
@@ -234,7 +234,7 @@ SELECT
 FROM
   gps_licenciamento_autuacao AS gla
 LEFT JOIN
-  {{ ref("subsidio_parametros") }} AS p --`rj-smtr.dashboard_subsidio_sppo.subsidio_parametros`
+  {{ ref("subsidio_parametros") }} AS p --`rj-smtr.dashboard_subsidio_sppo.subsidio_parametros` 
 ON
   gla.indicadores.indicador_licenciado = p.indicador_licenciado
   AND gla.indicadores.indicador_ar_condicionado = p.indicador_ar_condicionado
@@ -249,7 +249,7 @@ SELECT
   * EXCEPT(indicadores),
   TO_JSON(indicadores) AS indicadores,
   CASE
-    WHEN indicadores.indicador_licenciado IS FALSE THEN "Não licenciado"
+    WHEN indicadores.indicador_licenciado IS FALSE THEN "Não licenciado"  
     WHEN indicadores.indicador_vistoriado IS FALSE THEN "Não vistoriado"
     WHEN indicadores.indicador_ar_condicionado IS TRUE AND indicadores.indicador_autuacao_ar_condicionado IS TRUE THEN "Autuado por ar inoperante"
     WHEN indicadores.indicador_ar_condicionado IS TRUE AND indicadores.indicador_registro_agente_verao_ar_condicionado IS TRUE THEN "Registrado com ar inoperante"

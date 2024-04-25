@@ -34,7 +34,7 @@ SELECT
     o.valor_taxa AS valor_desconto_taxa,
     ROUND(o.valor_liquido + 0.0005, 2) AS valor_total_transacao_liquido,
     '{{ var("version") }}' AS versao
-FROM
+FROM 
     {{ ref('staging_ordem_pagamento_consorcio_operadora') }} o
 JOIN
     {{ ref("staging_ordem_pagamento") }} op

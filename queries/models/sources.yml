@@ -48,7 +48,7 @@ sources:
 
   - name: br_rj_riodejaneiro_stu_staging
     database: rj-smtr-staging
-
+    
     tables:
       - name: operadora_empresa
       - name: operadora_pessoa_fisica
@@ -62,13 +62,13 @@ sources:
       - name: recursos_sppo_reprocessamento
       - name: recursos_sppo_servico_dia_avaliacao
       - name: recursos_sppo_servico_dia_pago
-
+  
   - name: cadastro
     database: rj-smtr
 
     tables:
       - name: modos
-
+  
   - name: br_rj_riodejaneiro_rdo_staging
     database: rj-smtr-staging
 
@@ -101,22 +101,22 @@ sources:
       - name: sppo_licenciamento_solicitacao
       - name: sppo_licenciamento
       - name: sppo_licenciamento_stu
-
+  
   - name: dashboard_subsidio_sppo_staging
     database: rj-smtr-staging
 
     tables:
       - name: subsidio_valor_km_tipo_viagem
-
+  
   - name: dashboard_controle_vinculo_jae_riocard_staging
     database: rj-smtr-staging
-
+    
     tables:
       - name: relatorio_instalacao_jae
 
   - name: br_rj_riodejaneiro_onibus_gps_zirix_staging
     database: rj-smtr-staging
 
-    tables:
+    tables: 
       - name: registros
       - name: realocacao

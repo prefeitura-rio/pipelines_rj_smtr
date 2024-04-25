@@ -1,4 +1,4 @@
-SELECT
+SELECT 
     SAFE_CAST(data_versao AS DATE) data_versao,
     SAFE_CAST(servico AS STRING) servico,
     SAFE_CAST(vista AS STRING) vista,

@@ -4,11 +4,11 @@
     'granularity': 'day' },
     unique_key = ['shape_id', 'feed_start_date'],
     alias = 'shapes_geom'
-) }}
+) }} 
 
 
 WITH contents AS (
-    SELECT
+    SELECT 
         shape_id,
         ST_GEOGPOINT(shape_pt_lon, shape_pt_lat) AS ponto_shape,
         shape_pt_sequence,
@@ -28,7 +28,7 @@ pts AS (
 ),
 shapes AS (
     -- BUILD LINESTRINGS OVER SHAPE POINTS
-    SELECT
+    SELECT 
         shape_id,
         feed_start_date,
         ST_MAKELINE(ARRAY_AGG(ponto_shape)) AS shape,
@@ -41,35 +41,35 @@ shapes AS (
 shapes_half AS (
     -- BUILD HALF LINESTRINGS OVER SHAPE POINTS
     (
-        SELECT
+        SELECT 
             shape_id,
             feed_start_date,
             shape_id || "_0" AS new_shape_id,
             ST_MAKELINE(ARRAY_AGG(ponto_shape)) AS shape,
             ARRAY_AGG(ponto_shape)[ORDINAL(1)] AS start_pt,
             ARRAY_AGG(ponto_shape)[ORDINAL(ARRAY_LENGTH(ARRAY_AGG(ponto_shape)))] AS end_pt,
-        FROM
+        FROM 
             pts
-        WHERE
+        WHERE 
             shape_pt_sequence <= ROUND(final_pt_sequence / 2)
-        GROUP BY
+        GROUP BY 
             1,
             2
     )
     UNION ALL
     (
-        SELECT
+        SELECT 
             shape_id,
             feed_start_date,
             shape_id || "_1" AS new_shape_id,
             ST_MAKELINE(ARRAY_AGG(ponto_shape)) AS shape,
             ARRAY_AGG(ponto_shape)[ORDINAL(1)] AS start_pt,
             ARRAY_AGG(ponto_shape)[ORDINAL(ARRAY_LENGTH(ARRAY_AGG(ponto_shape)))] AS end_pt,
-        FROM
+        FROM 
             pts
-        WHERE
+        WHERE 
             shape_pt_sequence > ROUND(final_pt_sequence / 2)
-        GROUP BY
+        GROUP BY 
             1,
             2
     )
@@ -79,14 +79,14 @@ ids AS (
       * EXCEPT(rn)
     FROM
     (
-        SELECT
+        SELECT 
             feed_start_date,
             shape_id,
             shape,
             start_pt,
             end_pt,
             ROW_NUMBER() OVER(PARTITION BY feed_start_date, shape_id) rn
-        FROM
+        FROM 
             shapes
     )
     WHERE rn = 1
@@ -121,7 +121,7 @@ union_shapes AS (
         AND ROUND(ST_X(i.start_pt),4) = ROUND(ST_X(i.end_pt),4)
   )
 )
-SELECT
+SELECT 
     feed_version,
     feed_start_date,
     feed_end_date,
@@ -132,8 +132,8 @@ SELECT
     end_pt,
     '{{ var("version") }}' as versao_modelo
 FROM union_shapes AS m
-LEFT JOIN
-    {{ ref('feed_info_gtfs2') }} AS fi
+LEFT JOIN 
+    {{ ref('feed_info_gtfs2') }} AS fi 
 USING
     (feed_start_date)
 {% if is_incremental() -%}

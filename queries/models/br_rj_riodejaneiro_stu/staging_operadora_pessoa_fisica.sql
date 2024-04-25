@@ -4,7 +4,7 @@
   )
 }}
 
-WITH
+WITH 
     operadora_pessoa_fisica AS (
         SELECT
             data,

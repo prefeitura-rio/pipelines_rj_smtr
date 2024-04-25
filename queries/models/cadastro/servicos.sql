@@ -22,5 +22,5 @@ FROM
     {{ ref("staging_linha") }} j
 FULL OUTER JOIN
     {{ ref("servicos_gtfs_aux") }} g
-ON
+ON 
     COALESCE(j.gtfs_route_id, j.gtfs_stop_id) = g.id_servico

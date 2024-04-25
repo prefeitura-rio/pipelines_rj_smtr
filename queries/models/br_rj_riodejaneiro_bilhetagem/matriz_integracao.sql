@@ -38,7 +38,7 @@ SELECT
   '{{ var("version") }}' as versao
 FROM
   matriz_melt i
-LEFT JOIN
+LEFT JOIN 
     {{ source("cadastro", "modos") }} m
 ON
   i.id_tipo_modal = m.id_modo AND m.fonte = "jae"

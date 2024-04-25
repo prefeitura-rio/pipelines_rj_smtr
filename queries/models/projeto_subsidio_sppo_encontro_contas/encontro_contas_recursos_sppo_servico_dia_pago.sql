@@ -30,9 +30,9 @@ WHERE
     -- Recurso pode ter sido cancelado (pago e depois revertido)
     -- Problema reporto não gerou impacto na operação (quando aparece apenas 1 vez)
   valor_pago != 0
-  -- Desconsideram-se recursos do tipo "Algoritmo" (igual a apuração em produção, levantado pela TR/SUBTT/CMO)
+  -- Desconsideram-se recursos do tipo "Algoritmo" (igual a apuração em produção, levantado pela TR/SUBTT/CMO) 
   -- Desconsideram-se recursos do tipo "Viagem Individual" (não afeta serviço-dia)
   AND tipo_recurso NOT IN ("Algoritmo", "Viagem Individual")
   -- Desconsideram-se recursos de reprocessamento que já constam em produção
-  AND NOT (data BETWEEN "2022-06-01" AND "2022-06-30"
+  AND NOT (data BETWEEN "2022-06-01" AND "2022-06-30" 
             AND tipo_recurso = "Reprocessamento")

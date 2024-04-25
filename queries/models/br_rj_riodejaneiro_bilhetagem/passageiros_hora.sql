@@ -11,7 +11,7 @@
 }}
 
 
-/*
+/* 
 consulta as partições a serem atualizadas com base nas transações capturadas entre date_range_start e date_range_end
 e as integrações capturadas entre date_range_start e date_range_end
 */
@@ -52,7 +52,7 @@ e as integrações capturadas entre date_range_start e date_range_end
                 particoes_integracao i
             USING(data_transacao)
             WHERE COALESCE(t.data_transacao, i.data_transacao) IS NOT NULL
-
+                
         {% endset %}
 
         {% set partitions = run_query(partitions_query) %}

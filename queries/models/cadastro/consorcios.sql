@@ -5,7 +5,7 @@
 }}
 
 WITH stu AS (
-  SELECT
+  SELECT 
       perm_autor AS id_consorcio,
       cnpj,
       processo,
@@ -25,7 +25,7 @@ SELECT
   COALESCE(s.id_consorcio, j.cd_consorcio) AS id_consorcio,
   CASE
     WHEN s.id_consorcio = '221000050' THEN "Consórcio BRT"
-    ELSE j.nm_consorcio
+    ELSE j.nm_consorcio 
   END AS consorcio,
   s.cnpj,
   s.razao_social,
@@ -38,4 +38,4 @@ FULL OUTER JOIN
 ON
   j.cd_consorcio = s.cd_consorcio_jae
 
-
+  
