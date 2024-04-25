@@ -1539,7 +1539,7 @@ def perform_check(desc: str, check_params: dict, request_params: dict) -> dict:
         desc (str): The check description
         check_params (dict): The check parameters
             * query (str): SQL query to be executed
-            * order_columns (list): order columns for query log results, 
+            * order_columns (list): order columns for query log results,
             in case of failure (optional)
         request_params (dict): The request parameters
 

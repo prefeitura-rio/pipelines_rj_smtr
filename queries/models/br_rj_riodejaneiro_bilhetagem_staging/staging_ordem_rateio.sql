@@ -45,7 +45,7 @@ WITH ordem_rateio AS (
   FROM
     {{ source('br_rj_riodejaneiro_bilhetagem_staging', 'ordem_rateio') }}
 )
-SELECT 
+SELECT
   * EXCEPT(rn)
 FROM
 (

@@ -6,7 +6,7 @@
 --    em cada tapa da viagem (inicio, meio, fim, fora), total de
 --    registros de gps e total de minutos da viagem com registros de gps.
 with distancia as (
-    select 
+    select
         *,
         n_registros_middle + n_registros_start + n_registros_end as n_registros_shape
     from (
@@ -35,7 +35,7 @@ with distancia as (
     )
 )
 -- 2. Calcula distancia total por viagem - junta distancias corrigidas
---    de ida e volta de viagens circulares. 
+--    de ida e volta de viagens circulares.
 select
     id_viagem,
     sum(distancia_aferida) as distancia_aferida,

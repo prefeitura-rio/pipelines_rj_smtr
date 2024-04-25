@@ -15,7 +15,7 @@ WITH
     FROM
       (
         SELECT
-          feed_version, 
+          feed_version,
           trip_short_name AS servico,
           CASE
             WHEN ROUND(ST_Y(start_pt),4) = ROUND(ST_Y(end_pt),4) AND ROUND(ST_X(start_pt),4) = ROUND(ST_X(end_pt),4) THEN "C"
@@ -27,42 +27,42 @@ WITH
           {{ ref("trips_filtrada_aux_gtfs2") }}
         WHERE
           indicador_trajeto_alternativo IS FALSE
-      )   
+      )
     WHERE
       sentido = "C"
   ),
   -- 2. Busca principais informações na Ordem de Serviço (OS)
   ordem_servico AS (
-    SELECT 
+    SELECT
       * EXCEPT(horario_inicio, horario_fim),
-      IF(horario_inicio IS NOT NULL AND ARRAY_LENGTH(SPLIT(horario_inicio, ":")) = 3, 
-          PARSE_TIME("%T", 
+      IF(horario_inicio IS NOT NULL AND ARRAY_LENGTH(SPLIT(horario_inicio, ":")) = 3,
+          PARSE_TIME("%T",
                       CONCAT(
-                          SAFE_CAST(MOD(SAFE_CAST(SPLIT(horario_inicio, ":")[OFFSET(0)] AS INT64), 24) AS INT64), 
-                          ":", 
-                          SAFE_CAST(SPLIT(horario_inicio, ":")[OFFSET(1)] AS INT64), 
-                          ":", 
+                          SAFE_CAST(MOD(SAFE_CAST(SPLIT(horario_inicio, ":")[OFFSET(0)] AS INT64), 24) AS INT64),
+                          ":",
+                          SAFE_CAST(SPLIT(horario_inicio, ":")[OFFSET(1)] AS INT64),
+                          ":",
                           SAFE_CAST(SPLIT(horario_inicio, ":")[OFFSET(2)] AS INT64)
                       )
-                    ), 
+                    ),
                     NULL
       ) AS inicio_periodo,
-      IF(horario_fim IS NOT NULL AND ARRAY_LENGTH(SPLIT(horario_fim, ":")) = 3, 
-          PARSE_TIME("%T", 
+      IF(horario_fim IS NOT NULL AND ARRAY_LENGTH(SPLIT(horario_fim, ":")) = 3,
+          PARSE_TIME("%T",
                       CONCAT(
-                          SAFE_CAST(MOD(SAFE_CAST(SPLIT(horario_fim, ":")[OFFSET(0)] AS INT64), 24) AS INT64), 
-                          ":", 
-                          SAFE_CAST(SPLIT(horario_inicio, ":")[OFFSET(1)] AS INT64), 
-                          ":", 
+                          SAFE_CAST(MOD(SAFE_CAST(SPLIT(horario_fim, ":")[OFFSET(0)] AS INT64), 24) AS INT64),
+                          ":",
+                          SAFE_CAST(SPLIT(horario_inicio, ":")[OFFSET(1)] AS INT64),
+                          ":",
                           SAFE_CAST(SPLIT(horario_inicio, ":")[OFFSET(2)] AS INT64)
                       )
-                    ), 
+                    ),
                     NULL
       ) AS fim_periodo,
-    FROM 
+    FROM
       {{ ref('ordem_servico_gtfs2') }}
     {% if is_incremental() -%}
-      WHERE 
+      WHERE
         feed_start_date = '{{ var("data_versao_gtfs") }}'
     {%- endif %}
   ),
@@ -72,7 +72,7 @@ WITH
       *
     FROM
       ordem_servico
-    UNPIVOT 
+    UNPIVOT
     (
       (
         distancia_planejada,
@@ -90,10 +90,10 @@ WITH
     )
   )
   -- 4. Atualiza sentido dos serviços circulares na ordem de serviço
-SELECT 
+SELECT
     o.* EXCEPT(sentido),
     COALESCE(s.sentido, o.sentido) AS sentido
-FROM 
+FROM
     ordem_servico_sentido AS o
 LEFT JOIN
     servico_trips_sentido AS s

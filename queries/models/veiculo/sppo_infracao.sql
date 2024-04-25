@@ -15,7 +15,7 @@
   {% set infracao_date = run_query("SELECT MIN(SAFE_CAST(data AS DATE)) FROM " ~ ref('sppo_infracao_staging') ~ " WHERE SAFE_CAST(data AS DATE) >= DATE_ADD(DATE('" ~ var("run_date") ~ "'), INTERVAL 7 DAY)").columns[0].values()[0] %}
 {% endif -%}
 
-WITH 
+WITH
   infracao AS (
     SELECT
       *

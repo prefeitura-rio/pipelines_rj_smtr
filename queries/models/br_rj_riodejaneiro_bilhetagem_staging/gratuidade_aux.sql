@@ -52,7 +52,7 @@ WITH gratuidade_complete_partitions AS (
     {% if is_incremental() -%}
         WHERE
         {{ incremental_filter }}
-    
+
         {% if partition_list|length > 0 -%}
             UNION ALL
 

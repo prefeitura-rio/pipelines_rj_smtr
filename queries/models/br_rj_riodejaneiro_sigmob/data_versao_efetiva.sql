@@ -12,11 +12,11 @@
 
 with
 agency as (
-SELECT 
+SELECT
     data,
-    data_versao as data_versao_original, 
+    data_versao as data_versao_original,
     CASE WHEN data <= DATE("{{var("data_inclusao_agency")}}") THEN DATE("{{var("data_inclusao_agency")}}") ELSE
-        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) 
+        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
     END AS data_versao_efetiva
 FROM UNNEST(GENERATE_DATE_ARRAY(DATE('2021-01-01'), CURRENT_DATE())) data
 LEFT JOIN (
@@ -26,11 +26,11 @@ LEFT JOIN (
 ON data = DATE(data_versao)
 ),
 calendar as (
-SELECT 
+SELECT
     data,
-    data_versao as data_versao_original, 
+    data_versao as data_versao_original,
     CASE WHEN data <= DATE("{{var("data_inclusao_calendar")}}") THEN DATE("{{var("data_inclusao_calendar")}}") ELSE
-        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) 
+        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
     END AS data_versao_efetiva
 FROM UNNEST(GENERATE_DATE_ARRAY(DATE('2021-01-01'), CURRENT_DATE())) data
 LEFT JOIN (
@@ -40,11 +40,11 @@ LEFT JOIN (
 ON data = DATE(data_versao)
 ),
 frota_determinada as (
-SELECT 
+SELECT
     data,
-    DATE(data_versao) as data_versao_original, 
+    DATE(data_versao) as data_versao_original,
     CASE WHEN data <= DATE("{{var("data_inclusao_frota_determinada")}}") THEN DATE("{{var("data_inclusao_frota_determinada")}}") ELSE
-        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) 
+        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
     END AS data_versao_efetiva
 FROM UNNEST(GENERATE_DATE_ARRAY(DATE('2021-01-01'), CURRENT_DATE())) data
 LEFT JOIN (
@@ -54,11 +54,11 @@ LEFT JOIN (
 ON DATE(data) = DATE(data_versao)
 ),
 holidays as (
-SELECT 
+SELECT
     data,
-    data_versao as data_versao_original, 
+    data_versao as data_versao_original,
     CASE WHEN data <= DATE("{{var("data_inclusao_holidays")}}") THEN DATE("{{var("data_inclusao_holidays")}}") ELSE
-        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) 
+        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
     END AS data_versao_efetiva
 FROM UNNEST(GENERATE_DATE_ARRAY(DATE('2021-01-01'), CURRENT_DATE())) data
 LEFT JOIN (
@@ -68,11 +68,11 @@ LEFT JOIN (
 ON data = DATE(data_versao)
 ),
 linhas as (
-    SELECT 
+    SELECT
     data,
-    DATE(data_versao) as data_versao_original, 
+    DATE(data_versao) as data_versao_original,
     CASE WHEN data <= DATE("{{var("data_inclusao_linhas")}}") THEN DATE("{{var("data_inclusao_linhas")}}") ELSE
-        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) 
+        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
     END AS data_versao_efetiva
 FROM UNNEST(GENERATE_DATE_ARRAY(DATE('2021-01-01'), CURRENT_DATE())) data
 LEFT JOIN (
@@ -82,11 +82,11 @@ LEFT JOIN (
 ON data = DATE(data_versao)
 ),
 routes as (
-SELECT 
+SELECT
     data,
-    DATE(data_versao) as data_versao_original, 
+    DATE(data_versao) as data_versao_original,
     CASE WHEN data <= DATE("{{var("data_inclusao_routes")}}") THEN DATE("{{var("data_inclusao_routes")}}") ELSE
-        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) 
+        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
     END AS data_versao_efetiva
 FROM UNNEST(GENERATE_DATE_ARRAY(DATE('2021-01-01'), CURRENT_DATE())) data
 LEFT JOIN (
@@ -96,11 +96,11 @@ LEFT JOIN (
 ON data = data_versao
 ),
 shapes as (
-SELECT 
+SELECT
     data,
-    data_versao as data_versao_original, 
+    data_versao as data_versao_original,
     CASE WHEN data <= DATE("{{var("data_inclusao_shapes")}}") THEN DATE("{{var("data_inclusao_shapes")}}") ELSE
-        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) 
+        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
     END AS data_versao_efetiva
 FROM UNNEST(GENERATE_DATE_ARRAY(DATE('2021-01-01'), CURRENT_DATE())) data
 LEFT JOIN (
@@ -110,11 +110,11 @@ LEFT JOIN (
 ON data = DATE(data_versao)
 ),
 stop_details as (
-SELECT 
+SELECT
     data,
-    data_versao as data_versao_original, 
+    data_versao as data_versao_original,
     CASE WHEN data <= DATE("{{var("data_inclusao_stop_details")}}") THEN DATE("{{var("data_inclusao_stop_details")}}") ELSE
-        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) 
+        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
     END AS data_versao_efetiva
 FROM UNNEST(GENERATE_DATE_ARRAY(DATE('2021-01-01'), CURRENT_DATE())) data
 LEFT JOIN (
@@ -124,11 +124,11 @@ LEFT JOIN (
 ON data = DATE(data_versao)
 ),
 stop_times as (
-SELECT 
+SELECT
     data,
-    data_versao as data_versao_original, 
+    data_versao as data_versao_original,
     CASE WHEN data <= DATE("{{var("data_inclusao_stop_times")}}") THEN DATE("{{var("data_inclusao_stop_times")}}") ELSE
-        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) 
+        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
     END AS data_versao_efetiva
 FROM UNNEST(GENERATE_DATE_ARRAY(DATE('2021-01-01'), CURRENT_DATE())) data
 LEFT JOIN (
@@ -138,11 +138,11 @@ LEFT JOIN (
 ON data = DATE(data_versao)
 ),
 stops as (
-SELECT 
+SELECT
     data,
-    data_versao as data_versao_original, 
+    data_versao as data_versao_original,
     CASE WHEN data <= DATE("{{var("data_inclusao_stops")}}") THEN DATE("{{var("data_inclusao_stops")}}") ELSE
-        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) 
+        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
     END AS data_versao_efetiva
 FROM UNNEST(GENERATE_DATE_ARRAY(DATE('2021-01-01'), CURRENT_DATE())) data
 LEFT JOIN (
@@ -152,11 +152,11 @@ LEFT JOIN (
 ON data = DATE(data_versao)
 ),
 trips as (
-SELECT 
+SELECT
     data,
-    data_versao as data_versao_original, 
+    data_versao as data_versao_original,
     CASE WHEN data <= DATE("{{var("data_inclusao_trips")}}") THEN DATE("{{var("data_inclusao_trips")}}") ELSE
-        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) 
+        LAST_VALUE(DATE(data_versao) IGNORE NULLS) OVER (ORDER BY data ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
     END AS data_versao_efetiva
 FROM UNNEST(GENERATE_DATE_ARRAY(DATE('2021-01-01'), CURRENT_DATE())) data
 LEFT JOIN (
@@ -179,7 +179,7 @@ joined as (
     st.data_versao_efetiva as data_versao_efetiva_stop_times,
     sp.data_versao_efetiva as data_versao_efetiva_stops,
     t.data_versao_efetiva as data_versao_efetiva_trips
-    from agency a 
+    from agency a
     join shapes s
     on s.data = a.data
     join calendar c
@@ -201,8 +201,8 @@ joined as (
     join trips t
     on a.data = t.data
 )
-select * 
-from joined 
+select *
+from joined
 {% if is_incremental() %}
     {%set max_date_partition = run_query("select max(DATE(data)) from " ~ this).columns[0].values()[0]%}
     where DATE(data) > ("{{max_date_partition}}")

@@ -4,7 +4,7 @@
   )
 }}
 
-WITH 
+WITH
     consorcio AS (
         SELECT
             data,

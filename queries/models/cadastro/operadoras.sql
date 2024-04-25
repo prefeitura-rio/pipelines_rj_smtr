@@ -38,7 +38,7 @@ WITH operadora_jae AS (
     {{ ref("staging_conta_bancaria") }} AS cb
   ON
     ot.cd_cliente = cb.cd_cliente
-  JOIN 
+  JOIN
     {{ source("cadastro", "modos") }} m
   ON
     ot.cd_tipo_modal = m.id_modo AND m.fonte = "jae"
@@ -89,13 +89,13 @@ stu AS (
     FROM
       stu_pessoa_fisica
   ) s
-  JOIN 
+  JOIN
     {{ source("cadastro", "modos") }} m
   ON
     s.id_modo = m.id_modo AND m.fonte = "stu"
 ),
 cadastro AS (
-  SELECT 
+  SELECT
     COALESCE(s.perm_autor, j.cd_operadora_transporte) AS id_operadora,
     UPPER(REGEXP_REPLACE(NORMALIZE(COALESCE(s.nome_operadora, j.nm_cliente), NFD), r"\pM", '')) AS operadora_completo,
     s.tipo_permissao AS tipo_operadora,

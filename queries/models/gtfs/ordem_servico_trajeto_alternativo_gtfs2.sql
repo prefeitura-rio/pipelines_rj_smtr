@@ -1,16 +1,16 @@
-{{ 
+{{
   config(
-    partition_by = { 
+    partition_by = {
       "field": "feed_start_date",
       "data_type": "date",
       "granularity": "day"
     },
     alias = "ordem_servico_trajeto_alternativo",
-  ) 
-}} 
+  )
+}}
 
 WITH ordem_servico_trajeto_alternativo AS (
-  SELECT 
+  SELECT
     fi.feed_version,
     SAFE_CAST(o.data_versao AS DATE) feed_start_date,
     fi.feed_end_date,
@@ -24,14 +24,14 @@ WITH ordem_servico_trajeto_alternativo AS (
     SAFE_CAST(JSON_VALUE(o.content, "$.horario_inicio") AS STRING) horario_inicio,
     SAFE_CAST(JSON_VALUE(o.content, "$.horario_fim") AS STRING) horario_fim,
     SAFE_CAST(JSON_VALUE(o.content, "$.vista") AS STRING) vista,
-  FROM 
+  FROM
     {{ source("br_rj_riodejaneiro_gtfs_staging", "ordem_servico_trajeto_alternativo") }} O
-  LEFT JOIN 
-    {{ ref("feed_info_gtfs2") }} fi 
-  ON 
+  LEFT JOIN
+    {{ ref("feed_info_gtfs2") }} fi
+  ON
     o.data_versao = CAST(fi.feed_start_date AS STRING)
   {% if is_incremental() -%}
-    WHERE 
+    WHERE
       o.data_versao = "{{ var('data_versao_gtfs') }}"
       AND fi.feed_start_date = "{{ var('data_versao_gtfs') }}"
   {%- endif %}
@@ -52,28 +52,28 @@ SELECT
   END AS evento,
   extensao_ida/1000 AS extensao_ida,
   extensao_volta/1000 AS extensao_volta,
-  IF(horario_inicio IS NOT NULL AND ARRAY_LENGTH(SPLIT(horario_inicio, ":")) = 3, 
-      PARSE_TIME("%T", 
+  IF(horario_inicio IS NOT NULL AND ARRAY_LENGTH(SPLIT(horario_inicio, ":")) = 3,
+      PARSE_TIME("%T",
                   CONCAT(
-                      SAFE_CAST(MOD(SAFE_CAST(SPLIT(horario_inicio, ":")[OFFSET(0)] AS INT64), 24) AS INT64), 
-                      ":", 
-                      SAFE_CAST(SPLIT(horario_inicio, ":")[OFFSET(1)] AS INT64), 
-                      ":", 
+                      SAFE_CAST(MOD(SAFE_CAST(SPLIT(horario_inicio, ":")[OFFSET(0)] AS INT64), 24) AS INT64),
+                      ":",
+                      SAFE_CAST(SPLIT(horario_inicio, ":")[OFFSET(1)] AS INT64),
+                      ":",
                       SAFE_CAST(SPLIT(horario_inicio, ":")[OFFSET(2)] AS INT64)
                   )
-                ), 
+                ),
                 NULL
   ) AS inicio_periodo,
-  IF(horario_fim IS NOT NULL AND ARRAY_LENGTH(SPLIT(horario_fim, ":")) = 3, 
-      PARSE_TIME("%T", 
+  IF(horario_fim IS NOT NULL AND ARRAY_LENGTH(SPLIT(horario_fim, ":")) = 3,
+      PARSE_TIME("%T",
                   CONCAT(
-                      SAFE_CAST(MOD(SAFE_CAST(SPLIT(horario_fim, ":")[OFFSET(0)] AS INT64), 24) AS INT64), 
-                      ":", 
-                      SAFE_CAST(SPLIT(horario_fim, ":")[OFFSET(1)] AS INT64), 
-                      ":", 
+                      SAFE_CAST(MOD(SAFE_CAST(SPLIT(horario_fim, ":")[OFFSET(0)] AS INT64), 24) AS INT64),
+                      ":",
+                      SAFE_CAST(SPLIT(horario_fim, ":")[OFFSET(1)] AS INT64),
+                      ":",
                       SAFE_CAST(SPLIT(horario_fim, ":")[OFFSET(2)] AS INT64)
                   )
-                ), 
+                ),
                 NULL
   ) AS fim_periodo,
   '{{ var("version") }}' AS versao_modelo

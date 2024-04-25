@@ -1,6 +1,6 @@
 {{ config(
   materialized="view"
-) }} 
+) }}
 
 WITH
   data_versao AS (
@@ -17,12 +17,12 @@ WITH
   SELECT
     *
   FROM
-    {{ ref("ordem_servico_gtfs") }} 
+    {{ ref("ordem_servico_gtfs") }}
     PIVOT( MAX(partidas_ida) AS partidas_ida,
       MAX(partidas_volta) AS partidas_volta,
       MAX(viagens_planejadas) AS viagens_planejadas,
-      MAX(distancia_total_planejada) AS km FOR 
-      tipo_dia IN ( 
+      MAX(distancia_total_planejada) AS km FOR
+      tipo_dia IN (
         'Dia Útil' AS du,
         'Ponto Facultativo' AS pf,
         'Sabado' AS sab,

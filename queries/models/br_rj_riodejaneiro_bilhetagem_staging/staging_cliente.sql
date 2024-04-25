@@ -4,7 +4,7 @@
   )
 }}
 
-WITH 
+WITH
     cliente AS (
         SELECT
             data,

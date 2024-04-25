@@ -1,4 +1,4 @@
-{{ 
+{{
   config(
     partition_by = {
       "field": "feed_start_date",
@@ -9,7 +9,7 @@
   )
 }}
 
-WITH 
+WITH
   -- 1. Busca os shapes em formato geográfico
   shapes AS (
     SELECT
@@ -17,7 +17,7 @@ WITH
     FROM
       {{ ref("shapes_geom_gtfs2") }}
     {% if is_incremental() -%}
-    WHERE 
+    WHERE
       feed_start_date = '{{ var("data_versao_gtfs") }}'
     {% endif -%}
   ),
@@ -52,7 +52,7 @@ WITH
       ON
         t.feed_version = o.feed_version
         AND o.servico = t.trip_short_name
-        AND 
+        AND
           (o.tipo_dia = t.tipo_dia
           OR (o.tipo_dia = "Ponto Facultativo" AND t.tipo_dia = "Dia Útil"))
         AND
@@ -93,7 +93,7 @@ WITH
       ON
         t.feed_version = o.feed_version
         AND o.servico = t.trip_short_name
-        AND 
+        AND
           (o.tipo_dia = t.tipo_dia
           OR (o.tipo_dia = "Ponto Facultativo" AND t.tipo_dia = "Dia Útil")
           OR (t.tipo_dia = "EXCEP")) -- Inclui trips do service_id/tipo_dia "EXCEP"
@@ -123,7 +123,7 @@ WITH
         WHEN indicador_trajeto_alternativo IS TRUE THEN 1 -- Trajeto alternativo
     END
       AS id_tipo_trajeto,
-    FROM 
+    FROM
     (
       (
         SELECT
@@ -134,9 +134,9 @@ WITH
           ordem_servico_tratada
         WHERE
           sentido = "I"
-          OR sentido = "V" 
+          OR sentido = "V"
       )
-      UNION ALL 
+      UNION ALL
       (
         SELECT
           * EXCEPT(trip_id),
@@ -145,9 +145,9 @@ WITH
         FROM
           ordem_servico_tratada
         WHERE
-          sentido = "C" 
+          sentido = "C"
       )
-      UNION ALL 
+      UNION ALL
       (
         SELECT
           * EXCEPT(trip_id),
@@ -156,8 +156,8 @@ WITH
         FROM
           ordem_servico_tratada
         WHERE
-          sentido = "C" 
-      ) 
+          sentido = "C"
+      )
     )
   )
 SELECT
