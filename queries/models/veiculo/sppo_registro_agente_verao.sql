@@ -1,4 +1,4 @@
-{{ 
+{{
   config(
     materialized="incremental",
     partition_by={

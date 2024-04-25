@@ -14,7 +14,7 @@
 {% endif %}
 with
        trips as (
-              SELECT 
+              SELECT
                      trip_id,
                      shape_id,
                      route_id,
@@ -23,11 +23,11 @@ with
               WHERE DATE(data_versao) between DATE("{{start_date}}") and DATE_ADD(DATE("{{start_date}}"), INTERVAL 15 DAY)
        ),
        linhas as (
-              SELECT 
-                     trip_id, 
+              SELECT
+                     trip_id,
                      shape_id,
-                     t.route_id, 
-                     route_short_name linha, 
+                     t.route_id,
+                     route_short_name linha,
                      idModalSmtr id_modal_smtr,
                      t.data_versao,
               FROM trips t
@@ -36,12 +36,12 @@ with
               FROM {{ ref('routes_desaninhada') }}
               WHERE DATE(data_versao) between DATE("{{start_date}}") and DATE_ADD(DATE("{{start_date}}"), INTERVAL 15 DAY)
               ) r
-              on t.route_id = r.route_id 
+              on t.route_id = r.route_id
               and t.data_versao = r.data_versao
        ),
        contents as (
-       -- EXTRACTS VALUES FROM JSON STRING FIELD 'content' 
-              SELECT 
+       -- EXTRACTS VALUES FROM JSON STRING FIELD 'content'
+              SELECT
                      shape_id,
                      ST_GEOGPOINT(
                             SAFE_CAST(json_value(content, "$.shape_pt_lon") AS FLOAT64),
@@ -53,8 +53,8 @@ with
               WHERE DATE(data_versao) between DATE("{{start_date}}") and DATE_ADD(DATE("{{start_date}}"), INTERVAL 15 DAY)
        ),
        pts as (
-              select 
-                     *, 
+              select
+                     *,
                      max(shape_pt_sequence) over(
                             partition by data_versao, shape_id
                      ) final_pt_sequence
@@ -63,8 +63,8 @@ with
        ),
        shapes as (
               -- BUILD LINESTRINGS OVER SHAPE POINTS
-              SELECT 
-                     shape_id, 
+              SELECT
+                     shape_id,
                      data_versao,
                      st_makeline(ARRAY_AGG(ponto_shape)) as shape
               FROM pts
@@ -72,7 +72,7 @@ with
        ),
        boundary as (
               -- EXTRACT START AND END POINTS FROM SHAPES
-              SELECT 
+              SELECT
                      c1.shape_id,
                      c1.ponto_shape start_pt,
                      c2.ponto_shape end_pt,
@@ -83,7 +83,7 @@ with
        ),
        merged as (
               -- JOIN SHAPES AND BOUNDARY POINTS
-              SELECT 
+              SELECT
                      s.*,
                      b.* except(data_versao, shape_id),
                      round(ST_LENGTH(shape),1) shape_distance,
@@ -92,21 +92,21 @@ with
               ON s.shape_id = b.shape_id and s.data_versao = b.data_versao
        ),
        ids as (
-              SELECT 
+              SELECT
                      trip_id,
                      m.shape_id,
                      route_id,
                      id_modal_smtr,
-                     replace(linha, " ", "") as linha_gtfs, 
+                     replace(linha, " ", "") as linha_gtfs,
                      shape,
-                     shape_distance, 
-                     start_pt, 
+                     shape_distance,
+                     start_pt,
                      end_pt,
                      m.data_versao,
                      row_number() over(
                             partition by m.data_versao, m.shape_id, l.trip_id
                      ) rn
-              FROM merged m 
+              FROM merged m
               JOIN linhas l
               ON m.shape_id = l.shape_id
               AND m.data_versao = l.data_versao

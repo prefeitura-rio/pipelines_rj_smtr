@@ -7,11 +7,9 @@ from datetime import datetime, timedelta
 
 from prefect import task
 
-
 from pipelines.constants import constants as smtr_constants
-from pipelines.utils.backup.tasks import (
+from pipelines.utils.backup.tasks import (  # perform_check,
     format_send_discord_message,
-    # perform_check,
     perform_checks_for_table,
 )
 from pipelines.utils.secret import get_secret
