@@ -4,7 +4,7 @@
   )
 }}
 
-WITH 
+WITH
     conta_bancaria AS (
         SELECT
             data,

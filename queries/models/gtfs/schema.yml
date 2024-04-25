@@ -22,7 +22,7 @@ models:
         description: "Data final do feed (versão)."
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
-      - name: versao_modelo 
+      - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
 
   - name: calendar_gtfs2
@@ -54,7 +54,7 @@ models:
         description: "Data final do feed (versão)."
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
-      - name: versao_modelo 
+      - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
 
   - name: calendar_dates_gtfs2
@@ -72,7 +72,7 @@ models:
         description: "Data final do feed (versão)."
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
-      - name: versao_modelo 
+      - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
 
   - name: fare_attributes_gtfs2
@@ -98,7 +98,7 @@ models:
         description: "Data final do feed (versão)."
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
-      - name: versao_modelo 
+      - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
 
   - name: fare_rules_gtfs2
@@ -120,7 +120,7 @@ models:
         description: "Data final do feed (versão)."
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
-      - name: versao_modelo 
+      - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
 
   - name: feed_info_gtfs2
@@ -146,7 +146,7 @@ models:
         description: "URL para informações de contato, um formulário web, uma mesa de suporte ou outras ferramentas de comunicação relativas ao conjunto de dados GTFS e práticas de publicação de dados."
       - name: feed_start_date
         description: "Data de referência do feed (versão)."
-      - name: versao_modelo 
+      - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
 
   - name: frequencies_gtfs2
@@ -168,7 +168,7 @@ models:
         description: "Data final do feed (versão)."
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
-      - name: versao_modelo 
+      - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
 
   - name: routes_gtfs2
@@ -187,7 +187,7 @@ models:
       - name: route_type
         description: "Indica o tipo de transporte utilizado em uma rota."
       - name: route_url
-        description: "URL de uma página da web sobre uma rota específica." 
+        description: "URL de uma página da web sobre uma rota específica."
       - name: route_color
         description: "Designação de cores da rota que corresponda ao material voltado para o público."
       - name: route_text_color
@@ -206,7 +206,7 @@ models:
         description: "Data final do feed (versão)."
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
-      - name: versao_modelo 
+      - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
 
   - name: shapes_geom_gtfs2
@@ -230,7 +230,7 @@ models:
         description: "Ponto final do shape em formato geográfico (Point)."
       - name: data_versao
         description: "Data de referência do planejamento (versão)."
-      - name: versao_modelo 
+      - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
 
   - name: shapes_gtfs2
@@ -252,7 +252,7 @@ models:
         description: "Data final do feed (versão)."
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
-      - name: versao_modelo 
+      - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
 
   - name: stops_gtfs2
@@ -294,7 +294,7 @@ models:
         description: "Data final do feed (versão)."
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
-      - name: versao_modelo 
+      - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
 
   - name: stop_times_gtfs2
@@ -330,7 +330,7 @@ models:
         description: "Data final do feed (versão)."
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
-      - name: versao_modelo 
+      - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
 
   - name: trips_gtfs2
@@ -362,7 +362,7 @@ models:
         description: "Data final do feed (versão)."
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
-      - name: versao_modelo 
+      - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
 
   - name: ordem_servico_gtfs2
@@ -398,7 +398,7 @@ models:
         description: "Data final do feed (versão)."
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS."
-      - name: versao_modelo 
+      - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
       - name: tipo_os
         description: "Tipo de Ordem de Serviço (ex: 'Regular', 'Extraordinária - Verão')"

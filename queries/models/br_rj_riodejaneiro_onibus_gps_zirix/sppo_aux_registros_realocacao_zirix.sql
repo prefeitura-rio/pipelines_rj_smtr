@@ -1,4 +1,4 @@
-{{ 
+{{
   config(
       materialized='incremental',
       partition_by={
@@ -12,7 +12,7 @@
 
 -- 1. Filtra realocações válidas dentro do intervalo de GPS avaliado
 with realocacao as (
-  select 
+  select
     * except(datetime_saida),
     case
       when datetime_saida is null then datetime_operacao
@@ -24,11 +24,11 @@ with realocacao as (
     -- Realocação deve acontecer após o registro de GPS e até 1 hora depois
         datetime_diff(datetime_operacao, datetime_entrada, minute) between 0 and 60
     {% if is_incremental() -%}
-    and 
+    and
         data between DATE("{{var('date_range_start')}}")
         and DATE(datetime_add("{{var('date_range_end')}}", interval 1
         hour))
-    and 
+    and
         datetime_operacao between datetime("{{var('date_range_start')}}")
             and datetime_add("{{var('date_range_end')}}", interval 1 hour)
     {%- endif -%}
@@ -57,7 +57,7 @@ combinacao as (
     g.hora
   from gps g
   inner join realocacao r
-  on 
+  on
     g.ordem = r.id_veiculo
     and g.linha != r.servico
     and g.timestamp_gps between r.datetime_entrada and r.datetime_saida
@@ -66,7 +66,7 @@ combinacao as (
 select
   * except(rn)
 from (
-  select 
+  select
     *,
     row_number() over (partition by id_veiculo, timestamp_gps order by datetime_realocacao desc) as rn
   from combinacao

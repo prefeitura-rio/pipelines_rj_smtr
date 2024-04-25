@@ -4,7 +4,7 @@
   )
 }}
 
-WITH 
+WITH
     ordem_ressarcimento AS (
         SELECT
             data,

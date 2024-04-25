@@ -1,13 +1,13 @@
-{{config( 
+{{config(
     partition_by = { 'field' :'feed_start_date',
     'data_type' :'date',
     'granularity': 'day' },
     unique_key = ['trip_id','feed_start_date'],
-    alias = 'trips' 
+    alias = 'trips'
 )}}
 
 
-SELECT 
+SELECT
     fi.feed_version,
     SAFE_CAST(t.data_versao AS DATE) as feed_start_date,
     fi.feed_end_date,
@@ -22,17 +22,17 @@ SELECT
     SAFE_CAST(JSON_VALUE(t.content, '$.wheelchair_accessible') AS STRING) wheelchair_accessible,
     SAFE_CAST(JSON_VALUE(t.content, '$.bikes_allowed') AS STRING) bikes_allowed,
     '{{ var("version") }}' as versao_modelo
-FROM 
+FROM
     {{ source(
         'br_rj_riodejaneiro_gtfs_staging',
         'trips'
     ) }} t
 JOIN
-    {{ ref('feed_info_gtfs2') }} fi 
-ON 
+    {{ ref('feed_info_gtfs2') }} fi
+ON
     t.data_versao = CAST(fi.feed_start_date AS STRING)
 {% if is_incremental() -%}
-    WHERE 
+    WHERE
         t.data_versao = '{{ var("data_versao_gtfs") }}'
     AND fi.feed_start_date = '{{ var("data_versao_gtfs") }}'
 {%- endif %}

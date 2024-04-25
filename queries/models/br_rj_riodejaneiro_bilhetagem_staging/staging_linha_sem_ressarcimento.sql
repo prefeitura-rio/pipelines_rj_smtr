@@ -13,7 +13,7 @@ WITH linha_sem_ressarcimento AS (
   FROM
     {{ source('br_rj_riodejaneiro_bilhetagem_staging', 'linha_sem_ressarcimento') }}
 )
-SELECT 
+SELECT
   * EXCEPT(rn)
 FROM
 (
