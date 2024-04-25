@@ -11,12 +11,12 @@
 -- 1. Busca anexo de trajetos alternativos
 WITH
   ordem_servico_trajeto_alternativo AS (
-    SELECT
+    SELECT 
       *
-    FROM
+    FROM 
       {{ ref("ordem_servico_trajeto_alternativo_gtfs2") }}
     {% if is_incremental() -%}
-      WHERE
+      WHERE 
         feed_start_date = "{{ var('data_versao_gtfs') }}"
     {%- endif %}
   ),
@@ -26,7 +26,7 @@ WITH
       *
     FROM
       ordem_servico_trajeto_alternativo
-    UNPIVOT
+    UNPIVOT 
     (
       (
         distancia_planejada

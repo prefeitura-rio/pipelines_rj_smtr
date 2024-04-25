@@ -1,6 +1,6 @@
 {{
-  config(
-    partition_by = {
+  config( 
+    partition_by = { 
     "field": "data",
     "data_type": "date",
     "granularity": "month"

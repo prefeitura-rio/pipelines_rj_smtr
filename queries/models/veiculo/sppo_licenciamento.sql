@@ -11,7 +11,7 @@
 with
     -- Tabela de licenciamento
     stu as (
-        select
+        select 
             *
         from
             {{ ref("sppo_licenciamento_stu_staging") }} as t
@@ -46,7 +46,7 @@ with
         {% if var("run_date") >= "2024-03-01" %}
         SELECT
             s.* EXCEPT(ano_ultima_vistoria),
-            CASE
+            CASE 
                 WHEN c.ano_ultima_vistoria > s.ano_ultima_vistoria THEN c.ano_ultima_vistoria
                 ELSE COALESCE(s.ano_ultima_vistoria, c.ano_ultima_vistoria)
             END AS ano_ultima_vistoria_atualizado,
@@ -55,7 +55,7 @@ with
         LEFT JOIN
             (
                 SELECT
-                    id_veiculo,
+                    id_veiculo, 
                     placa,
                     ano_ultima_vistoria
                 FROM

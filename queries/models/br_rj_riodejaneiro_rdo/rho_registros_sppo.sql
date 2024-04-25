@@ -1,4 +1,4 @@
-{{
+{{ 
   config(
       materialized='incremental',
       partition_by={
@@ -19,14 +19,14 @@
             FROM
                 {{ staging_table }}
             WHERE
-                ano BETWEEN
-                    EXTRACT(YEAR FROM DATE("{{ var('date_range_start') }}"))
+                ano BETWEEN 
+                    EXTRACT(YEAR FROM DATE("{{ var('date_range_start') }}")) 
                     AND EXTRACT(YEAR FROM DATE("{{ var('date_range_end') }}"))
-                AND mes BETWEEN
-                    EXTRACT(MONTH FROM DATE("{{ var('date_range_start') }}"))
+                AND mes BETWEEN 
+                    EXTRACT(MONTH FROM DATE("{{ var('date_range_start') }}")) 
                     AND EXTRACT(MONTH FROM DATE("{{ var('date_range_end') }}"))
-                AND dia BETWEEN
-                    EXTRACT(DAY FROM DATE("{{ var('date_range_start') }}"))
+                AND dia BETWEEN 
+                    EXTRACT(DAY FROM DATE("{{ var('date_range_start') }}")) 
                     AND EXTRACT(DAY FROM DATE("{{ var('date_range_end') }}"))
         {% endset %}
 
@@ -54,14 +54,14 @@ WITH rho_new AS (
         {{ staging_table }}
     {% if is_incremental() %}
         WHERE
-            ano BETWEEN
-                EXTRACT(YEAR FROM DATE("{{ var('date_range_start') }}"))
+            ano BETWEEN 
+                EXTRACT(YEAR FROM DATE("{{ var('date_range_start') }}")) 
                 AND EXTRACT(YEAR FROM DATE("{{ var('date_range_end') }}"))
-            AND mes BETWEEN
-                EXTRACT(MONTH FROM DATE("{{ var('date_range_start') }}"))
+            AND mes BETWEEN 
+                EXTRACT(MONTH FROM DATE("{{ var('date_range_start') }}")) 
                 AND EXTRACT(MONTH FROM DATE("{{ var('date_range_end') }}"))
-            AND dia BETWEEN
-                EXTRACT(DAY FROM DATE("{{ var('date_range_start') }}"))
+            AND dia BETWEEN 
+                EXTRACT(DAY FROM DATE("{{ var('date_range_start') }}")) 
                 AND EXTRACT(DAY FROM DATE("{{ var('date_range_end') }}"))
     {% endif %}
 ),
@@ -70,7 +70,7 @@ rho_complete_partitions AS (
         *
     FROM
         rho_new
-
+    
     {% if is_incremental() and partition_list|length > 0 %}
 
         UNION ALL
@@ -89,14 +89,14 @@ rho_rn AS (
     SELECT
         *,
         ROW_NUMBER() OVER(
-            PARTITION BY
-                data_transacao,
+            PARTITION BY 
+                data_transacao, 
                 hora_transacao,
                 data_arquivo_rho,
                 servico_riocard,
                 linha_riocard,
-                operadora
-            ORDER BY
+                operadora 
+            ORDER BY 
                 datetime_captura DESC
         ) AS rn
     FROM

@@ -4,7 +4,7 @@
     'granularity': 'day' },
     unique_key = ['fare_id', 'data_versao'],
     alias = 'fare_rules'
-)}}
+)}} 
 
 
 SELECT

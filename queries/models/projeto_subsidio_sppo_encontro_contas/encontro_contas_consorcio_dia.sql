@@ -35,7 +35,7 @@ WITH
       perc_km_planejada >= 80
       AND DATA BETWEEN "{{ data_inicio }}"
       AND "{{ data_fim }}"
-      AND DATA NOT IN ("2022-10-02", "2022-10-30", '{{ lista_datas_remover|join("', '") }}')
+      AND DATA NOT IN ("2022-10-02", "2022-10-30", '{{ lista_datas_remover|join("', '") }}') 
   ),
   subsidio AS (
   SELECT
@@ -100,7 +100,7 @@ WITH
     WHERE
       DATA BETWEEN "{{ data_inicio }}"
       AND "{{ data_fim }}"
-      AND DATA NOT IN ("2022-10-02", "2022-10-30", '{{ lista_datas_remover|join("', '") }}')
+      AND DATA NOT IN ("2022-10-02", "2022-10-30", '{{ lista_datas_remover|join("', '") }}') 
       AND sd.servico IS NOT NULL) s
   LEFT JOIN
     recurso r
@@ -214,7 +214,7 @@ WITH
     servico_dia_subsidio AS sd
   USING
     (data,
-      servico)
+      servico)  
   WHERE
     r.data IS NULL
     AND sd.servico IS NOT NULL

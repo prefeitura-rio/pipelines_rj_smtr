@@ -1,6 +1,6 @@
 {{
-  config(
-    partition_by = {
+  config( 
+    partition_by = { 
     "field": "data",
     "data_type": "date",
     "granularity": "month"
@@ -38,15 +38,15 @@ LEFT JOIN
   {{ source("br_rj_riodejaneiro_rdo", "rdo40_tratado") }} AS rdo
 ON
   rdo.termo = c.id_consorcio
-WHERE
+WHERE 
   rdo.data >= "2015-01-01"
   {% if is_incremental() %}
   AND rdo.data BETWEEN DATE_TRUNC(DATE("{{ var("start_date") }}"), MONTH)
   AND LAST_DAY(DATE("{{ var("end_date") }}"), MONTH)
   AND rdo.data < DATE_TRUNC(CURRENT_DATE(), MONTH)
   {% endif %}
-GROUP BY
-  data,
-  rdo.ano,
-  rdo.mes,
+GROUP BY 
+  data, 
+  rdo.ano, 
+  rdo.mes, 
   c.modo

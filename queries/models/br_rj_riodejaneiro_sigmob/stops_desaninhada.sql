@@ -1,4 +1,4 @@
-SELECT
+SELECT 
     stop_id,
     case when json_value(content, '$.IDPropriedadeParada') is null then false else true end flag_vistoriada,
     json_value(content, '$.stop_name') as stop_name,

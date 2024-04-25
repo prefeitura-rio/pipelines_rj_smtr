@@ -14,7 +14,7 @@
 
 -- 1. Define datas do período planejado
 with data_efetiva as (
-    select
+    select 
         data,
         tipo_dia,
         data_versao_shapes,
@@ -31,13 +31,13 @@ quadro as (
         p.* except(tipo_dia, data_versao, horario_inicio, horario_fim),
         horario_inicio as inicio_periodo,
         horario_fim as fim_periodo
-    from
+    from 
         data_efetiva e
     inner join (
-        select *
+        select * 
         from {{ ref("subsidio_quadro_horario") }}
         {% if is_incremental() %}
-        where
+        where 
             data_versao in (select data_versao_frequencies from data_efetiva)
         {% endif %}
     ) p
@@ -57,13 +57,13 @@ trips as (
         select *
         from {{ ref('subsidio_trips_desaninhada') }}
         {% if is_incremental() %}
-        where
+        where 
             data_versao in (select data_versao_trips from data_efetiva)
         {% endif %}
     ) t
-    inner join
+    inner join 
         data_efetiva e
-    on
+    on 
         t.data_versao = e.data_versao_trips
 ),
 quadro_trips as (
@@ -101,16 +101,16 @@ quadro_tratada as (
     select
         q.*,
         t.shape_id as shape_id_planejado,
-        case
+        case 
             when sentido = "C"
             then shape_id || "_" || split(q.trip_id, "_")[offset(1)]
             else shape_id
         end as shape_id, -- TODO: adicionar no sigmob
     from
         quadro_trips q
-    left join
+    left join 
         trips t
-    on
+    on 
         t.data = q.data
     and
         t.trip_id = q.trip_id_planejado
@@ -126,25 +126,25 @@ shapes as (
         shape,
         start_pt,
         end_pt
-    from
+    from 
         data_efetiva e
     inner join (
-        select *
+        select * 
         from {{ ref('subsidio_shapes_geom') }}
         {% if is_incremental() %}
-        where
+        where 
             data_versao in (select data_versao_shapes from data_efetiva)
         {% endif %}
     ) s
-    on
+    on 
         s.data_versao = e.data_versao_shapes
 )
 -- 5. Junta shapes e trips aos servicos planejados no quadro horário
-select
+select 
     p.*,
     s.data_shape,
     s.shape,
-    case
+    case 
         when p.sentido = "C" and split(p.shape_id, "_")[offset(1)] = "0" then "I"
         when p.sentido = "C" and split(p.shape_id, "_")[offset(1)] = "1" then "V"
         when p.sentido = "I" or p.sentido = "V" then p.sentido
@@ -157,7 +157,7 @@ from
     quadro_tratada p
 inner join
     shapes s
-on
+on 
     p.shape_id = s.shape_id
 and
     p.data = s.data

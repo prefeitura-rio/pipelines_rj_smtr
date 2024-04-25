@@ -1,6 +1,6 @@
 {{ config(
   materialized="view"
-) }}
+) }} 
 
 WITH
   data_versao AS (

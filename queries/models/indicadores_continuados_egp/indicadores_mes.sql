@@ -6,7 +6,7 @@
 ] %}
 
 {% for query in queries %}
-SELECT
+SELECT 
     ano,
     mes,
     {% if query.mode is defined %}NULL{% else %}modo{% endif %} AS modo,

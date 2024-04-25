@@ -4,7 +4,7 @@
        'granularity': 'day' },
        unique_key = ['shape_id', 'data_versao'],
        alias = 'shapes_geom'
-) }}
+) }} 
 
 
 WITH contents AS (
@@ -70,7 +70,7 @@ ids AS (
               ROW_NUMBER() OVER(PARTITION BY data_versao, shape_id) rn
        FROM merged m
 )
-SELECT
+SELECT 
        * EXCEPT(rn),
        '{{ var("version") }}' as versao_modelo
 FROM ids

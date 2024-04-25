@@ -2,7 +2,7 @@
 {{ config(
         materialized='view',
         alias='sppo_infracao'
-  )
+  ) 
 }}
 
 

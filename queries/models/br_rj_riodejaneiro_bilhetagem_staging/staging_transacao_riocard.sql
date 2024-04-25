@@ -1,6 +1,6 @@
 {{
     config(
-        alias='transacao',
+        alias='transacao_riocard',
     )
 }}
 
@@ -24,7 +24,6 @@ SELECT
     SAFE_CAST(JSON_VALUE(content, '$.id_produto') AS STRING) AS id_produto,
     SAFE_CAST(JSON_VALUE(content, '$.id_servico') AS STRING) AS id_servico,
     SAFE_CAST(JSON_VALUE(content, '$.id_tipo_midia') AS STRING) AS id_tipo_midia,
-    SAFE_CAST(JSON_VALUE(content, '$.is_abt') AS BOOL) AS is_abt,
     SAFE_CAST(JSON_VALUE(content, '$.latitude_trx') AS FLOAT64) AS latitude_trx,
     SAFE_CAST(JSON_VALUE(content, '$.longitude_trx') AS FLOAT64) AS longitude_trx,
     SAFE_CAST(JSON_VALUE(content, '$.nr_logico_midia_operador') AS STRING) AS nr_logico_midia_operador,
@@ -38,7 +37,6 @@ SELECT
     SAFE_CAST(JSON_VALUE(content, '$.valor_tarifa') AS FLOAT64) AS valor_tarifa,
     SAFE_CAST(JSON_VALUE(content, '$.valor_transacao') AS FLOAT64) AS valor_transacao,
     SAFE_CAST(JSON_VALUE(content, '$.veiculo_id') AS STRING) AS veiculo_id,
-    SAFE_CAST(JSON_VALUE(content, '$.vl_saldo') AS FLOAT64) AS vl_saldo,
-    SAFE_CAST(JSON_VALUE(content, '$.id_tipo_modal') AS STRING) AS id_tipo_modal
+    SAFE_CAST(JSON_VALUE(content, '$.vl_saldo') AS FLOAT64) AS vl_saldo
 FROM
-    {{ source("jae_source", "transacao") }}
+    {{ source("br_rj_riodejaneiro_bilhetagem_staging", "transacao_riocard") }}

@@ -1,5 +1,5 @@
 with desaninhada as (
-    select
+    select  
     data_versao,
     json_value(content, '$.agency_id') agency_id,
     json_value(content, '$.route_short_name') route_short_name,
@@ -50,7 +50,7 @@ ultimas_versoes as (
     where DATE(fimVigencia) >= DATE(data_versao) or fimVigencia is null
     order by route_id, fimVigencia
 )
-select
+select 
     *
 from ultimas_versoes
 

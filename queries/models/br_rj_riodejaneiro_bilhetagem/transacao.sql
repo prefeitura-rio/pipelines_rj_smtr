@@ -1,3 +1,4 @@
+-- depends_on: {{ ref('operadoras_contato') }}
 {{
   config(
     materialized="incremental",
@@ -36,7 +37,7 @@
 {% endif %}
 
 WITH transacao_deduplicada AS (
-    SELECT
+    SELECT 
         * EXCEPT(rn)
     FROM
     (
@@ -46,8 +47,8 @@ WITH transacao_deduplicada AS (
         FROM
             {{ transacao_staging }}
         {% if is_incremental() -%}
-        WHERE
-            {{ incremental_filter }}
+            WHERE
+                {{ incremental_filter }}
         {%- endif %}
     )
     WHERE
@@ -58,13 +59,13 @@ tipo_transacao AS (
     chave AS id_tipo_transacao,
     valor AS tipo_transacao,
   FROM
-    `rj-smtr-dev.bilhetagem.dicionario`
+    `rj-smtr.br_rj_riodejaneiro_bilhetagem.dicionario`
   WHERE
     id_tabela = "transacao"
-    AND coluna = "id_tipo_transacao"
+    AND coluna = "id_tipo_transacao" 
 ),
 gratuidade AS (
-    SELECT
+    SELECT 
         CAST(id_cliente AS STRING) AS id_cliente,
         tipo_gratuidade,
         data_inicio_validade,
@@ -73,13 +74,13 @@ gratuidade AS (
         {{ ref("gratuidade_aux") }}
     -- se for incremental pega apenas as partições necessárias
     {% if is_incremental() %}
-        WHERE
-            id_cliente
-            {% if gratuidade_partition_list|length > 0 %}
-                IN ({{ gratuidade_partition_list|join(', ') }})
-            {% else %}
-                = 0
-            {% endif %}
+        {% if gratuidade_partition_list|length > 0 and gratuidade_partition_list|length < 10000 %}
+            WHERE
+                id_cliente IN ({{ gratuidade_partition_list|join(', ') }})
+        {% elif gratuidade_partition_list|length == 0 %}
+            WHERE
+                id_cliente = 0
+        {% endif %}
     {% endif %}
 ),
 tipo_pagamento AS (
@@ -87,18 +88,23 @@ tipo_pagamento AS (
     chave AS id_tipo_pagamento,
     valor AS tipo_pagamento
   FROM
-    `rj-smtr-dev.bilhetagem.dicionario`
+    `rj-smtr.br_rj_riodejaneiro_bilhetagem.dicionario`
   WHERE
     id_tabela = "transacao"
-    AND coluna = "id_tipo_pagamento"
+    AND coluna = "id_tipo_pagamento" 
 )
-SELECT
+SELECT 
     EXTRACT(DATE FROM data_transacao) AS data,
     EXTRACT(HOUR FROM data_transacao) AS hora,
     data_transacao AS datetime_transacao,
     data_processamento AS datetime_processamento,
     t.timestamp_captura AS datetime_captura,
-    l.cd_linha AS id_servico_jae,
+    m.modo,
+    dc.id_consorcio,
+    dc.consorcio,
+    do.id_operadora,
+    do.operadora,
+    t.cd_linha AS id_servico_jae,
     sentido,
     NULL AS id_veiculo,
     COALESCE(t.id_cliente, t.pan_hash) AS id_cliente,
@@ -117,11 +123,18 @@ SELECT
     '{{ var("version") }}' as versao
 FROM
     transacao_deduplicada AS t
-LEFT JOIN
-    {{ ref("staging_linha") }} AS l
+LEFT JOIN 
+    {{ source("cadastro", "modos") }} m
 ON
-    t.cd_linha = l.cd_linha
-    AND t.data_transacao >= l.datetime_inclusao
+    t.id_tipo_modal = m.id_modo AND m.fonte = "jae"
+LEFT JOIN
+    {{ ref("operadoras") }} AS do
+ON
+    t.cd_operadora = do.id_operadora_jae
+LEFT JOIN
+    {{ ref("consorcios") }} AS dc
+ON
+    t.cd_consorcio = dc.id_consorcio_jae
 LEFT JOIN
     tipo_transacao AS tt
 ON
@@ -137,3 +150,10 @@ ON
     AND t.id_cliente = g.id_cliente
     AND t.data_transacao >= g.data_inicio_validade
     AND (t.data_transacao < g.data_fim_validade OR g.data_fim_validade IS NULL)
+LEFT JOIN
+    {{ ref("staging_linha_sem_ressarcimento") }} l
+ON
+    t.cd_linha = l.id_linha
+WHERE
+    l.id_linha IS NULL
+    AND DATE(data_transacao) >= "2023-07-17"

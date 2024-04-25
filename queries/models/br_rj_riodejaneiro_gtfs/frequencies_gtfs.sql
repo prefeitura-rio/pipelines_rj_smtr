@@ -4,7 +4,7 @@
     'granularity': 'day' },
     unique_key = ['trip_id', 'start_time', 'data_versao'],
     alias = 'frequencies'
-)}}
+)}} 
 
 
 SELECT SAFE_CAST(data_versao AS DATE) data_versao,

@@ -1,4 +1,4 @@
-SELECT
+SELECT 
 data,
 hora,
 id_veiculo,

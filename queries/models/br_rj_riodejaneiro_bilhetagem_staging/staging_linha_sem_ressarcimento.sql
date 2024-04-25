@@ -11,9 +11,9 @@ WITH linha_sem_ressarcimento AS (
     DATETIME(PARSE_TIMESTAMP('%Y-%m-%d %H:%M:%S%Ez', timestamp_captura), "America/Sao_Paulo") AS timestamp_captura,
     DATETIME(PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*S%Ez', SAFE_CAST(JSON_VALUE(content, '$.dt_inclusao') AS STRING)), 'America/Sao_Paulo') AS dt_inclusao
   FROM
-    {{ source('jae_source', 'linha_sem_ressarcimento') }}
+    {{ source('br_rj_riodejaneiro_bilhetagem_staging', 'linha_sem_ressarcimento') }}
 )
-SELECT
+SELECT 
   * EXCEPT(rn)
 FROM
 (

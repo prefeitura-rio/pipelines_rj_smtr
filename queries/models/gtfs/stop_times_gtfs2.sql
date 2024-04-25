@@ -4,10 +4,10 @@
     'granularity': 'day' },
     unique_key = ['trip_id', 'feed_start_date'],
     alias = 'stop_times'
-)}}
+)}} 
 
 
-SELECT
+SELECT 
     fi.feed_version,
     SAFE_CAST(st.data_versao AS DATE) as feed_start_date,
     fi.feed_end_date,
@@ -24,17 +24,17 @@ SELECT
     SAFE_CAST(JSON_VALUE(st.content, '$.shape_dist_traveled') AS FLOAT64) shape_dist_traveled,
     SAFE_CAST(JSON_VALUE(st.content, '$.timepoint') AS STRING) timepoint,
     '{{ var("version") }}' AS versao_modelo
-FROM
+FROM 
     {{ source(
         'br_rj_riodejaneiro_gtfs_staging',
         'stop_times'
     ) }} st
 JOIN
-    {{ ref('feed_info_gtfs2') }} fi
-ON
+    {{ ref('feed_info_gtfs2') }} fi 
+ON 
     st.data_versao = CAST(fi.feed_start_date AS STRING)
 {% if is_incremental() -%}
-    WHERE
+    WHERE 
         st.data_versao = '{{ var("data_versao_gtfs") }}'
         AND fi.feed_start_date = '{{ var("data_versao_gtfs") }}'
 {%- endif %}

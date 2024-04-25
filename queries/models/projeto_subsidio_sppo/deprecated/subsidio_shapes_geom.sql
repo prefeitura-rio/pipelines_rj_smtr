@@ -16,7 +16,7 @@ with data_versao as (
     where data between date_sub("{{ var("run_date") }}", interval 1 day) and date("{{ var("run_date") }}")
 ),
 contents as (
-    SELECT
+    SELECT 
         shape_id,
         ST_GEOGPOINT(
             SAFE_CAST(shape_pt_lon AS FLOAT64),
@@ -24,7 +24,7 @@ contents as (
         ) ponto_shape,
         SAFE_CAST(shape_pt_sequence as INT64) shape_pt_sequence,
         DATE(data_versao) AS data_versao
-    FROM
+    FROM 
         {{ var("subsidio_shapes") }} s
     {% if is_incremental() %}
     WHERE
@@ -33,18 +33,18 @@ contents as (
 ),
 pts as (
     select
-        *,
+        *, 
         max(shape_pt_sequence) over(
                 partition by data_versao, shape_id
         ) final_pt_sequence
-    from
+    from 
         contents c
     order by
         data_versao, shape_id, shape_pt_sequence
 ),
 shapes as (
 -- BUILD LINESTRINGS OVER SHAPE POINTS
-    SELECT
+    SELECT 
         shape_id,
         data_versao,
         st_makeline(ARRAY_AGG(ponto_shape)) as shape
@@ -53,33 +53,33 @@ shapes as (
 ),
 boundary as (
 -- EXTRACT START AND END POINTS FROM SHAPES
-    SELECT
+    SELECT 
         c1.shape_id,
         c1.ponto_shape start_pt,
         c2.ponto_shape end_pt,
         c1.data_versao
-    FROM
+    FROM 
         (select * from pts where shape_pt_sequence = 1) c1
-    JOIN
+    JOIN 
         (select * from pts where shape_pt_sequence = final_pt_sequence) c2
-    ON
+    ON 
         c1.shape_id = c2.shape_id and c1.data_versao = c2.data_versao
 ),
 merged as (
 -- JOIN SHAPES AND BOUNDARY POINTS
-    SELECT
+    SELECT 
         s.*,
         b.* except(data_versao, shape_id),
         round(ST_LENGTH(shape),1) shape_distance,
-    FROM
+    FROM 
         shapes s
-    JOIN
+    JOIN 
         boundary b
-    ON
+    ON 
         s.shape_id = b.shape_id and s.data_versao = b.data_versao
 ),
 ids as (
-    SELECT
+    SELECT 
         shape_id,
         shape,
         shape_distance,

@@ -4,10 +4,10 @@
     'granularity': 'day' },
     unique_key = ['stop_id', 'feed_start_date'],
     alias = 'stops'
-)}}
+)}} 
 
 
-SELECT
+SELECT 
     fi.feed_version,
     SAFE_CAST(s.data_versao AS DATE) as feed_start_date,
     fi.feed_end_date,
@@ -27,17 +27,17 @@ SELECT
     SAFE_CAST(JSON_VALUE(s.content, '$.level_id') AS STRING) level_id,
     SAFE_CAST(JSON_VALUE(s.content, '$.platform_code') AS STRING) platform_code,
     '{{ var("version") }}' AS versao_modelo
-FROM
+FROM 
     {{ source(
         'br_rj_riodejaneiro_gtfs_staging',
         'stops'
     ) }} s
 JOIN
-    {{ ref('feed_info_gtfs2') }} fi
-ON
+    {{ ref('feed_info_gtfs2') }} fi 
+ON 
     s.data_versao = CAST(fi.feed_start_date AS STRING)
 {% if is_incremental() -%}
-    WHERE
+    WHERE 
         s.data_versao = '{{ var("data_versao_gtfs") }}'
         AND fi.feed_start_date = '{{ var("data_versao_gtfs") }}'
 {%- endif %}

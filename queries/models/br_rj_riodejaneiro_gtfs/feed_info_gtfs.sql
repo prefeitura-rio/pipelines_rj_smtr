@@ -4,7 +4,7 @@
     'granularity': 'day' },
     unique_key = ['feed_publisher_name', 'data_versao'],
     alias = 'feed_info'
-)}}
+)}} 
 
 
 SELECT SAFE_CAST(data_versao AS DATE) data_versao,

@@ -22,8 +22,8 @@
 {% for indicador, modos in indicadores_modos.items() %}
     {% for modo in modos %}
     {% set outer_loop_iteration.value = outer_loop_iteration.value + 1 %}
-    SELECT
-        "{{ indicador }}" AS indicador,
+    SELECT 
+        "{{ indicador }}" AS indicador, 
         {% if modo %}"{{ modo }}"{% else %}NULL{% endif %} AS modo,
         *
     FROM (
@@ -37,10 +37,10 @@
             FROM
                 {{ table_name }}
                 --rj-smtr.indicadores_continuados_egp.indicadores_mes
-            WHERE
+            WHERE 
                 nome_indicador = "{{ indicador }}"
                 AND modo {% if modo %}= "{{ modo }}"{% else %}IS NULL{% endif %}
-        ) PIVOT ( MAX(valor) FOR mes IN (
+        ) PIVOT ( MAX(valor) FOR mes IN ( 
             1 Janeiro,
             2 Fevereiro,
             3 Marco,
@@ -52,7 +52,7 @@
             9 Setembro,
             10 Outubro,
             11 Novembro,
-            12 Dezembro )
+            12 Dezembro ) 
         )
     )
     {% if outer_loop_iteration.value != total_indicators.value %}UNION ALL{% endif %}

@@ -1,4 +1,4 @@
-{{
+{{ 
   config(
       materialized='incremental',
       partition_by={
@@ -18,7 +18,7 @@ Filtragem e tratamento básico de registros de gps.
 */
 WITH
 box AS (
-  /*1. Geometria de caixa que contém a área do município de Rio de Janeiro.*/
+  /*1. Geometria de caixa que contém a área do município de Rio de Janeiro.*/ 
 	SELECT
 	*
 	FROM
@@ -60,7 +60,7 @@ filtrada AS (
       ( SELECT min_longitude FROM box),
       ( SELECT min_latitude FROM box),
       ( SELECT max_longitude FROM box),
-      ( SELECT max_latitude FROM box))
+      ( SELECT max_latitude FROM box)) 
   )
 SELECT
   * except(rn),
