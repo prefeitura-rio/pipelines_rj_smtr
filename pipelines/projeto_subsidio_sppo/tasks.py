@@ -75,7 +75,9 @@ def subsidio_data_quality_check(
         test_check_list,
     ) in checks_list.items():
         checks[table_id] = perform_checks_for_table(
-            table_id, request_params, test_check_list, # check_params
+            table_id,
+            request_params,
+            test_check_list,  # check_params
         )
 
     log(checks)
