@@ -657,7 +657,7 @@ models:
           # - not_null
       - name: fim_periodo
         description: "Fim do período de operação planejado"
-        tests:
+        # tests:
           # - not_null
       - name: tempo_planejado
         description: "Tempo planejado da viagem (em minutos)"
