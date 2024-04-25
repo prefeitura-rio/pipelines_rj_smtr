@@ -7,11 +7,11 @@ from datetime import datetime, timedelta
 
 from prefect import task
 
-from pipelines.constants import constants
+
 from pipelines.constants import constants as smtr_constants
 from pipelines.utils.backup.tasks import (
     format_send_discord_message,
-    perform_check,
+    # perform_check,
     perform_checks_for_table,
 )
 from pipelines.utils.secret import get_secret
@@ -47,8 +47,8 @@ def subsidio_data_quality_check(
     if mode not in ["pre", "pos"]:
         raise ValueError("Mode must be 'pre' or 'pos'")
 
-    if check_params is None:
-        check_params = smtr_constants.SUBSIDIO_SPPO_DATA_CHECKS_PARAMS.value
+    # if check_params is None:
+    #     check_params = smtr_constants.SUBSIDIO_SPPO_DATA_CHECKS_PARAMS.value
 
     # if # code_owners is None:
     #     # code_owners = smtr_constants.SUBSIDIO_SPPO_CODE_OWNERS.value

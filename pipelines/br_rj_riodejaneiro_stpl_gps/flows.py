@@ -17,7 +17,7 @@ from pipelines.br_rj_riodejaneiro_stpl_gps.tasks import (
 )
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
-from pipelines.schedules import every_minute  # every_hour,
+# from pipelines.schedules import every_minute  # every_hour,
 from pipelines.utils.backup.tasks import (
     bq_upload,
     create_date_hour_partition,
