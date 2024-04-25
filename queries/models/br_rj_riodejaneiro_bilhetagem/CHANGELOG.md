@@ -12,7 +12,7 @@
 
 ## [1.0.1] - 2024-04-16
 
-### Adicionado 
+### Adicionado
 - Adicionada descrições das colunas das tabelas: `ordem_pagamento_consorcio_dia`, `ordem_pagamento_consorcio_operador_dia`, `ordem_pagamento_dia`,`transacao_riocard`
 - Adicionada a descrição da coluna intervalo_integracao na tabela `integracao`
 

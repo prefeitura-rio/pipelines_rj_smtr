@@ -25,7 +25,7 @@ WITH percentual_rateio_integracao AS (
   FROM
     {{ source('br_rj_riodejaneiro_bilhetagem_staging', 'percentual_rateio_integracao') }}
 )
-SELECT 
+SELECT
   * EXCEPT(rn)
 FROM
 (

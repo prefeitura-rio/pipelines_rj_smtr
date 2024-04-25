@@ -20,7 +20,7 @@ WITH gps_sppo AS (
     DATA = DATE_SUB(DATE('{{ var("run_date") }}'), INTERVAL 1 DAY)
   GROUP BY
     1,
-    2 
+    2
 ),
 planilha_ronald AS (
   SELECT DISTINCT
@@ -106,7 +106,7 @@ transacao_agg AS (
     transacao_riocard
   GROUP BY
     1,
-    2 
+    2
 )
 SELECT
   gs.data,

@@ -98,7 +98,7 @@ models:
         description: "Tipo de trajeto (0 - Regular, 1 - Alternativo, válida a partir de 2024-04-01)."
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS (Válida a partir de 2024-04-01)."
-      
+
   - name: aux_registros_status_trajeto
     description: "Tabela auxiliar de classificação dos registros de GPS
     no trajeto (shape), com base no serviço informado pelo veículo (atualizada diariamente, sem histórico)."
@@ -218,7 +218,7 @@ models:
               values: ["I", "V", "C"]
       - name: id_viagem
         description: "Código identificador da viagem (id_veiculo +
-        servico + datetime_partida)" 
+        servico + datetime_partida)"
         tests:
           - not_null
           - unique
@@ -282,7 +282,7 @@ models:
               values: ["I", "V", "C"]
       - name: id_viagem
         description: "Código identificador da viagem (id_veiculo +
-        servico + datetime_partida)" 
+        servico + datetime_partida)"
         tests:
           - not_null
           - unique
@@ -374,7 +374,7 @@ models:
               values: ["I", "V", "C"]
       - name: id_viagem
         description: "Código identificador da viagem (id_veiculo +
-        servico + datetime_partida)" 
+        servico + datetime_partida)"
         tests:
           - not_null
           - unique
@@ -397,7 +397,7 @@ models:
     columns:
       - name: id_viagem
         description: "Código identificador da viagem (id_veiculo +
-        servico + datetime_partida)" 
+        servico + datetime_partida)"
         tests:
           - not_null
           - unique
@@ -502,7 +502,7 @@ models:
               values: ["I", "V", "C"]
       - name: id_viagem
         description: "Código identificador da viagem (id_veiculo +
-        servico + datetime_partida)" 
+        servico + datetime_partida)"
         tests:
           - not_null
           - unique
@@ -648,7 +648,7 @@ models:
               values: ["I", "V", "C"]
       - name: id_viagem
         description: "Código identificador da viagem (id_veiculo +
-        servico + datetime_partida)" 
+        servico + datetime_partida)"
         tests:
           - not_null
           - unique
@@ -666,7 +666,7 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ["Completa linha correta", "Completa linha incorreta"]  
+              values: ["Completa linha correta", "Completa linha incorreta"]
       - name: inicio_periodo
         description: "Início do período de operação planejado"
         # tests:
@@ -752,7 +752,7 @@ models:
         description: "Ponto final do shape em formato geográfico (Point)."
       - name: data_versao
         description: "Data de referência do planejamento (versão)."
-      - name: versao_modelo 
+      - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
   - name: subsidio_trips_desaninhada
     description: "Viagens para cada serviço (Descontinuada a partir de 2024-04-01 [SUBSIDIO_V6])"
@@ -773,7 +773,7 @@ models:
         description: "Apenas Dia Útil (DU)"
       - name: data_versao
         description: "Data de referência do planejamento (versão)."
-      - name: versao_modelo 
+      - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
   - name: subsidio_quadro_horario
     description: "Dados de planejamento operacional dos serviços (Descontinuada a partir de 2024-04-01 [SUBSIDIO_V6])"
@@ -800,7 +800,7 @@ models:
         description: "Dia da semana - categorias: Dia Útil, Sabado, Domingo e Ponto Facultativo"
       - name: distancia_total_planejada
         description: "Distância total planejada do serviço em km (junta ida+volta multiplicado pela quantidade de viagens)."
-      - name: versao_modelo 
+      - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
 
   - name: subsidio_data_versao_efetiva

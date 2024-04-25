@@ -4,10 +4,10 @@
   'granularity': 'day' },
   unique_key = ['agency_id', 'feed_start_date'],
   alias = 'agency',
-) }} 
+) }}
 
 
-SELECT 
+SELECT
   fi.feed_version,
   SAFE_CAST(a.data_versao AS DATE) feed_start_date,
   fi.feed_end_date,
@@ -17,14 +17,14 @@ SELECT
   SAFE_CAST(JSON_VALUE(a.content, '$.agency_timezone') AS STRING) agency_timezone,
   SAFE_CAST(JSON_VALUE(a.content, '$.agency_lang') AS STRING) agency_lang,
   '{{ var("version") }}' AS versao_modelo
-FROM 
+FROM
   {{ source('br_rj_riodejaneiro_gtfs_staging', 'agency') }} a
-JOIN 
-  {{ ref('feed_info_gtfs2') }} fi 
-ON 
+JOIN
+  {{ ref('feed_info_gtfs2') }} fi
+ON
   a.data_versao = CAST(fi.feed_start_date AS STRING)
 {% if is_incremental() -%}
-  WHERE 
+  WHERE
     a.data_versao = '{{ var("data_versao_gtfs") }}'
     AND fi.feed_start_date = '{{ var("data_versao_gtfs") }}'
 {%- endif %}

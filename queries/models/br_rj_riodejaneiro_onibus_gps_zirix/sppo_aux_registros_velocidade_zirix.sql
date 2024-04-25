@@ -7,8 +7,8 @@
 Descrição:
 Estimativa das velocidades dos veículos nos últimos 10 minutos contados a partir da timestamp_gps atual.
 Essa metodologia serve para determinar quais carros estão em movimento e quais estão parados.
-1. Calculamos a velocidade do veículo no último trecho de 10 minutos de operação. 
-A implementação utiliza a função 'first_value' com uma janela (cláusula 'over') de até 10 minutos anteriores à 
+1. Calculamos a velocidade do veículo no último trecho de 10 minutos de operação.
+A implementação utiliza a função 'first_value' com uma janela (cláusula 'over') de até 10 minutos anteriores à
 timestamp_gps atual e calcula a distância do ponto mais antigo (o first_value na janela) ao ponto atual (posicao_veiculo_geo).
 Dividimos essa distância pela diferença de tempo entre a timestamp_gps atual e a timestamp_gps do ponto mais
 antigo da janela (o qual recuperamos novamente com o uso de first_value).
@@ -19,7 +19,7 @@ um valor nulo.
 2. Após o calculo da velocidade, definimos a coluna 'status_movimento'. Veículos abaixo da 'velocidade_limiar_parado', são
 considerados como 'parado'. Caso contrário, são considerados 'andando'
 */
-with 
+with
     t_velocidade as (
     select
         data,
@@ -48,7 +48,7 @@ with
                 SECOND
                 )),
             0
-        ) * 3.6 velocidade 
+        ) * 3.6 velocidade
     FROM  {{ ref("sppo_aux_registros_filtrada_zirix") }}
     {%if not flags.FULL_REFRESH -%}
     WHERE
@@ -57,12 +57,12 @@ with
     {%- endif -%}
     ),
     medias as (
-        select 
+        select
         data,
         id_veiculo,
         timestamp_gps,
         linha,
-        distancia, 
+        distancia,
         velocidade, # velocidade do pontual
         AVG(velocidade) OVER (
             PARTITION BY id_veiculo, linha
@@ -72,16 +72,16 @@ with
     from t_velocidade
     )
 SELECT
-    timestamp_gps, 
+    timestamp_gps,
     data,
     id_veiculo,
-    linha, 
+    linha,
     distancia,
     ROUND(
         CASE WHEN velocidade_media > {{ var('velocidade_maxima') }}
             THEN {{ var('velocidade_maxima') }}
-            ELSE velocidade_media 
-        END, 
+            ELSE velocidade_media
+        END,
         1) as velocidade,
     -- 2. Determinação do estado de movimento do veículo.
     case

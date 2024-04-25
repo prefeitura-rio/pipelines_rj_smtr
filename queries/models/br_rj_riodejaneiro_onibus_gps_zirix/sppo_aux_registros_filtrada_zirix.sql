@@ -1,4 +1,4 @@
-{{ 
+{{
   config(
       materialized='incremental',
       partition_by={
@@ -19,14 +19,14 @@ Filtragem e tratamento básico de registros de gps.
 */
 WITH
 box AS (
-  /*1. Geometria de caixa que contém a área do município de Rio de Janeiro.*/ 
+  /*1. Geometria de caixa que contém a área do município de Rio de Janeiro.*/
 	SELECT
 	*
 	FROM
-	{{ var('limites_caixa') }} 
+	{{ var('limites_caixa') }}
 ),
 gps AS (
-  /*2. Filtra registros antigos. Remove registros que tem diferença maior que 1 minuto entre o timestamp_captura e timestamp_gps.*/ 
+  /*2. Filtra registros antigos. Remove registros que tem diferença maior que 1 minuto entre o timestamp_captura e timestamp_gps.*/
   SELECT
     *,
     ST_GEOGPOINT(longitude, latitude) posicao_veiculo_geo
@@ -71,7 +71,7 @@ filtrada AS (
       ( SELECT min_longitude FROM box),
       ( SELECT min_latitude FROM box),
       ( SELECT max_longitude FROM box),
-      ( SELECT max_latitude FROM box)) 
+      ( SELECT max_latitude FROM box))
   )
 SELECT
   * except(rn),

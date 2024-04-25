@@ -1,10 +1,10 @@
 -- 1. Identifica viagens circulares de ida que possuem volta
 --    consecutiva. Junta numa única linha a datetime_partida (ida) + datetime_chegada_volta
 with ida_volta_circular as (
-    select 
+    select
         t.*
     from (
-        select 
+        select
             *,
             lead(datetime_partida) over (
                 partition by id_veiculo, servico_realizado order by id_veiculo, servico_realizado, datetime_partida, sentido_shape) as datetime_partida_volta,
@@ -14,7 +14,7 @@ with ida_volta_circular as (
                 partition by id_veiculo, servico_realizado order by id_veiculo, servico_realizado, datetime_partida, sentido_shape) as shape_id_volta,
             lead(sentido_shape) over (
                 partition by id_veiculo, servico_realizado order by id_veiculo, servico_realizado, datetime_partida, sentido_shape) = "V" as flag_proximo_volta -- possui volta
-        from 
+        from
             {{ ref("aux_viagem_inicio_fim") }} v
         where
             sentido = "C"
@@ -28,7 +28,7 @@ with ida_volta_circular as (
 --    (mantem ida e volta separadas, mas com o mesmo id)
 viagem_circular as (
     select distinct
-        * 
+        *
     from (
         select
             case
@@ -42,9 +42,9 @@ viagem_circular as (
                 ) then c.id_viagem
             end as id_viagem,
             v.* except(id_viagem)
-        from 
+        from
             {{ ref("aux_viagem_inicio_fim") }} v
-        inner join 
+        inner join
             ida_volta_circular c
         on
             c.id_veiculo = v.id_veiculo
@@ -57,13 +57,13 @@ viagem_circular as (
 -- 3. Junta viagens circulares tratadas às viagens não circulares já identificadas
 select
     *
-from 
+from
     viagem_circular v
 union all (
     select
         *
     from
         {{ ref("aux_viagem_inicio_fim") }} v
-    where 
+    where
         sentido = "I" or sentido = "V"
 )

@@ -37,7 +37,7 @@
 {% endif %}
 
 WITH transacao_deduplicada AS (
-    SELECT 
+    SELECT
         * EXCEPT(rn)
     FROM
     (
@@ -62,10 +62,10 @@ tipo_transacao AS (
     `rj-smtr.br_rj_riodejaneiro_bilhetagem.dicionario`
   WHERE
     id_tabela = "transacao"
-    AND coluna = "id_tipo_transacao" 
+    AND coluna = "id_tipo_transacao"
 ),
 gratuidade AS (
-    SELECT 
+    SELECT
         CAST(id_cliente AS STRING) AS id_cliente,
         tipo_gratuidade,
         data_inicio_validade,
@@ -91,9 +91,9 @@ tipo_pagamento AS (
     `rj-smtr.br_rj_riodejaneiro_bilhetagem.dicionario`
   WHERE
     id_tabela = "transacao"
-    AND coluna = "id_tipo_pagamento" 
+    AND coluna = "id_tipo_pagamento"
 )
-SELECT 
+SELECT
     EXTRACT(DATE FROM data_transacao) AS data,
     EXTRACT(HOUR FROM data_transacao) AS hora,
     data_transacao AS datetime_transacao,
@@ -123,7 +123,7 @@ SELECT
     '{{ var("version") }}' as versao
 FROM
     transacao_deduplicada AS t
-LEFT JOIN 
+LEFT JOIN
     {{ source("cadastro", "modos") }} m
 ON
     t.id_tipo_modal = m.id_modo AND m.fonte = "jae"

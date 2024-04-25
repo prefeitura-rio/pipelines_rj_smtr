@@ -19,7 +19,7 @@ TIPOS:
 
 */
 
-SELECT 
+SELECT
 DATE(SAFE_CAST(Data AS DATETIME)) data,
 REPLACE(content,"None","") content,
 SAFE_CAST(data_versao AS DATE) data_versao

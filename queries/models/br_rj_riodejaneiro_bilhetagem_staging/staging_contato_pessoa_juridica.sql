@@ -4,7 +4,7 @@
   )
 }}
 
-WITH 
+WITH
     contato_pessoa_juridica AS (
         SELECT
             data,

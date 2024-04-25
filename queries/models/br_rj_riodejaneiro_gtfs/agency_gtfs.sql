@@ -4,7 +4,7 @@
   'granularity': 'day' },
   unique_key = ['agency_id', 'data_versao'],
   alias = 'agency',
-) }} 
+) }}
 
 
 SELECT SAFE_CAST(data_versao AS DATE) data_versao,

@@ -19,7 +19,7 @@ Identificação de todas as trips de referência para os trajetos alternativos
   {%- set eventos_trajetos_alternativos = run_query(query).columns[0].values() -%}
 {% endif %}
 
-WITH 
+WITH
   -- 1. Busca os shapes em formato geográfico
   shapes AS (
     SELECT
@@ -27,7 +27,7 @@ WITH
     FROM
       {{ ref("shapes_geom_gtfs2") }}
     {% if is_incremental() -%}
-    WHERE 
+    WHERE
       feed_start_date = '{{ var("data_versao_gtfs") }}'
     {% endif -%}
   ),
