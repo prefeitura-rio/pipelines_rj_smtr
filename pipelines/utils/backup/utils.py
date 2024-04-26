@@ -210,7 +210,7 @@ def connect_ftp(secret_path: str = None, secure: bool = True):
         ImplicitFTP_TLS: ftp client
     """
 
-    ftp_data = get_secret(secret_path)["data"]
+    ftp_data = get_secret(secret_path)
     if secure:
         ftp_client = ImplicitFtpTls()
     else:
@@ -543,7 +543,7 @@ def get_raw_data_api(  # pylint: disable=R0912
         if secret_path is None:
             headers = secret_path
         else:
-            headers = get_secret(secret_path)["data"]
+            headers = get_secret(secret_path)
 
         response = requests.get(
             url,
@@ -662,7 +662,7 @@ def get_raw_data_db(
     filetype = "json"
 
     try:
-        credentials = get_secret(secret_path)["data"]
+        credentials = get_secret(secret_path)
 
         with connector_mapping[engine](
             host=host,

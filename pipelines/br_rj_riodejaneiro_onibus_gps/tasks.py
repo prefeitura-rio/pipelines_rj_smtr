@@ -44,7 +44,7 @@ def create_api_url_onibus_realocacao(
     }
     url = "http://ccomobility.com.br/WebServices/Binder/wsconecta/EnvioViagensRetroativasSMTR?"
 
-    headers = get_secret(secret_path)["data"]
+    headers = get_secret(secret_path)
     key = list(headers)[0]
     url = f"{url}{key}={{secret}}"
 
