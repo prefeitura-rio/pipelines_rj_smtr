@@ -31,6 +31,7 @@ from pipelines.utils.backup.tasks import (  # get_local_dbt_client,
     fetch_dataset_sha,
     get_current_flow_labels,
     get_current_flow_mode,
+    get_flow_project,
     get_current_timestamp,
     get_materialization_date_range,
     get_now_time,
@@ -280,6 +281,7 @@ with Flow(
     materialize = Parameter("materialize", default=True)
     # SETUP #
     LABELS = get_current_flow_labels()
+    PROJECT = get_flow_project()
 
     errors, timestamps, previous_errors = query_logs(
         dataset_id=constants.GPS_SPPO_RAW_DATASET_ID.value,
@@ -294,7 +296,7 @@ with Flow(
         with case(materialize, True):
             materialize_no_error = create_flow_run(
                 flow_name=materialize_sppo.name,
-                project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+                project_name=PROJECT,
                 labels=LABELS,
                 run_name=materialize_sppo.name,
             )
@@ -353,7 +355,7 @@ with Flow(
         with case(materialize, True):
             run_materialize = create_flow_run(
                 flow_name=materialize_sppo.name,
-                project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+                project_name=PROJECT,
                 labels=LABELS,
                 run_name=materialize_sppo.name,
             )

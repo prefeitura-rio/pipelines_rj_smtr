@@ -32,6 +32,7 @@ from pipelines.utils.backup.tasks import (
     bq_upload,
     get_current_flow_labels,
     get_current_flow_mode,
+    get_flow_project,
     get_current_timestamp,
     get_now_time,
     rename_current_flow_run_now_time,
@@ -155,10 +156,11 @@ with Flow(
     # code_owners=constants.DEFAULT_CODE_OWNERS.value,
 ) as rho_captura_tratamento:
     LABELS = get_current_flow_labels()
+    PROJECT = get_flow_project()
 
     run_captura = create_flow_run(
         flow_name=captura_sppo_rho.name,
-        project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+        project_name=PROJECT,
         labels=LABELS,
     )
 
@@ -171,7 +173,7 @@ with Flow(
 
     run_materializacao = create_flow_run(
         flow_name=sppo_rho_materialize.name,
-        project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+        project_name=PROJECT,
         labels=LABELS,
         upstream_tasks=[wait_captura],
     )

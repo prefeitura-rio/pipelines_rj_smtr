@@ -28,6 +28,7 @@ from pipelines.utils.backup.flows import (
 from pipelines.utils.backup.tasks import (
     get_current_flow_labels,
     get_current_timestamp,
+    get_flow_project,
     get_scheduled_start_times,
     rename_current_flow_run_now_time,
 )
@@ -100,6 +101,8 @@ with Flow(
     )
 
     LABELS = get_current_flow_labels()
+    PROJECT = get_flow_project()
+
     with case(capture, True):
         gtfs_capture_parameters = [
             {"timestamp": data_versao_gtfs, **d} for d in constants.GTFS_TABLE_CAPTURE_PARAMS.value
@@ -107,7 +110,7 @@ with Flow(
 
         run_captura = create_flow_run.map(
             flow_name=unmapped(gtfs_captura.name),
-            project_name=unmapped(emd_constants.PREFECT_DEFAULT_PROJECT.value),
+            project_name=unmapped(PROJECT),
             parameters=gtfs_capture_parameters,
             labels=unmapped(LABELS),
             scheduled_start_time=get_scheduled_start_times(
@@ -148,7 +151,7 @@ with Flow(
 
         run_materializacao = create_flow_run(
             flow_name=gtfs_materializacao.name,
-            project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            project_name=PROJECT,
             parameters=gtfs_materializacao_parameters,
             labels=LABELS,
             upstream_tasks=[wait_captura],
@@ -156,7 +159,7 @@ with Flow(
 
         run_materializacao_new_dataset_id = create_flow_run(
             flow_name=gtfs_materializacao.name,
-            project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            project_name=PROJECT,
             parameters=gtfs_materializacao_parameters_new,
             labels=LABELS,
             upstream_tasks=[wait_captura],

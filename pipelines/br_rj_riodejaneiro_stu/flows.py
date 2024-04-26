@@ -29,6 +29,7 @@ from pipelines.constants import constants as emd_constants
 from pipelines.utils.backup.flows import default_capture_flow
 from pipelines.utils.backup.tasks import (
     get_current_flow_labels,
+    get_flow_project,
     get_current_timestamp,
     rename_current_flow_run_now_time,
 )
@@ -75,6 +76,7 @@ with Flow(
     )
 
     LABELS = get_current_flow_labels()
+    PROJECT = get_flow_project()
 
     # JOIN INDIVIDUAL FILES
     raw_files = get_stu_raw_blobs(data_versao_stu=data_versao_stu)
@@ -92,7 +94,7 @@ with Flow(
 
     run_captura = create_flow_run.map(
         flow_name=unmapped(stu_captura_subflow.name),
-        project_name=unmapped(emd_constants.PREFECT_DEFAULT_PROJECT.value),
+        project_name=unmapped(PROJECT),
         parameters=stu_capture_parameters,
         labels=unmapped(LABELS),
     )

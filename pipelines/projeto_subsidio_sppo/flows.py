@@ -32,6 +32,7 @@ from pipelines.utils.backup.tasks import (
     fetch_dataset_sha,
     get_current_flow_labels,
     get_current_flow_mode,
+    get_flow_project,
     get_join_dict,
     get_now_date,
     get_previous_date,
@@ -153,6 +154,7 @@ with Flow(
     # Set dbt client #
     LABELS = get_current_flow_labels()
     MODE = get_current_flow_mode()
+    PROJECT = get_flow_project()
 
     # dbt_client = get_k8s_dbt_client(mode=MODE, wait=rename_flow_run)
     # Use the command below to get the dbt client in dev mode:
@@ -176,7 +178,7 @@ with Flow(
 
             SPPO_VEICULO_DIA_RUN = create_flow_run(
                 flow_name=sppo_veiculo_dia.name,
-                project_name=constants.PREFECT_DEFAULT_PROJECT.value,
+                project_name=PROJECT,
                 run_name=sppo_veiculo_dia.name,
                 parameters=parameters,
             )
