@@ -12,6 +12,7 @@ from prefect.tasks.control_flow import merge
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
+from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
     handler_inject_bd_credentials,
@@ -99,7 +100,6 @@ with Flow(
     )
 
     LABELS = get_current_flow_labels()
-
     with case(capture, True):
         gtfs_capture_parameters = [
             {"timestamp": data_versao_gtfs, **d} for d in constants.GTFS_TABLE_CAPTURE_PARAMS.value

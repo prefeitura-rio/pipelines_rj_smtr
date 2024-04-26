@@ -174,7 +174,7 @@ def get_last_run_timestamp(dataset_id: str, table_id: str, mode: str = "prod") -
     redis_client = get_redis_client()
     key = dataset_id + "." + table_id
     log(f"Fetching key {key} from redis, working on mode {mode}")
-    if mode == "dev":
+    if mode != "prod":
         key = f"{mode}.{key}"
     runs = redis_client.get(key)
     # if runs is None:

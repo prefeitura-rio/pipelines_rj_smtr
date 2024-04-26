@@ -145,7 +145,7 @@ with Flow(
     rebuild = Parameter("rebuild", False)
 
     LABELS = get_current_flow_labels()
-    MODE = get_flow_run_mode(LABELS)
+    MODE = get_current_flow_mode()
 
     # Set dbt client #
     # dbt_client = get_k8s_dbt_client(mode=MODE, wait=rename_flow_run)

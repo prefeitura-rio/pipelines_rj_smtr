@@ -66,7 +66,7 @@ with Flow(
     timestamp = get_current_timestamp()
 
     LABELS = get_current_flow_labels()
-    MODE = get_flow_run_mode(LABELS)
+    MODE = get_current_flow_mode()
 
     # Rename flow run
     rename_flow_run = rename_current_flow_run_now_time(
@@ -134,7 +134,7 @@ with Flow(
     timestamp = get_current_timestamp()
 
     LABELS = get_current_flow_labels()
-    MODE = get_flow_run_mode(LABELS)
+    MODE = get_current_flow_mode()
 
     # Rename flow run
     rename_flow_run = rename_current_flow_run_now_time(
@@ -214,7 +214,7 @@ with Flow(
 
     # Set dbt client #
     LABELS = get_current_flow_labels()
-    MODE = get_flow_run_mode(LABELS)
+    MODE = get_current_flow_mode()
 
     # dbt_client = get_k8s_dbt_client(mode=MODE, wait=rename_flow_run)
     # Use the command below to get the dbt client in dev mode:

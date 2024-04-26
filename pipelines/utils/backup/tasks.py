@@ -1341,7 +1341,7 @@ def set_last_run_timestamp(
     log(f"Saving timestamp {timestamp} on Redis for {dataset_id}.{table_id}")
     redis_client = get_redis_client()
     key = dataset_id + "." + table_id
-    if mode != "production":
+    if mode != "prod":
         key = f"{mode}.{key}"
         log(f'Will set last run timestamp on key: {key}')
     content = redis_client.get(key)
@@ -1766,15 +1766,16 @@ def get_now_date():
 
 
 @task
-def get_current_flow_mode(labels: List[str]) -> str:
+def get_current_flow_mode() -> str:
     """
     Get the mode (prod/dev/staging) of the current flow.
     """
-    flow_run_id = prefect.context.get("flow_run_id")
-    flow_run_view = FlowRunView.from_flow_run_id(flow_run_id)
+    project_name = prefect.context.get("project_name")
     
-    if labels[0].endswith("-dev"):
+    if project_name !="production":
         return "dev"
-    if labels[0].endswith("-staging"):
-        return "staging"
     return "prod"
+
+@task
+def get_flow_project():
+    return prefect.context.get('project_name')

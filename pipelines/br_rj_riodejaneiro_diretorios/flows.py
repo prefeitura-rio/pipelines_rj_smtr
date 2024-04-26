@@ -11,6 +11,7 @@ from prefect.storage import GCS
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
+from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
     handler_inject_bd_credentials,
@@ -24,6 +25,7 @@ from pipelines.constants import constants as emd_constants
 from pipelines.utils.backup.flows import default_materialization_flow
 from pipelines.utils.backup.tasks import (
     get_current_flow_labels,
+    get_flow_project,
     get_rounded_timestamp,
     rename_current_flow_run_now_time,
 )
@@ -67,6 +69,7 @@ with Flow(
     )
 
     LABELS = get_current_flow_labels()
+    PROJECT = get_flow_project()
 
     table_params = task(
         lambda tables, exclude: [t for t in tables if t["table_id"] not in exclude]
@@ -78,7 +81,7 @@ with Flow(
 
     run_materializacao = create_flow_run.map(
         flow_name=unmapped(diretorios_materializacao_subflow.name),
-        project_name=unmapped(emd_constants.PREFECT_DEFAULT_PROJECT.value),
+        project_name=unmapped(PROJECT),
         labels=unmapped(LABELS),
         parameters=table_params,
     )
