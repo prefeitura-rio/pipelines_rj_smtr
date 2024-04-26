@@ -1771,11 +1771,12 @@ def get_current_flow_mode() -> str:
     Get the mode (prod/dev/staging) of the current flow.
     """
     project_name = prefect.context.get("project_name")
-    
-    if project_name !="production":
+
+    if project_name != "production":
         return "dev"
     return "prod"
 
+
 @task
 def get_flow_project():
-    return prefect.context.get('project_name')
+    return prefect.context.get("project_name")
