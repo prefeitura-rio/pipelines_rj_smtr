@@ -13,6 +13,7 @@ from prefect.storage import GCS
 # EMD Imports #
 
 from prefeitura_rio.pipelines_utils.custom import Flow
+from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
     handler_initialize_sentry,
@@ -68,7 +69,7 @@ with Flow(
     rebuild = Parameter("rebuild", False)
 
     LABELS = get_current_flow_labels()
-    MODE = get_current_flow_mode(LABELS)
+    MODE = get_flow_run_mode(LABELS)
 
     # Set dbt client #
     # dbt_client = get_k8s_dbt_client(mode=MODE, wait=rename_flow_run)

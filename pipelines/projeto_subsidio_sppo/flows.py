@@ -11,6 +11,7 @@ from prefect.tasks.control_flow import merge
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
+from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
     handler_inject_bd_credentials,
@@ -78,7 +79,7 @@ with Flow(
     )
 
     LABELS = get_current_flow_labels()
-    MODE = get_current_flow_mode(LABELS)
+    MODE = get_flow_run_mode(LABELS)
 
     # Set dbt client #
     # dbt_client = get_k8s_dbt_client(mode=MODE, wait=rename_flow_run)
@@ -151,7 +152,7 @@ with Flow(
 
     # Set dbt client #
     LABELS = get_current_flow_labels()
-    MODE = get_current_flow_mode(LABELS)
+    MODE = get_flow_run_mode(LABELS)
 
     # dbt_client = get_k8s_dbt_client(mode=MODE, wait=rename_flow_run)
     # Use the command below to get the dbt client in dev mode:

@@ -11,6 +11,7 @@ from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
+from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 
 # from pipelines.utils.execute_dbt_model.tasks import get_k8s_dbt_client
 from prefeitura_rio.pipelines_utils.state_handlers import (
@@ -65,7 +66,7 @@ with Flow(
     timestamp = get_current_timestamp()
 
     LABELS = get_current_flow_labels()
-    MODE = get_current_flow_mode(LABELS)
+    MODE = get_flow_run_mode(LABELS)
 
     # Rename flow run
     rename_flow_run = rename_current_flow_run_now_time(
@@ -133,7 +134,7 @@ with Flow(
     timestamp = get_current_timestamp()
 
     LABELS = get_current_flow_labels()
-    MODE = get_current_flow_mode(LABELS)
+    MODE = get_flow_run_mode(LABELS)
 
     # Rename flow run
     rename_flow_run = rename_current_flow_run_now_time(
@@ -213,7 +214,7 @@ with Flow(
 
     # Set dbt client #
     LABELS = get_current_flow_labels()
-    MODE = get_current_flow_mode(LABELS)
+    MODE = get_flow_run_mode(LABELS)
 
     # dbt_client = get_k8s_dbt_client(mode=MODE, wait=rename_flow_run)
     # Use the command below to get the dbt client in dev mode:

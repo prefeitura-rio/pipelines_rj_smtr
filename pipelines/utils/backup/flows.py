@@ -212,7 +212,7 @@ with Flow(
     dbt_vars = Parameter("dbt_vars", default=dict())
 
     LABELS = get_current_flow_labels()
-    MODE = get_current_flow_mode(LABELS)
+    MODE = get_flow_run_mode(LABELS)
 
     timestamp = get_rounded_timestamp(timestamp=timestamp)
 
