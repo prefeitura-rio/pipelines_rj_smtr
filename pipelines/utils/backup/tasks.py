@@ -1343,7 +1343,7 @@ def set_last_run_timestamp(
     key = dataset_id + "." + table_id
     if mode != "production":
         key = f"{mode}.{key}"
-        log(f'Will set last run timestamp on key: {key}')
+        log(f"Will set last run timestamp on key: {key}")
     content = redis_client.get(key)
     if not content:
         content = {}
@@ -1772,7 +1772,7 @@ def get_current_flow_mode(labels: List[str]) -> str:
     """
     flow_run_id = prefect.context.get("flow_run_id")
     flow_run_view = FlowRunView.from_flow_run_id(flow_run_id)
-    
+
     if labels[0].endswith("-dev"):
         return "dev"
     if labels[0].endswith("-staging"):
