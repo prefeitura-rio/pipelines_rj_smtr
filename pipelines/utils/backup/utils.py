@@ -15,7 +15,6 @@ from pathlib import Path
 from typing import Any, List, Union
 
 import basedosdados as bd
-from google.api_core.exceptions import BadRequest
 import pandas as pd
 import prefect
 import psycopg2
@@ -24,16 +23,18 @@ import pymysql
 import pytz
 import requests
 from basedosdados import Table
+from google.api_core.exceptions import BadRequest
 from google.cloud.storage.blob import Blob
 from prefect.schedules.clocks import IntervalClock
+
 # from prefeitura_rio.pipelines_utils.infisical import get_secret
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
 
 from pipelines.constants import constants
-from pipelines.utils.secret import get_secret
 from pipelines.utils.implicit_ftp import ImplicitFtpTls
+from pipelines.utils.secret import get_secret
 
 # Set BD config to run on cloud #
 bd.config.from_file = True
