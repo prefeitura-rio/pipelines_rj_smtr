@@ -230,6 +230,7 @@ def update_rdo_redis(
     table_id: str,
     dataset_id: str = constants.RDO_DATASET_ID.value,
     errors=None,
+    mode:str = 'prod',
     wait=None,  # pylint: disable=W0613
 ):
     """
@@ -247,6 +248,8 @@ def update_rdo_redis(
         bool: if redis key was set
     """
     key = f"{dataset_id}.{table_id}"
+    if mode != 'prod':
+        key = f'{mode}.{key}'
     redis_client = get_redis_client()
     content = redis_client.get(key)  # get current redis state
     if errors:
