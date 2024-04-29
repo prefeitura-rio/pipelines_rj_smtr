@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any, List, Union
 
 import basedosdados as bd
+from google.api_core.exceptions import BadRequest
 import pandas as pd
 import prefect
 import psycopg2
@@ -25,12 +26,13 @@ import requests
 from basedosdados import Table
 from google.cloud.storage.blob import Blob
 from prefect.schedules.clocks import IntervalClock
-from prefeitura_rio.pipelines_utils.infisical import get_secret
+# from prefeitura_rio.pipelines_utils.infisical import get_secret
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
 
 from pipelines.constants import constants
+from pipelines.utils.secret import get_secret
 from pipelines.utils.implicit_ftp import ImplicitFtpTls
 
 # Set BD config to run on cloud #
@@ -149,11 +151,15 @@ def get_table_min_max_value(  # pylint: disable=R0913
         SELECT
             {kind}({field_name})
         FROM {query_project_id}.{dataset_id}.{table_id}
+        WHERE data >= DATETIME_SUB(CURRENT_DATETIME(), INTERVAL 7 DAY)
     """
     log(f"Will run query:\n{query}")
-    result = bd.read_sql(query=query, billing_project_id=bq_project())
+    try:
+        result = bd.read_sql(query=query, billing_project_id=bq_project())
 
-    return result.iloc[0][0]
+        return result.iloc[0][0]
+    except BadRequest:
+        return datetime.now(pytz.timezone("America/Sao_Paulo")).strftime("%Y-%m-%dT%H:%M:%S")
 
 
 def get_last_run_timestamp(dataset_id: str, table_id: str, mode: str = "prod") -> str:
