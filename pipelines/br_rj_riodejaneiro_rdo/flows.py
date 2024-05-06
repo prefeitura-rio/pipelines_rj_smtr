@@ -23,7 +23,7 @@ from pipelines.br_rj_riodejaneiro_rdo.tasks import (
     get_file_paths_from_ftp,
     get_rdo_date_range,
     pre_treatment_br_rj_riodejaneiro_rdo,
-    update_rdo_redis,
+    update_redis_ftp_files,
 )
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
@@ -142,7 +142,7 @@ with Flow(
         partitions=partitions,
         status=status,
     )
-    set_redis = update_rdo_redis(download_files=download_files, table_id=table_id, errors=errors)
+    set_redis = update_redis_ftp_files(download_files=download_files, table_id=table_id, errors=errors)
 
 captura_sppo_rho.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 captura_sppo_rho.run_config = KubernetesRun(
@@ -230,7 +230,7 @@ with Flow(
         partitions=partitions,
         status=status,
     )
-    set_redis = update_rdo_redis(download_files=download_files, table_id=table_id, errors=errors)
+    set_redis = update_redis_ftp_files(download_files=download_files, table_id=table_id, errors=errors)
 
 captura_sppo_rdo.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 captura_sppo_rdo.run_config = KubernetesRun(

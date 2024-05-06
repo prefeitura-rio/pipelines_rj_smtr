@@ -86,8 +86,9 @@ def check_files_for_download(files: list, dataset_id: str, table_id: str):
     try:
         exclude_files = redis_client.get(f"{dataset_id}.{table_id}")["files"]
     except (TypeError, KeyError):
-        set_redis_rdo_files(redis_client, dataset_id, table_id)
-        exclude_files = redis_client.get(f"{dataset_id}.{table_id}")["files"]
+        # set_redis_rdo_files(redis_client, dataset_id, table_id)
+        # exclude_files = redis_client.get(f"{dataset_id}.{table_id}")["files"]
+        exclude_files =[]
 
     log(f"There are {len(exclude_files)} already downloaded")
     download_files = [
@@ -98,27 +99,30 @@ def check_files_for_download(files: list, dataset_id: str, table_id: str):
 
 
 @task
-def download_and_save_local_from_ftp(file_info: dict):
+def download_and_save_local_from_ftp(file_info: dict, dataset_id:str=None, table_id:str=None):
     """
     Downloads file from FTP and saves to data/raw/<dataset_id>/<table_id>.
     """
     # table_id: str, kind: str, rho: bool = False, rdo: bool = True
     if file_info["error"] is not None:
         return file_info
+    if not dataset_id:
+        dataset_id = constants.RDO_DATASET_ID.value
+    if not table_id:
+        table_id = build_table_id(  # mudar pra task
+            mode=file_info["transport_mode"], report_type=file_info["report_type"]
+        )
 
-    dataset_id = constants.RDO_DATASET_ID.value
     base_path = f'{os.getcwd()}/{os.getenv("DATA_FOLDER", "data")}/{{bucket_mode}}/{dataset_id}'
-
-    table_id = build_table_id(  # mudar pra task
-        mode=file_info["transport_mode"], report_type=file_info["report_type"]
-    )
 
     # Set general local path to save file (bucket_modes: raw or staging)
     file_info[
         "local_path"
     ] = f"""{base_path}/{table_id}/{file_info["partitions"]}/{file_info['filename']}.{{file_ext}}"""
+
     # Get raw data
     file_info["raw_path"] = file_info["local_path"].format(bucket_mode="raw", file_ext="txt")
+    file_info['treated_path'] = file_info['local_path'].format(bucket_mode='staging', file_ext='csv')
     Path(file_info["raw_path"]).parent.mkdir(parents=True, exist_ok=True)
     try:
         # Get data from FTP - TODO: create get_raw() error alike
@@ -225,7 +229,7 @@ def pre_treatment_br_rj_riodejaneiro_rdo(
 
 
 @task
-def update_rdo_redis(
+def update_redis_ftp_files(
     download_files: list,
     table_id: str,
     dataset_id: str = constants.RDO_DATASET_ID.value,

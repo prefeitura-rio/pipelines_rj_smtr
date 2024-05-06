@@ -12,6 +12,7 @@ from prefect import task
 from pipelines.constants import constants
 from pipelines.utils.backup.utils import data_info_str, filter_data
 from pipelines.utils.utils import log  # ,get_vault_secret
+from pipelines.utils.backup.utils import connect_ftp
 
 # EMD Imports #
 
@@ -20,6 +21,25 @@ from pipelines.utils.utils import log  # ,get_vault_secret
 
 
 # Tasks #
+
+@task
+def get_ftp_filepaths(search_dir:str, wait=None):
+    min_timestamp = datetime(2022, 1, 1).timestamp()  # set min timestamp for search
+    # Connect to FTP & search files
+    # try:
+    ftp_client = connect_ftp(constants.RDO_FTPS_SECRET_PATH.value)
+    filenames = [file for file, info in ftp_client.mlsd(search_dir)]
+    files = []
+    for file in filenames:
+        filename = file.split('.')[0]
+        file_date = datetime.strptime(filename.split('_')[1], '%Y%m%d').date()
+        partitions = f"data={file_date.isoformat()}"
+        ftp_path = f'{search_dir}/{file}'
+        file_info = {'filename':filename, 'partitions':partitions, 'ftp_path':ftp_path, 'error':None}
+        files.append(file_info)
+    
+    return files
+            
 
 
 @task
@@ -108,8 +128,8 @@ def pre_treatment_sppo_licenciamento(status: dict, timestamp: datetime):
     return {"data": data, "error": error}
 
 
-@task
-def pre_treatment_sppo_infracao(status: dict, timestamp: datetime):
+@task(nout=4)
+def pre_treatment_sppo_infracao(files: list):
     """Basic data treatment for violation data. Apply filtering to raw data.
 
     Args:
@@ -122,65 +142,75 @@ def pre_treatment_sppo_infracao(status: dict, timestamp: datetime):
     """
 
     # Check previous error
-    if status["error"] is not None:
-        return {"data": pd.DataFrame(), "error": status["error"]}
+    treated_paths, raw_paths, partitions, status = [], [], [], []
+    for file_info in files:
+        if file_info["error"] is not None:
+            return {"data": pd.DataFrame(), "error": file_info["error"]}
 
-    try:
-        error = None
-        data = pd.json_normalize(status["data"])
+        try:
+            error = None
+            data = pd.read_csv(file_info['raw_path'])
 
-        log(
-            f"""
-        Received inputs:
-        - timestamp:\n{timestamp}
-        - data:\n{data.head()}"""
-        )
+            log(
+                f"""
+            Received inputs:
+            - data:\n{data.head()}"""
+            )
 
-        log(f"Raw data:\n{data_info_str(data)}", level="info")
+            log(f"Raw data:\n{data_info_str(data)}", level="info")
 
-        log("Renaming columns...", level="info")
-        data = data.rename(columns=constants.SPPO_INFRACAO_MAPPING_KEYS.value)
+            log("Renaming columns...", level="info")
+            data = data.rename(columns=constants.SPPO_INFRACAO_MAPPING_KEYS.value)
 
-        log("Adding captured timestamp column...", level="info")
-        data["timestamp_captura"] = timestamp
+            log("Adding captured timestamp column...", level="info")
+            data["timestamp_captura"] = file_info['timestamp_captura']
 
-        log("Striping string columns and replacing empty strings...", level="info")
-        for col in data.columns[data.dtypes == "object"].to_list():
-            data[col] = data[col].str.strip().replace("", np.nan)
+            log("Striping string columns and replacing empty strings...", level="info")
+            for col in data.columns[data.dtypes == "object"].to_list():
+                data[col] = data[col].str.strip().replace("", np.nan)
 
-        log("Updating valor type to float...", level="info")
-        data["valor"] = data["valor"].str.replace(",", ".").astype(float)
+            log("Updating valor type to float...", level="info")
+            data["valor"] = data["valor"].str.replace(",", ".").astype(float)
 
-        filters = ["modo != 'ONIBUS'"]
-        log(f"Filtering '{filters}'...", level="info")
-        data = filter_data(data, filters)
+            filters = ["modo != 'ONIBUS'"]
+            log(f"Filtering '{filters}'...", level="info")
+            data = filter_data(data, filters)
 
-        log("Filtering null primary keys...", level="info")
-        primary_key = ["placa", "id_auto_infracao"]
-        data.dropna(subset=primary_key, inplace=True)
+            log("Filtering null primary keys...", level="info")
+            primary_key = ["placa", "id_auto_infracao"]
+            data.dropna(subset=primary_key, inplace=True)
 
-        # Check primary keys
-        # pk_columns = ["placa", "id_auto_infracao"]
-        # check_new_data = f"data_infracao == '{timestamp.strftime('%Y-%m-%d')}'"
-        # check_not_null(data, pk_columns, subset_query=check_new_data)
+            # Check primary keys
+            # pk_columns = ["placa", "id_auto_infracao"]
+            # check_new_data = f"data_infracao == '{timestamp.strftime('%Y-%m-%d')}'"
+            # check_not_null(data, pk_columns, subset_query=check_new_data)
 
-        log(f"Finished cleaning! Pre-treated data:\n{data_info_str(data)}", level="info")
+            log(f"Finished cleaning! Pre-treated data:\n{data_info_str(data)}", level="info")
 
-        log("Creating nested structure...", level="info")
-        pk_cols = primary_key + ["timestamp_captura"]
-        data = (
-            data.groupby(pk_cols)
-            .apply(lambda x: x[data.columns.difference(pk_cols)].to_json(orient="records"))
-            .str.strip("[]")
-            .reset_index(name="content")[primary_key + ["content", "timestamp_captura"]]
-        )
+            log("Creating nested structure...", level="info")
+            pk_cols = primary_key + ["timestamp_captura"]
+            data = (
+                data.groupby(pk_cols)
+                .apply(lambda x: x[data.columns.difference(pk_cols)].to_json(orient="records"))
+                .str.strip("[]")
+                .reset_index(name="content")[primary_key + ["content", "timestamp_captura"]]
+            )
 
-        log(
-            f"Finished nested structure! Pre-treated data:\n{data_info_str(data)}",
-            level="info",
-        )
+            log(
+                f"Finished nested structure! Pre-treated data:\n{data_info_str(data)}",
+                level="info",
+            )
+            raw_paths.append(file_info['raw_path'])
+            treated_paths.append(file_info['treated_path'])
+            partitions.append(file_info['partitions'])
+            status.append({'error':None})
+            
 
-    except Exception as exp:  # pylint: disable=W0703
-        error = exp
+        except Exception as e:  # pylint: disable=W0703
+            log(f"Pre Treatment failed with error: {e}")
+            treated_paths.append(None)
+            raw_paths.append(None)
+            partitions.append(None)
+            status.append({"error": e})
 
-    return {"data": data, "error": error}
+    return treated_paths, raw_paths, partitions, status
