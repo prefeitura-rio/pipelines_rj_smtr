@@ -88,7 +88,7 @@ def check_files_for_download(files: list, dataset_id: str, table_id: str):
     except (TypeError, KeyError):
         # set_redis_rdo_files(redis_client, dataset_id, table_id)
         # exclude_files = redis_client.get(f"{dataset_id}.{table_id}")["files"]
-        exclude_files =[]
+        exclude_files = []
 
     log(f"There are {len(exclude_files)} already downloaded")
     download_files = [
@@ -99,7 +99,7 @@ def check_files_for_download(files: list, dataset_id: str, table_id: str):
 
 
 @task
-def download_and_save_local_from_ftp(file_info: dict, dataset_id:str=None, table_id:str=None):
+def download_and_save_local_from_ftp(file_info: dict, dataset_id: str = None, table_id: str = None):
     """
     Downloads file from FTP and saves to data/raw/<dataset_id>/<table_id>.
     """
@@ -122,7 +122,9 @@ def download_and_save_local_from_ftp(file_info: dict, dataset_id:str=None, table
 
     # Get raw data
     file_info["raw_path"] = file_info["local_path"].format(bucket_mode="raw", file_ext="txt")
-    file_info['treated_path'] = file_info['local_path'].format(bucket_mode='staging', file_ext='csv')
+    file_info["treated_path"] = file_info["local_path"].format(
+        bucket_mode="staging", file_ext="csv"
+    )
     Path(file_info["raw_path"]).parent.mkdir(parents=True, exist_ok=True)
     try:
         # Get data from FTP - TODO: create get_raw() error alike
@@ -234,7 +236,7 @@ def update_redis_ftp_files(
     table_id: str,
     dataset_id: str = constants.RDO_DATASET_ID.value,
     errors=None,
-    mode:str = 'prod',
+    mode: str = "prod",
     wait=None,  # pylint: disable=W0613
 ):
     """
@@ -252,8 +254,8 @@ def update_redis_ftp_files(
         bool: if redis key was set
     """
     key = f"{dataset_id}.{table_id}"
-    if mode != 'prod':
-        key = f'{mode}.{key}'
+    if mode != "prod":
+        key = f"{mode}.{key}"
     redis_client = get_redis_client()
     content = redis_client.get(key)  # get current redis state
     if errors:

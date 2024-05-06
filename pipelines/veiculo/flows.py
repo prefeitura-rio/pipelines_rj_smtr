@@ -11,7 +11,6 @@ from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
-# from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 
 # from pipelines.utils.execute_dbt_model.tasks import get_k8s_dbt_client
 from prefeitura_rio.pipelines_utils.state_handlers import (
@@ -19,6 +18,11 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
 )
 
+from pipelines.br_rj_riodejaneiro_rdo.tasks import (
+    check_files_for_download,
+    download_and_save_local_from_ftp,
+    update_redis_ftp_files,
+)
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
 from pipelines.schedules import every_day_hour_seven
@@ -45,16 +49,16 @@ from pipelines.utils.backup.tasks import (
     upload_logs_to_bq,
 )
 from pipelines.utils.backup.utils import set_default_parameters
-from pipelines.br_rj_riodejaneiro_rdo.tasks import (
-    check_files_for_download, 
-    download_and_save_local_from_ftp, 
-    update_redis_ftp_files
-)
 from pipelines.veiculo.tasks import (
     get_ftp_filepaths,
     pre_treatment_sppo_infracao,
     pre_treatment_sppo_licenciamento,
 )
+
+# from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
+
+
+
 
 # EMD Imports #
 
@@ -64,27 +68,21 @@ from pipelines.veiculo.tasks import (
 
 # Flows #
 
-with Flow('SMTR - Captura STU FTP') as captura_stu_ftp:
+with Flow("SMTR - Captura STU FTP") as captura_stu_ftp:
 
-    search_dir = Parameter('search_dir', default='multas')
-    dataset_id = Parameter('dataset_id', default=constants.VEICULO_DATASET_ID.value)
-    table_id = Parameter('table_id', default=constants.SPPO_INFRACAO_TABLE_ID)
+    search_dir = Parameter("search_dir", default="multas")
+    dataset_id = Parameter("dataset_id", default=constants.VEICULO_DATASET_ID.value)
+    table_id = Parameter("table_id", default=constants.SPPO_INFRACAO_TABLE_ID)
     #     rename_run = rename_current_flow_run_now_time(
     #     prefix=f"{captura_sppo_rho.name} FTP - {transport_mode.run()}-{report_type.run()} ",
     #     now_time=get_current_timestamp(),
     #     wait=None,
     # )
     # EXTRACT
-    files = get_ftp_filepaths(
-        search_dir=search_dir
-    )
-    download_files = check_files_for_download(
-        files=files, dataset_id=dataset_id, table_id=table_id
-    )
+    files = get_ftp_filepaths(search_dir=search_dir)
+    download_files = check_files_for_download(files=files, dataset_id=dataset_id, table_id=table_id)
     updated_info = download_and_save_local_from_ftp.map(
-        file_info=download_files, 
-        dataset_id=dataset_id, 
-        table_id=table_id
+        file_info=download_files, dataset_id=dataset_id, table_id=table_id
     )
     # TRANSFORM
     treated_paths, raw_paths, partitions, status = pre_treatment_sppo_infracao()
@@ -99,11 +97,8 @@ with Flow('SMTR - Captura STU FTP') as captura_stu_ftp:
         status=status,
     )
     set_redis = update_redis_ftp_files(
-        download_files=download_files,
-        dataset_id=dataset_id,
-        table_id=table_id, 
-        errors=errors
-        )
+        download_files=download_files, dataset_id=dataset_id, table_id=table_id, errors=errors
+    )
 
 # flake8: noqa: E501
 with Flow(
