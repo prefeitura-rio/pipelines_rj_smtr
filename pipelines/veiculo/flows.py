@@ -185,70 +185,70 @@ sppo_licenciamento_captura.state_handlers = [
     handler_inject_bd_credentials,
 ]
 
-with Flow(
-    f"SMTR: {constants.VEICULO_DATASET_ID.value} {constants.SPPO_INFRACAO_TABLE_ID.value} - Captura",
-    # code_owners=["caio", "fernanda", "boris", "rodrigo"],
-) as sppo_infracao_captura:
-    timestamp = get_current_timestamp()
+# with Flow(
+#     f"SMTR: {constants.VEICULO_DATASET_ID.value} {constants.SPPO_INFRACAO_TABLE_ID.value} - Captura",
+#     # code_owners=["caio", "fernanda", "boris", "rodrigo"],
+# ) as sppo_infracao_captura:
+#     timestamp = get_current_timestamp()
 
-    LABELS = get_current_flow_labels()
-    MODE = get_current_flow_mode()
+#     LABELS = get_current_flow_labels()
+#     MODE = get_current_flow_mode()
 
-    # Rename flow run
-    rename_flow_run = rename_current_flow_run_now_time(
-        prefix=f"{sppo_infracao_captura.name} - ", now_time=timestamp
-    )
+#     # Rename flow run
+#     rename_flow_run = rename_current_flow_run_now_time(
+#         prefix=f"{sppo_infracao_captura.name} - ", now_time=timestamp
+#     )
 
-    # SETUP #
-    partitions = create_date_hour_partition(timestamp, partition_date_only=True)
+#     # SETUP #
+#     partitions = create_date_hour_partition(timestamp, partition_date_only=True)
 
-    filename = parse_timestamp_to_string(timestamp)
+#     filename = parse_timestamp_to_string(timestamp)
 
-    filepath = create_local_partition_path(
-        dataset_id=constants.VEICULO_DATASET_ID.value,
-        table_id=constants.SPPO_INFRACAO_TABLE_ID.value,
-        filename=filename,
-        partitions=partitions,
-    )
+#     filepath = create_local_partition_path(
+#         dataset_id=constants.VEICULO_DATASET_ID.value,
+#         table_id=constants.SPPO_INFRACAO_TABLE_ID.value,
+#         filename=filename,
+#         partitions=partitions,
+#     )
 
-    # EXTRACT
-    raw_status = get_raw(
-        url=constants.SPPO_INFRACAO_URL.value,
-        filetype="txt",
-        csv_args=constants.SPPO_INFRACAO_CSV_ARGS.value,
-    )
+#     # EXTRACT
+#     raw_status = get_raw(
+#         url=constants.SPPO_INFRACAO_URL.value,
+#         filetype="txt",
+#         csv_args=constants.SPPO_INFRACAO_CSV_ARGS.value,
+#     )
 
-    raw_filepath = save_raw_local(status=raw_status, file_path=filepath)
+#     raw_filepath = save_raw_local(status=raw_status, file_path=filepath)
 
-    # TREAT
-    treated_status = pre_treatment_sppo_infracao(status=raw_status, timestamp=timestamp)
+#     # TREAT
+#     treated_status = pre_treatment_sppo_infracao(status=raw_status, timestamp=timestamp)
 
-    treated_filepath = save_treated_local(status=treated_status, file_path=filepath)
+#     treated_filepath = save_treated_local(status=treated_status, file_path=filepath)
 
-    # LOAD
-    error = bq_upload(
-        dataset_id=constants.VEICULO_DATASET_ID.value,
-        table_id=constants.SPPO_INFRACAO_TABLE_ID.value,
-        filepath=treated_filepath,
-        raw_filepath=raw_filepath,
-        partitions=partitions,
-        status=treated_status,
-    )
-    upload_logs_to_bq(
-        dataset_id=constants.VEICULO_DATASET_ID.value,
-        parent_table_id=constants.SPPO_INFRACAO_TABLE_ID.value,
-        timestamp=timestamp,
-        error=error,
-    )
-    sppo_infracao_captura.set_dependencies(task=partitions, upstream_tasks=[rename_flow_run])
+#     # LOAD
+#     error = bq_upload(
+#         dataset_id=constants.VEICULO_DATASET_ID.value,
+#         table_id=constants.SPPO_INFRACAO_TABLE_ID.value,
+#         filepath=treated_filepath,
+#         raw_filepath=raw_filepath,
+#         partitions=partitions,
+#         status=treated_status,
+#     )
+#     upload_logs_to_bq(
+#         dataset_id=constants.VEICULO_DATASET_ID.value,
+#         parent_table_id=constants.SPPO_INFRACAO_TABLE_ID.value,
+#         timestamp=timestamp,
+#         error=error,
+#     )
+#     sppo_infracao_captura.set_dependencies(task=partitions, upstream_tasks=[rename_flow_run])
 
-sppo_infracao_captura.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
-sppo_infracao_captura.run_config = KubernetesRun(
-    image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
-)
-sppo_infracao_captura.schedule = every_day_hour_seven
-sppo_infracao_captura.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
+# sppo_infracao_captura.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+# sppo_infracao_captura.run_config = KubernetesRun(
+#     image=emd_constants.DOCKER_IMAGE.value,
+#     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+# )
+# sppo_infracao_captura.schedule = every_day_hour_seven
+# sppo_infracao_captura.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
 
 # flake8: noqa: E501
 with Flow(
