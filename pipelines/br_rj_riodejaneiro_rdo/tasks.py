@@ -70,7 +70,7 @@ def get_file_paths_from_ftp(
 
 
 @task
-def check_files_for_download(files: list, dataset_id: str, table_id: str, mode:str='prod'):
+def check_files_for_download(files: list, dataset_id: str, table_id: str, mode: str = "prod"):
     """Check redis for files already downloaded from the FTP
 
     Args:
@@ -83,7 +83,7 @@ def check_files_for_download(files: list, dataset_id: str, table_id: str, mode:s
     """
     redis_client = get_redis_client()
     fetch_key = f"{dataset_id}.{table_id}"
-    if mode != 'prod':
+    if mode != "prod":
         fetch_key = f"{mode}.{fetch_key}"
 
     try:
