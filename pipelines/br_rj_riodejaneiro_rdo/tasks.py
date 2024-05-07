@@ -21,10 +21,9 @@ from pipelines.br_rj_riodejaneiro_rdo.utils import (
     merge_file_info_and_errors,
 )
 from pipelines.constants import constants
-from pipelines.utils.backup.utils import (
+from pipelines.utils.backup.utils import (  # set_redis_rdo_files,
     connect_ftp,
     get_last_run_timestamp,
-    # set_redis_rdo_files,
 )
 
 
