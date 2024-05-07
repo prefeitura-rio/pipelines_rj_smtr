@@ -6,6 +6,7 @@ from typing import Any, Union
 import prefect
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
+
 # from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 from pytz import timezone
 

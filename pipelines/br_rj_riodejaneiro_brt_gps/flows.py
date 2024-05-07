@@ -13,6 +13,7 @@ from prefect.storage import GCS
 # EMD Imports #
 
 from prefeitura_rio.pipelines_utils.custom import Flow
+
 # from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
