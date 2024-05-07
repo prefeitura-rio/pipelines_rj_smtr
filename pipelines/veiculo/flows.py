@@ -81,7 +81,7 @@ with Flow("SMTR - Captura STU FTP") as captura_stu_ftp:
     MODE = get_current_flow_mode()
     # EXTRACT
     files = get_ftp_filepaths(search_dir=search_dir)
-    download_files = check_files_for_download(files=files, dataset_id=dataset_id, table_id=table_id)
+    download_files = check_files_for_download(files=files, dataset_id=dataset_id, table_id=table_id,mode=MODE)
     updated_files_info = download_and_save_local_from_ftp.map(
         file_info=download_files, dataset_id=dataset_id, table_id=table_id
     )
@@ -104,6 +104,17 @@ with Flow("SMTR - Captura STU FTP") as captura_stu_ftp:
         errors=errors,
         mode=MODE
         )
+    
+captura_stu_ftp.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+captura_stu_ftp.run_config = KubernetesRun(
+    image=emd_constants.DOCKER_IMAGE.value,
+    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+)
+captura_stu_ftp.schedule = every_day_hour_seven
+captura_stu_ftp.state_handlers = [
+    handler_initialize_sentry,
+    handler_inject_bd_credentials,
+]
 
 # flake8: noqa: E501
 with Flow(
