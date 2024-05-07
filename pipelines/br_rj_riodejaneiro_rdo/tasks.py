@@ -24,7 +24,7 @@ from pipelines.constants import constants
 from pipelines.utils.backup.utils import (
     connect_ftp,
     get_last_run_timestamp,
-    set_redis_rdo_files,
+    # set_redis_rdo_files,
 )
 
 
