@@ -154,7 +154,7 @@ def pre_treatment_sppo_infracao(files: list):
 
         # try:
         error = None
-        data = pd.read_csv(file_info["raw_path"], sep=';', header=None, index_col=False)
+        data = pd.read_csv(file_info["raw_path"], sep=";", header=None, index_col=False)
 
         log(
             f"""
@@ -208,8 +208,8 @@ def pre_treatment_sppo_infracao(files: list):
             level="info",
         )
         # Save Local
-        Path(file_info['treated_path']).parent.mkdir(parents=True, exist_ok=True)
-        data.to_csv(file_info['treated_path'])
+        Path(file_info["treated_path"]).parent.mkdir(parents=True, exist_ok=True)
+        data.to_csv(file_info["treated_path"])
 
         # Update successful outputs
         raw_paths.append(file_info["raw_path"])
