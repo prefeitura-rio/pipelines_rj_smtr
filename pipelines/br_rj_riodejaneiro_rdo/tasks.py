@@ -70,7 +70,7 @@ def get_file_paths_from_ftp(
 
 
 @task
-def check_files_for_download(files: list, dataset_id: str, table_id: str):
+def check_files_for_download(files: list, dataset_id: str, table_id: str, mode:str='prod'):
     """Check redis for files already downloaded from the FTP
 
     Args:
@@ -82,9 +82,12 @@ def check_files_for_download(files: list, dataset_id: str, table_id: str):
         list: Containing the info on the files to download
     """
     redis_client = get_redis_client()
+    fetch_key = f"{dataset_id}.{table_id}"
+    if mode != 'prod':
+        fetch_key = f"{mode}.{fetch_key}"
 
     try:
-        exclude_files = redis_client.get(f"{dataset_id}.{table_id}")["files"]
+        exclude_files = redis_client.get(fetch_key)["files"]
     except (TypeError, KeyError):
         # set_redis_rdo_files(redis_client, dataset_id, table_id)
         # exclude_files = redis_client.get(f"{dataset_id}.{table_id}")["files"]

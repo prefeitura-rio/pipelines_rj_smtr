@@ -68,12 +68,13 @@ with Flow('SMTR - Captura STU FTP') as captura_stu_ftp:
 
     search_dir = Parameter('search_dir', default='multas')
     dataset_id = Parameter('dataset_id', default=constants.VEICULO_DATASET_ID.value)
-    table_id = Parameter('table_id', default=constants.SPPO_INFRACAO_TABLE_ID)
+    table_id = Parameter('table_id', default=constants.SPPO_INFRACAO_TABLE_ID.value)
     #     rename_run = rename_current_flow_run_now_time(
     #     prefix=f"{captura_sppo_rho.name} FTP - {transport_mode.run()}-{report_type.run()} ",
     #     now_time=get_current_timestamp(),
     #     wait=None,
     # )
+    MODE = get_current_flow_mode()
     # EXTRACT
     files = get_ftp_filepaths(
         search_dir=search_dir
@@ -81,13 +82,13 @@ with Flow('SMTR - Captura STU FTP') as captura_stu_ftp:
     download_files = check_files_for_download(
         files=files, dataset_id=dataset_id, table_id=table_id
     )
-    updated_info = download_and_save_local_from_ftp.map(
+    updated_files_info = download_and_save_local_from_ftp.map(
         file_info=download_files, 
         dataset_id=dataset_id, 
         table_id=table_id
     )
     # TRANSFORM
-    treated_paths, raw_paths, partitions, status = pre_treatment_sppo_infracao()
+    treated_paths, raw_paths, partitions, status = pre_treatment_sppo_infracao(files = updated_files_info)
 
     # LOAD
     errors = bq_upload.map(
@@ -102,7 +103,8 @@ with Flow('SMTR - Captura STU FTP') as captura_stu_ftp:
         download_files=download_files,
         dataset_id=dataset_id,
         table_id=table_id, 
-        errors=errors
+        errors=errors,
+        mode=MODE
         )
 
 # flake8: noqa: E501
