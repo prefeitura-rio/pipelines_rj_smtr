@@ -151,6 +151,21 @@ class Storage(GCPBase):
         )
         return self.bucket.get_blob(blob_name=blob_name)
 
+    def list_blobs(
+        self,
+        mode: str,
+        filename: str = None,
+        filetype: str = None,
+        partition: str = None,
+    ):
+        blob_name = self.create_blob_name(
+            mode=mode,
+            partition=partition,
+            filename=filename,
+            filetype=filetype,
+        )
+        return self.bucket.list_blobs(prefix=blob_name)
+
     def get_blob_bytes(
         self,
         mode: str,
