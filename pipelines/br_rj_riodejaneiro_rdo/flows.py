@@ -11,7 +11,7 @@ from prefect.utilities.edges import unmapped
 
 # from pipelines.rj_smtr.br_rj_riodejaneiro_rdo.schedules import every_two_weeks
 from prefeitura_rio.pipelines_utils.custom import Flow
-from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
+# from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
     handler_inject_bd_credentials,
