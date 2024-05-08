@@ -29,7 +29,7 @@ from pipelines.schedules import every_day_hour_seven
 
 # from pipelines.capture.templates.flows import create_default_capture_flow
 from pipelines.utils.backup.flows import default_capture_flow
-from pipelines.utils.backup.tasks import (  # create_date_hour_partition,; create_local_partition_path,; get_current_timestamp,; get_raw,; parse_timestamp_to_string,; save_raw_local,; save_treated_local,; upload_logs_to_bq,
+from pipelines.utils.backup.tasks import (
     bq_upload,
     fetch_dataset_sha,
     get_current_flow_labels,

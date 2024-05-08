@@ -47,7 +47,7 @@ def get_ftp_filepaths(search_dir: str, wait=None):
     return files
 
 
-@task
+@task(nout=4)
 def pre_treatment_sppo_licenciamento(files: list):
     """Basic data treatment for vehicle data. Apply filtering to raw data.
 
