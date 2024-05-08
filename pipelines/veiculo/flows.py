@@ -29,24 +29,16 @@ from pipelines.schedules import every_day_hour_seven
 
 # from pipelines.capture.templates.flows import create_default_capture_flow
 from pipelines.utils.backup.flows import default_capture_flow
-from pipelines.utils.backup.tasks import (
+from pipelines.utils.backup.tasks import (  # create_date_hour_partition,; create_local_partition_path,; get_current_timestamp,; get_raw,; parse_timestamp_to_string,; save_raw_local,; save_treated_local,; upload_logs_to_bq,
     bq_upload,
-    # create_date_hour_partition,
-    # create_local_partition_path,
     fetch_dataset_sha,
     get_current_flow_labels,
     get_current_flow_mode,
-    # get_current_timestamp,
     get_join_dict,
     get_previous_date,
-    # get_raw,
     get_run_dates,
-    # parse_timestamp_to_string,
     rename_current_flow_run_now_time,
     run_dbt_model,
-    # save_raw_local,
-    # save_treated_local,
-    # upload_logs_to_bq,
 )
 from pipelines.utils.backup.utils import set_default_parameters
 from pipelines.veiculo.tasks import (
