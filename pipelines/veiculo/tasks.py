@@ -48,7 +48,7 @@ def get_ftp_filepaths(search_dir: str, wait=None):
 
 
 @task
-def pre_treatment_sppo_licenciamento(status: dict, timestamp: datetime):
+def pre_treatment_sppo_licenciamento(files: list):
     """Basic data treatment for vehicle data. Apply filtering to raw data.
 
     Args:
@@ -61,76 +61,88 @@ def pre_treatment_sppo_licenciamento(status: dict, timestamp: datetime):
     """
 
     # Check previous error
-    if status["error"] is not None:
-        return {"data": pd.DataFrame(), "error": status["error"]}
+    treated_paths, raw_paths, partitions, status = [], [], [], []
+    for file_info in files:
+        if file_info["error"] is not None:
+            return {"data": pd.DataFrame(), "error": file_info["error"]}
 
-    try:
-        error = None
-        data = pd.json_normalize(status["data"])
+        try:
+            error = None
+            data = pd.json_normalize(file_info["data"])
 
-        log(
-            f"""
-        Received inputs:
-        - timestamp:\n{timestamp}
-        - data:\n{data.head()}"""
-        )
+            log(
+                f"""
+            Received inputs:
+            - timestamp:\n{file_info["timestamp_captura"]}
+            - data:\n{data.head()}"""
+            )
 
-        log(f"Raw data:\n{data_info_str(data)}", level="info")
+            log(f"Raw data:\n{data_info_str(data)}", level="info")
 
-        log("Renaming columns...", level="info")
-        data = data.rename(columns=constants.SPPO_LICENCIAMENTO_MAPPING_KEYS.value)
+            log("Renaming columns...", level="info")
+            data = data.rename(columns=constants.SPPO_LICENCIAMENTO_MAPPING_KEYS.value)
 
-        log("Adding captured timestamp column...", level="info")
-        data["timestamp_captura"] = timestamp
+            log("Adding captured timestamp column...", level="info")
+            data["timestamp_captura"] = file_info["timestamp_captura"]
 
-        log("Striping string columns...", level="info")
-        for col in data.columns[data.dtypes == "object"].to_list():
-            data[col] = data[col].str.strip()
+            log("Striping string columns...", level="info")
+            for col in data.columns[data.dtypes == "object"].to_list():
+                data[col] = data[col].str.strip()
 
-        log("Converting boolean values...", level="info")
-        for col in data.columns[data.columns.str.contains("indicador")].to_list():
-            data[col] = data[col].map({"Sim": True, "Nao": False})
+            log("Converting boolean values...", level="info")
+            for col in data.columns[data.columns.str.contains("indicador")].to_list():
+                data[col] = data[col].map({"Sim": True, "Nao": False})
 
-        # Check data
-        # check_columns = [["id_veiculo", "placa"], ["tipo_veiculo", "id_planta"]]
+            # Check data
+            # check_columns = [["id_veiculo", "placa"], ["tipo_veiculo", "id_planta"]]
 
-        # check_relation(data, check_columns)
+            # check_relation(data, check_columns)
 
-        log("Filtering null primary keys...", level="info")
-        primary_key = ["id_veiculo"]
-        data.dropna(subset=primary_key, inplace=True)
+            log("Filtering null primary keys...", level="info")
+            primary_key = ["id_veiculo"]
+            data.dropna(subset=primary_key, inplace=True)
 
-        log("Update indicador_ar_condicionado based on tipo_veiculo...", level="info")
-        data["indicador_ar_condicionado"] = data["tipo_veiculo"].map(
-            lambda x: None if not isinstance(x, str) else bool("C/AR" in x.replace(" ", ""))
-        )
+            log("Update indicador_ar_condicionado based on tipo_veiculo...", level="info")
+            data["indicador_ar_condicionado"] = data["tipo_veiculo"].map(
+                lambda x: None if not isinstance(x, str) else bool("C/AR" in x.replace(" ", ""))
+            )
 
-        log("Update status...", level="info")
-        data["status"] = "Licenciado"
+            log("Update status...", level="info")
+            data["status"] = "Licenciado"
 
-        log(f"Finished cleaning! Pre-treated data:\n{data_info_str(data)}", level="info")
+            log(f"Finished cleaning! Pre-treated data:\n{data_info_str(data)}", level="info")
 
-        log("Creating nested structure...", level="info")
-        pk_cols = primary_key + ["timestamp_captura"]
-        data = (
-            data.groupby(pk_cols)
-            .apply(lambda x: x[data.columns.difference(pk_cols)].to_json(orient="records"))
-            .str.strip("[]")
-            .reset_index(name="content")[primary_key + ["content", "timestamp_captura"]]
-        )
+            log("Creating nested structure...", level="info")
+            pk_cols = primary_key + ["timestamp_captura"]
+            data = (
+                data.groupby(pk_cols)
+                .apply(lambda x: x[data.columns.difference(pk_cols)].to_json(orient="records"))
+                .str.strip("[]")
+                .reset_index(name="content")[primary_key + ["content", "timestamp_captura"]]
+            )
 
-        log(
-            f"Finished nested structure! Pre-treated data:\n{data_info_str(data)}",
-            level="info",
-        )
+            log(
+                f"Finished nested structure! Pre-treated data:\n{data_info_str(data)}",
+                level="info",
+            )
+            # Save Local
+            Path(file_info["treated_path"]).parent.mkdir(parents=True, exist_ok=True)
+            data.to_csv(file_info["treated_path"])
 
-    except Exception as exp:  # pylint: disable=W0703
-        error = exp
+            # Update successful outputs
+            raw_paths.append(file_info["raw_path"])
+            treated_paths.append(file_info["treated_path"])
+            partitions.append(file_info["partitions"])
+            status.append({"error": None})
 
-    if error is not None:
-        log(f"[CATCHED] Task failed with error: \n{error}", level="error")
+        except Exception as e:  # pylint: disable=W0703
+            log(f"Pre Treatment failed with error: {e}")
+            treated_paths.append(None)
+            raw_paths.append(None)
+            partitions.append(None)
+            status.append({"error": e})
 
-    return {"data": data, "error": error}
+    return treated_paths, raw_paths, partitions, status
 
 
 @task(nout=4)
