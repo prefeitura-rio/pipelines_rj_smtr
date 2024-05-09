@@ -111,6 +111,7 @@ captura_stu_ftp.state_handlers = [
 ]
 with Flow("SMTR - Captura licenciamento FTP") as captura_licenciamento_ftp:
 
+    timestamp = Parameter("timestamp", default=None)
     search_dir = Parameter("search_dir", default="licenciamento")
     dataset_id = Parameter("dataset_id", default=constants.VEICULO_DATASET_ID.value)
     table_id = Parameter("table_id", default=constants.SPPO_LICENCIAMENTO_TABLE_ID.value)
@@ -122,11 +123,13 @@ with Flow("SMTR - Captura licenciamento FTP") as captura_licenciamento_ftp:
     MODE = get_current_flow_mode()
     # EXTRACT
     files = get_ftp_filepaths(search_dir=search_dir)
-    download_files = check_files_for_download(
-        files=files, dataset_id=dataset_id, table_id=table_id, mode=MODE
-    )
+
+    # removida checagem do redis
+    # download_files = check_files_for_download(
+    #     files=files, dataset_id=dataset_id, table_id=table_id, mode=MODE
+    # )
     updated_files_info = download_and_save_local_from_ftp.map(
-        file_info=download_files, dataset_id=dataset_id, table_id=table_id
+        file_info=files, dataset_id=dataset_id, table_id=table_id
     )
     # TRANSFORM
     treated_paths, raw_paths, partitions, status = pre_treatment_sppo_licenciamento(
@@ -142,13 +145,13 @@ with Flow("SMTR - Captura licenciamento FTP") as captura_licenciamento_ftp:
         partitions=partitions,
         status=status,
     )
-    set_redis = update_redis_ftp_files(
-        download_files=download_files,
-        dataset_id=dataset_id,
-        table_id=table_id,
-        errors=errors,
-        mode=MODE,
-    )
+    # set_redis = update_redis_ftp_files(
+    #     download_files=download_files,
+    #     dataset_id=dataset_id,
+    #     table_id=table_id,
+    #     errors=errors,
+    #     mode=MODE,
+    # )
 
 captura_licenciamento_ftp.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 captura_licenciamento_ftp.run_config = KubernetesRun(

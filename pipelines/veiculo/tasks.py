@@ -11,6 +11,7 @@ import pandas as pd
 from prefect import task
 
 from pipelines.constants import constants
+from pipelines.utils.backup.tasks import get_rounded_timestamp
 from pipelines.utils.backup.utils import connect_ftp, data_info_str, filter_data
 from pipelines.utils.utils import log  # ,get_vault_secret
 
@@ -24,10 +25,12 @@ from pipelines.utils.utils import log  # ,get_vault_secret
 
 
 @task
-def get_ftp_filepaths(search_dir: str, wait=None):
+def get_ftp_filepaths(search_dir: str, timestamp=None, wait=None):
     # min_timestamp = datetime(2022, 1, 1).timestamp()  # set min timestamp for search
     # Connect to FTP & search files
     # try:
+    if timestamp is None:
+        timestamp = get_rounded_timestamp()
     ftp_client = connect_ftp(constants.RDO_FTPS_SECRET_PATH.value)
     filenames = [file for file, info in ftp_client.mlsd(search_dir)]
     files = []
@@ -42,7 +45,8 @@ def get_ftp_filepaths(search_dir: str, wait=None):
             "ftp_path": ftp_path,
             "error": None,
         }
-        files.append(file_info)
+        if file_date == datetime.strptime(timestamp, "%Y-%m-%d").date():
+            files.append(file_info)
 
     return files
 
