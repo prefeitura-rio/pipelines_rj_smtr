@@ -33,7 +33,7 @@ def get_ftp_filepaths(search_dir: str, wait=None, timestamp=None):
         filenames = [
             file
             for file, info in ftp_client.mlsd(search_dir)
-            if datetime.strptime(file.split(".")[0].split("_")[1], "%Y-%m-%d").date()
+            if datetime.strptime(file.split(".")[0].split("_")[1], "%Y%m%d").date()
             == datetime.strptime(timestamp, "%Y-%m-%d").date()
         ]
     else:
