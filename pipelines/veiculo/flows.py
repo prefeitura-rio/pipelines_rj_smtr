@@ -28,6 +28,7 @@ from pipelines.constants import constants as emd_constants
 from pipelines.schedules import every_day_hour_seven
 
 # from pipelines.capture.templates.flows import create_default_capture_flow
+from pipelines.tasks import get_current_timestamp
 from pipelines.utils.backup.flows import default_capture_flow
 from pipelines.utils.backup.tasks import (
     bq_upload,
@@ -121,8 +122,10 @@ with Flow("SMTR - Captura licenciamento FTP") as captura_licenciamento_ftp:
     #     wait=None,
     # )
     MODE = get_current_flow_mode()
+    if timestamp is None:
+        timestamp = get_current_timestamp()
     # EXTRACT
-    files = get_ftp_filepaths(search_dir=search_dir)
+    files = get_ftp_filepaths(search_dir=search_dir, timestamp=timestamp)
 
     # removida checagem do redis
     # download_files = check_files_for_download(

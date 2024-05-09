@@ -11,7 +11,6 @@ import pandas as pd
 from prefect import task
 
 from pipelines.constants import constants
-from pipelines.utils.backup.tasks import get_rounded_timestamp
 from pipelines.utils.backup.utils import connect_ftp, data_info_str, filter_data
 from pipelines.utils.utils import log  # ,get_vault_secret
 
@@ -25,14 +24,20 @@ from pipelines.utils.utils import log  # ,get_vault_secret
 
 
 @task
-def get_ftp_filepaths(search_dir: str, timestamp=None, wait=None):
+def get_ftp_filepaths(search_dir: str, wait=None, timestamp=None):
     # min_timestamp = datetime(2022, 1, 1).timestamp()  # set min timestamp for search
     # Connect to FTP & search files
     # try:
-    if timestamp is None:
-        timestamp = get_rounded_timestamp()
     ftp_client = connect_ftp(constants.RDO_FTPS_SECRET_PATH.value)
-    filenames = [file for file, info in ftp_client.mlsd(search_dir)]
+    if timestamp is not None:
+        filenames = [
+            file
+            for file, info in ftp_client.mlsd(search_dir)
+            if datetime.strptime(file.split(".")[0].split("_")[1], "%Y-%m-%d").date()
+            == datetime.strptime(timestamp, "%Y-%m-%d").date()
+        ]
+    else:
+        filenames = [file for file, info in ftp_client.mlsd(search_dir)]
     files = []
     for file in filenames:
         filename = file.split(".")[0]
@@ -45,8 +50,7 @@ def get_ftp_filepaths(search_dir: str, timestamp=None, wait=None):
             "ftp_path": ftp_path,
             "error": None,
         }
-        if file_date == datetime.strptime(timestamp, "%Y-%m-%d").date():
-            files.append(file_info)
+        files.append(file_info)
 
     return files
 
@@ -63,7 +67,6 @@ def pre_treatment_sppo_licenciamento(files: list):
     Returns:
         dict: dict containing the data treated and the current error status.
     """
-
     # Check previous error
     treated_paths, raw_paths, partitions, status = [], [], [], []
     for file_info in files:
