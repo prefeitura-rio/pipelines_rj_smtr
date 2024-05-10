@@ -43,7 +43,7 @@ from pipelines.veiculo.tasks import (
 
 # Flows #
 
-with Flow("SMTR - Captura STU FTP") as captura_stu_ftp:
+with Flow("SMTR - Captura infração FTP") as captura_stu_ftp:
 
     timestamp = Parameter("timestamp", default=None)
     search_dir = Parameter("search_dir", default="multas")
