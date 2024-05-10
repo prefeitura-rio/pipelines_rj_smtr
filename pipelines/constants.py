@@ -54,6 +54,10 @@ class constants(Enum):  # pylint: disable=c0103
     MODE_INCR = "incr"
     FLOW_RUN_URL_PATTERN = "https://pipelines.dados.rio/smtr/flow-run/{run_id}"
 
+    GLITCH_API_ENDPOINT = "https://glitch.dados.rio/api/0/projects/smtr/pipelines/issues/"
+    GLITCH_URL = "https://glitch.dados.rio/"
+    GLITCH_AUTH = "glitch_auth"
+    GLITCH_WEBHOOK = "glitch"
     # URLS #
     REPO_URL = "https://api.github.com/repos/prefeitura-rio/pipelines_rj_smtr"
     DATAPLEX_URL = "https://console.cloud.google.com/dataplex/govern/quality"
