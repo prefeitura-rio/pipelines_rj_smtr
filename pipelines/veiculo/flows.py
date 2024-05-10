@@ -18,12 +18,6 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
 )
 
-from pipelines.veiculo.tasks import (
-    download_and_save_local_from_ftp,
-    get_ftp_filepaths,
-    pre_treatment_sppo_infracao,
-    pre_treatment_sppo_licenciamento,
-)
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
 from pipelines.schedules import every_day_hour_seven
@@ -31,6 +25,12 @@ from pipelines.schedules import every_day_hour_seven
 # from pipelines.capture.templates.flows import create_default_capture_flow
 from pipelines.tasks import get_current_timestamp
 from pipelines.utils.backup.tasks import bq_upload
+from pipelines.veiculo.tasks import (
+    download_and_save_local_from_ftp,
+    get_ftp_filepaths,
+    pre_treatment_sppo_infracao,
+    pre_treatment_sppo_licenciamento,
+)
 
 # # from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 
