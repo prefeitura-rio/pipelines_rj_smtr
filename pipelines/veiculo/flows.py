@@ -24,7 +24,7 @@ from pipelines.schedules import every_day_hour_seven
 
 # from pipelines.capture.templates.flows import create_default_capture_flow
 from pipelines.tasks import get_current_timestamp
-from pipelines.utils.backup.tasks import bq_upload
+from pipelines.utils.backup.tasks import bq_upload, get_rounded_timestamp
 from pipelines.veiculo.tasks import (
     download_and_save_local_from_ftp,
     get_ftp_filepaths,
@@ -51,8 +51,7 @@ with Flow("SMTR - Captura infração FTP") as captura_stu_ftp:
     table_id = Parameter("table_id", default=constants.SPPO_INFRACAO_TABLE_ID.value)
 
     # MODE = get_current_flow_mode()
-    with case(timestamp, None):
-        timestamp = get_current_timestamp()
+    timestamp = get_rounded_timestamp(timestamp)
     # EXTRACT
     files = get_ftp_filepaths(search_dir=search_dir, timestamp=timestamp)
     # download_files = check_files_for_download(
@@ -100,9 +99,7 @@ with Flow("SMTR - Captura licenciamento FTP") as captura_licenciamento_ftp:
     dataset_id = Parameter("dataset_id", default=constants.VEICULO_DATASET_ID.value)
     table_id = Parameter("table_id", default=constants.SPPO_LICENCIAMENTO_TABLE_ID.value)
 
-    # MODE = get_current_flow_mode()
-    with case(timestamp, None):
-        timestamp = get_current_timestamp()
+    timestamp = get_rounded_timestamp(timestamp)
     # EXTRACT
     files = get_ftp_filepaths(search_dir=search_dir, timestamp=timestamp)
     # download_files = check_files_for_download(
