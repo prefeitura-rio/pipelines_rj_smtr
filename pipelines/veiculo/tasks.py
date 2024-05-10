@@ -67,9 +67,9 @@ def download_and_save_local_from_ftp(file_info: dict, dataset_id: str = None, ta
     base_path = f'{os.getcwd()}/{os.getenv("DATA_FOLDER", "data")}/{{bucket_mode}}/{dataset_id}'
 
     # Set general local path to save file (bucket_modes: raw or staging)
-    file_info[
-        "local_path"
-    ] = f"""{base_path}/{table_id}/{file_info["partitions"]}/{file_info['filename']}.{{file_ext}}"""
+    file_info["local_path"] = (
+        f"""{base_path}/{table_id}/{file_info["partitions"]}/{file_info['filename']}.{{file_ext}}"""
+    )
 
     # Get raw data
     file_info["raw_path"] = file_info["local_path"].format(bucket_mode="raw", file_ext="txt")
@@ -104,11 +104,11 @@ def get_ftp_filepaths(search_dir: str, wait=None, timestamp=None):
     # try:
     ftp_client = connect_ftp(constants.RDO_FTPS_SECRET_PATH.value)
     if timestamp is not None:
+        target_date = timestamp.date()
         filenames = [
             file
             for file, info in ftp_client.mlsd(search_dir)
-            if datetime.strptime(file.split(".")[0].split("_")[1], "%Y%m%d").date()
-            == datetime.strptime(timestamp, "%Y-%m-%d").date()
+            if datetime.strptime(file.split(".")[0].split("_")[1], "%Y%m%d").date() == target_date
         ]
     else:
         filenames = [file for file, info in ftp_client.mlsd(search_dir)]
