@@ -67,9 +67,9 @@ def download_and_save_local_from_ftp(file_info: dict, dataset_id: str = None, ta
     base_path = f'{os.getcwd()}/{os.getenv("DATA_FOLDER", "data")}/{{bucket_mode}}/{dataset_id}'
 
     # Set general local path to save file (bucket_modes: raw or staging)
-    file_info[
-        "local_path"
-    ] = f"""{base_path}/{table_id}/{file_info["partitions"]}/{file_info['filename']}.{{file_ext}}"""
+    file_info["local_path"] = (
+        f"""{base_path}/{table_id}/{file_info["partitions"]}/{file_info['filename']}.{{file_ext}}"""
+    )
 
     # Get raw data
     file_info["raw_path"] = file_info["local_path"].format(bucket_mode="raw", file_ext="txt")
@@ -98,7 +98,7 @@ def download_and_save_local_from_ftp(file_info: dict, dataset_id: str = None, ta
 
 
 @task
-def get_ftp_filepaths(search_dir: str, wait=None, timestamp=None):
+def get_ftp_filepaths(search_dir: str, timestamp=None):
     # min_timestamp = datetime(2022, 1, 1).timestamp()  # set min timestamp for search
     # Connect to FTP & search files
     # try:
@@ -148,7 +148,6 @@ def pre_treatment_sppo_licenciamento(files: list):
             return {"data": pd.DataFrame(), "error": file_info["error"]}
 
         try:
-            error = None
             data = pd.json_normalize(file_info["data"])
 
             log(
@@ -246,7 +245,6 @@ def pre_treatment_sppo_infracao(files: list):
             return {"data": pd.DataFrame(), "error": file_info["error"]}
 
         try:
-            error = None
             data = pd.read_csv(file_info["raw_path"], sep=";", header=None, index_col=False)
 
             log(

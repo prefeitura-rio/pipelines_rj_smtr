@@ -4,15 +4,12 @@
 Flows for veiculos
 """
 
-from copy import deepcopy
-
-from prefect import Parameter, case
+from prefect import Parameter
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
 
-# from pipelines.utils.execute_dbt_model.tasks import get_k8s_dbt_client
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
     handler_inject_bd_credentials,
@@ -22,8 +19,6 @@ from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
 from pipelines.schedules import every_day_hour_seven
 
-# from pipelines.capture.templates.flows import create_default_capture_flow
-from pipelines.tasks import get_current_timestamp
 from pipelines.utils.backup.tasks import bq_upload, get_rounded_timestamp
 from pipelines.veiculo.tasks import (
     download_and_save_local_from_ftp,
@@ -31,15 +26,6 @@ from pipelines.veiculo.tasks import (
     pre_treatment_sppo_infracao,
     pre_treatment_sppo_licenciamento,
 )
-
-# # from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
-
-
-# EMD Imports #
-
-
-# SMTR Imports #
-
 
 # Flows #
 
