@@ -9,7 +9,6 @@ from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
-
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
     handler_inject_bd_credentials,
@@ -18,7 +17,6 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
 from pipelines.schedules import every_day_hour_seven
-
 from pipelines.utils.backup.tasks import bq_upload, get_rounded_timestamp
 from pipelines.veiculo.tasks import (
     download_and_save_local_from_ftp,
