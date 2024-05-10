@@ -18,7 +18,7 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
 )
 
-from pipelines.capture.veiculo.tasks import (
+from pipelines.veiculo.tasks import (
     download_and_save_local_from_ftp,
     get_ftp_filepaths,
     pre_treatment_sppo_infracao,
@@ -30,17 +30,7 @@ from pipelines.schedules import every_day_hour_seven
 
 # from pipelines.capture.templates.flows import create_default_capture_flow
 from pipelines.tasks import get_current_timestamp
-from pipelines.utils.backup.tasks import (
-    bq_upload,
-    fetch_dataset_sha,
-    get_current_flow_labels,
-    get_current_flow_mode,
-    get_join_dict,
-    get_previous_date,
-    get_run_dates,
-    rename_current_flow_run_now_time,
-    run_dbt_model,
-)
+from pipelines.utils.backup.tasks import bq_upload
 
 # # from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 
@@ -53,7 +43,7 @@ from pipelines.utils.backup.tasks import (
 
 # Flows #
 
-with Flow("SMTR - Captura infração FTP") as captura_stu_ftp:
+with Flow("SMTR - Captura STU FTP") as captura_stu_ftp:
 
     timestamp = Parameter("timestamp", default=None)
     search_dir = Parameter("search_dir", default="multas")
