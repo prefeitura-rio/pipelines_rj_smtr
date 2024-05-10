@@ -199,7 +199,7 @@ def connect_ftp(secret_path: str = None, secure: bool = True):
         ImplicitFTP_TLS: ftp client
     """
 
-    ftp_data = get_secret(secret_path)["data"]
+    ftp_data = get_secret(secret_path)
     if secure:
         ftp_client = ImplicitFtpTls()
     else:
