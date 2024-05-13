@@ -62,8 +62,8 @@ class constants(Enum):  # pylint: disable=c0103
     GPS_STPL_API_BASE_URL = "http://zn4.m2mcontrol.com.br/api/integracao/veiculos"
     GPS_STPL_API_SECRET_PATH = "stpl_api"
 
-    GPS_STPL_DATASET_ID = "br_rj_riodejaneiro_veiculos"
-    GPS_STPL_RAW_DATASET_ID = "br_rj_riodejaneiro_stpl_gps"
+    GPS_STPL_DATASET_ID = "migracao_br_rj_riodejaneiro_veiculos"
+    GPS_STPL_RAW_DATASET_ID = "migracao_br_rj_riodejaneiro_stpl_gps"
     GPS_STPL_RAW_TABLE_ID = "registros"
     GPS_STPL_TREATED_TABLE_ID = "gps_stpl"
 
@@ -75,9 +75,9 @@ class constants(Enum):  # pylint: disable=c0103
     GPS_SPPO_API_SECRET_PATH = "sppo_api"
     GPS_SPPO_API_SECRET_PATH_V2 = "sppo_api_v2"
 
-    GPS_SPPO_RAW_DATASET_ID = "br_rj_riodejaneiro_onibus_gps"
+    GPS_SPPO_RAW_DATASET_ID = "migracao_br_rj_riodejaneiro_onibus_gps"
     GPS_SPPO_RAW_TABLE_ID = "registros"
-    GPS_SPPO_DATASET_ID = "br_rj_riodejaneiro_veiculos"
+    GPS_SPPO_DATASET_ID = "migracao_br_rj_riodejaneiro_veiculos"
     GPS_SPPO_TREATED_TABLE_ID = "gps_sppo"
     GPS_SPPO_CAPTURE_DELAY_V1 = 1
     GPS_SPPO_CAPTURE_DELAY_V2 = 60
@@ -92,8 +92,8 @@ class constants(Enum):  # pylint: disable=c0103
     # GPS BRT #
     GPS_BRT_API_SECRET_PATH = "brt_api_v2"
     GPS_BRT_API_URL = "https://zn4.m2mcontrol.com.br/api/integracao/veiculos"
-    GPS_BRT_DATASET_ID = "br_rj_riodejaneiro_veiculos"
-    GPS_BRT_RAW_DATASET_ID = "br_rj_riodejaneiro_brt_gps"
+    GPS_BRT_DATASET_ID = "migracao_br_rj_riodejaneiro_veiculos"
+    GPS_BRT_RAW_DATASET_ID = "migracao_br_rj_riodejaneiro_brt_gps"
     GPS_BRT_RAW_TABLE_ID = "registros"
     GPS_BRT_TREATED_TABLE_ID = "gps_brt"
     GPS_BRT_MAPPING_KEYS = {
@@ -110,7 +110,7 @@ class constants(Enum):  # pylint: disable=c0103
     GPS_BRT_MATERIALIZE_DELAY_HOURS = 0
 
     # VEICULO
-    VEICULO_DATASET_ID = "veiculo"
+    VEICULO_DATASET_ID = "migracao_veiculo"
 
     # AUTUAÇÕES - AGENTES DE VERÃO
     SPPO_REGISTRO_AGENTE_VERAO_COLUMNS = [
@@ -137,7 +137,7 @@ class constants(Enum):  # pylint: disable=c0103
 
     # STU
 
-    STU_DATASET_ID = "br_rj_riodejaneiro_stu"
+    STU_DATASET_ID = "migracao_br_rj_riodejaneiro_stu"
 
     STU_BUCKET_NAME = "rj-smtr-stu-private"
 
@@ -195,7 +195,7 @@ class constants(Enum):  # pylint: disable=c0103
     # RDO/RHO
     RDO_FTP_ALLOWED_PATHS = ["SPPO", "STPL"]
     RDO_FTPS_SECRET_PATH = "smtr_rdo_ftps"
-    RDO_DATASET_ID = "br_rj_riodejaneiro_rdo"
+    RDO_DATASET_ID = "migracao_br_rj_riodejaneiro_rdo"
     SPPO_RDO_TABLE_ID = "rdo_registros_sppo"
     SPPO_RHO_TABLE_ID = "rho_registros_sppo"
     STPL_RDO_TABLE_ID = "rdo_registros_stpl"
@@ -203,7 +203,7 @@ class constants(Enum):  # pylint: disable=c0103
     RDO_MATERIALIZE_START_DATE = "2022-12-07"
 
     # ROCK IN RIO
-    RIR_DATASET_ID = "dashboards"
+    RIR_DATASET_ID = "migracao_dashboards"
     RIR_TABLE_ID = "registros_ocr_rir"
     RIR_START_DATE = "2022-08-30 12:00:00"
     RIR_SECRET_PATH = "smtr_rir_ftp"
@@ -220,12 +220,12 @@ class constants(Enum):  # pylint: disable=c0103
     }
 
     # SUBSÍDIO
-    SUBSIDIO_SPPO_DATASET_ID = "projeto_subsidio_sppo"
+    SUBSIDIO_SPPO_DATASET_ID = "migracao_projeto_subsidio_sppo"
     SUBSIDIO_SPPO_TABLE_ID = "viagem_completa"
 
     # SUBSÍDIO DASHBOARD
-    BILHETAGEM_DATASET_ID = "bilhetagem"
-    CADASTRO_DATASET_ID = "cadastro"
+    BILHETAGEM_DATASET_ID = "migracao_bilhetagem"
+    CADASTRO_DATASET_ID = "migracao_cadastro"
 
     # CAPTURA #
 
@@ -474,7 +474,7 @@ class constants(Enum):  # pylint: disable=c0103
     # }
 
     # GTFS
-    GTFS_DATASET_ID = "br_rj_riodejaneiro_gtfs"
+    GTFS_DATASET_ID = "migracao_br_rj_riodejaneiro_gtfs"
 
     GTFS_GENERAL_CAPTURE_PARAMS = {
         "partition_date_only": True,
@@ -549,7 +549,7 @@ class constants(Enum):  # pylint: disable=c0103
     }
 
     # SUBSÍDIO RECURSOS VIAGENS INDIVIDUAIS
-    SUBSIDIO_SPPO_RECURSOS_DATASET_ID = "br_rj_riodejaneiro_recurso"
+    SUBSIDIO_SPPO_RECURSOS_DATASET_ID = "migracao_br_rj_riodejaneiro_recurso"
     SUBSIDIO_SPPO_RECURSO_API_BASE_URL = "https://api.movidesk.com/public/v1/tickets?"
     SUBSIDIO_SPPO_RECURSO_API_SECRET_PATH = "sppo_subsidio_recursos_api"
     SUBSIDIO_SPPO_RECURSO_SERVICE = "serviceFull eq 'SPPO'"
@@ -658,8 +658,8 @@ class constants(Enum):  # pylint: disable=c0103
     SPPO_VEICULO_DIA_TABLE_ID = "sppo_veiculo_dia"
 
     # SUBSÍDIO DASHBOARD
-    SUBSIDIO_SPPO_DASHBOARD_DATASET_ID = "dashboard_subsidio_sppo"
-    SUBSIDIO_SPPO_DASHBOARD_STAGING_DATASET_ID = "dashboard_subsidio_sppo_staging"
+    SUBSIDIO_SPPO_DASHBOARD_DATASET_ID = "migracao_dashboard_subsidio_sppo"
+    SUBSIDIO_SPPO_DASHBOARD_STAGING_DATASET_ID = "migracao_dashboard_subsidio_sppo_staging"
     SUBSIDIO_SPPO_DASHBOARD_TABLE_ID = "sumario_servico_dia"
     SUBSIDIO_SPPO_DATA_CHECKS_PARAMS = {
         "check_gps_capture": {
