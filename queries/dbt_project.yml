@@ -29,13 +29,13 @@ vars:
 
   ### GPS ###
   brt_terminais: "rj-smtr.br_rj_riodejaneiro_transporte.estacoes_e_terminais_brt" # aux_registros_parada
-  brt_registros_staging: rj-smtr-staging.br_rj_riodejaneiro_brt_gps_staging.registros
+  brt_registros_staging: rj-smtr-dev.migracao_br_rj_riodejaneiro_brt_gps_staging.registros
   limites_caixa: "rj-smtr.br_rj_riodejaneiro_geo.limites_geograficos_caixa" # registros_filtrada
   linhas_sppo: "rj-smtr.br_rj_riodejaneiro_transporte.linhas_sppo" # registros_agg_data_hora_consorcio
   polygon_garagem: "rj-smtr.br_rj_riodejaneiro_geo.garagens_polygon" # aux_registros_parada
   sppo_terminais: "rj-smtr.br_rj_riodejaneiro_transporte.terminais_onibus_coordenadas" # aux_registros_parada
-  sppo_registros_staging: "rj-smtr-staging.br_rj_riodejaneiro_onibus_gps_staging.registros"
-  sppo_realocacao_staging: "rj-smtr-staging.br_rj_riodejaneiro_onibus_gps_staging.realocacao"
+  sppo_registros_staging: "rj-smtr-dev.migracao_br_rj_riodejaneiro_onibus_gps_staging.registros"
+  sppo_realocacao_staging: "rj-smtr-dev.migracao_br_rj_riodejaneiro_onibus_gps_staging.realocacao"
   data_inicio_realocacao: "2022-11-15"
 
   # Parametros de intersecção do ônibus com rota
