@@ -224,7 +224,7 @@ class constants(Enum):  # pylint: disable=c0103
     SUBSIDIO_SPPO_TABLE_ID = "viagem_completa"
 
     # SUBSÍDIO DASHBOARD
-    BILHETAGEM_DATASET_ID = "migracao_bilhetagem"
+    # BILHETAGEM_DATASET_ID = "migracao_bilhetagem"
     CADASTRO_DATASET_ID = "migracao_cadastro"
 
     # CAPTURA #
