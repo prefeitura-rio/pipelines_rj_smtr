@@ -2,7 +2,7 @@
 """
 Imports all flows for every project so we can register all of them.
 """
-from pipelines.br_rj_riodejaneiro_bilhetagem.flows import * # noqa
+from pipelines.br_rj_riodejaneiro_bilhetagem.flows import *  # noqa
 from pipelines.br_rj_riodejaneiro_brt_gps.flows import *  # noqa
 from pipelines.br_rj_riodejaneiro_diretorios.flows import *  # noqa
 from pipelines.br_rj_riodejaneiro_gtfs.flows import *  # noqa
