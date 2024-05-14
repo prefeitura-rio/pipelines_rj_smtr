@@ -538,9 +538,7 @@ and createdDate lt {end})",
                         *
                     FROM
                         LINHA
-                    WHERE
-                        DT_INCLUSAO BETWEEN '{start}'
-                        AND '{end}'
+
                 """,
             },
             "primary_key": ["CD_LINHA"],  # id column to nest data on
@@ -561,9 +559,7 @@ and createdDate lt {end})",
                         TIPO_MODAL m
                     ON
                         o.CD_TIPO_MODAL = m.CD_TIPO_MODAL
-                    WHERE
-                        DT_INCLUSAO BETWEEN '{start}'
-                        AND '{end}'
+
                 """,
             },
             "primary_key": ["CD_OPERADORA_TRANSPORTE"],  # id column to nest data on
@@ -579,9 +575,7 @@ and createdDate lt {end})",
                         c.*
                     FROM
                         CLIENTE c
-                    WHERE
-                        DT_CADASTRO BETWEEN '{start}'
-                        AND '{end}'
+
                 """,
             },
             "primary_key": ["CD_CLIENTE"],  # id column to nest data on
@@ -604,9 +598,7 @@ and createdDate lt {end})",
                         CLIENTE c
                     ON
                         p.CD_CLIENTE = c.CD_CLIENTE
-                    WHERE
-                        c.DT_CADASTRO BETWEEN '{start}'
-                        AND '{end}'
+
                 """,
             },
             "primary_key": ["CD_CLIENTE"],  # id column to nest data on
@@ -628,9 +620,7 @@ and createdDate lt {end})",
                         tipo_gratuidade t
                     ON
                         g.id_tipo_gratuidade = t.id
-                    WHERE
-                        g.data_inclusao BETWEEN '{start}'
-                        AND '{end}'
+
                 """,
             },
             "primary_key": ["id"],  # id column to nest data on
@@ -647,9 +637,7 @@ and createdDate lt {end})",
                         *
                     FROM
                         CONSORCIO
-                    WHERE
-                        DT_INCLUSAO BETWEEN '{start}'
-                        AND '{end}'
+
                 """,
             },
             "primary_key": ["CD_CONSORCIO"],  # id column to nest data on
@@ -665,9 +653,7 @@ and createdDate lt {end})",
                           *
                       FROM
                           percentual_rateio_integracao
-                      WHERE
-                          dt_inclusao BETWEEN '{start}'
-                          AND '{end}'
+
                   """,
             },
             "primary_key": ["id"],  # id column to nest data on
@@ -692,16 +678,15 @@ and createdDate lt {end})",
                         OPERADORA_TRANSPORTE o
                     ON
                         o.CD_CLIENTE = c.CD_CLIENTE
-                    WHERE
-                        {update}
+
                 """,
-                "get_updates": [
-                    "c.cd_cliente",
-                    "c.cd_agencia",
-                    "c.cd_tipo_conta",
-                    "c.nr_banco",
-                    "c.nr_conta",
-                ],
+                # "get_updates": [
+                #     "c.cd_cliente",
+                #     "c.cd_agencia",
+                #     "c.cd_tipo_conta",
+                #     "c.nr_banco",
+                #     "c.nr_conta",
+                # ],
             },
             "primary_key": ["CD_CLIENTE"],  # id column to nest data on
             "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
@@ -717,9 +702,7 @@ and createdDate lt {end})",
                         *
                     FROM
                         CONTATO_PESSOA_JURIDICA
-                    WHERE
-                        DT_INCLUSAO BETWEEN '{start}'
-                        AND '{end}'
+
                 """,
             },
             "primary_key": [
@@ -739,11 +722,7 @@ and createdDate lt {end})",
                         *
                     FROM
                         SERVICO_MOTORISTA
-                    WHERE
-                        DT_ABERTURA BETWEEN '{start}'
-                        AND '{end}'
-                        OR DT_FECHAMENTO BETWEEN '{start}'
-                        AND '{end}'
+
                 """,
             },
             "primary_key": [
