@@ -313,7 +313,7 @@ and createdDate lt {end})",
         "source_type": "db",
     }
 
-    BILHETAGEM_PRIVATE_BUCKET = "rj-smtr-jae-private"
+    BILHETAGEM_PRIVATE_BUCKET = "rj-smtr-dev-private"
 
     BILHETAGEM_TRANSACAO_CAPTURE_PARAMS = {
         "table_id": "transacao",
