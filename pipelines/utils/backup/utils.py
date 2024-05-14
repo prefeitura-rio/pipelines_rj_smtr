@@ -756,18 +756,90 @@ def get_raw_data_gcs(
     return error, data, filetype
 
 
+def close_db_connection(connection, engine: str):
+    """
+    Safely close a database connection
+
+    Args:
+        connection: the database connection
+        engine (str): The datase management system
+    """
+    if engine == "postgresql":
+        if not connection.closed:
+            connection.close()
+            log("Database connection closed")
+    elif engine == "mysql":
+        if connection.open:
+            connection.close()
+            log("Database connection closed")
+    else:
+        raise NotImplementedError(f"Engine {engine} not supported")
+
+
+def execute_db_query(
+    engine: str,
+    query: str,
+    connection,
+    connector,
+    connection_info: dict,
+) -> list[dict]:
+    """
+    Execute a query if retries
+
+    Args:
+        query (str): the SQL Query to execute
+        engine (str): The database management system
+        connection: The database connection
+        connector: The database connector (to do reconnections)
+        connection_info (dict): The database connector params (to do reconnections)
+
+    Returns:
+        list[dict]: The query results
+
+    """
+    retries = 10
+    for retry in range(retries):
+        try:
+            log(f"Executing query:\n{query}")
+            data = pd.read_sql(sql=query, con=connection).to_dict(orient="records")
+            for d in data:
+                for k, v in d.items():
+                    if pd.isna(v):
+                        d[k] = None
+            break
+        except Exception as err:
+            log(f"[ATTEMPT {retry}]: {err}")
+            close_db_connection(connection=connection, engine=engine)
+            if retry < retries - 1:
+                connection = connector(**connection_info)
+            else:
+                raise err
+
+    close_db_connection(connection=connection, engine=engine)
+    return data
+
+
 def get_raw_data_db(
-    query: str, engine: str, host: str, secret_path: str, database: str
+    query: str,
+    engine: str,
+    host: str,
+    secret_path: str,
+    database: str,
+    page_size: int = None,
+    max_pages: int = None,
 ) -> tuple[str, str, str]:
     """
     Get data from Databases
 
     Args:
         query (str): the SQL Query to execute
-        engine (str): The datase management system
+        engine (str): The database management system
         host (str): The database host
         secret_path (str): Secret path to get credentials
         database (str): The database to connect
+        page_size (int, Optional): The maximum number of rows returned by the paginated query
+            if you set a value for this argument, the query will have LIMIT and OFFSET appended to it
+        max_pages (int, Optional): The maximum number of paginated queries to execute
 
     Returns:
         tuple[str, str, str]: Error, data and filetype
@@ -779,24 +851,52 @@ def get_raw_data_db(
 
     data = None
     error = None
-    filetype = "json"
+
+    if max_pages is None:
+        max_pages = 1
+
+    full_data = []
+    credentials = get_secret(secret_path)
+
+    connector = connector_mapping[engine]
 
     try:
-        credentials = get_secret(secret_path)
+        connection_info = {
+            "host": host,
+            "user": credentials["user"],
+            "password": credentials["password"],
+            "database": database,
+        }
+        connection = connector(**connection_info)
 
-        with connector_mapping[engine](
-            host=host,
-            user=credentials["user"],
-            password=credentials["password"],
-            database=database,
-        ) as connection:
-            data = pd.read_sql(sql=query, con=connection).to_dict(orient="records")
+        for page in range(max_pages):
+            if page_size is not None:
+                paginated_query = query + f" LIMIT {page_size} OFFSET {page * page_size}"
+            else:
+                paginated_query = query
+
+            data = execute_db_query(
+                engine=engine,
+                query=paginated_query,
+                connection=connection,
+                connector=connector,
+                connection_info=connection_info,
+            )
+
+            full_data += data
+
+            log(f"Returned {len(data)} rows")
+
+            if page_size is None or len(data) < page_size:
+                log("Database Extraction Finished")
+                break
 
     except Exception:
+        full_data = []
         error = traceback.format_exc()
         log(f"[CATCHED] Task failed with error: \n{error}", level="error")
 
-    return error, data, filetype
+    return error, full_data, "json"
 
 
 def save_treated_local_func(
