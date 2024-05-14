@@ -191,7 +191,7 @@ models:
       +schema: migracao_br_rj_riodejaneiro_gtfs
     br_rj_riodejaneiro_sigmob:
       +materialized: view
-      +schema: migracao_br_rj_riodejaneiro_sigmob
+      +schema: br_rj_riodejaneiro_sigmob
     br_rj_riodejaneiro_onibus_gps:
       +materialized: view
       +schema: migracao_br_rj_riodejaneiro_onibus_gps
