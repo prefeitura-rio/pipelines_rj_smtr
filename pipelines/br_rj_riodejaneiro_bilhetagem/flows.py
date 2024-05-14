@@ -145,7 +145,7 @@ bilhetagem_tracking_captura = set_default_parameters(
 )
 
 bilhetagem_tracking_captura.state_handlers.append(
-    handler_inject_bd_credentials, handler_initialize_sentry, handler_skip_if_running
+    [handler_inject_bd_credentials, handler_initialize_sentry, handler_skip_if_running]
 )
 
 
@@ -331,7 +331,7 @@ bilhetagem_materializacao_gps_validador = set_default_parameters(
 )
 
 bilhetagem_materializacao_gps_validador.state_handlers.append(
-    handler_inject_bd_credentials, handler_initialize_sentry, handler_skip_if_running
+    [handler_inject_bd_credentials, handler_initialize_sentry, handler_skip_if_running]
 )
 
 
