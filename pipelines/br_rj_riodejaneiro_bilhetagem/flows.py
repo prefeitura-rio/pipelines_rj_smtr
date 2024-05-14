@@ -144,9 +144,11 @@ bilhetagem_tracking_captura = set_default_parameters(
     | constants.BILHETAGEM_TRACKING_CAPTURE_PARAMS.value,
 )
 
-bilhetagem_tracking_captura.state_handlers.append(
-    [handler_inject_bd_credentials, handler_initialize_sentry, handler_skip_if_running]
-)
+bilhetagem_tracking_captura.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+    handler_skip_if_running,
+]
 
 
 bilhetagem_tracking_captura.schedule = every_5_minutes
@@ -330,9 +332,11 @@ bilhetagem_materializacao_gps_validador = set_default_parameters(
     default_parameters=constants.BILHETAGEM_MATERIALIZACAO_GPS_VALIDADOR_GENERAL_PARAMS.value,
 )
 
-bilhetagem_materializacao_gps_validador.state_handlers.append(
-    [handler_inject_bd_credentials, handler_initialize_sentry, handler_skip_if_running]
-)
+bilhetagem_materializacao_gps_validador.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+    handler_skip_if_running,
+]
 
 
 # RECAPTURA #
