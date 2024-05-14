@@ -30,7 +30,7 @@ WITH ordem_pagamento_consorcio_operadora AS (
     SAFE_CAST(JSON_VALUE(content, '$.valor_taxa') AS FLOAT64) AS valor_taxa,
     SAFE_CAST(JSON_VALUE(content, '$.valor_vendaabordo') AS FLOAT64) AS valor_vendaabordo
   FROM
-      {{ source("br_rj_riodejaneiro_bilhetagem_staging", "ordem_pagamento_consorcio_operadora") }}
+      {{ source("migracao_br_rj_riodejaneiro_bilhetagem_staging", "ordem_pagamento_consorcio_operadora") }}
 ),
 ordem_pagamento_consorcio_operadora_rn AS (
   SELECT

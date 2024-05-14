@@ -17,7 +17,7 @@ WITH
             SAFE_CAST(JSON_VALUE(content, '$.IN_SITUACAO_ATIVIDADE') AS STRING) AS in_situacao_atividade,
             SAFE_CAST(JSON_VALUE(content, '$.DS_TIPO_MODAL') AS STRING) AS ds_tipo_modal
         FROM
-            {{ source("br_rj_riodejaneiro_bilhetagem_staging", "operadora_transporte") }}
+            {{ source("migracao_br_rj_riodejaneiro_bilhetagem_staging", "operadora_transporte") }}
     ),
     operadora_transporte_rn AS (
         SELECT

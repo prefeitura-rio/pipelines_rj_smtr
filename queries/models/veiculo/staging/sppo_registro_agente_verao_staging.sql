@@ -15,4 +15,4 @@ SELECT
   SAFE_CAST(DATETIME(TIMESTAMP_TRUNC(TIMESTAMP(timestamp_captura), SECOND), "America/Sao_Paulo" ) AS DATETIME) AS datetime_captura,
   "{{ var("version") }}" AS versao
 FROM
-  {{ source('veiculo_staging','sppo_registro_agente_verao') }}
+  {{ source("migracao_veiculo_staging",'sppo_registro_agente_verao') }}

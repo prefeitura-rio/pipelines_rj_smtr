@@ -23,7 +23,7 @@ WITH percentual_rateio_integracao AS (
     SAFE_CAST(JSON_VALUE(content, '$.perc_rateio_integracao_t4') AS FLOAT64) AS perc_rateio_integracao_t4,
     SAFE_CAST(JSON_VALUE(content, '$.perc_rateio_origem') AS FLOAT64) AS perc_rateio_origem
   FROM
-    {{ source('br_rj_riodejaneiro_bilhetagem_staging', 'percentual_rateio_integracao') }}
+    {{ source("migracao_br_rj_riodejaneiro_bilhetagem_staging", 'percentual_rateio_integracao') }}
 )
 SELECT
   * EXCEPT(rn)

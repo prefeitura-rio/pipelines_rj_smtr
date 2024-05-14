@@ -39,4 +39,4 @@ SELECT
     SAFE_CAST(JSON_VALUE(content, '$.veiculo_id') AS STRING) AS veiculo_id,
     SAFE_CAST(JSON_VALUE(content, '$.vl_saldo') AS FLOAT64) AS vl_saldo
 FROM
-    {{ source("br_rj_riodejaneiro_bilhetagem_staging", "transacao_riocard") }}
+    {{ source("migracao_br_rj_riodejaneiro_bilhetagem_staging", "transacao_riocard") }}

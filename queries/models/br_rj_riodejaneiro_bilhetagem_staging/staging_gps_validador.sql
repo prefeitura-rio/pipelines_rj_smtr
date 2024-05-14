@@ -35,5 +35,5 @@ SELECT
     SAFE_CAST(JSON_VALUE(content, '$.versao_app') AS FLOAT64) AS versao_app,
     SAFE_CAST(JSON_VALUE(content, '$.temperatura') AS FLOAT64) AS temperatura
 FROM
-    {{ source('br_rj_riodejaneiro_bilhetagem_staging', 'gps_validador') }}
+    {{ source("migracao_br_rj_riodejaneiro_bilhetagem_staging", 'gps_validador') }}
 

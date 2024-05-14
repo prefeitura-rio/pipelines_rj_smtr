@@ -227,7 +227,7 @@ models:
       +schema: migracao_br_rj_riodejaneiro_bilhetagem
     br_rj_riodejaneiro_bilhetagem_staging:
       +materialized: view
-      +schema: migracao_br_rj_riodejaneiro_bilhetagem_staging
+      +schema: migracao_br_rj_riodejaneiro_bilhetagem_staging_dbt
     dashboard_bilhetagem_implantacao_jae:
       +materialized: table
       +schema: migracao_dashboard_bilhetagem_implantacao_jae
