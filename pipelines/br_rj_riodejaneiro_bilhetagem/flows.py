@@ -355,7 +355,7 @@ bilhetagem_recaptura.state_handlers = [
 
 with Flow(
     "SMTR: Bilhetagem Transação - Tratamento",
-    code_owners=["caio", "fernanda", "boris", "rodrigo", "rafaelpinheiro"],
+    # code_owners=["caio", "fernanda", "boris", "rodrigo", "rafaelpinheiro"],
 ) as bilhetagem_transacao_tratamento:
     # Configuração #
 
@@ -544,7 +544,7 @@ bilhetagem_transacao_tratamento.state_handlers = [
 
 with Flow(
     "SMTR: Bilhetagem Ordem Pagamento - Captura/Tratamento",
-    code_owners=["caio", "fernanda", "boris", "rodrigo", "rafaelpinheiro"],
+    # code_owners=["caio", "fernanda", "boris", "rodrigo", "rafaelpinheiro"],
 ) as bilhetagem_ordem_pagamento_captura_tratamento:
     capture = Parameter("capture", default=True)
     materialize = Parameter("materialize", default=True)
