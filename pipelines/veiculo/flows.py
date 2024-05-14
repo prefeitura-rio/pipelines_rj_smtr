@@ -27,7 +27,7 @@ from pipelines.veiculo.tasks import (
 
 # Flows #
 
-with Flow("SMTR - Captura infração FTP") as captura_stu_ftp:
+with Flow("SMTR: veiculo sppo_infracao - captura") as captura_stu_ftp:
 
     timestamp = Parameter("timestamp", default=None)
     search_dir = Parameter("search_dir", default="multas")
@@ -76,7 +76,7 @@ captura_stu_ftp.state_handlers = [
     handler_initialize_sentry,
     handler_inject_bd_credentials,
 ]
-with Flow("SMTR - Captura licenciamento FTP") as captura_licenciamento_ftp:
+with Flow("SMTR: veiculo sppo_licenciamento_stu - captura") as captura_licenciamento_ftp:
 
     timestamp = Parameter("timestamp", default=None)
     search_dir = Parameter("search_dir", default="licenciamento")
