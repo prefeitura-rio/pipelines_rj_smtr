@@ -64,7 +64,6 @@ bilhetagem_transacao_captura = set_default_parameters(
 bilhetagem_transacao_captura.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
-    handler_skip_if_running,
 ]
 bilhetagem_transacao_captura.schedule = every_minute
 
@@ -85,7 +84,6 @@ bilhetagem_transacao_riocard_captura = set_default_parameters(
 bilhetagem_transacao_riocard_captura.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
-    handler_skip_if_running,
 ]
 bilhetagem_transacao_riocard_captura.schedule = every_minute
 
@@ -104,7 +102,10 @@ bilhetagem_fiscalizacao_captura = set_default_parameters(
     default_parameters=constants.BILHETAGEM_GENERAL_CAPTURE_DEFAULT_PARAMS.value
     | constants.BILHETAGEM_FISCALIZACAO_CAPTURE_PARAMS.value,
 )
-bilhetagem_fiscalizacao_captura.state_handlers
+bilhetagem_fiscalizacao_captura.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+]
 bilhetagem_fiscalizacao_captura.schedule = every_5_minutes
 
 # BILHETAGEM INTEGRAÇÃO - CAPTURA A CADA MINUTO #
@@ -119,7 +120,6 @@ bilhetagem_integracao_captura.run_config = KubernetesRun(
 bilhetagem_integracao_captura.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
-    handler_skip_if_running,
 ]
 bilhetagem_integracao_captura = set_default_parameters(
     flow=bilhetagem_integracao_captura,
@@ -165,7 +165,6 @@ bilhetagem_ressarcimento_captura.run_config = KubernetesRun(
 bilhetagem_ressarcimento_captura.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
-    handler_skip_if_running,
 ]
 bilhetagem_ressarcimento_captura = set_default_parameters(
     flow=bilhetagem_ressarcimento_captura,
@@ -184,7 +183,6 @@ bilhetagem_auxiliar_captura.run_config = KubernetesRun(
 bilhetagem_auxiliar_captura.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
-    handler_skip_if_running,
 ]
 bilhetagem_auxiliar_captura = set_default_parameters(
     flow=bilhetagem_auxiliar_captura,
@@ -214,7 +212,6 @@ bilhetagem_materializacao_transacao_parameters = {
 bilhetagem_materializacao_transacao.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
-    handler_skip_if_running,
 ]
 
 bilhetagem_materializacao_transacao = set_default_parameters(
@@ -277,7 +274,6 @@ bilhetagem_materializacao_ordem_pagamento_parameters = {
 bilhetagem_materializacao_ordem_pagamento.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
-    handler_skip_if_running,
 ]
 
 bilhetagem_materializacao_ordem_pagamento = set_default_parameters(
@@ -306,7 +302,6 @@ bilhetagem_materializacao_integracao_parameters = {
 bilhetagem_materializacao_integracao.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
-    handler_skip_if_running,
 ]
 
 bilhetagem_materializacao_integracao = set_default_parameters(
@@ -352,7 +347,6 @@ bilhetagem_recaptura = set_default_parameters(
 bilhetagem_recaptura.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
-    handler_skip_if_running,
 ]
 
 # TRATAMENTO - RODA DE HORA EM HORA, RECAPTURAS + CAPTURA AUXILIAR + MATERIALIZAÇÃO #
@@ -382,7 +376,8 @@ with Flow(
 
         run_recaptura_transacao = create_flow_run(
             flow_name=bilhetagem_recaptura.name,
-            project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            # project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            project_name="staging",
             labels=LABELS,
             parameters=constants.BILHETAGEM_TRANSACAO_CAPTURE_PARAMS.value,
         )
@@ -396,7 +391,8 @@ with Flow(
 
         run_recaptura_transacao_riocard = create_flow_run(
             flow_name=bilhetagem_recaptura.name,
-            project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            # project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            project_name="staging",
             labels=LABELS,
             parameters=constants.BILHETAGEM_TRANSACAO_RIOCARD_CAPTURE_PARAMS.value,
             upstream_tasks=[wait_recaptura_transacao_true],
@@ -413,7 +409,8 @@ with Flow(
 
         run_recaptura_fiscalizacao = create_flow_run(
             flow_name=bilhetagem_recaptura.name,
-            project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            # project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            project_name="staging",
             labels=LABELS,
             parameters=constants.BILHETAGEM_FISCALIZACAO_CAPTURE_PARAMS.value,
         )
@@ -429,7 +426,8 @@ with Flow(
 
         runs_captura = create_flow_run.map(
             flow_name=unmapped(bilhetagem_auxiliar_captura.name),
-            project_name=unmapped(emd_constants.PREFECT_DEFAULT_PROJECT.value),
+            # project_name=unmapped(emd_constants.PREFECT_DEFAULT_PROJECT.value),
+            project_name=unmapped("staging"),
             parameters=constants.BILHETAGEM_CAPTURE_PARAMS.value,
             labels=unmapped(LABELS),
         )
@@ -447,7 +445,8 @@ with Flow(
 
         runs_recaptura_auxiliar = create_flow_run.map(
             flow_name=unmapped(bilhetagem_recaptura.name),
-            project_name=unmapped(emd_constants.PREFECT_DEFAULT_PROJECT.value),
+            # project_name=unmapped(emd_constants.PREFECT_DEFAULT_PROJECT.value),
+            project_name=unmapped("staging"),
             parameters=constants.BILHETAGEM_CAPTURE_PARAMS.value,
             labels=unmapped(LABELS),
         )
@@ -477,7 +476,8 @@ with Flow(
         # Materialização
         run_materializacao_transacao = create_flow_run(
             flow_name=bilhetagem_materializacao_transacao.name,
-            project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            # project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            project_name="staging",
             labels=LABELS,
             upstream_tasks=[
                 wait_captura,
@@ -498,7 +498,8 @@ with Flow(
 
         run_materializacao_gps_validador = create_flow_run(
             flow_name=bilhetagem_materializacao_gps_validador.name,
-            project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            # project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            project_name="staging",
             labels=LABELS,
             parameters={
                 "table_id": constants.BILHETAGEM_MATERIALIZACAO_GPS_VALIDADOR_TABLE_ID.value,
@@ -516,7 +517,8 @@ with Flow(
 
         run_materializacao_gps_validador_van = create_flow_run(
             flow_name=bilhetagem_materializacao_gps_validador.name,
-            project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            # project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            project_name="staging",
             labels=LABELS,
             parameters={
                 "table_id": constants.BILHETAGEM_MATERIALIZACAO_GPS_VALIDADOR_VAN_TABLE_ID.value,
@@ -541,7 +543,6 @@ bilhetagem_transacao_tratamento.schedule = every_hour
 bilhetagem_transacao_tratamento.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
-    handler_skip_if_running,
 ]
 # CAPTURA/TRATAMENTO - ORDEM PAGAMENTO:
 # CAPTURA + RECAPTURA + MATERIALIZAÇÃO
@@ -568,7 +569,8 @@ with Flow(
     with case(capture, True):
         runs_captura = create_flow_run.map(
             flow_name=unmapped(bilhetagem_ressarcimento_captura.name),
-            project_name=unmapped(emd_constants.PREFECT_DEFAULT_PROJECT.value),
+            # project_name=unmapped(emd_constants.PREFECT_DEFAULT_PROJECT.value),
+            project_name=unmapped("staging"),
             parameters=constants.BILHETAGEM_ORDEM_PAGAMENTO_CAPTURE_PARAMS.value,
             labels=unmapped(LABELS),
         )
@@ -582,7 +584,8 @@ with Flow(
 
         runs_captura_integracao = create_flow_run(
             flow_name=unmapped(bilhetagem_integracao_captura.name),
-            project_name=unmapped(emd_constants.PREFECT_DEFAULT_PROJECT.value),
+            # project_name=unmapped(emd_constants.PREFECT_DEFAULT_PROJECT.value),
+            project_name=unmapped("staging"),
             labels=unmapped(LABELS),
             upstream_tasks=[wait_captura],
         )
@@ -598,7 +601,8 @@ with Flow(
 
         runs_recaptura = create_flow_run.map(
             flow_name=unmapped(bilhetagem_recaptura.name),
-            project_name=unmapped(emd_constants.PREFECT_DEFAULT_PROJECT.value),
+            # project_name=unmapped(emd_constants.PREFECT_DEFAULT_PROJECT.value),
+            project_name=unmapped("staging"),
             parameters=constants.BILHETAGEM_ORDEM_PAGAMENTO_CAPTURE_PARAMS.value,
             labels=unmapped(LABELS),
         )
@@ -616,7 +620,8 @@ with Flow(
 
         run_recaptura_integracao = create_flow_run(
             flow_name=bilhetagem_recaptura.name,
-            project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            # project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            project_name="staging",
             labels=LABELS,
             parameters=constants.BILHETAGEM_INTEGRACAO_CAPTURE_PARAMS.value,
             upstream_tasks=[wait_recaptura_true, wait_captura_integracao],
@@ -649,7 +654,8 @@ with Flow(
 
         run_materializacao = create_flow_run(
             flow_name=bilhetagem_materializacao_ordem_pagamento.name,
-            project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            # project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            project_name="staging",
             labels=LABELS,
             upstream_tasks=[wait_recaptura, wait_recaptura_integracao],
             parameters={
@@ -666,7 +672,8 @@ with Flow(
 
         run_materializacao_integracao = create_flow_run(
             flow_name=bilhetagem_materializacao_integracao.name,
-            project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            # project_name=emd_constants.PREFECT_DEFAULT_PROJECT.value,
+            project_name="staging",
             labels=LABELS,
             upstream_tasks=[
                 wait_materializacao,
@@ -695,7 +702,6 @@ bilhetagem_ordem_pagamento_captura_tratamento.run_config = KubernetesRun(
 bilhetagem_ordem_pagamento_captura_tratamento.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
-    handler_skip_if_running,
 ]
 
 bilhetagem_ordem_pagamento_captura_tratamento.schedule = every_day_hour_five
