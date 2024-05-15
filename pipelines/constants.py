@@ -673,40 +673,40 @@ and createdDate lt {end})",
             "primary_key": ["id"],  # id column to nest data on
             "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
         },
-        {
-            "table_id": "conta_bancaria",
-            "partition_date_only": True,
-            "extract_params": {
-                "database": "principal_db",
-                "query": """
-                    SELECT
-                        c.*,
-                        b.NM_BANCO
-                    FROM
-                        CONTA_BANCARIA c
-                    JOIN
-                        BANCO b
-                    ON
-                        b.NR_BANCO = c.NR_BANCO
-                    JOIN
-                        OPERADORA_TRANSPORTE o
-                    ON
-                        o.CD_CLIENTE = c.CD_CLIENTE
-                    WHERE
-                        {update}
-                """,
-                "get_updates": [
-                    "c.cd_cliente",
-                    "c.cd_agencia",
-                    "c.cd_tipo_conta",
-                    "c.nr_banco",
-                    "c.nr_conta",
-                ],
-            },
-            "primary_key": ["CD_CLIENTE"],  # id column to nest data on
-            "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
-            "save_bucket_name": BILHETAGEM_PRIVATE_BUCKET,
-        },
+        # {
+        #     "table_id": "conta_bancaria",
+        #     "partition_date_only": True,
+        #     "extract_params": {
+        #         "database": "principal_db",
+        #         "query": """
+        #             SELECT
+        #                 c.*,
+        #                 b.NM_BANCO
+        #             FROM
+        #                 CONTA_BANCARIA c
+        #             JOIN
+        #                 BANCO b
+        #             ON
+        #                 b.NR_BANCO = c.NR_BANCO
+        #             JOIN
+        #                 OPERADORA_TRANSPORTE o
+        #             ON
+        #                 o.CD_CLIENTE = c.CD_CLIENTE
+        #             WHERE
+        #                 {update}
+        #         """,
+        #         "get_updates": [
+        #             "c.cd_cliente",
+        #             "c.cd_agencia",
+        #             "c.cd_tipo_conta",
+        #             "c.nr_banco",
+        #             "c.nr_conta",
+        #         ],
+        #     },
+        #     "primary_key": ["CD_CLIENTE"],  # id column to nest data on
+        #     "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
+        #     "save_bucket_name": BILHETAGEM_PRIVATE_BUCKET,
+        # },
         {
             "table_id": "contato_pessoa_juridica",
             "partition_date_only": True,
