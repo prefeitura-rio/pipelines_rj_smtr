@@ -212,10 +212,10 @@ models:
       +schema: migracao_dashboard_subsidio_sppo_staging
     veiculo:
       +materialized: view
-      +schema: migracao_veiculo
+      +schema: veiculo
       staging:
         +materialized: view
-        +schema: migracao_veiculo_staging
+        +schema: veiculo_staging
     br_rj_riodejaneiro_rdo:
       +materialized: view
       +schema: migracao_br_rj_riodejaneiro_rdo
