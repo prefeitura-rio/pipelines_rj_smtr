@@ -33,7 +33,7 @@ gps AS (
     {{ ref('brt_registros_desaninhada') }}
   {% if is_incremental() -%}
   WHERE
-    data between DATE("{{var('date_range_start')}}") and DATE("{{var('date_range_end')}}")
+    DATE(data) between DATE("{{var('date_range_start')}}") and DATE("{{var('date_range_end')}}")
     AND timestamp_gps > "{{var('date_range_start')}}" and timestamp_gps <= "{{var('date_range_end')}}"
     AND DATETIME_DIFF(timestamp_captura, timestamp_gps, MINUTE) BETWEEN 0 AND 1
   {%- endif %}
@@ -50,7 +50,7 @@ filtrada AS (
     servico,
     timestamp_gps,
     timestamp_captura,
-    data,
+    DATE(data) AS data,
     hora,
     row_number() over (partition by id_veiculo, timestamp_gps, servico) rn
   FROM
