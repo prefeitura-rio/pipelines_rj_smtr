@@ -24,7 +24,7 @@ with realocacao as (
         datetime_diff(datetime_operacao, datetime_entrada, minute) between 0 and 60
     {% if is_incremental() -%}
     and
-        data between DATE("{{var('date_range_start')}}")
+        DATE(data) between DATE("{{var('date_range_start')}}")
         and DATE(datetime_add("{{var('date_range_end')}}", interval 1
         hour))
     and
