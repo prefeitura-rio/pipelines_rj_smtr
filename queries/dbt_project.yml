@@ -250,7 +250,7 @@ models:
     gtfs:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
-      +schema: migracao_gtfs
+      +schema: gtfs
     indicadores_continuados_egp_staging:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
