@@ -3,9 +3,10 @@
 Flows for br_rj_riodejaneiro_onibus_gps
 """
 
-from prefect import Parameter, case
+from prefect import Parameter, case, task
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
+from prefect.tasks.control_flow import merge
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
@@ -18,6 +19,7 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 )
 
 from pipelines.br_rj_riodejaneiro_onibus_gps.tasks import (
+    clean_br_rj_riodejaneiro_onibus_gps,
     create_api_url_onibus_gps,
     create_api_url_onibus_realocacao,
     pre_treatment_br_rj_riodejaneiro_onibus_gps,
@@ -147,9 +149,12 @@ with Flow(
     dataset_id = Parameter("dataset_id", default=constants.GPS_SPPO_DATASET_ID.value)
     table_id = Parameter("table_id", default=constants.GPS_SPPO_TREATED_TABLE_ID.value)
     rebuild = Parameter("rebuild", False)
+    rematerialization = Parameter("rematerialization", default=False)
+    date_range_start = Parameter("date_range_start", default=None)
+    date_range_end = Parameter("date_range_end", default=None)
 
     LABELS = get_current_flow_labels()
-    MODE = get_current_flow_mode()
+    MODE = get_current_flow_mode(LABELS)
 
     # Set dbt client #
     # dbt_client = get_k8s_dbt_client(mode=MODE, wait=rename_flow_run)
@@ -157,22 +162,44 @@ with Flow(
     # dbt_client = get_local_dbt_client(host="localhost", port=3001)
 
     # Set specific run parameters #
-    date_range = get_materialization_date_range(
-        dataset_id=dataset_id,
-        table_id=table_id,
-        raw_dataset_id=raw_dataset_id,
-        raw_table_id=raw_table_id,
-        table_run_datetime_column_name="timestamp_gps",
-        mode=MODE,
-        delay_hours=constants.GPS_SPPO_MATERIALIZE_DELAY_HOURS.value,
-    )
+    with case(rematerialization, False):
+        date_range_false = get_materialization_date_range(
+            dataset_id=dataset_id,
+            table_id=table_id,
+            raw_dataset_id=raw_dataset_id,
+            raw_table_id=raw_table_id,
+            table_run_datetime_column_name="timestamp_gps",
+            mode=MODE,
+            delay_hours=constants.GPS_SPPO_MATERIALIZE_DELAY_HOURS.value,
+        )
+
+        RUN_CLEAN_FALSE = task(
+            lambda: [None],
+            checkpoint=False,
+            name="assign_none_to_previous_runs",
+        )()
+    with case(rematerialization, True):
+        date_range_true = task(
+            lambda start, end: {
+                "date_range_start": start,
+                "date_range_end": end,
+            }
+        )(start=date_range_start, end=date_range_end)
+
+        RUN_CLEAN_TRUE = clean_br_rj_riodejaneiro_onibus_gps(date_range_true)
+
+    RUN_CLEAN = merge(RUN_CLEAN_TRUE, RUN_CLEAN_FALSE)
+
+    date_range = merge(date_range_true, date_range_false)
+
     dataset_sha = fetch_dataset_sha(
         dataset_id=dataset_id,
+        upstream_tasks=[RUN_CLEAN],
     )
 
     # Run materialization #
     with case(rebuild, True):
-        RUN = run_dbt_model(
+        RUN_TRUE = run_dbt_model(
             # dbt_client=dbt_client,
             dataset_id=dataset_id,
             table_id=table_id,
@@ -181,15 +208,9 @@ with Flow(
             _vars=[date_range, dataset_sha],
             flags="--full-refresh",
         )
-        set_last_run_timestamp(
-            dataset_id=dataset_id,
-            table_id=table_id,
-            timestamp=date_range["date_range_end"],
-            wait=RUN,
-            mode=MODE,
-        )
+
     with case(rebuild, False):
-        RUN = run_dbt_model(
+        RUN_FALSE = run_dbt_model(
             # dbt_client=dbt_client,
             dataset_id=dataset_id,
             table_id=table_id,
@@ -197,13 +218,28 @@ with Flow(
             _vars=[date_range, dataset_sha],
             upstream=True,
         )
-        set_last_run_timestamp(
+
+    RUN = merge(RUN_TRUE, RUN_FALSE)
+
+    with case(rematerialization, False):
+        SET_FALSE = set_last_run_timestamp(
             dataset_id=dataset_id,
             table_id=table_id,
             timestamp=date_range["date_range_end"],
             wait=RUN,
             mode=MODE,
         )
+
+    with case(rematerialization, True):
+        SET_TRUE = task(
+            lambda: [None],
+            checkpoint=False,
+            name="assign_none_to_previous_runs",
+        )()
+
+    SET = merge(SET_TRUE, SET_FALSE)
+
+    materialize_sppo.set_reference_tasks([RUN, RUN_CLEAN, SET])
 
 materialize_sppo.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 materialize_sppo.run_config = KubernetesRun(
