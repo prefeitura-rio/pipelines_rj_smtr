@@ -182,6 +182,52 @@ class constants(Enum):  # pylint: disable=c0103
         },
     ]
 
+    # SUBSÍDIO RECURSOS
+
+    SUBSIDIO_SPPO_RECURSO_TABLE_CAPTURE_PARAMS = {
+        "recursos_sppo_viagens_individuais": "Viagem Individual",
+        "recursos_sppo_bloqueio_via": "Bloqueio da via",
+        "recursos_sppo_reprocessamento": "Reprocessamento",
+    }
+
+    SUBSIDIO_SPPO_RECURSOS_DATASET_ID = "migracao_br_rj_riodejaneiro_recursos"
+    SUBSIDIO_SPPO_RECURSO_API_BASE_URL = "https://api.movidesk.com/public/v1/tickets"
+    SUBSIDIO_SPPO_RECURSO_API_SECRET_PATH = "sppo_subsidio_recursos_api"
+    SUBSIDIO_SPPO_RECURSO_CAPTURE_PARAMS = {
+        "partition_date_only": True,
+        "dataset_id": SUBSIDIO_SPPO_RECURSOS_DATASET_ID,
+        "extract_params": {
+            "token": "",
+            "$select": "id,protocol,createdDate,lastUpdate",
+            "$filter": "serviceFirstLevel eq '{service} - Recurso Viagens Subsídio' \
+and (lastUpdate ge {start} and lastUpdate lt {end} or createdDate ge {start} \
+and createdDate lt {end})",
+            "$expand": "customFieldValues,customFieldValues($expand=items)",
+            "$orderby": "createdDate asc",
+        },
+        "interval_minutes": 1440,
+        "source_type": "movidesk",
+        "primary_key": ["protocol"],
+    }
+
+    SUBSIDIO_SPPO_RECURSOS_TABLE_IDS = [
+        {"table_id": "recursos_sppo_viagens_individuais"},
+        {"table_id": "recursos_sppo_bloqueio_via"},
+        {"table_id": "recursos_sppo_reprocessamento"},
+    ]
+
+    SUBSIDIO_SPPO_RECURSOS_MATERIALIZACAO_PARAMS = {
+        "dataset_id": "br_rj_riodejaneiro_recursos",
+        "upstream": True,
+        "dbt_vars": {
+            "date_range": {
+                "table_run_datetime_column_name": "datetime_recurso",
+                "delay_hours": 0,
+            },
+            "version": {},
+        },
+    }
+
     DIRETORIO_MATERIALIZACAO_PARAMS = {
         "dataset_id": "cadastro",
         "upstream": True,
@@ -267,7 +313,7 @@ class constants(Enum):  # pylint: disable=c0103
         "source_type": "db",
     }
 
-    BILHETAGEM_PRIVATE_BUCKET = "rj-smtr-jae-private"
+    BILHETAGEM_PRIVATE_BUCKET = "rj-smtr-dev-private"
 
     BILHETAGEM_TRANSACAO_CAPTURE_PARAMS = {
         "table_id": "transacao",
@@ -627,40 +673,40 @@ class constants(Enum):  # pylint: disable=c0103
             "primary_key": ["id"],  # id column to nest data on
             "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
         },
-        {
-            "table_id": "conta_bancaria",
-            "partition_date_only": True,
-            "extract_params": {
-                "database": "principal_db",
-                "query": """
-                    SELECT
-                        c.*,
-                        b.NM_BANCO
-                    FROM
-                        CONTA_BANCARIA c
-                    JOIN
-                        BANCO b
-                    ON
-                        b.NR_BANCO = c.NR_BANCO
-                    JOIN
-                        OPERADORA_TRANSPORTE o
-                    ON
-                        o.CD_CLIENTE = c.CD_CLIENTE
-                    WHERE
-                        {update}
-                """,
-                "get_updates": [
-                    "c.cd_cliente",
-                    "c.cd_agencia",
-                    "c.cd_tipo_conta",
-                    "c.nr_banco",
-                    "c.nr_conta",
-                ],
-            },
-            "primary_key": ["CD_CLIENTE"],  # id column to nest data on
-            "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
-            "save_bucket_name": BILHETAGEM_PRIVATE_BUCKET,
-        },
+        # {
+        #     "table_id": "conta_bancaria",
+        #     "partition_date_only": True,
+        #     "extract_params": {
+        #         "database": "principal_db",
+        #         "query": """
+        #             SELECT
+        #                 c.*,
+        #                 b.NM_BANCO
+        #             FROM
+        #                 CONTA_BANCARIA c
+        #             JOIN
+        #                 BANCO b
+        #             ON
+        #                 b.NR_BANCO = c.NR_BANCO
+        #             JOIN
+        #                 OPERADORA_TRANSPORTE o
+        #             ON
+        #                 o.CD_CLIENTE = c.CD_CLIENTE
+        #             WHERE
+        #                 {update}
+        #         """,
+        #         "get_updates": [
+        #             "c.cd_cliente",
+        #             "c.cd_agencia",
+        #             "c.cd_tipo_conta",
+        #             "c.nr_banco",
+        #             "c.nr_conta",
+        #         ],
+        #     },
+        #     "primary_key": ["CD_CLIENTE"],  # id column to nest data on
+        #     "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
+        #     "save_bucket_name": BILHETAGEM_PRIVATE_BUCKET,
+        # },
         {
             "table_id": "contato_pessoa_juridica",
             "partition_date_only": True,
@@ -863,39 +909,39 @@ class constants(Enum):  # pylint: disable=c0103
         },
     }
 
-    # SUBSÍDIO RECURSOS VIAGENS INDIVIDUAIS
-    SUBSIDIO_SPPO_RECURSOS_DATASET_ID = "migracao_br_rj_riodejaneiro_recurso"
-    SUBSIDIO_SPPO_RECURSO_API_BASE_URL = "https://api.movidesk.com/public/v1/tickets?"
-    SUBSIDIO_SPPO_RECURSO_API_SECRET_PATH = "sppo_subsidio_recursos_api"
-    SUBSIDIO_SPPO_RECURSO_SERVICE = "serviceFull eq 'SPPO'"
-    SUBSIDIO_SPPO_RECURSO_CAPTURE_PARAMS = {
-        "partition_date_only": True,
-        "table_id": "recurso_sppo",
-        "dataset_id": SUBSIDIO_SPPO_RECURSOS_DATASET_ID,
-        "extract_params": {
-            "token": "",
-            "$select": "id,protocol,createdDate",
-            "$filter": "{dates} and serviceFull/any(serviceFull: {service})",
-            "$expand": "customFieldValues,customFieldValues($expand=items)",
-            "$orderby": "createdDate asc",
-        },
-        "interval_minutes": 1440,
-        "source_type": "movidesk",
-        "primary_key": ["protocol"],
-    }
+    # # SUBSÍDIO RECURSOS VIAGENS INDIVIDUAIS
+    # SUBSIDIO_SPPO_RECURSOS_DATASET_ID = "migracao_br_rj_riodejaneiro_recurso"
+    # SUBSIDIO_SPPO_RECURSO_API_BASE_URL = "https://api.movidesk.com/public/v1/tickets?"
+    # SUBSIDIO_SPPO_RECURSO_API_SECRET_PATH = "sppo_subsidio_recursos_api"
+    # SUBSIDIO_SPPO_RECURSO_SERVICE = "serviceFull eq 'SPPO'"
+    # SUBSIDIO_SPPO_RECURSO_CAPTURE_PARAMS = {
+    #     "partition_date_only": True,
+    #     "table_id": "recurso_sppo",
+    #     "dataset_id": SUBSIDIO_SPPO_RECURSOS_DATASET_ID,
+    #     "extract_params": {
+    #         "token": "",
+    #         "$select": "id,protocol,createdDate",
+    #         "$filter": "{dates} and serviceFull/any(serviceFull: {service})",
+    #         "$expand": "customFieldValues,customFieldValues($expand=items)",
+    #         "$orderby": "createdDate asc",
+    #     },
+    #     "interval_minutes": 1440,
+    #     "source_type": "movidesk",
+    #     "primary_key": ["protocol"],
+    # }
 
-    SUBSIDIO_SPPO_RECURSOS_MATERIALIZACAO_PARAMS = {
-        "dataset_id": SUBSIDIO_SPPO_RECURSOS_DATASET_ID,
-        "table_id": SUBSIDIO_SPPO_RECURSO_CAPTURE_PARAMS["table_id"],
-        "upstream": True,
-        "dbt_vars": {
-            "date_range": {
-                "table_run_datetime_column_name": "data_recurso",
-                "delay_hours": 0,
-            },
-            "version": {},
-        },
-    }
+    # SUBSIDIO_SPPO_RECURSOS_MATERIALIZACAO_PARAMS = {
+    #     "dataset_id": SUBSIDIO_SPPO_RECURSOS_DATASET_ID,
+    #     "table_id": SUBSIDIO_SPPO_RECURSO_CAPTURE_PARAMS["table_id"],
+    #     "upstream": True,
+    #     "dbt_vars": {
+    #         "date_range": {
+    #             "table_run_datetime_column_name": "data_recurso",
+    #             "delay_hours": 0,
+    #         },
+    #         "version": {},
+    #     },
+    # }
 
     # VEÍCULOS LICENCIADOS
     # flake8: noqa: E501

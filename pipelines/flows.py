@@ -13,5 +13,6 @@ from pipelines.br_rj_riodejaneiro_stu.flows import *  # noqa
 from pipelines.capture.jae.flows import *  # noqa
 from pipelines.exemplo import *  # noqa
 from pipelines.projeto_subsidio_sppo.flows import *  # noqa
+from pipelines.templates.backup.flows import *  # noqa
 from pipelines.treatment.bilhetagem.flows import *  # noqa
 from pipelines.veiculo.flows import *  # noqa

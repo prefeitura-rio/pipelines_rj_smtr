@@ -87,6 +87,7 @@ def run_dbt_model(
     flags: str = None,
     _vars: dict | List[Dict] = None,
 ):
+    dataset_id = dataset_id.replace("migracao_", "")
     return run_dbt_model_func(
         dataset_id=dataset_id,
         table_id=table_id,
@@ -725,7 +726,7 @@ def create_request_params(
             except GenericGBQException as err:
                 if "404 Not found" in str(err):
                     log("Table Not found, returning id = 0")
-                    last_captured_id = 0
+                    last_captured_id = 801035443
 
             request_params["query"] = request_params["query"].format(
                 last_id=last_captured_id,
