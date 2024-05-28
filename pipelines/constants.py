@@ -75,9 +75,9 @@ class constants(Enum):  # pylint: disable=c0103
     GPS_SPPO_API_SECRET_PATH = "sppo_api"
     GPS_SPPO_API_SECRET_PATH_V2 = "sppo_api_v2"
 
-    GPS_SPPO_RAW_DATASET_ID = "migracao_br_rj_riodejaneiro_onibus_gps"
+    GPS_SPPO_RAW_DATASET_ID = "br_rj_riodejaneiro_onibus_gps"
     GPS_SPPO_RAW_TABLE_ID = "registros"
-    GPS_SPPO_DATASET_ID = "migracao_br_rj_riodejaneiro_veiculos"
+    GPS_SPPO_DATASET_ID = "br_rj_riodejaneiro_veiculos"
     GPS_SPPO_TREATED_TABLE_ID = "gps_sppo"
     GPS_SPPO_CAPTURE_DELAY_V1 = 1
     GPS_SPPO_CAPTURE_DELAY_V2 = 60

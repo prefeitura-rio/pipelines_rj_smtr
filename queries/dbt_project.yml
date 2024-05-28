@@ -194,7 +194,7 @@ models:
       +schema: br_rj_riodejaneiro_sigmob
     br_rj_riodejaneiro_onibus_gps:
       +materialized: view
-      +schema: migracao_br_rj_riodejaneiro_onibus_gps
+      +schema: br_rj_riodejaneiro_onibus_gps
     br_rj_riodejaneiro_onibus_gps_zirix:
       +materialized: view
       +schema: migracao_br_rj_riodejaneiro_onibus_gps_zirix
@@ -203,7 +203,7 @@ models:
       +schema: migracao_br_rj_riodejaneiro_brt_gps
     br_rj_riodejaneiro_veiculos:
       +materialized: view
-      +schema: migracao_br_rj_riodejaneiro_veiculos
+      +schema: br_rj_riodejaneiro_veiculos
     dashboard_subsidio_sppo:
       +materialized: view
       +schema: migracao_dashboard_subsidio_sppo
