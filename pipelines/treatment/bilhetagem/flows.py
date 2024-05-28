@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Flows de tratamento da bilhetagem"""
-from datetime import timedelta
+# from datetime import timedelta
 
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
@@ -13,7 +13,8 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 from pipelines.capture.jae.constants import constants as jae_capture_constants
 from pipelines.capture.jae.flows import JAE_AUXILIAR_CAPTURE
 from pipelines.constants import constants
-from pipelines.schedules import generate_interval_schedule
+
+# from pipelines.schedules import generate_interval_schedule
 from pipelines.tasks import (  # parse_timestamp_to_string,
     get_scheduled_timestamp,
     run_subflow,

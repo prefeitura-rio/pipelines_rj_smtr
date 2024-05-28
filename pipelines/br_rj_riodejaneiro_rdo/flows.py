@@ -28,7 +28,8 @@ from pipelines.br_rj_riodejaneiro_rdo.tasks import (
 )
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
-from pipelines.schedules import every_day
+
+# from pipelines.schedules import every_day
 from pipelines.utils.backup.tasks import (
     bq_upload,
     get_current_flow_labels,
