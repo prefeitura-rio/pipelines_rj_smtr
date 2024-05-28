@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """Capture flows for Jae"""
-from datetime import timedelta
+# from datetime import timedelta
 
 from pipelines.capture.jae.constants import constants
 from pipelines.capture.jae.tasks import create_extractor_jae
 from pipelines.capture.templates.flows import create_default_capture_flow
 from pipelines.constants import constants as smtr_constants
-from pipelines.schedules import generate_interval_schedule
+
+# from pipelines.schedules import generate_interval_schedule
 
 # Transação
 
@@ -19,10 +20,10 @@ JAE_TRANSACAO_CAPTURE = create_default_capture_flow(
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
 )
 
-JAE_TRANSACAO_CAPTURE.schedule = generate_interval_schedule(
-    interval=timedelta(minutes=5),
-    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
-)
+# JAE_TRANSACAO_CAPTURE.schedule = generate_interval_schedule(
+#     interval=timedelta(minutes=5),
+#     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+# )
 
 
 JAE_TRANSACAO_RIOCARD_CAPTURE = create_default_capture_flow(
@@ -34,10 +35,10 @@ JAE_TRANSACAO_RIOCARD_CAPTURE = create_default_capture_flow(
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
 )
 
-JAE_TRANSACAO_RIOCARD_CAPTURE.schedule = generate_interval_schedule(
-    interval=timedelta(minutes=5),
-    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
-)
+# JAE_TRANSACAO_RIOCARD_CAPTURE.schedule = generate_interval_schedule(
+#     interval=timedelta(minutes=5),
+#     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+# )
 
 # GPS Validador
 
@@ -50,10 +51,10 @@ JAE_GPS_VALIDADOR_CAPTURE = create_default_capture_flow(
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
 )
 
-JAE_GPS_VALIDADOR_CAPTURE.schedule = generate_interval_schedule(
-    interval=timedelta(minutes=5),
-    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
-)
+# JAE_GPS_VALIDADOR_CAPTURE.schedule = generate_interval_schedule(
+#     interval=timedelta(minutes=5),
+#     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+# )
 
 # Tabelas Auxiliares
 
