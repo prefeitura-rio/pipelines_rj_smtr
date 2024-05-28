@@ -106,7 +106,7 @@ bilhetagem_fiscalizacao_captura.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
 ]
-bilhetagem_fiscalizacao_captura.schedule = every_5_minutes
+# bilhetagem_fiscalizacao_captura.schedule = every_5_minutes
 
 # BILHETAGEM INTEGRAÇÃO - CAPTURA A CADA MINUTO #
 
@@ -149,7 +149,7 @@ bilhetagem_tracking_captura.state_handlers.append(
 )
 
 
-bilhetagem_tracking_captura.schedule = every_5_minutes
+# bilhetagem_tracking_captura.schedule = every_5_minutes
 
 # BILHETAGEM RESSARCIMENTO - SUBFLOW PARA RODAR DIARIAMENTE #
 
