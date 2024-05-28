@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
-from typing import Dict, List
 import traceback
 from datetime import datetime
+from typing import Dict, List
 
+import requests
 from prefect import task
 from prefect.client import Client
 
-from pipelines.utils.utils import log
 from pipelines.utils.secret import get_secret
-
-import requests
+from pipelines.utils.utils import log
 
 
 @task
@@ -184,9 +183,7 @@ query($flow_name: String, $offset: Int){
         for flow_run in flow["flow_runs"]:
             if flow["flow_runs"]:
                 archived_flow_runs.append(flow_run)
-            log(
-                f"Got flow_run {flow_run['id']}, scheduled: {flow_run['scheduled_start_time']}"
-            )
+            log(f"Got flow_run {flow_run['id']}, scheduled: {flow_run['scheduled_start_time']}")
 
     if archived_flow_runs:
         log(f"O Flow {flow_name} possui runs a serem canceladas")
@@ -221,9 +218,7 @@ def cancel_flows(flows, prefect_client: Client = None) -> None:
 
     for flow in flows:
         try:
-            response = prefect_client.graphql(
-                query=query, variables=dict(flow_id=flow["id"])
-            )
+            response = prefect_client.graphql(query=query, variables=dict(flow_id=flow["id"]))
             # state: str = response["data"]["cancel_flow_run"]["state"]
             log(response)
             log(f">>>>>>>>>> Flow run {flow['id']} arquivada")
