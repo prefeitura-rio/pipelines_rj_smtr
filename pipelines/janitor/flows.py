@@ -2,16 +2,17 @@
 "Flows for janitor"
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
-from pipelines.constants import constants as emd_constants
-from prefeitura_rio.pipelines_utils.custom import Flow
 from prefect.utilities.edges import unmapped
-from pipelines.schedules import every_5_minutes
+from prefeitura_rio.pipelines_utils.custom import Flow
+
+from pipelines.constants import constants as emd_constants
 from pipelines.janitor.tasks import (
-    query_active_flow_names,
-    query_not_active_flows,
     cancel_flows,
     get_prefect_client,
+    query_active_flow_names,
+    query_not_active_flows,
 )
+from pipelines.schedules import every_5_minutes
 
 with Flow(
     "SMTR: Desagendamento de runs arquivadas",

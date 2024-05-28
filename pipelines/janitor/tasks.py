@@ -2,14 +2,14 @@
 # from typing import Dict, List
 import traceback
 from datetime import datetime
+from typing import Dict, List
 
+import requests
 from prefect import task
 from prefect.client import Client
 
-from pipelines.utils.utils import log
 from pipelines.utils.secret import get_secret
-
-import requests
+from pipelines.utils.utils import log
 
 
 @task
