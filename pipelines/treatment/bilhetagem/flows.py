@@ -68,7 +68,7 @@ bilhetagem_tratamento.state_handlers = [
     handler_skip_if_running,
 ]
 
-bilhetagem_tratamento.schedule = generate_interval_schedule(
-    interval=timedelta(hours=1),
-    agent_label=constants.RJ_SMTR_AGENT_LABEL.value,
-)
+# bilhetagem_tratamento.schedule = generate_interval_schedule(
+#     interval=timedelta(hours=1),
+#     agent_label=constants.RJ_SMTR_AGENT_LABEL.value,
+# )

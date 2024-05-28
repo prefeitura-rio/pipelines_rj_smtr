@@ -105,7 +105,7 @@ captura_stu_ftp.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-captura_stu_ftp.schedule = every_day_hour_seven
+# captura_stu_ftp.schedule = every_day_hour_seven
 captura_stu_ftp.state_handlers = [
     handler_initialize_sentry,
     handler_inject_bd_credentials,
@@ -161,7 +161,7 @@ captura_licenciamento_ftp.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-captura_licenciamento_ftp.schedule = every_day_hour_seven
+# captura_licenciamento_ftp.schedule = every_day_hour_seven
 captura_licenciamento_ftp.state_handlers = [
     handler_initialize_sentry,
     handler_inject_bd_credentials,
@@ -371,4 +371,4 @@ veiculo_sppo_registro_agente_verao_captura = set_default_parameters(
     flow=veiculo_sppo_registro_agente_verao_captura,
     default_parameters=constants.SPPO_REGISTRO_AGENTE_VERAO_PARAMS.value,
 )
-veiculo_sppo_registro_agente_verao_captura.schedule = every_day_hour_seven
+# veiculo_sppo_registro_agente_verao_captura.schedule = every_day_hour_seven

@@ -66,7 +66,7 @@ bilhetagem_transacao_captura.state_handlers = [
     handler_initialize_sentry,
     handler_skip_if_running,
 ]
-bilhetagem_transacao_captura.schedule = every_minute
+# bilhetagem_transacao_captura.schedule = every_minute
 
 
 bilhetagem_transacao_riocard_captura = deepcopy(default_capture_flow)
@@ -87,7 +87,7 @@ bilhetagem_transacao_riocard_captura.state_handlers = [
     handler_initialize_sentry,
     handler_skip_if_running,
 ]
-bilhetagem_transacao_riocard_captura.schedule = every_minute
+# bilhetagem_transacao_riocard_captura.schedule = every_minute
 
 # BILHETAGEM FISCALIZAÇÃO - CAPTURA A CADA 5 MINUTOS #
 
@@ -105,7 +105,7 @@ bilhetagem_fiscalizacao_captura = set_default_parameters(
     | constants.BILHETAGEM_FISCALIZACAO_CAPTURE_PARAMS.value,
 )
 bilhetagem_fiscalizacao_captura.state_handlers
-bilhetagem_fiscalizacao_captura.schedule = every_5_minutes
+# bilhetagem_fiscalizacao_captura.schedule = every_5_minutes
 
 # BILHETAGEM INTEGRAÇÃO - CAPTURA A CADA MINUTO #
 
@@ -149,7 +149,7 @@ bilhetagem_tracking_captura.state_handlers.append(
 )
 
 
-bilhetagem_tracking_captura.schedule = every_5_minutes
+# bilhetagem_tracking_captura.schedule = every_5_minutes
 
 # BILHETAGEM RESSARCIMENTO - SUBFLOW PARA RODAR DIARIAMENTE #
 
@@ -242,7 +242,7 @@ bilhetagem_materializacao_transacao_riocard = set_default_parameters(
     default_parameters=constants.BILHETAGEM_MATERIALIZACAO_TRANSACAO_RIOCARD_PARAMS.value,
 )
 
-bilhetagem_materializacao_transacao_riocard.schedule = every_day_hour_five
+# bilhetagem_materializacao_transacao_riocard.schedule = every_day_hour_five
 
 # Ordem Pagamento
 
@@ -533,7 +533,7 @@ bilhetagem_transacao_tratamento.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-bilhetagem_transacao_tratamento.schedule = every_hour
+# bilhetagem_transacao_tratamento.schedule = every_hour
 bilhetagem_transacao_tratamento.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
@@ -694,4 +694,4 @@ bilhetagem_ordem_pagamento_captura_tratamento.state_handlers = [
     handler_skip_if_running,
 ]
 
-bilhetagem_ordem_pagamento_captura_tratamento.schedule = every_day_hour_five
+# bilhetagem_ordem_pagamento_captura_tratamento.schedule = every_day_hour_five

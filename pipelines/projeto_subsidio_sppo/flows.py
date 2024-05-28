@@ -108,7 +108,7 @@ viagens_sppo.run_config = KubernetesRun(
     image=constants.DOCKER_IMAGE.value, labels=[constants.RJ_SMTR_AGENT_LABEL.value]
 )
 viagens_sppo.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
-viagens_sppo.schedule = every_day_hour_five
+# viagens_sppo.schedule = every_day_hour_five
 
 with Flow(
     "SMTR: Subsídio SPPO Apuração - Tratamento",
@@ -276,5 +276,5 @@ subsidio_sppo_apuracao.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
 subsidio_sppo_apuracao.run_config = KubernetesRun(
     image=constants.DOCKER_IMAGE.value, labels=[constants.RJ_SMTR_AGENT_LABEL.value]
 )
-subsidio_sppo_apuracao.schedule = every_day_hour_seven
+# subsidio_sppo_apuracao.schedule = every_day_hour_seven
 subsidio_sppo_apuracao.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
