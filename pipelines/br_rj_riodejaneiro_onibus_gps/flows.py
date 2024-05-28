@@ -126,7 +126,7 @@ realocacao_sppo.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-# realocacao_sppo.schedule = every_10_minutes
+realocacao_sppo.schedule = every_10_minutes
 realocacao_sppo.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
 
@@ -376,5 +376,5 @@ recaptura.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-# recaptura.schedule = every_hour_minute_six
+recaptura.schedule = every_hour_minute_six
 recaptura.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
