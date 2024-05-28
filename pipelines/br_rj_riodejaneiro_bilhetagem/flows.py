@@ -20,12 +20,13 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
-from pipelines.schedules import (
-    every_5_minutes,
-    every_day_hour_five,
-    every_hour,
-    every_minute,
-)
+
+# from pipelines.schedules import (
+#     every_5_minutes,
+#     every_day_hour_five,
+#     every_hour,
+#     every_minute,
+# )
 from pipelines.utils.backup.flows import (
     default_capture_flow,
     default_materialization_flow,
