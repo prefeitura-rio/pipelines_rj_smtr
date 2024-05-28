@@ -62,8 +62,8 @@ class constants(Enum):  # pylint: disable=c0103
     GPS_STPL_API_BASE_URL = "http://zn4.m2mcontrol.com.br/api/integracao/veiculos"
     GPS_STPL_API_SECRET_PATH = "stpl_api"
 
-    GPS_STPL_DATASET_ID = "br_rj_riodejaneiro_veiculos"
-    GPS_STPL_RAW_DATASET_ID = "br_rj_riodejaneiro_stpl_gps"
+    GPS_STPL_DATASET_ID = "migracao_br_rj_riodejaneiro_veiculos"
+    GPS_STPL_RAW_DATASET_ID = "migracao_br_rj_riodejaneiro_stpl_gps"
     GPS_STPL_RAW_TABLE_ID = "registros"
     GPS_STPL_TREATED_TABLE_ID = "gps_stpl"
 
@@ -75,9 +75,9 @@ class constants(Enum):  # pylint: disable=c0103
     GPS_SPPO_API_SECRET_PATH = "sppo_api"
     GPS_SPPO_API_SECRET_PATH_V2 = "sppo_api_v2"
 
-    GPS_SPPO_RAW_DATASET_ID = "br_rj_riodejaneiro_onibus_gps"
+    GPS_SPPO_RAW_DATASET_ID = "migracao_br_rj_riodejaneiro_onibus_gps"
     GPS_SPPO_RAW_TABLE_ID = "registros"
-    GPS_SPPO_DATASET_ID = "br_rj_riodejaneiro_veiculos"
+    GPS_SPPO_DATASET_ID = "migracao_br_rj_riodejaneiro_veiculos"
     GPS_SPPO_TREATED_TABLE_ID = "gps_sppo"
     GPS_SPPO_CAPTURE_DELAY_V1 = 1
     GPS_SPPO_CAPTURE_DELAY_V2 = 60
@@ -92,8 +92,8 @@ class constants(Enum):  # pylint: disable=c0103
     # GPS BRT #
     GPS_BRT_API_SECRET_PATH = "brt_api_v2"
     GPS_BRT_API_URL = "https://zn4.m2mcontrol.com.br/api/integracao/veiculos"
-    GPS_BRT_DATASET_ID = "br_rj_riodejaneiro_veiculos"
-    GPS_BRT_RAW_DATASET_ID = "br_rj_riodejaneiro_brt_gps"
+    GPS_BRT_DATASET_ID = "migracao_br_rj_riodejaneiro_veiculos"
+    GPS_BRT_RAW_DATASET_ID = "migracao_br_rj_riodejaneiro_brt_gps"
     GPS_BRT_RAW_TABLE_ID = "registros"
     GPS_BRT_TREATED_TABLE_ID = "gps_brt"
     GPS_BRT_MAPPING_KEYS = {
@@ -110,7 +110,7 @@ class constants(Enum):  # pylint: disable=c0103
     GPS_BRT_MATERIALIZE_DELAY_HOURS = 0
 
     # VEICULO
-    VEICULO_DATASET_ID = "veiculo"
+    VEICULO_DATASET_ID = "migracao_veiculo"
 
     # AUTUAÇÕES - AGENTES DE VERÃO
     SPPO_REGISTRO_AGENTE_VERAO_COLUMNS = [
@@ -137,7 +137,7 @@ class constants(Enum):  # pylint: disable=c0103
 
     # STU
 
-    STU_DATASET_ID = "br_rj_riodejaneiro_stu"
+    STU_DATASET_ID = "migracao_br_rj_riodejaneiro_stu"
 
     STU_BUCKET_NAME = "rj-smtr-stu-private"
 
@@ -182,6 +182,52 @@ class constants(Enum):  # pylint: disable=c0103
         },
     ]
 
+    # SUBSÍDIO RECURSOS
+
+    SUBSIDIO_SPPO_RECURSO_TABLE_CAPTURE_PARAMS = {
+        "recursos_sppo_viagens_individuais": "Viagem Individual",
+        "recursos_sppo_bloqueio_via": "Bloqueio da via",
+        "recursos_sppo_reprocessamento": "Reprocessamento",
+    }
+
+    SUBSIDIO_SPPO_RECURSOS_DATASET_ID = "migracao_br_rj_riodejaneiro_recursos"
+    SUBSIDIO_SPPO_RECURSO_API_BASE_URL = "https://api.movidesk.com/public/v1/tickets"
+    SUBSIDIO_SPPO_RECURSO_API_SECRET_PATH = "sppo_subsidio_recursos_api"
+    SUBSIDIO_SPPO_RECURSO_CAPTURE_PARAMS = {
+        "partition_date_only": True,
+        "dataset_id": SUBSIDIO_SPPO_RECURSOS_DATASET_ID,
+        "extract_params": {
+            "token": "",
+            "$select": "id,protocol,createdDate,lastUpdate",
+            "$filter": "serviceFirstLevel eq '{service} - Recurso Viagens Subsídio' \
+and (lastUpdate ge {start} and lastUpdate lt {end} or createdDate ge {start} \
+and createdDate lt {end})",
+            "$expand": "customFieldValues,customFieldValues($expand=items)",
+            "$orderby": "createdDate asc",
+        },
+        "interval_minutes": 1440,
+        "source_type": "movidesk",
+        "primary_key": ["protocol"],
+    }
+
+    SUBSIDIO_SPPO_RECURSOS_TABLE_IDS = [
+        {"table_id": "recursos_sppo_viagens_individuais"},
+        {"table_id": "recursos_sppo_bloqueio_via"},
+        {"table_id": "recursos_sppo_reprocessamento"},
+    ]
+
+    SUBSIDIO_SPPO_RECURSOS_MATERIALIZACAO_PARAMS = {
+        "dataset_id": "br_rj_riodejaneiro_recursos",
+        "upstream": True,
+        "dbt_vars": {
+            "date_range": {
+                "table_run_datetime_column_name": "datetime_recurso",
+                "delay_hours": 0,
+            },
+            "version": {},
+        },
+    }
+
     DIRETORIO_MATERIALIZACAO_PARAMS = {
         "dataset_id": "cadastro",
         "upstream": True,
@@ -195,7 +241,7 @@ class constants(Enum):  # pylint: disable=c0103
     # RDO/RHO
     RDO_FTP_ALLOWED_PATHS = ["SPPO", "STPL"]
     RDO_FTPS_SECRET_PATH = "smtr_rdo_ftps"
-    RDO_DATASET_ID = "br_rj_riodejaneiro_rdo"
+    RDO_DATASET_ID = "migracao_br_rj_riodejaneiro_rdo"
     SPPO_RDO_TABLE_ID = "rdo_registros_sppo"
     SPPO_RHO_TABLE_ID = "rho_registros_sppo"
     STPL_RDO_TABLE_ID = "rdo_registros_stpl"
@@ -203,7 +249,7 @@ class constants(Enum):  # pylint: disable=c0103
     RDO_MATERIALIZE_START_DATE = "2022-12-07"
 
     # ROCK IN RIO
-    RIR_DATASET_ID = "dashboards"
+    RIR_DATASET_ID = "migracao_dashboards"
     RIR_TABLE_ID = "registros_ocr_rir"
     RIR_START_DATE = "2022-08-30 12:00:00"
     RIR_SECRET_PATH = "smtr_rir_ftp"
@@ -220,16 +266,131 @@ class constants(Enum):  # pylint: disable=c0103
     }
 
     # SUBSÍDIO
-    SUBSIDIO_SPPO_DATASET_ID = "projeto_subsidio_sppo"
+    SUBSIDIO_SPPO_DATASET_ID = "migracao_projeto_subsidio_sppo"
     SUBSIDIO_SPPO_TABLE_ID = "viagem_completa"
 
     # SUBSÍDIO DASHBOARD
-    BILHETAGEM_DATASET_ID = "bilhetagem"
-    CADASTRO_DATASET_ID = "cadastro"
+    # BILHETAGEM_DATASET_ID = "migracao_bilhetagem"
+    CADASTRO_DATASET_ID = "migracao_cadastro"
 
     # CAPTURA #
 
-    # JAE
+    # JAE - BILHETAGEM
+
+    BILHETAGEM_DATASET_ID = "migracao_br_rj_riodejaneiro_bilhetagem"
+
+    BILHETAGEM_GENERAL_CAPTURE_PARAMS = {
+        "databases": {
+            "principal_db": {
+                "engine": "mysql",
+                "host": "10.5.114.121",
+            },
+            "tarifa_db": {
+                "engine": "postgresql",
+                "host": "10.5.113.254",
+            },
+            "transacao_db": {
+                "engine": "postgresql",
+                "host": "10.5.115.1",
+            },
+            "tracking_db": {
+                "engine": "postgresql",
+                "host": "10.5.15.25",
+            },
+            "ressarcimento_db": {
+                "engine": "postgresql",
+                "host": "10.5.15.127",
+            },
+            "gratuidade_db": {
+                "engine": "postgresql",
+                "host": "10.5.12.107",
+            },
+            "fiscalizacao_db": {
+                "engine": "postgresql",
+                "host": "10.5.115.29",
+            },
+        },
+        "source_type": "db",
+    }
+
+    BILHETAGEM_PRIVATE_BUCKET = "rj-smtr-dev-private"
+
+    BILHETAGEM_TRANSACAO_CAPTURE_PARAMS = {
+        "table_id": "transacao",
+        "partition_date_only": False,
+        "extract_params": {
+            "database": "transacao_db",
+            "query": """
+                SELECT
+                    *
+                FROM
+                    transacao
+                WHERE
+                    data_processamento BETWEEN '{start}'
+                    AND '{end}'
+            """,
+        },
+        "primary_key": ["id"],
+        "interval_minutes": 1,
+    }
+
+    BILHETAGEM_TRANSACAO_RIOCARD_CAPTURE_PARAMS = {
+        "table_id": "transacao_riocard",
+        "partition_date_only": False,
+        "extract_params": {
+            "database": "transacao_db",
+            "query": """
+                SELECT
+                    *
+                FROM
+                    transacao_riocard
+                WHERE
+                    data_processamento >= '{start}'
+                    AND data_processamento < '{end}'
+            """,
+        },
+        "primary_key": ["id"],
+        "interval_minutes": 1,
+    }
+
+    BILHETAGEM_FISCALIZACAO_CAPTURE_PARAMS = {
+        "table_id": "fiscalizacao",
+        "partition_date_only": False,
+        "extract_params": {
+            "database": "fiscalizacao_db",
+            "query": """
+                SELECT
+                    *
+                FROM
+                    fiscalizacao
+                WHERE
+                    dt_inclusao >= '{start}'
+                    AND dt_inclusao < '{end}'
+            """,
+        },
+        "primary_key": ["id"],
+        "interval_minutes": 5,
+        "save_bucket_name": BILHETAGEM_PRIVATE_BUCKET,
+    }
+
+    BILHETAGEM_INTEGRACAO_CAPTURE_PARAMS = {
+        "table_id": "integracao_transacao",
+        "partition_date_only": False,
+        "extract_params": {
+            "database": "ressarcimento_db",
+            "query": """
+                SELECT
+                    *
+                FROM
+                    integracao_transacao
+                WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'
+            """,
+        },
+        "primary_key": ["id"],
+        "interval_minutes": 1440,
+    }
 
     BILHETAGEM_TRACKING_CAPTURE_PARAMS = {
         "table_id": "gps_validador",
@@ -242,12 +403,13 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     tracking_detalhe
                 WHERE
-                    data_tracking BETWEEN '{start}'
-                    AND '{end}'
+                    id > {last_id} AND id <= {max_id}
             """,
+            "page_size": 1000,
+            "max_pages": 100,
         },
         "primary_key": ["id"],
-        "interval_minutes": 1,
+        "interval_minutes": 5,
     }
 
     BILHETAGEM_ORDEM_PAGAMENTO_CAPTURE_PARAMS = [
@@ -287,6 +449,78 @@ class constants(Enum):  # pylint: disable=c0103
             "primary_key": ["id"],
             "interval_minutes": 1440,
         },
+        {
+            "table_id": "ordem_pagamento_consorcio_operadora",
+            "partition_date_only": True,
+            "extract_params": {
+                "database": "ressarcimento_db",
+                "query": """
+                SELECT
+                    *
+                FROM
+                    ordem_pagamento_consorcio_operadora
+                WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'
+            """,
+            },
+            "primary_key": ["id"],
+            "interval_minutes": 1440,
+        },
+        {
+            "table_id": "ordem_pagamento_consorcio",
+            "partition_date_only": True,
+            "extract_params": {
+                "database": "ressarcimento_db",
+                "query": """
+                SELECT
+                    *
+                FROM
+                    ordem_pagamento_consorcio
+                WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'
+            """,
+            },
+            "primary_key": ["id"],
+            "interval_minutes": 1440,
+        },
+        {
+            "table_id": "ordem_rateio",
+            "partition_date_only": True,
+            "extract_params": {
+                "database": "ressarcimento_db",
+                "query": """
+                SELECT
+                    *
+                FROM
+                    ordem_rateio
+                WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'
+            """,
+            },
+            "primary_key": ["id"],
+            "interval_minutes": 1440,
+        },
+        {
+            "table_id": "linha_sem_ressarcimento",
+            "partition_date_only": True,
+            "extract_params": {
+                "database": "ressarcimento_db",
+                "query": """
+                SELECT
+                    *
+                FROM
+                    linha_sem_ressarcimento
+                WHERE
+                    dt_inclusao BETWEEN '{start}'
+                    AND '{end}'
+            """,
+            },
+            "primary_key": ["id_linha"],
+            "interval_minutes": 1440,
+        },
     ]
 
     BILHETAGEM_SECRET_PATH = "smtr_jae_access_data"
@@ -313,72 +547,20 @@ class constants(Enum):  # pylint: disable=c0103
             "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
         },
         {
-            "table_id": "grupo",
-            "partition_date_only": True,
-            "extract_params": {
-                "database": "principal_db",
-                "query": """
-                    SELECT
-                        *
-                    FROM
-                        GRUPO
-                    WHERE
-                        DT_INCLUSAO BETWEEN '{start}'
-                        AND '{end}'
-                """,
-            },
-            "primary_key": ["CD_GRUPO"],  # id column to nest data on
-            "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
-        },
-        {
-            "table_id": "grupo_linha",
-            "partition_date_only": True,
-            "extract_params": {
-                "database": "principal_db",
-                "query": """
-                    SELECT
-                        *
-                    FROM
-                        GRUPO_LINHA
-                    WHERE
-                        DT_INCLUSAO BETWEEN '{start}'
-                        AND '{end}'
-                """,
-            },
-            "primary_key": ["CD_GRUPO", "CD_LINHA"],
-            "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
-        },
-        {
-            "table_id": "matriz_integracao",
-            "partition_date_only": True,
-            "extract_params": {
-                "database": "tarifa_db",
-                "query": """
-                    SELECT
-                        *
-                    FROM
-                        matriz_integracao
-                    WHERE
-                        dt_inclusao BETWEEN '{start}'
-                        AND '{end}'
-                """,
-            },
-            "primary_key": [
-                "cd_versao_matriz",
-                "cd_integracao",
-            ],  # id column to nest data on
-            "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
-        },
-        {
             "table_id": "operadora_transporte",
             "partition_date_only": True,
             "extract_params": {
                 "database": "principal_db",
                 "query": """
                     SELECT
-                        *
+                        o.*,
+                        m.DS_TIPO_MODAL
                     FROM
-                        OPERADORA_TRANSPORTE
+                        OPERADORA_TRANSPORTE o
+                    LEFT JOIN
+                        TIPO_MODAL m
+                    ON
+                        o.CD_TIPO_MODAL = m.CD_TIPO_MODAL
                     WHERE
                         DT_INCLUSAO BETWEEN '{start}'
                         AND '{end}'
@@ -388,19 +570,72 @@ class constants(Enum):  # pylint: disable=c0103
             "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
         },
         {
-            "table_id": "pessoa_juridica",
+            "table_id": "cliente",
             "partition_date_only": True,
             "extract_params": {
                 "database": "principal_db",
                 "query": """
                     SELECT
-                        *
+                        c.*
                     FROM
-                        PESSOA_JURIDICA
+                        CLIENTE c
+                    WHERE
+                        DT_CADASTRO BETWEEN '{start}'
+                        AND '{end}'
                 """,
             },
             "primary_key": ["CD_CLIENTE"],  # id column to nest data on
             "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
+            "save_bucket_name": BILHETAGEM_PRIVATE_BUCKET,
+            "pre_treatment_reader_args": {"dtype": {"NR_DOCUMENTO": "object"}},
+        },
+        {
+            "table_id": "pessoa_fisica",
+            "partition_date_only": True,
+            "extract_params": {
+                "database": "principal_db",
+                "query": """
+                    SELECT
+                        p.*,
+                        c.DT_CADASTRO
+                    FROM
+                        PESSOA_FISICA p
+                    JOIN
+                        CLIENTE c
+                    ON
+                        p.CD_CLIENTE = c.CD_CLIENTE
+                    WHERE
+                        c.DT_CADASTRO BETWEEN '{start}'
+                        AND '{end}'
+                """,
+            },
+            "primary_key": ["CD_CLIENTE"],  # id column to nest data on
+            "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
+            "save_bucket_name": BILHETAGEM_PRIVATE_BUCKET,
+        },
+        {
+            "table_id": "gratuidade",
+            "partition_date_only": True,
+            "extract_params": {
+                "database": "gratuidade_db",
+                "query": """
+                    SELECT
+                        g.*,
+                        t.descricao AS tipo_gratuidade
+                    FROM
+                        gratuidade g
+                    LEFT JOIN
+                        tipo_gratuidade t
+                    ON
+                        g.id_tipo_gratuidade = t.id
+                    WHERE
+                        g.data_inclusao BETWEEN '{start}'
+                        AND '{end}'
+                """,
+            },
+            "primary_key": ["id"],  # id column to nest data on
+            "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
+            "save_bucket_name": BILHETAGEM_PRIVATE_BUCKET,
         },
         {
             "table_id": "consorcio",
@@ -421,7 +656,59 @@ class constants(Enum):  # pylint: disable=c0103
             "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
         },
         {
-            "table_id": "linha_consorcio",
+            "table_id": "percentual_rateio_integracao",
+            "partition_date_only": True,
+            "extract_params": {
+                "database": "ressarcimento_db",
+                "query": """
+                      SELECT
+                          *
+                      FROM
+                          percentual_rateio_integracao
+                      WHERE
+                          dt_inclusao BETWEEN '{start}'
+                          AND '{end}'
+                  """,
+            },
+            "primary_key": ["id"],  # id column to nest data on
+            "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
+        },
+        # {
+        #     "table_id": "conta_bancaria",
+        #     "partition_date_only": True,
+        #     "extract_params": {
+        #         "database": "principal_db",
+        #         "query": """
+        #             SELECT
+        #                 c.*,
+        #                 b.NM_BANCO
+        #             FROM
+        #                 CONTA_BANCARIA c
+        #             JOIN
+        #                 BANCO b
+        #             ON
+        #                 b.NR_BANCO = c.NR_BANCO
+        #             JOIN
+        #                 OPERADORA_TRANSPORTE o
+        #             ON
+        #                 o.CD_CLIENTE = c.CD_CLIENTE
+        #             WHERE
+        #                 {update}
+        #         """,
+        #         "get_updates": [
+        #             "c.cd_cliente",
+        #             "c.cd_agencia",
+        #             "c.cd_tipo_conta",
+        #             "c.nr_banco",
+        #             "c.nr_conta",
+        #         ],
+        #     },
+        #     "primary_key": ["CD_CLIENTE"],  # id column to nest data on
+        #     "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
+        #     "save_bucket_name": BILHETAGEM_PRIVATE_BUCKET,
+        # },
+        {
+            "table_id": "contato_pessoa_juridica",
             "partition_date_only": True,
             "extract_params": {
                 "database": "principal_db",
@@ -429,52 +716,126 @@ class constants(Enum):  # pylint: disable=c0103
                     SELECT
                         *
                     FROM
-                        LINHA_CONSORCIO
+                        CONTATO_PESSOA_JURIDICA
                     WHERE
                         DT_INCLUSAO BETWEEN '{start}'
                         AND '{end}'
                 """,
             },
-            "primary_key": ["CD_CONSORCIO", "CD_LINHA"],  # id column to nest data on
+            "primary_key": [
+                "NR_SEQ_CONTATO",
+                "CD_CLIENTE",
+            ],  # id column to nest data on
+            "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
+            "save_bucket_name": BILHETAGEM_PRIVATE_BUCKET,
+        },
+        {
+            "table_id": "servico_motorista",
+            "partition_date_only": True,
+            "extract_params": {
+                "database": "principal_db",
+                "query": """
+                    SELECT
+                        *
+                    FROM
+                        SERVICO_MOTORISTA
+                    WHERE
+                        DT_ABERTURA BETWEEN '{start}'
+                        AND '{end}'
+                        OR DT_FECHAMENTO BETWEEN '{start}'
+                        AND '{end}'
+                """,
+            },
+            "primary_key": [
+                "NR_LOGICO_MIDIA",
+                "ID_SERVICO",
+            ],  # id column to nest data on
             "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
         },
     ]
 
-    # BILHETAGEM_MATERIALIZACAO_TRANSACAO_PARAMS = {
-    #     "dataset_id": BILHETAGEM_DATASET_ID,
-    #     "table_id": BILHETAGEM_TRANSACAO_CAPTURE_PARAMS["table_id"],
-    #     "upstream": True,
-    #     "dbt_vars": {
-    #         "date_range": {
-    #             "table_run_datetime_column_name": "datetime_transacao",
-    #             "delay_hours": 1,
-    #         },
-    #         "version": {},
-    #     },
-    # }
+    BILHETAGEM_EXCLUDE = "+operadoras +consorcios"
 
-    # BILHETAGEM_MATERIALIZACAO_ORDEM_PAGAMENTO_PARAMS = {
-    #     "dataset_id": BILHETAGEM_DATASET_ID,
-    #     "table_id": "ordem_pagamento",
-    #     "upstream": True,
-    #     "exclude": f"+{BILHETAGEM_MATERIALIZACAO_TRANSACAO_PARAMS['table_id']}",
-    #     "dbt_vars": {
-    #         "date_range": {
-    #             "table_run_datetime_column_name": "data_ordem",
-    #             "delay_hours": 0,
-    #         },
-    #         "version": {},
-    #     },
-    # }
+    BILHETAGEM_JAE_DASHBOARD_DATASET_ID = "migracao_dashboard_bilhetagem_jae"
 
-    # BILHETAGEM_GENERAL_CAPTURE_DEFAULT_PARAMS = {
-    #     "dataset_id": BILHETAGEM_DATASET_ID,
-    #     "secret_path": BILHETAGEM_SECRET_PATH,
-    #     "source_type": BILHETAGEM_GENERAL_CAPTURE_PARAMS["source_type"],
-    # }
+    BILHETAGEM_MATERIALIZACAO_INTEGRACAO_PARAMS = {
+        "dataset_id": BILHETAGEM_JAE_DASHBOARD_DATASET_ID,
+        "table_id": "view_integracao",
+        "upstream": True,
+        "dbt_vars": {
+            "date_range": {
+                "table_run_datetime_column_name": "data",
+                "delay_hours": 0,
+            },
+            "version": {},
+        },
+        "exclude": f"{BILHETAGEM_EXCLUDE} stops_gtfs2 routes_gtfs2 feed_info_gtfs2",
+    }
+
+    BILHETAGEM_MATERIALIZACAO_TRANSACAO_PARAMS = {
+        "dataset_id": BILHETAGEM_JAE_DASHBOARD_DATASET_ID,
+        "table_id": "view_passageiros_hora",
+        "upstream": True,
+        "dbt_vars": {
+            "date_range": {
+                "table_run_datetime_column_name": "data",
+                "delay_hours": 1,
+            },
+            "version": {},
+        },
+        "exclude": "integracao matriz_integracao stops_gtfs2 routes_gtfs2 feed_info_gtfs2",
+    }
+
+    BILHETAGEM_MATERIALIZACAO_TRANSACAO_RIOCARD_PARAMS = {
+        "dataset_id": "dashboard_controle_vinculo_jae_riocard",
+        "table_id": "veiculo_indicadores_dia",
+        "upstream": True,
+        "dbt_vars": {
+            "run_date": {},
+            "version": {},
+        },
+        "exclude": "+gps_sppo +sppo_licenciamento +gps_validador",
+    }
+
+    BILHETAGEM_MATERIALIZACAO_ORDEM_PAGAMENTO_PARAMS = {
+        "dataset_id": BILHETAGEM_DATASET_ID,
+        "table_id": "ordem_pagamento_dia",
+        "upstream": True,
+        "exclude": BILHETAGEM_EXCLUDE,
+        "dbt_vars": {
+            "date_range": {
+                "table_run_datetime_column_name": "data_ordem",
+                "delay_hours": 0,
+            },
+            "version": {},
+        },
+    }
+
+    BILHETAGEM_MATERIALIZACAO_GPS_VALIDADOR_GENERAL_PARAMS = {
+        "dataset_id": BILHETAGEM_DATASET_ID,
+        "upstream": True,
+        "downstream": True,
+        "exclude": BILHETAGEM_EXCLUDE,
+        "dbt_vars": {
+            "date_range": {
+                "table_run_datetime_column_name": "datetime_captura",
+                "delay_hours": 0,
+            },
+            "version": {},
+        },
+    }
+
+    BILHETAGEM_MATERIALIZACAO_GPS_VALIDADOR_TABLE_ID = "gps_validador"
+    BILHETAGEM_MATERIALIZACAO_GPS_VALIDADOR_VAN_TABLE_ID = "gps_validador_van"
+
+    BILHETAGEM_GENERAL_CAPTURE_DEFAULT_PARAMS = {
+        "dataset_id": BILHETAGEM_DATASET_ID,
+        "secret_path": BILHETAGEM_SECRET_PATH,
+        "source_type": BILHETAGEM_GENERAL_CAPTURE_PARAMS["source_type"],
+    }
 
     # GTFS
-    GTFS_DATASET_ID = "br_rj_riodejaneiro_gtfs"
+    GTFS_DATASET_ID = "migracao_br_rj_riodejaneiro_gtfs"
 
     GTFS_GENERAL_CAPTURE_PARAMS = {
         "partition_date_only": True,
@@ -548,39 +909,39 @@ class constants(Enum):  # pylint: disable=c0103
         },
     }
 
-    # SUBSÍDIO RECURSOS VIAGENS INDIVIDUAIS
-    SUBSIDIO_SPPO_RECURSOS_DATASET_ID = "br_rj_riodejaneiro_recurso"
-    SUBSIDIO_SPPO_RECURSO_API_BASE_URL = "https://api.movidesk.com/public/v1/tickets?"
-    SUBSIDIO_SPPO_RECURSO_API_SECRET_PATH = "sppo_subsidio_recursos_api"
-    SUBSIDIO_SPPO_RECURSO_SERVICE = "serviceFull eq 'SPPO'"
-    SUBSIDIO_SPPO_RECURSO_CAPTURE_PARAMS = {
-        "partition_date_only": True,
-        "table_id": "recurso_sppo",
-        "dataset_id": SUBSIDIO_SPPO_RECURSOS_DATASET_ID,
-        "extract_params": {
-            "token": "",
-            "$select": "id,protocol,createdDate",
-            "$filter": "{dates} and serviceFull/any(serviceFull: {service})",
-            "$expand": "customFieldValues,customFieldValues($expand=items)",
-            "$orderby": "createdDate asc",
-        },
-        "interval_minutes": 1440,
-        "source_type": "movidesk",
-        "primary_key": ["protocol"],
-    }
+    # # SUBSÍDIO RECURSOS VIAGENS INDIVIDUAIS
+    # SUBSIDIO_SPPO_RECURSOS_DATASET_ID = "migracao_br_rj_riodejaneiro_recurso"
+    # SUBSIDIO_SPPO_RECURSO_API_BASE_URL = "https://api.movidesk.com/public/v1/tickets?"
+    # SUBSIDIO_SPPO_RECURSO_API_SECRET_PATH = "sppo_subsidio_recursos_api"
+    # SUBSIDIO_SPPO_RECURSO_SERVICE = "serviceFull eq 'SPPO'"
+    # SUBSIDIO_SPPO_RECURSO_CAPTURE_PARAMS = {
+    #     "partition_date_only": True,
+    #     "table_id": "recurso_sppo",
+    #     "dataset_id": SUBSIDIO_SPPO_RECURSOS_DATASET_ID,
+    #     "extract_params": {
+    #         "token": "",
+    #         "$select": "id,protocol,createdDate",
+    #         "$filter": "{dates} and serviceFull/any(serviceFull: {service})",
+    #         "$expand": "customFieldValues,customFieldValues($expand=items)",
+    #         "$orderby": "createdDate asc",
+    #     },
+    #     "interval_minutes": 1440,
+    #     "source_type": "movidesk",
+    #     "primary_key": ["protocol"],
+    # }
 
-    SUBSIDIO_SPPO_RECURSOS_MATERIALIZACAO_PARAMS = {
-        "dataset_id": SUBSIDIO_SPPO_RECURSOS_DATASET_ID,
-        "table_id": SUBSIDIO_SPPO_RECURSO_CAPTURE_PARAMS["table_id"],
-        "upstream": True,
-        "dbt_vars": {
-            "date_range": {
-                "table_run_datetime_column_name": "data_recurso",
-                "delay_hours": 0,
-            },
-            "version": {},
-        },
-    }
+    # SUBSIDIO_SPPO_RECURSOS_MATERIALIZACAO_PARAMS = {
+    #     "dataset_id": SUBSIDIO_SPPO_RECURSOS_DATASET_ID,
+    #     "table_id": SUBSIDIO_SPPO_RECURSO_CAPTURE_PARAMS["table_id"],
+    #     "upstream": True,
+    #     "dbt_vars": {
+    #         "date_range": {
+    #             "table_run_datetime_column_name": "data_recurso",
+    #             "delay_hours": 0,
+    #         },
+    #         "version": {},
+    #     },
+    # }
 
     # VEÍCULOS LICENCIADOS
     # flake8: noqa: E501
@@ -658,8 +1019,8 @@ class constants(Enum):  # pylint: disable=c0103
     SPPO_VEICULO_DIA_TABLE_ID = "sppo_veiculo_dia"
 
     # SUBSÍDIO DASHBOARD
-    SUBSIDIO_SPPO_DASHBOARD_DATASET_ID = "dashboard_subsidio_sppo"
-    SUBSIDIO_SPPO_DASHBOARD_STAGING_DATASET_ID = "dashboard_subsidio_sppo_staging"
+    SUBSIDIO_SPPO_DASHBOARD_DATASET_ID = "migracao_dashboard_subsidio_sppo"
+    SUBSIDIO_SPPO_DASHBOARD_STAGING_DATASET_ID = "migracao_dashboard_subsidio_sppo_staging"
     SUBSIDIO_SPPO_DASHBOARD_TABLE_ID = "sumario_servico_dia"
     SUBSIDIO_SPPO_DATA_CHECKS_PARAMS = {
         "check_gps_capture": {

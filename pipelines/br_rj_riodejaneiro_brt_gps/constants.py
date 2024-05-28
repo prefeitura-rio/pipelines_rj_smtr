@@ -11,9 +11,9 @@ class constants(Enum):  # pylint: disable=c0103
     Valores constantes para pipelines br_rj_riodejaneiro_brt_gps
     """
 
-    GPS_BRT_RAW_DATASET_ID = "br_rj_riodejaneiro_brt_gps"
+    GPS_BRT_RAW_DATASET_ID = "migracao_br_rj_riodejaneiro_brt_gps"
     GPS_BRT_RAW_TABLE_ID = "registros"
-    GPS_BRT_DATASET_ID = "br_rj_riodejaneiro_veiculos"
+    GPS_BRT_DATASET_ID = "migracao_br_rj_riodejaneiro_veiculos"
     GPS_BRT_TREATED_TABLE_ID = "gps_brt"
     GPS_BRT_MATERIALIZE_DELAY_HOURS = 0
     GPS_BRT_API_URL = "https://zn4.m2mcontrol.com.br/api/integracao/veiculos"

@@ -11,17 +11,22 @@ import traceback
 import zipfile
 from datetime import date, datetime, timedelta
 from ftplib import FTP
+from functools import partial
 from pathlib import Path
 from typing import Any, List, Union
 
 import basedosdados as bd
 import pandas as pd
+import prefect
 import psycopg2
 import psycopg2.extras
 import pymysql
 import pytz
 import requests
-from basedosdados import Table
+from basedosdados import Storage, Table
+from basedosdados.upload.datatypes import Datatype
+from google.api_core.exceptions import BadRequest
+from google.cloud import bigquery
 from google.cloud.storage.blob import Blob
 from prefect.schedules.clocks import IntervalClock
 
@@ -36,6 +41,16 @@ from pipelines.utils.secret import get_secret
 
 # Set BD config to run on cloud #
 bd.config.from_file = True
+
+
+def set_default_parameters(flow: prefect.Flow, default_parameters: dict) -> prefect.Flow:
+    """
+    Sets default parameters for a flow.
+    """
+    for parameter in flow.parameters():
+        if parameter.name in default_parameters:
+            parameter.default = default_parameters[parameter.name]
+    return flow
 
 
 def send_discord_message(
@@ -64,27 +79,137 @@ def log_critical(message: str, secret_path: str = constants.CRITICAL_SECRET_PATH
     return send_discord_message(message=message, webhook_url=url)
 
 
-def create_or_append_table(dataset_id: str, table_id: str, path: str, partitions: str = None):
+def create_bq_table_schema(
+    data_sample_path: Union[str, Path],
+) -> list[bigquery.SchemaField]:
+    """
+    Create the bq schema based on the structure of data_sample_path.
+
+    Args:
+        data_sample_path (str, Path): Data sample path to auto complete columns names
+
+    Returns:
+        list[bigquery.SchemaField]: The table schema
+    """
+
+    data_sample_path = Path(data_sample_path)
+
+    if data_sample_path.is_dir():
+        data_sample_path = [
+            f for f in data_sample_path.glob("**/*") if f.is_file() and f.suffix == ".csv"
+        ][0]
+
+    columns = Datatype(source_format="csv").header(data_sample_path=data_sample_path)
+
+    schema = []
+    for col in columns:
+        schema.append(bigquery.SchemaField(name=col, field_type="STRING", description=None))
+    return schema
+
+
+def create_bq_external_table(table_obj: Table, path: str, bucket_name: str):
+    """Creates an BigQuery External table based on sample data
+
+    Args:
+        table_obj (Table): BD Table object
+        path (str): Table data local path
+        bucket_name (str, Optional): The bucket name where the data is located
+    """
+
+    Storage(
+        dataset_id=table_obj.dataset_id,
+        table_id=table_obj.table_id,
+        bucket_name=bucket_name,
+    ).upload(
+        path=path,
+        mode="staging",
+        if_exists="replace",
+    )
+
+    bq_table = bigquery.Table(table_obj.table_full_name["staging"])
+    project_name = table_obj.client["bigquery_prod"].project
+    table_full_name = table_obj.table_full_name["prod"].replace(
+        project_name, f"{project_name}.{bucket_name}", 1
+    )
+    bq_table.description = f"staging table for `{table_full_name}`"
+
+    bq_table.external_data_configuration = Datatype(
+        dataset_id=table_obj.dataset_id,
+        table_id=table_obj.table_id,
+        schema=create_bq_table_schema(
+            data_sample_path=path,
+        ),
+        mode="staging",
+        bucket_name=bucket_name,
+        partitioned=True,
+        biglake_connection_id=None,
+    ).external_config
+
+    table_obj.client["bigquery_staging"].create_table(bq_table)
+
+
+def create_or_append_table(
+    dataset_id: str,
+    table_id: str,
+    path: str,
+    partitions: str = None,
+    bucket_name: str = None,
+):
     """Conditionally create table or append data to its relative GCS folder.
 
     Args:
         dataset_id (str): target dataset_id on BigQuery
         table_id (str): target table_id on BigQuery
         path (str): Path to .csv data file
+        partitions (str): partition string.
+        bucket_name (str, Optional): The bucket name to save the data.
     """
-    tb_obj = Table(table_id=table_id, dataset_id=dataset_id)
-    if not tb_obj.table_exists("staging"):
-        log("Table does not exist in STAGING, creating table...")
-        dirpath = path.split(partitions)[0]
-        tb_obj.create(
+    table_arguments = {"table_id": table_id, "dataset_id": dataset_id}
+    if bucket_name is not None:
+        table_arguments["bucket_name"] = bucket_name
+
+    tb_obj = Table(**table_arguments)
+    dirpath = path.split(partitions)[0]
+
+    if bucket_name is not None:
+        create_func = partial(
+            create_bq_external_table,
+            table_obj=tb_obj,
+            path=dirpath,
+            bucket_name=bucket_name,
+        )
+
+        append_func = partial(
+            Storage(dataset_id=dataset_id, table_id=table_id, bucket_name=bucket_name).upload,
+            path=path,
+            mode="staging",
+            if_exists="replace",
+            partitions=partitions,
+        )
+
+    else:
+        create_func = partial(
+            tb_obj.create,
             path=dirpath,
             if_table_exists="pass",
             if_storage_data_exists="replace",
         )
+
+        append_func = partial(
+            tb_obj.append,
+            filepath=path,
+            if_exists="replace",
+            timeout=600,
+            partitions=partitions,
+        )
+
+    if not tb_obj.table_exists("staging"):
+        log("Table does not exist in STAGING, creating table...")
+        create_func()
         log("Table created in STAGING")
     else:
         log("Table already exists in STAGING, appending to it...")
-        tb_obj.append(filepath=path, if_exists="replace", timeout=600, partitions=partitions)
+        append_func()
         log("Appended to table on STAGING successfully.")
 
 
@@ -140,11 +265,15 @@ def get_table_min_max_value(  # pylint: disable=R0913
         SELECT
             {kind}({field_name})
         FROM {query_project_id}.{dataset_id}.{table_id}
+        WHERE data >= DATETIME_SUB(CURRENT_DATETIME(), INTERVAL 7 DAY)
     """
     log(f"Will run query:\n{query}")
-    result = bd.read_sql(query=query, billing_project_id=bq_project())
+    try:
+        result = bd.read_sql(query=query, billing_project_id=bq_project())
 
-    return result.iloc[0][0]
+        return result.iloc[0][0]
+    except BadRequest:
+        return datetime.now(pytz.timezone("America/Sao_Paulo")).strftime("%Y-%m-%dT%H:%M:%S")
 
 
 def get_last_run_timestamp(dataset_id: str, table_id: str, mode: str = "prod") -> str:
@@ -165,7 +294,7 @@ def get_last_run_timestamp(dataset_id: str, table_id: str, mode: str = "prod") -
     redis_client = get_redis_client()
     key = dataset_id + "." + table_id
     log(f"Fetching key {key} from redis, working on mode {mode}")
-    if mode == "dev":
+    if mode != "prod":
         key = f"{mode}.{key}"
     runs = redis_client.get(key)
     # if runs is None:
@@ -534,7 +663,7 @@ def get_raw_data_api(  # pylint: disable=R0912
         if secret_path is None:
             headers = secret_path
         else:
-            headers = get_secret(secret_path)["data"]
+            headers = get_secret(secret_path)
 
         response = requests.get(
             url,
@@ -627,18 +756,90 @@ def get_raw_data_gcs(
     return error, data, filetype
 
 
+def close_db_connection(connection, engine: str):
+    """
+    Safely close a database connection
+
+    Args:
+        connection: the database connection
+        engine (str): The datase management system
+    """
+    if engine == "postgresql":
+        if not connection.closed:
+            connection.close()
+            log("Database connection closed")
+    elif engine == "mysql":
+        if connection.open:
+            connection.close()
+            log("Database connection closed")
+    else:
+        raise NotImplementedError(f"Engine {engine} not supported")
+
+
+def execute_db_query(
+    engine: str,
+    query: str,
+    connection,
+    connector,
+    connection_info: dict,
+) -> list[dict]:
+    """
+    Execute a query if retries
+
+    Args:
+        query (str): the SQL Query to execute
+        engine (str): The database management system
+        connection: The database connection
+        connector: The database connector (to do reconnections)
+        connection_info (dict): The database connector params (to do reconnections)
+
+    Returns:
+        list[dict]: The query results
+
+    """
+    retries = 10
+    for retry in range(retries):
+        try:
+            log(f"Executing query:\n{query}")
+            data = pd.read_sql(sql=query, con=connection).to_dict(orient="records")
+            for d in data:
+                for k, v in d.items():
+                    if pd.isna(v):
+                        d[k] = None
+            break
+        except Exception as err:
+            log(f"[ATTEMPT {retry}]: {err}")
+            close_db_connection(connection=connection, engine=engine)
+            if retry < retries - 1:
+                connection = connector(**connection_info)
+            else:
+                raise err
+
+    close_db_connection(connection=connection, engine=engine)
+    return data
+
+
 def get_raw_data_db(
-    query: str, engine: str, host: str, secret_path: str, database: str
+    query: str,
+    engine: str,
+    host: str,
+    secret_path: str,
+    database: str,
+    page_size: int = None,
+    max_pages: int = None,
 ) -> tuple[str, str, str]:
     """
     Get data from Databases
 
     Args:
         query (str): the SQL Query to execute
-        engine (str): The datase management system
+        engine (str): The database management system
         host (str): The database host
         secret_path (str): Secret path to get credentials
         database (str): The database to connect
+        page_size (int, Optional): The maximum number of rows returned by the paginated query
+            if you set a value for this argument, the query will have LIMIT and OFFSET appended to it
+        max_pages (int, Optional): The maximum number of paginated queries to execute
 
     Returns:
         tuple[str, str, str]: Error, data and filetype
@@ -650,24 +851,52 @@ def get_raw_data_db(
 
     data = None
     error = None
-    filetype = "json"
+
+    if max_pages is None:
+        max_pages = 1
+
+    full_data = []
+    credentials = get_secret(secret_path)
+
+    connector = connector_mapping[engine]
 
     try:
-        credentials = get_secret(secret_path)["data"]
+        connection_info = {
+            "host": host,
+            "user": credentials["user"],
+            "password": credentials["password"],
+            "database": database,
+        }
+        connection = connector(**connection_info)
 
-        with connector_mapping[engine](
-            host=host,
-            user=credentials["user"],
-            password=credentials["password"],
-            database=database,
-        ) as connection:
-            data = pd.read_sql(sql=query, con=connection).to_dict(orient="records")
+        for page in range(max_pages):
+            if page_size is not None:
+                paginated_query = query + f" LIMIT {page_size} OFFSET {page * page_size}"
+            else:
+                paginated_query = query
+
+            data = execute_db_query(
+                engine=engine,
+                query=paginated_query,
+                connection=connection,
+                connector=connector,
+                connection_info=connection_info,
+            )
+
+            full_data += data
+
+            log(f"Returned {len(data)} rows")
+
+            if page_size is None or len(data) < page_size:
+                log("Database Extraction Finished")
+                break
 
     except Exception:
+        full_data = []
         error = traceback.format_exc()
         log(f"[CATCHED] Task failed with error: \n{error}", level="error")
 
-    return error, data, filetype
+    return error, full_data, "json"
 
 
 def save_treated_local_func(
@@ -701,6 +930,7 @@ def upload_run_logs_to_bq(  # pylint: disable=R0913
     previous_error: str = None,
     recapture: bool = False,
     mode: str = "raw",
+    bucket_name: str = None,
 ):
     """
     Upload execution status table to BigQuery.
@@ -715,6 +945,7 @@ def upload_run_logs_to_bq(  # pylint: disable=R0913
         previous_error (str): previous error catched during execution
         recapture (bool): if the execution was a recapture
         mode (str): folder to save locally, later folder which to upload to GCS
+        bucket_name (str, Optional): The bucket name to save the data.
 
     Returns:
         None
@@ -753,6 +984,7 @@ def upload_run_logs_to_bq(  # pylint: disable=R0913
         table_id=table_id,
         path=filepath.as_posix(),
         partitions=partition,
+        bucket_name=bucket_name,
     )
     if error is not None:
         raise Exception(f"Pipeline failed with error: {error}")
@@ -780,30 +1012,30 @@ def get_datetime_range(
     return {"start": start, "end": end}
 
 
-def read_raw_data(filepath: str, csv_args: dict = None) -> tuple[str, pd.DataFrame]:
+def read_raw_data(filepath: str, reader_args: dict = None) -> tuple[str, pd.DataFrame]:
     """
     Read raw data from file
 
     Args:
         filepath (str): filepath to read
-        csv_args (dict): arguments to pass to pandas.read_csv
+        reader_args (dict): arguments to pass to pandas.read_csv or read_json
 
     Returns:
         tuple[str, pd.DataFrame]: error and data
     """
     error = None
     data = None
+    if reader_args is None:
+        reader_args = {}
     try:
         file_type = filepath.split(".")[-1]
 
         if file_type == "json":
-            data = pd.read_json(filepath)
+            data = pd.read_json(filepath, **reader_args)
 
             # data = json.loads(data)
         elif file_type in ("txt", "csv"):
-            if csv_args is None:
-                csv_args = {}
-            data = pd.read_csv(filepath, **csv_args)
+            data = pd.read_csv(filepath, **reader_args)
         else:
             error = "Unsupported raw file extension. Supported only: json, csv and txt"
 

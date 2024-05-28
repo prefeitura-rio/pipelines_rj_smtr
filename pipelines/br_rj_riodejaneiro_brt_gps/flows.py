@@ -13,7 +13,12 @@ from prefect.storage import GCS
 # EMD Imports #
 
 from prefeitura_rio.pipelines_utils.custom import Flow
-from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_credentials
+
+# from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
+from prefeitura_rio.pipelines_utils.state_handlers import (
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+)
 
 # from prefeitura_rio.pipelines_utils.prefect import get_k8s_dbt_client
 
@@ -65,7 +70,7 @@ with Flow(
     rebuild = Parameter("rebuild", False)
 
     LABELS = get_current_flow_labels()
-    MODE = get_current_flow_mode(LABELS)
+    MODE = get_current_flow_mode()
 
     # Set dbt client #
     # dbt_client = get_k8s_dbt_client(mode=MODE, wait=rename_flow_run)
@@ -122,15 +127,15 @@ with Flow(
 materialize_brt.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 materialize_brt.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
+    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-materialize_brt.state_handlers = [handler_inject_bd_credentials]
-materialize_brt.schedule = every_hour
+materialize_brt.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
+# materialize_brt.schedule = every_hour
 
 
 with Flow(
     "SMTR: GPS BRT - Captura",
-    # code_owners=["caio", "fernanda", "boris", "rodrigo"],
+    # # code_owners=["caio", "fernanda", "boris", "rodrigo"],
 ) as captura_brt:
     timestamp = get_current_timestamp()
     # Rename flow run
@@ -186,5 +191,5 @@ captura_brt.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
 )
-captura_brt.state_handlers = [handler_inject_bd_credentials]
-captura_brt.schedule = every_minute
+captura_brt.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
+# captura_brt.schedule = every_minute
