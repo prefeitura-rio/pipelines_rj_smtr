@@ -28,7 +28,8 @@ from pipelines.projeto_subsidio_sppo.tasks import (
     check_param,
     subsidio_data_quality_check,
 )
-from pipelines.schedules import every_day_hour_five, every_day_hour_seven
+
+# from pipelines.schedules import every_day_hour_five, every_day_hour_seven
 from pipelines.utils.backup.tasks import (
     fetch_dataset_sha,
     get_current_flow_labels,

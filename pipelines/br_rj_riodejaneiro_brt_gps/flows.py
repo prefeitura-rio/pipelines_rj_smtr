@@ -31,7 +31,8 @@ from pipelines.br_rj_riodejaneiro_brt_gps.constants import constants as gps_cons
 from pipelines.br_rj_riodejaneiro_brt_gps.tasks import (
     pre_treatment_br_rj_riodejaneiro_brt_gps,
 )
-from pipelines.schedules import every_hour, every_minute
+
+# from pipelines.schedules import every_hour, every_minute
 from pipelines.utils.backup.tasks import (  # get_local_dbt_client,; setup_task,
     bq_upload,
     create_date_hour_partition,

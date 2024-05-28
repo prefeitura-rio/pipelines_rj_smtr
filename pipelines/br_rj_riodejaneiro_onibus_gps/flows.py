@@ -24,7 +24,8 @@ from pipelines.br_rj_riodejaneiro_onibus_gps.tasks import (
 )
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
-from pipelines.schedules import every_10_minutes, every_hour_minute_six, every_minute
+
+# from pipelines.schedules import every_10_minutes, every_hour_minute_six, every_minute
 from pipelines.utils.backup.tasks import (  # get_local_dbt_client,
     bq_upload,
     create_date_hour_partition,
@@ -270,7 +271,7 @@ captura_sppo_v2.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-captura_sppo_v2.schedule = every_minute
+# captura_sppo_v2.schedule = every_minute
 captura_sppo_v2.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
 
