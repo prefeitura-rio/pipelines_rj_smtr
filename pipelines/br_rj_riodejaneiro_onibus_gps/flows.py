@@ -391,8 +391,8 @@ recaptura_realocacao_sppo.run_config = KubernetesRun(
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 recaptura_realocacao_sppo.state_handlers = [
-    handler_inject_bd_credentials,
     handler_initialize_sentry,
+    handler_inject_bd_credentials,
 ]
 
 with Flow("SMTR: GPS SPPO - Tratamento") as recaptura:
