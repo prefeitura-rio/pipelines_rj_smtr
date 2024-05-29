@@ -154,7 +154,7 @@ with Flow(
     date_range_end = Parameter("date_range_end", default=None)
 
     LABELS = get_current_flow_labels()
-    MODE = get_current_flow_mode(LABELS)
+    MODE = get_current_flow_mode()
 
     # Set dbt client #
     # dbt_client = get_k8s_dbt_client(mode=MODE, wait=rename_flow_run)
