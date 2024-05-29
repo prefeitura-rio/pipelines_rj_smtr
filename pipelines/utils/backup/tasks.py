@@ -87,7 +87,6 @@ def run_dbt_model(
     flags: str = None,
     _vars: dict | List[Dict] = None,
 ):
-    dataset_id = dataset_id.replace("migracao_", "")
     return run_dbt_model_func(
         dataset_id=dataset_id,
         table_id=table_id,
