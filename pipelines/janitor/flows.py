@@ -17,13 +17,17 @@ from pipelines.janitor.tasks import (
     query_not_active_flows,
 )
 from pipelines.schedules import every_5_minutes
+from pipelines.utils.backup.tasks import get_flow_project
 
 with Flow(
     "SMTR: Desagendamento de runs arquivadas",
 ) as janitor_flow:
+    PROJECT_NAME = get_flow_project()
     client = get_prefect_client()
-    flows = query_active_flow_names(prefect_client=client)
-    archived_flow_runs = query_not_active_flows.map(flows=flows, prefect_client=unmapped(client))
+    flows = query_active_flow_names(prefect_client=client, prefect_project=PROJECT_NAME)
+    archived_flow_runs = query_not_active_flows.map(
+        flows=flows, prefect_client=unmapped(client), prefect_project=unmapped(PROJECT_NAME)
+    )
     cancel_flows.map(flows=archived_flow_runs, prefect_client=unmapped(client))
 
 janitor_flow.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)

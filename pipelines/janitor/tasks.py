@@ -13,14 +13,14 @@ from pipelines.utils.utils import log
 
 
 @task
-def query_active_flow_names(prefix="%SMTR%", prefect_client=None):
+def query_active_flow_names(prefix="%SMTR%", prefect_client=None, prefect_project="production"):
     query = """
-query ($prefix: String, $offset: Int){
+query ($prefix: String, $offset: Int, $project_name: String){
     flow(
         where: {
             name: {_like: $prefix},
             archived: {_eq: false},
-            project: {name:{_eq:"main"}}
+            project: {name:{_eq: $project_name}}
         }
         offset: $offset
     ){
@@ -31,7 +31,7 @@ query ($prefix: String, $offset: Int){
 """
     if not prefect_client:
         prefect_client = Client()
-    variables = {"prefix": prefix, "offset": 0}
+    variables = {"prefix": prefix, "offset": 0, "project_name": prefect_project}
     # flow_names = []
     response = prefect_client.graphql(query=query, variables=variables)["data"]
     active_flows = []
@@ -44,7 +44,7 @@ query ($prefix: String, $offset: Int){
 
 
 @task
-def query_not_active_flows(flows, prefect_client=None):
+def query_not_active_flows(flows, prefect_client=None, prefect_project="production"):
     """
     Queries the graphql API for scheduled flow_runs of
     archived versions of <flow_name>
@@ -54,12 +54,12 @@ def query_not_active_flows(flows, prefect_client=None):
     flow_name, last_version = flows
     now = datetime.now().isoformat()
     query = """
-query($flow_name: String, $last_version: Int, $now: timestamptz!, $offset: Int){
+query($flow_name: String, $last_version: Int, $now: timestamptz!, $offset: Int, $project_name:String){
     flow(
         where:{
             name: {_eq:$flow_name},
             version: {_lt:$last_version}
-            project: {name:{_eq:"main"}}
+            project: {name:{_eq: $project_name}}
         }
         offset: $offset
         order_by: {version:desc}
@@ -88,6 +88,7 @@ query($flow_name: String, $last_version: Int, $now: timestamptz!, $offset: Int){
         "last_version": last_version,
         "now": now,
         "offset": 0,
+        "project_name": prefect_project,
     }
     archived_flows = []
     response = prefect_client.graphql(query=query, variables=variables)["data"]
@@ -141,7 +142,7 @@ def get_active_flow_names(prefix="%SMTR%"):
 
 
 @task
-def query_archived_scheduled_runs(flow_name, prefect_client=None):
+def query_archived_scheduled_runs(flow_name, prefect_client=None, prefect_project="production"):
     """
     Queries the graphql API for scheduled flow_runs of
     archived versions of <flow_name>
@@ -149,12 +150,12 @@ def query_archived_scheduled_runs(flow_name, prefect_client=None):
         flow_name (str): flow name
     """
     query = """
-query($flow_name: String, $offset: Int){
+query($flow_name: String, $offset: Int, $project_name:String){
     flow(
         where:{
             name: {_eq:$flow_name},
             archived: {_eq:true},
-            project: {name:{_eq:"main"}}
+            project: {name:{_eq: $project_name}}
         }
         offset: $offset
         order_by: {version:desc}
@@ -176,7 +177,7 @@ query($flow_name: String, $offset: Int){
     if not prefect_client:
         prefect_client = Client()
 
-    variables = {"flow_name": flow_name, "offset": 0}
+    variables = {"flow_name": flow_name, "offset": 0, "project_name": prefect_project}
     archived_flow_runs = []
     response = prefect_client.graphql(query=query, variables=variables)["data"]
 
