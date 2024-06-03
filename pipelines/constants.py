@@ -277,7 +277,7 @@ and createdDate lt {end})",
 
     # JAE - BILHETAGEM
 
-    BILHETAGEM_DATASET_ID = "migracao_br_rj_riodejaneiro_bilhetagem"
+    BILHETAGEM_DATASET_ID = "br_rj_riodejaneiro_bilhetagem"
 
     BILHETAGEM_GENERAL_CAPTURE_PARAMS = {
         "databases": {
