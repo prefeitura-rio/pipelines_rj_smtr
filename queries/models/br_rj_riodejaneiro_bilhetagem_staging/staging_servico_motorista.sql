@@ -20,4 +20,4 @@ SELECT
   SAFE_CAST(JSON_VALUE(content, '$.TP_GERACAO') AS STRING) AS tp_geracao,
   SAFE_CAST(JSON_VALUE(content, '$.VL_TARIFA_LINHA') AS FLOAT64) AS vl_tarifa_linha
 FROM
-  {{ source("migracao_br_rj_riodejaneiro_bilhetagem_staging", 'servico_motorista') }}
+  {{ source('br_rj_riodejaneiro_bilhetagem_staging', 'servico_motorista') }}

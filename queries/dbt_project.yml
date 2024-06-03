@@ -224,10 +224,10 @@ models:
       +schema: migracao_br_rj_riodejaneiro_rdo_staging
     br_rj_riodejaneiro_bilhetagem:
       +materialized: incremental
-      +schema: migracao_br_rj_riodejaneiro_bilhetagem
+      +schema: br_rj_riodejaneiro_bilhetagem
     br_rj_riodejaneiro_bilhetagem_staging:
       +materialized: view
-      +schema: migracao_br_rj_riodejaneiro_bilhetagem_staging_dbt
+      +schema: br_rj_riodejaneiro_bilhetagem_staging
     dashboard_bilhetagem_implantacao_jae:
       +materialized: table
       +schema: migracao_dashboard_bilhetagem_implantacao_jae
@@ -238,9 +238,9 @@ models:
       +materialized: view
       +schema: migracao_br_rj_riodejaneiro_stu
     cadastro_staging:
-      +schema: migracao_cadastro_staging
+      +schema: cadastro_staging
     cadastro:
-      +schema: migracao_cadastro
+      +schema: cadastro
     br_rj_riodejaneiro_recursos:
       +materialized: incremental
       +schema: migracao_br_rj_riodejaneiro_recursos

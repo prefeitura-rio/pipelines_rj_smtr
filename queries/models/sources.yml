@@ -1,8 +1,8 @@
 version: 2
 
 sources:
-  - name: migracao_br_rj_riodejaneiro_bilhetagem_staging
-    database: rj-smtr-dev
+  - name: br_rj_riodejaneiro_bilhetagem_staging
+    database: rj-smtr-staging
 
     tables:
       - name: transacao
@@ -69,8 +69,14 @@ sources:
     tables:
       - name: modos
 
-  - name: migracao_br_rj_riodejaneiro_rdo_staging
-    database: rj-smtr-dev
+  - name: cadastro_staging
+    database: rj-smtr
+
+    tables:
+      - name: consorcio_modo
+
+  - name: br_rj_riodejaneiro_rdo_staging
+    database: rj-smtr-staging
 
     tables:
       - name: rho_registros_sppo
@@ -87,10 +93,10 @@ sources:
     database: rj-smtr
 
     tables:
-      - name: subsidio_parametros_atualizada
+      - name: parametros_km
 
-  - name: migracao_veiculo_staging
-    database: rj-smtr-dev
+  - name: veiculo_staging
+    database: rj-smtr-staging
 
     tables:
       - name: sppo_vistoria_tr_subtt_cglf_2023
@@ -120,3 +126,10 @@ sources:
     tables:
       - name: registros
       - name: realocacao
+
+  - name: controle_financeiro_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: cb
+      - name: cett

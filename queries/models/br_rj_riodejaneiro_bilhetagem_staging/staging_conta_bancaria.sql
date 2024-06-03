@@ -16,7 +16,7 @@ WITH
             SAFE_CAST(JSON_VALUE(content, '$.NR_BANCO') AS STRING) AS nr_banco,
             SAFE_CAST(JSON_VALUE(content, '$.NR_CONTA') AS STRING) AS nr_conta,
         FROM
-            {{ source("migracao_br_rj_riodejaneiro_bilhetagem_staging", "conta_bancaria") }}
+            {{ source("br_rj_riodejaneiro_bilhetagem_staging", "conta_bancaria") }}
     ),
     conta_bancaria_rn AS (
         SELECT
