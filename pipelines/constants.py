@@ -312,6 +312,7 @@ and createdDate lt {end})",
         },
         "source_type": "db",
     }
+
     BILHETAGEM_TRACKING_CAPTURE_PARAMS = {
         "table_id": "gps_validador",
         "partition_date_only": False,
