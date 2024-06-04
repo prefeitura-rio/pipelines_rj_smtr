@@ -29,7 +29,7 @@ vars:
 
   ### GPS ###
   brt_terminais: "rj-smtr.br_rj_riodejaneiro_transporte.estacoes_e_terminais_brt" # aux_registros_parada
-  brt_registros_staging: rj-smtr-dev.migracao_br_rj_riodejaneiro_brt_gps_staging.registros
+  brt_registros_staging: rj-smtr-staging.br_rj_riodejaneiro_brt_gps_staging.registros
   limites_caixa: "rj-smtr.br_rj_riodejaneiro_geo.limites_geograficos_caixa" # registros_filtrada
   linhas_sppo: "rj-smtr.br_rj_riodejaneiro_transporte.linhas_sppo" # registros_agg_data_hora_consorcio
   polygon_garagem: "rj-smtr.br_rj_riodejaneiro_geo.garagens_polygon" # aux_registros_parada
@@ -181,10 +181,10 @@ models:
   rj_smtr:
     projeto_subsidio_sppo:
       +materialized: view
-      +schema: migracao_projeto_subsidio_sppo
+      +schema: projeto_subsidio_sppo
       deprecated:
         +materialized: view
-        +schema: migracao_projeto_subsidio_sppo
+        +schema: projeto_subsidio_sppo
     br_rj_riodejaneiro_sigmob:
       +materialized: view
       +schema: br_rj_riodejaneiro_sigmob
@@ -193,19 +193,19 @@ models:
       +schema: br_rj_riodejaneiro_onibus_gps
     br_rj_riodejaneiro_onibus_gps_zirix:
       +materialized: view
-      +schema: migracao_br_rj_riodejaneiro_onibus_gps_zirix
+      +schema: br_rj_riodejaneiro_onibus_gps_zirix
     br_rj_riodejaneiro_brt_gps:
       +materialized: view
-      +schema: migracao_br_rj_riodejaneiro_brt_gps
+      +schema: br_rj_riodejaneiro_brt_gps
     br_rj_riodejaneiro_veiculos:
       +materialized: view
       +schema: br_rj_riodejaneiro_veiculos
     dashboard_subsidio_sppo:
       +materialized: view
-      +schema: migracao_dashboard_subsidio_sppo
+      +schema: dashboard_subsidio_sppo
     dashboard_subsidio_sppo_staging:
       +materialized: view
-      +schema: migracao_dashboard_subsidio_sppo_staging
+      +schema: dashboard_subsidio_sppo_staging
     veiculo:
       +materialized: view
       +schema: veiculo
@@ -214,10 +214,10 @@ models:
         +schema: veiculo_staging
     br_rj_riodejaneiro_rdo:
       +materialized: view
-      +schema: migracao_br_rj_riodejaneiro_rdo
+      +schema: br_rj_riodejaneiro_rdo
     br_rj_riodejaneiro_rdo_staging:
       +materialized: view
-      +schema: migracao_br_rj_riodejaneiro_rdo_staging
+      +schema: br_rj_riodejaneiro_rdo_staging
     br_rj_riodejaneiro_bilhetagem:
       +materialized: incremental
       +schema: br_rj_riodejaneiro_bilhetagem
@@ -226,23 +226,23 @@ models:
       +schema: br_rj_riodejaneiro_bilhetagem_staging
     dashboard_bilhetagem_implantacao_jae:
       +materialized: table
-      +schema: migracao_dashboard_bilhetagem_implantacao_jae
+      +schema: dashboard_bilhetagem_implantacao_jae
     dashboard_bilhetagem_jae:
       +materialized: view
-      +schema: migracao_dashboard_bilhetagem_jae
+      +schema: dashboard_bilhetagem_jae
     br_rj_riodejaneiro_stu:
       +materialized: view
-      +schema: migracao_br_rj_riodejaneiro_stu
+      +schema: br_rj_riodejaneiro_stu
     cadastro_staging:
       +schema: cadastro_staging
     cadastro:
       +schema: cadastro
     br_rj_riodejaneiro_recursos:
       +materialized: incremental
-      +schema: migracao_br_rj_riodejaneiro_recursos
+      +schema: br_rj_riodejaneiro_recursos
     br_rj_riodejaneiro_recursos_staging:
       +materialized: incremental
-      +schema: migracao_br_rj_riodejaneiro_recursos_staging
+      +schema: br_rj_riodejaneiro_recursos_staging
     gtfs:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
@@ -250,13 +250,13 @@ models:
     indicadores_continuados_egp_staging:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
-      +schema: migracao_indicadores_continuados_egp_staging
+      +schema: indicadores_continuados_egp_staging
     indicadores_continuados_egp:
       +materialized: view
-      +schema: migracao_indicadores_continuados_egp
+      +schema: indicadores_continuados_egp
     projeto_subsidio_sppo_encontro_contas:
       +materialized: table
-      +schema: migracao_projeto_subsidio_sppo_encontro_contas
+      +schema: projeto_subsidio_sppo_encontro_contas
     dashboard_controle_vinculo_jae_riocard:
       +materialized: incremental
-      +schema: migracao_dashboard_controle_vinculo_jae_riocard
+      +schema: dashboard_controle_vinculo_jae_riocard
