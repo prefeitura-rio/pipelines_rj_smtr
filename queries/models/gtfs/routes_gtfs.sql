@@ -4,9 +4,11 @@
     'granularity': 'day' },
     unique_key = ['route_id', 'feed_start_date'],
     alias = 'routes'
-
 )}}
 
+{% if execute and is_incremental() %}
+  {% set last_feed_version = get_last_feed_start_date(var("data_versao_gtfs")) %}
+{% endif %}
 
 SELECT
   fi.feed_version,
@@ -32,11 +34,11 @@ SELECT
     'routes'
   ) }} r
 JOIN
-  {{ ref('feed_info_gtfs2') }} fi
+  {{ ref('feed_info_gtfs') }} fi
 ON
   r.data_versao = CAST(fi.feed_start_date AS STRING)
 {% if is_incremental() -%}
   WHERE
-    r.data_versao = '{{ var("data_versao_gtfs") }}'
-    AND fi.feed_start_date = '{{ var("data_versao_gtfs") }}'
+    r.data_versao IN ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
+    AND fi.feed_start_date IN ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
 {%- endif %}

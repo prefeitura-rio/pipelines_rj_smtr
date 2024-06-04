@@ -11,6 +11,7 @@ WITH ordem_servico AS (
     fi.feed_version,
     SAFE_CAST(os.data_versao AS DATE) as feed_start_date,
     fi.feed_end_date,
+    SAFE_CAST(tipo_os AS STRING) tipo_os,
     SAFE_CAST(os.servico AS STRING) servico,
     SAFE_CAST(JSON_VALUE(os.content, '$.vista') AS STRING) vista,
     SAFE_CAST(JSON_VALUE(os.content, '$.consorcio') AS STRING) consorcio,
@@ -34,14 +35,13 @@ WITH ordem_servico AS (
     SAFE_CAST(SAFE_CAST(JSON_VALUE(os.content, '$.partidas_volta_domingo') AS FLOAT64) AS INT64) partidas_volta_domingo,
     SAFE_CAST(JSON_VALUE(os.content, '$.viagens_domingo') AS FLOAT64) viagens_domingo,
     SAFE_CAST(JSON_VALUE(os.content, '$.km_domingo') AS FLOAT64) km_domingo,
-    COALESCE(SAFE_CAST(JSON_VALUE(os.content, '$.tipo_os') AS STRING), "Regular") tipo_os,
   FROM
     {{ source(
       'br_rj_riodejaneiro_gtfs_staging',
       'ordem_servico'
     ) }} os
   JOIN
-    {{ ref('feed_info_gtfs2') }} fi
+    {{ ref('feed_info_gtfs') }} fi
   ON
     os.data_versao = CAST(fi.feed_start_date AS STRING)
   {% if is_incremental() -%}

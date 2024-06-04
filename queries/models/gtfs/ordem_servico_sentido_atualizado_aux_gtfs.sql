@@ -1,5 +1,5 @@
 /*
-  ordem_servico_gtfs2 com sentidos despivotados, ajustes nos horários e com atualização dos sentidos circulares
+  ordem_servico_gtfs com sentidos despivotados, ajustes nos horários e com atualização dos sentidos circulares
 */
 {{
   config(
@@ -24,7 +24,7 @@ WITH
         END
           AS sentido
         FROM
-          {{ ref("trips_filtrada_aux_gtfs2") }}
+          {{ ref("trips_filtrada_aux_gtfs") }}
         WHERE
           indicador_trajeto_alternativo IS FALSE
       )
@@ -35,32 +35,10 @@ WITH
   ordem_servico AS (
     SELECT
       * EXCEPT(horario_inicio, horario_fim),
-      IF(horario_inicio IS NOT NULL AND ARRAY_LENGTH(SPLIT(horario_inicio, ":")) = 3,
-          PARSE_TIME("%T",
-                      CONCAT(
-                          SAFE_CAST(MOD(SAFE_CAST(SPLIT(horario_inicio, ":")[OFFSET(0)] AS INT64), 24) AS INT64),
-                          ":",
-                          SAFE_CAST(SPLIT(horario_inicio, ":")[OFFSET(1)] AS INT64),
-                          ":",
-                          SAFE_CAST(SPLIT(horario_inicio, ":")[OFFSET(2)] AS INT64)
-                      )
-                    ),
-                    NULL
-      ) AS inicio_periodo,
-      IF(horario_fim IS NOT NULL AND ARRAY_LENGTH(SPLIT(horario_fim, ":")) = 3,
-          PARSE_TIME("%T",
-                      CONCAT(
-                          SAFE_CAST(MOD(SAFE_CAST(SPLIT(horario_fim, ":")[OFFSET(0)] AS INT64), 24) AS INT64),
-                          ":",
-                          SAFE_CAST(SPLIT(horario_inicio, ":")[OFFSET(1)] AS INT64),
-                          ":",
-                          SAFE_CAST(SPLIT(horario_inicio, ":")[OFFSET(2)] AS INT64)
-                      )
-                    ),
-                    NULL
-      ) AS fim_periodo,
+      horario_inicio AS inicio_periodo,
+      horario_fim  AS fim_periodo,
     FROM
-      {{ ref('ordem_servico_gtfs2') }}
+      {{ ref('ordem_servico_gtfs') }}
     {% if is_incremental() -%}
       WHERE
         feed_start_date = '{{ var("data_versao_gtfs") }}'
@@ -102,4 +80,4 @@ USING
 WHERE
     distancia_planejada != 0
     AND distancia_total_planejada != 0
-    AND partidas != 0
+    AND (partidas != 0 OR partidas IS NULL)
