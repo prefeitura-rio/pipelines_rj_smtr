@@ -18,4 +18,4 @@ SELECT
     SAFE_CAST(dia AS INT64) dia,
     DATE(CONCAT(ano,'-', mes, '-', dia)) data_particao
 from
-    {{ source("migracao_br_rj_riodejaneiro_rdo_staging", "rho5_registros_stpl") }} as t
+    {{ source("br_rj_riodejaneiro_rdo_staging", "rho5_registros_stpl") }} as t
