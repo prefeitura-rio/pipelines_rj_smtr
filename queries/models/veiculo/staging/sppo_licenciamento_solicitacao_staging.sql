@@ -31,4 +31,4 @@ SELECT
    SAFE_CAST(JSON_VALUE(content,"$.status") AS STRING) status,
    SAFE_CAST(JSON_VALUE(content,"$.solicitacao") AS STRING) solicitacao
  FROM
-     {{ source("migracao_veiculo_staging",'sppo_licenciamento_solicitacao') }} as t
+     {{ source("veiculo_staging",'sppo_licenciamento_solicitacao') }} as t
