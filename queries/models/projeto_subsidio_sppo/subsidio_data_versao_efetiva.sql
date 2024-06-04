@@ -314,7 +314,7 @@ WHERE
 
 {% else %}
 {% if execute %}
-  {% set max_feed_version = run_query("SELECT feed_version FROM " ~ ref('feed_info_gtfs2') ~ " WHERE feed_start_date = (SELECT MAX(feed_start_date) FROM " ~ ref('feed_info_gtfs2') ~ " WHERE feed_start_date >= DATE_TRUNC(DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 30 DAY), MONTH))").columns[0].values()[0] %}
+  {% set max_feed_version = run_query("SELECT feed_version FROM " ~ ref('feed_info_gtfs') ~ " WHERE feed_start_date = (SELECT MAX(feed_start_date) FROM " ~ ref('feed_info_gtfs') ~ " WHERE feed_start_date >= DATE_TRUNC(DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 30 DAY), MONTH))").columns[0].values()[0] %}
 {% endif %}
 
 WITH
@@ -365,7 +365,7 @@ SELECT
 FROM
   dates AS d
 LEFT JOIN
-  {{ ref('feed_info_gtfs2') }} AS i
+  {{ ref('feed_info_gtfs') }} AS i
 ON
   (d.feed_version = i.feed_version AND i.feed_version IS NOT NULL)
   OR "{{ max_feed_version }}" = i.feed_version
