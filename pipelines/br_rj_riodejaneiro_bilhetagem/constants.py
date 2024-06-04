@@ -13,40 +13,6 @@ class constants(Enum):  # pylint: disable=c0103
     Constant values for rj_smtr br_rj_riodejaneiro_bilhetagem
     """
 
-    BILHETAGEM_GENERAL_CAPTURE_PARAMS = {
-        "databases": {
-            "principal_db": {
-                "engine": "mysql",
-                "host": "10.5.114.121",
-            },
-            "tarifa_db": {
-                "engine": "postgresql",
-                "host": "10.5.113.254",
-            },
-            "transacao_db": {
-                "engine": "postgresql",
-                "host": "10.5.115.1",
-            },
-            "tracking_db": {
-                "engine": "postgresql",
-                "host": "10.5.15.25",
-            },
-            "ressarcimento_db": {
-                "engine": "postgresql",
-                "host": "10.5.15.127",
-            },
-            "gratuidade_db": {
-                "engine": "postgresql",
-                "host": "10.5.12.107",
-            },
-            "fiscalizacao_db": {
-                "engine": "postgresql",
-                "host": "10.5.115.29",
-            },
-        },
-        "source_type": "db",
-    }
-
     BILHETAGEM_PRIVATE_BUCKET = "rj-smtr-jae-private"
 
     BILHETAGEM_TRANSACAO_CAPTURE_PARAMS = {
@@ -124,26 +90,6 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "primary_key": ["id"],
         "interval_minutes": 1440,
-    }
-
-    BILHETAGEM_TRACKING_CAPTURE_PARAMS = {
-        "table_id": "gps_validador",
-        "partition_date_only": False,
-        "extract_params": {
-            "database": "tracking_db",
-            "query": """
-                SELECT
-                    *
-                FROM
-                    tracking_detalhe
-                WHERE
-                    id > {last_id} AND id <= {max_id}
-            """,
-            "page_size": 1000,
-            "max_pages": 100,
-        },
-        "primary_key": ["id"],
-        "interval_minutes": 5,
     }
 
     BILHETAGEM_ORDEM_PAGAMENTO_CAPTURE_PARAMS = [
@@ -565,7 +511,7 @@ class constants(Enum):  # pylint: disable=c0103
     BILHETAGEM_GENERAL_CAPTURE_DEFAULT_PARAMS = {
         "dataset_id": smtr_constants.BILHETAGEM_DATASET_ID.value,
         "secret_path": BILHETAGEM_SECRET_PATH,
-        "source_type": BILHETAGEM_GENERAL_CAPTURE_PARAMS["source_type"],
+        "source_type": smtr_constants.BILHETAGEM_GENERAL_CAPTURE_PARAMS.value["source_type"],
     }
 
     BILHETAGEM_MATERIALIZACAO_VALIDACAO_JAE_PARAMS = {

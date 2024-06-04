@@ -136,7 +136,7 @@ bilhetagem_tracking_captura.run_config = KubernetesRun(
 bilhetagem_tracking_captura = set_default_parameters(
     flow=bilhetagem_tracking_captura,
     default_parameters=constants.BILHETAGEM_GENERAL_CAPTURE_DEFAULT_PARAMS.value
-    | constants.BILHETAGEM_TRACKING_CAPTURE_PARAMS.value,
+    | smtr_constants.BILHETAGEM_TRACKING_CAPTURE_PARAMS.value,
 )
 
 bilhetagem_tracking_captura.state_handlers.append(

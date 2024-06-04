@@ -279,6 +279,59 @@ and createdDate lt {end})",
 
     BILHETAGEM_DATASET_ID = "br_rj_riodejaneiro_bilhetagem"
 
+    BILHETAGEM_GENERAL_CAPTURE_PARAMS = {
+        "databases": {
+            "principal_db": {
+                "engine": "mysql",
+                "host": "10.5.114.121",
+            },
+            "tarifa_db": {
+                "engine": "postgresql",
+                "host": "10.5.113.254",
+            },
+            "transacao_db": {
+                "engine": "postgresql",
+                "host": "10.5.115.1",
+            },
+            "tracking_db": {
+                "engine": "postgresql",
+                "host": "10.5.15.25",
+            },
+            "ressarcimento_db": {
+                "engine": "postgresql",
+                "host": "10.5.15.127",
+            },
+            "gratuidade_db": {
+                "engine": "postgresql",
+                "host": "10.5.12.107",
+            },
+            "fiscalizacao_db": {
+                "engine": "postgresql",
+                "host": "10.5.115.29",
+            },
+        },
+        "source_type": "db",
+    }
+    BILHETAGEM_TRACKING_CAPTURE_PARAMS = {
+        "table_id": "gps_validador",
+        "partition_date_only": False,
+        "extract_params": {
+            "database": "tracking_db",
+            "query": """
+                SELECT
+                    *
+                FROM
+                    tracking_detalhe
+                WHERE
+                    id > {last_id} AND id <= {max_id}
+            """,
+            "page_size": 1000,
+            "max_pages": 100,
+        },
+        "primary_key": ["id"],
+        "interval_minutes": 5,
+    }
+
     # GTFS
     GTFS_DATASET_ID = "migracao_br_rj_riodejaneiro_gtfs"
 
