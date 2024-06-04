@@ -511,7 +511,7 @@ class constants(Enum):  # pylint: disable=c0103
     BILHETAGEM_GENERAL_CAPTURE_DEFAULT_PARAMS = {
         "dataset_id": smtr_constants.BILHETAGEM_DATASET_ID.value,
         "secret_path": BILHETAGEM_SECRET_PATH,
-        "source_type": smtr_constants.BILHETAGEM_GENERAL_CAPTURE_PARAMS["source_type"],
+        "source_type": smtr_constants.BILHETAGEM_GENERAL_CAPTURE_PARAMS.value["source_type"],
     }
 
     BILHETAGEM_MATERIALIZACAO_VALIDACAO_JAE_PARAMS = {
