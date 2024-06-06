@@ -1,4 +1,3 @@
--- depends_on: {{ ref('passageiros_tile_hora') }}
 SELECT
     p.data,
     p.hora,
@@ -13,9 +12,10 @@ SELECT
     p.sentido,
     p.tipo_transacao_smtr,
     p.tipo_transacao_detalhe_smtr,
+    p.tile_id,
     p.quantidade_passageiros
 FROM
-    {{ ref("passageiros_hora") }} p
+    {{ ref("passageiros_tile_hora") }} p
 LEFT JOIN
     {{ ref("servicos") }} s
 USING(id_servico_jae)
