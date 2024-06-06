@@ -1062,7 +1062,8 @@ and createdDate lt {end})",
                 "expression": "id_viagem IS NOT NULL",
             },
             "Todas viagens possuem indicador de viagem remunerada não nulo e verdadeiro/falso": {
-                "expression": "indicador_viagem_remunerada IS NOT NULL AND indicador_viagem_remunerada IN (TRUE, FALSE)",
+                "expression": "indicador_viagem_remunerada IS NOT NULL\
+AND indicador_viagem_remunerada IN (TRUE, FALSE)",
             },
             "Todas viagens com distância planejada não nula e maior ou igual a zero": {
                 "expression": "distancia_planejada IS NOT NULL AND distancia_planejada >= 0",
