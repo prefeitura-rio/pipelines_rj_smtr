@@ -71,9 +71,9 @@
           COALESCE(t.data_transacao, i.data_transacao) IS NOT NULL
     {% endset %}
 
-    {% set partitions = run_query(partitions_query) %}
+    {% set transacao_partitions = run_query(transacao_partitions_query) %}
 
-    {% set partition_list = partitions.columns[0].values() %}
+    {% set transacao_partition_list = transacao_partitions.columns[0].values() %}
   {% endif %}
 {% endif %}
 
@@ -82,7 +82,7 @@ WITH transacao AS (
     *
   FROM
     {{ transacao_staging }}
-  {% if is_incremental() -%}
+  {% if is_incremental() %}
       WHERE
         {{ incremental_filter }}
   {% endif %}
