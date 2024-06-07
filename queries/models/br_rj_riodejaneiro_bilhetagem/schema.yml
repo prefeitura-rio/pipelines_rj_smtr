@@ -265,7 +265,7 @@ models:
         description: "Quantidade de transações que aconteceram em determinada data e hora"
       - name: versao
         description: "Código de controle de versão do dado (SHA Github)"
-  - name: passageiros_hora
+  - name: passageiros_tile_hora
     description: "Tabela de contagem do número de passageiros por hora. Agrega valores da tabela de transações por: data, hora, modo, consorcio, operadora, servico, sentido, tipo_transacao e tile_id"
     columns:
       - name: data

@@ -39,7 +39,7 @@ SELECT
   descricao_servico_jae,
   sentido,
   id_transacao,
-  tipo_transacao,
+  tipo_transacao_smtr,
   CASE
     WHEN tipo_transacao_smtr = "Gratuidade" THEN tipo_gratuidade
     WHEN tipo_transacao_smtr = "Integração" THEN "Integração"

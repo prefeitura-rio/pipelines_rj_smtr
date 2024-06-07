@@ -17,7 +17,7 @@ SELECT
   '{{ var("version") }}' AS versao
 FROM
   {{ ref("passageiros_hora_aux") }} p
-LEFT JOIN
+JOIN
   {{ source("br_rj_riodejaneiro_geo", "h3_res9") }} geo
 ON
   ST_CONTAINS(ST_GEOGFROMTEXT(geo.geometry), ST_GEOGPOINT(p.longitude, p.latitude))
@@ -30,7 +30,7 @@ GROUP BY
   servico_jae,
   descricao_servico_jae,
   sentido,
-  tipo_transacao,
+  tipo_transacao_smtr,
   tipo_transacao_detalhe_smtr,
   tipo_gratuidade,
   tipo_pagamento,

@@ -1,4 +1,4 @@
--- depends_on: {{ ref('passageiros_tile_hora') }}
+-- depends_on: {{ ref('view_passageiros_tile_hora') }}
 SELECT
     p.data,
     p.hora,

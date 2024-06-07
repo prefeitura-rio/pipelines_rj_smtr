@@ -25,7 +25,7 @@ GROUP BY
   servico_jae,
   descricao_servico_jae,
   sentido,
-  tipo_transacao,
+  tipo_transacao_smtr,
   tipo_transacao_detalhe_smtr,
   tipo_gratuidade,
   tipo_pagamento
