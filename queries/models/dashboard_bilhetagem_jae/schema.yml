@@ -22,6 +22,10 @@ models:
         description: "Descrição do serviço na tabela cadastro.servicos"
       - name: nome_completo_servico
         description: "Concatenação das colunas servico e descricao_servico, separadas por ' - '"
+      - name: latitude_servico
+        description: "Latitude do stop no GTFS (apenas para modo BRT)"
+      - name: longitude_servico
+        description: "Longitude do stop no GTFS (apenas para modo BRT)"
       - name: sentido
         description: "Sentido de operação do serviço (0 = ida, 1 = volta)"
       - name: tipo_transacao_smtr
