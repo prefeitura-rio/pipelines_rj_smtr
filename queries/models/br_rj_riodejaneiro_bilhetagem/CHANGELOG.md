@@ -1,10 +1,22 @@
 # Changelog - bilhetagem
 
+## [2.0.0] - 2024-06-11
+
+### Adicionado
+- Cria modelos `passageiros_hora_aux.sql` e `passageiros_tile_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/56)
+
+### Alterado
+- Adiciona colunas tipo_transacao_smtr e valor_pagamento no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/56)
+- Altera lógica da execução incremental no modelo `transacao.sql` para atualizar valores de rateio e o tipo de transação da primeira perna das integrações (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/56)
+
+### Corrigido
+- Corrige filtro no modelo `passageiros_hora_aux.sql` para adicionar transações de Ônibus (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/56)
+
 ## [1.2.1] - 2024-05-20
 
 ### Corrigido
 - Altera alias da tabela `linha_sem_ressarcimento` no modelo `transacao.sql` (https://github.com/prefeitura-rio/queries-rj-smtr/pull/317)
-- Corrige select servico no modelo `ordem_pagamento_servico_operador_dia.sql` ((https://github.com/prefeitura-rio/queries-rj-smtr/pull/317)
+- Corrige select servico no modelo `ordem_pagamento_servico_operador_dia.sql` (https://github.com/prefeitura-rio/queries-rj-smtr/pull/317)
 
 ## [1.2.0] - 2024-05-20
 
