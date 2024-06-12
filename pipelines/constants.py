@@ -1073,3 +1073,5 @@ AND indicador_viagem_remunerada IN (TRUE, FALSE)",
             },
         },
     }
+
+    CONTROLE_FINANCEIRO_DATASET_ID = "controle_financeiro"
