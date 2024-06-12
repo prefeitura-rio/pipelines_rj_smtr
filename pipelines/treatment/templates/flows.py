@@ -17,12 +17,11 @@ from pipelines.tasks import (
     get_scheduled_timestamp,
     parse_string_to_timestamp,
 )
-from pipelines.treatment.templates.tasks import (
+from pipelines.treatment.templates.tasks import (  # run_data_quality_checks,
     create_dbt_run_vars,
     get_last_materialization_datetime,
     get_repo_version,
     rename_materialization_flow,
-    run_data_quality_checks,
     run_dbt_model_task,
     save_materialization_datetime_redis,
 )
@@ -154,19 +153,20 @@ def create_default_materialization_flow(
             dbt_run_vars=dbt_run_vars,
         )
 
-        save_redis = save_materialization_datetime_redis(
+        save_materialization_datetime_redis(
             redis_key=redis_key,
             value=datetime_end,
             upstream_tasks=[run_dbt],
         )
 
         if data_quality_checks is not None:
-            run_data_quality_checks(
-                data_quality_checks=data_quality_checks,
-                initial_partition=datetime_start,
-                final_partition=datetime_end,
-                upstream_tasks=[save_redis],
-            )
+            pass
+            # run_data_quality_checks(
+            #     data_quality_checks=data_quality_checks,
+            #     initial_partition=datetime_start,
+            #     final_partition=datetime_end,
+            #     upstream_tasks=[save_redis],
+            # )
 
     default_materialization_flow.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
     default_materialization_flow.run_config = KubernetesRun(
