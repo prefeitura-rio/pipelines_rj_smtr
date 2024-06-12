@@ -808,6 +808,9 @@ def create_request_params(
     elif dataset_id == constants.VEICULO_DATASET_ID.value:
         request_url = get_secret(extract_params["secret_path"])["data"]["request_url"]
 
+    elif dataset_id == constants.CONTROLE_FINANCEIRO_DATASET_ID.value:
+        request_url = extract_params["base_url"] + extract_params["sheet_id"]
+
     return request_params, request_url
 
 
@@ -1500,6 +1503,13 @@ def transform_raw_to_nested_structure(
                         for col in data.columns[data.dtypes == "object"].to_list():
                             data[col] = data[col].str.strip()
 
+                    if (
+                        constants.GTFS_DATASET_ID.value in raw_filepath
+                        and "ordem_servico" in raw_filepath
+                        and "tipo_os" not in data.columns
+                    ):
+                        data["tipo_os"] = "Regular"
+
                     log(f"Finished cleaning! Data:\n{data_info_str(data)}", level="info")
 
                     log("Creating nested structure...", level="info")
@@ -1508,7 +1518,13 @@ def transform_raw_to_nested_structure(
                     data = (
                         data.groupby(pk_cols)
                         .apply(
-                            lambda x: x[data.columns.difference(pk_cols)].to_json(orient="records")
+                            lambda x: x[data.columns.difference(pk_cols)].to_json(
+                                orient="records",
+                                force_ascii=(
+                                    constants.CONTROLE_FINANCEIRO_DATASET_ID.value
+                                    not in raw_filepath
+                                ),
+                            )
                         )
                         .str.strip("[]")
                         .reset_index(name="content")[primary_key + ["content", "timestamp_captura"]]

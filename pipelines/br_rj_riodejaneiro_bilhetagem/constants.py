@@ -527,3 +527,5 @@ ordem_pagamento_servico_operador_dia staging_ordem_pagamento_consorcio_operadora
             "version": {},
         },
     }
+
+    ORDEM_PAGAMENTO_CONSORCIO_OPERADOR_DIA_CHECK_ID = "ordem-pagamento-consorcio-operador-dia"

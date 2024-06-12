@@ -27,6 +27,7 @@ from pipelines.schedules import (
     every_hour,
     every_minute,
 )
+from pipelines.treatment.templates.tasks import run_data_quality_checks
 from pipelines.utils.backup.flows import (
     default_capture_flow,
     default_materialization_flow,
@@ -39,6 +40,7 @@ from pipelines.utils.backup.tasks import (
     rename_current_flow_run_now_time,
 )
 from pipelines.utils.backup.utils import set_default_parameters
+from pipelines.utils.dataplex import DataQualityCheckArgs
 
 # Flows #
 
@@ -695,8 +697,20 @@ with Flow(
             raise_final_state=True,
         )
 
+        notify_discord = run_data_quality_checks(
+            data_quality_checks=[
+                DataQualityCheckArgs(
+                    check_id=constants.ORDEM_PAGAMENTO_CONSORCIO_OPERADOR_DIA_CHECK_ID.value,
+                    table_partition_column_name="data_ordem",
+                    table_id="ordem_pagamento_consorcio_operador_dia",
+                    dataset_id=smtr_constants.BILHETAGEM_DATASET_ID.name,
+                )
+            ],
+            initial_timestamp=timestamp,
+        )
+
     bilhetagem_ordem_pagamento_captura_tratamento.set_reference_tasks(
-        [wait_materializacao_integracao, wait_recaptura]
+        [wait_materializacao_integracao, wait_recaptura, notify_discord]
     )
 
 bilhetagem_ordem_pagamento_captura_tratamento.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
