@@ -43,6 +43,7 @@ from pipelines.utils.backup.tasks import (
     get_scheduled_start_times,
     rename_current_flow_run_now_time,
     transform_raw_to_nested_structure,
+    unpack_mapped_results_nout2,
     upload_raw_data_to_gcs,
     upload_staging_data_to_gcs,
 )
@@ -131,12 +132,16 @@ with Flow("SMTR: GTFS - Captura OS (subflow)") as gtfs_captura_nova:
         info=os_info["new_os"], local_partitions=local_partitions
     )
 
-    errors, treated_filepaths = transform_raw_to_nested_structure.map(
+    transform_raw_to_nested_structure_results = transform_raw_to_nested_structure.map(
         raw_filepath=raw_filepaths,
         filepath=local_partitions,
         primary_key=primary_keys,
         timestamp=timestamp,
         error=unmapped(None),
+    )
+
+    errors, treated_filepaths = unpack_mapped_results_nout2(
+        mapped_results=transform_raw_to_nested_structure_results
     )
 
     errors = upload_raw_data_to_gcs.map(
