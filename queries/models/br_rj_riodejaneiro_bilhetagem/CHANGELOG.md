@@ -1,5 +1,12 @@
 # Changelog - bilhetagem
 
+## [2.1.0] - 2024-06-13
+
+### Alterado
+- Adiciona colunas `data_pagamento` e `valor_pago` no modelo `ordem_pagamento_consorcio_operador_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/60)
+- Subtrai valor pago a mais ao VLT (data_ordem = 2024-05-31) da ordem do dia 2024-06-07 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/60)
+- Adiciona prioridade dos dados novos em relação aos antigos no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/60)
+
 ## [2.0.0] - 2024-06-11
 
 ### Adicionado
