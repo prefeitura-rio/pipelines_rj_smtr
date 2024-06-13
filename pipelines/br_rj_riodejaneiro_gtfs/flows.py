@@ -157,6 +157,7 @@ with Flow("SMTR: GTFS - Captura OS (subflow)") as gtfs_captura_nova:
         table_id=constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys(),
         staging_filepath=treated_filepaths,
         partitions=unmapped(partition),
+        timestamp=unmapped(timestamp),
         error=errors,
     )
 
