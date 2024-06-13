@@ -13,6 +13,11 @@ from prefect.storage import GCS
 
 # EMD Imports #
 from prefeitura_rio.pipelines_utils.custom import Flow
+from prefeitura_rio.pipelines_utils.state_handlers import (
+    handler_initialize_sentry,
+    handler_inject_bd_credentials,
+    handler_skip_if_running,
+)
 
 from pipelines.constants import constants as smtr_constants
 from pipelines.controle_financeiro.constants import constants
@@ -56,6 +61,12 @@ controle_cct_cb_captura = set_default_parameters(
     default_parameters=constants.SHEETS_CAPTURE_DEFAULT_PARAMS.value
     | constants.SHEETS_CB_CAPTURE_PARAMS.value,
 )
+
+controle_cct_cb_captura.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+]
+
 controle_cct_cb_captura.schedule = every_day
 
 controle_cct_cett_captura = deepcopy(default_capture_flow)
@@ -71,6 +82,12 @@ controle_cct_cett_captura = set_default_parameters(
     default_parameters=constants.SHEETS_CAPTURE_DEFAULT_PARAMS.value
     | constants.SHEETS_CETT_CAPTURE_PARAMS.value,
 )
+
+controle_cct_cett_captura.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+]
+
 controle_cct_cett_captura.schedule = every_day
 
 
@@ -152,5 +169,11 @@ arquivo_retorno_captura.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
+
+arquivo_retorno_captura.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+    handler_skip_if_running,
+]
 
 arquivo_retorno_captura.schedule = every_friday_seven_thirty
