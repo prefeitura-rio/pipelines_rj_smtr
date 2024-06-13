@@ -9,12 +9,13 @@ from typing import Union
 import pandas as pd
 import requests
 from prefect import task
+from prefeitura_rio.pipelines_utils.logging import log
+from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
-from pipelines.rj_smtr.constants import constants as smtr_constants
-from pipelines.rj_smtr.controle_financeiro.constants import constants
-from pipelines.rj_smtr.controle_financeiro.utils import get_date_ranges
-from pipelines.rj_smtr.utils import save_raw_local_func
-from pipelines.utils.utils import get_redis_client, get_vault_secret, log
+from pipelines.constants import constants as smtr_constants
+from pipelines.controle_financeiro.constants import constants
+from pipelines.utils.backup.utils import save_raw_local_func
+from pipelines.utils.secret import get_secret
 
 
 @task
@@ -40,7 +41,7 @@ def get_cct_arquivo_retorno_redis_key(mode: str) -> str:
 @task(nout=2)
 def create_cct_arquivo_retorno_params(
     redis_key: str, start_date: Union[str, None], end_date: Union[str, None]
-) -> tuple[dict, list[dict]]:
+) -> tuple[dict, dict]:
     """
     Create parameters to get data from cct api's arquivoPublicacao
 
@@ -51,11 +52,12 @@ def create_cct_arquivo_retorno_params(
 
     Returns:
         dict: headers
-        list[dict]: parameters
+        dict: parameters
     """
     auth_resp = requests.post(
         f"{constants.CCT_API_BASE_URL.value}/auth/admin/email/login",
-        data=get_vault_secret(constants.CCT_API_SECRET_PATH.value)["data"],
+        data=get_secret(constants.CCT_API_SECRET_PATH.value),
+        timeout=smtr_constants.MAX_TIMEOUT_SECONDS.value,
     )
     auth_resp.raise_for_status()
     headers = {"Authorization": f"Bearer {auth_resp.json()['token']}"}
@@ -75,26 +77,23 @@ def create_cct_arquivo_retorno_params(
     log(f"Got value from Redis: {redis_return}")
 
     if redis_return is None:
-        params = [
-            {
-                "dt_inicio": "2024-05-09",
-                "dt_fim": date.today().isoformat(),
-            }
-        ]
+        params = {
+            "dt_inicio": "2024-05-09",
+            "dt_fim": date.today().isoformat(),
+        }
 
     else:
-        pending_dates = redis_return["pending_dates"]
 
-        params = get_date_ranges(
-            last_date=redis_return["last_date"],
-            pending_dates=pending_dates,
-        )
+        params = {
+            "dt_inicio": redis_return["last_date"],
+            "dt_fim": date.today().isoformat(),
+        }
 
     return headers, params
 
 
 @task
-def get_raw_cct_arquivo_retorno(headers: dict, params: list[dict], local_filepath: str) -> str:
+def get_raw_cct_arquivo_retorno(headers: dict, params: dict, local_filepath: str) -> str:
     """
     Get data from cct api arquivoPublicacao
 
@@ -106,26 +105,23 @@ def get_raw_cct_arquivo_retorno(headers: dict, params: list[dict], local_filepat
     Returns:
         str: filepath to raw data
     """
-    data = []
     url = f"{constants.CCT_API_BASE_URL.value}/cnab/arquivoPublicacao"
-    for param in params:
-        log(
-            f"""Getting raw data:
-            url: {url},
-            params: {param}"""
-        )
-        resp = requests.get(
-            url,
-            headers=headers,
-            params=param,
-        )
+    log(
+        f"""Getting raw data:
+        url: {url},
+        params: {params}"""
+    )
+    resp = requests.get(
+        url,
+        headers=headers,
+        params=params,
+        timeout=smtr_constants.MAX_TIMEOUT_SECONDS.value,
+    )
 
-        resp.raise_for_status()
-        new_data = resp.json()
+    resp.raise_for_status()
+    data = resp.json()
 
-        data += new_data
-
-        log(f"returned {len(new_data)} rows")
+    log(f"returned {len(data)} rows")
 
     return save_raw_local_func(data=data, filepath=local_filepath)
 
@@ -140,23 +136,10 @@ def cct_arquivo_retorno_save_redis(redis_key: str, raw_filepath: str):
         raw_filepath (str): Filepath to raw data
     """
     df = pd.read_json(raw_filepath)
-    df["dataOrdem"] = pd.to_datetime(df["dataOrdem"]).dt.strftime("%Y-%m-%d")
-    all_returned_dates = df["dataOrdem"].unique().tolist()
-    df = (
-        df.groupby(  # pylint: disable=E1101
-            [
-                "idConsorcio",
-                "idOperadora",
-                "dataOrdem",
-            ]
-        )["isPago"]
-        .max()
-        .reset_index()
-    )
-    pending_dates = df.loc[~df["isPago"]]["dataOrdem"].unique().tolist()
+    df["dataVencimento"] = pd.to_datetime(df["dataVencimento"]).dt.strftime("%Y-%m-%d")
+    all_returned_dates = df["dataVencimento"].unique().tolist()
 
     log(f"The API returned the following dates: {sorted(all_returned_dates)}")
-    log(f"the following dates are not paid: {sorted(pending_dates)}")
 
     redis_client = get_redis_client()
     redis_return = redis_client.get(redis_key)
@@ -165,18 +148,13 @@ def cct_arquivo_retorno_save_redis(redis_key: str, raw_filepath: str):
         redis_return = {}
 
     redis_return["last_date"] = max(
-        [df["dataOrdem"].max(), redis_return.get("last_date", "2024-05-09")]
+        [df["dataVencimento"].max(), redis_return.get("last_date", "2024-05-09")]
     )
-
-    redis_return["pending_dates"] = pending_dates + [
-        d for d in redis_return.get("pending_dates", []) if d not in all_returned_dates
-    ]
 
     log(
         f"""
         Saving values on redis
         last_date: {redis_return["last_date"]}
-        pending_dates: {sorted(redis_return["pending_dates"])}
         """
     )
 
