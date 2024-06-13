@@ -22,12 +22,49 @@ models:
         description: "Descrição do serviço na tabela cadastro.servicos"
       - name: nome_completo_servico
         description: "Concatenação das colunas servico e descricao_servico, separadas por ' - '"
+      - name: latitude_servico
+        description: "Latitude do stop no GTFS (apenas para modo BRT)"
+      - name: longitude_servico
+        description: "Longitude do stop no GTFS (apenas para modo BRT)"
       - name: sentido
         description: "Sentido de operação do serviço (0 = ida, 1 = volta)"
       - name: tipo_transacao_smtr
         description: "Tipo de transação realizada no padrão usado pela SMTR (Tarifa Cheia, Integração e Gratuidade)"
       - name: tipo_transacao_detalhe_smtr
         description: "Detalhamento sobre a transação, de acordo com o tipo (Tarifa Cheia = tipo do pagamento, Gratuidade = tipo da gratuidade)"
+      - name: quantidade_passageiros
+        description: "Quantidade de transações que aconteceram em determinada data e hora"
+      - name: versao
+        description: "Código de controle de versão do dado (SHA Github)"
+  - name: view_passageiros_tile_hora
+    description: "View criada para uso no painel de bilhetagem. Junta os dados da tabela br_rj_riodejaneiro_bilhetagem.passageiros_tile_hora com a tabela cadastro.servicos"
+    columns:
+      - name: data
+        description: "Data da transação"
+      - name: hora
+        description: "Hora da transação"
+      - name: modo
+        description: "Tipo de transporte (Ônibus, Van, BRT)"
+      - name: consorcio
+        description: "Nome do consórcio"
+      - name: operadora
+        description: "Nome da operadora de transporte (mascarado se for pessoa física)"
+      - name: id_servico_jae
+        description: "Identificador da linha no banco de dados da jaé (É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae)"
+      - name: servico
+        description: "Nome do serviço na tabela cadastro.servicos"
+      - name: descricao_servico
+        description: "Descrição do serviço na tabela cadastro.servicos"
+      - name: nome_completo_servico
+        description: "Concatenação das colunas servico e descricao_servico, separadas por ' - '"
+      - name: sentido
+        description: "Sentido de operação do serviço (0 = ida, 1 = volta)"
+      - name: tipo_transacao_smtr
+        description: "Tipo de transação realizada no padrão usado pela SMTR (Tarifa Cheia, Integração e Gratuidade)"
+      - name: tipo_transacao_detalhe_smtr
+        description: "Detalhamento sobre a transação, de acordo com o tipo (Tarifa Cheia = tipo do pagamento, Gratuidade = tipo da gratuidade)"
+      - name: tile_id
+        description: "Identificador do hexágono da geolocalização da transação na tabela rj-smtr.br_rj_riodejaneiro_geo.h3_res9"
       - name: quantidade_passageiros
         description: "Quantidade de transações que aconteceram em determinada data e hora"
       - name: versao

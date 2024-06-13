@@ -463,7 +463,11 @@ class constants(Enum):  # pylint: disable=c0103
             },
             "version": {},
         },
-        "exclude": "integracao matriz_integracao stops_gtfs routes_gtfs feed_info_gtfs",
+        "exclude": "integracao matriz_integracao gtfs \
+ordem_pagamento_dia ordem_pagamento_consorcio_dia ordem_pagamento_consorcio_operador_dia \
+staging_ordem_pagamento_consorcio staging_ordem_pagamento \
+ordem_pagamento_servico_operador_dia staging_ordem_pagamento_consorcio_operadora \
+aux_retorno_ordem_pagamento",
     }
 
     BILHETAGEM_MATERIALIZACAO_TRANSACAO_RIOCARD_PARAMS = {
@@ -524,3 +528,5 @@ class constants(Enum):  # pylint: disable=c0103
             "version": {},
         },
     }
+
+    ORDEM_PAGAMENTO_CONSORCIO_OPERADOR_DIA_CHECK_ID = "ordem-pagamento-consorcio-operador-dia"

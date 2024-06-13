@@ -219,14 +219,14 @@ def create_dbt_run_vars(
         # Create date_range using Redis
         else:
             if not table_id:
-                log("table_id are blank. Skiping task...")
+                log("table_id is blank. Skiping task...")
                 return [None], None, False
 
             raw_table_id = raw_table_id or table_id
 
             date_var = get_materialization_date_range.run(
                 dataset_id=dataset_id,
-                table_id=table_id,
+                table_id=dbt_vars["date_range"].get("table_alias", table_id),
                 raw_dataset_id=raw_dataset_id,
                 raw_table_id=raw_table_id,
                 table_run_datetime_column_name=dbt_vars["date_range"].get(
@@ -252,7 +252,7 @@ def create_dbt_run_vars(
             day_datetime=timestamp,
         )
 
-        final_vars.append([d.copy() for d in date_var])
+        final_vars += [d.copy() for d in date_var]
 
         log(f"run_date created: {date_var}")
 

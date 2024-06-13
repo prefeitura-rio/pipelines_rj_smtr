@@ -2,6 +2,7 @@
 from datetime import date, datetime, timedelta
 from typing import Union
 
+import basedosdados as bd
 import pandas as pd
 import requests
 from prefect import task
@@ -222,16 +223,14 @@ def save_materialization_datetime_redis(redis_key: str, value: datetime):
 @task
 def run_data_quality_checks(
     data_quality_checks: list[DataQualityCheckArgs],
-    initial_partition: datetime,
-    final_partition: datetime,
+    initial_timestamp: datetime,
 ):
     """
     Executa os testes de qualidade de dados no Dataplex
 
     Args:
         data_quality_checks (list[DataQualityCheckArgs]): Lista de testes para executar
-        initial_partition (datetime): Partição inicial para rodar os testes
-        final_partition (datetime): Partição final para rodar os testes
+        initial_timestamp (datetime): Data inicial para filtrar as partições modificadas
     """
     if flow_is_running_local():
         return
@@ -241,29 +240,36 @@ def run_data_quality_checks(
             f"data_quality_checks precisa ser uma lista. Recebeu: {type(data_quality_checks)}"
         )
 
-    log(
-        f"""Executando testes de qualidade de dados:
-        partição inicial: {initial_partition}
-        partição final: {final_partition}
-        """
-    )
+    log("Executando testes de qualidade de dados")
 
     for check in data_quality_checks:
+        partitions = bd.read_sql(
+            f"""
+            SELECT
+                PARSE_DATE('%Y%m%d', partition_id) AS partition_date
+            FROM
+                `rj-smtr.{check.dataset_id}.INFORMATION_SCHEMA.PARTITIONS`
+            WHERE
+                table_name = "{check.table_id}"
+                AND partition_id != "__NULL__"
+                AND
+                    DATE(last_modified_time, "America/Sao_Paulo") >=
+                    DATE('{initial_timestamp.date().isoformat()}')
+            """,
+            billing_project_id="rj-smtr-dev",
+        )["partition_date"].to_list()
+
+        partitions = [f"'{p}'" for p in partitions]
+
         dataplex = DataQuality(
             data_scan_id=check.check_id,
             project_id="rj-smtr",
         )
         partition_column_name = check.table_partition_column_name
-        if partition_column_name is None or initial_partition is None:
+        if partition_column_name is None:
             row_filters = "1=1"
         else:
-            initial_partition = initial_partition.strftime("%Y-%m-%d")
-            final_partition = final_partition.strftime("%Y-%m-%d")
-            row_filters = f"{partition_column_name} "
-            if initial_partition == final_partition:
-                row_filters += f"= '{initial_partition}'"
-            else:
-                row_filters += f"BETWEEN '{initial_partition}' AND '{final_partition}'"
+            row_filters = f"{partition_column_name} IN ({', '.join(partitions)})"
 
         log(f"Executando check de qualidade de dados {dataplex.id} com o filtro: {row_filters}")
         run = dataplex.run_parameterized(
@@ -278,8 +284,7 @@ def run_data_quality_checks(
                 dataplex_check_id=check.check_id,
                 dataplex_run=run,
                 timestamp=datetime.now(tz=timezone(constants.TIMEZONE.value)),
-                initial_partition=initial_partition,
-                final_partition=final_partition,
+                partitions=partitions,
             )
 
 
