@@ -48,6 +48,7 @@ from pipelines.utils.backup.tasks import (
     upload_staging_data_to_gcs,
 )
 from pipelines.utils.backup.utils import set_default_parameters
+from pipelines.utils.utils import isostr_to_datetime
 
 # from pipelines.capture.templates.flows import create_default_capture_flow
 
@@ -117,26 +118,30 @@ with Flow("SMTR: GTFS - Captura OS (subflow)") as gtfs_captura_nova:
 
     with case(os_info["new_os"], True):
 
-        partition = create_date_hour_partition(timestamp=timestamp)
+        data_versao_gtfs = isostr_to_datetime(data_versao_gtfs)
 
-        filename = parse_timestamp_to_string(timestamp)
+        partition = create_date_hour_partition(
+            timestamp=data_versao_gtfs, partition_date_name="data_versao", partition_date_only=True
+        )
 
-    local_partitions = create_local_partition_path.map(
+        filename = parse_timestamp_to_string(data_versao_gtfs)
+
+    local_filepath = create_local_partition_path.map(
         dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
         table_id=constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys(),
-        partitions=unmapped(data_versao_gtfs),
+        partitions=unmapped(partition),
         filename=unmapped(filename),
     )
 
     raw_filepaths, primary_keys = get_raw_drive_files(
-        info=os_info["new_os"], local_partitions=local_partitions
+        info=os_info["new_os"], local_filepath=local_filepath
     )
 
     transform_raw_to_nested_structure_results = transform_raw_to_nested_structure.map(
         raw_filepath=raw_filepaths,
-        filepath=local_partitions,
+        filepath=local_filepath,
         primary_key=primary_keys,
-        timestamp=timestamp,
+        timestamp=data_versao_gtfs,
         error=unmapped(None),
     )
 

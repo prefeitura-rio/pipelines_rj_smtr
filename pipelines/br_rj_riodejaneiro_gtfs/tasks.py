@@ -1,20 +1,17 @@
-# -*- coding: utf-8 -*-
 import io
-import zipfile
 from os import environ
-from typing import Any, Iterable
-
-import openpyxl as xl
+import zipfile
 import pandas as pd
+from prefect import task
+from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
+from prefeitura_rio.pipelines_utils.logging import log
 import requests
-from google.oauth2 import service_account
+from pipelines.constants import constants
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
-from prefect import task
-from prefeitura_rio.pipelines_utils.logging import log
-from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
+from google.oauth2 import service_account
+import openpyxl as xl
 
-from pipelines.constants import constants
 from pipelines.utils.backup.utils import save_raw_local_func
 
 
@@ -120,7 +117,7 @@ def convert_to_float(value):
 
 ## refatorar em funções menores ##
 @task(nout=2)
-def get_raw_drive_files(info, local_partitions: list):
+def get_raw_drive_files(info, local_filepath: list):
     """
     Downloads raw files from Google Drive based on the provided information.
 
@@ -272,7 +269,7 @@ def get_raw_drive_files(info, local_partitions: list):
     ):
         raise Exception("failed to validate km_test and km_dia_util")
 
-    local_file_path = list(filter(lambda x: "ordem_servico" in x, local_partitions))[0]
+    local_file_path = list(filter(lambda x: "ordem_servico" in x, local_filepath))[0]
     quadro_geral_csv = quadro_geral.to_csv(index=False)
     raw_file_path = save_raw_local_func(
         data=quadro_geral_csv, filepath=local_file_path, filetype="csv"
@@ -327,7 +324,7 @@ def get_raw_drive_files(info, local_partitions: list):
         raise Exception("Missing or duplicated columns in ordem_servico_trajeto_alternativo")
 
     local_file_path = list(
-        filter(lambda x: "ordem_servico_trajeto_alternativo" in x, local_partitions)
+        filter(lambda x: "ordem_servico_trajeto_alternativo" in x, local_filepath)
     )[0]
     ordem_servico_trajeto_alternativo_csv = ordem_servico_trajeto_alternativo.to_csv(index=False)
     raw_file_path = save_raw_local_func(
@@ -357,7 +354,7 @@ def get_raw_drive_files(info, local_partitions: list):
             data = data.decode(encoding="utf-8")
 
             # encontra a partição correta
-            local_file_path = list(filter(lambda x: filename in x, local_partitions))[0]
+            local_file_path = list(filter(lambda x: filename in x, local_filepath))[0]
 
             raw_file_path = save_raw_local_func(data=data, filepath=local_file_path, filetype="txt")
             log(f"Saved file: {raw_file_path}")
