@@ -1,18 +1,20 @@
+# -*- coding: utf-8 -*-
 import io
+import zipfile
 from os import environ
 from typing import Any, Iterable
-import zipfile
+
+import openpyxl as xl
 import pandas as pd
-from prefect import task
-from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
-from prefeitura_rio.pipelines_utils.logging import log
 import requests
-from pipelines.constants import constants
+from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
-from google.oauth2 import service_account
-import openpyxl as xl
+from prefect import task
+from prefeitura_rio.pipelines_utils.logging import log
+from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
+from pipelines.constants import constants
 from pipelines.utils.backup.utils import save_raw_local_func
 
 

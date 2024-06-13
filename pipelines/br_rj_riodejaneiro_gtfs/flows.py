@@ -26,28 +26,25 @@ from pipelines.br_rj_riodejaneiro_gtfs.tasks import (
     get_os_info,
     get_raw_drive_files,
 )
-from pipelines.tasks import get_scheduled_timestamp, parse_timestamp_to_string
-
-from pipelines.utils.backup.tasks import (
-    create_date_hour_partition,
-    create_local_partition_path,
-    upload_raw_data_to_gcs,
-    transform_raw_to_nested_structure,
-    upload_staging_data_to_gcs,
-)
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
+from pipelines.tasks import get_scheduled_timestamp, parse_timestamp_to_string
 from pipelines.utils.backup.flows import (
     default_capture_flow,
     default_materialization_flow,
 )
 from pipelines.utils.backup.tasks import (
+    create_date_hour_partition,
+    create_local_partition_path,
     get_current_flow_labels,
     get_current_flow_mode,
     get_current_timestamp,
     get_flow_project,
     get_scheduled_start_times,
     rename_current_flow_run_now_time,
+    transform_raw_to_nested_structure,
+    upload_raw_data_to_gcs,
+    upload_staging_data_to_gcs,
 )
 from pipelines.utils.backup.utils import set_default_parameters
 
