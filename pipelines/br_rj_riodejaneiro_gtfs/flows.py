@@ -17,6 +17,7 @@ from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
     handler_inject_bd_credentials,
+    handler_skip_if_running,
 )
 
 # SMTR Imports #
@@ -156,6 +157,17 @@ with Flow("SMTR: GTFS - Captura OS (subflow)") as gtfs_captura_nova:
         partitions=unmapped(partition),
         error=errors,
     )
+
+gtfs_captura_nova.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+gtfs_captura_nova.run_config = KubernetesRun(
+    image=emd_constants.DOCKER_IMAGE.value,
+    labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
+)
+gtfs_captura_nova.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+    handler_skip_if_running,
+]
 
 
 with Flow(
