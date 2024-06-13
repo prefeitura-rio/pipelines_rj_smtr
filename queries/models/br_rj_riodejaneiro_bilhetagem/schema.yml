@@ -395,8 +395,14 @@ models:
         description: "Valor total das transações realizadas (R$)"
       - name: valor_desconto_taxa
         description: "Valor da taxa descontado do valor total (R$)"
-      - name: valor_total_transacao_liquido
+      - name: valor_total_transacao_liquido_ordem
         description: "Valor total das transações menos o valor_desconto_taxa (R$)"
+      - name: valor_total_transacao_liquido
+        description: "Valor corrigido total das transações menos o valor_desconto_taxa (R$)"
+      - name: data_pagamento
+        description: "Data em que foi realizado o pagamento ao operador ou consórcio"
+      - name: valor_pagamento
+        description: "Valor pago ao operador ou consórcio (R$)"
       - name: versao
         description: "Código de controle de versão do dado (SHA Github)"
   - name: ordem_pagamento_dia
