@@ -22,5 +22,5 @@ FROM
 WHERE
   isPago = TRUE
 {% if is_incremental() %}
-  AND data BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
+  AND DATE(data) BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
 {% endif %}
