@@ -3,7 +3,7 @@
 tasks for rj-smtr.controle_financeiro
 """
 
-from datetime import date
+from datetime import date, timedelta
 from typing import Union
 
 import pandas as pd
@@ -85,7 +85,9 @@ def create_cct_arquivo_retorno_params(
     else:
 
         params = {
-            "dt_inicio": redis_return["last_date"],
+            "dt_inicio": (
+                date.fromisoformat(redis_return["last_date"]) + timedelta(days=1)
+            ).isoformat(),
             "dt_fim": date.today().isoformat(),
         }
 
