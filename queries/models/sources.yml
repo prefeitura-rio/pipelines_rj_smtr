@@ -133,6 +133,7 @@ sources:
     tables:
       - name: cb
       - name: cett
+      - name: arquivo_retorno
 
   - name: br_rj_riodejaneiro_geo
     database: rj-smtr

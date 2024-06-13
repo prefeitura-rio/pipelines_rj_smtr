@@ -253,7 +253,8 @@ complete_partitions AS (
     stop_id,
     stop_lat,
     stop_lon,
-    valor_transacao
+    valor_transacao,
+    0 AS priority
   FROM
     new_data
 
@@ -289,7 +290,8 @@ complete_partitions AS (
       stop_id,
       stop_lat,
       stop_lon,
-      valor_transacao
+      valor_transacao,
+      1 AS priority
     FROM
       {{ this }}
     WHERE
@@ -307,7 +309,7 @@ transacao_deduplicada AS (
   (
     SELECT
       *,
-      ROW_NUMBER() OVER (PARTITION BY id_transacao ORDER BY datetime_captura DESC) AS rn
+      ROW_NUMBER() OVER (PARTITION BY id_transacao ORDER BY datetime_captura DESC, priority) AS rn
     FROM
       complete_partitions
   )

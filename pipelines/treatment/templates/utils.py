@@ -36,8 +36,7 @@ def send_dataplex_discord_message(
     dataplex_check_id: str,
     dataplex_run: DataScanJob,
     timestamp: datetime,
-    initial_partition: str,
-    final_partition: str,
+    partitions: list,
 ):
     """
     Envia o relatório dos testes de qualidade de dados no Discord
@@ -45,8 +44,7 @@ def send_dataplex_discord_message(
     dataplex_check_id (str): ID do teste no Dataplex
     dataplex_run (DataScanJob): Resultado da execução dos testes
     timestamp (datetime): Timestamp de execução do flow
-    initial_partition (str): Partição inicial analisada pelos testes
-    final_partition (str): Partição inicial analisada pelos testes
+    partitions (list): Lista de partições testadas
     """
     msg_pattern = """**Partições:** {partitions}
 **Porcentagem de registros com erro:** {error_ratio}%
@@ -56,11 +54,7 @@ def send_dataplex_discord_message(
         {
             "name": f"Regra: {r.rule.name}",
             "value": msg_pattern.format(
-                partitions=(
-                    final_partition
-                    if final_partition == initial_partition
-                    else f"{initial_partition} até {final_partition}"
-                ),
+                partitions=partitions,
                 error_ratio=(1 - round(r.pass_ratio, 2)) * 100,
                 failing_rows_query=r.failing_rows_query,
             ),

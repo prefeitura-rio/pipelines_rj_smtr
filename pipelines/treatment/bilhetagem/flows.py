@@ -21,7 +21,8 @@ from pipelines.tasks import (  # parse_timestamp_to_string,
 )
 from pipelines.treatment.templates.flows import create_default_materialization_flow
 from pipelines.treatment.templates.tasks import create_date_range_variable
-from pipelines.utils.dataplex import DataQualityCheckArgs
+
+# from pipelines.utils.dataplex import DataQualityCheckArgs
 
 BILHETAGEM_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="Bilhetagem - Materialização (subflow)",
@@ -33,9 +34,9 @@ BILHETAGEM_MATERIALIZACAO = create_default_materialization_flow(
         "upstream": True,
     },
     agent_label=constants.RJ_SMTR_DEV_AGENT_LABEL.value,
-    data_quality_checks=[
-        DataQualityCheckArgs(check_id="teste-falha", table_partition_column_name="data")
-    ],
+    # data_quality_checks=[
+    #     DataQualityCheckArgs(check_id="teste-falha", table_partition_column_name="data")
+    # ],
 )
 
 with Flow("Bilhetagem - Tratamento") as bilhetagem_tratamento:

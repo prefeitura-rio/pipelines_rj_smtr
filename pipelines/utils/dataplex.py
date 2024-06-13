@@ -29,7 +29,9 @@ from google.oauth2 import service_account
 @dataclass
 class DataQualityCheckArgs:
     check_id: str
-    table_partition_column_name: str = None
+    dataset_id: str
+    table_id: str
+    table_partition_column_name: str = (None,)
 
 
 class Dataplex:
