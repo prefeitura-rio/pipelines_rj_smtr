@@ -138,7 +138,7 @@ def cct_arquivo_retorno_save_redis(redis_key: str, raw_filepath: str):
         raw_filepath (str): Filepath to raw data
     """
     df = pd.read_json(raw_filepath)
-    if len(df) == 0:
+    if df.empty:
         return
     df["dataVencimento"] = pd.to_datetime(df["dataVencimento"]).dt.strftime("%Y-%m-%d")
     all_returned_dates = df["dataVencimento"].unique().tolist()
