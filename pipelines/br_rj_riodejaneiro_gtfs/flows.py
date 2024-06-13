@@ -118,8 +118,6 @@ with Flow("SMTR: GTFS - Captura OS (subflow)") as gtfs_captura_nova:
 
     with case(os_info["new_os"], True):
 
-        data_versao_gtfs = isostr_to_datetime(data_versao_gtfs)
-
         partition = create_date_hour_partition(
             timestamp=data_versao_gtfs, partition_date_name="data_versao", partition_date_only=True
         )
