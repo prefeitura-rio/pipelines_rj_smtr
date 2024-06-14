@@ -61,8 +61,6 @@ def get_os_info(last_captured_os: str) -> dict:
     if last_captured_os is None:
         last_captured_os = df["ano_id_despacho"].max()
     else:
-        # Remove texto indesejado do 'Despacho'
-        last_captured_os = last_captured_os.split("-")[-1]
 
         # Filtra linhas onde 'Despacho' é maior ou igual que o último capturado
         df = df.loc[(df["ano_id_despacho"] > last_captured_os)]
@@ -73,7 +71,7 @@ def get_os_info(last_captured_os: str) -> dict:
     # Mantem apenas colunas necessarias
     df = df[
         [
-            "Despacho",
+            "ano_id_despacho",
             "Início da Vigência da OS",
             "Arquivo OS",
             "Arquivo GTFS",
@@ -131,17 +129,17 @@ def convert_to_float(value):
 @task(nout=2)
 def get_raw_drive_files(os_control, local_filepath: list):
     """
-    Downloads raw files from Google Drive based on the provided information.
+    Downloads raw files from Google Drive and processes them.
 
     Args:
-        os_control (dict): A dictionary containing information about the files to be downloaded.
-        credentials (str, optional): Path to the credentials file for authentication. Defaults to None.
+        os_control (dict): A dictionary containing information about the OS (Ordem de Serviço).
+        local_filepath (list): A list of local file paths where the downloaded files will be saved.
 
     Returns:
-        list: A list containing the table IDs of the downloaded files.
-        list: A list containing the paths of the saved files.
-        list: A list containing any errors that occurred during the process.
+        raw_filepaths (list): A list of file paths where the downloaded raw files are saved.
+        primary_keys (list[list]): A list with the primary_keys for the tables.
     """
+
     raw_filepaths = []
 
     log(f"Baixando arquivos: {os_control}")
