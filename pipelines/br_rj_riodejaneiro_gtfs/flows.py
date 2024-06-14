@@ -204,9 +204,11 @@ with Flow(
         run_captura = create_flow_run.map(
             flow_name=unmapped(gtfs_captura_nova.name),
             project_name=unmapped(PROJECT),
+            parameters=None,
             labels=unmapped(LABELS),
             scheduled_start_time=get_scheduled_start_times(
                 timestamp=timestamp,
+                parameters=None,
                 intervals={"agency": timedelta(minutes=5)},
             ),
         )
