@@ -88,8 +88,7 @@ def get_os_info(last_captured_os: str) -> dict:
         # converte "Início da Vigência da OS" de dd/mm/aaaa para aaaa-mm-dd
         data["Início da Vigência da OS"] = datetime.strptime(
             data["Início da Vigência da OS"], "%d/%m/%Y"
-        )
-        # .strftime("%Y-%m-%d")
+        ).strftime("%Y-%m-%d")
 
     return flag_new_os, data, data["ano_id_despacho"], data["Início da Vigência da OS"]
 
