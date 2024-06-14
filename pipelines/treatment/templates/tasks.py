@@ -243,8 +243,18 @@ def run_data_quality_checks(
     log("Executando testes de qualidade de dados")
 
     for check in data_quality_checks:
-        partitions = bd.read_sql(
-            f"""
+
+        dataplex = DataQuality(
+            data_scan_id=check.check_id,
+            project_id="rj-smtr",
+        )
+        partition_column_name = check.table_partition_column_name
+        partitions = "Sem filtro de partições"
+        if partition_column_name is None:
+            row_filters = "1=1"
+        else:
+            partitions = bd.read_sql(
+                f"""
             SELECT
                 PARSE_DATE('%Y%m%d', partition_id) AS partition_date
             FROM
@@ -256,19 +266,10 @@ def run_data_quality_checks(
                     DATE(last_modified_time, "America/Sao_Paulo") >=
                     DATE('{initial_timestamp.date().isoformat()}')
             """,
-            billing_project_id="rj-smtr-dev",
-        )["partition_date"].to_list()
+                billing_project_id="rj-smtr-dev",
+            )["partition_date"].to_list()
 
-        partitions = [f"'{p}'" for p in partitions]
-
-        dataplex = DataQuality(
-            data_scan_id=check.check_id,
-            project_id="rj-smtr",
-        )
-        partition_column_name = check.table_partition_column_name
-        if partition_column_name is None:
-            row_filters = "1=1"
-        else:
+            partitions = [f"'{p}'" for p in partitions]
             row_filters = f"{partition_column_name} IN ({', '.join(partitions)})"
 
         log(f"Executando check de qualidade de dados {dataplex.id} com o filtro: {row_filters}")
