@@ -68,18 +68,21 @@ from pipelines.utils.utils import isostr_to_datetime
 #     agent_label=emd_constants.RJ_SMTR_AGENT_LABEL.value,
 #     overwrite_flow_params=constants.GTFS_GENERAL_CAPTURE_PARAMS.value,
 # )
-gtfs_captura = deepcopy(default_capture_flow)
-gtfs_captura.name = "SMTR: GTFS - Captura (subflow)"
-gtfs_captura.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
-gtfs_captura.run_config = KubernetesRun(
-    image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
-)
-gtfs_captura.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
-gtfs_captura = set_default_parameters(
-    flow=gtfs_captura,
-    default_parameters=constants.GTFS_GENERAL_CAPTURE_PARAMS.value,
-)
+
+# Captura Antiga
+# gtfs_captura = deepcopy(default_capture_flow)
+# gtfs_captura.name = "SMTR: GTFS - Captura (subflow)"
+# gtfs_captura.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+# gtfs_captura.run_config = KubernetesRun(
+#     image=emd_constants.DOCKER_IMAGE.value,
+#     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+# )
+# gtfs_captura.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
+# gtfs_captura = set_default_parameters(
+#     flow=gtfs_captura,
+#     default_parameters=constants.GTFS_GENERAL_CAPTURE_PARAMS.value,
+# )
+# Captura Antiga
 
 # gtfs_materializacao = create_default_materialization_flow(
 #     flow_name="SMTR: GTFS - Materialização (subflow)",
@@ -100,7 +103,7 @@ gtfs_materializacao = set_default_parameters(
     default_parameters=constants.GTFS_MATERIALIZACAO_PARAMS.value,
 )
 
-with Flow("SMTR: GTFS - Captura OS (subflow)") as gtfs_captura_nova:
+with Flow("SMTR: GTFS - Captura (subflow)") as gtfs_captura_nova:
 
     mode = get_current_flow_mode()
     last_captured_os = get_last_capture_os(mode=mode, dataset_id="gtfs")
@@ -196,19 +199,15 @@ with Flow(
     PROJECT = get_flow_project()
 
     with case(capture, True):
-        gtfs_capture_parameters = [
-            {"timestamp": data_versao_gtfs, **d} for d in constants.GTFS_TABLE_CAPTURE_PARAMS.value
-        ]
 
+        # Captura nova
         run_captura = create_flow_run.map(
-            flow_name=unmapped(gtfs_captura.name),
+            flow_name=unmapped(gtfs_captura_nova.name),
             project_name=unmapped(PROJECT),
-            parameters=gtfs_capture_parameters,
             labels=unmapped(LABELS),
             scheduled_start_time=get_scheduled_start_times(
                 timestamp=timestamp,
-                parameters=gtfs_capture_parameters,
-                intervals={"agency": timedelta(minutes=11)},
+                intervals={"agency": timedelta(minutes=5)},
             ),
         )
 
@@ -218,6 +217,31 @@ with Flow(
             stream_logs=unmapped(True),
             raise_final_state=unmapped(True),
         )
+
+        # Captura antiga
+
+        # gtfs_capture_parameters = [
+        #     {"timestamp": data_versao_gtfs, **d} for d in constants.GTFS_TABLE_CAPTURE_PARAMS.value
+        # ]
+
+        # run_captura = create_flow_run.map(
+        #     flow_name=unmapped(gtfs_captura.name),
+        #     project_name=unmapped(PROJECT),
+        #     parameters=gtfs_capture_parameters,
+        #     labels=unmapped(LABELS),
+        #     scheduled_start_time=get_scheduled_start_times(
+        #         timestamp=timestamp,
+        #         parameters=gtfs_capture_parameters,
+        #         intervals={"agency": timedelta(minutes=11)},
+        #     ),
+        # )
+
+        # wait_captura_true = wait_for_flow_run.map(
+        #     run_captura,
+        #     stream_states=unmapped(True),
+        #     stream_logs=unmapped(True),
+        #     raise_final_state=unmapped(True),
+        # )
 
     with case(capture, False):
         wait_captura_false = task(
