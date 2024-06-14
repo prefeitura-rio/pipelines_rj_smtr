@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 import io
 import zipfile
 from os import environ
@@ -84,6 +85,10 @@ def get_os_info(last_captured_os: str) -> dict:
         log("Nova OS encontrada!")
         data = df.to_dict(orient="records")[0]  # Converte o DataFrame para um dicionário
         flag_new_os = True  # Se houver mais de uma OS, é uma nova OS
+        # converte "Início da Vigência da OS" de dd/mm/aaaa para aaaa-mm-dd
+        data["Início da Vigência da OS"] = datetime.strptime(
+            data["Início da Vigência da OS"], "%d/%m/%Y"
+        ).strftime("%Y-%m-%d")
 
     return flag_new_os, data, data["ano_id_despacho"], data["Início da Vigência da OS"]
 
