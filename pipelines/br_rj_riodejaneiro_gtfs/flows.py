@@ -130,20 +130,22 @@ with Flow("SMTR: GTFS - Captura (subflow)") as gtfs_captura_nova:
 
         filename = parse_timestamp_to_string(data_versao_gtfs)
 
-        local_filepath = create_local_partition_path.map(
+        table_ids = task(constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys)()
+
+        local_filepaths = create_local_partition_path.map(
             dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
-            table_id=constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys(),
+            table_id=table_ids,
             partitions=unmapped(partition),
             filename=unmapped(filename),
         )
 
         raw_filepaths, primary_keys = get_raw_drive_files(
-            os_control=os_control, local_filepath=local_filepath
+            os_control=os_control, local_filepath=local_filepaths
         )
 
         transform_raw_to_nested_structure_results = transform_raw_to_nested_structure.map(
             raw_filepath=raw_filepaths,
-            filepath=local_filepath,
+            filepath=local_filepaths,
             primary_key=primary_keys,
             timestamp=unmapped(data_versao_gtfs),
             error=unmapped(None),
