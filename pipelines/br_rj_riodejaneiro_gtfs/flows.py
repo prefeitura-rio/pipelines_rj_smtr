@@ -41,6 +41,7 @@ from pipelines.utils.backup.tasks import (
     get_current_flow_mode,
     get_current_timestamp,
     get_flow_project,
+    get_rounded_timestamp,
     get_scheduled_start_times,
     rename_current_flow_run_now_time,
     transform_raw_to_nested_structure,
@@ -49,7 +50,6 @@ from pipelines.utils.backup.tasks import (
     upload_staging_data_to_gcs,
 )
 from pipelines.utils.backup.utils import set_default_parameters
-from pipelines.utils.utils import isostr_to_datetime
 
 # from pipelines.capture.templates.flows import create_default_capture_flow
 
@@ -120,6 +120,8 @@ with Flow("SMTR: GTFS - Captura (subflow)") as gtfs_captura_nova:
     )
 
     with case(flag_new_os, True):
+
+        data_versao_gtfs = get_rounded_timestamp(data_versao_gtfs)
 
         partition = create_date_hour_partition(
             timestamp=data_versao_gtfs, partition_date_name="data_versao", partition_date_only=True
