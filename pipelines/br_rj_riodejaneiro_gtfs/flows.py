@@ -139,7 +139,7 @@ with Flow("SMTR: GTFS - Captura OS (subflow)") as gtfs_captura_nova:
         raw_filepath=raw_filepaths,
         filepath=local_filepath,
         primary_key=primary_keys,
-        timestamp=data_versao_gtfs,
+        timestamp=unmapped(data_versao_gtfs),
         error=unmapped(None),
     )
 
@@ -160,7 +160,7 @@ with Flow("SMTR: GTFS - Captura OS (subflow)") as gtfs_captura_nova:
         table_id=constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys(),
         staging_filepath=treated_filepaths,
         partitions=unmapped(partition),
-        timestamp=unmapped(timestamp),
+        timestamp=unmapped(data_versao_gtfs),
         error=errors,
     )
 
