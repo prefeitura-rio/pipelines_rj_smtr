@@ -64,6 +64,9 @@ def get_os_info(last_captured_os: str) -> dict:
     ultimo_id = last_captured_os.split("/")[-2]
     df = df.loc[(df["ano_despacho"] >= ultimo_ano) & (df["id_despacho"] > ultimo_id)]
 
+    # Ordena por despacho
+    df = df.sort_values(by=["ano_despacho", "id_despacho"], ascending=True)
+
     # Mantem apenas colunas necessarias
     df = df[
         [
@@ -76,8 +79,6 @@ def get_os_info(last_captured_os: str) -> dict:
         ]
     ]
 
-    # Ordena por despacho
-    df = df.sort_values(by=["ano_despacho", "id_despacho"], ascending=True)
     os_info = df.to_dict(orient="records")  # Converte o DataFrame para um dicionário
     status = len(df) == 1  # Se houver mais de uma OS, é uma nova OS
 
