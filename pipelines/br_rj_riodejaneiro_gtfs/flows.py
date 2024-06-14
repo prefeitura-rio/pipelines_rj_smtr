@@ -110,17 +110,16 @@ with Flow("SMTR: GTFS - Captura (subflow)") as gtfs_captura_nova:
     last_captured_os = get_last_capture_os(mode=mode, dataset_id="gtfs")
 
     timestamp = get_scheduled_timestamp()
-    # timestamp = get_current_timestamp()
 
-    os_info = get_os_info(last_captured_os=last_captured_os)
-
-    data_versao_gtfs = os_info["data"]["Início da Vigência da OS"]
+    flag_new_os, os_control, despacho, data_versao_gtfs = get_os_info(
+        last_captured_os=last_captured_os
+    )
 
     rename_current_flow_run_now_time(
         prefix=gtfs_captura_nova.name + ' ["' + data_versao_gtfs + '"] ', now_time=timestamp
     )
 
-    with case(os_info["new_os"], True):
+    with case(flag_new_os, True):
 
         partition = create_date_hour_partition(
             timestamp=data_versao_gtfs, partition_date_name="data_versao", partition_date_only=True
@@ -136,7 +135,7 @@ with Flow("SMTR: GTFS - Captura (subflow)") as gtfs_captura_nova:
         )
 
         raw_filepaths, primary_keys = get_raw_drive_files(
-            info=os_info["new_os"], local_filepath=local_filepath
+            os_control=os_control, local_filepath=local_filepath
         )
 
         transform_raw_to_nested_structure_results = transform_raw_to_nested_structure.map(
@@ -170,7 +169,7 @@ with Flow("SMTR: GTFS - Captura (subflow)") as gtfs_captura_nova:
 
         update_last_captured_os(
             dataset_id=constants.GTFS_DATASET_ID.value,
-            despacho=os_info["data"]["despacho"],
+            despacho=despacho,
             mode=mode,
         )
 

@@ -37,35 +37,38 @@ def get_last_capture_os(dataset_id: str, mode: str = "prod") -> dict:
 def update_last_captured_os(dataset_id: str, despacho: str, mode: str = "prod") -> None:
     redis_client = get_redis_client()
     fetch_key = f"{dataset_id}.last_captured_os"
-    despacho = despacho.split("-")[-1]
     if mode != "prod":
         fetch_key = f"{mode}.{fetch_key}"
 
     redis_client.set(fetch_key, {"last_captured_os": despacho})
 
 
-@task
+@task(nout=4)
 def get_os_info(last_captured_os: str) -> dict:
+
     df = download_controle_os_csv(constants.GTFS_CONTROLE_OS_URL.value)
+    flag_new_os = False
+    data = {"Início da Vigência da OS": None, "ano_id_despacho": None}
 
     if df.empty:
-        return {"new_os": False, "data": {"Início da Vigência da OS": None}}
+        return flag_new_os, data, data["ano_id_despacho"], data["Início da Vigência da OS"]
+
+    # df = filter_valid_rows(df)
 
     log(f"Os info: {df.head()}")
+
+    df["ano_id_despacho"] = df["Despacho"].apply(lambda x: x.split("-")[-1])
     if last_captured_os is None:
-        last_captured_os = df["Despacho"].max()
-    # Remove texto indesejado do 'Despacho'
-    last_captured_os = last_captured_os.split("-")[-1]
+        last_captured_os = df["ano_id_despacho"].max()
+    else:
+        # Remove texto indesejado do 'Despacho'
+        last_captured_os = last_captured_os.split("-")[-1]
 
-    # Filtra linhas onde 'Despacho' é maior ou igual que o último capturado
-    df["ano_despacho"] = df["Despacho"].apply(lambda x: x.split("-")[-1].split("/")[-1])
-    df["id_despacho"] = df["Despacho"].apply(lambda x: x.split("-")[-1].split("/")[-2])
-    ultimo_ano = last_captured_os.split("/")[-1]
-    ultimo_id = last_captured_os.split("/")[-2]
-    df = df.loc[(df["ano_despacho"] >= ultimo_ano) & (df["id_despacho"] > ultimo_id)]
+        # Filtra linhas onde 'Despacho' é maior ou igual que o último capturado
+        df = df.loc[(df["ano_id_despacho"] > last_captured_os)]
 
-    # Ordena por despacho
-    df = df.sort_values(by=["ano_despacho", "id_despacho"], ascending=True)
+        # Ordena por despacho
+        df = df.sort_values(by=["ano_id_despacho"], ascending=True)
 
     # Mantem apenas colunas necessarias
     df = df[
@@ -79,10 +82,12 @@ def get_os_info(last_captured_os: str) -> dict:
         ]
     ]
 
-    os_info = df.to_dict(orient="records")  # Converte o DataFrame para um dicionário
-    status = len(df) == 1  # Se houver mais de uma OS, é uma nova OS
+    if len(df) >= 1:
+        log("Nova OS encontrada!")
+        data = df.to_dict(orient="records")[0]  # Converte o DataFrame para um dicionário
+        flag_new_os = True  # Se houver mais de uma OS, é uma nova OS
 
-    return {"new_os": status, "data": os_info[0]}
+    return flag_new_os, data, data["ano_id_despacho"], data["Início da Vigência da OS"]
 
 
 ## mover para utils ##
@@ -94,6 +99,7 @@ def download_controle_os_csv(url):
     # Carrega o conteúdo da resposta em um DataFrame
     df = pd.read_csv(io.StringIO(response.text))
 
+    ## separar em outra função ##
     if not df.empty:
         # Remove linhas com valores nulos
         df.dropna(how="all", inplace=True)
@@ -123,12 +129,12 @@ def convert_to_float(value):
 
 ## refatorar em funções menores ##
 @task(nout=2)
-def get_raw_drive_files(info, local_filepath: list):
+def get_raw_drive_files(os_control, local_filepath: list):
     """
     Downloads raw files from Google Drive based on the provided information.
 
     Args:
-        info (dict): A dictionary containing information about the files to be downloaded.
+        os_control (dict): A dictionary containing information about the files to be downloaded.
         credentials (str, optional): Path to the credentials file for authentication. Defaults to None.
 
     Returns:
@@ -138,7 +144,7 @@ def get_raw_drive_files(info, local_filepath: list):
     """
     raw_filepaths = []
 
-    log(f"Baixando arquivos: {info}")
+    log(f"Baixando arquivos: {os_control}")
 
     # Autenticar usando o arquivo de credenciais
     credentials = service_account.Credentials.from_service_account_file(
@@ -149,7 +155,7 @@ def get_raw_drive_files(info, local_filepath: list):
     # Criar o serviço da API Google Drive e Google Sheets
     drive_service = build("drive", "v3", credentials=credentials)
 
-    file_link = info["Link da OS"]
+    file_link = os_control["Link da OS"]
 
     file_id = file_link.split("/")[-2]
 
@@ -342,7 +348,7 @@ def get_raw_drive_files(info, local_filepath: list):
 
     raw_filepaths.append(raw_file_path)
 
-    file_link = info["Link do GTFS"]
+    file_link = os_control["Link do GTFS"]
     file_id = file_link.split("/")[-2]
 
     request = drive_service.files().get_media(fileId=file_id)  # pylint: disable=E1101
