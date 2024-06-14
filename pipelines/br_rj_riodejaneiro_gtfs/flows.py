@@ -130,7 +130,7 @@ with Flow("SMTR: GTFS - Captura (subflow)") as gtfs_captura_nova:
 
         filename = parse_timestamp_to_string(data_versao_gtfs)
 
-        table_ids = task(constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys)()
+        table_ids = task(lambda: constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys())()
 
         local_filepaths = create_local_partition_path.map(
             dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
