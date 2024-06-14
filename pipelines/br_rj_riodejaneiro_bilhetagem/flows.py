@@ -697,20 +697,21 @@ with Flow(
             raise_final_state=True,
         )
 
-        notify_discord = run_data_quality_checks(
+        NOTIFY_DISCORD = run_data_quality_checks(
             data_quality_checks=[
                 DataQualityCheckArgs(
                     check_id=constants.ORDEM_PAGAMENTO_CONSORCIO_OPERADOR_DIA_CHECK_ID.value,
                     table_partition_column_name="data_ordem",
                     table_id="ordem_pagamento_consorcio_operador_dia",
-                    dataset_id=smtr_constants.BILHETAGEM_DATASET_ID.name,
+                    dataset_id=smtr_constants.BILHETAGEM_DATASET_ID.value,
                 )
             ],
             initial_timestamp=timestamp,
+            upstream_tasks=[wait_materializacao],
         )
 
     bilhetagem_ordem_pagamento_captura_tratamento.set_reference_tasks(
-        [wait_materializacao_integracao, wait_recaptura, notify_discord]
+        [wait_materializacao_integracao, wait_recaptura, NOTIFY_DISCORD]
     )
 
 bilhetagem_ordem_pagamento_captura_tratamento.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
