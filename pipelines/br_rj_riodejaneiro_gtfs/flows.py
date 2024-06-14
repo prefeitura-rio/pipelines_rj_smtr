@@ -25,6 +25,7 @@ from pipelines.br_rj_riodejaneiro_gtfs.tasks import (
     get_last_capture_os,
     get_os_info,
     get_raw_drive_files,
+    update_last_captured_os,
 )
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
@@ -127,45 +128,51 @@ with Flow("SMTR: GTFS - Captura (subflow)") as gtfs_captura_nova:
 
         filename = parse_timestamp_to_string(data_versao_gtfs)
 
-    local_filepath = create_local_partition_path.map(
-        dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
-        table_id=constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys(),
-        partitions=unmapped(partition),
-        filename=unmapped(filename),
-    )
+        local_filepath = create_local_partition_path.map(
+            dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
+            table_id=constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys(),
+            partitions=unmapped(partition),
+            filename=unmapped(filename),
+        )
 
-    raw_filepaths, primary_keys = get_raw_drive_files(
-        info=os_info["new_os"], local_filepath=local_filepath
-    )
+        raw_filepaths, primary_keys = get_raw_drive_files(
+            info=os_info["new_os"], local_filepath=local_filepath
+        )
 
-    transform_raw_to_nested_structure_results = transform_raw_to_nested_structure.map(
-        raw_filepath=raw_filepaths,
-        filepath=local_filepath,
-        primary_key=primary_keys,
-        timestamp=unmapped(data_versao_gtfs),
-        error=unmapped(None),
-    )
+        transform_raw_to_nested_structure_results = transform_raw_to_nested_structure.map(
+            raw_filepath=raw_filepaths,
+            filepath=local_filepath,
+            primary_key=primary_keys,
+            timestamp=unmapped(data_versao_gtfs),
+            error=unmapped(None),
+        )
 
-    errors, treated_filepaths = unpack_mapped_results_nout2(
-        mapped_results=transform_raw_to_nested_structure_results
-    )
+        errors, treated_filepaths = unpack_mapped_results_nout2(
+            mapped_results=transform_raw_to_nested_structure_results
+        )
 
-    errors = upload_raw_data_to_gcs.map(
-        dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
-        table_id=constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys(),
-        raw_filepath=raw_filepaths,
-        partitions=unmapped(partition),
-        error=unmapped(None),
-    )
+        errors = upload_raw_data_to_gcs.map(
+            dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
+            table_id=constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys(),
+            raw_filepath=raw_filepaths,
+            partitions=unmapped(partition),
+            error=unmapped(None),
+        )
 
-    upload_staging_data_to_gcs.map(
-        dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
-        table_id=constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys(),
-        staging_filepath=treated_filepaths,
-        partitions=unmapped(partition),
-        timestamp=unmapped(data_versao_gtfs),
-        error=errors,
-    )
+        upload_staging_data_to_gcs.map(
+            dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
+            table_id=constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys(),
+            staging_filepath=treated_filepaths,
+            partitions=unmapped(partition),
+            timestamp=unmapped(data_versao_gtfs),
+            error=errors,
+        )
+
+        update_last_captured_os(
+            dataset_id=constants.GTFS_DATASET_ID.value,
+            despacho=os_info["data"]["despacho"],
+            mode=mode,
+        )
 
 gtfs_captura_nova.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 gtfs_captura_nova.run_config = KubernetesRun(

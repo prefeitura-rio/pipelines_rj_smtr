@@ -52,15 +52,17 @@ def get_os_info(last_captured_os: str) -> dict:
         return {"new_os": False, "data": {"Início da Vigência da OS": None}}
 
     log(f"Os info: {df.head()}")
+    if last_captured_os is None:
+        last_captured_os = df["Despacho"].max()
     # Remove texto indesejado do 'Despacho'
     last_captured_os = last_captured_os.split("-")[-1]
 
     # Filtra linhas onde 'Despacho' é maior ou igual que o último capturado
     df["ano_despacho"] = df["Despacho"].apply(lambda x: x.split("-")[-1].split("/")[-1])
     df["id_despacho"] = df["Despacho"].apply(lambda x: x.split("-")[-1].split("/")[-2])
-    ano_last = last_captured_os.split("/")[-1]
-    id_last = last_captured_os.split("/")[-2]
-    df = df.loc[(df["ano_despacho"] >= ano_last) & (df["id_despacho"] > id_last)]
+    ultimo_ano = last_captured_os.split("/")[-1]
+    ultimo_id = last_captured_os.split("/")[-2]
+    df = df.loc[(df["ano_despacho"] >= ultimo_ano) & (df["id_despacho"] > ultimo_id)]
 
     # Mantem apenas colunas necessarias
     df = df[
@@ -74,7 +76,8 @@ def get_os_info(last_captured_os: str) -> dict:
         ]
     ]
 
-    ## Filtrar apenas a linha como  despacho mais antigo ##
+    # Ordena por despacho
+    df = df.sort_values(by=["ano_despacho", "id_despacho"], ascending=True)
     os_info = df.to_dict(orient="records")  # Converte o DataFrame para um dicionário
     status = len(df) == 1  # Se houver mais de uma OS, é uma nova OS
 
