@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import io
+import os
 import zipfile
 from datetime import datetime
 from os import environ
@@ -16,6 +17,7 @@ from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
 from pipelines.constants import constants
 from pipelines.utils.backup.utils import save_raw_local_func
+from pipelines.utils.secret import get_secret
 
 
 @task
@@ -148,7 +150,10 @@ def get_raw_drive_files(os_control, local_filepath: list):
     raw_filepaths = []
 
     log(f"Baixando arquivos: {os_control}")
-
+    # log(get_secret("GOOGLE_APPLICATION_CREDENTIALS"))
+    log(os.environ["GOOGLE_APPLICATION_CREDENTIALS"])
+    for name, value in os.environ.items():
+        log(f"{name}: {value}")
     # Autenticar usando o arquivo de credenciais
     credentials = service_account.Credentials.from_service_account_file(
         filename="/tmp/credentials.json",
