@@ -151,10 +151,6 @@ def get_raw_drive_files(os_control, local_filepath: list):
     raw_filepaths = []
 
     log(f"Baixando arquivos: {os_control}")
-    credentials_path = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
-    with open(credentials_path, "r") as file:
-        credentials = file.read()
-        log(f"Credentials: {credentials}")
 
     # Autenticar usando o arquivo de credenciais
     credentials = service_account.Credentials.from_service_account_file(
