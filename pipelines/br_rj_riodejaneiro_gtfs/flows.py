@@ -165,7 +165,7 @@ with Flow("SMTR: GTFS - Captura (subflow)") as gtfs_captura_nova:
 
         upload_staging_data_to_gcs.map(
             dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
-            table_id=constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys(),
+            table_id=table_ids,
             staging_filepath=treated_filepaths,
             partitions=unmapped(partition),
             timestamp=unmapped(data_versao_gtfs),
