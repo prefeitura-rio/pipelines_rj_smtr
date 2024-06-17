@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import base64
 import io
 import os
 import zipfile
@@ -150,10 +151,13 @@ def get_raw_drive_files(os_control, local_filepath: list):
     raw_filepaths = []
 
     log(f"Baixando arquivos: {os_control}")
-    credentials_path = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
+    # log(get_secret("GOOGLE_APPLICATION_CREDENTIALS"))
+    credentials_info = base64.b64decode(get_secret(secret_name="BASEDOSDADOS_CREDENTIALS_PROD"))
+    log(credentials_info)
     # Autenticar usando o arquivo de credenciais
-    credentials = service_account.Credentials.from_service_account_file(
-        filename=credentials_path,
+    credentials = service_account.Credentials.from_service_account_info(
+        # filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
+        info=credentials_info,
         scopes=["https://www.googleapis.com/auth/drive.readonly"],
     )
 
