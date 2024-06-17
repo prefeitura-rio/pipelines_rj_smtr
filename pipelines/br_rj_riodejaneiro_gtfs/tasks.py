@@ -55,18 +55,19 @@ def get_os_info(last_captured_os: str) -> dict:
     if df.empty:
         return flag_new_os, data, data["ano_id_despacho"], data["Início da Vigência da OS"]
 
+    ## trazer logica de filtragem de colunas ##
     # df = filter_valid_rows(df)
 
     df["ano_id_despacho"] = df["Despacho"].apply(lambda x: str(x).rsplit("-", maxsplit=2)[-1])
+    # Ordena por despacho
+    df = df.sort_values(by=["ano_id_despacho"], ascending=True)
     if last_captured_os is None:
         last_captured_os = df["ano_id_despacho"].max()
+        df = df.loc[(df["ano_id_despacho"] == last_captured_os)]
     else:
 
         # Filtra linhas onde 'Despacho' é maior ou igual que o último capturado
         df = df.loc[(df["ano_id_despacho"] > last_captured_os)]
-
-        # Ordena por despacho
-        df = df.sort_values(by=["ano_id_despacho"])
 
     # Mantem apenas colunas necessarias
     df = df[
@@ -162,10 +163,16 @@ def get_raw_drive_files(os_control, local_filepath: list):
 
     file_id = file_link.split("/")[-2]
 
-    request = drive_service.files().export_media(  # pylint: disable=E1101
-        fileId=file_id,
-        mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    )
+    file = drive_service.files().get(fileId=file_id).execute()  # pylint: disable=E1101
+    mime_type = file.get("mimeType")
+
+    if "google-apps" in mime_type:
+        request = drive_service.files().export(  # pylint: disable=E1101
+            fileId=file_id,
+            mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+    else:
+        request = drive_service.files().get_media(fileId=file_id)  # pylint: disable=E1101
 
     file_bytes = io.BytesIO()
     downloader = MediaIoBaseDownload(file_bytes, request)
@@ -363,7 +370,7 @@ def get_raw_drive_files(os_control, local_filepath: list):
         status, done = downloader.next_chunk()
 
     with zipfile.ZipFile(file_bytes, "r") as zipped_file:
-        for filename in constants.GTFS_TABLE_CAPTURE_PARAMS.value[2:].keys():
+        for filename in list(constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys())[2:]:
 
             data = zipped_file.read(filename + ".txt")
             data = data.decode(encoding="utf-8")
