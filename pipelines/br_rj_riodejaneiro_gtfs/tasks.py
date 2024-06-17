@@ -153,16 +153,13 @@ def get_raw_drive_files(os_control, local_filepath: list):
     log(f"Baixando arquivos: {os_control}")
     # log(get_secret("GOOGLE_APPLICATION_CREDENTIALS"))
     credentials_info = get_secret(secret_name="BASEDOSDADOS_CREDENTIALS_PROD")
-    credentials_info = base64.b64decode(list(credentials_info.values())[0])
+    credentials_info = io.StringIO(base64.b64decode(list(credentials_info.values())[0]))
 
-    credentials_path = "tmp/cred.json"
-    with open(credentials_path, "wb") as f:
-        f.write(credentials_info)
     log(credentials_info)
     # Autenticar usando o arquivo de credenciais
-    credentials = service_account.Credentials.from_service_account_file(
+    credentials = service_account.Credentials.from_service_account_info(
         # filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
-        filename=credentials_path,
+        info=credentials_info,
         scopes=["https://www.googleapis.com/auth/drive.readonly"],
     )
 
