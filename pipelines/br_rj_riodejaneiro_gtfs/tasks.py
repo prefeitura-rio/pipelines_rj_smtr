@@ -32,8 +32,6 @@ def get_last_capture_os(dataset_id: str, mode: str = "prod") -> dict:
 
     log(f"Last captured os: {last_captured_os}")
 
-    # last_captured_os = "MTR-DES-2024/30822"
-    ### teste sem redis ###
     return last_captured_os
 
 
@@ -59,9 +57,7 @@ def get_os_info(last_captured_os: str) -> dict:
 
     # df = filter_valid_rows(df)
 
-    log(f"Os info: {df.head()}")
-
-    df["ano_id_despacho"] = df["Despacho"].apply(lambda x: x.split("-")[-1])
+    df["ano_id_despacho"] = df["Despacho"].apply(lambda x: str(x).rsplit("-", maxsplit=2)[-1])
     if last_captured_os is None:
         last_captured_os = df["ano_id_despacho"].max()
     else:
@@ -84,6 +80,7 @@ def get_os_info(last_captured_os: str) -> dict:
         ]
     ]
 
+    log(f"Os info: {df.tail()}")
     if len(df) >= 1:
         log("Nova OS encontrada!")
         data = df.to_dict(orient="records")[0]  # Converte o DataFrame para um dicionário
