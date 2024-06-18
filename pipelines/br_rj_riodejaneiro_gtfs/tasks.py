@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
-import base64
 import io
 import os
 import zipfile
 from datetime import datetime
-from os import environ
 
 import openpyxl as xl
 import pandas as pd
-import requests
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
@@ -16,9 +13,13 @@ from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
+from pipelines.br_rj_riodejaneiro_gtfs.utils import (
+    convert_to_float,
+    download_controle_os_csv,
+    filter_valid_rows,
+)
 from pipelines.constants import constants
 from pipelines.utils.backup.utils import save_raw_local_func
-from pipelines.utils.secret import get_secret
 
 
 @task
@@ -56,7 +57,7 @@ def get_os_info(last_captured_os: str) -> dict:
         return flag_new_os, data, data["ano_id_despacho"], data["Início da Vigência da OS"]
 
     ## trazer logica de filtragem de colunas ##
-    # df = filter_valid_rows(df)
+    df = filter_valid_rows(df)
 
     df["ano_id_despacho"] = df["Despacho"].apply(lambda x: str(x).rsplit("-", maxsplit=2)[-1])
     # Ordena por despacho
@@ -92,43 +93,6 @@ def get_os_info(last_captured_os: str) -> dict:
         ).strftime("%Y-%m-%d")
 
     return flag_new_os, data, data["ano_id_despacho"], data["Início da Vigência da OS"]
-
-
-## mover para utils ##
-def download_controle_os_csv(url):
-
-    response = requests.get(url=url, timeout=constants.MAX_TIMEOUT_SECONDS.value)
-    response.raise_for_status()  # Verifica se houve algum erro na requisição
-    response.encoding = "utf-8"
-    # Carrega o conteúdo da resposta em um DataFrame
-    df = pd.read_csv(io.StringIO(response.text))
-
-    ## separar em outra função ##
-    if not df.empty:
-        # Remove linhas com valores nulos
-        df.dropna(how="all", inplace=True)
-
-        # Remove linhas onde 'Fim da Vigência da OS' == 'Sem Vigência'
-        df = df[df["Fim da Vigência da OS"] != "Sem Vigência"]
-
-        # Remove linhas onde 'Submeter mudanças para Dados' == False
-        df = df[df["Submeter mudanças para Dados"] == True]
-
-        # Remove linhas onde 'Arquivo OS' e 'Arquivo GTFS' são nulos
-        df = df[~df["Arquivo OS"].isnull()]
-        df = df[~df["Arquivo GTFS"].isnull()]
-        df = df[~df["Link da OS"].isnull()]
-        df = df[~df["Link do GTFS"].isnull()]
-
-    log(f"Download concluído! Dados:\n{df.head()}")
-    return df
-
-
-## Mover para utils ##
-def convert_to_float(value):
-    if "," in value:
-        value = value.replace(".", "").replace(",", ".").strip()
-    return float(value)
 
 
 ## refatorar em funções menores ##
