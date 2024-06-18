@@ -24,6 +24,17 @@ from pipelines.utils.backup.utils import save_raw_local_func
 
 @task
 def get_last_capture_os(dataset_id: str, mode: str = "prod") -> dict:
+    """
+    Retrieves the last captured OS for a given dataset ID and mode.
+
+    Args:
+        dataset_id (str): The ID of the dataset.
+        mode (str, optional): The mode of operation. Defaults to "prod".
+
+    Returns:
+        dict: The last captured OS.
+
+    """
     redis_client = get_redis_client()
     fetch_key = f"{dataset_id}.last_captured_os"
     if mode != "prod":
@@ -38,6 +49,17 @@ def get_last_capture_os(dataset_id: str, mode: str = "prod") -> dict:
 
 @task
 def update_last_captured_os(dataset_id: str, despacho: str, mode: str = "prod") -> None:
+    """
+    Update the last captured OS for a given dataset.
+
+    Args:
+        dataset_id (str): The ID of the dataset.
+        despacho (str): The last captured operating system.
+        mode (str, optional): The mode of operation. Defaults to "prod".
+
+    Returns:
+        None
+    """
     redis_client = get_redis_client()
     fetch_key = f"{dataset_id}.last_captured_os"
     if mode != "prod":
@@ -48,7 +70,19 @@ def update_last_captured_os(dataset_id: str, despacho: str, mode: str = "prod") 
 
 @task(nout=4)
 def get_os_info(last_captured_os: str) -> dict:
+    """
+    Retrieves information about the OS from a CSV file.
 
+    Args:
+        last_captured_os (str): The ID of the last captured OS.
+
+    Returns:
+        tuple: A tuple containing the following elements:
+            - flag_new_os (bool): Indicates whether a new OS was found.
+            - data (dict): A dictionary containing the OS information.
+            - ano_id_despacho (str): The year and ID of the OS dispatch.
+            - inicio_vigencia_os (str): The start date of the OS in the format 'YYYY-MM-DD'.
+    """
     df = download_controle_os_csv(constants.GTFS_CONTROLE_OS_URL.value)
     flag_new_os = False
     data = {"Início da Vigência da OS": None, "ano_id_despacho": None}
@@ -66,8 +100,7 @@ def get_os_info(last_captured_os: str) -> dict:
         last_captured_os = df["ano_id_despacho"].max()
         df = df.loc[(df["ano_id_despacho"] == last_captured_os)]
     else:
-
-        # Filtra linhas onde 'Despacho' é maior ou igual que o último capturado
+        # Filtra linhas onde 'Despacho' é maior que o último capturado
         df = df.loc[(df["ano_id_despacho"] > last_captured_os)]
 
     # Mantem apenas colunas necessarias
