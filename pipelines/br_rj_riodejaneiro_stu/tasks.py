@@ -9,7 +9,7 @@ import pandas as pd
 from google.cloud.storage.blob import Blob
 from prefect import task
 
-from pipelines.constants import constants
+from pipelines.br_rj_riodejaneiro_stu.constants import constants
 from pipelines.utils.utils import log
 
 

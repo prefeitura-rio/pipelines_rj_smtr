@@ -16,16 +16,14 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
 )
 
+from pipelines.br_rj_riodejaneiro_stu.constants import constants
 from pipelines.br_rj_riodejaneiro_stu.tasks import (
     create_final_stu_dataframe,
     get_stu_raw_blobs,
     read_stu_raw_file,
     save_stu_dataframes,
 )
-from pipelines.constants import constants
-from pipelines.constants import constants as emd_constants
-
-# from pipelines.capture.templates.flows import create_default_capture_flow
+from pipelines.constants import constants as smtr_constants
 from pipelines.utils.backup.flows import default_capture_flow
 from pipelines.utils.backup.tasks import (
     get_current_flow_labels,
@@ -35,24 +33,12 @@ from pipelines.utils.backup.tasks import (
 )
 from pipelines.utils.backup.utils import set_default_parameters
 
-# EMD Imports #
-
-
-# SMTR Imports #
-
-
-# stu_captura_subflow = create_default_capture_flow(
-#     flow_name="SMTR: STU - Captura (subflow)",
-#     agent_label=emd_constants.RJ_SMTR_AGENT_LABEL.value,
-#     overwrite_flow_params=constants.STU_GENERAL_CAPTURE_PARAMS.value,
-# )
-
 stu_captura_subflow = deepcopy(default_capture_flow)
 stu_captura_subflow.name = "SMTR: STU - Captura (subflow)"
-stu_captura_subflow.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+stu_captura_subflow.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 stu_captura_subflow.run_config = KubernetesRun(
-    image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+    image=smtr_constants.DOCKER_IMAGE.value,
+    labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 stu_captura_subflow.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
 
@@ -63,7 +49,6 @@ stu_captura_subflow = set_default_parameters(
 
 with Flow(
     "SMTR: STU - Captura",
-    # # code_owners=["rodrigo", "rafaelpinheiro"],
 ) as stu_captura:
     # SETUP
     data_versao_stu = Parameter("data_versao_stu", required=True)
@@ -108,9 +93,9 @@ with Flow(
         raise_final_state=unmapped(True),
     )
 
-stu_captura.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+stu_captura.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 stu_captura.run_config = KubernetesRun(
-    image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+    image=smtr_constants.DOCKER_IMAGE.value,
+    labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 stu_captura.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
