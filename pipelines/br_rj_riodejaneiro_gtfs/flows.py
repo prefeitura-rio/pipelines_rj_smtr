@@ -2,7 +2,6 @@
 """
 Flows for gtfs
 """
-from copy import deepcopy
 
 from prefect import Parameter, case, task
 from prefect.run_configs import KubernetesRun
@@ -27,7 +26,6 @@ from pipelines.br_rj_riodejaneiro_gtfs.tasks import (
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
 from pipelines.tasks import get_scheduled_timestamp, parse_timestamp_to_string
-from pipelines.utils.backup.flows import default_materialization_flow
 from pipelines.utils.backup.tasks import (
     create_date_hour_partition,
     create_local_partition_path,
@@ -40,7 +38,7 @@ from pipelines.utils.backup.tasks import (
     upload_raw_data_to_gcs,
     upload_staging_data_to_gcs,
 )
-from pipelines.utils.backup.utils import set_default_parameters
+from pipelines.schedules import every_5_minutes
 
 # from pipelines.capture.templates.flows import create_default_capture_flow
 
@@ -176,7 +174,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 "data_versao_gtfs": data_versao_gtfs,
                 "version": {},
             },
-        )
+        ).set_upstream(update_last_captured_os)
 
 gtfs_captura_nova.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 gtfs_captura_nova.run_config = KubernetesRun(
@@ -188,6 +186,7 @@ gtfs_captura_nova.state_handlers = [
     handler_initialize_sentry,
     handler_skip_if_running,
 ]
+gtfs_captura_nova.schedule = every_5_minutes
 
 
 # with Flow(
