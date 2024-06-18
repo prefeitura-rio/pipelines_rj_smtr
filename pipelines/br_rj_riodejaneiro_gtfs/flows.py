@@ -157,7 +157,7 @@ with Flow("SMTR: GTFS - Captura (subflow)") as gtfs_captura_nova:
 
         errors = upload_raw_data_to_gcs.map(
             dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
-            table_id=constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys(),
+            table_id=table_ids,
             raw_filepath=raw_filepaths,
             partitions=unmapped(partition),
             error=unmapped(None),
