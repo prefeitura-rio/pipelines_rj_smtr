@@ -137,50 +137,9 @@ class constants(Enum):  # pylint: disable=c0103
 
     # STU
 
-    STU_DATASET_ID = "migracao_br_rj_riodejaneiro_stu"
+    STU_DATASET_ID = "br_rj_riodejaneiro_stu"
 
     STU_BUCKET_NAME = "rj-smtr-stu-private"
-
-    STU_MODE_MAPPING = {
-        "1": "Táxi",
-        "2": "Ônibus",
-        "3": "Escolar",
-        "4": "Complementar (cabritinho)",
-        "6": "Fretamento",
-        "7": "TEC",
-        "8": "Van",
-    }
-
-    STU_TYPE_MAPPING = [
-        "Autônomo",
-        "Empresa",
-        "Cooperativa",
-        "Instituicao de Ensino",
-        "Associações",
-        "Autônomo Provisório",
-        "Contrato Público",
-        "Prestadora de Serviços",
-    ]
-
-    STU_GENERAL_CAPTURE_PARAMS = {
-        "partition_date_only": True,
-        "source_type": "gcs",
-        "dataset_id": STU_DATASET_ID,
-        "save_bucket_name": STU_BUCKET_NAME,
-    }
-
-    STU_TABLE_CAPTURE_PARAMS = [
-        {
-            "table_id": "operadora_empresa",
-            "primary_key": ["Perm_Autor"],
-            "pre_treatment_reader_args": {"dtype": "object"},
-        },
-        {
-            "table_id": "operadora_pessoa_fisica",
-            "primary_key": ["Perm_Autor"],
-            "pre_treatment_reader_args": {"dtype": "object"},
-        },
-    ]
 
     # SUBSÍDIO RECURSOS
 
