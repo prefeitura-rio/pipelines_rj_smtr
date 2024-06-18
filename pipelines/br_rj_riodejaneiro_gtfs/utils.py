@@ -12,22 +12,24 @@ from pipelines.utils.backup.utils import save_raw_local_func
 
 
 def filter_valid_rows(df: pd.DataFrame) -> pd.DataFrame:
-    if not df.empty:
-        # Remove linhas com valores nulos
-        df.dropna(how="all", inplace=True)
 
-        # Remove linhas onde 'Fim da Vigência da OS' == 'Sem Vigência'
-        df = df[df["Fim da Vigência da OS"] != "Sem Vigência"]
+    # salva index atual em uma coluna
+    df["index"] = df.index
+    # Remove linhas com valores nulos
+    df.dropna(how="all", inplace=True)
 
-        # Remove linhas onde 'Submeter mudanças para Dados' == False
-        df = df[df["Submeter mudanças para Dados"] == True]
+    # Remove linhas onde 'Fim da Vigência da OS' == 'Sem Vigência'
+    df = df[df["Fim da Vigência da OS"] != "Sem Vigência"]
 
-        # Remove linhas onde 'Arquivo OS' e 'Arquivo GTFS' são nulos
-        df = df[~df["Início da Vigência da OS"].isnull()]
-        df = df[~df["Arquivo OS"].isnull()]
-        df = df[~df["Arquivo GTFS"].isnull()]
-        df = df[~df["Link da OS"].isnull()]
-        df = df[~df["Link do GTFS"].isnull()]
+    # Remove linhas onde 'Submeter mudanças para Dados' == False
+    df = df[df["Submeter mudanças para Dados"] == True]
+
+    # Remove linhas onde 'Arquivo OS' e 'Arquivo GTFS' são nulos
+    df = df[~df["Início da Vigência da OS"].isnull()]
+    df = df[~df["Arquivo OS"].isnull()]
+    df = df[~df["Arquivo GTFS"].isnull()]
+    df = df[~df["Link da OS"].isnull()]
+    df = df[~df["Link do GTFS"].isnull()]
     return df
 
 

@@ -68,7 +68,6 @@ def update_last_captured_os(dataset_id: str, data_index: str, mode: str = "prod"
     redis_client.set(fetch_key, {"last_captured_os": data_index})
 
 
-## Rever logica da ordem pelo despacho ##
 @task(nout=4)
 def get_os_info(last_captured_os: str) -> dict:
     """
@@ -91,10 +90,9 @@ def get_os_info(last_captured_os: str) -> dict:
     if df.empty:
         return flag_new_os, data, data["ano_id_despacho"], data["Início da Vigência da OS"]
 
-    ## trazer logica de filtragem de colunas ##
     df = filter_valid_rows(df)
 
-    df["data_index"] = df["Início da Vigência da OS"].astype(str) + "_" + df.index.astype(str)
+    df["data_index"] = df["Início da Vigência da OS"].astype(str) + "_" + df["index"].astype(str)
     # Ordena por despacho
     df = df.sort_values(by=["data_index"], ascending=True)
     if last_captured_os is None:
@@ -129,7 +127,6 @@ def get_os_info(last_captured_os: str) -> dict:
     return flag_new_os, data, data["data_index"], data["Início da Vigência da OS"]
 
 
-## refatorar em funções menores ##
 @task(nout=2)
 def get_raw_drive_files(os_control, local_filepath: list):
     """
@@ -150,8 +147,7 @@ def get_raw_drive_files(os_control, local_filepath: list):
 
     # Autenticar usando o arquivo de credenciais
     credentials = service_account.Credentials.from_service_account_file(
-        # filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
-        filename="/mnt/c/Users/Softex/.basedosdados/credentials/staging.json",
+        filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
         scopes=["https://www.googleapis.com/auth/drive.readonly"],
     )
 

@@ -4,7 +4,7 @@ Flows for gtfs
 """
 from copy import deepcopy
 
-from prefect import case, task
+from prefect import Parameter, case, task
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.utilities.edges import unmapped
@@ -34,6 +34,7 @@ from pipelines.utils.backup.tasks import (
     get_current_flow_mode,
     get_current_timestamp,
     rename_current_flow_run_now_time,
+    run_dbt_model,
     transform_raw_to_nested_structure,
     unpack_mapped_results_nout2,
     upload_raw_data_to_gcs,
@@ -81,20 +82,22 @@ from pipelines.utils.backup.utils import set_default_parameters
 #     overwrite_flow_param_values=constants.GTFS_MATERIALIZACAO_PARAMS.value,
 # )
 
-gtfs_materializacao = deepcopy(default_materialization_flow)
-gtfs_materializacao.name = "SMTR: GTFS - Materialização (subflow)"
-gtfs_materializacao.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
-gtfs_materializacao.run_config = KubernetesRun(
-    image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
-)
-gtfs_materializacao.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
-gtfs_materializacao = set_default_parameters(
-    flow=gtfs_materializacao,
-    default_parameters=constants.GTFS_MATERIALIZACAO_PARAMS.value,
-)
+# gtfs_materializacao = deepcopy(default_materialization_flow)
+# gtfs_materializacao.name = "SMTR: GTFS - Materialização (subflow)"
+# gtfs_materializacao.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+# gtfs_materializacao.run_config = KubernetesRun(
+#     image=emd_constants.DOCKER_IMAGE.value,
+#     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+# )
+# gtfs_materializacao.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
+# gtfs_materializacao = set_default_parameters(
+#     flow=gtfs_materializacao,
+#     default_parameters=constants.GTFS_MATERIALIZACAO_PARAMS.value,
+# )
 
-with Flow("SMTR: GTFS - Captura (subflow)") as gtfs_captura_nova:
+with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
+    capture = Parameter("capture", default=True)
+    materialize = Parameter("materialize", default=True)
 
     mode = get_current_flow_mode()
     last_captured_os = get_last_capture_os(mode=mode, dataset_id="gtfs")
@@ -167,7 +170,13 @@ with Flow("SMTR: GTFS - Captura (subflow)") as gtfs_captura_nova:
             mode=mode,
         )
 
-        ## Adicionar materialização ##
+        run_dbt_model(
+            dataset_id=constants.GTFS_DATASET_ID.value,
+            _vars={
+                "data_versao_gtfs": data_versao_gtfs,
+                "version": {},
+            },
+        )
 
 gtfs_captura_nova.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 gtfs_captura_nova.run_config = KubernetesRun(
