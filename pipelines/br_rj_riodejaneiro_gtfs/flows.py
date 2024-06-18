@@ -153,7 +153,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             error=unmapped(None),
         )
 
-        upload_staging_data_to_gcs.map(
+        wait_upload_staging_data_to_gcs = upload_staging_data_to_gcs.map(
             dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
             table_id=table_ids,
             staging_filepath=treated_filepaths,
@@ -162,19 +162,20 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             error=errors,
         )
 
-        update_last_captured_os(
-            dataset_id=constants.GTFS_DATASET_ID.value,
-            data_index=data_index,
-            mode=mode,
-        ).set_upstream(upload_staging_data_to_gcs)
-
-        run_dbt_model(
+        wait_run_dbt_model = run_dbt_model(
             dataset_id=constants.GTFS_DATASET_ID.value,
             _vars={
                 "data_versao_gtfs": data_versao_gtfs,
                 "version": {},
             },
-        ).set_upstream(update_last_captured_os)
+        ).set_upstream(task=wait_upload_staging_data_to_gcs)
+
+        update_last_captured_os(
+            dataset_id=constants.GTFS_DATASET_ID.value,
+            data_index=data_index,
+            mode=mode,
+        ).set_upstream(task=wait_run_dbt_model)
+
 
 gtfs_captura_nova.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 gtfs_captura_nova.run_config = KubernetesRun(
