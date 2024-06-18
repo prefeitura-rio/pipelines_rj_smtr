@@ -12,7 +12,16 @@ from pipelines.utils.backup.utils import save_raw_local_func
 
 
 def filter_valid_rows(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Filter the valid rows in a DataFrame based on specific conditions.
 
+    Args:
+        df (pd.DataFrame): The input DataFrame to filter.
+
+    Returns:
+        pd.DataFrame: The filtered DataFrame.
+
+    """
     # salva index atual em uma coluna
     df["index"] = df.index
     # Remove linhas com valores nulos
