@@ -166,7 +166,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             dataset_id=constants.GTFS_DATASET_ID.value,
             data_index=data_index,
             mode=mode,
-        )
+        ).set_upstream(upload_staging_data_to_gcs)
 
         run_dbt_model(
             dataset_id=constants.GTFS_DATASET_ID.value,
