@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
 import io
+
 import pandas as pd
 import requests
 from prefeitura_rio.pipelines_utils.logging import log
+
 from pipelines.constants import constants
 
 
