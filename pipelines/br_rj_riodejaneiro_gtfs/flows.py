@@ -27,9 +27,7 @@ from pipelines.br_rj_riodejaneiro_gtfs.tasks import (
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
 from pipelines.tasks import get_scheduled_timestamp, parse_timestamp_to_string
-from pipelines.utils.backup.flows import (
-    default_materialization_flow,
-)
+from pipelines.utils.backup.flows import default_materialization_flow
 from pipelines.utils.backup.tasks import (
     create_date_hour_partition,
     create_local_partition_path,

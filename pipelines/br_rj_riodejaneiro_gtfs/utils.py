@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import io
 
+import openpyxl as xl
 import pandas as pd
 import requests
-from prefeitura_rio.pipelines_utils.logging import log
 from googleapiclient.http import MediaIoBaseDownload
-import openpyxl as xl
+from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.constants import constants
 from pipelines.utils.backup.utils import save_raw_local_func
