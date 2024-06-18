@@ -3,13 +3,10 @@
 Flows for gtfs
 """
 from copy import deepcopy
-from datetime import timedelta
 
-from prefect import Parameter, case, task
+from prefect import case, task
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
-from prefect.tasks.control_flow import merge
-from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
 
@@ -31,18 +28,13 @@ from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
 from pipelines.tasks import get_scheduled_timestamp, parse_timestamp_to_string
 from pipelines.utils.backup.flows import (
-    default_capture_flow,
     default_materialization_flow,
 )
 from pipelines.utils.backup.tasks import (
     create_date_hour_partition,
     create_local_partition_path,
-    get_current_flow_labels,
     get_current_flow_mode,
     get_current_timestamp,
-    get_flow_project,
-    get_rounded_timestamp,
-    get_scheduled_start_times,
     rename_current_flow_run_now_time,
     transform_raw_to_nested_structure,
     unpack_mapped_results_nout2,
@@ -50,7 +42,6 @@ from pipelines.utils.backup.tasks import (
     upload_staging_data_to_gcs,
 )
 from pipelines.utils.backup.utils import set_default_parameters
-from pipelines.utils.utils import isostr_to_datetime
 
 # from pipelines.capture.templates.flows import create_default_capture_flow
 
@@ -112,7 +103,7 @@ with Flow("SMTR: GTFS - Captura (subflow)") as gtfs_captura_nova:
 
     timestamp = get_scheduled_timestamp()
 
-    flag_new_os, os_control, despacho, data_versao_gtfs = get_os_info(
+    flag_new_os, os_control, data_index, data_versao_gtfs = get_os_info(
         last_captured_os=last_captured_os
     )
 
@@ -174,7 +165,7 @@ with Flow("SMTR: GTFS - Captura (subflow)") as gtfs_captura_nova:
 
         update_last_captured_os(
             dataset_id=constants.GTFS_DATASET_ID.value,
-            despacho=despacho,
+            data_index=data_index,
             mode=mode,
         )
 
