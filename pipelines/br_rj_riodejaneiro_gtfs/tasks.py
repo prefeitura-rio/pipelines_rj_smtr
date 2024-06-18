@@ -383,4 +383,4 @@ def get_raw_drive_files(os_control, local_filepath: list):
 
             raw_filepaths.append(raw_file_path)
 
-    return raw_filepaths, constants.GTFS_TABLE_CAPTURE_PARAMS.value.values()
+    return raw_filepaths, list(constants.GTFS_TABLE_CAPTURE_PARAMS.value.values())
