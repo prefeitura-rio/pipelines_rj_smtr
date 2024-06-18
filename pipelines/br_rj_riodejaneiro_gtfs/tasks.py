@@ -181,7 +181,7 @@ def get_raw_drive_files(os_control, local_filepath: list):
             data = data.decode(encoding="utf-8")
 
             # encontra a partição correta
-            local_file_path = list(filter(lambda x: filename in x, local_filepath))[0]
+            local_file_path = list(filter(lambda x: filename + "/" in x, local_filepath))[0]
 
             raw_file_path = save_raw_local_func(data=data, filepath=local_file_path, filetype="txt")
             log(f"Saved file: {raw_file_path}")
