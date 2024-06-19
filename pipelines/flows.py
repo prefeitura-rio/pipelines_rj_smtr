@@ -10,6 +10,7 @@ from pipelines.br_rj_riodejaneiro_onibus_gps.flows import *  # noqa
 from pipelines.br_rj_riodejaneiro_rdo.flows import *  # noqa
 from pipelines.br_rj_riodejaneiro_stpl_gps.flows import *  # noqa
 from pipelines.br_rj_riodejaneiro_stu.flows import *  # noqa
+from pipelines.br_rj_riodejaneiro_viagem_zirix.flows import *  # noqa
 from pipelines.capture.jae.flows import *  # noqa
 from pipelines.controle_financeiro.flows import *  # noqa
 from pipelines.exemplo import *  # noqa
