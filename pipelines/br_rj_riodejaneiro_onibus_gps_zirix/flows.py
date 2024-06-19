@@ -30,6 +30,7 @@ from pipelines.utils.backup.tasks import (
     get_current_flow_labels,
     get_current_flow_mode,
     get_current_timestamp,
+    get_flow_project,
     get_materialization_date_range,
     get_now_time,
     get_raw,
@@ -252,7 +253,7 @@ with Flow(
     materialize = Parameter("materialize", default=True)
     # SETUP #
     LABELS = get_current_flow_labels()
-
+    PROJECT = get_flow_project()
     errors, timestamps, previous_errors = query_logs(
         dataset_id=constants.GPS_SPPO_ZIRIX_RAW_DATASET_ID.value,
         table_id=smtr_constants.GPS_SPPO_RAW_TABLE_ID.value,
@@ -266,7 +267,7 @@ with Flow(
         with case(materialize, True):
             materialize_no_error = create_flow_run(
                 flow_name=materialize_sppo_zirix.name,
-                project_name=smtr_constants.PREFECT_DEFAULT_PROJECT.value,
+                project_name=PROJECT,
                 labels=LABELS,
                 run_name=materialize_sppo_zirix.name,
             )
@@ -325,7 +326,7 @@ with Flow(
         with case(materialize, True):
             run_materialize = create_flow_run(
                 flow_name=materialize_sppo_zirix.name,
-                project_name=smtr_constants.PREFECT_DEFAULT_PROJECT.value,
+                project_name=PROJECT,
                 labels=LABELS,
                 run_name=materialize_sppo_zirix.name,
             )
