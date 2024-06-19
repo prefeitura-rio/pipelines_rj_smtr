@@ -98,7 +98,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
     materialize = Parameter("materialize", default=True)
 
     mode = get_current_flow_mode()
-    last_captured_os = get_last_capture_os(mode=mode, dataset_id="gtfs")
+    last_captured_os = get_last_capture_os(mode=mode, dataset_id=constants.GTFS_DATASET_ID.value)
 
     timestamp = get_scheduled_timestamp()
 

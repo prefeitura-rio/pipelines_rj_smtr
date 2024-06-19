@@ -5,19 +5,19 @@ import zipfile
 from datetime import datetime
 
 import openpyxl as xl
-import pandas as pd
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from googleapiclient.http import MediaIoBaseDownload
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
 from pipelines.br_rj_riodejaneiro_gtfs.utils import (
-    convert_to_float,
     download_controle_os_csv,
+    download_file,
+    download_xlsx,
     filter_valid_rows,
-    processa_OS,
+    processa_ordem_servico,
+    processa_ordem_servico_trajeto_alternativo,
 )
 from pipelines.constants import constants
 from pipelines.utils.backup.utils import save_raw_local_func
@@ -36,14 +36,15 @@ def get_last_capture_os(dataset_id: str, mode: str = "prod") -> dict:
         dict: The last captured OS.
 
     """
-    redis_client = get_redis_client()
-    fetch_key = f"{dataset_id}.last_captured_os"
-    if mode != "prod":
-        fetch_key = f"{mode}.{fetch_key}"
+    # redis_client = get_redis_client()
+    # fetch_key = f"{dataset_id}.last_captured_os"
+    # if mode != "prod":
+    #     fetch_key = f"{mode}.{fetch_key}"
 
-    last_captured_os = redis_client.get(fetch_key)
+    # last_captured_os = redis_client.get(fetch_key)
 
-    log(f"Last captured os: {last_captured_os}")
+    # log(f"Last captured os: {last_captured_os}")
+    last_captured_os = None
     return last_captured_os
 
 
@@ -151,45 +152,57 @@ def get_raw_drive_files(os_control, local_filepath: list):
 
     # Autenticar usando o arquivo de credenciais
     credentials = service_account.Credentials.from_service_account_file(
-        filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
+        # filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
+        filename="/mnt/c/Users/Softex/.basedosdados/credentials/staging.json",
         scopes=["https://www.googleapis.com/auth/drive.readonly"],
     )
 
     # Criar o serviço da API Google Drive e Google Sheets
     drive_service = build("drive", "v3", credentials=credentials)
 
+    # Baixa planilha de OS
     file_link = os_control["Link da OS"]
+    file_bytes_os = download_xlsx(file_link=file_link, drive_service=drive_service)
 
-    processa_OS(
-        file_link=file_link,
-        drive_service=drive_service,
-        local_filepath=local_filepath,
-        raw_filepaths=raw_filepaths,
-    )
-
+    # Baixa GTFS
     file_link = os_control["Link do GTFS"]
-    file_id = file_link.split("/")[-2]
+    file_bytes_gtfs = download_file(file_link=file_link, drive_service=drive_service)
 
-    request = drive_service.files().get_media(fileId=file_id)  # pylint: disable=E1101
-    file_bytes = io.BytesIO()
-    downloader = MediaIoBaseDownload(file_bytes, request)
+    # Salva os nomes das planilhas
+    sheetnames = xl.load_workbook(file_bytes_os).sheetnames
 
-    done = False
-    while not done:
-        status, done = downloader.next_chunk()
+    with zipfile.ZipFile(file_bytes_gtfs, "r") as zipped_file:
+        for filename in list(constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys()):
+            if filename == "ordem_servico":
 
-    with zipfile.ZipFile(file_bytes, "r") as zipped_file:
-        for filename in list(constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys())[2:]:
+                processa_ordem_servico(
+                    sheetnames=sheetnames,
+                    file_bytes=file_bytes_os,
+                    local_filepath=local_filepath,
+                    raw_filepaths=raw_filepaths,
+                )
+            elif filename == "ordem_servico_trajeto_alternativo":
 
-            data = zipped_file.read(filename + ".txt")
-            data = data.decode(encoding="utf-8")
+                processa_ordem_servico_trajeto_alternativo(
+                    sheetnames=sheetnames,
+                    file_bytes=file_bytes_os,
+                    local_filepath=local_filepath,
+                    raw_filepaths=raw_filepaths,
+                )
 
-            # encontra a partição correta
-            local_file_path = list(filter(lambda x: filename + "/" in x, local_filepath))[0]
+            else:
+                # Processa arquivos do GTFS
+                data = zipped_file.read(filename + ".txt")
+                data = data.decode(encoding="utf-8")
 
-            raw_file_path = save_raw_local_func(data=data, filepath=local_file_path, filetype="txt")
-            log(f"Saved file: {raw_file_path}")
+                # encontra a partição correta
+                local_file_path = list(filter(lambda x: filename + "/" in x, local_filepath))[0]
 
-            raw_filepaths.append(raw_file_path)
+                raw_file_path = save_raw_local_func(
+                    data=data, filepath=local_file_path, filetype="txt"
+                )
+                log(f"Saved file: {raw_file_path}")
+
+                raw_filepaths.append(raw_file_path)
 
     return raw_filepaths, list(constants.GTFS_TABLE_CAPTURE_PARAMS.value.values())

@@ -284,3 +284,15 @@ def processa_ordem_servico_trajeto_alternativo(
     log(f"Saved file: {raw_file_path}")
 
     raw_filepaths.append(raw_file_path)
+
+
+def download_file(file_link, drive_service):
+    file_id = file_link.split("/")[-2]
+
+    request = drive_service.files().get_media(fileId=file_id)  # pylint: disable=E1101
+    file_bytes = io.BytesIO()
+    downloader = MediaIoBaseDownload(file_bytes, request)
+    done = False
+    while not done:
+        status, done = downloader.next_chunk()
+    return file_bytes
