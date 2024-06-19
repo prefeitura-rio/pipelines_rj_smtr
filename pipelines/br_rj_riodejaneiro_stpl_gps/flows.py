@@ -12,11 +12,11 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
 )
 
+from pipelines.br_rj_riodejaneiro_stpl_gps.constants import constants
 from pipelines.br_rj_riodejaneiro_stpl_gps.tasks import (
     pre_treatment_br_rj_riodejaneiro_stpl_gps,
 )
-from pipelines.constants import constants
-from pipelines.constants import constants as emd_constants
+from pipelines.constants import constants as smtr_constants
 
 # from pipelines.schedules import every_minute  # every_hour,
 from pipelines.utils.backup.tasks import (
@@ -97,10 +97,10 @@ with Flow(
     captura_stpl.set_dependencies(task=partitions, upstream_tasks=[rename_flow_run])
 
 
-captura_stpl.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+captura_stpl.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 captura_stpl.run_config = KubernetesRun(
-    image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+    image=smtr_constants.DOCKER_IMAGE.value,
+    labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 captura_stpl.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
 # Captura descontinuada (sem dados), avaliar quando voltar

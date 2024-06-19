@@ -57,7 +57,7 @@ import pendulum
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 
-from pipelines.constants import constants
+from pipelines.constants import constants as smtr_constants
 from pipelines.utils.backup.utils import log_critical
 
 
@@ -82,7 +82,7 @@ def pre_treatment_br_rj_riodejaneiro_stpl_gps(status_dict, timestamp):
 
     error = None
     # get tz info from constants
-    timezone = constants.TIMEZONE.value
+    timezone = smtr_constants.TIMEZONE.value
 
     # initialize df for nested columns
     df = pd.DataFrame(columns=columns)
