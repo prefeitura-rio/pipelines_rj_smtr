@@ -152,8 +152,7 @@ def get_raw_drive_files(os_control, local_filepath: list):
 
     # Autenticar usando o arquivo de credenciais
     credentials = service_account.Credentials.from_service_account_file(
-        # filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
-        filename="/mnt/c/Users/Softex/.basedosdados/credentials/staging.json",
+        filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
         scopes=["https://www.googleapis.com/auth/drive.readonly"],
     )
 
