@@ -42,8 +42,6 @@ from pipelines.utils.backup.tasks import (
 from pipelines.utils.backup.utils import set_default_parameters
 from pipelines.utils.dataplex import DataQualityCheckArgs
 
-# Flows #
-
 # BILHETAGEM TRANSAÇÃO - CAPTURA A CADA MINUTO #
 
 bilhetagem_transacao_captura = deepcopy(default_capture_flow)
