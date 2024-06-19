@@ -21,21 +21,6 @@
 {% set integracao_staging = ref('staging_integracao_transacao') %}
 {% if execute %}
   {% if is_incremental() %}
-    -- Verifica partições para consultar na tabela de gratuidades
-    -- {% set gratuidade_partitions_query %}
-    --   SELECT DISTINCT
-    --     CAST(CAST(id_cliente AS FLOAT64) AS INT64) AS id_cliente
-    --   FROM
-    --     {{ transacao_staging }}
-    --   WHERE
-    --     {{ incremental_filter }}
-    --     AND tipo_transacao = "21"
-    -- {% endset %}
-
-    -- {% set gratuidade_partitions = run_query(gratuidade_partitions_query) %}
-
-    -- {% set gratuidade_partition_list = gratuidade_partitions.columns[0].values() %}
-    -- Verifica partições que serão alteradas pelos dados capturados
     {% set transacao_partitions_query %}
       WITH particoes_integracao AS (
         SELECT DISTINCT
@@ -105,18 +90,7 @@ gratuidade AS (
     data_fim_validade
   FROM
     {{ ref("gratuidade_aux") }}
-  -- TODO: FILTRAR PARTIÇÕES DE FORMA MAIS EFICIENTE
-
-  -- se for incremental pega apenas as partições necessárias
-  -- {% if is_incremental() %}
-  --   {% if gratuidade_partition_list|length > 0 and gratuidade_partition_list|length < 10000 %}
-  --     WHERE
-  --       id_cliente IN ({{ gratuidade_partition_list|join(', ') }})
-  --   {% elif gratuidade_partition_list|length == 0 %}
-  --     WHERE
-  --       id_cliente = 0
-  --   {% endif %}
-  -- {% endif %}
+  -- TODO: FILTRAR PARTIÇÕES DE FORMA EFICIENTE
 ),
 tipo_pagamento AS (
   SELECT
