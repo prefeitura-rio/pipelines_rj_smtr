@@ -1374,8 +1374,8 @@ def delay_now_time(timestamp: str, delay_minutes=6):
 @task
 def fetch_dataset_sha(dataset_id: str):
     """Fetches the SHA of a branch from Github"""
-    url = "https://api.github.com/repos/prefeitura-rio/queries-rj-smtr"
-    url += f"/commits?queries-rj-smtr/rj_smtr/{dataset_id}"
+    url = "https://api.github.com/repos/prefeitura-rio/pipelines-rj-smtr"
+    url += f"/commits?pipelines_rj_smtr/queries/models/{dataset_id}"
     response = requests.get(url)
 
     if response.status_code != 200:

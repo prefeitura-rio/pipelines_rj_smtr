@@ -30,6 +30,7 @@ from pipelines.tasks import get_scheduled_timestamp, parse_timestamp_to_string
 from pipelines.utils.backup.tasks import (
     create_date_hour_partition,
     create_local_partition_path,
+    fetch_dataset_sha,
     get_current_flow_mode,
     get_current_timestamp,
     rename_current_flow_run_now_time,
@@ -163,12 +164,13 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
         )
 
         string_data_versao_gtfs = parse_timestamp_to_string(data_versao_gtfs)
+        version = fetch_dataset_sha(dataset_id="gtfs")
 
         wait_run_dbt_model = run_dbt_model(
             dataset_id="gtfs",
             _vars={
                 "data_versao_gtfs": string_data_versao_gtfs,
-                "version": {},
+                "version": version,
             },
         ).set_upstream(task=wait_upload_staging_data_to_gcs)
 
