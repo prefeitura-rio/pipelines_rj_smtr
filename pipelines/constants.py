@@ -291,6 +291,7 @@ X-1vRvFcyr9skfBIrjxc4FSJZ3-g4gUCF56YjGPOmd1f5qH8vndpy22P6f6KdcYgWaqzUmtSBL\
         "stop_times": ["trip_id", "stop_sequence"],
     }
 
+    GTFS_MATERIALIZACAO_DATASET_ID = "gtfs"
     GTFS_MATERIALIZACAO_PARAMS = {
         "dataset_id": GTFS_DATASET_ID,
         "dbt_vars": {
