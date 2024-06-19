@@ -1,5 +1,10 @@
 # Changelog - bilhetagem
 
+## [2.1.1] - 2024-06-19
+
+### Corrigido
+- Remove filtro de partições de gratuidade no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/69)
+
 ## [2.1.0] - 2024-06-13
 
 ### Alterado
