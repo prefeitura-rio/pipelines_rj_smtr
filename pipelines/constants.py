@@ -58,15 +58,6 @@ class constants(Enum):  # pylint: disable=c0103
     REPO_URL = "https://api.github.com/repos/prefeitura-rio/pipelines_rj_smtr"
     DATAPLEX_URL = "https://console.cloud.google.com/dataplex/govern/quality"
 
-    # GPS STPL #
-    GPS_STPL_API_BASE_URL = "http://zn4.m2mcontrol.com.br/api/integracao/veiculos"
-    GPS_STPL_API_SECRET_PATH = "stpl_api"
-
-    GPS_STPL_DATASET_ID = "migracao_br_rj_riodejaneiro_veiculos"
-    GPS_STPL_RAW_DATASET_ID = "migracao_br_rj_riodejaneiro_stpl_gps"
-    GPS_STPL_RAW_TABLE_ID = "registros"
-    GPS_STPL_TREATED_TABLE_ID = "gps_stpl"
-
     # GPS SPPO #
     GPS_SPPO_API_BASE_URL = (
         "http://ccomobility.com.br/WebServices/Binder/WSConecta/EnvioInformacoesIplan?"
@@ -110,30 +101,7 @@ class constants(Enum):  # pylint: disable=c0103
     GPS_BRT_MATERIALIZE_DELAY_HOURS = 0
 
     # VEICULO
-    VEICULO_DATASET_ID = "migracao_veiculo"
-
-    # AUTUAÇÕES - AGENTES DE VERÃO
-    SPPO_REGISTRO_AGENTE_VERAO_COLUMNS = [
-        "datetime_registro",
-        "email",
-        "id_veiculo",
-        "servico",
-        "link_foto",
-        "validacao",
-    ]
-
-    SPPO_REGISTRO_AGENTE_VERAO_PARAMS = {
-        "partition_date_only": True,
-        "source_type": "api-csv",
-        "dataset_id": VEICULO_DATASET_ID,
-        "table_id": "sppo_registro_agente_verao",
-        "extract_params": {"secret_path": "smtr_agentes_verao"},
-        "pre_treatment_reader_args": {
-            "skiprows": 2,
-            "names": SPPO_REGISTRO_AGENTE_VERAO_COLUMNS,
-        },
-        "primary_key": ["datetime_registro", "email"],
-    }
+    VEICULO_DATASET_ID = "veiculo"
 
     # STU
 
@@ -401,82 +369,8 @@ and createdDate lt {end})",
     #     },
     # }
 
-    # VEÍCULOS LICENCIADOS
-    # flake8: noqa: E501
-    SPPO_LICENCIAMENTO_URL = (
-        "https://siurblab.rio.rj.gov.br/SMTR/DADOS%20CADASTRAIS/Cadastro%20de%20Veiculos.txt"
-    )
-    SPPO_LICENCIAMENTO_MAPPING_KEYS = {
-        "placa": "placa",
-        "ordem": "id_veiculo",
-        "permissao": "permissao",
-        "modal": "modo",
-        "ultima_vistoria": "data_ultima_vistoria",
-        "cod_planta": "id_planta",
-        "cod_mod_carroceria": "id_carroceria",
-        "cod_fab_carroceria": "id_interno_carroceria",
-        "des_mod_carroceria": "carroceria",
-        "cod_mod_chassi": "id_chassi",
-        "cod_fab_chassi": "id_fabricante_chassi",
-        "des_mod_chassi": "nome_chassi",
-        "lotacao_sentado": "quantidade_lotacao_sentado",
-        "lotacao_pe": "quantidade_lotacao_pe",
-        "elevador": "indicador_elevador",
-        "ar_condicionado": "indicador_ar_condicionado_stu",
-        "tipo_veiculo": "tipo_veiculo",
-        "combustivel": "tipo_combustivel",
-        "portas": "quantidade_portas",
-        "ano_fabricacao": "ano_fabricacao",
-        "wifi": "indicador_wifi",
-        "usb": "indicador_usb",
-        "data_inicio_vinculo": "data_inicio_vinculo",
-    }
-    SPPO_LICENCIAMENTO_CSV_ARGS = {
-        "sep": ";",
-        "names": SPPO_LICENCIAMENTO_MAPPING_KEYS.keys(),  # pylint: disable=e1101
-    }
-    SPPO_LICENCIAMENTO_TABLE_ID = "sppo_licenciamento_stu"
-
-    # INFRAÇÃO
-    SPPO_INFRACAO_URL = "https://siurblab.rio.rj.gov.br/SMTR/Multas/multas.txt"
-
-    SPPO_INFRACAO_COLUMNS = [
-        "permissao",
-        "modo",
-        "placa",
-        "id_auto_infracao",
-        "data_infracao",
-        "valor",
-        "id_infracao",
-        "infracao",
-        "status",
-        "data_pagamento",
-        "servico",
-    ]
-
-    SPPO_INFRACAO_MAPPING_KEYS = {
-        "permissao": "permissao",
-        "modal": "modo",
-        "placa": "placa",
-        "cm": "id_auto_infracao",
-        "data_infracao": "data_infracao",
-        "valor": "valor",
-        "cod_infracao": "id_infracao",
-        "des_infracao": "infracao",
-        "status": "status",
-        "data_pagamento": "data_pagamento",
-        "linha": "servico",
-    }
-    SPPO_INFRACAO_CSV_ARGS = {
-        "sep": ";",
-        "names": SPPO_INFRACAO_MAPPING_KEYS.keys(),  # pylint: disable=e1101
-    }
-    SPPO_INFRACAO_TABLE_ID = "sppo_infracao"
-
-    # VEÍCULO DIA
-    SPPO_VEICULO_DIA_TABLE_ID = "sppo_veiculo_dia"
-
     # SUBSÍDIO DASHBOARD
+    # flake8: noqa: E501
     SUBSIDIO_SPPO_DASHBOARD_DATASET_ID = "migracao_dashboard_subsidio_sppo"
     SUBSIDIO_SPPO_DASHBOARD_STAGING_DATASET_ID = "migracao_dashboard_subsidio_sppo_staging"
     SUBSIDIO_SPPO_DASHBOARD_TABLE_ID = "sumario_servico_dia"
