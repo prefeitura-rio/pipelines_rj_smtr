@@ -165,7 +165,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
         string_data_versao_gtfs = parse_timestamp_to_string(data_versao_gtfs)
 
         wait_run_dbt_model = run_dbt_model(
-            dataset_id=constants.GTFS_DATASET_ID.value,
+            dataset_id="gtfs",
             _vars={
                 "data_versao_gtfs": string_data_versao_gtfs,
                 "version": {},
@@ -182,7 +182,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 gtfs_captura_nova.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 gtfs_captura_nova.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
+    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 gtfs_captura_nova.state_handlers = [
     handler_inject_bd_credentials,

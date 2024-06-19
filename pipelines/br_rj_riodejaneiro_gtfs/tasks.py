@@ -71,28 +71,31 @@ def update_last_captured_os(dataset_id: str, data_index: str, mode: str = "prod"
 @task(nout=4)
 def get_os_info(last_captured_os: str) -> dict:
     """
-    Retrieves information about the OS from a CSV file.
+    Retrieves information about the OS.
 
     Args:
-        last_captured_os (str): The ID of the last captured OS.
+        last_captured_os (str): The last captured OS data_index.
 
     Returns:
         tuple: A tuple containing the following elements:
             - flag_new_os (bool): Indicates whether a new OS was found.
             - data (dict): A dictionary containing the OS information.
-            - ano_id_despacho (str): The year and ID of the OS dispatch.
-            - inicio_vigencia_os (str): The start date of the OS in the format 'YYYY-MM-DD'.
+            - data_index (str): The index of the captured OS.
+            - inicio_vigencia_os (str): The start date of the captured OS.
+
     """
     df = download_controle_os_csv(constants.GTFS_CONTROLE_OS_URL.value)
+
     flag_new_os = False
-    data = {"Início da Vigência da OS": None, "ano_id_despacho": None}
+    data = {"Início da Vigência da OS": None, "data_index": None}
 
     if df.empty:
-        return flag_new_os, data, data["ano_id_despacho"], data["Início da Vigência da OS"]
+        return flag_new_os, data, data["data_index"], data["Início da Vigência da OS"]
 
     df = filter_valid_rows(df)
 
     df["data_index"] = df["Início da Vigência da OS"].astype(str) + "_" + df["index"].astype(str)
+
     # Ordena por despacho
     df = df.sort_values(by=["data_index"], ascending=True)
     if last_captured_os is None:
@@ -114,11 +117,12 @@ def get_os_info(last_captured_os: str) -> dict:
         ]
     ]
 
-    log(f"Os info: {df.tail()}")
+    log(f"Os info: {df.head()}")
     if len(df) >= 1:
         log("Nova OS encontrada!")
         data = df.to_dict(orient="records")[0]  # Converte o DataFrame para um dicionário
         flag_new_os = True  # Se houver mais de uma OS, é uma nova OS
+
         # converte "Início da Vigência da OS" de dd/mm/aaaa para aaaa-mm-dd
         data["Início da Vigência da OS"] = datetime.strptime(
             data["Início da Vigência da OS"], "%d/%m/%Y"
