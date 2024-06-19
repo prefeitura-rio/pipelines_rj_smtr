@@ -58,15 +58,6 @@ class constants(Enum):  # pylint: disable=c0103
     REPO_URL = "https://api.github.com/repos/prefeitura-rio/pipelines_rj_smtr"
     DATAPLEX_URL = "https://console.cloud.google.com/dataplex/govern/quality"
 
-    # GPS STPL #
-    GPS_STPL_API_BASE_URL = "http://zn4.m2mcontrol.com.br/api/integracao/veiculos"
-    GPS_STPL_API_SECRET_PATH = "stpl_api"
-
-    GPS_STPL_DATASET_ID = "migracao_br_rj_riodejaneiro_veiculos"
-    GPS_STPL_RAW_DATASET_ID = "migracao_br_rj_riodejaneiro_stpl_gps"
-    GPS_STPL_RAW_TABLE_ID = "registros"
-    GPS_STPL_TREATED_TABLE_ID = "gps_stpl"
-
     # GPS SPPO #
     GPS_SPPO_API_BASE_URL = (
         "http://ccomobility.com.br/WebServices/Binder/WSConecta/EnvioInformacoesIplan?"
