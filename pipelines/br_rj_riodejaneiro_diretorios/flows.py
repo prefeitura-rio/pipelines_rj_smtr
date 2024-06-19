@@ -73,9 +73,9 @@ with Flow(
     PROJECT = get_flow_project()
 
     table_params = task(
-        lambda tables, exclude: [t for t in tables if t["table_id"] not in exclude]
-        if exclude is not None
-        else tables,
+        lambda tables, exclude: (
+            [t for t in tables if t["table_id"] not in exclude] if exclude is not None else tables
+        ),
         checkpoint=False,
         name="get_tables_to_run",
     )(tables=constants.DIRETORIO_MATERIALIZACAO_TABLE_PARAMS.value, exclude=exclude)
