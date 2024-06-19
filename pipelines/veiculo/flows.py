@@ -19,7 +19,6 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 
 from pipelines.constants import constants as smtr_constants
 from pipelines.schedules import every_day_hour_seven
-from pipelines.tasks import get_current_timestamp
 from pipelines.utils.backup.flows import default_capture_flow
 from pipelines.utils.backup.tasks import (
     bq_upload,
@@ -28,6 +27,7 @@ from pipelines.utils.backup.tasks import (
     fetch_dataset_sha,
     get_current_flow_labels,
     get_current_flow_mode,
+    get_current_timestamp,
     get_join_dict,
     get_previous_date,
     get_run_dates,
