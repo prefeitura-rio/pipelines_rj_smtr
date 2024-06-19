@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Constant values for rj_smtr controle_financeiro
+Constant values for rj_smtr br_rj_riodejaneiro_stu
 """
 
 from enum import Enum
