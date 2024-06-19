@@ -162,10 +162,12 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             error=errors,
         )
 
+        string_data_versao_gtfs = parse_timestamp_to_string(data_versao_gtfs)
+
         wait_run_dbt_model = run_dbt_model(
             dataset_id=constants.GTFS_DATASET_ID.value,
             _vars={
-                "data_versao_gtfs": data_versao_gtfs,
+                "data_versao_gtfs": string_data_versao_gtfs,
                 "version": {},
             },
         ).set_upstream(task=wait_upload_staging_data_to_gcs)
