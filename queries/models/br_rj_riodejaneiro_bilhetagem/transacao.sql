@@ -105,6 +105,8 @@ gratuidade AS (
     data_fim_validade
   FROM
     {{ ref("gratuidade_aux") }}
+  -- TODO: FILTRAR PARTIÇÕES DE FORMA MAIS EFICIENTE
+
   -- se for incremental pega apenas as partições necessárias
   -- {% if is_incremental() %}
   --   {% if gratuidade_partition_list|length > 0 and gratuidade_partition_list|length < 10000 %}
