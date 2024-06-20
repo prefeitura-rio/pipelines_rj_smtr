@@ -21,7 +21,6 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 
 # SMTR Imports #
 from pipelines.constants import constants
-from pipelines.constants import constants as emd_constants
 from pipelines.migration.flows import default_capture_flow, default_materialization_flow
 from pipelines.migration.tasks import (
     get_current_flow_labels,
@@ -47,15 +46,15 @@ from pipelines.migration.utils import set_default_parameters
 
 # gtfs_captura = create_default_capture_flow(
 #     flow_name="SMTR: GTFS - Captura (subflow)",
-#     agent_label=emd_constants.RJ_SMTR_AGENT_LABEL.value,
+#     agent_label=constants.RJ_SMTR_AGENT_LABEL.value,
 #     overwrite_flow_params=constants.GTFS_GENERAL_CAPTURE_PARAMS.value,
 # )
 gtfs_captura = deepcopy(default_capture_flow)
 gtfs_captura.name = "SMTR: GTFS - Captura (subflow)"
-gtfs_captura.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+gtfs_captura.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
 gtfs_captura.run_config = KubernetesRun(
-    image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+    image=constants.DOCKER_IMAGE.value,
+    labels=[constants.RJ_SMTR_AGENT_LABEL.value],
 )
 gtfs_captura.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
 gtfs_captura = set_default_parameters(
@@ -65,16 +64,16 @@ gtfs_captura = set_default_parameters(
 
 # gtfs_materializacao = create_default_materialization_flow(
 #     flow_name="SMTR: GTFS - Materialização (subflow)",
-#     agent_label=emd_constants.RJ_SMTR_AGENT_LABEL.value,
+#     agent_label=constants.RJ_SMTR_AGENT_LABEL.value,
 #     overwrite_flow_param_values=constants.GTFS_MATERIALIZACAO_PARAMS.value,
 # )
 
 gtfs_materializacao = deepcopy(default_materialization_flow)
 gtfs_materializacao.name = "SMTR: GTFS - Materialização (subflow)"
-gtfs_materializacao.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+gtfs_materializacao.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
 gtfs_materializacao.run_config = KubernetesRun(
-    image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+    image=constants.DOCKER_IMAGE.value,
+    labels=[constants.RJ_SMTR_AGENT_LABEL.value],
 )
 gtfs_materializacao.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
 gtfs_materializacao = set_default_parameters(
@@ -177,10 +176,10 @@ with Flow(
             raise_final_state=True,
         )
 
-gtfs_captura_tratamento.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+gtfs_captura_tratamento.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
 gtfs_captura_tratamento.run_config = KubernetesRun(
-    image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+    image=constants.DOCKER_IMAGE.value,
+    labels=[constants.RJ_SMTR_AGENT_LABEL.value],
 )
 gtfs_captura_tratamento.state_handlers = [
     handler_inject_bd_credentials,
