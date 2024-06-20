@@ -108,11 +108,10 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
         last_captured_os=last_captured_os
     )
 
-    rename_current_flow_run_now_time(
-        prefix=gtfs_captura_nova.name + ' ["' + data_versao_gtfs + '"] ', now_time=timestamp
-    )
-
     with case(flag_new_os, True):
+        rename_current_flow_run_now_time(
+            prefix=gtfs_captura_nova.name + ' ["' + data_versao_gtfs + '"] ', now_time=timestamp
+        )
 
         data_versao_gtfs = get_current_timestamp(data_versao_gtfs)
 
@@ -180,6 +179,11 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             data_index=data_index,
             mode=mode,
         ).set_upstream(task=wait_run_dbt_model)
+
+    with case(flag_new_os, False):
+        rename_current_flow_run_now_time(
+            prefix=gtfs_captura_nova.name + " [SKIPPED] ", now_time=timestamp
+        )
 
 
 gtfs_captura_nova.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
