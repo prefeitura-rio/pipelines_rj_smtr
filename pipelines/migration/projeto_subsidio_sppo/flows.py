@@ -51,17 +51,6 @@ from pipelines.migration.veiculo.flows import sppo_veiculo_dia
 
 # SMTR Imports #
 
-
-# from pipelines.utils.backup.tasks import (
-#     fetch_dataset_sha,
-#     get_run_dates,
-#     get_join_dict,
-#     get_previous_date,
-#     # get_local_dbt_client,
-#     # set_last_run_timestamp,
-# )
-
-
 # Flows #
 
 with Flow(

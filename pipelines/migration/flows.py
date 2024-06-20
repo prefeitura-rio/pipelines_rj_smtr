@@ -36,9 +36,6 @@ from pipelines.migration.tasks import (
 
 # EMD Imports #
 
-
-# from pipelines.utils.backup.tasks import get_k8s_dbt_client
-
 # SMTR Imports #
 
 

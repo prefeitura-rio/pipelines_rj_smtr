@@ -1128,37 +1128,3 @@ def build_table_id(mode: str, report_type: str):
         else:
             table_id = constants.STPL_RHO_TABLE_ID.value
     return table_id
-
-
-def generate_ftp_schedules(interval_minutes: int, label: str = constants.RJ_SMTR_AGENT_LABEL.value):
-    """Generates IntervalClocks with the parameters needed to capture
-    each report.
-
-    Args:
-        interval_minutes (int): interval which this flow will be run.
-        label (str, optional): Prefect label, defines which agent to use when launching flow run.
-        Defaults to constants.RJ_SMTR_AGENT_LABEL.value.
-
-    Returns:
-        List(IntervalClock): containing the clocks for scheduling runs
-    """
-    modes = ["SPPO", "STPL"]
-    reports = ["RDO", "RHO"]
-    clocks = []
-    for mode in modes:
-        for report in reports:
-            clocks.append(
-                IntervalClock(
-                    interval=timedelta(minutes=interval_minutes),
-                    start_date=datetime(
-                        2022, 12, 16, 5, 0, tzinfo=timezone(constants.TIMEZONE.value)
-                    ),
-                    parameter_defaults={
-                        "transport_mode": mode,
-                        "report_type": report,
-                        "table_id": build_table_id(mode=mode, report_type=report),
-                    },
-                    labels=[label],
-                )
-            )
-    return clocks

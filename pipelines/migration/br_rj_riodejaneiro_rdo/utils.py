@@ -5,6 +5,7 @@ General purpose functions for the br_rj_riodejaneiro_rdo project
 
 from datetime import datetime, timedelta
 
+from prefect.schedules import Schedule
 from prefect.schedules.clocks import IntervalClock
 from pytz import timezone
 
@@ -65,7 +66,7 @@ def generate_ftp_schedules(
         Defaults to emd_constants.RJ_SMTR_AGENT_LABEL.value.
 
     Returns:
-        List(IntervalClock): containing the clocks for scheduling runs
+        Schedule: Schedules for RDO/RHO data capture
     """
     modes = ["SPPO", "STPL"]
     reports = ["RDO", "RHO"]
@@ -86,4 +87,4 @@ def generate_ftp_schedules(
                     labels=[label],
                 )
             )
-    return clocks
+    return Schedule(clocks)
