@@ -41,6 +41,8 @@ def get_last_capture_os(dataset_id: str, mode: str = "prod") -> dict:
         fetch_key = f"{mode}.{fetch_key}"
 
     last_captured_os = redis_client.get(fetch_key)
+    if last_captured_os is not None:
+        last_captured_os = last_captured_os["last_captured_os"]
 
     log(f"Last captured os: {last_captured_os}")
 
