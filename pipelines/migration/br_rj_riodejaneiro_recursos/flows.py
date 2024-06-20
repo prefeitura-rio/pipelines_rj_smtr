@@ -22,6 +22,7 @@ from pipelines.migration.flows import default_capture_flow, default_materializat
 from pipelines.migration.tasks import (
     get_current_flow_labels,
     get_current_timestamp,
+    get_flow_project,
     rename_current_flow_run_now_time,
 )
 from pipelines.migration.utils import set_default_parameters
@@ -100,6 +101,7 @@ with Flow(
     )
 
     LABELS = get_current_flow_labels()
+    PROJECT = get_flow_project()
 
     recursos_capture_parameters = [
         {
@@ -124,7 +126,7 @@ with Flow(
     with case(capture, True):
         run_captura = create_flow_run.map(
             flow_name=unmapped(sppo_recurso_captura.name),
-            project_name=unmapped(smtr_constants.PREFECT_DEFAULT_PROJECT.value),
+            project_name=unmapped(PROJECT),
             parameters=recursos_capture_parameters,
             labels=unmapped(LABELS),
         )
@@ -150,7 +152,7 @@ with Flow(
     with case(recapture, True):
         run_recaptura = create_flow_run.map(
             flow_name=unmapped(sppo_recurso_recaptura.name),
-            project_name=unmapped(smtr_constants.PREFECT_DEFAULT_PROJECT.value),
+            project_name=unmapped(PROJECT),
             parameters=recursos_capture_parameters,
             labels=unmapped(LABELS),
         )
@@ -174,7 +176,7 @@ with Flow(
     with case(materialize, True):
         run_materializacao = create_flow_run.map(
             flow_name=unmapped(sppo_recurso_materializacao.name),
-            project_name=unmapped(smtr_constants.PREFECT_DEFAULT_PROJECT.value),
+            project_name=unmapped(PROJECT),
             labels=unmapped(LABELS),
             parameters=table_params,
             upstream_tasks=[wait_captura],
