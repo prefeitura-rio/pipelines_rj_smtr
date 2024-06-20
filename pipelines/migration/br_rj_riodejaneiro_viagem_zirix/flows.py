@@ -11,11 +11,11 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
 )
 
-from pipelines.br_rj_riodejaneiro_viagem_zirix.constants import constants
 from pipelines.constants import constants as smtr_constants
+from pipelines.migration.br_rj_riodejaneiro_viagem_zirix.constants import constants
+from pipelines.migration.flows import default_capture_flow
+from pipelines.migration.utils import set_default_parameters
 from pipelines.schedules import every_10_minutes, every_hour
-from pipelines.utils.backup.flows import default_capture_flow
-from pipelines.utils.backup.utils import set_default_parameters
 
 # Flows #
 

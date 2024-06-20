@@ -13,16 +13,15 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
 )
 
-from pipelines.br_rj_riodejaneiro_onibus_gps_zirix.constants import constants
-from pipelines.br_rj_riodejaneiro_onibus_gps_zirix.tasks import (
+from pipelines.constants import constants as smtr_constants
+from pipelines.migration.br_rj_riodejaneiro_onibus_gps_zirix.constants import constants
+from pipelines.migration.br_rj_riodejaneiro_onibus_gps_zirix.tasks import (
     create_api_url_onibus_gps,
     create_api_url_onibus_realocacao,
     pre_treatment_br_rj_riodejaneiro_onibus_gps,
     pre_treatment_br_rj_riodejaneiro_onibus_realocacao,
 )
-from pipelines.constants import constants as smtr_constants
-from pipelines.schedules import every_10_minutes, every_hour_minute_six, every_minute
-from pipelines.utils.backup.tasks import (
+from pipelines.migration.tasks import (
     bq_upload,
     create_date_hour_partition,
     create_local_partition_path,
@@ -43,6 +42,7 @@ from pipelines.utils.backup.tasks import (
     set_last_run_timestamp,
     upload_logs_to_bq,
 )
+from pipelines.schedules import every_10_minutes, every_hour_minute_six, every_minute
 
 # Flows #
 
