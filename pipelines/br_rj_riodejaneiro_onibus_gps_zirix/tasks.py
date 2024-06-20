@@ -11,7 +11,6 @@ import pandas as pd
 import pendulum
 from prefect import task
 
-from pipelines.br_rj_riodejaneiro_onibus_gps_zirix.constants import constants
 from pipelines.constants import constants as smtr_constants
 from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import log
@@ -23,7 +22,7 @@ from pipelines.utils.utils import log
 def create_api_url_onibus_realocacao(
     interval_minutes: int = 10,
     timestamp: datetime = None,
-    secret_path: str = constants.ZIRIX_API_SECRET_PATH.value,
+    secret_path: str = smtr_constants.ZIRIX_API_SECRET_PATH.value,
 ) -> str:
     """
     start_date: datahora mínima do sinal de GPS avaliado
@@ -37,7 +36,7 @@ def create_api_url_onibus_realocacao(
         ),
         "date_range_end": timestamp.strftime("%Y-%m-%dT%H:%M:%S"),
     }
-    url = f"{constants.ZIRIX_BASE_URL.value}/EnvioViagensRetroativas?"
+    url = f"{smtr_constants.ZIRIX_BASE_URL.value}/EnvioViagensRetroativas?"
 
     headers = get_secret(secret_path)
     key = list(headers)[0]
@@ -132,9 +131,9 @@ def create_api_url_onibus_gps(timestamp: datetime = None) -> str:
     if not timestamp:
         timestamp = pendulum.now(smtr_constants.TIMEZONE.value).replace(second=0, microsecond=0)
 
-    headers = get_secret(constants.ZIRIX_API_SECRET_PATH.value)
+    headers = get_secret(smtr_constants.ZIRIX_API_SECRET_PATH.value)
     key = list(headers)[0]
-    url = f"{constants.ZIRIX_BASE_URL.value}/EnvioIplan?{key}={{secret}}"
+    url = f"{smtr_constants.ZIRIX_BASE_URL.value}/EnvioIplan?{key}={{secret}}"
 
     date_range = {
         "start": (timestamp - timedelta(minutes=6)).strftime("%Y-%m-%d+%H:%M:%S"),
