@@ -36,15 +36,15 @@ def get_last_capture_os(dataset_id: str, mode: str = "prod") -> dict:
         dict: The last captured OS.
 
     """
-    # redis_client = get_redis_client()
-    # fetch_key = f"{dataset_id}.last_captured_os"
-    # if mode != "prod":
-    #     fetch_key = f"{mode}.{fetch_key}"
+    redis_client = get_redis_client()
+    fetch_key = f"{dataset_id}.last_captured_os"
+    if mode != "prod":
+        fetch_key = f"{mode}.{fetch_key}"
 
-    # last_captured_os = redis_client.get(fetch_key)
+    last_captured_os = redis_client.get(fetch_key)
 
-    # log(f"Last captured os: {last_captured_os}")
-    last_captured_os = None
+    log(f"Last captured os: {last_captured_os}")
+
     return last_captured_os
 
 
