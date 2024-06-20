@@ -166,7 +166,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
         string_data_versao_gtfs = parse_timestamp_to_string(data_versao_gtfs)
         version = fetch_dataset_sha(dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value)
-        dbt_vars = get_join_dict([{"data_versao_gtfs", string_data_versao_gtfs}, version], {})
+        dbt_vars = get_join_dict([{"data_versao_gtfs": string_data_versao_gtfs}], version)[0]
 
         wait_run_dbt_model = run_dbt_model(
             dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value,
