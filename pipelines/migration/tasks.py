@@ -780,8 +780,8 @@ def create_request_params(
         if isinstance(data_recurso, str):
             data_recurso = datetime.fromisoformat(data_recurso)
         extract_params["token"] = get_secret(constants.SUBSIDIO_SPPO_RECURSO_API_SECRET_PATH.value)[
-            "data"
-        ]["token"]
+            "token"
+        ]
         start = datetime.strftime(
             data_recurso - timedelta(minutes=interval_minutes), "%Y-%m-%dT%H:%M:%S.%MZ"
         )
