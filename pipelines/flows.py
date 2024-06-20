@@ -12,6 +12,7 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.flows import *  # noqa
 from pipelines.migration.br_rj_riodejaneiro_onibus_gps.flows import *  # noqa
 from pipelines.migration.br_rj_riodejaneiro_onibus_gps_zirix.flows import *  # noqa
 from pipelines.migration.br_rj_riodejaneiro_rdo.flows import *  # noqa
+from pipelines.migration.br_rj_riodejaneiro_recursos.flows import *  # noqa
 from pipelines.migration.br_rj_riodejaneiro_stpl_gps.flows import *  # noqa
 from pipelines.migration.br_rj_riodejaneiro_stu.flows import *  # noqa
 from pipelines.migration.br_rj_riodejaneiro_viagem_zirix.flows import *  # noqa
