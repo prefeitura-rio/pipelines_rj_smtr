@@ -16,8 +16,8 @@ from pipelines.janitor.tasks import (
     query_active_flow_names,
     query_not_active_flows,
 )
+from pipelines.migration.tasks import get_flow_project
 from pipelines.schedules import every_5_minutes
-from pipelines.utils.backup.tasks import get_flow_project
 
 with Flow(
     "SMTR: Desagendamento de runs arquivadas",
