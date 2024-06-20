@@ -21,11 +21,11 @@ from pipelines.migration.br_rj_riodejaneiro_recursos.constants import constants
 from pipelines.migration.flows import default_capture_flow, default_materialization_flow
 from pipelines.migration.tasks import (
     get_current_flow_labels,
+    get_current_timestamp,
     rename_current_flow_run_now_time,
 )
 from pipelines.migration.utils import set_default_parameters
 from pipelines.schedules import every_day
-from pipelines.tasks import get_current_timestamp
 
 # EMD Imports #
 
