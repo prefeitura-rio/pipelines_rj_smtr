@@ -130,6 +130,7 @@ psycopg2-binary = "^2.9.9"
 redis-pal = "^1.0.0"
 sqlalchemy = "^2.0.25"
 google-cloud-dataplex = "^1.12.3"
+openpyxl = "^3.1.4"
 
 
 [tool.poetry.group.dev]
