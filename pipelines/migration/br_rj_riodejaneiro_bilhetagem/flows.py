@@ -40,8 +40,6 @@ from pipelines.schedules import (
 from pipelines.treatment.templates.tasks import run_data_quality_checks
 from pipelines.utils.dataplex import DataQualityCheckArgs
 
-# Flows #
-
 # BILHETAGEM TRANSAÇÃO - CAPTURA A CADA MINUTO #
 
 bilhetagem_transacao_captura = deepcopy(default_capture_flow)
