@@ -170,8 +170,8 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value,
             _vars={
                 "data_versao_gtfs": string_data_versao_gtfs,
-            }
-            | version,
+                **version,
+            },
         ).set_upstream(task=wait_upload_staging_data_to_gcs)
 
         update_last_captured_os(
