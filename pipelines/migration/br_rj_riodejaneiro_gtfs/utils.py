@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Utils for gtfs
+"""
 import io
 
 import openpyxl as xl
@@ -43,6 +46,16 @@ def filter_valid_rows(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def download_controle_os_csv(url):
+    """
+    Downloads a CSV file from the given URL and returns its content as a pandas DataFrame.
+
+    Args:
+        url (str): The URL of the CSV file to download.
+
+    Returns:
+        pandas.DataFrame: The content of the downloaded CSV file as a DataFrame.
+
+    """
 
     response = requests.get(url=url, timeout=constants.MAX_TIMEOUT_SECONDS.value)
     response.raise_for_status()  # Verifica se houve algum erro na requisição
@@ -55,12 +68,33 @@ def download_controle_os_csv(url):
 
 
 def convert_to_float(value):
+    """
+    Converts a string value to a float.
+
+    Args:
+        value (str): The string value to be converted.
+
+    Returns:
+        float: The converted float value.
+    """
     if "," in value:
         value = value.replace(".", "").replace(",", ".").strip()
     return float(value)
 
 
 def processa_OS(file_link: str, drive_service, local_filepath: list, raw_filepaths: list):
+    """
+    Process the OS data from an Excel file.
+
+    Args:
+        file_link (str): The link to the Excel file.
+        drive_service: The drive service object for downloading the file.
+        local_filepath (list): The list of local file paths.
+        raw_filepaths (list): The list of raw file paths.
+
+    Returns:
+        None
+    """
 
     file_bytes = download_xlsx(file_link=file_link, drive_service=drive_service)
 
@@ -84,6 +118,16 @@ def processa_OS(file_link: str, drive_service, local_filepath: list, raw_filepat
 
 
 def download_xlsx(file_link, drive_service):
+    """
+    Downloads an XLSX file from Google Drive.
+
+    Args:
+        file_link (str): The link to the file in Google Drive.
+        drive_service: The Google Drive service object.
+
+    Returns:
+        io.BytesIO: The downloaded XLSX file as a BytesIO object.
+    """
     file_id = file_link.split("/")[-2]
 
     file = drive_service.files().get(fileId=file_id).execute()  # pylint: disable=E1101
@@ -109,6 +153,22 @@ def download_xlsx(file_link, drive_service):
 
 
 def processa_ordem_servico(sheetnames, file_bytes, local_filepath, raw_filepaths):
+    """
+    Process the order of service data from multiple sheets in an Excel file.
+
+    Args:
+        sheetnames (list): List of sheet names in the Excel file.
+        file_bytes (bytes): Bytes of the Excel file.
+        local_filepath (str): Local file path.
+        raw_filepaths (list): List of raw file paths.
+
+    Returns:
+        None
+
+    Raises:
+        Exception: If there are missing or duplicated columns in the OS data.
+        Exception: If the validation of 'km_test' and 'km_dia_util' fails.
+    """
     # conta quantos sheets tem no arquivo sem o nome de Anexo II
     sheets_range = len(sheetnames) - len([x for x in sheetnames if "ANEXO II" in x])
     quadro_geral = pd.DataFrame()
@@ -227,6 +287,21 @@ def processa_ordem_servico(sheetnames, file_bytes, local_filepath, raw_filepaths
 def processa_ordem_servico_trajeto_alternativo(
     sheetnames, file_bytes, local_filepath, raw_filepaths
 ):
+    """
+    Process 'Trajetos Alternativos' from an Excel file.
+
+    Args:
+        sheetnames (list): List of sheet names in the Excel file.
+        file_bytes (bytes): Bytes of the Excel file.
+        local_filepath (str): Local file path.
+        raw_filepaths (list): List of raw file paths.
+
+    Returns:
+        None
+
+    Raises:
+        Exception: If there are missing or duplicated columns in 'Trajetos Alternativos'.
+    """
     # Pre-tratamento para "Trajeto Alternativo"
     sheet = -1
     log(f"########## {sheetnames[sheet]} ##########")
@@ -287,6 +362,16 @@ def processa_ordem_servico_trajeto_alternativo(
 
 
 def download_file(file_link, drive_service):
+    """
+    Downloads a file from Google Drive.
+
+    Args:
+        file_link (str): The link to the file in Google Drive.
+        drive_service: The Google Drive service object.
+
+    Returns:
+        io.BytesIO: The downloaded file as a BytesIO object.
+    """
     file_id = file_link.split("/")[-2]
 
     request = drive_service.files().get_media(fileId=file_id)  # pylint: disable=E1101
