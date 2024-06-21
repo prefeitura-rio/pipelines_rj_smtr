@@ -115,7 +115,7 @@ models:
           - not_null
       - name: id_empresa
         description: "Código identificador da empresa que opera o veículo"
-        tests:
+        # tests:
           # - not_null
       - name: timestamp_gps
         description: "Timestamp de emissão do sinal de GPS"
@@ -136,7 +136,7 @@ models:
           - not_null
       - name: servico_realizado
         description: "Outro serviço da empresa que o veículo pode estar operando"
-        tests:
+        # tests:
           # - not_null
       - name: shape_id
         description: "Código identificador do shape (trajeto) do serviço
@@ -190,7 +190,7 @@ models:
           - not_null
       - name: id_empresa
         description: "Código identificador da empresa que opera o veículo"
-        tests:
+        # tests:
           # - not_null
       - name: servico_informado
         description: "Serviço informado pelo GPS do veículo"
@@ -254,7 +254,7 @@ models:
           - not_null
       - name: id_empresa
         description: "Código identificador da empresa que opera o veículo"
-        tests:
+        # tests:
           # - not_null
       - name: servico_informado
         description: "Serviço informado pelo GPS do veículo"
@@ -263,7 +263,7 @@ models:
       - name: servico_realizado
         description: "Serviço realizado pelo veículo (com base na
         identificação do trajeto)"
-        tests:
+        # tests:
           # - not_null
       - name: shape_id
         description: "Código identificador do shape (trajeto) do serviço"
@@ -474,7 +474,7 @@ models:
           - not_null
       - name: id_empresa
         description: "Código identificador da empresa que opera o veículo"
-        tests:
+        # tests:
           # - not_null
       - name: servico_informado
         description: "Serviço informado pelo GPS do veículo"
@@ -618,7 +618,7 @@ models:
           - not_null
       - name: id_empresa
         description: "Código identificador da empresa que opera o veículo"
-        tests:
+        # tests:
           # - not_null
       - name: servico_informado
         description: "Serviço informado pelo GPS do veículo"
@@ -670,15 +670,15 @@ models:
               values: ["Completa linha correta", "Completa linha incorreta"]
       - name: inicio_periodo
         description: "Início do período de operação planejado"
-        tests:
+        # tests:
           # - not_null
       - name: fim_periodo
         description: "Fim do período de operação planejado"
-        tests:
+        # tests:
           # - not_null
       - name: tempo_planejado
         description: "Tempo planejado da viagem (em minutos)"
-        tests:
+        # tests:
           # - not_null
           # - greater_than_zero
       - name: tempo_viagem
@@ -730,7 +730,7 @@ models:
           - greater_than_zero
       - name: perc_conformidade_tempo
         description: "Razão do tempo aferido da viagem pelo planejado x 100"
-        tests:
+        # tests:
           # - not_null
           # - greater_than_zero
       - name: versao_modelo
