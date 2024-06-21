@@ -5,6 +5,7 @@
 ### Adicionado
 
 - Adiciona DocString nas funções de `utils.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/74)
+- Adicionado log da linha selecionada para captura na task `get_os_info` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/74)
 
 ## [1.0.1] - 2024-06-20
 
