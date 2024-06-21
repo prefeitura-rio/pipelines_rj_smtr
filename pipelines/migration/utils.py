@@ -1102,29 +1102,3 @@ def get_raw_recursos(request_url: str, request_params: dict) -> tuple[str, str, 
     log(f"Request concluído, tamanho dos dados: {len(data)}.")
 
     return error, data, filetype
-
-
-def build_table_id(mode: str, report_type: str):
-    """Build table_id based on which table is the target
-    of current flow run
-
-    Args:
-        mode (str): SPPO or STPL
-        report_type (str): RHO or RDO
-
-    Returns:
-        str: table_id
-    """
-    if mode == "SPPO":
-        if report_type == "RDO":
-            table_id = constants.SPPO_RDO_TABLE_ID.value
-        else:
-            table_id = constants.SPPO_RHO_TABLE_ID.value
-    if mode == "STPL":
-        # slice the string to get rid of V at end of
-        # STPL reports filenames
-        if report_type[:3] == "RDO":
-            table_id = constants.STPL_RDO_TABLE_ID.value
-        else:
-            table_id = constants.STPL_RHO_TABLE_ID.value
-    return table_id
