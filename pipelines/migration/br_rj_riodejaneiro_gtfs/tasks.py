@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Tasks for gtfs
+"""
 import os
 import zipfile
 from datetime import datetime
@@ -41,6 +44,8 @@ def get_last_capture_os(dataset_id: str, mode: str = "prod") -> dict:
         fetch_key = f"{mode}.{fetch_key}"
 
     last_captured_os = redis_client.get(fetch_key)
+    if last_captured_os is not None:
+        last_captured_os = last_captured_os["last_captured_os"]
 
     log(f"Last captured os: {last_captured_os}")
 
@@ -105,18 +110,6 @@ def get_os_info(last_captured_os: str) -> dict:
         # Filtra linhas onde 'Despacho' é maior que o último capturado
         df = df.loc[(df["data_index"] > last_captured_os)]
 
-    # Mantem apenas colunas necessarias
-    df = df[
-        [
-            "data_index",
-            "Início da Vigência da OS",
-            "Arquivo OS",
-            "Arquivo GTFS",
-            "Link da OS",
-            "Link do GTFS",
-        ]
-    ]
-
     log(f"Os info: {df.head()}")
     if len(df) >= 1:
         log("Nova OS encontrada!")
@@ -127,7 +120,7 @@ def get_os_info(last_captured_os: str) -> dict:
         data["Início da Vigência da OS"] = datetime.strptime(
             data["Início da Vigência da OS"], "%d/%m/%Y"
         ).strftime("%Y-%m-%d")
-
+        log(f"OS selecionada: {data}")
     return flag_new_os, data, data["data_index"], data["Início da Vigência da OS"]
 
 
