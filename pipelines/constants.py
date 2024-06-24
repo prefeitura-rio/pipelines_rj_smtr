@@ -121,25 +121,8 @@ class constants(Enum):  # pylint: disable=c0103
     SUBSIDIO_SPPO_RECURSO_API_BASE_URL = "https://api.movidesk.com/public/v1/tickets"
     SUBSIDIO_SPPO_RECURSO_API_SECRET_PATH = "sppo_subsidio_recursos_api"
 
-    DIRETORIO_MATERIALIZACAO_PARAMS = {
-        "dataset_id": "cadastro",
-        "upstream": True,
-    }
-
-    DIRETORIO_MATERIALIZACAO_TABLE_PARAMS = [
-        {"table_id": "diretorio_consorcios"},
-        {"table_id": "operadoras_contatos"},
-    ]
-
     # RDO/RHO
-    RDO_FTP_ALLOWED_PATHS = ["SPPO", "STPL"]
     RDO_FTPS_SECRET_PATH = "smtr_rdo_ftps"
-    RDO_DATASET_ID = "migracao_br_rj_riodejaneiro_rdo"
-    SPPO_RDO_TABLE_ID = "rdo_registros_sppo"
-    SPPO_RHO_TABLE_ID = "rho_registros_sppo"
-    STPL_RDO_TABLE_ID = "rdo_registros_stpl"
-    STPL_RHO_TABLE_ID = "rho_registros_stpl"
-    RDO_MATERIALIZE_START_DATE = "2022-12-07"
 
     # ROCK IN RIO
     RIR_DATASET_ID = "migracao_dashboards"

@@ -19,8 +19,8 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 )
 
 # SMTR Imports #
-from pipelines.constants import constants
-from pipelines.constants import constants as emd_constants
+from pipelines.constants import constants as smtr_constants
+from pipelines.migration.br_rj_riodejaneiro_diretorios.constants import constants
 
 # from pipelines.treatment.templates.flows import create_default_materialization_flow
 from pipelines.migration.flows import default_materialization_flow
@@ -38,10 +38,10 @@ from pipelines.migration.utils import set_default_parameters
 diretorios_materializacao_subflow = deepcopy(default_materialization_flow)
 diretorios_materializacao_subflow.name = "SMTR: Diretórios - Materialização (subflow)"
 
-diretorios_materializacao_subflow.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+diretorios_materializacao_subflow.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 diretorios_materializacao_subflow.run_config = KubernetesRun(
-    image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+    image=smtr_constants.DOCKER_IMAGE.value,
+    labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 diretorios_materializacao_subflow.state_handlers = [
     handler_initialize_sentry,
@@ -95,10 +95,10 @@ with Flow(
     )
 
 
-diretorios_materializacao.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+diretorios_materializacao.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 diretorios_materializacao.run_config = KubernetesRun(
-    image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+    image=smtr_constants.DOCKER_IMAGE.value,
+    labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 diretorios_materializacao.state_handlers = [
     handler_initialize_sentry,

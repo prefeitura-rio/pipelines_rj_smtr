@@ -39,6 +39,13 @@ class constants(Enum):  # pylint: disable=c0103
     Constant values for the br_rj_riodejaneiro_rdo project
     """
 
+    RDO_DATASET_ID = "br_rj_riodejaneiro_rdo"
+    SPPO_RDO_TABLE_ID = "rdo_registros_sppo"
+    SPPO_RHO_TABLE_ID = "rho_registros_sppo"
+    STPL_RDO_TABLE_ID = "rdo_registros_stpl"
+    STPL_RHO_TABLE_ID = "rho_registros_stpl"
+    RDO_MATERIALIZE_START_DATE = "2022-12-07"
+
     RDO_PRE_TREATMENT_CONFIG = {
         "SPPO": {
             "RDO": {
