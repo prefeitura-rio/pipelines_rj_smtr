@@ -19,11 +19,11 @@ from prefeitura_rio.pipelines_utils.logging import log
 
 # SMTR Imports #
 
-from pipelines.constants import constants
+from pipelines.constants import constants as smtr_constants
 from pipelines.migration.utils import log_critical, map_dict_keys
 
 
-from pipelines.migration.br_rj_riodejaneiro_brt_gps.constants import constants as gps_constants
+from pipelines.migration.br_rj_riodejaneiro_brt_gps.constants import constants
 
 # Tasks #
 
@@ -48,7 +48,7 @@ def pre_treatment_br_rj_riodejaneiro_brt_gps(status: dict, timestamp):
 
     error = None
     data = status["data"]["veiculos"]
-    timezone = constants.TIMEZONE.value
+    timezone = smtr_constants.TIMEZONE.value
     log(
         f"""
     Received inputs:
@@ -61,9 +61,7 @@ def pre_treatment_br_rj_riodejaneiro_brt_gps(status: dict, timestamp):
     df = pd.DataFrame(columns=columns)  # pylint: disable=c0103
 
     # map_dict_keys change data keys to match project data structure
-    df["content"] = [
-        map_dict_keys(piece, gps_constants.GPS_BRT_MAPPING_KEYS.value) for piece in data
-    ]
+    df["content"] = [map_dict_keys(piece, constants.GPS_BRT_MAPPING_KEYS.value) for piece in data]
     df[key_column] = [piece[key_column] for piece in data]
     df["timestamp_gps"] = [piece["timestamp_gps"] for piece in data]
     df["timestamp_captura"] = timestamp
