@@ -25,6 +25,7 @@ SELECT
     WHEN sentido = 'V' THEN 'Volta'
     ELSE sentido
   END AS sentido,
+  '{{ var("version") }}' AS versao
 FROM
   {{ ref("staging_viagem_informada") }}
 {% if is_incremental() %}

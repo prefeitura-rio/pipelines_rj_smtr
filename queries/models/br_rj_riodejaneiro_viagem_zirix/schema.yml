@@ -24,3 +24,5 @@ models:
         description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...)"
       - name: sentido
         description: "Ida ou Volta"
+      - name: versao
+        description: "Código de controle de versão do dado (SHA Github)"
