@@ -13,7 +13,7 @@ from datetime import date, datetime, timedelta
 from ftplib import FTP
 from functools import partial
 from pathlib import Path
-from typing import Any, List, Union
+from typing import Any, List, Optional, Union
 
 import basedosdados as bd
 import pandas as pd
@@ -28,6 +28,7 @@ from basedosdados.upload.datatypes import Datatype
 from google.api_core.exceptions import BadRequest
 from google.cloud import bigquery
 from google.cloud.storage.blob import Blob
+from prefect.engine.state import State
 from prefect.schedules.clocks import IntervalClock
 
 # from prefeitura_rio.pipelines_utils.infisical import get_secret
@@ -1102,3 +1103,71 @@ def get_raw_recursos(request_url: str, request_params: dict) -> tuple[str, str, 
     log(f"Request concluído, tamanho dos dados: {len(data)}.")
 
     return error, data, filetype
+
+
+def build_table_id(mode: str, report_type: str):
+    """Build table_id based on which table is the target
+    of current flow run
+
+    Args:
+        mode (str): SPPO or STPL
+        report_type (str): RHO or RDO
+
+    Returns:
+        str: table_id
+    """
+    if mode == "SPPO":
+        if report_type == "RDO":
+            table_id = constants.SPPO_RDO_TABLE_ID.value
+        else:
+            table_id = constants.SPPO_RHO_TABLE_ID.value
+    if mode == "STPL":
+        # slice the string to get rid of V at end of
+        # STPL reports filenames
+        if report_type[:3] == "RDO":
+            table_id = constants.STPL_RDO_TABLE_ID.value
+        else:
+            table_id = constants.STPL_RHO_TABLE_ID.value
+    return table_id
+
+
+def notify_discord_on_failure(
+    flow: prefect.Flow,
+    state: State,
+    secret_path: str,
+    code_owners: Optional[List[str]] = None,
+):
+    """
+    Notifies a Discord channel when a flow fails.
+    """
+    url = get_secret(secret_path)["url"]
+    flow_run_id = prefect.context.get("flow_run_id")
+    code_owners = code_owners or constants.DEFAULT_CODE_OWNERS.value
+    code_owner_dict = constants.OWNERS_DISCORD_MENTIONS.value
+    at_code_owners = []
+    for code_owner in code_owners:
+        code_owner_id = code_owner_dict[code_owner]["user_id"]
+        code_owner_type = code_owner_dict[code_owner]["type"]
+
+        if code_owner_type == "user":
+            at_code_owners.append(f"    - <@{code_owner_id}>\n")
+        elif code_owner_type == "user_nickname":
+            at_code_owners.append(f"    - <@!{code_owner_id}>\n")
+        elif code_owner_type == "channel":
+            at_code_owners.append(f"    - <#{code_owner_id}>\n")
+        elif code_owner_type == "role":
+            at_code_owners.append(f"    - <@&{code_owner_id}>\n")
+
+    message = (
+        f":man_facepalming: Flow **{flow.name}** has failed."
+        + f'\n  - State message: *"{state.message}"*'
+        + "\n  - Link to the failed flow: "
+        + f"https://prefect.dados.rio/flow-run/{flow_run_id}"
+        + "\n  - Extra attention:\n"
+        + "".join(at_code_owners)
+    )
+    send_discord_message(
+        message=message,
+        webhook_url=url,
+    )
+

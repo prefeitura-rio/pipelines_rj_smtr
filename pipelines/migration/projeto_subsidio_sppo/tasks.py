@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from prefect import task
 
 from pipelines.constants import constants as smtr_constants
+from pipelines.migration.projeto_subsidio_sppo.constants import constants
 from pipelines.migration.tasks import (  # perform_check,
     format_send_discord_message,
     perform_checks_for_table,
@@ -26,8 +27,7 @@ def check_param(param: str) -> bool:
 
 @task
 def subsidio_data_quality_check(
-    mode: str,
-    params: dict,  # code_owners: list = None, check_params: dict = None
+    mode: str, params: dict, code_owners: list = None, check_params: dict = None
 ) -> bool:
     """
     Verifica qualidade de dados para o processo de apuração de subsídio
@@ -45,11 +45,11 @@ def subsidio_data_quality_check(
     if mode not in ["pre", "pos"]:
         raise ValueError("Mode must be 'pre' or 'pos'")
 
-    # if check_params is None:
-    #     check_params = smtr_constants.SUBSIDIO_SPPO_DATA_CHECKS_PARAMS.value
+    if check_params is None:
+        check_params = constants.SUBSIDIO_SPPO_DATA_CHECKS_PARAMS.value
 
-    # if # code_owners is None:
-    #     # code_owners = smtr_constants.SUBSIDIO_SPPO_CODE_OWNERS.value
+    if code_owners is None:
+        code_owners = constants.SUBSIDIO_SPPO_CODE_OWNERS.value
 
     checks = dict()
 
@@ -62,12 +62,12 @@ def subsidio_data_quality_check(
 
     if mode == "pos":
         request_params["end_timestamp"] = f"""{params["end_date"]} 00:00:00"""
-        request_params["dataset_id"] = smtr_constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value
+        request_params["dataset_id"] = constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value
 
     checks_list = (
-        smtr_constants.SUBSIDIO_SPPO_DATA_CHECKS_PRE_LIST.value
+        constants.SUBSIDIO_SPPO_DATA_CHECKS_PRE_LIST.value
         if mode == "pre"
-        else smtr_constants.SUBSIDIO_SPPO_DATA_CHECKS_POS_LIST.value
+        else constants.SUBSIDIO_SPPO_DATA_CHECKS_POS_LIST.value
     )
 
     for (
@@ -75,9 +75,7 @@ def subsidio_data_quality_check(
         test_check_list,
     ) in checks_list.items():
         checks[table_id] = perform_checks_for_table(
-            table_id,
-            request_params,
-            test_check_list,  # check_params
+            table_id, request_params, test_check_list, check_params
         )
 
     log(checks)
@@ -88,7 +86,7 @@ def subsidio_data_quality_check(
         else f'{params["start_date"]} a {params["end_date"]}'
     )
 
-    webhook_url = get_secret(secret_path=smtr_constants.SUBSIDIO_SPPO_SECRET_PATH.value)[
+    webhook_url = get_secret(secret_path=constants.SUBSIDIO_SPPO_SECRET_PATH.value)[
         "discord_data_check_webhook"
     ]
 
@@ -134,19 +132,19 @@ def subsidio_data_quality_check(
             else ":warning: **Status:** Testes falharam. Necessidade de revisão dos dados finais!\n"
         )
 
-    # if not test_check:
-    #     at_# code_owners = [
-    #         f'    - <@{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
-    #         if constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "user"
-    #         else f'    - <@!{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
-    #         if constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "user_nickname"
-    #         else f'    - <#{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
-    #         if constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "channel"
-    #         else f'    - <@&{constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
-    #         for code_owner in # code_owners
-    #     ]
+    if not test_check:
+        at_code_owners = [
+            f'   - <@{smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
+            if smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "user"
+            else f'   - <@!{smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
+            if smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "user_nickname"
+            else f'   - <#{smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
+            if smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "channel"
+            else f'   - <@&{smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
+            for code_owner in code_owners
+        ]
 
-    #     formatted_messages.extend(at_# code_owners)
+        formatted_messages.extend(at_code_owners)
 
     format_send_discord_message(formatted_messages, webhook_url)
 
