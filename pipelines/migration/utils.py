@@ -1170,4 +1170,3 @@ def notify_discord_on_failure(
         message=message,
         webhook_url=url,
     )
-
