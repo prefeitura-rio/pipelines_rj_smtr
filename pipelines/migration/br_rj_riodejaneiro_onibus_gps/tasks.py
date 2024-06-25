@@ -3,6 +3,7 @@
 Tasks for br_rj_riodejaneiro_onibus_gps
 """
 
+import io
 import traceback
 from datetime import datetime, timedelta
 from typing import Dict, Union
@@ -320,3 +321,45 @@ def clean_br_rj_riodejaneiro_onibus_gps(date_range: dict) -> Union[str, None]:
         log(f"[CATCHED] Task failed with error: \n{error}", level="error")
 
     return error
+
+
+@task
+def create_source_path(
+    dataset_id: str, table_id: str, filename: str, partitions: str = None
+) -> str:
+    """
+    Create the source file path based on the given parameters.
+
+    Args:
+        project_name (str): The name of the project.
+        dataset_id (str): The ID of the dataset.
+        table_id (str): The ID of the table.
+        filename (str): The name of the file.
+        partitions (str, optional): The partitions for the file (default: None).
+
+    Returns:
+        str: The created source file path.
+    """
+    file_path = f"raw/{dataset_id}/{table_id}"
+    file_path += f"/{partitions}/{filename}."
+    log(f"Creating source path: {file_path}")
+    return file_path
+
+
+@task
+def get_raw_staging_data_gcs(source_path: str) -> str:
+    try:
+        bucket = bd.Storage(dataset_id="", table_id="")
+        log(f"Downloading data from {source_path}...")
+        blob_list = list(
+            bucket.client["storage_staging"].bucket(bucket.bucket_name).list_blobs(source_path)
+        )
+        blob = blob_list[0]
+        bytes_data = blob.download_as_bytes()
+        data = pd.read_csv(io.StringIO(bytes_data))
+        log(f"Data downloaded from {source_path}")
+    except Exception:
+        e = traceback.format_exc()
+        log(f"Error downloading data from {source_path}: {e}", level="error")
+        return {"data": None, "error": e}
+    return {"data": data, "error": None}
