@@ -216,7 +216,7 @@ models:
       +schema: veiculo
       staging:
         +materialized: view
-        +schema: veiculo_staging_dbt
+        +schema: veiculo_staging
     br_rj_riodejaneiro_rdo:
       +materialized: view
       +schema: br_rj_riodejaneiro_rdo
