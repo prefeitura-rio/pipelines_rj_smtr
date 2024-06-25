@@ -7,6 +7,13 @@
     )
 }}
 
+{%- if execute %}
+  {% set query = "SELECT DISTINCT COALESCE(feed_start_date, data_versao_trips, data_versao_shapes, data_versao_frequencies) FROM " ~ ref('subsidio_data_versao_efetiva') ~ " WHERE data BETWEEN DATE('" ~ var('start_date') ~ "') AND DATE('" ~ var("end_date") ~ "')"%}
+  {{- log(query, info=True) -}}
+  {% set feed_start_dates = run_query(query).columns[0].values() %}
+  {{- log(feed_start_dates, info=True) -}}
+{% endif -%}
+
 WITH
 -- 1. Viagens planejadas (agrupadas por data e serviço)
   planejado AS (
@@ -18,33 +25,39 @@ WITH
     distancia_total_planejada AS km_planejada,
   FROM
     {{ ref("viagem_planejada") }}
+    -- rj-smtr.projeto_subsidio_sppo.viagem_planejada
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE( "{{ var("end_date") }}" )
     AND ( distancia_total_planejada > 0
       OR distancia_total_planejada IS NULL )
+    AND (id_tipo_trajeto = 0
+      OR id_tipo_trajeto IS NULL)
   ),
   viagens_planejadas AS (
   SELECT
-    data_versao,
+    feed_start_date,
     servico,
     tipo_dia,
     viagens_planejadas,
     partidas_ida,
-    partidas_volta
+    partidas_volta,
+    tipo_os,
   FROM
       {{ ref("ordem_servico_gtfs") }}
+      -- rj-smtr.gtfs.ordem_servico
   WHERE
-    data_versao BETWEEN DATE_TRUNC(DATE("{{ var("start_date") }}"), MONTH)
-    AND DATE( "{{ var("end_date") }}" )
+    feed_start_date IN ('{{ feed_start_dates|join("', '") }}')
   ),
   data_versao_efetiva AS (
   SELECT
     data,
     tipo_dia,
-    COALESCE(data_versao_trips, data_versao_shapes, data_versao_frequencies) AS data_versao
+    tipo_os,
+    COALESCE(feed_start_date, data_versao_trips, data_versao_shapes, data_versao_frequencies) AS feed_start_date
   FROM
       {{ ref("subsidio_data_versao_efetiva") }}
+      -- rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva (alterar também query no bloco execute)
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE( "{{ var("end_date") }}" )
@@ -63,9 +76,11 @@ WITH
   LEFT JOIN
     viagens_planejadas AS v
   ON
-    d.data_versao = v.data_versao
+    d.feed_start_date = v.feed_start_date
     AND p.tipo_dia = v.tipo_dia
     AND p.servico = v.servico
+    AND (d.tipo_os = v.tipo_os
+      OR (d.tipo_os IS NULL AND v.tipo_os = "Regular"))
   ),
 -- 2. Viagens realizadas
   viagem AS (
@@ -77,6 +92,7 @@ WITH
     distancia_planejada
  FROM
     {{ ref("viagem_completa") }}
+    -- rj-smtr.projeto_subsidio_sppo.viagem_completa
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE( "{{ var("end_date") }}" ) ),
@@ -88,6 +104,7 @@ WITH
     status
   FROM
     {{ ref("sppo_veiculo_dia") }}
+    -- rj-smtr.veiculo.sppo_veiculo_dia
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}") ),
@@ -162,6 +179,15 @@ CASE
         AND perc_km_planejada > 200
         AND rn > viagens_planejadas_ida_volta*2
         THEN FALSE
+    WHEN data >= "2023-09-16"
+        AND (p.tipo_dia = "Dia Útil"
+          AND (viagens_planejadas IS NULL
+            OR perc_km_planejada IS NULL
+            OR rn IS NULL
+            OR viagens_planejadas_ida_volta IS NULL
+          )
+        )
+        THEN NULL
     ELSE
         TRUE
     END AS indicador_viagem_remunerada
