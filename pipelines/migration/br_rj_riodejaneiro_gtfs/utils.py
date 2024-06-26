@@ -108,8 +108,33 @@ def download_xlsx(file_link, drive_service):
     return file_bytes
 
 
-def processa_ordem_servico(sheetnames, file_bytes, local_filepath, raw_filepaths):
-    # conta quantos sheets tem no arquivo sem o nome de Anexo II
+def processa_ordem_servico(
+    sheetnames, file_bytes, local_filepath, raw_filepaths, regular_sheet_index=None
+):
+    """
+    Process the OS data from an Excel file.
+
+    Args:
+        sheetnames (list): List of sheet names in the Excel file.
+        file_bytes (bytes): The Excel file in bytes format.
+        local_filepath (str): The local file path where the processed data will be saved.
+        raw_filepaths (list): List of raw file paths.
+        regular_sheet_index (int, optional): The index of the regular sheet. Defaults to 0.
+
+    Raises:
+        Exception: If there are more than 2 tabs in the file or if there are missing or duplicated columns in the order of service data.
+        Exception: If the validation of 'km_test' and 'km_dia_util' fails.
+
+    Returns:
+        None
+    """
+
+    if len(sheetnames) != 2 and regular_sheet_index is None:
+        raise Exception("More than 2 tabs in the file. Please specify the regular sheet index.")
+
+    if regular_sheet_index is None:
+        regular_sheet_index = 0
+
     sheets_range = len(sheetnames) - len([x for x in sheetnames if "ANEXO II" in x])
     quadro_geral = pd.DataFrame()
 
@@ -178,7 +203,7 @@ def processa_ordem_servico(sheetnames, file_bytes, local_filepath, raw_filepaths
         quadro["extensao_ida"] = quadro["extensao_ida"] / 1000
         quadro["extensao_volta"] = quadro["extensao_volta"] / 1000
 
-        if i == 0:
+        if i == regular_sheet_index:
             quadro["tipo_os"] = "Regular"
 
         quadro_geral = pd.concat([quadro_geral, quadro])
@@ -227,6 +252,21 @@ def processa_ordem_servico(sheetnames, file_bytes, local_filepath, raw_filepaths
 def processa_ordem_servico_trajeto_alternativo(
     sheetnames, file_bytes, local_filepath, raw_filepaths
 ):
+    """
+    Process 'OS Trajeto Alternativo' from an Excel file.
+
+    Args:
+        sheetnames (list): List of sheet names in the Excel file.
+        file_bytes (bytes): Bytes of the Excel file.
+        local_filepath (str): Local file path.
+        raw_filepaths (list): List of raw file paths.
+
+    Raises:
+        Exception: Missing or duplicated columns in the DataFrame.
+
+    Returns:
+        None
+    """
     # Pre-tratamento para "Trajeto Alternativo"
     sheet = -1
     log(f"########## {sheetnames[sheet]} ##########")
@@ -287,6 +327,16 @@ def processa_ordem_servico_trajeto_alternativo(
 
 
 def download_file(file_link, drive_service):
+    """
+    Downloads a file from Google Drive.
+
+    Args:
+        file_link (str): The link to the file on Google Drive.
+        drive_service: The Google Drive service object.
+
+    Returns:
+        io.BytesIO: The downloaded file as a BytesIO object.
+    """
     file_id = file_link.split("/")[-2]
 
     request = drive_service.files().get_media(fileId=file_id)  # pylint: disable=E1101

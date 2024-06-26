@@ -96,16 +96,20 @@ from pipelines.tasks import get_scheduled_timestamp, parse_timestamp_to_string
 # )
 
 with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
-    capture = Parameter("capture", default=True)
-    materialize = Parameter("materialize", default=True)
+    regular_sheet_index = Parameter("regular_sheet_index", default=None)
+    data_versao_gtfs = Parameter("data_versao_gtfs", default=None)
 
     mode = get_current_flow_mode()
-    last_captured_os = get_last_capture_os(mode=mode, dataset_id=constants.GTFS_DATASET_ID.value)
+    last_captured_os = None
+    with case(data_versao_gtfs, None):
+        last_captured_os = get_last_capture_os(
+            mode=mode, dataset_id=constants.GTFS_DATASET_ID.value
+        )
 
     timestamp = get_scheduled_timestamp()
 
     flag_new_os, os_control, data_index, data_versao_gtfs = get_os_info(
-        last_captured_os=last_captured_os
+        last_captured_os=last_captured_os, data_versao_gtfs=data_versao_gtfs
     )
 
     with case(flag_new_os, True):
@@ -131,7 +135,9 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
         )
 
         raw_filepaths, primary_keys = get_raw_drive_files(
-            os_control=os_control, local_filepath=local_filepaths
+            os_control=os_control,
+            local_filepath=local_filepaths,
+            regular_sheet_index=regular_sheet_index,
         )
 
         transform_raw_to_nested_structure_results = transform_raw_to_nested_structure.map(
