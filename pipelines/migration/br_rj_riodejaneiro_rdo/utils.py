@@ -9,8 +9,8 @@ from prefect.schedules import Schedule
 from prefect.schedules.clocks import IntervalClock
 from pytz import timezone
 
-from pipelines.constants import constants
-from pipelines.constants import constants as emd_constants
+from pipelines.constants import constants as smtr_constants
+from pipelines.migration.br_rj_riodejaneiro_rdo.constants import constants
 
 
 def build_table_id(mode: str, report_type: str):
@@ -55,7 +55,7 @@ def merge_file_info_and_errors(files: list, errors: list):
 
 
 def generate_ftp_schedules(
-    interval_minutes: int, label: str = emd_constants.RJ_SMTR_AGENT_LABEL.value
+    interval_minutes: int, label: str = smtr_constants.RJ_SMTR_AGENT_LABEL.value
 ):
     """Generates IntervalClocks with the parameters needed to capture
     each report.
@@ -63,7 +63,7 @@ def generate_ftp_schedules(
     Args:
         interval_minutes (int): interval which this flow will be run.
         label (str, optional): Prefect label, defines which agent to use when launching flow run.
-        Defaults to emd_constants.RJ_SMTR_AGENT_LABEL.value.
+        Defaults to smtr_constants.RJ_SMTR_AGENT_LABEL.value.
 
     Returns:
         Schedule: Schedules for RDO/RHO data capture
@@ -77,7 +77,7 @@ def generate_ftp_schedules(
                 IntervalClock(
                     interval=timedelta(minutes=interval_minutes),
                     start_date=datetime(
-                        2022, 12, 16, 5, 0, tzinfo=timezone(constants.TIMEZONE.value)
+                        2022, 12, 16, 5, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
                     ),
                     parameter_defaults={
                         "transport_mode": mode,

@@ -15,10 +15,8 @@ from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
-from pipelines.constants import constants
-from pipelines.migration.br_rj_riodejaneiro_rdo.constants import (
-    constants as rdo_constants,
-)
+from pipelines.constants import constants as smtr_constants
+from pipelines.migration.br_rj_riodejaneiro_rdo.constants import constants
 from pipelines.migration.br_rj_riodejaneiro_rdo.utils import (
     build_table_id,
     merge_file_info_and_errors,
@@ -41,7 +39,7 @@ def get_file_paths_from_ftp(
     min_timestamp = datetime(2022, 1, 1).timestamp()  # set min timestamp for search
     # Connect to FTP & search files
     # try:
-    ftp_client = connect_ftp(constants.RDO_FTPS_SECRET_PATH.value)
+    ftp_client = connect_ftp(smtr_constants.RDO_FTPS_SECRET_PATH.value)
     files_updated_times = {
         file: datetime.timestamp(parser.parse(info["modify"]))
         for file, info in ftp_client.mlsd(transport_mode)
@@ -132,7 +130,7 @@ def download_and_save_local_from_ftp(file_info: dict, dataset_id: str = None, ta
     Path(file_info["raw_path"]).parent.mkdir(parents=True, exist_ok=True)
     try:
         # Get data from FTP - TODO: create get_raw() error alike
-        ftp_client = connect_ftp(constants.RDO_FTPS_SECRET_PATH.value)
+        ftp_client = connect_ftp(smtr_constants.RDO_FTPS_SECRET_PATH.value)
         if not Path(file_info["raw_path"]).is_file():
             with open(file_info["raw_path"], "wb") as raw_file:
                 ftp_client.retrbinary(
@@ -141,7 +139,7 @@ def download_and_save_local_from_ftp(file_info: dict, dataset_id: str = None, ta
                 )
         ftp_client.quit()
         # Get timestamp of download time
-        file_info["timestamp_captura"] = pendulum.now(constants.TIMEZONE.value).isoformat()
+        file_info["timestamp_captura"] = pendulum.now(smtr_constants.TIMEZONE.value).isoformat()
 
         log(f"Timestamp captura is {file_info['timestamp_captura']}")
         log(f"Update file info: {file_info}")
@@ -170,7 +168,7 @@ def pre_treatment_br_rj_riodejaneiro_rdo(
     for file_info in files:
         log(f"Processing file {files.index(file_info)}")
         try:
-            config = rdo_constants.RDO_PRE_TREATMENT_CONFIG.value[file_info["transport_mode"]][
+            config = constants.RDO_PRE_TREATMENT_CONFIG.value[file_info["transport_mode"]][
                 file_info["report_type"]
             ]
             # context.log.info(f"Config for ETL: {config}")
@@ -298,5 +296,5 @@ def get_rdo_date_range(dataset_id: str, table_id: str, mode: str = "prod"):
         last_run_date = constants.RDO_MATERIALIZE_START_DATE.value
     return {
         "date_range_start": last_run_date,
-        "date_range_end": pendulum.now(constants.TIMEZONE.value).date().isoformat(),
+        "date_range_end": pendulum.now(smtr_constants.TIMEZONE.value).date().isoformat(),
     }
