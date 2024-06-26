@@ -3,7 +3,7 @@
 Flows for br_rj_riodejaneiro_onibus_gps
 """
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 from prefect import Parameter, case, task
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
@@ -26,6 +26,7 @@ from pipelines.migration.br_rj_riodejaneiro_onibus_gps.tasks import (
     clean_br_rj_riodejaneiro_onibus_gps,
     create_api_url_onibus_gps,
     create_api_url_onibus_realocacao,
+    create_date_range,
     create_source_path,
     get_raw_staging_data_gcs,
     pre_treatment_br_rj_riodejaneiro_onibus_gps,
@@ -55,6 +56,7 @@ from pipelines.migration.tasks import (  # get_local_dbt_client,
     set_last_run_timestamp,
     upload_logs_to_bq,
 )
+from prefeitura_rio.pipelines_utils.logging import log
 from pipelines.schedules import every_10_minutes, every_hour_minute_six, every_minute
 
 # from pipelines.utils.execute_dbt_model.tasks import get_k8s_dbt_client
@@ -530,47 +532,46 @@ recaptura.state_handlers = [
 with Flow(
     "SMTR: GPS SPPO - Recaptura",
     # code_owners=["caio", "fernanda", "boris", "rodrigo"],
-) as captura_sppo_v2:
+) as recaptura_sppo_v2:
     version = Parameter("version", default=2)
-    start_date = Parameter("start_date", default=None)
-    end_date = Parameter("end_date", default=None)
+    start_date = Parameter("start_date", default="2024-05-05")
+    end_date = Parameter("end_date", default="2024-05-05")
 
     # SETUP #
     # timestamp = get_current_timestamp()
 
     # cria uma lista de timestamps a partir de start_date e end_date
-    start = get_rounded_timestamp(start_date)
-    end = get_rounded_timestamp(end_date)
+    start = get_current_timestamp(start_date)
+    end = get_current_timestamp(end_date)
 
-    date_range = [
-        start + timedelta(minutes=i)
-        for i in range(0, int(((end + timedelta(days=1)) - start).total_seconds() / 60))
-    ]
+    date_range = create_date_range(start, end)
 
-    string_date_range = parse_timestamp_to_string.map(date_range)
+    # string_date_range = parse_timestamp_to_string.map(date_range)
 
-    rename_flow_run = rename_current_flow_run_now_time(
-        prefix=captura_sppo_v2.name + ": {" + string_date_range + "}", now_time=timestamp
-    )
-    partitions = create_date_hour_partition.map(string_date_range)
-    filenames = parse_timestamp_to_string.map(string_date_range)
+    # rename_flow_run = rename_current_flow_run_now_time(
+    #     prefix=captura_sppo_v2.name + ": {" + string_date_range + "}", now_time=timestamp
+    # )
+    partitions = create_date_hour_partition.map(date_range)
+    filenames = parse_timestamp_to_string.map(date_range)
 
-    local_filepaths = create_local_partition_path(
+    local_filepaths = create_local_partition_path.map(
         dataset_id=unmapped(constants.GPS_SPPO_RAW_DATASET_ID.value),
         table_id=unmapped(constants.GPS_SPPO_RAW_TABLE_ID.value),
         filename=filenames,
         partitions=partitions,
     )
+    # task(lambda: log("partitions", partitions))()
+    # task(lambda: log("filenames", filenames))()
 
-    # gerar caminhos de arquivos do gcs
     source_paths = create_source_path.map(
-        table_id=constants.GPS_SPPO_RAW_TABLE_ID.value,
-        dataset_id=constants.GPS_SPPO_RAW_DATASET_ID.value,
+        table_id=unmapped(constants.GPS_SPPO_RAW_TABLE_ID.value),
+        dataset_id=unmapped(constants.GPS_SPPO_RAW_DATASET_ID.value),
         partitions=partitions,
         filename=filenames,
     )
 
     # EXTRACT #
+    ## CUIDADO ##
     raw_status = get_raw_staging_data_gcs.map(source_path=source_paths)
 
     # CLEAN #
@@ -578,7 +579,7 @@ with Flow(
         status=raw_status, timestamp=date_range, version=unmapped(version)
     )
 
-    treated_filepath = save_treated_local(status=treated_status, file_path=filepath)
+    treated_filepaths = save_treated_local.map(status=treated_status, file_path=local_filepaths)
 
     # LOAD #
     error = bq_upload(
@@ -589,17 +590,17 @@ with Flow(
         status=treated_status,
     )
 
-    # upload_logs_to_bq(
-    #     dataset_id=constants.GPS_SPPO_RAW_DATASET_ID.value,
-    #     parent_table_id=constants.GPS_SPPO_RAW_TABLE_ID.value,
-    #     error=error,
-    #     timestamp=timestamp,
-    # )
+    # # upload_logs_to_bq(
+    # #     dataset_id=constants.GPS_SPPO_RAW_DATASET_ID.value,
+    # #     parent_table_id=constants.GPS_SPPO_RAW_TABLE_ID.value,
+    # #     error=error,
+    # #     timestamp=timestamp,
+    # # )
 
-captura_sppo_v2.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
-captura_sppo_v2.run_config = KubernetesRun(
+recaptura_sppo_v2.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+recaptura_sppo_v2.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-captura_sppo_v2.schedule = every_minute
-captura_sppo_v2.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
+recaptura_sppo_v2.schedule = every_minute
+recaptura_sppo_v2.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]

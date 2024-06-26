@@ -347,19 +347,33 @@ def create_source_path(
 
 
 @task
-def get_raw_staging_data_gcs(source_path: str) -> str:
+def get_raw_staging_data_gcs(source_path: str) -> dict:
     try:
         bucket = bd.Storage(dataset_id="", table_id="")
         log(f"Downloading data from {source_path}...")
         blob_list = list(
-            bucket.client["storage_staging"].bucket(bucket.bucket_name).list_blobs(source_path)
+            bucket.client["storage_staging"]
+            .bucket(bucket.bucket_name)
+            .list_blobs(prefix=source_path)
         )
         blob = blob_list[0]
         bytes_data = blob.download_as_bytes()
-        data = pd.read_csv(io.StringIO(bytes_data))
-        log(f"Data downloaded from {source_path}")
+        data = pd.read_csv(io.BytesIO(bytes_data))
+        log(f"Data downloaded from {source_path}\n{data.head()}")
+        data = data.to_dict(orient="records")
     except Exception:
         e = traceback.format_exc()
         log(f"Error downloading data from {source_path}: {e}", level="error")
-        return {"data": None, "error": e}
+        return {"data": [], "error": e}
     return {"data": data, "error": None}
+
+
+@task
+def create_date_range(start: datetime, end: datetime) -> list:
+    date_range = [
+        start + timedelta(minutes=i)
+        for i in range(0, int(((end + timedelta(minutes=2)) - start).total_seconds() / 60))
+        # for i in range(0, int(((end + timedelta(days=1)) - start).total_seconds() / 60))
+    ]
+    log(f"Date range created: {date_range}")
+    return date_range
