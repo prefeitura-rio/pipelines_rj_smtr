@@ -602,5 +602,5 @@ recaptura_sppo_v2.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-recaptura_sppo_v2.schedule = every_minute
+# recaptura_sppo_v2.schedule = every_minute
 recaptura_sppo_v2.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
