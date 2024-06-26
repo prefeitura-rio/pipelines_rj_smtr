@@ -93,8 +93,4 @@ SELECT
   '{{ var("version") }}' AS versao,
   CURRENT_DATETIME("America/Sao_Paulo") as datetime_ultima_atualizacao
 FROM
-  {{ staging_viagem_informada }}
-{% if is_incremental() %}
-  WHERE
-    {{ incremental_filter }}
-{% endif %}
+  deduplicado
