@@ -100,11 +100,8 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
     data_versao_gtfs = Parameter("data_versao_gtfs", default=None)
 
     mode = get_current_flow_mode()
-    last_captured_os = None
-    with case(data_versao_gtfs, None):
-        last_captured_os = get_last_capture_os(
-            mode=mode, dataset_id=constants.GTFS_DATASET_ID.value
-        )
+
+    last_captured_os = get_last_capture_os(mode=mode, dataset_id=constants.GTFS_DATASET_ID.value)
 
     timestamp = get_scheduled_timestamp()
 
