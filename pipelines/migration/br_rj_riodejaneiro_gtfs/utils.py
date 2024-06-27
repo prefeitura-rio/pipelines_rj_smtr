@@ -152,6 +152,32 @@ def download_xlsx(file_link, drive_service):
     return file_bytes
 
 
+def normalizar_horario(horario):
+    """
+    Normalizes the given time string.
+
+    If the time string contains the word "day", it splits the string into days and time.
+    It converts the days, hours, minutes, and seconds into total hours and returns the normalized time string.
+
+    If the time string does not contain the word "day", it returns the time string as is.
+
+    Args:
+        horario (str): The time string to be normalized.
+
+    Returns:
+        str: The normalized time string.
+
+    """
+    if "day" in horario:
+        days, time = horario.split(", ")
+        days = int(days.split(" ")[0])
+        hours, minutes, seconds = map(int, time.split(":"))
+        total_hours = days * 24 + hours
+        return f"{total_hours:02}:{minutes:02}:{seconds:02}"
+    else:
+        return horario.split(" ")[1] if " " in horario else horario
+
+
 def processa_ordem_servico(
     sheetnames, file_bytes, local_filepath, raw_filepaths, regular_sheet_index=None
 ):
@@ -229,7 +255,7 @@ def processa_ordem_servico(
         quadro[hora_cols] = quadro[hora_cols].astype(str)
 
         for hora_col in hora_cols:
-            quadro[hora_col] = quadro[hora_col].apply(lambda x: x.split(" ")[1] if " " in x else x)
+            quadro[hora_col] = quadro[hora_col].apply(normalizar_horario)
 
         cols = [
             coluna
@@ -250,7 +276,7 @@ def processa_ordem_servico(
         if i == regular_sheet_index:
             quadro["tipo_os"] = "Regular"
 
-        quadro_geral = pd.concat([quadro_geral, quadro])
+            quadro_geral = pd.concat([quadro_geral, quadro])
 
     # Verificações
     columns_in_dataframe = set(quadro_geral.columns)
