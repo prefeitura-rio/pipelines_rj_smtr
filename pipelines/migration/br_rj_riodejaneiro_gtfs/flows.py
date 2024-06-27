@@ -8,6 +8,7 @@ from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
+from prefect.tasks.control_flow import merge
 
 # from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 from prefeitura_rio.pipelines_utils.state_handlers import (
@@ -101,8 +102,13 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
     mode = get_current_flow_mode()
 
-    last_captured_os = get_last_capture_os(mode=mode, dataset_id=constants.GTFS_DATASET_ID.value)
+    last_captured_os_none = None
+    with case(data_versao_gtfs, None):
+        last_captured_os_redis = get_last_capture_os(
+            mode=mode, dataset_id=constants.GTFS_DATASET_ID.value
+        )
 
+    last_captured_os = merge(last_captured_os_none, last_captured_os_redis)
     timestamp = get_scheduled_timestamp()
 
     flag_new_os, os_control, data_index, data_versao_gtfs = get_os_info(

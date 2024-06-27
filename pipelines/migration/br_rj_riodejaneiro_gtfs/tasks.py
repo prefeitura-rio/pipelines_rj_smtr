@@ -69,7 +69,11 @@ def update_last_captured_os(dataset_id: str, data_index: str, mode: str = "prod"
     fetch_key = f"{dataset_id}.last_captured_os"
     if mode != "prod":
         fetch_key = f"{mode}.{fetch_key}"
-
+    last_captured_os = redis_client.get(fetch_key)
+    # verifica se a ultima os capturada é maior que a nova
+    if last_captured_os is not None:
+        if last_captured_os["last_captured_os"] > data_index:
+            return
     redis_client.set(fetch_key, {"last_captured_os": data_index})
 
 
