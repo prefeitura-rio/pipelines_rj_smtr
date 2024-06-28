@@ -534,8 +534,8 @@ with Flow(
     # code_owners=["caio", "fernanda", "boris", "rodrigo"],
 ) as recaptura_sppo_v2:
     version = Parameter("version", default=2)
-    start_date = Parameter("start_date", default="2024-05-05")
-    end_date = Parameter("end_date", default="2024-05-05")
+    start_date = Parameter("start_date", default="2023-06-22")
+    end_date = Parameter("end_date", default="2023-06-22")
 
     # SETUP #
     # timestamp = get_current_timestamp()
@@ -560,8 +560,6 @@ with Flow(
         filename=filenames,
         partitions=partitions,
     )
-    # task(lambda: log("partitions", partitions))()
-    # task(lambda: log("filenames", filenames))()
 
     source_paths = create_source_path.map(
         table_id=unmapped(constants.GPS_SPPO_RAW_TABLE_ID.value),
@@ -571,7 +569,7 @@ with Flow(
     )
 
     # EXTRACT #
-    ## CUIDADO ##
+    ## buscando de staging ##
     raw_status = get_raw_staging_data_gcs.map(source_path=source_paths)
 
     # CLEAN #
@@ -582,10 +580,11 @@ with Flow(
     treated_filepaths = save_treated_local.map(status=treated_status, file_path=local_filepaths)
 
     # LOAD #
-    error = bq_upload(
-        dataset_id=constants.GPS_SPPO_RAW_DATASET_ID.value,
-        table_id=constants.GPS_SPPO_RAW_TABLE_ID.value,
-        filepath=treated_filepath,
+    # salvando em dev ##
+    error = bq_upload.map(
+        dataset_id=unmapped(constants.GPS_SPPO_RAW_DATASET_ID.value),
+        table_id=unmapped(constants.GPS_SPPO_RAW_TABLE_ID.value),
+        filepath=treated_filepaths,
         partitions=partitions,
         status=treated_status,
     )

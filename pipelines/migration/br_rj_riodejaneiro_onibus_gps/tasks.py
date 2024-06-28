@@ -4,6 +4,7 @@ Tasks for br_rj_riodejaneiro_onibus_gps
 """
 
 import io
+import json
 import traceback
 from datetime import datetime, timedelta
 from typing import Dict, Union
@@ -349,16 +350,14 @@ def create_source_path(
 @task
 def get_raw_staging_data_gcs(source_path: str) -> dict:
     try:
-        bucket = bd.Storage(dataset_id="", table_id="")
+        bucket = bd.Storage(dataset_id="", table_id="", bucket_name="rj-smtr-staging")
         log(f"Downloading data from {source_path}...")
-        blob_list = list(
-            bucket.client["storage_staging"]
-            .bucket(bucket.bucket_name)
-            .list_blobs(prefix=source_path)
-        )
-        blob = blob_list[0]
+
+        blob = bucket.bucket.get_blob(blob_name=f"{source_path}json")
         bytes_data = blob.download_as_bytes()
-        data = pd.read_csv(io.BytesIO(bytes_data))
+        json_data = json.loads(io.BytesIO(bytes_data).read().decode("utf-8"))
+        data = pd.DataFrame(json_data)
+
         log(f"Data downloaded from {source_path}\n{data.head()}")
         data = data.to_dict(orient="records")
     except Exception:
@@ -372,8 +371,8 @@ def get_raw_staging_data_gcs(source_path: str) -> dict:
 def create_date_range(start: datetime, end: datetime) -> list:
     date_range = [
         start + timedelta(minutes=i)
-        for i in range(0, int(((end + timedelta(minutes=2)) - start).total_seconds() / 60))
-        # for i in range(0, int(((end + timedelta(days=1)) - start).total_seconds() / 60))
+        # for i in range(0, int(((end + timedelta(minutes=2)) - start).total_seconds() / 60))
+        for i in range(0, int(((end + timedelta(days=1)) - start).total_seconds() / 60))
     ]
     log(f"Date range created: {date_range}")
     return date_range
