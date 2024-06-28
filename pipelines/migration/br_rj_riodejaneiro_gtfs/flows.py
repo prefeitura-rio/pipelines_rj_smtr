@@ -177,7 +177,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 error=errors,
             )
     with case(capture, False):
-        wait_captura_false = task(lambda: [None, None, None], name="assign_none_to_capture_runs")()
+        wait_captura_false = task(lambda: [None], name="assign_none_to_capture_runs")()
 
     wait_captura = merge(wait_captura_true, wait_captura_false)
 
@@ -193,16 +193,21 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             _vars=dbt_vars,
         ).set_upstream(task=wait_captura)
 
-        update_last_captured_os(
+        wait_materialize_true = update_last_captured_os(
             dataset_id=constants.GTFS_DATASET_ID.value,
             data_index=data_index,
             mode=mode,
         ).set_upstream(task=wait_run_dbt_model)
 
+    with case(materialize, False):
+        wait_materialize_false = task(lambda: [None], name="assign_none_to_materialize_runs")()
+
+    wait_materialize = merge(wait_materialize_true, wait_materialize_false)
+
     with case(flag_new_os, False):
         rename_current_flow_run_now_time(
             prefix=gtfs_captura_nova.name + " [SKIPPED] ", now_time=timestamp
-        )
+        ).set_upstream(task=wait_materialize)
 
 
 gtfs_captura_nova.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
