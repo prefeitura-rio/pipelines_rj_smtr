@@ -370,7 +370,7 @@ X-1vRvFcyr9skfBIrjxc4FSJZ3-g4gUCF56YjGPOmd1f5qH8vndpy22P6f6KdcYgWaqzUmtSBL\
                     timestamp_gps) AS hora,
                     COUNT(*) AS q_gps_raw
                 FROM
-                    `rj-smtr.br_rj_riodejaneiro_onibus_gps.registros`
+                    `rj-smtr.br_rj_riodejaneiro_onibus_gps.sppo_registros`
                 WHERE
                     DATA BETWEEN DATE("{start_timestamp}")
                     AND DATE("{end_timestamp}")
