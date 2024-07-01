@@ -11,7 +11,6 @@ from pytz import timezone
 
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
-from pipelines.utils.backup.utils import generate_ftp_schedules
 
 
 def generate_interval_schedule(
@@ -102,6 +101,18 @@ every_hour_minute_six = Schedule(
     ]
 )
 
+every_hour_minute_thirty = Schedule(
+    clocks=[
+        IntervalClock(
+            interval=timedelta(hours=1),
+            start_date=datetime(2021, 1, 1, 0, 30, 0, tzinfo=timezone(constants.TIMEZONE.value)),
+            labels=[
+                emd_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        ),
+    ]
+)
+
 every_day = Schedule(
     clocks=[
         IntervalClock(
@@ -114,10 +125,7 @@ every_day = Schedule(
     ]
 )
 
-ftp_clocks = generate_ftp_schedules(
-    interval_minutes=60, label=emd_constants.RJ_SMTR_DEV_AGENT_LABEL
-)
-ftp_schedule = Schedule(ftp_clocks)
+
 every_day_hour_five = Schedule(
     clocks=[
         IntervalClock(
