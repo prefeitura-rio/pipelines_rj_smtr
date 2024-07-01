@@ -10,7 +10,7 @@ from pipelines.constants import constants as smtr_constants
 
 class constants(Enum):  # pylint: disable=c0103
     """
-    Constant values for rj_smtr br_rj_riodejaneiro_stu
+    Constant values for rj_smtr  br_rj_riodejaneiro_stu
     """
 
     STU_GENERAL_CAPTURE_PARAMS = {
