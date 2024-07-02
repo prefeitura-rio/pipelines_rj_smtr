@@ -330,3 +330,5 @@ models:
       - name: hora
         description: "Hora do 'timestamp_captura'"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
+  - name: gps_sppo_zirix
+    description: "Tabela com os dados tratados de registros de GPS dos ônibus capturados utilizando a API da Zirix."
