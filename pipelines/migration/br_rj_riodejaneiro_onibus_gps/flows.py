@@ -260,9 +260,10 @@ with Flow(
     # code_owners=["caio", "fernanda", "boris", "rodrigo"],
 ) as captura_sppo_v2:
     version = Parameter("version", default=2)
+    timestamp = Parameter("timestamp", default=None)
 
     # SETUP #
-    timestamp = get_current_timestamp()
+    timestamp = get_current_timestamp(timestamp)
 
     rename_flow_run = rename_current_flow_run_now_time(
         prefix=captura_sppo_v2.name + ": ", now_time=timestamp
@@ -538,7 +539,8 @@ with Flow(
     end_date = Parameter("end_date", default="2023-06-22")
 
     # SETUP #
-    # timestamp = get_current_timestamp()
+    PROJECT = get_flow_project()
+    LABELS = get_current_flow_labels()
 
     # cria uma lista de timestamps a partir de start_date e end_date
     start = get_current_timestamp(start_date)
@@ -546,48 +548,57 @@ with Flow(
 
     date_range = create_date_range(start, end)
 
-    # string_date_range = parse_timestamp_to_string.map(date_range)
+    string_date_range = parse_timestamp_to_string.map(date_range)
 
     # rename_flow_run = rename_current_flow_run_now_time(
     #     prefix=captura_sppo_v2.name + ": {" + string_date_range + "}", now_time=timestamp
     # )
-    partitions = create_date_hour_partition.map(date_range)
-    filenames = parse_timestamp_to_string.map(date_range)
+    # partitions = create_date_hour_partition.map(date_range)
+    # filenames = parse_timestamp_to_string.map(date_range)
 
-    local_filepaths = create_local_partition_path.map(
-        dataset_id=unmapped(constants.GPS_SPPO_RAW_DATASET_ID.value),
-        table_id=unmapped(constants.GPS_SPPO_RAW_TABLE_ID.value),
-        filename=filenames,
-        partitions=partitions,
-    )
+    # local_filepaths = create_local_partition_path.map(
+    #     dataset_id=unmapped(constants.GPS_SPPO_RAW_DATASET_ID.value),
+    #     table_id=unmapped(constants.GPS_SPPO_RAW_TABLE_ID.value),
+    #     filename=filenames,
+    #     partitions=partitions,
+    # )
 
-    source_paths = create_source_path.map(
-        table_id=unmapped(constants.GPS_SPPO_RAW_TABLE_ID.value),
-        dataset_id=unmapped(constants.GPS_SPPO_RAW_DATASET_ID.value),
-        partitions=partitions,
-        filename=filenames,
-    )
+    # source_paths = create_source_path.map(
+    #     table_id=unmapped(constants.GPS_SPPO_RAW_TABLE_ID.value),
+    #     dataset_id=unmapped(constants.GPS_SPPO_RAW_DATASET_ID.value),
+    #     partitions=partitions,
+    #     filename=filenames,
+    # )
 
     # EXTRACT #
     ## buscando de staging ##
-    raw_status = get_raw_staging_data_gcs.map(source_path=source_paths)
+    # raw_status = get_raw_staging_data_gcs.map(source_path=source_paths)
 
-    # CLEAN #
-    treated_status = pre_treatment_br_rj_riodejaneiro_onibus_gps.map(
-        status=raw_status, timestamp=date_range, version=unmapped(version)
+    # recaptura da api
+    run_captura_sppo_v2 = create_flow_run.map(
+        flow_name=captura_sppo_v2.name,
+        project_name=PROJECT,
+        labels=LABELS,
+        run_name=captura_sppo_v2.name,
+        parameters={"timestamp": string_date_range},
     )
 
-    treated_filepaths = save_treated_local.map(status=treated_status, file_path=local_filepaths)
+    # # CLEAN #
+    # treated_status = pre_treatment_br_rj_riodejaneiro_onibus_gps.map(
+    #     status=raw_status, timestamp=date_range, version=unmapped(version)
+    # )
 
-    # LOAD #
-    # salvando em dev ##
-    error = bq_upload.map(
-        dataset_id=unmapped(constants.GPS_SPPO_RAW_DATASET_ID.value),
-        table_id=unmapped(constants.GPS_SPPO_RAW_TABLE_ID.value),
-        filepath=treated_filepaths,
-        partitions=partitions,
-        status=treated_status,
-    )
+    # treated_filepaths = save_treated_local.map(status=treated_status, file_path=local_filepaths)
+
+    # # LOAD #
+    # # salvando em dev ##
+    # error = bq_upload.map(
+    #     dataset_id=unmapped(constants.GPS_SPPO_RAW_DATASET_ID.value),
+    #     table_id=unmapped(constants.GPS_SPPO_RAW_TABLE_ID.value),
+    #     filepath=treated_filepaths,
+    #     partitions=partitions,
+    #     status=treated_status,
+    # )
 
     # # upload_logs_to_bq(
     # #     dataset_id=constants.GPS_SPPO_RAW_DATASET_ID.value,
