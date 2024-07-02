@@ -3,6 +3,8 @@
 Tasks for br_rj_riodejaneiro_onibus_gps
 """
 
+import io
+import json
 import traceback
 from datetime import datetime, timedelta
 from typing import Dict, Union
@@ -320,3 +322,57 @@ def clean_br_rj_riodejaneiro_onibus_gps(date_range: dict) -> Union[str, None]:
         log(f"[CATCHED] Task failed with error: \n{error}", level="error")
 
     return error
+
+
+@task
+def create_source_path(
+    dataset_id: str, table_id: str, filename: str, partitions: str = None
+) -> str:
+    """
+    Create the source file path based on the given parameters.
+
+    Args:
+        project_name (str): The name of the project.
+        dataset_id (str): The ID of the dataset.
+        table_id (str): The ID of the table.
+        filename (str): The name of the file.
+        partitions (str, optional): The partitions for the file (default: None).
+
+    Returns:
+        str: The created source file path.
+    """
+    file_path = f"raw/{dataset_id}/{table_id}"
+    file_path += f"/{partitions}/{filename}."
+    log(f"Creating source path: {file_path}")
+    return file_path
+
+
+@task
+def get_raw_staging_data_gcs(source_path: str) -> dict:
+    try:
+        bucket = bd.Storage(dataset_id="", table_id="", bucket_name="rj-smtr-staging")
+        log(f"Downloading data from {source_path}...")
+
+        blob = bucket.bucket.get_blob(blob_name=f"{source_path}json")
+        bytes_data = blob.download_as_bytes()
+        json_data = json.loads(io.BytesIO(bytes_data).read().decode("utf-8"))
+        data = pd.DataFrame(json_data)
+
+        log(f"Data downloaded from {source_path}\n{data.head()}")
+        data = data.to_dict(orient="records")
+    except Exception:
+        e = traceback.format_exc()
+        log(f"Error downloading data from {source_path}: {e}", level="error")
+        return {"data": [], "error": e}
+    return {"data": data, "error": None}
+
+
+@task
+def create_date_range(start: datetime, end: datetime) -> list:
+    date_range = [
+        start + timedelta(minutes=i)
+        for i in range(0, int((end - start).total_seconds() / 60))
+        # for i in range(0, int(((end + timedelta(days=1)) - start).total_seconds() / 60))
+    ]
+    log(f"Date range created: {date_range}")
+    return date_range
