@@ -113,13 +113,15 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
         )
 
     last_captured_os = merge(last_captured_os_none, last_captured_os_redis)
-    timestamp = get_scheduled_timestamp()
-
-    flag_new_os, os_control, data_index, data_versao_gtfs = get_os_info(
-        last_captured_os=last_captured_os, data_versao_gtfs=data_versao_gtfs
-    )
 
     with case(capture, True):
+
+        timestamp = get_scheduled_timestamp()
+
+        flag_new_os, os_control, data_index, data_versao_gtfs = get_os_info(
+            last_captured_os=last_captured_os, data_versao_gtfs=data_versao_gtfs
+        )
+
         with case(flag_new_os, True):
             rename_current_flow_run_now_time(
                 prefix=gtfs_captura_nova.name + ' ["' + data_versao_gtfs + '"] ', now_time=timestamp
@@ -178,10 +180,8 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 timestamp=unmapped(data_versao_gtfs),
                 error=errors,
             )
-    with case(capture, False):
-        wait_captura_false = task(lambda: [None], name="assign_none_to_capture_runs")()
 
-    wait_captura = merge(wait_captura_true, wait_captura_false)
+    wait_captura = merge(wait_captura_true, None)
 
     with case(materialize, True):
         string_data_versao_gtfs = parse_timestamp_to_string(
@@ -201,10 +201,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             mode=mode,
         ).set_upstream(task=wait_run_dbt_model)
 
-    with case(materialize, False):
-        wait_materialize_false = task(lambda: [None], name="assign_none_to_materialize_runs")()
-
-    wait_materialize = merge(wait_materialize_true, wait_materialize_false)
+    wait_materialize = merge(wait_materialize_true, None)
 
     with case(flag_new_os, False):
         rename_current_flow_run_now_time(
