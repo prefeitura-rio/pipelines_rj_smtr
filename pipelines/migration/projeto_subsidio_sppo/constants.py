@@ -119,7 +119,7 @@ class constants(Enum):  # pylint: disable=c0103
                     timestamp_gps) AS hora,
                     COUNT(*) AS q_gps_raw
                 FROM
-                    `rj-smtr.br_rj_riodejaneiro_onibus_gps.registros`
+                    `rj-smtr.br_rj_riodejaneiro_onibus_gps.sppo_registros`
                 WHERE
                     DATA BETWEEN DATE("{start_timestamp}")
                     AND DATE("{end_timestamp}")
