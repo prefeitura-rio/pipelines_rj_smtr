@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.0.3] - 2024-06-26
+
+### Adicionado
+
+- Adiciona parametros para a captura manual do gtfs no flow `SMTR: GTFS - Captura/Tratamento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/82/)
+
 ## [1.0.2] - 2024-06-21
 
 ### Adicionado

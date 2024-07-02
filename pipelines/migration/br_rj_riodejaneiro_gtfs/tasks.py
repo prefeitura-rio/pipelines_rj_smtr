@@ -69,12 +69,16 @@ def update_last_captured_os(dataset_id: str, data_index: str, mode: str = "prod"
     fetch_key = f"{dataset_id}.last_captured_os"
     if mode != "prod":
         fetch_key = f"{mode}.{fetch_key}"
-
+    last_captured_os = redis_client.get(fetch_key)
+    # verifica se a ultima os capturada é maior que a nova
+    if last_captured_os is not None:
+        if last_captured_os["last_captured_os"] > data_index:
+            return
     redis_client.set(fetch_key, {"last_captured_os": data_index})
 
 
 @task(nout=4)
-def get_os_info(last_captured_os: str) -> dict:
+def get_os_info(last_captured_os: str, data_versao_gtfs: str = None) -> dict:
     """
     Retrieves information about the OS.
 
@@ -103,9 +107,14 @@ def get_os_info(last_captured_os: str) -> dict:
 
     # Ordena por despacho
     df = df.sort_values(by=["data_index"], ascending=True)
-    if last_captured_os is None:
+    if data_versao_gtfs is not None:
+        data_versao_gtfs = datetime.strptime(data_versao_gtfs, "%Y-%m-%d").strftime("%d/%m/%Y")
+        df = df.loc[(df["Início da Vigência da OS"] == data_versao_gtfs)]
+
+    elif last_captured_os is None:
         last_captured_os = df["data_index"].max()
         df = df.loc[(df["data_index"] == last_captured_os)]
+
     else:
         # Filtra linhas onde 'Despacho' é maior que o último capturado
         df = df.loc[(df["data_index"] > last_captured_os)]
@@ -125,7 +134,7 @@ def get_os_info(last_captured_os: str) -> dict:
 
 
 @task(nout=2)
-def get_raw_drive_files(os_control, local_filepath: list):
+def get_raw_drive_files(os_control, local_filepath: list, regular_sheet_index: int = None):
     """
     Downloads raw files from Google Drive and processes them.
 
@@ -171,6 +180,7 @@ def get_raw_drive_files(os_control, local_filepath: list):
                     file_bytes=file_bytes_os,
                     local_filepath=local_filepath,
                     raw_filepaths=raw_filepaths,
+                    regular_sheet_index=regular_sheet_index,
                 )
             elif filename == "ordem_servico_trajeto_alternativo":
 

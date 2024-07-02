@@ -152,24 +152,59 @@ def download_xlsx(file_link, drive_service):
     return file_bytes
 
 
-def processa_ordem_servico(sheetnames, file_bytes, local_filepath, raw_filepaths):
+def normalizar_horario(horario):
     """
-    Process the order of service data from multiple sheets in an Excel file.
+    Normalizes the given time string.
+
+    If the time string contains the word "day", it splits the string into days and time.
+    It converts the days, hours, minutes, and seconds into total hours and returns the normalized time string.
+
+    If the time string does not contain the word "day", it returns the time string as is.
+
+    Args:
+        horario (str): The time string to be normalized.
+
+    Returns:
+        str: The normalized time string.
+
+    """
+    if "day" in horario:
+        days, time = horario.split(", ")
+        days = int(days.split(" ")[0])
+        hours, minutes, seconds = map(int, time.split(":"))
+        total_hours = days * 24 + hours
+        return f"{total_hours:02}:{minutes:02}:{seconds:02}"
+    else:
+        return horario.split(" ")[1] if " " in horario else horario
+
+
+def processa_ordem_servico(
+    sheetnames, file_bytes, local_filepath, raw_filepaths, regular_sheet_index=None
+):
+    """
+    Process the OS data from an Excel file.
 
     Args:
         sheetnames (list): List of sheet names in the Excel file.
-        file_bytes (bytes): Bytes of the Excel file.
-        local_filepath (str): Local file path.
+        file_bytes (bytes): The Excel file in bytes format.
+        local_filepath (str): The local file path where the processed data will be saved.
         raw_filepaths (list): List of raw file paths.
+        regular_sheet_index (int, optional): The index of the regular sheet. Defaults to 0.
+
+    Raises:
+        Exception: If there are more than 2 tabs in the file or if there are missing or duplicated columns in the order of service data.
+        Exception: If the validation of 'km_test' and 'km_dia_util' fails.
 
     Returns:
         None
-
-    Raises:
-        Exception: If there are missing or duplicated columns in the OS data.
-        Exception: If the validation of 'km_test' and 'km_dia_util' fails.
     """
-    # conta quantos sheets tem no arquivo sem o nome de Anexo II
+
+    if len(sheetnames) != 2 and regular_sheet_index is None:
+        raise Exception("More than 2 tabs in the file. Please specify the regular sheet index.")
+
+    if regular_sheet_index is None:
+        regular_sheet_index = 0
+
     sheets_range = len(sheetnames) - len([x for x in sheetnames if "ANEXO II" in x])
     quadro_geral = pd.DataFrame()
 
@@ -220,7 +255,7 @@ def processa_ordem_servico(sheetnames, file_bytes, local_filepath, raw_filepaths
         quadro[hora_cols] = quadro[hora_cols].astype(str)
 
         for hora_col in hora_cols:
-            quadro[hora_col] = quadro[hora_col].apply(lambda x: x.split(" ")[1] if " " in x else x)
+            quadro[hora_col] = quadro[hora_col].apply(normalizar_horario)
 
         cols = [
             coluna
@@ -238,10 +273,10 @@ def processa_ordem_servico(sheetnames, file_bytes, local_filepath, raw_filepaths
         quadro["extensao_ida"] = quadro["extensao_ida"] / 1000
         quadro["extensao_volta"] = quadro["extensao_volta"] / 1000
 
-        if i == 0:
+        if i == regular_sheet_index:
             quadro["tipo_os"] = "Regular"
 
-        quadro_geral = pd.concat([quadro_geral, quadro])
+            quadro_geral = pd.concat([quadro_geral, quadro])
 
     # Verificações
     columns_in_dataframe = set(quadro_geral.columns)
