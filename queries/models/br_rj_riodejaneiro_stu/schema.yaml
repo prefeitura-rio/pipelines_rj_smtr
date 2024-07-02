@@ -1,0 +1,7 @@
+version: 2
+
+models:
+  - name: staging_operadora_empresa
+    description: "View para os dados capturados em staging com tratamento básico das empresas operadoras."
+  - name: staging_operadora_pessoa_fisica
+    description: "View para os dados capturados em staging com tratamento básico dos operadores pessoa física."
