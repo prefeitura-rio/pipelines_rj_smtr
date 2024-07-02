@@ -4,6 +4,7 @@ Flows for br_rj_riodejaneiro_onibus_gps
 """
 
 from datetime import datetime, timedelta
+
 from prefect import Parameter, case, task
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
@@ -11,6 +12,7 @@ from prefect.tasks.control_flow import merge
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
+from prefeitura_rio.pipelines_utils.logging import log
 
 # SMTR Imports #
 # from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
@@ -56,7 +58,6 @@ from pipelines.migration.tasks import (  # get_local_dbt_client,
     set_last_run_timestamp,
     upload_logs_to_bq,
 )
-from prefeitura_rio.pipelines_utils.logging import log
 from pipelines.schedules import every_10_minutes, every_hour_minute_six, every_minute
 
 # from pipelines.utils.execute_dbt_model.tasks import get_k8s_dbt_client
