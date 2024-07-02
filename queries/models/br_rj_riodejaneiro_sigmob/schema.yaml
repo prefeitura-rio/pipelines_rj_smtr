@@ -65,9 +65,9 @@ models:
   #         - not_null:
   #             partition_column: data
   - name: routes
-    description: "View para os dados capturados em staging do cadastro dos serviços.
+    description: "View para os dados capturados em staging do cadastro dos serviços."
   - name: routes_desaninhada
-    description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro dos serviços (routes).
+    description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro dos serviços (routes)."
     columns:
       - name: route_id
         tests:
@@ -77,9 +77,9 @@ models:
               partition_column: data_versao
               combined_keys: ""
   - name: trips
-    description: "View para os dados capturados em staging do cadastro dos itinerários.
+    description: "View para os dados capturados em staging do cadastro dos itinerários."
   - name: trips_desaninhada
-    description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro dos itinerários (trips).
+    description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro dos itinerários (trips)."
     columns:
       - name: trip_id
         description: "Identificador único para um itinerário"
