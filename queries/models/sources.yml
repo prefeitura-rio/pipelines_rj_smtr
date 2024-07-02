@@ -93,7 +93,7 @@ sources:
     database: rj-smtr
 
     tables:
-      - name: subsidio_parametros_atualizada
+      - name: parametros_km
 
   - name: veiculo_staging
     database: rj-smtr-staging
@@ -135,8 +135,20 @@ sources:
       - name: cett
       - name: arquivo_retorno
 
+  - name: projeto_subsidio_sppo_encontro_contas
+    database: rj-smtr-staging
+
+    tables:
+      - name: rdo_correcao_rioonibus_servico_quinzena
+
   - name: br_rj_riodejaneiro_geo
     database: rj-smtr
 
     tables:
       - name: h3_res9
+
+  - name: br_rj_riodejaneiro_viagem_zirix_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: viagem_informada

@@ -2,6 +2,8 @@
 # pylint: disable=W0511
 """
 Flows for projeto_subsidio_sppo
+
+DBT 2024-07-02
 """
 
 from prefect import Parameter, case, task
@@ -18,8 +20,8 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
 )
 
-from pipelines.constants import constants
 from pipelines.constants import constants as smtr_constants
+from pipelines.migration.projeto_subsidio_sppo.constants import constants
 
 # from pipelines.materialize_to_datario.flows import (
 #     smtr_materialize_to_datario_viagem_sppo_flow,
@@ -28,8 +30,6 @@ from pipelines.migration.projeto_subsidio_sppo.tasks import (
     check_param,
     subsidio_data_quality_check,
 )
-
-# from pipelines.schedules import every_day_hour_five, every_day_hour_seven
 from pipelines.migration.tasks import (
     fetch_dataset_sha,
     get_current_flow_labels,
@@ -43,6 +43,7 @@ from pipelines.migration.tasks import (
     run_dbt_model,
 )
 from pipelines.migration.veiculo.flows import sppo_veiculo_dia
+from pipelines.schedules import every_day_hour_five, every_day_hour_seven
 
 # EMD Imports #
 
@@ -79,26 +80,26 @@ with Flow(
     # dbt_client = get_local_dbt_client(host="localhost", port=3001)
 
     dataset_sha = fetch_dataset_sha(
-        dataset_id=smtr_constants.SUBSIDIO_SPPO_DATASET_ID.value,
+        dataset_id=constants.SUBSIDIO_SPPO_DATASET_ID.value,
     )
 
     _vars = get_join_dict(dict_list=run_dates, new_dict=dataset_sha)
 
     RUN = run_dbt_model.map(
         # dbt_client=unmapped(dbt_client),
-        dataset_id=unmapped(smtr_constants.SUBSIDIO_SPPO_DATASET_ID.value),
-        table_id=unmapped(smtr_constants.SUBSIDIO_SPPO_TABLE_ID.value),
+        dataset_id=unmapped(constants.SUBSIDIO_SPPO_DATASET_ID.value),
+        table_id=unmapped(constants.SUBSIDIO_SPPO_TABLE_ID.value),
         upstream=unmapped(True),
-        exclude=unmapped("+gps_sppo"),
+        exclude=unmapped("+gps_sppo +ordem_servico_trips_shapes_gtfs"),
         _vars=_vars,
     )
 
-viagens_sppo.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
+viagens_sppo.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 viagens_sppo.run_config = KubernetesRun(
-    image=constants.DOCKER_IMAGE.value, labels=[constants.RJ_SMTR_AGENT_LABEL.value]
+    image=smtr_constants.DOCKER_IMAGE.value, labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value]
 )
 viagens_sppo.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
-# viagens_sppo.schedule = every_day_hour_five
+viagens_sppo.schedule = every_day_hour_five
 
 with Flow(
     "SMTR: Subsídio SPPO Apuração - Tratamento",
@@ -153,7 +154,7 @@ with Flow(
 
     # Get models version #
     dataset_sha = fetch_dataset_sha(
-        dataset_id=smtr_constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value,
+        dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value,
     )
 
     _vars = {"start_date": start_date, "end_date": end_date}
@@ -201,14 +202,14 @@ with Flow(
             # 4. CALCULATE #
             SUBSIDIO_SPPO_STAGING_RUN = run_dbt_model(
                 # dbt_client=dbt_client,
-                dataset_id=smtr_constants.SUBSIDIO_SPPO_DASHBOARD_STAGING_DATASET_ID.value,
+                dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_STAGING_DATASET_ID.value,
                 _vars=_vars,
                 upstream_tasks=[SUBSIDIO_SPPO_DATA_QUALITY_PRE],
             )
 
             SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_model(
                 # dbt_client=dbt_client,
-                dataset_id=smtr_constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value,
+                dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value,
                 _vars=_vars,
                 upstream_tasks=[SUBSIDIO_SPPO_STAGING_RUN],
             )
@@ -262,9 +263,9 @@ with Flow(
             upstream_tasks=[SUBSIDIO_SPPO_DATA_QUALITY_PRE],
         )
 
-subsidio_sppo_apuracao.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
+subsidio_sppo_apuracao.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 subsidio_sppo_apuracao.run_config = KubernetesRun(
-    image=constants.DOCKER_IMAGE.value, labels=[constants.RJ_SMTR_AGENT_LABEL.value]
+    image=smtr_constants.DOCKER_IMAGE.value, labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value]
 )
-# subsidio_sppo_apuracao.schedule = every_day_hour_seven
 subsidio_sppo_apuracao.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
+subsidio_sppo_apuracao.schedule = every_day_hour_seven

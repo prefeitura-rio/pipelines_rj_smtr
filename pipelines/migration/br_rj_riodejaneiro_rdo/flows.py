@@ -18,8 +18,8 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
 )
 
-from pipelines.constants import constants
-from pipelines.constants import constants as emd_constants
+from pipelines.constants import constants as smtr_constants
+from pipelines.migration.br_rj_riodejaneiro_rdo.constants import constants
 from pipelines.migration.br_rj_riodejaneiro_rdo.tasks import (
     check_files_for_download,
     download_and_save_local_from_ftp,
@@ -28,8 +28,6 @@ from pipelines.migration.br_rj_riodejaneiro_rdo.tasks import (
     pre_treatment_br_rj_riodejaneiro_rdo,
     update_redis_ftp_files,
 )
-
-# from pipelines.schedules import every_day
 from pipelines.migration.tasks import (
     bq_upload,
     get_current_flow_labels,
@@ -41,6 +39,7 @@ from pipelines.migration.tasks import (
     run_dbt_model,
     set_last_run_timestamp,
 )
+from pipelines.schedules import every_day
 
 # from pipelines.utils.execute_dbt_model.tasks import get_k8s_dbt_client
 # from pipelines.utils.execute_dbt_model.tasks import run_dbt_model
@@ -99,17 +98,16 @@ with Flow(
             mode=MODE,
         )
 
-sppo_rho_materialize.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+sppo_rho_materialize.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 sppo_rho_materialize.run_config = KubernetesRun(
-    image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+    image=smtr_constants.DOCKER_IMAGE.value,
+    labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 sppo_rho_materialize.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
 
 with Flow(
     "SMTR: RHO - Captura (subflow)",
-    # code_owners=constants.DEFAULT_CODE_OWNERS.value,
 ) as captura_sppo_rho:
     # SETUP
     transport_mode = Parameter("transport_mode", "SPPO")
@@ -148,16 +146,15 @@ with Flow(
         download_files=download_files, table_id=table_id, errors=errors
     )
 
-captura_sppo_rho.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+captura_sppo_rho.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 captura_sppo_rho.run_config = KubernetesRun(
-    image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+    image=smtr_constants.DOCKER_IMAGE.value,
+    labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 captura_sppo_rho.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
 with Flow(
     "SMTR: RHO - Captura/Tratamento",
-    # code_owners=constants.DEFAULT_CODE_OWNERS.value,
 ) as rho_captura_tratamento:
     LABELS = get_current_flow_labels()
     PROJECT = get_flow_project()
@@ -189,17 +186,16 @@ with Flow(
         raise_final_state=True,
     )
 
-rho_captura_tratamento.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+rho_captura_tratamento.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 rho_captura_tratamento.run_config = KubernetesRun(
-    image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+    image=smtr_constants.DOCKER_IMAGE.value,
+    labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-# rho_captura_tratamento.schedule = every_day
+rho_captura_tratamento.schedule = every_day
 rho_captura_tratamento.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
 with Flow(
     "SMTR: RDO - Captura",
-    # code_owners=constants.DEFAULT_CODE_OWNERS.value,
 ) as captura_sppo_rdo:
     # SETUP
     transport_mode = Parameter("transport_mode", "SPPO")
@@ -238,15 +234,15 @@ with Flow(
         download_files=download_files, table_id=table_id, errors=errors
     )
 
-captura_sppo_rdo.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+captura_sppo_rdo.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 captura_sppo_rdo.run_config = KubernetesRun(
-    image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
+    image=smtr_constants.DOCKER_IMAGE.value,
+    labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-# captura_sppo_rdo.schedule = every_day
+captura_sppo_rdo.schedule = every_day
 captura_sppo_rdo.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
 
 # captura_sppo_rho = deepcopy(captura_sppo_rdo)
-# captura_sppo_rho.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
-# captura_sppo_rho.run_config = KubernetesRun(image=emd_constants.DOCKER_IMAGE.value)
+# captura_sppo_rho.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
+# captura_sppo_rho.run_config = KubernetesRun(image=constants.DOCKER_IMAGE.value)

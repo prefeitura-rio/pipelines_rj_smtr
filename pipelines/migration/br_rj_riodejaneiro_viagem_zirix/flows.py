@@ -13,9 +13,9 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 
 from pipelines.constants import constants as smtr_constants
 from pipelines.migration.br_rj_riodejaneiro_viagem_zirix.constants import constants
-from pipelines.migration.flows import default_capture_flow
+from pipelines.migration.flows import default_capture_flow, default_materialization_flow
 from pipelines.migration.utils import set_default_parameters
-from pipelines.schedules import every_10_minutes, every_hour
+from pipelines.schedules import every_10_minutes, every_hour, every_hour_minute_thirty
 
 # Flows #
 
@@ -51,3 +51,24 @@ viagens_recaptura = set_default_parameters(
 )
 
 viagens_recaptura.schedule = every_hour
+
+
+viagem_zirix_materializacao = deepcopy(default_materialization_flow)
+viagem_zirix_materializacao.name = "Viagem Zirix - Materialização"
+viagem_zirix_materializacao.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
+viagem_zirix_materializacao.run_config = KubernetesRun(
+    image=smtr_constants.DOCKER_IMAGE.value,
+    labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
+)
+
+viagem_zirix_materializacao.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+]
+
+viagem_zirix_materializacao = set_default_parameters(
+    flow=viagem_zirix_materializacao,
+    default_parameters=constants.VIAGEM_MATERIALIZACAO_PARAMS.value,
+)
+
+viagem_zirix_materializacao.schedule = every_hour_minute_thirty
