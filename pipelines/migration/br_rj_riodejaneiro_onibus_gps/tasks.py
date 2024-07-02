@@ -371,8 +371,8 @@ def get_raw_staging_data_gcs(source_path: str) -> dict:
 def create_date_range(start: datetime, end: datetime) -> list:
     date_range = [
         start + timedelta(minutes=i)
-        # for i in range(0, int(((end + timedelta(minutes=2)) - start).total_seconds() / 60))
-        for i in range(0, int(((end + timedelta(days=1)) - start).total_seconds() / 60))
+        for i in range(0, int((end - start).total_seconds() / 60))
+        # for i in range(0, int(((end + timedelta(days=1)) - start).total_seconds() / 60))
     ]
     log(f"Date range created: {date_range}")
     return date_range
