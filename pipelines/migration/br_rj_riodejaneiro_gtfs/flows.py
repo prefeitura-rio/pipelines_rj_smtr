@@ -102,12 +102,12 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
     capture = Parameter("capture", default=True)
     materialize = Parameter("materialize", default=True)
     regular_sheet_index = Parameter("regular_sheet_index", default=None)
-    data_versao_gtfs = Parameter("data_versao_gtfs", default=None)
+    data_versao_gtfs_param = Parameter("data_versao_gtfs", default=None)
 
     mode = get_current_flow_mode()
 
     last_captured_os_none = None
-    with case(data_versao_gtfs, None):
+    with case(data_versao_gtfs_param, None):
         last_captured_os_redis = get_last_capture_os(
             mode=mode, dataset_id=constants.GTFS_DATASET_ID.value
         )
@@ -118,24 +118,25 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
         timestamp = get_scheduled_timestamp()
 
-        flag_new_os, os_control, data_index, data_versao_gtfs = get_os_info(
-            last_captured_os=last_captured_os, data_versao_gtfs=data_versao_gtfs
+        flag_new_os, os_control, data_index, data_versao_gtfs_task = get_os_info(
+            last_captured_os=last_captured_os, data_versao_gtfs=data_versao_gtfs_param
         )
 
         with case(flag_new_os, True):
             rename_current_flow_run_now_time(
-                prefix=gtfs_captura_nova.name + ' ["' + data_versao_gtfs + '"] ', now_time=timestamp
+                prefix=gtfs_captura_nova.name + ' ["' + data_versao_gtfs_task + '"] ',
+                now_time=timestamp,
             )
 
-            data_versao_gtfs = get_current_timestamp(data_versao_gtfs)
+            data_versao_gtfs_task = get_current_timestamp(data_versao_gtfs_task)
 
             partition = create_date_hour_partition(
-                timestamp=data_versao_gtfs,
+                timestamp=data_versao_gtfs_task,
                 partition_date_name="data_versao",
                 partition_date_only=True,
             )
 
-            filename = parse_timestamp_to_string(data_versao_gtfs)
+            filename = parse_timestamp_to_string(data_versao_gtfs_task)
 
             table_ids = task(lambda: list(constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys()))()
 
@@ -156,7 +157,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 raw_filepath=raw_filepaths,
                 filepath=local_filepaths,
                 primary_key=primary_keys,
-                timestamp=unmapped(data_versao_gtfs),
+                timestamp=unmapped(data_versao_gtfs_task),
                 error=unmapped(None),
             )
 
@@ -177,29 +178,31 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 table_id=table_ids,
                 staging_filepath=treated_filepaths,
                 partitions=unmapped(partition),
-                timestamp=unmapped(data_versao_gtfs),
+                timestamp=unmapped(data_versao_gtfs_task),
                 error=errors,
             )
 
+    data_versao_gtfs = merge(data_versao_gtfs_task, data_versao_gtfs_param)
     wait_captura = merge(wait_captura_true, None)
 
     with case(materialize, True):
-        string_data_versao_gtfs = parse_timestamp_to_string(
-            timestamp=data_versao_gtfs, pattern="%Y-%m-%d"
-        )
-        version = fetch_dataset_sha(dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value)
-        dbt_vars = get_join_dict([{"data_versao_gtfs": string_data_versao_gtfs}], version)[0]
+        with case(data_versao_gtfs, not None):
+            string_data_versao_gtfs = parse_timestamp_to_string(
+                timestamp=data_versao_gtfs, pattern="%Y-%m-%d"
+            )
+            version = fetch_dataset_sha(dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value)
+            dbt_vars = get_join_dict([{"data_versao_gtfs": string_data_versao_gtfs}], version)[0]
 
-        wait_run_dbt_model = run_dbt_model(
-            dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value,
-            _vars=dbt_vars,
-        ).set_upstream(task=wait_captura)
+            wait_run_dbt_model = run_dbt_model(
+                dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value,
+                _vars=dbt_vars,
+            ).set_upstream(task=wait_captura)
 
-        wait_materialize_true = update_last_captured_os(
-            dataset_id=constants.GTFS_DATASET_ID.value,
-            data_index=data_index,
-            mode=mode,
-        ).set_upstream(task=wait_run_dbt_model)
+            wait_materialize_true = update_last_captured_os(
+                dataset_id=constants.GTFS_DATASET_ID.value,
+                data_index=data_index,
+                mode=mode,
+            ).set_upstream(task=wait_run_dbt_model)
 
     wait_materialize = merge(wait_materialize_true, None)
 
