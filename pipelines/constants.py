@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Valores constantes gerais para pipelines da rj-smtr
+
+DBT 2024-07-03
 """
 
 from enum import Enum
