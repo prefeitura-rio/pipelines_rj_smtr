@@ -143,7 +143,7 @@ bilhetagem_tracking_captura.state_handlers.append(
 )
 
 
-# bilhetagem_tracking_captura.schedule = every_5_minutes
+bilhetagem_tracking_captura.schedule = every_5_minutes
 
 # BILHETAGEM RESSARCIMENTO - SUBFLOW PARA RODAR DIARIAMENTE #
 
