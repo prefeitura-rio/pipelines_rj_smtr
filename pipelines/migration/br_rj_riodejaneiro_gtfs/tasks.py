@@ -9,6 +9,7 @@ from datetime import datetime
 import openpyxl as xl
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+import pandas as pd
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
