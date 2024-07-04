@@ -186,9 +186,10 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
     wait_captura = merge(wait_captura_true, None)
 
     with case(materialize, True):
-        string_data_versao_gtfs = parse_timestamp_to_string(
-            timestamp=data_versao_gtfs, pattern="%Y-%m-%d"
-        )
+        with case(data_versao_gtfs, str):
+            string_data_versao_gtfs = parse_timestamp_to_string(
+                timestamp=data_versao_gtfs, pattern="%Y-%m-%d"
+            )
         version = fetch_dataset_sha(dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value)
         dbt_vars = get_join_dict([{"data_versao_gtfs": string_data_versao_gtfs}], version)[0]
 
