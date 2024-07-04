@@ -109,9 +109,9 @@ def get_os_info(last_captured_os: str) -> dict:
     df = filter_valid_rows(df)
 
     # converte "Início da Vigência da OS" de dd/mm/aaaa para aaaa-mm-dd
-    df["Início da Vigência da OS"] = datetime.strptime(
-        df["Início da Vigência da OS"], "%d/%m/%Y"
-    ).strftime("%Y-%m-%d")
+    df["Início da Vigência da OS"] = pd.to_datetime(
+        df["Início da Vigência da OS"], format="%d/%m/%Y"
+    ).dt.strftime("%Y-%m-%d")
 
     df["data_index"] = df["Início da Vigência da OS"].astype(str) + "_" + df["index"].astype(str)
 
