@@ -96,7 +96,7 @@ def update_last_captured_os(dataset_id: str, data_index: str, mode: str = "prod"
 
 
 @task(nout=4)
-def get_os_info(last_captured_os: str, data_versao_gtfs: str = None) -> dict:
+def get_os_info(last_captured_os: str = None, data_versao_gtfs: str = None) -> dict:
     """
     Retrieves information about the OS.
 
@@ -131,7 +131,6 @@ def get_os_info(last_captured_os: str, data_versao_gtfs: str = None) -> dict:
     # Ordena por data e index
     df = df.sort_values(by=["data_index"], ascending=True)
     if data_versao_gtfs is not None:
-        data_versao_gtfs = datetime.strptime(data_versao_gtfs, "%Y-%m-%d").strftime("%d/%m/%Y")
         df = df.loc[(df["Início da Vigência da OS"] == data_versao_gtfs)]
 
     elif last_captured_os is None:
