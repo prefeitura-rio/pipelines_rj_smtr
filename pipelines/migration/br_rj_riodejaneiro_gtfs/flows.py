@@ -182,27 +182,29 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 error=errors,
             )
 
-    data_versao_gtfs = merge(data_versao_gtfs_task, data_versao_gtfs_param)
+    data_versao_gtfs_merge = merge(data_versao_gtfs_task, data_versao_gtfs_param)
     wait_captura = merge(wait_captura_true, None)
 
     with case(materialize, True):
-        with case(data_versao_gtfs, str):
-            string_data_versao_gtfs = parse_timestamp_to_string(
-                timestamp=data_versao_gtfs, pattern="%Y-%m-%d"
-            )
-        version = fetch_dataset_sha(dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value)
-        dbt_vars = get_join_dict([{"data_versao_gtfs": string_data_versao_gtfs}], version)[0]
+        with case(data_versao_gtfs_merge, True):
+            with case(data_versao_gtfs_merge, str):
+                string_data_versao_gtfs = parse_timestamp_to_string(
+                    timestamp=data_versao_gtfs_merge, pattern="%Y-%m-%d"
+                )
+            data_versao_gtfs = merge(string_data_versao_gtfs,data_versao_gtfs_merge)
+            version = fetch_dataset_sha(dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value)
+            dbt_vars = get_join_dict([{"data_versao_gtfs": string_data_versao_gtfs}], version)[0]
 
-        wait_run_dbt_model = run_dbt_model(
-            dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value,
-            _vars=dbt_vars,
-        ).set_upstream(task=wait_captura)
+            wait_run_dbt_model = run_dbt_model(
+                dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value,
+                _vars=dbt_vars,
+            ).set_upstream(task=wait_captura)
 
-        wait_materialize_true = update_last_captured_os(
-            dataset_id=constants.GTFS_DATASET_ID.value,
-            data_index=data_index,
-            mode=mode,
-        ).set_upstream(task=wait_run_dbt_model)
+            wait_materialize_true = update_last_captured_os(
+                dataset_id=constants.GTFS_DATASET_ID.value,
+                data_index=data_index,
+                mode=mode,
+            ).set_upstream(task=wait_run_dbt_model)
 
     wait_materialize = merge(wait_materialize_true, None)
 
