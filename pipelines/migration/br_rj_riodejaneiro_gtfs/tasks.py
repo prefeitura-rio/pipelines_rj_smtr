@@ -80,6 +80,14 @@ def update_last_captured_os(dataset_id: str, data_index: str, mode: str = "prod"
     if mode != "prod":
         fetch_key = f"{mode}.{fetch_key}"
     last_captured_os = redis_client.get(fetch_key)
+    #  verifica se last_capture_os tem formado dia/mes/ano_index e converte para ano-mes-dia_index
+    if last_captured_os is not None:
+        if "/" in last_captured_os:
+            index = last_captured_os.split("_")[1]
+            data = datetime.strptime(last_captured_os.split("_")[0], "%d/%m/%Y").strftime(
+                "%Y-%m-%d"
+            )
+            last_captured_os = data + "_" + index
     # verifica se a ultima os capturada é maior que a nova
     if last_captured_os is not None:
         if last_captured_os["last_captured_os"] > data_index:
