@@ -47,6 +47,13 @@ def get_last_capture_os(dataset_id: str, mode: str = "prod") -> dict:
     if last_captured_os is not None:
         last_captured_os = last_captured_os["last_captured_os"]
 
+    #  verifica se last_capture_os tem formado dia/mes/ano_index
+    if last_captured_os is not None:
+        if "/" in last_captured_os:
+            index = last_captured_os.split("_")[1]
+            data = datetime.strptime(last_captured_os.split("_")[0], "%d/%m/%Y").strftime("%Y-%m-%d")
+            last_captured_os = data + "_" + index
+
     log(f"Last captured os: {last_captured_os}")
 
     return last_captured_os
@@ -99,9 +106,14 @@ def get_os_info(last_captured_os: str) -> dict:
 
     df = filter_valid_rows(df)
 
+    # converte "Início da Vigência da OS" de dd/mm/aaaa para aaaa-mm-dd
+    data["Início da Vigência da OS"] = datetime.strptime(
+        data["Início da Vigência da OS"], "%d/%m/%Y"
+    ).strftime("%Y-%m-%d")
+
     df["data_index"] = df["Início da Vigência da OS"].astype(str) + "_" + df["index"].astype(str)
 
-    # Ordena por despacho
+    # Ordena por data e index
     df = df.sort_values(by=["data_index"], ascending=True)
     if last_captured_os is None:
         last_captured_os = df["data_index"].max()
@@ -116,10 +128,7 @@ def get_os_info(last_captured_os: str) -> dict:
         data = df.to_dict(orient="records")[0]  # Converte o DataFrame para um dicionário
         flag_new_os = True  # Se houver mais de uma OS, é uma nova OS
 
-        # converte "Início da Vigência da OS" de dd/mm/aaaa para aaaa-mm-dd
-        data["Início da Vigência da OS"] = datetime.strptime(
-            data["Início da Vigência da OS"], "%d/%m/%Y"
-        ).strftime("%Y-%m-%d")
+        
         log(f"OS selecionada: {data}")
     return flag_new_os, data, data["data_index"], data["Início da Vigência da OS"]
 
