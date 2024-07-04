@@ -181,32 +181,36 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 timestamp=unmapped(data_versao_gtfs_task),
                 error=errors,
             )
+    with case(capture, False):
+        wait_captura_false = task()
 
     data_versao_gtfs_merge = merge(data_versao_gtfs_task, data_versao_gtfs_param)
-    wait_captura = merge(wait_captura_true, None)
+    wait_captura = merge(wait_captura_true, wait_captura_false)
 
     with case(materialize, True):
-        with case(data_versao_gtfs_merge, True):
-            with case(data_versao_gtfs_merge, str):
-                string_data_versao_gtfs = parse_timestamp_to_string(
-                    timestamp=data_versao_gtfs_merge, pattern="%Y-%m-%d"
-                )
-            data_versao_gtfs = merge(string_data_versao_gtfs, data_versao_gtfs_merge)
-            version = fetch_dataset_sha(dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value)
-            dbt_vars = get_join_dict([{"data_versao_gtfs": string_data_versao_gtfs}], version)[0]
+        with case(data_versao_gtfs_merge, str):
+            string_data_versao_gtfs = parse_timestamp_to_string(
+                timestamp=data_versao_gtfs_merge, pattern="%Y-%m-%d"
+            )
+        data_versao_gtfs = merge(string_data_versao_gtfs, data_versao_gtfs_merge)
+        version = fetch_dataset_sha(dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value)
+        dbt_vars = get_join_dict([{"data_versao_gtfs": data_versao_gtfs}], version)[0]
 
-            wait_run_dbt_model = run_dbt_model(
-                dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value,
-                _vars=dbt_vars,
-            ).set_upstream(task=wait_captura)
+        wait_run_dbt_model = run_dbt_model(
+            dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value,
+            _vars=dbt_vars,
+        ).set_upstream(task=wait_captura)
 
-            wait_materialize_true = update_last_captured_os(
-                dataset_id=constants.GTFS_DATASET_ID.value,
-                data_index=data_index,
-                mode=mode,
-            ).set_upstream(task=wait_run_dbt_model)
+        wait_materialize_true = update_last_captured_os(
+            dataset_id=constants.GTFS_DATASET_ID.value,
+            data_index=data_index,
+            mode=mode,
+        ).set_upstream(task=wait_run_dbt_model)
 
-    wait_materialize = merge(wait_materialize_true, None)
+    with case(materialize, False):
+        wait_materialize_false = task()
+
+    wait_materialize = merge(wait_materialize_true, wait_materialize_false)
 
     with case(flag_new_os, False):
         rename_current_flow_run_now_time(
