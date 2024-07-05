@@ -138,7 +138,7 @@ def get_os_info(last_captured_os: str = None, data_versao_gtfs: str = None) -> d
         df = df.loc[(df["data_index"] == last_captured_os)]
 
     else:
-        # Filtra linhas onde 'Despacho' é maior que o último capturado
+        # Filtra linhas onde 'data_index' é maior que o último capturado
         df = df.loc[(df["data_index"] > last_captured_os)]
 
     log(f"Os info: {df.head()}")
