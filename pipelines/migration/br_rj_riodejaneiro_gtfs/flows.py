@@ -106,7 +106,6 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
     mode = get_current_flow_mode()
 
-    flag_new_os_false = False
     last_captured_os_none = None
     with case(data_versao_gtfs_param, None):
         last_captured_os_redis = get_last_capture_os(
@@ -186,7 +185,6 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
     data_versao_gtfs_merge = merge(data_versao_gtfs_task, data_versao_gtfs_param)
     wait_captura = merge(wait_captura_true, wait_captura_false)
-    flag_new_os = merge(flag_new_os_task, flag_new_os_false)
 
     data_versao_gtfs_is_str = task(lambda: isinstance(data_versao_gtfs_merge, str))()
 
