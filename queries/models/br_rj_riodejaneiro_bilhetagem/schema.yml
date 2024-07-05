@@ -187,6 +187,8 @@ models:
         description: "Validador aberto ou fechado no momento da transmissão"
       - name: temperatura
         description: "Temperatura do local, medida pelo sensor do validador (ºC)"
+      - name: versao_app
+        description: "Versão do Software do validador"
       - name: versao
         description: "Código de controle de versão do dado (SHA Github)"
   - name: gps_validador_van
@@ -234,6 +236,8 @@ models:
         description: "Validador aberto ou fechado no momento da transmissão"
       - name: temperatura
         description: "Temperatura do local, medida pelo sensor do validador (ºC)"
+      - name: versao_app
+        description: "Versão do Software do validador"
       - name: versao
         description: "Código de controle de versão do dado (SHA Github)"
   - name: passageiros_hora
