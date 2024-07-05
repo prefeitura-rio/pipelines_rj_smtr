@@ -1,5 +1,10 @@
 # Changelog - bilhetagem
 
+## [2.1.2] - 2024-07-05
+
+### Adicionado
+- Adiciona coluna `versao_app` nos modelos `gps_validador_aux.sql`, `gps_validador.sql` e `gps_validador_van.sql`
+
 ## [2.1.1] - 2024-06-19
 
 ### Corrigido
