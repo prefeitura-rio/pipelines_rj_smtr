@@ -106,6 +106,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
     mode = get_current_flow_mode()
 
+    flag_new_os = False
     last_captured_os_none = None
     with case(data_versao_gtfs_param, None):
         last_captured_os_redis = get_last_capture_os(
@@ -113,7 +114,6 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
         )
 
     last_captured_os = merge(last_captured_os_none, last_captured_os_redis)
-
     with case(capture, True):
 
         timestamp = get_scheduled_timestamp()
@@ -187,7 +187,11 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
     data_versao_gtfs_merge = merge(data_versao_gtfs_task, data_versao_gtfs_param)
     wait_captura = merge(wait_captura_true, wait_captura_false)
 
-    with case(materialize, True):
+    verifica_materialize = task(
+        lambda: materialize and ((flag_new_os and capture) or data_versao_gtfs_param is not None)
+    )()
+
+    with case(verifica_materialize, True):
         with case(data_versao_gtfs_merge, str):
             string_data_versao_gtfs = parse_timestamp_to_string(
                 timestamp=data_versao_gtfs_merge, pattern="%Y-%m-%d"
