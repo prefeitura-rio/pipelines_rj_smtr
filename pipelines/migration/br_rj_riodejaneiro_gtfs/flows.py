@@ -188,13 +188,14 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
     wait_captura = merge(wait_captura_true, wait_captura_false)
     flag_new_os = merge(flag_new_os_task, flag_new_os_false)
 
-    with case(materialize, True):
-        verifica_materialize = task(
-            lambda: (flag_new_os and capture) or data_versao_gtfs_param is not None
-        )()
+    verifica_materialize = task(
+        lambda: (flag_new_os and capture) or data_versao_gtfs_param is not None
+    )()
+    data_versao_gtfs_is_str = task(lambda: isinstance(data_versao_gtfs_merge, str))()
 
+    with case(materialize, True):
         with case(verifica_materialize, True):
-            with case(data_versao_gtfs_merge, str):
+            with case(data_versao_gtfs_is_str, True):
                 string_data_versao_gtfs = parse_timestamp_to_string(
                     timestamp=data_versao_gtfs_merge, pattern="%Y-%m-%d"
                 )
