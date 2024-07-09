@@ -46,7 +46,7 @@ transacao_agg AS (
     t.id_servico_jae,
     t.id_operadora,
     COUNT(*) AS quantidade_total_transacao_captura,
-    SUM(t.valor_transacao) AS valor_total_transacao_captura
+    SUM(t.valor_transacao) AS valor_total_transacao_captura,
     MAX(ti.indicador_servico_fora_vigencia) IS NOT NULL AS indicador_servico_fora_vigencia
   FROM
     {{ ref("aux_transacao_ordem") }} t
@@ -93,28 +93,38 @@ transacao_ordem AS (
     transacao_agg t
   USING(data_ordem, id_servico_jae, id_operadora)
 )
+indicadores AS (
+  SELECT
+    o.data_ordem,
+    id.id_ordem_pagamento,
+    o.id_consorcio,
+    o.id_operadora,
+    o.id_servico_jae,
+    o.quantidade_total_transacao,
+    o.valor_total_transacao_bruto,
+    o.valor_total_transacao_liquido,
+    o.quantidade_total_transacao_captura,
+    o.valor_total_transacao_captura,
+    COALESCE(
+      (
+        quantidade_total_transacao_captura != quantidade_total_transacao
+        OR ROUND(valor_total_transacao_captura, 2) != ROUND(valor_total_transacao_bruto, 2)
+      ),
+      TRUE
+    ) AS indicador_captura_invalida,
+    o.indicador_servico_fora_vigencia
+  FROM
+    transacao_ordem o
+  JOIN
+    id_ordem_pagamento id
+  USING(data_ordem)
+)
 SELECT
-  o.data_ordem,
-  id.id_ordem_pagamento,
-  o.id_consorcio,
-  o.id_operadora,
-  o.id_servico_jae,
-  o.quantidade_total_transacao,
-  o.valor_total_transacao_bruto,
-  o.valor_total_transacao_liquido,
-  o.quantidade_total_transacao_captura,
-  o.valor_total_transacao_captura,
-  COALESCE(
-    (
-      quantidade_total_transacao_captura != quantidade_total_transacao
-      OR ROUND(valor_total_transacao_captura, 2) != ROUND(valor_total_transacao_bruto, 2)
-    ),
-    TRUE
-  ) AS indicador_captura_invalida,
-  o.indicador_servico_fora_vigencia,
+  *,
   '{{ var("version") }}' AS versao
 FROM
-  transacao_ordem o
-JOIN
-  id_ordem_pagamento id
-USING(data_ordem)
+  indicadores
+WHERE
+  indicador_servico_fora_vigencia = TRUE
+  OR indicador_captura_invalida = TRUE
+
