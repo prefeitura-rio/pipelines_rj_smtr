@@ -29,6 +29,7 @@ SELECT
     sentido,
     estado_equipamento,
     temperatura,
+    versao_app,
     '{{ var("version") }}' as versao
 FROM
 (
