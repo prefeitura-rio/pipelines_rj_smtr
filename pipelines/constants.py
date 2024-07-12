@@ -248,6 +248,31 @@ X-1vRvFcyr9skfBIrjxc4FSJZ3-g4gUCF56YjGPOmd1f5qH8vndpy22P6f6KdcYgWaqzUmtSBL\
             "version": {},
         },
     }
+    OS_COLUMNS = [
+    "Serviço",
+    "Vista",
+    "Consórcio",
+    "Extensão de Ida",
+    "Extensão de Volta",
+    "Horário Inicial Dia Útil",
+    "Horário Fim Dia Útil",
+    "Partidas Ida Dia Útil",
+    "Partidas Volta Dia Útil",
+    "Viagens Dia Útil",
+    "Quilometragem Dia Útil",
+    "Partidas Ida Sábado",
+    "Partidas Volta Sábado",
+    "Viagens Sábado",
+    "Quilometragem Sábado",
+    "Partidas Ida Domingo",
+    "Partidas Volta Domingo",
+    "Viagens Domingo",
+    "Quilometragem Domingo",
+    "Partidas Ida Ponto Facultativo",
+    "Partidas Volta Ponto Facultativo",
+    "Viagens Ponto Facultativo",
+    "Quilometragem Ponto Facultativo"
+    ]
 
     # # SUBSÍDIO RECURSOS VIAGENS INDIVIDUAIS
     # SUBSIDIO_SPPO_RECURSOS_DATASET_ID = "migracao_br_rj_riodejaneiro_recurso"

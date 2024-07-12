@@ -2,6 +2,7 @@
 """
 Tasks for gtfs
 """
+import pytz
 import os
 import zipfile
 from datetime import datetime
@@ -9,12 +10,18 @@ from datetime import datetime
 import openpyxl as xl
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+import pandas as pd
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
 from pipelines.constants import constants
 from pipelines.migration.br_rj_riodejaneiro_gtfs.utils import (
+    check_os_columns,
+    check_os_columns_order,
+    get_trips,
+    get_board,
+    check_os_filetype,
     download_controle_os_csv,
     download_file,
     download_xlsx,
@@ -22,8 +29,8 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.utils import (
     processa_ordem_servico,
     processa_ordem_servico_trajeto_alternativo,
 )
-from pipelines.migration.utils import save_raw_local_func
-
+from pipelines.migration.utils import save_raw_local_func, get_secret
+from pipelines.migration.tasks import format_send_discord_message
 
 @task
 def get_last_capture_os(dataset_id: str, mode: str = "prod") -> dict:
@@ -207,3 +214,117 @@ def get_raw_drive_files(os_control, local_filepath: list):
                 raw_filepaths.append(raw_file_path)
 
     return raw_filepaths, list(constants.GTFS_TABLE_CAPTURE_PARAMS.value.values())
+
+### Validation
+
+@task
+def validate_gtfs_os(os_filepath, gtfs_filepath, os_initial_date, os_final_date):
+    messages = []
+    with open(gtfs_filepath, 'rb') as f:
+        gtfs_file = f.read()
+    # Check OS and GTFS files
+    if os_filepath and gtfs_file:
+
+        if not check_os_filetype(os_filepath):
+            messages.append(
+                ":warning: O nome do arquivo OS não é do tipo correto! Transforme o arquivo no formato .xlsx do Excel.")
+            return
+        
+        os_sheets = pd.read_excel(os_filepath, None)
+
+        if len(os_sheets) == 1:
+            os_df = os_sheets.popitem()[1]
+        else:
+            messages.append(
+                "O arquivo possui mais de uma aba, selecione a aba que contém os dados")
+            
+
+        viagens_cols = ["Viagens Dia Útil", "Viagens Sábado",
+                        "Viagens Domingo", "Viagens Ponto Facultativo"]
+        km_cols = ["Quilometragem Dia Útil", "Quilometragem Sábado",
+                    "Quilometragem Domingo", "Quilometragem Ponto Facultativo"]
+
+
+        if not check_os_columns(os_df):
+            messages.append(
+                ":warning: O arquivo OS não contém as colunas esperadas!")
+            return
+
+        for col in viagens_cols + km_cols:
+            os_df[col] = (
+                os_df[col].astype(str)
+                .str.strip()
+                .str.replace("—", "0")
+                .str.replace(",", ".")
+                .astype(float)
+                .fillna(0)
+                
+            )
+            os_df[col] = os_df[col].astype(float)
+
+        
+        if not check_os_columns_order(os_df):
+            messages.append(
+                f":warning: O arquivo OS contém as colunas esperadas, porém não segue a ordem esperada: {os_columns}")
+
+        # Check dates
+
+        if (os_initial_date is not None) and (os_final_date is not None):
+            
+            if os_initial_date > datetime.now().date():
+                messages.append(
+                    ":warning: ATENÇÃO: Você está subindo uma OS cuja operação já começou! Prossiga se é isso mesmo, senão revise as datas escolhidas."
+                )
+            
+            trips_agg = get_trips(gtfs_file)
+            quadro = get_board(os_df)
+            quadro_merged = quadro.merge(trips_agg, on='servico', how='left')
+            if len(quadro_merged[(quadro_merged["trip_id_ida"].isna()) & (quadro_merged["trip_id_volta"].isna())]) > 0:
+                messages.append(
+                    ":warning: ATENÇÃO: Existem trip_ids nulas"
+                )
+
+            if len(quadro_merged[((quadro_merged["partidas_ida_du"] > 0) & (quadro_merged["trip_id_ida"].isna())) | 
+                ((quadro_merged["partidas_volta_du"] > 0) & (quadro_merged["trip_id_volta"].isna()))].sort_values('servico')) > 0:
+                messages.append(
+                    ":warning: ATENÇÃO: Existem viagens com ida e volta que possuem trip_ids nulas"
+                )
+
+            if len(quadro_merged[((quadro_merged["extensao_ida"] == 0) & ~(quadro_merged["trip_id_ida"].isna())) | 
+                ((quadro_merged["extensao_volta"] == 0) & ~(quadro_merged["trip_id_volta"].isna()))]) > 0:
+                messages.append(
+                    ":warning: ATENÇÃO: Existem viagens programadas sem extensão definida"
+                )
+            # Check data
+            # TODO: Partidas x Extensão, Serviços OS x GTFS (routes, trips, shapes), Extensão OS x GTFS"
+
+            # # Numero de servicos por consorcio
+            # tb = pd.DataFrame(os_df.groupby(
+            #     "Consórcio")["Serviço"].count())
+            # tb.loc["Total"] = tb.sum()
+            # st.table(tb)
+
+            # # Numero de viagens por consorcio
+            # tb = pd.DataFrame(os_df.groupby(
+            #     "Consórcio")[viagens_cols].sum())
+            # tb.loc["Total"] = tb.sum()
+            # st.table(tb.style.format("{:.1f}"))
+
+            # # Numero de KM por consorcio
+            # tb = pd.DataFrame(os_df.groupby(
+            #     "Consórcio")[km_cols].sum())
+            # tb.loc["Total"] = tb.sum()
+            # st.table(tb.style.format("{:.3f}"))
+    return messages
+
+@task
+def send_check_report(messages=None):
+    webhook_url = get_secret("gtfs_check_webhook")['url']
+    base_msg = f'Reporte de validação GTFS e OS {datetime.now(tz=pytz.timezone("America/Sao_Paulo")).date().isoformat()}'
+    if not messages:
+        msg = "GTFS e OS passaram na validação!"
+        send_msg = f"{base_msg}\n{msg}"
+        format_send_discord_message([send_msg], webhook_url)
+        return
+    send_msgs = [base_msg] + messages
+    format_send_discord_message(send_msgs, webhook_url)
