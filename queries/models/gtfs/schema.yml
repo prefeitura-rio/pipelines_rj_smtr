@@ -373,7 +373,7 @@ models:
 
   - name: servicos_sentido
     description: "Sentido dos serviços (I - Ida, V - Volta, C - Circular)"
-    
+
   - name: ordem_servico_gtfs
     description: "Dados das linhas presentes no município."
     columns:
