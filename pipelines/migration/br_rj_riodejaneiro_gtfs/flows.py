@@ -7,15 +7,14 @@ DBT: 2024-07-15
 
 from copy import deepcopy
 from datetime import timedelta
+
 from prefect import Parameter, case, task
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
-from prefect.utilities.edges import unmapped
-from prefeitura_rio.pipelines_utils.custom import Flow
-from pipelines.migration.flows import default_capture_flow, default_materialization_flow
 from prefect.tasks.control_flow import merge
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
-
+from prefect.utilities.edges import unmapped
+from prefeitura_rio.pipelines_utils.custom import Flow
 
 # from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 from prefeitura_rio.pipelines_utils.state_handlers import (
@@ -24,8 +23,8 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_skip_if_running,
 )
 
+from pipelines.capture.templates.flows import create_default_capture_flow
 from pipelines.constants import constants
-from prefect.tasks.prefect import wait_for_flow_run
 
 # SMTR Imports #
 from pipelines.migration.br_rj_riodejaneiro_gtfs.tasks import (
@@ -34,6 +33,7 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.tasks import (
     get_raw_drive_files,
     update_last_captured_os,
 )
+from pipelines.migration.flows import default_capture_flow, default_materialization_flow
 from pipelines.migration.tasks import (
     create_date_hour_partition,
     create_local_partition_path,
@@ -54,9 +54,7 @@ from pipelines.migration.tasks import (
 from pipelines.migration.utils import set_default_parameters
 from pipelines.schedules import every_5_minutes
 from pipelines.tasks import get_scheduled_timestamp, parse_timestamp_to_string
-
-from pipelines.capture.templates.flows import create_default_capture_flow
-
+from pipelines.treatment.templates.flows import create_default_materialization_flow
 
 # Imports #
 
@@ -64,7 +62,6 @@ from pipelines.capture.templates.flows import create_default_capture_flow
 # EMD Imports #
 
 
-from pipelines.treatment.templates.flows import create_default_materialization_flow
 
 # SETUP dos Flows
 
