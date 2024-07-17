@@ -34,6 +34,7 @@ from pipelines.migration.utils import set_default_parameters
 from pipelines.schedules import (
     every_5_minutes,
     every_day_hour_five,
+    every_day_hour_seven,
     every_hour,
     every_minute,
 )
@@ -346,7 +347,7 @@ bilhetagem_validacao_jae.state_handlers = [
     handler_skip_if_running,
 ]
 
-# bilhetagem_validacao_jae.schedule = every_day_hour_seven
+bilhetagem_validacao_jae.schedule = every_day_hour_seven
 
 
 # RECAPTURA #
