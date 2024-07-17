@@ -9,6 +9,29 @@
   )
 }}
 
+{% set integracao_table = ref('integracao') %}
+{% if execute %}
+  {% if is_incremental() %}
+
+    {% set partitions_query %}
+      SELECT
+        CONCAT("'", PARSE_DATE("%Y%m%d", partition_id), "'") AS data
+      FROM
+        `{{ integracao_table.database }}.{{ integracao_table.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+      WHERE
+        table_name = "{{ integracao_table.identifier }}"
+        AND partition_id != "__NULL__"
+        AND DATE(last_modified_time, "America/Sao_Paulo") = DATE_SUB(DATE("{{var('run_date')}}"), INTERVAL 1 DAY)
+    {% endset %}
+
+    {{ log("Running query: \n"~partitions_query, info=True) }}
+    {% set partitions = run_query(partitions_query) %}
+
+    {% set partition_list = partitions.columns[0].values() %}
+    {{ log("integracao partitions: \n"~partition_list, info=True) }}
+  {% endif %}
+{% endif %}
+
 WITH sequencias_validas AS (
   SELECT
     id_matriz_integracao,
@@ -28,11 +51,14 @@ integracao_agg AS (
     MIN(intervalo_integracao) AS menor_intervalo
   FROM
     {{ ref("integracao") }}
-  {% if is_incremental() %}
-    WHERE
-      data BETWEEN DATE_SUB(DATE("{{var('run_date')}}"), INTERVAL 1 DAY) AND DATE_ADD(DATE("{{var('run_date')}}"), INTERVAL 1 DAY)
-      AND datetime_processamento_integracao = DATE_SUB(DATE("{{var('run_date')}}"), INTERVAL 1 DAY)
-  {% endif %}
+  WHERE
+    {% if is_incremental() %}
+      {% if partition_list|length > 0 %}
+        data IN ({{ partition_list|join(', ') }})
+      {% else %}
+        data = "2000-01-01"
+      {% endif %}
+    {% endif %}
   GROUP BY
     1,
     2
