@@ -62,8 +62,8 @@ WITH transacao AS (
   ON
     t.id_servico_jae = s.id_servico_jae
     AND t.data >= s.data_inicio_vigencia AND (t.data <= s.data_fim_vigencia OR s.data_fim_vigencia IS NULL)
-  WHERE
     {% if is_incremental() %}
+      WHERE
       {% if partition_list|length > 0 %}
         data IN ({{ partition_list|join(', ') }})
       {% else %}
