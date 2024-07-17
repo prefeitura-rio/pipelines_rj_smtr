@@ -3,7 +3,7 @@
 ## [1.0.1] - 2024-07-17
 
 ### Corrigido
-- Deduplica ids dos serviços
+- Deduplica ids dos serviços (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/109)
 
 ## [1.0.0] - 2024-06-11
 
