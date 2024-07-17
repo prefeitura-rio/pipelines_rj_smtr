@@ -16,8 +16,8 @@ SELECT
     g.latitude,
     g.longitude,
     g.tabela_origem_gtfs,
-    COALESCE(g.inicio_vigencia, DATE(j.datetime_inclusao)) AS inicio_vigencia,
-    g.fim_vigencia,
+    COALESCE(g.inicio_vigencia, DATE(j.datetime_inclusao)) AS data_inicio_vigencia,
+    g.fim_vigencia AS data_fim_vigencia,
     '{{ var("version") }}' as versao
 FROM
     {{ ref("staging_linha") }} j
