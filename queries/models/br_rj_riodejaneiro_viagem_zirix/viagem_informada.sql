@@ -26,7 +26,7 @@
         {{ incremental_filter }}
     {% endset %}
 
-    {% set partitions = run_query(partitions_query)[0].values() %}
+    {% set partitions = run_query(partitions_query).columns[0].values() %}
   {% endif %}
 {% endif %}
 
