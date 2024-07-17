@@ -1,6 +1,6 @@
 {{
   config(
-    materialized="ephemeral",
+    materialized="table",
   )
 }}
 
@@ -64,7 +64,7 @@ WITH transacao AS (
       DATE(t.data) <= CURRENT_DATE("America/Sao_Paulo")
       AND DATE(t.data_processamento) <= CURRENT_DATE("America/Sao_Paulo")
     {% endif %}
-)
+),
 transacao_deduplicada AS (
   SELECT
     t.* EXCEPT(rn),
@@ -73,7 +73,7 @@ transacao_deduplicada AS (
   (
     SELECT
       *,
-      ROW_NUMBER() OVER (PARTITION BY id ORDER BY timestamp_captura DESC) AS rn
+      ROW_NUMBER() OVER (PARTITION BY id_transacao ORDER BY timestamp_captura DESC) AS rn
     FROM
       transacao
   ) t
@@ -87,7 +87,7 @@ FROM
 LEFT JOIN
   {{ ref("staging_linha_sem_ressarcimento") }} l
 ON
-  t.cd_linha = l.id_linha
+  t.id_servico_jae = l.id_linha
 WHERE
   -- Remove dados com data de ordem de pagamento maiores que a execução do modelo
   {% if is_incremental() %}
@@ -98,4 +98,4 @@ WHERE
   -- Remove linhas de teste que não entram no ressarcimento
   AND l.id_linha IS NULL
   -- Remove gratuidades e transferências da contagem de transações
-  AND tipo_transacao NOT IN ('5', '21')
+  AND tipo_transacao NOT IN ('5', '21', '40')
