@@ -148,4 +148,4 @@ SELECT
 FROM
   cadastro
 WHERE
-  modo NOT IN ("Escolar", "Táxi", "TEC", "Fretamento")
+  modo NOT IN ("Escolar", "Táxi", "TEC")
