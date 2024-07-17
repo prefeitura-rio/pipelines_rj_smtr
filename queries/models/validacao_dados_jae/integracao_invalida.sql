@@ -51,8 +51,8 @@ integracao_agg AS (
     MIN(intervalo_integracao) AS menor_intervalo
   FROM
     {{ ref("integracao") }}
-  WHERE
     {% if is_incremental() %}
+      WHERE
       {% if partition_list|length > 0 %}
         data IN ({{ partition_list|join(', ') }})
       {% else %}
