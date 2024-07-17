@@ -49,8 +49,6 @@ models:
         description: "Nome longo da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou nome da estação de BRT na Jaé"
       # - name: servico
       #   description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação no caso de BRT"
-      - name: descricao_servico
-        description: "Nome completo da linha ou estação"
       - name: id_transacao
         description: "Identificador único da transação"
       - name: longitude
@@ -71,43 +69,26 @@ models:
         description: "Resumo do tipo de geolocalização inválida de acordo com as colunas indicadoras"
       - name: indicador_servico_fora_gtfs
         description: "Indica se o serviço não tem correspondência com as tabela 'trips' ou 'stops' do GTFS"
+      - name: indicador_servico_fora_vigencia
+        description: "Indica se a transação foi feita em um serviço fora de vigência"
       - name: versao
         description: "Código de controle de versão do dado (SHA Github)"
-  - name: ordem_pagamento_validacao
+  - name: ordem_pagamento_invalida
     description: "Tabela para validação dos dados da ordem de pagamento da Jaé"
     columns:
       - name: data_ordem
         description: "Data da ordem de pagamento (partição)"
       - name: id_ordem_pagamento
         description: "Identificador único da ordem de pagamento"
-      - name: indicador_agregacao_invalida
-        description: "Indica se a soma dos valores de todos os consórcios pagos no dia é igual ao valor total do dia informado pela Jaé"
-      - name: indicador_servico_operador_invalido
-        description: "Indica se as informações da tabela ordem_pagamento_servico_operador_dia estão válidas"
-      - name: indicador_consorcio_operador_invalido
-        description: "Indica se as informações da tabela ordem_pagamento_consorcio_operador_dia estão válidas"
-      - name: indicador_consorcio_invalido
-        description: "Indica se as informações da tabela ordem_pagamento_consorcio_dia estão válidas"
-      - name: indicador_ordem_invalida
-        description: "Indica se a ordem de pagamento é válida"
-      - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
-  - name: veiculo_validacao
-    description: "Tabela para validação dos dados de veículos da Jaé"
-    columns:
-      - name: data
-        description: "Data das informações enviadas pelo validador da Jaé (partição)"
-      - name: id_validador
-        description: "Número de série do validador"
-      - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
-      - name: quantidade_gps_validador
-        description: "Quantidade de registros de GPS do validador da Jaé no dia"
-      - name: quantidade_gps_onibus
-        description: "Quantidade de registros de GPS do veículo no dia"
-      - name: quantidade_transacao
-        description: "Quantidade de transações feitas utilizando o validador da Jaé no dia"
-      - name: indicador_veiculo_licenciado
-        description: "Indica se o veículo estava licenciado no dia"
+      - name: indicador_captura_invalida
+        description: "Indica se o número e valor das transações capturadas é diferente das informações encontradas na ordem de pagamento"
+      - name: indicador_servico_fora_vigencia
+        description: "Indica se houve alguma transação feita em um serviço fora de vigência. Quando nulo informa que não foi possível encontrar a vigência do serviço"
+      - name: indicador_agregacao_consorcio_operador_dia_invalida
+        description: "Indica se os valores e quantidades da tabela ordem_pagamento_servico_operador_dia agregada por consórcio, operador e dia está diferente das informações da tabela ordem_pagamento_consorcio_operador_dia"
+      - name: indicador_agregacao_consorcio_dia_invalida
+        description: "Indica se os valores e quantidades da tabela ordem_pagamento_consorcio_operador_dia agregada por consórcio e dia está diferente das informações da tabela ordem_pagamento_consorcio_dia"
+      - name: indicador_agregacao_dia_invalida
+        description: "Indica se os valores e quantidades da tabela ordem_pagamento_consorcio_dia agregada por dia está diferente das informações da tabela ordem_pagamento_dia"
       - name: versao
         description: "Código de controle de versão do dado (SHA Github)"
