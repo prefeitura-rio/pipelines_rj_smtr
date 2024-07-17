@@ -105,7 +105,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
     data_versao_gtfs_param = Parameter("data_versao_gtfs", default=None)
 
     mode = get_current_flow_mode()
-
+    data_versao_gtfs_task = None
     last_captured_os_none = None
     with case(data_versao_gtfs_param, None):
         last_captured_os_redis = get_last_capture_os(
@@ -186,18 +186,22 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
     data_versao_gtfs_merge = merge(data_versao_gtfs_task, data_versao_gtfs_param)
     wait_captura = merge(wait_captura_true, wait_captura_false)
 
-    data_versao_gtfs_is_str = task(lambda: isinstance(data_versao_gtfs_merge, str))()
-
     verifica_materialize = task(
         lambda materialize, data_versao: materialize and data_versao is not None
     )(materialize=materialize, data_versao=data_versao_gtfs_merge)
 
+    data_versao_gtfs_is_str = task(
+        lambda: isinstance(data_versao_gtfs_merge, str) and verifica_materialize
+    )()
+
+    with case(data_versao_gtfs_is_str, True):
+        string_data_versao_gtfs = parse_timestamp_to_string(
+            timestamp=data_versao_gtfs_merge, pattern="%Y-%m-%d"
+        )
+
+    data_versao_gtfs = merge(string_data_versao_gtfs, data_versao_gtfs_merge)
+
     with case(verifica_materialize, True):
-        with case(data_versao_gtfs_is_str, True):
-            string_data_versao_gtfs = parse_timestamp_to_string(
-                timestamp=data_versao_gtfs_merge, pattern="%Y-%m-%d"
-            )
-        data_versao_gtfs = merge(string_data_versao_gtfs, data_versao_gtfs_merge)
         version = fetch_dataset_sha(dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value)
         dbt_vars = get_join_dict([{"data_versao_gtfs": data_versao_gtfs}], version)[0]
 
