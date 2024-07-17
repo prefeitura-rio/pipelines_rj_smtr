@@ -8,6 +8,28 @@
     },
   )
 }}
+{% set transacao_table = ref('transacao') %}
+{% if execute %}
+  {% if is_incremental() %}
+
+    {% set partitions_query %}
+      SELECT
+        CONCAT("'", PARSE_DATE("%Y%m%d", partition_id), "'") AS data
+      FROM
+        `{{ transacao_table.database }}.{{ transacao_table.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+      WHERE
+        table_name = "{{ transacao_table.identifier }}"
+        AND partition_id != "__NULL__"
+        AND DATE(last_modified_time, "America/Sao_Paulo") = DATE_SUB(DATE("{{var('run_date')}}"), INTERVAL 1 DAY)
+    {% endset %}
+
+    {{ log("Running query: \n"~partitions_query, info=True) }}
+    {% set partitions = run_query(partitions_query) %}
+
+    {% set partition_list = partitions.columns[0].values() %}
+    {{ log("trasacao partitions: \n"~partition_list, info=True) }}
+  {% endif %}
+{% endif %}
 
 WITH transacao AS (
   SELECT
@@ -40,21 +62,28 @@ WITH transacao AS (
   ON
     t.id_servico_jae = s.id_servico_jae
     AND t.data >= s.inicio_vigencia AND (t.data <= s.fim_vigencia OR s.fim_vigencia IS NULL)
-  {% if is_incremental() %}
-    WHERE
-      data = DATE_SUB(DATE("{{var('run_date')}}"), INTERVAL 1 DAY)
-  {% endif %}
+  WHERE
+    {% if is_incremental() %}
+      {% if partition_list|length > 0 %}
+        data IN ({{ partition_list|join(', ') }})
+      {% else %}
+        data = "2000-01-01"
+      {% endif %}
+    {% endif %}
 ),
 indicadores AS (
   SELECT
-    * EXCEPT(id_servico_gtfs, latitude_tratada, longitude_tratada),
+    * EXCEPT(id_servico_gtfs, latitude_tratada, longitude_tratada, id_servico_jae_cadastro),
     latitude_tratada = 0 OR longitude_tratada = 0 AS indicador_geolocalizacao_zerada,
     (
       (latitude_tratada != 0 OR longitude_tratada != 0)
       AND NOT ST_INTERSECTSBOX(ST_GEOGPOINT(longitude_tratada, latitude_tratada), -43.87, -23.13, -43.0, -22.59)
     ) AS indicador_geolocalizacao_fora_rio,
     (
-      (latitude_tratada != 0 OR longitude_tratada != 0)
+      latitude_tratada != 0
+      AND longitude_tratada != 0
+      AND latitude_servico IS NOT NULL
+      AND longitude_servico IS NOT NULL
       AND modo = "BRT"
       AND ST_DISTANCE(ST_GEOGPOINT(longitude_tratada, latitude_tratada), ST_GEOGPOINT(longitude_servico, latitude_servico)) > 100
     ) AS indicador_geolocalizacao_fora_stop,
