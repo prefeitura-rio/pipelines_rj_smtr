@@ -1,4 +1,18 @@
-WITH dados_filtrados AS (
+WITH servicos AS (
+    SELECT
+        * EXCEPT(rn)
+    FROM
+        (
+            SELECT
+                *,
+                ROW_NUMBER() OVER (PARTITION BY id_servico_jae ORDER BY data_inicio_vigencia) AS rn
+            FROM
+                {{ ref("servicos") }}
+        )
+    WHERE
+        rn = 1
+),
+dados_filtrados AS (
     SELECT
         i.data,
         i.hora,
@@ -11,7 +25,7 @@ WITH dados_filtrados AS (
     FROM
         {{ ref("integracao") }} i
     LEFT JOIN
-        {{ ref("servicos") }} s
+        servicos s
     USING(id_servico_jae)
     WHERE
         data >= "2024-02-24"
