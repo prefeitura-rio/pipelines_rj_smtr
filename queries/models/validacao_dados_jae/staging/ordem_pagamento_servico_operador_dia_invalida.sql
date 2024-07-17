@@ -15,7 +15,7 @@
     SELECT DISTINCT
       CONCAT("'", DATE(data_transacao), "'") AS data_transacao
     FROM
-      transacao_ordem
+      {{ transacao_ordem }}
     WHERE
       data_ordem = DATE("{{var('run_date')}}")
   {% endset %}
@@ -53,6 +53,10 @@ transacao_agg AS (
   LEFT JOIN
     transacao_invalida ti
   USING(id_transacao)
+  GROUP BY
+    data_ordem,
+    id_servico_jae,
+    id_operadora
 ),
 ordem_pagamento AS (
   SELECT
@@ -92,7 +96,7 @@ transacao_ordem AS (
   FULL OUTER JOIN
     transacao_agg t
   USING(data_ordem, id_servico_jae, id_operadora)
-)
+),
 indicadores AS (
   SELECT
     o.data_ordem,
@@ -127,4 +131,5 @@ FROM
 WHERE
   indicador_servico_fora_vigencia = TRUE
   OR indicador_captura_invalida = TRUE
+  AND id_servico_jae NOT IN (SELECT id_linha FROM {{ ref("staging_linha_sem_ressarcimento") }})
 
