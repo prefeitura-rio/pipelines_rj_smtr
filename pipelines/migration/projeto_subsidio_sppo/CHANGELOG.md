@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.0.1] - 2024-07-17
+
+### Alterado
+
+- Alterado o schedule do flow `SMTR: Subsídio SPPO Apuração - Tratamento` de 07:00 para 07:05 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/106)  
+
 ## [1.0.0] - 2024-06-28
 
 ### Alterado
