@@ -22,8 +22,8 @@ WITH
       USING
         (data)
       LEFT JOIN
-        {{ ref("ordem_servico_gtfs") }} AS o
-        -- rj-smtr.gtfs.ordem_servico AS o
+        -- {{ ref("ordem_servico_gtfs") }} AS o
+        rj-smtr.gtfs.ordem_servico AS o
       USING
         (feed_start_date, servico, tipo_os)
       WHERE

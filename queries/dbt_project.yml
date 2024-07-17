@@ -186,16 +186,16 @@ models:
   rj_smtr:
     projeto_subsidio_sppo:
       +materialized: view
-      +schema: projeto_subsidio_sppo
+      +schema: SMTR202307005758_reprocessamento_projeto_subsidio_sppo
       deprecated:
         +materialized: view
-        +schema: projeto_subsidio_sppo
+        +schema: SMTR202307005758_reprocessamento_projeto_subsidio_sppo
     br_rj_riodejaneiro_sigmob:
       +materialized: view
       +schema: br_rj_riodejaneiro_sigmob
     br_rj_riodejaneiro_onibus_gps:
       +materialized: view
-      +schema: br_rj_riodejaneiro_onibus_gps
+      +schema: SMTR202307005758_reprocessamento_br_rj_riodejaneiro_onibus_gps
     br_rj_riodejaneiro_onibus_gps_zirix:
       +materialized: view
       +schema: br_rj_riodejaneiro_onibus_gps_zirix
@@ -204,13 +204,13 @@ models:
       +schema: br_rj_riodejaneiro_brt_gps
     br_rj_riodejaneiro_veiculos:
       +materialized: view
-      +schema: br_rj_riodejaneiro_veiculos
+      +schema: SMTR202307005758_reprocessamento_br_rj_riodejaneiro_veiculos
     dashboard_subsidio_sppo:
       +materialized: view
-      +schema: dashboard_subsidio_sppo
+      +schema: SMTR202307005758_reprocessamento_dashboard_subsidio_sppo
     dashboard_subsidio_sppo_staging:
       +materialized: view
-      +schema: dashboard_subsidio_sppo_staging
+      +schema: SMTR202307005758_reprocessamento_dashboard_subsidio_sppo_staging
     veiculo:
       +materialized: view
       +schema: veiculo

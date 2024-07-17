@@ -28,7 +28,8 @@ WITH
     status,
     SAFE_CAST(JSON_VALUE(indicadores,"$.indicador_ar_condicionado") AS BOOL) AS indicador_ar_condicionado
   FROM
-    {{ ref("sppo_veiculo_dia") }} -- `rj-smtr`.`veiculo`.`sppo_veiculo_dia`
+    -- {{ ref("sppo_veiculo_dia") }} 
+    `rj-smtr`.`veiculo`.`sppo_veiculo_dia`
   WHERE
     `data` BETWEEN DATE( "{{ var("DATA_SUBSIDIO_V2_INICIO") }}" )
     AND DATE( "{{ var("end_date") }}" ) ),

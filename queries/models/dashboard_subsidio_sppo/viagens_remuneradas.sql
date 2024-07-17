@@ -44,8 +44,8 @@ WITH
     partidas_volta,
     tipo_os,
   FROM
-      {{ ref("ordem_servico_gtfs") }}
-      -- rj-smtr.gtfs.ordem_servico
+      -- {{ ref("ordem_servico_gtfs") }}
+      rj-smtr.gtfs.ordem_servico
   WHERE
     feed_start_date IN ('{{ feed_start_dates|join("', '") }}')
   ),
@@ -103,8 +103,8 @@ WITH
     id_veiculo,
     status
   FROM
-    {{ ref("sppo_veiculo_dia") }}
-    -- rj-smtr.veiculo.sppo_veiculo_dia
+    -- {{ ref("sppo_veiculo_dia") }}
+    rj-smtr.veiculo.sppo_veiculo_dia
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}") ),

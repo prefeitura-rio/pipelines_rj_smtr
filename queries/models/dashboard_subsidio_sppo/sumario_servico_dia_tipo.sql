@@ -32,8 +32,8 @@ WITH
     id_veiculo,
     status
   FROM
-    -- rj-smtr.veiculo.sppo_veiculo_dia
-    {{ ref("sppo_veiculo_dia") }}
+    rj-smtr.veiculo.sppo_veiculo_dia
+    -- {{ ref("sppo_veiculo_dia") }}
   WHERE
     DATA >= DATE( "{{ var("DATA_SUBSIDIO_V2_INICIO") }}" )
     {% if is_incremental() %}
