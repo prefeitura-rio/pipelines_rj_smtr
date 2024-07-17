@@ -23,7 +23,8 @@ SELECT
     g.longitude_equipamento AS longitude,
     INITCAP(g.sentido_linha) AS sentido,
     g.estado_equipamento,
-    g.temperatura
+    g.temperatura,
+    g.versao_app
 FROM
     {{ ref("staging_gps_validador") }} g
 LEFT JOIN

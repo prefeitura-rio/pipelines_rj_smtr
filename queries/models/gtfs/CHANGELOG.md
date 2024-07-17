@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.1.5] - 2024-07-15
+
+### Adicionado
+
+- Adicionadas descrições das tabelas `servicos_sentido`, `ordem_servico_viagens_planejadas`, `ordem_servico_diaria` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/102)
+
 ## [1.1.4] - 2024-05-22
 
 ### Alterado
