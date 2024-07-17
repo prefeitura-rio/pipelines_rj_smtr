@@ -34,7 +34,7 @@ models:
       - name: modo
         description: "Tipo de transporte (Ônibus, Van, BRT)"
       - name: id_consorcio
-        description: "dentificador do consórcio na tabela cadastro.consorcios"
+        description: "Identificador do consórcio na tabela cadastro.consorcios"
       - name: consorcio
         description: "Nome do consórcio"
       - name: id_operadora
