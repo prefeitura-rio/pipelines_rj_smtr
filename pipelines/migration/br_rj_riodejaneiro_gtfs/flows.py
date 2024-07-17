@@ -99,8 +99,7 @@ from pipelines.tasks import get_scheduled_timestamp, parse_timestamp_to_string
 # )
 
 with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
-    capture = Parameter("capture", default=True)
-    materialize = Parameter("materialize", default=True)
+    materialize_only = Parameter("materialize_only", default=False)
     regular_sheet_index = Parameter("regular_sheet_index", default=None)
     data_versao_gtfs_param = Parameter("data_versao_gtfs", default=None)
 
@@ -113,7 +112,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
         )
 
     last_captured_os = merge(last_captured_os_none, last_captured_os_redis)
-    with case(capture, True):
+    with case(materialize_only, False):
 
         timestamp = get_scheduled_timestamp()
 
@@ -180,19 +179,17 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 timestamp=unmapped(data_versao_gtfs_task),
                 error=errors,
             )
-    with case(capture, False):
+    with case(materialize_only, True):
         wait_captura_false = task()
 
     data_versao_gtfs_merge = merge(data_versao_gtfs_task, data_versao_gtfs_param)
     wait_captura = merge(wait_captura_true, wait_captura_false)
 
-    verifica_materialize = task(
-        lambda materialize, data_versao: materialize and data_versao is not None
-    )(materialize=materialize, data_versao=data_versao_gtfs_merge)
+    verifica_materialize = task(lambda data_versao: data_versao is not None)(
+        data_versao=data_versao_gtfs_merge
+    )
 
-    data_versao_gtfs_is_str = task(
-        lambda: isinstance(data_versao_gtfs_merge, str) and verifica_materialize
-    )()
+    data_versao_gtfs_is_str = task(lambda: isinstance(data_versao_gtfs_merge, str))()
 
     with case(data_versao_gtfs_is_str, True):
         string_data_versao_gtfs = parse_timestamp_to_string(
@@ -216,7 +213,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             mode=mode,
         ).set_upstream(task=wait_run_dbt_model)
 
-    with case(materialize, False):
+    with case(verifica_materialize, False):
         wait_materialize_false = task()
 
     wait_materialize = merge(wait_materialize_true, wait_materialize_false)
