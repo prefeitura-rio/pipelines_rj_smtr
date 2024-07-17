@@ -64,5 +64,11 @@ WHERE
   {% endif %}
   AND id_servico_jae NOT IN ("140", "142")
   AND id_operadora != "2"
-  AND (modo = "BRT" OR (modo = "VLT" AND data >= DATE("2024-02-24")) OR (modo = "Ônibus" AND data >= DATE("2024-04-19")))
+  AND (
+      modo = "BRT"
+      OR (modo = "VLT" AND data >= DATE("2024-02-24"))
+      OR (modo = "Ônibus" AND data >= DATE("2024-04-19"))
+      OR (modo = "Van" AND consorcio = "STPC" AND data >= DATE("2024-07-01"))
+      OR (modo = "Van" AND consorcio = "STPL" AND data >= DATE("2024-07-15"))
+  )
   AND tipo_transacao IS NOT NULL
