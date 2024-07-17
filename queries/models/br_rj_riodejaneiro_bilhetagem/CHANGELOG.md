@@ -1,5 +1,13 @@
 # Changelog - bilhetagem
 
+## [2.1.3] - 2024-07-18
+
+### Adicionado
+- Adiciona transações de Van no modelo `passageiros_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/110)
+
+### Alterado
+- Define o tipo_gratuidade de transações do tipo `Gratuidade` que o cliente não foi encontrado na tabela `br_rj_riodejaneiro_bilhetagem_staging.aux_gratuidade` como `Não Identificado` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/110)
+
 ## [2.1.2] - 2024-07-05
 
 ### Adicionado
