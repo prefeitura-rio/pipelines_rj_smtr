@@ -1,17 +1,17 @@
 # Changelog - gtfs
 
+## [1.0.4] - 2024-07-17
 
-## [1.0.4] - 2024-07-04
+### Adicionado
+
+- Adiciona parametros para a captura manual do gtfs no flow `SMTR: GTFS - Captura/Tratamento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/82/)
+
+## [1.0.3] - 2024-07-04
 
 ## Corrigido
 
 - Corrigido o formato da data salva no redis de d/m/y para y-m-d (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/91)
 
-## [1.0.3] - 2024-06-26
-
-### Adicionado
-
-- Adiciona parametros para a captura manual do gtfs no flow `SMTR: GTFS - Captura/Tratamento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/82/)
 
 ## [1.0.2] - 2024-06-21
 
