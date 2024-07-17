@@ -89,7 +89,7 @@ transacao_ordem AS (
     op.valor_total_transacao_bruto,
     op.valor_total_transacao_liquido,
     t.quantidade_total_transacao_captura,
-    CAST(t.valor_total_transacao_captura + op.valor_rateio_credito + op.valor_rateio_debito AS NUMERIC) AS valor_total_transacao_captura,
+    SAFE_CAST(t.valor_total_transacao_captura + op.valor_rateio_credito + op.valor_rateio_debito AS NUMERIC) AS valor_total_transacao_captura,
     t.indicador_servico_fora_vigencia
   FROM
     ordem_pagamento op
