@@ -318,7 +318,10 @@ SELECT
     WHEN t.tipo_transacao IN ("Débito", "Botoeira") THEN "Integral"
     ELSE t.tipo_transacao
   END AS tipo_transacao_smtr,
-  t.tipo_gratuidade,
+  CASE
+    WHEN t.tipo_transacao = "Gratuidade" AND t.tipo_gratuidade IS NULL THEN "Não Identificado"
+    ELSE t.tipo_gratuidade
+  END AS tipo_gratuidade,
   t.id_tipo_integracao,
   t.id_integracao,
   t.latitude,
