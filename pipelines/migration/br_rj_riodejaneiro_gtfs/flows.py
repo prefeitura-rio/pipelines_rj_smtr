@@ -191,7 +191,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
     data_versao_gtfs_is_str = task(lambda: isinstance(data_versao_gtfs_merge, str))()
 
-    with case(data_versao_gtfs_is_str, True):
+    with case(data_versao_gtfs_is_str, False):
         string_data_versao_gtfs = parse_timestamp_to_string(
             timestamp=data_versao_gtfs_merge, pattern="%Y-%m-%d"
         )
