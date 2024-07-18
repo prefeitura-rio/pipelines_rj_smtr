@@ -114,7 +114,8 @@ WITH
     DISTINCT data_inicio,
     data_fim,
     status,
-    subsidio_km
+    subsidio_km,
+    MAX(subsidio_km) OVER (PARTITION BY data_inicio, data_fim) AS subsidio_km_teto
   FROM
     {{ ref("subsidio_valor_km_tipo_viagem") }} ),
 -- 5. Viagens com tipo e valor de subsídio por km
@@ -125,7 +126,8 @@ WITH
     ve.status AS tipo_viagem,
     id_viagem,
     distancia_planejada,
-    t.subsidio_km
+    t.subsidio_km,
+    t.subsidio_km_teto
   FROM
     viagem AS v
   LEFT JOIN
