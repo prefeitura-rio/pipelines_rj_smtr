@@ -280,3 +280,9 @@ models:
       staging:
         +materialized: view
         +schema: br_rj_riodejaneiro_viagem_zirix_staging
+    financeiro:
+      +materialized: view
+      +schema: financeiro
+    dashboard_subsidio_sppo_v2:
+      +materialized: view
+      +schema: dashboard_subsidio_sppo_v2
