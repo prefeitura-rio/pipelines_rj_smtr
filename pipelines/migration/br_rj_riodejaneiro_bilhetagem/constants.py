@@ -521,8 +521,7 @@ aux_retorno_ordem_pagamento",
     BILHETAGEM_MATERIALIZACAO_VALIDACAO_JAE_PARAMS = {
         "dataset_id": "validacao_dados_jae",
         "upstream": True,
-        "exclude": "+gps_sppo +sppo_veiculo_dia +gps_validador +transacao \
-+ordem_pagamento_dia +integracao +servicos",
+        "exclude": "gtfs +transacao +integracao",
         "dbt_vars": {
             "run_date": {},
             "version": {},

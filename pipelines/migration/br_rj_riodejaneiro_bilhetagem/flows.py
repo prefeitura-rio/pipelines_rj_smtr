@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Flows for br_rj_riodejaneiro_bilhetagem
+
+DBT: 2024-07-18
 """
 
 from copy import deepcopy
@@ -34,6 +36,7 @@ from pipelines.migration.utils import set_default_parameters
 from pipelines.schedules import (
     every_5_minutes,
     every_day_hour_five,
+    every_day_hour_seven,
     every_hour,
     every_minute,
 )
@@ -138,12 +141,14 @@ bilhetagem_tracking_captura = set_default_parameters(
     | smtr_constants.BILHETAGEM_TRACKING_CAPTURE_PARAMS.value,
 )
 
-bilhetagem_tracking_captura.state_handlers.append(
-    [handler_inject_bd_credentials, handler_initialize_sentry, handler_skip_if_running]
-)
+bilhetagem_tracking_captura.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+    handler_skip_if_running,
+]
 
 
-# bilhetagem_tracking_captura.schedule = every_5_minutes
+bilhetagem_tracking_captura.schedule = every_5_minutes
 
 # BILHETAGEM RESSARCIMENTO - SUBFLOW PARA RODAR DIARIAMENTE #
 
@@ -346,7 +351,7 @@ bilhetagem_validacao_jae.state_handlers = [
     handler_skip_if_running,
 ]
 
-# bilhetagem_validacao_jae.schedule = every_day_hour_seven
+bilhetagem_validacao_jae.schedule = every_day_hour_seven
 
 
 # RECAPTURA #

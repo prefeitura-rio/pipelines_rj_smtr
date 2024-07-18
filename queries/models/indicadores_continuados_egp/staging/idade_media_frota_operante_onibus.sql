@@ -21,9 +21,9 @@ WITH
   {% if is_incremental() %}
     data BETWEEN DATE_TRUNC(DATE("{{ var("start_date") }}"), MONTH)
     AND LAST_DAY(DATE("{{ var("end_date") }}"), MONTH)
-    AND data < DATE_TRUNC(CURRENT_DATE(), MONTH)
+    AND data < DATE_TRUNC(CURRENT_DATE("America/Sao_Paulo"), MONTH)
   {% else %}
-    data < DATE_TRUNC(CURRENT_DATE(), MONTH)
+    data < DATE_TRUNC(CURRENT_DATE("America/Sao_Paulo"), MONTH)
   {% endif %}
   GROUP BY
     1,
@@ -41,9 +41,9 @@ WITH
   {% if is_incremental() %}
     data BETWEEN DATE_TRUNC(DATE("{{ var("start_date") }}"), MONTH)
     AND LAST_DAY(DATE("{{ var("end_date") }}"), MONTH)
-    AND data < DATE_TRUNC(CURRENT_DATE(), MONTH)
+    AND data < DATE_TRUNC(CURRENT_DATE("America/Sao_Paulo"), MONTH)
   {% else %}
-    data < DATE_TRUNC(CURRENT_DATE(), MONTH)
+    data < DATE_TRUNC(CURRENT_DATE("America/Sao_Paulo"), MONTH)
   {% endif %}
   ),
   -- 3. Calcula a idade de todos os veículos para a data de referência
@@ -72,7 +72,7 @@ SELECT
   EXTRACT(MONTH FROM data) AS mes,
   "Ônibus" AS modo,
   ROUND(AVG(idade),2) AS idade_media_veiculo_mes,
-  CURRENT_DATE() AS data_ultima_atualizacao,
+  CURRENT_DATE("America/Sao_Paulo") AS data_ultima_atualizacao,
   '{{ var("version") }}' as versao
 FROM
   idade_frota

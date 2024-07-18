@@ -13,7 +13,7 @@ SELECT
   EXTRACT(MONTH FROM data) AS mes,
   "Ônibus" AS modo,
   COUNT(DISTINCT id_veiculo) AS quantidade_veiculo_mes,
-  CURRENT_DATE() AS data_ultima_atualizacao,
+  CURRENT_DATE("America/Sao_Paulo") AS data_ultima_atualizacao,
   '{{ var("version") }}' as versao
 FROM
   {{ ref('viagem_completa') }}
@@ -22,9 +22,9 @@ WHERE
 {% if is_incremental() %}
   data BETWEEN DATE_TRUNC(DATE("{{ var("start_date") }}"), MONTH)
   AND LAST_DAY(DATE("{{ var("end_date") }}"), MONTH)
-  AND data < DATE_TRUNC(CURRENT_DATE(), MONTH)
+  AND data < DATE_TRUNC(CURRENT_DATE("America/Sao_Paulo"), MONTH)
 {% else %}
-  data < DATE_TRUNC(CURRENT_DATE(), MONTH)
+  data < DATE_TRUNC(CURRENT_DATE("America/Sao_Paulo"), MONTH)
 {% endif %}
 GROUP BY
   2,
