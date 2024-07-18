@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.0.3] - 2024-07-04
+
+## Corrigido
+
+- Corrigido o formato da data salva no redis de d/m/y para y-m-d (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/91)
+
 ## [1.0.2] - 2024-06-21
 
 ### Adicionado

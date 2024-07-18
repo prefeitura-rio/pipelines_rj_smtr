@@ -238,10 +238,10 @@ models:
     br_rj_riodejaneiro_stu:
       +materialized: view
       +schema: br_rj_riodejaneiro_stu
-    cadastro_staging:
-      +schema: cadastro_staging
     cadastro:
       +schema: cadastro
+      staging:
+        +schema: cadastro_staging
     br_rj_riodejaneiro_recursos:
       +materialized: incremental
       +schema: br_rj_riodejaneiro_recursos
@@ -252,13 +252,13 @@ models:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
       +schema: gtfs
-    indicadores_continuados_egp_staging:
-      +materialized: incremental
-      +incremental_strategy: insert_overwrite
-      +schema: indicadores_continuados_egp_staging
     indicadores_continuados_egp:
       +materialized: view
       +schema: indicadores_continuados_egp
+      staging:
+        +materialized: incremental
+        +incremental_strategy: insert_overwrite
+        +schema: indicadores_continuados_egp_staging
     projeto_subsidio_sppo_encontro_contas:
       +materialized: table
       +schema: projeto_subsidio_sppo_encontro_contas
@@ -280,6 +280,12 @@ models:
       staging:
         +materialized: view
         +schema: br_rj_riodejaneiro_viagem_zirix_staging
+    validacao_dados_jae:
+      +materialized: incremental
+      +schema: validacao_dados_jae
+      staging:
+        +materialized: incremental
+        +schema: validacao_dados_jae_staging
     financeiro:
       +materialized: view
       +schema: financeiro

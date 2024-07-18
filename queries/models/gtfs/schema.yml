@@ -365,6 +365,15 @@ models:
       - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
 
+  - name: ordem_servico_diaria
+    description: "Dados diários das linhas presentes no município."
+
+  - name: ordem_servico_viagens_planejadas
+    description: "Viagens planejadas das linhas presentes no município."
+
+  - name: servicos_sentido
+    description: "Sentido dos serviços (I - Ida, V - Volta, C - Circular)"
+
   - name: ordem_servico_gtfs
     description: "Dados das linhas presentes no município."
     columns:
