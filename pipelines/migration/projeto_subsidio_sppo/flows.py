@@ -207,14 +207,21 @@ with Flow(
                 upstream_tasks=[SUBSIDIO_SPPO_DATA_QUALITY_PRE],
             )
 
-            SUBSIDIO_SPPO_FINANCEIRO_RUN = run_dbt_model(
+            SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_model(
                 # dbt_client=dbt_client,
-                dataset_id=constants.SUBSIDIO_SPPO_FINANCEIRO_DATASET_ID.value,
+                dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value,
                 _vars=_vars,
                 upstream_tasks=[SUBSIDIO_SPPO_STAGING_RUN],
             )
 
-            SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_model(
+            SUBSIDIO_SPPO_FINANCEIRO_RUN = run_dbt_model(
+                # dbt_client=dbt_client,
+                dataset_id=constants.SUBSIDIO_SPPO_FINANCEIRO_DATASET_ID.value,
+                _vars=_vars,
+                upstream_tasks=[SUBSIDIO_SPPO_APURACAO_RUN],
+            )
+
+            SUBSIDIO_SPPO_APURACAOv2_RUN = run_dbt_model(
                 # dbt_client=dbt_client,
                 dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_V2_DATASET_ID.value,
                 _vars=_vars,
@@ -225,7 +232,7 @@ with Flow(
             SUBSIDIO_SPPO_DATA_QUALITY_POS = subsidio_data_quality_check(
                 mode="pos",
                 params=_vars,
-                upstream_tasks=[SUBSIDIO_SPPO_APURACAO_RUN],
+                upstream_tasks=[SUBSIDIO_SPPO_APURACAOv2_RUN],
             )
 
             # TODO: test upstream_tasks=[SUBSIDIO_SPPO_DASHBOARD_RUN]
