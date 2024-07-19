@@ -72,9 +72,9 @@ models:
       - name: km_planejada_dia
         description: "Distância planejada para o serviço por dia (km)."
       - name: media_pof
-        description: ""media_pof""
+        description: "Média do indicador percentual de operação por faixa horária."
       - name: desvp_pof
-        description: ""desvp_pof""
+        description: "Desvio padrão do indicador percentual de operação por faixa horária."
       - name: km_apurada_registrado_com_ar_inoperante
         description: "Distância apurada de viagens realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste (km)."
       - name: km_apurada_n_licenciado
