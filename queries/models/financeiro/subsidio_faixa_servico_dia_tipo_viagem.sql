@@ -37,7 +37,8 @@ WITH
     id_viagem,
     distancia_planejada,
     subsidio_km,
-    subsidio_km_teto, -- 4.04 AS subsidio_km_teto,
+    -- subsidio_km_teto,
+    4.04 AS subsidio_km_teto,
     indicador_viagem_remunerada
   FROM
     -- {{ ref("viagens_remuneradas") }}
