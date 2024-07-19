@@ -154,7 +154,7 @@ with Flow(
 
     # Get models version #
     dataset_sha = fetch_dataset_sha(
-        dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value,
+        dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value,  # precisa disso ?
     )
 
     _vars = {"start_date": start_date, "end_date": end_date}
@@ -207,11 +207,18 @@ with Flow(
                 upstream_tasks=[SUBSIDIO_SPPO_DATA_QUALITY_PRE],
             )
 
-            SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_model(
+            SUBSIDIO_SPPO_FINANCEIRO_RUN = run_dbt_model(
                 # dbt_client=dbt_client,
-                dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value,
+                dataset_id=constants.SUBSIDIO_SPPO_FINANCEIRO_DATASET_ID.value,
                 _vars=_vars,
                 upstream_tasks=[SUBSIDIO_SPPO_STAGING_RUN],
+            )
+
+            SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_model(
+                # dbt_client=dbt_client,
+                dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_V2_DATASET_ID.value,
+                _vars=_vars,
+                upstream_tasks=[SUBSIDIO_SPPO_FINANCEIRO_RUN],
             )
 
             # 5. POST-DATA QUALITY CHECK #

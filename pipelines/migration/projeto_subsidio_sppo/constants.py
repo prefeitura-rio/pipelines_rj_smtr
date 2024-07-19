@@ -13,6 +13,8 @@ class constants(Enum):  # pylint: disable=c0103
     Constant values for rj_smtr projeto_subsidio_sppo
     """
 
+    SUBSIDIO_SPPO_FINANCEIRO_DATASET_ID = "financeiro"
+
     SUBSIDIO_SPPO_DATASET_ID = "projeto_subsidio_sppo"
     SUBSIDIO_SPPO_SECRET_PATH = "projeto_subsidio_sppo"
     SUBSIDIO_SPPO_TABLE_ID = "viagem_completa"
@@ -21,6 +23,7 @@ class constants(Enum):  # pylint: disable=c0103
     # SUBSÍDIO DASHBOARD
     # flake8: noqa: E501
     SUBSIDIO_SPPO_DASHBOARD_DATASET_ID = "dashboard_subsidio_sppo"
+    SUBSIDIO_SPPO_DASHBOARD_V2_DATASET_ID = "dashboard_subsidio_sppo_v2"
     SUBSIDIO_SPPO_DASHBOARD_STAGING_DATASET_ID = "dashboard_subsidio_sppo_staging"
     SUBSIDIO_SPPO_DASHBOARD_TABLE_ID = "sumario_servico_dia"
     SUBSIDIO_SPPO_DATA_CHECKS_PARAMS = {
@@ -411,9 +414,9 @@ class constants(Enum):  # pylint: disable=c0103
                 SELECT
                     * EXCEPT(km_apurada),
                     km_apurada,
-                    ROUND(COALESCE(km_apurada_registrado_com_ar_inoperante,0) + COALESCE(km_apurada_n_licenciado,0) + COALESCE(km_apurada_autuado_ar_inoperante,0) + COALESCE(km_apurada_autuado_seguranca,0) + COALESCE(km_apurada_autuado_limpezaequipamento,0) + COALESCE(km_apurada_licenciado_sem_ar_n_autuado,0) + COALESCE(km_apurada_licenciado_com_ar_n_autuado,0) + COALESCE(km_apurada_n_vistoriado, 0),2) AS km_apurada2
+                    ROUND(COALESCE(km_apurada_registrado_com_ar_inoperante,0) + COALESCE(km_apurada_n_licenciado,0) + COALESCE(km_apurada_autuado_ar_inoperante,0) + COALESCE(km_apurada_autuado_seguranca,0) + COALESCE(km_apurada_autuado_limpezaequipamento,0) + COALESCE(km_apurada_licenciado_sem_ar_n_autuado,0) + COALESCE(km_apurada_licenciado_com_ar_n_autuado,0) + COALESCE(km_apurada_n_vistoriado, 0) + COALESCE(km_apurada_sem_passageiro, 0),2) AS km_apurada2
                 FROM
-                    `rj-smtr.dashboard_subsidio_sppo.sumario_servico_dia_tipo`
+                    `rj-smtr.dashboard_subsidio_sppo_v2.sumario_servico_dia_pagamento`
                 WHERE
                     DATA BETWEEN DATE("{start_timestamp}")
                     AND DATE("{end_timestamp}"))
