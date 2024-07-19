@@ -10,6 +10,7 @@ from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
+from prefeitura_rio.pipelines_utils.logging import log
 
 # from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 from prefeitura_rio.pipelines_utils.state_handlers import (
@@ -28,10 +29,7 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.tasks import (
     get_raw_staging_data_gcs,
     update_last_captured_os,
 )
-from pipelines.migration.br_rj_riodejaneiro_onibus_gps.tasks import (
-    create_source_path,
-)
-from prefeitura_rio.pipelines_utils.logging import log
+from pipelines.migration.br_rj_riodejaneiro_onibus_gps.tasks import create_source_path
 from pipelines.migration.tasks import (
     create_date_hour_partition,
     create_local_partition_path,

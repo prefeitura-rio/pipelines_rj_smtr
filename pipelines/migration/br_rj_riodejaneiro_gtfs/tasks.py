@@ -8,6 +8,7 @@ import traceback
 import zipfile
 from datetime import datetime
 
+import basedosdados as bd
 import openpyxl as xl
 import pandas as pd
 from google.oauth2 import service_account
@@ -15,7 +16,6 @@ from googleapiclient.discovery import build
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
-import basedosdados as bd
 
 from pipelines.constants import constants
 from pipelines.migration.br_rj_riodejaneiro_gtfs.utils import (
