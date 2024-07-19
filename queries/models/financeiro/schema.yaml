@@ -40,7 +40,7 @@ models:
       - name: servico
         description: "Serviço realizado pelo veículo."
       - name: indicador_ar_condicionado
-        description: ""indicador_ar_condicionado""
+        description: "Indicador se o veículo foi licenciado com ar condicionado."
       - name: tipo_viagem
         description: "Tipo de viagem"
       - name: viagens_faixa
