@@ -2,7 +2,9 @@
 """
 Tasks for gtfs
 """
+import io
 import os
+import traceback
 import zipfile
 from datetime import datetime
 
@@ -13,6 +15,7 @@ from googleapiclient.discovery import build
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
+import basedosdados as bd
 
 from pipelines.constants import constants
 from pipelines.migration.br_rj_riodejaneiro_gtfs.utils import (
@@ -208,3 +211,22 @@ def get_raw_drive_files(os_control, local_filepath: list):
                 raw_filepaths.append(raw_file_path)
 
     return raw_filepaths, list(constants.GTFS_TABLE_CAPTURE_PARAMS.value.values())
+
+
+@task
+def get_raw_staging_data_gcs(source_path: str) -> dict:
+    try:
+        bucket = bd.Storage(dataset_id="", table_id="", bucket_name="rj-smtr-staging")
+        log(f"Downloading data from {source_path}...")
+
+        blob = bucket.bucket.get_blob(blob_name=f"{source_path}txt")
+        bytes_data = blob.download_as_bytes()
+        data = pd.read_csv(io.BytesIO(bytes_data))
+
+        log(f"Data downloaded from {source_path}\n{data.head()}")
+        data = data.to_dict(orient="records")
+    except Exception:
+        e = traceback.format_exc()
+        log(f"Error downloading data from {source_path}: {e}", level="error")
+        return {"data": [], "error": e}
+    return {"data": data, "error": None}

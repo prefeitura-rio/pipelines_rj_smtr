@@ -25,8 +25,13 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.tasks import (
     get_last_capture_os,
     get_os_info,
     get_raw_drive_files,
+    get_raw_staging_data_gcs,
     update_last_captured_os,
 )
+from pipelines.migration.br_rj_riodejaneiro_onibus_gps.tasks import (
+    create_source_path,
+)
+from prefeitura_rio.pipelines_utils.logging import log
 from pipelines.migration.tasks import (
     create_date_hour_partition,
     create_local_partition_path,
@@ -36,6 +41,7 @@ from pipelines.migration.tasks import (
     get_join_dict,
     rename_current_flow_run_now_time,
     run_dbt_model,
+    save_raw_local,
     transform_raw_to_nested_structure,
     unpack_mapped_results_nout2,
     upload_raw_data_to_gcs,
@@ -329,3 +335,81 @@ gtfs_captura_nova.schedule = every_5_minutes
 #     handler_inject_bd_credentials,
 #     handler_initialize_sentry,
 # ]
+
+with Flow("SMTR: GTFS fare_rules - Recaptura") as recaptura_gtfs_fare_rules:
+
+    data_versao_gtfs_list = Parameter("data_versao_gtfs_list", default=[])
+
+    # SETUP #
+    GTFS_DATASET_ID = "br_rj_riodejaneiro_gtfs"
+    GTFS_TABLE_ID = "fare_rules"
+
+    data_versao_gtfs_list = get_current_timestamp.map(data_versao_gtfs_list)
+    filenames = parse_timestamp_to_string.map(data_versao_gtfs_list)
+
+    partitions = create_date_hour_partition.map(
+        timestamp=data_versao_gtfs_list,
+        partition_date_name=unmapped("data_versao"),
+        partition_date_only=unmapped(True),
+    )
+
+    local_filepaths = create_local_partition_path.map(
+        dataset_id=unmapped(GTFS_DATASET_ID),
+        table_id=unmapped(GTFS_TABLE_ID),
+        partitions=partitions,
+        filename=filenames,
+    )
+
+    source_paths = create_source_path.map(
+        dataset_id=unmapped(GTFS_DATASET_ID),
+        table_id=unmapped(GTFS_TABLE_ID),
+        partitions=partitions,
+        filename=filenames,
+    )
+
+    # EXTRACT #
+    ## buscando de staging ##
+    raw_status = get_raw_staging_data_gcs.map(source_path=source_paths)
+
+    raw_filepaths = save_raw_local.map(status=raw_status, file_path=local_filepaths)
+
+    # CLEAN #
+    transform_raw_to_nested_structure_results = transform_raw_to_nested_structure.map(
+        raw_filepath=raw_filepaths,
+        filepath=local_filepaths,
+        primary_key=unmapped(list(constants.GTFS_TABLE_CAPTURE_PARAMS.value["fare_rules"])),
+        timestamp=unmapped(data_versao_gtfs),
+        error=unmapped(None),
+    )
+
+    errors, treated_filepaths = unpack_mapped_results_nout2(
+        mapped_results=transform_raw_to_nested_structure_results
+    )
+
+    # LOAD #
+    upload_staging_data_to_gcs.map(
+        dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
+        table_id=unmapped(GTFS_TABLE_ID),
+        staging_filepath=treated_filepaths,
+        partitions=partitions,
+        timestamp=unmapped(data_versao_gtfs),
+        error=errors,
+    )
+
+    # upload_logs_to_bq(
+    #     dataset_id=constants.GPS_SPPO_RAW_DATASET_ID.value,
+    #     parent_table_id=constants.GPS_SPPO_RAW_TABLE_ID.value,
+    #     error=error,
+    #     timestamp=timestamp,
+    # )
+
+recaptura_gtfs_fare_rules.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
+recaptura_gtfs_fare_rules.run_config = KubernetesRun(
+    image=constants.DOCKER_IMAGE.value,
+    labels=[constants.RJ_SMTR_DEV_AGENT_LABEL.value],
+)
+# recaptura_sppo_v2.schedule = every_minute
+recaptura_gtfs_fare_rules.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+]
