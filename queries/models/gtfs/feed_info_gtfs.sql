@@ -27,7 +27,7 @@ WITH feed_info AS (
       'feed_info'
     ) }}
   {% if is_incremental() %}
-    WHERE 
+    WHERE
       data_versao =  '{{ var("data_versao_gtfs") }}'
     UNION ALL
       SELECT
@@ -35,10 +35,10 @@ WITH feed_info AS (
       FROM
         {{ this }}
       WHERE
-        feed_start_date != DATE('{{ var("data_versao_gtfs") }}') 
+        feed_start_date != DATE('{{ var("data_versao_gtfs") }}')
   {% endif %}
   )
-  SELECT 
+  SELECT
     feed_version,
     feed_start_date,
     DATE_SUB(LEAD(DATE(feed_version)) OVER (ORDER BY feed_version), INTERVAL 1 DAY) AS feed_end_date,
