@@ -249,6 +249,67 @@ X-1vRvFcyr9skfBIrjxc4FSJZ3-g4gUCF56YjGPOmd1f5qH8vndpy22P6f6KdcYgWaqzUmtSBL\
         },
     }
 
+    GTFS_TABLE_CAPTURE_PARAMS_ANTIGO = [
+        {
+            "table_id": "shapes",
+            "primary_key": ["shape_id", "shape_pt_sequence"],
+        },
+        {
+            "table_id": "agency",
+            "primary_key": ["agency_id"],
+        },
+        {
+            "table_id": "calendar_dates",
+            "primary_key": ["service_id", "date"],
+        },
+        {
+            "table_id": "calendar",
+            "primary_key": ["service_id"],
+        },
+        {
+            "table_id": "feed_info",
+            "primary_key": ["feed_publisher_name"],
+        },
+        {
+            "table_id": "frequencies",
+            "primary_key": ["trip_id", "start_time"],
+        },
+        {
+            "table_id": "routes",
+            "primary_key": ["route_id"],
+        },
+        {
+            "table_id": "stops",
+            "primary_key": ["stop_id"],
+        },
+        {
+            "table_id": "trips",
+            "primary_key": ["trip_id"],
+        },
+        {
+            "table_id": "fare_attributes",
+            "primary_key": ["fare_id"],
+        },
+        {
+            "table_id": "fare_rules",
+            "primary_key": [],
+        },
+        {
+            "table_id": "ordem_servico",
+            "primary_key": ["servico", "tipo_os"],
+            "extract_params": {"filename": "ordem_servico"},
+        },
+        {
+            "table_id": "ordem_servico_trajeto_alternativo",
+            "primary_key": ["servico", "tipo_os", "evento"],
+            "extract_params": {"filename": "ordem_servico_trajeto_alternativo"},
+        },
+        {
+            "table_id": "stop_times",
+            "primary_key": ["trip_id", "stop_sequence"],
+        },
+    ]
+
     # # SUBSÍDIO RECURSOS VIAGENS INDIVIDUAIS
     # SUBSIDIO_SPPO_RECURSOS_DATASET_ID = "migracao_br_rj_riodejaneiro_recurso"
     # SUBSIDIO_SPPO_RECURSO_API_BASE_URL = "https://api.movidesk.com/public/v1/tickets?"
