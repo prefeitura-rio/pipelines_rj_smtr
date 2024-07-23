@@ -376,7 +376,7 @@ with Flow("SMTR: GTFS fare_rules - Recaptura") as recaptura_gtfs_fare_rules:
         raw_filepath=raw_filepaths,
         filepath=local_filepaths,
         primary_key=unmapped(list(constants.GTFS_TABLE_CAPTURE_PARAMS.value["fare_rules"])),
-        timestamp=unmapped(data_versao_gtfs),
+        timestamp=data_versao_gtfs_list,
         error=unmapped(None),
     )
 
@@ -390,7 +390,7 @@ with Flow("SMTR: GTFS fare_rules - Recaptura") as recaptura_gtfs_fare_rules:
         table_id=unmapped(GTFS_TABLE_ID),
         staging_filepath=treated_filepaths,
         partitions=partitions,
-        timestamp=unmapped(data_versao_gtfs),
+        timestamp=data_versao_gtfs_list,
         error=errors,
     )
 
