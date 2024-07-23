@@ -8,29 +8,24 @@
 )}}
 
 WITH consorcio AS (
-    SELECT
+  SELECT
     id_consorcio,
     modo
   FROM
-    {{ ref("consorcios") }} AS c
-  -- TODO: Adicionar modo na tabela consorcios
-  LEFT JOIN
-    {{ ref("operadoras") }} AS o
-  ON
-    c.id_consorcio_jae = o.id_operadora_jae
+    {{ ref("consorcios") }}
+    -- rj-smtr.cadastro.consorcios
   WHERE
-    consorcio IN ("MobiRio", "Internorte", "Intersul", "Santa Cruz", "Transcarioca")
+    modo IN ("Ônibus", "BRT")
 )
 SELECT
   DATE_TRUNC(data, MONTH) AS data,
   rdo.ano,
   rdo.mes,
   c.modo,
-  SUM(rdo.qtd_grt_idoso + rdo.qtd_grt_especial +
-      rdo.qtd_grt_estud_federal + rdo.qtd_grt_estud_estadual +
-      rdo.qtd_grt_estud_municipal + rdo.qtd_grt_rodoviario +
-      rdo.qtd_grt_passe_livre_universitario) AS quantidade_passageiro_gratuidade_mes,
-  CURRENT_DATE() AS data_ultima_atualizacao,
+  SUM(qtd_buc_1_perna+qtd_buc_2_perna_integracao+
+      qtd_buc_supervia_1_perna+qtd_buc_supervia_2_perna_integracao+
+      qtd_cartoes_perna_unica_e_demais+qtd_pagamentos_especie) AS quantidade_passageiro_pagante_mes,
+  CURRENT_DATE("America/Sao_Paulo") AS data_ultima_atualizacao,
   '{{ var("version") }}' as versao
 FROM
   consorcio AS c
@@ -43,7 +38,7 @@ WHERE
   {% if is_incremental() %}
   AND rdo.data BETWEEN DATE_TRUNC(DATE("{{ var("start_date") }}"), MONTH)
   AND LAST_DAY(DATE("{{ var("end_date") }}"), MONTH)
-  AND rdo.data < DATE_TRUNC(CURRENT_DATE(), MONTH)
+  AND rdo.data < DATE_TRUNC(CURRENT_DATE("America/Sao_Paulo"), MONTH)
   {% endif %}
 GROUP BY
   data,
