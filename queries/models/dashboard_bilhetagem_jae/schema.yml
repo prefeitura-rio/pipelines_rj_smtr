@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: view_passageiros_hora
-    description: "View criada para uso no painel de bilhetagem. Junta os dados da tabela br_rj_riodejaneiro_bilhetagem.passageiros_hora com a tabela cadastro.servicos"
+    description: "View criada para uso no painel de bilhetagem. Junta os dados da tabela br_rj_riodejaneiro_bilhetagem.passageiros_hora (exceto os do tipo RioCard) com a tabela cadastro.servicos"
     columns:
       - name: data
         description: "Data da transação"
@@ -104,5 +104,34 @@ models:
         description: "Concatenação da colunas descricao_servico_destino e perna_destino"
       - name: tempo_integracao_minutos
         description: "Tempo em minutos entre a trasação atual e a próxima transação da integração"
+      - name: versao
+        description: "Código de controle de versão do dado (SHA Github)"
+  - name: view_passageiros_hora_riocard
+    description: "View criada para uso no painel de bilhetagem. Junta os dados de transações do tipo RioCard da tabela br_rj_riodejaneiro_bilhetagem.passageiros_hora com a tabela cadastro.servicos"
+    columns:
+      - name: data
+        description: "Data da transação"
+      - name: hora
+        description: "Hora da transação"
+      - name: modo
+        description: "Tipo de transporte (Ônibus, Van, BRT)"
+      - name: consorcio
+        description: "Nome do consórcio"
+      - name: id_servico_jae
+        description: "Identificador da linha no banco de dados da jaé (É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae)"
+      - name: servico
+        description: "Nome do serviço na tabela cadastro.servicos"
+      - name: descricao_servico
+        description: "Descrição do serviço na tabela cadastro.servicos"
+      - name: nome_completo_servico
+        description: "Concatenação das colunas servico e descricao_servico, separadas por ' - '"
+      - name: latitude_servico
+        description: "Latitude do stop no GTFS (apenas para modo BRT)"
+      - name: longitude_servico
+        description: "Longitude do stop no GTFS (apenas para modo BRT)"
+      - name: sentido
+        description: "Sentido de operação do serviço (0 = ida, 1 = volta)"
+      - name: quantidade_passageiros
+        description: "Quantidade de transações que aconteceram em determinada data e hora"
       - name: versao
         description: "Código de controle de versão do dado (SHA Github)"

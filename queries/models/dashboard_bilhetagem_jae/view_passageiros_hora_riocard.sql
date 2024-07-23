@@ -1,4 +1,4 @@
--- depends_on: {{ ref('view_passageiros_tile_hora') }}
+-- depends_on: {{ ref('view_passageiros_hora') }}
 WITH servicos AS (
   SELECT
     * EXCEPT(rn)
@@ -25,15 +25,12 @@ SELECT
   s.latitude AS latitude_servico,
   s.longitude AS longitude_servico,
   p.sentido,
-  CASE
-    WHEN p.tipo_transacao_smtr = "Integral" THEN "Tarifa Integral"
-    ELSE p.tipo_transacao_smtr
-  END AS tipo_transacao_smtr,
-  p.tipo_transacao_detalhe_smtr,
   p.quantidade_passageiros
 FROM
   {{ ref("passageiros_hora") }} p
 LEFT JOIN
   servicos s
 USING(id_servico_jae)
-WHERE tipo_transacao_smtr != "RioCard"
+WHERE
+  tipo_transacao_smtr = "RioCard"
+  AND modo IS NOT NULL

@@ -3,6 +3,7 @@ version: 2
 sources:
   - name: br_rj_riodejaneiro_bilhetagem_staging_dev
     database: rj-smtr-dev
+    schema: br_rj_riodejaneiro_bilhetagem_staging
 
     tables:
       - name: linha_consorcio
