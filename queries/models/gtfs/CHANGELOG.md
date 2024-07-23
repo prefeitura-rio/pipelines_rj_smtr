@@ -1,5 +1,12 @@
 # Changelog - gtfs
 
+## [1.1.7] - 2024-07-23
+
+### Adicionado
+
+- Adiciona descrição da coluna `feed_update_datetime` em `feed_info` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/119)
+
+
 ## [1.1.6] - 2024-07-22
 
 ### Alterado
