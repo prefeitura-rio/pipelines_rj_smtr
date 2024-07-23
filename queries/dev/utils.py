@@ -4,6 +4,7 @@ import os
 # from datetime import datetime as dt
 # from datetime import timedelta
 from typing import Dict, List, Union
+
 import requests
 
 # import pandas as pd
@@ -63,6 +64,7 @@ def run_dbt_model(
 
     print(f"\n>>> RUNNING: {run_command}\n")
     os.system(run_command)
+
 
 def fetch_dataset_sha(dataset_id: str):
     """Fetches the SHA of a branch from Github"""
