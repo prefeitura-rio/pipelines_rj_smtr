@@ -1,6 +1,6 @@
 # Changelog - gtfs
 
-## COrrigido
+## Corrigido
 
 ## [1.0.5] - 2024-07-23
 
