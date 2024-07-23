@@ -224,8 +224,6 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             prefix=gtfs_captura_nova.name + " [SKIPPED] ", now_time=timestamp
         ).set_upstream(task=wait_materialize)
 
-    gtfs_captura_nova.set_reference_tasks([wait_materialize, wait_captura])
-
 
 gtfs_captura_nova.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
 gtfs_captura_nova.run_config = KubernetesRun(
