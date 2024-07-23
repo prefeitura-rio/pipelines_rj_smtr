@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## Corrigido
+
+## [1.0.5] - 2024-07-23
+
+- Corrigido o parse da data_versao_gtf (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/118)
+
 ## [1.0.4] - 2024-07-17
 
 ### Adicionado
