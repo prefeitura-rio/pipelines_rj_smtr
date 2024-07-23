@@ -6,7 +6,7 @@
       "data_type":"date",
       "granularity": "day"
     },
-    incremental_strategy="insert-overwrite",
+    incremental_strategy="insert_overwrite",
   )
 }}
 
@@ -40,25 +40,6 @@ WITH staging_transacao AS (
     WHERE
       DATE(data) >= "2024-07-18"
   {% endif %}
-  --   SELECT
-  --   * EXCEPT(rn)
-  -- FROM
-  -- (
-  --   SELECT
-  --     *,
-  --     ROW_NUMBER() OVER(PARTITION BY id ORDER BY timestamp_captura DESC) AS rn
-  --   FROM
-  --     transacao_staging
-  --   {% if is_incremental() %}
-  --     WHERE
-  --       DATE(data) BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
-  --   {% else %}
-  --     WHERE
-  --       DATE(data) >= "2024-07-18"
-  --   {% endif %}
-  -- )
-  -- WHERE
-  --   rn = 1
 ),
 novos_dados AS (
   SELECT
@@ -67,7 +48,7 @@ novos_dados AS (
     t.data_transacao AS datetime_transacao,
     t.data_processamento AS datetime_processamento,
     t.timestamp_captura AS datetime_captura,
-    do.modo,
+    COALESCE(do.modo, dc.modo) AS modo,
     dc.id_consorcio,
     dc.consorcio,
     do.id_operadora,
@@ -89,7 +70,7 @@ novos_dados AS (
   FROM
     staging_transacao t
   LEFT JOIN
-    {{ operadoras }} do
+    {{ ref("operadoras") }} do
   ON
     t.cd_operadora = do.id_operadora_jae
   LEFT JOIN
@@ -100,13 +81,43 @@ novos_dados AS (
     {{ ref("staging_linha_consorcio") }} lc
   ON
     t.cd_linha = lc.cd_linha
-    AND t.cd_consorcio = lc.cd_consorcio
-    AND t.data_transacao BETWEEN lc.dt_inicio_validade AND lc.dt_fim_validade
+    AND (
+      t.data_transacao BETWEEN lc.dt_inicio_validade AND lc.dt_fim_validade
+      OR lc.dt_fim_validade IS NULL
+    )
   LEFT JOIN
     {{ ref("consorcios") }} dc
   ON
     lc.cd_consorcio = dc.id_consorcio_jae
 ),
+-- consorcios AS (
+--   SELECT
+--     t.data,
+--     t.hora,
+--     t.datetime_transacao,
+--     t.datetime_processamento,
+--     t.datetime_captura,
+--     COALESCE(t.modo, dc.modo) AS modo,
+--     dc.id_consorcio,
+--     dc.consorcio,
+--     t.id_operadora,
+--     t.operadora,
+--     t.id_servico_jae,
+--     t.servico_jae,
+--     t.descricao_servico_jae,
+--     t.sentido,
+--     t.id_veiculo,
+--     t.id_validador,
+--     t.id_transacao,
+--     t.latitude,
+--     t.longitude,
+--     t.valor_transacao
+--   FROM
+--     novos_dados t
+--   LEFT JOIN
+--     {{ ref("consorcios") }} dc
+--   USING(id_consorcio_jae)
+-- ),
 particoes_completas AS (
   SELECT
     *,
@@ -114,7 +125,7 @@ particoes_completas AS (
   FROM
     novos_dados
 
-  {% if is_incremental() and transacao_partitions|length > 0%}
+  {% if is_incremental() and transacao_partitions|length > 0 %}
     UNION ALL
 
     SELECT
@@ -128,7 +139,7 @@ particoes_completas AS (
 ),
 transacao_deduplicada AS (
   SELECT
-    * EXCEPT(rn)
+    * EXCEPT(rn, priority)
   FROM
   (
     SELECT
