@@ -146,6 +146,8 @@ models:
         description: "URL para informações de contato, um formulário web, uma mesa de suporte ou outras ferramentas de comunicação relativas ao conjunto de dados GTFS e práticas de publicação de dados."
       - name: feed_start_date
         description: "Data de referência do feed (versão)."
+      - name: feed_update_datetime
+        description: "Data e hora da última atualização do feed."
       - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
 
