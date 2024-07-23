@@ -432,6 +432,29 @@ class constants(Enum):  # pylint: disable=c0103
             ],  # id column to nest data on
             "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
         },
+        {
+            "table_id": "linha_consorcio",
+            "partition_date_only": True,
+            "extract_params": {
+                "database": "principal_db",
+                "query": """
+                    SELECT
+                        *
+                    FROM
+                        LINHA_CONSORCIO
+                    WHERE
+                        DT_INCLUSAO BETWEEN '{start}'
+                        AND '{end}'
+                        OR DT_FIM_VALIDADE BETWEEN '{start}'
+                        AND '{end}'
+                """,
+            },
+            "primary_key": [
+                "CD_CONSORCIO",
+                "CD_LINHA",
+            ],  # id column to nest data on
+            "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
+        },
     ]
 
     BILHETAGEM_EXCLUDE = "+operadoras +consorcios +servicos"
