@@ -1,5 +1,13 @@
 # Changelog - gtfs
 
+## [1.1.6] - 2024-07-22
+
+### Alterado
+
+- Alterada a tabela `feed_info` de table para incremental e adicionada a coluna `feed_update_datetime`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/82)
+
+- Alterada a tabela `fare_rules` para refletir a alteração nas primary keys (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/82)
+
 ## [1.1.5] - 2024-07-15
 
 ### Adicionado
