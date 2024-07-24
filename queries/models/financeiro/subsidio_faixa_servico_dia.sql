@@ -15,9 +15,9 @@ WITH
     consorcio,
     servico,
     -- faixa_horaria_inicio,
-    SAFE_CAST('{{ var("start_date") }}T00:00:00' AS DATETIME) AS faixa_horaria_inicio,
+    SAFE_CAST(data || 'T00:00:00' AS DATETIME) AS faixa_horaria_inicio,
     -- faixa_horaria_fim,
-    SAFE_CAST('{{ var("start_date") }}T23:59:59' AS DATETIME) AS faixa_horaria_fim,
+    SAFE_CAST(data || 'T23:59:59' AS DATETIME) AS faixa_horaria_fim,
     distancia_total_planejada AS km_planejada
   FROM
     -- {{ ref("viagem_planejada") }}
