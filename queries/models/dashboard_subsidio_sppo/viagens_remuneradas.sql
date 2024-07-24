@@ -82,64 +82,18 @@ WITH
     AND (d.tipo_os = v.tipo_os
       OR (d.tipo_os IS NULL AND v.tipo_os = "Regular"))
   ),
--- 2. Viagens realizadas
-  viagem AS (
-  SELECT
-    data,
-    servico_realizado AS servico,
-    id_veiculo,
-    id_viagem,
-    distancia_planejada
- FROM
-    {{ ref("viagem_completa") }}
-    -- rj-smtr.projeto_subsidio_sppo.viagem_completa
-  WHERE
-    data BETWEEN DATE("{{ var("start_date") }}")
-    AND DATE( "{{ var("end_date") }}" ) ),
--- 3. Status dos veículos
-  veiculos AS (
-  SELECT
-    data,
-    id_veiculo,
-    status
-  FROM
-    {{ ref("sppo_veiculo_dia") }}
-    -- rj-smtr.veiculo.sppo_veiculo_dia
-  WHERE
-    data BETWEEN DATE("{{ var("start_date") }}")
-    AND DATE("{{ var("end_date") }}") ),
--- 4. Parâmetros de subsídio
-  subsidio_parametros AS (
-  SELECT
-    DISTINCT data_inicio,
-    data_fim,
-    status,
-    subsidio_km
-  FROM
-    {{ ref("subsidio_valor_km_tipo_viagem") }} ),
--- 5. Viagens com tipo e valor de subsídio por km
+-- 2. Viagens com tipo e valor de subsídio por km
   viagem_km_tipo AS (
   SELECT
-    v.data,
-    v.servico,
-    ve.status AS tipo_viagem,
-    id_viagem,
-    distancia_planejada,
-    t.subsidio_km
-  FROM
-    viagem AS v
-  LEFT JOIN
-    veiculos AS ve
-  USING
-    (data,
-      id_veiculo)
-  LEFT JOIN
-    subsidio_parametros AS t
-  ON
-    v.data BETWEEN t.data_inicio
-    AND t.data_fim
-    AND ve.status = t.status ),
--- 6. Apuração de km realizado e Percentual de Operação Diário (POD)
+    *
+ FROM
+    {{ ref("viagem_km_tipo") }}
+    -- rj-smtr.dashboard_subsidio_sppo.viagem_km_tipo
+  WHERE
+    data BETWEEN DATE("{{ var("start_date") }}")
+    AND DATE( "{{ var("end_date") }}" )
+  ),
+-- 3. Apuração de km realizado e Percentual de Operação Diário (POD)
   servico_km_apuracao AS (
   SELECT
     p.data,
@@ -163,31 +117,33 @@ WITH
     3,
     4,
     5 )
--- 7. Flag de viagens que serão consideradas ou não para fins de remuneração (apuração de valor de subsídio) - RESOLUÇÃO SMTR Nº 3645/2023
+-- 4. Flag de viagens que serão consideradas ou não para fins de remuneração (apuração de valor de subsídio) - RESOLUÇÃO SMTR Nº 3645/2023
 SELECT
 v.* EXCEPT(rn),
 CASE
+    WHEN v.tipo_viagem = "Sem transação"
+      THEN FALSE
     WHEN data >= "2023-09-16"
-        AND p.tipo_dia = "Dia Útil"
-        AND viagens_planejadas > 10
-        AND perc_km_planejada > 120
-        AND rn > viagens_planejadas_ida_volta*1.2
-        THEN FALSE
+      AND p.tipo_dia = "Dia Útil"
+      AND viagens_planejadas > 10
+      AND perc_km_planejada > 120
+      AND rn > viagens_planejadas_ida_volta*1.2
+      THEN FALSE
     WHEN data >= "2023-09-16"
-        AND p.tipo_dia = "Dia Útil"
-        AND viagens_planejadas <= 10
-        AND perc_km_planejada > 200
-        AND rn > viagens_planejadas_ida_volta*2
-        THEN FALSE
+      AND p.tipo_dia = "Dia Útil"
+      AND viagens_planejadas <= 10
+      AND perc_km_planejada > 200
+      AND rn > viagens_planejadas_ida_volta*2
+      THEN FALSE
     WHEN data >= "2023-09-16"
-        AND (p.tipo_dia = "Dia Útil"
-          AND (viagens_planejadas IS NULL
-            OR perc_km_planejada IS NULL
-            OR rn IS NULL
-            OR viagens_planejadas_ida_volta IS NULL
-          )
+      AND (p.tipo_dia = "Dia Útil"
+        AND (viagens_planejadas IS NULL
+          OR perc_km_planejada IS NULL
+          OR rn IS NULL
+          OR viagens_planejadas_ida_volta IS NULL
         )
-        THEN NULL
+      )
+      THEN NULL
     ELSE
         TRUE
     END AS indicador_viagem_remunerada
