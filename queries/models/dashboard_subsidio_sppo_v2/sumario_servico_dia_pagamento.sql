@@ -62,7 +62,7 @@ WITH
       "Licenciado sem ar e não autuado" AS licenciado_sem_ar_n_autuado,
       "Licenciado com ar e não autuado" AS licenciado_com_ar_n_autuado,
       "Não vistoriado" AS n_vistoriado,
-      "Sem passageiro" AS sem_passageiro))
+      "Sem transação" AS sem_transacao))
   )
 SELECT
   vs.data,
