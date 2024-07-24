@@ -7,6 +7,7 @@ import zipfile
 from datetime import datetime
 
 import openpyxl as xl
+import pandas as pd
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from prefect import task
@@ -47,6 +48,15 @@ def get_last_capture_os(dataset_id: str, mode: str = "prod") -> dict:
     if last_captured_os is not None:
         last_captured_os = last_captured_os["last_captured_os"]
 
+    #  verifica se last_capture_os tem formado dia/mes/ano_index
+    if last_captured_os is not None:
+        if "/" in last_captured_os:
+            index = last_captured_os.split("_")[1]
+            data = datetime.strptime(last_captured_os.split("_")[0], "%d/%m/%Y").strftime(
+                "%Y-%m-%d"
+            )
+            last_captured_os = data + "_" + index
+
     log(f"Last captured os: {last_captured_os}")
 
     return last_captured_os
@@ -69,12 +79,24 @@ def update_last_captured_os(dataset_id: str, data_index: str, mode: str = "prod"
     fetch_key = f"{dataset_id}.last_captured_os"
     if mode != "prod":
         fetch_key = f"{mode}.{fetch_key}"
-
+    last_captured_os = redis_client.get(fetch_key)
+    #  verifica se last_capture_os tem formado dia/mes/ano_index e converte para ano-mes-dia_index
+    if last_captured_os is not None:
+        if "/" in last_captured_os:
+            index = last_captured_os.split("_")[1]
+            data = datetime.strptime(last_captured_os.split("_")[0], "%d/%m/%Y").strftime(
+                "%Y-%m-%d"
+            )
+            last_captured_os = data + "_" + index
+    # verifica se a ultima os capturada é maior que a nova
+    if last_captured_os is not None:
+        if last_captured_os["last_captured_os"] > data_index:
+            return
     redis_client.set(fetch_key, {"last_captured_os": data_index})
 
 
 @task(nout=4)
-def get_os_info(last_captured_os: str) -> dict:
+def get_os_info(last_captured_os: str = None, data_versao_gtfs: str = None) -> dict:
     """
     Retrieves information about the OS.
 
@@ -99,15 +121,24 @@ def get_os_info(last_captured_os: str) -> dict:
 
     df = filter_valid_rows(df)
 
+    # converte "Início da Vigência da OS" de dd/mm/aaaa para aaaa-mm-dd
+    df["Início da Vigência da OS"] = pd.to_datetime(
+        df["Início da Vigência da OS"], format="%d/%m/%Y"
+    ).dt.strftime("%Y-%m-%d")
+
     df["data_index"] = df["Início da Vigência da OS"].astype(str) + "_" + df["index"].astype(str)
 
-    # Ordena por despacho
+    # Ordena por data e index
     df = df.sort_values(by=["data_index"], ascending=True)
-    if last_captured_os is None:
+    if data_versao_gtfs is not None:
+        df = df.loc[(df["Início da Vigência da OS"] == data_versao_gtfs)]
+
+    elif last_captured_os is None:
         last_captured_os = df["data_index"].max()
         df = df.loc[(df["data_index"] == last_captured_os)]
+
     else:
-        # Filtra linhas onde 'Despacho' é maior que o último capturado
+        # Filtra linhas onde 'data_index' é maior que o último capturado
         df = df.loc[(df["data_index"] > last_captured_os)]
 
     log(f"Os info: {df.head()}")
@@ -116,16 +147,12 @@ def get_os_info(last_captured_os: str) -> dict:
         data = df.to_dict(orient="records")[0]  # Converte o DataFrame para um dicionário
         flag_new_os = True  # Se houver mais de uma OS, é uma nova OS
 
-        # converte "Início da Vigência da OS" de dd/mm/aaaa para aaaa-mm-dd
-        data["Início da Vigência da OS"] = datetime.strptime(
-            data["Início da Vigência da OS"], "%d/%m/%Y"
-        ).strftime("%Y-%m-%d")
         log(f"OS selecionada: {data}")
     return flag_new_os, data, data["data_index"], data["Início da Vigência da OS"]
 
 
 @task(nout=2)
-def get_raw_drive_files(os_control, local_filepath: list):
+def get_raw_drive_files(os_control, local_filepath: list, regular_sheet_index: int = None):
     """
     Downloads raw files from Google Drive and processes them.
 
@@ -171,6 +198,7 @@ def get_raw_drive_files(os_control, local_filepath: list):
                     file_bytes=file_bytes_os,
                     local_filepath=local_filepath,
                     raw_filepaths=raw_filepaths,
+                    regular_sheet_index=regular_sheet_index,
                 )
             elif filename == "ordem_servico_trajeto_alternativo":
 

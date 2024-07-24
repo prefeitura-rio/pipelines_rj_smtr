@@ -125,3 +125,9 @@ models:
         description: "Tabela do GTFS de onde foram coletadas as informações (stops ou routes)"
       - name: feed_start_date_gtfs
         description: "Último feed_start_date do GTFS em que as informações do serviço estavam disponíveis"
+      - name: data_inicio_vigencia
+        description: "Data de inicio da vigência do serviço segundo o GTFS ou o cadastro do serviço no sistema da Jaé (caso não exista no GTFS)"
+      - name: data_fim_vigencia
+        description: "Data de fim da vigência do serviço segundo o GTFS"
+      - name: versao
+        description: "Código de controle de versão do dado (SHA Github)"

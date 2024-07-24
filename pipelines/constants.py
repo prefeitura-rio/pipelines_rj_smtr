@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Valores constantes gerais para pipelines da rj-smtr
+
+DBT 2024-07-03
 """
 
 from enum import Enum
@@ -201,7 +203,7 @@ class constants(Enum):  # pylint: disable=c0103
                     id > {last_id} AND id <= {max_id}
             """,
             "page_size": 1000,
-            "max_pages": 100,
+            "max_pages": 70,
         },
         "primary_key": ["id"],
         "interval_minutes": 5,
@@ -234,7 +236,7 @@ X-1vRvFcyr9skfBIrjxc4FSJZ3-g4gUCF56YjGPOmd1f5qH8vndpy22P6f6KdcYgWaqzUmtSBL\
         "stops": ["stop_id"],
         "trips": ["trip_id"],
         "fare_attributes": ["fare_id"],
-        "fare_rules": [],
+        "fare_rules": ["fare_id", "route_id"],
         "stop_times": ["trip_id", "stop_sequence"],
     }
 
