@@ -6,7 +6,7 @@ models:
     description: "Tabela histórica com detalhes das viagens planejadas a cada dia"
     columns:
       - name: consorcio
-        description: "Consórcio ao qual o serviço pertence"
+        description: "{{ doc('consorcio') }}"
         tests:
           - not_null
       - name: data
