@@ -21,6 +21,7 @@ from pandas_gbq.exceptions import GenericGBQException
 from prefect import Client, task
 from prefect.backend import FlowRunView
 from prefeitura_rio.pipelines_utils.dbt import run_dbt_model as run_dbt_model_func
+from prefeitura_rio.pipelines_utils.dbt import run_dbt_selector as run_dbt_selector_func
 from prefeitura_rio.pipelines_utils.infisical import inject_bd_credentials
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
@@ -94,6 +95,19 @@ def run_dbt_model(
         upstream=upstream,
         downstream=downstream,
         exclude=exclude,
+        flags=flags,
+        _vars=_vars,
+    )
+
+
+@task
+def run_dbt_selector(
+    selector_name: str,
+    flags: str = None,
+    _vars: dict | list[dict] = None,
+):
+    return run_dbt_selector_func(
+        selector_name=selector_name,
         flags=flags,
         _vars=_vars,
     )

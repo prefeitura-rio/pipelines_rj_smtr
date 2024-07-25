@@ -26,6 +26,18 @@ def check_param(param: str) -> bool:
 
 
 @task
+def check_start_date(param: dict) -> bool:
+    """
+    Check if start_date >= 2024-08-16
+    """
+
+    start_date = datetime.strptime(param["start_date"], "%Y-%m-%d").date()
+    comparison_date = datetime.strptime("2024-06-01", "%Y-%m-%d").date()
+
+    return start_date >= comparison_date
+
+
+@task
 def subsidio_data_quality_check(
     mode: str, params: dict, code_owners: list = None, check_params: dict = None
 ) -> bool:
