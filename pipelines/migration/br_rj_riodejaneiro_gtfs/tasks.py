@@ -192,7 +192,6 @@ def get_raw_drive_files(os_control, local_filepath: list, regular_sheet_index: i
     with zipfile.ZipFile(file_bytes_gtfs, "r") as zipped_file:
         for filename in list(constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys()):
             if filename == "ordem_servico":
-
                 processa_ordem_servico(
                     sheetnames=sheetnames,
                     file_bytes=file_bytes_os,
@@ -201,7 +200,6 @@ def get_raw_drive_files(os_control, local_filepath: list, regular_sheet_index: i
                     regular_sheet_index=regular_sheet_index,
                 )
             elif filename == "ordem_servico_trajeto_alternativo":
-
                 processa_ordem_servico_trajeto_alternativo(
                     sheetnames=sheetnames,
                     file_bytes=file_bytes_os,

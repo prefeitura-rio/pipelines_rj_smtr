@@ -55,7 +55,6 @@ class DateRange:
         table: BQTable,
         timestamp: datetime,
     ) -> dict:
-
         last_run = (
             self.get_last_run_from_redis(redis_key=redis_key)
             or self.get_last_run_from_bq(table=table)

@@ -113,7 +113,6 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
     last_captured_os = merge(last_captured_os_none, last_captured_os_redis)
     with case(materialize_only, False):
-
         timestamp = get_scheduled_timestamp()
 
         flag_new_os, os_control, data_index, data_versao_gtfs_task = get_os_info(
