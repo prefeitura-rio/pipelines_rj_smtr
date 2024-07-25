@@ -1,0 +1,20 @@
+selectors:
+  - name: apuracao_antiga
+    description: Apuração sem faixa horária
+    definition:
+      union:
+        - method: path
+          value: models/dashboard_subsidio_sppo_staging
+        - method: path
+          value: models/dashboard_subsidio_sppo
+
+  - name: apuracao_nova
+    description: Apuração com faixa horária
+    definition:
+      union:
+        - method: path
+          value: models/dashboard_subsidio_sppo_staging
+        - method: path
+          value: models/financeiro
+        - method: path
+          value: models/dashboard_subsidio_sppo_v2
