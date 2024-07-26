@@ -22,10 +22,6 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 
 from pipelines.constants import constants as smtr_constants
 from pipelines.migration.projeto_subsidio_sppo.constants import constants
-
-# from pipelines.materialize_to_datario.flows import (
-#     smtr_materialize_to_datario_viagem_sppo_flow,
-# )
 from pipelines.migration.projeto_subsidio_sppo.tasks import (
     check_param,
     check_start_date,
@@ -46,6 +42,10 @@ from pipelines.migration.tasks import (
 )
 from pipelines.migration.veiculo.flows import sppo_veiculo_dia
 from pipelines.schedules import every_day_hour_five, every_day_hour_seven_minute_five
+
+# from pipelines.materialize_to_datario.flows import (
+#     smtr_materialize_to_datario_viagem_sppo_flow,
+# )
 
 # EMD Imports #
 

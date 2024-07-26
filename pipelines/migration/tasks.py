@@ -21,7 +21,6 @@ from pandas_gbq.exceptions import GenericGBQException
 from prefect import Client, task
 from prefect.backend import FlowRunView
 from prefeitura_rio.pipelines_utils.dbt import run_dbt_model as run_dbt_model_func
-from prefeitura_rio.pipelines_utils.dbt import run_dbt_selector as run_dbt_selector_func
 from prefeitura_rio.pipelines_utils.infisical import inject_bd_credentials
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
@@ -47,6 +46,7 @@ from pipelines.migration.utils import (
     send_discord_message,
     upload_run_logs_to_bq,
 )
+from pipelines.tasks import run_dbt_selector as run_dbt_selector_func
 from pipelines.utils.secret import get_secret
 
 
