@@ -16,9 +16,10 @@
     - `pip install -e .`
 
 - Crie um arquivo `.env` na raiz do projeto, contendo as seguintes variáveis:
-    - ```INFISICAL_ADDRESS = ''
-    INFISICAL_TOKEN = ''
-    ```
+    - ```
+      INFISICAL_ADDRESS = ''
+      INFISICAL_TOKEN = ''
+
     - Solicite os valores a serem utilizados para a equipe de devops
 
 - Adicione as variáveis de ambiente à sua sessão de terminal:
@@ -44,11 +45,11 @@
  
 ### Etapa 2 - Deploy para staging e PR
 
-    - Sempre trabalhe com branchs `staging/<nome>`
-    - Dê push e abra seu Pull Request.
-    - Cada commit nesta branch irá disparar as rotinas do Github que:
-    - Verificam formatação
-    - Fazem Deploy
-    - Registram flows em staging (ambiente de testes)
-    - Você acompanha o status destas rotinas na própria página do seu PR
-    - Flows registrados aparecem no servidor Prefect. Eles podem ser rodados por lá
+- Sempre trabalhe com branchs `staging/<nome>`
+- Dê push e abra seu Pull Request.
+- Cada commit nesta branch irá disparar as rotinas do Github que:
+- Verificam formatação
+- Fazem Deploy
+- Registram flows em staging (ambiente de testes)
+- Você acompanha o status destas rotinas na própria página do seu PR
+- Flows registrados aparecem no servidor Prefect. Eles podem ser rodados por lá
