@@ -208,13 +208,14 @@ with Flow(
                 SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_selector(
                     selector_name="apuracao_antiga",
                     _vars=_vars,
-                )
+                ).set_upstream(SUBSIDIO_SPPO_DATA_QUALITY_PRE)
 
             with case(apuracao_start_date, True):
                 SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_selector(
                     selector_name="apuracao_nova",
                     _vars=_vars,
-                )
+                ).set_upstream(SUBSIDIO_SPPO_DATA_QUALITY_PRE)
+
             # SUBSIDIO_SPPO_STAGING_RUN = run_dbt_model(
             #     # dbt_client=dbt_client,
             #     dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_STAGING_DATASET_ID.value,
