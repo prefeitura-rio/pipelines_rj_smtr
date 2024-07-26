@@ -46,7 +46,6 @@ from pipelines.migration.utils import (
     send_discord_message,
     upload_run_logs_to_bq,
 )
-from pipelines.tasks import run_dbt_selector as run_dbt_selector_func
 from pipelines.utils.secret import get_secret
 
 
@@ -95,19 +94,6 @@ def run_dbt_model(
         upstream=upstream,
         downstream=downstream,
         exclude=exclude,
-        flags=flags,
-        _vars=_vars,
-    )
-
-
-@task
-def run_dbt_selector(
-    selector_name: str,
-    flags: str = None,
-    _vars: dict | list[dict] = None,
-):
-    return run_dbt_selector_func(
-        selector_name=selector_name,
         flags=flags,
         _vars=_vars,
     )

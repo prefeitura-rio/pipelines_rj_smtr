@@ -38,10 +38,10 @@ from pipelines.migration.tasks import (
     get_run_dates,
     rename_current_flow_run_now_time,
     run_dbt_model,
-    run_dbt_selector,
 )
 from pipelines.migration.veiculo.flows import sppo_veiculo_dia
 from pipelines.schedules import every_day_hour_five, every_day_hour_seven_minute_five
+from pipelines.tasks import run_dbt_selector
 
 # from pipelines.materialize_to_datario.flows import (
 #     smtr_materialize_to_datario_viagem_sppo_flow,
@@ -208,13 +208,13 @@ with Flow(
                 SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_selector(
                     selector_name="apuracao_antiga",
                     _vars=_vars,
-                ).set_upstream(SUBSIDIO_SPPO_DATA_QUALITY_PRE)
+                )
 
             with case(apuracao_start_date, True):
                 SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_selector(
                     selector_name="apuracao_nova",
                     _vars=_vars,
-                ).set_upstream(SUBSIDIO_SPPO_DATA_QUALITY_PRE)
+                )
 
             # SUBSIDIO_SPPO_STAGING_RUN = run_dbt_model(
             #     # dbt_client=dbt_client,
