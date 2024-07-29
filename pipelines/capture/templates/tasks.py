@@ -195,9 +195,9 @@ def transform_raw_to_nested_structure(
     if print_inputs:
         log(
             f"""
-            Received inputs:
-            - timestamp:\n{timestamp}
-            - data:\n{data.head()}"""
+Received inputs:
+- timestamp:\n{timestamp}
+- data:\n{data.head()}"""
         )
 
     if data.empty:
@@ -220,7 +220,7 @@ def transform_raw_to_nested_structure(
         log(f"timestamp column = {timestamp}", level="info")
 
         log(
-            f"Finished nested structure! Data:\n{data_info_str(data)}",
+            f"Finished nested structure! Data: \n{data_info_str(data)}",
             level="info",
         )
 

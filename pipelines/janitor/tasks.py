@@ -2,7 +2,6 @@
 # from typing import Dict, List
 import traceback
 from datetime import datetime
-from typing import Dict, List
 
 import requests
 from prefect import task
@@ -10,6 +9,8 @@ from prefect.client import Client
 
 from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import log
+
+# from typing import Dict, List
 
 
 @task
@@ -54,7 +55,8 @@ def query_not_active_flows(flows, prefect_client=None, prefect_project="producti
     flow_name, last_version = flows
     now = datetime.now().isoformat()
     query = """
-query($flow_name: String, $last_version: Int, $now: timestamptz!, $offset: Int, $project_name:String){
+query(\
+$flow_name: String, $last_version: Int, $now: timestamptz!, $offset: Int, $project_name:String){
     flow(
         where:{
             name: {_eq:$flow_name},

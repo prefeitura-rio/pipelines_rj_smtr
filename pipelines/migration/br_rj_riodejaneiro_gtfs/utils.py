@@ -157,7 +157,8 @@ def normalizar_horario(horario):
     Normalizes the given time string.
 
     If the time string contains the word "day", it splits the string into days and time.
-    It converts the days, hours, minutes, and seconds into total hours and returns the normalized time string.
+    It converts the days, hours, minutes, and seconds into total hours and returns
+    the normalized time string.
 
     If the time string does not contain the word "day", it returns the time string as is.
 
@@ -192,7 +193,8 @@ def processa_ordem_servico(
         regular_sheet_index (int, optional): The index of the regular sheet. Defaults to 0.
 
     Raises:
-        Exception: If there are more than 2 tabs in the file or if there are missing or duplicated columns in the order of service data.
+        Exception: If there are more than 2 tabs in the file or if there are missing or
+        duplicated columns in the order of service data.
         Exception: If the validation of 'km_test' and 'km_dia_util' fails.
 
     Returns:
