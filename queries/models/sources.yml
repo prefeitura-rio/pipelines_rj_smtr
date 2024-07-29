@@ -107,6 +107,7 @@ sources:
       - name: sppo_licenciamento_solicitacao
       - name: sppo_licenciamento
       - name: sppo_licenciamento_stu
+      # - name: sppo_vistoria_tr_subtt_cmo_recurso_SMTR202404004977
 
   - name: dashboard_subsidio_sppo_staging
     database: rj-smtr-staging
