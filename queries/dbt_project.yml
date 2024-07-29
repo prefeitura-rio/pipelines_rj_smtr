@@ -252,6 +252,10 @@ models:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
       +schema: gtfs
+      staging:
+        +materialized: incremental
+        +incremental_strategy: insert_overwrite
+        +schema: gtfs_staging
     indicadores_continuados_egp:
       +materialized: view
       +schema: indicadores_continuados_egp
