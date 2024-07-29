@@ -29,7 +29,7 @@
 
 - Adicione um arquivo `test.py` na raiz do projeto:
     - Neste arquivo, você deve importar o flow a ser testado
-    - Importar a função `run_local` 
+    - Importar a função `run_local`
         - `from pipelines.utils.prefect import run_local`
         - A assinatura da função é a seguinte:
             `run_local(flow: prefect.Flow, parameters: Dict[str, Any] = None)`
@@ -37,12 +37,12 @@
             uma execução local
     - Use `run_local(<flow_a_ser_testado>)` e execute o arquivo:
         - `python test.py`
-        - Uma dica interessante que pode ajudar no processo de teste e debug é adicionar 
+        - Uma dica interessante que pode ajudar no processo de teste e debug é adicionar
             `| tee logs.txt`
           ao executar seu teste.
         - Isso gerará um arquivo com os logs daquela execução, para que você possa
         analisar esses logs mais facilmente do que usando somente o terminal.
- 
+
 ### Etapa 2 - Deploy para staging e PR
 
 - Sempre trabalhe com branchs `staging/<nome>`
