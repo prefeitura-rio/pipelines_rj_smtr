@@ -83,7 +83,6 @@ def create_cct_arquivo_retorno_params(
         }
 
     else:
-
         params = {
             "dt_inicio": (
                 date.fromisoformat(redis_return["last_date"]) + timedelta(days=1)

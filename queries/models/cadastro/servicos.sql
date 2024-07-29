@@ -16,11 +16,12 @@ SELECT
     g.latitude,
     g.longitude,
     g.tabela_origem_gtfs,
-    g.feed_start_date AS feed_start_date_gtfs,
+    COALESCE(g.inicio_vigencia, DATE(j.datetime_inclusao)) AS data_inicio_vigencia,
+    g.fim_vigencia AS data_fim_vigencia,
     '{{ var("version") }}' as versao
 FROM
     {{ ref("staging_linha") }} j
 FULL OUTER JOIN
-    {{ ref("servicos_gtfs_aux") }} g
+    {{ ref("aux_servicos_gtfs") }} g
 ON
     COALESCE(j.gtfs_route_id, j.gtfs_stop_id) = g.id_servico

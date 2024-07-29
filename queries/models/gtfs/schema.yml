@@ -146,6 +146,8 @@ models:
         description: "URL para informações de contato, um formulário web, uma mesa de suporte ou outras ferramentas de comunicação relativas ao conjunto de dados GTFS e práticas de publicação de dados."
       - name: feed_start_date
         description: "Data de referência do feed (versão)."
+      - name: feed_update_datetime
+        description: "Data e hora da última atualização do feed."
       - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
 
@@ -364,6 +366,15 @@ models:
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
         description: "Código de controle de versão (SHA do GitHub)."
+
+  - name: ordem_servico_diaria
+    description: "Dados diários das linhas presentes no município."
+
+  - name: ordem_servico_viagens_planejadas
+    description: "Viagens planejadas das linhas presentes no município."
+
+  - name: servicos_sentido
+    description: "Sentido dos serviços (I - Ida, V - Volta, C - Circular)"
 
   - name: ordem_servico_gtfs
     description: "Dados das linhas presentes no município."
