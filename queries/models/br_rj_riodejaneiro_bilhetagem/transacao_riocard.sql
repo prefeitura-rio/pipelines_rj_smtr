@@ -36,9 +36,6 @@ WITH staging_transacao AS (
   {% if is_incremental() %}
     WHERE
       DATE(data) BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
-  {% else %}
-    WHERE
-      DATE(data) >= "2024-07-18"
   {% endif %}
 ),
 novos_dados AS (

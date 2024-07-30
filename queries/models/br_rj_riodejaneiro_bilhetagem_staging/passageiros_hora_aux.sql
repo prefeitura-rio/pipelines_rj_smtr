@@ -1,5 +1,5 @@
 {{
-  config(materialized="ephemeral")
+  config(materialized="table")
 }}
 
 
@@ -66,8 +66,7 @@ SELECT
   END AS tipo_transacao_detalhe_smtr,
   tipo_gratuidade,
   tipo_pagamento,
-  latitude,
-  longitude
+  ST_GEOGPOINT(longitude, latitude) AS geo_point_transacao
 FROM
   {{ transacao_table }}
 WHERE
@@ -108,13 +107,12 @@ WHERE
     "RioCard" AS tipo_transacao_detalhe_smtr,
     NULL AS tipo_gratuidade,
     "RioCard" AS tipo_pagamento,
-    latitude,
-    longitude
+    ST_GEOGPOINT(longitude, latitude) AS geo_point_transacao
   FROM
     {{ transacao_riocard_table }}
   WHERE
-    id_servico_jae NOT IN ("140", "142") OR id_servico_jae IS NULL
-    AND id_operadora != "2" OR id_operadora IS NULL
+    (id_servico_jae NOT IN ("140", "142") OR id_servico_jae IS NULL)
+    AND (id_operadora != "2" OR id_operadora IS NULL)
     AND (
       modo = "BRT"
       OR (modo = "VLT" AND data >= DATE("2024-02-24"))

@@ -11,7 +11,7 @@
 }}
 
 SELECT
-  * EXCEPT(id_transacao, latitude, longitude),
+  * EXCEPT(id_transacao, geo_point_transacao),
   COUNT(id_transacao) AS quantidade_passageiros,
   '{{ var("version") }}' AS versao
 FROM
