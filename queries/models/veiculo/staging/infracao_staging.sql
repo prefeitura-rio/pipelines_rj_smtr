@@ -1,7 +1,7 @@
 
 {{ config(
         materialized='view',
-        alias='sppo_infracao'
+        alias='infracao'
   )
 }}
 
@@ -18,7 +18,8 @@ SELECT
   SAFE_CAST(JSON_VALUE(content,'$.id_infracao') AS STRING) id_infracao,
   SAFE_CAST(JSON_VALUE(content,'$.infracao') AS STRING) infracao,
   SAFE_CAST(JSON_VALUE(content,'$.status') AS STRING) status,
-  IF(JSON_VALUE(content,'$.data_pagamento') = "", NULL, PARSE_DATE("%d/%m/%Y", JSON_VALUE(content,'$.data_pagamento'))) data_pagamento
+  IF(JSON_VALUE(content,'$.data_pagamento') = "", NULL, PARSE_DATE("%d/%m/%Y", JSON_VALUE(content,'$.data_pagamento'))) data_pagamento,
+  SAFE_CAST(JSON_VALUE(content,'$.servico') AS STRING) servico
 FROM
   {{ source('veiculo_staging','sppo_infracao') }} as t
 
