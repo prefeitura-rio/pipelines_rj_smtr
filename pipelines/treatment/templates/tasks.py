@@ -243,7 +243,6 @@ def run_data_quality_checks(
     log("Executando testes de qualidade de dados")
 
     for check in data_quality_checks:
-
         dataplex = DataQuality(
             data_scan_id=check.check_id,
             project_id="rj-smtr",
