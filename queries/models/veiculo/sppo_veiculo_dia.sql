@@ -28,9 +28,10 @@ WITH
   ELSE FALSE
   END AS indicador_vistoriado,
   FROM
-    {{ ref("sppo_licenciamento") }} --`rj-smtr`.`veiculo`.`sppo_licenciamento`
+    {{ ref("licenciamento") }} --`rj-smtr`.`veiculo`.`licenciamento`
   WHERE
     data = DATE("{{ licenciamento_date }}")
+    AND tipo_veiculo NOT LIKE "%ROD%"
   ),
   gps AS (
   SELECT
