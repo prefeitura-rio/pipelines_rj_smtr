@@ -360,18 +360,3 @@ models:
         description: "Valor de subsídio, conforme tipo de viagem (R$/km)."
       - name: indicador_viagem_remunerada
         description: "Indicador se a viagem foi remunerada ou não."
-  - name: viagem_km_tipo
-    description: "Tabela com classificação do tipo de viagem, distância planejada e valor de subsídio."
-    columns:
-      - name: data
-        description: "Data da viagem."
-      - name: servico
-        description: "Serviço realizado pelo veículo."
-      - name: tipo_viagem
-        description: "Classificação do tipo de viagem."
-      - name: id_viagem
-        description: "Código único identificador da viagem."
-      - name: distancia_planejada
-        description: "Distância planejada da viagem (km)."
-      - name: subsidio_km
-        description: "Valor de subsídio, conforme tipo de viagem (R$/km)."
