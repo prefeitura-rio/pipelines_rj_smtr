@@ -35,16 +35,7 @@ WITH
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}") ),
--- 3. Parâmetros de subsídio
-  subsidio_parametros AS (
-  SELECT
-    DISTINCT data_inicio,
-    data_fim,
-    status,
-    subsidio_km
-  FROM
-    {{ ref("subsidio_valor_km_tipo_viagem") }} ),
--- 4. Viagem com tolerância de 30 minutos, limitada pela viagem anterior
+-- 3. Viagem com tolerância de 30 minutos, limitada pela viagem anterior
 viagem_com_tolerancia AS (
   SELECT
     v.*,
@@ -61,14 +52,15 @@ viagem_com_tolerancia AS (
   FROM
     viagem AS v
 ),
--- 5. Contagem de transações
+-- 4. Contagem de transações
 transacao_contagem AS (
   SELECT
     v.data,
     v.id_viagem,
-    COUNT(t.datetime_transacao) AS transacoes_contagem
+    COUNT(t.datetime_transacao) AS quantidade_transacao
   FROM
     {{ ref("transacao") }} AS t
+    -- rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao AS t
   JOIN
     viagem_com_tolerancia AS v
   ON
@@ -78,14 +70,15 @@ transacao_contagem AS (
   GROUP BY
     v.data, v.id_viagem
 ),
--- 6. Contagem de transações Riocard
+-- 5. Contagem de transações Riocard
 transacao_riocard_contagem AS (
   SELECT
     v.data,
     v.id_viagem,
-    COUNT(tr.datetime_transacao) AS transacoes_riocard_contagem
+    COUNT(tr.datetime_transacao) AS quantidade_transacao_riocard
   FROM
     {{ ref("transacao_riocard") }} AS tr
+    -- rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard AS tr
   JOIN
     viagem_com_tolerancia AS v
   ON
@@ -94,17 +87,36 @@ transacao_riocard_contagem AS (
     AND tr.datetime_transacao BETWEEN v.datetime_partida_com_tolerancia AND v.datetime_chegada
   GROUP BY
     v.data, v.id_viagem
-)
--- 7. Verificação de estado do equipamento
+),
+-- transacao_riocard_contagem AS (
+--   SELECT
+--     v.data,
+--     v.id_viagem,
+--     COUNT(tr.data_transacao) AS quantidade_transacao_riocard
+--   FROM
+--     -- {{ ref("transacao_riocard") }} AS tr
+--     rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.transacao_riocard AS tr
+--   JOIN
+--     viagem_com_tolerancia AS v
+--   ON
+--     -- tr.id_veiculo = SUBSTR(v.id_veiculo, 2)
+--     tr.veiculo_id = SUBSTR(v.id_veiculo, 2)
+--     AND EXTRACT(DATE FROM tr.data_transacao)  = v.data
+--     AND tr.data_transacao BETWEEN v.datetime_partida_com_tolerancia AND v.datetime_chegada
+--   GROUP BY
+--     v.data, v.id_viagem
+-- ),
+-- 6. Verificação de estado do equipamento
 estado_equipamento_verificacao AS (
   SELECT
     v.data,
     v.id_viagem,
-    COUNT(CASE WHEN g.estado_equipamento != "ABERTO" THEN 1 END) AS conta_estado_fechado
+    IF(COUNT(CASE WHEN g.estado_equipamento != "ABERTO" THEN 1 END) = 0, TRUE, FALSE) AS indicador_estado_equipamento_aberto
   FROM
     {{ ref("gps_validador") }} AS g
+    -- rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador AS g
   JOIN
-    viagem_com_tolerancia AS v
+    viagem AS v
   ON
     g.id_veiculo = SUBSTR(v.id_veiculo, 2)
     AND g.data = v.data
@@ -114,19 +126,28 @@ estado_equipamento_verificacao AS (
 )
 SELECT
   v.data,
+  v.id_viagem,
+  v.id_veiculo,
   v.servico,
   CASE
-    WHEN v.data >= "2024-07-20"
-      AND ((COALESCE(tc.transacoes_contagem, 0) = 0
-        AND COALESCE(trc.transacoes_riocard_contagem, 0) = 0)
-        OR eev.conta_estado_fechado != 0)
+    WHEN v.data >= DATE("{{ var("DATA_SUBSIDIO_V8_INICIO") }}")
+    --   AND ((COALESCE(t.quantidade_transacao, 0) = 0
+    --     AND COALESCE(tr.quantidade_transacao_riocard, 0) = 0)
+    --     OR eev.conta_estado_fechado != 0)
+      AND (COALESCE(tr.quantidade_transacao_riocard, 0) = 0
+        OR COALESCE(eev.indicador_estado_equipamento_aberto, FALSE) = FALSE)
       AND ve.status IN ("Licenciado com ar e não autuado", "Licenciado sem ar e não autuado")
       THEN "Sem transação"
     ELSE ve.status
   END AS tipo_viagem,
-  v.id_viagem,
   v.distancia_planejada,
-  t.subsidio_km
+  COALESCE(t.quantidade_transacao, 0) AS quantidade_transacao,
+  COALESCE(tr.quantidade_transacao_riocard, 0) AS quantidade_transacao_riocard,
+  COALESCE(eev.indicador_estado_equipamento_aberto, FALSE) AS indicador_estado_equipamento_aberto,
+  v.datetime_partida_com_tolerancia AS datetime_partida_bilhetagem,
+  v.datetime_partida,
+  v.datetime_chegada,
+  CURRENT_DATETIME("America/Sao_Paulo") AS datetime_ultima_atualizacao
 FROM
   viagem_com_tolerancia AS v
 LEFT JOIN
@@ -134,22 +155,14 @@ LEFT JOIN
 USING
   (data, id_veiculo)
 LEFT JOIN
-  subsidio_parametros AS t
-ON
-  v.data BETWEEN t.data_inicio AND t.data_fim
-  AND ve.status = t.status
+  transacao_contagem AS t
+USING
+  (data, id_viagem)
 LEFT JOIN
-  transacao_contagem AS tc
-ON
-  v.data = tc.data
-  AND v.id_viagem = tc.id_viagem
-LEFT JOIN
-  transacao_riocard_contagem AS trc
-ON
-  v.data = trc.data
-  AND v.id_viagem = trc.id_viagem
+  transacao_riocard_contagem AS tr
+USING
+  (data, id_viagem)
 LEFT JOIN
   estado_equipamento_verificacao AS eev
-ON
-  v.data = eev.data
-  AND v.id_viagem = eev.id_viagem
+USING
+  (data, id_viagem)
