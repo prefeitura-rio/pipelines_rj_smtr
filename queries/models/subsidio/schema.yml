@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: viagem_transacao
+    description: "Tabela com quantidade de transações por viagem."
+    columns:
+      - name: data
+        description: "Data da viagem."
+      - name: id_viagem
+        description: "Código único identificador da viagem."
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: servico
+        description: "Serviço realizado pelo veículo."
+      - name: tipo_viagem
+        description: "Classificação do tipo de viagem."
+      - name: distancia_planejada
+        description: "{{ doc('distancia_planejada') }}"
+      - name: quantidade_transacao
+        description: "Quantidade de transações da Jaé durante a viagem."
+      - name: quantidade_transacao_riocard
+        description: "Quantidade de transações da RioCard durante a viagem."
+      - name: indicador_estado_equipamento_aberto
+        description: "Indicador se todos os registros de GPS foram transmitidos com o estado ABERTO durante a viagem."
+      - name: datetime_partida_bilhetagem
+        description: "Horário de início da viagem para contagem das transações, considerando uma tolerância de até 30 minutos do ínicio da viagem, limitada pelo encerramento da viagem anterior realizada pelo mesmo veículo."
+      - name: datetime_partida
+        description: "{{ doc('datetime_partida') }}"
+      - name: datetime_chegada
+        description: "{{ doc('datetime_chegada') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
