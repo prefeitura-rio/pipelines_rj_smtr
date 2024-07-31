@@ -78,7 +78,9 @@ SELECT
   tipo_veiculo,
   status,
   data_inicio_vinculo,
-  ano_ultima_vistoria_atualizado
+  ano_ultima_vistoria_atualizado,
+  CURRENT_DATETIME("America/Sao_Paulo") AS datetime_ultima_atualizacao,
+  "{{ var("version") }}" AS versao
 FROM
   stu_ano_ultima_vistoria
 WHERE
