@@ -44,10 +44,10 @@ viagem_com_tolerancia AS (
       WHEN LAG(v.datetime_chegada) OVER (PARTITION BY v.id_veiculo ORDER BY v.datetime_partida) IS NULL THEN
         DATETIME(TIMESTAMP_SUB(datetime_partida, INTERVAL 30 MINUTE))
       ELSE
-        GREATEST(
-          DATETIME(TIMESTAMP_SUB(datetime_partida, INTERVAL 30 MINUTE)),
+        DATETIME(TIMESTAMP_ADD(GREATEST(
+          TIMESTAMP_SUB(datetime_partida, INTERVAL 30 MINUTE),
           LAG(v.datetime_chegada) OVER (PARTITION BY v.id_veiculo ORDER BY v.datetime_partida)
-        )
+        ), INTERVAL 1 SECOND))
     END AS datetime_partida_com_tolerancia
   FROM
     viagem AS v
