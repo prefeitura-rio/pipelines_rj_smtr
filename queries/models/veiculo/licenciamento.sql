@@ -17,7 +17,7 @@ WITH stu AS (
     * EXCEPT(data),
     DATE(data) AS data
   FROM
-    {{ ref("sppo_licenciamento_stu_staging") }} AS t
+    {{ ref("licenciamento_stu_staging") }} AS t
   {% if is_incremental() %}
     WHERE
       DATE(data) = DATE("{{ licenciamento_date }}")
@@ -54,7 +54,31 @@ stu_ano_ultima_vistoria AS (
   USING(id_veiculo, placa)
 )
 SELECT
-  * EXCEPT(rn),
+  data,
+  modo,
+  id_veiculo,
+  ano_fabricacao,
+  carroceria,
+  data_ultima_vistoria,
+  id_carroceria,
+  id_chassi,
+  id_fabricante_chassi,
+  id_interno_carroceria,
+  id_planta,
+  indicador_ar_condicionado,
+  indicador_elevador,
+  indicador_usb,
+  indicador_wifi,
+  nome_chassi,
+  permissao,
+  placa,
+  quantidade_lotacao_pe,
+  quantidade_lotacao_sentado,
+  tipo_combustivel,
+  tipo_veiculo,
+  status,
+  data_inicio_vinculo,
+  ano_ultima_vistoria_atualizado
 FROM
   stu_ano_ultima_vistoria
 WHERE
