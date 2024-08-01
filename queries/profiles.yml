@@ -22,4 +22,4 @@ queries:
       project: rj-smtr
       threads: 1
       type: bigquery
-  target: prod
+  target: dev

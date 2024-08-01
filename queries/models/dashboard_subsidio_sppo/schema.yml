@@ -358,5 +358,7 @@ models:
         description: "Distância planejada da viagem (km)."
       - name: subsidio_km
         description: "Valor de subsídio, conforme tipo de viagem (R$/km)."
+      - name: subsidio_km_teto
+        description: "Valor máximo de subsídio, conforme tipo de viagem (R$/km)."
       - name: indicador_viagem_remunerada
         description: "Indicador se a viagem foi remunerada ou não."

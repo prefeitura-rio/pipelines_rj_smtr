@@ -286,3 +286,9 @@ models:
       staging:
         +materialized: incremental
         +schema: validacao_dados_jae_staging
+    financeiro:
+      +materialized: view
+      +schema: financeiro
+    dashboard_subsidio_sppo_v2:
+      +materialized: view
+      +schema: dashboard_subsidio_sppo_v2

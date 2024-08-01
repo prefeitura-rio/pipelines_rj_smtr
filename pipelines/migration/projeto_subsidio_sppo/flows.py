@@ -22,12 +22,9 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 
 from pipelines.constants import constants as smtr_constants
 from pipelines.migration.projeto_subsidio_sppo.constants import constants
-
-# from pipelines.materialize_to_datario.flows import (
-#     smtr_materialize_to_datario_viagem_sppo_flow,
-# )
 from pipelines.migration.projeto_subsidio_sppo.tasks import (
     check_param,
+    check_start_date,
     subsidio_data_quality_check,
 )
 from pipelines.migration.tasks import (
@@ -44,6 +41,11 @@ from pipelines.migration.tasks import (
 )
 from pipelines.migration.veiculo.flows import sppo_veiculo_dia
 from pipelines.schedules import every_day_hour_five, every_day_hour_seven_minute_five
+from pipelines.tasks import run_dbt_selector
+
+# from pipelines.materialize_to_datario.flows import (
+#     smtr_materialize_to_datario_viagem_sppo_flow,
+# )
 
 # EMD Imports #
 
@@ -154,7 +156,7 @@ with Flow(
 
     # Get models version #
     dataset_sha = fetch_dataset_sha(
-        dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value,
+        dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value,  # precisa disso ?
     )
 
     _vars = {"start_date": start_date, "end_date": end_date}
@@ -200,19 +202,48 @@ with Flow(
 
         with case(SUBSIDIO_SPPO_DATA_QUALITY_PRE, True):
             # 4. CALCULATE #
-            SUBSIDIO_SPPO_STAGING_RUN = run_dbt_model(
-                # dbt_client=dbt_client,
-                dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_STAGING_DATASET_ID.value,
-                _vars=_vars,
-                upstream_tasks=[SUBSIDIO_SPPO_DATA_QUALITY_PRE],
-            )
+            apuracao_start_date = check_start_date(_vars)
 
-            SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_model(
-                # dbt_client=dbt_client,
-                dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value,
-                _vars=_vars,
-                upstream_tasks=[SUBSIDIO_SPPO_STAGING_RUN],
-            )
+            with case(apuracao_start_date, False):
+                SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_selector(
+                    selector_name="apuracao_antiga",
+                    _vars=_vars,
+                )
+
+            with case(apuracao_start_date, True):
+                SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_selector(
+                    selector_name="apuracao_nova",
+                    _vars=_vars,
+                )
+
+            # SUBSIDIO_SPPO_STAGING_RUN = run_dbt_model(
+            #     # dbt_client=dbt_client,
+            #     dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_STAGING_DATASET_ID.value,
+            #     _vars=_vars,
+            #     upstream_tasks=[SUBSIDIO_SPPO_DATA_QUALITY_PRE],
+            # )
+
+            # SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_model(
+            #     # dbt_client=dbt_client,
+            #     dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value,
+            #     _vars=_vars,
+            #     upstream_tasks=[SUBSIDIO_SPPO_STAGING_RUN],
+            # )
+
+            # SUBSIDIO_SPPO_FINANCEIRO_RUN = run_dbt_model(
+            #     # dbt_client=dbt_client,
+            #     dataset_id=constants.SUBSIDIO_SPPO_FINANCEIRO_DATASET_ID.value,
+            #     _vars=_vars,
+            #     # upstream_tasks=[SUBSIDIO_SPPO_APURACAO_RUN],
+            #     upstream_tasks=[SUBSIDIO_SPPO_STAGING_RUN],
+            # )
+
+            # SUBSIDIO_SPPO_APURACAOv2_RUN = run_dbt_model(
+            #     # dbt_client=dbt_client,
+            #     dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_V2_DATASET_ID.value,
+            #     _vars=_vars,
+            #     upstream_tasks=[SUBSIDIO_SPPO_FINANCEIRO_RUN],
+            # )
 
             # 5. POST-DATA QUALITY CHECK #
             SUBSIDIO_SPPO_DATA_QUALITY_POS = subsidio_data_quality_check(
