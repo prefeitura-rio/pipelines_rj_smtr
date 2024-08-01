@@ -289,5 +289,6 @@ models:
         +materialized: incremental
         +schema: validacao_dados_jae_staging
     subsidio:
-      +materialized: view
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
       +schema: subsidio
