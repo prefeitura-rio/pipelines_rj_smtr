@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [6.0.3] - 2024-08-01
+
+### Alterado
+
+- Alterados modelos `viagem_planejada.sql` e `subsidio_data_versao_efetiva.sql` para materializar sempre em D+0 e permitir acompanhamento pelos operadores ()
+
 ## [6.0.2] - 2024-04-22
 
 ### Adicionado
