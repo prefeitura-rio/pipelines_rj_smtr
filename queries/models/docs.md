@@ -21,3 +21,15 @@ Horário de fim da viagem.
 {% docs distancia_planejada %}
 Distância do shape (trajeto) planejado (km).
 {% enddocs %}
+
+{% docs tipo_viagem_status %}
+Classificação do tipo de viagem.
+{% enddocs %}
+
+{% docs servico %}
+Serviço realizado pelo veículo.
+{% enddocs %}
+
+{% docs id_viagem %}
+Código único identificador da viagem.
+{% enddocs %}
