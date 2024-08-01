@@ -131,9 +131,6 @@ SELECT
   v.servico,
   CASE
     WHEN v.data >= DATE("{{ var("DATA_SUBSIDIO_V8_INICIO") }}")
-    --   AND ((COALESCE(t.quantidade_transacao, 0) = 0
-    --     AND COALESCE(tr.quantidade_transacao_riocard, 0) = 0)
-    --     OR eev.conta_estado_fechado != 0)
       AND (COALESCE(tr.quantidade_transacao_riocard, 0) = 0
         OR COALESCE(eev.indicador_estado_equipamento_aberto, FALSE) = FALSE)
       AND ve.status IN ("Licenciado com ar e não autuado", "Licenciado sem ar e não autuado")
