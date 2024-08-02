@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import requests
 
 # from datetime import datetime as dt
 # from datetime import timedelta
@@ -62,3 +63,16 @@ def run_dbt_model(
 
     print(f"\n>>> RUNNING: {run_command}\n")
     os.system(run_command)
+
+
+def fetch_dataset_sha(dataset_id: str):
+    """Fetches the SHA of a branch from Github"""
+    url = "https://api.github.com/repos/prefeitura-rio/queries-rj-smtr"
+    url += f"/commits?queries-rj-smtr/rj_smtr/{dataset_id}"
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        return None
+
+    dataset_version = response.json()[0]["sha"]
+    return {"version": dataset_version}
