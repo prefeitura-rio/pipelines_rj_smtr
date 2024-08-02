@@ -1,5 +1,10 @@
 # Changelog - gtfs
 
+## [1.1.8] - 2024-08-02
+
+### Alterado
+- Adiciona tag `geolocalizacao` aos modelos `shapes_geom_gtfs.sql`, `shapes_gtfs.sql` e `stops_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/127)
+
 ## [1.1.7] - 2024-07-23
 
 ### Adicionado
