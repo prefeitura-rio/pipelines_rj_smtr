@@ -6,6 +6,8 @@
 
 - Adiciona filtro para os nomes de tabs da planilha de controle os na task `get_raw_drive_files` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/128/files)
 
+- Adiociona etapa de remover pontos antes da converção de metro para km no processamento da OS (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/129)
+
 ## Corrigido
 
 ## [1.0.5] - 2024-07-23
