@@ -4,6 +4,7 @@
 
 ### Alterado
 - Adiciona tag `geolocalizacao` ao modelo `servicos.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/127)
+- Adiciona tag `identificacao` ao modelo `operadoras.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/127)
 
 ## [1.2.0] - 2024-07-17
 
