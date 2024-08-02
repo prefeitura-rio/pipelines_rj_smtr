@@ -3,7 +3,8 @@
     'data_type' :'date',
     'granularity': 'day' },
     unique_key = ['stop_id', 'feed_start_date'],
-    alias = 'stops'
+    alias = 'stops',
+    tags=['geolocalizacao']
 )}}
 
 {% if execute and is_incremental() %}

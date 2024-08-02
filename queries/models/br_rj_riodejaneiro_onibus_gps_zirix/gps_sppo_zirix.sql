@@ -6,7 +6,8 @@
       'data_type':'date',
       'granularity': 'day'
     },
-    alias='gps_sppo'
+    alias='gps_sppo',
+    tags=['geolocalizacao']
   )
 }}
 /*
