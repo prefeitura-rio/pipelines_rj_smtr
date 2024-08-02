@@ -188,6 +188,8 @@ def get_raw_drive_files(os_control, local_filepath: list, regular_sheet_index: i
 
     # Salva os nomes das planilhas
     sheetnames = xl.load_workbook(file_bytes_os).sheetnames
+    sheetnames = [name for name in sheetnames if "ANEXO" in name]
+    log(f"tabs encontradas na planilha Controle OS: {sheetnames}")
 
     with zipfile.ZipFile(file_bytes_gtfs, "r") as zipped_file:
         for filename in list(constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys()):
