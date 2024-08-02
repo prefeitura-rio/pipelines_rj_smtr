@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
-import requests
 
 # from datetime import datetime as dt
 # from datetime import timedelta
 from typing import Dict, List, Union
+
+import requests
 
 # import pandas as pd
 
