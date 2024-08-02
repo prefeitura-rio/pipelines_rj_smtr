@@ -286,3 +286,6 @@ models:
       staging:
         +materialized: incremental
         +schema: validacao_dados_jae_staging
+    catalogo:
+      +materialized: view
+      +schema: catalogo
