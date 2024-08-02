@@ -1,5 +1,10 @@
 # Changelog - cadastro
 
+## [1.2.1] - 2024-08-02
+
+### Alterado
+- Adiciona tag `geolocalizacao` ao modelo `servicos.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/127)
+
 ## [1.2.0] - 2024-07-17
 
 ### Adicionado
