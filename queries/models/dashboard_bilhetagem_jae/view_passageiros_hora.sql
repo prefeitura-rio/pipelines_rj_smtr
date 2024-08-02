@@ -36,4 +36,3 @@ FROM
 LEFT JOIN
   servicos s
 USING(id_servico_jae)
-WHERE tipo_transacao_smtr != "RioCard"
