@@ -292,3 +292,6 @@ models:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
       +schema: subsidio
+    catalogo:
+      +materialized: view
+      +schema: catalogo

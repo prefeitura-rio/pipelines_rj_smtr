@@ -1,6 +1,7 @@
 {{
   config(
     alias='cliente',
+    tags=['identificacao']
   )
 }}
 

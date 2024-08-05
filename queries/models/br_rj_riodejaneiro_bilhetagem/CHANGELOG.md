@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [2.1.4] - 2024-08-02
+
+### Alterado
+- Adiciona tag `geolocalizacao` aos modelos `gps_validador_van.sql` e `gps_validador.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/127)
+- Adiciona tag `identificacao` ao modelo `staging_cliente.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/127)
+
 ## [2.1.3] - 2024-07-18
 
 ### Adicionado

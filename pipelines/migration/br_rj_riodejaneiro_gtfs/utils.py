@@ -270,6 +270,8 @@ def processa_ordem_servico(
 
         extensao_cols = ["extensao_ida", "extensao_volta"]
         quadro[extensao_cols] = quadro[extensao_cols].astype(str)
+        for col in extensao_cols:
+            quadro[col] = quadro[col].str.replace(".", "", regex=False)
         quadro[extensao_cols] = quadro[extensao_cols].apply(pd.to_numeric)
 
         quadro["extensao_ida"] = quadro["extensao_ida"] / 1000
