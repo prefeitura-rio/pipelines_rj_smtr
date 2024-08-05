@@ -11,16 +11,16 @@
 }}
 
 SELECT
-  p.* EXCEPT(id_transacao, latitude, longitude),
+  p.* EXCEPT(id_transacao, geo_point_transacao),
   geo.tile_id,
   COUNT(id_transacao) AS quantidade_passageiros,
   '{{ var("version") }}' AS versao
 FROM
-  {{ ref("passageiros_hora_aux") }} p
+  {{ ref("aux_passageiros_hora") }} p
 JOIN
-  {{ source("br_rj_riodejaneiro_geo", "h3_res9") }} geo
+  {{ ref("aux_h3_res9") }} geo
 ON
-  ST_CONTAINS(ST_GEOGFROMTEXT(geo.geometry), ST_GEOGPOINT(p.longitude, p.latitude))
+  ST_CONTAINS(geo.geometry, geo_point_transacao)
 GROUP BY
   data,
   hora,

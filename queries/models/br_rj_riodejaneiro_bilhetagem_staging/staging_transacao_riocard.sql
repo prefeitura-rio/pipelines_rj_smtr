@@ -34,9 +34,9 @@ SELECT
     SAFE_CAST(JSON_VALUE(content, '$.tipo_integracao') AS STRING) AS tipo_integracao,
     SAFE_CAST(JSON_VALUE(content, '$.tipo_transacao') AS STRING) AS tipo_transacao,
     SAFE_CAST(JSON_VALUE(content, '$.uid_origem') AS STRING) AS uid_origem,
-    SAFE_CAST(JSON_VALUE(content, '$.valor_tarifa') AS FLOAT64) AS valor_tarifa,
-    SAFE_CAST(JSON_VALUE(content, '$.valor_transacao') AS FLOAT64) AS valor_transacao,
+    SAFE_CAST(JSON_VALUE(content, '$.valor_tarifa') AS NUMERIC) AS valor_tarifa,
+    SAFE_CAST(JSON_VALUE(content, '$.valor_transacao') AS NUMERIC) AS valor_transacao,
     SAFE_CAST(JSON_VALUE(content, '$.veiculo_id') AS STRING) AS veiculo_id,
-    SAFE_CAST(JSON_VALUE(content, '$.vl_saldo') AS FLOAT64) AS vl_saldo
+    SAFE_CAST(JSON_VALUE(content, '$.vl_saldo') AS NUMERIC) AS vl_saldo
 FROM
     {{ source("br_rj_riodejaneiro_bilhetagem_staging", "transacao_riocard") }}
