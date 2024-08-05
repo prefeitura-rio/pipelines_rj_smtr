@@ -30,7 +30,7 @@ WITH infracao AS (
 infracao_rn AS (
   SELECT
     *,
-    ROW_NUMBER() OVER (PARTITION BY data, id_auto_infracao) rn
+    ROW_NUMBER() OVER (PARTITION BY data, id_auto_infracao ORDER BY timestamp_captura DESC) rn
   FROM
     infracao
 )
