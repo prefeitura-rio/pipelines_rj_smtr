@@ -1,5 +1,10 @@
 # Changelog - dashboard_bilhetagem_jae
 
+## [1.0.2] - 2024-08-05
+
+### Adicionado
+- Adiciona filtro para remover dados de transações do tipo RioCard no modelo `view_passageiros_hora.sql` e `view_passageiros_tile_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/130)
+
 ## [1.0.1] - 2024-07-17
 
 ### Corrigido
