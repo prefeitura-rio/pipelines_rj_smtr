@@ -46,7 +46,7 @@ class constants(Enum):  # pylint: disable=c0103
         "names": SPPO_LICENCIAMENTO_MAPPING_KEYS.keys(),  # pylint: disable=e1101
     }
 
-    SPPO_INFRACAO_TABLE_ID = "sppo_infracao"
+    SPPO_INFRACAO_TABLE_ID = "infracao"
 
     SPPO_INFRACAO_MAPPING_KEYS = {
         "permissao": "permissao",

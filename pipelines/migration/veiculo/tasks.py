@@ -204,9 +204,9 @@ def pre_treatment_sppo_infracao(status: dict, timestamp: datetime):
         # log(f"Filtering '{filters}'...", level="info")
         # data = filter_data(data, filters)
 
-        log("Filtering null primary keys...", level="info")
-        primary_key = ["placa", "id_auto_infracao"]
-        data.dropna(subset=primary_key, inplace=True)
+        # log("Filtering null primary keys...", level="info")
+        primary_key = ["id_auto_infracao"]
+        # data.dropna(subset=primary_key, inplace=True)
 
         # Check primary keys
         # pk_columns = ["placa", "id_auto_infracao"]
