@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: sppo_infracao
+  - name: infracao
     description: "Tabela histórica de todas as multas aplicadas aos modos de transporte no município do Rio de Janeiro, com qualquer situação.
     Dados capturados diariamente de: https://www.data.rio/documents/multas-aplicadas-aos-modos-de-transporte-nos-%C3%BAltimos-cinco-anos"
     columns:
@@ -34,7 +34,7 @@ models:
                       CANCELADA - Multa foi cancelada através de um Processo de Recurso"
       - name: data_pagamento
         description: "Data de pagamento"
-  - name: sppo_licenciamento
+  - name: licenciamento
     description: "Tabela histórica de dados cadastrais dos veículos que operam o sistema de ônibus (BRT e SPPO),
                   considerando tanto os licenciados no Sistema de Transporte Urbano (STU) quanto as solicitações
                   válidas em andamento para ingresso no sistema"
