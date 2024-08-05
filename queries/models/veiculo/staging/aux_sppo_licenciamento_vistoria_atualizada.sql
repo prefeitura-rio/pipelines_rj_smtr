@@ -37,6 +37,14 @@ FROM
             ano_ultima_vistoria,
         FROM
             {{ ref("sppo_vistoria_tr_subtt_cglf_pendentes_2024_staging") }}
+        UNION ALL
+        SELECT
+            data,
+            id_veiculo,
+            placa,
+            ano_ultima_vistoria,
+        FROM
+            {{ ref("sppo_vistoria_tr_subtt_cmo_recurso_SMTR202404004977_staging") }}
     )
 GROUP BY
   1,

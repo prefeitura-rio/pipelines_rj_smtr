@@ -98,7 +98,8 @@ WITH
     SELECT
       *
     FROM
-      {{ ref("subsidio_data_versao_efetiva") }} -- `rj-smtr`.`projeto_subsidio_sppo`.`subsidio_data_versao_efetiva`
+      -- {{ ref("subsidio_data_versao_efetiva") }}
+      `rj-smtr`.`projeto_subsidio_sppo`.`subsidio_data_versao_efetiva`
     WHERE
       data >= "2022-06-01"
       AND data < DATE( "{{ var("DATA_SUBSIDIO_V2_INICIO") }}" )) AS v
