@@ -134,13 +134,21 @@ def subsidio_data_quality_check(
 
     if not test_check:
         at_code_owners = [
-            f'   - <@{smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
-            if smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "user"
-            else f'   - <@!{smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
-            if smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "user_nickname"
-            else f'   - <#{smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
-            if smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "channel"
-            else f'   - <@&{smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
+            (
+                f'   - <@{smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
+                if smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"] == "user"
+                else (
+                    f'   - <@!{smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
+                    if smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"]
+                    == "user_nickname"
+                    else (
+                        f'   - <#{smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
+                        if smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["type"]
+                        == "channel"
+                        else f'   - <@&{smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
+                    )
+                )
+            )
             for code_owner in code_owners
         ]
 
