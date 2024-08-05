@@ -526,6 +526,8 @@ models:
         description: "Data e hora de processamento da transação em GMT-3 (formato YYYY-MM-ddTHH:mm:ss.ssssss)"
       - name: datetime_captura
         description: "Timestamp de captura em GMT-3 (formato YYYY-MM-dd HH:mm:ssTZD)"
+      - name: modo
+        description: "Tipo de transporte (Ônibus, Van, BRT)"
       - name: id_consorcio
         description: "Identificador do consórcio na tabela cadastro.consorcios"
       - name: consorcio
