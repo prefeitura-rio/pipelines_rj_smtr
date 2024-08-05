@@ -3,7 +3,8 @@
     'data_type' :'date',
     'granularity': 'day' },
     unique_key = ['shape_id', 'feed_start_date'],
-    alias = 'shapes_geom'
+    alias = 'shapes_geom',
+    tags=['geolocalizacao']
 ) }}
 
 {% if execute and is_incremental() %}
