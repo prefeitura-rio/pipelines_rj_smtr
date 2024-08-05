@@ -16,7 +16,7 @@ SELECT
   COUNT(id_transacao) AS quantidade_passageiros,
   '{{ var("version") }}' AS versao
 FROM
-  {{ ref("passageiros_hora_aux") }} p
+  {{ ref("aux_passageiros_hora") }} p
 JOIN
   {{ ref("aux_h3_res9") }} geo
 ON

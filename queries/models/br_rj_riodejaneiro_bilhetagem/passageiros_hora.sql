@@ -15,7 +15,7 @@ SELECT
   COUNT(id_transacao) AS quantidade_passageiros,
   '{{ var("version") }}' AS versao
 FROM
-  {{ ref("passageiros_hora_aux") }}
+  {{ ref("aux_passageiros_hora") }}
 GROUP BY
   data,
   hora,
