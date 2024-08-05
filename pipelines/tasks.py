@@ -187,7 +187,6 @@ def run_subflow(
     flow_run_results = []
 
     for idx, param_list in enumerate(parameters):
-
         if not isinstance(param_list, list):
             param_list = [param_list]
 
