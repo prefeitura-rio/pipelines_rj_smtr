@@ -13,7 +13,7 @@ class constants(Enum):  # pylint: disable=c0103
     Constant values for rj_smtr veiculo
     """
 
-    SPPO_LICENCIAMENTO_TABLE_ID = "sppo_licenciamento_stu"
+    SPPO_LICENCIAMENTO_TABLE_ID = "licenciamento_stu"
 
     SPPO_LICENCIAMENTO_MAPPING_KEYS = {
         "placa": "placa",

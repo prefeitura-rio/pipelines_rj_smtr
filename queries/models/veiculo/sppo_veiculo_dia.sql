@@ -1,11 +1,11 @@
 -- depends_on: {{ ref('licenciamento_stu_staging') }}
 {{
-    config(
-        materialized="incremental",
-        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-        unique_key=["data", "id_veiculo"],
-        incremental_strategy="insert_overwrite",
-    )
+  config(
+    materialized="incremental",
+    partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+    unique_key=["data", "id_veiculo"],
+    incremental_strategy="insert_overwrite",
+  )
 }}
 
 {% if execute %}
@@ -54,7 +54,6 @@ gps AS (
   {% endif -%}
     data = DATE("{{ infracao_date }}")
     AND data_infracao = DATE("{{ var('run_date') }}")
-    AND modo = "ONIBUS"
 ),
 registros_agente_verao AS (
   SELECT
@@ -200,9 +199,7 @@ gps_licenciamento_autuacao AS (
               COALESCE(r.indicador_registro_agente_verao_ar_condicionado, FALSE)   AS indicador_registro_agente_verao_ar_condicionado)
     {% endif %}
     AS indicadores,
-    l.placa,
-    DATE("{{ licenciamento_date }}") AS data_licenciamento,
-    DATE("{{ infracao_date }}") AS data_infracao,
+    l.placa
   FROM
     gps g
   LEFT JOIN
@@ -220,6 +217,8 @@ SELECT
   gla.* EXCEPT(indicadores),
   TO_JSON(indicadores) AS indicadores,
   status,
+  DATE("{{ licenciamento_date }}") AS data_licenciamento,
+  DATE("{{ infracao_date }}") AS data_infracao,
   CURRENT_DATETIME("America/Sao_Paulo") AS datetime_ultima_atualizacao,
   "{{ var("version") }}" AS versao
 FROM
@@ -250,6 +249,8 @@ SELECT
     WHEN indicadores.indicador_ar_condicionado IS TRUE THEN "Licenciado com ar e não autuado"
     ELSE NULL
   END AS status,
+  DATE("{{ licenciamento_date }}") AS data_licenciamento,
+  DATE("{{ infracao_date }}") AS data_infracao,
   CURRENT_DATETIME("America/Sao_Paulo") AS datetime_ultima_atualizacao,
   "{{ var("version") }}" AS versao
 FROM
