@@ -493,7 +493,7 @@ ordem_pagamento_servico_operador_dia staging_ordem_pagamento_consorcio_operadora
 aux_retorno_ordem_pagamento",
     }
 
-    BILHETAGEM_MATERIALIZACAO_TRANSACAO_RIOCARD_PARAMS = {
+    BILHETAGEM_MATERIALIZACAO_DASHBOARD_CONTROLE_VINCULO_PARAMS = {
         "dataset_id": "dashboard_controle_vinculo_jae_riocard",
         "table_id": "veiculo_indicadores_dia",
         "upstream": True,
@@ -501,7 +501,7 @@ aux_retorno_ordem_pagamento",
             "run_date": {},
             "version": {},
         },
-        "exclude": "+gps_sppo +sppo_licenciamento +gps_validador",
+        "exclude": "+gps_sppo +sppo_licenciamento +gps_validador +transacao_riocard",
     }
 
     BILHETAGEM_MATERIALIZACAO_ORDEM_PAGAMENTO_PARAMS = {
