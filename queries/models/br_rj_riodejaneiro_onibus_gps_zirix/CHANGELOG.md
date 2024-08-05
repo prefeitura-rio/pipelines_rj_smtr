@@ -1,5 +1,10 @@
 # Changelog - onibus_gps_zirix
 
+## [1.0.3] - 2024-08-02
+
+### Alterado
+- Adiciona tag `geolocalizacao` ao modelo `gps_sppo_zirix.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/127)
+
 ## [1.0.2] - 2024-07-02
 
 ### Adicionado

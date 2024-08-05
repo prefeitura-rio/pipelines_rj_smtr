@@ -236,7 +236,7 @@ X-1vRvFcyr9skfBIrjxc4FSJZ3-g4gUCF56YjGPOmd1f5qH8vndpy22P6f6KdcYgWaqzUmtSBL\
         "stops": ["stop_id"],
         "trips": ["trip_id"],
         "fare_attributes": ["fare_id"],
-        "fare_rules": [],
+        "fare_rules": ["fare_id", "route_id"],
         "stop_times": ["trip_id", "stop_sequence"],
     }
 

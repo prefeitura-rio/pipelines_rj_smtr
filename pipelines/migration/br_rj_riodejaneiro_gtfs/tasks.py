@@ -79,12 +79,24 @@ def update_last_captured_os(dataset_id: str, data_index: str, mode: str = "prod"
     fetch_key = f"{dataset_id}.last_captured_os"
     if mode != "prod":
         fetch_key = f"{mode}.{fetch_key}"
-
+    last_captured_os = redis_client.get(fetch_key)
+    #  verifica se last_capture_os tem formado dia/mes/ano_index e converte para ano-mes-dia_index
+    if last_captured_os is not None:
+        if "/" in last_captured_os:
+            index = last_captured_os.split("_")[1]
+            data = datetime.strptime(last_captured_os.split("_")[0], "%d/%m/%Y").strftime(
+                "%Y-%m-%d"
+            )
+            last_captured_os = data + "_" + index
+    # verifica se a ultima os capturada é maior que a nova
+    if last_captured_os is not None:
+        if last_captured_os["last_captured_os"] > data_index:
+            return
     redis_client.set(fetch_key, {"last_captured_os": data_index})
 
 
 @task(nout=4)
-def get_os_info(last_captured_os: str) -> dict:
+def get_os_info(last_captured_os: str = None, data_versao_gtfs: str = None) -> dict:
     """
     Retrieves information about the OS.
 
@@ -118,9 +130,13 @@ def get_os_info(last_captured_os: str) -> dict:
 
     # Ordena por data e index
     df = df.sort_values(by=["data_index"], ascending=True)
-    if last_captured_os is None:
+    if data_versao_gtfs is not None:
+        df = df.loc[(df["Início da Vigência da OS"] == data_versao_gtfs)]
+
+    elif last_captured_os is None:
         last_captured_os = df["data_index"].max()
         df = df.loc[(df["data_index"] == last_captured_os)]
+
     else:
         # Filtra linhas onde 'data_index' é maior que o último capturado
         df = df.loc[(df["data_index"] > last_captured_os)]
@@ -136,7 +152,7 @@ def get_os_info(last_captured_os: str) -> dict:
 
 
 @task(nout=2)
-def get_raw_drive_files(os_control, local_filepath: list):
+def get_raw_drive_files(os_control, local_filepath: list, regular_sheet_index: int = None):
     """
     Downloads raw files from Google Drive and processes them.
 
@@ -172,19 +188,20 @@ def get_raw_drive_files(os_control, local_filepath: list):
 
     # Salva os nomes das planilhas
     sheetnames = xl.load_workbook(file_bytes_os).sheetnames
+    sheetnames = [name for name in sheetnames if "ANEXO" in name]
+    log(f"tabs encontradas na planilha Controle OS: {sheetnames}")
 
     with zipfile.ZipFile(file_bytes_gtfs, "r") as zipped_file:
         for filename in list(constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys()):
             if filename == "ordem_servico":
-
                 processa_ordem_servico(
                     sheetnames=sheetnames,
                     file_bytes=file_bytes_os,
                     local_filepath=local_filepath,
                     raw_filepaths=raw_filepaths,
+                    regular_sheet_index=regular_sheet_index,
                 )
             elif filename == "ordem_servico_trajeto_alternativo":
-
                 processa_ordem_servico_trajeto_alternativo(
                     sheetnames=sheetnames,
                     file_bytes=file_bytes_os,
