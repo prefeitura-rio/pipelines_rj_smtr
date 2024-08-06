@@ -23,38 +23,41 @@ from pipelines.schedules import (  # every_10_minutes,; every_hour,; every_hour_
 
 # Flows #
 
-viagens_captura = deepcopy(default_capture_flow)
-viagens_captura.name = "SMTR: Viagens Ônibus Conecta - Captura"
-viagens_captura.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
-viagens_captura.run_config = KubernetesRun(
+viagens_conecta_captura = deepcopy(default_capture_flow)
+viagens_conecta_captura.name = "SMTR: Viagens Ônibus Conecta - Captura"
+viagens_conecta_captura.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
+viagens_conecta_captura.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-viagens_captura.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
+viagens_conecta_captura.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
-viagens_captura = set_default_parameters(
-    flow=viagens_captura,
+viagens_conecta_captura = set_default_parameters(
+    flow=viagens_conecta_captura,
     default_parameters=constants.VIAGEM_CAPTURE_PARAMETERS.value,
 )
 
-viagens_captura.schedule = every_day_hour_ten
+viagens_conecta_captura.schedule = every_day_hour_ten
 
 
-viagens_recaptura = deepcopy(default_capture_flow)
-viagens_recaptura.name = "SMTR: Viagens Ônibus Conecta - Recaptura"
-viagens_recaptura.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
-viagens_recaptura.run_config = KubernetesRun(
+viagens_conecta_recaptura = deepcopy(default_capture_flow)
+viagens_conecta_recaptura.name = "SMTR: Viagens Ônibus Conecta - Recaptura"
+viagens_conecta_recaptura.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
+viagens_conecta_recaptura.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-viagens_recaptura.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
+viagens_conecta_recaptura.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+]
 
-viagens_recaptura = set_default_parameters(
-    flow=viagens_recaptura,
+viagens_conecta_recaptura = set_default_parameters(
+    flow=viagens_conecta_recaptura,
     default_parameters=constants.VIAGEM_CAPTURE_PARAMETERS.value | {"recapture": True},
 )
 
-viagens_recaptura.schedule = every_day_hour_ten
+viagens_conecta_recaptura.schedule = every_day_hour_ten
 
 
 viagem_conecta_materializacao = deepcopy(default_materialization_flow)
