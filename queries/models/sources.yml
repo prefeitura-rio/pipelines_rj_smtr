@@ -155,8 +155,8 @@ sources:
     tables:
       - name: viagem_informada
 
-  - name: br_rj_riodejaneiro_viagem_conecta_staging_dev
-    database: rj-smtr-dev
+  - name: br_rj_riodejaneiro_viagem_conecta_staging
+    database: rj-smtr-staging
     schema: br_rj_riodejaneiro_conecta_staging
 
     tables:
