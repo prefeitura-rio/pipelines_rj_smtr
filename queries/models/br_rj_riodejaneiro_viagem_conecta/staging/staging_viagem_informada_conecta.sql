@@ -7,7 +7,6 @@
 SELECT
   id_viagem,
   data,
-  hora,
   DATETIME(PARSE_TIMESTAMP('%Y-%m-%d %H:%M:%S%Ez', timestamp_captura), "America/Sao_Paulo") AS timestamp_captura,
   DATE(
     PARSE_DATETIME(
