@@ -98,7 +98,7 @@ sources:
       - name: parametros_km
 
   - name: veiculo_staging
-    database: rj-smtr-dev
+    database: rj-smtr-staging
 
     tables:
       - name: sppo_vistoria_tr_subtt_cglf_2023
