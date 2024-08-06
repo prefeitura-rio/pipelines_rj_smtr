@@ -157,7 +157,7 @@ sources:
 
   - name: br_rj_riodejaneiro_viagem_conecta_staging_dev
     database: rj-smtr-dev
-    schema: br_rj_riodejaneiro_conecta_staging
+    schema: br_rj_riodejaneiro_viagem_conecta_staging
 
     tables:
       - name: viagem_informada_conecta
