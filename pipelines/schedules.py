@@ -204,3 +204,15 @@ every_friday_seven_thirty = Schedule(
         )
     ]
 )
+
+every_15_minute = Schedule(
+    clocks=[
+        IntervalClock(
+            interval=timedelta(minutes=15),
+            start_date=datetime(2021, 1, 1, 0, 0, 0, tzinfo=timezone(constants.TIMEZONE.value)),
+            labels=[
+                emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value,
+            ],
+        ),
+    ]
+)
