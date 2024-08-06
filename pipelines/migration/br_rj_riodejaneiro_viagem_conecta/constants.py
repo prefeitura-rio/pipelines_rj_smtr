@@ -27,6 +27,7 @@ class constants(Enum):  # pylint: disable=c0103
         "upstream": True,
         "dbt_vars": {
             "run_date": {},
+            "version": {},
         },
         "source_dataset_ids": [smtr_constants.VIAGEM_CONECTA_RAW_DATASET_ID.value],
         "source_table_ids": [VIAGEM_CAPTURE_PARAMETERS["table_id"]],
