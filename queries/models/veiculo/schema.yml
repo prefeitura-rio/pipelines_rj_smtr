@@ -34,6 +34,10 @@ models:
                       CANCELADA - Multa foi cancelada através de um Processo de Recurso"
       - name: data_pagamento
         description: "Data de pagamento"
+      - name: datetime_ultima_atualizacao
+        description: "Última atualização (GMT-3)."
+      - name: versao
+        description: "SHA do repositório no Github"
   - name: licenciamento
     description: "Tabela histórica de dados cadastrais dos veículos que operam o sistema de ônibus (BRT e SPPO),
                   considerando tanto os licenciados no Sistema de Transporte Urbano (STU) quanto as solicitações
@@ -90,6 +94,10 @@ models:
         description: "Ano atualizado da última vistoria realizada pelo veículo"
       - name: data_inicio_vinculo
         description: "Data de início do vínculo do veículo no STU"
+      - name: datetime_ultima_atualizacao
+        description: "Última atualização (GMT-3)."
+      - name: versao
+        description: "SHA do repositório no Github"
   - name: sppo_licenciamento_solicitacao
     description: "Tabela histórica de dados cadastrais das solicitações em andamento para ingresso no Sistema de Transporte Urbano (STU)"
     columns:
@@ -153,6 +161,8 @@ models:
         description: "Data de operação"
       - name: id_veiculo
         description: "Número de ordem do veículo, identificação que é exibida na lateral do ônibus"
+      - name: placa
+        description: "Placa do veículo"
       - name: indicadores
         description: "Indicadores para caraterização do status do veículo"
       - name: indicadores.indicador_licenciado
@@ -179,6 +189,12 @@ models:
                       - Autuado por limpeza/equipamento - Veículo que operou, foi licenciado, mas foi autuado cumulativamente por infrações relacionadas à limpeza e equipamentos do veículo\n
                       - Sem ar e não autuado - Veículo que operou, foi licenciado sem ar condicionado e não foi autuado\n
                       - Com ar e não autuado - Veículo que operou, foi licenciado com ar condicionado e não foi autuado"
+      - name: datetime_ultima_atualizacao
+        description: "Última atualização (GMT-3)."
+      - name: data_licenciamento
+        description: "Data do arquivo de licenciamento utilizado"
+      - name: data_infracao
+        description: "Data do arquivo de infrações utilizado"
       - name: versao
         description: "SHA do repositório no Github"
   - name: sppo_registro_agente_verao
