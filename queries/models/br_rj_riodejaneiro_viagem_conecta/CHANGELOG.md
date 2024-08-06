@@ -1,4 +1,4 @@
-# Changelog - viagem_zirix
+# Changelog - viagem_conecta
 
 ## [1.0.0] - 2024-08-06
 
