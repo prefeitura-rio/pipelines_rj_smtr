@@ -117,7 +117,7 @@ vars:
   # Feature Apuração Madonna · The Celebration Tour in Rio
   DATA_SUBSIDIO_V7_INICIO: "2024-05-01"
   # Feature Viagens sem transação
-  DATA_SUBSIDIO_V8_INICIO: "2024-07-20"
+  DATA_SUBSIDIO_V8_INICIO: "2024-07-19"
   # valor_subsidio: "`rj-smtr-dev.projeto_subsidio_sppo.valor_subsidio`"
 
   # Recursos #
