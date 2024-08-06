@@ -88,24 +88,6 @@ transacao_riocard_contagem AS (
   GROUP BY
     v.data, v.id_viagem
 ),
--- transacao_riocard_contagem AS (
---   SELECT
---     v.data,
---     v.id_viagem,
---     COUNT(tr.data_transacao) AS quantidade_transacao_riocard
---   FROM
---     -- {{ ref("transacao_riocard") }} AS tr
---     rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.transacao_riocard AS tr
---   JOIN
---     viagem_com_tolerancia AS v
---   ON
---     -- tr.id_veiculo = SUBSTR(v.id_veiculo, 2)
---     tr.veiculo_id = SUBSTR(v.id_veiculo, 2)
---     AND EXTRACT(DATE FROM tr.data_transacao)  = v.data
---     AND tr.data_transacao BETWEEN v.datetime_partida_com_tolerancia AND v.datetime_chegada
---   GROUP BY
---     v.data, v.id_viagem
--- ),
 -- 6. Verificação de estado do equipamento
 estado_equipamento_verificacao AS (
   SELECT
