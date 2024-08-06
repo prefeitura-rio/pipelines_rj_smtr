@@ -14,7 +14,7 @@
   DATE(data) = DATE("{{var('run_date')}}")
 {% endset %}
 
-{% set staging_viagem_informada = ref('staging_viagem_informada') %}
+{% set staging_viagem_informada = ref('staging_viagem_informada_conecta') %}
 {% if execute %}
   {% if is_incremental() %}
     {% set partitions_query %}

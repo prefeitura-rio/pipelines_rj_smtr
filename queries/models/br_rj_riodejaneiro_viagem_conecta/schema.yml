@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: viagem_informada
+  - name: viagem_informada_conecta
     description: "Detalhes das viagens informadas pelas operadoras de ônibus"
     columns:
       - name: data

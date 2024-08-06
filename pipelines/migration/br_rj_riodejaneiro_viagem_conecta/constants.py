@@ -15,7 +15,7 @@ class constants(Enum):  # pylint: disable=c0103
 
     VIAGEM_CAPTURE_PARAMETERS = {
         "dataset_id": smtr_constants.VIAGEM_CONECTA_RAW_DATASET_ID.value,
-        "table_id": "viagem_informada",
+        "table_id": "viagem_informada_conecta",
         "partition_date_only": True,
         "primary_key": ["id_viagem"],
         "source_type": "api-json",
@@ -23,7 +23,7 @@ class constants(Enum):  # pylint: disable=c0103
 
     VIAGEM_MATERIALIZACAO_PARAMS = {
         "dataset_id": smtr_constants.VIAGEM_CONECTA_RAW_DATASET_ID.value,
-        "table_id": "viagem_informada",
+        "table_id": "viagem_informada_conecta",
         "upstream": True,
         "dbt_vars": {
             "run_date": {},

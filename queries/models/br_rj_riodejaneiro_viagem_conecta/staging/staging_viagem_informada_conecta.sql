@@ -1,6 +1,6 @@
 {{
   config(
-    alias="viagem_informada"
+    alias="viagem_informada_conecta"
   )
 }}
 
@@ -56,4 +56,4 @@ SELECT
   SAFE_CAST(JSON_VALUE(content, '$.shape_id') AS STRING) AS shape_id,
   SAFE_CAST(JSON_VALUE(content, '$.trip_id') AS STRING) AS trip_id
 FROM
-  {{ source("br_rj_riodejaneiro_viagem_conecta_staging_dev", "viagem_informada") }}
+  {{ source("br_rj_riodejaneiro_viagem_conecta_staging_dev", "viagem_informada_conecta") }}

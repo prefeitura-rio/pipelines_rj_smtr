@@ -160,4 +160,4 @@ sources:
     schema: br_rj_riodejaneiro_conecta_staging
 
     tables:
-      - name: viagem_informada
+      - name: viagem_informada_conecta
