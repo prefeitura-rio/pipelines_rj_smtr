@@ -289,3 +289,10 @@ models:
     catalogo:
       +materialized: view
       +schema: catalogo
+    br_rj_riodejaneiro_viagem_conecta:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: br_rj_riodejaneiro_viagem_conecta
+      staging:
+        +materialized: view
+        +schema: br_rj_riodejaneiro_viagem_conecta_staging
