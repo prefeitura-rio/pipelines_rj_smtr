@@ -5,6 +5,8 @@ Flows for br_rj_riodejaneiro_onibus_gps
 DBT 2024-07-02
 """
 
+from copy import deepcopy
+
 from prefect import Parameter, case, task
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
@@ -516,6 +518,55 @@ recaptura.run_config = KubernetesRun(
 )
 recaptura.schedule = every_hour_minute_six
 recaptura.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+    handler_skip_if_running,
+]
+
+
+materialize_gps_15_min = deepcopy(materialize_sppo)
+materialize_gps_15_min.name = "SMTR: GPS SPPO 15 Minutos - Materialização (subflow)"
+
+with Flow("SMTR: GPS SPPO 15 Minutos - Tratamento") as recaptura_15min:
+    version = Parameter("version", default=2)
+    datetime_filter_gps = Parameter("datetime_filter_gps", default=None)
+    rebuild = Parameter("rebuild", default=False)
+    # SETUP #
+    LABELS = get_current_flow_labels()
+    PROJECT = get_flow_project()
+
+    rename_flow_run = rename_current_flow_run_now_time(
+        prefix=recaptura.name + ": ", now_time=get_now_time(), wait=timestamps
+    )
+
+    materialize_no_error = create_flow_run(
+        flow_name=materialize_gps_15_min.name,
+        project_name=PROJECT,
+        labels=LABELS,
+        run_name=materialize_sppo.name,
+        parameters={
+            "table_id": constants.GPS_SPPO_15_MIN_TREATED_TABLE_ID.value,
+            "rebuild": rebuild,
+            "materialize_delay_hours": 0,
+            "truncate_minutes": False,
+        },
+    )
+
+    wait_materialize_no_error = wait_for_flow_run(
+        materialize_no_error,
+        stream_states=True,
+        stream_logs=True,
+        raise_final_state=True,
+    )
+
+
+recaptura_15min.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+recaptura_15min.run_config = KubernetesRun(
+    image=emd_constants.DOCKER_IMAGE.value,
+    labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
+)
+recaptura_15min.schedule = every_hour_minute_six
+recaptura_15min.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
     handler_skip_if_running,
