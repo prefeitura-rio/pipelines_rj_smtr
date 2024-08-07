@@ -536,7 +536,7 @@ with Flow("SMTR: GPS SPPO 15 Minutos - Tratamento") as recaptura_15min:
     PROJECT = get_flow_project()
 
     rename_flow_run = rename_current_flow_run_now_time(
-        prefix=recaptura.name + ": ", now_time=get_now_time(), wait=timestamps
+        prefix=recaptura.name + ": ", now_time=get_now_time()
     )
 
     materialize_no_error = create_flow_run(
