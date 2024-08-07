@@ -2,7 +2,7 @@
 """
 Flows for br_rj_riodejaneiro_onibus_gps
 
-DBT 2024-07-02
+DBT 2024-08-06
 """
 
 from copy import deepcopy
