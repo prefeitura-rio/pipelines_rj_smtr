@@ -2,7 +2,7 @@
 """
 Flows for br_rj_riodejaneiro_viagem_conecta
 
-DBT: 2024-08-06
+DBT: 2024-08-07
 """
 from copy import deepcopy
 
@@ -17,9 +17,7 @@ from pipelines.constants import constants as smtr_constants
 from pipelines.migration.br_rj_riodejaneiro_viagem_conecta.constants import constants
 from pipelines.migration.flows import default_capture_flow, default_materialization_flow
 from pipelines.migration.utils import set_default_parameters
-from pipelines.schedules import (  # every_10_minutes,; every_hour,; every_hour_minute_thirty,
-    every_day_hour_ten,
-)
+from pipelines.schedules import every_day_hour_ten
 
 # Flows #
 
