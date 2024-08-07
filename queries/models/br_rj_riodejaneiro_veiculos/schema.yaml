@@ -7,3 +7,5 @@ models:
     description: "Tabela com os dados tratados de registros de GPS do SPPO, incluindo velocidade estimada, estado de movimento, parada em terminal ou garagem e interseção com o traçado da linha informada."
   - name: gps_brt_15_minutos
     description: "Tabela com os dados tratados de registros de GPS do BRT, incluindo velocidade estimada, estado de movimento, parada em terminal ou garagem e interseção com o traçado da linha informada."
+  - name: gps_sppo_15_minutos
+    description: "Tabela com os dados tratados de registros de GPS do SPPO, incluindo velocidade estimada, estado de movimento, parada em terminal ou garagem e interseção com o traçado da linha informada."
