@@ -1,3 +1,11 @@
+{% if var("fifteen_minutes") == "_15_minutos" %}
+{{
+  config(
+      materialized='ephemeral',
+      alias=this.name ~ var("fifteen_minutes")
+  )
+}}
+{% else %}
 {{
   config(
       materialized='incremental',
@@ -8,6 +16,7 @@
       }
   )
 }}
+{% endif %}
 
 -- 1. Filtra realocações válidas dentro do intervalo de GPS avaliado
 with realocacao as (

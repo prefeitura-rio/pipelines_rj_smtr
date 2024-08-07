@@ -1,3 +1,11 @@
+{% if var("fifteen_minutes") == "_15_minutos" %}
+{{
+  config(
+      materialized='ephemeral',
+      alias=this.name ~ var("fifteen_minutes")
+  )
+}}
+{% else %}
 {{
   config(
       materialized='incremental',
@@ -8,6 +16,8 @@
       }
   )
 }}
+{% endif %}
+
   /*
 Descrição:
 Filtragem e tratamento básico de registros de gps.
@@ -44,7 +54,7 @@ realocacao as (
   FROM
     gps g
   LEFT JOIN
-    {{ ref('sppo_aux_registros_realocacao') }} r
+    {{ ref('sppo_aux_registros_realocacao') ~ var('fifteen_minutes')}} r
   ON
     g.ordem = r.id_veiculo
     and g.timestamp_gps = r.timestamp_gps

@@ -152,6 +152,7 @@ with Flow(
     rematerialization = Parameter("rematerialization", default=False)
     date_range_start = Parameter("date_range_start", default=None)
     date_range_end = Parameter("date_range_end", default=None)
+    fifteen_minutes = Parameter("fifteen_minutes", default="")
 
     LABELS = get_current_flow_labels()
     MODE = get_current_flow_mode()
@@ -205,7 +206,7 @@ with Flow(
             table_id=table_id,
             upstream=True,
             exclude="+data_versao_efetiva",
-            _vars=[date_range, dataset_sha],
+            _vars=[date_range, dataset_sha, fifteen_minutes],
             flags="--full-refresh",
         )
 
@@ -215,7 +216,7 @@ with Flow(
             dataset_id=dataset_id,
             table_id=table_id,
             exclude="+data_versao_efetiva",
-            _vars=[date_range, dataset_sha],
+            _vars=[date_range, dataset_sha, fifteen_minutes],
             upstream=True,
         )
 
@@ -549,6 +550,7 @@ with Flow("SMTR: GPS SPPO 15 Minutos - Tratamento") as recaptura_15min:
             "rebuild": rebuild,
             "materialize_delay_hours": 0,
             "truncate_minutes": False,
+            "fifteen_minutes": "_15_minutos",
         },
     )
 
