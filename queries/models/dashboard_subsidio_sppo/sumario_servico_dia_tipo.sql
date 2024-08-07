@@ -26,31 +26,17 @@ WITH
     AND (distancia_total_planejada > 0
     OR distancia_total_planejada IS NOT NULL)
   ),
-  veiculos AS (
-  SELECT
-    DATA,
-    id_veiculo,
-    status
-  FROM
-    -- rj-smtr.veiculo.sppo_veiculo_dia
-    {{ ref("sppo_veiculo_dia") }}
-  WHERE
-    DATA >= DATE( "{{ var("DATA_SUBSIDIO_V2_INICIO") }}" )
-    {% if is_incremental() %}
-      AND DATA BETWEEN DATE("{{ var("start_date") }}" )
-      AND DATE( "{{ var("end_date") }}" )
-    {% endif %}
-  ),
   viagem AS (
   SELECT
-    DATA,
-    servico_realizado AS servico,
+    data,
+    servico,
     id_veiculo,
     id_viagem,
+    tipo_viagem,
     distancia_planejada
   FROM
-    -- rj-smtr.projeto_subsidio_sppo.viagem_completa
-    {{ ref("viagem_completa") }}
+    -- rj-smtr.subsidio.viagem_transacao
+    {{ ref("viagem_transacao") }}
   WHERE
     DATA >= DATE( "{{ var("DATA_SUBSIDIO_V2_INICIO") }}" )
     {% if is_incremental() %}
@@ -60,18 +46,13 @@ WITH
   ),
   servico_km_tipo AS (
   SELECT
-    v.DATA,
-    v.servico,
-    ve.status AS tipo_viagem,
+    data,
+    servico,
+    tipo_viagem,
     COUNT(id_viagem) AS viagens,
     ROUND(SUM(distancia_planejada), 2) AS km_apurada
   FROM
     viagem v
-  LEFT JOIN
-    veiculos ve
-  ON
-    ve.data = v.data
-    AND ve.id_veiculo = v.id_veiculo
   GROUP BY
     1,
     2,
@@ -127,7 +108,8 @@ WITH
           "Autuado por limpeza/equipamento" AS autuado_limpezaequipamento,
           "Licenciado sem ar e não autuado" AS licenciado_sem_ar_n_autuado,
           "Licenciado com ar e não autuado" AS licenciado_com_ar_n_autuado,
-          "Não vistoriado" AS n_vistoriado
+          "Não vistoriado" AS n_vistoriado,
+          "Sem transação" AS sem_transacao
         )))
 SELECT
   sd.*,
