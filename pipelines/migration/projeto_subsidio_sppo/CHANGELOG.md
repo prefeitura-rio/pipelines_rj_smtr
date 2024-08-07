@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.0.2] - 2024-07-31
+
+### Adicionado
+
+- Adiciona `km_apurada_sem_transacao` na soma da constante `SUBSIDIO_SPPO_DATA_CHECKS_PARAMS.teste_sumario_servico_dia_tipo_soma_km`  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/121)
+
 ## [1.0.1] - 2024-07-17
 
 ### Alterado
