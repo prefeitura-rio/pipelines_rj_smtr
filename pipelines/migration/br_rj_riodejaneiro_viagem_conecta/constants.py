@@ -17,7 +17,9 @@ class constants(Enum):  # pylint: disable=c0103
         "dataset_id": smtr_constants.VIAGEM_CONECTA_RAW_DATASET_ID.value,
         "table_id": "viagem_informada_conecta",
         "partition_date_only": True,
+        "extract_params": {"delay_days": 2},
         "primary_key": ["id_viagem"],
+        "interval_minutes": 1440,
         "source_type": "api-json",
     }
 
@@ -31,4 +33,5 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "source_dataset_ids": [smtr_constants.VIAGEM_CONECTA_RAW_DATASET_ID.value],
         "source_table_ids": [VIAGEM_CAPTURE_PARAMETERS["table_id"]],
+        "capture_intervals_minutes": [VIAGEM_CAPTURE_PARAMETERS["interval_minutes"]],
     }
