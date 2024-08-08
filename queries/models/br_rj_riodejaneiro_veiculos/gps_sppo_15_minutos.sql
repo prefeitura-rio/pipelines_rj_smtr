@@ -35,7 +35,7 @@ WITH
       linha,
       latitude,
       longitude,
-    FROM {{ ref('sppo_aux_registros_filtrada') ~ var('fifteen_minutes') }}
+    FROM {{ ref('sppo_aux_registros_filtrada' ~ var('fifteen_minutes')) }}
     WHERE
       -- data between DATE("{{var('date_range_start')}}") and DATE("{{var('date_range_end')}}")
       -- AND timestamp_gps > "{{var('date_range_start')}}" and timestamp_gps <="{{var('date_range_end')}}"
