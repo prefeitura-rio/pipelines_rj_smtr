@@ -3,7 +3,7 @@
 """
 Flows for projeto_subsidio_sppo
 
-DBT 2024-07-02
+DBT 2024-08-08
 """
 
 from prefect import Parameter, case, task
@@ -209,7 +209,9 @@ with Flow(
 
             SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_model(
                 # dbt_client=dbt_client,
-                dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value,
+                dataset_id=constants.SUBSIDIO_SPPO_V2_DATASET_ID.value
+                + " "
+                + constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value,
                 _vars=_vars,
                 upstream_tasks=[SUBSIDIO_SPPO_STAGING_RUN],
             )
