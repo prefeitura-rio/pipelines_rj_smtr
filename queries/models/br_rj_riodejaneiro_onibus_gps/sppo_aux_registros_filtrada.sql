@@ -1,7 +1,7 @@
 {% if var("fifteen_minutes") == "_15_minutos" %}
 {{
   config(
-      materialized='ephemeral',
+      materialized='view',
       alias=this.name ~ var("fifteen_minutes")
   )
 }}
