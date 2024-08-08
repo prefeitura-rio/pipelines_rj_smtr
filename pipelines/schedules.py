@@ -205,7 +205,7 @@ every_friday_seven_thirty = Schedule(
     ]
 )
 
-every_15_minute = Schedule(
+every_15_minutes = Schedule(
     clocks=[
         IntervalClock(
             interval=timedelta(minutes=15),

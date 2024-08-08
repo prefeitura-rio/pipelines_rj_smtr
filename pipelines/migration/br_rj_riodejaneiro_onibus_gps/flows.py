@@ -54,7 +54,12 @@ from pipelines.migration.tasks import (  # get_local_dbt_client,
     set_last_run_timestamp,
     upload_logs_to_bq,
 )
-from pipelines.schedules import every_10_minutes, every_hour_minute_six, every_minute
+from pipelines.schedules import (
+    every_10_minutes,
+    every_15_minutes,
+    every_hour_minute_six,
+    every_minute,
+)
 
 # from pipelines.utils.execute_dbt_model.tasks import get_k8s_dbt_client
 
@@ -567,7 +572,7 @@ recaptura_15min.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
 )
-recaptura_15min.schedule = every_hour_minute_six
+recaptura_15min.schedule = every_15_minutes
 recaptura_15min.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
