@@ -18,6 +18,8 @@ class constants(Enum):  # pylint: disable=c0103
     SUBSIDIO_SPPO_TABLE_ID = "viagem_completa"
     SUBSIDIO_SPPO_CODE_OWNERS = ["dados_smtr"]
 
+    SUBSIDIO_SPPO_V2_DATASET_ID = "subsidio"
+
     # SUBSÍDIO DASHBOARD
     # flake8: noqa: E501
     SUBSIDIO_SPPO_DASHBOARD_DATASET_ID = "dashboard_subsidio_sppo"
