@@ -290,6 +290,10 @@ X-1vRvFcyr9skfBIrjxc4FSJZ3-g4gUCF56YjGPOmd1f5qH8vndpy22P6f6KdcYgWaqzUmtSBL\
     VIAGEM_ZIRIX_RAW_DATASET_ID = "br_rj_riodejaneiro_viagem_zirix"
     ZIRIX_BASE_URL = "https://integration.systemsatx.com.br/Globalbus/SMTR"
 
+    CONECTA_API_SECRET_PATH = "conecta_api"
+    VIAGEM_CONECTA_RAW_DATASET_ID = "br_rj_riodejaneiro_viagem_conecta"
+    CONECTA_BASE_URL = "https://ccomobility.com.br/webservices/binder/wsconecta"
+
     CONTROLE_FINANCEIRO_DATASET_ID = "controle_financeiro"
 
     ######################################

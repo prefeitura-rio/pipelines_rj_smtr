@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: viagem_informada_conecta
+    description: "Detalhes das viagens informadas pelas operadoras de ônibus"
+    columns:
+      - name: data
+        description: "Data da viagem (partição)"
+      - name: datetime_partida
+        description: "Data e hora da partida da viagem em GMT-3"
+      - name: datetime_chegada
+        description: "Data e hora da chegada da viagem em GMT-3"
+      - name: datetime_processamento
+        description: "Data e hora do processamento da viagem em GMT-3"
+      - name: datetime_captura
+        description: "Data e hora da captura da integração em GMT-3"
+      - name: id_veiculo
+        description: "Código identificador do veículo (número de ordem)"
+      - name: trip_id
+        description: "Identificador de uma viagem da tabela trips do GTFS"
+      - name: route_id
+        description: "Identificador de uma rota da tabela routes do GTFS"
+      - name: shape_id
+        description: "Identificador de um shape da tabela shapes do GTFS"
+      - name: servico
+        description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...)"
+      - name: sentido
+        description: "Ida ou Volta"
+      - name: id_viagem
+        description: "Identificador de um shape da tabela shapes do GTFS"
+      - name: versao
+        description: "Código de controle de versão do dado (SHA Github)"
+      - name: datetime_ultima_atualizacao
+        description: "Última atualização (GMT-3)."
