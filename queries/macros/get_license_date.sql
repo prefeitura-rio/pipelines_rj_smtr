@@ -10,7 +10,7 @@ SELECT
     WHEN DATE("{{ var('run_date') }}") >= "2024-03-16" AND DATE("{{ var('run_date') }}") < "2024-04-01" THEN DATE("2024-04-09")
     ELSE (
       SELECT MIN(DATE(data))
-      FROM {{ ref("sppo_licenciamento_stu_staging") }}
+      FROM {{ ref("licenciamento_stu_staging") }}
       WHERE DATE(data) >= DATE_ADD(DATE("{{ var('run_date') }}"), INTERVAL 5 DAY)
         -- Admite apenas versões do STU igual ou após 2024-04-09 a partir de abril/24 devido à falha de atualização na fonte da dados (SIURB)
         AND (DATE("{{ var('run_date') }}") < "2024-04-01" OR DATE(data) >= '2024-04-09')
