@@ -52,7 +52,7 @@ realocacao as (
   FROM
     gps g
   LEFT JOIN
-    {{ ref('sppo_aux_registros_realocacao' ~ var('fifteen_minutes')) }} r
+    {{ ref('sppo_aux_registros_realocacao') }} r
   ON
     g.ordem = r.id_veiculo
     and g.timestamp_gps = r.timestamp_gps
