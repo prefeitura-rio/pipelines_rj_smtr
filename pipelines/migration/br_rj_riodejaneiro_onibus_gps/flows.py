@@ -206,7 +206,7 @@ with Flow(
             table_id=table_id,
             upstream=True,
             exclude="+data_versao_efetiva",
-            _vars=[date_range, dataset_sha, fifteen_minutes],
+            _vars=[date_range, dataset_sha, {"fifteen_minutes": fifteen_minutes}],
             flags="--full-refresh",
         )
 
@@ -216,7 +216,7 @@ with Flow(
             dataset_id=dataset_id,
             table_id=table_id,
             exclude="+data_versao_efetiva",
-            _vars=[date_range, dataset_sha, fifteen_minutes],
+            _vars=[date_range, dataset_sha, {"fifteen_minutes": fifteen_minutes}],
             upstream=True,
         )
 
