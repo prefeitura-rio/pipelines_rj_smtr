@@ -17,7 +17,7 @@ from pipelines.constants import constants as smtr_constants
 from pipelines.migration.br_rj_riodejaneiro_viagem_conecta.constants import constants
 from pipelines.migration.flows import default_capture_flow, default_materialization_flow
 from pipelines.migration.utils import set_default_parameters
-from pipelines.schedules import every_day_hour_ten
+from pipelines.schedules import every_day, every_day_hour_seven, every_day_hour_ten
 
 # Flows #
 
@@ -35,7 +35,7 @@ viagens_conecta_captura = set_default_parameters(
     default_parameters=constants.VIAGEM_CAPTURE_PARAMETERS.value,
 )
 
-viagens_conecta_captura.schedule = every_day_hour_ten
+viagens_conecta_captura.schedule = every_day
 
 
 viagens_conecta_recaptura = deepcopy(default_capture_flow)
@@ -55,7 +55,7 @@ viagens_conecta_recaptura = set_default_parameters(
     default_parameters=constants.VIAGEM_CAPTURE_PARAMETERS.value | {"recapture": True},
 )
 
-viagens_conecta_recaptura.schedule = every_day_hour_ten
+viagens_conecta_recaptura.schedule = every_day_hour_seven
 
 
 viagem_conecta_materializacao = deepcopy(default_materialization_flow)
