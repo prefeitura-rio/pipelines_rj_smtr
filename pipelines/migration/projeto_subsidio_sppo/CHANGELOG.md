@@ -10,7 +10,6 @@
 
 - Alterado o flow `subsidio_sppo_apuracao` para utlizar a constante `SUBSIDIO_SPPO_V2_DATASET_ID` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/137)
 
-
 ## [1.0.2] - 2024-07-31
 
 ### Adicionado
