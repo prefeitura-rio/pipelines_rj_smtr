@@ -830,10 +830,11 @@ def create_request_params(
 
     elif dataset_id == constants.VIAGEM_CONECTA_RAW_DATASET_ID.value:
         request_url = f"{constants.CONECTA_BASE_URL.value}/envioViagensConsolidadasSMTR"
+        delay_days = extract_params["delay_days"]
         token = get_secret(constants.CONECTA_API_SECRET_PATH.value)
         token_key = list(token)[0]
         request_params = {
-            "data": (timestamp).strftime("%Y-%m-%d"),
+            "data": (timestamp - timedelta(days=delay_days)).strftime("%Y-%m-%d"),
             token_key: get_secret(constants.CONECTA_API_SECRET_PATH.value)[token_key],
         }
         log(
