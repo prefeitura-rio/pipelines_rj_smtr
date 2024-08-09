@@ -1,3 +1,11 @@
+{% if var("fifteen_minutes") == "_15_minutos" %}
+{{
+  config(
+      materialized='view',
+      alias=this.name ~ var("fifteen_minutes")
+  )
+}}
+{% else %}
 {{
   config(
       materialized='incremental',
@@ -8,6 +16,8 @@
       }
   )
 }}
+{% endif %}
+
   /*
 Descrição:
 Filtragem e tratamento básico de registros de gps.
@@ -31,11 +41,9 @@ gps AS (
     ST_GEOGPOINT(longitude, latitude) posicao_veiculo_geo
   FROM
     {{ ref('sppo_registros') }}
-  {% if is_incremental() -%}
   WHERE
     data between DATE("{{var('date_range_start')}}") and DATE("{{var('date_range_end')}}")
     AND timestamp_gps > "{{var('date_range_start')}}" and timestamp_gps <="{{var('date_range_end')}}"
-  {%- endif -%}
 ),
 realocacao as (
   SELECT

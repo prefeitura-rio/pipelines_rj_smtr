@@ -1260,6 +1260,7 @@ def get_materialization_date_range(  # pylint: disable=R0913
     mode: str = "prod",
     delay_hours: int = 0,
     end_ts: datetime = None,
+    truncate_minutes: bool = True,
 ):
     """
     Task for generating dict with variables to be passed to the
@@ -1323,16 +1324,20 @@ def get_materialization_date_range(  # pylint: disable=R0913
         last_run = datetime(last_run.year, last_run.month, last_run.day)
 
     # set start to last run hour (H)
-    start_ts = last_run.replace(minute=0, second=0, microsecond=0).strftime(timestr)
+    start_ts = last_run.replace(second=0, microsecond=0).strftime(timestr)
+    if truncate_minutes:
+        start_ts = start_ts.replace(minute=0)
 
     # set end to now - delay
 
     if not end_ts:
         end_ts = pendulum.now(constants.TIMEZONE.value).replace(
-            tzinfo=None, minute=0, second=0, microsecond=0
+            tzinfo=None, second=0, microsecond=0
         )
 
-    end_ts = (end_ts - timedelta(hours=delay_hours)).replace(minute=0, second=0, microsecond=0)
+    end_ts = (end_ts - timedelta(hours=delay_hours)).replace(second=0, microsecond=0)
+    if truncate_minutes:
+        end_ts = end_ts.replace(minute=0)
 
     end_ts = end_ts.strftime(timestr)
 

@@ -1,3 +1,11 @@
+{% if var("fifteen_minutes") == "_15_minutos" %}
+{{
+  config(
+      materialized='view',
+      alias=this.name ~ var("fifteen_minutes")
+  )
+}}
+{% else %}
 {{
   config(
       materialized='incremental',
@@ -8,6 +16,7 @@
       }
   )
 }}
+{% endif %}
 
 -- 1. Filtra realocações válidas dentro do intervalo de GPS avaliado
 with realocacao as (
@@ -21,16 +30,11 @@ with realocacao as (
     {{ ref('sppo_realocacao') }}
   where
     -- Realocação deve acontecer após o registro de GPS e até 1 hora depois
-        datetime_diff(datetime_operacao, datetime_entrada, minute) between 0 and 60
-    {% if is_incremental() -%}
-    and
-        data between DATE("{{var('date_range_start')}}")
-        and DATE(datetime_add("{{var('date_range_end')}}", interval 1
-        hour))
-    and
-        datetime_operacao between datetime("{{var('date_range_start')}}")
-            and datetime_add("{{var('date_range_end')}}", interval 1 hour)
-    {%- endif -%}
+    datetime_diff(datetime_operacao, datetime_entrada, minute) between 0 and 60
+    and data between DATE("{{var('date_range_start')}}")
+    and DATE(datetime_add("{{var('date_range_end')}}", interval 1 hour))
+    and datetime_operacao between datetime("{{var('date_range_start')}}")
+    and datetime_add("{{var('date_range_end')}}", interval 1 hour)
 ),
 -- 2. Altera registros de GPS com servicos realocados
 gps as (
