@@ -11,7 +11,7 @@
 }}
 
 {% set incremental_filter %}
-  DATE(data) = DATE_SUB(DATE("{{ var("run_date") }}"), interval 2 day)
+  DATE(data) = DATE("{{ var("run_date") }}")
 {% endset %}
 
 {% set staging_viagem_informada = ref('staging_viagem_informada_conecta') %}
