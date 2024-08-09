@@ -127,3 +127,19 @@ Distância da última posição do GPS em relação à posição atual (m)
 {% docs versao %}
 Código de controle de versão do dado (SHA Github)
 {% enddocs %}
+
+{% docs id_validador %}
+Número de série do validador
+{% enddocs %}
+
+{% docs quantidade_total_transacao %}
+Quantidade total de transações realizadas
+{% enddocs %}
+
+{% docs tipo_gratuidade %}
+Tipo da gratuidade (Estudante, PCD, Sênior)
+{% enddocs %}
+
+{% docs tipo_pagamento %}
+Tipo de pagamento utilizado
+{% enddocs %}
