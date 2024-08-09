@@ -158,6 +158,11 @@ with Flow(
     date_range_start = Parameter("date_range_start", default=None)
     date_range_end = Parameter("date_range_end", default=None)
     fifteen_minutes = Parameter("fifteen_minutes", default="")
+    materialize_delay_hours = Parameter(
+        "materialize_delay_hours",
+        default=constants.GPS_SPPO_MATERIALIZE_DELAY_HOURS.value,
+    )
+    truncate_minutes = Parameter("truncate_minutes", default=True)
 
     LABELS = get_current_flow_labels()
     MODE = get_current_flow_mode()
@@ -176,7 +181,8 @@ with Flow(
             raw_table_id=raw_table_id,
             table_run_datetime_column_name="timestamp_gps",
             mode=MODE,
-            delay_hours=constants.GPS_SPPO_MATERIALIZE_DELAY_HOURS.value,
+            delay_hours=materialize_delay_hours,
+            truncate_minutes=truncate_minutes,
         )
 
         RUN_CLEAN_FALSE = task(
