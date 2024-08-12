@@ -57,3 +57,35 @@ Tipo de dado da coluna
 {% docs metadado_descricao %}
 Descrição da coluna
 {% enddocs %}
+
+{% docs timestamp_captura %}
+Timestamp de captura, pela SMTR, do sinal de GPS
+{% enddocs %}
+
+{% docs data_captura %}
+Data do 'timestamp_captura'
+{% enddocs %}
+
+{% docs hora_captura %}
+Hora do 'timestamp_captura'
+{% enddocs %}
+
+{% docs content %}
+Conteúdo do json
+{% enddocs %}
+
+{% docs placa %}
+Placa do veículo
+{% enddocs %}
+
+{% docs linha %}
+Linha de ônibus (serviço)
+{% enddocs %}
+
+{% docs sentido %}
+Sentido de operação do linha/serviço
+{% enddocs %}
+
+{% docs trajeto %}
+Nome completo do serviço
+{% enddocs %}
