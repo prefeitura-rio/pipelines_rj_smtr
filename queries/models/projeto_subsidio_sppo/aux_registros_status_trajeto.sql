@@ -35,6 +35,10 @@ with gps as (
         and datetime_add(datetime_trunc("{{ var("run_date") }}", day), interval {{ gps_interval }} hour)
     )
     and status != "Parado garagem"
+    {% if var("run_date") == "2024-05-05" %}
+        -- Apuração "Madonna · The Celebration Tour in Rio"
+        and servico != "SE001"
+    {% endif %}
 ),
 -- 2. Classifica a posição do veículo em todos os shapes possíveis de
 --    serviços de uma mesma empresa
