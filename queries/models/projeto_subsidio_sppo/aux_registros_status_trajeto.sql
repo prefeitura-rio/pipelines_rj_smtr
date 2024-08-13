@@ -35,6 +35,8 @@ with gps as (
         and datetime_add(datetime_trunc("{{ var("run_date") }}", day), interval {{ gps_interval }} hour)
     )
     and status != "Parado garagem"
+    -- Filtra o serviço do show da Madonna
+    and servico != "SE001"
 ),
 -- 2. Classifica a posição do veículo em todos os shapes possíveis de
 --    serviços de uma mesma empresa

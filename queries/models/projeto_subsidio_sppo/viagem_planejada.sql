@@ -283,5 +283,7 @@ USING
    feed_version,
     tipo_dia,
     tipo_os)
-
+-- Filtra servico do show da Madonna
+WHERE
+ servico != "SE001"
 {% endif %}
