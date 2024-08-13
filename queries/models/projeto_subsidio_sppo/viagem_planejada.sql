@@ -283,7 +283,9 @@ USING
    feed_version,
     tipo_dia,
     tipo_os)
--- Filtra servico do show da Madonna
-WHERE
- servico != "SE001"
+{% if var("run_date") == "2024-05-05" %}
+  -- Apuração "Madonna · The Celebration Tour in Rio"
+  WHERE
+    servico != "SE001"
+{% endif %}
 {% endif %}
