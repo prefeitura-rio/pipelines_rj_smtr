@@ -314,6 +314,11 @@ WHERE
 
 {% else %}
 
+-- Verifica se já existe alguma data posterior materializada (em caso de reprocessamento, não há necessidade de rematerializar data posterior)
+{% if execute %}
+  {% set indicador_incremento_data = run_query("SELECT MAX(data) > DATE_SUB('" ~ var('run_date')  ~ "', INTERVAL 1 DAY) FROM " ~ this ~ " WHERE data >= DATE_SUB('" ~ var('run_date')  ~ "', INTERVAL 1 DAY)").columns[0].values()[0] %}
+{% endif %}
+
 WITH
   dates AS (
   SELECT
@@ -368,7 +373,13 @@ WITH
     (feed_version)
   WHERE
   {% if is_incremental() %}
-    data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY) AND DATE("{{ var('run_date') }}")
+    {% if indicador_incremento_data %}
+      {% do log("Existe data posterior materializada, realizando tratamento apenas para D-1", info=true) %}
+      data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)
+    {% else %}
+      {% do log("Não existe data posterior materializada, realizando tratamento de D-1 a D+0", info=true) %}
+      data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY) AND DATE("{{ var('run_date') }}")
+    {% endif %}
   {% else %}
     data <= DATE("{{ var('run_date') }}")
   {% endif %}

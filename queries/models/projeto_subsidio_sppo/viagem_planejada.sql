@@ -199,6 +199,11 @@ and
 
 {% else %}
 
+-- Verifica se já existe alguma data posterior materializada (em caso de reprocessamento, não há necessidade de rematerializar data posterior)
+{% if execute %}
+  {% set indicador_incremento_data = run_query("SELECT MAX(data) > DATE_SUB('" ~ var('run_date')  ~ "', INTERVAL 1 DAY) FROM " ~ this ~ " WHERE data >= DATE_SUB('" ~ var('run_date')  ~ "', INTERVAL 1 DAY)").columns[0].values()[0] %}
+{% endif %}
+
 WITH
 -- 1. Define datas do período planejado
   data_versao_efetiva AS (
@@ -213,7 +218,14 @@ WITH
     {{ ref("subsidio_data_versao_efetiva") }}
     -- rj-smtr-dev.projeto_subsidio_sppo.subsidio_data_versao_efetiva
   WHERE
-    data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY) AND DATE("{{ var('run_date') }}"))
+    {% if indicador_incremento_data %}
+        {% do log("Existe data posterior materializada, realizando tratamento apenas para D-1", info=true) %}
+        data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)
+    {% else %}
+        {% do log("Não existe data posterior materializada, realizando tratamento de D-1 a D+0", info=true) %}
+        data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY) AND DATE("{{ var('run_date') }}")
+    {% endif %}
+)
 SELECT
   d.data,
   CASE
