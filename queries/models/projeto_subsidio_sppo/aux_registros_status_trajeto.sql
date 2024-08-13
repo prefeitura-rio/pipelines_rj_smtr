@@ -37,8 +37,7 @@ with gps as (
     and status != "Parado garagem"
     {% if var("run_date") == "2024-05-05" %}
         -- Apuração "Madonna · The Celebration Tour in Rio"
-        WHERE
-        servico != "SE001"
+        and servico != "SE001"
     {% endif %}
 ),
 -- 2. Classifica a posição do veículo em todos os shapes possíveis de
