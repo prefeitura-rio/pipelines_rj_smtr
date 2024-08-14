@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [6.0.4] 2024-08-13
+
+### Adicionado
+
+- Adicionado filtro para remover viagens do serviço SE001 da apuração do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/144)
+
 ## [6.0.3] - 2024-08-01
 
 ### Alterado
