@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrige modelos `subsidio_data_versao_efetiva.sql` e `viagem_planejada.sql` para verifica se já existe alguma data posterior materializada. Afinal, em caso de reprocessamento, não há necessidade de rematerializar data posterior (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/145)
+- Corrige modelos `subsidio_data_versao_efetiva.sql` e `viagem_planejada.sql` para verificar se já existe alguma data posterior materializada (D+0). Afinal, em caso de reprocessamento, não há necessidade de rematerializar D+0 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/145)
 
 ## [6.0.4] 2024-08-13
 
