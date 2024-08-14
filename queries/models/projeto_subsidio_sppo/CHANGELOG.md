@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [6.0.5] 2024-08-14
+
+### Corrigido
+
+- Corrige modelos `subsidio_data_versao_efetiva.sql` e `viagem_planejada.sql` para verifica se já existe alguma data posterior materializada. Afinal, em caso de reprocessamento, não há necessidade de rematerializar data posterior (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/145)
+
 ## [6.0.4] 2024-08-13
 
 ### Adicionado
