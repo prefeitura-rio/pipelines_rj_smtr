@@ -301,7 +301,7 @@ SELECT
                 )
             )
         ),
-        INTERVAL DIV(SAFE_CAST(SPLIT(0.faixa_horaria_inicio, ":")[OFFSET(0)] AS INT64), 24) DAY
+        INTERVAL DIV(SAFE_CAST(SPLIT(o.faixa_horaria_inicio, ":")[OFFSET(0)] AS INT64), 24) DAY
     ),
     DATETIME_ADD(
         DATETIME(
