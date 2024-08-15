@@ -136,9 +136,9 @@ new_data AS (
     l.nm_linha AS descricao_servico_jae,
     sentido,
     CASE
-    WHEN m.modo = "VLT" THEN SUBSTRING(t.veiculo_id, 1, 3)
-    WHEN m.modo = "BRT" THEN NULL
-    ELSE t.veiculo_id
+      WHEN m.modo = "VLT" THEN SUBSTRING(t.veiculo_id, 1, 3)
+      WHEN m.modo = "BRT" THEN NULL
+      ELSE t.veiculo_id
     END AS id_veiculo,
     t.numero_serie_validador AS id_validador,
     COALESCE(t.id_cliente, t.pan_hash) AS id_cliente,

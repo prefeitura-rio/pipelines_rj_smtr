@@ -5,7 +5,8 @@
             'field': 'data',
             'data_type': 'date',
             'granularity': 'day'
-        }
+        },
+        tags=['geolocalizacao']
     )
 }}
 /*

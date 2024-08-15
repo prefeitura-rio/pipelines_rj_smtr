@@ -2,7 +2,7 @@
 """
 Flows for br_rj_riodejaneiro_bilhetagem
 
-DBT: 2024-07-18
+DBT: 2024-08-06
 """
 
 from copy import deepcopy
@@ -217,28 +217,30 @@ bilhetagem_materializacao_transacao = set_default_parameters(
 )
 
 
-bilhetagem_materializacao_transacao_riocard = deepcopy(default_materialization_flow)
-bilhetagem_materializacao_transacao_riocard.name = (
-    "SMTR: Bilhetagem Transação RioCard - Materialização"
+bilhetagem_materializacao_dashboard_controle_vinculo = deepcopy(default_materialization_flow)
+bilhetagem_materializacao_dashboard_controle_vinculo.name = (
+    "SMTR: Bilhetagem Controle Vinculo Validador - Materialização"
 )
-bilhetagem_materializacao_transacao_riocard.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
-bilhetagem_materializacao_transacao_riocard.run_config = KubernetesRun(
+bilhetagem_materializacao_dashboard_controle_vinculo.storage = GCS(
+    smtr_constants.GCS_FLOWS_BUCKET.value
+)
+bilhetagem_materializacao_dashboard_controle_vinculo.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 
-bilhetagem_materializacao_transacao_riocard.state_handlers = [
+bilhetagem_materializacao_dashboard_controle_vinculo.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
     handler_skip_if_running,
 ]
 
-bilhetagem_materializacao_transacao_riocard = set_default_parameters(
-    flow=bilhetagem_materializacao_transacao_riocard,
-    default_parameters=constants.BILHETAGEM_MATERIALIZACAO_TRANSACAO_RIOCARD_PARAMS.value,
+bilhetagem_materializacao_dashboard_controle_vinculo = set_default_parameters(
+    flow=bilhetagem_materializacao_dashboard_controle_vinculo,
+    default_parameters=constants.BILHETAGEM_MATERIALIZACAO_DASHBOARD_CONTROLE_VINCULO_PARAMS.value,
 )
 
-bilhetagem_materializacao_transacao_riocard.schedule = every_day_hour_five
+bilhetagem_materializacao_dashboard_controle_vinculo.schedule = every_day_hour_five
 
 # Ordem Pagamento
 

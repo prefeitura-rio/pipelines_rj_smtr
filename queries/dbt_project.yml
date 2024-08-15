@@ -116,8 +116,10 @@ vars:
   DATA_SUBSIDIO_V6_INICIO: "2024-04-01"
   # Feature Apuração Madonna · The Celebration Tour in Rio
   DATA_SUBSIDIO_V7_INICIO: "2024-05-01"
+  # Feature Viagens sem transação
+  DATA_SUBSIDIO_V8_INICIO: "2024-07-19"
   # Feature Apuração por faixa horária
-  DATA_SUBSIDIO_V9_INICIO: "2024-07-16"
+  DATA_SUBSIDIO_V9_INICIO: "2024-08-05"
   # valor_subsidio: "`rj-smtr-dev.projeto_subsidio_sppo.valor_subsidio`"
 
   # Recursos #
@@ -294,3 +296,10 @@ models:
     dashboard_subsidio_sppo_v2:
       +materialized: view
       +schema: dashboard_subsidio_sppo_v2
+    subsidio:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: subsidio
+    catalogo:
+      +materialized: view
+      +schema: catalogo

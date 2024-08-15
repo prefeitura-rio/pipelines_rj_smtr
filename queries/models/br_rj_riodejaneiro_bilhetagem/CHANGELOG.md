@@ -1,5 +1,25 @@
 # Changelog - bilhetagem
 
+## [2.2.0] - 2024-08-05
+
+### Adicionado
+- Cria modelo `aux_h3_res9.sql` para tratar os dados geográficos de tile (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/130)
+- Cria modelo `staging_linha_consorcio.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/130)
+
+### Alterado
+- `aux_passageiros_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/130)
+  - Faz conversão dos dados geograficos no modelo
+  - Altera materialized de `ephemeral` para `table`
+  - Adiciona transações do tipo RioCard
+- Muda tipo das colunas de valor do modelo `staging_transacao_riocard.sql` de `float` para `numeric` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/130)
+- Altera lógica incremental do modelo `transacao_riocard.sql` para rodar de hora em hora (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/130)
+
+## [2.1.4] - 2024-08-02
+
+### Alterado
+- Adiciona tag `geolocalizacao` aos modelos `gps_validador_van.sql` e `gps_validador.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/127)
+- Adiciona tag `identificacao` ao modelo `staging_cliente.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/127)
+
 ## [2.1.3] - 2024-07-18
 
 ### Adicionado

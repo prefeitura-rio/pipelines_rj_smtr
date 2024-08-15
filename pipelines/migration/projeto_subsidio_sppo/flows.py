@@ -3,7 +3,7 @@
 """
 Flows for projeto_subsidio_sppo
 
-DBT 2024-07-02
+DBT 2024-08-13
 """
 
 from prefect import Parameter, case, task
@@ -244,6 +244,22 @@ with Flow(
             #     _vars=_vars,
             #     upstream_tasks=[SUBSIDIO_SPPO_FINANCEIRO_RUN],
             # )
+            
+#             SUBSIDIO_SPPO_STAGING_RUN = run_dbt_model(
+#                 # dbt_client=dbt_client,
+#                 dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_STAGING_DATASET_ID.value,
+#                 _vars=_vars,
+#                 upstream_tasks=[SUBSIDIO_SPPO_DATA_QUALITY_PRE],
+#             )
+
+#             SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_model(
+#                 # dbt_client=dbt_client,
+#                 dataset_id=constants.SUBSIDIO_SPPO_V2_DATASET_ID.value
+#                 + " "
+#                 + constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value,
+#                 _vars=_vars,
+#                 upstream_tasks=[SUBSIDIO_SPPO_STAGING_RUN],
+#             )
 
             # 5. POST-DATA QUALITY CHECK #
             SUBSIDIO_SPPO_DATA_QUALITY_POS = subsidio_data_quality_check(

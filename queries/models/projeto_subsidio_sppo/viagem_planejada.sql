@@ -213,7 +213,7 @@ WITH
     {{ ref("subsidio_data_versao_efetiva") }}
     -- rj-smtr-dev.projeto_subsidio_sppo.subsidio_data_versao_efetiva
   WHERE
-    data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)
+    data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY) AND DATE("{{ var('run_date') }}")
   ),
   -- 2. Busca partidas e quilometragem da faixa horaria (dia seguinte)
   dia_seguinte AS (
@@ -377,7 +377,9 @@ LEFT JOIN
 USING
   (tipo_dia,
    servico)
+{% if var("run_date") == "2024-05-05" %}
 WHERE
-  o.faixa_horaria_inicio != "24:00:00"
-
+-- Apuração "Madonna · The Celebration Tour in Rio"
+  servico != "SE001"
+{% endif %}
 {% endif %}
