@@ -217,7 +217,7 @@ WITH
   ),
   -- 2. Busca partidas e quilometragem da faixa horaria (dia seguinte)
   dia_seguinte AS (
-  SELECT
+  SELECT DISTINCT
     servico,
     tipo_dia,
     partidas AS partidas_dia_seguinte,
