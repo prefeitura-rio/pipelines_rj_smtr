@@ -36,7 +36,44 @@ with gps as (
     )
     and status != "Parado garagem"
 ),
--- 2. Classifica a posição do veículo em todos os shapes possíveis de
+-- 2. Busca os shapes em formato geográfico
+shapes AS (
+  SELECT
+    *
+  FROM
+    {{ ref("shapes_geom_gtfs") }}
+  {% if is_incremental() -%}
+  WHERE
+    feed_start_date = '{{ var("data_versao_gtfs") }}'
+  {% endif -%}
+),
+-- 3. Deduplica viagens planejadas
+viagem_planejada AS (
+  SELECT
+    DISTINCT * EXCEPT(faixa_horaria_inicio, faixa_horaria_fim, partidas, distancia_total_planejada, shape, start_pt, end_pt)
+  FROM
+    {{ ref("viagem_planejada") }}
+  WHERE
+    {% if var("run_date") > var("DATA_SUBSIDIO_V6_INICIO") %}
+    data = date_sub(date("{{ var("run_date") }}"), interval 1 day)
+    {% else %}
+    data between date_sub(date("{{ var("run_date") }}"), interval 1 day) and date("{{ var("run_date") }}")
+    {% endif %}
+),
+deduplica_viagem_planejada AS (
+  SELECT
+    v.*,
+    s.shape,
+    s.start_pt,
+    s.end_pt
+  FROM
+    viagem_planejada AS v
+  LEFT JOIN
+    shapes AS s
+  USING
+    (feed_version, shape_id)
+)
+-- 4. Classifica a posição do veículo em todos os shapes possíveis de
 --    serviços de uma mesma empresa
 status_viagem as (
     select
@@ -74,16 +111,10 @@ status_viagem as (
     from
         gps g
     inner join (
-        select
-            *
-        from
-            {{ ref("viagem_planejada") }}
-        where
-            {% if var("run_date") > var("DATA_SUBSIDIO_V6_INICIO") %}
-            data = date_sub(date("{{ var("run_date") }}"), interval 1 day)
-            {% else %}
-            data between date_sub(date("{{ var("run_date") }}"), interval 1 day) and date("{{ var("run_date") }}")
-            {% endif %}
+        SELECT
+          *
+        FROM
+          deduplica_viagem_planejada
     ) s
     on
         {% if var("run_date") > var("DATA_SUBSIDIO_V6_INICIO") %}

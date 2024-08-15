@@ -213,7 +213,20 @@ WITH
     {{ ref("subsidio_data_versao_efetiva") }}
     -- rj-smtr-dev.projeto_subsidio_sppo.subsidio_data_versao_efetiva
   WHERE
-    data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY) )
+    data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)
+  ),
+  -- 2. Busca partidas e quilometragem da faixa horaria (dia seguinte)
+  dia_seguinte AS (
+  SELECT
+    servico,
+    tipo_dia,
+    partidas AS partidas_dia_seguinte,
+    distancia_total_planejada AS distancia_dia_seguinte
+  FROM
+    {{ ref("ordem_servico_trips_shapes_gtfs") }}
+  WHERE
+    faixa_horaria_inicio = "24:00:00"
+  )
 SELECT
   d.data,
   CASE
@@ -224,8 +237,19 @@ SELECT
   vista,
   consorcio,
   sentido,
+  CASE
+    WHEN faixa_horaria_inicio = "00:00:00" THEN
+      o.partidas + COALESCE(ds.partidas_dia_seguinte, 0)
+    ELSE
+      o.partidas
+  END AS partidas,
   distancia_planejada,
-  distancia_total_planejada,
+  CASE
+    WHEN faixa_horaria_inicio = "00:00:00" THEN
+      o.distancia_total_planejada + COALESCE(ds.distancia_dia_seguinte, 0)
+    ELSE
+      o.distancia_total_planejada
+  END AS distancia_total_planejada,
   IF(inicio_periodo IS NOT NULL AND ARRAY_LENGTH(SPLIT(inicio_periodo, ":")) = 3,
     DATETIME_ADD(
         DATETIME(
@@ -262,6 +286,70 @@ SELECT
     ),
     NULL
   ) AS fim_periodo,
+  IF(d.data >= DATA_SUBSIDIO_V9_INICIO,
+    DATETIME_ADD(
+        DATETIME(
+            d.data,
+            PARSE_TIME("%T",
+                CONCAT(
+                SAFE_CAST(MOD(SAFE_CAST(SPLIT(o.faixa_horaria_inicio, ":")[OFFSET(0)] AS INT64), 24) AS INT64),
+                ":",
+                SAFE_CAST(SPLIT(o.faixa_horaria_inicio, ":")[OFFSET(1)] AS INT64),
+                ":",
+                SAFE_CAST(SPLIT(o.faixa_horaria_inicio, ":")[OFFSET(2)] AS INT64)
+                )
+            )
+        ),
+        INTERVAL DIV(SAFE_CAST(SPLIT(0.faixa_horaria_inicio, ":")[OFFSET(0)] AS INT64), 24) DAY
+    ),
+    DATETIME_ADD(
+        DATETIME(
+            d.data,
+            PARSE_TIME("%T",
+                CONCAT(
+                SAFE_CAST(MOD(SAFE_CAST(SPLIT("00:00:00", ":")[OFFSET(0)] AS INT64), 24) AS INT64),
+                ":",
+                SAFE_CAST(SPLIT("00:00:00", ":")[OFFSET(1)] AS INT64),
+                ":",
+                SAFE_CAST(SPLIT("00:00:00", ":")[OFFSET(2)] AS INT64)
+                )
+            )
+        ),
+        INTERVAL DIV(SAFE_CAST(SPLIT("00:00:00", ":")[OFFSET(0)] AS INT64), 24) DAY
+    )
+  ) AS faixa_horaria_inicio,
+  IF(d.data >= DATA_SUBSIDIO_V9_INICIO,
+    DATETIME_ADD(
+        DATETIME(
+            d.data,
+            PARSE_TIME("%T",
+                CONCAT(
+                SAFE_CAST(MOD(SAFE_CAST(SPLIT(o.faixa_horaria_fim, ":")[OFFSET(0)] AS INT64), 24) AS INT64),
+                ":",
+                SAFE_CAST(SPLIT(o.faixa_horaria_fim, ":")[OFFSET(1)] AS INT64),
+                ":",
+                SAFE_CAST(SPLIT(o.faixa_horaria_fim, ":")[OFFSET(2)] AS INT64)
+                )
+            )
+        ),
+        INTERVAL DIV(SAFE_CAST(SPLIT(o.faixa_horaria_fim, ":")[OFFSET(0)] AS INT64), 24) DAY
+    ),
+    DATETIME_ADD(
+        DATETIME(
+            d.data,
+            PARSE_TIME("%T",
+                CONCAT(
+                SAFE_CAST(MOD(SAFE_CAST(SPLIT("23:59:59", ":")[OFFSET(0)] AS INT64), 24) AS INT64),
+                ":",
+                SAFE_CAST(SPLIT("23:59:59" ":")[OFFSET(1)] AS INT64),
+                ":",
+                SAFE_CAST(SPLIT("23:59:59", ":")[OFFSET(2)] AS INT64)
+                )
+            )
+        ),
+        INTERVAL DIV(SAFE_CAST(SPLIT("23:59:59", ":")[OFFSET(0)] AS INT64), 24) DAY
+    )
+  ) AS faixa_horaria_fim,
   trip_id_planejado,
   trip_id,
   shape_id,
@@ -277,11 +365,19 @@ SELECT
 FROM
   data_versao_efetiva AS d
 LEFT JOIN
-  {{ ref("ordem_servico_trips_shapes_gtfs") }} AS o
+--   {{ ref("ordem_servico_trips_shapes_gtfs") }} AS o
+  rj-smtr.gtfs.ordem_servico_trips_shapes AS o
 USING
   (feed_start_date,
    feed_version,
     tipo_dia,
     tipo_os)
+LEFT JOIN
+  dia_seguinte AS ds
+USING
+  (tipo_dia,
+   servico)
+WHERE
+  o.faixa_horaria_inicio != "24:00:00"
 
 {% endif %}

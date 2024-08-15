@@ -171,10 +171,13 @@ SELECT
   vista,
   consorcio,
   sentido,
+  fh.partidas,
   distancia_planejada,
-  distancia_total_planejada,
+  fh.quilometragem AS distancia_total_planejada,
   inicio_periodo,
   fim_periodo,
+  fh.faixa_horaria_inicio,
+  fh.faixa_horaria_fim,
   trip_id_planejado,
   trip_id,
   shape_id,
@@ -197,6 +200,11 @@ USING
   (feed_version,
     feed_start_date,
     shape_id)
+LEFT JOIN
+  -- {{ ref(" ") }} AS fh
+  rj-smtr-dev.projeto_subsidio_sppo.ordem_servico_faixa_horaria AS fh
+USING
+  (tipo_dia, servico)
 {% if is_incremental() -%}
 WHERE
   feed_start_date = '{{ var("data_versao_gtfs") }}'

@@ -22,7 +22,9 @@ WITH
     tipo_dia,
     consorcio,
     servico,
-    distancia_total_planejada AS km_planejada,
+    faixa_horaria_inicio,
+    faixa_horaria_fim,
+    distancia_total_planejada AS km_planejada, -- ADD SUM(distancia_total_planejada) e GROUP BY 1,2,3,4
   FROM
     {{ ref("viagem_planejada") }}
     -- rj-smtr.projeto_subsidio_sppo.viagem_planejada
@@ -89,6 +91,7 @@ WITH
     servico_realizado AS servico,
     id_veiculo,
     id_viagem,
+    datetime_partida,
     distancia_planejada
  FROM
     {{ ref("viagem_completa") }}
@@ -125,6 +128,7 @@ WITH
     v.servico,
     ve.status AS tipo_viagem,
     id_viagem,
+    datetime_partida,
     distancia_planejada,
     t.subsidio_km,
     t.subsidio_km_teto
@@ -142,29 +146,12 @@ WITH
     AND t.data_fim
     AND ve.status = t.status ),
 -- 6. Apuração de km realizado e Percentual de Operação Diário (POD)
-  servico_km_apuracao AS (
-  SELECT
-    p.data,
-    p.tipo_dia,
-    p.consorcio,
-    p.servico,
-    p.km_planejada AS km_planejada,
-    COALESCE(COUNT(v.id_viagem), 0) AS viagens,
-    COALESCE(SUM(v.distancia_planejada), 0) AS km_apurada,
-    COALESCE(ROUND(100 * SUM(v.distancia_planejada) / p.km_planejada,2), 0) AS perc_km_planejada
-  FROM
-    viagem_planejada AS p
-  LEFT JOIN
-    viagem_km_tipo AS v
-  USING
-    (data,
-      servico)
-  GROUP BY
-    1,
-    2,
-    3,
-    4,
-    5 )
+  servico_faixa_km_apuracao AS (
+    SELECT
+      *
+    FROM
+      {{ ref("subsidio_faixa_servico_dia") }}
+)
 -- 7. Flag de viagens que serão consideradas ou não para fins de remuneração (apuração de valor de subsídio) - RESOLUÇÃO SMTR Nº 3645/2023
 SELECT
 v.* EXCEPT(rn),
@@ -172,19 +159,19 @@ CASE
     WHEN data >= "2023-09-16"
         AND p.tipo_dia = "Dia Útil"
         AND viagens_planejadas > 10
-        AND perc_km_planejada > 120
+        AND pof > 120
         AND rn > viagens_planejadas_ida_volta*1.2
         THEN FALSE
     WHEN data >= "2023-09-16"
         AND p.tipo_dia = "Dia Útil"
         AND viagens_planejadas <= 10
-        AND perc_km_planejada > 200
+        AND pof > 200
         AND rn > viagens_planejadas_ida_volta*2
         THEN FALSE
     WHEN data >= "2023-09-16"
         AND (p.tipo_dia = "Dia Útil"
           AND (viagens_planejadas IS NULL
-            OR perc_km_planejada IS NULL
+            OR pof IS NULL
             OR rn IS NULL
             OR viagens_planejadas_ida_volta IS NULL
           )
@@ -201,11 +188,15 @@ FROM
     viagem_km_tipo ) AS v
 LEFT JOIN
     viagem_planejada AS p
-USING
-    (data,
-        servico)
+ON
+  p.data = v.data
+  AND p.servico = v.servico
+  AND v.datetime_partida BETWEEN p.faixa_horaria_inicio
+  AND p.faixa_horaria_fim
 LEFT JOIN
-    servico_km_apuracao AS s
-USING
-    (data,
-        servico)
+    servico_faixa_km_apuracao AS s
+ON
+  s.data = v.data
+  AND s.servico = v.servico
+  AND v.datetime_partida BETWEEN s.faixa_horaria_inicio
+  AND s.faixa_horaria_fim
