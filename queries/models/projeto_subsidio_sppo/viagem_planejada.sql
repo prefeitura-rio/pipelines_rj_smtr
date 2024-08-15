@@ -224,6 +224,7 @@ WITH
     distancia_total_planejada AS distancia_dia_seguinte
   FROM
     {{ ref("ordem_servico_trips_shapes_gtfs") }}
+    -- rj-smtr.gtfs.ordem_servico_trips_shapes
   WHERE
     faixa_horaria_inicio = "24:00:00"
   )
@@ -365,8 +366,8 @@ SELECT
 FROM
   data_versao_efetiva AS d
 LEFT JOIN
---   {{ ref("ordem_servico_trips_shapes_gtfs") }} AS o
-  rj-smtr.gtfs.ordem_servico_trips_shapes AS o
+  {{ ref("ordem_servico_trips_shapes_gtfs") }} AS o
+--   rj-smtr.gtfs.ordem_servico_trips_shapes AS o
 USING
   (feed_start_date,
    feed_version,

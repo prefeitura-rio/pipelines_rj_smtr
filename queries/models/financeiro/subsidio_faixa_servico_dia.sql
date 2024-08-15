@@ -20,8 +20,8 @@ WITH
     -- SAFE_CAST(data || 'T23:59:59' AS DATETIME) AS faixa_horaria_fim,
     distancia_total_planejada AS km_planejada
   FROM
-    -- {{ ref("viagem_planejada") }}
-    rj-smtr.projeto_subsidio_sppo.viagem_planejada
+    {{ ref("viagem_planejada") }}
+    -- rj-smtr.projeto_subsidio_sppo.viagem_planejada
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
@@ -36,8 +36,8 @@ WITH
     datetime_partida,
     distancia_planejada
  FROM
-    -- {{ ref("viagem_completa") }}
-   rj-smtr.projeto_subsidio_sppo.viagem_completa
+    {{ ref("viagem_completa") }}
+  --  rj-smtr.projeto_subsidio_sppo.viagem_completa
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")

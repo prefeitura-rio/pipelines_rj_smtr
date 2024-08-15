@@ -201,8 +201,8 @@ USING
     feed_start_date,
     shape_id)
 LEFT JOIN
-  -- {{ ref(" ") }} AS fh
-  rj-smtr-dev.projeto_subsidio_sppo.ordem_servico_faixa_horaria AS fh
+  {{ ref("ordem_servico_faixa_horaria") }} AS fh
+  -- rj-smtr-dev.projeto_subsidio_sppo.ordem_servico_faixa_horaria AS fh
 USING
   (tipo_dia, servico)
 {% if is_incremental() -%}

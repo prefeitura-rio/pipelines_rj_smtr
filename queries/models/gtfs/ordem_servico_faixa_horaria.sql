@@ -1,7 +1,6 @@
 {{
   config(
     materialized='view',
-    alias='anexo_faixa_horaria'
   )
 }}
 

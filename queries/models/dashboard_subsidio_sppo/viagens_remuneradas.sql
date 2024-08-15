@@ -93,16 +93,16 @@ WITH
     subsidio_km,
     MAX(subsidio_km) OVER (PARTITION BY data_inicio, data_fim) AS subsidio_km_teto
   FROM
-    {{ ref("subsidio_valor_km_tipo_viagem") }}
-    -- rj-smtr-staging.dashboard_subsidio_sppo_staging.subsidio_valor_km_tipo_viagem
+    -- {{ ref("subsidio_valor_km_tipo_viagem") }}
+    rj-smtr-staging.dashboard_subsidio_sppo_staging.subsidio_valor_km_tipo_viagem
 ),
 -- 3. Viagens com quantidades de transações
   viagem_transacao AS (
   SELECT
     *
  FROM
-    {{ ref("viagem_transacao") }}
-    -- rj-smtr.subsidio.viagem_transacao
+    -- {{ ref("viagem_transacao") }}
+    rj-smtr.subsidio.viagem_transacao
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE( "{{ var("end_date") }}" )
@@ -159,7 +159,6 @@ SELECT
             OR viagens_planejadas_ida_volta IS NULL
           )
         )
-      )
       THEN NULL
     ELSE
         TRUE
