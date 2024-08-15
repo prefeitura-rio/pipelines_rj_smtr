@@ -287,7 +287,7 @@ SELECT
     ),
     NULL
   ) AS fim_periodo,
-  IF(d.data >= DATA_SUBSIDIO_V9_INICIO,
+  IF(d.data >= DATE("{{ var("DATA_SUBSIDIO_V9_INICIO") }}"),
     DATETIME_ADD(
         DATETIME(
             d.data,
@@ -319,7 +319,7 @@ SELECT
         INTERVAL DIV(SAFE_CAST(SPLIT("00:00:00", ":")[OFFSET(0)] AS INT64), 24) DAY
     )
   ) AS faixa_horaria_inicio,
-  IF(d.data >= DATA_SUBSIDIO_V9_INICIO,
+  IF(d.data >= DATE("{{ var("DATA_SUBSIDIO_V9_INICIO") }}"),
     DATETIME_ADD(
         DATETIME(
             d.data,
