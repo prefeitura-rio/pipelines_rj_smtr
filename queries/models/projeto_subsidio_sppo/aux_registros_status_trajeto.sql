@@ -76,7 +76,7 @@ deduplica_viagem_planejada AS (
     shapes AS s
   USING
     (feed_version, shape_id)
-)
+),
 -- 4. Classifica a posição do veículo em todos os shapes possíveis de
 --    serviços de uma mesma empresa
 status_viagem as (
