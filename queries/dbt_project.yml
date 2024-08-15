@@ -116,6 +116,8 @@ vars:
   DATA_SUBSIDIO_V6_INICIO: "2024-04-01"
   # Feature Apuração Madonna · The Celebration Tour in Rio
   DATA_SUBSIDIO_V7_INICIO: "2024-05-01"
+  # Feature Apuração por faixa horária
+  DATA_SUBSIDIO_V9_INICIO: "2024-07-16"
   # valor_subsidio: "`rj-smtr-dev.projeto_subsidio_sppo.valor_subsidio`"
 
   # Recursos #
