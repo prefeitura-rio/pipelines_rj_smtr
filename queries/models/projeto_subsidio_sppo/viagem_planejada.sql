@@ -342,7 +342,7 @@ SELECT
                 CONCAT(
                 SAFE_CAST(MOD(SAFE_CAST(SPLIT("23:59:59", ":")[OFFSET(0)] AS INT64), 24) AS INT64),
                 ":",
-                SAFE_CAST(SPLIT("23:59:59" ":")[OFFSET(1)] AS INT64),
+                SAFE_CAST(SPLIT("23:59:59", ":")[OFFSET(1)] AS INT64),
                 ":",
                 SAFE_CAST(SPLIT("23:59:59", ":")[OFFSET(2)] AS INT64)
                 )
