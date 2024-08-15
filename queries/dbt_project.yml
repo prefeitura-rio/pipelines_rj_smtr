@@ -255,7 +255,7 @@ models:
     gtfs:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
-      +schema: gtfs
+      +schema: apuracaoFH_gtfs
     indicadores_continuados_egp:
       +materialized: view
       +schema: indicadores_continuados_egp
