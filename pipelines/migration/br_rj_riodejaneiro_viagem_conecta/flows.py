@@ -2,7 +2,7 @@
 """
 Flows for br_rj_riodejaneiro_viagem_conecta
 
-DBT: 2024-08-09
+DBT: 2024-08-16
 """
 from copy import deepcopy
 
