@@ -216,7 +216,7 @@ WITH
     data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY) AND DATE("{{ var('run_date') }}")
   ),
   -- 2. Busca partidas e quilometragem da faixa horaria (dia seguinte)
-  dia_seguinte AS (
+  dia_seguinte_du AS (
   SELECT DISTINCT
     servico,
     tipo_dia,
@@ -227,6 +227,33 @@ WITH
     -- rj-smtr.gtfs.ordem_servico_trips_shapes
   WHERE
     faixa_horaria_inicio = "24:00:00"
+    AND tipo_dia = "Dia Útil"
+  ),
+  dia_seguinte_sab AS (
+  SELECT DISTINCT
+    servico,
+    tipo_dia,
+    partidas AS partidas_dia_seguinte,
+    distancia_total_planejada AS distancia_dia_seguinte
+  FROM
+    {{ ref("ordem_servico_trips_shapes_gtfs") }}
+    -- rj-smtr.gtfs.ordem_servico_trips_shapes
+  WHERE
+    faixa_horaria_inicio = "24:00:00"
+    AND tipo_dia = "Sabado"
+  ),
+  dia_seguinte_dom AS (
+  SELECT DISTINCT
+    servico,
+    tipo_dia,
+    partidas AS partidas_dia_seguinte,
+    distancia_total_planejada AS distancia_dia_seguinte
+  FROM
+    {{ ref("ordem_servico_trips_shapes_gtfs") }}
+    -- rj-smtr.gtfs.ordem_servico_trips_shapes
+  WHERE
+    faixa_horaria_inicio = "24:00:00"
+    AND tipo_dia = "Domingo"
   )
 SELECT
   d.data,
@@ -239,15 +266,27 @@ SELECT
   consorcio,
   sentido,
   CASE
-    WHEN faixa_horaria_inicio = "00:00:00" THEN
-      o.partidas + COALESCE(ds.partidas_dia_seguinte, 0)
+    WHEN faixa_horaria_inicio = "00:00:00" AND tipo_dia = "Domingo" THEN
+      o.partidas + COALESCE(sab.partidas_dia_seguinte, 0)
+    WHEN faixa_horaria_inicio = "00:00:00" AND tipo_dia = "Sabado" THEN
+      o.partidas + COALESCE(du.partidas_dia_seguinte, 0)
+    WHEN faixa_horaria_inicio = "00:00:00" AND FORMAT_DATE('%A', DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)) = 'Monday' AND tipo_dia = "Dia Util" THEN
+      o.partidas + COALESCE(dom.partidas_dia_seguinte, 0)
+    WHEN faixa_horaria_inicio = "00:00:00" AND tipo_dia = "Dia Util" THEN
+      o.partidas + COALESCE(du.partidas_dia_seguinte, 0)
     ELSE
       o.partidas
   END AS partidas,
   distancia_planejada,
   CASE
-    WHEN faixa_horaria_inicio = "00:00:00" THEN
-      o.distancia_total_planejada + COALESCE(ds.distancia_dia_seguinte, 0)
+    WHEN faixa_horaria_inicio = "00:00:00" AND tipo_dia = "Domingo" THEN
+      o.partidas + COALESCE(sab.distancia_dia_seguinte, 0)
+    WHEN faixa_horaria_inicio = "00:00:00" AND tipo_dia = "Sabado" THEN
+      o.partidas + COALESCE(du.distancia_dia_seguinte, 0)
+    WHEN faixa_horaria_inicio = "00:00:00" AND FORMAT_DATE('%A', DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)) = 'Monday' AND tipo_dia = "Dia Util" THEN
+      o.partidas + COALESCE(dom.distancia_dia_seguinte, 0)
+    WHEN faixa_horaria_inicio = "00:00:00" AND tipo_dia = "Dia Util" THEN
+      o.partidas + COALESCE(du.distancia_dia_seguinte, 0)
     ELSE
       o.distancia_total_planejada
   END AS distancia_total_planejada,
@@ -374,13 +413,24 @@ USING
     tipo_dia,
     tipo_os)
 LEFT JOIN
-  dia_seguinte AS ds
+  dia_seguinte_du AS du
 USING
   (tipo_dia,
    servico)
-{% if var("run_date") == "2024-05-05" %}
+LEFT JOIN
+  dia_seguinte_sab AS sab
+USING
+  (tipo_dia,
+   servico)
+LEFT JOIN
+  dia_seguinte_dom AS dom
+USING
+  (tipo_dia,
+   servico)
 WHERE
--- Apuração "Madonna · The Celebration Tour in Rio"
-  servico != "SE001"
-{% endif %}
+  o.faixa_horaria_inicio != "24:00:00"
+  {% if var("run_date") == "2024-05-05" %}
+  -- Apuração "Madonna · The Celebration Tour in Rio"
+  AND servico != "SE001"
+  {% endif %}
 {% endif %}
