@@ -270,7 +270,7 @@ SELECT
       o.partidas + COALESCE(sab.partidas_dia_seguinte, 0)
     WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Sabado" THEN
       o.partidas + COALESCE(du.partidas_dia_seguinte, 0)
-    WHEN o.faixa_horaria_inicio = "00:00:00" AND FORMAT_DATE('%A', DATE("{{ var('run_date') }}")) = 'Monday' AND o.tipo_dia = "Dia Útil" THEN
+    WHEN o.faixa_horaria_inicio = "00:00:00" AND FORMAT_DATE('%A', DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)) = 'Monday' AND o.tipo_dia = "Dia Útil" THEN
       o.partidas + COALESCE(dom.partidas_dia_seguinte, 0)
     WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Dia Útil" THEN
       o.partidas + COALESCE(du.partidas_dia_seguinte, 0)
@@ -283,7 +283,7 @@ SELECT
       o.partidas + COALESCE(sab.distancia_dia_seguinte, 0)
     WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Sabado" THEN
       o.partidas + COALESCE(du.distancia_dia_seguinte, 0)
-    WHEN o.faixa_horaria_inicio = "00:00:00" AND FORMAT_DATE('%A', DATE("{{ var('run_date') }}")) = 'Monday' AND o.tipo_dia = "Dia Útil" THEN
+    WHEN o.faixa_horaria_inicio = "00:00:00" AND FORMAT_DATE('%A', DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)) = 'Monday' AND o.tipo_dia = "Dia Útil" THEN
       o.partidas + COALESCE(dom.distancia_dia_seguinte, 0)
     WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Dia Útil" THEN
       o.partidas + COALESCE(du.distancia_dia_seguinte, 0)
