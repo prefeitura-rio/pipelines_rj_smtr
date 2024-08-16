@@ -5,6 +5,8 @@ selectors:
       union:
         - method: path
           value: models/dashboard_subsidio_sppo_staging
+        - method: fqn
+          value: viagem_transacao
         - method: path
           value: models/dashboard_subsidio_sppo
 
@@ -14,6 +16,10 @@ selectors:
       union:
         - method: path
           value: models/dashboard_subsidio_sppo_staging
+        - method: fqn
+          value: viagem_transacao
+        - method: fqn
+          value: viagens_remuneradas
         - method: path
           value: models/financeiro
         - method: path
