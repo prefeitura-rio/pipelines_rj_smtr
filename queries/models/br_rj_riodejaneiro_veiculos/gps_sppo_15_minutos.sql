@@ -1,7 +1,6 @@
 {{
   config(
     materialized='table',
-    alias=this.name ~ "_dev",
     partition_by={
       'field':"data",
       'data_type':'date',
@@ -37,8 +36,6 @@ WITH
       longitude,
     FROM {{ ref('sppo_aux_registros_filtrada') }}
     WHERE
-      -- data between DATE("{{var('date_range_start')}}") and DATE("{{var('date_range_end')}}")
-      -- AND timestamp_gps > "{{var('date_range_start')}}" and timestamp_gps <="{{var('date_range_end')}}"
       data = DATE("{{var('date_range_end')}}")
       AND timestamp_gps > DATETIME_SUB("{{var('date_range_end')}}", INTERVAL 75 MINUTE)
       AND timestamp_gps <= "{{var('date_range_end')}}"
@@ -136,8 +133,6 @@ ON
   AND  r.timestamp_gps = p.timestamp_gps
   AND r.linha = p.linha
 WHERE
-  -- date(r.timestamp_gps) between DATE("{{var('date_range_start')}}") and DATE("{{var('date_range_end')}}")
-  -- AND r.timestamp_gps > "{{var('date_range_start')}}" and r.timestamp_gps <="{{var('date_range_end')}}"
   DATE(r.timestamp_gps) = DATE("{{var('date_range_end')}}")
   AND r.timestamp_gps > DATETIME_SUB("{{var('date_range_end')}}", INTERVAL 75 MINUTE)
   AND r.timestamp_gps <= "{{var('date_range_end')}}"
