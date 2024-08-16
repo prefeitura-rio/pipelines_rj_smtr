@@ -258,34 +258,34 @@ WITH
 SELECT
   d.data,
   CASE
-    WHEN subtipo_dia IS NOT NULL THEN CONCAT(tipo_dia, " - ", subtipo_dia)
-    ELSE tipo_dia
+    WHEN subtipo_dia IS NOT NULL THEN CONCAT(o.tipo_dia, " - ", subtipo_dia)
+    ELSE o.tipo_dia
   END AS tipo_dia,
   servico,
   vista,
   consorcio,
   sentido,
   CASE
-    WHEN faixa_horaria_inicio = "00:00:00" AND tipo_dia = "Domingo" THEN
+    WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Domingo" THEN
       o.partidas + COALESCE(sab.partidas_dia_seguinte, 0)
-    WHEN faixa_horaria_inicio = "00:00:00" AND tipo_dia = "Sabado" THEN
+    WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Sabado" THEN
       o.partidas + COALESCE(du.partidas_dia_seguinte, 0)
-    WHEN faixa_horaria_inicio = "00:00:00" AND FORMAT_DATE('%A', DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)) = 'Monday' AND tipo_dia = "Dia Útil" THEN
+    WHEN o.faixa_horaria_inicio = "00:00:00" AND FORMAT_DATE('%A', DATE("{{ var('run_date') }}")) = 'Monday' AND o.tipo_dia = "Dia Útil" THEN
       o.partidas + COALESCE(dom.partidas_dia_seguinte, 0)
-    WHEN faixa_horaria_inicio = "00:00:00" AND tipo_dia = "Dia Útil" THEN
+    WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Dia Útil" THEN
       o.partidas + COALESCE(du.partidas_dia_seguinte, 0)
     ELSE
       o.partidas
   END AS partidas,
   distancia_planejada,
   CASE
-    WHEN faixa_horaria_inicio = "00:00:00" AND tipo_dia = "Domingo" THEN
+    WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Domingo" THEN
       o.partidas + COALESCE(sab.distancia_dia_seguinte, 0)
-    WHEN faixa_horaria_inicio = "00:00:00" AND tipo_dia = "Sabado" THEN
+    WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Sabado" THEN
       o.partidas + COALESCE(du.distancia_dia_seguinte, 0)
-    WHEN faixa_horaria_inicio = "00:00:00" AND FORMAT_DATE('%A', DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)) = 'Monday' AND tipo_dia = "Dia Útil" THEN
+    WHEN o.faixa_horaria_inicio = "00:00:00" AND FORMAT_DATE('%A', DATE("{{ var('run_date') }}")) = 'Monday' AND o.tipo_dia = "Dia Útil" THEN
       o.partidas + COALESCE(dom.distancia_dia_seguinte, 0)
-    WHEN faixa_horaria_inicio = "00:00:00" AND tipo_dia = "Dia Útil" THEN
+    WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Dia Útil" THEN
       o.partidas + COALESCE(du.distancia_dia_seguinte, 0)
     ELSE
       o.distancia_total_planejada
@@ -415,18 +415,15 @@ USING
 LEFT JOIN
   dia_seguinte_du AS du
 USING
-  (tipo_dia,
-   servico)
+  (servico)
 LEFT JOIN
   dia_seguinte_sab AS sab
 USING
-  (tipo_dia,
-   servico)
+  (servico)
 LEFT JOIN
   dia_seguinte_dom AS dom
 USING
-  (tipo_dia,
-   servico)
+  (servico)
 WHERE
   o.faixa_horaria_inicio != "24:00:00"
   {% if var("run_date") == "2024-05-05" %}
