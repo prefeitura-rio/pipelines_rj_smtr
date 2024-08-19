@@ -35,12 +35,14 @@
 
 {% set max_transactions = 5 %} -- Número máximo de pernas em uma integração
 {% set pivot_columns = ["datetime_transacao", "id_transacao", "modo", "servico_sentido"] %}
+
 WITH matriz AS (
   SELECT
     string_agg(modo order by sequencia_integracao) AS sequencia_valida,
     count(*) AS quantidade_transacao
   FROM
-    rj-smtr.br_rj_riodejaneiro_bilhetagem.matriz_integracao
+    -- ref("matriz_integracao")
+    `rj-smtr.br_rj_riodejaneiro_bilhetagem.matriz_integracao`
   group by id_matriz_integracao
 ),
 transacao AS (
@@ -54,7 +56,8 @@ transacao AS (
       {% endif %}
     {% endfor %}
   FROM
-    {{ ref("transacao") }}
+    -- {{ ref("transacao") }}
+    `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
   WHERE
     DATA = '2024-07-23'
     and id_cliente IN ('243053', '235930')
@@ -88,11 +91,11 @@ integracao_possivel AS (
   SELECT
     *,
     {% set modos = ["modo_0"] %}
-    {% set servicos = [] %}
+    {% set servicos = ["servico_0"] %}
     {% for transaction_number in range(1, max_transactions) %}
-      {{ modos.append("modo_"~transaction_number) }}
+      {% do modos.append("modo_"~transaction_number) %}
       (
-        DATETIME_DIFF(datetime_transacao_{ transaction_number }, datetime_transacao_0, MINUTE) <= 180
+        DATETIME_DIFF(datetime_transacao_{{ transaction_number }}, datetime_transacao_0, MINUTE) <= 180
         AND CONCAT({{ modos|join(", ',', ") }}) IN (SELECT sequencia_valida FROM matriz)
         {% if loop.first %}
           AND servico_{{ transaction_number }} != servico_0
@@ -100,11 +103,11 @@ integracao_possivel AS (
           AND servico_{{ transaction_number }} NOT IN ({{ servicos|join(", ',', ") }})
         {% endif %}
       ) AS indicador_integracao_{{ transaction_number }},
-      {{ servicos.append("servicos_"~transaction_number) }}
+      {% do servicos.append("servico_"~transaction_number) %}
 
     {% endfor %}
   FROM
-    agrupada
+    transacao_agrupada
   WHERE
     id_transacao_1 IS NOT NULL
 ),
@@ -114,12 +117,12 @@ transacao_filtrada AS (
     {% for column in pivot_columns %}
       {% for transaction_number in range(max_transactions) %}
         {% if transaction_number < 2 %}
-          {{ column }}_transaction_number,
+          {{ column }}_{{ transaction_number }},
         {% else %}
           CASE
             WHEN
               indicador_integracao_{{ transaction_number }} THEN column_{{ transaction_number }}
-            END AS column_{{ transaction_number }},
+            END AS {{ column }}_{{ transaction_number }},
         {% endif %}
       {% endfor %}
     {% endfor %}
@@ -144,7 +147,7 @@ transacao_listada AS (
       ", "
     ) AS transacoes
   FROM
-    campos_tratados
+    transacao_filtrada
 ),
 {% for i in range(max_transactions - 1) %}
   validacao_integracao_{{ max_transactions - i }}_pernas AS (
