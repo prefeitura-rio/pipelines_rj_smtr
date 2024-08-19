@@ -429,6 +429,95 @@ class constants(Enum):  # pylint: disable=c0103
             """,
             "order_columns": ["dif"],
         },
+        "check_viagem_completa": {
+            "query": """
+            WITH
+                data_versao_efetiva AS (
+                SELECT
+                    *
+                FROM
+                    rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva
+                WHERE
+                    DATA >= "2024-04-01"
+                    AND DATA BETWEEN DATE("{start_timestamp}")
+                    AND DATE("{end_timestamp}")),
+                viagem_completa AS (
+                SELECT
+                    *
+                FROM
+                    rj-smtr.projeto_subsidio_sppo.viagem_completa
+                WHERE
+                    DATA >= "2024-04-01"
+                    AND DATA BETWEEN DATE("{start_timestamp}")
+                    AND DATE("{end_timestamp}")),
+                feed_info AS (
+                SELECT
+                    *
+                FROM
+                    rj-smtr.gtfs.feed_info
+                WHERE
+                    feed_version IN (
+                    SELECT
+                    feed_version
+                    FROM
+                    data_versao_efetiva) )
+                SELECT
+                DISTINCT DATA
+                FROM
+                viagem_completa
+                LEFT JOIN
+                data_versao_efetiva AS d
+                USING
+                (DATA)
+                LEFT JOIN
+                feed_info AS i
+                ON
+                (DATA BETWEEN i.feed_start_date
+                    AND i.feed_end_date
+                    OR (DATA >= i.feed_start_date
+                    AND i.feed_end_date IS NULL))
+                WHERE
+                i.feed_start_date != d.feed_start_date
+                OR datetime_ultima_atualizacao < feed_update_datetime
+            """,
+            "order_columns": ["DATA"],
+        },
+        "teste_subsido_viagens_atualizadas": {
+            "query": """
+            WITH
+                viagem_completa AS (
+                SELECT
+                    data,
+                    datetime_ultima_atualizacao
+                FROM
+                    rj-smtr.projeto_subsidio_sppo.viagem_completa
+                WHERE
+                    DATA >= "2024-04-01"
+                    AND DATA BETWEEN DATE("2024-07-01")
+                    AND DATE("2024-07-31")),
+                sumario_servico_dia_historico AS (
+                SELECT
+                    data,
+                    datetime_ultima_atualizacao
+                FROM
+                    -- `rj-smtr.dashboard_subsidio_sppo.sumario_servico_dia`
+                    -- `rj-smtr-dev.dashboard_subsidio_sppo_novos_teste_subsidio.sumario_servico_dia`
+                WHERE
+                    DATA BETWEEN "2024-07-01"
+                    AND "2024-07-15" )
+                SELECT
+                DISTINCT DATA
+                FROM
+                viagem_completa as c
+                LEFT JOIN
+                sumario_servico_dia_historico AS h
+                USING
+                (DATA)
+                WHERE
+                c.datetime_ultima_atualizacao > h.datetime_ultima_atualizacao
+            """,
+            "order_columns": ["DATA"],
+        },
     }
     SUBSIDIO_SPPO_DATA_CHECKS_PRE_LIST = {
         "general": {
@@ -453,6 +542,9 @@ class constants(Enum):  # pylint: disable=c0103
             },
             "Todos os dados de status dos veículos foram devidamente tratados": {
                 "test": "check_sppo_veiculo_dia",
+            },
+            "Todas as viagens foram processadas com feed atualizado do GTFS": {
+                "test": "check_viagem_completa",
             },
         }
     }
@@ -496,6 +588,9 @@ class constants(Enum):  # pylint: disable=c0103
             },
             "Todos serviços com valor de subsídio pago não nulo e maior ou igual a zero": {
                 "expression": "valor_subsidio_pago IS NOT NULL AND valor_subsidio_pago >= 0",
+            },
+            "Todas as viagens foram atualizadas antes do processamento do subsídio": {
+                "test": "teste_subsido_viagens_atualizadas"
             },
         },
         "sumario_servico_dia_tipo_sem_glosa": {
