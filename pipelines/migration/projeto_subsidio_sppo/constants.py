@@ -493,18 +493,18 @@ class constants(Enum):  # pylint: disable=c0103
                     rj-smtr.projeto_subsidio_sppo.viagem_completa
                 WHERE
                     DATA >= "2024-04-01"
-                    AND DATA BETWEEN DATE("2024-07-01")
-                    AND DATE("2024-07-31")),
+                    AND DATA BETWEEN DATE("{start_timestamp}")
+                    AND DATE("{end_timestamp}")),
                 sumario_servico_dia_historico AS (
                 SELECT
                     data,
                     datetime_ultima_atualizacao
                 FROM
-                    -- `rj-smtr.dashboard_subsidio_sppo.sumario_servico_dia`
-                    `rj-smtr-dev.dashboard_subsidio_sppo_novos_teste_subsidio.sumario_servico_dia`
+                    -- `rj-smtr.dashboard_subsidio_sppo.sumario_servico_dia_historico`
+                    `rj-smtr-dev.dashboard_subsidio_sppo_novos_teste_subsidio.sumario_servico_dia_historico`
                 WHERE
-                    DATA BETWEEN "2024-07-01"
-                    AND "2024-07-15" )
+                    DATA BETWEEN "{start_timestamp}"
+                    AND "{end_timestamp}" )
                 SELECT
                 DISTINCT DATA
                 FROM
