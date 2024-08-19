@@ -500,11 +500,10 @@ class constants(Enum):  # pylint: disable=c0103
                     data,
                     datetime_ultima_atualizacao
                 FROM
-                    -- `rj-smtr.dashboard_subsidio_sppo.sumario_servico_dia_historico`
-                    `rj-smtr-dev.dashboard_subsidio_sppo_novos_teste_subsidio.sumario_servico_dia_historico`
+                    `rj-smtr.dashboard_subsidio_sppo.sumario_servico_dia_historico`
                 WHERE
                     DATA BETWEEN DATE("{start_timestamp}")
-                    AND DATE("{end_timestamp}")
+                    AND DATE("{end_timestamp}"))
                 SELECT
                 DISTINCT DATA
                 FROM

@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [7.0.1] - 2024-08-19
+
+## Adicionado
+
+- Adicionada coluna `datetime_ultima_atualizacao` na tabela `sumario_servico_dia_historico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/147)
+
 ## [7.0.0] - 2024-07-31
 
 ### Alterado
