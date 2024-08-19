@@ -503,8 +503,8 @@ class constants(Enum):  # pylint: disable=c0103
                     -- `rj-smtr.dashboard_subsidio_sppo.sumario_servico_dia_historico`
                     `rj-smtr-dev.dashboard_subsidio_sppo_novos_teste_subsidio.sumario_servico_dia_historico`
                 WHERE
-                    DATA BETWEEN "{start_timestamp}"
-                    AND "{end_timestamp}" )
+                    DATA BETWEEN DATE("{start_timestamp}")
+                    AND DATE("{end_timestamp}")
                 SELECT
                 DISTINCT DATA
                 FROM
@@ -542,9 +542,6 @@ class constants(Enum):  # pylint: disable=c0103
             },
             "Todos os dados de status dos veículos foram devidamente tratados": {
                 "test": "check_sppo_veiculo_dia",
-            },
-            "Todas as viagens foram processadas com feed atualizado do GTFS": {
-                "test": "check_viagem_completa",
             },
         }
     }
@@ -698,8 +695,11 @@ class constants(Enum):  # pylint: disable=c0103
             "Todas viagens com valor de subsídio por km não nulo e maior ou igual a zero": {
                 "expression": "subsidio_km IS NOT NULL AND subsidio_km >= 0",
             },
-            "Todas as viagens foram atualizadas antes do processamento do subsídio": {
+            "Todas viagens atualizadas antes do processamento do subsídio": {
                 "test": "teste_subsido_viagens_atualizadas"
+            },
+            "Todas viagens processadas com feed atualizado do GTFS": {
+                "test": "check_viagem_completa",
             },
         },
     }
