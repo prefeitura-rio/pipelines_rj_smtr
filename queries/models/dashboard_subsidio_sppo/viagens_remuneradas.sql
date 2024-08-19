@@ -24,6 +24,7 @@ WITH
     servico,
     faixa_horaria_inicio,
     faixa_horaria_fim,
+    partidas,
     distancia_total_planejada AS km_planejada, -- ADD SUM(distancia_total_planejada) e GROUP BY 1,2,3,4
   FROM
     {{ ref("viagem_planejada") }}
@@ -35,21 +36,6 @@ WITH
       OR distancia_total_planejada IS NULL )
     AND (id_tipo_trajeto = 0
       OR id_tipo_trajeto IS NULL)
-  ),
-  viagens_planejadas AS (
-  SELECT
-    feed_start_date,
-    servico,
-    tipo_dia,
-    viagens_planejadas,
-    partidas_ida,
-    partidas_volta,
-    tipo_os,
-  FROM
-      {{ ref("ordem_servico_gtfs") }}
-      -- rj-smtr.gtfs.ordem_servico
-  WHERE
-    feed_start_date IN ('{{ feed_start_dates|join("', '") }}')
   ),
   data_versao_efetiva AS (
   SELECT
@@ -66,23 +52,13 @@ WITH
   ),
   viagem_planejada AS (
   SELECT
-    p.*,
-    viagens_planejadas,
-    v.partidas_ida + v.partidas_volta AS viagens_planejadas_ida_volta
+    p.*
   FROM
     planejado AS p
   LEFT JOIN
     data_versao_efetiva AS d
   USING
     (data, tipo_dia)
-  LEFT JOIN
-    viagens_planejadas AS v
-  ON
-    d.feed_start_date = v.feed_start_date
-    AND p.tipo_dia = v.tipo_dia
-    AND p.servico = v.servico
-    AND (d.tipo_os = v.tipo_os
-      OR (d.tipo_os IS NULL AND v.tipo_os = "Regular"))
   ),
 -- 2. Parâmetros de subsídio
   subsidio_parametros AS (
@@ -141,22 +117,21 @@ SELECT
       THEN FALSE
     WHEN data >= "2023-09-16"
         AND p.tipo_dia = "Dia Útil"
-        AND viagens_planejadas > 10
+        AND partidas/2 > 10
         AND pof > 120
-        AND rn > viagens_planejadas_ida_volta*1.2
+        AND rn > partidas*1.2
         THEN FALSE
     WHEN data >= "2023-09-16"
         AND p.tipo_dia = "Dia Útil"
-        AND viagens_planejadas <= 10
+        AND partidas/2 <= 10
         AND pof > 200
-        AND rn > viagens_planejadas_ida_volta*2
+        AND rn > partidas*2
         THEN FALSE
     WHEN data >= "2023-09-16"
         AND (p.tipo_dia = "Dia Útil"
-          AND (viagens_planejadas IS NULL
+          AND (partidas IS NULL
             OR pof IS NULL
             OR rn IS NULL
-            OR viagens_planejadas_ida_volta IS NULL
           )
         )
       THEN NULL
