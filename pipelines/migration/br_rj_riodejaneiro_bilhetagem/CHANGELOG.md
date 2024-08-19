@@ -1,5 +1,11 @@
 # Changelog - br_rj_riodejaneiro_bilhetagem
 
+## [1.3.1] - 2024-08-19
+
+### Alterado
+
+- Adiciona tabela do subsídio no exclude da materialização das tabelas do GPS do validador.
+
 ## [1.3.0] - 2024-08-05
 
 ### Adicionado
