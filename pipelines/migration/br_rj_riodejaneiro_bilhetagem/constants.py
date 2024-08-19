@@ -522,7 +522,8 @@ aux_retorno_ordem_pagamento",
         "dataset_id": smtr_constants.BILHETAGEM_DATASET_ID.value,
         "upstream": True,
         "downstream": True,
-        "exclude": f"{BILHETAGEM_EXCLUDE} veiculo_validacao veiculo_indicadores_dia",
+        "exclude": f"{BILHETAGEM_EXCLUDE} veiculo_validacao veiculo_indicadores_dia \
+viagem_transacao+",
         "dbt_vars": {
             "date_range": {
                 "table_run_datetime_column_name": "datetime_captura",
