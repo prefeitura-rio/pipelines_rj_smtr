@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Adiciona tabela do subsídio no exclude da materialização das tabelas do GPS do validador.
+- Adiciona tabela do subsídio no exclude da materialização das tabelas do GPS do validador (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/150)
 
 ## [1.3.0] - 2024-08-05
 
