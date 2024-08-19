@@ -41,8 +41,8 @@ WITH
     4.04 AS subsidio_km_teto,
     indicador_viagem_remunerada
   FROM
-    -- {{ ref("viagens_remuneradas") }}
-    rj-smtr.dashboard_subsidio_sppo.viagens_remuneradas
+    {{ ref("viagens_remuneradas") }}
+    -- rj-smtr.dashboard_subsidio_sppo.viagens_remuneradas
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
@@ -67,8 +67,8 @@ WITH
     id_veiculo,
     id_viagem
   FROM
-    -- {{ ref("viagem_completa") }}
-    rj-smtr.projeto_subsidio_sppo.viagem_completa
+    {{ ref("viagem_completa") }}
+    -- rj-smtr.projeto_subsidio_sppo.viagem_completa
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
