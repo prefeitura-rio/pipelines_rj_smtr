@@ -54,6 +54,7 @@ from pipelines.migration.tasks import (  # get_local_dbt_client,
     set_last_run_timestamp,
     upload_logs_to_bq,
 )
+from pipelines.migration.utils import set_default_parameters
 from pipelines.schedules import (
     every_10_minutes,
     every_15_minutes,
@@ -537,6 +538,15 @@ recaptura.state_handlers = [
 
 
 materialize_gps_15_min = deepcopy(materialize_sppo)
+materialize_gps_15_min = set_default_parameters(
+    flow=materialize_gps_15_min,
+    default_parameters={
+        "table_id": constants.GPS_SPPO_15_MIN_TREATED_TABLE_ID.value,
+        "materialize_delay_hours": 0,
+        "truncate_minutes": False,
+        "fifteen_minutes": "_15_minutos",
+    },
+)
 materialize_gps_15_min.name = "SMTR: GPS SPPO 15 Minutos - Materialização (subflow)"
 
 with Flow("SMTR: GPS SPPO 15 Minutos - Tratamento") as recaptura_15min:
