@@ -1324,9 +1324,11 @@ def get_materialization_date_range(  # pylint: disable=R0913
         last_run = datetime(last_run.year, last_run.month, last_run.day)
 
     # set start to last run hour (H)
-    start_ts = last_run.replace(second=0, microsecond=0).strftime(timestr)
+    start_ts = last_run.replace(second=0, microsecond=0)
     if truncate_minutes:
         start_ts = start_ts.replace(minute=0)
+
+    start_ts = start_ts.strftime(timestr)
 
     # set end to now - delay
 
