@@ -501,7 +501,7 @@ class constants(Enum):  # pylint: disable=c0103
                     datetime_ultima_atualizacao
                 FROM
                     -- `rj-smtr.dashboard_subsidio_sppo.sumario_servico_dia`
-                    -- `rj-smtr-dev.dashboard_subsidio_sppo_novos_teste_subsidio.sumario_servico_dia`
+                    `rj-smtr-dev.dashboard_subsidio_sppo_novos_teste_subsidio.sumario_servico_dia`
                 WHERE
                     DATA BETWEEN "2024-07-01"
                     AND "2024-07-15" )
