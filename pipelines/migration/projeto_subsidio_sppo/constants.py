@@ -589,9 +589,6 @@ class constants(Enum):  # pylint: disable=c0103
             "Todos serviços com valor de subsídio pago não nulo e maior ou igual a zero": {
                 "expression": "valor_subsidio_pago IS NOT NULL AND valor_subsidio_pago >= 0",
             },
-            "Todas as viagens foram atualizadas antes do processamento do subsídio": {
-                "test": "teste_subsido_viagens_atualizadas"
-            },
         },
         "sumario_servico_dia_tipo_sem_glosa": {
             "Todas as somas dos tipos de quilometragem são equivalentes a quilometragem total": {
@@ -700,6 +697,9 @@ class constants(Enum):  # pylint: disable=c0103
             },
             "Todas viagens com valor de subsídio por km não nulo e maior ou igual a zero": {
                 "expression": "subsidio_km IS NOT NULL AND subsidio_km >= 0",
+            },
+            "Todas as viagens foram atualizadas antes do processamento do subsídio": {
+                "test": "teste_subsido_viagens_atualizadas"
             },
         },
     }
