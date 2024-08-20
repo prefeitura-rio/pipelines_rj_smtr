@@ -2,45 +2,39 @@ echo "Current working directory is:" && pwd
 
 echo "Creating directories..."
 
-cd ./queries
-
 mkdir ./credentials-dev
 
 mkdir ./credentials-prod
 
-mkdir /tmp
+mkdir ./profiles
 
 echo "Mounting files from env..."
 
-bash -c "echo $1  > /tmp/credentials.json"
+bash -c "echo $1 | base64 --decode > ./credentials-dev/dev.json"
 
-ls /tmp | grep credentials.json
+bash -c "echo $1 | base64 --decode > ./credentials-prod/prod.json"
 
-# bash -c "echo $1  > ./credentials-prod/prod.json"
+echo """
+default:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      project: rj-smtr
+      dataset: dbt
+      location: US
+      threads: 2
+      keyfile: $PWD/credentials-dev/dev.json
+    prod:
+      type: bigquery
+      method: service-account
+      project: rj-smtr
+      dataset: dbt
+      location: US
+      threads: 2
+      keyfile: $PWD/credentials-prod/prod.json""" > profiles/profiles.yml
 
-# echo """
-# default:
-#   target: dev
-#   outputs:
-#     dev:
-#       type: bigquery
-#       method: service-account
-#       project: rj-smtr
-#       dataset: dbt
-#       location: US
-#       threads: 2
-#       keyfile: /tmp/credentials.json
-#     prod:
-#       type: bigquery
-#       method: service-account
-#       project: rj-smtr
-#       dataset: dbt
-#       location: US
-#       threads: 2
-#       keyfile: $PWD/credentials-prod/prod.json""" > profiles/profiles.yml
+ls ./profiles
 
-# ls ./profiles
-
-echo "Generating docs static files"
-
-dbt docs generate --profiles-dir .
+dbt docs generate --profiles-dir ./profiles
