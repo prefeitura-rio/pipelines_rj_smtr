@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 import json
-import re
 import os
+import re
 
 PATH_DBT_PROJECT = "/home/caio/projects/queries-rj-smtr"
 
