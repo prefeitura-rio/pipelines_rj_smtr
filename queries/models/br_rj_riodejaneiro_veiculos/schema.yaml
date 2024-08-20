@@ -39,7 +39,7 @@ models:
       - name: velocidade_estimada_10_min
         description: "{{ doc('velocidade_estimada_10_min') }}"
       - name: distancia
-        description: "{{ doc('distancia') }}"
+        description: "{{ doc('distancia_gps') }}"
       - name: versao
         description: "{{ doc('versao') }}"
   - name: gps_sppo
@@ -80,7 +80,7 @@ models:
       - name: velocidade_estimada_10_min
         description: "{{ doc('velocidade_estimada_10_min') }}"
       - name: distancia
-        description: "{{ doc('distancia') }}"
+        description: "{{ doc('distancia_gps') }}"
       - name: versao
         description: "{{ doc('versao') }}"
   - name: gps_brt_15_minutos
@@ -162,6 +162,6 @@ models:
       - name: velocidade_estimada_10_min
         description: "{{ doc('velocidade_estimada_10_min') }}"
       - name: distancia
-        description: "{{ doc('distancia') }}"
+        description: "{{ doc('distancia_gps') }}"
       - name: versao
         description: "{{ doc('versao') }}"
