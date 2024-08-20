@@ -14,6 +14,8 @@ echo "Mounting files from env..."
 
 bash -c "echo $1  > /tmp/credentials.json"
 
+ls /tmp | grep credentials.json
+
 # bash -c "echo $1  > ./credentials-prod/prod.json"
 
 # echo """
