@@ -215,7 +215,7 @@ models:
       +schema: apuracaoFH_dashboard_subsidio_sppo
     dashboard_subsidio_sppo_staging:
       +materialized: view
-      +schema: dashboard_subsidio_sppo_staging
+      +schema: apuracaoFH_dashboard_subsidio_sppo_staging
     veiculo:
       +materialized: view
       +schema: veiculo
@@ -293,14 +293,14 @@ models:
         +schema: validacao_dados_jae_staging
     financeiro:
       +materialized: view
-      +schema: financeiro
+      +schema: apuracaoFH_financeiro
     dashboard_subsidio_sppo_v2:
       +materialized: view
-      +schema: dashboard_subsidio_sppo_v2
+      +schema: apuracaoFH_dashboard_subsidio_sppo_v2
     subsidio:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
-      +schema: subsidio
+      +schema: apuracaoFH_subsidio
     catalogo:
       +materialized: view
       +schema: catalogo

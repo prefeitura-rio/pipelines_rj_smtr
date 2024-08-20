@@ -17,8 +17,8 @@ WITH
     servico,
     pof
   FROM
-    rj-smtr-dev.financeiro.subsidio_faixa_servico_dia
-    --{{ ref("subsidio_faixa_servico_dia") }}
+    -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia
+    {{ ref("subsidio_faixa_servico_dia") }}
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")

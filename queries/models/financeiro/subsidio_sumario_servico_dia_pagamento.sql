@@ -18,8 +18,8 @@ WITH
     SUM(km_planejada_faixa) AS km_planejada_dia,
     MIN(pof) AS min_pof
   FROM
-    -- {{ ref("subsidio_faixa_servico_dia") }}
-    rj-smtr-dev.financeiro.subsidio_faixa_servico_dia
+    {{ ref("subsidio_faixa_servico_dia") }}
+    -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
@@ -57,8 +57,8 @@ WITH
     valor_total_sem_glosa,
     valor_judicial
   FROM
-    rj-smtr-dev.financeiro.subsidio_faixa_servico_dia_tipo_viagem
-    --{{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
+    -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia_tipo_viagem
+    {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
   ),
   valores_calculados AS (
   SELECT
