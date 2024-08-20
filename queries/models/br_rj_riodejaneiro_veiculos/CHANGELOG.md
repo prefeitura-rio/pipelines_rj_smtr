@@ -1,5 +1,10 @@
 # Changelog - br_rj_riodejaneiro_veiculos
 
+## [1.0.3] - 2024-08-09
+
+### Adicionado
+- Adiciona descrição em todas as colunas dos modelos `gps_brt.sql`, `gps_brt_15_minutos.sql`, `gps_sppo.sql` e `gps_sppo_15_minutos.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/139)
+
 ## [1.0.2] - 2024-08-07
 
 ### Adicionado

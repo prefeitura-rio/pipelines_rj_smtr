@@ -1,5 +1,15 @@
 # Changelog - bilhetagem
 
+## [2.2.1] - 2024-08-09
+
+### Adicionado
+- Adiciona descrição da coluna `id_validador` em `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/139)
+- Adiciona descrição da coluna `quantidade_total_transacao` em `ordem_pagamento_consorcio_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/139)
+- Adiciona descrição das colunas `quantidade_total_transacao` e `valor_pago` em `ordem_pagamento_consorcio_operador_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/139)
+- Adiciona descrição da coluna `quantidade_total_transacao` em `ordem_pagamento_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/139)
+- Adiciona descrição das colunas `tipo_gratuidade` e `tipo_pagamento` em `passageiros_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/139)
+- Adiciona descrição das colunas `tipo_gratuidade` e `tipo_pagamento` em `passageiros_tile_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/139)
+
 ## [2.2.0] - 2024-08-05
 
 ### Adicionado
