@@ -15,7 +15,7 @@ bash -c "echo $1 | base64 --decode > ./credentials-dev/dev.json"
 bash -c "echo $1 | base64 --decode > ./credentials-prod/prod.json"
 
 echo """
-default:
+queries:
   target: dev
   outputs:
     dev:
