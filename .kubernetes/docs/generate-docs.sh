@@ -10,9 +10,9 @@ mkdir ./profiles
 
 echo "Mounting files from env..."
 
-bash -c "echo $1 | base64 --decode > ./credentials-dev/dev.json"
+bash -c "echo $1  > ./credentials-dev/dev.json"
 
-bash -c "echo $1 | base64 --decode > ./credentials-prod/prod.json"
+bash -c "echo $1  > ./credentials-prod/prod.json"
 
 echo """
 default:
