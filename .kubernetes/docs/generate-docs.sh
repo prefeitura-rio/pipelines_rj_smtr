@@ -41,4 +41,6 @@ ls /tmp | grep credentials.json
 
 # ls ./profiles
 
+echo "Generating docs static files"
+
 dbt docs generate --profiles-dir .
