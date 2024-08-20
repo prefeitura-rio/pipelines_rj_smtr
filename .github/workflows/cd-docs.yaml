@@ -7,7 +7,7 @@ on:
       - staging/*
 
 env:
-  GCP_PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GCP_PROJECT_ID: ${{ secrets.GKE_PROJECT_ID }}
   GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
   GKE_CLUSTER: ${{ secrets.GKE_APP_CLUSTER_NAME }}
   GKE_ZONE: ${{ secrets.GKE_CLUSTER_ZONE }}
