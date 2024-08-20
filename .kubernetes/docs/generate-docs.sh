@@ -2,6 +2,8 @@ echo "Current working directory is:" && pwd
 
 echo "Creating directories..."
 
+cd ./queries
+
 mkdir ./credentials-dev
 
 mkdir ./credentials-prod
