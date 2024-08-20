@@ -40,7 +40,6 @@ gps AS (
     ST_GEOGPOINT(longitude, latitude) posicao_veiculo_geo
   FROM
     {{ ref('sppo_registros') }}
-  {% if is_incremental() -%}
   WHERE
     data between DATE("{{var('date_range_start')}}") and DATE("{{var('date_range_end')}}")
   {% if is_incremental() -%}
