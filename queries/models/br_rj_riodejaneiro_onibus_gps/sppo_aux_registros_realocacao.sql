@@ -30,9 +30,9 @@ with realocacao as (
   where
     -- Realocação deve acontecer após o registro de GPS e até 1 hora depois
     datetime_diff(datetime_operacao, datetime_entrada, minute) between 0 and 60
-    {% if is_incremental() -%}
     and data between DATE("{{var('date_range_start')}}")
     and DATE(datetime_add("{{var('date_range_end')}}", interval 1 hour))
+    {% if is_incremental() -%}
     and datetime_operacao between datetime("{{var('date_range_start')}}")
     and datetime_add("{{var('date_range_end')}}", interval 1 hour)
     {%- endif -%}
