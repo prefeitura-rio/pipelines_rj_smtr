@@ -37,29 +37,29 @@ WITH
     AND (id_tipo_trajeto = 0
       OR id_tipo_trajeto IS NULL)
   ),
-  data_versao_efetiva AS (
-  SELECT
-    data,
-    tipo_dia,
-    tipo_os,
-    COALESCE(feed_start_date, data_versao_trips, data_versao_shapes, data_versao_frequencies) AS feed_start_date
-  FROM
-      {{ ref("subsidio_data_versao_efetiva") }}
-      -- rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva -- (alterar também query no bloco execute)
-  WHERE
-    data BETWEEN DATE("{{ var("start_date") }}")
-    AND DATE( "{{ var("end_date") }}" )
-  ),
-  viagem_planejada AS (
-  SELECT
-    p.*
-  FROM
-    planejado AS p
-  LEFT JOIN
-    data_versao_efetiva AS d
-  USING
-    (data, tipo_dia)
-  ),
+  -- data_versao_efetiva AS (
+  -- SELECT
+  --   data,
+  --   tipo_dia,
+  --   tipo_os,
+  --   COALESCE(feed_start_date, data_versao_trips, data_versao_shapes, data_versao_frequencies) AS feed_start_date
+  -- FROM
+  --     {{ ref("subsidio_data_versao_efetiva") }}
+  --     -- rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva -- (alterar também query no bloco execute)
+  -- WHERE
+  --   data BETWEEN DATE("{{ var("start_date") }}")
+  --   AND DATE( "{{ var("end_date") }}" )
+  -- ),
+  -- viagem_planejada AS (
+  -- SELECT
+  --   p.*
+  -- FROM
+  --   planejado AS p
+  -- LEFT JOIN
+  --   data_versao_efetiva AS d
+  -- USING
+  --   (data, tipo_dia)
+  -- ),
 -- 2. Parâmetros de subsídio
   subsidio_parametros AS (
   SELECT
@@ -144,14 +144,14 @@ SELECT
     ROW_NUMBER() OVER(PARTITION BY data, servico ORDER BY subsidio_km*distancia_planejada DESC) AS rn
 FROM
     viagem_km_tipo ) AS v
-LEFT JOIN
-    viagem_planejada AS p
+INNER JOIN
+    planejado AS p
 ON
   p.data = v.data
   AND p.servico = v.servico
   AND v.datetime_partida BETWEEN p.faixa_horaria_inicio
   AND p.faixa_horaria_fim
-LEFT JOIN
+INNER JOIN
     servico_faixa_km_apuracao AS s
 ON
   s.data = v.data
