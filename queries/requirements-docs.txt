@@ -4,4 +4,5 @@ dbt-extractor==0.5.1
 dbt-semantic-interfaces==0.4.2
 markupsafe==2.0.1
 setuptools==67.8.0
-pandas==2.0.2
+pandas==2.1.4
+pandas-gbq==0.19.2
