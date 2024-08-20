@@ -21,19 +21,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup Python version
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.9"
+      # - name: Setup Python version
+      #   uses: actions/setup-python@v2
+      #   with:
+      #     python-version: "3.9"
 
-      - run: |-
-          pip install --no-cache-dir -r requirements.txt
+      # - run: |-
+      #     pip install --no-cache-dir -r requirements.txt
 
       # Setup gcloud CLI
       - name: Setup Google Cloud CLI
         uses: google-github-actions/setup-gcloud@v0.2.1
         with:
-          service_account_key: ${{ secrets.GKE_SA_KEY }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
           project_id: ${{ secrets.GKE_PROJECT_ID}}
           export_default_credentials: true
 
@@ -42,7 +42,7 @@ jobs:
         with:
           cluster_name: ${{ env.GKE_CLUSTER }}
           location: ${{ env.GKE_ZONE }}
-          credentials: ${{ secrets.GKE_SA_KEY }}
+          credentials: ${{ secrets.GCP_SA_KEY }}
 
       # Configure Docker to use the gcloud command-line tool as a credential
       # helper for authentication
@@ -55,7 +55,7 @@ jobs:
           cd ./.kubernetes/docs/
           sh generate-docs.sh $KEY
         env:
-          KEY: ${{ secrets.GKE_SA_KEY }}
+          KEY: ${{ secrets.GCP_SA_KEY }}
 
       - name: Build and publish image
         run: |
