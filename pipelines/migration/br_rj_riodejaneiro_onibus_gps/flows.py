@@ -2,7 +2,7 @@
 """
 Flows for br_rj_riodejaneiro_onibus_gps
 
-DBT 2024-08-09
+DBT 2024-08-20
 """
 
 from prefect import Parameter, case, task
