@@ -140,7 +140,8 @@ dados_completos AS (
       sumario_glosa_suspensa )
 )
 SELECT
-  *
+  *,
+  CURRENT_DATETIME("America/Sao_Paulo") as datetime_ultima_atualizacao
 FROM
   dados_completos
 {% if is_incremental() %}
