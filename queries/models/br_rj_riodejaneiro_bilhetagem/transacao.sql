@@ -14,7 +14,7 @@
 -- TODO: Usar variável de run_date_hour para otimizar o numero de partições lidas em staging
 {% set incremental_filter %}
   DATE(data) BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
-  -- AND timestamp_captura BETWEEN DATETIME("{{var('date_range_start')}}") AND DATETIME("{{var('date_range_end')}}")
+  AND timestamp_captura BETWEEN DATETIME("{{var('date_range_start')}}") AND DATETIME("{{var('date_range_end')}}")
 {% endset %}
 
 {% set transacao_staging = ref('staging_transacao') %}
@@ -22,38 +22,12 @@
 {% if execute %}
   {% if is_incremental() %}
     {% set transacao_partitions_query %}
-      WITH particoes_integracao AS (
-        SELECT DISTINCT
-          CONCAT("'", DATE(data_transacao), "'") AS data_transacao
-        FROM
-          {{ integracao_staging }},
-          UNNEST([
-            data_transacao_t0,
-            data_transacao_t1,
-            data_transacao_t2,
-            data_transacao_t3,
-            data_transacao_t4
-          ]) AS data_transacao
-        WHERE
-          {{ incremental_filter }}
-        ),
-        particoes_transacao AS (
-          SELECT DISTINCT
-            CONCAT("'", DATE(data_transacao), "'") AS data_transacao
-          FROM
-            {{ transacao_staging }}
-          WHERE
-            {{ incremental_filter }}
-        )
-        SELECT
-          COALESCE(t.data_transacao, i.data_transacao) AS data_transacao
-        FROM
-          particoes_transacao t
-        FULL OUTER JOIN
-          particoes_integracao i
-        USING(data_transacao)
-        WHERE
-          COALESCE(t.data_transacao, i.data_transacao) IS NOT NULL
+      SELECT DISTINCT
+        CONCAT("'", DATE(data_transacao), "'") AS data_transacao
+      FROM
+        {{ transacao_staging }}
+      WHERE
+        {{ incremental_filter }}
     {% endset %}
 
     {% set transacao_partitions = run_query(transacao_partitions_query) %}
@@ -150,6 +124,7 @@ new_data AS (
     NULL AS id_integracao,
     latitude_trx AS latitude,
     longitude_trx AS longitude,
+    ST_GEOGPOINT(longitude_trx, latitude_trx) AS geo_point_transacao,
     NULL AS stop_id,
     NULL AS stop_lat,
     NULL AS stop_lon,
@@ -226,6 +201,7 @@ complete_partitions AS (
     id_integracao,
     latitude,
     longitude,
+    geo_point_transacao,
     stop_id,
     stop_lat,
     stop_lon,
@@ -263,6 +239,7 @@ complete_partitions AS (
       id_integracao,
       latitude,
       longitude,
+      geo_point_transacao,
       stop_id,
       stop_lat,
       stop_lon,
@@ -326,6 +303,7 @@ SELECT
   t.id_integracao,
   t.latitude,
   t.longitude,
+  t.geo_point_transacao,
   t.stop_id,
   t.stop_lat,
   t.stop_lon,
