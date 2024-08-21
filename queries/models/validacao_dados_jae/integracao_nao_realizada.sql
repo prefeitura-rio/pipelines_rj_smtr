@@ -57,8 +57,7 @@
 
 WITH matriz AS (
   SELECT
-    string_agg(modo order by sequencia_integracao) AS sequencia_valida,
-    count(*) AS quantidade_transacao
+    string_agg(modo order by sequencia_integracao) AS sequencia_valida
   FROM
     ref("matriz_integracao")
     -- `rj-smtr.br_rj_riodejaneiro_bilhetagem.matriz_integracao`
