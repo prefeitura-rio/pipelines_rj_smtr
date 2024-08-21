@@ -18,8 +18,8 @@
       SELECT
         CONCAT("'", PARSE_DATE("%Y%m%d", partition_id), "'") AS data
       FROM
-        -- `{{ transacao_table.database }}.{{ transacao_table.schema }}.INFORMATION_SCHEMA.PARTITIONS`
-        `rj-smtr.{{ transacao_table.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+        `{{ transacao_table.database }}.{{ transacao_table.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+        -- `rj-smtr.{{ transacao_table.schema }}.INFORMATION_SCHEMA.PARTITIONS`
       WHERE
         table_name = "{{ transacao_table.identifier }}"
         AND partition_id != "__NULL__"
@@ -60,8 +60,8 @@ WITH matriz AS (
     string_agg(modo order by sequencia_integracao) AS sequencia_valida,
     count(*) AS quantidade_transacao
   FROM
-    -- ref("matriz_integracao")
-    `rj-smtr.br_rj_riodejaneiro_bilhetagem.matriz_integracao`
+    ref("matriz_integracao")
+    -- `rj-smtr.br_rj_riodejaneiro_bilhetagem.matriz_integracao`
   group by id_matriz_integracao
 ),
 transacao AS (
@@ -75,8 +75,8 @@ transacao AS (
       {% endif %}
     {% endfor %}
   FROM
-    -- {{ ref("transacao") }}
-    `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
+    {{ ref("transacao") }}
+    -- `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
   WHERE
     data < CURRENT_DATE("America/Sao_Paulo")
     {% if is_incremental() %}
@@ -232,8 +232,8 @@ integracao_nao_realizada AS (
       SELECT
         id_transacao
       FROM
-        -- ref("integracao")
-        `rj-smtr.br_rj_riodejaneiro_bilhetagem.integracao`
+        ref("integracao")
+        -- `rj-smtr.br_rj_riodejaneiro_bilhetagem.integracao`
       {% if is_incremental() %}
         WHERE
           {{ transaction_date_filter }}
