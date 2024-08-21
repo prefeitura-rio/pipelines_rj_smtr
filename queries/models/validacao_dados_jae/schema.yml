@@ -17,7 +17,7 @@ models:
       - name: indicador_intervalo_transacao_suspeito
         description: "Indica se existe algum intervalo entre transações menor que 5 minutos dentro da integração"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: transacao_invalida
     description: "Tabela para validação dos dados de transação da Jaé"
     columns:
@@ -72,7 +72,7 @@ models:
       - name: indicador_servico_fora_vigencia
         description: "Indica se a transação foi feita em um serviço fora de vigência"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: ordem_pagamento_invalida
     description: "Tabela para validação dos dados da ordem de pagamento da Jaé"
     columns:
@@ -91,7 +91,7 @@ models:
       - name: indicador_agregacao_dia_invalida
         description: "Indica se os valores e quantidades da tabela ordem_pagamento_consorcio_dia agregada por dia está diferente das informações da tabela ordem_pagamento_dia"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: integracao_nao_realizada
     description: "Tabela contendo integrações que deveriam ter ocorrido mas não estão listadas na base da Jaé"
     columns:
@@ -112,4 +112,4 @@ models:
       - name: sentido
         description: "Sentido de operação do serviço (0 = ida, 1 = volta)"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
