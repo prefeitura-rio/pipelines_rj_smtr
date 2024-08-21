@@ -1,5 +1,5 @@
 {{
-  config(materialized="table")
+  config(materialized="ephemeral")
 }}
 
 
@@ -20,7 +20,7 @@ e as integrações capturadas entre date_range_start e date_range_end
       WHERE
         table_name = "{{ transacao_table.identifier }}"
         AND partition_id != "__NULL__"
-        AND DATE(last_modified_time, "America/Sao_Paulo") BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
+        AND DATETIME(last_modified_time, "America/Sao_Paulo") BETWEEN DATETIME("{{var('date_range_start')}}") AND (DATETIME("{{var('date_range_end')}}"))
     {% endset %}
 
     {{ log("Running query: \n"~partitions_query) }}
@@ -66,7 +66,7 @@ SELECT
   END AS tipo_transacao_detalhe_smtr,
   tipo_gratuidade,
   tipo_pagamento,
-  ST_GEOGPOINT(longitude, latitude) AS geo_point_transacao
+  geo_point_transacao
 FROM
   {{ transacao_table }}
 WHERE
