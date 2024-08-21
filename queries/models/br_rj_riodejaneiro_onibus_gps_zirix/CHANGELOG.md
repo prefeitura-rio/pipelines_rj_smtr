@@ -1,5 +1,10 @@
 # Changelog - onibus_gps_zirix
 
+## [1.0.4] - 2024-08-09
+
+### Adicionado
+- Adiciona descrição em todas as colunas do modelo `gps_sppo_zirix.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/139)
+
 ## [1.0.3] - 2024-08-02
 
 ### Alterado
