@@ -216,7 +216,7 @@ WITH
     data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY) AND DATE("{{ var('run_date') }}")
   ),
   -- 2. Busca partidas e quilometragem da faixa horaria (dia seguinte)
-  dia_seguinte_du AS (
+  dia_seguinte AS (
   SELECT DISTINCT
     servico,
     tipo_dia,
@@ -226,35 +226,48 @@ WITH
     {{ ref("ordem_servico_trips_shapes_gtfs") }}
     -- rj-smtr.gtfs.ordem_servico_trips_shapes
   WHERE
-    faixa_horaria_inicio = "24:00:00"
-    AND tipo_dia = "Dia Útil"
-  ),
-  dia_seguinte_sab AS (
-  SELECT DISTINCT
-    servico,
-    tipo_dia,
-    partidas AS partidas_dia_seguinte,
-    distancia_total_planejada AS distancia_dia_seguinte
-  FROM
-    {{ ref("ordem_servico_trips_shapes_gtfs") }}
-    -- rj-smtr.gtfs.ordem_servico_trips_shapes
-  WHERE
-    faixa_horaria_inicio = "24:00:00"
-    AND tipo_dia = "Sabado"
-  ),
-  dia_seguinte_dom AS (
-  SELECT DISTINCT
-    servico,
-    tipo_dia,
-    partidas AS partidas_dia_seguinte,
-    distancia_total_planejada AS distancia_dia_seguinte
-  FROM
-    {{ ref("ordem_servico_trips_shapes_gtfs") }}
-    -- rj-smtr.gtfs.ordem_servico_trips_shapes
-  WHERE
-    faixa_horaria_inicio = "24:00:00"
-    AND tipo_dia = "Domingo"
+    faixa_horaria_inicio = "00:00:00"
+    AND tipo_dia = (SELECT tipo_dia FROM data_versao_efetiva WHERE data = DATE("{{ var('run_date') }}"))
   )
+  -- dia_seguinte_du AS (
+  -- SELECT DISTINCT
+  --   servico,
+  --   tipo_dia,
+  --   partidas AS partidas_dia_seguinte,
+  --   distancia_total_planejada AS distancia_dia_seguinte
+  -- FROM
+  --   {{ ref("ordem_servico_trips_shapes_gtfs") }}
+  --   -- rj-smtr.gtfs.ordem_servico_trips_shapes
+  -- WHERE
+  --   faixa_horaria_inicio = "24:00:00"
+  --   AND tipo_dia = "Dia Útil"
+  -- ),
+  -- dia_seguinte_sab AS (
+  -- SELECT DISTINCT
+  --   servico,
+  --   tipo_dia,
+  --   partidas AS partidas_dia_seguinte,
+  --   distancia_total_planejada AS distancia_dia_seguinte
+  -- FROM
+  --   {{ ref("ordem_servico_trips_shapes_gtfs") }}
+  --   -- rj-smtr.gtfs.ordem_servico_trips_shapes
+  -- WHERE
+  --   faixa_horaria_inicio = "24:00:00"
+  --   AND tipo_dia = "Sabado"
+  -- ),
+  -- dia_seguinte_dom AS (
+  -- SELECT DISTINCT
+  --   servico,
+  --   tipo_dia,
+  --   partidas AS partidas_dia_seguinte,
+  --   distancia_total_planejada AS distancia_dia_seguinte
+  -- FROM
+  --   {{ ref("ordem_servico_trips_shapes_gtfs") }}
+  --   -- rj-smtr.gtfs.ordem_servico_trips_shapes
+  -- WHERE
+  --   faixa_horaria_inicio = "24:00:00"
+  --   AND tipo_dia = "Domingo"
+  -- )
 SELECT
   d.data,
   CASE
@@ -265,31 +278,32 @@ SELECT
   vista,
   consorcio,
   sentido,
-  CASE
-    WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Domingo" THEN
-      o.partidas + COALESCE(sab.partidas_dia_seguinte, 0)
-    WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Sabado" THEN
-      o.partidas + COALESCE(du.partidas_dia_seguinte, 0)
-    WHEN o.faixa_horaria_inicio = "00:00:00" AND FORMAT_DATE('%A', DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)) = 'Monday' AND o.tipo_dia = "Dia Útil" THEN
-      o.partidas + COALESCE(dom.partidas_dia_seguinte, 0)
-    WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Dia Útil" THEN
-      o.partidas + COALESCE(du.partidas_dia_seguinte, 0)
-    ELSE
-      o.partidas
-  END AS partidas,
+  -- CASE
+  --   WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Domingo" THEN
+  --     o.partidas + COALESCE(sab.partidas_dia_seguinte, 0)
+  --   WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Sabado" THEN
+  --     o.partidas + COALESCE(du.partidas_dia_seguinte, 0)
+  --   WHEN o.faixa_horaria_inicio = "00:00:00" AND FORMAT_DATE('%A', DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)) = 'Monday' AND o.tipo_dia = "Dia Útil" THEN
+  --     o.partidas + COALESCE(dom.partidas_dia_seguinte, 0)
+  --   WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Dia Útil" THEN
+  --     o.partidas + COALESCE(du.partidas_dia_seguinte, 0)
+  --   ELSE
+  --     o.partidas
+  -- END AS partidas,
+  o.partidas + COALESCE(ds.partidas_dia_seguinte) AS partidas,
   distancia_planejada,
-  CASE
-    WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Domingo" THEN
-      o.partidas + COALESCE(sab.distancia_dia_seguinte, 0)
-    WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Sabado" THEN
-      o.partidas + COALESCE(du.distancia_dia_seguinte, 0)
-    WHEN o.faixa_horaria_inicio = "00:00:00" AND FORMAT_DATE('%A', DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)) = 'Monday' AND o.tipo_dia = "Dia Útil" THEN
-      o.partidas + COALESCE(dom.distancia_dia_seguinte, 0)
-    WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Dia Útil" THEN
-      o.partidas + COALESCE(du.distancia_dia_seguinte, 0)
-    ELSE
-      o.distancia_total_planejada
-  END AS distancia_total_planejada,
+  -- CASE
+  --   WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Domingo" THEN
+  --     o.partidas + COALESCE(sab.distancia_dia_seguinte, 0)
+  --   WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Sabado" THEN
+  --     o.partidas + COALESCE(du.distancia_dia_seguinte, 0)
+  --   WHEN o.faixa_horaria_inicio = "00:00:00" AND FORMAT_DATE('%A', DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)) = 'Monday' AND o.tipo_dia = "Dia Útil" THEN
+  --     o.partidas + COALESCE(dom.distancia_dia_seguinte, 0)
+  --   WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Dia Útil" THEN
+  --     o.partidas + COALESCE(du.distancia_dia_seguinte, 0)
+  --   ELSE
+  --     o.distancia_total_planejada
+  -- END AS distancia_total_planejada,
   IF(inicio_periodo IS NOT NULL AND ARRAY_LENGTH(SPLIT(inicio_periodo, ":")) = 3,
     DATETIME_ADD(
         DATETIME(
@@ -413,17 +427,19 @@ USING
     tipo_dia,
     tipo_os)
 LEFT JOIN
-  dia_seguinte_du AS du
-USING
-  (servico)
-LEFT JOIN
-  dia_seguinte_sab AS sab
-USING
-  (servico)
-LEFT JOIN
-  dia_seguinte_dom AS dom
-USING
-  (servico)
+  dia_seguinte AS ds
+-- LEFT JOIN
+--   dia_seguinte_du AS du
+-- USING
+--   (servico)
+-- LEFT JOIN
+--   dia_seguinte_sab AS sab
+-- USING
+--   (servico)
+-- LEFT JOIN
+--   dia_seguinte_dom AS dom
+-- USING
+--   (servico)
 WHERE
   o.faixa_horaria_inicio != "24:00:00"
   {% if var("run_date") == "2024-05-05" %}
