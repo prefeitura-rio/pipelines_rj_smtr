@@ -246,3 +246,4 @@ FROM
   melted
 WHERE
   id_integracao IN (SELECT id_integracao FROM integracao_nao_realizada)
+  AND id_transacao IS NOT NULL

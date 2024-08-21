@@ -1,5 +1,10 @@
 # Changelog - validacao_dados_jae
 
+## [1.1.1] - 2024-08-21
+
+### Corrigido
+  - Remove pernas nulas no modelo `integracao_nao_realizada.sql`
+
 ## [1.1.0] - 2024-08-21
 
 ### Adicionado
