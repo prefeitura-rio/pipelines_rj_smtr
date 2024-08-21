@@ -211,79 +211,56 @@ WITH
     tipo_os,
   FROM
     {{ ref("subsidio_data_versao_efetiva") }}
-    -- rj-smtr-dev.projeto_subsidio_sppo.subsidio_data_versao_efetiva
+    -- rj-smtr-dev.apuracaoFH_projeto_subsidio_sppo.subsidio_data_versao_efetiva
   WHERE
     data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY) AND DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)
   ),
   -- 2. Busca partidas e quilometragem da faixa horaria (dia anterior)
   dia_anterior AS (
-  SELECT DISTINCT
+    SELECT
+    COALESCE(d1.feed_version, feed_version),
+    COALESCE(d1.feed_start_date, feed_start_date),
+    feed_end_date,
+    tipo_os,
+    COALESCE(d1.tipo_dia, tipo_dia),
     servico,
-    tipo_dia,
-    feed_version,
-    feed_start_date,
-    partidas AS partidas_dia_anterior,
-    distancia_total_planejada AS distancia_dia_anterior
-  FROM
-    {{ ref("ordem_servico_trips_shapes_gtfs") }}
-    -- rj-smtr.gtfs.ordem_servico_trips_shapes
-  WHERE
-    faixa_horaria_inicio = "24:00:00"
-    AND tipo_dia = (SELECT tipo_dia FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY))
-  )
-  -- dia_seguinte AS (
-  -- SELECT DISTINCT
-  --   servico,
-  --   tipo_dia,
-  --   partidas AS partidas_dia_seguinte,
-  --   distancia_total_planejada AS distancia_dia_seguinte
-  -- FROM
-  --   {{ ref("ordem_servico_trips_shapes_gtfs") }}
-  --   -- rj-smtr.gtfs.ordem_servico_trips_shapes
-  -- WHERE
-  --   faixa_horaria_inicio = "00:00:00"
-  --   AND tipo_dia = (SELECT tipo_dia FROM data_versao_efetiva WHERE data = DATE("{{ var('run_date') }}"))
-  -- )
-  -- dia_seguinte_du AS (
-  -- SELECT DISTINCT
-  --   servico,
-  --   tipo_dia,
-  --   partidas AS partidas_dia_seguinte,
-  --   distancia_total_planejada AS distancia_dia_seguinte
-  -- FROM
-  --   {{ ref("ordem_servico_trips_shapes_gtfs") }}
-  --   -- rj-smtr.gtfs.ordem_servico_trips_shapes
-  -- WHERE
-  --   faixa_horaria_inicio = "24:00:00"
-  --   AND tipo_dia = "Dia Útil"
-  -- ),
-  -- dia_seguinte_sab AS (
-  -- SELECT DISTINCT
-  --   servico,
-  --   tipo_dia,
-  --   partidas AS partidas_dia_seguinte,
-  --   distancia_total_planejada AS distancia_dia_seguinte
-  -- FROM
-  --   {{ ref("ordem_servico_trips_shapes_gtfs") }}
-  --   -- rj-smtr.gtfs.ordem_servico_trips_shapes
-  -- WHERE
-  --   faixa_horaria_inicio = "24:00:00"
-  --   AND tipo_dia = "Sabado"
-  -- ),
-  -- dia_seguinte_dom AS (
-  -- SELECT DISTINCT
-  --   servico,
-  --   tipo_dia,
-  --   partidas AS partidas_dia_seguinte,
-  --   distancia_total_planejada AS distancia_dia_seguinte
-  -- FROM
-  --   {{ ref("ordem_servico_trips_shapes_gtfs") }}
-  --   -- rj-smtr.gtfs.ordem_servico_trips_shapes
-  -- WHERE
-  --   faixa_horaria_inicio = "24:00:00"
-  --   AND tipo_dia = "Domingo"
-  -- )
-SELECT
+    vista,
+    consorcio,
+    sentido,
+    partidas,
+    distancia_planejada,
+    distancia_total_planejada,
+    inicio_periodo,
+    fim_periodo,
+    "00:00:00" AS faixa_horaria_inicio,
+    "02:59:59" AS faixa_horaria_fim,
+    trip_id_planejado,
+    trip_id,
+    shape_id,
+    shape_id_planejado,
+    shape,
+    sentido_shape,
+    start_pt,
+    end_pt,
+    id_tipo_trajeto,
+    FROM
+      {{ ref("ordem_servico_trips_shapes_gtfs") }}
+      -- rj-smtr-dev.apuracaoFH_gtfs.ordem_servico_trips_shapes
+    LEFT JOIN
+      (SELECT * FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)) as d1
+    USING (feed_start_date, feed_version, tipo_dia, tipo_os)
+    WHERE
+      faixa_horaria_inicio = "24:00:00"
+      AND tipo_dia = (SELECT tipo_dia FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY))
+  ),
+combina_trips_shapes AS (
+    SELECT *
+    FROM rj-smtr-dev.apuracaoFH_gtfs.ordem_servico_trips_shapes
+    UNION ALL
+    SELECT *
+    FROM dia_anterior
+),
+data_trips_shapes AS (SELECT
   d.data,
   CASE
     WHEN subtipo_dia IS NOT NULL THEN CONCAT(o.tipo_dia, " - ", subtipo_dia)
@@ -293,40 +270,9 @@ SELECT
   vista,
   consorcio,
   sentido,
-  -- CASE
-  --   WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Domingo" THEN
-  --     o.partidas + COALESCE(sab.partidas_dia_seguinte, 0)
-  --   WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Sabado" THEN
-  --     o.partidas + COALESCE(du.partidas_dia_seguinte, 0)
-  --   WHEN o.faixa_horaria_inicio = "00:00:00" AND FORMAT_DATE('%A', DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)) = 'Monday' AND o.tipo_dia = "Dia Útil" THEN
-  --     o.partidas + COALESCE(dom.partidas_dia_seguinte, 0)
-  --   WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Dia Útil" THEN
-  --     o.partidas + COALESCE(du.partidas_dia_seguinte, 0)
-  --   ELSE
-  --     o.partidas
-  -- END AS partidas,
-  CASE
-    WHEN o.faixa_horaria_inicio = "00:00:00" THEN o.partidas + COALESCE(da.partidas_dia_anterior)
-    ELSE
-      o.partidas
-  END AS partidas,
-  CASE
-    WHEN o.faixa_horaria_inicio = "00:00:00" THEN o.distancia_planejada + COALESCE(da.distancia_dia_anterior)
-    ELSE
-      o.distancia_planejada
-  END AS distancia_planejada,
-  -- CASE
-  --   WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Domingo" THEN
-  --     o.partidas + COALESCE(sab.distancia_dia_seguinte, 0)
-  --   WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Sabado" THEN
-  --     o.partidas + COALESCE(du.distancia_dia_seguinte, 0)
-  --   WHEN o.faixa_horaria_inicio = "00:00:00" AND FORMAT_DATE('%A', DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)) = 'Monday' AND o.tipo_dia = "Dia Útil" THEN
-  --     o.partidas + COALESCE(dom.distancia_dia_seguinte, 0)
-  --   WHEN o.faixa_horaria_inicio = "00:00:00" AND o.tipo_dia = "Dia Útil" THEN
-  --     o.partidas + COALESCE(du.distancia_dia_seguinte, 0)
-  --   ELSE
-  --     o.distancia_total_planejada
-  -- END AS distancia_total_planejada,
+  partidas,
+  distancia_planejada,
+  distancia_total_planejada,
   IF(inicio_periodo IS NOT NULL AND ARRAY_LENGTH(SPLIT(inicio_periodo, ":")) = 3,
     DATETIME_ADD(
         DATETIME(
@@ -442,37 +388,81 @@ SELECT
 FROM
   data_versao_efetiva AS d
 LEFT JOIN
-  {{ ref("ordem_servico_trips_shapes_gtfs") }} AS o
---   rj-smtr.gtfs.ordem_servico_trips_shapes AS o
-USING
-  (feed_start_date,
-   feed_version,
-    tipo_dia,
-    tipo_os)
-LEFT JOIN
-  dia_anterior AS da
-USING
-  (servico,
-    feed_version,
-    feed_start_date)
--- LEFT JOIN
---   dia_seguinte_du AS du
--- USING
---   (servico)
--- LEFT JOIN
---   dia_seguinte_sab AS sab
--- USING
---   (servico)
--- LEFT JOIN
---   dia_seguinte_dom AS dom
--- USING
---   (servico)
+  (SELECT * FROM combina_trips_shapes) AS o
+USING (feed_start_date, feed_version, tipo_dia, tipo_os)
 WHERE
   data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)
-  AND o.faixa_horaria_inicio != "24:00:00"
-  -- Verificar inclusão serviços 24h às 27h de D-2 em D-1
-  {% if var("run_date") == "2024-05-05" %}
+  AND faixa_horaria_inicio != "24:00:00"
+),
+shapes AS (
+  SELECT
+    *
+  FROM
+    {{ ref("shapes_geom_gtfs") }}
+    -- rj-smtr-dev.apuracaoFH_gtfs.shapes_geom
+  WHERE
+    feed_start_date = (SELECT feed_start_date FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY))
+),
+dados_agregados AS (
+SELECT
+  data,
+  tipo_dia,
+  servico,
+  vista,
+  consorcio,
+  sentido,
+  SUM(partidas) AS partidas,
+  distancia_planejada,
+  SUM(distancia_total_planejada) AS distancia_total_planejada,
+  faixa_horaria_inicio,
+  faixa_horaria_fim,
+  trip_id_planejado,
+  trip_id,
+  shape_id,
+  shape_id_planejado,
+  data_shape,
+  sentido_shape,
+  id_tipo_trajeto,
+  feed_version,
+  datetime_ultima_atualizacao
+FROM
+  data_trips_shapes
+GROUP BY
+  data, tipo_dia, servico, vista, consorcio, sentido, distancia_planejada, faixa_horaria_inicio, faixa_horaria_fim, trip_id_planejado, trip_id, shape_id, shape_id_planejado, data_shape, sentido_shape, id_tipo_trajeto, feed_version, datetime_ultima_atualizacao
+)
+SELECT
+  data,
+  tipo_dia,
+  servico,
+  vista,
+  consorcio,
+  sentido,
+  partidas,
+  distancia_planejada,
+  distancia_total_planejada,
+  faixa_horaria_inicio,
+  faixa_horaria_fim,
+  trip_id_planejado,
+  trip_id,
+  shape_id,
+  shape_id_planejado,
+  data_shape,
+  s.shape,
+  sentido_shape,
+  s.start_pt,
+  s.end_pt,
+  id_tipo_trajeto,
+  feed_version,
+  datetime_ultima_atualizacao
+FROM
+  dados_agregados
+LEFT JOIN
+  shapes AS s
+USING
+  (feed_version, shape_id)
+{% if var("run_date") == "2024-05-05" %}
   -- Apuração "Madonna · The Celebration Tour in Rio"
+WHERE
   AND servico != "SE001"
   {% endif %}
 {% endif %}
