@@ -1,6 +1,7 @@
 {{
   config(
-    materialized="table"
+    materialized="table",
+    tags=["identificacao"]
   )
 }}
 
@@ -148,4 +149,4 @@ SELECT
 FROM
   cadastro
 WHERE
-  modo NOT IN ("Escolar", "Táxi", "TEC", "Fretamento")
+  modo NOT IN ("Escolar", "Táxi", "TEC")

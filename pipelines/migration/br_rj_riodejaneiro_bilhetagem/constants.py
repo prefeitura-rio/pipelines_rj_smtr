@@ -432,6 +432,29 @@ class constants(Enum):  # pylint: disable=c0103
             ],  # id column to nest data on
             "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
         },
+        {
+            "table_id": "linha_consorcio",
+            "partition_date_only": True,
+            "extract_params": {
+                "database": "principal_db",
+                "query": """
+                    SELECT
+                        *
+                    FROM
+                        LINHA_CONSORCIO
+                    WHERE
+                        DT_INCLUSAO BETWEEN '{start}'
+                        AND '{end}'
+                        OR DT_FIM_VALIDADE BETWEEN '{start}'
+                        AND '{end}'
+                """,
+            },
+            "primary_key": [
+                "CD_CONSORCIO",
+                "CD_LINHA",
+            ],  # id column to nest data on
+            "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
+        },
     ]
 
     BILHETAGEM_EXCLUDE = "+operadoras +consorcios +servicos"
@@ -470,7 +493,7 @@ ordem_pagamento_servico_operador_dia staging_ordem_pagamento_consorcio_operadora
 aux_retorno_ordem_pagamento",
     }
 
-    BILHETAGEM_MATERIALIZACAO_TRANSACAO_RIOCARD_PARAMS = {
+    BILHETAGEM_MATERIALIZACAO_DASHBOARD_CONTROLE_VINCULO_PARAMS = {
         "dataset_id": "dashboard_controle_vinculo_jae_riocard",
         "table_id": "veiculo_indicadores_dia",
         "upstream": True,
@@ -478,7 +501,7 @@ aux_retorno_ordem_pagamento",
             "run_date": {},
             "version": {},
         },
-        "exclude": "+gps_sppo +sppo_licenciamento +gps_validador",
+        "exclude": "+gps_sppo +sppo_licenciamento +gps_validador +transacao_riocard",
     }
 
     BILHETAGEM_MATERIALIZACAO_ORDEM_PAGAMENTO_PARAMS = {
@@ -499,7 +522,8 @@ aux_retorno_ordem_pagamento",
         "dataset_id": smtr_constants.BILHETAGEM_DATASET_ID.value,
         "upstream": True,
         "downstream": True,
-        "exclude": f"{BILHETAGEM_EXCLUDE} veiculo_validacao veiculo_indicadores_dia",
+        "exclude": f"{BILHETAGEM_EXCLUDE} veiculo_validacao veiculo_indicadores_dia \
+viagem_transacao+",
         "dbt_vars": {
             "date_range": {
                 "table_run_datetime_column_name": "datetime_captura",
@@ -521,8 +545,7 @@ aux_retorno_ordem_pagamento",
     BILHETAGEM_MATERIALIZACAO_VALIDACAO_JAE_PARAMS = {
         "dataset_id": "validacao_dados_jae",
         "upstream": True,
-        "exclude": "+gps_sppo +sppo_veiculo_dia +gps_validador +transacao \
-+ordem_pagamento_dia +integracao +servicos",
+        "exclude": "gtfs +transacao +integracao",
         "dbt_vars": {
             "run_date": {},
             "version": {},

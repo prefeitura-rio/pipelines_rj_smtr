@@ -2,7 +2,7 @@
 """
 Valores constantes gerais para pipelines da rj-smtr
 
-DBT 2024-07-03
+DBT 2024-08-21
 """
 
 from enum import Enum
@@ -72,6 +72,7 @@ class constants(Enum):  # pylint: disable=c0103
     GPS_SPPO_RAW_TABLE_ID = "registros"
     GPS_SPPO_DATASET_ID = "br_rj_riodejaneiro_veiculos"
     GPS_SPPO_TREATED_TABLE_ID = "gps_sppo"
+    GPS_SPPO_15_MIN_TREATED_TABLE_ID = "gps_sppo_15_minutos"
     GPS_SPPO_CAPTURE_DELAY_V1 = 1
     GPS_SPPO_CAPTURE_DELAY_V2 = 60
     GPS_SPPO_RECAPTURE_DELAY_V2 = 6
@@ -236,7 +237,7 @@ X-1vRvFcyr9skfBIrjxc4FSJZ3-g4gUCF56YjGPOmd1f5qH8vndpy22P6f6KdcYgWaqzUmtSBL\
         "stops": ["stop_id"],
         "trips": ["trip_id"],
         "fare_attributes": ["fare_id"],
-        "fare_rules": [],
+        "fare_rules": ["fare_id", "route_id"],
         "stop_times": ["trip_id", "stop_sequence"],
     }
 

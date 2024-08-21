@@ -213,7 +213,7 @@ WITH
     {{ ref("subsidio_data_versao_efetiva") }}
     -- rj-smtr-dev.projeto_subsidio_sppo.subsidio_data_versao_efetiva
   WHERE
-    data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY) )
+    data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY) AND DATE("{{ var('run_date') }}"))
 SELECT
   d.data,
   CASE
@@ -283,5 +283,9 @@ USING
    feed_version,
     tipo_dia,
     tipo_os)
-
+  {% if var("run_date") == "2024-05-05" %}
+    -- Apuração "Madonna · The Celebration Tour in Rio"
+    WHERE
+      servico != "SE001"
+  {% endif %}
 {% endif %}

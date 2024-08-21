@@ -1,4 +1,18 @@
 -- depends_on: {{ ref('view_passageiros_tile_hora') }}
+WITH servicos AS (
+  SELECT
+    * EXCEPT(rn)
+  FROM
+    (
+      SELECT
+        *,
+        ROW_NUMBER() OVER (PARTITION BY id_servico_jae ORDER BY data_inicio_vigencia) AS rn
+      FROM
+        {{ ref("servicos") }}
+    )
+  WHERE
+    rn = 1
+)
 SELECT
   p.data,
   p.hora,
@@ -20,5 +34,7 @@ SELECT
 FROM
   {{ ref("passageiros_hora") }} p
 LEFT JOIN
-  {{ ref("servicos") }} s
+  servicos s
 USING(id_servico_jae)
+WHERE
+  p.tipo_transacao_smtr != "RioCard"

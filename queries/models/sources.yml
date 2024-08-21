@@ -1,6 +1,7 @@
 version: 2
 
 sources:
+
   - name: br_rj_riodejaneiro_bilhetagem_staging
     database: rj-smtr-staging
 
@@ -26,6 +27,7 @@ sources:
       - name: linha_sem_ressarcimento
       - name: ordem_pagamento_consorcio_operadora
       - name: ordem_pagamento_consorcio
+      - name: linha_consorcio
 
   - name: br_rj_riodejaneiro_gtfs_staging
     database: rj-smtr-staging

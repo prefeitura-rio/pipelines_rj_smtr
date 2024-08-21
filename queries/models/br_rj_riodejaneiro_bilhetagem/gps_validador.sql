@@ -6,6 +6,7 @@
       "data_type":"date",
       "granularity": "day"
     },
+    tags=['geolocalizacao']
   )
 }}
 
@@ -33,6 +34,7 @@ SELECT
     sentido,
     estado_equipamento,
     temperatura,
+    versao_app,
     '{{ var("version") }}' as versao
 FROM
 (

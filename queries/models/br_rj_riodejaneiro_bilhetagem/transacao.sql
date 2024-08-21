@@ -136,9 +136,9 @@ new_data AS (
     l.nm_linha AS descricao_servico_jae,
     sentido,
     CASE
-    WHEN m.modo = "VLT" THEN SUBSTRING(t.veiculo_id, 1, 3)
-    WHEN m.modo = "BRT" THEN NULL
-    ELSE t.veiculo_id
+      WHEN m.modo = "VLT" THEN SUBSTRING(t.veiculo_id, 1, 3)
+      WHEN m.modo = "BRT" THEN NULL
+      ELSE t.veiculo_id
     END AS id_veiculo,
     t.numero_serie_validador AS id_validador,
     COALESCE(t.id_cliente, t.pan_hash) AS id_cliente,
@@ -318,7 +318,10 @@ SELECT
     WHEN t.tipo_transacao IN ("Débito", "Botoeira") THEN "Integral"
     ELSE t.tipo_transacao
   END AS tipo_transacao_smtr,
-  t.tipo_gratuidade,
+  CASE
+    WHEN t.tipo_transacao = "Gratuidade" AND t.tipo_gratuidade IS NULL THEN "Não Identificado"
+    ELSE t.tipo_gratuidade
+  END AS tipo_gratuidade,
   t.id_tipo_integracao,
   t.id_integracao,
   t.latitude,

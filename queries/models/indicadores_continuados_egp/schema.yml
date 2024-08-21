@@ -16,3 +16,36 @@ models:
         description: "Valor do indicador"
       - name: data_ultima_atualizacao
         description: "Data da última atualização do indicador"
+  - name: indicadores_mes_pivot
+    description: "Indicadores mensais vinculados ao Escritório de Gerenciamento de Projetos e de Metas (EGP-Rio) pivotados por mês"
+    columns:
+      - name: indicador
+        description: "Nome do indicador"
+      - name: modo
+        description: "Modo de transporte (quando aplicável)"
+      - name: ano
+        description: "Ano de apuração do indicador"
+      - name: Janeiro
+        description: "Valor apurado do indicador no mês de janeiro"
+      - name: Fevereiro
+        description: "Valor apurado do indicador no mês de fevereiro"
+      - name: Marco
+        description: "Valor apurado do indicador no mês de março"
+      - name: Abril
+        description: "Valor apurado do indicador no mês de abril"
+      - name: Maio
+        description: "Valor apurado do indicador no mês de maio"
+      - name: Junho
+        description: "Valor apurado do indicador no mês de junho"
+      - name: Julho
+        description: "Valor apurado do indicador no mês de julho"
+      - name: Agosto
+        description: "Valor apurado do indicador no mês de agosto"
+      - name: Setembro
+        description: "Valor apurado do indicador no mês de setembro"
+      - name: Outubro
+        description: "Valor apurado do indicador no mês de outubro"
+      - name: Novembro
+        description: "Valor apurado do indicador no mês de novembro"
+      - name: Dezembro
+        description: "Valor apurado do indicador no mês de dezembro"

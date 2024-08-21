@@ -40,7 +40,6 @@ BILHETAGEM_MATERIALIZACAO = create_default_materialization_flow(
 )
 
 with Flow("Bilhetagem - Tratamento") as bilhetagem_tratamento:
-
     timestamp = get_scheduled_timestamp()
 
     AUXILIAR_CAPTURE = run_subflow(

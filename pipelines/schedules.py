@@ -162,6 +162,18 @@ every_day_hour_seven = Schedule(
     ]
 )
 
+every_day_hour_seven_minute_five = Schedule(
+    clocks=[
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(2022, 11, 30, 7, 5, tzinfo=timezone(constants.TIMEZONE.value)),
+            labels=[
+                emd_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        ),
+    ]
+)
+
 every_dayofmonth_one_and_sixteen = Schedule(
     clocks=[
         CronClock(
@@ -190,5 +202,17 @@ every_friday_seven_thirty = Schedule(
                 emd_constants.RJ_SMTR_AGENT_LABEL.value,
             ],
         )
+    ]
+)
+
+every_15_minutes = Schedule(
+    clocks=[
+        IntervalClock(
+            interval=timedelta(minutes=15),
+            start_date=datetime(2021, 1, 1, 0, 0, 0, tzinfo=timezone(constants.TIMEZONE.value)),
+            labels=[
+                emd_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        ),
     ]
 )

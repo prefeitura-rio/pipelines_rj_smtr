@@ -1,5 +1,25 @@
 # Changelog - cadastro
 
+## [1.2.1] - 2024-08-02
+
+### Alterado
+- Adiciona tag `geolocalizacao` ao modelo `servicos.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/127)
+- Adiciona tag `identificacao` ao modelo `operadoras.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/127)
+
+## [1.2.0] - 2024-07-17
+
+### Adicionado
+
+- Cria modelos auxiliares para a tabela de servicos:
+  - `aux_routes_vigencia_gtfs.sql`
+  - `aux_stops_vigencia_gtfs.sql`
+  - `aux_servicos_gtfs.sql`
+
+### Alterado
+
+- Altera estrutura do modelo `servicos.sql` para adicionar datas de inicio e fim de vigência (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/98)
+- Altera filtro no modelo `operadoras.sql`, deixando de filtrar operadores do modo `Fretamento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/98)
+
 ## [1.1.1] - 2024-04-25
 
 ### Alterado

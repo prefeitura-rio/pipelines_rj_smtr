@@ -1,5 +1,28 @@
 # Changelog - br_rj_riodejaneiro_bilhetagem
 
+## [1.3.1] - 2024-08-19
+
+### Alterado
+
+- Adiciona tabela do subsídio no exclude da materialização das tabelas do GPS do validador (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/150)
+
+## [1.3.0] - 2024-08-05
+
+### Adicionado
+
+- Cria captura da tabela `linha_consorcio` do banco de dados da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/130)
+
+### Alterado
+
+- Renomeia flow `SMTR: Bilhetagem Transação RioCard - Materialização` para `SMTR: Bilhetagem Controle Vinculo Validador - Materialização` e adiciona modelo `transacao_riocard` no parametro `exclude`  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/130)
+
+## [1.2.0] - 2024-07-17
+
+### Alterado
+
+- Ativa schedule do flow `bilhetagem_validacao_jae` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/98)
+- Adequa parâmetro exclude do flow `bilhetagem_validacao_jae` para as novas queries de validação (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/98)
+
 ## [1.1.0] - 2024-06-13
 
 ### Adicionado
