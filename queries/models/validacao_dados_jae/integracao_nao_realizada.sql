@@ -18,7 +18,8 @@
       SELECT
         CONCAT("'", PARSE_DATE("%Y%m%d", partition_id), "'") AS data
       FROM
-        `{{ transacao_table.database }}.{{ transacao_table.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+        -- `{{ transacao_table.database }}.{{ transacao_table.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+        `rj-smtr.{{ transacao_table.schema }}.INFORMATION_SCHEMA.PARTITIONS`
       WHERE
         table_name = "{{ transacao_table.identifier }}"
         AND partition_id != "__NULL__"
@@ -189,7 +190,7 @@ transacao_listada AS (
 integracoes_validas AS (
   SELECT
     DATE(datetime_transacao_0) AS data,
-    GENERATE_UUID() AS id_integracao,
+    id_transacao_0 AS id_integracao,
     *
   FROM
     validacao_integracao_2_pernas
@@ -199,11 +200,10 @@ integracoes_validas AS (
 melted AS (
   SELECT
     data,
-    GENERATE_UUID() AS id_integracao,
+    id_integracao,
     sequencia_integracao,
     datetime_transacao,
     id_transacao,
-    id_cliente,
     modo,
     SPLIT(servico_sentido, '_')[0] AS id_servico_jae,
     SPLIT(servico_sentido, '_')[1] AS sentido
@@ -240,11 +240,10 @@ integracao_nao_realizada AS (
       {% endif %}
     )
 )
--- SELECT
---   *,
---   '{{ var("version") }}' as versao
--- FROM
---   melted
--- WHERE
---   id_integracao IN (SELECT id_integracao FROM integracao_nao_realizada)
-SELECT CURRENT_DATE() AS data, * FROM integracao_nao_realizada
+SELECT
+  *,
+  '{{ var("version") }}' as versao
+FROM
+  melted
+WHERE
+  id_integracao IN (SELECT id_integracao FROM integracao_nao_realizada)
