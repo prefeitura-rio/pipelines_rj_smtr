@@ -92,3 +92,8 @@ models:
         description: "Indica se os valores e quantidades da tabela ordem_pagamento_consorcio_dia agregada por dia está diferente das informações da tabela ordem_pagamento_dia"
       - name: versao
         description: "Código de controle de versão do dado (SHA Github)"
+  - name: transacao_invalida
+    description: "Tabela para validação dos dados de transação da Jaé"
+    columns:
+      - name: data
+        description: "Data da transação (partição)"

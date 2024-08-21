@@ -22,7 +22,7 @@
       WHERE
         table_name = "{{ transacao_table.identifier }}"
         AND partition_id != "__NULL__"
-        AND DATE(last_modified_time, "America/Sao_Paulo") = DATE_SUB(DATE("{{var('run_date')}}"), INTERVAL 1 DAY)
+        AND DATE(last_modified_time, "America/Sao_Paulo") >= DATE_SUB(DATE("{{var('run_date')}}"), INTERVAL 1 DAY)
     {% endset %}
 
     {{ log("Running query: \n"~partitions_query, info=True) }}
@@ -33,8 +33,26 @@
   {% endif %}
 {% endif %}
 
-{% set max_transactions = 5 %} -- Número máximo de pernas em uma integração
+{% set max_transactions = var('quantidade_integracoes_max') %} -- Número máximo de pernas em uma integração
 {% set pivot_columns = ["datetime_transacao", "id_transacao", "modo", "servico_sentido"] %}
+{% set transaction_date_filter %}
+  {% if partition_list|length > 0 %}
+    {% for p in partition_list %}
+      (
+        data BETWEEN DATE_SUB(DATE({{ p }}), INTERVAL 1 DAY) AND DATE_ADD(DATE({{ p }}), INTERVAL 1 DAY)
+        AND
+          (
+            DATE(datetime_transacao) = DATE({{ p }})
+            OR DATE(DATETIME_SUB(datetime_transacao, INTERVAL 180 MINUTE)) = DATE({{ p }})
+            OR DATE(DATETIME_ADD(datetime_transacao, INTERVAL 180 MINUTE)) = DATE({{ p }})
+          )
+      )
+      {% if not loop.last %}OR{% endif %}
+    {% endfor %}
+  {% else %}
+    data = "2000-01-01"
+  {% endif %}
+{% endset %}
 
 WITH matriz AS (
   SELECT
@@ -50,7 +68,7 @@ transacao AS (
     id_cliente,
     {% for column in pivot_columns %}
       {% if column == "servico_sentido" %}
-        CONCAT(id_servico_jae, '_', sentido),
+        CONCAT(id_servico_jae, '_', sentido) AS servico_sentido,
       {% else %}
         {{ column }},
       {% endif %}
@@ -59,17 +77,11 @@ transacao AS (
     -- {{ ref("transacao") }}
     `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
   WHERE
-    DATA = '2024-07-23'
-    and id_cliente IN ('243053', '235930')
-    -- {% if is_incremental() %}
-    --   {% if partition_list|length > 0 %}
-    --     data IN ({{ partition_list|join(', ') }})
-    --   {% else %}
-    --     data = "2000-01-01"
-    --   {% endif %}
-    --   {% else %}
-    --     data < CURRENT_DATE("America/Sao_Paulo")
-    -- {% endif %}
+    data < CURRENT_DATE("America/Sao_Paulo")
+    {% if is_incremental() %}
+      AND
+      {{ transaction_date_filter }}
+    {% endif %}
 ),
 transacao_agrupada AS (
   SELECT
@@ -80,7 +92,7 @@ transacao_agrupada AS (
         {% if loop.first %}
           {{ column }} AS {{ column }}_{{ transaction_number }},
         {% else %}
-          LEAD({{ column }}) OVER (PARTITION BY id_cliente ORDER BY datetime_transacao) AS {{ column }}_{{ transaction_number }},
+          LEAD({{ column }}, {{ loop.index0 }}) OVER (PARTITION BY id_cliente ORDER BY datetime_transacao) AS {{ column }}_{{ transaction_number }},
         {% endif %}
       {% endfor %}
     {% endfor %}
@@ -91,19 +103,19 @@ integracao_possivel AS (
   SELECT
     *,
     {% set modos = ["modo_0"] %}
-    {% set servicos = ["servico_0"] %}
+    {% set servicos = ["servico_sentido_0"] %}
     {% for transaction_number in range(1, max_transactions) %}
       {% do modos.append("modo_"~transaction_number) %}
       (
         DATETIME_DIFF(datetime_transacao_{{ transaction_number }}, datetime_transacao_0, MINUTE) <= 180
         AND CONCAT({{ modos|join(", ',', ") }}) IN (SELECT sequencia_valida FROM matriz)
         {% if loop.first %}
-          AND servico_{{ transaction_number }} != servico_0
+          AND servico_sentido_{{ transaction_number }} != servico_sentido_0
         {% else %}
-          AND servico_{{ transaction_number }} NOT IN ({{ servicos|join(", ',', ") }})
+          AND servico_sentido_{{ transaction_number }} NOT IN ({{ servicos|join(", ',', ") }})
         {% endif %}
       ) AS indicador_integracao_{{ transaction_number }},
-      {% do servicos.append("servico_"~transaction_number) %}
+      {% do servicos.append("servico_sentido_"~transaction_number) %}
 
     {% endfor %}
   FROM
@@ -121,7 +133,7 @@ transacao_filtrada AS (
         {% else %}
           CASE
             WHEN
-              indicador_integracao_{{ transaction_number }} THEN column_{{ transaction_number }}
+              indicador_integracao_{{ transaction_number }} THEN {{ column }}_{{ transaction_number }}
             END AS {{ column }}_{{ transaction_number }},
         {% endif %}
       {% endfor %}
@@ -131,7 +143,7 @@ transacao_filtrada AS (
     indicador_integracao_3,
     indicador_integracao_4
   FROM
-    integracao
+    integracao_possivel
   WHERE
     indicador_integracao_1
 ),
@@ -172,11 +184,67 @@ transacao_listada AS (
         WHERE
           NOT remover_{{ max_transactions - i + 1 }}
       {% endif %}
-  ){% if not loop.last %},{% endif %}
+  ),
 {% endfor %}
-SELECT
-  *
-FROM
-  validacao_integracao_2_pernas
-WHERE
-  NOT remover_2
+integracoes_validas AS (
+  SELECT
+    DATE(datetime_transacao_0) AS data,
+    GENERATE_UUID() AS id_integracao,
+    *
+  FROM
+    validacao_integracao_2_pernas
+  WHERE
+    NOT remover_2
+),
+melted AS (
+  SELECT
+    data,
+    GENERATE_UUID() AS id_integracao,
+    sequencia_integracao,
+    datetime_transacao,
+    id_transacao,
+    id_cliente,
+    modo,
+    SPLIT(servico_sentido, '_')[0] AS id_servico_jae,
+    SPLIT(servico_sentido, '_')[1] AS sentido
+  FROM
+    integracoes_validas,
+    UNNEST(
+      [
+        {% for transaction_number in range(max_transactions) %}
+          STRUCT(
+            {% for column in pivot_columns %}
+              {{ column }}_{{ transaction_number }} AS {{ column }},
+            {% endfor %}
+            {{ transaction_number }} AS sequencia_integracao
+          ){%if not loop.last %},{% endif %}
+      {% endfor %}
+      ]
+    )
+),
+integracao_nao_realizada AS (
+  SELECT DISTINCT
+    id_integracao
+  FROM
+    melted
+  WHERE
+    id_transacao NOT IN (
+      SELECT
+        id_transacao
+      FROM
+        -- ref("integracao")
+        `rj-smtr.br_rj_riodejaneiro_bilhetagem.integracao`
+      {% if is_incremental() %}
+        WHERE
+          {{ transaction_date_filter }}
+      {% endif %}
+    )
+)
+-- SELECT
+--   *,
+--   '{{ var("version") }}' as versao
+-- FROM
+--   melted
+-- WHERE
+--   id_integracao IN (SELECT id_integracao FROM integracao_nao_realizada)
+SELECT CURRENT_DATE() AS data, * FROM integracao_nao_realizada
