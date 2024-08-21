@@ -23,7 +23,7 @@
       WHERE
         table_name = "{{ transacao_table.identifier }}"
         AND partition_id != "__NULL__"
-        AND DATE(last_modified_time, "America/Sao_Paulo") >= DATE_SUB(DATE("{{var('run_date')}}"), INTERVAL 1 DAY)
+        AND DATE(last_modified_time, "America/Sao_Paulo") BETWEEN DATE_SUB(DATE("{{var('run_date')}}"), INTERVAL 1 DAY) AND DATE("{{var('run_date')}}")
     {% endset %}
 
     {{ log("Running query: \n"~partitions_query, info=True) }}
