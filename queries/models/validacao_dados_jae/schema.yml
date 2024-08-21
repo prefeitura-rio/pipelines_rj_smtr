@@ -111,3 +111,5 @@ models:
         description: "Identificador da linha no banco de dados da jaé (É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae)"
       - name: sentido
         description: "Sentido de operação do serviço (0 = ida, 1 = volta)"
+      - name: versao
+        description: "Código de controle de versão do dado (SHA Github)"
