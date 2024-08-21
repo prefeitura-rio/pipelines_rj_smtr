@@ -30,7 +30,7 @@
     {% set partitions = run_query(partitions_query) %}
 
     {% set partition_list = partitions.columns[0].values() %}
-    {{ log("trasacao partitions: \n"~partition_list, info=True) }}
+    {{ log("transacao partitions: \n"~partition_list, info=True) }}
   {% endif %}
 {% endif %}
 
@@ -59,7 +59,7 @@ WITH matriz AS (
   SELECT
     string_agg(modo order by sequencia_integracao) AS sequencia_valida
   FROM
-    ref("matriz_integracao")
+    {{ ref("matriz_integracao") }}
     -- `rj-smtr.br_rj_riodejaneiro_bilhetagem.matriz_integracao`
   group by id_matriz_integracao
 ),
@@ -231,7 +231,7 @@ integracao_nao_realizada AS (
       SELECT
         id_transacao
       FROM
-        ref("integracao")
+        {{ ref("integracao") }}
         -- `rj-smtr.br_rj_riodejaneiro_bilhetagem.integracao`
       {% if is_incremental() %}
         WHERE
