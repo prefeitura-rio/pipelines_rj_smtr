@@ -16,7 +16,8 @@ WITH
     tipo_dia,
     consorcio,
     servico,
-    distancia_total_planejada AS km_planejada,
+    sentido,
+    SUM(distancia_total_planejada) AS km_planejada,
   FROM
     {{ ref("viagem_planejada") }}
     -- `rj-smtr`.`projeto_subsidio_sppo`.`viagem_planejada`
@@ -25,6 +26,7 @@ WITH
     AND DATE( "{{ var("end_date") }}" )
     AND ( distancia_total_planejada > 0
       OR distancia_total_planejada IS NULL )
+  GROUP BY 1,2,3,4,5
   ),
 -- 2. Viagens realizadas
   viagem AS (
@@ -52,7 +54,7 @@ WITH
     COALESCE(SUM(v.distancia_planejada), 0) AS km_apurada,
     COALESCE(ROUND(100 * SUM(v.distancia_planejada) / p.km_planejada,2), 0) AS perc_km_planejada
   FROM
-    planejado AS p
+    (SELECT DISTINCT * EXCEPT(sentido) FROM planejado ) AS p
   LEFT JOIN
     viagem AS v
   USING

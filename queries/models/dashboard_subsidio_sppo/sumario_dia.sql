@@ -10,10 +10,14 @@ WITH
     CASE
       WHEN sentido = "C" THEN MAX(distancia_planejada)
     ELSE
-    SUM(distancia_planejada)
-  END
+      SUM(distancia_planejada)
+    END
     AS distancia_planejada,
-    MAX(distancia_total_planejada) AS distancia_total_planejada,
+    CASE
+      WHEN sentido = "C" THEN MAX(distancia_total_planejada)
+    ELSE
+      SUM(distancia_total_planejada)
+    END AS distancia_total_planejada,
     NULL AS viagens_planejadas
   FROM
     {{ ref("viagem_planejada") }}
