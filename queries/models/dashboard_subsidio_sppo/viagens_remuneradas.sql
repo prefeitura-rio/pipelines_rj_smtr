@@ -25,7 +25,7 @@ WITH
     faixa_horaria_inicio,
     faixa_horaria_fim,
     partidas,
-    distancia_total_planejada AS km_planejada, -- ADD SUM(distancia_total_planejada) e GROUP BY 1,2,3,4
+    distancia_total_planejada AS km_planejada,
   FROM
     {{ ref("viagem_planejada") }}
     -- rj-smtr.projeto_subsidio_sppo.viagem_planejada
@@ -37,29 +37,6 @@ WITH
     AND (id_tipo_trajeto = 0
       OR id_tipo_trajeto IS NULL)
   ),
-  -- data_versao_efetiva AS (
-  -- SELECT
-  --   data,
-  --   tipo_dia,
-  --   tipo_os,
-  --   COALESCE(feed_start_date, data_versao_trips, data_versao_shapes, data_versao_frequencies) AS feed_start_date
-  -- FROM
-  --     {{ ref("subsidio_data_versao_efetiva") }}
-  --     -- rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva -- (alterar também query no bloco execute)
-  -- WHERE
-  --   data BETWEEN DATE("{{ var("start_date") }}")
-  --   AND DATE( "{{ var("end_date") }}" )
-  -- ),
-  -- viagem_planejada AS (
-  -- SELECT
-  --   p.*
-  -- FROM
-  --   planejado AS p
-  -- LEFT JOIN
-  --   data_versao_efetiva AS d
-  -- USING
-  --   (data, tipo_dia)
-  -- ),
 -- 2. Parâmetros de subsídio
   subsidio_parametros AS (
   SELECT
@@ -111,7 +88,7 @@ WITH
 )
 -- 6. Flag de viagens que serão consideradas ou não para fins de remuneração (apuração de valor de subsídio) - RESOLUÇÃO SMTR Nº 3645/2023
 SELECT
-  v.* EXCEPT(rn),
+  v.* EXCEPT(rn, datetime_partida),
   CASE
     WHEN v.tipo_viagem = "Sem transação"
       THEN FALSE
