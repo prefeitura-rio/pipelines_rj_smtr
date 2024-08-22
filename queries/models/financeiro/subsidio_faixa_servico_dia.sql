@@ -36,8 +36,8 @@ WITH
     datetime_partida,
     distancia_planejada
  FROM
-    {{ ref("viagem_completa") }}
-  --  rj-smtr.projeto_subsidio_sppo.viagem_completa
+    -- {{ ref("viagem_completa") }}
+   rj-smtr.projeto_subsidio_sppo.viagem_completa
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")

@@ -16,8 +16,8 @@ WITH
     SAFE_CAST(AVG(pof) AS NUMERIC) AS media_pof,
     SAFE_CAST(STDDEV(pof) AS NUMERIC) AS desvp_pof
   FROM
-    -- {{ ref("subsidio_faixa_servico_dia") }}
-    rj-smtr-dev.financeiro.subsidio_faixa_servico_dia
+    {{ ref("subsidio_faixa_servico_dia") }}
+    -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
@@ -31,7 +31,8 @@ WITH
   SELECT
     *
   FROM
-    rj-smtr-dev.financeiro.subsidio_sumario_servico_dia_pagamento
+    {{ ref("subsidio_sumario_servico_dia_pagamento") }}
+    -- rj-smtr-dev.financeiro.subsidio_sumario_servico_dia_pagamento
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
@@ -48,7 +49,8 @@ WITH
       tipo_viagem,
       km_apurada_faixa
     FROM
-      rj-smtr-dev.financeiro.subsidio_faixa_servico_dia_tipo_viagem
+      {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
+      -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia_tipo_viagem
     WHERE
       data BETWEEN DATE("{{ var("start_date") }}")
       AND DATE("{{ var("end_date") }}")

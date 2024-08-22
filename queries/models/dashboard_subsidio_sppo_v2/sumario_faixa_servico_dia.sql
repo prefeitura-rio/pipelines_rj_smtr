@@ -20,8 +20,8 @@ WITH
     km_planejada_faixa,
     pof
   FROM
-    rj-smtr-dev.financeiro.subsidio_faixa_servico_dia
-    --{{ ref("subsidio_faixa_servico_dia") }}
+    -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia
+    {{ ref("subsidio_faixa_servico_dia") }}
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
@@ -40,8 +40,8 @@ WITH
     SUM(valor_total_sem_glosa) AS valor_total_sem_glosa,
     SUM(valor_judicial) AS valor_judicial
   FROM
-    rj-smtr-dev.financeiro.subsidio_faixa_servico_dia_tipo_viagem
-    --{{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
+    -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia_tipo_viagem
+    {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
@@ -67,7 +67,8 @@ WITH
       tipo_viagem,
       km_apurada_faixa
     FROM
-      rj-smtr-dev.financeiro.subsidio_faixa_servico_dia_tipo_viagem
+      {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
+      -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia_tipo_viagem
     WHERE
       data BETWEEN DATE("{{ var("start_date") }}")
       AND DATE("{{ var("end_date") }}")
