@@ -65,10 +65,11 @@ WITH
     data,
     servico_realizado AS servico,
     id_veiculo,
-    id_viagem
+    id_viagem,
+    datetime_partida
   FROM
-    {{ ref("viagem_completa") }}
-    -- rj-smtr.projeto_subsidio_sppo.viagem_completa
+    -- {{ ref("viagem_completa") }}
+    rj-smtr.projeto_subsidio_sppo.viagem_completa
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
@@ -78,6 +79,7 @@ WITH
     v.data,
     v.servico,
     v.id_viagem,
+    v.datetime_partida,
     COALESCE(ia.indicador_ar_condicionado, FALSE) AS indicador_ar_condicionado
   FROM
     viagem v
@@ -113,15 +115,17 @@ WITH
     FROM
       subsidio_faixa_dia AS sfd
     LEFT JOIN
+      ar_viagem AS av
+    ON
+      sfd.data = av.data
+      AND sfd.servico = av.servico
+      AND av.datetime_partida BETWEEN sfd.faixa_horaria_inicio
+      AND sfd.faixa_horaria_fim
+    LEFT JOIN
       servico_km_apuracao AS s
     ON
       sfd.data = s.data
       AND sfd.servico = s.servico
-    LEFT JOIN
-      ar_viagem AS av
-    ON
-      s.data = av.data
-      AND s.servico = av.servico
       AND s.id_viagem = av.id_viagem
   )
 SELECT
@@ -150,6 +154,5 @@ GROUP BY
   faixa_horaria_fim,
   consorcio,
   servico,
-  pof,
   indicador_ar_condicionado,
   tipo_viagem
