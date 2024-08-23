@@ -251,6 +251,8 @@ WITH
     USING (feed_start_date, feed_version, tipo_dia, tipo_os)
     WHERE
       faixa_horaria_inicio = "24:00:00"
+      AND tipo_os = (SELECT tipo_os FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY))
+      AND feed_version = (SELECT feed_version FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY))
       AND tipo_dia = (SELECT tipo_dia FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY))
   ),
 combina_trips_shapes AS (
