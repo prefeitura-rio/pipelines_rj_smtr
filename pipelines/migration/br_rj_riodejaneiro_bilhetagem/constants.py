@@ -476,8 +476,8 @@ class constants(Enum):  # pylint: disable=c0103
     }
 
     BILHETAGEM_MATERIALIZACAO_TRANSACAO_PARAMS = {
-        "dataset_id": BILHETAGEM_JAE_DASHBOARD_DATASET_ID,
-        "table_id": "view_passageiros_hora",
+        "dataset_id": smtr_constants.BILHETAGEM_DATASET_ID.value,
+        "table_id": "transacao",
         "upstream": True,
         "dbt_vars": {
             "date_range": {
@@ -490,7 +490,21 @@ class constants(Enum):  # pylint: disable=c0103
 ordem_pagamento_dia ordem_pagamento_consorcio_dia ordem_pagamento_consorcio_operador_dia \
 staging_ordem_pagamento_consorcio staging_ordem_pagamento \
 ordem_pagamento_servico_operador_dia staging_ordem_pagamento_consorcio_operadora \
-aux_retorno_ordem_pagamento",
+aux_retorno_ordem_pagamento staging_arquivo_retorno",
+    }
+
+    BILHETAGEM_MATERIALIZACAO_PASSAGEIROS_HORA_PARAMS = {
+        "dataset_id": BILHETAGEM_JAE_DASHBOARD_DATASET_ID,
+        "table_id": "view_passageiros_hora",
+        "upstream": True,
+        "dbt_vars": {
+            "date_range": {
+                "table_run_datetime_column_name": "data",
+                "delay_hours": 0,
+            },
+            "version": {},
+        },
+        "exclude": "+transacao",
     }
 
     BILHETAGEM_MATERIALIZACAO_DASHBOARD_CONTROLE_VINCULO_PARAMS = {
