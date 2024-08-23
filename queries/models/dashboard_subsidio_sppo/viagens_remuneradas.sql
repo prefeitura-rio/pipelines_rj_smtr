@@ -37,6 +37,60 @@ WITH
     AND (id_tipo_trajeto = 0
       OR id_tipo_trajeto IS NULL)
   ),
+  viagens_planejadas AS (
+  SELECT
+    feed_start_date,
+    servico,
+    tipo_dia,
+    viagens_planejadas,
+    partidas_ida,
+    partidas_volta,
+    tipo_os,
+  FROM
+      {{ ref("ordem_servico_gtfs") }}
+      -- rj-smtr.gtfs.ordem_servico
+  WHERE
+    feed_start_date IN ('{{ feed_start_dates|join("', '") }}')
+  ),
+  data_versao_efetiva AS (
+  SELECT
+    data,
+    tipo_dia,
+    tipo_os,
+    COALESCE(feed_start_date, data_versao_trips, data_versao_shapes, data_versao_frequencies) AS feed_start_date
+  FROM
+      {{ ref("subsidio_data_versao_efetiva") }}
+      -- rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva -- (alterar também query no bloco execute)
+  WHERE
+    data BETWEEN DATE("{{ var("start_date") }}")
+    AND DATE( "{{ var("end_date") }}" )
+  ),
+  viagem_planejada AS (
+  SELECT
+    p.data,
+    p.tipo_dia,
+    p.consorcio,
+    p.servico,
+    p.faixa_horaria_inicio,
+    p.faixa_horaria_fim,
+    IF(v.partidas_volta = 0, p.partidas, p.partidas/2) AS viagens_planejadas,
+    p.km_planejada,
+    p.partidas AS viagens_planejadas_ida_volta
+  FROM
+    planejado AS p
+  LEFT JOIN
+    data_versao_efetiva AS d
+  USING
+    (data, tipo_dia)
+  LEFT JOIN
+    viagens_planejadas AS v
+  ON
+    d.feed_start_date = v.feed_start_date
+    AND p.tipo_dia = v.tipo_dia
+    AND p.servico = v.servico
+    AND (d.tipo_os = v.tipo_os
+      OR (d.tipo_os IS NULL AND v.tipo_os = "Regular"))
+  ),
 -- 2. Parâmetros de subsídio
   subsidio_parametros AS (
   SELECT
@@ -92,21 +146,23 @@ SELECT
   CASE
     WHEN v.tipo_viagem = "Sem transação"
       THEN FALSE
+    WHEN (viagens_planejadas = 0 OR viagens_planejadas IS NULL)
+      THEN FALSE
     WHEN p.data >= DATE("{{ var("DATA_SUBSIDIO_V3A_INICIO") }}")
         AND p.tipo_dia = "Dia Útil"
-        AND partidas/2 > 10
+        AND viagens_planejadas/2 > 10
         AND pof > 120
-        AND rn > partidas*1.2
+        AND rn > viagens_planejadas_ida_volta*1.2
         THEN FALSE
     WHEN p.data >= DATE("{{ var("DATA_SUBSIDIO_V3A_INICIO") }}")
         AND p.tipo_dia = "Dia Útil"
-        AND partidas/2 <= 10
+        AND viagens_planejadas/2 <= 10
         AND pof > 200
-        AND rn > partidas*2
+        AND rn > viagens_planejadas_ida_volta*2
         THEN FALSE
     WHEN p.data >= DATE("{{ var("DATA_SUBSIDIO_V3A_INICIO") }}")
         AND (p.tipo_dia = "Dia Útil"
-          AND (partidas IS NULL
+          AND (viagens_planejadas IS NULL
             OR pof IS NULL
             OR rn IS NULL
           )
@@ -121,14 +177,14 @@ SELECT
     ROW_NUMBER() OVER(PARTITION BY data, servico ORDER BY subsidio_km*distancia_planejada DESC) AS rn
 FROM
     viagem_km_tipo ) AS v
-INNER JOIN
-    planejado AS p
+LEFT JOIN
+    viagem_planejada AS p
 ON
   p.data = v.data
   AND p.servico = v.servico
   AND v.datetime_partida BETWEEN p.faixa_horaria_inicio
   AND p.faixa_horaria_fim
-INNER JOIN
+LEFT JOIN
     servico_faixa_km_apuracao AS s
 ON
   s.data = v.data
