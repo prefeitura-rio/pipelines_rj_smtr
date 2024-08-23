@@ -37,8 +37,8 @@ WITH
     id_viagem,
     distancia_planejada,
     subsidio_km,
-    -- subsidio_km_teto,
-    4.04 AS subsidio_km_teto,
+    subsidio_km_teto,
+    -- 4.04 AS subsidio_km_teto,
     indicador_viagem_remunerada
   FROM
     {{ ref("viagens_remuneradas") }}
@@ -105,10 +105,8 @@ WITH
       s.subsidio_km_teto,
       s.indicador_viagem_remunerada,
       CASE
-        WHEN s.tipo_viagem = "Autuado por ar inoperante" THEN TRUE
-        WHEN s.tipo_viagem = "Licenciado sem ar e não autuado" THEN TRUE
+        WHEN s.tipo_viagem IN ("Autuado por ar inoperante", "Licenciado sem ar e não autuado", "Registrado com ar inoperante") THEN TRUE
         WHEN sfd.pof < 60 THEN TRUE
-        WHEN s.tipo_viagem = "Registrado com ar inoperante" THEN TRUE
         ELSE FALSE
       END AS indicador_penalidade_judicial,
       COALESCE(av.indicador_ar_condicionado, FALSE) AS indicador_ar_condicionado
