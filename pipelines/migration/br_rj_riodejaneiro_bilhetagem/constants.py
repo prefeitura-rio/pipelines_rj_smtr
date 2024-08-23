@@ -445,8 +445,8 @@ class constants(Enum):  # pylint: disable=c0103
                     WHERE
                         DT_INCLUSAO BETWEEN '{start}'
                         AND '{end}'
-                        OR DT_FIM_VALIDADE BETWEEN '{start}'
-                        AND '{end}'
+                        OR DT_FIM_VALIDADE BETWEEN DATE('{start}')
+                        AND DATE('{end}')
                 """,
             },
             "primary_key": [
@@ -454,6 +454,54 @@ class constants(Enum):  # pylint: disable=c0103
                 "CD_LINHA",
             ],  # id column to nest data on
             "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
+        },
+        {
+            "table_id": "linha_consorcio_operadora_transporte",
+            "partition_date_only": True,
+            "extract_params": {
+                "database": "principal_db",
+                "query": """
+                    SELECT
+                        *
+                    FROM
+                        LINHA_CONSORCIO_OPERADORA_TRANSPORTE
+                    WHERE
+                        DT_INCLUSAO BETWEEN '{start}'
+                        AND '{end}'
+                        OR DT_FIM_VALIDADE BETWEEN DATE('{start}')
+                        AND DATE('{end}')
+                """,
+            },
+            "primary_key": [
+                "CD_CONSORCIO",
+                "CD_OPERADORA_TRANSPORTE",
+                "CD_LINHA",
+            ],  # id column to nest data on
+            "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
+        },
+        {
+            "table_id": "endereco",
+            "partition_date_only": True,
+            "extract_params": {
+                "database": "principal_db",
+                "query": """
+                    SELECT
+                        *
+                    FROM
+                        ENDERECO
+                    WHERE
+                        DT_INCLUSAO BETWEEN '{start}'
+                        AND '{end}'
+                        OR
+                        DT_INATIVACAO BETWEEN '{start}'
+                        AND '{end}'
+                """,
+            },
+            "primary_key": [
+                "NR_SEQ_ENDERECO",
+            ],  # id column to nest data on
+            "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
+            "save_bucket_name": BILHETAGEM_PRIVATE_BUCKET,
         },
     ]
 
