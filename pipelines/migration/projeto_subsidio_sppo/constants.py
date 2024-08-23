@@ -21,6 +21,8 @@ class constants(Enum):  # pylint: disable=c0103
     SUBSIDIO_SPPO_CODE_OWNERS = ["dados_smtr"]
 
     SUBSIDIO_SPPO_V2_DATASET_ID = "subsidio"
+    # Feature Apuração por faixa horária
+    DATA_SUBSIDIO_V9_INICIO = "2024-08-16"  # Alterar quando terminar os testes
 
     # SUBSÍDIO DASHBOARD
     # flake8: noqa: E501

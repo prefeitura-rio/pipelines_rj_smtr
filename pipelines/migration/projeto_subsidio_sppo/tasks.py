@@ -32,7 +32,7 @@ def check_start_date(param: dict) -> bool:
     """
 
     start_date = datetime.strptime(param["start_date"], "%Y-%m-%d").date()
-    comparison_date = datetime.strptime("2024-06-01", "%Y-%m-%d").date()
+    comparison_date = datetime.strptime(constants.DATA_SUBSIDIO_V9_INICIO.value, "%Y-%m-%d").date()
 
     return start_date >= comparison_date
 
