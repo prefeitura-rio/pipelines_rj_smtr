@@ -2,16 +2,15 @@
 """
 Utils for gtfs
 """
-from datetime import datetime
 import io
+import re
+from datetime import datetime
+from zipfile import ZIP_DEFLATED, ZipFile
 
 import openpyxl as xl
 import pandas as pd
-import re
 import requests
 from googleapiclient.http import MediaIoBaseDownload
-from zipfile import ZipFile, ZIP_DEFLATED
-
 from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.constants import constants
@@ -425,42 +424,58 @@ def download_file(file_link, drive_service):
         status, done = downloader.next_chunk()
     return file_bytes
 
+
 ### Validation
 
+
 def read_stream(stream: bytes) -> pd.DataFrame:
-    file_text = str(stream,'utf-8')    
-    string_buffer = io.StringIO(file_text) 
+    file_text = str(stream, "utf-8")
+    string_buffer = io.StringIO(file_text)
     return pd.read_csv(string_buffer)
 
+
 def get_shapes(shapes: pd.DataFrame) -> pd.DataFrame:
-    
-    #Identifica pontos finais
+
+    # Identifica pontos finais
     max_pt_shapes = shapes.groupby("shape_id").shape_pt_sequence.idxmax()
 
-    #Identifica pontos iniciais
+    # Identifica pontos iniciais
     min_pt_shapes = shapes.groupby("shape_id").shape_pt_sequence.idxmin()
 
-    #Realiza merge entre dataframes
-    shapes_min_max = shapes.loc[max_pt_shapes].merge(shapes.loc[min_pt_shapes], on='shape_id', how='left', suffixes=('_max', '_min'))
-
-    #Identifica shapes circulares (mesma coordenada de início e término)
-    #shapes_min_max['flag_circular'] = (shapes_min_max['shape_pt_lat_max'] == shapes_min_max['shape_pt_lat_min']) & (shapes_min_max['shape_pt_lon_max'] == shapes_min_max['shape_pt_lon_min'])
-    # Arredondamento para 4ª casa decimal - Caso 651 e 652
-    shapes_min_max['flag_circular'] = (
-        (round(shapes_min_max['shape_pt_lat_max'],4) == round(shapes_min_max['shape_pt_lat_min'],4)) 
-        & (round(shapes_min_max['shape_pt_lon_max'],4) == round(shapes_min_max['shape_pt_lon_min'],4))
+    # Realiza merge entre dataframes
+    shapes_min_max = shapes.loc[max_pt_shapes].merge(
+        shapes.loc[min_pt_shapes], on="shape_id", how="left", suffixes=("_max", "_min")
     )
-    
+
+    # Identifica shapes circulares (mesma coordenada de início e término)
+    # shapes_min_max['flag_circular'] = (shapes_min_max['shape_pt_lat_max'] == shapes_min_max['shape_pt_lat_min']) & (shapes_min_max['shape_pt_lon_max'] == shapes_min_max['shape_pt_lon_min'])
+    # Arredondamento para 4ª casa decimal - Caso 651 e 652
+    shapes_min_max["flag_circular"] = (
+        round(shapes_min_max["shape_pt_lat_max"], 4) == round(shapes_min_max["shape_pt_lat_min"], 4)
+    ) & (
+        round(shapes_min_max["shape_pt_lon_max"], 4) == round(shapes_min_max["shape_pt_lon_min"], 4)
+    )
+
     # filtra shapes não circulares
-    shapes_final = shapes[~shapes.shape_id.isin(shapes_min_max[shapes_min_max['flag_circular'] == True]['shape_id'].to_list())]
+    shapes_final = shapes[
+        ~shapes.shape_id.isin(
+            shapes_min_max[shapes_min_max["flag_circular"] == True]["shape_id"].to_list()
+        )
+    ]
 
     # filtra shapes circulares
-    shapes_circulares = shapes[shapes.shape_id.isin(shapes_min_max[shapes_min_max['flag_circular'] == True]['shape_id'].to_list())]
+    shapes_circulares = shapes[
+        shapes.shape_id.isin(
+            shapes_min_max[shapes_min_max["flag_circular"] == True]["shape_id"].to_list()
+        )
+    ]
 
     # identifica metade do trajeto circular
-    shapes_c_breakpoint = round(shapes_circulares.groupby("shape_id").shape_pt_sequence.max()/2, 0).to_dict()
+    shapes_c_breakpoint = round(
+        shapes_circulares.groupby("shape_id").shape_pt_sequence.max() / 2, 0
+    ).to_dict()
 
-    # separa metades do trajeto em ida + volta 
+    # separa metades do trajeto em ida + volta
     shapes_circulares = pd.DataFrame()
 
     for idx in shapes_c_breakpoint:
@@ -476,88 +491,110 @@ def get_shapes(shapes: pd.DataFrame) -> pd.DataFrame:
         shapes_final = pd.concat([shapes_final, aux])
     return shapes_final
 
+
 def get_trips(file: bytes) -> pd.DataFrame:
 
     # Descompacta o arquivo zip direto na memoria
-    input_zip = ZipFile(io.BufferedRWPairBytesIO(file), 'r')
+    input_zip = ZipFile(io.BufferedRWPairBytesIO(file), "r")
     files: dict[str, bytes] = {name: input_zip.read(name) for name in input_zip.namelist()}
-    trips = read_stream(files['trips.txt'])
-    agency = read_stream(files['agency.txt'])
-    routes = read_stream(files['routes.txt'])
-    shapes = read_stream(files['shapes.txt'])
+    trips = read_stream(files["trips.txt"])
+    agency = read_stream(files["agency.txt"])
+    routes = read_stream(files["routes.txt"])
+    shapes = read_stream(files["shapes.txt"])
     shapes_final = get_shapes(shapes)
-    
-    trips = trips.merge(routes, how='left', on='route_id').merge(agency, how='left', on='agency_id')
-    
+
+    trips = trips.merge(routes, how="left", on="route_id").merge(agency, how="left", on="agency_id")
+
     trips_qh = trips.copy()
     # Serão considerados os trip_id de sábado para as linhas abaixo
     linhas_sab = ["SP601"]
     trips_qh = trips_qh.sort_values(by=["service_id"], ascending=False)
-    trips_qh = trips_qh[((~(trips_qh['trip_short_name'].isin(linhas_sab)) &
-                          (trips_qh['service_id'].str.startswith(("U_R", "U_O"), na=False))) | 
-                         ((trips_qh['trip_short_name'].isin(linhas_sab)) & 
-                          (trips_qh['service_id'].str.startswith(("S_R", "S_O"), na=False))))]
-    trips_qh = (trips_qh[trips_qh['shape_id'].isin(list(set(shapes_final['shape_id'].to_list())))]
-            .sort_values(['trip_short_name', 'service_id', 'shape_id', 'direction_id'])
-            .drop_duplicates(['trip_short_name', 'direction_id']))
-    
-    trips_agg = (pd.pivot_table(trips_qh, values='trip_id', index = ['trip_short_name'], 
-                            columns='direction_id', aggfunc='first')
-             .rename_axis(None, axis=1)
-             .reset_index()
-             .rename(columns={'trip_short_name': 'servico', 0: 'trip_id_ida', 1: 'trip_id_volta'})
-             [['servico', 'trip_id_ida', 'trip_id_volta']]
-             .sort_values(by=['servico']))
+    trips_qh = trips_qh[
+        (
+            (
+                ~(trips_qh["trip_short_name"].isin(linhas_sab))
+                & (trips_qh["service_id"].str.startswith(("U_R", "U_O"), na=False))
+            )
+            | (
+                (trips_qh["trip_short_name"].isin(linhas_sab))
+                & (trips_qh["service_id"].str.startswith(("S_R", "S_O"), na=False))
+            )
+        )
+    ]
+    trips_qh = (
+        trips_qh[trips_qh["shape_id"].isin(list(set(shapes_final["shape_id"].to_list())))]
+        .sort_values(["trip_short_name", "service_id", "shape_id", "direction_id"])
+        .drop_duplicates(["trip_short_name", "direction_id"])
+    )
+
+    trips_agg = (
+        pd.pivot_table(
+            trips_qh,
+            values="trip_id",
+            index=["trip_short_name"],
+            columns="direction_id",
+            aggfunc="first",
+        )
+        .rename_axis(None, axis=1)
+        .reset_index()
+        .rename(columns={"trip_short_name": "servico", 0: "trip_id_ida", 1: "trip_id_volta"})[
+            ["servico", "trip_id_ida", "trip_id_volta"]
+        ]
+        .sort_values(by=["servico"])
+    )
     return trips_agg
 
-def get_board(quadro: pd.DataFrame):
-    columns = {'Serviço': 'servico',
-           'Vista': 'vista',
-           'Consórcio': 'consorcio',
-           'Consorcio': 'consorcio',
-           'Horário Inicial': 'horario_inicio',
-           'Horário Início': 'horario_inicio',
-           'Horário início': 'horario_inicio',
-           'Horário Inicial Dia Útil': 'horario_inicio',
-           'Horário Fim Dia Útil': 'horario_fim',
-           'Horário Fim': 'horario_fim',
-           'Horário fim': 'horario_fim',
-           'Partidas Ida Dia Útil': 'partidas_ida_du',
-           'Partidas ida dia útil': 'partidas_ida_du',
-           'Partidas Ida\n(DU)': 'partidas_ida_du',
-           'Partidas Volta Dia Útil': 'partidas_volta_du',
-           'Partidas volta dia útil': 'partidas_volta_du',
-           'Partidas Volta\n(DU)': 'partidas_volta_du',
-           'Extensão de Ida': 'extensao_ida',
-           'Extensão de ida': 'extensao_ida',
-           'Ext.\nIda': 'extensao_ida',
-           'Extensão de Volta': 'extensao_volta',
-           'Extensão de volta': 'extensao_volta',
-           'Ext.\nVolta': 'extensao_volta',
-           'Viagens Dia Útil': 'viagens_du',
-           'Viagens dia útil': 'viagens_du',
-           'Viagens\n(DU)': 'viagens_du',
-           'Quilometragem Dia Útil': 'km_dia_util',
-           'Quilometragem dia útil': 'km_dia_util',
-           'KM\n(DU)': 'km_dia_util',
-           'Quilometragem Sábado': 'km_sabado',
-           'Quilometragem sábado': 'km_sabado',
-           'KM\n(SAB)': 'km_sabado',
-           'Quilometragem Domingo': 'km_domingo',
-           'Quilometragem domingo': 'km_domingo',
-           'KM\n(DOM)': 'km_domingo',
-           'Partida Ida Ponto Facultativo': 'partidas_ida_pf',
-           'Partidas Ida Ponto Facultativo': 'partidas_ida_pf',
-           'Partidas Ida\n(FAC)': 'partidas_ida_pf',
-           'Partida Volta Ponto Facultativo': 'partidas_volta_pf',
-           'Partidas Volta Ponto Facultativo': 'partidas_volta_pf',
-           'Partidas Volta\n(FAC)': 'partidas_volta_pf',   
-           'Viagens Ponto Facultativo': 'viagens_pf',
-           'Viagens\n(FAC)': 'viagens_pf',
-           'Quilometragem Ponto Facultativo': 'km_pf',
-           'KM\n(FAC)': 'km_pf'}
 
-    quadro = quadro.rename(columns = columns)
+def get_board(quadro: pd.DataFrame):
+    columns = {
+        "Serviço": "servico",
+        "Vista": "vista",
+        "Consórcio": "consorcio",
+        "Consorcio": "consorcio",
+        "Horário Inicial": "horario_inicio",
+        "Horário Início": "horario_inicio",
+        "Horário início": "horario_inicio",
+        "Horário Inicial Dia Útil": "horario_inicio",
+        "Horário Fim Dia Útil": "horario_fim",
+        "Horário Fim": "horario_fim",
+        "Horário fim": "horario_fim",
+        "Partidas Ida Dia Útil": "partidas_ida_du",
+        "Partidas ida dia útil": "partidas_ida_du",
+        "Partidas Ida\n(DU)": "partidas_ida_du",
+        "Partidas Volta Dia Útil": "partidas_volta_du",
+        "Partidas volta dia útil": "partidas_volta_du",
+        "Partidas Volta\n(DU)": "partidas_volta_du",
+        "Extensão de Ida": "extensao_ida",
+        "Extensão de ida": "extensao_ida",
+        "Ext.\nIda": "extensao_ida",
+        "Extensão de Volta": "extensao_volta",
+        "Extensão de volta": "extensao_volta",
+        "Ext.\nVolta": "extensao_volta",
+        "Viagens Dia Útil": "viagens_du",
+        "Viagens dia útil": "viagens_du",
+        "Viagens\n(DU)": "viagens_du",
+        "Quilometragem Dia Útil": "km_dia_util",
+        "Quilometragem dia útil": "km_dia_util",
+        "KM\n(DU)": "km_dia_util",
+        "Quilometragem Sábado": "km_sabado",
+        "Quilometragem sábado": "km_sabado",
+        "KM\n(SAB)": "km_sabado",
+        "Quilometragem Domingo": "km_domingo",
+        "Quilometragem domingo": "km_domingo",
+        "KM\n(DOM)": "km_domingo",
+        "Partida Ida Ponto Facultativo": "partidas_ida_pf",
+        "Partidas Ida Ponto Facultativo": "partidas_ida_pf",
+        "Partidas Ida\n(FAC)": "partidas_ida_pf",
+        "Partida Volta Ponto Facultativo": "partidas_volta_pf",
+        "Partidas Volta Ponto Facultativo": "partidas_volta_pf",
+        "Partidas Volta\n(FAC)": "partidas_volta_pf",
+        "Viagens Ponto Facultativo": "viagens_pf",
+        "Viagens\n(FAC)": "viagens_pf",
+        "Quilometragem Ponto Facultativo": "km_pf",
+        "KM\n(FAC)": "km_pf",
+    }
+
+    quadro = quadro.rename(columns=columns)
 
     # corrige nome do servico
     quadro["servico"] = quadro["servico"].astype(str)
@@ -568,8 +605,18 @@ def get_board(quadro: pd.DataFrame):
 
     quadro = quadro.replace("—", 0)
 
-    #Ajusta colunas numéricas
-    numeric_cols = quadro.columns.difference(["servico", "vista", "consorcio", "horario_inicio", "horario_fim", "extensao_ida", "extensao_volta"]).to_list()
+    # Ajusta colunas numéricas
+    numeric_cols = quadro.columns.difference(
+        [
+            "servico",
+            "vista",
+            "consorcio",
+            "horario_inicio",
+            "horario_fim",
+            "extensao_ida",
+            "extensao_volta",
+        ]
+    ).to_list()
     quadro[numeric_cols] = quadro[numeric_cols].astype(str)
     quadro[numeric_cols] = quadro[numeric_cols].apply(lambda x: x.str.replace(".", ""))
     quadro[numeric_cols] = quadro[numeric_cols].apply(lambda x: x.str.replace(",", "."))
@@ -580,8 +627,8 @@ def get_board(quadro: pd.DataFrame):
     quadro[extensao_cols] = quadro[extensao_cols].apply(lambda x: x.str.replace(",00", ""))
     quadro[extensao_cols] = quadro[extensao_cols].apply(pd.to_numeric)
 
-    quadro["extensao_ida"] = quadro["extensao_ida"]/1000
-    quadro["extensao_volta"] = quadro["extensao_volta"]/1000
+    quadro["extensao_ida"] = quadro["extensao_ida"] / 1000
+    quadro["extensao_volta"] = quadro["extensao_volta"] / 1000
 
     # Ajusta colunas com hora
     hora_cols = [coluna for coluna in quadro.columns if "horario" in coluna]
@@ -594,12 +641,14 @@ def get_board(quadro: pd.DataFrame):
     hora_cols = [coluna for coluna in quadro.columns if "km" in coluna]
 
     for hora_col in hora_cols:
-        quadro[hora_col] = quadro[hora_col]/100
+        quadro[hora_col] = quadro[hora_col] / 100
     return quadro
+
 
 def os_sheets(os_file):
     df = pd.read_excel(os_file, None)
     return len(df.keys())
+
 
 def check_os_filetype(os_file):
     try:
@@ -608,8 +657,9 @@ def check_os_filetype(os_file):
     except ValueError:
         return False
 
+
 def check_os_filename(os_file):
-    pattern = re.compile(r'^os_\d{4}-\d{2}-\d{2}.xlsx$')
+    pattern = re.compile(r"^os_\d{4}-\d{2}-\d{2}.xlsx$")
     return bool(pattern.match(os_file.name))
 
 
@@ -624,30 +674,32 @@ def check_os_columns_order(os_df):
 
 
 def check_gtfs_filename(gtfs_file):
-    pattern = re.compile(r'^gtfs_\d{4}-\d{2}-\d{2}.zip$')
+    pattern = re.compile(r"^gtfs_\d{4}-\d{2}-\d{2}.zip$")
     return bool(pattern.match(gtfs_file.name))
 
 
-def change_feed_info_dates(file: bytes, os_initial_date: datetime, os_final_date: datetime) -> bytes:
+def change_feed_info_dates(
+    file: bytes, os_initial_date: datetime, os_final_date: datetime
+) -> bytes:
 
     # Descompacta o arquivo zip direto na memoria
-    input_zip = ZipFile(io.BytesIO(file), 'r')
+    input_zip = ZipFile(io.BytesIO(file), "r")
     files: dict[str, bytes] = {name: input_zip.read(name) for name in input_zip.namelist()}
 
     # Transforma os bytes em arquivo
-    file_text = str(files['feed_info.txt'],'utf-8')    
-    string_buffer = io.StringIO(file_text) 
+    file_text = str(files["feed_info.txt"], "utf-8")
+    string_buffer = io.StringIO(file_text)
 
     # Muda a data
     df = pd.read_csv(string_buffer)
-    df['feed_start_date'] = os_initial_date.strftime('%Y%m%d')
-    df['feed_end_date'] = os_final_date.strftime('%Y%m%d')
+    df["feed_start_date"] = os_initial_date.strftime("%Y%m%d")
+    df["feed_end_date"] = os_final_date.strftime("%Y%m%d")
 
     # Transforma o dataframe em csv na memoria
-    string_buffer = io.StringIO() 
-    df.to_csv(string_buffer, index=False, lineterminator='\r\n')
-    
-    files['feed_info.txt'] = bytes(string_buffer.getvalue(), encoding='utf8')
+    string_buffer = io.StringIO()
+    df.to_csv(string_buffer, index=False, lineterminator="\r\n")
+
+    files["feed_info.txt"] = bytes(string_buffer.getvalue(), encoding="utf8")
 
     # Compacta o arquivo novamente
     zip_buffer = io.BytesIO()
