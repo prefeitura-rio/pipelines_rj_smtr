@@ -19,7 +19,6 @@ from pipelines.constants import constants
 from pipelines.migration.br_rj_riodejaneiro_gtfs.utils import (
     check_os_columns,
     check_os_columns_order,
-    check_os_filetype,
     download_controle_os_csv,
     download_file,
     download_xlsx,
@@ -236,27 +235,58 @@ def get_raw_drive_files(os_control, local_filepath: list, regular_sheet_index: i
 
 ### Validation
 
+@task(nout=2)
+def get_gtfs_zipfile(os_control):
+    """
+    Downloads raw files from Google Drive and processes them.
+
+    Args:
+        os_control (dict): A dictionary containing information about the OS (Ordem de Serviço).
+        local_filepath (list): A list of local file paths where the downloaded files will be saved.
+
+    Returns:
+        raw_filepaths (list): A list of file paths where the downloaded raw files are saved.
+        primary_keys (list[list]): A list with the primary_keys for the tables.
+    """
+
+    log(f"Baixando arquivos: {os_control}")
+
+    # Autenticar usando o arquivo de credenciais
+    credentials = service_account.Credentials.from_service_account_file(
+        filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
+        scopes=["https://www.googleapis.com/auth/drive.readonly"],
+    )
+
+    # Criar o serviço da API Google Drive e Google Sheets
+    drive_service = build("drive", "v3", credentials=credentials)
+
+    # Baixa planilha de OS
+    file_link = os_control["Link da OS"]
+    file_bytes_os = download_xlsx(file_link=file_link, drive_service=drive_service)
+
+    # Baixa GTFS
+    file_link = os_control["Link do GTFS"]
+    file_bytes_gtfs = download_file(file_link=file_link, drive_service=drive_service)
+
+    # Salva os nomes das planilhas
+    sheetnames = xl.load_workbook(file_bytes_os).sheetnames
+    sheetnames = [name for name in sheetnames if "ANEXO" in name]
+    log(f"tabs encontradas na planilha Controle OS: {sheetnames}")
+    return file_bytes_gtfs, 
 
 @task
-def validate_gtfs_os(os_filepath, gtfs_filepath, os_initial_date, os_final_date):
+def validate_gtfs_os(os_file, gtfs_file, os_initial_date, os_final_date):
     messages = []
-    with open(gtfs_filepath, "rb") as f:
-        gtfs_file = f.read()
+    # with open(gtfs_filepath, "rb") as f:
+    #     gtfs_file = f.read()
     # Check OS and GTFS files
-    if os_filepath and gtfs_file:
-
-        if not check_os_filetype(os_filepath):
-            messages.append(
-                ":warning: O nome do arquivo OS não é do tipo correto! Transforme o arquivo no formato .xlsx do Excel."
-            )
-            return
-
-        os_sheets = pd.read_excel(os_filepath, None)
+    if os_file and gtfs_file:
+        os_sheets = pd.read_excel(os_file, None)
 
         if len(os_sheets) == 1:
             os_df = os_sheets.popitem()[1]
         else:
-            messages.append("O arquivo possui mais de uma aba, selecione a aba que contém os dados")
+            messages.append("O arquivo possui mais de uma aba")
 
         viagens_cols = [
             "Viagens Dia Útil",
@@ -289,7 +319,7 @@ def validate_gtfs_os(os_filepath, gtfs_filepath, os_initial_date, os_final_date)
 
         if not check_os_columns_order(os_df):
             messages.append(
-                f":warning: O arquivo OS contém as colunas esperadas, porém não segue a ordem esperada: {os_columns}"
+                f":warning: O arquivo OS contém as colunas esperadas, porém não segue a ordem esperada: {constants.OS_COLUMNS.value}"
             )
 
         # Check dates
@@ -298,7 +328,7 @@ def validate_gtfs_os(os_filepath, gtfs_filepath, os_initial_date, os_final_date)
 
             if os_initial_date > datetime.now().date():
                 messages.append(
-                    ":warning: ATENÇÃO: Você está subindo uma OS cuja operação já começou! Prossiga se é isso mesmo, senão revise as datas escolhidas."
+                    ":warning: ATENÇÃO: Você está subindo uma OS cuja operação já começou!"
                 )
 
             trips_agg = get_trips(gtfs_file)
