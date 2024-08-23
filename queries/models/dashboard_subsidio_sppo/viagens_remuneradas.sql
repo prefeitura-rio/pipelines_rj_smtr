@@ -92,19 +92,19 @@ SELECT
   CASE
     WHEN v.tipo_viagem = "Sem transação"
       THEN FALSE
-    WHEN p.data >= "2023-09-16"
+    WHEN p.data >= DATE("{{ var("DATA_SUBSIDIO_V3A_INICIO") }}")
         AND p.tipo_dia = "Dia Útil"
         AND partidas/2 > 10
         AND pof > 120
         AND rn > partidas*1.2
         THEN FALSE
-    WHEN p.data >= "2023-09-16"
+    WHEN p.data >= DATE("{{ var("DATA_SUBSIDIO_V3A_INICIO") }}")
         AND p.tipo_dia = "Dia Útil"
         AND partidas/2 <= 10
         AND pof > 200
         AND rn > partidas*2
         THEN FALSE
-    WHEN p.data >= "2023-09-16"
+    WHEN p.data >= DATE("{{ var("DATA_SUBSIDIO_V3A_INICIO") }}")
         AND (p.tipo_dia = "Dia Útil"
           AND (partidas IS NULL
             OR pof IS NULL
