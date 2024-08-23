@@ -42,7 +42,7 @@ models:
         description: "Quilometragem apurada de viagens de veículos com ar e não autuados."
       - name: km_apurada_n_vistoriado
         description: "Distância apurada de viagens realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria (km)."
-      - name: km_apurada_sem_passageiro
+      - name: km_apurada_sem_transacao
         description: "Distância apurada de viagens realizadas sem passageiro registrado."
       - name: valor_apurado
         description: "Valor da distância apurada multiplicada pelo subsídio por quilômetro (sem glosa). É zerado quando POF < 80%."
@@ -91,7 +91,7 @@ models:
         description: "Quilometragem apurada de viagens de veículos com ar e não autuados."
       - name: km_apurada_n_vistoriado
         description: "Distância apurada de viagens realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria (km)."
-      - name: km_apurada_sem_passageiro
+      - name: km_apurada_sem_transacao
         description: "Distância apurada de viagens realizadas sem passageiro registrado."
       - name: valor_a_pagar
         description: "Valor efetivo de pagamento (valor_total_apurado - valor_acima_limite - valor_glosado)."
