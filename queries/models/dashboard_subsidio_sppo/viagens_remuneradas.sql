@@ -73,9 +73,9 @@ WITH
     p.servico,
     p.faixa_horaria_inicio,
     p.faixa_horaria_fim,
-    IF(v.partidas_volta = 0, p.partidas, p.partidas/2) AS viagens_planejadas,
+    v.viagens_planejadas,
     p.km_planejada,
-    p.partidas AS viagens_planejadas_ida_volta
+    IF(p.data >= DATE("{{ var("DATA_SUBSIDIO_V9_INICIO") }}"), p.partidas, v.partidas_ida + v.partidas_volta) AS viagens_planejadas_ida_volta
   FROM
     planejado AS p
   LEFT JOIN
@@ -98,10 +98,11 @@ WITH
     data_fim,
     status,
     subsidio_km,
-    MAX(subsidio_km) OVER (PARTITION BY data_inicio, data_fim) AS subsidio_km_teto
+    MAX(subsidio_km) OVER (PARTITION BY data_inicio, data_fim) AS subsidio_km_teto,
+    indicador_penalidade_judicial
   FROM
-    {{ ref("subsidio_valor_km_tipo_viagem") }}
-    -- rj-smtr-staging.dashboard_subsidio_sppo_staging.subsidio_valor_km_tipo_viagem
+    -- {{ ref("subsidio_valor_km_tipo_viagem") }}
+    rj-smtr-staging.dashboard_subsidio_sppo_staging.subsidio_valor_km_tipo_viagem
 ),
 -- 3. Viagens com quantidades de transações
   viagem_transacao AS (
@@ -124,7 +125,8 @@ WITH
     vt.datetime_partida,
     vt.distancia_planejada,
     t.subsidio_km,
-    t.subsidio_km_teto
+    t.subsidio_km_teto,
+    t.indicador_penalidade_judicial
   FROM
     viagem_transacao AS vt
   LEFT JOIN
@@ -150,13 +152,13 @@ SELECT
       THEN FALSE
     WHEN p.data >= DATE("{{ var("DATA_SUBSIDIO_V3A_INICIO") }}")
         AND p.tipo_dia = "Dia Útil"
-        AND viagens_planejadas/2 > 10
+        AND viagens_planejadas > 10
         AND pof > 120
         AND rn > viagens_planejadas_ida_volta*1.2
         THEN FALSE
     WHEN p.data >= DATE("{{ var("DATA_SUBSIDIO_V3A_INICIO") }}")
         AND p.tipo_dia = "Dia Útil"
-        AND viagens_planejadas/2 <= 10
+        AND viagens_planejadas <= 10
         AND pof > 200
         AND rn > viagens_planejadas_ida_volta*2
         THEN FALSE
