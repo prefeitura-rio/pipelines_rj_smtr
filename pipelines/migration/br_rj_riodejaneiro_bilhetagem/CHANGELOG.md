@@ -1,5 +1,11 @@
 # Changelog - br_rj_riodejaneiro_bilhetagem
 
+## [1.4.0] - 2024-08-26
+
+### Alterado
+
+- Separa materialização da `passageiros_hora` da `transacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/164)
+
 ## [1.3.1] - 2024-08-19
 
 ### Alterado
