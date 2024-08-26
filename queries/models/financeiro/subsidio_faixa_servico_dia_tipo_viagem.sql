@@ -39,6 +39,7 @@ WITH
     subsidio_km,
     subsidio_km_teto,
     -- 4.04 AS subsidio_km_teto,
+    indicador_penalidade_judicial,
     indicador_viagem_remunerada
   FROM
     {{ ref("viagens_remuneradas") }}
@@ -105,9 +106,9 @@ WITH
       s.subsidio_km_teto,
       s.indicador_viagem_remunerada,
       CASE
-        WHEN s.tipo_viagem IN ("Autuado por ar inoperante", "Licenciado sem ar e não autuado", "Registrado com ar inoperante") THEN TRUE
+        -- WHEN s.tipo_viagem IN ("Autuado por ar inoperante", "Licenciado sem ar e não autuado", "Registrado com ar inoperante") THEN TRUE
         WHEN sfd.pof < 60 THEN TRUE
-        ELSE FALSE
+        ELSE s.indicador_penalidade_judicial
       END AS indicador_penalidade_judicial,
       COALESCE(av.indicador_ar_condicionado, FALSE) AS indicador_ar_condicionado
     FROM
@@ -134,15 +135,14 @@ SELECT
   consorcio,
   servico,
   indicador_ar_condicionado,
+  indicador_penalidade_judicial,
   tipo_viagem,
   SAFE_CAST(COALESCE(COUNT(id_viagem), 0) AS INT64) AS viagens_faixa,
   SAFE_CAST(COALESCE(SUM(distancia_planejada), 0) AS NUMERIC) AS km_apurada_faixa,
   SAFE_CAST(COALESCE(SUM(IF(tipo_viagem != "Não licenciado", distancia_planejada, 0)), 0) AS NUMERIC) AS km_subsidiada_faixa,
   SAFE_CAST(SUM(IF(indicador_viagem_remunerada = TRUE AND pof >= 80, distancia_planejada*subsidio_km, 0)) AS NUMERIC) AS valor_apurado,
   SAFE_CAST(COALESCE(SUM(IF(indicador_viagem_remunerada = TRUE, 0, distancia_planejada*subsidio_km)), 0) AS NUMERIC) AS valor_acima_limite,
-  SAFE_CAST(SUM(IF(pof >= 80 AND tipo_viagem != "Não licenciado", distancia_planejada*subsidio_km_teto, 0)) - COALESCE(SUM(IF(indicador_viagem_remunerada = TRUE, 0, distancia_planejada*subsidio_km)), 0) AS NUMERIC) AS valor_total_sem_glosa,
-  SAFE_CAST((SUM(IF(indicador_viagem_remunerada = TRUE AND indicador_penalidade_judicial = TRUE, distancia_planejada*subsidio_km_teto, 0))
-  - SUM(IF(indicador_viagem_remunerada = TRUE AND indicador_penalidade_judicial = TRUE, distancia_planejada*subsidio_km, 0))) AS NUMERIC) AS valor_judicial
+  SAFE_CAST(SUM(IF(pof >= 80 AND tipo_viagem != "Não licenciado", distancia_planejada*subsidio_km_teto, 0)) - COALESCE(SUM(IF(indicador_viagem_remunerada = TRUE, 0, distancia_planejada*subsidio_km)), 0) AS NUMERIC) AS valor_total_sem_glosa
 FROM
   subsidio_servico_ar
 GROUP BY
