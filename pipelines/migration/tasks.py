@@ -237,6 +237,7 @@ def create_dbt_run_vars(
                 mode=mode,
                 delay_hours=dbt_vars["date_range"].get("delay_hours", 0),
                 end_ts=timestamp,
+                truncate_minutes=dbt_vars["date_range"].get("truncate_minutes", True),
             )
 
             flag_date_range = True
