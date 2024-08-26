@@ -28,6 +28,9 @@ sources:
       - name: ordem_pagamento_consorcio_operadora
       - name: ordem_pagamento_consorcio
       - name: linha_consorcio
+      - name: linha_consorcio_operadora_transporte
+      - name: endereco
+
 
   - name: br_rj_riodejaneiro_gtfs_staging
     database: rj-smtr-staging
