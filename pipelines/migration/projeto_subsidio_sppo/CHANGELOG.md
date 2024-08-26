@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.0.4] - 2024-08-19
+
+### Adicionado
+
+- Adicionados os testes `Todas as viagens foram processadas com feed atualizado do GTFS` e `Todas as viagens foram atualizadas antes do processamento do subsídio` na constante `SUBSIDIO_SPPO_DATA_CHECKS_POS_LIST` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/147)
+
 ## [1.0.3] - 2024-08-08
 
 ### Adicionado

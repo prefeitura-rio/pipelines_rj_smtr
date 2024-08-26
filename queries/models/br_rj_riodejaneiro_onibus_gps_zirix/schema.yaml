@@ -332,3 +332,42 @@ models:
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
   - name: gps_sppo_zirix
     description: "Tabela com os dados tratados de registros de GPS dos ônibus capturados utilizando a API da Zirix."
+    columns:
+      - name: modo
+        description: "SPPO – nesse arquivo só consta esse modo"
+      - name: timestamp_gps
+        description: "{{ doc('timestamp_gps') }}"
+      - name: data
+        description: "{{ doc('data_gps') }}"
+      - name: hora
+        description: "{{ doc('hora_gps') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: latitude
+        description: "{{ doc('latitude_gps') }}"
+      - name: longitude
+        description: "{{ doc('longitude_gps') }}"
+      - name: flag_em_operacao
+        description: "{{ doc('flag_em_operacao') }}"
+      - name: flag_em_movimento
+        description: "{{ doc('flag_em_movimento') }}"
+      - name: tipo_parada
+        description: "{{ doc('tipo_parada') }}"
+      - name: flag_linha_existe_sigmob
+        description: "{{ doc('flag_linha_existe_sigmob') }}"
+      - name: flag_trajeto_correto
+        description: "{{ doc('flag_trajeto_correto') }}"
+      - name: flag_trajeto_correto_hist
+        description: "{{ doc('flag_trajeto_correto_hist') }}"
+      - name: status
+        description: "{{ doc('status_veiculo_gps') }}"
+      - name: velocidade_instantanea
+        description: "{{ doc('velocidade_instantanea') }}"
+      - name: velocidade_estimada_10_min
+        description: "{{ doc('velocidade_estimada_10_min') }}"
+      - name: distancia
+        description: "{{ doc('distancia_gps') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
