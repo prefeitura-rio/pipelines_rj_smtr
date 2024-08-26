@@ -61,8 +61,8 @@ JOIN
   {{ ref("aux_h3_res9") }} geo
 ON
   ST_CONTAINS(geo.geometry, geo_point_transacao)
+WHERE
 {% if is_incremental() %}
-  WHERE
   {% if partition_list|length > 0 %}
     data IN ({{ partition_list|join(', ') }})
   {% else %}

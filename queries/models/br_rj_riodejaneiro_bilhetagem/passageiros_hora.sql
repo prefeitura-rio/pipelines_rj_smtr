@@ -56,8 +56,8 @@ SELECT
   '{{ var("version") }}' AS versao
 FROM
   {{ ref("aux_passageiros_hora") }}
+WHERE
 {% if is_incremental() %}
-  WHERE
   {% if partition_list|length > 0 %}
     data IN ({{ partition_list|join(', ') }})
   {% else %}
