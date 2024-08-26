@@ -50,13 +50,13 @@ models:
     description: ""
     columns:
     - name: data
-      description: 
+      description:
     - name: ano
       description:
     - name: mes
       description:
     - name: dia
-      description: 
+      description:
     - name: id_consorcio
       description: "Identificador do consórcio na tabela cadastro.consorcios"
     - name: consorcio
@@ -64,11 +64,11 @@ models:
     - name: servico
       description: '{{doc(servico)}}'
     - name: linha
-      description: 
+      description:
     - name: tipo_servico
       description:
     - name: ordem_servico
-      description: 
+      description:
     - name: codigo_veiculo
       description:
     - name: tarifa_codigo
@@ -122,4 +122,4 @@ models:
     - name: class_servico
       description:
     - name: qtd_passageiros_total
-      description: 
+      description:

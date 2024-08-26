@@ -272,7 +272,7 @@ models:
         description: "Distância do shape (trajeto) planejado (km)"
       - name: distancia_aferida
         description: "Distância aferida da viagem (distância euclidiana entre posições consecutivas do sinal de GPS)"
-      - name: n_registros_start ## nao tem 
+      - name: n_registros_start ## nao tem
         description: "Contagem de sinais de GPS emitidos no meio do trajeto."
       - name: n_registros_shape
         description: "Contagem de sinais de GPS emitidos dentro do trajeto."

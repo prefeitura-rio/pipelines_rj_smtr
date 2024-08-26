@@ -403,7 +403,7 @@ models:
 
   - name: servicos_sentido
     description: "Sentido dos serviços (I - Ida, V - Volta, C - Circular)"
-    columns:    
+    columns:
       - name: feed_start_date
         dscription: '{{ doc("feed_start_date") }}'
       - name: servico
