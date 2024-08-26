@@ -1,4 +1,3 @@
--- depends_on: {{ ref('transacao') }}
 {{
   config(
     materialized="incremental",
