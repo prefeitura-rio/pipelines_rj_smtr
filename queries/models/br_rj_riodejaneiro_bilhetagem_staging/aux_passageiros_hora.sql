@@ -23,7 +23,7 @@ SELECT
   tipo_pagamento,
   geo_point_transacao
 FROM
-  {{ transacao_table }}
+  {{ ref('transacao') }}
 WHERE
   id_servico_jae NOT IN ("140", "142")
   AND id_operadora != "2"
@@ -54,7 +54,7 @@ SELECT
   "RioCard" AS tipo_pagamento,
   ST_GEOGPOINT(longitude, latitude) AS geo_point_transacao
 FROM
-  {{ transacao_riocard_table }}
+  {{ ref('transacao_riocard') }}
 WHERE
   (id_servico_jae NOT IN ("140", "142") OR id_servico_jae IS NULL)
   AND (id_operadora != "2" OR id_operadora IS NULL)
