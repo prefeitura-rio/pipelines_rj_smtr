@@ -46,3 +46,80 @@ models:
         description: "Quantidade de gratuidades"
       - name: arquivos_somados
         description: "Coluna de controle com array das datas dos arquivos que foram somados para obter os valores finais"
+  - name: rdo40_registros
+    description: ""
+    columns:
+    - name: data
+      description: 
+    - name: ano
+      description:
+    - name: mes
+      description:
+    - name: dia
+      description: 
+    - name: id_consorcio
+      description: "Identificador do consórcio na tabela cadastro.consorcios"
+    - name: consorcio
+      description: "Nome do consórcio"
+    - name: servico
+      description: '{{doc(servico)}}'
+    - name: linha
+      description: 
+    - name: tipo_servico
+      description:
+    - name: ordem_servico
+      description: 
+    - name: codigo_veiculo
+      description:
+    - name: tarifa_codigo
+      description:
+    - name: tarifa_valor
+      description:
+    - name: frota_determinada
+      description:
+    - name: frota_licenciada
+      description:
+    - name: frota_operante
+      description:
+    - name: qtd_viagens
+      description:
+    - name: qtd_km_cobertos
+      description:
+    - name: qtd_grt_idoso
+      description:
+    - name: qtd_grt_especial
+      description:
+    - name: qtd_grt_estud_federal
+      description:
+    - name: qtd_grt_estud_estadual
+      description:
+    - name: qtd_grt_estud_municipal
+      description:
+    - name: qtd_grt_rodoviario
+      description:
+    - name: qtd_buc_1_perna
+      description:
+    - name: qtd_buc_2_perna_integracao
+      description:
+    - name: receita_buc
+      description:
+    - name: qtd_buc_supervia_1_perna
+      description:
+    - name: qtd_buc_supervia_2_perna_integracao
+      description:
+    - name: receita_buc_supervia
+      description:
+    - name: qtd_cartoes_perna_unica_e_demais
+      description:
+    - name: receita_cartoes_perna_unica_e_demais
+      description:
+    - name: qtd_pagamentos_especie
+      description:
+    - name: receita_especie
+      description:
+    - name: qtd_grt_passe_livre_universitario
+      description:
+    - name: class_servico
+      description:
+    - name: qtd_passageiros_total
+      description: 

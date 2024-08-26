@@ -3,7 +3,92 @@ version: 2
 models:
   - name: brt_aux_registros_filtrada
     description: "Tabela auxiliar no tratamento do GPS do BRT. Remove registros fora do município do Rio de Janeiro e registros que tem diferença maior que 1 minuto entre o timestamp_captura e timestamp_gps."
+    columns:
+      - name: id_veiculo
+        description: '{{ doc('id_veiculo') }}'
+      - name: latitude
+        description: '{{ doc('latitude_gps') }}'
+      - name: longitude
+        description: '{{ doc('longitude_gps') }}'
+      - name: posicao_veiculo_geo
+        description: "Coordenada geográfica (POINT) com a posição que o veículo se encontra, conforme 'longitude' e 'latitude' informadas pelo GPS (EPSG:4326 - WGS84)"
+      - name: velocidade
+        description: "Velocidade instantânea do veículo, conforme informado pelo GPS (km/h)"
+      - name: servico
+        description: '{{ doc('servico') }}'
+      - name: timestamp_gps
+        description: '{{ doc('timestamp_gps') }}'
+      - name: timestamp_captura
+        description: '{{ doc('timestamp_captura') }}'
+      - name: data
+        description: "Data do 'timestamp_captura'"
+      - name: hora
+        description: "Hora do 'timestamp_captura'"
+      - name: versao
+        description: '{{ doc('versao') }}
   - name: brt_registros
     description: "View para os dados capturados em staging com tratamento básico e conversão de valores"
+    columns:
+      - name: id_veiculo
+        description: '{{ doc('id_veiculo') }}'
+      - name: timestamp_gps
+        description: '{{ doc('timestamp_gps') }}'
+      - name: timestamp_captura
+        description: '{{ doc('timestamp_captura') }}'
+      - name: content
+        description: '{{ doc('content') }}'
+      - name: data
+        description: "Data do 'timestamp_captura'"
+      - name: hora
+        description: "Hora do 'timestamp_captura'"
   - name: brt_registros_desaninhada
     description: "View para os dados capturados em staging com os valores da coluna content desaninhados."
+    columns:
+      - name: data
+        description: "Data do 'timestamp_captura'"
+      - name: hora
+        description: "Hora do 'timestamp_captura'"
+      - name: id_veiculo
+        description: '{{ doc('id_veiculo') }}'
+      - name: timestamp_gps
+        description: '{{ doc('timestamp_gps') }}'
+      - name: timestamp_captura
+        description: '{{ doc('timestamp_captura') }}'
+      - name: latitude
+        description: '{{ doc('latitude_gps') }}'
+      - name: longitude
+        description: '{{ doc('longitude_gps') }}'
+      - name: servico
+        description: '{{ doc(servico) }}'
+      - name: sentido
+        description: '{{ doc('sentido') }}'
+      - name: velocidade
+        description: "Velocidade instantânea do veículo, conforme informado pelo GPS (km/h)"
+  - name: registros_historico
+    description: "View para os dados históricos capturados em staging com tratamento básico e conversão de valores"
+      - name: codigo
+        description: ""
+      - name: placa
+        description: "Placa do veículo"
+      - name: linha
+        description: "Linha de ônibus (serviço) ou, se realocada, informada pela empresa operadora"
+      - name: latitude
+        description: '{{ doc('latitude_gps') }}'
+      - name: longitude
+        description: '{{ doc('longitude_gps') }}'
+      - name: timestamp_gps
+        description: '{{ doc('timestamp_gps') }}'
+      - name: velocidade
+        description: "Velocidade instantânea do veículo, conforme informado pelo GPS (km/h)"
+      - name: id_migracao_trajeto
+        description: ""
+      - name: sentido
+        description: '{{ doc('sentido') }}'
+      - name: trajeto
+        description: ""
+      - name: timestamp_captura
+        description: '{{ doc('timestamp_captura') }}'
+      - name: data
+        description: "Data do 'timestamp_captura'"
+      - name: hora
+        description: "Hora do 'timestamp_captura'"

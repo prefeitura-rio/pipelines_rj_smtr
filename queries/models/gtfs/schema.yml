@@ -62,7 +62,7 @@ models:
     columns:
       - name: service_id
         description: "Identifica um conjunto de datas quando ocorre uma exceção de serviço para uma ou mais rotas"
-      - name: date
+      - name: date #já tem descrição
         description: "Data em que ocorre a exceção de serviço."
       - name: exception_type
         description: "Indica se o serviço está disponível na data especificada no campo de data."
@@ -369,13 +369,47 @@ models:
 
   - name: ordem_servico_diaria
     description: "Dados diários das linhas presentes no município."
+    columns:
+      - name: DATA
+        description: "Data da ordem de serviço."
+      - name: tipo_dia
+        description: '{{ doc("tipo_dia") }}'
+      - name: servico
+        description: '{{ doc("servico") }}'
+      - name: vista
+        description: '{{ doc("vista") }}'
+      - name: consorcio
+        description: '{{ doc("consorcio") }}'
+      - name: sentido
+        description: '{{ doc("sentido") }}'
+      - name: viagens_planejadas
+        description: '{{ doc("viagens_planejadas") }}'
+      - name: inicio_periodo
+        description: '{{ doc("inicio_periodo") }}'
+      - name: fim_periodo
+        description: '{{ doc("fim_periodo") }}'
 
   - name: ordem_servico_viagens_planejadas
     description: "Viagens planejadas das linhas presentes no município."
+    columns:
+      - name: data
+        description: "Data da ordem de serviço."
+      - name: tipo_dia
+        description: '{{ doc("tipo_dia") }}'
+      - name: servico
+        description: '{{ doc("servico") }}'
+      - name: viagens_planejadas
+        description: '{{ doc("viagens_planejadas") }}'
 
   - name: servicos_sentido
     description: "Sentido dos serviços (I - Ida, V - Volta, C - Circular)"
-
+    columns:    
+      - name: feed_start_date
+        dscription: '{{ doc("feed_start_date") }}'
+      - name: servico
+        dscription: '{{ doc("servico") }}'
+      - name: sentido
+        dscription: '{{ doc("sentido") }}'
   - name: ordem_servico_gtfs
     description: "Dados das linhas presentes no município."
     columns:
