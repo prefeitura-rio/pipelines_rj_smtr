@@ -1,5 +1,21 @@
 # Changelog - bilhetagem
 
+## [2.3.0] - 2024-08-26
+
+### Adicionado
+- Cria modelos `staging_linha_consorcio_operadora_transporte.sql` e `staging_endereco.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/164)
+
+### Alterado
+- Utiliza data e hora no filtro incremental dos modelos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/164):
+  - `transacao.sql`
+  - `transacao_riocard.sql`
+  - `passageiros_hora.sql`
+  - `passageiros_tile_hora.sql`
+- Adiciona coluna geo_point_transacao nos modelos `transacao.sql` e `transacao_riocard.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/164)
+- Altera materialized do modelo `aux_passageiros_hora.sql` de `table` para `ephemeral` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/164)
+- Adiciona transações do RioCard no modelo `aux_passageiros_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/164)
+
+
 ## [2.2.1] - 2024-08-09
 
 ### Adicionado
