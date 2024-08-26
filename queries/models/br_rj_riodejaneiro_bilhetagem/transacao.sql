@@ -22,12 +22,38 @@
 {% if execute %}
   {% if is_incremental() %}
     {% set transacao_partitions_query %}
-      SELECT DISTINCT
-        CONCAT("'", DATE(data_transacao), "'") AS data_transacao
-      FROM
-        {{ transacao_staging }}
-      WHERE
-        {{ incremental_filter }}
+      WITH particoes_integracao AS (
+        SELECT DISTINCT
+          CONCAT("'", DATE(data_transacao), "'") AS data_transacao
+        FROM
+          {{ integracao_staging }},
+          UNNEST([
+            data_transacao_t0,
+            data_transacao_t1,
+            data_transacao_t2,
+            data_transacao_t3,
+            data_transacao_t4
+          ]) AS data_transacao
+        WHERE
+          {{ incremental_filter }}
+        ),
+        particoes_transacao AS (
+          SELECT DISTINCT
+            CONCAT("'", DATE(data_transacao), "'") AS data_transacao
+          FROM
+            {{ transacao_staging }}
+          WHERE
+            {{ incremental_filter }}
+        )
+        SELECT
+          COALESCE(t.data_transacao, i.data_transacao) AS data_transacao
+        FROM
+          particoes_transacao t
+        FULL OUTER JOIN
+          particoes_integracao i
+        USING(data_transacao)
+        WHERE
+          COALESCE(t.data_transacao, i.data_transacao) IS NOT NULL
     {% endset %}
 
     {% set transacao_partitions = run_query(transacao_partitions_query) %}
