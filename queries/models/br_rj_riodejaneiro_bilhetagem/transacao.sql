@@ -14,7 +14,7 @@
 -- TODO: Usar variável de run_date_hour para otimizar o numero de partições lidas em staging
 {% set incremental_filter %}
   DATE(data) BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
-  -- AND timestamp_captura BETWEEN DATETIME("{{var('date_range_start')}}") AND DATETIME("{{var('date_range_end')}}")
+  AND timestamp_captura BETWEEN DATETIME("{{var('date_range_start')}}") AND DATETIME("{{var('date_range_end')}}")
 {% endset %}
 
 {% set transacao_staging = ref('staging_transacao') %}
@@ -150,6 +150,7 @@ new_data AS (
     NULL AS id_integracao,
     latitude_trx AS latitude,
     longitude_trx AS longitude,
+    ST_GEOGPOINT(longitude_trx, latitude_trx) AS geo_point_transacao,
     NULL AS stop_id,
     NULL AS stop_lat,
     NULL AS stop_lon,
@@ -226,6 +227,7 @@ complete_partitions AS (
     id_integracao,
     latitude,
     longitude,
+    geo_point_transacao,
     stop_id,
     stop_lat,
     stop_lon,
@@ -263,6 +265,7 @@ complete_partitions AS (
       id_integracao,
       latitude,
       longitude,
+      geo_point_transacao,
       stop_id,
       stop_lat,
       stop_lon,
@@ -326,6 +329,7 @@ SELECT
   t.id_integracao,
   t.latitude,
   t.longitude,
+  t.geo_point_transacao,
   t.stop_id,
   t.stop_lat,
   t.stop_lon,
