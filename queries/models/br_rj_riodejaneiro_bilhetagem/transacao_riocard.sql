@@ -1,3 +1,4 @@
+-- depends_on: {{ ref('transacao') }}
 {{
   config(
     materialized="incremental",
@@ -12,6 +13,7 @@
 
 {% set incremental_filter %}
   DATE(data) BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
+  AND timestamp_captura BETWEEN DATETIME("{{var('date_range_start')}}") AND DATETIME("{{var('date_range_end')}}")
 {% endset %}
 
 {% set transacao_staging = ref('staging_transacao_riocard') %}
@@ -35,7 +37,7 @@ WITH staging_transacao AS (
     {{ transacao_staging }}
   {% if is_incremental() %}
     WHERE
-      DATE(data) BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
+      {{ incremental_filter }}
   {% endif %}
 ),
 novos_dados AS (
@@ -63,6 +65,7 @@ novos_dados AS (
     t.id AS id_transacao,
     t.latitude_trx AS latitude,
     t.longitude_trx AS longitude,
+    ST_GEOGPOINT(t.longitude_trx, t.latitude_trx) AS geo_point_transacao,
     t.valor_transacao
   FROM
     staging_transacao t
