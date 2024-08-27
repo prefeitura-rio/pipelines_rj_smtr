@@ -54,7 +54,9 @@ WITH
     SAFE_CAST(p.km_planejada AS NUMERIC) AS km_planejada_faixa,
     SAFE_CAST(COALESCE(COUNT(v.id_viagem), 0) AS INT64) AS viagens_faixa,
     SAFE_CAST(COALESCE(SUM(v.distancia_planejada), 0) AS NUMERIC) AS km_apurada_faixa,
-    SAFE_CAST(COALESCE(ROUND(100 * SUM(v.distancia_planejada) / p.km_planejada, 2), 0) AS NUMERIC) AS pof
+    SAFE_CAST(COALESCE(ROUND(100 * SUM(v.distancia_planejada) / p.km_planejada, 2), 0) AS NUMERIC) AS pof,
+    '{{ var("version") }}' as versao,
+    CURRENT_DATETIME("America/Sao_Paulo") as datetime_ultima_atualizacao
   FROM
     planejado AS p
   LEFT JOIN

@@ -98,7 +98,9 @@ SELECT
   pd.* EXCEPT(data, tipo_dia, faixa_horaria_inicio, faixa_horaria_fim, servico, consorcio),
   agg.valor_apurado,
   agg.valor_acima_limite,
-  agg.valor_total_sem_glosa
+  agg.valor_total_sem_glosa,
+  '{{ var("version") }}' as versao,
+  CURRENT_DATETIME("America/Sao_Paulo") as datetime_ultima_atualizacao
 FROM
   subsidio_faixa AS s
 LEFT JOIN

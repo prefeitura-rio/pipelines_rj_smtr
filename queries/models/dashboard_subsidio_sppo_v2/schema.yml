@@ -52,6 +52,10 @@ models:
         description: "Valor total das viagens considerando o valor máximo por km."
       - name: valor_judicial
         description: "Valor de glosa depositada em juízo (Autuação por ar inoperante, Veículo licenciado sem ar, Penalidade abaixo de 60% e Notificação dos Agentes de Verão)."
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: sumario_servico_dia_pagamento
     description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia."
     columns:
@@ -107,3 +111,7 @@ models:
         description: "Valor de glosa depositada em juízo (Autuação por ar inoperante, Veículo licenciado sem ar, Penalidade abaixo de 60% e Notificação dos Agentes de Verão)."
       - name: valor_penalidade
         description: "Valor penalidade [negativa] (POF =< 60%)."
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"

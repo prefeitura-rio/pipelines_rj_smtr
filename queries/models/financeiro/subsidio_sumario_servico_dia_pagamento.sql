@@ -118,7 +118,9 @@ SELECT
   vc.valor_total_sem_glosa,
   vc.valor_acima_limite + vc.valor_penalidade + vc.valor_total_sem_glosa AS valor_total_apurado,
   vc.valor_judicial,
-  vc.valor_penalidade
+  vc.valor_penalidade,
+  '{{ var("version") }}' as versao,
+  CURRENT_DATETIME("America/Sao_Paulo") as datetime_ultima_atualizacao
 FROM
   subsidio_dia AS sd
 LEFT JOIN

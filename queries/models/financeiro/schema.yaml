@@ -24,6 +24,10 @@ models:
         description: "Distância planejada para o serviço por faixa horária (km)."
       - name: pof
         description: "Indicador percentual de quilometragem apurada em relação à planejada da linha por faixa horária."
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: subsidio_faixa_servico_dia_tipo_viagem
     description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia, faixa horária e tipo de viagem."
     columns:
@@ -55,6 +59,10 @@ models:
         description: "Valor apurado das viagens que não foram remuneradas (por estar acima do teto de 120% / 200%)."
       - name: valor_total_sem_glosa
         description: "Valor total das viagens considerando o valor máximo por km."
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: subsidio_sumario_servico_dia_pagamento
     description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia"
     columns:
@@ -88,3 +96,7 @@ models:
         description: "Valor de glosa depositada em juízo (Autuação por ar inoperante, Veículo licenciado sem ar, Penalidade abaixo de 60% e Notificação dos Agentes de Verão)."
       - name: valor_penalidade
         description: "Valor penalidade [negativa] (POF =< 60%)."
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"

@@ -84,7 +84,9 @@ SELECT
   vs.valor_total_sem_glosa,
   vs.valor_total_apurado,
   vs.valor_judicial,
-  vs.valor_penalidade
+  vs.valor_penalidade,
+  '{{ var("version") }}' as versao,
+  CURRENT_DATETIME("America/Sao_Paulo") as datetime_ultima_atualizacao
 FROM
   valores_subsidio AS vs
 LEFT JOIN

@@ -159,7 +159,7 @@ with Flow(
         dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value,  # precisa disso ?
     )
 
-    _vars = {"start_date": start_date, "end_date": end_date}
+    _vars = {"start_date": start_date, "end_date": end_date, "version": dataset_sha}
 
     # 2. MATERIALIZE DATA #
     with case(test_only, False):
