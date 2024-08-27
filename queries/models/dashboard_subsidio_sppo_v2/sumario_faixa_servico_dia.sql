@@ -37,8 +37,7 @@ WITH
     SUM(km_subsidiada_faixa) AS km_subsidiada_faixa,
     SUM(valor_apurado) AS valor_apurado,
     SUM(valor_acima_limite) AS valor_acima_limite,
-    SUM(valor_total_sem_glosa) AS valor_total_sem_glosa,
-    SUM(valor_judicial) AS valor_judicial
+    SUM(valor_total_sem_glosa) AS valor_total_sem_glosa
   FROM
     -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia_tipo_viagem
     {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
@@ -99,8 +98,7 @@ SELECT
   pd.* EXCEPT(data, tipo_dia, faixa_horaria_inicio, faixa_horaria_fim, servico, consorcio),
   agg.valor_apurado,
   agg.valor_acima_limite,
-  agg.valor_total_sem_glosa,
-  agg.valor_judicial
+  agg.valor_total_sem_glosa
 FROM
   subsidio_faixa AS s
 LEFT JOIN
