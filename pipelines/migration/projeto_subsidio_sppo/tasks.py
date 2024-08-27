@@ -28,13 +28,41 @@ def check_param(param: str) -> bool:
 @task
 def check_start_date(param: dict) -> bool:
     """
-    Check if start_date >= 2024-08-16
+    Check if start_date >= DATA_SUBSIDIO_V9_INICIO
     """
 
     start_date = datetime.strptime(param["start_date"], "%Y-%m-%d").date()
     comparison_date = datetime.strptime(constants.DATA_SUBSIDIO_V9_INICIO.value, "%Y-%m-%d").date()
 
     return start_date >= comparison_date
+
+
+@task
+def check_date_in_range(param: dict) -> bool:
+    """
+    Check if DATA_SUBSIDIO_V9_INICIO is between start_date and end_date.
+    """
+    start_date = datetime.strptime(param["start_date"], "%Y-%m-%d").date()
+    end_date = datetime.strptime(param["end_date"], "%Y-%m-%d").date()
+    comparison_date = datetime.strptime(constants.DATA_SUBSIDIO_V9_INICIO.value, "%Y-%m-%d").date()
+
+    return start_date <= comparison_date <= end_date
+
+
+@task
+def split_date_range(param: dict) -> dict:
+    """
+    Split the date range into two ranges if DATA_SUBSIDIO_V9_INICIO is within the date range.
+    Returns the first and second ranges.
+    """
+    start_date = datetime.strptime(param["start_date"], "%Y-%m-%d").date()
+    end_date = datetime.strptime(param["end_date"], "%Y-%m-%d").date()
+    comparison_date = datetime.strptime(constants.DATA_SUBSIDIO_V9_INICIO.value, "%Y-%m-%d").date()
+
+    return {
+        "first_range": {"start_date": start_date, "end_date": comparison_date - timedelta(days=1)},
+        "second_range": {"start_date": comparison_date, "end_date": end_date},
+    }
 
 
 @task
@@ -148,6 +176,7 @@ def subsidio_data_quality_check(
             else ":warning: **Status:** Testes falharam. Necessidade de revisão dos dados finais!\n"
         )
 
+    # fmt: off
     if not test_check:
         at_code_owners = [
             f'   - <@{smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
@@ -161,7 +190,7 @@ def subsidio_data_quality_check(
         ]
 
         formatted_messages.extend(at_code_owners)
-
+    # fmt: on
     format_send_discord_message(formatted_messages, webhook_url)
 
     return test_check
