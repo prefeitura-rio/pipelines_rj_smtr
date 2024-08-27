@@ -549,6 +549,7 @@ aux_retorno_ordem_pagamento staging_arquivo_retorno",
             "date_range": {
                 "table_run_datetime_column_name": "data",
                 "delay_hours": 0,
+                "truncate_minutes": False,
             },
             "version": {},
         },
