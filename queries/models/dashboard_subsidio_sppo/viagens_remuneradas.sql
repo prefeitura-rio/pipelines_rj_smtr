@@ -101,8 +101,8 @@ WITH
     MAX(subsidio_km) OVER (PARTITION BY data_inicio, data_fim) AS subsidio_km_teto,
     indicador_penalidade_judicial
   FROM
-    -- {{ ref("subsidio_valor_km_tipo_viagem") }}
-    rj-smtr-staging.dashboard_subsidio_sppo_staging.subsidio_valor_km_tipo_viagem
+    {{ ref("subsidio_valor_km_tipo_viagem") }}
+    -- rj-smtr-staging.dashboard_subsidio_sppo_staging.subsidio_valor_km_tipo_viagem
 ),
 -- 3. Viagens com quantidades de transações
   viagem_transacao AS (
@@ -146,10 +146,6 @@ WITH
 SELECT
   v.* EXCEPT(rn, datetime_partida),
   CASE
-    WHEN v.tipo_viagem = "Sem transação"
-      THEN FALSE
-    WHEN (viagens_planejadas = 0 OR viagens_planejadas IS NULL)
-      THEN FALSE
     WHEN p.data >= DATE("{{ var("DATA_SUBSIDIO_V3A_INICIO") }}")
         AND p.tipo_dia = "Dia Útil"
         AND viagens_planejadas > 10
