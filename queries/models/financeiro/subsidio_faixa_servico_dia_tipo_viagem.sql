@@ -136,13 +136,14 @@ SELECT
   servico,
   indicador_ar_condicionado,
   indicador_penalidade_judicial,
+  indicador_viagem_remunerada,
   tipo_viagem,
   SAFE_CAST(COALESCE(COUNT(id_viagem), 0) AS INT64) AS viagens_faixa,
-  SAFE_CAST(COALESCE(SUM(distancia_planejada), 0) AS NUMERIC) AS km_apurada_faixa,
-  SAFE_CAST(COALESCE(SUM(IF(tipo_viagem != "Não licenciado", distancia_planejada, 0)), 0) AS NUMERIC) AS km_subsidiada_faixa,
-  SAFE_CAST(SUM(IF(indicador_viagem_remunerada = TRUE AND pof >= 80, distancia_planejada*subsidio_km, 0)) AS NUMERIC) AS valor_apurado,
-  SAFE_CAST(COALESCE(SUM(IF(indicador_viagem_remunerada = TRUE, 0, distancia_planejada*subsidio_km)), 0) AS NUMERIC) AS valor_acima_limite,
-  SAFE_CAST(SUM(IF(pof >= 80 AND tipo_viagem != "Não licenciado", distancia_planejada*subsidio_km_teto, 0)) - COALESCE(SUM(IF(indicador_viagem_remunerada = TRUE, 0, distancia_planejada*subsidio_km)), 0) AS NUMERIC) AS valor_total_sem_glosa
+  SAFE_CAST(TRUNC(COALESCE(SUM(distancia_planejada), 0), 3)AS NUMERIC) AS km_apurada_faixa,
+  SAFE_CAST(TRUNC(COALESCE(SUM(IF(tipo_viagem != "Não licenciado", distancia_planejada, 0)), 0), 3) AS NUMERIC) AS km_subsidiada_faixa,
+  SAFE_CAST(TRUNC(SUM(IF(indicador_viagem_remunerada = TRUE AND pof >= 80, distancia_planejada*subsidio_km, 0)), 2) AS NUMERIC) AS valor_apurado,
+  SAFE_CAST(TRUNC(COALESCE(SUM(IF(indicador_viagem_remunerada = TRUE, 0, distancia_planejada*subsidio_km)), 0), 2) AS NUMERIC) AS valor_acima_limite,
+  SAFE_CAST(TRUNC(SUM(IF(pof >= 80 AND tipo_viagem != "Não licenciado", distancia_planejada*subsidio_km_teto, 0)) - COALESCE(SUM(IF(indicador_viagem_remunerada = TRUE, 0, distancia_planejada*subsidio_km)), 0), 2) AS NUMERIC) AS valor_total_sem_glosa
 FROM
   subsidio_servico_ar
 GROUP BY
@@ -153,4 +154,6 @@ GROUP BY
   consorcio,
   servico,
   indicador_ar_condicionado,
+  indicador_penalidade_judicial,
+  indicador_viagem_remunerada,
   tipo_viagem
