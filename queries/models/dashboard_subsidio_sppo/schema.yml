@@ -360,5 +360,5 @@ models:
         description: "Valor de subsídio, conforme tipo de viagem (R$/km)."
       - name: subsidio_km_teto
         description: "Valor máximo de subsídio, conforme tipo de viagem (R$/km)."
-      - name: indicador_viagem_remunerada
-        description: "Indicador se a viagem foi remunerada ou não."
+      - name: indicador_viagem_dentro_limite
+        description: "Indica se a viagem foi remunerada por estar abaixo do teto de 120%/200%."

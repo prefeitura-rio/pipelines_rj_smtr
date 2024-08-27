@@ -168,7 +168,7 @@ SELECT
       THEN NULL
     ELSE
         TRUE
-    END AS indicador_viagem_remunerada
+    END AS indicador_viagem_dentro_limite
 FROM (
 SELECT
     *,
