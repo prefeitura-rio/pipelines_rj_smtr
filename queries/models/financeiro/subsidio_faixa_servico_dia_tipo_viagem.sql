@@ -142,7 +142,7 @@ SELECT
   SAFE_CAST(TRUNC(COALESCE(SUM(distancia_planejada), 0), 3)AS NUMERIC) AS km_apurada_faixa,
   SAFE_CAST(TRUNC(COALESCE(SUM(IF(tipo_viagem != "Não licenciado", distancia_planejada, 0)), 0), 3) AS NUMERIC) AS km_subsidiada_faixa,
   SAFE_CAST(TRUNC(SUM(IF(indicador_viagem_dentro_limite = TRUE AND pof >= 80, distancia_planejada*subsidio_km, 0)), 2) AS NUMERIC) AS valor_apurado,
-  SAFE_CAST(TRUNC(COALESCE(SUM(IF(indicador_viagem_dentro_limite = TRUE, 0, distancia_planejada*subsidio_km)), 0), 2) AS NUMERIC) AS valor_acima_limite,
+  SAFE_CAST(-TRUNC(COALESCE(SUM(IF(indicador_viagem_dentro_limite = TRUE, 0, distancia_planejada*subsidio_km)), 0), 2) AS NUMERIC) AS valor_acima_limite,
   SAFE_CAST(TRUNC(SUM(IF(pof >= 80 AND tipo_viagem != "Não licenciado", distancia_planejada*subsidio_km_teto, 0)) - COALESCE(SUM(IF(indicador_viagem_dentro_limite = TRUE, 0, distancia_planejada*subsidio_km)), 0), 2) AS NUMERIC) AS valor_total_sem_glosa
 FROM
   subsidio_servico_ar
