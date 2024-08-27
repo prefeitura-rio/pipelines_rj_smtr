@@ -1,8 +1,14 @@
 # Changelog - gtfs
 
-## Adicionado
+## [1.0.7] - 2024-08-27
+
+### Alterado
+
+- Alterada a forma de identificação das tabs das planilhas de Ordem de servico e Trajetos alternativos para identificar atravez dos sufixos `ANEXO I` e `ANEXO II` respectivamente (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/171)
 
 ## [1.0.6] - 2024-08-02
+
+### Adicionado
 
 - Adiciona filtro para os nomes de tabs da planilha de controle os na task `get_raw_drive_files` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/128/files)
 
