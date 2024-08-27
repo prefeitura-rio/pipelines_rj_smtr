@@ -75,6 +75,10 @@ def subsidio_data_quality_check(
     if mode == "pos":
         request_params["end_timestamp"] = f"""{params["end_date"]} 00:00:00"""
         request_params["dataset_id"] = constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value
+        if check_start_date(params):
+            request_params["dataset_id_v2"] = constants.SUBSIDIO_SPPO_DASHBOARD_V2_DATASET_ID.value
+        else:
+            request_params["dataset_id_v2"] = constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value
 
     checks_list = (
         constants.SUBSIDIO_SPPO_DATA_CHECKS_PRE_LIST.value
