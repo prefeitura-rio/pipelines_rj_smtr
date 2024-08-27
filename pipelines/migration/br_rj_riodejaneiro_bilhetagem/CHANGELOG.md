@@ -1,5 +1,11 @@
 # Changelog - br_rj_riodejaneiro_bilhetagem
 
+## [1.4.1] - 2024-08-27
+
+### Alterado
+
+- Adiciona parâmetro `truncate_minutes` nas constantes `BILHETAGEM_MATERIALIZACAO_PASSAGEIROS_HORA_PARAMS` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/169)
+
 ## [1.4.0] - 2024-08-26
 
 ### Alterado

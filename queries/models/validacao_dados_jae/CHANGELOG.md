@@ -1,5 +1,10 @@
 # Changelog - validacao_dados_jae
 
+## [1.1.2] - 2024-08-27
+
+### Corrigido
+  - Remove transações do tipo gratuidade no modelo `integracao_nao_realizada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/169)
+
 ## [1.1.1] - 2024-08-21
 
 ### Corrigido
