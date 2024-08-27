@@ -206,13 +206,13 @@ with Flow(
 
             with case(apuracao_start_date, False):
                 SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_selector(
-                    selector_name="apuracao_antiga",
+                    selector_name="apuracao_subsidio_v8",
                     _vars=_vars,
                 )
 
             with case(apuracao_start_date, True):
                 SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_selector(
-                    selector_name="apuracao_nova",
+                    selector_name="apuracao_subsidio_v9",
                     _vars=_vars,
                 )
 

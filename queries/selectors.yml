@@ -1,5 +1,5 @@
 selectors:
-  - name: apuracao_antiga
+  - name: apuracao_subsidio_v8
     description: Apuração sem faixa horária
     definition:
       union:
@@ -10,7 +10,7 @@ selectors:
         - method: path
           value: models/dashboard_subsidio_sppo
 
-  - name: apuracao_nova
+  - name: apuracao_subsidio_v9
     description: Apuração com faixa horária
     definition:
       union:
