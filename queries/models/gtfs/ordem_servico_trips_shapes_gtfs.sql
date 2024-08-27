@@ -171,7 +171,7 @@ SELECT
   vista,
   consorcio,
   sentido,
-  fh.partidas,
+  fh.partidas AS partidas_total_planejada,
   distancia_planejada,
   fh.quilometragem AS distancia_total_planejada,
   inicio_periodo,
