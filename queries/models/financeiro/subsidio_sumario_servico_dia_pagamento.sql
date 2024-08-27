@@ -15,8 +15,7 @@ WITH
     servico,
     SUM(viagens_faixa) AS viagens_dia,
     SUM(km_apurada_faixa) AS km_apurada_dia,
-    SUM(km_planejada_faixa) AS km_planejada_dia,
-    MIN(pof) AS min_pof
+    SUM(km_planejada_faixa) AS km_planejada_dia
   FROM
     {{ ref("subsidio_faixa_servico_dia") }}
     -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia
@@ -29,16 +28,27 @@ WITH
     consorcio,
     servico
   ),
-  subsidio_faixa AS (
+  -- subsidio_faixa AS (
+  -- SELECT
+  --   *
+  -- FROM
+  --   {{ ref("subsidio_faixa_servico_dia") }}
+  --   -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia
+  -- WHERE
+  --   data BETWEEN DATE("{{ var("start_date") }}")
+  --   AND DATE("{{ var("end_date") }}")
+  -- ),
+  subsidio_parametros AS (
   SELECT
-    *
+    DISTINCT data_inicio,
+    data_fim,
+    status,
+    subsidio_km,
+    MAX(subsidio_km) OVER (PARTITION BY data_inicio, data_fim) AS subsidio_km_teto
   FROM
-    {{ ref("subsidio_faixa_servico_dia") }}
-    -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia
-  WHERE
-    data BETWEEN DATE("{{ var("start_date") }}")
-    AND DATE("{{ var("end_date") }}")
-  ),
+    {{ ref("subsidio_valor_km_tipo_viagem") }}
+    -- rj-smtr-staging.dashboard_subsidio_sppo_staging.subsidio_valor_km_tipo_viagem
+),
   penalidade AS (
   SELECT
     data,
@@ -51,21 +61,7 @@ WITH
   ),
   subsidio_dia_tipo_viagem AS (
   SELECT
-    data,
-    tipo_dia,
-    faixa_horaria_inicio,
-    faixa_horaria_fim,
-    consorcio,
-    servico,
-    indicador_ar_condicionado,
-    tipo_viagem,
-    viagens_faixa,
-    km_apurada_faixa,
-    km_subsidiada_faixa,
-    valor_apurado,
-    valor_acima_limite,
-    valor_total_sem_glosa,
-    valor_judicial
+    *
   FROM
     -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia_tipo_viagem
     {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
@@ -83,26 +79,28 @@ WITH
     SUM(s.km_subsidiada_faixa) AS km_subsidiada_dia,
     COALESCE(SUM(s.valor_acima_limite), 0) AS valor_acima_limite,
     COALESCE(SUM(s.valor_total_sem_glosa), 0) AS valor_total_sem_glosa,
-    -- CASE
-    --   WHEN sf.pof >= 80 THEN SUM(s.valor_apurado)
-    --   ELSE pe.valor_penalidade
-    -- END AS valor_total_com_glosa,
     SUM(s.valor_apurado) + pe.valor_penalidade AS valor_total_com_glosa,
-    COALESCE(SUM(s.valor_judicial), 0) AS valor_judicial
+    CASE
+      WHEN pe.valor_penalidade != 0 THEN -pe.valor_penalidade
+      ELSE SAFE_CAST(TRUNC((SUM(IF(indicador_viagem_remunerada = TRUE AND indicador_penalidade_judicial = TRUE, km_apurada_faixa*subsidio_km_teto, 0))
+           - SUM(IF(indicador_viagem_remunerada = TRUE AND indicador_penalidade_judicial = TRUE, km_apurada_faixa*subsidio_km, 0))), 2) AS NUMERIC)
+    END AS valor_judicial,
   FROM
     subsidio_dia_tipo_viagem AS s
-  -- LEFT JOIN
-  --   subsidio_faixa AS sf
-  -- USING(data, tipo_dia, consorcio, servico)
   LEFT JOIN
     penalidade AS pe
   USING(data, tipo_dia, consorcio, servico)
+  LEFT JOIN
+    subsidio_parametros AS sp
+  ON
+    s.data BETWEEN sp.data_inicio
+    AND sp.data_fim
+    AND s.tipo_viagem = sp.status
   GROUP BY
     s.data,
     s.tipo_dia,
     s.consorcio,
     s.servico,
-    -- sf.pof,
     pe.valor_penalidade
   )
 SELECT
@@ -115,23 +113,10 @@ SELECT
   vc.km_subsidiada_dia,
   sd.km_planejada_dia,
   vc.valor_total_com_glosa AS valor_a_pagar,
-  CASE
-    WHEN sd.min_pof >= 80 THEN
-      (vc.valor_total_com_glosa - vc.valor_total_sem_glosa)
-    ELSE
-      vc.valor_penalidade
-  END AS valor_glosado,
-  -- vc.valor_total_com_glosa - vc.valor_total_sem_glosa AS valor_glosado,
-  -vc.valor_acima_limite AS valor_acima_limite,
+  vc.valor_total_com_glosa - vc.valor_total_sem_glosa AS valor_glosado,
+  vc.valor_acima_limite,
   vc.valor_total_sem_glosa,
-  vc.valor_total_com_glosa + vc.valor_acima_limite -
-  CASE
-    WHEN sd.min_pof >= 80 THEN
-      (vc.valor_total_com_glosa - vc.valor_penalidade - vc.valor_total_sem_glosa)
-    ELSE
-      vc.valor_penalidade
-  END AS valor_total_apurado,
-  -- vc.valor_total_com_glosa + vc.valor_acima_limite - (vc.valor_total_com_glosa - vc.valor_penalidade - vc.valor_total_sem_glosa) AS valor_total_apurado,
+  vc.valor_acima_limite + vc.valor_penalidade + vc.valor_total_sem_glosa AS valor_total_apurado,
   vc.valor_judicial,
   vc.valor_penalidade
 FROM
@@ -139,6 +124,3 @@ FROM
 LEFT JOIN
   valores_calculados AS vc
 USING(data, tipo_dia, consorcio, servico)
--- LEFT JOIN
---   subsidio_faixa AS sf
--- USING(data, tipo_dia, consorcio, servico)
