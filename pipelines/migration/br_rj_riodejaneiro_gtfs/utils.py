@@ -201,86 +201,85 @@ def processa_ordem_servico(
         None
     """
 
-    if len(sheetnames) != 2 and regular_sheet_index is None:
-        raise Exception("More than 2 tabs in the file. Please specify the regular sheet index.")
+    if len(sheetnames) != 3 and regular_sheet_index is None:
+        raise Exception("More than 3 tabs in the file. Please specify the regular sheet index.")
 
     if regular_sheet_index is None:
-        regular_sheet_index = 0
+        regular_sheet_index = next(
+            (i for i, name in enumerate(sheetnames) if "ANEXO I" in name), None
+        )
 
-    sheets_range = len(sheetnames) - len([x for x in sheetnames if "ANEXO II" in x])
     quadro_geral = pd.DataFrame()
 
-    for i in range(0, sheets_range):
-        log(f"########## {sheetnames[i]} ##########")
-        quadro = pd.read_excel(file_bytes, sheet_name=sheetnames[i], dtype=object)
+    log(f"########## {sheetnames[regular_sheet_index]} ##########")
+    quadro = pd.read_excel(file_bytes, sheet_name=sheetnames[regular_sheet_index], dtype=object)
 
-        columns = {
-            "Serviço": "servico",
-            "Vista": "vista",
-            "Consórcio": "consorcio",
-            "Extensão de Ida": "extensao_ida",
-            "Extensão de Volta": "extensao_volta",
-            "Horário Inicial": "horario_inicio",
-            "Horário\nInicial": "horario_inicio",
-            "Horário Fim": "horario_fim",
-            "Horário\nFim": "horario_fim",
-            "Partidas Ida Dia Útil": "partidas_ida_du",
-            "Partidas Volta Dia Útil": "partidas_volta_du",
-            "Viagens Dia Útil": "viagens_du",
-            "Quilometragem Dia Útil": "km_dia_util",
-            "Partidas Ida Sábado": "partidas_ida_sabado",
-            "Partidas Volta Sábado": "partidas_volta_sabado",
-            "Viagens Sábado": "viagens_sabado",
-            "Quilometragem Sábado": "km_sabado",
-            "Partidas Ida Domingo": "partidas_ida_domingo",
-            "Partidas Volta Domingo": "partidas_volta_domingo",
-            "Viagens Domingo": "viagens_domingo",
-            "Quilometragem Domingo": "km_domingo",
-            "Partidas Ida Ponto Facultativo": "partidas_ida_pf",
-            "Partidas Volta Ponto Facultativo": "partidas_volta_pf",
-            "Viagens Ponto Facultativo": "viagens_pf",
-            "Quilometragem Ponto Facultativo": "km_pf",
-        }
+    columns = {
+        "Serviço": "servico",
+        "Vista": "vista",
+        "Consórcio": "consorcio",
+        "Extensão de Ida": "extensao_ida",
+        "Extensão de Volta": "extensao_volta",
+        "Horário Inicial": "horario_inicio",
+        "Horário\nInicial": "horario_inicio",
+        "Horário Fim": "horario_fim",
+        "Horário\nFim": "horario_fim",
+        "Partidas Ida Dia Útil": "partidas_ida_du",
+        "Partidas Volta Dia Útil": "partidas_volta_du",
+        "Viagens Dia Útil": "viagens_du",
+        "Quilometragem Dia Útil": "km_dia_util",
+        "Partidas Ida Sábado": "partidas_ida_sabado",
+        "Partidas Volta Sábado": "partidas_volta_sabado",
+        "Viagens Sábado": "viagens_sabado",
+        "Quilometragem Sábado": "km_sabado",
+        "Partidas Ida Domingo": "partidas_ida_domingo",
+        "Partidas Volta Domingo": "partidas_volta_domingo",
+        "Viagens Domingo": "viagens_domingo",
+        "Quilometragem Domingo": "km_domingo",
+        "Partidas Ida Ponto Facultativo": "partidas_ida_pf",
+        "Partidas Volta Ponto Facultativo": "partidas_volta_pf",
+        "Viagens Ponto Facultativo": "viagens_pf",
+        "Quilometragem Ponto Facultativo": "km_pf",
+    }
 
-        quadro = quadro.rename(columns=columns)
+    quadro = quadro.rename(columns=columns)
 
-        quadro["servico"] = quadro["servico"].astype(str)
-        quadro["servico"] = quadro["servico"].str.extract(r"([A-Z]+)", expand=False).fillna(
-            ""
-        ) + quadro["servico"].str.extract(r"([0-9]+)", expand=False).fillna("")
+    quadro["servico"] = quadro["servico"].astype(str)
+    quadro["servico"] = quadro["servico"].str.extract(r"([A-Z]+)", expand=False).fillna(
+        ""
+    ) + quadro["servico"].str.extract(r"([0-9]+)", expand=False).fillna("")
 
-        quadro = quadro[list(set(columns.values()))]
-        quadro = quadro.replace("—", 0)
-        quadro = quadro.reindex(columns=list(set(columns.values())))
+    quadro = quadro[list(set(columns.values()))]
+    quadro = quadro.replace("—", 0)
+    quadro = quadro.reindex(columns=list(set(columns.values())))
 
-        hora_cols = [coluna for coluna in quadro.columns if "horario" in coluna]
-        quadro[hora_cols] = quadro[hora_cols].astype(str)
+    hora_cols = [coluna for coluna in quadro.columns if "horario" in coluna]
+    quadro[hora_cols] = quadro[hora_cols].astype(str)
 
-        for hora_col in hora_cols:
-            quadro[hora_col] = quadro[hora_col].apply(normalizar_horario)
+    for hora_col in hora_cols:
+        quadro[hora_col] = quadro[hora_col].apply(normalizar_horario)
 
-        cols = [
-            coluna
-            for coluna in quadro.columns
-            if "km" in coluna or "viagens" in coluna or "partida" in coluna
-        ]
+    cols = [
+        coluna
+        for coluna in quadro.columns
+        if "km" in coluna or "viagens" in coluna or "partida" in coluna
+    ]
 
-        for col in cols:
-            quadro[col] = quadro[col].astype(str).apply(convert_to_float).astype(float).fillna(0)
+    for col in cols:
+        quadro[col] = quadro[col].astype(str).apply(convert_to_float).astype(float).fillna(0)
 
-        extensao_cols = ["extensao_ida", "extensao_volta"]
-        quadro[extensao_cols] = quadro[extensao_cols].astype(str)
-        for col in extensao_cols:
-            quadro[col] = quadro[col].str.replace(".", "", regex=False)
-        quadro[extensao_cols] = quadro[extensao_cols].apply(pd.to_numeric)
+    extensao_cols = ["extensao_ida", "extensao_volta"]
+    quadro[extensao_cols] = quadro[extensao_cols].astype(str)
+    for col in extensao_cols:
+        quadro[col] = quadro[col].str.replace(".", "", regex=False)
+    quadro[extensao_cols] = quadro[extensao_cols].apply(pd.to_numeric)
 
-        quadro["extensao_ida"] = quadro["extensao_ida"] / 1000
-        quadro["extensao_volta"] = quadro["extensao_volta"] / 1000
+    quadro["extensao_ida"] = quadro["extensao_ida"] / 1000
+    quadro["extensao_volta"] = quadro["extensao_volta"] / 1000
 
-        if i == regular_sheet_index:
-            quadro["tipo_os"] = "Regular"
+    quadro["tipo_os"] = "Regular"
 
-            quadro_geral = pd.concat([quadro_geral, quadro])
+    quadro_geral = pd.concat([quadro_geral, quadro])
 
     # Verificações
     columns_in_dataframe = set(quadro_geral.columns)
@@ -342,7 +341,7 @@ def processa_ordem_servico_trajeto_alternativo(
         Exception: If there are missing or duplicated columns in 'Trajetos Alternativos'.
     """
     # Pre-tratamento para "Trajeto Alternativo"
-    sheet = -1
+    sheet = next((i for i, name in enumerate(sheetnames) if "ANEXO II" in name), None)
     log(f"########## {sheetnames[sheet]} ##########")
 
     ordem_servico_trajeto_alternativo = pd.read_excel(
