@@ -518,10 +518,7 @@ with Flow(
             project_name=PROJECT,
             labels=LABELS,
             upstream_tasks=[wait_materializacao_transacao],
-            parameters={
-                "timestamp": materialize_timestamp,
-            }
-            | constants.BILHETAGEM_MATERIALIZACAO_PASSAGEIROS_HORA_PARAMS.value,
+            parameters=constants.BILHETAGEM_MATERIALIZACAO_PASSAGEIROS_HORA_PARAMS.value,
         )
 
         wait_materializacao_passageiros_hora = wait_for_flow_run(
