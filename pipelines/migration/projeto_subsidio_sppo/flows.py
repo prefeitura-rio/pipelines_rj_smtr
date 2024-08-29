@@ -158,10 +158,11 @@ with Flow(
 
     # Get models version #
     dataset_sha = fetch_dataset_sha(
-        dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value,  # precisa disso ?
+        dataset_id=constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value,
     )
 
-    _vars = {"start_date": start_date, "end_date": end_date, "version": dataset_sha}
+    dates = [{"start_date": start_date, "end_date": end_date}]
+    _vars = get_join_dict(dict_list=dates, new_dict=dataset_sha)[0]
 
     # 2. MATERIALIZE DATA #
     with case(test_only, False):
@@ -209,20 +210,38 @@ with Flow(
             with case(date_in_range, True):
                 date_intervals = split_date_range(_vars)
 
+                dbt_vars_1 = get_join_dict(
+                    dict_list=[_vars], new_dict=date_intervals["first_range"]
+                )[0]
+
                 SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_selector(
                     selector_name="apuracao_subsidio_v8",
-                    _vars=_vars.update(date_intervals["first_range"]),
+                    _vars=dbt_vars_1,
                 )
-
-                SUBSIDIO_SPPO_APURACAO_RUN_2 = run_dbt_selector(
-                    selector_name="apuracao_subsidio_v9",
-                    _vars=_vars.update(date_intervals["second_range"]),
-                ).set_upstream(task=SUBSIDIO_SPPO_APURACAO_RUN)
 
                 # POST-DATA QUALITY CHECK #
                 SUBSIDIO_SPPO_DATA_QUALITY_POS = subsidio_data_quality_check(
                     mode="pos",
-                    params=_vars,
+                    params=dbt_vars_1,
+                    upstream_tasks=[SUBSIDIO_SPPO_APURACAO_RUN],
+                )
+
+                dbt_vars_2 = get_join_dict(
+                    dict_list=[dbt_vars_1],
+                    new_dict=date_intervals["second_range"],
+                    upstream_tasks=[SUBSIDIO_SPPO_DATA_QUALITY_POS],
+                )[0]
+
+                SUBSIDIO_SPPO_APURACAO_RUN_2 = run_dbt_selector(
+                    selector_name="apuracao_subsidio_v9",
+                    _vars=dbt_vars_2,
+                    upstream_tasks=[dbt_vars_2],
+                )
+
+                # POST-DATA QUALITY CHECK #
+                SUBSIDIO_SPPO_DATA_QUALITY_POS_2 = subsidio_data_quality_check(
+                    mode="pos",
+                    params=dbt_vars_2,
                     upstream_tasks=[SUBSIDIO_SPPO_APURACAO_RUN_2],
                 )
 
