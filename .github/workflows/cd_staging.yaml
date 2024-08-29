@@ -46,7 +46,7 @@ jobs:
 
       - name: Update image tag in constants
         run: |-
-          python .github/workflows/scripts/replace_docker_tag.py ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }} ${{ github.sha }}
+          python .github/workflows/scripts/replace_docker_tag.py debian ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }} ${{ github.sha }}
 
       - name: Update image tag in constants
         run: |-

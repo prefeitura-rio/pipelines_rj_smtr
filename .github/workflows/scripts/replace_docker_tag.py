@@ -19,7 +19,7 @@ def get_name_version_from_args() -> List[str]:
     Returns the version from the command line arguments.
     """
     if len(argv) != 4:
-        print("Usage: replace_docker_tag.py <None/Fedora> <image_name> <version>")
+        print("Usage: replace_docker_tag.py <debian/fedora> <image_name> <version>")
         exit(1)
     return argv[1], argv[2], argv[3]
 
