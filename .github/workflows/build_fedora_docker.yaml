@@ -15,7 +15,7 @@ env:
 
 jobs:
   build-container:
-    name: Build and publish docs
+    name: Build and publish pipelines on Fedora
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
