@@ -5,7 +5,14 @@ on:
     branches:
       - main
       - staging/*
-
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/cd_staging.yaml"
+      - "pipelines/**/*"
+      - "pyproject.toml"
+      - "Dockerfile-fedora"
 env:
   GKE_PROJECT_ID: ${{ secrets.GKE_PROJECT_ID }}
   GKE_SA_KEY: ${{ secrets.GKE_SA_KEY }}
@@ -55,5 +62,5 @@ jobs:
 
       - name: Build and publish image
         run: |
-          docker build -t $IMAGE_NAME:$GITHUB_SHA . -f Dockerfile-fedora
-          docker push $IMAGE_NAME:$GITHUB_SHA
+          docker build -t $IMAGE_NAME:${{ github.sha}} . -f Dockerfile-fedora
+          docker push $IMAGE_NAME:${{ github.sha }}

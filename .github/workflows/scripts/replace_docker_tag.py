@@ -44,7 +44,7 @@ def update_file(file_path: Path, image_name: str, version: str, mode: str = None
     else:
         replace_tag = REPLACE_TAG
         replace_image = REPLACE_IMAGE
-
+    print(f"Will replace {replace_image}:{replace_tag} -> {image_name}:{version}")
     text = replace_in_text(text, replace_tag, version)
     text = replace_in_text(text, replace_image, image_name)
     with file_path.open("w") as file:
