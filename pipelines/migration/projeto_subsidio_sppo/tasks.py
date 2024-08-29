@@ -46,7 +46,7 @@ def check_date_in_range(param: dict) -> bool:
     end_date = datetime.strptime(param["end_date"], "%Y-%m-%d").date()
     comparison_date = datetime.strptime(constants.DATA_SUBSIDIO_V9_INICIO.value, "%Y-%m-%d").date()
 
-    return start_date <= comparison_date <= end_date
+    return start_date < comparison_date <= end_date
 
 
 @task
@@ -55,13 +55,17 @@ def split_date_range(param: dict) -> dict:
     Split the date range into two ranges if DATA_SUBSIDIO_V9_INICIO is within the date range.
     Returns the first and second ranges.
     """
-    start_date = datetime.strptime(param["start_date"], "%Y-%m-%d").date()
-    end_date = datetime.strptime(param["end_date"], "%Y-%m-%d").date()
     comparison_date = datetime.strptime(constants.DATA_SUBSIDIO_V9_INICIO.value, "%Y-%m-%d").date()
 
     return {
-        "first_range": {"start_date": start_date, "end_date": comparison_date - timedelta(days=1)},
-        "second_range": {"start_date": comparison_date, "end_date": end_date},
+        "first_range": {
+            "start_date": param["start_date"],
+            "end_date": (comparison_date - timedelta(days=1)).strftime("%Y-%m-%d"),
+        },
+        "second_range": {
+            "start_date": comparison_date.strftime("%Y-%m-%d"),
+            "end_date": param["end_date"],
+        },
     }
 
 
@@ -103,10 +107,14 @@ def subsidio_data_quality_check(
     if mode == "pos":
         request_params["end_timestamp"] = f"""{params["end_date"]} 00:00:00"""
         request_params["dataset_id"] = constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value
-        if check_start_date(params):
+        if check_start_date.run(params):
             request_params["dataset_id_v2"] = constants.SUBSIDIO_SPPO_DASHBOARD_V2_DATASET_ID.value
+            request_params[
+                "table_id_v2"
+            ] = constants.SUBSIDIO_SPPO_DASHBOARD_SUMARIO_TABLE_ID_V2.value
         else:
             request_params["dataset_id_v2"] = constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value
+            request_params["table_id_v2"] = constants.SUBSIDIO_SPPO_DASHBOARD_SUMARIO_TABLE_ID.value
 
     checks_list = (
         constants.SUBSIDIO_SPPO_DATA_CHECKS_PRE_LIST.value
