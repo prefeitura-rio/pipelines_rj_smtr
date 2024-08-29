@@ -2,7 +2,7 @@
 """
 Flows for br_rj_riodejaneiro_bilhetagem
 
-DBT: 2024-08-21 2
+DBT: 2024-08-26
 """
 
 from copy import deepcopy
@@ -508,6 +508,21 @@ with Flow(
 
         wait_materializacao_transacao = wait_for_flow_run(
             run_materializacao_transacao,
+            stream_states=True,
+            stream_logs=True,
+            raise_final_state=True,
+        )
+
+        run_materializacao_passageiros_hora = create_flow_run(
+            flow_name=bilhetagem_materializacao_transacao.name,
+            project_name=PROJECT,
+            labels=LABELS,
+            upstream_tasks=[wait_materializacao_transacao],
+            parameters=constants.BILHETAGEM_MATERIALIZACAO_PASSAGEIROS_HORA_PARAMS.value,
+        )
+
+        wait_materializacao_passageiros_hora = wait_for_flow_run(
+            run_materializacao_passageiros_hora,
             stream_states=True,
             stream_logs=True,
             raise_final_state=True,

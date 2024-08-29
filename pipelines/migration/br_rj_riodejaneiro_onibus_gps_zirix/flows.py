@@ -2,7 +2,7 @@
 """
 Flows for br_rj_riodejaneiro_onibus_gps_zirix
 
-DBT 2024-08-20
+DBT 2024-08-26
 """
 from prefect import Parameter, case
 from prefect.run_configs import KubernetesRun
@@ -134,7 +134,7 @@ with Flow(
     # Set specific run parameters #
     date_range = get_materialization_date_range(
         dataset_id=dataset_id,
-        table_id="gps_sppo",
+        table_id=table_id,
         raw_dataset_id=raw_dataset_id,
         raw_table_id=raw_table_id,
         table_run_datetime_column_name="timestamp_gps",

@@ -78,6 +78,7 @@ transacao AS (
     -- `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
   WHERE
     data < CURRENT_DATE("America/Sao_Paulo")
+    AND tipo_transacao != "Gratuidade"
     {% if is_incremental() %}
       AND
       {{ transaction_date_filter }}
