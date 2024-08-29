@@ -29,7 +29,7 @@ jobs:
       
       - name: Update image tag in constants
         run: |-
-          python .github/workflows/scripts/replace_docker_tag.py gcr.io/${{ env.GKE_PROJECT_ID }}/${{ IMAGE_NAME }}:${{ github.sha }}
+          python .github/workflows/scripts/replace_docker_tag.py gcr.io/${{ env.GKE_PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
       # Setup gcloud CLI
       - name: Setup Google Cloud CLI
