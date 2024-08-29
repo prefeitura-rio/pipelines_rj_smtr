@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.1.9] - 2024-08-29
+
+### Alterado
+
+- Altera modelo `ordem_servico_trips_shapes_gtfs` em razão da apuração por faixa horária (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
+
 ## [1.1.8] - 2024-08-02
 
 ### Alterado

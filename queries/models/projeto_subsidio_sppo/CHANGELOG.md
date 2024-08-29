@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [6.0.5] - 2024-08-29
+
+### Alterado
+
+- Alterado os modelos `viagem_planejada` e `aux_registros_status_trajeto` em razão da apuração por faixa horária (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
+
 ## [6.0.4] 2024-08-13
 
 ### Adicionado

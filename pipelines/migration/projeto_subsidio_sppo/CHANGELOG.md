@@ -1,5 +1,21 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.0.5] - 2024-08-29
+
+### Alterado
+
+- Alterado `teste_sumario_servico_dia_tipo_soma_km` para considerar tabela de acordo com o período (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
+
+- Alterado `indicador_viagem_remunerada` para `indicador_viagem_dentro_limite` no `SUBSIDIO_SPPO_DATA_CHECKS_POS_LIST` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
+
+- Alterada a lógica do flow `subsidio_sppo_apuracao` para utilizar os selectors `apuracao_subsidio_v8` e `apuracao_subsidio_v9` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
+
+- Alterada a lógica da task `subsidio_data_quality_check` para considerar tabela de acordo com o período (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
+
+### Adicionado
+
+- Adicionadas as tasks `check_start_date`, `check_date_in_range` e `split_date_range` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
+
 ## [1.0.4] - 2024-08-19
 
 ### Adicionado
