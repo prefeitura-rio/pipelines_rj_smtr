@@ -235,6 +235,7 @@ def get_raw_drive_files(os_control, local_filepath: list, regular_sheet_index: i
 
 ### Validation
 
+
 @task(nout=2)
 def get_gtfs_zipfile(os_control):
     """
@@ -268,12 +269,13 @@ def get_gtfs_zipfile(os_control):
     os_files = []
     file_link = os_control["Link do GTFS"]
     file_bytes_gtfs = download_file(file_link=file_link, drive_service=drive_service)
-    
+
     # Salva os nomes das planilhas
     sheetnames = xl.load_workbook(file_bytes_os).sheetnames
     sheetnames = [name for name in sheetnames if "ANEXO" in name]
     log(f"tabs encontradas na planilha Controle OS: {sheetnames}")
     return file_bytes_gtfs, file_bytes_os
+
 
 @task
 def validate_gtfs_os(os_file, gtfs_file, os_initial_date, os_final_date):
@@ -303,7 +305,7 @@ def validate_gtfs_os(os_file, gtfs_file, os_initial_date, os_final_date):
         ]
 
         if not check_os_columns(os_df):
-            log('Checking OS columns')
+            log("Checking OS columns")
             messages.append(":warning: O arquivo OS não contém as colunas esperadas!")
             # return
 
@@ -320,7 +322,7 @@ def validate_gtfs_os(os_file, gtfs_file, os_initial_date, os_final_date):
             os_df[col] = os_df[col].astype(float)
 
         if not check_os_columns_order(os_df):
-            log('Checking OS column order')
+            log("Checking OS column order")
             messages.append(
                 f":warning: O arquivo OS contém as colunas esperadas, porém não segue a ordem esperada: {constants.OS_COLUMNS.value}"
             )
@@ -328,7 +330,7 @@ def validate_gtfs_os(os_file, gtfs_file, os_initial_date, os_final_date):
         # Check dates
 
         if (os_initial_date is not None) and (os_final_date is not None):
-            log('Checking OS dates')
+            log("Checking OS dates")
             if os_initial_date > datetime.now().date():
                 messages.append(
                     ":warning: ATENÇÃO: Você está subindo uma OS cuja operação já começou!"

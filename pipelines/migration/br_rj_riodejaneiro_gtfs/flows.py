@@ -29,7 +29,7 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.tasks import (
     get_raw_drive_files,
     send_check_report,
     update_last_captured_os,
-    validate_gtfs_os
+    validate_gtfs_os,
 )
 from pipelines.migration.tasks import (
     create_date_hour_partition,
@@ -120,10 +120,10 @@ with Flow("SMTR: GTFS - Validação") as gtfs_validator:
     gtfs_file, os_file = get_gtfs_zipfile(os_control=os_control)
 
     messages = validate_gtfs_os(
-        os_file=os_file, 
+        os_file=os_file,
         gtfs_file=gtfs_file,
-        os_initial_date=data_index, 
-        os_final_date=data_versao_gtfs_task
+        os_initial_date=data_index,
+        os_final_date=data_versao_gtfs_task,
     )
     send_check_report(messages=messages)
 
