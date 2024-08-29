@@ -117,10 +117,10 @@ with Flow("SMTR: GTFS - Validação") as gtfs_validator:
     flag_new_os, os_control, data_index, data_versao_gtfs_task = get_os_info(
         last_captured_os=last_captured_os, data_versao_gtfs=data_versao_gtfs_param
     )
-    gtfs_file, os_filepath = get_gtfs_zipfile(os_control=os_control)
+    gtfs_file, os_file = get_gtfs_zipfile(os_control=os_control)
 
     messages = validate_gtfs_os(
-        os_filepath=os_filepath, 
+        os_file=os_file, 
         gtfs_file=gtfs_file,
         os_initial_date=data_index, 
         os_final_date=data_versao_gtfs_task
