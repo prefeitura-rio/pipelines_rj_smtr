@@ -554,6 +554,9 @@ aux_retorno_ordem_pagamento staging_arquivo_retorno",
             "version": {},
         },
         "exclude": "+transacao",
+        "source_dataset_ids": [],
+        "source_table_ids": [],
+        "capture_intervals_minutes": [],
     }
 
     BILHETAGEM_MATERIALIZACAO_DASHBOARD_CONTROLE_VINCULO_PARAMS = {
