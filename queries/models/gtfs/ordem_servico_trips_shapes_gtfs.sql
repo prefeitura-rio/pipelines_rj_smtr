@@ -171,13 +171,26 @@ SELECT
   vista,
   consorcio,
   sentido,
-  fh.partidas AS partidas_total_planejada,
+  {% if var("data_versao_gtfs") >= var("DATA_SUBSIDIO_V9_INICIO")  %}
+    fh.partidas AS partidas_total_planejada,
+  {% else %}
+    0 AS partidas_total_planejada,
+  {% endif %}
   distancia_planejada,
-  fh.quilometragem AS distancia_total_planejada,
+  {% if var("data_versao_gtfs") >= var("DATA_SUBSIDIO_V9_INICIO")  %}
+    fh.quilometragem AS distancia_total_planejada,
+  {% else %}
+    distancia_total_planejada,
+  {% endif %}
   inicio_periodo,
   fim_periodo,
-  fh.faixa_horaria_inicio,
-  fh.faixa_horaria_fim,
+  {% if var("data_versao_gtfs") >= var("DATA_SUBSIDIO_V9_INICIO")  %}
+    fh.faixa_horaria_inicio,
+    fh.faixa_horaria_fim,
+  {% else %}
+    "00:00:00" AS faixa_horaria_inicio,
+    "02:59:59" AS faixa_horaria_fim,
+  {% endif %}
   trip_id_planejado,
   trip_id,
   shape_id,
@@ -200,11 +213,13 @@ USING
   (feed_version,
     feed_start_date,
     shape_id)
-LEFT JOIN
-  {{ ref("ordem_servico_faixa_horaria") }} AS fh
-  -- rj-smtr-dev.projeto_subsidio_sppo.ordem_servico_faixa_horaria AS fh
-USING
-  (tipo_dia, servico)
+{% if var("data_versao_gtfs") >= var("DATA_SUBSIDIO_V9_INICIO")  %}
+  LEFT JOIN
+    {{ ref("ordem_servico_faixa_horaria") }} AS fh
+    -- rj-smtr-dev.gtfs.ordem_servico_faixa_horaria AS fh
+  USING
+    (tipo_dia, servico)
+{% endif %}
 {% if is_incremental() -%}
 WHERE
   feed_start_date = '{{ var("data_versao_gtfs") }}'
