@@ -1,5 +1,17 @@
 # Changelog - br_rj_riodejaneiro_bilhetagem
 
+## [1.4.3] - 2024-08-29
+
+### Corrigido
+
+- Remove verificação de sources da materialização da`passageiros_hora` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/173)
+
+## [1.4.2] - 2024-08-28
+
+### Corrigido
+
+- Remove parâmetro timestamp da materialização da `passageiros_hora` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/172)
+
 ## [1.4.1] - 2024-08-27
 
 ### Alterado
