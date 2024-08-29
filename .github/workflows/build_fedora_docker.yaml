@@ -28,7 +28,7 @@ jobs:
 
       - run: |-
           pip install --no-cache-dir -r requirements.txt
-      
+
       # - name: Update image tag in constants
       #   run: |-
       #     python .github/workflows/scripts/replace_docker_tag.py gcr.io/${{ env.GKE_PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}

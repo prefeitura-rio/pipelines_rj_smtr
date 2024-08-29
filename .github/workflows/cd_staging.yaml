@@ -70,7 +70,7 @@ jobs:
           check-name: 'Build Docker image'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           verbose: true
-      
+
       - name: Wait for Docker image to be available
         uses: lewagon/wait-on-check-action@v1.3.1
         with:
@@ -78,7 +78,7 @@ jobs:
           check-name: 'Build Fedora Image'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           verbose: true
-    
+
       - name: Register Prefect flows
         run: |-
           python .github/workflows/scripts/register_flows.py --project $PREFECT__SERVER__PROJECT --path pipelines/ --no-schedule --filter-affected-flows
