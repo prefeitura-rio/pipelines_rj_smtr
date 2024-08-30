@@ -47,79 +47,79 @@ models:
       - name: arquivos_somados
         description: "Coluna de controle com array das datas dos arquivos que foram somados para obter os valores finais"
   - name: rdo40_registros
-    description: ""
+    description: "View para os dados do Resumo Diário de Operação com a quantidade total de passageiros."
     columns:
     - name: data
-      description:
+      description: "Data das transações"
     - name: ano
-      description:
+      description: "Ano das transações"
     - name: mes
-      description:
+      description: "Mês das transações"
     - name: dia
-      description:
+      description: "Dia das transações"
     - name: id_consorcio
       description: "Identificador do consórcio na tabela cadastro.consorcios"
     - name: consorcio
-      description: "Nome do consórcio"
+      description: "{{ doc('consorcio') }}"
     - name: servico
-      description: '{{doc(servico)}}'
+      description: "{{ doc('servico') }}"
     - name: linha
-      description:
+      description: "{{ doc('linha') }}"
     - name: tipo_servico
-      description:
+      description: "{{ doc('tipo_servico') }}"
     - name: ordem_servico
-      description:
+      description: "{{ doc('ordem_servico') }}"
     - name: codigo_veiculo
-      description:
+      description: "{{ doc('codigo_veiculo') }}"
     - name: tarifa_codigo
-      description:
+      description: "{{ doc('tarifa_codigo') }}"
     - name: tarifa_valor
-      description:
+      description: "{{ doc('tarifa_valor') }}"
     - name: frota_determinada
-      description:
+      description: "{{ doc('frota_determinada') }}"
     - name: frota_licenciada
-      description:
+      description: "{{ doc('frota_licenciada') }}"
     - name: frota_operante
-      description:
+      description: "{{ doc('frota_operante') }}"
     - name: qtd_viagens
-      description:
+      description: "{{ doc('qtd_viagens') }}"
     - name: qtd_km_cobertos
-      description:
+      description: "{{ doc('qtd_km_cobertos') }}"
     - name: qtd_grt_idoso
-      description:
+      description: "{{ doc('qtd_grt_idoso') }}"
     - name: qtd_grt_especial
-      description:
+      description: "{{ doc('qtd_grt_especial') }}"
     - name: qtd_grt_estud_federal
-      description:
+      description: "{{ doc('qtd_grt_estud_federal') }}"
     - name: qtd_grt_estud_estadual
-      description:
+      description: "{{ doc('qtd_grt_estud_estadual') }}"
     - name: qtd_grt_estud_municipal
-      description:
+      description: "{{ doc('qtd_grt_estud_municipal') }}"
     - name: qtd_grt_rodoviario
-      description:
+      description: "{{ doc('qtd_grt_rodoviario') }}"
     - name: qtd_buc_1_perna
-      description:
+      description: "{{ doc('qtd_buc_1_perna') }}"
     - name: qtd_buc_2_perna_integracao
-      description:
+      description: "{{ doc('qtd_buc_2_perna_integracao') }}"
     - name: receita_buc
-      description:
+      description: "{{ doc('receita_buc') }}"
     - name: qtd_buc_supervia_1_perna
-      description:
+      description: "{{ doc('qtd_buc_supervia_1_perna') }}"
     - name: qtd_buc_supervia_2_perna_integracao
-      description:
+      description: "{{ doc('qtd_buc_supervia_2_perna_integracao') }}"
     - name: receita_buc_supervia
-      description:
+      description: "{{ doc('receita_buc_supervia') }}"
     - name: qtd_cartoes_perna_unica_e_demais
-      description:
+      description: "{{ doc('qtd_cartoes_perna_unica_e_demais') }}"
     - name: receita_cartoes_perna_unica_e_demais
-      description:
+      description: "{{ doc('receita_cartoes_perna_unica_e_demais') }}"
     - name: qtd_pagamentos_especie
-      description:
+      description: "{{ doc('qtd_pagamentos_especie') }}"
     - name: receita_especie
-      description:
+      description: "{{ doc('receita_especie') }}"
     - name: qtd_grt_passe_livre_universitario
-      description:
+      description: "{{ doc('qtd_grt_passe_livre_universitario') }}"
     - name: class_servico
-      description:
+      description: "{{ doc('class_servico') }}"
     - name: qtd_passageiros_total
-      description:
+      description: "{{ doc('qtd_passageiros_total') }}"

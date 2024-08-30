@@ -9,7 +9,7 @@ models:
         - name: perm_autor
           description: "Permissão"
         - name: timestamp_captura
-          description: '{{ doc("timestamp_captura") }}'
+          description: "{{ doc('timestamp_captura') }}"
         - name: cnpj
           description: "CNPJ da empresa"
         - name: data_registro
@@ -21,7 +21,7 @@ models:
         - name: id_modo
           description: "Identificador do modo de transporte"
         - name: modo
-          description: '{{ doc("modo") }}'
+          description: "{{ doc('modo') }}"
         - name: tipo_permissao
           description: "Tipo de permissão da empresa"
   - name: staging_operadora_pessoa_fisica
@@ -32,13 +32,13 @@ models:
         - name: perm_autor
           description: "Permissão"
         - name: timestamp_captura
-          description: '{{ doc("timestamp_captura") }}'
+          description: "{{ doc('timestamp_captura') }}"
         - name: cpf
           description: "CPF do operador"
         - name: data_registro
           description: "Data de registro do operador"
         - name: ratr
-          description: ""
+          description: "Registro de auxiliar de transporte"
         - name: processo
           description: "Processo de registro do operador"
         - name: nome
@@ -48,6 +48,6 @@ models:
         - name: id_modo
           description: "Identificador do modo de transporte"
         - name: modo
-          description: '{{ doc("modo") }}'
+          description: "{{ doc('modo') }}"
         - name: tipo_permissao
           description: "Tipo de permissão do operador"
