@@ -296,3 +296,6 @@ models:
     catalogo:
       +materialized: view
       +schema: catalogo
+    infracao: 
+      +materialized: view
+      +schema: infracao
