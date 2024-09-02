@@ -172,7 +172,7 @@ with Flow(
         )
         set_last_run_timestamp(
             dataset_id=dataset_id,
-            table_id=table_id,
+            table_id="gps_sppo",
             timestamp=date_range["date_range_end"],
             wait=RUN,
             mode=MODE,
