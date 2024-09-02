@@ -14,3 +14,5 @@ flow.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE_FEDORA.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
+import pyodbc
+pyodbc.connect()

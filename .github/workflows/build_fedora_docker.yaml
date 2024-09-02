@@ -4,13 +4,12 @@ on:
   push:
     branches:
       - main
-      - staging/*
   pull_request:
     branches:
       - main
     paths:
       - ".github/workflows/cd_staging.yaml"
-      - "pipelines/**/*"
+      - "pipelines/serpro/*"
       - "pyproject.toml"
       - "Dockerfile-fedora"
 env:
