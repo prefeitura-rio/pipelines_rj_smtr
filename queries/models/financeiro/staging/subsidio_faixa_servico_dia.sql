@@ -79,6 +79,8 @@ SELECT
   viagens_faixa,
   km_apurada_faixa,
   km_planejada_faixa,
-  pof
+  pof,
+  versao,
+  datetime_ultima_atualizacao
 FROM
   servico_km_apuracao

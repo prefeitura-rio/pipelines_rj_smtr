@@ -4,4 +4,4 @@
 
 ### Adicionado
 
-- Cria modelos `subsidio_faixa_servico_dia`, `subsidio_penalidade_servico_dia`, `subsidio_faixa_servico_dia_tipo_viagem` e `subsidio_sumario_servico_dia_pagamento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
+- Cria modelos `subsidio_penalidade_servico_dia`, `subsidio_faixa_servico_dia_tipo_viagem` e `subsidio_sumario_servico_dia_pagamento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)

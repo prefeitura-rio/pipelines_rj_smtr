@@ -294,8 +294,13 @@ models:
         +materialized: incremental
         +schema: validacao_dados_jae_staging
     financeiro:
-      +materialized: view
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
       +schema: apuracaoFH_financeiro
+      staging:
+        +materialized: incremental
+        +incremental_strategy: insert_overwrite
+        +schema: apuracaoFH_financeiro_staging
     dashboard_subsidio_sppo_v2:
       +materialized: view
       +schema: apuracaoFH_dashboard_subsidio_sppo_v2
