@@ -296,9 +296,9 @@ models:
     catalogo:
       +materialized: view
       +schema: catalogo
-    infracao:
+    transito:
       +materialized: incremental
-      +schema: infracao
+      +schema: transito
       staging:
         +materialized: view
-        +schema: infracao_staging
+        +schema: transito_staging

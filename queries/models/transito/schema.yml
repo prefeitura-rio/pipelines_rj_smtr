@@ -1,19 +1,19 @@
 version: 2
 
 models:
-  - name: autuacoes_citran
-    description: "Tabela com dados de autuações fornecidos pela citran apartid de 2019"
+  - name: autuacao_citran
+    description: "Tabela com dados de autuações fornecidos pelo sistema CITRAN/IplanRio"
     columns:
       - name: data
-        description: "Data da autuação (Colunade particionamento)"
+        description: "Data da autuação (Coluna de particionamento)"
       - name: hora
         description: "Hora da autuação"
       - name: id_auto_infracao
-        description: "Identificador unico da autuação (UUiD) [protegido]"
+        description: "Código do auto de infração"
       - name: data_limite_defesa_previa
         description: "Data limite para defesa prévia"
       - name: data_limite_recurso
-        description: "Data limite para recurso"
+        description: "Data limite para recurso em primeira instância"
       - name: situacao_atual
         description: "Descrição da situação da autuação"
       - name: status_infracao
@@ -35,9 +35,9 @@ models:
       - name: cep_proprietario
         description: "CEP do proprietário do veículo [protegido]"
       - name: valor_infracao
-        description: "Valor monetário da autuação (100%)"
-      - name: valor_pag
-        description: "Valor pago da autuação"
+        description: "Valor monetário da autuação (100%) [R$]"
+      - name: valor_pago
+        description: "Valor pago da autuação [R$]"
       - name: data_pagamento
         description: "Data de pagamento da autuação"
       - name: id_autuador
@@ -48,34 +48,34 @@ models:
         description: "Código TOM do município da autuação"
       - name: descricao_municipio
         description: "Nome do município da autuação"
-      - name: local_autuacao
-        description: "Endereço onde ocorreu a autuacao"
+      - name: endereco_autuacao
+        description: "Endereço onde ocorreu a autuação"
       - name: processo_defesa_autuacao
-        description: "Numero do processo de defesa prévia"
+        description: "Número do processo de defesa prévia"
       - name: recurso_penalidade_multa
-        description: "Número do processo de recurso contra penalidade de multa em primeira instância"
-      - name: processo_troca_real_infrator
-        description: "Numero do processo de troca de real infrator"
+        description: "Número do processo de recurso contra aplicação de penalidade de multa em primeira instância"
+      - name: processo_troca_real_condutor_infrator
+        description: "Número do processo de troca de real condutor infrator"
       - name: status_sne
         description: "Indicador de adesão do veículo ao SNE"
 
-  - name: autuacoes
-    description: "Tabela de autuações fornecidas pela citran e serpro"
+  - name: autuacao
+    description: "Tabela com dados de autuações (até abril/2023)"
     columns:
       - name: data
-        description: "Data da autuação (Colunade particionamento)"
+        description: "Data da autuação (Coluna de particionamento)"
       - name: id_autuacao
-        description: "Identificador unico da autuação (UUiD) [protegido]"
+        description: "Identificador único da autuação"
+      - name: id_auto_infracao
+        description: "Código do auto de infração [protegido]"
         policy_tags:
         - 'projects/rj-smtr/locations/us/taxonomies/7968932463054912793/policyTags/5243840798726507169'
-      - name: id_auto_infracao
-        description: "Número único do AIT"
       - name: datetime_autuacao
         description: "Data e hora da autuação"
       - name: data_limite_defesa_previa
         description: "Data limite para defesa prévia"
       - name: data_limite_recurso
-        description: "Data limite para recurso"
+        description: "Data limite para recurso em primeira instância"
       - name: descricao_situacao_autuacao
         description: "Descrição da situação da autuação"
       - name: status_infracao
@@ -95,7 +95,9 @@ models:
       - name: descricao_veiculo
         description: "Marca/modelo do veículo"
       - name: placa_veiculo
-        description: "Placa do veiculo"
+        description: "Placa do veículo"
+        policy_tags:
+        - 'projects/rj-smtr/locations/us/taxonomies/7968932463054912793/policyTags/5243840798726507169'
       - name: ano_fabricacao_veiculo
         description: "Ano de fabricação do veículo"
       - name: ano_modelo_veiculo
@@ -105,7 +107,7 @@ models:
       - name: especie_veiculo
         description: "Espécie do veículo"
       - name: uf_infrator
-        description: "Estado do condutor infrator (em caso de indicação de real condutor)"
+        description: "Estado do condutor infrator (em caso de indicação de real condutor infrator)"
       - name: uf_principal_condutor
         description: "Estado do condutor principal do veículo"
       - name: uf_proprietario
@@ -115,9 +117,9 @@ models:
         policy_tags:
         - 'projects/rj-smtr/locations/us/taxonomies/7968932463054912793/policyTags/5243840798726507169'
       - name: valor_infracao
-        description: "Valor monetário da autuação (100%)"
+        description: "Valor monetário da autuação (100%) [R$]"
       - name: valor_pago
-        description: "Valor pago da autuação"
+        description: "Valor pago da autuação [R$]"
       - name: data_pagamento
         description: "Data de pagamento da autuação"
       - name: id_autuador
@@ -135,14 +137,14 @@ models:
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/7968932463054912793/policyTags/5243840798726507169'
       - name: tile_autuacao
-        description: "Hexagono da autuação"
+        description: "Hexágono da autuação"
       - name: processo_defesa_autuacao
-        description: "Numero do processo de defesa prévia"
+        description: "Número do processo de defesa prévia"
       - name: recurso_penalidade_multa
-        description: "Número do processo de recurso contra penalidade de multa em primeira instância"
+        description: "Número do processo de recurso contra aplicação de penalidade de multa em primeira instância"
       - name: processo_troca_real_infrator
-        description: "Numero do processo de troca de real infrator"
+        description: "Número do processo de troca de real condutor infrator"
       - name: status_sne
-        description: "Indicador de adesão do veículo ao SNE"
+        description: "Indicador de adesão do veículo ao Sistema de Notificação Eletrônica (SNE)"
       - name: fonte
         description: "Origem dos dados"
