@@ -297,5 +297,8 @@ models:
       +materialized: view
       +schema: catalogo
     infracao: 
-      +materialized: view
+      +materialized: incremental
       +schema: infracao
+      staging:
+        +materialized: view
+        +schema: infracao_staging
