@@ -7,7 +7,6 @@ from pipelines.constants import constants as smtr_constants
 from pipelines.serpro.tasks import wait_sleeping
 from pipelines.serpro.utils import handler_setup_serpro
 
-
 with Flow("SMTR - Teste Conexão Serpro") as flow:
     # setup_serpro()
     wait_sleeping()
