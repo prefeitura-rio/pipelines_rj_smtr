@@ -1,15 +1,18 @@
+# -*- coding: utf-8 -*-
+import os
+
 from prefect.client import Client
 from prefect.engine.state import Skipped, State
-import os
 
 from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import log
 
-def setup_serpro(secret_path:str='radar_serpro'):
-    data = get_secret(secret_path=secret_path)['setup.sh']
-    log('Got Secret')
-    os.popen('touch setup.sh')
-    with open('setup.sh','wb') as f:
+
+def setup_serpro(secret_path: str = "radar_serpro"):
+    data = get_secret(secret_path=secret_path)["setup.sh"]
+    log("Got Secret")
+    os.popen("touch setup.sh")
+    with open("setup.sh", "wb") as f:
         f.write(data)
     return os.popen("sh setup.sh")
 
