@@ -1,5 +1,3 @@
--- models/smtr_autuacoes.sql
-
 {{ config(
     materialized='incremental',
     partition_by={
@@ -13,7 +11,7 @@
 
 WITH citran AS (
 
-    select
+    select 
         DATE(data)  data,
         id_auto_infracao,
         TIMESTAMP(concat(data,' ',hora,':00')) AS datetime_autuacao,
@@ -40,17 +38,17 @@ WITH citran AS (
         valor_infracao,
         valor_pago,
         data_pagamento,
-        id_autuador,
+        "260010" AS id_autuador,
         descricao_autuador,
-        id_municipio_autuacao,
-        descricao_municipio,
+        "6001" AS id_municipio_autuacao,
+        "RIO DE JANEIRO" AS descricao_municipio,
         "RJ" AS uf_autuacao,
         NULL AS cep_autuacao, -- não padronizado na citran
         NULL AS tile_autuacao,
         processo_defesa_autuacao,
         recurso_penalidade_multa,
         processo_troca_real_infrator,
-        status_sne,
+        FALSE AS status_sne, 
         "CITRAN" AS fonte
     FROM {{ ref('autuacoes_citran') }}
     {% if is_incremental() %}
@@ -59,7 +57,7 @@ WITH citran AS (
     {% endif %}
 )
 
-SELECT
+SELECT 
     data,
     GENERATE_UUID() AS id_autuacao,
     id_auto_infracao,
@@ -91,7 +89,7 @@ SELECT
     descricao_autuador,
     id_municipio_autuacao,
     descricao_municipio,
-    uf_autuacao,
+    uf_autuacao, 
     cep_autuacao,
     tile_autuacao,
     processo_defesa_autuacao,
