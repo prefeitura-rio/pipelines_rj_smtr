@@ -8,7 +8,7 @@ from pipelines.utils.utils import log
 
 
 @task
-def wait_sleeping(interval_seconds: int = 3600, wait=None):
+def wait_sleeping(interval_seconds: int = 54000, wait=None):
     sleep(interval_seconds)
 
 
