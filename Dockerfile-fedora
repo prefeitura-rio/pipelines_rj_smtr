@@ -3,8 +3,10 @@
 
 # Start Python image
 FROM fedora:latest
-RUN python3 --version
+# RUN python3 --version
 RUN dnf -y install python3.10 && dnf clean all
+RUN yum install java -y
+RUN yum install make -y
 # RUN dnf remove python3.12
 # Setting environment with prefect version
 ARG PREFECT_VERSION=1.4.1
@@ -20,3 +22,4 @@ RUN python3.10 -m pip install --no-cache-dir -U "pip>=21.2.4" "prefect==$PREFECT
 WORKDIR /app
 COPY . .
 RUN python3.10 -m pip install --prefer-binary --no-cache-dir -U .
+RUN python3 -m pip install jaydebeapi
