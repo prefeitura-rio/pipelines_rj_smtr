@@ -4,11 +4,13 @@ from prefect import task
 import os
 
 from pipelines.utils.secret import get_secret  
-from pipelines.utils.utils import log 
+from pipelines.utils.utils import log
+
 
 @task
 def wait_sleeping(interval_seconds: int = 3600, wait=None):
     sleep(interval_seconds)
+
 
 @task
 def setup_serpro(secret_path:str='radar_serpro'):
