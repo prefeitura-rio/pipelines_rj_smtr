@@ -1,47 +1,39 @@
-import jaydebeapi as jdb
+# -*- coding: utf-8 -*-
 from typing import List
+
+import jaydebeapi as jdb
 
 from pipelines.utils.secret import get_secret
 
 
 class JDBC:
-    def __init__(
-        self,
-        db_params_secret_path:str,
-        environment:str='staging'
-    ) -> None:
-            self._environment = environment
-            self._secret_path = db_params_secret_path
-            self._conn_kwargs = self.get_conn_kwargs()
-            self._connection = self.connect()
-            self._cursor = self.get_cursor()
-        
+    def __init__(self, db_params_secret_path: str, environment: str = "staging") -> None:
+        self._environment = environment
+        self._secret_path = db_params_secret_path
+        self._conn_kwargs = self.get_conn_kwargs()
+        self._connection = self.connect()
+        self._cursor = self.get_cursor()
+
     def get_conn_kwargs(self):
-        
-        data = get_secret(
-        secret_path=self._secret_path,
-        environment=self._environment
-        )
-        conn_kwargs=dict(
-            jclassname=data['jclassname'],
-            user=data['user'],
-            password=data['password'],
-            url=data['url'],
-            jars=[data['jars']]
+
+        data = get_secret(secret_path=self._secret_path, environment=self._environment)
+        conn_kwargs = dict(
+            jclassname=data["jclassname"],
+            user=data["user"],
+            password=data["password"],
+            url=data["url"],
+            jars=[data["jars"]],
         )
         return conn_kwargs
 
     def connect(self):
-        data = get_secret(
-        secret_path=self._secret_path,
-        environment=self._environment
-        )
+        data = get_secret(secret_path=self._secret_path, environment=self._environment)
 
         return jdb.connect(
-            jclassname=data['jclassname'],
-            url=data['url'],
+            jclassname=data["jclassname"],
+            url=data["url"],
             jars=rf"{data['jars']}",
-            driver_args=[data['user'], data['password']]
+            driver_args=[data["user"], data["password"]],
         )
 
     def get_cursor(self):
