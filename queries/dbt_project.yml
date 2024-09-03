@@ -296,7 +296,7 @@ models:
     catalogo:
       +materialized: view
       +schema: catalogo
-    infracao: 
+    infracao:
       +materialized: incremental
       +schema: infracao
       staging:

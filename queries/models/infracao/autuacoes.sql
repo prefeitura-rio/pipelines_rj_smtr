@@ -13,7 +13,7 @@
 
 WITH citran AS (
 
-    select 
+    select
         DATE(data)  data,
         id_auto_infracao,
         TIMESTAMP(concat(data,' ',hora,':00')) AS datetime_autuacao,
@@ -59,7 +59,7 @@ WITH citran AS (
     {% endif %}
 )
 
-SELECT 
+SELECT
     data,
     GENERATE_UUID() AS id_autuacao,
     id_auto_infracao,
@@ -91,7 +91,7 @@ SELECT
     descricao_autuador,
     id_municipio_autuacao,
     descricao_municipio,
-    uf_autuacao, 
+    uf_autuacao,
     cep_autuacao,
     tile_autuacao,
     processo_defesa_autuacao,
