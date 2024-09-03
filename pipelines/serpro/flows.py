@@ -4,7 +4,7 @@ from prefect.storage import GCS
 from prefeitura_rio.pipelines_utils.custom import Flow
 
 from pipelines.constants import constants as smtr_constants
-from pipelines.serpro.tasks import setup_serpro, wait_sleeping
+from pipelines.serpro.tasks import wait_sleeping
 from pipelines.serpro.utils import handler_setup_serpro
 
 
