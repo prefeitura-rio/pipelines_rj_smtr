@@ -11,7 +11,7 @@
 
 WITH citran AS (
 
-    select 
+    select
         DATE(data)  data,
         id_auto_infracao,
         TIMESTAMP(concat(data,' ',hora,':00')) AS datetime_autuacao,
@@ -48,7 +48,7 @@ WITH citran AS (
         processo_defesa_autuacao,
         recurso_penalidade_multa,
         processo_troca_real_infrator,
-        FALSE AS status_sne, 
+        FALSE AS status_sne,
         "CITRAN" AS fonte
     FROM {{ ref('autuacoes_citran') }}
     {% if is_incremental() %}
@@ -57,7 +57,7 @@ WITH citran AS (
     {% endif %}
 )
 
-SELECT 
+SELECT
     data,
     GENERATE_UUID() AS id_autuacao,
     id_auto_infracao,
@@ -89,7 +89,7 @@ SELECT
     descricao_autuador,
     id_municipio_autuacao,
     descricao_municipio,
-    uf_autuacao, 
+    uf_autuacao,
     cep_autuacao,
     tile_autuacao,
     processo_defesa_autuacao,
