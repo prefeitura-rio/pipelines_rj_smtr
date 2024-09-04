@@ -16,7 +16,7 @@ WITH citran AS (
         DATETIME(concat(data,' ',hora,':00')) AS datetime_autuacao,
         data_limite_defesa_previa,
         data_limite_recurso,
-        NULL AS descricao_situacao_autuacao,
+        situacao_atual AS descricao_situacao_autuacao,
         IF(status_infracao != "", status_infracao, NULL) AS status_infracao,
         IF(codigo_enquadramento != "", codigo_enquadramento, NULL) AS codigo_enquadramento,
         IF(tipificacao_resumida != "", tipificacao_resumida, NULL) AS tipificacao_resumida,
