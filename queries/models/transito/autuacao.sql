@@ -11,7 +11,7 @@
 
 WITH citran AS (
     SELECT
-        DATE(data) AS data,
+        data,
         id_auto_infracao,
         DATETIME(concat(data,' ',hora,':00')) AS datetime_autuacao,
         data_limite_defesa_previa,
@@ -52,7 +52,7 @@ WITH citran AS (
     FROM {{ ref('autuacao_citran') }}
     {% if is_incremental() %}
         WHERE
-            data BETWEEN DATE("{var('date_range_start')}") AND DATE("{var('date_range_end')}")
+            data BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
     {% endif %}
 )
 

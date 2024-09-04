@@ -6,7 +6,7 @@
 
 
 SELECT
-  data,
+  DATE(data) AS data,
   SAFE_CAST(JSON_VALUE(content,'$.Hora') AS STRING) hora,
   Cod__Detran as id_auto_infracao,
   IF(JSON_VALUE(content, '$.DtLimDP') != '', SAFE_CAST(PARSE_DATE('%d/%m/%Y', JSON_VALUE(content,'$.DtLimDP')) AS STRING), NULL) data_limite_defesa_previa,
