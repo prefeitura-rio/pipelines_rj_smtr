@@ -57,7 +57,7 @@
 
 WITH matriz AS (
   SELECT
-    string_agg(modo order by sequencia_integracao) AS sequencia_valida
+    STRING_AGG(modo order by sequencia_integracao) AS sequencia_valida
   FROM
     {{ ref("matriz_integracao") }}
     -- `rj-smtr.br_rj_riodejaneiro_bilhetagem.matriz_integracao`
@@ -207,7 +207,7 @@ melted AS (
     modo,
     SPLIT(servico_sentido, '_')[0] AS id_servico_jae,
     SPLIT(servico_sentido, '_')[1] AS sentido,
-    countif(modo = "BRT") OVER(PARTITION BY id_integracao) > 1 AS indicador_transferencia
+    COUNTIF(modo = "BRT") OVER(PARTITION BY id_integracao) > 1 AS indicador_transferencia
   FROM
     integracoes_validas,
     UNNEST(
