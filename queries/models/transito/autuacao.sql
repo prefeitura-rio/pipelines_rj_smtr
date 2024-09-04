@@ -11,12 +11,12 @@
 
 WITH citran AS (
     SELECT
-        DATE(data) AS data,
+        data,
         id_auto_infracao,
         DATETIME(concat(data,' ',hora,':00')) AS datetime_autuacao,
         data_limite_defesa_previa,
         data_limite_recurso,
-        NULL AS descricao_situacao_autuacao,
+        situacao_atual AS descricao_situacao_autuacao,
         IF(status_infracao != "", status_infracao, NULL) AS status_infracao,
         IF(codigo_enquadramento != "", codigo_enquadramento, NULL) AS codigo_enquadramento,
         IF(tipificacao_resumida != "", tipificacao_resumida, NULL) AS tipificacao_resumida,
@@ -52,7 +52,7 @@ WITH citran AS (
     FROM {{ ref('autuacao_citran') }}
     {% if is_incremental() %}
         WHERE
-            data BETWEEN DATE("{var('date_range_start')}") AND DATE("{var('date_range_end')}")
+            data BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
     {% endif %}
 )
 
