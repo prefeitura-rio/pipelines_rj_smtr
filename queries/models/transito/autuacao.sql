@@ -10,8 +10,7 @@
 ) }}
 
 WITH citran AS (
-
-    select
+    SELECT
         DATE(data) AS data,
         id_auto_infracao,
         DATETIME(concat(data,' ',hora,':00')) AS datetime_autuacao,
