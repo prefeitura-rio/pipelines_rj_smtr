@@ -3,7 +3,9 @@
 ## [1.1.3] - 2024-09-04
 
 ### Alterado
-  - Cria filtro para remover integrações com 2 ou mais transações do modo `BRT` no modelo `integracao_nao_realizada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/185)
+  - Modelo `integracao_nao_realizada.sql`:
+    - Soma 1 na coluna `sequencia_integracao` para padronizar em relação a tabela `integracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/185)
+    - Cria filtro para remover integrações com 2 ou mais transações do modo `BRT` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/185)
 
 ## [1.1.2] - 2024-08-27
 
