@@ -44,9 +44,9 @@ WITH citran AS (
         "RJ" AS uf_autuacao,
         NULL AS cep_autuacao, -- não padronizado na citran
         NULL AS tile_autuacao,
-        IF(processo_defesa_autuacao != "00000000", processo_defesa_autuacao, NULL) AS processo_defesa_autuacao,
-        IF(recurso_penalidade_multa != "00000000", recurso_penalidade_multa, NULL) AS recurso_penalidade_multa,
-        IF(processo_troca_real_infrator != "00000000", processo_troca_real_infrator, NULL) AS processo_troca_real_infrator,
+        IF(processo_defesa_autuacao != "00000000" AND processo_defesa_autuacao != "" , processo_defesa_autuacao, NULL) AS processo_defesa_autuacao,
+        IF(recurso_penalidade_multa != "00000000" AND recurso_penalidade_multa != "" , recurso_penalidade_multa, NULL) AS recurso_penalidade_multa,
+        IF(processo_troca_real_infrator != "00000000" AND processo_troca_real_infrator != "" , processo_troca_real_infrator, NULL) AS processo_troca_real_infrator,
         FALSE AS status_sne,
         "CITRAN" AS fonte
     FROM {{ ref('autuacao_citran') }}
