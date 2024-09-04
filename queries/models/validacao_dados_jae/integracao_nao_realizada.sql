@@ -206,7 +206,8 @@ melted AS (
     id_transacao,
     modo,
     SPLIT(servico_sentido, '_')[0] AS id_servico_jae,
-    SPLIT(servico_sentido, '_')[1] AS sentido
+    SPLIT(servico_sentido, '_')[1] AS sentido,
+    countif(modo = "BRT") OVER(PARTITION BY id_integracao) > 1 AS indicador_transferencia
   FROM
     integracoes_validas,
     UNNEST(
@@ -216,7 +217,7 @@ melted AS (
             {% for column in pivot_columns %}
               {{ column }}_{{ transaction_number }} AS {{ column }},
             {% endfor %}
-            {{ transaction_number }} AS sequencia_integracao
+            {{ transaction_number + 1}} AS sequencia_integracao
           ){%if not loop.last %},{% endif %}
       {% endfor %}
       ]
@@ -228,7 +229,8 @@ integracao_nao_realizada AS (
   FROM
     melted
   WHERE
-    id_transacao NOT IN (
+    NOT indicador_transferencia
+    AND id_transacao NOT IN (
       SELECT
         id_transacao
       FROM
@@ -241,7 +243,7 @@ integracao_nao_realizada AS (
     )
 )
 SELECT
-  *,
+  * EXCEPT(indicador_transferencia),
   '{{ var("version") }}' as versao
 FROM
   melted
