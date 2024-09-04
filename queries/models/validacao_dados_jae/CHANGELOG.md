@@ -1,5 +1,10 @@
 # Changelog - validacao_dados_jae
 
+## [1.1.3] - 2024-09-04
+
+### Alterado
+  - Cria filtro para remover integrações com 2 ou mais transações do modo `BRT` no modelo `integracao_nao_realizada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/185)
+
 ## [1.1.2] - 2024-08-27
 
 ### Corrigido
