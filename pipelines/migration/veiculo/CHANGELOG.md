@@ -1,5 +1,12 @@
 # Changelog - veiculo
 
+## [1.1.0] - 2024-08-06
+
+### Alterado
+- Alterações no tratamento do arquivo de infrações (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/126):
+  - Remove coluna `placa` das primary keys
+  - Remove filtro de modo
+
 ## [1.0.1] - 2024-05-28
 
 ### Adicionado

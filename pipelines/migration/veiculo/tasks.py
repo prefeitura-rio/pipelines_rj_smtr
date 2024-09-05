@@ -13,7 +13,7 @@ import pandas as pd
 from prefect import task
 
 from pipelines.constants import constants as smtr_constants
-from pipelines.migration.utils import connect_ftp, data_info_str, filter_data
+from pipelines.migration.utils import connect_ftp, data_info_str
 from pipelines.migration.veiculo.constants import constants
 from pipelines.utils.utils import log  # ,get_vault_secret
 
@@ -200,13 +200,13 @@ def pre_treatment_sppo_infracao(status: dict, timestamp: datetime):
         log("Updating valor type to float...", level="info")
         data["valor"] = data["valor"].str.replace(",", ".").astype(float)
 
-        filters = ["modo != 'ONIBUS'"]
-        log(f"Filtering '{filters}'...", level="info")
-        data = filter_data(data, filters)
+        # filters = ["modo != 'ONIBUS'"]
+        # log(f"Filtering '{filters}'...", level="info")
+        # data = filter_data(data, filters)
 
-        log("Filtering null primary keys...", level="info")
-        primary_key = ["placa", "id_auto_infracao"]
-        data.dropna(subset=primary_key, inplace=True)
+        # log("Filtering null primary keys...", level="info")
+        primary_key = ["id_auto_infracao"]
+        # data.dropna(subset=primary_key, inplace=True)
 
         # Check primary keys
         # pk_columns = ["placa", "id_auto_infracao"]
