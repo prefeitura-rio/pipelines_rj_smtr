@@ -296,3 +296,9 @@ models:
     catalogo:
       +materialized: view
       +schema: catalogo
+    transito:
+      +materialized: incremental
+      +schema: transito
+      staging:
+        +materialized: view
+        +schema: transito_staging
