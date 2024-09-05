@@ -2,7 +2,7 @@
 """
 Flows for br_rj_riodejaneiro_bilhetagem
 
-DBT: 2024-09-04
+DBT: 2024-09-05
 """
 
 from copy import deepcopy
