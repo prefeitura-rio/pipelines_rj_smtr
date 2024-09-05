@@ -1,5 +1,10 @@
 # Changelog - bilhetagem
 
+## [2.4.0] - 2024-09-05
+
+### Alterado
+- Adiciona coluna `hash_cliente` no modelo `transacao.sql`
+
 ## [2.3.0] - 2024-08-26
 
 ### Adicionado
