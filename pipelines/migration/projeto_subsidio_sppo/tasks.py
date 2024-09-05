@@ -6,6 +6,7 @@ Tasks for projeto_subsidio_sppo
 from datetime import datetime, timedelta
 
 from prefect import task
+from prefect.tasks.core.operators import GreaterThanOrEqual
 
 from pipelines.constants import constants as smtr_constants
 from pipelines.migration.projeto_subsidio_sppo.constants import constants
@@ -23,50 +24,6 @@ def check_param(param: str) -> bool:
     Check if param is None
     """
     return param is None
-
-
-@task
-def check_start_date(param: dict) -> bool:
-    """
-    Check if start_date >= DATA_SUBSIDIO_V9_INICIO
-    """
-
-    start_date = datetime.strptime(param["start_date"], "%Y-%m-%d").date()
-    comparison_date = datetime.strptime(constants.DATA_SUBSIDIO_V9_INICIO.value, "%Y-%m-%d").date()
-
-    return start_date >= comparison_date
-
-
-@task
-def check_date_in_range(param: dict) -> bool:
-    """
-    Check if DATA_SUBSIDIO_V9_INICIO is between start_date and end_date.
-    """
-    start_date = datetime.strptime(param["start_date"], "%Y-%m-%d").date()
-    end_date = datetime.strptime(param["end_date"], "%Y-%m-%d").date()
-    comparison_date = datetime.strptime(constants.DATA_SUBSIDIO_V9_INICIO.value, "%Y-%m-%d").date()
-
-    return start_date < comparison_date <= end_date
-
-
-@task
-def split_date_range(param: dict) -> dict:
-    """
-    Split the date range into two ranges if DATA_SUBSIDIO_V9_INICIO is within the date range.
-    Returns the first and second ranges.
-    """
-    comparison_date = datetime.strptime(constants.DATA_SUBSIDIO_V9_INICIO.value, "%Y-%m-%d").date()
-
-    return {
-        "first_range": {
-            "start_date": param["start_date"],
-            "end_date": (comparison_date - timedelta(days=1)).strftime("%Y-%m-%d"),
-        },
-        "second_range": {
-            "start_date": comparison_date.strftime("%Y-%m-%d"),
-            "end_date": param["end_date"],
-        },
-    }
 
 
 @task
@@ -104,10 +61,13 @@ def subsidio_data_quality_check(
         ).strftime("%Y-%m-%d %H:%M:%S"),
     }
 
+    gte = GreaterThanOrEqual()
+    gte_result = gte.run(params["start_date"], constants.DATA_SUBSIDIO_V9_INICIO.value)
+
     if mode == "pos":
         request_params["end_timestamp"] = f"""{params["end_date"]} 00:00:00"""
         request_params["dataset_id"] = constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value
-        if check_start_date.run(params):
+        if gte_result:
             request_params["dataset_id_v2"] = constants.SUBSIDIO_SPPO_DASHBOARD_V2_DATASET_ID.value
             request_params[
                 "table_id_v2"
