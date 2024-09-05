@@ -156,7 +156,7 @@ deduplica_viagem_planejada AS (
   LEFT JOIN
     shapes AS s
   USING
-    (feed_version, shape_id)
+    (feed_version, feed_start_date, shape_id)
 ),
 -- 4. Classifica a posição do veículo em todos os shapes possíveis de
 --    serviços de uma mesma empresa

@@ -218,11 +218,11 @@ WITH
   -- 2. Busca partidas e quilometragem da faixa horaria (dia anterior)
   dia_anterior AS (
     SELECT
-    COALESCE(d1.feed_version, feed_version),
-    COALESCE(d1.feed_start_date, feed_start_date),
+    COALESCE(d1.feed_version, feed_version) AS feed_version,
+    COALESCE(d1.feed_start_date, feed_start_date) AS feed_start_date,
     feed_end_date,
     tipo_os,
-    COALESCE(d1.tipo_dia, tipo_dia),
+    COALESCE(d1.tipo_dia, tipo_dia) AS tipo_dia,
     servico,
     vista,
     consorcio,
@@ -253,11 +253,17 @@ WITH
       faixa_horaria_inicio = "24:00:00"
       AND tipo_os = (SELECT tipo_os FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY))
       AND feed_version = (SELECT feed_version FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY))
+      AND feed_start_date = (SELECT feed_start_date FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY))
       AND tipo_dia = (SELECT tipo_dia FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY))
   ),
 combina_trips_shapes AS (
     SELECT *
     FROM rj-smtr-dev.apuracaoFH_gtfs.ordem_servico_trips_shapes
+    WHERE
+      tipo_os = (SELECT tipo_os FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY))
+      AND feed_version = (SELECT feed_version FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY))
+      AND feed_start_date = (SELECT feed_start_date FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY))
+      AND tipo_dia = (SELECT tipo_dia FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY))
     UNION ALL
     SELECT *
     FROM dia_anterior
@@ -386,11 +392,11 @@ data_trips_shapes AS (SELECT
   end_pt,
   id_tipo_trajeto,
   feed_version,
-  CURRENT_DATETIME("America/Sao_Paulo") AS datetime_ultima_atualizacao
+  feed_start_date
 FROM
   data_versao_efetiva AS d
 LEFT JOIN
-  (SELECT * FROM combina_trips_shapes) AS o
+  combina_trips_shapes AS o
 USING (feed_start_date, feed_version, tipo_dia, tipo_os)
 WHERE
   data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)
@@ -413,7 +419,7 @@ SELECT
   vista,
   consorcio,
   sentido,
-  SUM(partidas_total_planejada) AS partidas_total_planejada,
+  SUM(COALESCE(partidas_total_planejada, 0)) AS partidas_total_planejada,
   distancia_planejada,
   SUM(distancia_total_planejada) AS distancia_total_planejada,
   inicio_periodo,
@@ -428,11 +434,11 @@ SELECT
   sentido_shape,
   id_tipo_trajeto,
   feed_version,
-  datetime_ultima_atualizacao
+  feed_start_date
 FROM
   data_trips_shapes
 GROUP BY
-  data, tipo_dia, servico, vista, consorcio, sentido, distancia_planejada, faixa_horaria_inicio, faixa_horaria_fim, trip_id_planejado, trip_id, shape_id, shape_id_planejado, data_shape, sentido_shape, id_tipo_trajeto, feed_version, datetime_ultima_atualizacao
+  data, tipo_dia, servico, vista, consorcio, sentido, distancia_planejada, inicio_periodo, fim_periodo, faixa_horaria_inicio, faixa_horaria_fim, trip_id_planejado, trip_id, shape_id, shape_id_planejado, data_shape, sentido_shape, id_tipo_trajeto, feed_version, feed_start_date
 )
 SELECT
   data,
@@ -459,13 +465,14 @@ SELECT
   s.end_pt,
   id_tipo_trajeto,
   feed_version,
-  datetime_ultima_atualizacao
+  feed_start_date,
+  CURRENT_DATETIME("America/Sao_Paulo") AS datetime_ultima_atualizacao
 FROM
   dados_agregados
 LEFT JOIN
   shapes AS s
 USING
-  (feed_version, shape_id)
+  (feed_version, feed_start_date, shape_id)
 {% if var("run_date") == "2024-05-05" %}
   -- Apuração "Madonna · The Celebration Tour in Rio"
 WHERE
