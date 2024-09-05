@@ -312,5 +312,6 @@ models:
       +materialized: view
       +schema: catalogo
     planejamento:
-      +materialized: table
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
       +schema: planejamento
