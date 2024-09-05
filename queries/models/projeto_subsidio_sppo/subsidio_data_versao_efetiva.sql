@@ -369,7 +369,8 @@ WITH
     (feed_version)
   WHERE
   {% if is_incremental() %}
-    data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY) AND DATE("{{ var('run_date') }}")
+    -- data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY) AND DATE("{{ var('run_date') }}")
+    data = DATE("{{ var('run_date') }}")
   {% else %}
     data <= DATE("{{ var('run_date') }}")
   {% endif %}
