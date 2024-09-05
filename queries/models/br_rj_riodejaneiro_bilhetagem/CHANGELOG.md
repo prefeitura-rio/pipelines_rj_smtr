@@ -3,7 +3,7 @@
 ## [2.4.0] - 2024-09-05
 
 ### Alterado
-- Adiciona coluna `hash_cliente` no modelo `transacao.sql`
+- Adiciona coluna `hash_cliente` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/189)
 
 ## [2.3.0] - 2024-08-26
 
