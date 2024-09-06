@@ -68,6 +68,7 @@ WITH transacao AS (
     *
   FROM
     {{ transacao_staging }}
+    -- `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.transacao`
   {% if is_incremental() %}
       WHERE
         {{ incremental_filter }}
@@ -91,6 +92,7 @@ gratuidade AS (
     data_fim_validade
   FROM
     {{ ref("gratuidade_aux") }}
+    -- `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.gratuidade_aux`
   -- TODO: FILTRAR PARTIÇÕES DE FORMA EFICIENTE
 ),
 tipo_pagamento AS (
@@ -110,6 +112,7 @@ integracao AS (
     datetime_processamento_integracao
   FROM
     {{ ref("integracao") }}
+    -- `rj-smtr.br_rj_riodejaneiro_bilhetagem.integracao`
   {% if is_incremental() %}
     WHERE
     {% if transacao_partition_list|length > 0 %}
@@ -160,18 +163,22 @@ new_data AS (
     transacao AS t
   LEFT JOIN
     {{ source("cadastro", "modos") }} m
+    -- `rj-smtr.cadastro.modos` m
   ON
     t.id_tipo_modal = m.id_modo AND m.fonte = "jae"
   LEFT JOIN
     {{ ref("operadoras") }} do
+    -- `rj-smtr.cadastro.operadoras` do
   ON
     t.cd_operadora = do.id_operadora_jae
   LEFT JOIN
     {{ ref("consorcios") }} dc
+    -- `rj-smtr.cadastro.consorcios` dc
   ON
     t.cd_consorcio = dc.id_consorcio_jae
   LEFT JOIN
     {{ ref("staging_linha") }} l
+    -- `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.linha` l
   ON
     t.cd_linha = l.cd_linha
   -- LEFT JOIN
@@ -195,6 +202,7 @@ new_data AS (
     AND (t.data_transacao < g.data_fim_validade OR g.data_fim_validade IS NULL)
   LEFT JOIN
     {{ ref("staging_linha_sem_ressarcimento") }} lsr
+    -- `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.linha_sem_ressarcimento` lsr
   ON
     t.cd_linha = lsr.id_linha
   WHERE
@@ -314,6 +322,7 @@ SELECT
   t.id_veiculo,
   t.id_validador,
   t.id_cliente,
+  SHA256(t.id_cliente) AS hash_cliente,
   t.id_transacao,
   t.tipo_pagamento,
   t.tipo_transacao,
