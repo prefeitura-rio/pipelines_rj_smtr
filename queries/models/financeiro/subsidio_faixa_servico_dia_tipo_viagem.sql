@@ -17,8 +17,8 @@ WITH
     servico,
     pof
   FROM
-    -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia
     {{ ref("subsidio_faixa_servico_dia") }}
+    -- rj-smtr.financeiro.subsidio_faixa_servico_dia
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
@@ -38,7 +38,6 @@ WITH
     distancia_planejada,
     subsidio_km,
     subsidio_km_teto,
-    -- 4.04 AS subsidio_km_teto,
     indicador_penalidade_judicial,
     indicador_viagem_dentro_limite
   FROM
@@ -55,8 +54,8 @@ WITH
     status,
     SAFE_CAST(JSON_VALUE(indicadores,"$.indicador_ar_condicionado") AS BOOL) AS indicador_ar_condicionado
   FROM
-    -- {{ ref("sppo_veiculo_dia") }}
-    rj-smtr.veiculo.sppo_veiculo_dia
+    {{ ref("sppo_veiculo_dia") }}
+    -- rj-smtr.veiculo.sppo_veiculo_dia
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
@@ -69,8 +68,8 @@ WITH
     id_viagem,
     datetime_partida
   FROM
-    -- {{ ref("viagem_completa") }}
-    rj-smtr.projeto_subsidio_sppo.viagem_completa
+    {{ ref("viagem_completa") }}
+    -- rj-smtr.projeto_subsidio_sppo.viagem_completa
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
@@ -106,7 +105,6 @@ WITH
       s.subsidio_km_teto,
       s.indicador_viagem_dentro_limite,
       CASE
-        -- WHEN s.tipo_viagem IN ("Autuado por ar inoperante", "Licenciado sem ar e não autuado", "Registrado com ar inoperante") THEN TRUE
         WHEN sfd.pof < 60 THEN TRUE
         ELSE s.indicador_penalidade_judicial
       END AS indicador_penalidade_judicial,

@@ -18,7 +18,7 @@ WITH
     SUM(km_planejada_faixa) AS km_planejada_dia
   FROM
     {{ ref("subsidio_faixa_servico_dia") }}
-    -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia
+    -- rj-smtr.financeiro.subsidio_faixa_servico_dia
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
@@ -28,16 +28,6 @@ WITH
     consorcio,
     servico
   ),
-  -- subsidio_faixa AS (
-  -- SELECT
-  --   *
-  -- FROM
-  --   {{ ref("subsidio_faixa_servico_dia") }}
-  --   -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia
-  -- WHERE
-  --   data BETWEEN DATE("{{ var("start_date") }}")
-  --   AND DATE("{{ var("end_date") }}")
-  -- ),
   subsidio_parametros AS (
   SELECT
     DISTINCT data_inicio,
@@ -63,8 +53,8 @@ WITH
   SELECT
     *
   FROM
-    -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia_tipo_viagem
     {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
+    -- rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
