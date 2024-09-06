@@ -26,7 +26,7 @@ WITH receita_unpivot AS (
       WHEN mes = 'dezembro' THEN '12'
     END AS mes,
     SAFE_CAST(REPLACE(REPLACE(valor_arrecadacao, '.', ''), ',', '.') AS NUMERIC) AS valor_arrecadacao
-  FROM 
+  FROM
     {{ source('infracao_staging','receita_autuacao') }}
   UNPIVOT (
     valor_arrecadacao FOR mes IN (janeiro, fevereiro, marco, abril, maio, junho, julho, agosto, setembro, outubro, novembro, dezembro)
