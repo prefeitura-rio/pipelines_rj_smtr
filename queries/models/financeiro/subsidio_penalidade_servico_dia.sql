@@ -1,6 +1,8 @@
 {{
   config(
-    materialized='ephemeral'
+    materialized="incremental",
+    partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+    incremental_strategy="insert_overwrite",
   )
 }}
 
@@ -32,15 +34,17 @@ WITH
     perc_km_superior,
     IFNULL(-valor, 0) AS valor_penalidade
   FROM
-    -- {{ ref("valor_tipo_penalidade") }}
-    rj-smtr.dashboard_subsidio_sppo.valor_tipo_penalidade
+    {{ ref("valor_tipo_penalidade") }}
+    -- rj-smtr.dashboard_subsidio_sppo.valor_tipo_penalidade
   )
 SELECT
     s.data,
     s.tipo_dia,
     s.consorcio,
     s.servico,
-    SAFE_CAST(COALESCE(pe.valor_penalidade, 0) AS NUMERIC) AS valor_penalidade
+    SAFE_CAST(COALESCE(pe.valor_penalidade, 0) AS NUMERIC) AS valor_penalidade,
+    '{{ var("version") }}' as versao,
+    CURRENT_DATETIME("America/Sao_Paulo") as datetime_ultima_atualizacao
 FROM
   subsidio_dia AS s
 LEFT JOIN
