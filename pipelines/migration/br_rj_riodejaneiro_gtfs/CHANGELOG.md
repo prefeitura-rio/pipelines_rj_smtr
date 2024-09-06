@@ -4,9 +4,9 @@
 
 ### Adicionado
 
-- Cria função `processa_ordem_servico_faixa_horaria` e adiciona chamada na task `get_raw_drive_files` para processar o anexo da faixa horária (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/192)
+- Cria função `processa_ordem_servico_faixa_horaria` e adiciona chamada na task `get_raw_drive_files` para processar o anexo da faixa horária (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/193)
 
-- Adiciona materialização do modelo `ordem_servico_faixa_horaria` no flow (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/192)
+- Adiciona materialização do modelo `ordem_servico_faixa_horaria` no flow (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/193)
 
 ## [1.0.7] - 2024-08-27
 
