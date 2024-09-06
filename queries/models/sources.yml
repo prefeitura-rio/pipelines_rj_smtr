@@ -163,3 +163,4 @@ sources:
 
     tables:
       - name: autuacoes_citran
+      - name: receita_autuacao
