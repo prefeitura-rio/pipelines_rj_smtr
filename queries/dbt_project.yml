@@ -122,7 +122,7 @@ vars:
   # Feature Viagens sem transação
   DATA_SUBSIDIO_V8_INICIO: "2024-07-19"
   # Feature Apuração por faixa horária
-  DATA_SUBSIDIO_V9_INICIO: "2024-08-05"
+  DATA_SUBSIDIO_V9_INICIO: "2024-08-16"
   # valor_subsidio: "`rj-smtr-dev.projeto_subsidio_sppo.valor_subsidio`"
 
   # Recursos #
