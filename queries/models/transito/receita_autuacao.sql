@@ -1,5 +1,12 @@
 {{ config(
-    materialized='table'
+    materialized='incremental',
+    partition_by={
+      "field": "data",
+      "data_type": "date",
+      "granularity": "day"
+    },
+    unique_key='data',
+    incremental_strategy='insert_overwrite'
 ) }}
 
 WITH receita_unpivot AS (
@@ -19,18 +26,30 @@ WITH receita_unpivot AS (
       WHEN mes = 'novembro' THEN '11'
       WHEN mes = 'dezembro' THEN '12'
     END AS mes,
-    SAFE_CAST( REPLACE(REPLACE(valor_arrecadacao, '.', ''), ',', '.') AS NUMERIC ) AS valor_arrecadacao
+    SAFE_CAST(REPLACE(REPLACE(valor_arrecadacao, '.', ''), ',', '.') AS NUMERIC) AS valor_arrecadacao
   FROM `rj-smtr-dev.transito_staging.receita_autuacao`
   UNPIVOT (
     valor_arrecadacao FOR mes IN (janeiro, fevereiro, marco, abril, maio, junho, julho, agosto, setembro, outubro, novembro, dezembro)
   )
+  
+),
 
+receita_com_data AS (
+  SELECT
+    PARSE_DATE('%Y-%m-%d', CONCAT(ano, '-', mes, '-01')) AS data,
+    ano,
+    mes,
+    valor_arrecadacao
+  FROM receita_unpivot
 )
 
 SELECT
-  PARSE_DATE('%Y-%m-%d', CONCAT(ano, '-', mes, '-01')) AS data,
+  data,
   ano,
   mes,
-  valor_arrecadacao,
-FROM receita_unpivot
-WHERE valor_arrecadacao IS NOT NULL
+  valor_arrecadacao
+FROM receita_com_data
+{% if is_incremental() %}
+    WHERE
+      data BETWEEN DATE("{{ var('date_range_start') }}") AND DATE("{{ var('date_range_end') }}")
+{% endif %}
