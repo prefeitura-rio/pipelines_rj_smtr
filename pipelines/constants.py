@@ -227,6 +227,7 @@ X-1vRvFcyr9skfBIrjxc4FSJZ3-g4gUCF56YjGPOmd1f5qH8vndpy22P6f6KdcYgWaqzUmtSBL\
     GTFS_TABLE_CAPTURE_PARAMS = {
         "ordem_servico": ["servico", "tipo_os"],
         "ordem_servico_trajeto_alternativo": ["servico", "tipo_os", "evento"],
+        "ordem_servico_faixa_horaria": ["servico"],
         "shapes": ["shape_id", "shape_pt_sequence"],
         "agency": ["agency_id"],
         "calendar_dates": ["service_id", "date"],
@@ -241,6 +242,7 @@ X-1vRvFcyr9skfBIrjxc4FSJZ3-g4gUCF56YjGPOmd1f5qH8vndpy22P6f6KdcYgWaqzUmtSBL\
         "stop_times": ["trip_id", "stop_sequence"],
     }
 
+    PLANEJAMENTO_MATERIALIZACAO_DATASET_ID = "planejamento"
     GTFS_MATERIALIZACAO_DATASET_ID = "gtfs"
     GTFS_MATERIALIZACAO_PARAMS = {
         "dataset_id": GTFS_DATASET_ID,
