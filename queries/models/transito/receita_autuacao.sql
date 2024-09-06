@@ -31,7 +31,7 @@ WITH receita_unpivot AS (
   UNPIVOT (
     valor_arrecadacao FOR mes IN (janeiro, fevereiro, marco, abril, maio, junho, julho, agosto, setembro, outubro, novembro, dezembro)
   )
-  
+
 ),
 
 receita_com_data AS (
