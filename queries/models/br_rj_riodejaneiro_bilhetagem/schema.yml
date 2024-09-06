@@ -377,6 +377,8 @@ models:
     columns:
       - name: data_ordem
         description: "Data da ordem de pagamento (partição)"
+      - name: id_ordem_pagamento_consorcio_operador_dia
+        description: "Identificador unico do registro no banco de dados da Jaé"
       - name: id_consorcio
         description: "Identificador do consórcio na tabela cadastro.consorcios"
       - name: consorcio
