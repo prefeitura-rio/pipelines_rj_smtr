@@ -14,7 +14,7 @@
 
 ### Adicionado
 
-- Adicionadas as tasks `check_start_date`, `check_date_in_range` e `split_date_range` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
+- Adiciona parâmetro run_d0 para materializar D+0 as tabelas `viagem_planejada` e `subsidio_data_versao_efetiva` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
 
 ## [1.0.4] - 2024-08-19
 
