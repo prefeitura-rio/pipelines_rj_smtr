@@ -5,7 +5,6 @@
       "data_type": "date",
       "granularity": "day"
     },
-    unique_key='data',
     incremental_strategy='insert_overwrite'
 ) }}
 
@@ -27,7 +26,8 @@ WITH receita_unpivot AS (
       WHEN mes = 'dezembro' THEN '12'
     END AS mes,
     SAFE_CAST(REPLACE(REPLACE(valor_arrecadacao, '.', ''), ',', '.') AS NUMERIC) AS valor_arrecadacao
-  FROM `rj-smtr-dev.transito_staging.receita_autuacao`
+  FROM 
+    {{ source('infracao_staging','receita_autuacao') }}
   UNPIVOT (
     valor_arrecadacao FOR mes IN (janeiro, fevereiro, marco, abril, maio, junho, julho, agosto, setembro, outubro, novembro, dezembro)
   )
@@ -41,6 +41,7 @@ receita_com_data AS (
     mes,
     valor_arrecadacao
   FROM receita_unpivot
+  WHERE valor_arrecadacao IS NOT NULL
 )
 
 SELECT
