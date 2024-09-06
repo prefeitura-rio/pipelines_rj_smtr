@@ -307,3 +307,11 @@ Classificação do Serviço: Diretão, Estação do BRT, Rodoviário, Troncal do
 {% docs qtd_passageiros_total %}
 Quantidade total de passageiros
 {% enddocs %}
+
+{% docs codigo %}
+Número de ordem do veículo.
+{% enddocs %}
+
+{% docs trajeto %}
+Nome do trajeto.
+{% enddocs %}

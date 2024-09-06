@@ -66,8 +66,9 @@ models:
         description: "Velocidade instantânea do veículo, conforme informado pelo GPS (km/h)"
   - name: registros_historico
     description: "View para os dados históricos capturados em staging com tratamento básico e conversão de valores"
+    columns:
       - name: codigo
-        description: ""
+        description: "{{ doc('codigo') }}"
       - name: placa
         description: "Placa do veículo"
       - name: linha
@@ -81,11 +82,11 @@ models:
       - name: velocidade
         description: "Velocidade instantânea do veículo, conforme informado pelo GPS (km/h)"
       - name: id_migracao_trajeto
-        description: ""
+        description: "id_migracao_trajeto"
       - name: sentido
         description: "{{ doc('sentido') }}"
       - name: trajeto
-        description: ""
+        description: "{{ doc('trajeto') }}"
       - name: timestamp_captura
         description: "{{ doc('timestamp_captura') }}"
       - name: data
