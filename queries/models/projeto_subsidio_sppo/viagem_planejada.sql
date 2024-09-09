@@ -198,6 +198,13 @@ and
     p.data = s.data
 
 {% else %}
+{% if execute %}
+    {% set result = run_query("SELECT tipo_os, feed_version, feed_start_date, tipo_dia FROM " ~ ref('subsidio_data_versao_efetiva') ~ " WHERE data BETWEEN DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 2 DAY) AND DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 1 DAY) ORDER BY feed_version") %}
+    {% set tipo_oss =  result.columns[0].values() %}
+    {% set feed_versions =  result.columns[1].values() %}
+    {% set feed_start_dates =  result.columns[2].values() %}
+    {% set tipo_dias =  result.columns[3].values() %}
+{% endif %}
 
 WITH
 -- 1. Define datas do período planejado
@@ -251,20 +258,20 @@ WITH
     USING (feed_start_date, feed_version, tipo_dia, tipo_os)
     WHERE
       faixa_horaria_inicio = "24:00:00"
-      AND tipo_os = (SELECT tipo_os FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY))
-      AND feed_version = (SELECT feed_version FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY))
-      AND feed_start_date = (SELECT feed_start_date FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY))
-      AND tipo_dia = (SELECT tipo_dia FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY))
+      AND tipo_os = "{{ tipo_oss[0] }}"
+      AND feed_version = "{{ feed_versions[0] }}"
+      AND feed_start_date = DATE("{{ feed_start_dates[0] }}")
+      AND tipo_dia = "{{ tipo_dias[0] }}"
   ),
 combina_trips_shapes AS (
     SELECT *
     FROM {{ ref("ordem_servico_trips_shapes_gtfs") }}
     -- rj-smtr.gtfs.ordem_servico_trips_shapes
     WHERE
-      tipo_os = (SELECT tipo_os FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY))
-      AND feed_version = (SELECT feed_version FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY))
-      AND feed_start_date = (SELECT feed_start_date FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY))
-      AND tipo_dia = (SELECT tipo_dia FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY))
+      tipo_os = "{{ tipo_oss[1] }}"
+      AND feed_version = "{{ feed_versions[1] }}"
+      AND feed_start_date = DATE("{{ feed_start_dates[1] }}")
+      AND tipo_dia = "{{ tipo_dias[1] }}"
     UNION ALL
     SELECT *
     FROM dia_anterior
@@ -410,7 +417,7 @@ shapes AS (
     {{ ref("shapes_geom_gtfs") }}
     -- rj-smtr-dev.apuracaoFH_gtfs.shapes_geom
   WHERE
-    feed_start_date = (SELECT feed_start_date FROM data_versao_efetiva WHERE data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY) AND DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY))
+    feed_start_date IN (SELECT feed_start_date FROM data_versao_efetiva WHERE data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY) AND DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY))
 ),
 dados_agregados AS (
 SELECT
