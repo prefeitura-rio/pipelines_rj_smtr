@@ -1,20 +1,32 @@
-name: CD-docs
+name: Build Fedora Image
 
 on:
   push:
     branches:
       - main
-
+    paths:
+      - ".github/workflows/cd.yaml"
+      - "pipelines/serpro/*"
+      - "pyproject.toml"
+      - "Dockerfile-fedora"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/cd_staging.yaml"
+      - "pipelines/serpro/*"
+      - "pyproject.toml"
+      - "Dockerfile-fedora"
 env:
   GKE_PROJECT_ID: ${{ secrets.GKE_PROJECT_ID }}
   GKE_SA_KEY: ${{ secrets.GKE_SA_KEY }}
   GKE_CLUSTER: ${{ secrets.GKE_APP_CLUSTER_NAME }}
   GKE_ZONE: ${{ secrets.GKE_CLUSTER_ZONE }}
-  IMAGE_NAME: gcr.io/rj-smtr/dbt-docs
+  IMAGE_NAME: gcr.io/rj-smtr/pipelines-fedora
 
 jobs:
   build-container:
-    name: Build and publish docs
+    name: Build Fedora Image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -27,6 +39,10 @@ jobs:
 
       - run: |-
           pip install --no-cache-dir -r requirements.txt
+
+      # - name: Update image tag in constants
+      #   run: |-
+      #     python .github/workflows/scripts/replace_docker_tag.py gcr.io/${{ env.GKE_PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
       # Setup gcloud CLI
       - name: Setup Google Cloud CLI
@@ -48,28 +64,7 @@ jobs:
       - run: |-
           gcloud --quiet auth configure-docker
 
-      - name: Generate Docs Static Files
-        run: |
-          cd queries
-          sh ./.kubernetes/docs/generate-docs.sh $KEY
-        env:
-          KEY: ${{ secrets.GKE_SA_KEY }}
-
       - name: Build and publish image
         run: |
-          cd queries
-          docker build -t $IMAGE_NAME:$GITHUB_SHA . -f Dockerfile-docs
-          docker push $IMAGE_NAME:$GITHUB_SHA
-
-      - name: Set up Kustomize
-        run: |-
-          cd queries/.kubernetes/docs
-          curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
-          chmod u+x ./kustomize
-
-      - name: Deploy
-        run: |-
-          cd queries/.kubernetes/docs
-          ./kustomize edit set image gcr.io/PROJECT_ID/IMAGE_DBT:TAG=$IMAGE_NAME:$GITHUB_SHA
-          ./kustomize build . | kubectl apply -n dbt-docs -f -
-          kubectl rollout status -w -n dbt-docs deployment/dbt-docs
+          docker build -t $IMAGE_NAME:${{ github.sha}} . -f Dockerfile-fedora
+          docker push $IMAGE_NAME:${{ github.sha }}
