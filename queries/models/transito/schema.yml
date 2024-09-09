@@ -148,3 +148,13 @@ models:
         description: "Indicador de adesão do veículo ao Sistema de Notificação Eletrônica (SNE)"
       - name: fonte
         description: "Origem dos dados"
+  - name: receita_autuacao
+    columns:
+      - name: data
+        description:	"coluna de particao"
+      - name: ano
+        description:	"Ano da arrecadação"
+      - name: mes
+        description:	"Mes da arrecadação"
+      - name: valor_arrecadacao
+        description:	"Valor arrecadado para o mes"
