@@ -139,7 +139,7 @@ shapes AS (
 -- 3. Deduplica viagens planejadas
 viagem_planejada AS (
   SELECT
-    DISTINCT * EXCEPT(faixa_horaria_inicio, faixa_horaria_fim, partidas, distancia_total_planejada, shape, start_pt, end_pt)
+    DISTINCT * EXCEPT(faixa_horaria_inicio, faixa_horaria_fim, partidas_total_planejada, distancia_total_planejada, shape, start_pt, end_pt)
   FROM
     {{ ref("viagem_planejada") }}
   WHERE
