@@ -1469,7 +1469,7 @@ def get_previous_date(days):
 @task(checkpoint=False)
 def get_posterior_date(days):
     """
-    Returns the date of {days} days ago in YYYY-MM-DD.
+    Returns the date of {days} days from now in YYYY-MM-DD.
     """
     now = pendulum.now(pendulum.timezone("America/Sao_Paulo")).add(days=days)
 
