@@ -216,7 +216,7 @@ LEFT JOIN
   {{ ref("ordem_servico_faixa_horaria") }} AS fh
   -- rj-smtr-dev.gtfs.ordem_servico_faixa_horaria AS fh
 USING
-  (feed_version, feed_start_date, tipo_dia, servico)
+  (feed_version, feed_start_date, tipo_os, tipo_dia, servico)
 {% if is_incremental() -%}
 WHERE
   feed_start_date = '{{ var("data_versao_gtfs") }}'
