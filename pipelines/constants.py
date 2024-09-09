@@ -230,7 +230,7 @@ X-1vRvFcyr9skfBIrjxc4FSJZ3-g4gUCF56YjGPOmd1f5qH8vndpy22P6f6KdcYgWaqzUmtSBL\
     GTFS_TABLE_CAPTURE_PARAMS = {
         "ordem_servico": ["servico", "tipo_os"],
         "ordem_servico_trajeto_alternativo": ["servico", "tipo_os", "evento"],
-        "ordem_servico_faixa_horaria": ["servico"],
+        "ordem_servico_faixa_horaria": ["servico", "tipo_os"],
         "shapes": ["shape_id", "shape_pt_sequence"],
         "agency": ["agency_id"],
         "calendar_dates": ["service_id", "date"],
