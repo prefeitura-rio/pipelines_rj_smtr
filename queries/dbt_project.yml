@@ -315,3 +315,9 @@ models:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
       +schema: planejamento
+    transito:
+      +materialized: incremental
+      +schema: transito
+      staging:
+        +materialized: view
+        +schema: transito_staging

@@ -157,3 +157,10 @@ sources:
 
     tables:
       - name: viagem_informada
+
+  - name: infracao_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: autuacoes_citran
+      - name: receita_autuacao

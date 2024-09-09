@@ -37,9 +37,13 @@ models:
       - name: id_validador
         description: "{{ doc('id_validador') }}"
       - name: id_cliente
-        description: "Identificador único do cliente"
+        description: "Identificador único do cliente [protegido]"
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+      - name: hash_cliente
+        description: "Hash identificador do cliente [protegido]"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/3266350367297582691'
       - name: id_transacao
         description: "Identificador único da transação"
       - name: tipo_pagamento
