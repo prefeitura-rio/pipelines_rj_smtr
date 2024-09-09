@@ -245,7 +245,7 @@ WITH
     id_tipo_trajeto,
     FROM
       {{ ref("ordem_servico_trips_shapes_gtfs") }}
-      -- rj-smtr-dev.apuracaoFH_gtfs.ordem_servico_trips_shapes
+      -- rj-smtr.gtfs.ordem_servico_trips_shapes
     LEFT JOIN
       (SELECT * FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)) as d1
     USING (feed_start_date, feed_version, tipo_dia, tipo_os)
@@ -258,7 +258,8 @@ WITH
   ),
 combina_trips_shapes AS (
     SELECT *
-    FROM rj-smtr-dev.apuracaoFH_gtfs.ordem_servico_trips_shapes
+    FROM {{ ref("ordem_servico_trips_shapes_gtfs") }}
+    -- rj-smtr.gtfs.ordem_servico_trips_shapes
     WHERE
       tipo_os = (SELECT tipo_os FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY))
       AND feed_version = (SELECT feed_version FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY))
@@ -409,7 +410,7 @@ shapes AS (
     {{ ref("shapes_geom_gtfs") }}
     -- rj-smtr-dev.apuracaoFH_gtfs.shapes_geom
   WHERE
-    feed_start_date = (SELECT feed_start_date FROM data_versao_efetiva WHERE data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY))
+    feed_start_date = (SELECT feed_start_date FROM data_versao_efetiva WHERE data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY) AND DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY))
 ),
 dados_agregados AS (
 SELECT
