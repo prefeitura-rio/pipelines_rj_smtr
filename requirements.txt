@@ -45,6 +45,7 @@ importlib-metadata==6.11.0
 importlib-resources==6.1.1
 infisical==1.5.0
 isodate==0.6.1
+JayDeBeApi==1.2.3
 Jinja2==3.1.2
 jsonschema==4.20.0
 jsonschema-specifications==2023.11.2
