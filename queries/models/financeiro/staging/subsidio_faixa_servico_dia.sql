@@ -15,9 +15,7 @@ WITH
     consorcio,
     servico,
     faixa_horaria_inicio,
-    -- SAFE_CAST(data || 'T00:00:00' AS DATETIME) AS faixa_horaria_inicio,
     faixa_horaria_fim,
-    -- SAFE_CAST(data || 'T23:59:59' AS DATETIME) AS faixa_horaria_fim,
     distancia_total_planejada AS km_planejada
   FROM
     {{ ref("viagem_planejada") }}
@@ -36,8 +34,8 @@ WITH
     datetime_partida,
     distancia_planejada
  FROM
-    -- {{ ref("viagem_completa") }}
-   rj-smtr.projeto_subsidio_sppo.viagem_completa
+    {{ ref("viagem_completa") }}
+  --  rj-smtr.projeto_subsidio_sppo.viagem_completa
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
@@ -54,9 +52,7 @@ WITH
     SAFE_CAST(p.km_planejada AS NUMERIC) AS km_planejada_faixa,
     SAFE_CAST(COALESCE(COUNT(v.id_viagem), 0) AS INT64) AS viagens_faixa,
     SAFE_CAST(COALESCE(SUM(v.distancia_planejada), 0) AS NUMERIC) AS km_apurada_faixa,
-    SAFE_CAST(COALESCE(ROUND(100 * SUM(v.distancia_planejada) / p.km_planejada, 2), 0) AS NUMERIC) AS pof,
-    '{{ var("version") }}' as versao,
-    CURRENT_DATETIME("America/Sao_Paulo") as datetime_ultima_atualizacao
+    SAFE_CAST(COALESCE(ROUND(100 * SUM(v.distancia_planejada) / p.km_planejada, 2), 0) AS NUMERIC) AS pof
   FROM
     planejado AS p
   LEFT JOIN
@@ -80,7 +76,7 @@ SELECT
   km_apurada_faixa,
   km_planejada_faixa,
   pof,
-  versao,
-  datetime_ultima_atualizacao
+  '{{ var("version") }}' as versao,
+  CURRENT_DATETIME("America/Sao_Paulo") as datetime_ultima_atualizacao
 FROM
   servico_km_apuracao
