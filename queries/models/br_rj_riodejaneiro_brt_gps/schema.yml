@@ -82,7 +82,7 @@ models:
       - name: velocidade
         description: "Velocidade instantânea do veículo, conforme informado pelo GPS (km/h)"
       - name: id_migracao_trajeto
-        description: "id_migracao_trajeto"
+        description: ""
       - name: sentido
         description: "{{ doc('sentido') }}"
       - name: trajeto
