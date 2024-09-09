@@ -12,6 +12,7 @@ WITH
   dados AS (
   SELECT
     SAFE_CAST(data_versao AS DATE) AS data_versao,
+    SAFE_CAST(tipo_os AS DATE) AS tipo_os,
     SAFE_CAST(servico AS STRING) AS servico,
     SAFE_CAST(JSON_VALUE(content, "$.consorcio") AS STRING) AS consorcio,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_00h_e_03h_dias_uteis') AS STRING) AS partidas_entre_00h_e_03h_dias_uteis,
@@ -58,6 +59,7 @@ WITH
   dados_agrupados AS (
   SELECT
     data_versao,
+    tipo_os,
     servico,
     consorcio,
     CASE
