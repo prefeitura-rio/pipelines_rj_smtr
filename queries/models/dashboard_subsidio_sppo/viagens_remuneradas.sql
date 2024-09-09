@@ -24,7 +24,7 @@ WITH
     servico,
     faixa_horaria_inicio,
     faixa_horaria_fim,
-    partidas,
+    partidas_total_planejada,
     distancia_total_planejada AS km_planejada,
   FROM
     {{ ref("viagem_planejada") }}
@@ -75,7 +75,7 @@ WITH
     p.faixa_horaria_fim,
     v.viagens_planejadas,
     p.km_planejada,
-    IF(p.data >= DATE("{{ var("DATA_SUBSIDIO_V9_INICIO") }}"), p.partidas, v.partidas_ida + v.partidas_volta) AS viagens_planejadas_ida_volta
+    IF(p.data >= DATE("{{ var("DATA_SUBSIDIO_V9_INICIO") }}"), p.partidas_total_planejada, v.partidas_ida + v.partidas_volta) AS viagens_planejadas_ida_volta
   FROM
     planejado AS p
   LEFT JOIN
@@ -109,8 +109,8 @@ WITH
   SELECT
     *
  FROM
-    -- {{ ref("viagem_transacao") }}
-    rj-smtr.subsidio.viagem_transacao
+    {{ ref("viagem_transacao") }}
+    -- rj-smtr.subsidio.viagem_transacao
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE( "{{ var("end_date") }}" )
