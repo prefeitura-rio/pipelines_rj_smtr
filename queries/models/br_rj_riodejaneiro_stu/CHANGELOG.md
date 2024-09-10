@@ -4,4 +4,4 @@
 
 ### Corrigido
 
-- Corrige `schema.yaml` ()
+- Corrige `schema.yaml` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/201)
