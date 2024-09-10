@@ -16,8 +16,8 @@ from pipelines.janitor.tasks import (
     query_not_active_flows,
 )
 from pipelines.migration.tasks import get_flow_project
-from pipelines.serpro.tasks import wait_sleeping
 from pipelines.schedules import every_5_minutes
+from pipelines.serpro.tasks import wait_sleeping
 
 with Flow(
     "SMTR: Desagendamento de runs arquivadas",
@@ -39,7 +39,7 @@ janitor_flow.state_handlers = [handler_initialize_sentry]
 janitor_flow.schedule = every_5_minutes
 
 # trigger cd
-with Flow('Teste condição de CD') as test_flow:
+with Flow("Teste condição de CD") as test_flow:
     wait_sleeping(1000)
 
 test_flow.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
