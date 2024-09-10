@@ -1,5 +1,12 @@
 # Changelog - bilhetagem
 
+## [2.5.0] - 2024-09-10
+
+### Alterado
+- Adiciona coluna `id_ordem_pagamento_consorcio_operador_dia` no modelo `ordem_pagamento_consorcio_operador_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/191)
+- Cria tratamento da coluna `timestamp_captura` no modelo `staging_linha_consorcio_operadora_transporte.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/191)
+
+
 ## [2.4.0] - 2024-09-05
 
 ### Alterado

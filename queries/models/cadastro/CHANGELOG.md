@@ -1,5 +1,10 @@
 # Changelog - cadastro
 
+## [1.3.0] - 2024-09-10
+
+### Adicionado
+- Cria modelo `servico_operadora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/191)
+
 ## [1.2.1] - 2024-08-02
 
 ### Alterado
