@@ -203,7 +203,9 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
         dbt_vars = get_join_dict([{"data_versao_gtfs": data_versao_gtfs}], version)[0]
 
         wait_run_dbt_model = run_dbt_model(
-            dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value,
+            dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value
+            + " "
+            + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,
             _vars=dbt_vars,
         ).set_upstream(task=wait_captura)
 

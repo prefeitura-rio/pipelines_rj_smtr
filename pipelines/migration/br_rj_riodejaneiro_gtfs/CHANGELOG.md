@@ -1,5 +1,13 @@
 # Changelog - gtfs
 
+## [1.0.8] - 2024-09-06
+
+### Adicionado
+
+- Cria função `processa_ordem_servico_faixa_horaria` e adiciona chamada na task `get_raw_drive_files` para processar o anexo da faixa horária (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/193)
+
+- Adiciona materialização do modelo `ordem_servico_faixa_horaria` no flow (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/193)
+
 ## [1.0.7] - 2024-08-27
 
 ### Alterado
@@ -12,7 +20,7 @@
 
 - Adiciona filtro para os nomes de tabs da planilha de controle os na task `get_raw_drive_files` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/128/files)
 
-- Adiociona etapa de remover pontos antes da converção de metro para km no processamento da OS (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/129)
+- Adiciona etapa de remover pontos antes da converção de metro para km no processamento da OS (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/129)
 
 ## Corrigido
 
