@@ -53,6 +53,16 @@ jobs:
       - name: Update image tag in constants
         run: |-
           python .github/workflows/scripts/replace_docker_tag.py fedora gcr.io/rj-smtr/pipelines-fedora ${{ github.sha }}
+      
+      - name: Get changed filepaths
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            docker_fedora:
+              - "pipelines/serpro/*"
+              - "pyproject.toml"
+              - "Dockerfile-fedora"
 
       - name: Get changed files for code tree analysis
         id: files
@@ -79,6 +89,7 @@ jobs:
 
       - name: Wait for Docker image to be available
         uses: lewagon/wait-on-check-action@v1.3.1
+        if: ${{ steps.filter.outputs.docker_fedora }}=='true'
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           check-name: 'Build Fedora Image'
