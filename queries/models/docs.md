@@ -244,10 +244,6 @@ Frota Operacional do dia
 Número de Viagens da Linha no dia
 {% enddocs %}
 
-{% docs qtd_viagens %}
-Número de Viagens da Linha no dia
-{% enddocs %}
-
 {% docs qtd_km_cobertos %}
 Quilometragem Coberta
 {% enddocs %}
@@ -334,4 +330,8 @@ Número de ordem do veículo.
 
 {% docs trajeto %}
 Nome do trajeto.
+{% enddocs %}
+
+{% docs sentido %}
+Sentido da linha
 {% enddocs %}

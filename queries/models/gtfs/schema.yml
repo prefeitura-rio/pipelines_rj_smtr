@@ -405,11 +405,11 @@ models:
     description: "Sentido dos serviços (I - Ida, V - Volta, C - Circular)"
     columns:
       - name: feed_start_date
-        dscription: "{{ doc('feed_start_date') }}"
+        description: "{{ doc('feed_start_date') }}"
       - name: servico
-        dscription: "{{ doc('servico') }}"
+        description: "{{ doc('servico') }}"
       - name: sentido
-        dscription: "{{ doc('sentido') }}"
+        description: "{{ doc('sentido') }}"
   - name: ordem_servico_gtfs
     description: "Dados das linhas presentes no município."
     columns:
