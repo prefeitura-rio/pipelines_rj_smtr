@@ -38,4 +38,4 @@ janitor_flow.run_config = KubernetesRun(
 janitor_flow.state_handlers = [handler_inject_bd_credentials]
 janitor_flow.schedule = every_5_minutes
 
-#TRIGGER CD
+# TRIGGER CD
