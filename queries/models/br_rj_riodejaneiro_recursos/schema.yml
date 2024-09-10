@@ -33,6 +33,10 @@ models:
         description: Observações acerca do julgamentodo recurso
       - name: data
         description: Data do recurso (partição da tabela)
+      - name: data_julgamento
+        description: Data do julgamento
+      - name: datetime_update
+        description: Datetime de atualização do recurso
 
   - name: recursos_sppo_bloqueio_via
     description: "Recursos abertos na plataforma Movidesk para pagamento de subsídio de bloqueio de via"
@@ -53,6 +57,8 @@ models:
           description: Data/hora de captura dos dados
         - name: datetime_recurso
           description: Data/hora de criação do ticket para pedido de recurso no Movidesk
+        - name: datetime_update
+          description: Datetime de atualização do recurso
         - name: julgamento
           description: Julgamento do recurso
         - name: motivo_julgamento
@@ -79,6 +85,8 @@ models:
           description: Data/hora de captura dos dados
         - name: datetime_recurso
           description: Data/hora de criação do ticket para pedido de recurso no Movidesk
+        - name: datetime_update
+          description: Datetime de atualização do recurso
         - name: data
           description: Data do recurso (partição da tabela)
         - name: data_hora_inicio_viagem
