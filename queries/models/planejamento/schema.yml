@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: ordem_servico_faixa_horaria
+    description: "Quantidade de viagens planejadas por faixa horária."
+    columns:
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: tipo_dia
+        description: "{{ doc('tipo_dia') }}"
+      - name: faixa_horaria_inicio
+        description: "{{ doc('faixa_horaria_inicio') }}"
+      - name: faixa_horaria_fim
+        description: "{{ doc('faixa_horaria_fim') }}"
+      - name: partidas
+        description: "{{ doc('partidas') }}"
+      - name: quilometragem
+        description: "{{ doc('quilometragem') }}"
