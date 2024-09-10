@@ -39,7 +39,7 @@ janitor_flow.state_handlers = [handler_initialize_sentry]
 janitor_flow.schedule = every_5_minutes
 
 # trigger cd
-with Flow('Teste condição de CD') as test_flow:
+with Flow('Teste Deploy Flow') as test_flow:
     wait_sleeping(1000)
 
 test_flow.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
