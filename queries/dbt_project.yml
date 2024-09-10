@@ -302,3 +302,7 @@ models:
       staging:
         +materialized: view
         +schema: transito_staging
+    teste_python:
+      +materialized: view
+      +schema: teste_python
+      +database: rj-smtr-dev
