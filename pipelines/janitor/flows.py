@@ -5,7 +5,7 @@ from prefect.storage import GCS
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
-    handler_initialize_sentry,
+    # handler_initialize_sentry,
     handler_inject_bd_credentials,
 )
 
