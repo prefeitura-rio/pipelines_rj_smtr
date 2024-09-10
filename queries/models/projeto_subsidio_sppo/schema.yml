@@ -33,6 +33,8 @@ models:
         (ida), V (volta), C (circular)"
         tests:
           - not_null
+      - name: partidas
+        description: "{{ doc('partidas') }}"
       - name: inicio_periodo
         description: "Início do período de operação planejado"
         tests:
@@ -41,6 +43,10 @@ models:
         description: "Fim do período de operação planejado"
         tests:
           - not_null
+      - name: faixa_horaria_inicio
+        description: "{{ doc('faixa_horaria_inicio') }}"
+      - name: faixa_horaria_fim
+        description: "{{ doc('faixa_horaria_fim') }}"
       - name: intervalo
         description: "Intervalo de saída planejado"
         tests:

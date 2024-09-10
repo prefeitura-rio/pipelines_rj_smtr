@@ -2,6 +2,10 @@
 
 ## [1.1.9] - 2024-09-10
 
+### Alterado
+
+- Altera modelo `ordem_servico_trips_shapes_gtfs` em razão da apuração por faixa horária (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
+
 ### Corrigido
 - Corrigido `schema.yml` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/202)
 

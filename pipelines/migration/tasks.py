@@ -1466,6 +1466,16 @@ def get_previous_date(days):
     return now.to_date_string()
 
 
+@task(checkpoint=False)
+def get_posterior_date(days: int) -> str:
+    """
+    Returns the date of {days} days from now in YYYY-MM-DD.
+    """
+    now = pendulum.now(pendulum.timezone("America/Sao_Paulo")).add(days=days)
+
+    return now.to_date_string()
+
+
 ###############
 #
 # Pretreat data
@@ -1824,3 +1834,35 @@ def get_current_flow_mode() -> str:
 @task
 def get_flow_project():
     return prefect.context.get("project_name")
+
+
+@task
+def check_date_in_range(start_date: str, end_date: str, comparison_date: str) -> bool:
+    """
+    Check if comparison_date is between start_date and end_date.
+    """
+    start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+    end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+    comparison_date = datetime.strptime(comparison_date, "%Y-%m-%d").date()
+
+    return start_date < comparison_date <= end_date
+
+
+@task
+def split_date_range(start_date: str, end_date: str, comparison_date: str) -> dict:
+    """
+    Split the date range into two ranges on comparison_date.
+    Returns the first and second ranges.
+    """
+    comparison_date = datetime.strptime(comparison_date, "%Y-%m-%d").date()
+
+    return {
+        "first_range": {
+            "start_date": start_date,
+            "end_date": (comparison_date - timedelta(days=1)).strftime("%Y-%m-%d"),
+        },
+        "second_range": {
+            "start_date": comparison_date.strftime("%Y-%m-%d"),
+            "end_date": end_date,
+        },
+    }
