@@ -3,7 +3,7 @@
 ## [1.1.9] - 2024-09-10
 
 ### Corrigido
-- Corrigido `schema.yml` ()
+- Corrigido `schema.yml` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/202)
 
 ## [1.1.8] - 2024-08-02
 
