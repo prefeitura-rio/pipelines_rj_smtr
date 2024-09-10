@@ -17,7 +17,6 @@ from pipelines.janitor.tasks import (
 )
 from pipelines.migration.tasks import get_flow_project
 from pipelines.schedules import every_5_minutes
-from pipelines.serpro.tasks import wait_sleeping
 
 with Flow(
     "SMTR: Desagendamento de runs arquivadas",
