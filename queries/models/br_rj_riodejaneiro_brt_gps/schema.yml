@@ -25,7 +25,7 @@ models:
       - name: hora
         description: "Hora do 'timestamp_captura'"
       - name: versao
-        description: "{{ doc('versao') }}
+        description: "{{ doc('versao') }}"
   - name: brt_registros
     description: "View para os dados capturados em staging com tratamento básico e conversão de valores"
     columns:
