@@ -54,7 +54,7 @@ jobs:
         id: files
         uses: Ana06/get-changed-files@v2.1.0
 
-      - name: Get filepaths conditions for waiting 
+      - name: Get filepaths conditions for waiting
         uses: dorny/paths-filter@v2
         id: filter
         with:
