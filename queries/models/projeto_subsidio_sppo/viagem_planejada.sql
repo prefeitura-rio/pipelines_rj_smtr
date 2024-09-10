@@ -218,7 +218,7 @@ WITH
     tipo_os,
   FROM
     {{ ref("subsidio_data_versao_efetiva") }}
-    -- rj-smtr-dev.apuracaoFH_projeto_subsidio_sppo.subsidio_data_versao_efetiva
+    -- rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva
   WHERE
     data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY) AND DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)
   ),
@@ -415,7 +415,7 @@ shapes AS (
     *
   FROM
     {{ ref("shapes_geom_gtfs") }}
-    -- rj-smtr-dev.apuracaoFH_gtfs.shapes_geom
+    -- rj-smtr.gtfs.shapes_geom
   WHERE
     feed_start_date IN (SELECT feed_start_date FROM data_versao_efetiva WHERE data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY) AND DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY))
 ),
