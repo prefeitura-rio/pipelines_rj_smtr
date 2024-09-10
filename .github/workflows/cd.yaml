@@ -87,7 +87,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           verbose: true
 
-      - name: Wait for Docker image to be available
+      - name: Wait for Docker Fedora image to be available
         uses: lewagon/wait-on-check-action@v1.3.1
         if: ${{ steps.filter.outputs.docker_fedora }}=='true'
         with:
