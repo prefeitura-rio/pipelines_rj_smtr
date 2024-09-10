@@ -17,6 +17,7 @@ from pipelines.janitor.tasks import (
     query_not_active_flows,
 )
 from pipelines.migration.tasks import get_flow_project
+from pipelines.serpro.tasks import wait_sleeping
 from pipelines.schedules import every_5_minutes
 
 with Flow(
@@ -39,3 +40,12 @@ janitor_flow.state_handlers = [handler_initialize_sentry]
 janitor_flow.schedule = every_5_minutes
 
 # trigger cd
+with Flow('Teste condição de CD') as test_flow:
+    wait_sleeping(1000)
+
+test_flow.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+test_flow.run_config = KubernetesRun(
+    image=emd_constants.DOCKER_IMAGE.value,
+    labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
+)
+test_flow.state_handlers = [handler_initialize_sentry]
