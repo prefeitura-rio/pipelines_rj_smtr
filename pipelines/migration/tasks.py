@@ -1467,7 +1467,7 @@ def get_previous_date(days):
 
 
 @task(checkpoint=False)
-def get_posterior_date(days):
+def get_posterior_date(days: int) -> str:
     """
     Returns the date of {days} days from now in YYYY-MM-DD.
     """
@@ -1849,7 +1849,7 @@ def check_date_in_range(start_date: str, end_date: str, comparison_date: str) ->
 
 
 @task
-def split_date_range(start_date: str, end_date: str, comparison_date) -> dict:
+def split_date_range(start_date: str, end_date: str, comparison_date: str) -> dict:
     """
     Split the date range into two ranges on comparison_date.
     Returns the first and second ranges.
