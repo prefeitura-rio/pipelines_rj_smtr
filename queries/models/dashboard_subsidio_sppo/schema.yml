@@ -57,6 +57,8 @@ models:
         description: "Valor de penalidade apurado (R$)\n
                       Linha com operação entre 40% e 60% da quilometragem estipulada - penalidade equivalente a uma infração média prevista no Código Disciplinar do Serviço Público de Transporte de Passageiros por Meio de Ônibus do Município do Rio de Janeiro - SPPO.\n
                       Linha com operação inferior a 40% da quilometragem estipulada - penalidade equivalente a uma infração grave prevista no Código Disciplinar do Serviço Público de Transporte de Passageiros por Meio de Ônibus do Município do Rio de Janeiro - SPPO."
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: sumario_servico_tipo_viagem_dia
     description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia e tipo de viagem"
     columns:
@@ -270,7 +272,7 @@ models:
         description: "Distância do shape (trajeto) planejado (km)"
       - name: distancia_aferida
         description: "Distância aferida da viagem (distância euclidiana entre posições consecutivas do sinal de GPS)"
-      - name: n_registros_start
+      - name: n_registros_start ## nao tem
         description: "Contagem de sinais de GPS emitidos no meio do trajeto."
       - name: n_registros_shape
         description: "Contagem de sinais de GPS emitidos dentro do trajeto."
@@ -288,6 +290,8 @@ models:
         description: "Razão do tempo aferido da viagem pelo planejado x 100"
       - name: versao_modelo
         description: "Versão da metodologia de cálculo da respectiva linha na tabela."
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: sumario_servico_dia_tipo_sem_glosa
     description: "Tabela temporária sem as glosas e com os detalhes de viagens subsidiadas por serviço-dia."
     columns:
