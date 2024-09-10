@@ -1,5 +1,10 @@
 # Changelog - gtfs
 
+## [1.1.9] - 2024-09-10
+
+### Corrigido
+- Corrigido `schema.yml` ()
+
 ## [1.1.8] - 2024-08-02
 
 ### Alterado
