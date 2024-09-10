@@ -137,11 +137,27 @@ WITH
     AND vt.tipo_viagem = t.status ),
 -- 5. Apuração de km realizado e Percentual de Operação Diário (POD)
   servico_faixa_km_apuracao AS (
-    SELECT
-      *
-    FROM
-      {{ ref("subsidio_faixa_servico_dia") }}
-)
+  SELECT
+    p.data,
+    p.tipo_dia,
+    p.faixa_horaria_inicio,
+    p.faixa_horaria_fim,
+    p.consorcio,
+    p.servico,
+    p.km_planejada AS km_planejada,
+    COALESCE(ROUND(100 * SUM(v.distancia_planejada) / p.km_planejada,2), 0) AS pof
+  FROM
+    viagem_planejada AS p
+  LEFT JOIN
+    viagem_km_tipo AS v
+  ON
+    p.data = v.data
+    AND p.servico = v.servico
+    AND v.datetime_partida BETWEEN p.faixa_horaria_inicio
+    AND p.faixa_horaria_fim
+  GROUP BY
+    1, 2, 3, 4, 5, 6, 7
+  )
 -- 6. Flag de viagens que serão consideradas ou não para fins de remuneração (apuração de valor de subsídio) - RESOLUÇÃO SMTR Nº 3645/2023
 SELECT
   v.* EXCEPT(rn, datetime_partida),
@@ -171,19 +187,19 @@ SELECT
     END AS indicador_viagem_dentro_limite
 FROM (
 SELECT
-    *,
-    ROW_NUMBER() OVER(PARTITION BY data, servico ORDER BY subsidio_km*distancia_planejada DESC) AS rn
+  *,
+  ROW_NUMBER() OVER(PARTITION BY data, servico ORDER BY subsidio_km*distancia_planejada DESC) AS rn
 FROM
-    viagem_km_tipo ) AS v
+  viagem_km_tipo ) AS v
 LEFT JOIN
-    viagem_planejada AS p
+  viagem_planejada AS p
 ON
   p.data = v.data
   AND p.servico = v.servico
   AND v.datetime_partida BETWEEN p.faixa_horaria_inicio
   AND p.faixa_horaria_fim
 LEFT JOIN
-    servico_faixa_km_apuracao AS s
+  servico_faixa_km_apuracao AS s
 ON
   s.data = v.data
   AND s.servico = v.servico
