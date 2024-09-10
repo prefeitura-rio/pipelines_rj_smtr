@@ -38,6 +38,7 @@ WITH pagamento AS (
     valor_pago
   FROM
     {{ ref("aux_retorno_ordem_pagamento") }}
+    -- `rj-smtr.controle_financeiro_staging.aux_retorno_ordem_pagamento`
   {% if is_incremental() %}
     WHERE
     {% if partitions|length > 0 %}
@@ -50,6 +51,7 @@ WITH pagamento AS (
 ordem_pagamento AS (
   SELECT
   o.data_ordem,
+  o.id_ordem_pagamento_consorcio_operadora AS id_ordem_pagamento_consorcio_operador_dia,
   dc.id_consorcio,
   dc.consorcio,
   do.id_operadora,
@@ -78,16 +80,20 @@ ordem_pagamento AS (
   o.valor_liquido AS valor_total_transacao_liquido_ordem
   FROM
     {{ ordem_pagamento_consorcio_operadora_staging }} o
+    -- `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.ordem_pagamento_consorcio_operadora` o
   JOIN
     {{ ref("staging_ordem_pagamento") }} op
+    -- `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.ordem_pagamento` op
   ON
     o.data_ordem = op.data_ordem
   LEFT JOIN
     {{ ref("operadoras") }} do
+    -- `rj-smtr.cadastro.operadoras` do
   ON
     o.id_operadora = do.id_operadora_jae
   LEFT JOIN
     {{ ref("consorcios") }} dc
+    -- `rj-smtr.cadastro.consorcios` dc
   ON
     o.id_consorcio = dc.id_consorcio_jae
   {% if is_incremental() %}
@@ -107,6 +113,7 @@ ordem_pagamento_completa AS (
 
     SELECT
       data_ordem,
+      id_ordem_pagamento_consorcio_operador_dia,
       id_consorcio,
       consorcio,
       id_operadora,
@@ -138,6 +145,7 @@ ordem_pagamento_completa AS (
 ordem_valor_pagamento AS (
   SELECT
     data_ordem,
+    id_ordem_pagamento_consorcio_operador_dia,
     id_consorcio,
     o.consorcio,
     id_operadora,
@@ -170,6 +178,7 @@ ordem_valor_pagamento AS (
 )
 SELECT
   data_ordem,
+  id_ordem_pagamento_consorcio_operador_dia,
   id_consorcio,
   consorcio,
   id_operadora,
