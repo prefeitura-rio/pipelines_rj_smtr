@@ -118,6 +118,13 @@ models:
               to_table: ref('trips_desaninhada')
   - name: agency
     description: "View para os dados capturados em staging do cadastro das agências de transporte público (Descontinuada a partir de 2022-09-13)."
+    columns:
+      - name: agency_id
+        description: "Identificador único para uma agência"
+      - name: content
+        description: "{{ doc('content') }}"
+      - name: data_versao
+        description: "{{ doc('data_versao') }}"
   - name: agency_desaninhada
     description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro das agências de transporte público (agency) (Descontinuada a partir de 2022-09-13)."
   - name: agg_stops_vistoriadas
