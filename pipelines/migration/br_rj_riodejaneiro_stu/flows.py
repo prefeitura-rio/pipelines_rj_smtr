@@ -2,7 +2,7 @@
 """
 Flows for br_rj_riodejaneiro_stu
 
-DBT 2024-09-06
+DBT 2024-09-10
 """
 
 from copy import deepcopy
