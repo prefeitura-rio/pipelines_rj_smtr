@@ -21,6 +21,7 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.utils import (
     download_xlsx,
     filter_valid_rows,
     processa_ordem_servico,
+    processa_ordem_servico_faixa_horaria,
     processa_ordem_servico_trajeto_alternativo,
 )
 from pipelines.migration.utils import save_raw_local_func
@@ -203,6 +204,13 @@ def get_raw_drive_files(os_control, local_filepath: list, regular_sheet_index: i
                 )
             elif filename == "ordem_servico_trajeto_alternativo":
                 processa_ordem_servico_trajeto_alternativo(
+                    sheetnames=sheetnames,
+                    file_bytes=file_bytes_os,
+                    local_filepath=local_filepath,
+                    raw_filepaths=raw_filepaths,
+                )
+            elif filename == "ordem_servico_faixa_horaria":
+                processa_ordem_servico_faixa_horaria(
                     sheetnames=sheetnames,
                     file_bytes=file_bytes_os,
                     local_filepath=local_filepath,
