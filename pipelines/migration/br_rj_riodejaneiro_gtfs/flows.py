@@ -150,7 +150,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 os_control=os_control,
                 local_filepath=local_filepaths,
                 regular_sheet_index=regular_sheet_index,
-                upload_from_gcs=upload_from_gcs
+                upload_from_gcs=upload_from_gcs,
             )
 
             transform_raw_to_nested_structure_results = transform_raw_to_nested_structure.map(
