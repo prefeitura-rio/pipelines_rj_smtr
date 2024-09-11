@@ -4,7 +4,7 @@ Tasks for gtfs
 """
 import os
 import zipfile
-from datetime import datetime
+from datetime import datetime, date
 
 import openpyxl as xl
 import pandas as pd
@@ -45,7 +45,7 @@ def get_last_capture_os(dataset_id: str, mode: str = "prod") -> dict:
         dict: The last captured OS.
 
     """
-    redis_client = get_redis_client()
+    redis_client = get_redis_client("localhost")
     fetch_key = f"{dataset_id}.last_captured_os"
     if mode != "prod":
         fetch_key = f"{mode}.{fetch_key}"
@@ -292,23 +292,45 @@ def validate_gtfs_os(os_file, gtfs_file, os_initial_date, os_final_date):
         #     messages.append("O arquivo possui mais de uma aba")
         os_df = os_sheets.popitem()[1]
         viagens_cols = [
-            "Viagens Dia Útil",
-            "Viagens Sábado",
-            "Viagens Domingo",
-            "Viagens Ponto Facultativo",
+            "Partidas entre\n00h e 03h\n(Dias Úteis)",
+            "Partidas entre\n03h e 12h\n(Dias Úteis)",
+            "Partidas entre\n12h e 21h\n(Dias Úteis)",
+            "Partidas entre\n21h e 24h\n(Dias Úteis)",
+            "Partidas entre 24h e 03h\n(dia seguinte)\n(Dias Úteis)",
+            "Partidas entre\n00h e 03h\n(Sábado)",
+            "Partidas entre\n03h e 12h\n(Sábado)",
+            "Partidas entre 12h e 21h\n(Sábado)",
+            "Partidas entre\n21h e 24h\n(Sábado)",
+            "Partidas entre 24h e 03h\n(dia seguinte)\n(Sábado)",
+            "Partidas entre\n00h e 03h\n(Domingo)",
+            "Partidas entre\n03h e 12h\n(Domingo)",
+            "Partidas entre\n12h e 21h\n(Domingo)",
+            "Partidas entre\n21h e 24h\n(Domingo)",
+            "Partidas entre 24h e 03h\n(dia seguinte)\n(Domingo)",
         ]
         km_cols = [
-            "Quilometragem Dia Útil",
-            "Quilometragem Sábado",
-            "Quilometragem Domingo",
-            "Quilometragem Ponto Facultativo",
+            "Quilometragem entre 00h e 03h\n(Dias Úteis)",
+            "Quilometragem entre 03h e 12h\n(Dias Úteis)",
+            "Quilometragem entre 12h e 21h\n(Dias Úteis)",
+            "Quilometragem entre 21h e 24h\n(Dias Úteis)",
+            "Quilometragem entre\n24h e 03h\n(dia seguinte)\n(Dias Úteis)",
+            "Quilometragem entre\n00h e 03h\n(Sábado)",
+            "Quilometragem entre 03h e 12h\n(Sábado)",
+            "Quilometragem entre 12h e 21h\n(Sábado)",
+            "Quilometragem entre 21h e 24h\n(Sábado)",
+            "Quilometragem entre\n24h e 03h\n(dia seguinte)\n(Sábado)",
+            "Quilometragem entre 00h e 03h\n(Domingo)",
+            "Quilometragem entre 03h e 12h\n(Domingo)",
+            "Quilometragem entre 12h e 21h\n(Domingo)",
+            "Quilometragem entre 21h e 24h\n(Domingo)",
+            "Quilometragem entre\n24h e 03h\n(dia seguinte)\n(Domingo)",
         ]
 
         if not check_os_columns(os_df):
             log("Checking OS columns")
             messages.append(":warning: O arquivo OS não contém as colunas esperadas!")
             # return
-
+        log(os_df.columns)
         for col in viagens_cols + km_cols:
             os_df[col] = (
                 os_df[col]
@@ -316,6 +338,7 @@ def validate_gtfs_os(os_file, gtfs_file, os_initial_date, os_final_date):
                 .str.strip()
                 .str.replace("—", "0")
                 .str.replace(",", ".")
+                .str.replace('\n', ' ')
                 .astype(float)
                 .fillna(0)
             )
@@ -331,6 +354,10 @@ def validate_gtfs_os(os_file, gtfs_file, os_initial_date, os_final_date):
 
         if (os_initial_date is not None) and (os_final_date is not None):
             log("Checking OS dates")
+            if not isinstance(os_initial_date, date):
+                os_initial_date = os_initial_date.split('_')[0]
+                os_initial_date = date.fromisoformat(os_initial_date)
+                
             if os_initial_date > datetime.now().date():
                 messages.append(
                     ":warning: ATENÇÃO: Você está subindo uma OS cuja operação já começou!"

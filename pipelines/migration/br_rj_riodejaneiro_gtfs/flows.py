@@ -132,11 +132,11 @@ gtfs_validator.run_config = KubernetesRun(
     image=constants.DOCKER_IMAGE.value,
     labels=[constants.RJ_SMTR_AGENT_LABEL.value],
 )
-gtfs_validator.state_handlers = [
-    handler_inject_bd_credentials,
-    handler_initialize_sentry,
-    handler_skip_if_running,
-]
+# gtfs_validator.state_handlers = [
+#     handler_inject_bd_credentials,
+#     handler_initialize_sentry,
+#     handler_skip_if_running,
+# ]
 
 with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
     materialize_only = Parameter("materialize_only", default=False)

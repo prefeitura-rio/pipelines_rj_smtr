@@ -494,7 +494,7 @@ def get_shapes(shapes: pd.DataFrame) -> pd.DataFrame:
 def get_trips(file: bytes) -> pd.DataFrame:
 
     # Descompacta o arquivo zip direto na memoria
-    input_zip = ZipFile(io.BufferedRWPairBytesIO(file), "r")
+    input_zip = ZipFile(file, "r")
     files: dict[str, bytes] = {name: input_zip.read(name) for name in input_zip.namelist()}
     trips = read_stream(files["trips.txt"])
     agency = read_stream(files["agency.txt"])
