@@ -547,8 +547,6 @@ def processa_ordem_servico_faixa_horaria(sheetnames, file_bytes, local_filepath,
         if "ponto_facultativo" in coluna:
             ordem_servico_faixa_horaria[coluna] = 0
 
-    log(f"colunas anexo: {ordem_servico_faixa_horaria.columns}")
-
     columns_in_dataframe = set(ordem_servico_faixa_horaria.columns)
     missing_columns = columns_in_values - columns_in_dataframe
     all_columns_present = columns_in_dataframe.issubset(columns_in_values)
