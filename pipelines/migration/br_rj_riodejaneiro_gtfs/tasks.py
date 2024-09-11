@@ -2,6 +2,7 @@
 """
 Tasks for gtfs
 """
+import io
 import os
 import zipfile
 from datetime import datetime
@@ -179,14 +180,18 @@ def get_raw_gtfs_files(
         log("Baixando arquivos através do GCS")
 
         # Baixa planilha de OS
-        file_bytes_os = get_upload_storage_blob(
-            dataset_id=constants.GTFS_DATASET_ID.value, filename="os"
-        ).download_as_bytes()
+        file_bytes_os = io.BytesIO(
+            get_upload_storage_blob(
+                dataset_id=constants.GTFS_DATASET_ID.value, filename="os"
+            ).download_as_bytes()
+        )
 
         # Baixa GTFS
-        file_bytes_gtfs = get_upload_storage_blob(
-            dataset_id=constants.GTFS_DATASET_ID.value, filename="gtfs"
-        ).download_as_bytes()
+        file_bytes_gtfs = io.BytesIO(
+            get_upload_storage_blob(
+                dataset_id=constants.GTFS_DATASET_ID.value, filename="gtfs"
+            ).download_as_bytes()
+        )
 
     else:
         log("Baixando arquivos através do Google Drive")
