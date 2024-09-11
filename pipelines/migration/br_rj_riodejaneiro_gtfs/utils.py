@@ -278,7 +278,7 @@ def processa_ordem_servico(
     quadro["extensao_ida"] = quadro["extensao_ida"] / 1000
     quadro["extensao_volta"] = quadro["extensao_volta"] / 1000
 
-    if "tipo_os" not in quadro_geral.columns:
+    if "tipo_os" not in quadro.columns:
         quadro["tipo_os"] = "Regular"
 
     quadro_geral = pd.concat([quadro_geral, quadro])
