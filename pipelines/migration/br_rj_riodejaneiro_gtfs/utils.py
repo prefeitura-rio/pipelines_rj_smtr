@@ -250,6 +250,9 @@ def processa_ordem_servico(
         ""
     ) + quadro["servico"].str.extract(r"([0-9]+)", expand=False).fillna("")
 
+    if "tipo_os" not in quadro.columns:
+        quadro["tipo_os"] = "Regular"
+
     quadro = quadro[list(set(columns.values()))]
     quadro = quadro.replace("—", 0)
     quadro = quadro.reindex(columns=list(set(columns.values())))
@@ -277,9 +280,6 @@ def processa_ordem_servico(
 
     quadro["extensao_ida"] = quadro["extensao_ida"] / 1000
     quadro["extensao_volta"] = quadro["extensao_volta"] / 1000
-
-    if "tipo_os" not in quadro.columns:
-        quadro["tipo_os"] = "Regular"
 
     quadro_geral = pd.concat([quadro_geral, quadro])
 
