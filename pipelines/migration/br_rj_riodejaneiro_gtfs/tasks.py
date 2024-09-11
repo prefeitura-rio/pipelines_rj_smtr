@@ -162,7 +162,9 @@ def get_raw_gtfs_files(
     Args:
         os_control (dict): A dictionary containing information about the OS (Ordem de Serviço).
         local_filepath (list): A list of local file paths where the downloaded files will be saved.
-
+        regular_sheet_index (int, optional): The index of the regular sheet. Defaults to None.
+        upload_from_gcs (bool, optional):
+            A boolean indicating whether the files should be uploaded from GCS. Defaults to False.
 
     Returns:
         raw_filepaths (list): A list of file paths where the downloaded raw files are saved.
@@ -178,12 +180,12 @@ def get_raw_gtfs_files(
 
         # Baixa planilha de OS
         file_bytes_os = get_upload_storage_blob(
-            dataset_id=constants.GTFS_DATASET_ID.value, filename="os.xlsx"
+            dataset_id=constants.GTFS_DATASET_ID.value, filename="os"
         ).download_as_bytes()
 
         # Baixa GTFS
         file_bytes_gtfs = get_upload_storage_blob(
-            dataset_id=constants.GTFS_DATASET_ID.value, filename="gtfs.zip"
+            dataset_id=constants.GTFS_DATASET_ID.value, filename="gtfs"
         ).download_as_bytes()
 
     else:
