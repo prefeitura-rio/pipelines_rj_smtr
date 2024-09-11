@@ -3,7 +3,6 @@
 Flows for gtfs
 
 DBT: 2024-09-10
-
 """
 
 from prefect import Parameter, case, task
