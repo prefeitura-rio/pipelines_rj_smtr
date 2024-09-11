@@ -240,6 +240,7 @@ def processa_ordem_servico(
         "Partidas Volta Ponto Facultativo": "partidas_volta_pf",
         "Viagens Ponto Facultativo": "viagens_pf",
         "Quilometragem Ponto Facultativo": "km_pf",
+        "tipo_os": "tipo_os",
     }
 
     quadro = quadro.rename(columns=columns)
@@ -277,13 +278,14 @@ def processa_ordem_servico(
     quadro["extensao_ida"] = quadro["extensao_ida"] / 1000
     quadro["extensao_volta"] = quadro["extensao_volta"] / 1000
 
-    quadro["tipo_os"] = "Regular"
+    if "tipo_os" not in quadro_geral.columns:
+        quadro["tipo_os"] = "Regular"
 
     quadro_geral = pd.concat([quadro_geral, quadro])
 
     # Verificações
     columns_in_dataframe = set(quadro_geral.columns)
-    columns_in_values = set(list(columns.values()) + ["tipo_os"])
+    columns_in_values = set(list(columns.values()))
 
     all_columns_present = columns_in_dataframe.issubset(columns_in_values)
     no_duplicate_columns = len(columns_in_dataframe) == len(quadro_geral.columns)
@@ -361,11 +363,15 @@ def processa_ordem_servico_trajeto_alternativo(
         "Horário Final Interdição": "fim_periodo",
         "Descrição": "descricao",
         "Ativação": "ativacao",
+        "tipo_os": "tipo_os",
     }
 
     ordem_servico_trajeto_alternativo = ordem_servico_trajeto_alternativo.rename(
         columns=alt_columns
     )
+
+    if "tipo_os" not in ordem_servico_trajeto_alternativo.columns:
+        ordem_servico_trajeto_alternativo["tipo_os"] = "Regular"
 
     columns_in_dataframe = set(ordem_servico_trajeto_alternativo.columns)
     columns_in_values = set(list(alt_columns.values()))
@@ -482,9 +488,13 @@ def processa_ordem_servico_faixa_horaria(sheetnames, file_bytes, local_filepath,
         "Quilometragem entre  21h e 24h — Ponto Facultativo": "quilometragem_entre_21h_e_24h_ponto_facultativo",  # noqa
         "Partidas entre  24h e 03h (dia seguinte) — Ponto Facultativo": "partidas_entre_24h_e_03h_diaseguinte_ponto_facultativo",  # noqa
         "Quilometragem entre  24h e 03h (dia seguinte) — Ponto Facultativo": "quilometragem_entre_24h_e_03h_diaseguinte_ponto_facultativo",  # noqa
+        "tipo_os": "tipo_os",
     }
 
     ordem_servico_faixa_horaria = ordem_servico_faixa_horaria.rename(columns=fh_columns)
+
+    if "tipo_os" not in ordem_servico_faixa_horaria.columns:
+        ordem_servico_faixa_horaria["tipo_os"] = "Regular"
 
     columns_in_dataframe = set(ordem_servico_faixa_horaria.columns)
     columns_in_values = set(list(fh_columns.values()))

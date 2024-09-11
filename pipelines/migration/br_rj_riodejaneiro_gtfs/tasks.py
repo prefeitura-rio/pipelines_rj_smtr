@@ -174,20 +174,20 @@ def get_raw_gtfs_files(
     log(f"Baixando arquivos: {os_control}")
 
     if upload_from_gcs:
-        log(f"Baixando arquivos através do GCS")
+        log("Baixando arquivos através do GCS")
 
         # Baixa planilha de OS
         file_bytes_os = get_upload_storage_blob(
-            dataset_id="br_rj_riodejaneiro_gtfs", filename="os.xlsx"
+            dataset_id=constants.GTFS_DATASET_ID.value, filename="os.xlsx"
         ).download_as_bytes()
 
         # Baixa GTFS
         file_bytes_gtfs = get_upload_storage_blob(
-            dataset_id="br_rj_riodejaneiro_gtfs", filename="gtfs.zip"
+            dataset_id=constants.GTFS_DATASET_ID.value, filename="gtfs.zip"
         ).download_as_bytes()
 
     else:
-        log(f"Baixando arquivos através do Google Drive")
+        log("Baixando arquivos através do Google Drive")
 
         # Autenticar usando o arquivo de credenciais
         credentials = service_account.Credentials.from_service_account_file(
