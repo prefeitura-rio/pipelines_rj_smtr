@@ -24,7 +24,7 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.utils import (
     processa_ordem_servico_faixa_horaria,
     processa_ordem_servico_trajeto_alternativo,
 )
-from pipelines.migration.utils import save_raw_local_func, get_upload_storage_blob
+from pipelines.migration.utils import get_upload_storage_blob, save_raw_local_func
 
 
 @task
@@ -153,7 +153,9 @@ def get_os_info(last_captured_os: str = None, data_versao_gtfs: str = None) -> d
 
 
 @task(nout=2)
-def get_raw_gtfs_files(os_control, local_filepath: list, regular_sheet_index: int = None, upload_from_gcs: bool = False):
+def get_raw_gtfs_files(
+    os_control, local_filepath: list, regular_sheet_index: int = None, upload_from_gcs: bool = False
+):
     """
     Downloads raw files and processes them.
 
@@ -175,14 +177,18 @@ def get_raw_gtfs_files(os_control, local_filepath: list, regular_sheet_index: in
         log(f"Baixando arquivos através do GCS")
 
         # Baixa planilha de OS
-        file_bytes_os = get_upload_storage_blob(dataset_id="br_rj_riodejaneiro_gtfs", filename="os.xlsx").download_as_bytes()
+        file_bytes_os = get_upload_storage_blob(
+            dataset_id="br_rj_riodejaneiro_gtfs", filename="os.xlsx"
+        ).download_as_bytes()
 
         # Baixa GTFS
-        file_bytes_gtfs = get_upload_storage_blob(dataset_id="br_rj_riodejaneiro_gtfs", filename="gtfs.zip").download_as_bytes()
+        file_bytes_gtfs = get_upload_storage_blob(
+            dataset_id="br_rj_riodejaneiro_gtfs", filename="gtfs.zip"
+        ).download_as_bytes()
 
     else:
         log(f"Baixando arquivos através do Google Drive")
-        
+
         # Autenticar usando o arquivo de credenciais
         credentials = service_account.Credentials.from_service_account_file(
             filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
