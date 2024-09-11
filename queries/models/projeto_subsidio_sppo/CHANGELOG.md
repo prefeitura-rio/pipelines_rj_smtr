@@ -1,6 +1,12 @@
 # Changelog - projeto_subsidio_sppo
 
-## [6.0.5] - 2024-08-29
+## [9.0.1] - 2024-09-11
+
+### Alterado
+
+- Adicionado subtipo_dia `CNU` em `2024-08-18` conforme processo.rio MTR-PRO-2024/13252 no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/208)
+
+## [9.0.0] - 2024-08-29
 
 ### Alterado
 
