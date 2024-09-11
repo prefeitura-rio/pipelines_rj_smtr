@@ -484,6 +484,7 @@ def processa_ordem_servico_faixa_horaria(sheetnames, file_bytes, local_filepath,
         "Quilometragem entre  24h e 03h (dia seguinte) — Ponto Facultativo": "quilometragem_entre_24h_e_03h_diaseguinte_ponto_facultativo",  # noqa
     }
 
+    ordem_servico_faixa_horaria.columns = ordem_servico_faixa_horaria.columns.str.replace("\n", "")
     ordem_servico_faixa_horaria = ordem_servico_faixa_horaria.rename(columns=fh_columns)
 
     columns_in_dataframe = set(ordem_servico_faixa_horaria.columns)
