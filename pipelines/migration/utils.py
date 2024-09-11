@@ -716,14 +716,6 @@ def get_upload_storage_blob(
 
     log(f"blob_list: {blob_list}")
 
-    log(
-        f"""list: {list(
-        bucket.client["storage_staging"]
-        .bucket(bucket.bucket_name)
-        .list_blobs(prefix=f"upload/{dataset_id}")
-    )}"""
-    )
-
     return blob_list[0]
 
 
