@@ -12,7 +12,7 @@ WITH
   dados AS (
   SELECT
     SAFE_CAST(data_versao AS DATE) AS data_versao,
-    SAFE_CAST(tipo_os AS DATE) AS tipo_os,
+    SAFE_CAST(tipo_os AS STRING) AS tipo_os,
     SAFE_CAST(servico AS STRING) AS servico,
     SAFE_CAST(JSON_VALUE(content, "$.consorcio") AS STRING) AS consorcio,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_00h_e_03h_dias_uteis') AS STRING) AS partidas_entre_00h_e_03h_dias_uteis,
@@ -139,7 +139,7 @@ WITH
       quilometragem_entre_24h_e_03h_diaseguinte_ponto_facultativo
     )
   )
-  GROUP BY 1, 2, 3, 4, 5, 6
+  GROUP BY 1, 2, 3, 4, 5, 6, 7
 )
 SELECT
   fi.feed_version,
@@ -159,5 +159,5 @@ WHERE
   AND fi.feed_start_date = '{{ var("data_versao_gtfs") }}'
 {% else %}
 WHERE
-  d.data_versao >= var("DATA_SUBSIDIO_V9_INICIO")
+  d.data_versao >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
 {%- endif %}

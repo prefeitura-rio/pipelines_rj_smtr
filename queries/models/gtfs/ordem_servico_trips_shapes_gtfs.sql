@@ -169,25 +169,25 @@ SELECT
   tipo_dia,
   servico,
   vista,
-  consorcio,
+  o.consorcio,
   sentido,
   CASE
-    WHEN feed_start_date >= var("DATA_SUBSIDIO_V9_INICIO") THEN fh.partidas
+    WHEN feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}' THEN fh.partidas
     ELSE NULL
   END AS partidas_total_planejada,
   distancia_planejada,
   CASE
-    WHEN feed_start_date >= var("DATA_SUBSIDIO_V9_INICIO") THEN fh.quilometragem
+    WHEN feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}' THEN fh.quilometragem
     ELSE distancia_total_planejada
   END AS distancia_total_planejada,
   inicio_periodo,
   fim_periodo,
   CASE
-    WHEN feed_start_date >= var("DATA_SUBSIDIO_V9_INICIO") THEN fh.faixa_horaria_inicio
+    WHEN feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}' THEN fh.faixa_horaria_inicio
     ELSE "00:00:00"
   END AS faixa_horaria_inicio,
   CASE
-    WHEN feed_start_date >= var("DATA_SUBSIDIO_V9_INICIO") THEN fh.faixa_horaria_fim
+    WHEN feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}' THEN fh.faixa_horaria_fim
     ELSE "23:59:59"
   END AS faixa_horaria_fim,
   trip_id_planejado,
