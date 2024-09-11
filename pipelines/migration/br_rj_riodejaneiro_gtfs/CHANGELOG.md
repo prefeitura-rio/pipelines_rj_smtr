@@ -1,5 +1,14 @@
 # Changelog - gtfs
 
+## [1.1.0] - 2024-09-11
+
+### Alterado
+
+- Criada feature para subida manual com base nos arquivos no GCS (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/206)
+- Função `get_raw_drive_files` transformada em `get_raw_gtfs_files` e adaptada para capturar os arquivos tanto através do Google Drive quanto através do GCS por meio do novo parâmetro `upload_from_gcs` do flow `gtfs_captura_nova` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/206)
+- Funções `processa_ordem_servico`, `processa_ordem_servico_trajeto_alternativo` e `processa_ordem_servico_faixa_horaria` ajustadas para considerar a coluna `tipo_os` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/206)
+- Incorporadas outros nomes de colunas a serem renomeados na função `processa_ordem_servico_faixa_horaria`, bem como corrigido o tratamento de colunas ausentes (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/206)
+
 ## [1.0.8] - 2024-09-06
 
 ### Adicionado

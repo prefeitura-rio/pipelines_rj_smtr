@@ -714,6 +714,8 @@ def get_upload_storage_blob(
         .list_blobs(prefix=f"upload/{dataset_id}/{filename}.")
     )
 
+    log(f"blob_list: {blob_list}")
+
     return blob_list[0]
 
 

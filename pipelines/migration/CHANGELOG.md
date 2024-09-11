@@ -1,5 +1,11 @@
 # Changelog - migration
 
+## [1.0.2] - 2024-09-11
+
+### Adicionado
+
+- Adicionado log à função `get_upload_storage_blob` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/206)
+
 ## [1.0.1] - 2024-08-29
 
 ### Adicionado
