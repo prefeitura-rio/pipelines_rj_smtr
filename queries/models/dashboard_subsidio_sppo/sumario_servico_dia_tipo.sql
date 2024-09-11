@@ -15,8 +15,8 @@ WITH
     servico,
     distancia_total_planejada AS km_planejada
   FROM
-    -- rj-smtr.projeto_subsidio_sppo.viagem_planejada
-    {{ ref("viagem_planejada") }}
+    rj-smtr.projeto_subsidio_sppo.viagem_planejada
+    -- {{ ref("viagem_planejada") }}
   WHERE
     DATA >= DATE( "{{ var("DATA_SUBSIDIO_V2_INICIO") }}" )
     {% if is_incremental() %}

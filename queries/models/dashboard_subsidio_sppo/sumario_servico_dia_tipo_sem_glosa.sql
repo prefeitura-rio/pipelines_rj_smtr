@@ -7,6 +7,7 @@ WITH
     MAX(IF(status = "Licenciado com ar e não autuado", subsidio_km, NULL)) AS subsidio_km_sem_glosa
   FROM
     {{ ref("subsidio_valor_km_tipo_viagem") }}
+    -- rj-smtr-staging.dashboard_subsidio_sppo_staging.subsidio_valor_km_tipo_viagem
   WHERE
     data_inicio >= "2023-07-04"
     AND status IN ("Licenciado sem ar e não autuado", "Licenciado com ar e não autuado")

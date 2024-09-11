@@ -18,8 +18,8 @@ WITH
     servico,
     distancia_total_planejada AS km_planejada,
   FROM
-    {{ ref("viagem_planejada") }}
-    -- `rj-smtr`.`projeto_subsidio_sppo`.`viagem_planejada`
+    -- {{ ref("viagem_planejada") }}
+    `rj-smtr`.`projeto_subsidio_sppo`.`viagem_planejada`
   WHERE
     DATA BETWEEN DATE("{{ var("start_date") }}")
     AND DATE( "{{ var("end_date") }}" )
@@ -35,8 +35,8 @@ WITH
     id_viagem,
     distancia_planejada
  FROM
-    {{ ref("viagem_completa") }}
-    -- `rj-smtr`.`projeto_subsidio_sppo`.`viagem_completa`
+    -- {{ ref("viagem_completa") }}
+    `rj-smtr`.`projeto_subsidio_sppo`.`viagem_completa`
   WHERE
     DATA BETWEEN DATE("{{ var("start_date") }}")
     AND DATE( "{{ var("end_date") }}" ) ),

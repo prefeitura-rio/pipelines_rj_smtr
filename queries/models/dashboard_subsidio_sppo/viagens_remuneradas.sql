@@ -8,7 +8,7 @@
 }}
 
 {%- if execute %}
-  {% set query = "SELECT DISTINCT COALESCE(feed_start_date, data_versao_trips, data_versao_shapes, data_versao_frequencies) FROM " ~ ref('subsidio_data_versao_efetiva') ~ " WHERE data BETWEEN DATE('" ~ var('start_date') ~ "') AND DATE('" ~ var("end_date") ~ "')"%}
+  {% set query = "SELECT DISTINCT COALESCE(feed_start_date, data_versao_trips, data_versao_shapes, data_versao_frequencies) FROM  rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva  WHERE data BETWEEN DATE('" ~ var('start_date') ~ "') AND DATE('" ~ var("end_date") ~ "')"%}
   {{- log(query, info=True) -}}
   {% set feed_start_dates = run_query(query).columns[0].values() %}
   {{- log(feed_start_dates, info=True) -}}
@@ -24,8 +24,8 @@ WITH
     servico,
     distancia_total_planejada AS km_planejada,
   FROM
-    {{ ref("viagem_planejada") }}
-    -- rj-smtr.projeto_subsidio_sppo.viagem_planejada
+    -- {{ ref("viagem_planejada") }}
+    rj-smtr.projeto_subsidio_sppo.viagem_planejada
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE( "{{ var("end_date") }}" )
@@ -44,8 +44,8 @@ WITH
     partidas_volta,
     tipo_os,
   FROM
-      {{ ref("ordem_servico_gtfs") }}
-      -- rj-smtr.gtfs.ordem_servico
+      -- {{ ref("ordem_servico_gtfs") }}
+      rj-smtr.gtfs.ordem_servico
   WHERE
     feed_start_date IN ('{{ feed_start_dates|join("', '") }}')
   ),
@@ -56,8 +56,8 @@ WITH
     tipo_os,
     COALESCE(feed_start_date, data_versao_trips, data_versao_shapes, data_versao_frequencies) AS feed_start_date
   FROM
-      {{ ref("subsidio_data_versao_efetiva") }}
-      -- rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva -- (alterar também query no bloco execute)
+      -- {{ ref("subsidio_data_versao_efetiva") }}
+      rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva -- (alterar também query no bloco execute)
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE( "{{ var("end_date") }}" )

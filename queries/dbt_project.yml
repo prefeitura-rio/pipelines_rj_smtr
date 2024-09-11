@@ -118,7 +118,7 @@ vars:
   # Feature Apuração Madonna · The Celebration Tour in Rio
   DATA_SUBSIDIO_V7_INICIO: "2024-05-01"
   # Feature Viagens sem transação
-  DATA_SUBSIDIO_V8_INICIO: "2024-07-19"
+  DATA_SUBSIDIO_V8_INICIO: "2024-07-20"
   # valor_subsidio: "`rj-smtr-dev.projeto_subsidio_sppo.valor_subsidio`"
 
   # Recursos #
@@ -189,10 +189,10 @@ models:
   rj_smtr:
     projeto_subsidio_sppo:
       +materialized: view
-      +schema: projeto_subsidio_sppo
+      +schema: sem_transacao_reprocessamento_projeto_subsidio_sppo
       deprecated:
         +materialized: view
-        +schema: projeto_subsidio_sppo
+        +schema: sem_transacao_reprocessamento_projeto_subsidio_sppo
     br_rj_riodejaneiro_sigmob:
       +materialized: view
       +schema: br_rj_riodejaneiro_sigmob
@@ -210,10 +210,10 @@ models:
       +schema: br_rj_riodejaneiro_veiculos
     dashboard_subsidio_sppo:
       +materialized: view
-      +schema: dashboard_subsidio_sppo
+      +schema: sem_transacao_reprocessamento_dashboard_subsidio_sppo
     dashboard_subsidio_sppo_staging:
       +materialized: view
-      +schema: dashboard_subsidio_sppo_staging
+      +schema: sem_transacao_reprocessamento_dashboard_subsidio_sppo_staging
     veiculo:
       +materialized: view
       +schema: veiculo
@@ -292,7 +292,7 @@ models:
     subsidio:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
-      +schema: subsidio
+      +schema: sem_transacao_reprocessamento_subsidio
     catalogo:
       +materialized: view
       +schema: catalogo
@@ -301,4 +301,4 @@ models:
       +schema: transito
       staging:
         +materialized: view
-        +schema: transito_staging
+        +schema: transito_staging_dbt_tmp

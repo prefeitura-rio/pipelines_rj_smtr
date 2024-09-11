@@ -70,10 +70,8 @@ quadro as (
     inner join (
         select *
         from {{ ref("subsidio_quadro_horario") }}
-        {% if is_incremental() %}
         where
             data_versao in (select data_versao_frequencies from data_efetiva)
-        {% endif %}
     ) p
     on
         e.data_versao_frequencies = p.data_versao
@@ -90,10 +88,8 @@ trips as (
     from (
         select *
         from {{ ref('subsidio_trips_desaninhada') }}
-        {% if is_incremental() %}
         where
             data_versao in (select data_versao_trips from data_efetiva)
-        {% endif %}
     ) t
     inner join
         data_efetiva e
@@ -165,10 +161,8 @@ shapes as (
     inner join (
         select *
         from {{ ref('subsidio_shapes_geom') }}
-        {% if is_incremental() %}
         where
             data_versao in (select data_versao_shapes from data_efetiva)
-        {% endif %}
     ) s
     on
         s.data_versao = e.data_versao_shapes
@@ -210,8 +204,8 @@ WITH
     feed_start_date,
     tipo_os,
   FROM
-    {{ ref("subsidio_data_versao_efetiva") }}
-    -- rj-smtr-dev.projeto_subsidio_sppo.subsidio_data_versao_efetiva
+    -- {{ ref("subsidio_data_versao_efetiva") }}
+    rj-smtr-dev.projeto_subsidio_sppo.subsidio_data_versao_efetiva
   WHERE
     data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY) AND DATE("{{ var('run_date') }}"))
 SELECT
@@ -277,7 +271,8 @@ SELECT
 FROM
   data_versao_efetiva AS d
 LEFT JOIN
-  {{ ref("ordem_servico_trips_shapes_gtfs") }} AS o
+--   {{ ref("ordem_servico_trips_shapes_gtfs") }} AS o
+  rj-smtr.gtfs.ordem_servico_trips_shapes AS o
 USING
   (feed_start_date,
    feed_version,
