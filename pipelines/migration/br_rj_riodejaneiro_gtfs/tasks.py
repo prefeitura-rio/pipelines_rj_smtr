@@ -162,7 +162,9 @@ def get_raw_gtfs_files(
     Args:
         os_control (dict): A dictionary containing information about the OS (Ordem de Serviço).
         local_filepath (list): A list of local file paths where the downloaded files will be saved.
-
+        regular_sheet_index (int, optional): The index of the regular sheet. Defaults to None.
+        upload_from_gcs (bool, optional):
+            A boolean indicating whether the files should be uploaded from GCS. Defaults to False.
 
     Returns:
         raw_filepaths (list): A list of file paths where the downloaded raw files are saved.
@@ -174,20 +176,20 @@ def get_raw_gtfs_files(
     log(f"Baixando arquivos: {os_control}")
 
     if upload_from_gcs:
-        log(f"Baixando arquivos através do GCS")
+        log("Baixando arquivos através do GCS")
 
         # Baixa planilha de OS
         file_bytes_os = get_upload_storage_blob(
-            dataset_id="br_rj_riodejaneiro_gtfs", filename="os.xlsx"
+            dataset_id=constants.GTFS_DATASET_ID.value, filename="os"
         ).download_as_bytes()
 
         # Baixa GTFS
         file_bytes_gtfs = get_upload_storage_blob(
-            dataset_id="br_rj_riodejaneiro_gtfs", filename="gtfs.zip"
+            dataset_id=constants.GTFS_DATASET_ID.value, filename="gtfs"
         ).download_as_bytes()
 
     else:
-        log(f"Baixando arquivos através do Google Drive")
+        log("Baixando arquivos através do Google Drive")
 
         # Autenticar usando o arquivo de credenciais
         credentials = service_account.Credentials.from_service_account_file(
