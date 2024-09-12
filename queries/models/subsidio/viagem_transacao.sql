@@ -135,10 +135,7 @@ WITH
       id_veiculo,
       latitude,
       longitude,
-      CASE
-        WHEN "ABERTO" IN UNNEST(ARRAY_AGG(DISTINCT estado_equipamento)) THEN "ABERTO"
-        ELSE "FECHADO"
-      END AS estado_equipamento,
+      IF(COUNT(CASE WHEN estado_equipamento = "ABERTO" THEN 1 END) >= 1, "ABERTO", "FECHADO") AS estado_equipamento,
       MIN(datetime_gps) AS datetime_gps,
     FROM
       gps_validador
