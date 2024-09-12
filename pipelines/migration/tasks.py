@@ -697,7 +697,9 @@ def create_request_params(
             FROM
                 `{project}.{dataset_id}_staging.{table_id}_logs`
             WHERE
-                data <= '{timestamp.strftime("%Y-%m-%d")}'
+                data BETWEEN
+                    DATE_SUB('{timestamp.strftime("%Y-%m-%d")}', INTERVAL 7 DAY)
+                    AND '{timestamp.strftime("%Y-%m-%d")}'
                 AND sucesso = "True"
             ORDER BY
                 timestamp_captura DESC
