@@ -484,6 +484,8 @@ def processa_ordem_servico_faixa_horaria(sheetnames, file_bytes, local_filepath,
         "Quilometragem entre 21h e 24h — Domingo": "quilometragem_entre_21h_e_24h_domingo",
         "Partidas entre 24h e 03h (dia seguinte) — Domingo": "partidas_entre_24h_e_03h_diaseguinte_domingo",  # noqa
         "Quilometragem entre 24h e 03h (dia seguinte) — Domingo": "quilometragem_entre_24h_e_03h_diaseguinte_domingo",  # noqa
+        "Partidas entre 00h e 03h — Ponto Facultativo": "partidas_entre_00h_e_03h_ponto_facultativo",  # noqa
+        "Quilometragem entre 00h e 03h — Ponto Facultativo": "quilometragem_entre_00h_e_03h_ponto_facultativo",  # noqa
         "Partidas entre 03h e 12h — Ponto Facultativo": "partidas_entre_03h_e_12h_ponto_facultativo",  # noqa
         "Quilometragem entre 03h e 12h — Ponto Facultativo": "quilometragem_entre_03h_e_12h_ponto_facultativo",  # noqa
         "Partidas entre 12h e 21h — Ponto Facultativo": "partidas_entre_12h_e_21h_ponto_facultativo",  # noqa
@@ -522,6 +524,8 @@ def processa_ordem_servico_faixa_horaria(sheetnames, file_bytes, local_filepath,
         "Quilometragem entre 21h e 24h (Domingo)": "quilometragem_entre_21h_e_24h_domingo",
         "Partidas entre 24h e 03h (dia seguinte) (Domingo)": "partidas_entre_24h_e_03h_diaseguinte_domingo",  # noqa
         "Quilometragem entre 24h e 03h (dia seguinte) (Domingo)": "quilometragem_entre_24h_e_03h_diaseguinte_domingo",  # noqa
+        "Partidas entre 00h e 03h (Ponto Facultativo)": "partidas_entre_00h_e_03h_ponto_facultativo",  # noqa
+        "Quilometragem entre 00h e 03h (Ponto Facultativo)": "quilometragem_entre_00h_e_03h_ponto_facultativo",  # noqa
         "Partidas entre 03h e 12h (Ponto Facultativo)": "partidas_entre_03h_e_12h_ponto_facultativo",  # noqa
         "Quilometragem entre 03h e 12h (Ponto Facultativo)": "quilometragem_entre_03h_e_12h_ponto_facultativo",  # noqa
         "Partidas entre 12h e 21h (Ponto Facultativo)": "partidas_entre_12h_e_21h_ponto_facultativo",  # noqa
