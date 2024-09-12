@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo_encontro_contas
 
+## [1.0.4] - 2024-08-29
+
+### Alterado
+
+- Alterado os modelos `balanco_servico_dia` e `balanco_servico_dia_pos_gt` em razão de alterações no modelo `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
+
 ## [1.0.3] - 2024-06-07
 
 ### Adicionado

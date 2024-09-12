@@ -144,6 +144,26 @@ Tipo da gratuidade (Estudante, PCD, Sênior)
 Tipo de pagamento utilizado
 {% enddocs %}
 
+{% docs tipo_dia %}
+Dia da semana - categorias: Dia Útil, Sábado, Domingo
+{% enddocs %}
+
+{% docs faixa_horaria_inicio %}
+Horário inicial da faixa horária
+{% enddocs %}
+
+{% docs faixa_horaria_fim %}
+Horário final da faixa horária
+{% enddocs %}
+
+{% docs partidas %}
+Quantidade de partidas planejadas
+{% enddocs %}
+
+{% docs quilometragem %}
+Quilometragem planejada
+{% enddocs %}
+
 {% docs timestamp_captura %}
 Timestamp de captura pela SMTR
 {% enddocs %}
@@ -218,10 +238,6 @@ Frota Licenciada para a linha
 
 {% docs frota_operante %}
 Frota Operacional do dia
-{% enddocs %}
-
-{% docs qtd_viagens %}
-Número de Viagens da Linha no dia
 {% enddocs %}
 
 {% docs qtd_viagens %}
@@ -314,4 +330,8 @@ Número de ordem do veículo.
 
 {% docs trajeto %}
 Nome do trajeto.
+{% enddocs %}
+
+{% docs sentido %}
+Sentido da linha
 {% enddocs %}

@@ -1,5 +1,13 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [7.0.2] - 2024-08-29
+
+### Alterado
+
+- Alterado os modelos `sumario_dia`, `sumario_servico_dia` e `sumario_servico_dia_tipo` em razão de alterações no modelo `viagem_planejada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
+
+- Alterado modelo `viagens_remuneradas` em razão da apuração por faixa horária (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
+
 ## [7.0.1] - 2024-08-19
 
 ## Adicionado
