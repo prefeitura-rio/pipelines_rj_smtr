@@ -14,6 +14,7 @@ with shapes AS (
     rj-smtr.gtfs.shapes
   where
     feed_start_date = '2024-09-01'
+    and shape_id = "hj1m"
    order by
     1,
     2,

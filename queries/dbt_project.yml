@@ -302,7 +302,12 @@ models:
       staging:
         +materialized: view
         +schema: transito_staging
-    teste_python:
-      +materialized: view
-      +schema: teste_python
+    planejamento:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: planejamento
+      staging:
+        +database: rj-smtr-dev
+        +materialized: view
+        +schema: planejamento_staging
       +database: rj-smtr-dev
