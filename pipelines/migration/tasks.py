@@ -708,7 +708,7 @@ def create_request_params(
                 success_ts = datetime.fromisoformat(success_ts)
                 last_id_query = f"""
                 SELECT
-                    MAX(CAST(id AS INTEGER))
+                    CAST(MAX(CAST(id AS INTEGER)) AS STRING)
                 FROM
                     `{project}.{dataset_id}_staging.{table_id}`
                 WHERE
