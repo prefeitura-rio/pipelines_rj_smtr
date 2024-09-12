@@ -1,5 +1,13 @@
 # Changelog - br_rj_riodejaneiro_bilhetagem
 
+## [1.4.4] - 2024-09-12
+
+### Corrigido
+
+`bilhetagem_tracking_captura`:
+    - Remove try/catch da criação de parâmetros (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/216)
+    - Faz o cast do id para inteiro para definir o id inicial do filtro (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/216)
+
 ## [1.4.3] - 2024-08-29
 
 ### Corrigido
