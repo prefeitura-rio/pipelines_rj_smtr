@@ -545,53 +545,89 @@ def get_trips(file: bytes) -> pd.DataFrame:
 
 
 def get_board(quadro: pd.DataFrame):
+    # print('QUADRO COLUMNS:')
+    # print(quadro.columns)
+    # columns = {
+    #     "Serviço": "servico",
+    #     "Vista": "vista",
+    #     "Consórcio": "consorcio",
+    #     "Consorcio": "consorcio",
+    #     "Horário Inicial": "horario_inicio",
+    #     "Horário Início": "horario_inicio",
+    #     "Horário início": "horario_inicio",
+    #     "Horário Inicial Dia Útil": "horario_inicio",
+    #     "Horário Fim Dia Útil": "horario_fim",
+    #     "Horário Fim": "horario_fim",
+    #     "Horário fim": "horario_fim",
+    #     "Partidas Ida Dia Útil": "partidas_ida_du",
+    #     "Partidas ida dia útil": "partidas_ida_du",
+    #     "Partidas Ida\n(DU)": "partidas_ida_du",
+    #     "Partidas Volta Dia Útil": "partidas_volta_du",
+    #     "Partidas volta dia útil": "partidas_volta_du",
+    #     "Partidas Volta\n(DU)": "partidas_volta_du",
+    #     "Extensão de Ida": "extensao_ida",
+    #     "Extensão de ida": "extensao_ida",
+    #     "Ext.\nIda": "extensao_ida",
+    #     "Extensão de Volta": "extensao_volta",
+    #     "Extensão de volta": "extensao_volta",
+    #     "Ext.\nVolta": "extensao_volta",
+    #     "Viagens Dia Útil": "viagens_du",
+    #     "Viagens dia útil": "viagens_du",
+    #     "Viagens\n(DU)": "viagens_du",
+    #     "Quilometragem Dia Útil": "km_dia_util",
+    #     "Quilometragem dia útil": "km_dia_util",
+    #     "KM\n(DU)": "km_dia_util",
+    #     "Quilometragem Sábado": "km_sabado",
+    #     "Quilometragem sábado": "km_sabado",
+    #     "KM\n(SAB)": "km_sabado",
+    #     "Quilometragem Domingo": "km_domingo",
+    #     "Quilometragem domingo": "km_domingo",
+    #     "KM\n(DOM)": "km_domingo",
+    #     "Partida Ida Ponto Facultativo": "partidas_ida_pf",
+    #     "Partidas Ida Ponto Facultativo": "partidas_ida_pf",
+    #     "Partidas Ida\n(FAC)": "partidas_ida_pf",
+    #     "Partida Volta Ponto Facultativo": "partidas_volta_pf",
+    #     "Partidas Volta Ponto Facultativo": "partidas_volta_pf",
+    #     "Partidas Volta\n(FAC)": "partidas_volta_pf",
+    #     "Viagens Ponto Facultativo": "viagens_pf",
+    #     "Viagens\n(FAC)": "viagens_pf",
+    #     "Quilometragem Ponto Facultativo": "km_pf",
+    #     "KM\n(FAC)": "km_pf",
+    # }
     columns = {
-        "Serviço": "servico",
-        "Vista": "vista",
-        "Consórcio": "consorcio",
-        "Consorcio": "consorcio",
-        "Horário Inicial": "horario_inicio",
-        "Horário Início": "horario_inicio",
-        "Horário início": "horario_inicio",
-        "Horário Inicial Dia Útil": "horario_inicio",
-        "Horário Fim Dia Útil": "horario_fim",
-        "Horário Fim": "horario_fim",
-        "Horário fim": "horario_fim",
-        "Partidas Ida Dia Útil": "partidas_ida_du",
-        "Partidas ida dia útil": "partidas_ida_du",
-        "Partidas Ida\n(DU)": "partidas_ida_du",
-        "Partidas Volta Dia Útil": "partidas_volta_du",
-        "Partidas volta dia útil": "partidas_volta_du",
-        "Partidas Volta\n(DU)": "partidas_volta_du",
-        "Extensão de Ida": "extensao_ida",
-        "Extensão de ida": "extensao_ida",
-        "Ext.\nIda": "extensao_ida",
-        "Extensão de Volta": "extensao_volta",
-        "Extensão de volta": "extensao_volta",
-        "Ext.\nVolta": "extensao_volta",
-        "Viagens Dia Útil": "viagens_du",
-        "Viagens dia útil": "viagens_du",
-        "Viagens\n(DU)": "viagens_du",
-        "Quilometragem Dia Útil": "km_dia_util",
-        "Quilometragem dia útil": "km_dia_util",
-        "KM\n(DU)": "km_dia_util",
-        "Quilometragem Sábado": "km_sabado",
-        "Quilometragem sábado": "km_sabado",
-        "KM\n(SAB)": "km_sabado",
-        "Quilometragem Domingo": "km_domingo",
-        "Quilometragem domingo": "km_domingo",
-        "KM\n(DOM)": "km_domingo",
-        "Partida Ida Ponto Facultativo": "partidas_ida_pf",
-        "Partidas Ida Ponto Facultativo": "partidas_ida_pf",
-        "Partidas Ida\n(FAC)": "partidas_ida_pf",
-        "Partida Volta Ponto Facultativo": "partidas_volta_pf",
-        "Partidas Volta Ponto Facultativo": "partidas_volta_pf",
-        "Partidas Volta\n(FAC)": "partidas_volta_pf",
-        "Viagens Ponto Facultativo": "viagens_pf",
-        "Viagens\n(FAC)": "viagens_pf",
-        "Quilometragem Ponto Facultativo": "km_pf",
-        "KM\n(FAC)": "km_pf",
-    }
+        'Serviço':'servico', 
+        'Consórcio':'consorcio', 
+        'Partidas entre\n00h e 03h\n(Dias Úteis)':'partidas_dia_util_00_03',
+        'Quilometragem entre 00h e 03h\n(Dias Úteis)':'km_dia_util_00_03',
+        'Partidas entre\n03h e 12h\n(Dias Úteis)':'partidas_du_03_12',
+        'Quilometragem entre 03h e 12h\n(Dias Úteis)':'km_dia_util_03_12',
+        'Partidas entre\n12h e 21h\n(Dias Úteis)':'partidas_dia_util_12_21',
+        'Quilometragem entre 12h e 21h\n(Dias Úteis)':'km_dia_util_12_21',
+        'Partidas entre\n21h e 24h\n(Dias Úteis)':'partidas_dia_util_21_24',
+        'Quilometragem entre 21h e 24h\n(Dias Úteis)':'km_dia_util_21_24',
+        'Partidas entre 24h e 03h\n(dia seguinte)\n(Dias Úteis)':'partidas_dia_util_seguinte',
+        'Quilometragem entre\n24h e 03h\n(dia seguinte)\n(Dias Úteis)':'km_dia_util_seguinte',
+        'Partidas entre\n00h e 03h\n(Sábado)':'partidas_sabado_00_03',
+        'Quilometragem entre\n00h e 03h\n(Sábado)':'km_sabado_00_03',
+        'Partidas entre\n03h e 12h\n(Sábado)':"partidas_sabado_03_12",
+        'Quilometragem entre 03h e 12h\n(Sábado)':'km_sabado_03_12',
+        'Partidas entre 12h e 21h\n(Sábado)':"partidas_sabado_12_21",
+        'Quilometragem entre 12h e 21h\n(Sábado)':'km_sabado_12_21',
+        'Partidas entre\n21h e 24h\n(Sábado)':"partidas_sabado_21_24",
+        'Quilometragem entre 21h e 24h\n(Sábado)':'km_sabado_21_24',
+        'Partidas entre 24h e 03h\n(dia seguinte)\n(Sábado)':"partidas_sabado_seguinte",
+        'Quilometragem entre\n24h e 03h\n(dia seguinte)\n(Sábado)':'km_sabado_seguinte',
+        'Partidas entre\n00h e 03h\n(Domingo)':'partidas_domingo_00_03',
+        'Quilometragem entre 00h e 03h\n(Domingo)':'km_domingo_00_03',
+        'Partidas entre\n03h e 12h\n(Domingo)':'partidas_domingo_03_12',
+        'Quilometragem entre 03h e 12h\n(Domingo)':'km_domingo_03_12',
+        'Partidas entre\n12h e 21h\n(Domingo)':'partidas_domingo_12_21',
+        'Quilometragem entre 12h e 21h\n(Domingo)':'km_domingo_12_21',
+        'Partidas entre\n21h e 24h\n(Domingo)':'partidas_domingo_21_24',
+        'Quilometragem entre 21h e 24h\n(Domingo)':'km_domingo_21_24',
+        'Partidas entre 24h e 03h\n(dia seguinte)\n(Domingo)':'partidas_domingo_seguinte',
+        'Quilometragem entre\n24h e 03h\n(dia seguinte)\n(Domingo)':'km_domingo_seguinte'
+        }
 
     quadro = quadro.rename(columns=columns)
 
@@ -621,13 +657,13 @@ def get_board(quadro: pd.DataFrame):
     quadro[numeric_cols] = quadro[numeric_cols].apply(lambda x: x.str.replace(",", "."))
     quadro[numeric_cols] = quadro[numeric_cols].apply(pd.to_numeric)
 
-    extensao_cols = ["extensao_ida", "extensao_volta"]
-    quadro[extensao_cols] = quadro[extensao_cols].astype(str)
-    quadro[extensao_cols] = quadro[extensao_cols].apply(lambda x: x.str.replace(",00", ""))
-    quadro[extensao_cols] = quadro[extensao_cols].apply(pd.to_numeric)
+    # extensao_cols = ["extensao_ida", "extensao_volta"]
+    # quadro[extensao_cols] = quadro[extensao_cols].astype(str)
+    # quadro[extensao_cols] = quadro[extensao_cols].apply(lambda x: x.str.replace(",00", ""))
+    # quadro[extensao_cols] = quadro[extensao_cols].apply(pd.to_numeric)
 
-    quadro["extensao_ida"] = quadro["extensao_ida"] / 1000
-    quadro["extensao_volta"] = quadro["extensao_volta"] / 1000
+    # quadro["extensao_ida"] = quadro["extensao_ida"] / 1000
+    # quadro["extensao_volta"] = quadro["extensao_volta"] / 1000
 
     # Ajusta colunas com hora
     hora_cols = [coluna for coluna in quadro.columns if "horario" in coluna]
