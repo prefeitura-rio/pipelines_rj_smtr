@@ -17,7 +17,7 @@ WITH
     SAFE_CAST(STDDEV(pof) AS NUMERIC) AS desvp_pof
   FROM
     {{ ref("subsidio_faixa_servico_dia") }}
-    -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia
+    -- rj-smtr.financeiro_staging.subsidio_faixa_servico_dia
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
@@ -32,7 +32,7 @@ WITH
     *
   FROM
     {{ ref("subsidio_sumario_servico_dia_pagamento") }}
-    -- rj-smtr-dev.financeiro.subsidio_sumario_servico_dia_pagamento
+    -- rj-smtr.financeiro.subsidio_sumario_servico_dia_pagamento
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
@@ -50,7 +50,7 @@ WITH
       km_apurada_faixa
     FROM
       {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
-      -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia_tipo_viagem
+      -- rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem
     WHERE
       data BETWEEN DATE("{{ var("start_date") }}")
       AND DATE("{{ var("end_date") }}")
@@ -77,7 +77,15 @@ SELECT
   vs.km_planejada_dia,
   sd.media_pof,
   sd.desvp_pof,
-  pd.* EXCEPT(data, tipo_dia, servico, consorcio),
+  COALESCE(km_apurada_registrado_com_ar_inoperante, 0) AS km_apurada_registrado_com_ar_inoperante,
+  COALESCE(km_apurada_n_licenciado, 0) AS km_apurada_n_licenciado,
+  COALESCE(km_apurada_autuado_ar_inoperante, 0) AS km_apurada_autuado_ar_inoperante,
+  COALESCE(km_apurada_autuado_seguranca, 0) AS km_apurada_autuado_seguranca,
+  COALESCE(km_apurada_autuado_limpezaequipamento, 0) AS km_apurada_autuado_limpezaequipamento,
+  COALESCE(km_apurada_licenciado_sem_ar_n_autuado, 0) AS km_apurada_licenciado_sem_ar_n_autuado,
+  COALESCE(km_apurada_licenciado_com_ar_n_autuado, 0) AS km_apurada_licenciado_com_ar_n_autuado,
+  COALESCE(km_apurada_n_vistoriado, 0) AS km_apurada_n_vistoriado,
+  COALESCE(km_apurada_sem_transacao, 0) AS km_apurada_sem_transacao,
   vs.valor_a_pagar,
   vs.valor_glosado,
   vs.valor_acima_limite,
