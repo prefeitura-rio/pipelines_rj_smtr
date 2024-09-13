@@ -321,3 +321,7 @@ models:
       staging:
         +materialized: view
         +schema: transito_staging
+    br_rj_riodejaneiro_bilhetagem_15min:
+      +materialized: incremental
+      +schema: br_rj_riodejaneiro_bilhetagem_15min
+
