@@ -16,12 +16,11 @@ WITH
     consorcio,
     servico,
     viagens_faixa,
-    km_apurada_faixa,
     km_planejada_faixa,
     pof
   FROM
-    -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia
     {{ ref("subsidio_faixa_servico_dia") }}
+    -- rj-smtr.financeiro_staging.subsidio_faixa_servico_dia
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
@@ -34,13 +33,14 @@ WITH
     faixa_horaria_fim,
     consorcio,
     servico,
+    SUM(km_apurada_faixa) AS km_apurada_faixa,
     SUM(km_subsidiada_faixa) AS km_subsidiada_faixa,
     SUM(valor_apurado) AS valor_apurado,
     SUM(valor_acima_limite) AS valor_acima_limite,
     SUM(valor_total_sem_glosa) AS valor_total_sem_glosa
   FROM
-    -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia_tipo_viagem
     {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
+    -- rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
@@ -67,7 +67,7 @@ WITH
       km_apurada_faixa
     FROM
       {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
-      -- rj-smtr-dev.financeiro.subsidio_faixa_servico_dia_tipo_viagem
+      -- rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem
     WHERE
       data BETWEEN DATE("{{ var("start_date") }}")
       AND DATE("{{ var("end_date") }}")
@@ -91,11 +91,19 @@ SELECT
   s.consorcio,
   s.servico,
   s.viagens_faixa,
-  s.km_apurada_faixa,
+  agg.km_apurada_faixa,
   agg.km_subsidiada_faixa,
   s.km_planejada_faixa,
   s.pof,
-  pd.* EXCEPT(data, tipo_dia, faixa_horaria_inicio, faixa_horaria_fim, servico, consorcio),
+  COALESCE(km_apurada_registrado_com_ar_inoperante, 0) AS km_apurada_registrado_com_ar_inoperante,
+  COALESCE(km_apurada_n_licenciado, 0) AS km_apurada_n_licenciado,
+  COALESCE(km_apurada_autuado_ar_inoperante, 0) AS km_apurada_autuado_ar_inoperante,
+  COALESCE(km_apurada_autuado_seguranca, 0) AS km_apurada_autuado_seguranca,
+  COALESCE(km_apurada_autuado_limpezaequipamento, 0) AS km_apurada_autuado_limpezaequipamento,
+  COALESCE(km_apurada_licenciado_sem_ar_n_autuado, 0) AS km_apurada_licenciado_sem_ar_n_autuado,
+  COALESCE(km_apurada_licenciado_com_ar_n_autuado, 0) AS km_apurada_licenciado_com_ar_n_autuado,
+  COALESCE(km_apurada_n_vistoriado, 0) AS km_apurada_n_vistoriado,
+  COALESCE(km_apurada_sem_transacao, 0) AS km_apurada_sem_transacao,
   agg.valor_apurado,
   agg.valor_acima_limite,
   agg.valor_total_sem_glosa,
