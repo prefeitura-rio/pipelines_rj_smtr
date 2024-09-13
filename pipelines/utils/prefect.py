@@ -348,9 +348,9 @@ def handler_skip_if_running_tolerant(tolerance_minutes: int):
         tolerance_minutes = 0
 
     def handler(obj, old_state: State, new_state: State) -> State:
-
-        for i in range(tolerance_minutes + 1):
-            if new_state.is_running():
+        if new_state.is_running():
+            logger = prefect.context.get("logger")
+            for i in range(tolerance_minutes + 1):
                 client = Client()
                 query = """
                     query($flow_id: uuid) {
@@ -373,11 +373,11 @@ def handler_skip_if_running_tolerant(tolerance_minutes: int):
                 )
                 active_flow_runs = response["data"]["flow_run"]
                 if active_flow_runs and i < tolerance_minutes:
+                    logger.info(f"Attempt {i}")
                     time.sleep(60)
                 else:
                     break
             if active_flow_runs:
-                logger = prefect.context.get("logger")
                 message = (
                     "Skipping this flow run since there are already some flow runs in progress"
                 )
