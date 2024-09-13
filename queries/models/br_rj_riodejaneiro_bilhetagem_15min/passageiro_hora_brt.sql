@@ -29,6 +29,7 @@
       )
     THEN "Terminal Jardim Oceânico (Metrô)"
     WHEN descricao_servico_jae = "Terminal Jardim Oceânico - Mezainino" THEN "Terminal Jardim Oceânico (exceto Metrô)"
+    WHEN descricao_servico_jae = "Terminal Alvorada x Terminal Centro Olímpico" THEN "RIRJAE"
     ELSE descricao_servico_jae
   END
 {% endset %}
