@@ -16,7 +16,7 @@ WITH
     servico,
     faixa_horaria_inicio,
     faixa_horaria_fim,
-    distancia_total_planejada AS km_planejada
+    TRUNC(distancia_total_planejada, 3) AS km_planejada
   FROM
     {{ ref("viagem_planejada") }}
     -- rj-smtr.projeto_subsidio_sppo.viagem_planejada
@@ -35,7 +35,7 @@ WITH
     distancia_planejada
  FROM
     {{ ref("viagem_completa") }}
-  --  rj-smtr.projeto_subsidio_sppo.viagem_completa
+    -- rj-smtr.projeto_subsidio_sppo.viagem_completa
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
