@@ -347,7 +347,7 @@ def validate_gtfs_os(os_file, gtfs_file, os_initial_date, os_final_date):
         if not check_os_columns_order(os_df):
             log("Checking OS column order")
             messages.append(
-                f":warning: O arquivo OS contém as colunas esperadas, porém não segue a ordem esperada: {constants.OS_COLUMNS.value}"
+                f":warning: O arquivo OS contém as colunas esperadas, porém não segue a ordem esperada:\n{constants.OS_COLUMNS.value}"
             )
 
         # Check dates
@@ -360,12 +360,13 @@ def validate_gtfs_os(os_file, gtfs_file, os_initial_date, os_final_date):
                 
             if os_initial_date > datetime.now().date():
                 messages.append(
-                    ":warning: ATENÇÃO: Você está subindo uma OS cuja operação já começou!"
+                    ":warning:  Você está subindo uma OS cuja operação já começou!"
                 )
             log("Checking Trips and quadro")
             trips_agg = get_trips(gtfs_file)
             quadro = get_board(os_df)
             quadro_merged = quadro.merge(trips_agg, on="servico", how="left")
+
             if (
                 len(
                     quadro_merged[
@@ -375,45 +376,49 @@ def validate_gtfs_os(os_file, gtfs_file, os_initial_date, os_final_date):
                 )
                 > 0
             ):
-                messages.append(":warning: ATENÇÃO: Existem trip_ids nulas")
+                messages.append(":warning:  Existem trip_ids nulas")
+            partidas_cols = [col for col in quadro_merged.columns if 'partida' in col]
+            for col in partidas_cols:
+                if (
+                    len(
+                        quadro_merged[
+                            (
+                                (quadro_merged[col] > 0)
+                                & (quadro_merged["trip_id_ida"].isna())
+                            )
+                            | (
+                                (quadro_merged[col] > 0)
+                                & (quadro_merged["trip_id_volta"].isna())
+                            )
+                        ].sort_values("servico")
+                    )
+                    > 0
+                ):
+                    messages.append(
+                        f"""
+                        :warning:  Existem viagens com ida e volta que possuem trip_ids nulas
+                        Coluna: {col}
+                        """
+                    )
 
-            if (
-                len(
-                    quadro_merged[
-                        (
-                            (quadro_merged["partidas_ida_du"] > 0)
-                            & (quadro_merged["trip_id_ida"].isna())
-                        )
-                        | (
-                            (quadro_merged["partidas_volta_du"] > 0)
-                            & (quadro_merged["trip_id_volta"].isna())
-                        )
-                    ].sort_values("servico")
-                )
-                > 0
-            ):
-                messages.append(
-                    ":warning: ATENÇÃO: Existem viagens com ida e volta que possuem trip_ids nulas"
-                )
-
-            if (
-                len(
-                    quadro_merged[
-                        (
-                            (quadro_merged["extensao_ida"] == 0)
-                            & ~(quadro_merged["trip_id_ida"].isna())
-                        )
-                        | (
-                            (quadro_merged["extensao_volta"] == 0)
-                            & ~(quadro_merged["trip_id_volta"].isna())
-                        )
-                    ]
-                )
-                > 0
-            ):
-                messages.append(
-                    ":warning: ATENÇÃO: Existem viagens programadas sem extensão definida"
-                )
+            # if (
+            #     len(
+            #         quadro_merged[
+            #             (
+            #                 (quadro_merged["extensao_ida"] == 0)
+            #                 & ~(quadro_merged["trip_id_ida"].isna())
+            #             )
+            #             | (
+            #                 (quadro_merged["extensao_volta"] == 0)
+            #                 & ~(quadro_merged["trip_id_volta"].isna())
+            #             )
+            #         ]
+            #     )
+            #     > 0
+            # ):
+            #     messages.append(
+            #         ":warning:  Existem viagens programadas sem extensão definida"
+            #     )
             # Check data
             # TODO: Partidas x Extensão, Serviços OS x GTFS (routes, trips, shapes), Extensão OS x GTFS"
 
@@ -440,11 +445,11 @@ def validate_gtfs_os(os_file, gtfs_file, os_initial_date, os_final_date):
 @task
 def send_check_report(messages=None):
     webhook_url = get_secret("gtfs_check_webhook")["url"]
-    base_msg = f'Reporte de validação GTFS e OS {datetime.now(tz=pytz.timezone("America/Sao_Paulo")).date().isoformat()}'
+    base_msg = f'**Reporte de validação GTFS e OS {datetime.now(tz=pytz.timezone("America/Sao_Paulo")).date().isoformat()}**\n'
     if not messages:
-        msg = "GTFS e OS passaram na validação!"
+        msg = ":green_circle: GTFS e OS passaram na validação!"
         send_msg = f"{base_msg}\n{msg}"
         format_send_discord_message([send_msg], webhook_url)
         return
-    send_msgs = [base_msg] + messages
+    send_msgs = [f":red_circle: {base_msg}"] + [f"- {msg}\n" for msg in messages]
     format_send_discord_message(send_msgs, webhook_url)

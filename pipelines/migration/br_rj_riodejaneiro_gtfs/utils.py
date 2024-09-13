@@ -541,6 +541,8 @@ def get_trips(file: bytes) -> pd.DataFrame:
         ]
         .sort_values(by=["servico"])
     )
+    print('TRIPS COLUMNS')
+    print(trips_agg.columns)
     return trips_agg
 
 
