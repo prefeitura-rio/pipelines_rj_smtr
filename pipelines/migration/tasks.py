@@ -695,7 +695,7 @@ def create_request_params(
             SELECT
                 timestamp_captura
             FROM
-                `{project}.{dataset_id}_staging.{table_id}_logs`
+                `rj-smtr-staging.{dataset_id}_staging.{table_id}_logs`
             WHERE
                 DATE(data) BETWEEN
                     DATE_SUB('{timestamp.strftime("%Y-%m-%d")}', INTERVAL 7 DAY)
@@ -712,7 +712,7 @@ def create_request_params(
                 SELECT
                     CAST(MAX(CAST(id AS INTEGER)) AS STRING)
                 FROM
-                    `{project}.{dataset_id}_staging.{table_id}`
+                    `rj-smtr-staging.{dataset_id}_staging.{table_id}`
                 WHERE
                     data = '{success_ts.strftime("%Y-%m-%d")}'
                     and hora = "{success_ts.strftime("%H")}";
