@@ -7,7 +7,7 @@
 {% set descricao_servico %}
   CASE
     WHEN
-      descricao_servico_jae = "Terminal Jardim Oceânico"
+      descricao_servico_jae = "Terminal Jardim Oceânico - Mezainino"
       AND id_validador IN (
         "B35T020D00200518",
         "B35T020D00200513",
