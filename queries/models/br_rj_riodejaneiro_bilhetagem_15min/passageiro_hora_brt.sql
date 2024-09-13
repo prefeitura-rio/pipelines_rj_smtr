@@ -28,7 +28,7 @@
         "B35T020D00200010"
       )
     THEN "Terminal Jardim Oceânico (Metrô)"
-    WHEN descricao_servico_jae = "Terminal Jardim Oceânico" THEN "Terminal Jardim Oceânico (exceto Metrô)"
+    WHEN descricao_servico_jae = "Terminal Jardim Oceânico - Mezainino" THEN "Terminal Jardim Oceânico (exceto Metrô)"
     ELSE descricao_servico_jae
   END
 {% endset %}
