@@ -78,6 +78,16 @@ LEFT JOIN
 USING
     (feed_version, servico)
 WHERE
-    distancia_planejada != 0
-    AND distancia_total_planejada != 0
-    AND (partidas != 0 OR partidas IS NULL)
+      (
+        (
+          feed_start_date < '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
+          AND
+            (
+              distancia_planejada != 0
+              AND distancia_total_planejada != 0
+              AND (partidas != 0 OR partidas IS NULL)
+            )
+        )
+      OR
+        feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
+      )
