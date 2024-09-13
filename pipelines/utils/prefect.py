@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Prefect functions"""
 import inspect
+import time
 
 # import json
 from typing import Any, Callable, Dict, Type, Union
@@ -8,6 +9,8 @@ from typing import Any, Callable, Dict, Type, Union
 import prefect
 from prefect import unmapped
 from prefect.backend.flow_run import FlowRunView, FlowView, watch_flow_run
+from prefect.client import Client
+from prefect.engine.state import Skipped, State
 
 # from prefect.engine.signals import PrefectStateSignal, signal_from_state
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
@@ -332,3 +335,54 @@ def run_flow_mapped(
 
 class FailedSubFlow(Exception):
     """Erro para ser usado quando um subflow falha"""
+
+
+def handler_skip_if_running_tolerant(tolerance_minutes: int):
+    """
+    State handler that will skip a flow run if another instance of the flow is already running.
+
+    Adapted from Prefect Discourse:
+    https://tinyurl.com/4hn5uz2w
+    """
+    if tolerance_minutes < 0:
+        tolerance_minutes = 0
+
+    def handler(obj, old_state: State, new_state: State) -> State:
+
+        for i in range(tolerance_minutes + 1):
+            if new_state.is_running():
+                client = Client()
+                query = """
+                    query($flow_id: uuid) {
+                        flow_run(
+                            where: {
+                                _and: [
+                                    {state: {_eq: "Running"}},
+                                    {flow_id: {_eq: $flow_id}}
+                                ]
+                            }
+                        ) {
+                            id
+                        }
+                    }
+                """
+                # pylint: disable=no-member
+                response = client.graphql(
+                    query=query,
+                    variables=dict(flow_id=prefect.context.flow_id),
+                )
+                active_flow_runs = response["data"]["flow_run"]
+                if active_flow_runs and i < tolerance_minutes:
+                    time.sleep(60)
+                else:
+                    break
+            if active_flow_runs:
+                logger = prefect.context.get("logger")
+                message = (
+                    "Skipping this flow run since there are already some flow runs in progress"
+                )
+                logger.info(message)
+                return Skipped(message)
+        return new_state
+
+    return handler
