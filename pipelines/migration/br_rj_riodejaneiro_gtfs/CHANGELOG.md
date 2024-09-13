@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Inserido ajuste para no tipo_os `CNU` com feed_start_date `2024-08-16` considerar o planejamento de sábado do GTFS no domingo no modelo `ordem_servico_trips_shapes_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/224)
+- Inserido ajuste para o tipo_os `CNU` com feed_start_date `2024-08-16` considerar o planejamento do GTFS de sábado no domingo. Afetado o modelo `ordem_servico_trips_shapes_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/224)
 - Ajustado tratamento dos modelos `ordem_servico_sentido_atualizado_aux_gtfs.sql` e `ordem_servico_trips_shapes_gtfs.sql` em razão da apuração por faixa horária `DATA_SUBSIDIO_V9_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/224)
 
 ## [1.1.0] - 2024-09-11
