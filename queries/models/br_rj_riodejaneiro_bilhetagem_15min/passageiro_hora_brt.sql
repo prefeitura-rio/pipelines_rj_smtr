@@ -1,9 +1,9 @@
 {{
   config(
-    materialized="view"
+    materialized="table"
   )
 }}
-
+-- depends_on: {{ ref('gps_validador_15min') }}
 {% set descricao_servico %}
   CASE
     WHEN
@@ -40,7 +40,7 @@ WITH transacao AS (
     {{ descricao_servico }} AS descricao_servico,
     COUNT(*) AS quantidade_passageiros_jae
   FROM
-    `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
+    {{ ref("transacao_15min") }}
   WHERE
     data >= "2024-09-13"
     AND modo = "BRT"
@@ -56,7 +56,7 @@ transacao_riocard AS (
       {{ descricao_servico }} AS descricao_servico,
       COUNT(*) AS quantidade_passageiros_riocard
     FROM
-      `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard`
+      {{ ref("transacao_riocard_15min") }}
     WHERE
       data >= "2024-09-13"
       AND modo = "BRT"

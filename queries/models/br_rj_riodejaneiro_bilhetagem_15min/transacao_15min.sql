@@ -1,5 +1,3 @@
--- depends_on: {{ ref('transacao_riocard_15min') }}
--- depends_on: {{ ref('gps_validador_15min') }}
 {{
   config(
     materialized="incremental",

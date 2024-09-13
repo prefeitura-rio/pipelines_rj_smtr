@@ -15,7 +15,7 @@ class constants(Enum):  # pylint: disable=c0103
 
     MATERIALIZACAO_TRANSACAO_15MIN_PARAMS = {
         "dataset_id": smtr_constants.BILHETAGEM_DATASET_ID.value + "_15min",
-        "table_id": "transacao_15min",
+        "table_id": "passageiro_hora_brt",
         "upstream": True,
         "dbt_vars": {
             "date_range": {
