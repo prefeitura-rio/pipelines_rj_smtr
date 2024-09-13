@@ -2,7 +2,7 @@
 import numpy as np
 import pyproj
 from pyspark.sql.functions import col, explode, udf
-from pyspark.sql.types import ArrayType, IntegerType, StringType
+from pyspark.sql.types import ArrayType, StringType
 from shapely import wkt
 
 # from shapely.geometry import LineString, Point
@@ -40,7 +40,9 @@ def cut(line, distance):
         else:
             cut_distance = distance
         final_dist = last_final_dist + cut_distance
-        lines.append([i, substring(line, last_final_dist, final_dist).wkt])
+        lines.append(
+            [str(i), transform_projection(substring(line, last_final_dist, final_dist), True).wkt]
+        )
         last_final_dist = final_dist
 
     return lines
@@ -51,14 +53,14 @@ def cut_udf(wkt_string):
     return cut(line, distance=1000)
 
 
-cut_udf = udf(cut_udf, ArrayType(ArrayType(IntegerType(), StringType())))
+cut_udf = udf(cut_udf, ArrayType(ArrayType(StringType())))
 
 
 def model(dbt, session):
     dbt.config(
         materialized="table",
     )
-    df = dbt.ref("shapes_geom_planejamento")
+    df = dbt.ref("aux_shapes_geom_filtrada")
 
     df_segments = df.withColumn("shape_lists", cut_udf(col("wkt_shape")))
 
@@ -70,8 +72,8 @@ def model(dbt, session):
             "shape_id",
             explode(col("shape_lists")).alias("shape_list"),
         )
-        .withColumn("id_segmento", col("shape_list").getItem(1))
-        .withColumn("wkt_segmento", col("shape_list").getItem(2))
+        .withColumn("id_segmento", col("shape_list").getItem(0))
+        .withColumn("wkt_segmento", col("shape_list").getItem(1))
         .drop("shape_list")
     )
 
