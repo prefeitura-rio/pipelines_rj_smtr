@@ -72,8 +72,8 @@ WITH
     SUM(s.valor_apurado) + pe.valor_penalidade AS valor_total_com_glosa,
     CASE
       WHEN pe.valor_penalidade != 0 THEN -pe.valor_penalidade
-      ELSE SAFE_CAST(TRUNC((SUM(IF(indicador_viagem_dentro_limite = TRUE AND indicador_penalidade_judicial = TRUE, km_apurada_faixa*subsidio_km_teto, 0))
-           - SUM(IF(indicador_viagem_dentro_limite = TRUE AND indicador_penalidade_judicial = TRUE, km_apurada_faixa*subsidio_km, 0))), 2) AS NUMERIC)
+      ELSE SAFE_CAST((SUM(IF(indicador_viagem_dentro_limite = TRUE AND indicador_penalidade_judicial = TRUE, km_apurada_faixa*subsidio_km_teto, 0))
+           - SUM(IF(indicador_viagem_dentro_limite = TRUE AND indicador_penalidade_judicial = TRUE, km_apurada_faixa*subsidio_km, 0))) AS NUMERIC)
     END AS valor_judicial,
   FROM
     subsidio_dia_tipo_viagem AS s

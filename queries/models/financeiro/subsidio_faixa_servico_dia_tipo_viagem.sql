@@ -100,9 +100,9 @@ WITH
       sfd.pof,
       COALESCE(s.tipo_viagem, "Sem viagem apurada") AS tipo_viagem,
       s.id_viagem,
-      s.distancia_planejada,
-      s.subsidio_km,
-      s.subsidio_km_teto,
+      SAFE_CAST(s.distancia_planejada AS NUMERIC) AS distancia_planejada,
+      SAFE_CAST(s.subsidio_km AS NUMERIC) AS subsidio_km,
+      SAFE_CAST(s.subsidio_km_teto AS NUMERIC) AS subsidio_km_teto,
       s.indicador_viagem_dentro_limite,
       CASE
         WHEN sfd.pof < 60 THEN TRUE
@@ -137,11 +137,11 @@ SELECT
   indicador_viagem_dentro_limite,
   tipo_viagem,
   SAFE_CAST(COALESCE(COUNT(id_viagem), 0) AS INT64) AS viagens_faixa,
-  SAFE_CAST(TRUNC(COALESCE(SUM(distancia_planejada), 0), 3)AS NUMERIC) AS km_apurada_faixa,
-  SAFE_CAST(TRUNC(COALESCE(SUM(IF(tipo_viagem != "Não licenciado", distancia_planejada, 0)), 0), 3) AS NUMERIC) AS km_subsidiada_faixa,
-  SAFE_CAST(TRUNC(SUM(IF(indicador_viagem_dentro_limite = TRUE AND pof >= 80, distancia_planejada*subsidio_km, 0)), 2) AS NUMERIC) AS valor_apurado,
-  SAFE_CAST(-TRUNC(COALESCE(SUM(IF(indicador_viagem_dentro_limite = TRUE, 0, distancia_planejada*subsidio_km)), 0), 2) AS NUMERIC) AS valor_acima_limite,
-  SAFE_CAST(TRUNC(SUM(IF(pof >= 80 AND tipo_viagem != "Não licenciado", distancia_planejada*subsidio_km_teto, 0)) - COALESCE(SUM(IF(indicador_viagem_dentro_limite = TRUE, 0, distancia_planejada*subsidio_km)), 0), 2) AS NUMERIC) AS valor_total_sem_glosa,
+  SAFE_CAST(COALESCE(SUM(distancia_planejada), 0) AS NUMERIC) AS km_apurada_faixa,
+  SAFE_CAST(COALESCE(SUM(IF(tipo_viagem != "Não licenciado", distancia_planejada, 0)), 0) AS NUMERIC) AS km_subsidiada_faixa,
+  SAFE_CAST(SUM(IF(indicador_viagem_dentro_limite = TRUE AND pof >= 80, distancia_planejada*subsidio_km, 0)) AS NUMERIC) AS valor_apurado,
+  SAFE_CAST(-COALESCE(SUM(IF(indicador_viagem_dentro_limite = TRUE, 0, distancia_planejada*subsidio_km)), 0) AS NUMERIC) AS valor_acima_limite,
+  SAFE_CAST(SUM(IF(pof >= 80 AND tipo_viagem != "Não licenciado", distancia_planejada*subsidio_km_teto, 0)) - COALESCE(SUM(IF(indicador_viagem_dentro_limite = TRUE, 0, distancia_planejada*subsidio_km)), 0) AS NUMERIC) AS valor_total_sem_glosa,
   '{{ var("version") }}' as versao,
   CURRENT_DATETIME("America/Sao_Paulo") as datetime_ultima_atualizacao
 FROM
