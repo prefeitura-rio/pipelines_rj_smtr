@@ -11,7 +11,7 @@ WITH ordem_pagamento AS (
     timestamp_captura,
     DATETIME(PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*S%Ez', SAFE_CAST(JSON_VALUE(content, '$.data_inclusao') AS STRING)), "America/Sao_Paulo") AS datetime_inclusao,
     PARSE_DATE('%Y-%m-%d', SAFE_CAST(JSON_VALUE(content, '$.data_ordem') AS STRING)) AS data_ordem,
-    PARSE_DATE('%Y-%m-%d', SAFE_CAST(JSON_VALUE(content, '$.data_pagamento') AS STRING)) AS data_pagamento,
+    DATETIME(PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*S%Ez', SAFE_CAST(JSON_VALUE(content, '$.data_pagamento') AS STRING)), "America/Sao_Paulo") AS data_pagamento,
     SAFE_CAST(JSON_VALUE(content, '$.id_status_ordem') AS STRING) AS id_status_ordem,
     SAFE_CAST(JSON_VALUE(content, '$.qtd_debito') AS INTEGER) AS qtd_debito,
     SAFE_CAST(JSON_VALUE(content, '$.qtd_gratuidade') AS INTEGER) AS qtd_gratuidade,
