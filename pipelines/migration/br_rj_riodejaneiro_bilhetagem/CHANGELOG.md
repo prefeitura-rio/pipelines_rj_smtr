@@ -3,7 +3,7 @@
 ## [1.4.7] - 2024-09-16
 
 ### Alterado
-- Altera formato de data do campo data_pagamento do modelo `staging_ordem_pagamento.sql`
+- Altera formato de data do campo data_pagamento do modelo `staging_ordem_pagamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/233)
 
 ## [1.4.6] - 2024-09-16
 
