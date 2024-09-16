@@ -3,6 +3,11 @@
 ## [1.4.5] - 2024-09-13
 
 ### Alterado
+- Muda IP do banco ressarcimento_db de `10.5.15.127` para `10.5.12.50`
+
+## [1.4.5] - 2024-09-13
+
+### Alterado
 - Cria tolerância para pular a run no State Handler do flow `bilhetagem_tracking_captura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/222)
 
 ## [1.4.4] - 2024-09-12
