@@ -179,7 +179,7 @@ class constants(Enum):  # pylint: disable=c0103
             },
             "ressarcimento_db": {
                 "engine": "postgresql",
-                "host": "10.5.15.127",
+                "host": "10.5.12.50",
             },
             "gratuidade_db": {
                 "engine": "postgresql",
