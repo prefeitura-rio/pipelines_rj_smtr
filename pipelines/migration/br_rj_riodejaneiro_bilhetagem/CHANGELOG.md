@@ -1,5 +1,10 @@
 # Changelog - br_rj_riodejaneiro_bilhetagem
 
+## [1.4.6] - 2024-09-13
+
+### Alterado
+- Muda IP do banco ressarcimento_db de `10.5.15.127` para `10.5.12.50` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/228)
+
 ## [1.4.5] - 2024-09-13
 
 ### Alterado
