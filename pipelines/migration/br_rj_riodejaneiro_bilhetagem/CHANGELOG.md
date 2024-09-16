@@ -1,6 +1,11 @@
 # Changelog - br_rj_riodejaneiro_bilhetagem
 
-## [1.4.6] - 2024-09-13
+## [1.4.7] - 2024-09-16
+
+### Alterado
+- Altera formato de data do campo data_pagamento do modelo `staging_ordem_pagamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/233)
+
+## [1.4.6] - 2024-09-16
 
 ### Alterado
 - Muda IP do banco ressarcimento_db de `10.5.15.127` para `10.5.12.50` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/228)
