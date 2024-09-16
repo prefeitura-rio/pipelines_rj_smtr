@@ -10,7 +10,7 @@
   )
 }}
 
-SELECT
+SELECT DISTINCT
   dataOrdem AS data_ordem,
   DATE(dataVencimento) AS data_pagamento,
   idConsorcio AS id_consorcio,
