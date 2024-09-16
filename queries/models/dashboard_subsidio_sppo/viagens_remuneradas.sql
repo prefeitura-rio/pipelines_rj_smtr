@@ -98,7 +98,7 @@ WITH
     data_fim,
     status,
     subsidio_km,
-    MAX(subsidio_km) OVER (PARTITION BY data_inicio, data_fim) AS subsidio_km_teto,
+    MAX(subsidio_km) OVER (PARTITION BY DATE_TRUNC(data_inicio, YEAR), data_fim) AS subsidio_km_teto,
     indicador_penalidade_judicial
   FROM
     {{ ref("subsidio_valor_km_tipo_viagem") }}
