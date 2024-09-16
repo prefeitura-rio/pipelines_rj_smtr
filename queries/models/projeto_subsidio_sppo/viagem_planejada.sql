@@ -165,10 +165,10 @@ shapes as (
     inner join (
         select *
         from {{ ref('subsidio_shapes_geom') }}
-        
+
         where
             data_versao in (select data_versao_shapes from data_efetiva)
-        
+
     ) s
     on
         s.data_versao = e.data_versao_shapes
