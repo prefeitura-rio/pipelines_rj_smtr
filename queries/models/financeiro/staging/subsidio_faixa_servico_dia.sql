@@ -16,7 +16,7 @@ WITH
     servico,
     faixa_horaria_inicio,
     faixa_horaria_fim,
-    TRUNC(distancia_total_planejada, 3) AS km_planejada
+    distancia_total_planejada AS km_planejada
   FROM
     {{ ref("viagem_planejada") }}
     -- rj-smtr.projeto_subsidio_sppo.viagem_planejada
