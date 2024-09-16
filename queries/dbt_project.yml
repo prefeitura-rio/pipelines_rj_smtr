@@ -193,10 +193,10 @@ models:
   rj_smtr:
     projeto_subsidio_sppo:
       +materialized: view
-      +schema: projeto_subsidio_sppo
+      +schema: projeto_subsidio_sppo_dbt_tmp
       deprecated:
         +materialized: view
-        +schema: projeto_subsidio_sppo
+        +schema: projeto_subsidio_sppo_dbt_tmp
     br_rj_riodejaneiro_sigmob:
       +materialized: view
       +schema: br_rj_riodejaneiro_sigmob
