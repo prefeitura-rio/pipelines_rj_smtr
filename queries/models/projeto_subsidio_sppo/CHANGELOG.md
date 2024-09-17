@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.0.2] - 2024-09-17
+
+### Corrigido
+
+- Corrigido a consulta por shapes em `aux_registro_status_trajeto` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/234)
+
 ## [9.0.1] - 2024-09-11
 
 ### Alterado
