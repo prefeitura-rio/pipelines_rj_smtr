@@ -106,7 +106,7 @@ with Flow(
             dataset_id=constants.SUBSIDIO_SPPO_DATASET_ID.value,
             table_id="subsidio_data_versao_efetiva viagem_planejada",
             _vars={"run_date": date_d0, "version": dataset_sha},
-        ).set_upstream(RUN)
+        )
 
 viagens_sppo.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 viagens_sppo.run_config = KubernetesRun(

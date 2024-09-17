@@ -165,10 +165,10 @@ shapes as (
     inner join (
         select *
         from {{ ref('subsidio_shapes_geom') }}
-
+        {% if is_incremental() %}
         where
             data_versao in (select data_versao_shapes from data_efetiva)
-
+        {% endif %}
     ) s
     on
         s.data_versao = e.data_versao_shapes
@@ -414,8 +414,8 @@ shapes AS (
   SELECT
     *
   FROM
-    -- {{ ref("shapes_geom_gtfs") }}
-    rj-smtr.gtfs.shapes_geom
+    {{ ref("shapes_geom_gtfs") }}
+    -- rj-smtr.gtfs.shapes_geom
   WHERE
     feed_start_date IN (SELECT feed_start_date FROM data_versao_efetiva WHERE data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY) AND DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY))
 ),

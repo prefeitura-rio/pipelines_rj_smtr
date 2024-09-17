@@ -132,10 +132,10 @@ shapes AS (
   SELECT
     *
   FROM
-    -- {{ ref("shapes_geom_gtfs") }}
-    rj-smtr.gtfs.shapes_geom
+    {{ ref("shapes_geom_gtfs") }}
+    -- rj-smtr.gtfs.shapes_geom
   WHERE
-    date_sub(date("{{ var("run_date") }}"), interval 1 day) BETWEEN feed_start_date AND feed_end_date
+    date_sub(date("{{ var("run_date") }}"), interval 1 day) BETWEEN feed_start_date AND COALESCE(feed_end_date, date("{{ var("run_date") }}"))
 ),
 -- 3. Deduplica viagens planejadas
 viagem_planejada AS (
