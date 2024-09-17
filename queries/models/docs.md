@@ -143,3 +143,191 @@ Tipo da gratuidade (Estudante, PCD, Sênior)
 {% docs tipo_pagamento %}
 Tipo de pagamento utilizado
 {% enddocs %}
+
+{% docs tipo_dia %}
+Dia da semana - categorias: Dia Útil, Sábado, Domingo
+{% enddocs %}
+
+{% docs faixa_horaria_inicio %}
+Horário inicial da faixa horária
+{% enddocs %}
+
+{% docs faixa_horaria_fim %}
+Horário final da faixa horária
+{% enddocs %}
+
+{% docs partidas %}
+Quantidade de partidas planejadas
+{% enddocs %}
+
+{% docs quilometragem %}
+Quilometragem planejada
+{% enddocs %}
+
+{% docs timestamp_captura %}
+Timestamp de captura pela SMTR
+{% enddocs %}
+
+{% docs data_versao %}
+Data de referência do planejamento (versão).
+{% enddocs %}
+
+{% docs content %}
+Dados brutos capturados aninhados em formato JSON
+{% enddocs %}
+
+{% docs modo %}
+Tipo de transporte (Ônibus, Van, BRT)
+{% enddocs %}
+
+{% docs vista %}
+Itinerário do serviço (ex: Bananal ↔ Saens Peña)
+{% enddocs %}
+
+{% docs viagens_planejadas %}
+Viagens planejadas no período
+{% enddocs %}
+
+{% docs inicio_periodo %}
+Início do período de operação planejado
+{% enddocs %}
+
+{% docs fim_periodo %}
+Fim do período de operação planejado
+{% enddocs %}
+
+{% docs feed_start_date %}
+(Partição) Data inicial do feed (versão).
+{% enddocs %}
+
+{% docs linha %}
+Número da Linha
+{% enddocs %}
+
+{% docs tipo_servico %}
+Tipo de Serviço da Linha
+{% enddocs %}
+
+{% docs ordem_servico %}
+Ordem de Serviço da Linha
+{% enddocs %}
+
+{% docs codigo_veiculo %}
+Código do Tipo de Veículo do Serviço
+{% enddocs %}
+
+{% docs tarifa_codigo %}
+Tarifa determinada
+{% enddocs %}
+
+{% docs tarifa_valor %}
+Tarifa Praticada
+{% enddocs %}
+
+{% docs frota_determinada %}
+Frota Determinada
+{% enddocs %}
+
+{% docs frota_licenciada %}
+Frota Licenciada para a linha
+{% enddocs %}
+
+{% docs frota_operante %}
+Frota Operacional do dia
+{% enddocs %}
+
+{% docs qtd_viagens %}
+Número de Viagens da Linha no dia
+{% enddocs %}
+
+{% docs qtd_km_cobertos %}
+Quilometragem Coberta
+{% enddocs %}
+
+{% docs qtd_grt_idoso %}
+Gratuidades Transportadas - Idosos
+{% enddocs %}
+
+{% docs qtd_grt_especial %}
+Gratuidades Transportadas - Portadores de Necessidades Especiais
+{% enddocs %}
+
+{% docs qtd_grt_estud_federal %}
+Gratuidades Transportadas - Estudantes da União
+{% enddocs %}
+
+{% docs qtd_grt_estud_estadual %}
+Gratuidades Transportadas - Estudantes do Estado
+{% enddocs %}
+
+{% docs qtd_grt_estud_municipal %}
+Gratuidades Transportadas - Estudantes do Município
+{% enddocs %}
+
+{% docs qtd_grt_rodoviario %}
+Gratuidades Transportadas - Funcionários das Empresas
+{% enddocs %}
+
+{% docs qtd_buc_1_perna %}
+Bilhete único Carioca (1ª Perna)
+{% enddocs %}
+
+{% docs qtd_buc_2_perna_integracao %}
+Bilhete Único Carioca (2ª Perna)
+{% enddocs %}
+
+{% docs receita_buc %}
+Receita de Bilhete Único Carioca
+{% enddocs %}
+
+{% docs qtd_buc_supervia_1_perna %}
+Bilhete único Carioca - Supervia (1ª Perna)
+{% enddocs %}
+
+{% docs qtd_buc_supervia_2_perna_integracao %}
+Bilhete Único Carioca - Supervia (2ª Perna)
+{% enddocs %}
+
+{% docs receita_buc_supervia %}
+Receita de Bilhete Único Carioca - Supervia
+{% enddocs %}
+
+{% docs qtd_cartoes_perna_unica_e_demais %}
+Cartões Perna Única e demais transações valoradas não contempladas nos campos deste RDO
+{% enddocs %}
+
+{% docs receita_cartoes_perna_unica_e_demais %}
+Receita Cartões Perna Única e Receita das demais transações valoradas não contempladas nos campos deste RDO
+{% enddocs %}
+
+{% docs qtd_pagamentos_especie %}
+Passageiros Pagantes em Espécie
+{% enddocs %}
+
+{% docs receita_especie %}
+Receita Passageiros Pagantes em Espécie
+{% enddocs %}
+
+{% docs qtd_grt_passe_livre_universitario %}
+Gratuidades Transportadas - Passe Livre Universitário
+{% enddocs %}
+
+{% docs class_servico %}
+Classificação do Serviço: Diretão, Estação do BRT, Rodoviário, Troncal do BRT, Urbano.
+{% enddocs %}
+
+{% docs qtd_passageiros_total %}
+Quantidade total de passageiros
+{% enddocs %}
+
+{% docs codigo %}
+Número de ordem do veículo.
+{% enddocs %}
+
+{% docs trajeto %}
+Nome do trajeto.
+{% enddocs %}
+
+{% docs sentido %}
+Sentido da linha
+{% enddocs %}

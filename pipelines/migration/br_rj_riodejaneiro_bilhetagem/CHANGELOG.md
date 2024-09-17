@@ -1,5 +1,28 @@
 # Changelog - br_rj_riodejaneiro_bilhetagem
 
+## [1.4.7] - 2024-09-16
+
+### Alterado
+- Altera formato de data do campo data_pagamento do modelo `staging_ordem_pagamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/233)
+
+## [1.4.6] - 2024-09-16
+
+### Alterado
+- Muda IP do banco ressarcimento_db de `10.5.15.127` para `10.5.12.50` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/228)
+
+## [1.4.5] - 2024-09-13
+
+### Alterado
+- Cria tolerância para pular a run no State Handler do flow `bilhetagem_tracking_captura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/222)
+
+## [1.4.4] - 2024-09-12
+s
+### Corrigido
+
+`bilhetagem_tracking_captura`:
+    - Remove try/catch da criação de parâmetros (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/216)
+    - Faz o cast do id para inteiro para definir o id inicial do filtro (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/216)
+
 ## [1.4.3] - 2024-08-29
 
 ### Corrigido

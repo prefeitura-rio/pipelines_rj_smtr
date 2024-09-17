@@ -1,5 +1,29 @@
 # Changelog - gtfs
 
+## [1.1.1] - 2024-09-13
+
+### Alterado
+
+- Inserido ajuste para o tipo_os `CNU` com feed_start_date `2024-08-16` considerar o planejamento do GTFS de sábado no domingo. Afetado o modelo `ordem_servico_trips_shapes_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/224)
+- Ajustado tratamento dos modelos `ordem_servico_sentido_atualizado_aux_gtfs.sql` e `ordem_servico_trips_shapes_gtfs.sql` em razão da apuração por faixa horária `DATA_SUBSIDIO_V9_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/224)
+
+## [1.1.0] - 2024-09-11
+
+### Alterado
+
+- Criada feature para subida manual com base nos arquivos no GCS (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/206)
+- Função `get_raw_drive_files` transformada em `get_raw_gtfs_files` e adaptada para capturar os arquivos tanto através do Google Drive quanto através do GCS por meio do novo parâmetro `upload_from_gcs` do flow `gtfs_captura_nova` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/206)
+- Funções `processa_ordem_servico`, `processa_ordem_servico_trajeto_alternativo` e `processa_ordem_servico_faixa_horaria` ajustadas para considerar a coluna `tipo_os` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/206)
+- Incorporadas outros nomes de colunas a serem renomeados na função `processa_ordem_servico_faixa_horaria`, bem como corrigido o tratamento de colunas ausentes (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/206)
+
+## [1.0.8] - 2024-09-06
+
+### Adicionado
+
+- Cria função `processa_ordem_servico_faixa_horaria` e adiciona chamada na task `get_raw_drive_files` para processar o anexo da faixa horária (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/193)
+
+- Adiciona materialização do modelo `ordem_servico_faixa_horaria` no flow (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/193)
+
 ## [1.0.7] - 2024-08-27
 
 ### Alterado
@@ -12,7 +36,7 @@
 
 - Adiciona filtro para os nomes de tabs da planilha de controle os na task `get_raw_drive_files` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/128/files)
 
-- Adiociona etapa de remover pontos antes da converção de metro para km no processamento da OS (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/129)
+- Adiciona etapa de remover pontos antes da converção de metro para km no processamento da OS (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/129)
 
 ## Corrigido
 

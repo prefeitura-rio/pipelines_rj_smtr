@@ -690,43 +690,41 @@ def create_request_params(
         if table_id == constants.BILHETAGEM_TRACKING_CAPTURE_PARAMS.value["table_id"]:
             project = bq_project(kind="bigquery_staging")
             log(f"project = {project}")
-            try:
-                logs_query = f"""
-                SELECT
-                    timestamp_captura
-                FROM
-                    `{project}.{dataset_id}_staging.{table_id}_logs`
-                WHERE
-                    data <= '{timestamp.strftime("%Y-%m-%d")}'
-                    AND sucesso = "True"
-                ORDER BY
-                    timestamp_captura DESC
-                """
-                last_success_dates = bd.read_sql(query=logs_query, billing_project_id=project)
-                last_success_dates = last_success_dates.iloc[:, 0].to_list()
-                for success_ts in last_success_dates:
-                    success_ts = datetime.fromisoformat(success_ts)
-                    last_id_query = f"""
-                    SELECT
-                        MAX(id)
-                    FROM
-                        `{project}.{dataset_id}_staging.{table_id}`
-                    WHERE
-                        data = '{success_ts.strftime("%Y-%m-%d")}'
-                        and hora = "{success_ts.strftime("%H")}";
-                    """
 
-                    last_captured_id = bd.read_sql(query=last_id_query, billing_project_id=project)
-                    last_captured_id = last_captured_id.iloc[0][0]
-                    if last_captured_id is None:
-                        print("ID is None, trying next timestamp")
-                    else:
-                        log(f"last_captured_id = {last_captured_id}")
-                        break
-            except GenericGBQException as err:
-                if "404 Not found" in str(err):
-                    log("Table Not found, returning id = 0")
-                    last_captured_id = 0
+            logs_query = f"""
+            SELECT
+                timestamp_captura
+            FROM
+                `{project}.{dataset_id}_staging.{table_id}_logs`
+            WHERE
+                DATE(data) BETWEEN
+                    DATE_SUB('{timestamp.strftime("%Y-%m-%d")}', INTERVAL 7 DAY)
+                    AND DATE('{timestamp.strftime("%Y-%m-%d")}')
+                AND sucesso = "True"
+            ORDER BY
+                timestamp_captura DESC
+            """
+            last_success_dates = bd.read_sql(query=logs_query, billing_project_id=project)
+            last_success_dates = last_success_dates.iloc[:, 0].to_list()
+            for success_ts in last_success_dates:
+                success_ts = datetime.fromisoformat(success_ts)
+                last_id_query = f"""
+                SELECT
+                    CAST(MAX(CAST(id AS INTEGER)) AS STRING)
+                FROM
+                    `{project}.{dataset_id}_staging.{table_id}`
+                WHERE
+                    data = '{success_ts.strftime("%Y-%m-%d")}'
+                    and hora = "{success_ts.strftime("%H")}";
+                """
+
+                last_captured_id = bd.read_sql(query=last_id_query, billing_project_id=project)
+                last_captured_id = last_captured_id.iloc[0][0]
+                if last_captured_id is None:
+                    print("ID is None, trying next timestamp")
+                else:
+                    log(f"last_captured_id = {last_captured_id}")
+                    break
 
             request_params["query"] = request_params["query"].format(
                 last_id=last_captured_id,
@@ -1466,6 +1464,16 @@ def get_previous_date(days):
     return now.to_date_string()
 
 
+@task(checkpoint=False)
+def get_posterior_date(days: int) -> str:
+    """
+    Returns the date of {days} days from now in YYYY-MM-DD.
+    """
+    now = pendulum.now(pendulum.timezone("America/Sao_Paulo")).add(days=days)
+
+    return now.to_date_string()
+
+
 ###############
 #
 # Pretreat data
@@ -1824,3 +1832,35 @@ def get_current_flow_mode() -> str:
 @task
 def get_flow_project():
     return prefect.context.get("project_name")
+
+
+@task
+def check_date_in_range(start_date: str, end_date: str, comparison_date: str) -> bool:
+    """
+    Check if comparison_date is between start_date and end_date.
+    """
+    start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+    end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+    comparison_date = datetime.strptime(comparison_date, "%Y-%m-%d").date()
+
+    return start_date < comparison_date <= end_date
+
+
+@task
+def split_date_range(start_date: str, end_date: str, comparison_date: str) -> dict:
+    """
+    Split the date range into two ranges on comparison_date.
+    Returns the first and second ranges.
+    """
+    comparison_date = datetime.strptime(comparison_date, "%Y-%m-%d").date()
+
+    return {
+        "first_range": {
+            "start_date": start_date,
+            "end_date": (comparison_date - timedelta(days=1)).strftime("%Y-%m-%d"),
+        },
+        "second_range": {
+            "start_date": comparison_date.strftime("%Y-%m-%d"),
+            "end_date": end_date,
+        },
+    }

@@ -109,6 +109,8 @@ vars:
   DATA_SUBSIDIO_V2_INICIO: "2023-01-16"
   # Feature penalidade de autuação por segurança e limpeza/equipamento (DECRETO RIO 52820/2023)
   DATA_SUBSIDIO_V3_INICIO: "2023-07-04"
+  # Feature viagens remuneradas (RESOLUÇÃO SMTR Nº 3645/2023)
+  DATA_SUBSIDIO_V3A_INICIO: "2023-09-16"
   # Feature penalidade aplicada por agente de verão (DECRETO RIO 53856/2023 e RESOLUÇÃO SMTR 3682/2024)
   DATA_SUBSIDIO_V4_INICIO: "2024-01-04"
   # Feature penalidade de vistoria (RESOLUÇÃO SMTR 3683/2024)
@@ -119,6 +121,8 @@ vars:
   DATA_SUBSIDIO_V7_INICIO: "2024-05-01"
   # Feature Viagens sem transação
   DATA_SUBSIDIO_V8_INICIO: "2024-07-19"
+  # Feature Apuração por faixa horária
+  DATA_SUBSIDIO_V9_INICIO: "2024-08-16"
   # valor_subsidio: "`rj-smtr-dev.projeto_subsidio_sppo.valor_subsidio`"
 
   # Recursos #
@@ -289,6 +293,17 @@ models:
       staging:
         +materialized: incremental
         +schema: validacao_dados_jae_staging
+    financeiro:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: financeiro
+      staging:
+        +materialized: incremental
+        +incremental_strategy: insert_overwrite
+        +schema: financeiro_staging
+    dashboard_subsidio_sppo_v2:
+      +materialized: view
+      +schema: dashboard_subsidio_sppo_v2
     subsidio:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
@@ -296,6 +311,10 @@ models:
     catalogo:
       +materialized: view
       +schema: catalogo
+    planejamento:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: planejamento
     transito:
       +materialized: incremental
       +schema: transito

@@ -346,6 +346,7 @@ WITH
     CASE
       WHEN data = DATE(2024,05,04) THEN "Madonna 2024-05-04"
       WHEN data = DATE(2024,05,05) THEN "Madonna 2024-05-05"
+      WHEN data = DATE(2024,08,18) THEN "CNU" -- Processo.Rio MTR-PRO-2024/13252
       ELSE "Regular"
     END AS tipo_os,
   FROM UNNEST(GENERATE_DATE_ARRAY("{{var('DATA_SUBSIDIO_V6_INICIO')}}", "2024-12-31")) AS data),
@@ -356,6 +357,8 @@ WITH
     CASE
       WHEN tipo_os = "Extraordinária - Verão" THEN "Verão"
       WHEN tipo_os LIKE "%Madonna%" THEN "Madonna"
+      WHEN tipo_os = "Regular" THEN NULL
+      ELSE tipo_os
     END AS subtipo_dia,
     i.feed_version,
     i.feed_start_date,
@@ -364,11 +367,12 @@ WITH
     dates AS d
   LEFT JOIN
     {{ ref('feed_info_gtfs') }} AS i
+    -- rj-smtr.gtfs.feed_info AS i
   USING
     (feed_version)
   WHERE
   {% if is_incremental() %}
-    data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY) AND DATE("{{ var('run_date') }}")
+    data = DATE_SUB(DATE("{{ var("run_date") }}"), INTERVAL 1 DAY)
   {% else %}
     data <= DATE("{{ var('run_date') }}")
   {% endif %}
@@ -388,6 +392,7 @@ FROM
   data_versao_efetiva_manual AS d
 LEFT JOIN
   {{ ref('feed_info_gtfs') }} AS i
+  -- rj-smtr.gtfs.feed_info AS i
 ON
   (data BETWEEN i.feed_start_date AND i.feed_end_date
   OR (data >= i.feed_start_date AND i.feed_end_date IS NULL))

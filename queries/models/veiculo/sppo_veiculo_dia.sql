@@ -37,7 +37,8 @@ WITH
     DISTINCT data,
     id_veiculo
   FROM
-    {{ ref("gps_sppo") }} -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
+    {{ ref("gps_sppo") }}
+    -- rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo
   WHERE
     data = DATE("{{ var('run_date') }}") ),
   autuacoes AS (
@@ -61,6 +62,7 @@ WITH
       TRUE AS indicador_registro_agente_verao_ar_condicionado
     FROM
       {{ ref("sppo_registro_agente_verao") }}
+      -- rj-smtr.veiculo.sppo_registro_agente_verao
     WHERE
       data = DATE("{{ var('run_date') }}") ),
   autuacao_ar_condicionado AS (

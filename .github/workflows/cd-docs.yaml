@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - staging/*
 
 env:
   GKE_PROJECT_ID: ${{ secrets.GKE_PROJECT_ID }}

@@ -2,7 +2,7 @@
 """
 Valores constantes gerais para pipelines da rj-smtr
 
-DBT 2024-08-21
+DBT 2024-09-11
 """
 
 from enum import Enum
@@ -19,6 +19,9 @@ class constants(Enum):  # pylint: disable=c0103
     DOCKER_TAG = "AUTO_REPLACE_DOCKER_TAG"
     DOCKER_IMAGE_NAME = "AUTO_REPLACE_DOCKER_IMAGE"
     DOCKER_IMAGE = f"{DOCKER_IMAGE_NAME}:{DOCKER_TAG}"
+    DOCKER_FEDORA_TAG = "AUTO_REPLACE_FEDORA_TAG"
+    DOCKER_FEDORA_IMAGE_NAME = "AUTO_REPLACE_FEDORA_IMAGE"
+    DOCKER_IMAGE_FEDORA = f"{DOCKER_FEDORA_IMAGE_NAME}:{DOCKER_FEDORA_TAG}"
     GCS_FLOWS_BUCKET = "datario-public"
     # PROJECT_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr"}
     # DEFAULT_BUCKET_NAME = {"dev": "br-rj-smtr-dev", "prod": "br-rj-smtr"}
@@ -176,7 +179,7 @@ class constants(Enum):  # pylint: disable=c0103
             },
             "ressarcimento_db": {
                 "engine": "postgresql",
-                "host": "10.5.15.127",
+                "host": "10.5.12.50",
             },
             "gratuidade_db": {
                 "engine": "postgresql",
@@ -227,6 +230,7 @@ X-1vRvFcyr9skfBIrjxc4FSJZ3-g4gUCF56YjGPOmd1f5qH8vndpy22P6f6KdcYgWaqzUmtSBL\
     GTFS_TABLE_CAPTURE_PARAMS = {
         "ordem_servico": ["servico", "tipo_os"],
         "ordem_servico_trajeto_alternativo": ["servico", "tipo_os", "evento"],
+        "ordem_servico_faixa_horaria": ["servico", "tipo_os"],
         "shapes": ["shape_id", "shape_pt_sequence"],
         "agency": ["agency_id"],
         "calendar_dates": ["service_id", "date"],
@@ -241,6 +245,7 @@ X-1vRvFcyr9skfBIrjxc4FSJZ3-g4gUCF56YjGPOmd1f5qH8vndpy22P6f6KdcYgWaqzUmtSBL\
         "stop_times": ["trip_id", "stop_sequence"],
     }
 
+    PLANEJAMENTO_MATERIALIZACAO_DATASET_ID = "planejamento"
     GTFS_MATERIALIZACAO_DATASET_ID = "gtfs"
     GTFS_MATERIALIZACAO_PARAMS = {
         "dataset_id": GTFS_DATASET_ID,
