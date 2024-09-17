@@ -1,6 +1,6 @@
 -- depends_on: {{ ref('subsidio_data_versao_efetiva') }}
 {% if execute %}
-    {% set result = run_query("SELECT feed_start_date FROM " ~ ref('subsidio_data_versao_efetiva') ~ " WHERE data BETWEEN DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 2 DAY) AND DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 1 DAY) ORDER BY data") %}
+    {% set result = run_query("SELECT feed_start_date FROM " ~ ref('subsidio_data_versao_efetiva') ~ " WHERE data BETWEEN DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 2 DAY) AND DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 1 DAY)") %}
     {% set feed_start_dates =  result.columns[0].values() %}
 {% endif %}
 
