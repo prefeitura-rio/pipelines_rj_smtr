@@ -90,7 +90,13 @@ indicador_validacao_shape AS (
 SELECT
   *,
   (
-    indicador_tunel
+    (
+      indicador_tunel
+      AND (
+        (id_segmento > 1)
+        OR (shape_id < MAX(id_segmento) OVER (PARTITION BY feed_start_date, shape_id))
+      )
+    )
     OR indicador_area_prejudicada
     OR indicador_segmento_pequeno
   ) AS indicador_segmento_desconsiderado,
