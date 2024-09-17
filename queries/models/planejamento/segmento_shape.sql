@@ -81,20 +81,21 @@ indicador_validacao_shape AS (
     s.*,
     ST_INTERSECTS(s.segmento, t.buffer_tunel) AS indicador_tunel,
     ST_AREA(s.buffer) / ST_AREA(s.buffer_completo) < 0.5 AS indicador_area_prejudicada,
-    s.comprimento_segmento < 990 AS indicador_segmento_pequeno
+    s.comprimento_segmento < 990 AS indicador_segmento_pequeno,
+    CAST(id_segmento AS INTEGER) AS id_segmento_int
   FROM
     buffer_segmento_recortado s
   CROSS JOIN
     tunel t
 )
 SELECT
-  *,
+  * EXCEPT(id_segmento_int),
   (
     (
       indicador_tunel
       AND (
-        (id_segmento > 1)
-        OR (shape_id < MAX(id_segmento) OVER (PARTITION BY feed_start_date, shape_id))
+        (id_segmento_int > 1)
+        OR (id_segmento_int < MAX(id_segmento_int) OVER (PARTITION BY feed_start_date, shape_id))
       )
     )
     OR indicador_area_prejudicada
