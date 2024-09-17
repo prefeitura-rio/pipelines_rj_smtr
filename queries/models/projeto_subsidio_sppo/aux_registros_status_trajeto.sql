@@ -1,3 +1,9 @@
+
+{% if execute %}
+    {% set result = run_query("SELECT feed_start_date FROM " ~ ref('subsidio_data_versao_efetiva') ~ " WHERE data BETWEEN DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 2 DAY) AND DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 1 DAY) ORDER BY data") %}
+    {% set feed_start_dates =  result.columns[0].values() %}
+{% endif %}
+
 {% if var("run_date") == "2024-05-05" %}
 -- Apuração "Madonna · The Celebration Tour in Rio"
     {% set gps_interval = 7 %}
@@ -135,7 +141,7 @@ shapes AS (
     {{ ref("shapes_geom_gtfs") }}
     -- rj-smtr.gtfs.shapes_geom
   WHERE
-    date_sub(date("{{ var("run_date") }}"), interval 1 day) BETWEEN feed_start_date AND COALESCE(feed_end_date, date("{{ var("run_date") }}"))
+    feed_start_date IN ('{{ feed_start_dates|join("', '") }}')
 ),
 -- 3. Deduplica viagens planejadas
 viagem_planejada AS (
