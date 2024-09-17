@@ -2,6 +2,10 @@
 
 ## [9.0.2] - 2024-09-17
 
+### Corrigido
+
+- corrigidas as referencias a tabela `gps_sppo` em `aux_registro_status_trajeto` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/234)
+
 ### Alterado
 
 - Alterada a consulta por shapes em `aux_registro_status_trajeto` para buscar o feed_start_date do particionamento da tabela shapes_geom em `data_versao_efetiva`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/234)
