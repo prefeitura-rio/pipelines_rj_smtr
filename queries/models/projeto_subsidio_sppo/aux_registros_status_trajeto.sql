@@ -1,4 +1,4 @@
-
+-- depends_on: {{ ref('subsidio_data_versao_efetiva') }}
 {% if execute %}
     {% set result = run_query("SELECT feed_start_date FROM " ~ ref('subsidio_data_versao_efetiva') ~ " WHERE data BETWEEN DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 2 DAY) AND DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 1 DAY) ORDER BY data") %}
     {% set feed_start_dates =  result.columns[0].values() %}
@@ -33,7 +33,8 @@ with gps as (
         date_sub(date("{{ var("run_date") }}"), interval 1 day) as data_operacao
         {% endif %}
     from
-        `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo` g -- {{ ref('gps_sppo') }} g
+        -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo` g 
+        {{ ref('gps_sppo') }} g
     where (
         data between date_sub(date("{{ var("run_date") }}"), interval 1 day) and date("{{ var("run_date") }}")
     )
@@ -122,7 +123,8 @@ with gps as (
         ST_GEOGPOINT(longitude, latitude) posicao_veiculo_geo,
         date_sub(date("{{ var("run_date") }}"), interval 1 day) as data_operacao
     from
-        `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo` g -- {{ ref('gps_sppo') }} g
+        -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo` g 
+        {{ ref('gps_sppo') }} g
     where (
         data between date_sub(date("{{ var("run_date") }}"), interval 1 day) and date("{{ var("run_date") }}")
     )
