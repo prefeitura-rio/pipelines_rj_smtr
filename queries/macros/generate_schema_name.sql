@@ -16,5 +16,10 @@
         {% set schema_name = env_var("DBT_USER") + "__" + schema_name %}
     {% endif %}
 
+    {% if target.name in ("dev", "hmg") and schema_name.endswith("_staging") %}
+        {% set schema_name = schema_name + "_dbt" %}
+    {% endif %}
+
     {{ schema_name }}
+
 {%- endmacro %}
