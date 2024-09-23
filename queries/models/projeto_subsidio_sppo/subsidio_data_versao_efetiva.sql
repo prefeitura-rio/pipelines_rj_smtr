@@ -347,8 +347,8 @@ WITH
       WHEN data = DATE(2024,05,04) THEN "Madonna 2024-05-04"
       WHEN data = DATE(2024,05,05) THEN "Madonna 2024-05-05"
       WHEN data = DATE(2024,08,18) THEN "CNU" -- Processo.Rio MTR-PRO-2024/13252
-      WHEN data = DATE(2024,09,14) THEN "Extraordinária - Verão" -- Processo.Rio 
-      WHEN data = DATE(2024,09,15) THEN "Extraordinária - Verão" -- Processo.Rio 
+      WHEN data = DATE(2024,09,14) THEN "Extraordinária - Verão" -- Processo.Rio
+      WHEN data = DATE(2024,09,15) THEN "Extraordinária - Verão" -- Processo.Rio
       ELSE "Regular"
     END AS tipo_os,
   FROM UNNEST(GENERATE_DATE_ARRAY("{{var('DATA_SUBSIDIO_V6_INICIO')}}", "2024-12-31")) AS data),
