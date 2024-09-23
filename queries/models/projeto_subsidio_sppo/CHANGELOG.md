@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.0.3] - 2024-09-23
+
+### Alterado
+
+- Adicionado subtipo_dia `Verão` em `2024-09-14` e `2024-09-15` no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/242)
+
 ## [9.0.2] - 2024-09-17
 
 ### Corrigido
