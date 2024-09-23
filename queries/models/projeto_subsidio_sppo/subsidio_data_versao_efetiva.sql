@@ -347,6 +347,8 @@ WITH
       WHEN data = DATE(2024,05,04) THEN "Madonna 2024-05-04"
       WHEN data = DATE(2024,05,05) THEN "Madonna 2024-05-05"
       WHEN data = DATE(2024,08,18) THEN "CNU" -- Processo.Rio MTR-PRO-2024/13252
+      WHEN data = DATE(2024,09,14) THEN "Extraordinária - Verão" -- Processo.Rio 
+      WHEN data = DATE(2024,09,15) THEN "Extraordinária - Verão" -- Processo.Rio 
       ELSE "Regular"
     END AS tipo_os,
   FROM UNNEST(GENERATE_DATE_ARRAY("{{var('DATA_SUBSIDIO_V6_INICIO')}}", "2024-12-31")) AS data),
@@ -366,8 +368,8 @@ WITH
   FROM
     dates AS d
   LEFT JOIN
-    {{ ref('feed_info_gtfs') }} AS i
-    -- rj-smtr.gtfs.feed_info AS i
+    -- {{ ref('feed_info_gtfs') }} AS i
+    rj-smtr.gtfs.feed_info AS i
   USING
     (feed_version)
   WHERE
@@ -391,8 +393,8 @@ SELECT
 FROM
   data_versao_efetiva_manual AS d
 LEFT JOIN
-  {{ ref('feed_info_gtfs') }} AS i
-  -- rj-smtr.gtfs.feed_info AS i
+  -- {{ ref('feed_info_gtfs') }} AS i
+  rj-smtr.gtfs.feed_info AS i
 ON
   (data BETWEEN i.feed_start_date AND i.feed_end_date
   OR (data >= i.feed_start_date AND i.feed_end_date IS NULL))
