@@ -4,7 +4,7 @@ queries:
     dev:
       type: bigquery
       method: service-account
-      project: rj-smtr
+      project: rj-smtr-dev
       dataset: dbt
       location: US
       threads: 1
@@ -29,7 +29,7 @@ queries:
     hmg:
       type: bigquery
       method: service-account
-      project: rj-smtr
+      project: rj-smtr-dev
       dataset: dbt
       location: US
       threads: 1
