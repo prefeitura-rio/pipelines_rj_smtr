@@ -368,8 +368,8 @@ WITH
   FROM
     dates AS d
   LEFT JOIN
-    -- {{ ref('feed_info_gtfs') }} AS i
-    rj-smtr.gtfs.feed_info AS i
+    {{ ref('feed_info_gtfs') }} AS i
+    -- rj-smtr.gtfs.feed_info AS i
   USING
     (feed_version)
   WHERE
@@ -393,8 +393,8 @@ SELECT
 FROM
   data_versao_efetiva_manual AS d
 LEFT JOIN
-  -- {{ ref('feed_info_gtfs') }} AS i
-  rj-smtr.gtfs.feed_info AS i
+  {{ ref('feed_info_gtfs') }} AS i
+  -- rj-smtr.gtfs.feed_info AS i
 ON
   (data BETWEEN i.feed_start_date AND i.feed_end_date
   OR (data >= i.feed_start_date AND i.feed_end_date IS NULL))
