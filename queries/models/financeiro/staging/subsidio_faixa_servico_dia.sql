@@ -29,13 +29,14 @@ WITH
   viagem AS (
   SELECT
     data,
-    servico_realizado AS servico,
+    servico,
     id_viagem,
+    tipo_viagem,
     datetime_partida,
     distancia_planejada
  FROM
-    {{ ref("viagem_completa") }}
-    -- rj-smtr.projeto_subsidio_sppo.viagem_completa
+    {{ ref("viagem_transacao") }}
+    -- rj-smtr.subsidio.viagem_transacao
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}")
@@ -52,7 +53,7 @@ WITH
     SAFE_CAST(p.km_planejada AS NUMERIC) AS km_planejada_faixa,
     SAFE_CAST(COALESCE(COUNT(v.id_viagem), 0) AS INT64) AS viagens_faixa,
     SAFE_CAST(COALESCE(SUM(v.distancia_planejada), 0) AS NUMERIC) AS km_apurada_faixa,
-    SAFE_CAST(COALESCE(ROUND(100 * SUM(v.distancia_planejada) / p.km_planejada, 2), 0) AS NUMERIC) AS pof
+    SAFE_CAST(COALESCE(ROUND(100 * SUM(IF(v.tipo_viagem NOT IN ("Não licenciado","Não vistoriado"),v.distancia_planejada, 0)) / p.km_planejada,2), 0) AS NUMERIC) AS pof
   FROM
     planejado AS p
   LEFT JOIN
