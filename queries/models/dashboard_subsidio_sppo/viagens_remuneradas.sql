@@ -145,7 +145,7 @@ WITH
     p.consorcio,
     p.servico,
     p.km_planejada AS km_planejada,
-    COALESCE(ROUND(100 * SUM(v.distancia_planejada) / p.km_planejada,2), 0) AS pof
+    COALESCE(ROUND(100 * SUM(IF(v.tipo_viagem NOT IN ("Não licenciado","Não vistoriado"),v.distancia_planejada, 0)) / p.km_planejada,2), 0) AS pof
   FROM
     viagem_planejada AS p
   LEFT JOIN
