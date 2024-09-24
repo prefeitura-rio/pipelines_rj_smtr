@@ -14,7 +14,7 @@ WITH
     consorcio,
     servico,
     SAFE_CAST(AVG(pof) AS NUMERIC) AS media_pof,
-    SAFE_CAST(STDDEV(pof) AS NUMERIC) AS desvp_pof
+    SAFE_CAST(COALESCE(STDDEV(pof), 0) AS NUMERIC) AS desvp_pof
   FROM
     {{ ref("subsidio_faixa_servico_dia") }}
     -- rj-smtr.financeiro_staging.subsidio_faixa_servico_dia

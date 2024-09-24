@@ -1,5 +1,11 @@
 # Changelog - financeiro
 
+## [1.0.1] - 2024-09-20
+
+### Alterado
+
+- Altera `km_subsidiada_faixa` para considerar kms com indicador_viagem_dentro_limite = TRUE, pof >= 80 e subsidio_km > 0 no modelo `subsidio_faixa_servico_dia_tipo_viagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/239)
+
 ## [1.0.0] - 2024-08-29
 
 ### Adicionado
