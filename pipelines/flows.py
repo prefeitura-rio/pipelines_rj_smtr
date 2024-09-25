@@ -6,6 +6,7 @@ from pipelines.capture.jae.flows import *  # noqa
 from pipelines.exemplo import *  # noqa
 from pipelines.janitor.flows import *  # noqa
 from pipelines.migration.br_rj_riodejaneiro_bilhetagem.flows import *  # noqa
+from pipelines.migration.br_rj_riodejaneiro_bilhetagem_15min.flows import *  # noqa
 from pipelines.migration.br_rj_riodejaneiro_brt_gps.flows import *  # noqa
 from pipelines.migration.br_rj_riodejaneiro_diretorios.flows import *  # noqa
 from pipelines.migration.br_rj_riodejaneiro_gtfs.flows import *  # noqa
