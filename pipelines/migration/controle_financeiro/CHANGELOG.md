@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Altera encoding das planilhas de controle financeiro `cb` e `cett` de `Windows-1252` para `UTF-8`
+- Altera encoding das planilhas de controle financeiro `cb` e `cett` de `Windows-1252` para `UTF-8` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/248)
 
 ## [1.2.0] - 2024-06-13
 
