@@ -330,3 +330,13 @@ models:
         +materialized: view
         +schema: planejamento_staging
       +database: rj-smtr-dev
+    monitoramento:
+      +database: rj-smtr-dev
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: monitoramento
+      staging:
+        +database: rj-smtr-dev
+        +materialized: view
+        +schema: monitoramento_staging
+

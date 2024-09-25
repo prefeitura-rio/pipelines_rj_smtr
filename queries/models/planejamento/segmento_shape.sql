@@ -1,135 +1,117 @@
 {{
-  config(
-    partition_by = {
-      'field' :'feed_start_date',
-      'data_type' :'date',
-      'granularity': 'day'
-    },
-    tags=['geolocalizacao']
-  )
+    config(
+        partition_by={
+            "field": "feed_start_date",
+            "data_type": "date",
+            "granularity": "day",
+        },
+        tags=["geolocalizacao"],
+    )
 }}
 
 -- depends_on: {{ ref('feed_info_gtfs') }}
 {% if execute and is_incremental() %}
-  {% set last_feed_version = get_last_feed_start_date(var("data_versao_gtfs")) %}
+    {% set last_feed_version = get_last_feed_start_date(var("data_versao_gtfs")) %}
 {% endif %}
 
-WITH aux_segmento AS (
-  SELECT
-    feed_version,
-    feed_start_date,
-    feed_end_date,
-    shape_id,
-    id_segmento,
-    ST_GEOGFROMTEXT(wkt_segmento) AS segmento,
-    wkt_segmento,
-    ROUND(ST_LENGTH(ST_GEOGFROMTEXT(wkt_segmento)), 1) AS comprimento_segmento
-  FROM
-    {{ ref("aux_segmento_shape") }}
-),
-tunel AS (
-  SELECT
-    ST_UNION_AGG(ST_BUFFER(geometry, 50)) AS buffer_tunel
-  FROM
-    {{ source("dados_mestres", "logradouro") }}
-  WHERE
-    tipo = "Túnel"
+with
+    aux_segmento as (
+        select
+            feed_version,
+            feed_start_date,
+            feed_end_date,
+            shape_id,
+            id_segmento,
+            st_geogfromtext(wkt_segmento) as segmento,
+            wkt_segmento,
+            round(st_length(st_geogfromtext(wkt_segmento)), 1) as comprimento_segmento
+        from {{ ref("aux_segmento_shape") }}
+    ),
+    tunel as (
+        select st_union_agg(st_buffer(geometry, 50)) as buffer_tunel
+        from {{ source("dados_mestres", "logradouro") }}
+        where tipo = "Túnel"
 
-),
-buffer_segmento AS (
-  SELECT
-    *,
-    ST_BUFFER(segmento, 20) AS buffer_completo,
-  FROM
-    aux_segmento
-),
-intercessao_segmento AS (
-  SELECT
-    b1.shape_id,
-    b1.id_segmento,
-    ST_UNION(ARRAY_AGG(b2.buffer_completo) )AS buffer_segmento_posterior
-  FROM
-    buffer_segmento b1
-  JOIN
-    buffer_segmento b2
-  ON
-    b1.shape_id = b2.shape_id
-    AND b1.id_segmento < b2.id_segmento
-    AND ST_INTERSECTS(b1.buffer_completo, b2.buffer_completo)
-  GROUP BY
-    1,
-    2
-),
-buffer_segmento_recortado AS (
-  SELECT
-    b.*,
-    COALESCE(
-      ST_DIFFERENCE(
-        buffer_completo,
-        i.buffer_segmento_posterior
-      ),
-      buffer_completo
-    ) AS buffer
-  FROM
-    buffer_segmento b
-  LEFT JOIN
-    intercessao_segmento i
-  USING(shape_id, id_segmento)
-),
-indicador_validacao_shape AS (
-  SELECT
-    s.*,
-    ST_INTERSECTS(s.segmento, t.buffer_tunel) AS indicador_tunel,
-    ST_AREA(s.buffer) / ST_AREA(s.buffer_completo) < 0.5 AS indicador_area_prejudicada,
-    s.comprimento_segmento < 990 AS indicador_segmento_pequeno,
-    CAST(id_segmento AS INTEGER) AS id_segmento_int
-  FROM
-    buffer_segmento_recortado s
-  CROSS JOIN
-    tunel t
-)
-SELECT
-  * EXCEPT(id_segmento_int),
-  (
-    (
-      indicador_tunel
-      AND (
-        (id_segmento_int > 1)
-        OR (id_segmento_int < MAX(id_segmento_int) OVER (PARTITION BY feed_start_date, shape_id))
-      )
+    ),
+    buffer_segmento as (
+        select *, st_buffer(segmento, 20) as buffer_completo, from aux_segmento
+    ),
+    intercessao_segmento as (
+        select
+            b1.shape_id,
+            b1.id_segmento,
+            st_union(array_agg(b2.buffer_completo)) as buffer_segmento_posterior
+        from buffer_segmento b1
+        join
+            buffer_segmento b2
+            on b1.shape_id = b2.shape_id
+            and b1.id_segmento < b2.id_segmento
+            and st_intersects(b1.buffer_completo, b2.buffer_completo)
+        group by 1, 2
+    ),
+    buffer_segmento_recortado as (
+        select
+            b.*,
+            coalesce(
+                st_difference(buffer_completo, i.buffer_segmento_posterior),
+                buffer_completo
+            ) as buffer
+        from buffer_segmento b
+        left join intercessao_segmento i using (shape_id, id_segmento)
+    ),
+    indicador_validacao_shape as (
+        select
+            s.*,
+            st_intersects(s.segmento, t.buffer_tunel) as indicador_tunel,
+            st_area(s.buffer) / st_area(s.buffer_completo)
+            < 0.5 as indicador_area_prejudicada,
+            s.comprimento_segmento < 990 as indicador_segmento_pequeno,
+            cast(id_segmento as integer) as id_segmento_int
+        from buffer_segmento_recortado s
+        cross join tunel t
     )
-    OR indicador_area_prejudicada
-    OR indicador_segmento_pequeno
-  ) AS indicador_segmento_desconsiderado,
-  '{{ var("version") }}' AS versao
-FROM
-  indicador_validacao_shape
+select
+    * except (id_segmento_int),
+    (
+        (
+            indicador_tunel
+            and (
+                (id_segmento_int > 1)
+                or (
+                    id_segmento_int
+                    < max(id_segmento_int) over (partition by feed_start_date, shape_id)
+                    and id_segmento_int > 1
+                )
+            )
+        )
+        or indicador_area_prejudicada
+        or indicador_segmento_pequeno
+    ) as indicador_segmento_desconsiderado,
+    '{{ var("version") }}' as versao
+from indicador_validacao_shape
 
 {% if is_incremental() %}
 
-  UNION ALL
+    union all
 
-  SELECT
-    s.feed_version
-    s.feed_start_date
-    fi.feed_end_date
-    s.shape_id
-    s.id_segmento
-    s.segmento
-    s.wkt_segmento
-    s.comprimento_segmento,
-    s.buffer_completo,
-    s.buffer,
-    s.indicador_tunel,
-    s.indicador_area_prejudicada,
-    s.indicador_segmento_pequeno,
-    s.indicador_segmento_desconsiderado,
-    s.versao
-  FROM
-    {{ this }} s
-  JOIN
-    {{ ref('feed_info_gtfs') }} fi
-  USING(feed_start_date)
-  WHERE
-    feed_start_date = '{{ last_feed_version }}'
+    select
+        s.feed_version,
+        s.feed_start_date,
+        fi.feed_end_date,
+        s.shape_id,
+        s.id_segmento,
+        s.segmento,
+        s.wkt_segmento,
+        s.comprimento_segmento,
+        s.buffer_completo,
+        s.buffer,
+        s.indicador_tunel,
+        s.indicador_area_prejudicada,
+        s.indicador_segmento_pequeno,
+        s.indicador_segmento_desconsiderado,
+        s.versao
+    from {{ this }} s
+    join {{ ref("feed_info_gtfs") }} fi using (feed_start_date)
+    where feed_start_date = '{{ last_feed_version }}'
+
 {% endif %}
