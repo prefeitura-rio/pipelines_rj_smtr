@@ -63,6 +63,7 @@ def run_dbt_model(
         run_command += f" {flags}"
 
     print(f"\n>>> RUNNING: {run_command}\n")
+    os.chdir(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
     os.system(run_command)
 
 
