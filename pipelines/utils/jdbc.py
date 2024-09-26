@@ -2,6 +2,7 @@
 from typing import List
 
 import jaydebeapi as jdb
+from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.utils.secret import get_secret
 
@@ -24,6 +25,7 @@ class JDBC:
             url=data["url"],
             jars=[data["jars"]],
         )
+        log(f"jars={[data['jars']]}")
         return conn_kwargs
 
     def connect(self):
