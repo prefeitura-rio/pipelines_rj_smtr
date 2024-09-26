@@ -68,3 +68,10 @@ class JDBC:
         Fetches all rows from the JDBC database.
         """
         return [list(item) for item in self._cursor.fetchall()]
+
+    def close_connection(self):
+        """
+        Closes the JDBC connection.
+        """
+        if self._connection:
+            self._connection.close()
