@@ -60,8 +60,8 @@ models:
     columns:
       - name: ano
         description: "Ano"
-      - name: consorcio
-        description: "Consórcio"
+      - name: consorcio 
+        description: "Consórcio " 
       - name: servico
         description: "Serviço"
       - name: km_subsidiada
@@ -86,8 +86,8 @@ models:
     description: "Balanço da receita aferida e esperada por servico e
     dia para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
     columns:
-      - name: data
-        description: "Data"
+      - name: data 
+        description: "Data "
       - name: consorcio
         description: "Consórcio"
       - name: servico
@@ -149,11 +149,11 @@ models:
       - name: data_final_quinzena
         description: "Data final da quinzena"
       - name: consorcio
-        description: "Consórcio"
+        description: "Consórcio "
       - name: servico
         description: "Serviço"
       - name: quantidade_dias_subsidiado
-        description: "Quantidade de dias subsidiado"
+        description: "Quantidade de dias subsidiado "
       - name: km_subsidiada
         description: "Quilometragem apurada e subsidiada via algoritmo [km]"
       - name: receita_total_esperada
@@ -173,39 +173,46 @@ models:
       - name: saldo
         description: "Saldo entre a receita esperada e aferida,
         descontado o subsídio glosado [R$]"
-  # - name: parametros_km
-  #   description: "Parâmetros de remuneração do subsídio dos serviços de ônibus (SPPO) por tipo de viagem"
-  #   columns:
-  #     - name: indicador_licenciado
-  #       description: "Indicador se o veículo encontra-se licenciado"
-  #     - name: indicador_ar_condicionado
-  #       description: "Indicador se o veículo foi licenciado com ar condicionado"
-  #     - name: indicador_autuacao_ar_condicionado
-  #       description: "Indicador se o veículo foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado"
-  #     - name: indicador_autuacao_seguranca
-  #       description: "Indicador se o veículo foi autuado por infração relacionada à segurança do veículo"
-  #     - name: indicador_autuacao_limpeza
-  #       description: "Indicador se o veículo foi autuado por infração relacionada à limpeza do veículo"
-  #     - name: indicador_autuacao_equipamento
-  #       description: "Indicador se o veículo foi autuado por infração relacionada à inoperância ou mau funcionamento de equipamentos do veículo"
-  #     - name: indicador_sensor_temperatura
-  #       description: "Indicador se o sensor de temperatura do veículo não estava em funcionamento conforme especificação da SMTR"
-  #     - name: indicador_validador_sbd
-  #       description: "Indicador se o veículo se encontra com o novo validador do Sistema de Bilhetagem Digital (SBD) instalado"
-  #     - name: status
-  #       description: "Classificação, observados os demais parâmetros para remuneração"
-  #     - name: subsidio_km
-  #       description: "Valor de subsídio de remuneração (R$/km)"
-  #     - name: irk
-  #       description: "Índice de Remuneração por km (R$/km)"
-  #     - name: data_inicio
-  #       description: "Data inicial do período de vigência dos demais atributos"
-  #     - name: data_fim
-  #       description: "Data final do período de vigência dos demais atributos"
-  #     - name: legislacao
-  #       description: "Legislação que estabelece o valor e regras de remuneração"
-  #     - name: ordem
-  #       description: "Ordem de prioridade de aplicação dos valores de remuneração"
+  - name: parametros_km
+    description: "Parâmetros de remuneração do subsídio dos serviços de ônibus (SPPO) por tipo de viagem"
+    columns:
+
+      - name: status
+        description: "Classificação, observados os demais parâmetros para remuneração"
+      - name: data_inicio
+        description: "Data inicial do período de vigência dos demais atributos"
+      - name: data_fim
+        description: "Data final do período de vigência dos demais atributos"
+      - name: legislacao
+        description: "Legislação que estabelece o valor e regras de remuneração"
+      - name: irk
+        description: "Índice de Remuneração por km (R$/km)"
+      - name: irk_tarifa_publica
+        description: ""
+      - name: desconto_subsidio_km
+        description: "Valor de desconto de subsídio de remuneração (R$/km)"
+      - name: subsidio_km
+        description: "Valor de subsídio de remuneração (R$/km)"
+      - name: ordem
+        description: "Ordem de prioridade de aplicação dos valores de remuneração"
+      - name: indicador_licenciado
+        description: "Indicador se o veículo encontra-se licenciado"
+      - name: indicador_ar_condicionado
+        description: "Indicador se o veículo foi licenciado com ar condicionado"
+      - name: indicador_autuacao_ar_condicionado
+        description: "Indicador se o veículo foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado"
+      - name: indicador_autuacao_seguranca
+        description: "Indicador se o veículo foi autuado por infração relacionada à segurança do veículo"
+      - name: indicador_autuacao_limpeza
+        description: "Indicador se o veículo foi autuado por infração relacionada à limpeza do veículo"
+      - name: indicador_autuacao_equipamento
+        description: "Indicador se o veículo foi autuado por infração relacionada à inoperância ou mau funcionamento de equipamentos do veículo"
+      - name: indicador_sensor_temperatura
+        description: "Indicador se o sensor de temperatura do veículo não estava em funcionamento conforme especificação da SMTR"
+      - name: indicador_validador_sbd
+        description: "Indicador se o veículo se encontra com o novo validador do Sistema de Bilhetagem Digital (SBD) instalado"
+      - name: indicador_registro_agente_verao_ar_condicionado
+        description: "Indicador se o veículo foi autuado por agente de verão por inoperância ou mau funcionamento do sistema de ar condicionado"
   - name: receita_tarifaria_servico_nao_identificado_quinzena
     description: "Receita tarifária proveniente do RDO para serviços de ônibus
     dos consórcios que não foram identificados nos planos operacionais dos respectivos dias."
