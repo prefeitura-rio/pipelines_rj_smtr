@@ -7,6 +7,7 @@ from typing import List
 from prefect import task
 
 from pipelines.utils.jdbc import JDBC
+from pipelines.utils.utils import log
 
 
 @task
@@ -52,3 +53,13 @@ def dump_serpro(jdbc: JDBC, batch_size: int) -> List[str]:
     jdbc.close_connection()
 
     return csv_files
+
+
+@task
+def list_files():
+
+    try:
+        files = os.listdir("/app")
+        log(f"Files: {files}")
+    except Exception as e:
+        log(f"Erro: {e}")
