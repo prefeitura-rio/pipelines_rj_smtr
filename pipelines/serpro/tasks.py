@@ -35,6 +35,8 @@ def dump_serpro(jdbc: JDBC, batch_size: int) -> List[str]:
     file_path = f"{os.getcwd()}/{data_folder}/raw/radar_serpro/tb_infracao_view"
     csv_files = []
 
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
     query = "SELECT * FROM dbpro_radar_view_SMTR_VBL.tb_infracao_view"
 
     jdbc.execute_query(query)
