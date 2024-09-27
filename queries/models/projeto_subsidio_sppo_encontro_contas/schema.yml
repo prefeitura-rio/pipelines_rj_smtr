@@ -60,8 +60,8 @@ models:
     columns:
       - name: ano
         description: "Ano"
-      - name: consorcio 
-        description: "Consórcio " 
+      - name: consorcio
+        description: "Consórcio "
       - name: servico
         description: "Serviço"
       - name: km_subsidiada
@@ -86,7 +86,7 @@ models:
     description: "Balanço da receita aferida e esperada por servico e
     dia para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
     columns:
-      - name: data 
+      - name: data
         description: "Data "
       - name: consorcio
         description: "Consórcio"
