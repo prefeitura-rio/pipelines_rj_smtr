@@ -4,6 +4,7 @@ from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
+from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_credentials
 
 from pipelines.constants import constants as smtr_constants
 from pipelines.migration.tasks import upload_raw_data_to_gcs
@@ -11,7 +12,7 @@ from pipelines.serpro.tasks import dump_serpro, get_db_object
 from pipelines.serpro.utils import handler_setup_serpro
 
 with Flow("SMTR - Teste Conexão Serpro") as flow:
-    batch_size = Parameter("batch_size", default=10000)
+    batch_size = Parameter("batch_size", default=100000)
     # setup_serpro()
     # wait_sleeping()
 
@@ -36,4 +37,4 @@ flow.run_config = KubernetesRun(
     cpu_request="500m",
     memory_request="1000Mi",
 )
-flow.state_handlers = [handler_setup_serpro]
+flow.state_handlers = [handler_setup_serpro, handler_inject_bd_credentials]
