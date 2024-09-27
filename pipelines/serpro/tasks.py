@@ -17,11 +17,9 @@ def wait_sleeping(interval_seconds: int = 54000, wait=None):
     sleep(interval_seconds)
 
 
-@task(max_retries=3, retry_delay=timedelta(seconds=20))
+@task(checkpoint=False, max_retries=3, retry_delay=timedelta(seconds=20))
 def get_db_object(secret_path="radar_serpro", environment: str = "dev"):
-    log(get_secret(secret_path))
     jar_path = get_secret(secret_path=secret_path, environment=environment)["jars"]
-    log(jar_path)
 
     if not os.path.exists(jar_path):
         raise Exception(f"Arquivo JAR '{jar_path}' não encontrado.")
