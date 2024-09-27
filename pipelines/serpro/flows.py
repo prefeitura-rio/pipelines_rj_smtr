@@ -7,17 +7,13 @@ from prefeitura_rio.pipelines_utils.custom import Flow
 
 from pipelines.constants import constants as smtr_constants
 from pipelines.migration.tasks import upload_raw_data_to_gcs
-from pipelines.serpro.tasks import (  # , wait_sleeping
-    dump_serpro,
-    get_db_object,
-    list_files,
-)
+from pipelines.serpro.tasks import dump_serpro, get_db_object, list_files, wait_sleeping
 from pipelines.serpro.utils import handler_setup_serpro
 
 with Flow("SMTR - Teste Conexão Serpro") as flow:
     batch_size = Parameter("batch_size", default=10000)
     # setup_serpro()
-    # wait_sleeping()
+    wait_sleeping()
 
     list_files()
 
