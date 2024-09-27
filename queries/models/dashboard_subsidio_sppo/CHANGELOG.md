@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [7.0.4] - 2024-09-27
+
+### Corrigido
+
+- Remove agrupamento de viagens planejadas em `sumario_servico_dia` e `sumario_servico_dia_tipo` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/250)
+
 ## [7.0.3] - 2024-09-20
 
 ### Alterado
