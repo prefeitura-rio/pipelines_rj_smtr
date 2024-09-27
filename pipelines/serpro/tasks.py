@@ -32,7 +32,7 @@ def dump_serpro(jdbc: JDBC, batch_size: int) -> List[str]:
 
     index = 0
     data_folder = os.getenv("DATA_FOLDER", "data")
-    file_path = f"{os.getcwd()}/{data_folder}/raw/radar_serpro/tb_infracao_view"
+    file_path = f"{os.getcwd()}/{data_folder}/raw/radar_serpro/tb_infracao_view/"
     csv_files = []
 
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
@@ -56,6 +56,7 @@ def dump_serpro(jdbc: JDBC, batch_size: int) -> List[str]:
             writer.writerow(columns)
             writer.writerows(rows)
 
+        log(output_file)
         csv_files.append(output_file)
         index += 1
 
