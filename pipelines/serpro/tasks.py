@@ -28,8 +28,8 @@ def get_db_object(secret_path="radar_serpro", environment: str = "dev"):
 
 
 @task(checkpoint=False, nout=2)
-def get_raw_serpro(jdbc: JDBC, timestamp: str, local_filepath: str) -> str:
-    date = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S").date()
+def get_raw_serpro(jdbc: JDBC, timestamp: datetime, local_filepath: str) -> str:
+    date = timestamp.date()
     raw_filepath = local_filepath.format(mode="raw", filetype="csv")
 
     query = constants.SERPRO_CAPTURE_PARAMS.value["query"].format(date=date.strftime("%Y-%m-%d"))
