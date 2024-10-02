@@ -2,6 +2,7 @@
 import csv
 import os
 from datetime import datetime, timedelta
+from pathlib import Path
 from time import sleep
 
 from prefect import task
@@ -31,6 +32,7 @@ def get_db_object(secret_path="radar_serpro", environment: str = "dev"):
 def get_raw_serpro(jdbc: JDBC, timestamp: datetime, local_filepath: str) -> str:
     date = timestamp.date()
     raw_filepath = local_filepath.format(mode="raw", filetype="csv")
+    Path(raw_filepath).parent.mkdir(parents=True, exist_ok=True)
 
     query = constants.SERPRO_CAPTURE_PARAMS.value["query"].format(date=date.strftime("%Y-%m-%d"))
 
