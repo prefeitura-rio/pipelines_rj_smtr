@@ -59,7 +59,7 @@ with Flow(
 
     # Get default parameters #
     dataset_id = Parameter("dataset_id", default=constants.RDO_DATASET_ID.value)
-    table_id = Parameter("table_id", default=constants.SPPO_RHO_TABLE_ID.value)
+    table_id = Parameter("table_id", default=None)
     rebuild = Parameter("rebuild", False)
 
     LABELS = get_current_flow_labels()
@@ -71,13 +71,18 @@ with Flow(
     # dbt_client = get_local_dbt_client(host="localhost", port=3001)
 
     # Set specific run parameters #
-    date_range = get_rdo_date_range(dataset_id=dataset_id, table_id=table_id, mode=MODE)
+    date_range = get_rdo_date_range(
+        dataset_id=dataset_id,
+        table_id=constants.SPPO_RHO_TABLE_ID.value,
+        mode=MODE,
+    )
     version = fetch_dataset_sha(dataset_id=dataset_id)
     dbt_vars = get_join_dict([date_range], version)
     # Run materialization #
     with case(rebuild, True):
         RUN = run_dbt_model(
             dataset_id=dataset_id,
+            table_id=table_id,
             upstream=True,
             _vars=dbt_vars,
             flags="--full-refresh",
@@ -92,6 +97,8 @@ with Flow(
     with case(rebuild, False):
         RUN = run_dbt_model(
             dataset_id=dataset_id,
+            table_id=table_id,
+            upstream=True,
             _vars=dbt_vars,
         )
         set_last_run_timestamp(
@@ -206,7 +213,7 @@ captura_sppo_rdo.state_handlers = [handler_inject_bd_credentials, handler_initia
 
 with Flow(
     "SMTR: RDO - Captura/Tratamento",
-) as rho_captura_tratamento:
+) as rdo_captura_tratamento:
     LABELS = get_current_flow_labels()
     PROJECT = get_flow_project()
 
@@ -286,10 +293,10 @@ with Flow(
         raise_final_state=True,
     )
 
-rho_captura_tratamento.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
-rho_captura_tratamento.run_config = KubernetesRun(
+rdo_captura_tratamento.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
+rdo_captura_tratamento.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-rho_captura_tratamento.schedule = every_day
-rho_captura_tratamento.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
+rdo_captura_tratamento.schedule = every_day
+rdo_captura_tratamento.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
