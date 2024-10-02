@@ -32,10 +32,12 @@ from pipelines.migration.br_rj_riodejaneiro_rdo.tasks import (
 )
 from pipelines.migration.tasks import (
     bq_upload,
+    fetch_dataset_sha,
     get_current_flow_labels,
     get_current_flow_mode,
     get_current_timestamp,
     get_flow_project,
+    get_join_dict,
     get_now_time,
     rename_current_flow_run_now_time,
     run_dbt_model,
@@ -47,12 +49,12 @@ from pipelines.schedules import every_day
 # from pipelines.utils.execute_dbt_model.tasks import run_dbt_model
 
 with Flow(
-    "SMTR: SPPO RHO - Materialização (subflow)",
+    "SMTR: RDO - Materialização (subflow)",
     # code_owners=constants.DEFAULT_CODE_OWNERS.value,
-) as sppo_rho_materialize:
+) as sppo_rdo_materialize:
     # Rename flow run
     rename_flow_run = rename_current_flow_run_now_time(
-        prefix=sppo_rho_materialize.name + ": ", now_time=get_now_time()
+        prefix=sppo_rdo_materialize.name + ": ", now_time=get_now_time()
     )
 
     # Get default parameters #
@@ -70,13 +72,14 @@ with Flow(
 
     # Set specific run parameters #
     date_range = get_rdo_date_range(dataset_id=dataset_id, table_id=table_id, mode=MODE)
+    version = fetch_dataset_sha(dataset_id=dataset_id)
+    dbt_vars = get_join_dict([date_range], version)
     # Run materialization #
     with case(rebuild, True):
         RUN = run_dbt_model(
             dataset_id=dataset_id,
-            table_id=table_id,
             upstream=True,
-            _vars=[date_range],
+            _vars=dbt_vars,
             flags="--full-refresh",
         )
         set_last_run_timestamp(
@@ -89,8 +92,7 @@ with Flow(
     with case(rebuild, False):
         RUN = run_dbt_model(
             dataset_id=dataset_id,
-            table_id=table_id,
-            _vars=[date_range],
+            _vars=dbt_vars,
         )
         set_last_run_timestamp(
             dataset_id=dataset_id,
@@ -100,12 +102,12 @@ with Flow(
             mode=MODE,
         )
 
-sppo_rho_materialize.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
-sppo_rho_materialize.run_config = KubernetesRun(
+sppo_rdo_materialize.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
+sppo_rdo_materialize.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-sppo_rho_materialize.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
+sppo_rdo_materialize.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
 
 with Flow(
@@ -156,48 +158,7 @@ captura_sppo_rho.run_config = KubernetesRun(
 captura_sppo_rho.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
 with Flow(
-    "SMTR: RHO - Captura/Tratamento",
-) as rho_captura_tratamento:
-    LABELS = get_current_flow_labels()
-    PROJECT = get_flow_project()
-
-    run_captura = create_flow_run(
-        flow_name=captura_sppo_rho.name,
-        project_name=PROJECT,
-        labels=LABELS,
-    )
-
-    wait_captura = wait_for_flow_run(
-        run_captura,
-        stream_states=True,
-        stream_logs=True,
-        raise_final_state=True,
-    )
-
-    run_materializacao = create_flow_run(
-        flow_name=sppo_rho_materialize.name,
-        project_name=PROJECT,
-        labels=LABELS,
-        upstream_tasks=[wait_captura],
-    )
-
-    wait_materializacao = wait_for_flow_run(
-        run_materializacao,
-        stream_states=True,
-        stream_logs=True,
-        raise_final_state=True,
-    )
-
-rho_captura_tratamento.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
-rho_captura_tratamento.run_config = KubernetesRun(
-    image=smtr_constants.DOCKER_IMAGE.value,
-    labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
-)
-rho_captura_tratamento.schedule = every_day
-rho_captura_tratamento.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
-
-with Flow(
-    "SMTR: RDO - Captura",
+    "SMTR: RDO - Captura (subflow)",
 ) as captura_sppo_rdo:
     # SETUP
     transport_mode = Parameter("transport_mode", "SPPO")
@@ -241,10 +202,94 @@ captura_sppo_rdo.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-captura_sppo_rdo.schedule = every_day
 captura_sppo_rdo.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
+with Flow(
+    "SMTR: RDO - Captura/Tratamento",
+) as rho_captura_tratamento:
+    LABELS = get_current_flow_labels()
+    PROJECT = get_flow_project()
 
-# captura_sppo_rho = deepcopy(captura_sppo_rdo)
-# captura_sppo_rho.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
-# captura_sppo_rho.run_config = KubernetesRun(image=constants.DOCKER_IMAGE.value)
+    run_captura_rho_sppo = create_flow_run(
+        flow_name=captura_sppo_rho.name,
+        project_name=PROJECT,
+        labels=LABELS,
+    )
+
+    wait_captura_rho_sppo = wait_for_flow_run(
+        run_captura_rho_sppo,
+        stream_states=True,
+        stream_logs=True,
+        raise_final_state=True,
+    )
+
+    run_captura_rho_stpl = create_flow_run(
+        flow_name=captura_sppo_rho.name,
+        project_name=PROJECT,
+        labels=LABELS,
+        parameters={
+            "transport_mode": "STPL",
+            "table_id": constants.STPL_RHO_TABLE_ID.value,
+        },
+    )
+
+    wait_captura_rho_stpl = wait_for_flow_run(
+        run_captura_rho_stpl,
+        stream_states=True,
+        stream_logs=True,
+        raise_final_state=True,
+    )
+
+    run_captura_rdo_sppo = create_flow_run(
+        flow_name=captura_sppo_rdo.name,
+        project_name=PROJECT,
+        labels=LABELS,
+        upstream_tasks=[wait_captura_rho_sppo, run_captura_rho_stpl],
+    )
+
+    wait_captura_rdo_sppo = wait_for_flow_run(
+        run_captura_rdo_sppo,
+        stream_states=True,
+        stream_logs=True,
+        raise_final_state=True,
+    )
+
+    run_captura_rdo_stpl = create_flow_run(
+        flow_name=captura_sppo_rdo.name,
+        project_name=PROJECT,
+        labels=LABELS,
+        parameters={
+            "transport_mode": "STPL",
+            "table_id": constants.STPL_RHO_TABLE_ID.value,
+        },
+        upstream_tasks=[wait_captura_rho_sppo, run_captura_rho_stpl],
+    )
+
+    wait_captura_rdo_stpl = wait_for_flow_run(
+        run_captura_rdo_stpl,
+        stream_states=True,
+        stream_logs=True,
+        raise_final_state=True,
+    )
+
+    run_materializacao = create_flow_run(
+        flow_name=sppo_rdo_materialize.name,
+        project_name=PROJECT,
+        labels=LABELS,
+        upstream_tasks=[wait_captura_rdo_sppo, run_captura_rdo_stpl],
+    )
+
+    wait_materializacao = wait_for_flow_run(
+        run_materializacao,
+        stream_states=True,
+        stream_logs=True,
+        raise_final_state=True,
+    )
+
+rho_captura_tratamento.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
+rho_captura_tratamento.run_config = KubernetesRun(
+    image=smtr_constants.DOCKER_IMAGE.value,
+    labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
+)
+rho_captura_tratamento.schedule = every_day
+rho_captura_tratamento.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
