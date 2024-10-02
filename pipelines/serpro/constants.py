@@ -25,7 +25,7 @@ class constants(Enum):  # pylint: disable=c0103
             FROM
                 dbpro_radar_view_SMTR_VBL.tb_infracao_view
             WHERE
-                TO_DATE(auinf_dt_infracao, 'YYYY-MM-DD') = '{date}'
+                CAST(auinf_dt_infracao AS DATE) = CAST('{date}' AS DATE)
         """,
         "primary_key": ["auinf_num_auto"],
     }
