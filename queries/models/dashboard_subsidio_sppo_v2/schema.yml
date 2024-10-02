@@ -61,9 +61,9 @@ models:
     tests:
       - completude
       - accepted_values_valor_penalidade
-      - teto_pagamento_valor_subsidio_pago: 
+      - teto_pagamento_valor_subsidio_pago:
           expression: ROUND((valor_a_pagar - valor_penalidade)/subsidio_km_teto,2) <= ROUND(km_apurada_dia+0.01,2)
-      - unique_combination: 
+      - unique_combination:
           expression: data, servico
       - expression_is_true:
           expression: data IS NOT NULL

@@ -29,4 +29,4 @@ WITH
                 (DATA)
                 WHERE
                 c.datetime_ultima_atualizacao > h.datetime_ultima_atualizacao
-{%- endtest %}        
+{%- endtest %}
