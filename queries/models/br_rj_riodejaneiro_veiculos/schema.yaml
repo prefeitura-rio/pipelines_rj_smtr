@@ -44,6 +44,8 @@ models:
         description: "{{ doc('versao') }}"
   - name: gps_sppo
     description: "Tabela com os dados tratados de registros de GPS do SPPO, incluindo velocidade estimada, estado de movimento, parada em terminal ou garagem e interseção com o traçado da linha informada."
+    tests: 
+      - check_gps_treatment
     columns:
       - name: modo
         description: "SPPO – nesse arquivo só consta esse modo"

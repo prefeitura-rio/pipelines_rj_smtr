@@ -58,6 +58,31 @@ models:
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: sumario_servico_dia_pagamento
     description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia."
+    tests:
+      - completude
+      - accepted_values_valor_penalidade
+      - teto_pagamento_valor_subsidio_pago: 
+          expression: ROUND((valor_a_pagar - valor_penalidade)/subsidio_km_teto,2) <= ROUND(km_apurada_dia+0.01,2)
+      - unique_combination: 
+          expression: data, servico
+      - expression_is_true:
+          expression: data IS NOT NULL
+      - expression_is_true:
+          expression: tipo_dia IS NOT NULL
+      - expression_is_true:
+          expression: consorcio IS NOT NULL
+      - expression_is_true:
+          expression: servico IS NOT NULL
+      - expression_is_true:
+          expression: viagens_dia IS NOT NULL AND viagens_dia >= 0
+      - expression_is_true:
+          expression: km_apurada_dia IS NOT NULL AND km_apurada_dia >= 0
+      - expression_is_true:
+          expression: km_planejada_dia IS NOT NULL AND km_planejada_dia >= 0
+      - expression_is_true:
+          expression: media_pof IS NOT NULL AND media_pof >= 0
+      - expression_is_true:
+          expression: (valor_a_pagar - valor_penalidade) IS NOT NULL AND (valor_a_pagar - valor_penalidade) >= 0
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS."
@@ -71,6 +96,8 @@ models:
         description: "Quantidade de viagens apuradas por dia."
       - name: km_apurada_dia
         description: "Distância apurada para o serviço por dia (km)."
+        tests:
+          - sumario_servico_dia_tipo_soma_km
       - name: km_subsidiada_dia
         description: "Distância subsidiada para o serviço por dia (km)."
       - name: km_planejada_dia

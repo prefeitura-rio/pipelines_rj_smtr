@@ -78,3 +78,62 @@ def fetch_dataset_sha(dataset_id: str):
 
     dataset_version = response.json()[0]["sha"]
     return {"version": dataset_version}
+
+
+def run_dbt_tests(
+    dataset_id: str = None,
+    table_id: str = None,
+    model: str = None,
+    upstream: bool = None,
+    downstream: bool = None,
+    exclude: str = None,
+    flags: str = None,
+    _vars: Union[dict, List[Dict]] = None,
+):
+    """
+    Run DBT test
+    """
+    run_command = "dbt test"
+
+    common_flags = "--profiles-dir ./dev"
+
+    if flags:
+        flags = f"{common_flags} {flags}"
+    else:
+        flags = common_flags
+
+    if not model:
+        model = dataset_id
+        if table_id:
+            model += f".{table_id}"
+
+    if model:
+        run_command += f" --select "
+        if upstream:
+            run_command += "+"
+        run_command += model
+        if downstream:
+            run_command += "+"
+
+    if exclude:
+        run_command += f" --exclude {exclude}"
+
+    if _vars:
+        if isinstance(_vars, list):
+            vars_dict = {}
+            for elem in _vars:
+                vars_dict.update(elem)
+            vars_str = f'"{vars_dict}"'
+            run_command += f" --vars {vars_str}"
+        else:
+            vars_str = f'"{_vars}"'
+            run_command += f" --vars {vars_str}"
+
+    if flags:
+        run_command += f" {flags}"
+
+    print(f"\n>>> RUNNING: {run_command}\n")
+
+    project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    os.chdir(project_dir)
+    os.system(run_command)
