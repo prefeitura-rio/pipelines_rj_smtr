@@ -1,5 +1,11 @@
 # Changelog - veiculo
 
+## [1.1.3] - 2024-04-25
+
+#### Adicionado
+
+- Adiciona testes do subsidio para `sppo_veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/256)
+
 ## [1.1.2] - 2024-04-25
 
 #### Adicionado
