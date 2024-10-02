@@ -295,9 +295,9 @@ models:
       - name: versao
         data_type: string
         quote: true
-        description: {{ doc('versao') }}
+        description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
         data_type: datetime
         quote: true
-        description: {{ doc('datetime_ultima_atualizacao') }}
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
     description: Tabela materializada para acesso geral aos dados do RDO STPL
