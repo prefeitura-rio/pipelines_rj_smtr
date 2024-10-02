@@ -82,6 +82,7 @@ with Flow("SMTR: SERPRO - Captura/Tratamento") as serpro_captura:
         raw_filepath=raw_filepaths,
         partitions=partitions,
         error=unmapped(None),
+        bucket_name=unmapped(constants.INFRACAO_PRIVATE_BUCKET.value),
     )
 
     wait_captura_true = upload_staging_data_to_gcs.map(
@@ -91,6 +92,7 @@ with Flow("SMTR: SERPRO - Captura/Tratamento") as serpro_captura:
         partitions=partitions,
         timestamp=timestamps,
         error=errors,
+        bucket_name=unmapped(constants.INFRACAO_PRIVATE_BUCKET.value),
     )
 
     wait_run_dbt_model = run_dbt_model(
