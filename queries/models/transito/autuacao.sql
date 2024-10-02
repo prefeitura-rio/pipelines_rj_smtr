@@ -54,8 +54,53 @@ WITH citran AS (
         WHERE
             data BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
     {% endif %}
+),
+serpro AS (
+    SELECT
+        data,
+        id_auto_infracao,
+        datetime_autuacao,
+        data_limite_defesa_previa,
+        data_limite_recurso,
+        descricao_situacao_autuacao,
+        IF(status_infracao != "", status_infracao, NULL) AS status_infracao,
+        IF(codigo_enquadramento != "", codigo_enquadramento, NULL) AS codigo_enquadramento,
+        IF(tipificacao_resumida != "", tipificacao_resumida, NULL) AS tipificacao_resumida,
+        IF(pontuacao != "", pontuacao, NULL) AS pontuacao,
+        NULL AS gravidade,
+        NULL AS amparo_legal,
+        IF(tipo_veiculo != "", tipo_veiculo, NULL) AS tipo_veiculo,
+        IF(descricao_veiculo != "", descricao_veiculo, NULL) AS descricao_veiculo,
+        NULL AS placa_veiculo,
+        NULL AS ano_fabricacao_veiculo,
+        NULL AS ano_modelo_veiculo,
+        NULL AS cor_veiculo,
+        IF(especie_veiculo != "", especie_veiculo, NULL) AS especie_veiculo,
+        NULL AS uf_infrator,
+        NULL AS uf_principal_condutor,
+        IF(uf_proprietario != "", uf_proprietario, NULL) AS uf_proprietario,
+        IF(cep_proprietario != "", cep_proprietario, NULL) AS cep_proprietario,
+        valor_infracao,
+        valor_pago,
+        SAFE_CAST(NULL AS STRING) AS data_pagamento,
+        COALESCE(id_autuador, "260010") AS id_autuador,
+        IF(descricao_autuador != "", descricao_autuador, NULL) AS descricao_autuador,
+        COALESCE(id_municipio_autuacao,"6001") AS id_municipio_autuacao,
+        COALESCE(descricao_municipio, "RIO DE JANEIRO") AS descricao_municipio,
+        COALESCE(uf_autuacao,"RJ") AS uf_autuacao,
+        NULL AS cep_autuacao,
+        NULL AS tile_autuacao,
+        processo_defesa_autuacao,
+        recurso_penalidade_multa,
+        processo_troca_real_infrator,
+        IF(status_sne = "1.0", TRUE, FALSE) AS status_sne,
+        "SERPRO" AS fonte
+    FROM {{ ref('autuacao_serpro') }}
+    {% if is_incremental() %}
+        WHERE
+            data BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
+    {% endif %}
 )
-
 SELECT
     data,
     TO_HEX(SHA256(CONCAT(GENERATE_UUID(), id_auto_infracao))) AS id_autuacao,
@@ -98,3 +143,46 @@ SELECT
     fonte
 FROM
     citran
+UNION ALL
+SELECT
+    data,
+    TO_HEX(SHA256(CONCAT(GENERATE_UUID(), id_auto_infracao))) AS id_autuacao,
+    id_auto_infracao,
+    datetime_autuacao,
+    data_limite_defesa_previa,
+    data_limite_recurso,
+    descricao_situacao_autuacao,
+    status_infracao,
+    codigo_enquadramento,
+    tipificacao_resumida,
+    pontuacao,
+    gravidade,
+    amparo_legal,
+    tipo_veiculo,
+    descricao_veiculo,
+    placa_veiculo,
+    ano_fabricacao_veiculo,
+    ano_modelo_veiculo,
+    cor_veiculo,
+    especie_veiculo,
+    uf_infrator,
+    uf_principal_condutor,
+    uf_proprietario,
+    cep_proprietario,
+    valor_infracao,
+    valor_pago,
+    data_pagamento,
+    id_autuador,
+    descricao_autuador,
+    id_municipio_autuacao,
+    descricao_municipio,
+    uf_autuacao,
+    cep_autuacao,
+    tile_autuacao,
+    processo_defesa_autuacao,
+    recurso_penalidade_multa,
+    processo_troca_real_infrator,
+    status_sne,
+    fonte
+FROM
+    serpro
