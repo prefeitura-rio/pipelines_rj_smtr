@@ -79,7 +79,7 @@ serpro AS (
         uf_infrator,
         uf_principal_condutor,
         IF(uf_proprietario != "", uf_proprietario, NULL) AS uf_proprietario,
-        IF(cep_proprietario != "", cep_proprietario, NULL) AS cep_proprietario,
+        NULL AS cep_proprietario,
         valor_infracao,
         valor_pago,
         SAFE_CAST(NULL AS STRING) AS data_pagamento,
