@@ -100,6 +100,7 @@ with Flow("SMTR: SERPRO - Captura/Tratamento") as serpro_captura:
         dataset_id=constants.AUTUACAO_MATERIALIZACAO_DATASET_ID.value,
         table_id=constants.AUTUACAO_MATERIALIZACAO_TABLE_ID.value,
         _vars=[{"date_range_start": start_date, "date_range_end": end_date}],
+        upstream=True,
         upstream_tasks=[wait_captura_true],
     )
 
