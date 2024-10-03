@@ -28,7 +28,6 @@ SELECT
   SAFE_CAST(JSON_VALUE(content,'$.uf_infrator') AS STRING) AS uf_infrator,
   SAFE_CAST(JSON_VALUE(content,'$.uf_princ_cond') AS STRING) AS uf_principal_condutor,
   SAFE_CAST(JSON_VALUE(content,'$.uf_prop_orig') AS STRING) AS uf_proprietario,
-  SAFE_CAST(JSON_VALUE(content,'$.cep_proprietario') AS STRING) AS cep_proprietario,
   SAFE_CAST(JSON_VALUE(content,'$.auinf_infracao_valor') AS NUMERIC) AS valor_infracao,
   SAFE_CAST(JSON_VALUE(content,'$.pag_valor') AS NUMERIC) AS valor_pago,
   SAFE_CAST(JSON_VALUE(content,'$.auinf_id_orgao') AS STRING) AS id_autuador,
