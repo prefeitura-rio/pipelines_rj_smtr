@@ -2189,5 +2189,9 @@ with Flow(
     save_redis(key="br_rj_riodejaneiro_rdo.rdo_registros_stpl", files=files_rdo)
     save_redis(key="br_rj_riodejaneiro_rdo.rho_registros_stpl", files=files_rho)
 
-
+set_redis_rdo.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
+set_redis_rdo.run_config = KubernetesRun(
+    image=smtr_constants.DOCKER_IMAGE.value,
+    labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
+)
 set_redis_rdo.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
