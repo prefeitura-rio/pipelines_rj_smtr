@@ -67,8 +67,9 @@ with Flow("SMTR: SERPRO - Captura/Tratamento") as serpro_captura:
     transform_raw_to_nested_structure_results = transform_raw_to_nested_structure.map(
         raw_filepath=raw_filepaths,
         filepath=local_filepaths,
-        primary_key=constants.SERPRO_CAPTURE_PARAMS.value["primary_key"],
+        primary_key=unmapped(constants.SERPRO_CAPTURE_PARAMS.value["primary_key"]),
         timestamp=timestamps,
+        reader_args=unmapped(constants.SERPRO_CAPTURE_PARAMS.value["pre_treatment_reader_args"]),
         error=unmapped(None),
     )
 
