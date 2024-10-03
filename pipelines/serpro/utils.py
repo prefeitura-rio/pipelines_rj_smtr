@@ -10,10 +10,12 @@ from pipelines.utils.utils import log
 def setup_serpro(secret_path: str = "radar_serpro"):
     data = get_secret(secret_path=secret_path)["setup.sh"]
     log("Got Secret")
-    os.popen("touch setup.sh")
-    with open("setup.sh", "w") as f:
+
+    path = "/app/setup.sh"
+    os.popen(f"touch {path}")
+    with open(path, "w") as f:
         f.write(data)
-    return os.popen("sh setup.sh")
+    return os.popen(f"sh {path}")
 
 
 def handler_setup_serpro(obj, old_state: State, new_state: State) -> State:
