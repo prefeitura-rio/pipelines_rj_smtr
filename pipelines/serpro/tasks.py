@@ -18,7 +18,7 @@ def wait_sleeping(interval_seconds: int = 54000):
     sleep(interval_seconds)
 
 
-@task(checkpoint=False, max_retries=5, retry_delay=timedelta(seconds=30))
+@task(checkpoint=False, max_retries=10, retry_delay=timedelta(seconds=60))
 def get_db_object(secret_path="radar_serpro", environment: str = "dev"):
     jar_path = get_secret(secret_path=secret_path, environment=environment)["jars"]
 
