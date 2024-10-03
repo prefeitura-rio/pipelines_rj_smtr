@@ -18,3 +18,5 @@ RUN python3 -m pip install --no-cache-dir -U "pip>=21.2.4" "prefect==$PREFECT_VE
 WORKDIR /app
 COPY . .
 RUN python3 -m pip install --prefer-binary --no-cache-dir -U .
+WORKDIR /app/queries
+RUN dbt deps
