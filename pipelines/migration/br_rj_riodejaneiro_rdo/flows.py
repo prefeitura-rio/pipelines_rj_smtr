@@ -86,6 +86,7 @@ with Flow(
             upstream=True,
             _vars=dbt_vars,
             flags="--full-refresh",
+            exclude="+consorcios",
         )
         set_last_run_timestamp(
             dataset_id=dataset_id,
@@ -100,6 +101,7 @@ with Flow(
             table_id=table_id,
             upstream=True,
             _vars=dbt_vars,
+            exclude="+consorcios",
         )
         set_last_run_timestamp(
             dataset_id=dataset_id,
