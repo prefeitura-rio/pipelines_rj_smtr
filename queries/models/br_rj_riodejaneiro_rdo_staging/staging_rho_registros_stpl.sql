@@ -1,21 +1,22 @@
 {{
-  config(
-    alias='rho_registros_stpl',
-  )
+    config(
+        alias="rho_registros_stpl",
+    )
 }}
 
-SELECT
-    SAFE_CAST(operadora AS STRING) operadora,
-    SAFE_CAST(linha AS STRING) linha,
-    SAFE_CAST(data_transacao AS DATE) data_transacao,
-    -- SAFE_CAST(PARSE_DATETIME("%Y-%m-%d", data_transacao) AS DATETIME) data_transacao,
-    SAFE_CAST(hora_transacao AS INT64) hora_transacao,
-    SAFE_CAST(total_gratuidades AS INT64) total_gratuidades,
-    SAFE_CAST(total_pagantes AS INT64) total_pagantes,
-    SAFE_CAST(DATETIME(TIMESTAMP(timestamp_captura), "America/Sao_Paulo") AS DATETIME) timestamp_captura,
-    SAFE_CAST(ano AS INT64) ano,
-    SAFE_CAST(mes AS INT64) mes,
-    SAFE_CAST(dia AS INT64) dia,
-    DATE(CONCAT(ano,'-', mes, '-', dia)) data_particao
-from
-    {{ source("br_rj_riodejaneiro_rdo_staging", "rho5_registros_stpl") }} as t
+select
+    safe_cast(operadora as string) operadora,
+    safe_cast(linha as string) linha,
+    safe_cast(data_transacao as date) data_transacao,
+    safe_cast(hora_transacao as int64) hora_transacao,
+    safe_cast(total_gratuidades as int64) total_gratuidades,
+    safe_cast(total_pagantes as int64) total_pagantes,
+    safe_cast(codigo as string) codigo,
+    safe_cast(
+        datetime(timestamp(timestamp_captura), "America/Sao_Paulo") as datetime
+    ) timestamp_captura,
+    safe_cast(ano as int64) ano,
+    safe_cast(mes as int64) mes,
+    safe_cast(dia as int64) dia,
+    date(concat(ano, '-', mes, '-', dia)) data_particao
+from {{ source("br_rj_riodejaneiro_rdo_staging", "rho_registros_stpl") }} as t
