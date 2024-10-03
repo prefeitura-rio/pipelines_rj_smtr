@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import csv
-import os
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from time import sleep
 
@@ -9,7 +8,6 @@ from prefect import task
 
 from pipelines.serpro.constants import constants
 from pipelines.utils.jdbc import JDBC
-from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import log
 
 
@@ -18,13 +16,8 @@ def wait_sleeping(interval_seconds: int = 54000):
     sleep(interval_seconds)
 
 
-@task(checkpoint=False, max_retries=3, retry_delay=timedelta(seconds=20))
+@task(checkpoint=False)
 def get_db_object(secret_path="radar_serpro", environment: str = "dev"):
-    jar_path = get_secret(secret_path=secret_path, environment=environment)["jars"]
-
-    if not os.path.exists(jar_path):
-        raise Exception(f"Arquivo JAR '{jar_path}' não encontrado.")
-
     return JDBC(db_params_secret_path=secret_path, environment=environment)
 
 
