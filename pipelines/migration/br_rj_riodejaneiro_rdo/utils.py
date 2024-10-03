@@ -5,6 +5,7 @@ General purpose functions for the br_rj_riodejaneiro_rdo project
 
 from datetime import datetime, timedelta
 
+import pandas as pd
 from prefect.schedules import Schedule
 from prefect.schedules.clocks import IntervalClock
 from pytz import timezone
@@ -88,3 +89,30 @@ def generate_ftp_schedules(
                 )
             )
     return Schedule(clocks)
+
+
+def read_raw_rdo(raw_filepath: str) -> pd.DataFrame:
+    """
+    Cria um DataFrame a partir arquivo csv usando o encoding utf-8 ou latin-1
+
+    Args:
+        raw_filepath (str): caminho do arquivo csv
+
+    Returns:
+        DataFrame: DataFrame com os dados do csv
+    """
+    try:
+        return pd.read_csv(
+            raw_filepath,
+            header=None,
+            delimiter=";",
+            index_col=False,
+        )
+    except UnicodeDecodeError:
+        return pd.read_csv(
+            raw_filepath,
+            header=None,
+            delimiter=";",
+            index_col=False,
+            encoding="latin-1",
+        )
