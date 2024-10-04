@@ -18,18 +18,29 @@ WITH citran AS (
         data_limite_recurso,
         situacao_atual AS descricao_situacao_autuacao,
         IF(status_infracao != "", status_infracao, NULL) AS status_infracao,
-        IF(codigo_enquadramento != "", codigo_enquadramento, NULL) AS codigo_enquadramento,
+        SUBSTR(REPLACE(codigo_enquadramento, '-', ''), 1, 4) AS codigo_enquadramento,
         IF(tipificacao_resumida != "", tipificacao_resumida, NULL) AS tipificacao_resumida,
-        IF(pontuacao != "", pontuacao, NULL) AS pontuacao,
-        SAFE_CAST(NULL AS STRING) AS gravidade,
+        SAFE_CAST(SUBSTR(REGEXP_EXTRACT(pontuacao, r'\d+'), 2) AS STRING) AS pontuacao,
+        CASE
+            WHEN INITCAP(REGEXP_REPLACE(pontuacao, r'\d+', '')) = 'Media' THEN 'Média'
+            WHEN INITCAP(REGEXP_REPLACE(pontuacao, r'\d+', '')) = 'Gravissima' THEN 'Gravíssima'
+            ELSE INITCAP(REGEXP_REPLACE(pontuacao, r'\d+', ''))
+        END AS gravidade,
         SAFE_CAST(NULL AS STRING) AS amparo_legal,
-        IF(tipo_veiculo != "", tipo_veiculo, NULL) AS tipo_veiculo,
+        INITCAP(tipo_veiculo) AS tipo_veiculo,
         IF(descricao_veiculo != "", descricao_veiculo, NULL) AS descricao_veiculo,
         SAFE_CAST(NULL AS STRING) AS placa_veiculo,
         SAFE_CAST(NULL AS STRING) AS ano_fabricacao_veiculo,
         SAFE_CAST(NULL AS STRING) AS ano_modelo_veiculo,
         SAFE_CAST(NULL AS STRING) AS cor_veiculo,
-        IF(especie_veiculo != "", especie_veiculo, NULL) AS especie_veiculo,
+        CASE
+            WHEN INITCAP(REGEXP_REPLACE(especie_veiculo, r'\d+', '')) IN ('Misto', '0Misto') THEN 'Misto'
+            WHEN INITCAP(REGEXP_REPLACE(especie_veiculo, r'\d+', '')) IN ('Passageir', '0Passageir', 'Passageiro', '0Passageiro') THEN 'Passageiro'
+            WHEN INITCAP(REGEXP_REPLACE(especie_veiculo, r'\d+', '')) IN ('Tracao', '0Tracao', 'Tracao') THEN 'Tração'
+            WHEN INITCAP(REGEXP_REPLACE(especie_veiculo, r'\d+', '')) IN ('Nao Inform', '0Nao Inform', 'Nao Informado', '0Nao Informado') THEN 'Não informado'
+            WHEN INITCAP(REGEXP_REPLACE(especie_veiculo, r'\d+', '')) IN ('Carga', '0Carga') THEN 'Carga'
+            ELSE 'Inválido'
+        END AS especie_veiculo,
         SAFE_CAST(NULL AS STRING) AS uf_infrator,
         SAFE_CAST(NULL AS STRING) AS uf_principal_condutor,
         IF(uf_proprietario != "", uf_proprietario, NULL) AS uf_proprietario,
@@ -66,16 +77,16 @@ serpro AS (
         IF(status_infracao != "", status_infracao, NULL) AS status_infracao,
         IF(codigo_enquadramento != "", codigo_enquadramento, NULL) AS codigo_enquadramento,
         IF(tipificacao_resumida != "", tipificacao_resumida, NULL) AS tipificacao_resumida,
-        IF(pontuacao != "", pontuacao, NULL) AS pontuacao,
+        SUBSTR(pontuacao, 1, 1) AS pontuacao,
         gravidade,
         amparo_legal,
-        IF(tipo_veiculo != "", tipo_veiculo, NULL) AS tipo_veiculo,
+        INITCAP(tipo_veiculo) AS tipo_veiculo,
         IF(descricao_veiculo != "", descricao_veiculo, NULL) AS descricao_veiculo,
         placa_veiculo,
         ano_fabricacao_veiculo,
         ano_modelo_veiculo,
         cor_veiculo,
-        IF(especie_veiculo != "", especie_veiculo, NULL) AS especie_veiculo,
+        especie_veiculo,
         uf_infrator,
         uf_principal_condutor,
         IF(uf_proprietario != "", uf_proprietario, NULL) AS uf_proprietario,
