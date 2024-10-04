@@ -16,7 +16,7 @@ WITH
     {{ ref('sumario_servico_dia_historico')}}
     -- `rj-smtr.dashboard_subsidio_sppo.sumario_servico_dia_historico`
   WHERE
-    data < "2024-08-16" ),
+    data < DATE("{{ var("DATA_SUBSIDIO_V9_INICIO") }}") ),
   planejada AS (
   SELECT
     DISTINCT data,
@@ -27,7 +27,7 @@ WITH
     {{ ref('viagem_planejada')}}
     -- `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
   WHERE
-    data >= "2024-08-16"
+    data >= DATE("{{ var("DATA_SUBSIDIO_V9_INICIO") }}")
     AND (id_tipo_trajeto = 0
       OR id_tipo_trajeto IS NULL)
     AND FORMAT_TIME("%T", TIME(faixa_horaria_inicio)) != "00:00:00" ),
@@ -40,7 +40,7 @@ WITH
     vista,
     viagens_dia AS viagens,
     CASE
-      WHEN data >= "2024-09-01" THEN COALESCE(km_apurada_registrado_com_ar_inoperante,0) + COALESCE(km_apurada_autuado_ar_inoperante,0) + COALESCE(km_apurada_autuado_seguranca,0) + COALESCE(km_apurada_autuado_limpezaequipamento,0) + COALESCE(km_apurada_licenciado_sem_ar_n_autuado,0) + COALESCE(km_apurada_licenciado_com_ar_n_autuado,0) + COALESCE(km_apurada_sem_transacao, 0)
+      WHEN data >= DATE("{{ var("DATA_SUBSIDIO_V9A_INICIO") }}") THEN COALESCE(km_apurada_registrado_com_ar_inoperante,0) + COALESCE(km_apurada_autuado_ar_inoperante,0) + COALESCE(km_apurada_autuado_seguranca,0) + COALESCE(km_apurada_autuado_limpezaequipamento,0) + COALESCE(km_apurada_licenciado_sem_ar_n_autuado,0) + COALESCE(km_apurada_licenciado_com_ar_n_autuado,0) + COALESCE(km_apurada_sem_transacao, 0)
       ELSE COALESCE(km_apurada_registrado_com_ar_inoperante,0) + COALESCE(km_apurada_autuado_ar_inoperante,0) + COALESCE(km_apurada_autuado_seguranca,0) + COALESCE(km_apurada_autuado_limpezaequipamento,0) + COALESCE(km_apurada_licenciado_sem_ar_n_autuado,0) + COALESCE(km_apurada_licenciado_com_ar_n_autuado,0) + COALESCE(km_apurada_sem_transacao, 0) + COALESCE(km_apurada_n_vistoriado, 0) + COALESCE(km_apurada_n_licenciado, 0)
   END
     AS km_apurada,

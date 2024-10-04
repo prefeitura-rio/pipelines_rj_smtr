@@ -123,6 +123,8 @@ vars:
   DATA_SUBSIDIO_V8_INICIO: "2024-07-19"
   # Feature Apuração por faixa horária
   DATA_SUBSIDIO_V9_INICIO: "2024-08-16"
+  # Feature desconsideração de km não vistoriado e não licenciado
+  DATA_SUBSIDIO_V9A_INICIO: "2024-09-01"
   # valor_subsidio: "`rj-smtr-dev.projeto_subsidio_sppo.valor_subsidio`"
 
   # Recursos #
