@@ -43,7 +43,6 @@ def get_file_paths_from_ftp(
     files_updated_times = {
         file: datetime.timestamp(parser.parse(info["modify"]))
         for file, info in ftp_client.mlsd(transport_mode)
-        if info["size"] != "0"
     }
     # Get files modified inside interval
     files = []

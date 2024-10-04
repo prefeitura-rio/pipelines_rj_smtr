@@ -129,7 +129,7 @@ with Flow(
     materialize = Parameter("materialize", False)
 
     rename_run = rename_current_flow_run_now_time(
-        prefix=f"{captura_sppo_rho.name} FTP - {transport_mode.run()}-{report_type.run()} ",
+        prefix="RHO - Captura FTP - " + transport_mode + "-" + report_type + " ",
         now_time=get_current_timestamp(),
         wait=None,
     )
@@ -176,7 +176,7 @@ with Flow(
     materialize = Parameter("materialize", False)
 
     rename_run = rename_current_flow_run_now_time(
-        prefix=f"{captura_sppo_rdo.name} FTP - {transport_mode.run()}-{report_type.run()} ",
+        prefix="RHO - Captura FTP - " + transport_mode + "-" + report_type + " ",
         now_time=get_current_timestamp(),
         wait=None,
     )
