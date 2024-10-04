@@ -40,7 +40,7 @@ WITH
     vista,
     viagens_dia AS viagens,
     CASE
-      WHEN data >= DATE("{{ var("DATA_SUBSIDIO_V9A_INICIO") }}") THEN COALESCE(km_apurada_registrado_com_ar_inoperante,0) + COALESCE(km_apurada_autuado_ar_inoperante,0) + COALESCE(km_apurada_autuado_seguranca,0) + COALESCE(km_apurada_autuado_limpezaequipamento,0) + COALESCE(km_apurada_licenciado_sem_ar_n_autuado,0) + COALESCE(km_apurada_licenciado_com_ar_n_autuado,0) + COALESCE(km_apurada_sem_transacao, 0)
+      WHEN data >= DATE("{{ var("DATA_SUBSIDIO_V10_INICIO") }}") THEN COALESCE(km_apurada_registrado_com_ar_inoperante,0) + COALESCE(km_apurada_autuado_ar_inoperante,0) + COALESCE(km_apurada_autuado_seguranca,0) + COALESCE(km_apurada_autuado_limpezaequipamento,0) + COALESCE(km_apurada_licenciado_sem_ar_n_autuado,0) + COALESCE(km_apurada_licenciado_com_ar_n_autuado,0) + COALESCE(km_apurada_sem_transacao, 0)
       ELSE COALESCE(km_apurada_registrado_com_ar_inoperante,0) + COALESCE(km_apurada_autuado_ar_inoperante,0) + COALESCE(km_apurada_autuado_seguranca,0) + COALESCE(km_apurada_autuado_limpezaequipamento,0) + COALESCE(km_apurada_licenciado_sem_ar_n_autuado,0) + COALESCE(km_apurada_licenciado_com_ar_n_autuado,0) + COALESCE(km_apurada_sem_transacao, 0) + COALESCE(km_apurada_n_vistoriado, 0) + COALESCE(km_apurada_n_licenciado, 0)
   END
     AS km_apurada,

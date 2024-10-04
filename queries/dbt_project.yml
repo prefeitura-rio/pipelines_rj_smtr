@@ -124,7 +124,7 @@ vars:
   # Feature Apuração por faixa horária
   DATA_SUBSIDIO_V9_INICIO: "2024-08-16"
   # Feature desconsideração de km não vistoriado e não licenciado
-  DATA_SUBSIDIO_V9A_INICIO: "2024-09-01"
+  DATA_SUBSIDIO_V10_INICIO: "2024-09-01"
   # valor_subsidio: "`rj-smtr-dev.projeto_subsidio_sppo.valor_subsidio`"
 
   # Recursos #
@@ -323,3 +323,6 @@ models:
       staging:
         +materialized: view
         +schema: transito_staging
+    monitoramento:
+      +materialized: view
+      +schema: monitoramento
