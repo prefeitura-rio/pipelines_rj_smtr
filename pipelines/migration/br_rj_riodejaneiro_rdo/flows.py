@@ -239,6 +239,7 @@ with Flow(
             "transport_mode": "STPL",
             "table_id": constants.STPL_RHO_TABLE_ID.value,
         },
+        upstream_tasks=[wait_captura_rho_sppo],
     )
 
     wait_captura_rho_stpl = wait_for_flow_run(
@@ -268,9 +269,9 @@ with Flow(
         labels=LABELS,
         parameters={
             "transport_mode": "STPL",
-            "table_id": constants.STPL_RHO_TABLE_ID.value,
+            "table_id": constants.STPL_RDO_TABLE_ID.value,
         },
-        upstream_tasks=[wait_captura_rho_sppo, run_captura_rho_stpl],
+        upstream_tasks=[wait_captura_rdo_sppo],
     )
 
     wait_captura_rdo_stpl = wait_for_flow_run(
