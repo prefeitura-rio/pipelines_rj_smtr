@@ -269,7 +269,7 @@ with Flow(
         labels=LABELS,
         parameters={
             "transport_mode": "STPL",
-            "table_id": constants.STPL_RHO_TABLE_ID.value,
+            "table_id": constants.STPL_RDO_TABLE_ID.value,
         },
         upstream_tasks=[wait_captura_rdo_sppo],
     )
