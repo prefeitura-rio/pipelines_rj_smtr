@@ -108,7 +108,7 @@ def run_dbt_tests(
             model += f".{table_id}"
 
     if model:
-        run_command += f" --select "
+        run_command += " --select "
         if upstream:
             run_command += "+"
         run_command += model
