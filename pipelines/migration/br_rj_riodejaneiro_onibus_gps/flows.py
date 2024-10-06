@@ -271,8 +271,6 @@ with Flow(
     # code_owners=["caio", "fernanda", "boris", "rodrigo"],
 ) as captura_sppo_v2:
     version = Parameter("version", default=2)
-    fail = Parameter("fail", default=False)
-    task(lambda x: exec('raise(Exception("teste falha"))') if x else "foi")(x=fail)
 
     # SETUP #
     timestamp = get_current_timestamp()
