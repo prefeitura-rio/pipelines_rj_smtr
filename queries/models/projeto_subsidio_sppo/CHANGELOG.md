@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Alterados os tipo_os de `2024-09-13` a `2024-09-22` para `Rock in Rio` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/264)
+- Alterados os tipo_os de `13/09/24` a `15/09/24` e `19/09/24` a `22/09/24` para `Rock in Rio` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/264)
 
 ## [9.0.3] - 2024-09-23
 
