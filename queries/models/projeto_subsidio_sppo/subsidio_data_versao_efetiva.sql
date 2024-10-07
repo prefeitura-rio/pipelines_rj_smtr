@@ -348,12 +348,8 @@ WITH
       WHEN data = DATE(2024,05,05) THEN "Madonna 2024-05-05"
       WHEN data = DATE(2024,08,18) THEN "CNU" -- Processo.Rio MTR-PRO-2024/13252
       WHEN data = DATE(2024,09,13) THEN "Rock in Rio"
-      WHEN data = DATE(2024,09,14) THEN "Rock in Rio"
-      WHEN data = DATE(2024,09,15) THEN "Rock in Rio"
-      WHEN data = DATE(2024,09,19) THEN "Rock in Rio"
-      WHEN data = DATE(2024,09,20) THEN "Rock in Rio"
-      WHEN data = DATE(2024,09,21) THEN "Rock in Rio"
-      WHEN data = DATE(2024,09,22) THEN "Rock in Rio"
+      WHEN data BETWEEN DATE(2024,09,14) AND DATE(2024,09,15) THEN "Verão + Rock in Rio"
+      WHEN data BETWEEN DATE(2024,09,19) AND DATE(2024,09,22) THEN "Rock in Rio"
       ELSE "Regular"
     END AS tipo_os,
   FROM UNNEST(GENERATE_DATE_ARRAY("{{var('DATA_SUBSIDIO_V6_INICIO')}}", "2024-12-31")) AS data),
