@@ -350,10 +350,10 @@ WITH
       WHEN data = DATE(2024,09,13) THEN "Rock in Rio"
       WHEN data = DATE(2024,09,14) THEN "Rock in Rio"
       WHEN data = DATE(2024,09,15) THEN "Rock in Rio"
-      WHEN data = DATE(2024,09,19) THEN "Rock in Rio" 
-      WHEN data = DATE(2024,09,20) THEN "Rock in Rio" 
-      WHEN data = DATE(2024,09,21) THEN "Rock in Rio" 
-      WHEN data = DATE(2024,09,22) THEN "Rock in Rio" 
+      WHEN data = DATE(2024,09,19) THEN "Rock in Rio"
+      WHEN data = DATE(2024,09,20) THEN "Rock in Rio"
+      WHEN data = DATE(2024,09,21) THEN "Rock in Rio"
+      WHEN data = DATE(2024,09,22) THEN "Rock in Rio"
       ELSE "Regular"
     END AS tipo_os,
   FROM UNNEST(GENERATE_DATE_ARRAY("{{var('DATA_SUBSIDIO_V6_INICIO')}}", "2024-12-31")) AS data),
