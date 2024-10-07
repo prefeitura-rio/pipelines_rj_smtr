@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.0.4] - 2024-09-23
+
+### Alterado
+
+- Alterados os tipo_os de `2024-09-13` a `2024-09-22` para `Rock in Rio` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/264)
+
 ## [9.0.3] - 2024-09-23
 
 ### Alterado
