@@ -2,6 +2,11 @@
 
 ## [1.3.0] - 2024-09-10
 
+### Alterado
+- Adiciona TEC no modelo `operadoras.sql`
+
+## [1.3.0] - 2024-09-10
+
 ### Adicionado
 - Cria modelo `servico_operadora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/191)
 
