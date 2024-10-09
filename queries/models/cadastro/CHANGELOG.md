@@ -1,5 +1,10 @@
 # Changelog - cadastro
 
+## [1.3.1] - 2024-10-08
+
+### Alterado
+- Adiciona TEC no modelo `operadoras.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/265)
+
 ## [1.3.0] - 2024-09-10
 
 ### Adicionado
