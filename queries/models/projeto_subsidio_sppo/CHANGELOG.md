@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.0.4] - 2024-10-08
+
+### Corrigido
+
+- Corrigido a duplicação de viagens no modelo `viagens_planejadas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/266)
+
 ## [9.0.3] - 2024-09-23
 
 ### Alterado
