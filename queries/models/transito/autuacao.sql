@@ -18,7 +18,7 @@ WITH citran AS (
         data_limite_recurso,
         situacao_atual AS descricao_situacao_autuacao,
         IF(status_infracao != "", status_infracao, NULL) AS status_infracao,
-        SUBSTR(REPLACE(codigo_enquadramento, '-', ''), 1, 4) AS codigo_enquadramento,
+        REPLACE(codigo_enquadramento, '-', '') AS codigo_enquadramento,
         IF(tipificacao_resumida != "", tipificacao_resumida, NULL) AS tipificacao_resumida,
         SAFE_CAST(SUBSTR(REGEXP_EXTRACT(pontuacao, r'\d+'), 2) AS STRING) AS pontuacao,
         CASE
@@ -53,7 +53,7 @@ WITH citran AS (
         "6001" AS id_municipio_autuacao,
         "RIO DE JANEIRO" AS descricao_municipio,
         "RJ" AS uf_autuacao,
-        NULL AS cep_autuacao, -- não padronizado na citran
+        endereco_autuacao AS cep_autuacao,
         NULL AS tile_autuacao,
         IF(processo_defesa_autuacao != "00000000" AND processo_defesa_autuacao != "" , processo_defesa_autuacao, NULL) AS processo_defesa_autuacao,
         IF(recurso_penalidade_multa != "00000000" AND recurso_penalidade_multa != "" , recurso_penalidade_multa, NULL) AS recurso_penalidade_multa,
@@ -99,7 +99,11 @@ serpro AS (
         COALESCE(id_municipio_autuacao,"6001") AS id_municipio_autuacao,
         COALESCE(descricao_municipio, "RIO DE JANEIRO") AS descricao_municipio,
         COALESCE(uf_autuacao,"RJ") AS uf_autuacao,
-        NULL AS cep_autuacao,
+        CASE
+            WHEN logradouro_autuacao IS NOT NULL THEN
+                RTRIM(REGEXP_REPLACE(CONCAT(logradouro_autuacao, ' ', bairro_autuacao, ' ', complemento), r'\s+', ' '))
+            ELSE NULL
+        END AS cep_autuacao,
         NULL AS tile_autuacao,
         processo_defesa_autuacao,
         recurso_penalidade_multa,
