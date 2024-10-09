@@ -270,6 +270,7 @@ WITH
         sentido,
         trip_id_planejado,
         trip_id,
+        shape_id,
     FROM
       {{ ref("ordem_servico_trips_shapes_gtfs") }}
     --   rj-smtr.gtfs.ordem_servico_trips_shapes
@@ -462,7 +463,7 @@ LEFT JOIN
 USING (feed_start_date, feed_version, tipo_dia, tipo_os)
 LEFT JOIN
   trips AS t
-USING (feed_start_date, feed_version, tipo_dia, tipo_os, servico, sentido)
+USING (feed_start_date, feed_version, tipo_dia, tipo_os, servico, sentido, shape_id)
 WHERE
   data = DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)
   AND faixa_horaria_inicio != "24:00:00"
