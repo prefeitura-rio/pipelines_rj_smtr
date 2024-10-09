@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """Module to interact with GCP"""
-import csv
+# import csv
 import inspect
 import io
 import zipfile
 from dataclasses import dataclass
-from datetime import datetime
+
+# from datetime import datetime
 from mimetypes import MimeTypes
 from pathlib import Path
 from typing import Type, TypeVar, Union
@@ -13,11 +14,13 @@ from typing import Type, TypeVar, Union
 import basedosdados as bd
 from google.api_core.exceptions import NotFound
 from google.cloud import bigquery, storage
-from google.cloud.bigquery.external_config import HivePartitioningOptions
+
+# from google.cloud.bigquery.external_config import HivePartitioningOptions
 from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.constants import constants
-from pipelines.utils.fs import create_capture_filepath, create_partition
+
+# from pipelines.utils.fs import create_capture_filepath, create_partition
 
 T = TypeVar("T")
 # Set BD config to run on cloud #
@@ -32,13 +35,19 @@ class GCPBase:
     env: str
 
     def __post_init__(self):
-        if self.bucket_names is None:
-            self.bucket_name = constants.DEFAULT_BUCKET_NAME.value[self.env]
-        else:
-            self.bucket_name = self.bucket_names[self.env]
+        self.set_env(env=self.env)
 
     def __getitem__(self, key):
         return self.__dict__[key]
+
+    def set_env(self, env: str):
+        self.env = env
+        if self.bucket_names is None:
+            self.bucket_name = constants.DEFAULT_BUCKET_NAME.value[env]
+        else:
+            self.bucket_name = self.bucket_names[env]
+
+        return self
 
     def client(self, service: str) -> Union[storage.Client, bigquery.Client]:
         service_map = {"storage": storage.Client, "bigquery": bigquery.Client}
@@ -282,9 +291,6 @@ class BQTable(GCPBase):
         dataset_id: str,
         table_id: str,
         bucket_names: dict = None,
-        timestamp: datetime = None,
-        partition_date_only: bool = False,
-        raw_filetype: str = "json",
     ) -> None:
         super().__init__(
             dataset_id=dataset_id,
@@ -293,109 +299,19 @@ class BQTable(GCPBase):
             env=env,
         )
 
+    def set_env(self, env: str):
+        super().set_env(env=env)
+
         self.table_full_name = (
             f"{constants.PROJECT_NAME.value[env]}.{self.dataset_id}.{self.table_id}"
         )
-        if timestamp is None:
-            self.partition = None
-            self.raw_filepath = None
-            self.source_filepath = None
-        else:
-            self.partition = create_partition(
-                timestamp=timestamp,
-                partition_date_only=partition_date_only,
-            )
-
-            filepaths = create_capture_filepath(
-                dataset_id=dataset_id,
-                table_id=table_id,
-                timestamp=timestamp,
-                raw_filetype=raw_filetype,
-                partition=self.partition,
-            )
-
-            self.raw_filepath = filepaths.get("raw")
-            self.source_filepath = filepaths.get("source")
-
-        self.timestamp = timestamp
-
-    def _create_table_schema(self) -> list[bigquery.SchemaField]:
-        log("Creating table schema...")
-        with open(self.source_filepath, "r", encoding="utf-8") as fi:
-            columns = next(csv.reader(fi))
-
-        log(f"Columns found: {columns}")
-        schema = [
-            bigquery.SchemaField(name=col, field_type="STRING", description=None) for col in columns
-        ]
-        log("Schema created!")
-        return schema
-
-    def _create_table_config(self) -> bigquery.ExternalConfig:
-        if self.source_filepath is None:
-            raise AttributeError("source_filepath is None")
-
-        external_config = bigquery.ExternalConfig("CSV")
-        external_config.options.skip_leading_rows = 1
-        external_config.options.allow_quoted_newlines = True
-        external_config.autodetect = False
-        external_config.schema = self._create_table_schema()
-        external_config.options.field_delimiter = ","
-        external_config.options.allow_jagged_rows = False
-
-        uri = f"gs://{self.bucket_name}/source/{self.dataset_id}/{self.table_id}/*"
-        external_config.source_uris = uri
-        hive_partitioning = HivePartitioningOptions()
-        hive_partitioning.mode = "STRINGS"
-        hive_partitioning.source_uri_prefix = uri.replace("*", "")
-        external_config.hive_partitioning = hive_partitioning
-
-        return external_config
-
-    def upload_raw_file(self):
-        if self.raw_filepath is None:
-            raise AttributeError("raw_filepath is None")
-
-        st_obj = self.transfer_gcp_obj(target_class=Storage)
-
-        st_obj.upload_file(
-            mode="raw",
-            filepath=self.raw_filepath,
-            partition=self.partition,
-        )
+        return self
 
     def exists(self) -> bool:
         try:
             return bool(self.client("bigquery").get_table(self.table_full_name))
         except NotFound:
             return False
-
-    def create(self, location: str = "southamerica-east1"):
-        log(f"Creating External Table: {self.table_full_name}")
-        self.append()
-        dataset_obj = self.transfer_gcp_obj(target_class=Dataset, location=location)
-        dataset_obj.create()
-
-        client = self.client("bigquery")
-
-        bq_table = bigquery.Table(self.table_full_name)
-        bq_table.description = f"staging table for `{self.table_full_name}`"
-        bq_table.external_data_configuration = self._create_table_config()
-
-        client.create_table(bq_table)
-        log("Table created!")
-
-    def append(self):
-        if self.source_filepath is None:
-            raise ValueError("source_filepath is None")
-
-        st_obj = self.transfer_gcp_obj(target_class=Storage)
-
-        st_obj.upload_file(
-            mode="source",
-            filepath=self.source_filepath,
-            partition=self.partition,
-        )
 
     def get_table_min_max_value(self, field_name: str, kind: str):
         log(f"Getting {kind} value for {self.table_id}")

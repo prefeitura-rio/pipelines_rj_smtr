@@ -173,10 +173,10 @@ def read_raw_data(filepath: str, reader_args: dict = None) -> pd.DataFrame:
 
     log(f"Reading {filetype.upper()}")
     if filetype == "json":
-        data = pd.read_json(filepath, **reader_args)
+        data = pd.read_json(filepath, chunksize=50000, **reader_args)
 
     elif filetype in ("txt", "csv"):
-        data = pd.read_csv(filepath, **reader_args)
+        data = pd.read_csv(filepath, chunksize=50000, **reader_args)
     else:
         raise NotImplementedError(
             "Unsupported raw file extension. Supported only: json, csv and txt"

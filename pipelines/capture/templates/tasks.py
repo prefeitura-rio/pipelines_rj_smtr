@@ -8,10 +8,11 @@ from typing import Any, Callable, Union
 import pandas as pd
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
-from pytz import timezone
 
+from pipelines.capture.templates.utils import Source
 from pipelines.constants import constants
-from pipelines.utils.extractors.base import DataExtractor
+
+# from pipelines.utils.extractors.base import DataExtractor
 from pipelines.utils.fs import read_raw_data, save_local_file
 from pipelines.utils.gcp import BQTable
 from pipelines.utils.incremental_capture_strategy import (
@@ -23,6 +24,12 @@ from pipelines.utils.prefect import flow_is_running_local, rename_current_flow_r
 from pipelines.utils.pretreatment import transform_to_nested_structure
 from pipelines.utils.utils import create_timestamp_captura, data_info_str
 
+# from pytz import timezone
+
+
+# from copy import deepcopy
+
+
 ############################
 # Flow Configuration Tasks #
 ############################
@@ -32,15 +39,7 @@ from pipelines.utils.utils import create_timestamp_captura, data_info_str
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
-def create_table_object(
-    env: str,
-    dataset_id: str,
-    table_id: str,
-    bucket_names: Union[None, dict],
-    timestamp: datetime,
-    partition_date_only: bool,
-    raw_filetype: str,
-) -> BQTable:
+def set_env(env: str, source: Source) -> Source:
     """
     Cria um objeto de tabela para interagir com o BigQuery
     Creates basedosdados Table object
@@ -59,16 +58,8 @@ def create_table_object(
     Returns:
         BQTable: Objeto para manipular a tabela no BigQuery
     """
-
-    return BQTable(
-        env=env,
-        dataset_id=dataset_id,
-        table_id=table_id,
-        bucket_names=bucket_names,
-        timestamp=timestamp,
-        partition_date_only=partition_date_only,
-        raw_filetype=raw_filetype,
-    )
+    # source = deepcopy(source)
+    return source.set_env(env=env)
 
 
 @task(
@@ -79,18 +70,15 @@ def rename_capture_flow(
     dataset_id: str,
     table_id: str,
     timestamp: datetime,
-    incremental_info: IncrementalInfo,
 ) -> bool:
     """
     Renomeia a run atual do Flow de captura com o formato:
-    [<timestamp> | <FULL/INCR>] <dataset_id>.<table_id>: from <valor inicial> to <valor final>
+    <dataset_id>.<table_id>: <timestamp inicial>
 
     Returns:
         bool: Se o flow foi renomeado
     """
-    name = f"[{timestamp.astimezone(tz=timezone(constants.TIMEZONE.value))} | \
-{incremental_info.execution_mode.upper()}] {dataset_id}.{table_id}: from \
-{incremental_info.start_value} to {incremental_info.end_value}"
+    name = f"{dataset_id}.{table_id}: {timestamp.isoformat()}"
     return rename_current_flow_run(name=name)
 
 
@@ -103,15 +91,22 @@ def rename_capture_flow(
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
-def get_raw_data(data_extractor: DataExtractor):
+def create_partition_filepaths(source: Source, timestamp: datetime) -> dict:
+    return source.get_filepaths(timestamp=timestamp)
+
+
+@task(
+    max_retries=constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
+)
+def get_raw_data(data_extractor: Callable):
     """
     Faz a extração dos dados raw e salva localmente
 
     Args:
-        data_extractor (DataExtractor): Extrator de dados a ser executado
+        data_extractor (Callable): função a ser executada
     """
-    data_extractor.extract()
-    data_extractor.save_raw_local()
+    data_extractor()
 
 
 ################
@@ -123,14 +118,14 @@ def get_raw_data(data_extractor: DataExtractor):
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
-def upload_raw_file_to_gcs(table: BQTable):
+def upload_raw_file_to_gcs(source: Source, raw_filepath: str, partition: str):
     """
     Sobe o arquivo raw para o GCS
 
     Args:
         table (BQTable): Objeto de tabela para BigQuery
     """
-    table.upload_raw_file()
+    source.upload_raw_file(raw_filepath=raw_filepath, partition=partition)
 
 
 @task(
@@ -192,38 +187,29 @@ def transform_raw_to_nested_structure(
     """
     data = read_raw_data(filepath=raw_filepath, reader_args=reader_args)
 
-    if print_inputs:
-        log(
-            f"""
-Received inputs:
-- timestamp:\n{timestamp}
-- data:\n{data.head()}"""
-        )
+    chunks = []
+    for chunk in data:
+        if chunk.empty:
+            log("Empty dataframe, skipping transformation...")
+            chunk = pd.DataFrame()
+        else:
+            log(f"Raw data:\n{data_info_str(chunk)}", level="info")
 
-    if data.empty:
-        log("Empty dataframe, skipping transformation...")
-        data = pd.DataFrame()
-    else:
-        log(f"Raw data:\n{data_info_str(data)}", level="info")
+            for step in pretreat_funcs:
+                chunk = step(data=chunk, timestamp=timestamp, primary_keys=primary_keys)
 
-        for step in pretreat_funcs:
-            log(f"Starting treatment step: {step.__name__}...")
-            data = step(data=data, timestamp=timestamp, primary_keys=primary_keys)
-            log(f"Step {step.__name__} finished")
+            chunk = transform_to_nested_structure(data=chunk, primary_keys=primary_keys)
 
-        log("Creating nested structure...", level="info")
+            timestamp = create_timestamp_captura(timestamp=timestamp)
+            chunk["timestamp_captura"] = timestamp
+        chunks.append(chunk)
 
-        data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
+    log(
+        f"Finished nested structure! Data: \n{data_info_str(chunk)}",
+        level="info",
+    )
 
-        timestamp = create_timestamp_captura(timestamp=timestamp)
-        data["timestamp_captura"] = timestamp
-        log(f"timestamp column = {timestamp}", level="info")
-
-        log(
-            f"Finished nested structure! Data: \n{data_info_str(data)}",
-            level="info",
-        )
-
+    data = pd.concat(chunks)
     save_local_file(filepath=source_filepath, data=data)
     log(f"Data saved in {source_filepath}")
 

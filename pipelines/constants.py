@@ -26,7 +26,7 @@ class constants(Enum):  # pylint: disable=c0103
     # PROJECT_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr"}
     # DEFAULT_BUCKET_NAME = {"dev": "br-rj-smtr-dev", "prod": "br-rj-smtr"}
     PROJECT_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr-dev"}
-    DEFAULT_BUCKET_NAME = {"dev": "br-rj-smtr-dev", "prod": "br-rj-smtr-dev"}
+    DEFAULT_BUCKET_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr-dev"}
     FILE_MAX_SIZE = 20_000
     PREFECT_DEFAULT_PROJECT = "production"
 
