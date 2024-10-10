@@ -1,68 +1,70 @@
-{{
-  config(materialized="ephemeral")
-}}
+{{ config(materialized="ephemeral") }}
 
-SELECT
-  data,
-  hora,
-  modo,
-  consorcio,
-  id_servico_jae,
-  servico_jae,
-  descricao_servico_jae,
-  sentido,
-  id_transacao,
-  tipo_transacao_smtr,
-  CASE
-    WHEN tipo_transacao_smtr = "Gratuidade" THEN tipo_gratuidade
-    WHEN tipo_transacao_smtr = "Integração" THEN "Integração"
-    WHEN tipo_transacao_smtr = "Transferência" THEN "Transferência"
-    ELSE tipo_pagamento
-  END AS tipo_transacao_detalhe_smtr,
-  tipo_gratuidade,
-  tipo_pagamento,
-  geo_point_transacao
-FROM
-  {{ ref('transacao') }}
-WHERE
-  id_servico_jae NOT IN ("140", "142")
-  AND id_operadora != "2"
-  AND (
-    modo = "BRT"
-    OR (modo = "VLT" AND data >= DATE("2024-02-24"))
-    OR (modo = "Ônibus" AND data >= DATE("2024-04-19"))
-    OR (modo = "Van" AND consorcio = "STPC" AND data >= DATE("2024-07-01"))
-    OR (modo = "Van" AND consorcio = "STPL" AND data >= DATE("2024-07-15"))
-  )
-  AND tipo_transacao IS NOT NULL
+select
+    data,
+    hora,
+    modo,
+    consorcio,
+    id_servico_jae,
+    servico_jae,
+    descricao_servico_jae,
+    sentido,
+    id_transacao,
+    tipo_transacao_smtr,
+    ifnull(
+        case
+            when tipo_transacao_smtr = "Gratuidade"
+            then tipo_gratuidade
+            when tipo_transacao_smtr = "Integração"
+            then "Integração"
+            when tipo_transacao_smtr = "Transferência"
+            then "Transferência"
+            else tipo_pagamento
+        end,
+        "Não Identificado"
+    ) as tipo_transacao_detalhe_smtr,
+    tipo_gratuidade,
+    tipo_pagamento,
+    geo_point_transacao
+from {{ ref("transacao") }}
+where
+    id_servico_jae not in ("140", "142")
+    and id_operadora != "2"
+    and (
+        modo = "BRT"
+        or (modo = "VLT" and data >= date("2024-02-24"))
+        or (modo = "Ônibus" and data >= date("2024-04-19"))
+        or (modo = "Van" and consorcio = "STPC" and data >= date("2024-07-01"))
+        or (modo = "Van" and consorcio = "STPL" and data >= date("2024-07-15"))
+    )
+    and tipo_transacao is not null
 
-UNION ALL
+union all
 
-SELECT
-  data,
-  hora,
-  modo,
-  consorcio,
-  id_servico_jae,
-  servico_jae,
-  descricao_servico_jae,
-  sentido,
-  id_transacao,
-  "RioCard" AS tipo_transacao_smtr,
-  "RioCard" AS tipo_transacao_detalhe_smtr,
-  NULL AS tipo_gratuidade,
-  "RioCard" AS tipo_pagamento,
-  ST_GEOGPOINT(longitude, latitude) AS geo_point_transacao
-FROM
-  {{ ref('transacao_riocard') }}
-WHERE
-  (id_servico_jae NOT IN ("140", "142") OR id_servico_jae IS NULL)
-  AND (id_operadora != "2" OR id_operadora IS NULL)
-  AND (
-    modo = "BRT"
-    OR (modo = "VLT" AND data >= DATE("2024-02-24"))
-    OR (modo = "Ônibus" AND data >= DATE("2024-04-19"))
-    OR (modo = "Van" AND consorcio = "STPC" AND data >= DATE("2024-07-01"))
-    OR (modo = "Van" AND consorcio = "STPL" AND data >= DATE("2024-07-15"))
-    OR modo IS NULL
-  )
+select
+    data,
+    hora,
+    modo,
+    consorcio,
+    id_servico_jae,
+    servico_jae,
+    descricao_servico_jae,
+    sentido,
+    id_transacao,
+    "RioCard" as tipo_transacao_smtr,
+    "RioCard" as tipo_transacao_detalhe_smtr,
+    null as tipo_gratuidade,
+    "RioCard" as tipo_pagamento,
+    st_geogpoint(longitude, latitude) as geo_point_transacao
+from {{ ref("transacao_riocard") }}
+where
+    (id_servico_jae not in ("140", "142") or id_servico_jae is null)
+    and (id_operadora != "2" or id_operadora is null)
+    and (
+        modo = "BRT"
+        or (modo = "VLT" and data >= date("2024-02-24"))
+        or (modo = "Ônibus" and data >= date("2024-04-19"))
+        or (modo = "Van" and consorcio = "STPC" and data >= date("2024-07-01"))
+        or (modo = "Van" and consorcio = "STPL" and data >= date("2024-07-15"))
+        or modo is null
+    )
