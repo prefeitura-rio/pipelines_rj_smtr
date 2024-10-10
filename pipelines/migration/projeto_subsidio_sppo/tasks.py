@@ -68,18 +68,29 @@ def subsidio_data_quality_check(
         request_params["end_timestamp"] = f"""{params["end_date"]} 00:00:00"""
         request_params["dataset_id"] = constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value
         if gte_result:
-            request_params["dataset_id_v2"] = constants.SUBSIDIO_SPPO_DASHBOARD_V2_DATASET_ID.value
+            constants.SUBSIDIO_SPPO_DATA_CHECKS_POS_LIST.value.pop("sumario_servico_dia")
+            constants.SUBSIDIO_SPPO_DATA_CHECKS_POS_LIST.value.pop(
+                "sumario_servico_dia_tipo_sem_glosa"
+            )
+            checks_pos_list = constants.SUBSIDIO_SPPO_DATA_CHECKS_POS_LIST.value
+            request_params["column_id"] = "km_apurada_dia"
+            request_params["dataset_id2"] = constants.SUBSIDIO_SPPO_DASHBOARD_V2_DATASET_ID.value
             request_params[
-                "table_id_v2"
+                "table_id2"
+            ] = constants.SUBSIDIO_SPPO_DASHBOARD_SUMARIO_TABLE_ID_V2.value
+            request_params[
+                "table_id3"
             ] = constants.SUBSIDIO_SPPO_DASHBOARD_SUMARIO_TABLE_ID_V2.value
         else:
-            request_params["dataset_id_v2"] = constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value
-            request_params["table_id_v2"] = constants.SUBSIDIO_SPPO_DASHBOARD_SUMARIO_TABLE_ID.value
+            constants.SUBSIDIO_SPPO_DATA_CHECKS_POS_LIST.value.pop("sumario_servico_dia_pagamento")
+            checks_pos_list = constants.SUBSIDIO_SPPO_DATA_CHECKS_POS_LIST.value
+            request_params["column_id"] = "km_apurada"
+            request_params["dataset_id2"] = constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value
+            request_params["table_id2"] = constants.SUBSIDIO_SPPO_DASHBOARD_SUMARIO_TABLE_ID.value
+            request_params["table_id3"] = "sumario_servico_dia_historico"
 
     checks_list = (
-        constants.SUBSIDIO_SPPO_DATA_CHECKS_PRE_LIST.value
-        if mode == "pre"
-        else constants.SUBSIDIO_SPPO_DATA_CHECKS_POS_LIST.value
+        constants.SUBSIDIO_SPPO_DATA_CHECKS_PRE_LIST.value if mode == "pre" else checks_pos_list
     )
 
     for (
