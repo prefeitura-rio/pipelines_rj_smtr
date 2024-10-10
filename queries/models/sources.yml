@@ -166,3 +166,9 @@ sources:
     tables:
       - name: autuacoes_citran
       - name: receita_autuacao
+
+  - name: dados_mestres
+    database: datario
+
+    tables:
+      - name: logradouro
