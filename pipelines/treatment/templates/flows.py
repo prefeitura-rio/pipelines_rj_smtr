@@ -30,12 +30,13 @@ from pipelines.utils.prefect import TypedParameter
 
 
 def create_default_materialization_flow(
-    flow_name: str,
+    selector: str,
     dataset_id: str,
     datetime_column_name: str,
     create_datetime_variables_task: FunctionTask,
     overwrite_flow_param_values: dict,
     agent_label: str,
+    incremental_delay_hours: int = 0,
     data_quality_checks: list[DataQualityCheckArgs] = None,
 ) -> Flow:
     """
@@ -57,37 +58,18 @@ def create_default_materialization_flow(
         Returns:
             Flow: Flow de materialização
     """
-    with Flow(flow_name) as default_materialization_flow:
-        # Parâmetros DBT #
-        table_id = TypedParameter(
-            name="table_id",
-            default=overwrite_flow_param_values.get("table_id"),
-            accepted_types=(str, NoneType),
-        )
-        upstream = TypedParameter(
-            name="upstream",
-            default=overwrite_flow_param_values.get("upstream", False),
-            accepted_types=bool,
-        )
-        downstream = TypedParameter(
-            name="downstream",
-            default=overwrite_flow_param_values.get("downstream", False),
-            accepted_types=bool,
-        )
-        exclude = TypedParameter(
-            name="exclude",
-            default=overwrite_flow_param_values.get("exclude"),
-            accepted_types=(str, NoneType),
-        )
+    with Flow(selector + " - materializacao") as default_materialization_flow:
+
         rebuild = TypedParameter(
             name="rebuild",
-            default=overwrite_flow_param_values.get("rebuild", False),
+            default=False,
             accepted_types=bool,
         )
 
         # Parâmetros para filtros incrementais #
 
-        # Data de referência da execução, será a data final do filtro incremental
+        # Data de referência da execução, ela subtraída pelo incremental_delay_hours
+        # será a data final do filtro incremental
         timestamp = TypedParameter(
             name="timestamp",
             default=overwrite_flow_param_values.get("timestamp"),
@@ -113,7 +95,7 @@ def create_default_materialization_flow(
         last_materialization_datetime, redis_key = get_last_materialization_datetime(
             env=env,
             dataset_id=dataset_id,
-            table_id=table_id,
+            # table_id=table_id,
             datetime_column_name=datetime_column_name,
         )
 
@@ -130,7 +112,7 @@ def create_default_materialization_flow(
 
         rename_flow_run = rename_materialization_flow(
             dataset_id=dataset_id,
-            table_id=table_id,
+            # table_id=table_id,
             timestamp=timestamp,
             datetime_start=datetime_start,
             datetime_end=datetime_end,
@@ -145,10 +127,10 @@ def create_default_materialization_flow(
 
         run_dbt = run_dbt_model_task(
             dataset_id=dataset_id,
-            table_id=table_id,
-            upstream=upstream,
-            downstream=downstream,
-            exclude=exclude,
+            # table_id=table_id,
+            # upstream=upstream,
+            # downstream=downstream,
+            # exclude=exclude,
             rebuild=rebuild,
             dbt_run_vars=dbt_run_vars,
         )
