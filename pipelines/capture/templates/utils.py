@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
+from typing import Callable
 
 import pandas as pd
 from google.cloud import bigquery
@@ -8,26 +9,28 @@ from prefeitura_rio.pipelines_utils.logging import log
 from pytz import timezone
 
 from pipelines.constants import constants
-from pipelines.utils.fs import create_capture_filepath, create_partition
 from pipelines.utils.gcp import BQTable, Dataset, Storage
+from pipelines.utils.utils import cron_date_range
 
 
-class Source(BQTable):
-    def __init__(
+class SourceTable(BQTable):
+    def __init__(  # pylint: disable=R0913
         self,
-        dataset_id: str,
+        source_name: str,
         table_id: str,
         first_timestamp: datetime,
+        schedule_cron: str,
         primary_keys: list[str] = None,
         pretreatment_reader_args: dict = None,
-        interval_minutes: int = 1,
+        pretreat_funcs: Callable[[pd.DataFrame, datetime, list[str]], pd.DataFrame] = None,
         bucket_names: dict = None,
         partition_date_only: bool = False,
-        recapture_days: int = 1,
+        max_recaptures: int = 60,
         raw_filetype: str = "json",
     ) -> None:
+        self.source_name = source_name
         super().__init__(
-            dataset_id=dataset_id,
+            dataset_id="source_" + source_name,
             table_id=table_id,
             bucket_names=bucket_names,
             env="dev",
@@ -35,10 +38,11 @@ class Source(BQTable):
         self.raw_filetype = raw_filetype
         self.primary_keys = primary_keys
         self.partition_date_only = partition_date_only
-        self.interval_minutes = interval_minutes
-        self.recapture_days = recapture_days
+        self.max_recaptures = max_recaptures
         self.first_timestamp = first_timestamp
         self.pretreatment_reader_args = pretreatment_reader_args
+        self.schedule_cron = schedule_cron
+        self.pretreat_funcs = pretreat_funcs or []
 
     def _create_table_schema(self) -> list[bigquery.SchemaField]:
         log("Creating table schema...")
@@ -73,36 +77,20 @@ class Source(BQTable):
     def get_uncaptured_timestamps(self, timestamp: datetime, retroactive_days: int = 1) -> list:
         st = self.transfer_gcp_obj(target_class=Storage)
         initial_timestamp = max(timestamp - timedelta(days=retroactive_days), self.first_timestamp)
-        full_range = pd.date_range(initial_timestamp, timestamp, freq=f"{self.interval_minutes}min")
+        full_range = cron_date_range(
+            cron_expr=self.schedule_cron, start_time=initial_timestamp, end_time=timestamp
+        )
         days_to_check = pd.date_range(initial_timestamp.date(), timestamp.date())
 
         files = []
         for day in days_to_check:
             prefix = f"source/{self.dataset_id}/{self.table_id}/data={day.date().isoformat()}/"
-            files = files + [b.name.split("/")[-1] for b in st.bucket.list_blobs(prefix=prefix)]
+            files = files + [
+                datetime.strptime(b.name.split("/")[-1], "%Y-%m-%d-%H-%M-%S.csv")
+                for b in st.bucket.list_blobs(prefix=prefix)
+            ]
         tz = timezone(constants.TIMEZONE.value)
-        return [
-            tz.localize(d)
-            for d in full_range.difference(
-                pd.to_datetime(files, format="%Y-%m-%d-%H-%M-%S.csv", utc=False)
-            ).to_pydatetime()
-        ]
-
-    def get_filepaths(self, timestamp: datetime) -> dict[str, str]:
-        partition = create_partition(
-            timestamp=timestamp,
-            partition_date_only=self.partition_date_only,
-        )
-
-        filepaths = create_capture_filepath(
-            dataset_id=self.dataset_id,
-            table_id=self.table_id,
-            timestamp=timestamp,
-            raw_filetype=self.raw_filetype,
-            partition=partition,
-        )
-
-        return {"partition": partition, "filepaths": filepaths}
+        return [tz.localize(d) for d in full_range if d not in files][: self.max_recaptures]
 
     def upload_raw_file(self, raw_filepath: str, partition: str):
 
@@ -114,7 +102,7 @@ class Source(BQTable):
             partition=partition,
         )
 
-    def create(self, location: str = "southamerica-east1"):
+    def create(self, location: str = "US"):
         log(f"Creating External Table: {self.table_full_name}")
         dataset_obj = self.transfer_gcp_obj(target_class=Dataset, location=location)
         dataset_obj.create()

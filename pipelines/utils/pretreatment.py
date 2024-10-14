@@ -23,7 +23,7 @@ def transform_to_nested_structure(data: pd.DataFrame, primary_keys: list) -> pd.
 
     data["content"] = data.apply(
         lambda row: json.dumps(
-            row.drop(primary_keys).to_dict(),
+            row.drop(columns=primary_keys).to_dict(),
         ),
         axis=1,
     )

@@ -69,13 +69,15 @@ def get_scheduled_timestamp(timestamp: str = None) -> datetime:
     else:
         timestamp = prefect.context["scheduled_start_time"]
 
+    tz = timezone(constants.TIMEZONE.value)
+
     if timestamp.tzinfo is None:
-        timestamp = timestamp.replace(tzinfo=timezone(constants.TIMEZONE.value))
+        timestamp = tz.localize(timestamp)
     else:
-        timestamp = timestamp.astimezone(tz=timezone(constants.TIMEZONE.value))
+        timestamp = timestamp.astimezone(tz=tz)
 
     log(f"Created timestamp: {timestamp}")
-    return timestamp
+    return timestamp.replace(second=0, microsecond=0)
 
 
 @task

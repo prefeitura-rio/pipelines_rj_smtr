@@ -7,6 +7,7 @@ from typing import Any
 import basedosdados as bd
 import pandas as pd
 import pytz
+from croniter import croniter
 from pandas_gbq.exceptions import GenericGBQException
 from prefeitura_rio.pipelines_utils.logging import log
 
@@ -61,8 +62,6 @@ def create_timestamp_captura(timestamp: datetime) -> str:
     Returns:
         str: Valor a ser escrito na coluna timestamp_captura
     """
-    if timestamp.tzinfo is None:
-        timestamp = timestamp.replace(tzinfo=pytz.UTC)
 
     return timestamp.astimezone(tz=pytz.timezone(constants.TIMEZONE.value)).strftime(
         "%Y-%m-%d %H:%M:%S-03:00"
@@ -152,8 +151,47 @@ def create_sql_update_filter(
 
 
 def get_last_materialization_redis_key(env: str, dataset_id: str, table_id: str) -> str:
+    """
+    Gera o nome para ser usado na key onde serão salvos no Redis os dados
+    de controle para materialização de uma tabela
+
+    Args:
+        env (str): dev ou prod
+        dataset_id (str): nome do dataset no dbt
+        table_id (str): nome da tabela no dbt
+
+    Returns:
+        str: nome da key
+    """
     key = dataset_id + "." + table_id
     if env == "dev":
         key = f"{env}.{key}"
 
     return key
+
+
+def cron_date_range(cron_expr: str, start_time: datetime, end_time: datetime) -> list[datetime]:
+    """
+    Gera um range de datetimes com base em uma expressão cron entre dois datetimes.
+
+    Args:
+        cron_expr (str): Expressão cron
+        start_time (datetime): Datetime de início do range
+        end_time (datetime): Datetime de fim do range
+
+    Returns:
+        list[datetime]: lista com o range de datetimes
+
+    """
+    iterator = croniter(cron_expr, start_time)
+    current_date = iterator.get_next(datetime)
+    datetimes = []
+
+    while True:
+        if current_date <= end_time:
+            datetimes.append(current_date)
+        else:
+            break
+        current_date = iterator.get_next(datetime)
+
+    return datetimes
