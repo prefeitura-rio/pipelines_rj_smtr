@@ -77,10 +77,9 @@ select
             indicador_tunel
             and (
                 (id_segmento_int > 1)
-                or (
+                and (
                     id_segmento_int
                     < max(id_segmento_int) over (partition by feed_start_date, shape_id)
-                    and id_segmento_int > 1
                 )
             )
         )
