@@ -237,6 +237,10 @@ models:
 
   - name: sppo_realocacao
     description: "Tabela com todas as realocações de linha informadas."
+    tests:
+      - check_gps_capture:
+          table_id: realocacao
+          interval: 10
     columns:
       - name: id_veiculo
         description: "Código identificador do veículo (número de ordem)"
@@ -284,6 +288,10 @@ models:
 
   - name: sppo_registros
     description: "Tabela com todos os registros de GPS."
+    tests:
+      - check_gps_capture:
+          table_id: registros
+          interval: 1
     columns:
       - name: ordem
         description: "Código identificador do veículo (número de ordem)"
