@@ -17,6 +17,7 @@ from pipelines.treatment.templates.utils import (
     send_dataplex_discord_message,
 )
 from pipelines.utils.dataplex import DataQuality, DataQualityCheckArgs
+from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.prefect import flow_is_running_local, rename_current_flow_run
 
 # from pipelines.utils.utils import get_last_materialization_redis_key
@@ -60,27 +61,35 @@ def rename_materialization_flow(
     return rename_current_flow_run(name=name)
 
 
-@task(nout=2)
-def get_last_materialization_datetime(
+@task
+def get_datetime_start(
     env: str,
     selector: DBTSelector,
-) -> tuple[datetime, str]:
-    """
-    Busca no Redis o último datetime materializado. Caso não exista no Redis,
-    consulta a tabela no BigQuery.
-
-    Args:
-        env (str): dev ou prod
-        dataset_id (str): dataset_id no DBT
-        table_id (str): table_id no DBT
-        datetime_column_name (str): Nome da coluna para buscar a ultima data caso
-            não exista no Redis
-
-    Returns:
-        datetime: A última data e hora materializada
-        str: Key do Redis
-    """
+    datetime_start: Union[str, datetime, None],
+) -> datetime:
+    if datetime_start is not None:
+        if isinstance(datetime_start, str):
+            datetime_start = datetime.fromisoformat(datetime_start)
+        return datetime_start
     return selector.get_last_materialized_datetime(env=env)
+
+
+@task
+def get_datetime_end(
+    selector: DBTSelector,
+    timestamp: datetime,
+    datetime_end: Union[str, datetime, None],
+) -> datetime:
+    if datetime_end is not None:
+        if isinstance(datetime_end, str):
+            datetime_end = datetime.fromisoformat(datetime_end)
+        return datetime_end
+    return timestamp - timedelta(hours=selector.incremental_delay_hours)
+
+
+@task
+def wait_data_sources(data_sources: list[Union[SourceTable, DBTSelector]]):
+    pass
 
 
 @task

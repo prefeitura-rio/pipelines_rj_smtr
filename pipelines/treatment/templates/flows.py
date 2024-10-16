@@ -12,12 +12,8 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 )
 
 from pipelines.constants import constants
-from pipelines.tasks import (
-    get_run_env,
-    get_scheduled_timestamp,
-    parse_string_to_timestamp,
-)
-from pipelines.treatment.templates.tasks import get_last_materialization_datetime
+from pipelines.tasks import get_run_env, get_scheduled_timestamp
+from pipelines.treatment.templates.tasks import get_datetime_end, get_datetime_start
 
 # create_dbt_run_vars,; get_repo_version,; rename_materialization_flow,;
 # save_materialization_datetime_redis,
@@ -52,10 +48,10 @@ def create_default_materialization_flow(
     """
     with Flow(selector + " - materializacao") as default_materialization_flow:
 
-        # rebuild = TypedParameter(
-        #     name="rebuild",
+        # flags = TypedParameter(
+        #     name="flags",
         #     default=False,
-        #     accepted_types=bool,
+        #     accepted_types=(str, NoneType),
         # )
 
         # Parâmetros para filtros incrementais #
@@ -69,13 +65,13 @@ def create_default_materialization_flow(
         )
 
         # Substitui a data inicial da execução incremental
-        initial_datetime = TypedParameter(
+        datetime_start = TypedParameter(
             name="initial_datetime",
             default=None,
             accepted_types=(str, NoneType),
         )
         # Substitui a data final da execução incremental
-        end_datetime = TypedParameter(
+        datetime_end = TypedParameter(
             name="end_datetime",
             default=None,
             accepted_types=(str, NoneType),
@@ -85,12 +81,17 @@ def create_default_materialization_flow(
 
         timestamp = get_scheduled_timestamp(timestamp=timestamp)
 
-        last_materialization_datetime, redis_key = get_last_materialization_datetime(
-            env=env, selector=selector
+        datetime_start = get_datetime_start(
+            env=env,
+            selector=selector,
+            datetime_start=datetime_start,
         )
 
-        initial_datetime = parse_string_to_timestamp(timestamp_str=initial_datetime)
-        end_datetime = parse_string_to_timestamp(timestamp_str=end_datetime)
+        datetime_end = get_datetime_end(
+            selector=selector,
+            timestamp=timestamp,
+            datetime_end=datetime_end,
+        )
 
         # datetime_vars, datetime_start, datetime_end = create_datetime_variables_task(
         #     timestamp=timestamp,
