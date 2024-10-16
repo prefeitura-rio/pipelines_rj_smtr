@@ -18,7 +18,8 @@ FROM (
             AND DATE("{{ var('end_timestamp') }}")
     ) AS s
 LEFT JOIN
-    rj-smtr.gtfs.feed_info AS i
+    -- rj-smtr.gtfs.feed_info AS i
+    {{ ref('feed_info') }} AS i
 ON
 (DATA BETWEEN i.feed_start_date
     AND i.feed_end_date

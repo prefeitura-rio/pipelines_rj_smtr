@@ -63,47 +63,91 @@ models:
       - accepted_values_valor_penalidade
       - teto_pagamento_valor_subsidio_pago:
           expression: ROUND((valor_a_pagar - valor_penalidade)/subsidio_km_teto,2) <= ROUND(km_apurada_dia+0.01,2)
-      - unique_combination:
-          expression: data, servico
-      - expression_is_true:
-          expression: data IS NOT NULL
-      - expression_is_true:
-          expression: tipo_dia IS NOT NULL
-      - expression_is_true:
-          expression: consorcio IS NOT NULL
-      - expression_is_true:
-          expression: servico IS NOT NULL
-      - expression_is_true:
-          expression: viagens_dia IS NOT NULL AND viagens_dia >= 0
-      - expression_is_true:
-          expression: km_apurada_dia IS NOT NULL AND km_apurada_dia >= 0
-      - expression_is_true:
-          expression: km_planejada_dia IS NOT NULL AND km_planejada_dia >= 0
-      - expression_is_true:
-          expression: media_pof IS NOT NULL AND media_pof >= 0
-      - expression_is_true:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+          - data 
+          - servico
+      - dbt_utils.expression_is_true:
           expression: (valor_a_pagar - valor_penalidade) IS NOT NULL AND (valor_a_pagar - valor_penalidade) >= 0
+          config:
+            where: DATA BETWEEN DATE("{{ var('start_timestamp') }}") AND DATE("{{ var('end_timestamp') }}")
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS."
+        tests:
+          - dbt_utils.not_null_proportion:
+              at_least: 1 
+              config:
+                where: DATA BETWEEN DATE("{{ var('start_timestamp') }}") AND DATE("{{ var('end_timestamp') }}")
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo."
+        tests:
+          - dbt_utils.not_null_proportion:
+              at_least: 1 
+              config:
+                where: DATA BETWEEN DATE("{{ var('start_timestamp') }}") AND DATE("{{ var('end_timestamp') }}")
       - name: consorcio
         description: "Consórcio que opera o serviço."
+        tests:
+          - dbt_utils.not_null_proportion:
+              at_least: 1 
+              config:
+                where: DATA BETWEEN DATE("{{ var('start_timestamp') }}") AND DATE("{{ var('end_timestamp') }}")
       - name: servico
         description: "Serviço realizado pelo veículo."
+        tests:
+          - dbt_utils.not_null_proportion:
+              at_least: 1 
+              config:
+                where: DATA BETWEEN DATE("{{ var('start_timestamp') }}") AND DATE("{{ var('end_timestamp') }}")
       - name: viagens_dia
         description: "Quantidade de viagens apuradas por dia."
+        tests:
+          - dbt_utils.not_null_proportion:
+              at_least: 1 
+              config:
+                where: DATA BETWEEN DATE("{{ var('start_timestamp') }}") AND DATE("{{ var('end_timestamp') }}")
+          - dbt_utils.accepted_range:
+              min_value: 0
+              config:
+                where: DATA BETWEEN DATE("{{ var('start_timestamp') }}") AND DATE("{{ var('end_timestamp') }}")
       - name: km_apurada_dia
         description: "Distância apurada para o serviço por dia (km)."
+        tests:
+          - dbt_utils.not_null_proportion:
+              at_least: 1 
+              config:
+                where: DATA BETWEEN DATE("{{ var('start_timestamp') }}") AND DATE("{{ var('end_timestamp') }}")
+          - dbt_utils.accepted_range:
+              min_value: 0
+              config:
+                where: DATA BETWEEN DATE("{{ var('start_timestamp') }}") AND DATE("{{ var('end_timestamp') }}")
         tests:
           - sumario_servico_dia_tipo_soma_km
       - name: km_subsidiada_dia
         description: "Distância subsidiada para o serviço por dia (km)."
       - name: km_planejada_dia
         description: "Distância planejada para o serviço por dia (km)."
+        tests:
+          - dbt_utils.not_null_proportion:
+              at_least: 1 
+              config:
+                where: DATA BETWEEN DATE("{{ var('start_timestamp') }}") AND DATE("{{ var('end_timestamp') }}")
+          - dbt_utils.accepted_range:
+              min_value: 0
+              config:
+                where: DATA BETWEEN DATE("{{ var('start_timestamp') }}") AND DATE("{{ var('end_timestamp') }}")
       - name: media_pof
         description: "Média do indicador percentual de operação por faixa horária."
+        tests:
+          - dbt_utils.not_null_proportion:
+              at_least: 1 
+              config:
+                where: DATA BETWEEN DATE("{{ var('start_timestamp') }}") AND DATE("{{ var('end_timestamp') }}")
+          - dbt_utils.accepted_range:
+              min_value: 0
+              config:
+                where: DATA BETWEEN DATE("{{ var('start_timestamp') }}") AND DATE("{{ var('end_timestamp') }}")
       - name: desvp_pof
         description: "Desvio padrão do indicador percentual de operação por faixa horária."
       - name: km_apurada_registrado_com_ar_inoperante

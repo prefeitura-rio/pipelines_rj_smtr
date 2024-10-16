@@ -20,5 +20,7 @@ WITH
             SELECT
                 valor
             FROM
-                `rj-smtr`.`dashboard_subsidio_sppo`.`valor_tipo_penalidade` )
+                -- `rj-smtr`.`dashboard_subsidio_sppo`.`valor_tipo_penalidade`
+                {{ ref('valor_tipo_penalidade') }}
+                 )
 {%- endtest %}

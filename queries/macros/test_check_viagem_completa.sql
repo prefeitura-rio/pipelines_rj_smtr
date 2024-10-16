@@ -4,7 +4,8 @@ WITH
     SELECT
         *
     FROM
-        rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva
+        -- rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva
+        {{ ref('subsidio_data_versao_efetiva') }}
     WHERE
         DATA >= "2024-04-01"
         AND DATA BETWEEN DATE("{{ var('start_timestamp') }}")
@@ -13,7 +14,8 @@ WITH
     SELECT
         *
     FROM
-        rj-smtr.projeto_subsidio_sppo.viagem_completa
+        -- rj-smtr.projeto_subsidio_sppo.viagem_completa
+        {{ ref('viagem_completa') }}
     WHERE
         DATA >= "2024-04-01"
         AND DATA BETWEEN DATE("{{ var('start_timestamp') }}")
@@ -22,7 +24,8 @@ WITH
     SELECT
         *
     FROM
-        rj-smtr.gtfs.feed_info
+        -- rj-smtr.gtfs.feed_info
+        {{ ref('feed_info') }}
     WHERE
         feed_version IN (
         SELECT

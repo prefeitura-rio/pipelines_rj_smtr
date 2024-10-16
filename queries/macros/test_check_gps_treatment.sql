@@ -20,7 +20,8 @@ WITH
                     timestamp_gps) AS hora,
                     COUNT(*) AS q_gps_raw
                 FROM
-                    `rj-smtr.br_rj_riodejaneiro_onibus_gps.sppo_registros`
+                    -- `rj-smtr.br_rj_riodejaneiro_onibus_gps.sppo_registros`
+                    {{ ref('sppo_registros') }}
                 WHERE
                     DATA BETWEEN DATE("{{ var('start_timestamp') }}")
                     AND DATE("{{ var('end_timestamp') }}")
@@ -37,7 +38,8 @@ WITH
                     timestamp_gps) AS hora,
                     COUNT(*) AS q_gps_filtrada
                 FROM
-                    `rj-smtr.br_rj_riodejaneiro_onibus_gps.sppo_aux_registros_filtrada`
+                    -- `rj-smtr.br_rj_riodejaneiro_onibus_gps.sppo_aux_registros_filtrada`
+                    {{ ref('sppo_aux_registros_filtrada') }}
                 WHERE
                     DATA BETWEEN DATE("{{ var('start_timestamp') }}")
                     AND DATE("{{ var('end_timestamp') }}")
@@ -52,7 +54,8 @@ WITH
                     timestamp_gps) AS hora,
                     COUNT(*) AS q_gps_treated
                 FROM
-                    `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
+                    -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
+                    {{ ref('gps_sppo') }}
                 WHERE
                     DATA BETWEEN DATE("{{ var('start_timestamp') }}")
                     AND DATE("{{ var('end_timestamp') }}")

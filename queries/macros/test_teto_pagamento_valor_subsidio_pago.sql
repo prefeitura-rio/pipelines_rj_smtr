@@ -14,7 +14,8 @@ subsidio_valor_km_tipo_viagem AS (
         data_fim,
         MAX(subsidio_km) AS subsidio_km_teto
     FROM
-        `rj-smtr`.`dashboard_subsidio_sppo_staging`.`subsidio_valor_km_tipo_viagem`
+        -- `rj-smtr`.`dashboard_subsidio_sppo_staging`.`subsidio_valor_km_tipo_viagem`
+        {{ ref('subsidio_valor_km_tipo_viagem') }}
     WHERE
         subsidio_km > 0
     GROUP BY

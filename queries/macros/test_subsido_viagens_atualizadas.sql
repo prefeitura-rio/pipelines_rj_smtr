@@ -5,7 +5,8 @@ WITH
                     data,
                     datetime_ultima_atualizacao
                 FROM
-                    rj-smtr.projeto_subsidio_sppo.viagem_completa
+                    -- rj-smtr.projeto_subsidio_sppo.viagem_completa
+                    {{ ref('viagem_completa') }}
                 WHERE
                     DATA >= "2024-04-01"
                     AND DATA BETWEEN DATE("{{ var('start_timestamp') }}")

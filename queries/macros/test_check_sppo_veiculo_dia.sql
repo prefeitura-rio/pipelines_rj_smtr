@@ -7,7 +7,8 @@ WITH
         NULL AS q_duplicated_status,
         NULL AS q_null_status
     FROM
-        rj-smtr.veiculo.sppo_veiculo_dia
+        -- rj-smtr.veiculo.sppo_veiculo_dia
+        {{ ref('sppo_veiculo_dia')}}
     WHERE
         DATA BETWEEN DATE("{{ var('start_timestamp') }}")
         AND DATE("{{ var('end_timestamp') }}")
@@ -21,7 +22,8 @@ WITH
         id_veiculo,
         COUNT(*) AS q_status,
     FROM
-        rj-smtr.veiculo.sppo_veiculo_dia
+       -- rj-smtr.veiculo.sppo_veiculo_dia
+        {{ ref('sppo_veiculo_dia')}}
     WHERE
         DATA BETWEEN DATE("{{ var('start_timestamp') }}")
         AND DATE("{{ var('end_timestamp') }}")
@@ -47,7 +49,8 @@ WITH
         NULL AS q_duplicated_status,
         COUNT(*) AS q_null_status
     FROM
-        rj-smtr.veiculo.sppo_veiculo_dia
+        -- rj-smtr.veiculo.sppo_veiculo_dia
+        {{ ref('sppo_veiculo_dia')}}
     WHERE
         DATA BETWEEN DATE("{{ var('start_timestamp') }}")
         AND DATE("{{ var('end_timestamp') }}")
