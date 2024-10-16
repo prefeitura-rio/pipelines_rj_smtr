@@ -2,9 +2,58 @@
 from datetime import datetime
 
 from google.cloud.dataplex_v1 import DataScanJob
+from prefeitura_rio.pipelines_utils.logging import log
+from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
 from pipelines.constants import constants
 from pipelines.utils.discord import send_discord_embed_message
+from pipelines.utils.utils import cron_get_next_date
+
+
+class DBTSelector:
+    def __init__(
+        self,
+        name: str,
+        schedule_cron: str,
+        incremental_delay_hours: int,
+        initial_datetime: datetime,
+    ):
+        self.name = name
+        self.schedule_cron = schedule_cron
+        self.incremental_delay_hours = incremental_delay_hours
+        self.initial_datetime = initial_datetime
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def get_last_materialized_datetime(self, env: str) -> datetime:
+        redis_key = f"{env}.selector_{self.name}"
+        redis_client = get_redis_client()
+        content = redis_client.get(redis_key)
+        last_datetime = (
+            self.initial_datetime
+            if content is None
+            else datetime.strptime(
+                content[constants.REDIS_LAST_MATERIALIZATION_TS_KEY.value],
+                constants.MATERIALIZATION_LAST_RUN_PATTERN.value,
+            )
+        )
+
+        return last_datetime
+
+    def get_next_schedule_datetime(self, timestamp: datetime) -> datetime:
+        return cron_get_next_date(cron_expr=self.schedule_cron, timestamp=timestamp)
+
+    def set_redis_materialized_datetime(self, env: str, timestamp: datetime):
+        value = timestamp.strftime(constants.MATERIALIZATION_LAST_RUN_PATTERN.value)
+        redis_key = f"{env}.selector_{self.name}"
+        log(f"Saving timestamp {value} on key: {redis_key}")
+        redis_client = get_redis_client()
+        content = redis_client.get(redis_key)
+        if not content:
+            content = {}
+        content[constants.REDIS_LAST_MATERIALIZATION_TS_KEY.value] = value
+        redis_client.set(redis_key, content)
 
 
 def create_dataplex_log_message(dataplex_run: DataScanJob) -> str:

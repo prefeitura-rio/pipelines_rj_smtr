@@ -1,25 +1,34 @@
 # -*- coding: utf-8 -*-
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from typing import Union
 
 import basedosdados as bd
 import pandas as pd
 import requests
 from prefect import task
-from prefeitura_rio.pipelines_utils.dbt import run_dbt_model
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
 
 from pipelines.constants import constants
 from pipelines.treatment.templates.utils import (
+    DBTSelector,
     create_dataplex_log_message,
     send_dataplex_discord_message,
 )
 from pipelines.utils.dataplex import DataQuality, DataQualityCheckArgs
-from pipelines.utils.gcp import BQTable
 from pipelines.utils.prefect import flow_is_running_local, rename_current_flow_run
-from pipelines.utils.utils import get_last_materialization_redis_key
+
+# from pipelines.utils.utils import get_last_materialization_redis_key
+
+try:
+    from prefect.tasks.dbt.dbt import DbtShellTask
+except ImportError:
+    from prefeitura_rio.utils import base_assert_dependencies
+
+    base_assert_dependencies(["prefect"], extras=["pipelines"])
+
+from prefeitura_rio.pipelines_utils.io import get_root_path
 
 
 @task(
@@ -27,15 +36,14 @@ from pipelines.utils.utils import get_last_materialization_redis_key
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
 def rename_materialization_flow(
-    dataset_id: str,
-    table_id: str,
+    selector: DBTSelector,
     timestamp: datetime,
     datetime_start: datetime,
     datetime_end: datetime,
 ) -> bool:
     """
     Renomeia a run atual do Flow de materialização com o formato:
-    [<timestamp>] <dataset_id>.<table_id>: from <valor inicial> to <valor final>
+    [<timestamp>] <selector_name>: from <valor inicial> to <valor final>
 
     Args:
         dataset_id (str): dataset_id no DBT
@@ -48,16 +56,14 @@ def rename_materialization_flow(
         bool: Se o flow foi renomeado
     """
     name = f"[{timestamp.astimezone(tz=timezone(constants.TIMEZONE.value))}] \
-{dataset_id}.{table_id}: from {datetime_start} to {datetime_end}"
+{selector.name}: from {datetime_start} to {datetime_end}"
     return rename_current_flow_run(name=name)
 
 
 @task(nout=2)
 def get_last_materialization_datetime(
     env: str,
-    dataset_id: str,
-    table_id: str,
-    datetime_column_name: str,
+    selector: DBTSelector,
 ) -> tuple[datetime, str]:
     """
     Busca no Redis o último datetime materializado. Caso não exista no Redis,
@@ -74,49 +80,7 @@ def get_last_materialization_datetime(
         datetime: A última data e hora materializada
         str: Key do Redis
     """
-    key = get_last_materialization_redis_key(env=env, dataset_id=dataset_id, table_id=table_id)
-
-    redis_client = get_redis_client()
-    runs = redis_client.get(key)
-    try:
-        last_run_timestamp = runs[constants.REDIS_LAST_MATERIALIZATION_TS_KEY.value]
-    except (KeyError, TypeError):
-        last_run_timestamp = None
-
-    if last_run_timestamp is None:
-        log("Failed to fetch key from Redis...\n Querying tables for last suceeded run")
-        table = BQTable(env=env, dataset_id=dataset_id, table_id=table_id)
-        if table.exists() and datetime_column_name is not None:
-            log("Table exists, getting max datetime")
-            last_run_timestamp = table.get_table_min_max_value(
-                field_name=datetime_column_name, kind="max"
-            )
-        else:
-            log(
-                "datetime_column_name is None"
-                if datetime_column_name is None
-                else "Table does not exist"
-            )
-    else:
-        last_run_timestamp = datetime.strptime(
-            last_run_timestamp,
-            constants.MATERIALIZATION_LAST_RUN_PATTERN.value,
-        )
-
-    if (not isinstance(last_run_timestamp, datetime)) and (isinstance(last_run_timestamp, date)):
-        last_run_timestamp = datetime(
-            last_run_timestamp.year,
-            last_run_timestamp.month,
-            last_run_timestamp.day,
-        )
-
-    if not isinstance(last_run_timestamp, datetime) and last_run_timestamp is not None:
-        raise ValueError(
-            f"last_run_timestamp must be datetime. Received: {type(last_run_timestamp)}"
-        )
-
-    log(f"Got value {last_run_timestamp}")
-    return last_run_timestamp, key
+    return selector.get_last_materialized_datetime(env=env)
 
 
 @task
@@ -164,42 +128,49 @@ def create_dbt_run_vars(
 
 
 @task
-def run_dbt_model_task(
-    dataset_id: str,
-    table_id: str,
-    upstream: bool,
-    downstream: bool,
-    exclude: str,
-    rebuild: bool,
-    dbt_run_vars: list[dict[str]],
+def run_dbt_selector(
+    selector_name: str,
+    flags: str = None,
+    _vars: dict | list[dict] = None,
 ):
     """
-    Executa o modelo DBT
+    Runs a DBT selector.
 
     Args:
-        dataset_id (str): dataset_id no DBT
-        table_id (str): table_id no DBT
-        upstream (bool): Se verdadeiro, irá executar os modelos anteriores
-        downstream (bool): Se verdadeiro, irá executar os modelos posteriores
-        exclude (str): Modelos para excluir da execução
-        rebuild (bool): Se True, irá executar com a flag --full-refresh
-        dbt_run_vars (list[dict[str]]): Lista de variáveis para executar o modelo
+        selector_name (str): The name of the DBT selector to run.
+        flags (str, optional): Flags to pass to the dbt run command.
+        _vars (Union[dict, list[dict]], optional): Variables to pass to dbt. Defaults to None.
     """
-    if rebuild and len(dbt_run_vars) > 1:
-        raise ValueError(
-            f"Rebuild = True with multiple model runs: len(dbt_run_vars)={len(dbt_run_vars)}"
-        )
-    flags = "--full-refresh" if rebuild else None
-    for variable in dbt_run_vars:
-        run_dbt_model(
-            dataset_id=dataset_id,
-            table_id=table_id,
-            upstream=upstream,
-            downstream=downstream,
-            exclude=exclude,
-            flags=flags,
-            _vars=variable,
-        )
+    # Build the dbt command
+    run_command = f"dbt run --selector {selector_name}"
+
+    if _vars:
+        if isinstance(_vars, list):
+            vars_dict = {}
+            for elem in _vars:
+                vars_dict.update(elem)
+            vars_str = f'"{vars_dict}"'
+            run_command += f" --vars {vars_str}"
+        else:
+            vars_str = f'"{_vars}"'
+            run_command += f" --vars {vars_str}"
+
+    if flags:
+        run_command += f" {flags}"
+
+    log(f"Running dbt with command: {run_command}")
+    root_path = get_root_path()
+    queries_dir = str(root_path / "queries")
+    dbt_task = DbtShellTask(
+        profiles_dir=queries_dir,
+        helper_script=f"cd {queries_dir}",
+        log_stderr=True,
+        return_all=True,
+        command=run_command,
+    )
+    dbt_logs = dbt_task.run()
+
+    log("\n".join(dbt_logs))
 
 
 @task
