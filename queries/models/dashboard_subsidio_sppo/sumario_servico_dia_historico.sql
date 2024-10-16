@@ -24,8 +24,9 @@ WITH
       LEFT JOIN
         {{ ref("ordem_servico_gtfs") }} AS o
         -- rj-smtr.gtfs.ordem_servico AS o
-      USING
-        (feed_start_date, servico, tipo_os)
+      ON v.feed_start_date = o.feed_start_date
+        AND v.servico = o.servico
+        AND sdve.tipo_os = o.tipo_os
       WHERE
         data >= "{{ var('DATA_SUBSIDIO_V7_INICIO') }}"
     )
