@@ -120,7 +120,7 @@ vars:
   # Feature Apuração Madonna · The Celebration Tour in Rio
   DATA_SUBSIDIO_V7_INICIO: "2024-05-01"
   # Feature Viagens sem transação
-  DATA_SUBSIDIO_V8_INICIO: "2024-07-19"
+  DATA_SUBSIDIO_V8_INICIO: "2024-07-20"
   # Feature Apuração por faixa horária
   DATA_SUBSIDIO_V9_INICIO: "2024-08-16"
   # Feature desconsideração de km não vistoriado e não licenciado
