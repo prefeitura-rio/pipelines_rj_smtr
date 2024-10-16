@@ -17,8 +17,8 @@ WITH
         {{ ref("viagem_planejada") }} AS v
         -- `rj-smtr`.`projeto_subsidio_sppo`.`viagem_planejada` AS v
       LEFT JOIN
-        {{ ref("subsidio_data_versao_efetiva") }}
-        -- rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva
+        {{ ref("subsidio_data_versao_efetiva") }} AS sdve
+        -- rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva AS sdve
       USING
         (data)
       LEFT JOIN
