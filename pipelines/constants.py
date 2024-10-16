@@ -54,9 +54,6 @@ class constants(Enum):  # pylint: disable=c0103
     # PATTERNS #
     FILENAME_PATTERN = "%Y-%m-%d-%H-%M-%S"
     MATERIALIZATION_LAST_RUN_PATTERN = "%Y-%m-%dT%H:%M:%S"
-    SOURCE_DATASET_ID_PATTERN = "{source_name}_source"
-    MODE_FULL = "full"
-    MODE_INCR = "incr"
     FLOW_RUN_URL_PATTERN = "https://pipelines.dados.rio/smtr/flow-run/{run_id}"
 
     # URLS #

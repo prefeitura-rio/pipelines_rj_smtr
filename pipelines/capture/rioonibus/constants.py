@@ -6,8 +6,8 @@ Valores constantes para captura de dados da Rio Ônibus
 from datetime import datetime
 from enum import Enum
 
-from pipelines.capture.templates.utils import SourceTable
 from pipelines.schedules import cron_every_day_hour_11
+from pipelines.utils.gcp.bigquery import SourceTable
 
 
 class constants(Enum):  # pylint: disable=c0103

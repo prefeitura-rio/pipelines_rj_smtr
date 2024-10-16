@@ -27,9 +27,9 @@ from pipelines.capture.templates.tasks import (
     upload_raw_file_to_gcs,
     upload_source_data_to_gcs,
 )
-from pipelines.capture.templates.utils import SourceTable
 from pipelines.constants import constants
 from pipelines.tasks import get_run_env, get_scheduled_timestamp
+from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.prefect import TypedParameter
 
 

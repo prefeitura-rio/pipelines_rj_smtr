@@ -1,66 +1,30 @@
 # -*- coding: utf-8 -*-
-"""Module to interact with GCP"""
-# import csv
-import inspect
+"""Módulo com classe para interagir com o GCS"""
+
 import io
 import zipfile
-from dataclasses import dataclass
-
-# from datetime import datetime
 from mimetypes import MimeTypes
 from pathlib import Path
-from typing import Type, TypeVar, Union
+from typing import Union
 
-import basedosdados as bd
-from google.api_core.exceptions import NotFound
-from google.cloud import bigquery, storage
-
-# from google.cloud.bigquery.external_config import HivePartitioningOptions
+from google.cloud import storage
+from google.cloud.storage.blob import Blob
 from prefeitura_rio.pipelines_utils.logging import log
 
-from pipelines.constants import constants
-
-# from pipelines.utils.fs import create_capture_filepath, create_partition
-
-T = TypeVar("T")
-# Set BD config to run on cloud #
-bd.config.from_file = True
-
-
-@dataclass
-class GCPBase:
-    dataset_id: str
-    table_id: str
-    bucket_names: dict
-    env: str
-
-    def __post_init__(self):
-        self.set_env(env=self.env)
-
-    def __getitem__(self, key):
-        return self.__dict__[key]
-
-    def set_env(self, env: str):
-        self.env = env
-        if self.bucket_names is None:
-            self.bucket_name = constants.DEFAULT_BUCKET_NAME.value[env]
-        else:
-            self.bucket_name = self.bucket_names[env]
-
-        return self
-
-    def client(self, service: str) -> Union[storage.Client, bigquery.Client]:
-        service_map = {"storage": storage.Client, "bigquery": bigquery.Client}
-        return service_map[service](project=constants.PROJECT_NAME.value[self.env])
-
-    def transfer_gcp_obj(self, target_class: Type[T], **additional_kwargs) -> T:
-        base_args = list(inspect.signature(GCPBase).parameters.keys())
-        init_args = list(inspect.signature(target_class).parameters.keys())
-        kwargs = {k: self[k] for k in init_args if k in base_args} | additional_kwargs
-        return target_class(**kwargs)
+from pipelines.utils.gcp.base import GCPBase
 
 
 class Storage(GCPBase):
+    """
+    Classe para interagir com o GCS
+
+    Args:
+        dataset_id (str): dataset_id
+        table_id (str): table_id
+        bucket_names (dict): nome dos buckets de prod e dev associados ao objeto
+        env (str): prod ou dev
+    """
+
     def __init__(
         self,
         env: str,
@@ -84,6 +48,18 @@ class Storage(GCPBase):
         filetype: str = None,
         partition: str = None,
     ) -> str:
+        """
+        Cria o nome do blob
+
+        Args:
+            mode (str): pasta raiz
+            filename (str): nome do arquivo
+            filetype (str): extensão do arquivo
+            partition (str): partições no formato Hive
+
+        Returns:
+            str: nome completo do blob
+        """
         blob_name = f"{mode}/{self.dataset_id}"
         if self.table_id is not None:
             blob_name += f"/{self.table_id}"
@@ -112,10 +88,22 @@ class Storage(GCPBase):
         mode: str,
         filepath: Union[str, Path],
         partition: str = None,
-        if_exists="replace",
-        chunk_size=None,
+        if_exists: str = "replace",
+        chunk_size: int = None,
         **upload_kwargs,
     ):
+        """
+        Sobe um arquivo para o Storage
+
+        Args:
+            mode (str): prod ou dev
+            filepath (Union[str, Path]): Caminho do arquivo local
+            partition (str): partição no formato Hive
+            if_exists (str): Ação a ser tomada caso o arquivo exista
+                no storage (raise, pass, replace)
+            chunk_size (int): Tamanho do chunk do blob em bytes (deve ser múltiplo de 256 KB)
+            upload_kwargs: Argumentos adicionais para a função upload_from_filename
+        """
         filepath = Path(filepath)
 
         if filepath.is_dir():
@@ -151,7 +139,19 @@ class Storage(GCPBase):
         filename: str,
         filetype: str = None,
         partition: str = None,
-    ):
+    ) -> Blob:
+        """
+        Pega um blob no storage e retorna no formato de objeto Blob
+
+        Args:
+            mode (str): pasta raiz
+            filename (str): nome do arquivo
+            filetype (str): extensão do arquivo
+            partition (str): partições no formato Hive
+
+        Returns:
+            Blob: o objeto que representa o arquivo no storage
+        """
         blob_name = self.create_blob_name(
             mode=mode,
             partition=partition,
@@ -167,6 +167,18 @@ class Storage(GCPBase):
         filetype: str = None,
         partition: str = None,
     ) -> bytes:
+        """
+        Pega um blob no storage e retorna em bytes
+
+        Args:
+            mode (str): pasta raiz
+            filename (str): nome do arquivo
+            filetype (str): extensão do arquivo
+            partition (str): partições no formato Hive
+
+        Returns:
+            bytes: bytes do arquivo no storage
+        """
         blob_name = self.create_blob_name(
             mode=mode,
             partition=partition,
@@ -182,6 +194,18 @@ class Storage(GCPBase):
         filetype: str = None,
         partition: str = None,
     ) -> str:
+        """
+        Pega um blob no storage e retorna em string
+
+        Args:
+            mode (str): pasta raiz
+            filename (str): nome do arquivo
+            filetype (str): extensão do arquivo
+            partition (str): partições no formato Hive
+
+        Returns:
+            str: string do arquivo no storage
+        """
         blob_name = self.create_blob_name(
             mode=mode,
             partition=partition,
@@ -191,6 +215,16 @@ class Storage(GCPBase):
         return self.bucket.get_blob(blob_name=blob_name).download_as_text()
 
     def unzip_file(self, mode: str, zip_filename: str, unzip_to: str):
+        """
+        Faz o download de uma pasta compactada .zip no storage
+        e descompacta em outra pasta no storage
+
+        Args:
+            mode (str): pasta raiz
+            filename (str): nome do arquivo
+            unzip_to (str): nome da pasta para salvar os arquivos
+
+        """
         data = self.get_blob_bytes(mode=mode, filename=zip_filename)
         mime = MimeTypes()
         with zipfile.ZipFile(io.BytesIO(data), "r") as zipped_file:
@@ -220,6 +254,16 @@ class Storage(GCPBase):
         new_mode: str,
         partitions: Union[str, list[str]] = None,
     ):
+        """
+        Move uma pasta de um mode para outro ou de um Storage para outro
+
+        Args:
+            new_storage (Storage): Novo objeto de Storage para mover os arquivos
+            old_mode (str): pasta raiz dos arquivos que serão movidos
+            new_mode (str): pasta raiz para onde os arquivos vão ser movidos
+            partitions Union[str, list[str]]: Partição ou lista de partições em
+                formato Hive a serem movidas
+        """
         partitions = (
             [partitions] if isinstance(partitions, str) or partitions is None else partitions
         )
@@ -253,73 +297,3 @@ class Storage(GCPBase):
         else:
             for blob in blobs:
                 self.bucket.rename_blob(blob["source_blob"], new_name=blob["new_name"])
-
-
-class Dataset(GCPBase):
-    def __init__(self, dataset_id: str, env: str, location: str = "southamerica-east1") -> None:
-        super().__init__(
-            dataset_id=dataset_id,
-            table_id="",
-            bucket_names=None,
-            env=env,
-        )
-        self.location = location
-
-    def exists(self) -> bool:
-        try:
-            self.client("bigquery").get_dataset(self.dataset_id)
-            return True
-        except NotFound:
-            return False
-
-    def create(self):
-        if not self.exists():
-            dataset_full_name = f"{constants.PROJECT_NAME.value[self.env]}.{self.dataset_id}"
-            dataset_obj = bigquery.Dataset(dataset_full_name)
-            dataset_obj.location = self.location
-            log(f"Creating dataset {dataset_full_name} | location: {self.location}")
-            self.client("bigquery").create_dataset(dataset_obj)
-            log("Dataset created!")
-        else:
-            log("Dataset already exists")
-
-
-class BQTable(GCPBase):
-    def __init__(
-        self,
-        env: str,
-        dataset_id: str,
-        table_id: str,
-        bucket_names: dict = None,
-    ) -> None:
-        super().__init__(
-            dataset_id=dataset_id,
-            table_id=table_id,
-            bucket_names=bucket_names,
-            env=env,
-        )
-
-    def set_env(self, env: str):
-        super().set_env(env=env)
-
-        self.table_full_name = (
-            f"{constants.PROJECT_NAME.value[env]}.{self.dataset_id}.{self.table_id}"
-        )
-        return self
-
-    def exists(self) -> bool:
-        try:
-            return bool(self.client("bigquery").get_table(self.table_full_name))
-        except NotFound:
-            return False
-
-    def get_table_min_max_value(self, field_name: str, kind: str):
-        log(f"Getting {kind} value for {self.table_id}")
-        query = f"""
-        SELECT
-            {kind}({field_name})
-        FROM {self.table_full_name}
-        """
-        result = bd.read_sql(query=query)
-
-        return result.iloc[0][0]

@@ -5,15 +5,6 @@ from typing import Any, Union
 
 import prefect
 from prefect import task
-
-try:
-    from prefect.tasks.dbt.dbt import DbtShellTask
-except ImportError:
-    from prefeitura_rio.utils import base_assert_dependencies
-
-    base_assert_dependencies(["prefect"], extras=["pipelines"])
-
-from prefeitura_rio.pipelines_utils.io import get_root_path
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 from pytz import timezone
@@ -227,49 +218,3 @@ def run_subflow(
 
     if flag_failed_runs:
         raise FailedSubFlow(failed_message)
-
-
-@task
-def run_dbt_selector(
-    selector_name: str,
-    flags: str = None,
-    _vars: dict | list[dict] = None,
-):
-    """
-    Runs a DBT selector.
-
-    Args:
-        selector_name (str): The name of the DBT selector to run.
-        flags (str, optional): Flags to pass to the dbt run command.
-        _vars (Union[dict, list[dict]], optional): Variables to pass to dbt. Defaults to None.
-    """
-    # Build the dbt command
-    run_command = f"dbt run --selector {selector_name}"
-
-    if _vars:
-        if isinstance(_vars, list):
-            vars_dict = {}
-            for elem in _vars:
-                vars_dict.update(elem)
-            vars_str = f'"{vars_dict}"'
-            run_command += f" --vars {vars_str}"
-        else:
-            vars_str = f'"{_vars}"'
-            run_command += f" --vars {vars_str}"
-
-    if flags:
-        run_command += f" {flags}"
-
-    log(f"Running dbt with command: {run_command}")
-    root_path = get_root_path()
-    queries_dir = str(root_path / "queries")
-    dbt_task = DbtShellTask(
-        profiles_dir=queries_dir,
-        helper_script=f"cd {queries_dir}",
-        log_stderr=True,
-        return_all=True,
-        command=run_command,
-    )
-    dbt_logs = dbt_task.run()
-
-    log("\n".join(dbt_logs))

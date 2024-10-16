@@ -4,7 +4,7 @@ from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.utils.extractors.base import DataExtractor
 from pipelines.utils.fs import get_filetype
-from pipelines.utils.gcp import Storage
+from pipelines.utils.gcp.storage import Storage
 
 
 class GCSExtractor(DataExtractor):
