@@ -321,3 +321,10 @@ models:
       staging:
         +materialized: view
         +schema: transito_staging
+    monitoramento:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: monitoramento
+      staging:
+        +materialized: view
+        +schema: monitoramento_staging
