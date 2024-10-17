@@ -4,7 +4,7 @@ WITH
     SELECT
         *
     FROM
-        UNNEST(GENERATE_DATE_ARRAY(DATE("{{ var('start_timestamp') }}"), DATE("{{ var('end_timestamp') }}"))) AS DATA ),
+        UNNEST(GENERATE_DATE_ARRAY(DATE("{{ var('start_date') }}"), DATE("{{ var('end_date') }}"))) AS DATA ),
     {{ model.name }} AS (
     SELECT
         DATA,
@@ -12,8 +12,8 @@ WITH
     FROM
         {{ model }}
     WHERE
-        DATA BETWEEN DATE("{{ var('start_timestamp') }}")
-        AND DATE("{{ var('end_timestamp') }}")
+        DATA BETWEEN DATE("{{ var('start_date') }}")
+        AND DATE("{{ var('end_date') }}")
     GROUP BY
         1 )
 SELECT

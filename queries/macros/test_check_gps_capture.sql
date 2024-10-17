@@ -5,9 +5,9 @@ WITH
     SELECT
         DATETIME(timestamp_array) AS timestamp_array
     FROM
-        UNNEST( GENERATE_TIMESTAMP_ARRAY( TIMESTAMP("{{ var('start_timestamp') }}"), TIMESTAMP("{{ var('end_timestamp') }}"), INTERVAL {{ interval }} minute) ) AS timestamp_array
+        UNNEST( GENERATE_TIMESTAMP_ARRAY( TIMESTAMP("{{ var('start_date') }}"), TIMESTAMP("{{ var('end_date') }}"), INTERVAL {{ interval }} minute) ) AS timestamp_array
     WHERE
-        timestamp_array < TIMESTAMP("{{ var('end_timestamp') }}") ),
+        timestamp_array < TIMESTAMP("{{ var('end_date') }}") ),
     logs_table AS (
     SELECT
         SAFE_CAST(DATETIME(TIMESTAMP(timestamp_captura), "America/Sao_Paulo") AS DATETIME) timestamp_captura,
@@ -23,10 +23,10 @@ WITH
     FROM
         logs_table
     WHERE
-        DATA BETWEEN DATE(TIMESTAMP("{{ var('start_timestamp') }}"))
-        AND DATE(TIMESTAMP("{{ var('end_timestamp') }}"))
-        AND timestamp_captura BETWEEN "{{ var('start_timestamp') }}"
-        AND "{{ var('end_timestamp') }}" )
+        DATA BETWEEN DATE(TIMESTAMP("{{ var('start_date') }}"))
+        AND DATE(TIMESTAMP("{{ var('end_date') }}"))
+        AND timestamp_captura BETWEEN "{{ var('start_date') }}"
+        AND "{{ var('end_date') }}" )
     SELECT
         COALESCE(logs.timestamp_captura, t.timestamp_array) AS timestamp_captura,
         logs.erro

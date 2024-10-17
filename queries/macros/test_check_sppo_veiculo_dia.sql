@@ -10,8 +10,8 @@ WITH
         -- rj-smtr.veiculo.sppo_veiculo_dia
         {{ ref('sppo_veiculo_dia')}}
     WHERE
-        DATA BETWEEN DATE("{{ var('start_timestamp') }}")
-        AND DATE("{{ var('end_timestamp') }}")
+        DATA BETWEEN DATE("{{ var('start_date') }}")
+        AND DATE("{{ var('end_date') }}")
     GROUP BY
         1
     HAVING
@@ -25,8 +25,8 @@ WITH
        -- rj-smtr.veiculo.sppo_veiculo_dia
         {{ ref('sppo_veiculo_dia')}}
     WHERE
-        DATA BETWEEN DATE("{{ var('start_timestamp') }}")
-        AND DATE("{{ var('end_timestamp') }}")
+        DATA BETWEEN DATE("{{ var('start_date') }}")
+        AND DATE("{{ var('end_date') }}")
     GROUP BY
         1,
         2
@@ -52,8 +52,8 @@ WITH
         -- rj-smtr.veiculo.sppo_veiculo_dia
         {{ ref('sppo_veiculo_dia')}}
     WHERE
-        DATA BETWEEN DATE("{{ var('start_timestamp') }}")
-        AND DATE("{{ var('end_timestamp') }}")
+        DATA BETWEEN DATE("{{ var('start_date') }}")
+        AND DATE("{{ var('end_date') }}")
         AND status IS NULL
     GROUP BY
         1 )

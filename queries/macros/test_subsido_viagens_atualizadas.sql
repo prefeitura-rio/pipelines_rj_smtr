@@ -9,8 +9,8 @@ WITH
                     {{ ref('viagem_completa') }}
                 WHERE
                     DATA >= "2024-04-01"
-                    AND DATA BETWEEN DATE("{{ var('start_timestamp') }}")
-                    AND DATE("{{ var('end_timestamp') }}")),
+                    AND DATA BETWEEN DATE("{{ var('start_date') }}")
+                    AND DATE("{{ var('end_date') }}")),
                 sumario_servico_dia_historico AS (
                 SELECT
                     data,
@@ -18,8 +18,8 @@ WITH
                 FROM
                     {{ model }}
                 WHERE
-                    DATA BETWEEN DATE("{{ var('start_timestamp') }}")
-                    AND DATE("{{ var('end_timestamp') }}"))
+                    DATA BETWEEN DATE("{{ var('start_date') }}")
+                    AND DATE("{{ var('end_date') }}"))
                 SELECT
                 DISTINCT DATA
                 FROM

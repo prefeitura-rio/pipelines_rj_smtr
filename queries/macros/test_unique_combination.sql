@@ -4,8 +4,8 @@ SELECT
 FROM
     {{ model }}
 WHERE
-    DATA BETWEEN DATE("{{ var('start_timestamp') }}")
-    AND DATE("{{ var('end_timestamp') }}")
+    DATA BETWEEN DATE("{{ var('start_date') }}")
+    AND DATE("{{ var('end_date') }}")
 GROUP BY
     {{expression}}
 HAVING

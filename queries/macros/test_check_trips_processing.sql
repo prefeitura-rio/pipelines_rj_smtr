@@ -1,4 +1,4 @@
-{% test check_trips_processing(model) -%}
+start_date{% test check_trips_processing(model) -%}
 SELECT
     s.data,
     s.tipo_dia,
@@ -14,8 +14,8 @@ FROM (
         rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva
     WHERE
         DATA >= "2024-04-01" -- DATA_SUBSIDIO_V6_INICIO (Feature trajetos alternativos)
-        AND DATA BETWEEN DATE("{{ var('start_timestamp') }}")
-            AND DATE("{{ var('end_timestamp') }}")
+        AND DATA BETWEEN DATE("{{ var('start_date') }}")
+            AND DATE("{{ var('end_date') }}")
     ) AS s
 LEFT JOIN
     -- rj-smtr.gtfs.feed_info AS i

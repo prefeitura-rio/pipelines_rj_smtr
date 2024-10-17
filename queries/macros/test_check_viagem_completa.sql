@@ -8,8 +8,8 @@ WITH
         {{ ref('subsidio_data_versao_efetiva') }}
     WHERE
         DATA >= "2024-04-01"
-        AND DATA BETWEEN DATE("{{ var('start_timestamp') }}")
-        AND DATE("{{ var('end_timestamp') }}")),
+        AND DATA BETWEEN DATE("{{ var('start_date') }}")
+        AND DATE("{{ var('end_date') }}")),
     viagem_completa AS (
     SELECT
         *
@@ -18,14 +18,14 @@ WITH
         {{ ref('viagem_completa') }}
     WHERE
         DATA >= "2024-04-01"
-        AND DATA BETWEEN DATE("{{ var('start_timestamp') }}")
-        AND DATE("{{ var('end_timestamp') }}")),
+        AND DATA BETWEEN DATE("{{ var('start_date') }}")
+        AND DATE("{{ var('end_date') }}")),
     feed_info AS (
     SELECT
         *
     FROM
         -- rj-smtr.gtfs.feed_info
-        {{ ref('feed_info') }}
+        {{ ref('feed_info_gtfs') }}
     WHERE
         feed_version IN (
         SELECT

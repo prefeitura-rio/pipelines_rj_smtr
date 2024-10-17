@@ -1,4 +1,4 @@
-{% test check_gps_treatment(model) -%}
+start_date{% test check_gps_treatment(model) -%}
 WITH
             data_hora AS (
                 SELECT
@@ -9,7 +9,7 @@ WITH
                     FROM
                     timestamp_array) AS hora,
                 FROM
-                    UNNEST(GENERATE_TIMESTAMP_ARRAY("{{ var('start_timestamp') }}", "{{ var('end_timestamp') }}", INTERVAL 1 hour)) AS timestamp_array ),
+                    UNNEST(GENERATE_TIMESTAMP_ARRAY("{{ var('start_date') }}", "{{ var('end_date') }}", INTERVAL 1 hour)) AS timestamp_array ),
             gps_raw AS (
                 SELECT
                     EXTRACT(date
@@ -23,8 +23,8 @@ WITH
                     -- `rj-smtr.br_rj_riodejaneiro_onibus_gps.sppo_registros`
                     {{ ref('sppo_registros') }}
                 WHERE
-                    DATA BETWEEN DATE("{{ var('start_timestamp') }}")
-                    AND DATE("{{ var('end_timestamp') }}")
+                    DATA BETWEEN DATE("{{ var('start_date') }}")
+                    AND DATE("{{ var('end_date') }}")
                 GROUP BY
                     1,
                     2 ),
@@ -41,8 +41,8 @@ WITH
                     -- `rj-smtr.br_rj_riodejaneiro_onibus_gps.sppo_aux_registros_filtrada`
                     {{ ref('sppo_aux_registros_filtrada') }}
                 WHERE
-                    DATA BETWEEN DATE("{{ var('start_timestamp') }}")
-                    AND DATE("{{ var('end_timestamp') }}")
+                    DATA BETWEEN DATE("{{ var('start_date') }}")
+                    AND DATE("{{ var('end_date') }}")
                 GROUP BY
                     1,
                     2 ),
@@ -57,8 +57,8 @@ WITH
                     -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
                     {{ ref('gps_sppo') }}
                 WHERE
-                    DATA BETWEEN DATE("{{ var('start_timestamp') }}")
-                    AND DATE("{{ var('end_timestamp') }}")
+                    DATA BETWEEN DATE("{{ var('start_date') }}")
+                    AND DATE("{{ var('end_date') }}")
                 GROUP BY
                     1,
                     2),
