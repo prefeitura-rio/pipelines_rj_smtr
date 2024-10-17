@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Module containing general purpose tasks"""
-from datetime import datetime
-from typing import Any, Union
+from datetime import datetime, timedelta
+from typing import Any, List, Union
 
 import prefect
 from prefect import task
@@ -271,3 +271,27 @@ def run_dbt_selector(
     dbt_logs = dbt_task.run()
 
     log("\n".join(dbt_logs))
+
+
+@task
+def get_timestamp_range(start_date: str = None, end_date: str = None) -> List[str]:
+    """
+    Generates a list of all days between two given dates (inclusive).
+
+    Args:
+        start_date (str): The start date as a string in the format 'YYYY-MM-DD'.
+        end_date (str): The end date as a string in the format 'YYYY-MM-DD'.
+    """
+
+    start_date_dt = datetime.strptime(start_date, "%Y-%m-%d")
+    end_date_dt = datetime.strptime(end_date, "%Y-%m-%d")
+
+    timestamps = []
+    if start_date is None or end_date is None:
+        return None
+
+    while start_date_dt <= end_date_dt:
+        timestamps.append(start_date_dt)
+        start_date_dt += timedelta(days=1)
+
+    return timestamps

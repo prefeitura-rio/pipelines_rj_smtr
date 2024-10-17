@@ -165,4 +165,5 @@ sources:
 
     tables:
       - name: autuacoes_citran
+      - name: autuacoes_serpro
       - name: receita_autuacao
