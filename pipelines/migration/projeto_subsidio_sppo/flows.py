@@ -44,7 +44,7 @@ from pipelines.migration.tasks import (
 )
 from pipelines.migration.veiculo.flows import sppo_veiculo_dia
 from pipelines.schedules import every_day_hour_five, every_day_hour_seven_minute_five
-from pipelines.tasks import run_dbt_selector
+from pipelines.treatment.templates.tasks import run_dbt_selector
 
 # from pipelines.materialize_to_datario.flows import (
 #     smtr_materialize_to_datario_viagem_sppo_flow,

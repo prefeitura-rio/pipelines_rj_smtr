@@ -70,8 +70,6 @@ def create_capture_filepath(
     """
     log("Creating filepaths...")
     log(f"Timestamp received: {timestamp}")
-    timestamp = timestamp.astimezone(tz=pytz.timezone(constants.TIMEZONE.value))
-    log(f"Timestamp converted to {constants.TIMEZONE.value}: {timestamp}")
     data_folder = get_data_folder_path()
     log(f"Data folder: {data_folder}")
     template_filepath = os.path.join(
@@ -111,7 +109,7 @@ def get_filetype(filepath: str):
     return os.path.splitext(filepath)[1].removeprefix(".")
 
 
-def save_local_file(filepath: str, data: Union[str, dict, list[dict], pd.DataFrame]):
+def save_local_file(filepath: str, filetype: str, data: Union[str, dict, list[dict], pd.DataFrame]):
     """
     Salva um arquivo localmente
 
@@ -131,7 +129,6 @@ def save_local_file(filepath: str, data: Union[str, dict, list[dict], pd.DataFra
         log("File saved!")
         return
 
-    filetype = get_filetype(filepath)
     log(f"Saving {filetype.upper()}")
     with open(filepath, "w", encoding="utf-8") as file:
         if filetype == "json":
