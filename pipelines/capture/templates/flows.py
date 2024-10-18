@@ -3,8 +3,6 @@
 from types import NoneType
 
 from prefect import unmapped
-
-# from prefect import Parameter
 from prefect.run_configs import KubernetesRun
 from prefect.schedules import Schedule
 from prefect.schedules.clocks import CronClock
@@ -38,7 +36,7 @@ def create_default_capture_flow(
     source: SourceTable,
     create_extractor_task: FunctionTask,
     agent_label: str,
-    recapture_days: int = 1,
+    recapture_days: int = 2,
     generate_schedule: bool = True,
 ):  # pylint: disable=R0914, R0913
     """
@@ -46,36 +44,24 @@ def create_default_capture_flow(
 
     Args:
         flow_name (str): O nome do flow
-        partition_date_only (bool): True se o particionamento deve ser feito apenas por data
-            False se o particionamento deve ser feito por data e hora
+        source (SourceTable): Objeto representando a fonte de dados que será capturada
         create_extractor_task (FunctionTask):
-            A task que cria o DataExtractor
+            A task que prepara a função de extração
             Pode receber os argumentos:
-                env (str): dev ou prod
-                source_name (str): O nome do source
-                table_id (str): table_id no BigQuery
-                save_filepath (str): O caminho para salvar o arquivo raw localmente
-                data_extractor_params (dict): Dicionario com parametros personalizados
-                incremental_info (IncrementalInfo): Objeto contendo informações sobre
-                    a execução incremental
-            Deve retornar uma classe derivada de DataExtractor
-        overwrite_optional_flow_params (dict): Dicionário para substituir
-            o valor padrão dos parâmetros opcionais do flow
+                source (SourceTable): Objeto representando a fonte de dados que será capturada
+                timestamp (datetime): a timestamp de referência da execução
+            Deve retornar uma função que execute sem argumentos
         agent_label (str): Label do flow
+        recapture_days (int): A quantidade de dias que o flows vai considerar para achar datas
+            a serem recapturadas
+        generate_schedule (bool): Se a função vai agendar o flow com base
+            no parametro schedule_cron do source
 
     Returns:
-        Flow: The capture flow
+        Flow: O flow de captura
     """
 
     with Flow(flow_name) as capture_flow:
-        # Parâmetros Gerais #
-
-        # table_id no BigQuery
-        # exclude_table_id = TypedParameter(
-        #     name="exclude_table_id",
-        #     default=None,
-        #     accepted_types=(NoneType, list),
-        # )
 
         timestamp = TypedParameter(
             name="timestamp",
@@ -154,7 +140,7 @@ def create_default_capture_flow(
             timestamp=timestamps,
             primary_keys=unmapped(activated_source["primary_keys"]),
             reader_args=unmapped(activated_source["pretreatment_reader_args"]),
-            pretreat_funcs=unmapped(activated_source.pretreat_funcs),
+            pretreat_funcs=unmapped(activated_source["pretreat_funcs"]),
         )
         pretreatment.set_upstream(get_raw)
 

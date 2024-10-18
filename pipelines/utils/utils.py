@@ -10,6 +10,7 @@ import pytz
 from croniter import croniter
 from pandas_gbq.exceptions import GenericGBQException
 from prefeitura_rio.pipelines_utils.logging import log
+from pytz import timezone
 
 from pipelines.constants import constants
 
@@ -223,3 +224,23 @@ def cron_get_next_date(cron_expr: str, timestamp: datetime) -> datetime:
         datetime: próxima data do cron
     """
     return croniter(cron_expr, timestamp).get_next(datetime)
+
+
+def convert_timezone(timestamp: datetime) -> datetime:
+    """
+    Converte um datetime para a timezone padrão definida nas constantes
+
+    Args:
+        timestamp (datetime): Datetime a ser convertido
+
+    Returns:
+        datetime: Datetime com informação de timezone
+    """
+    tz = timezone(constants.TIMEZONE.value)
+
+    if timestamp.tzinfo is None:
+        timestamp = tz.localize(timestamp)
+    else:
+        timestamp = timestamp.astimezone(tz=tz)
+
+    return timestamp

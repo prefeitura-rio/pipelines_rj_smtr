@@ -10,12 +10,11 @@ from google.api_core.exceptions import NotFound
 from google.cloud import bigquery
 from google.cloud.bigquery.external_config import HivePartitioningOptions
 from prefeitura_rio.pipelines_utils.logging import log
-from pytz import timezone
 
 from pipelines.constants import constants
 from pipelines.utils.gcp.base import GCPBase
 from pipelines.utils.gcp.storage import Storage
-from pipelines.utils.utils import cron_date_range
+from pipelines.utils.utils import convert_timezone, cron_date_range
 
 
 class Dataset(GCPBase):
@@ -66,8 +65,22 @@ class Dataset(GCPBase):
 
 
 class BQTable(GCPBase):
+    """
+    Classe para manipular tabelas do BigQuery
+
+    Args:
+        env (str): prod ou dev
+        dataset_id (str): dataset_id no BigQuery
+        table_id (str): table_id no BigQuery
+        bucket_names (dict): nome dos buckets de prod e dev associados ao objeto
+    """
+
     def __init__(  # pylint: disable=R0913
-        self, env: str, dataset_id: str, table_id: str, bucket_names: dict = None
+        self,
+        env: str,
+        dataset_id: str,
+        table_id: str,
+        bucket_names: dict = None,
     ) -> None:
         self.table_full_name = None
         super().__init__(
@@ -129,6 +142,31 @@ class BQTable(GCPBase):
 
 
 class SourceTable(BQTable):
+    """
+    Classe para manipular dados capturados pelos flows
+
+    Args:
+        source_name (str): Nome da fonte de dados
+        table_id (str): table_id no BigQuery
+        first_timestamp (datetime): Primeira timestamp com dados
+        schedule_cron (str): Expressão cron contendo a frequência de atualização dos dados
+        primary_keys (list[str]): Lista com o nome das primary keys da tabela
+        pretreatment_reader_args (dict): Argumentos para leitura dos dados. São utilizados
+            nas funções pd.read_csv ou pd.read_json dependendo do tipo de dado
+        pretreat_funcs (Callable[[pd.DataFrame, datetime, list[str]], pd.DataFrame]): funções para
+            serem executadas antes de transformar em nested. Devem receber os argumentos:
+                data (pd.DataFrame)
+                timestamp (datetime)
+                primary_keys (list[str])
+            e retornar um pd.DataFrame
+        bucket_names (dict): nome dos buckets de prod e dev associados ao objeto
+        partition_date_only (bool): caso positivo, irá criar apenas a partição de data. Caso
+            negativo, cria partição de data e de hora
+        max_recaptures (int): número máximo de recapturas executadas de uma só vez
+        raw_filetype (str): tipo do dado (json, csv, txt)
+
+    """
+
     def __init__(  # pylint: disable=R0913
         self,
         source_name: str,
@@ -147,20 +185,23 @@ class SourceTable(BQTable):
         super().__init__(
             dataset_id="source_" + source_name,
             table_id=table_id,
-            bucket_names=bucket_names,
             env="dev",
-            schedule_cron=schedule_cron,
+            bucket_names=bucket_names,
         )
+        self.bucket_name = bucket_names
         self.raw_filetype = raw_filetype
         self.primary_keys = primary_keys
         self.partition_date_only = partition_date_only
         self.max_recaptures = max_recaptures
-        self.first_timestamp = first_timestamp
+        self.first_timestamp = convert_timezone(first_timestamp)
         self.pretreatment_reader_args = pretreatment_reader_args
         self.pretreat_funcs = pretreat_funcs or []
         self.schedule_cron = schedule_cron
 
     def _create_table_schema(self) -> list[bigquery.SchemaField]:
+        """
+        Cria schema para os argumentos da criação de tabela externa no BQ
+        """
         log("Creating table schema...")
         columns = self.primary_keys + ["content", "timestamp_captura"]
 
@@ -172,7 +213,9 @@ class SourceTable(BQTable):
         return schema
 
     def _create_table_config(self) -> bigquery.ExternalConfig:
-
+        """
+        Cria as configurações da tabela externa no BQ
+        """
         external_config = bigquery.ExternalConfig("CSV")
         external_config.options.skip_leading_rows = 1
         external_config.options.allow_quoted_newlines = True
@@ -190,7 +233,18 @@ class SourceTable(BQTable):
 
         return external_config
 
-    def get_uncaptured_timestamps(self, timestamp: datetime, retroactive_days: int = 1) -> list:
+    def get_uncaptured_timestamps(self, timestamp: datetime, retroactive_days: int = 2) -> list:
+        """
+        Retorna todas as timestamps não capturadas até um datetime
+
+        Args:
+            timestamp (datetime): filtro limite para a busca
+            retroactive_days (int): número de dias anteriores à timestamp informada que a busca
+                irá verificar
+
+        Returns:
+            list: Lista com as timestamps não capturadas
+        """
         st = Storage(
             env=self.env,
             dataset_id=self.dataset_id,
@@ -207,11 +261,10 @@ class SourceTable(BQTable):
         for day in days_to_check:
             prefix = f"source/{self.dataset_id}/{self.table_id}/data={day.date().isoformat()}/"
             files = files + [
-                datetime.strptime(b.name.split("/")[-1], "%Y-%m-%d-%H-%M-%S.csv")
+                convert_timezone(datetime.strptime(b.name.split("/")[-1], "%Y-%m-%d-%H-%M-%S.csv"))
                 for b in st.bucket.list_blobs(prefix=prefix)
             ]
-        tz = timezone(constants.TIMEZONE.value)
-        return [tz.localize(d) for d in full_range if d not in files][: self.max_recaptures]
+        return [d for d in full_range if d not in files][: self.max_recaptures]
 
     def upload_raw_file(self, raw_filepath: str, partition: str):
 
@@ -229,6 +282,12 @@ class SourceTable(BQTable):
         )
 
     def create(self, location: str = "US"):
+        """
+        Cria tabela externa do BQ
+
+        Args:
+            location (str): Localização do dataset
+        """
         log(f"Creating External Table: {self.table_full_name}")
         dataset_obj = Dataset(dataset_id=self.dataset_id, env=self.env, location=location)
         dataset_obj.create()
@@ -243,7 +302,13 @@ class SourceTable(BQTable):
         log("Table created!")
 
     def append(self, source_filepath: str, partition: str):
+        """
+        Insere novos dados na tabela externa
 
+        Args:
+            source_filepath (str): Caminho dos dados locais
+            partition (str): Partição Hive
+        """
         st_obj = Storage(
             env=self.env,
             dataset_id=self.dataset_id,

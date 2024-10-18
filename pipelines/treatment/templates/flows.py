@@ -4,6 +4,8 @@
 from types import NoneType
 
 from prefect.run_configs import KubernetesRun
+from prefect.schedules import Schedule
+from prefect.schedules.clocks import CronClock
 from prefect.storage import GCS
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
@@ -13,56 +15,52 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 
 from pipelines.constants import constants
 from pipelines.tasks import get_run_env, get_scheduled_timestamp
-from pipelines.treatment.templates.tasks import get_datetime_end, get_datetime_start
-
-# create_dbt_run_vars,; get_repo_version,; rename_materialization_flow,;
-# save_materialization_datetime_redis,
+from pipelines.treatment.templates.tasks import (
+    create_dbt_run_vars,
+    get_datetime_end,
+    get_datetime_start,
+    get_repo_version,
+    rename_materialization_flow,
+    run_dbt_selector,
+    save_materialization_datetime_redis,
+    wait_data_sources,
+)
 from pipelines.treatment.templates.utils import DBTSelector
 from pipelines.utils.prefect import TypedParameter
 
 
 def create_default_materialization_flow(
+    flow_name: str,
     selector: DBTSelector,
     agent_label: str,
     wait: list = None,
-    create_schedule: bool = True,
+    generate_schedule: bool = True,
 ) -> Flow:
     """
     Cria um flow de materialização
 
     Args:
         flow_name (str): O nome do Flow
-        dataset_id (str): O dataset_id no BigQuery
-        datetime_column_name (str): O nome da coluna de datetime para buscar a
-            última data materializada, caso não tenha registrado no Redis
-        create_datetime_variables_task (FunctionTask): Task de criação das variáveis de
-            data para execuções incrementais
-        overwrite_flow_param_values (dict): Dicionário para substituir os valores padrões dos
-            parâmetros do flow
+        selector (DBTSelector): Objeto que representa o selector do DBT
         agent_label (str): Label do flow
-        data_quality_checks (list[DataQualityCheckArgs]): Lista de checks do Dataplex para
-            serem executados
+        wait (list): Lista de DBTSelectors e/ou SourceTables para verificar a completude dos dados
+        generate_schedule (bool): Se a função vai agendar o flow com base
+            no parametro schedule_cron do selector
 
         Returns:
             Flow: Flow de materialização
     """
-    with Flow(selector + " - materializacao") as default_materialization_flow:
+    if wait is None:
+        wait = []
+    with Flow(flow_name) as default_materialization_flow:
 
-        # flags = TypedParameter(
-        #     name="flags",
-        #     default=False,
-        #     accepted_types=(str, NoneType),
-        # )
-
-        # Parâmetros para filtros incrementais #
-
-        # Data de referência da execução, ela subtraída pelo incremental_delay_hours
-        # será a data final do filtro incremental
-        timestamp = TypedParameter(
-            name="timestamp",
+        flags = TypedParameter(
+            name="flags",
             default=None,
             accepted_types=(str, NoneType),
         )
+
+        # Parâmetros para filtros incrementais #
 
         # Substitui a data inicial da execução incremental
         datetime_start = TypedParameter(
@@ -77,9 +75,15 @@ def create_default_materialization_flow(
             accepted_types=(str, NoneType),
         )
 
+        skip_source_check = TypedParameter(
+            name="skip_source_check",
+            default=False,
+            accepted_types=bool,
+        )
+
         env = get_run_env()
 
-        timestamp = get_scheduled_timestamp(timestamp=timestamp)
+        timestamp = get_scheduled_timestamp()
 
         datetime_start = get_datetime_start(
             env=env,
@@ -93,52 +97,39 @@ def create_default_materialization_flow(
             datetime_end=datetime_end,
         )
 
-        # datetime_vars, datetime_start, datetime_end = create_datetime_variables_task(
-        #     timestamp=timestamp,
-        #     last_materialization_datetime=last_materialization_datetime,
-        #     incremental_delay_hours=incremental_delay_hours,
-        #     overwrite_initial_datetime=overwrite_initial_datetime,
-        # )
+        complete_sources = wait_data_sources(
+            env=env,
+            datetime_start=datetime_start,
+            datetime_end=datetime_end,
+            data_sources=wait,
+            skip=skip_source_check,
+        )
 
-        # rename_flow_run = rename_materialization_flow(
-        #     dataset_id=dataset_id,
-        #     # table_id=table_id,
-        #     timestamp=timestamp,
-        #     datetime_start=datetime_start,
-        #     datetime_end=datetime_end,
-        # )
+        rename_flow_run = rename_materialization_flow(
+            selector=selector,
+            timestamp=timestamp,
+            datetime_start=datetime_start,
+            datetime_end=datetime_end,
+        )
 
-        # repo_version = get_repo_version(upstream_tasks=[rename_flow_run])
+        repo_version = get_repo_version(upstream_tasks=[rename_flow_run])
 
-        # dbt_run_vars = create_dbt_run_vars(
-        #     datetime_vars=datetime_vars,
-        #     repo_version=repo_version,
-        # )
+        dbt_run_vars = create_dbt_run_vars(
+            datetime_start=datetime_start,
+            datetime_end=datetime_end,
+            repo_version=repo_version,
+        )
 
-        # run_dbt = run_dbt_model_task(
-        #     dataset_id=dataset_id,
-        #     # table_id=table_id,
-        #     # upstream=upstream,
-        #     # downstream=downstream,
-        #     # exclude=exclude,
-        #     rebuild=rebuild,
-        #     dbt_run_vars=dbt_run_vars,
-        # )
+        dbt_run = run_dbt_selector(
+            selector_name=selector.name,
+            flags=flags,
+            _vars=dbt_run_vars,
+            upstream_tasks=[complete_sources],
+        )
 
-        # save_materialization_datetime_redis(
-        #     redis_key=redis_key,
-        #     value=datetime_end,
-        #     upstream_tasks=[run_dbt],
-        # )
-
-        # if data_quality_checks is not None:
-        #     pass
-        # run_data_quality_checks(
-        #     data_quality_checks=data_quality_checks,
-        #     initial_partition=datetime_start,
-        #     final_partition=datetime_end,
-        #     upstream_tasks=[save_redis],
-        # )
+        save_materialization_datetime_redis(
+            env=env, selector=selector, value=datetime_end, upstream_tasks=[dbt_run]
+        )
 
     default_materialization_flow.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
     default_materialization_flow.run_config = KubernetesRun(
@@ -150,5 +141,18 @@ def create_default_materialization_flow(
         handler_inject_bd_credentials,
         handler_skip_if_running,
     ]
+
+    if generate_schedule:
+
+        default_materialization_flow.schedule = Schedule(
+            [
+                CronClock(
+                    selector.schedule_cron,
+                    labels=[
+                        agent_label,
+                    ],
+                )
+            ]
+        )
 
     return default_materialization_flow
