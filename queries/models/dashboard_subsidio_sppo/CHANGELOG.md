@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [7.0.5] - 2024-10-16
+
+### Corrigido
+
+- Corrigido join em `sumario_servico_dia_historico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/271)
+
 ## [7.0.4] - 2024-09-27
 
 ### Corrigido
