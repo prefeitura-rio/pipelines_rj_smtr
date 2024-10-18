@@ -35,7 +35,7 @@ models:
         data_type: string
         quote: true
       - name: servico
-        description: Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação
+        description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação"
         data_type: string
         quote: true
       - name: sentido
