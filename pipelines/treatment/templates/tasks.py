@@ -243,7 +243,6 @@ def run_dbt_selector(
 
     root_path = get_root_path()
     queries_dir = str(root_path / "queries")
-    print(queries_dir)
 
     if flow_is_running_local():
         run_command += f' --profiles-dir "{queries_dir}/dev"'

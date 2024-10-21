@@ -27,7 +27,6 @@ def create_viagem_informada_extractor(source: SourceTable, timestamp: datetime):
         "datetime_processamento_inicio": extraction_day.isoformat() + "T00:00:00",
         "datetime_processamento_fim": extraction_day.isoformat() + "T23:59:59",
     }
-    print(params)
     return partial(
         get_raw_api,
         url=constants.VIAGEM_INFORMADA_BASE_URL.value,
