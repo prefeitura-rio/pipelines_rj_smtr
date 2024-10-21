@@ -29,13 +29,13 @@ WITH
     {{ ref('subsidio_faixa_servico_dia_tipo_viagem')}}
     -- `rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem`
   WHERE
-    data >= DATE("{{ var("DATA_SUBSIDIO_V9_INICIO") }}") 
+    data >= DATE("{{ var("DATA_SUBSIDIO_V9_INICIO") }}")
     and tipo_viagem != "Sem viagem apurada"
   GROUP by data,
     tipo_dia,
     consorcio,
     servico,
-    tipo_viagem, 
+    tipo_viagem,
     indicador_ar_condicionado)
 SELECT
   *
