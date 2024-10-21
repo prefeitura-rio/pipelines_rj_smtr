@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Alterado o link da planilha `Control OS` 
+- Alterado o link da planilha `Control OS`
 
 ## [1.1.1] - 2024-09-13
 
