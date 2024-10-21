@@ -32,7 +32,6 @@ from pipelines.migration.br_rj_riodejaneiro_onibus_gps.tasks import (
     pre_treatment_br_rj_riodejaneiro_onibus_gps,
     pre_treatment_br_rj_riodejaneiro_onibus_realocacao,
 )
-from pipelines.migration.br_rj_riodejaneiro_onibus_gps.utils import handler_notify_fail
 from pipelines.migration.tasks import (  # get_local_dbt_client,
     bq_upload,
     create_date_hour_partition,
@@ -330,7 +329,6 @@ captura_sppo_v2.schedule = every_minute
 captura_sppo_v2.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
-    handler_notify_fail,
 ]
 
 with Flow(
@@ -539,7 +537,6 @@ recaptura.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
     handler_skip_if_running,
-    handler_notify_fail,
 ]
 
 
