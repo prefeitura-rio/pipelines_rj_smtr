@@ -49,7 +49,7 @@ with
                 then 'Circular'
                 else sentido
             end as sentido,
-            fornecedor,
+            fornecedor as fonte_gps,
             datetime_processamento,
             timestamp_captura as datetime_captura,
         from {{ staging_viagem_informada_rioonibus }}
