@@ -59,6 +59,78 @@ models:
       - name: status_sne
         description: "Indicador de adesão do veículo ao SNE"
 
+  - name: autuacao_serpro
+    description: "Tabela com dados de autuações fornecidos pelo sistema CITRAN/IplanRio"
+    columns:
+      - name: data
+        description: "Data da autuação (Coluna de particionamento)"
+      - name: id_auto_infracao
+        description: "Código do auto de infração"
+      - name: datetime_autuacao
+        description: "Data e hora da autuação"
+      - name: data_limite_defesa_previa
+        description: "Data limite para defesa prévia"
+      - name: data_limite_recurso
+        description: "Data limite para recurso em primeira instância"
+      - name: descricao_situacao_autuacao
+        description: "Descrição da situação da autuação"
+      - name: status_infracao
+        description: "Descrição do status da infração"
+      - name: codigo_enquadramento
+        description: "Código da autuação"
+      - name: tipificacao_resumida
+        description: "Descrição da autuação"
+      - name: pontuacao
+        description: "Quantidade de pontos da autuação"
+      - name: gravidade
+        description: "Descrição da gravidade da autuação"
+      - name: amparo_legal
+        description: "Amparo legal da autuação"
+      - name: tipo_veiculo
+        description: "Tipo de veículo autuado"
+      - name: descricao_veiculo
+        description: "Marca/modelo do veículo"
+      - name: placa_veiculo
+        description: "Placa do veículo"
+      - name: ano_fabricacao_veiculo
+        description: "Ano de fabricação do veículo"
+      - name: ano_modelo_veiculo
+        description: "Ano do modelo do veículo"
+      - name: cor_veiculo
+        description: "Cor do veículo"
+      - name: especie_veiculo
+        description: "Espécie do veículo"
+      - name: uf_infrator
+        description: "Estado do condutor infrator (em caso de indicação de real condutor infrator)"
+      - name: uf_principal_condutor
+        description: "Estado do condutor principal do veículo"
+      - name: uf_proprietario
+        description: "Estado do proprietário do veículo"
+      - name: cep_proprietario
+        description: "CEP do proprietário do veículo [protegido]"
+      - name: valor_infracao
+        description: "Valor monetário da autuação (100%) [R$]"
+      - name: valor_pago
+        description: "Valor pago da autuação [R$]"
+      - name: id_autuador
+        description: "Código do órgão autuador"
+      - name: descricao_autuador
+        description: "Descrição da unidade de autuação"
+      - name: id_municipio_autuacao
+        description: "Código TOM do município da autuação"
+      - name: descricao_municipio
+        description: "Nome do município da autuação"
+      - name: uf_autuacao
+        description: "Sigla do estado da autuação"
+      - name: processo_defesa_autuacao
+        description: "Número do processo de defesa prévia"
+      - name: recurso_penalidade_multa
+        description: "Número do processo de recurso contra aplicação de penalidade de multa em primeira instância"
+      - name: processo_troca_real_infrator
+        description: "Número do processo de troca de real condutor infrator"
+      - name: status_sne
+        description: "Indicador de adesão do veículo ao SNE"
+
   - name: autuacao
     description: "Tabela com dados de autuações (até abril/2023)"
     columns:
