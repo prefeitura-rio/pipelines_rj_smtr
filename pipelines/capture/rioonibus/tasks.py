@@ -19,7 +19,7 @@ from pipelines.utils.secret import get_secret
 def create_viagem_informada_extractor(source: SourceTable, timestamp: datetime):
     """Cria a extração de viagens informadas na api da Rio Ônibus"""
 
-    extraction_day = timestamp.date() - timedelta(days=1)
+    extraction_day = timestamp.date() - timedelta(days=2)
     params = {
         "guidIdentificacao": get_secret(constants.RIO_ONIBUS_SECRET_PATH.value)[
             "guididentificacao"
