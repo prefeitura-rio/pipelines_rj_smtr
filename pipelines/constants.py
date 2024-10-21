@@ -214,9 +214,9 @@ class constants(Enum):  # pylint: disable=c0103
     }
 
     # GTFS
-    GTFS_CONTROLE_OS_URL = "https://docs.google.com/spreadsheets/d/e/2PAC\
-X-1vRvFcyr9skfBIrjxc4FSJZ3-g4gUCF56YjGPOmd1f5qH8vndpy22P6f6KdcYgWaqzUmtSBL\
-4Rs1Ardz/pub?gid=0&single=true&output=csv"
+    GTFS_CONTROLE_OS_URL = "https://docs.google.com/spreadsheets/d/\
+1Jn7fmaDOhuHMdMqHo5SGWHCRuerXNWJRmhRjnHxJ9O4\
+/pub?gid=0&single=true&output=csv"
     GTFS_DATASET_ID = "br_rj_riodejaneiro_gtfs"
 
     GTFS_GENERAL_CAPTURE_PARAMS = {

@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.1.2] - 2024-10-21
+
+### Alterado
+
+- Alterado o link da planilha `Control OS` 
+
 ## [1.1.1] - 2024-09-13
 
 ### Alterado
