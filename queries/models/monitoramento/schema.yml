@@ -42,7 +42,7 @@ models:
         description: Sentido de operação do serviço
         data_type: string
         quote: true
-      - name: fornecedor
+      - name: fonte_gps
         description: Fornecedor de dados de GPS a ser considerado para validar a viagem
         data_type: string
         quote: true
