@@ -1,3 +1,8 @@
+{{
+  config(
+    materialized="view",
+  )
+}}
 WITH
   pre_faixa_horaria AS (
   SELECT
