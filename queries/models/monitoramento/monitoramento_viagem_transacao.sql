@@ -36,7 +36,7 @@ WITH
       {% if is_incremental() %}
         AND data BETWEEN DATE("{{ var("start_date") }}")
         AND DATE_ADD(DATE("{{ var("end_date") }}"), INTERVAL 1 DAY)
-      {% endif %} 
+      {% endif %}
   ),
   -- 3. GPS Validador
   gps_validador AS (
@@ -77,7 +77,7 @@ WITH
     data >= DATE("{{ var("DATA_SUBSIDIO_V8_INICIO") }}")
     {% if is_incremental() %}
       AND data BETWEEN DATE("{{ var("start_date") }}")
-      AND DATE( "{{ var("end_date") }}" ) 
+      AND DATE( "{{ var("end_date") }}" )
     {% endif %}
   ),
   -- 5. Status dos veículos
@@ -263,4 +263,4 @@ LEFT JOIN
   estado_equipamento_verificacao AS eev
 USING
   (data, id_viagem)
-    
+
