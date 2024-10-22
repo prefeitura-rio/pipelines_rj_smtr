@@ -11,6 +11,6 @@ from pipelines.treatment.templates.flows import create_default_materialization_f
 VIAGEM_INFORMADA_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="viagem_informada - materializacao",
     selector=constants.VIAGEM_INFORMADA_SELECTOR.value,
-    agent_label=smtr_constants.RJ_SMTR_DEV_AGENT_LABEL.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[rioonibus_source_constants.VIAGEM_INFORMADA_SOURCE.value],
 )

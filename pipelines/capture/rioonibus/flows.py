@@ -10,6 +10,6 @@ CAPTURA_VIAGEM_INFORMADA = create_default_capture_flow(
     flow_name="rioonibus: viagem_informada - captura",
     source=constants.VIAGEM_INFORMADA_SOURCE.value,
     create_extractor_task=create_viagem_informada_extractor,
-    agent_label=smtr_constants.RJ_SMTR_DEV_AGENT_LABEL.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
 )
 set_default_parameters(CAPTURA_VIAGEM_INFORMADA, {"recapture": True})

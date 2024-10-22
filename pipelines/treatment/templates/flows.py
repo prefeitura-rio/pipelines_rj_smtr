@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Flows de Tratamento de dados Genéricos"""
-# from datetime import datetime
+from datetime import datetime
 from types import NoneType
 
 from prefect.run_configs import KubernetesRun
@@ -12,6 +12,7 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
     handler_skip_if_running,
 )
+from pytz import timezone
 
 from pipelines.constants import constants
 from pipelines.tasks import get_run_env, get_scheduled_timestamp
@@ -151,6 +152,7 @@ def create_default_materialization_flow(
                     labels=[
                         agent_label,
                     ],
+                    start_date=datetime.now(tz=timezone(constants.TIMEZONE.value)),
                 )
             ]
         )
