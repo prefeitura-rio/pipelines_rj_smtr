@@ -14,8 +14,8 @@ WITH
       id_veiculo,
       datetime_transacao
     FROM
-      -- `rj-smtr-dev`.`br_rj_riodejaneiro_bilhetagem`.`transacao`
-      rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao
+      {{ ref("transacao") }}
+      -- rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao
     WHERE
     data >= DATE("{{ var("DATA_SUBSIDIO_V8_INICIO") }}")
     {% if is_incremental() %}
@@ -29,8 +29,8 @@ WITH
       id_veiculo,
       datetime_transacao
     FROM
-      -- `rj-smtr-dev`.`br_rj_riodejaneiro_bilhetagem`.`transacao_riocard`
-      rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard
+      {{ ref("transacao_riocard") }}
+      -- rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard
     WHERE
       data >= DATE("{{ var("DATA_SUBSIDIO_V8_INICIO") }}")
       {% if is_incremental() %}
@@ -49,8 +49,8 @@ WITH
       latitude,
       longitude
     FROM
-      -- `rj-smtr-dev`.`br_rj_riodejaneiro_bilhetagem`.`gps_validador`
-      rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador
+      {{ ref("gps_validador") }}
+      -- rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador
     WHERE
       data >= DATE("{{ var("DATA_SUBSIDIO_V8_INICIO") }}")
       {% if is_incremental() %}
@@ -71,7 +71,7 @@ WITH
     sentido,
     distancia_planejada
  FROM
-    `rj-smtr.projeto_subsidio_sppo.viagem_completa`
+    {{ ref("viagem_completa") }}
     -- rj-smtr.projeto_subsidio_sppo.viagem_completa
   WHERE
     data >= DATE("{{ var("DATA_SUBSIDIO_V8_INICIO") }}")
@@ -87,8 +87,8 @@ WITH
     id_veiculo,
     status
   FROM
-    -- `rj-smtr-dev`.`veiculo`.`sppo_veiculo_dia`
-    rj-smtr.veiculo.sppo_veiculo_dia
+    {{ ref("sppo_veiculo_dia") }}
+    -- rj-smtr.veiculo.sppo_veiculo_dia
   WHERE
     data >= DATE("{{ var("DATA_SUBSIDIO_V8_INICIO") }}")
     {% if is_incremental() %}
