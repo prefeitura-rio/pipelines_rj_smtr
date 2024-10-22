@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
+"""Flow genérico de captura"""
 
+# -*- coding: utf-8 -*-
+
+from datetime import datetime
 from types import NoneType
 
 from prefect import unmapped
@@ -13,6 +17,7 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
     handler_inject_bd_credentials,
 )
+from pytz import timezone
 
 from pipelines.capture.templates.tasks import (
     create_filepaths,
@@ -168,6 +173,7 @@ def create_default_capture_flow(
                     labels=[
                         agent_label,
                     ],
+                    start_date=datetime.now(tz=timezone(constants.TIMEZONE.value)),
                 )
             ]
         )
