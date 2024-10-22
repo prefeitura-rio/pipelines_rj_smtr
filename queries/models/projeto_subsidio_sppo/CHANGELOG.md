@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.0.6] - 2024-10-22
+
+### Corrigido
+
+- Alterado o tipo_os de 2024-10-06 para `Eleição` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/281)
+
 ## [9.0.5] - 2024-10-08
 
 ### Corrigido

@@ -172,3 +172,9 @@ sources:
 
     tables:
       - name: logradouro
+
+  - name: source_rioonibus
+    database: rj-smtr-staging
+
+    tables:
+      - name: viagem_informada
