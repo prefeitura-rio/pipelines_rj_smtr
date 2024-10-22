@@ -3,7 +3,6 @@
 
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
 from types import NoneType
 
 from prefect import unmapped

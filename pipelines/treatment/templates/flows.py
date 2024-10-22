@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """Flows de Tratamento de dados Genéricos"""
-# from datetime import datetime
 from datetime import datetime
 from types import NoneType
 
