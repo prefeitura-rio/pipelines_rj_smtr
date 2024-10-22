@@ -18,5 +18,5 @@ class constants(Enum):  # pylint: disable=c0103
     VIAGEM_INFORMADA_SELECTOR = DBTSelector(
         name="viagem_informada",
         schedule_cron=cron_every_day_hour_7_minute_10,
-        initial_datetime=datetime(2024, 9, 19, 0, 0, 0),
+        initial_datetime=datetime(2024, 10, 18, 0, 0, 0),
     )
