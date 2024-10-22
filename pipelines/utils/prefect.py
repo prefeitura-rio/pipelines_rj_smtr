@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """Prefect functions"""
-import inspect
 import time
 
 # import json
-from typing import Any, Callable, Dict, Type, Union
+from typing import Any, Dict, Type, Union
 
 import prefect
 from prefect import unmapped
@@ -17,7 +16,6 @@ from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.constants import constants
-from pipelines.utils.extractors.base import DataExtractor
 
 # from prefect.engine.state import Cancelled, State
 
@@ -45,66 +43,6 @@ class TypedParameter(prefect.Parameter):
         ), f"Param {self.name} must be {self.accepted_types}. Received {type(param_value)}"
 
         return param_value
-
-
-def extractor_task(func: Callable, **task_init_kwargs):
-    """
-    Decorator para tasks create_extractor_task do flow generico de captura
-    Usado da mesma forma que o decorator task padrão do Prefect.
-
-    A função da task pode receber os seguintes argumentos:
-        env: str,
-        dataset_id: str,
-        table_id: str,
-        save_filepath: str,
-        data_extractor_params: dict,
-        incremental_info: IncrementalInfo
-
-    Garante que os argumentos e retorno da task estão corretos e
-    possibilita que a task seja criada sem precisar de todos os argumentos passados pelo flow
-    """
-    task_init_kwargs["name"] = task_init_kwargs.get("name", func.__name__)
-    signature = inspect.signature(func)
-    assert task_init_kwargs.get("nout", 1) == 1, "nout must be 1"
-
-    return_annotation = signature.return_annotation
-
-    if hasattr(return_annotation, "__origin__") and return_annotation.__origin__ is Union:
-        return_assertion = all(issubclass(t, DataExtractor) for t in return_annotation.__args__)
-    else:
-        return_assertion = issubclass(
-            signature.return_annotation,
-            DataExtractor,
-        )
-
-    assert return_assertion, "return must be DataExtractor subclass"
-
-    def decorator(func):
-        expected_arguments = [
-            "env",
-            "dataset_id",
-            "table_id",
-            "save_filepath",
-            "data_extractor_params",
-            "incremental_info",
-        ]
-
-        function_arguments = [p.name for p in signature.parameters.values()]
-
-        invalid_args = [a for a in function_arguments if a not in expected_arguments]
-
-        if len(invalid_args) > 0:
-            raise ValueError(f"Invalid arguments: {', '.join(invalid_args)}")
-
-        def wrapper(**kwargs):
-            return func(**{k: v for k, v in kwargs.items() if k in function_arguments})
-
-        task_init_kwargs["checkpoint"] = False
-        return prefect.task(wrapper, **task_init_kwargs)
-
-    if func is None:
-        return decorator
-    return decorator(func=func)
 
 
 def run_local(flow: prefect.Flow, parameters: Dict[str, Any] = None):
@@ -301,38 +239,6 @@ def run_flow_mapped(
     return complete_wait
 
 
-# def handler_cancel_subflows(obj, old_state: State, new_state: State) -> State:
-#     if isinstance(new_state, Cancelled):
-#         client = prefect.Client()
-#         subflows = prefect.context.get("_subflow_ids", [])
-#         if len(subflows) > 0:
-#             query = f"""
-#                 query {{
-#                     flow_run(
-#                         where: {{
-#                             _and: [
-#                                 {{state: {{_in: ["Running", "Submitted", "Scheduled"]}}}},
-#                                 {{id: {{_in: {json.dumps(subflows)}}}}}
-#                             ]
-#                         }}
-#                     ) {{
-#                         id
-#                     }}
-#                 }}
-#             """
-#             # pylint: disable=no-member
-#             response = client.graphql(query=query)
-#             active_subflow_runs = response["data"]["flow_run"]
-#             if active_subflow_runs:
-#                 logger = prefect.context.get("logger")
-#                 logger.info(f"Found {len(active_subflow_runs)} subflows running")
-#                 for subflow_run_id in active_subflow_runs:
-#                     logger.info(f"cancelling run: {subflow_run_id}")
-#                     client.cancel_flow_run(flow_run_id=subflow_run_id)
-#                     logger("Run cancelled!")
-#     return new_state
-
-
 class FailedSubFlow(Exception):
     """Erro para ser usado quando um subflow falha"""
 
@@ -386,3 +292,13 @@ def handler_skip_if_running_tolerant(tolerance_minutes: int):
         return new_state
 
     return handler
+
+
+def set_default_parameters(flow: prefect.Flow, default_parameters: dict) -> prefect.Flow:
+    """
+    Sets default parameters for a flow.
+    """
+    for parameter in flow.parameters():
+        if parameter.name in default_parameters:
+            parameter.default = default_parameters[parameter.name]
+    return flow

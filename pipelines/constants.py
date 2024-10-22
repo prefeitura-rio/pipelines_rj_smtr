@@ -25,8 +25,8 @@ class constants(Enum):  # pylint: disable=c0103
     GCS_FLOWS_BUCKET = "datario-public"
     # PROJECT_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr"}
     # DEFAULT_BUCKET_NAME = {"dev": "br-rj-smtr-dev", "prod": "br-rj-smtr"}
-    PROJECT_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr-dev"}
-    DEFAULT_BUCKET_NAME = {"dev": "br-rj-smtr-dev", "prod": "br-rj-smtr-dev"}
+    PROJECT_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr-staging"}
+    DEFAULT_BUCKET_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr-staging"}
     FILE_MAX_SIZE = 20_000
     PREFECT_DEFAULT_PROJECT = "production"
 
@@ -54,9 +54,6 @@ class constants(Enum):  # pylint: disable=c0103
     # PATTERNS #
     FILENAME_PATTERN = "%Y-%m-%d-%H-%M-%S"
     MATERIALIZATION_LAST_RUN_PATTERN = "%Y-%m-%dT%H:%M:%S"
-    SOURCE_DATASET_ID_PATTERN = "{source_name}_source"
-    MODE_FULL = "full"
-    MODE_INCR = "incr"
     FLOW_RUN_URL_PATTERN = "https://pipelines.dados.rio/smtr/flow-run/{run_id}"
 
     # URLS #
