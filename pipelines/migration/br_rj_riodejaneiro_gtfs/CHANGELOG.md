@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.1.2] - 2024-10-21
+
+### Alterado
+
+- Alterado o link da planilha `Control OS` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/278)
+
 ## [1.1.1] - 2024-09-13
 
 ### Alterado
