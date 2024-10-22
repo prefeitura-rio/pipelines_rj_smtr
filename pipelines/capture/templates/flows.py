@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """Flow genérico de captura"""
 
-# -*- coding: utf-8 -*-
-
 from datetime import datetime
 from types import NoneType
 
