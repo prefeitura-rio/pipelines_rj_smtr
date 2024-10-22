@@ -60,7 +60,7 @@ class DBTSelector:
             datetime: a data vinda do Redis
         """
         redis_key = f"{env}.selector_{self.name}"
-        redis_client = get_redis_client(host="localhost")
+        redis_client = get_redis_client()
         content = redis_client.get(redis_key)
         last_datetime = (
             self.initial_datetime
@@ -124,7 +124,7 @@ class DBTSelector:
         value = timestamp.strftime(constants.MATERIALIZATION_LAST_RUN_PATTERN.value)
         redis_key = f"{env}.selector_{self.name}"
         log(f"Saving timestamp {value} on key: {redis_key}")
-        redis_client = get_redis_client(host="localhost")
+        redis_client = get_redis_client()
         content = redis_client.get(redis_key)
         if not content:
             content = {constants.REDIS_LAST_MATERIALIZATION_TS_KEY.value: value}
