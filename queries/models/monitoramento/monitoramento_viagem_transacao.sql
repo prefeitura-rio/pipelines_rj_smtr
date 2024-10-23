@@ -97,16 +97,25 @@ WITH
     {% endif %}
   ),
   -- 6. Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos apenas para a primeira viagem
+  -- Obtem o Datetime de chegada da viagem anterior
+  chegava_anterior AS (
+    SELECT
+      v.*,
+      LAG(v.datetime_chegada) OVER (PARTITION BY v.id_veiculo ORDER BY v.datetime_partida) AS viagem_anterior_chegada,
+    FROM
+      viagem AS v
+  )
+  -- Adiciona tolerancia de 30 minutos a primeira viagem ou até o fim da viagem anterior caso exista
   viagem_com_tolerancia AS (
     SELECT
       v.*,
       CASE
-        WHEN LAG(v.datetime_chegada) OVER (PARTITION BY v.id_veiculo ORDER BY v.datetime_partida) IS NULL THEN
+        WHEN viagem_anterior_chegada IS NULL THEN
           DATETIME(TIMESTAMP_SUB(datetime_partida, INTERVAL 30 MINUTE))
-        ELSE DATETIME(TIMESTAMP_ADD(LAG(v.datetime_chegada) OVER (PARTITION BY v.id_veiculo ORDER BY v.datetime_partida), INTERVAL 1 SECOND))
+        ELSE DATETIME(TIMESTAMP_ADD(viagem_anterior_chegada, INTERVAL 1 SECOND))
       END AS datetime_partida_com_tolerancia
     FROM
-      viagem AS v
+      chegava_anterior AS v
   ),
   -- 7. Contagem de transações Jaé
   transacao_contagem AS (
