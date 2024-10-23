@@ -103,7 +103,7 @@ WITH
       CASE
         WHEN LAG(v.datetime_chegada) OVER (PARTITION BY v.id_veiculo ORDER BY v.datetime_partida) IS NULL THEN
           DATETIME(TIMESTAMP_SUB(datetime_partida, INTERVAL 30 MINUTE))
-        ELSE LAG(v.datetime_chegada) OVER (PARTITION BY v.id_veiculo ORDER BY v.datetime_partida)
+        ELSE DATETIME(TIMESTAMP_ADD(LAG(v.datetime_chegada) OVER (PARTITION BY v.id_veiculo ORDER BY v.datetime_partida), INTERVAL 1 SECOND))
       END AS datetime_partida_com_tolerancia
     FROM
       viagem AS v
