@@ -14,10 +14,10 @@ WITH
       id_veiculo,
       datetime_transacao
     FROM
-      {{ ref("transacao") }}
-      -- rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao
+      -- {{ ref("transacao") }}
+      rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao
     WHERE
-    data >= DATE("{{ var("DATA_SUBSIDIO_V8_INICIO") }}")
+    data >= DATE("2024-10-01")
     {% if is_incremental() %}
       AND data BETWEEN DATE("{{ var("start_date") }}")
       AND DATE_ADD(DATE("{{ var("end_date") }}"), INTERVAL 1 DAY)
@@ -29,10 +29,10 @@ WITH
       id_veiculo,
       datetime_transacao
     FROM
-      {{ ref("transacao_riocard") }}
-      -- rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard
+      -- {{ ref("transacao_riocard") }}
+      rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard
     WHERE
-      data >= DATE("{{ var("DATA_SUBSIDIO_V8_INICIO") }}")
+      data >= DATE("2024-10-01")
       {% if is_incremental() %}
         AND data BETWEEN DATE("{{ var("start_date") }}")
         AND DATE_ADD(DATE("{{ var("end_date") }}"), INTERVAL 1 DAY)
@@ -49,10 +49,10 @@ WITH
       latitude,
       longitude
     FROM
-      {{ ref("gps_validador") }}
-      -- rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador
+      -- {{ ref("gps_validador") }}
+      rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador
     WHERE
-      data >= DATE("{{ var("DATA_SUBSIDIO_V8_INICIO") }}")
+      data >= DATE("2024-10-01")
       {% if is_incremental() %}
         AND data BETWEEN DATE("{{ var("start_date") }}")
         AND DATE_ADD(DATE("{{ var("end_date") }}"), INTERVAL 1 DAY)
@@ -71,10 +71,10 @@ WITH
     sentido,
     distancia_planejada
  FROM
-    {{ ref("viagem_completa") }}
-    -- rj-smtr.projeto_subsidio_sppo.viagem_completa
+    -- {{ ref("viagem_completa") }}
+    rj-smtr.projeto_subsidio_sppo.viagem_completa
   WHERE
-    data >= DATE("{{ var("DATA_SUBSIDIO_V8_INICIO") }}")
+    data >= DATE("2024-10-01")
     {% if is_incremental() %}
       AND data BETWEEN DATE("{{ var("start_date") }}")
       AND DATE( "{{ var("end_date") }}" )
@@ -87,10 +87,10 @@ WITH
     id_veiculo,
     status
   FROM
-    {{ ref("sppo_veiculo_dia") }}
-    -- rj-smtr.veiculo.sppo_veiculo_dia
+    -- {{ ref("sppo_veiculo_dia") }}
+    rj-smtr.veiculo.sppo_veiculo_dia
   WHERE
-    data >= DATE("{{ var("DATA_SUBSIDIO_V8_INICIO") }}")
+    data >= DATE("2024-10-01")
     {% if is_incremental() %}
       AND data BETWEEN DATE("{{ var("start_date") }}")
       AND DATE( "{{ var("end_date") }}" )
@@ -100,11 +100,10 @@ WITH
   viagem_com_tolerancia AS (
     SELECT
       v.*,
-      LAG(v.datetime_chegada) OVER (PARTITION BY v.id_veiculo ORDER BY v.datetime_partida) AS viagem_anterior_chegada,
       CASE
         WHEN LAG(v.datetime_chegada) OVER (PARTITION BY v.id_veiculo ORDER BY v.datetime_partida) IS NULL THEN
           DATETIME(TIMESTAMP_SUB(datetime_partida, INTERVAL 30 MINUTE))
-        ELSE datetime_partida
+        ELSE LAG(v.datetime_chegada) OVER (PARTITION BY v.id_veiculo ORDER BY v.datetime_partida)
       END AS datetime_partida_com_tolerancia
     FROM
       viagem AS v
@@ -228,7 +227,7 @@ SELECT
   v.servico,
   eev.id_validador,
   CASE
-    WHEN v.data >= DATE("{{ var("DATA_SUBSIDIO_V8_INICIO") }}")
+    WHEN v.data >= DATE("2024-10-01")
       AND (COALESCE(tr.quantidade_transacao_riocard, 0) = 0
         OR COALESCE(eev.indicador_estado_equipamento_aberto, FALSE) = FALSE)
       AND ve.status IN ("Licenciado com ar e não autuado", "Licenciado sem ar e não autuado")
