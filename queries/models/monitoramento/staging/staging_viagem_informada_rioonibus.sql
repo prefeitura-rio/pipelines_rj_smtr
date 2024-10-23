@@ -11,8 +11,7 @@ select
     date(
         parse_timestamp(
             '%Y-%m-%d', safe_cast(json_value(content, '$.data_viagem') as string)
-        ),
-        'America/Sao_Paulo'
+        )
     ) as data_viagem,
     datetime(
         parse_timestamp(
