@@ -16,9 +16,6 @@ clean-targets:
   - "target"
   - "dbt_modules"
 
-tests:
-  +store_failures: true
-
 vars:
   ### Date default variables ###
   date_range_start: "2022-01-01T00:00:00"
