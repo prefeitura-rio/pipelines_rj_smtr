@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.0.1] - 2024-10-22
+
+### Adicionado
+
+- Cria modelos `sumario_servico_dia_pagamento_historico`, `sumario_servico_dia_tipo_viagem_historico` e `monitoramento_viagem_transacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/258)
+
 ## [1.0.0] - 2024-10-21
 
 ### Adicionado
