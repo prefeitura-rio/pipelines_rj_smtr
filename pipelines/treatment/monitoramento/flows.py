@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Flows de tratamento dos dados de monitoramento"""
+"""
+Flows de tratamento dos dados de monitoramento
+
+DBT: 2024-10-23
+"""
 
 from pipelines.capture.rioonibus.constants import (
     constants as rioonibus_source_constants,
