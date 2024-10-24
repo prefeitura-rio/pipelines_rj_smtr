@@ -26,8 +26,8 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.tasks import (
     get_gtfs_zipfile,
     get_last_capture_os,
     get_os_info,
-    send_check_report,
     get_raw_gtfs_files,
+    send_check_report,
     update_last_captured_os,
     validate_gtfs_os,
 )

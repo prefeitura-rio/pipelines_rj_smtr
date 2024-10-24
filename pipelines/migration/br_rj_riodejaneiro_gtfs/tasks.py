@@ -5,7 +5,7 @@ Tasks for gtfs
 import io
 import os
 import zipfile
-from datetime import datetime, date
+from datetime import date, datetime
 
 import openpyxl as xl
 import pandas as pd
@@ -31,7 +31,11 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.utils import (
     processa_ordem_servico_trajeto_alternativo,
 )
 from pipelines.migration.tasks import format_send_discord_message
-from pipelines.migration.utils import get_secret, save_raw_local_func, get_upload_storage_blob
+from pipelines.migration.utils import (
+    get_secret,
+    get_upload_storage_blob,
+    save_raw_local_func,
+)
 
 
 @task
@@ -372,7 +376,7 @@ def validate_gtfs_os(os_file, gtfs_file, os_initial_date, os_final_date):
                 .str.strip()
                 .str.replace("—", "0")
                 .str.replace(",", ".")
-                .str.replace('\n', ' ')
+                .str.replace("\n", " ")
                 .astype(float)
                 .fillna(0)
             )
@@ -389,13 +393,11 @@ def validate_gtfs_os(os_file, gtfs_file, os_initial_date, os_final_date):
         if (os_initial_date is not None) and (os_final_date is not None):
             log("Checking OS dates")
             if not isinstance(os_initial_date, date):
-                os_initial_date = os_initial_date.split('_')[0]
+                os_initial_date = os_initial_date.split("_")[0]
                 os_initial_date = date.fromisoformat(os_initial_date)
-                
+
             if os_initial_date > datetime.now().date():
-                messages.append(
-                    ":warning:  Você está subindo uma OS cuja operação já começou!"
-                )
+                messages.append(":warning:  Você está subindo uma OS cuja operação já começou!")
             log("Checking Trips and quadro")
             trips_agg = get_trips(gtfs_file)
             quadro = get_board(os_df)
@@ -411,19 +413,13 @@ def validate_gtfs_os(os_file, gtfs_file, os_initial_date, os_final_date):
                 > 0
             ):
                 messages.append(":warning:  Existem trip_ids nulas")
-            partidas_cols = [col for col in quadro_merged.columns if 'partida' in col]
+            partidas_cols = [col for col in quadro_merged.columns if "partida" in col]
             for col in partidas_cols:
                 if (
                     len(
                         quadro_merged[
-                            (
-                                (quadro_merged[col] > 0)
-                                & (quadro_merged["trip_id_ida"].isna())
-                            )
-                            | (
-                                (quadro_merged[col] > 0)
-                                & (quadro_merged["trip_id_volta"].isna())
-                            )
+                            ((quadro_merged[col] > 0) & (quadro_merged["trip_id_ida"].isna()))
+                            | ((quadro_merged[col] > 0) & (quadro_merged["trip_id_volta"].isna()))
                         ].sort_values("servico")
                     )
                     > 0

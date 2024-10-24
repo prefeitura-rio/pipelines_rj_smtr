@@ -547,7 +547,7 @@ def get_trips(file: bytes) -> pd.DataFrame:
         ]
         .sort_values(by=["servico"])
     )
-    print('TRIPS COLUMNS')
+    print("TRIPS COLUMNS")
     print(trips_agg.columns)
     return trips_agg
 
@@ -603,39 +603,39 @@ def get_board(quadro: pd.DataFrame):
     #     "KM\n(FAC)": "km_pf",
     # }
     columns = {
-        'Serviço':'servico', 
-        'Consórcio':'consorcio', 
-        'Partidas entre\n00h e 03h\n(Dias Úteis)':'partidas_dia_util_00_03',
-        'Quilometragem entre 00h e 03h\n(Dias Úteis)':'km_dia_util_00_03',
-        'Partidas entre\n03h e 12h\n(Dias Úteis)':'partidas_du_03_12',
-        'Quilometragem entre 03h e 12h\n(Dias Úteis)':'km_dia_util_03_12',
-        'Partidas entre\n12h e 21h\n(Dias Úteis)':'partidas_dia_util_12_21',
-        'Quilometragem entre 12h e 21h\n(Dias Úteis)':'km_dia_util_12_21',
-        'Partidas entre\n21h e 24h\n(Dias Úteis)':'partidas_dia_util_21_24',
-        'Quilometragem entre 21h e 24h\n(Dias Úteis)':'km_dia_util_21_24',
-        'Partidas entre 24h e 03h\n(dia seguinte)\n(Dias Úteis)':'partidas_dia_util_seguinte',
-        'Quilometragem entre\n24h e 03h\n(dia seguinte)\n(Dias Úteis)':'km_dia_util_seguinte',
-        'Partidas entre\n00h e 03h\n(Sábado)':'partidas_sabado_00_03',
-        'Quilometragem entre\n00h e 03h\n(Sábado)':'km_sabado_00_03',
-        'Partidas entre\n03h e 12h\n(Sábado)':"partidas_sabado_03_12",
-        'Quilometragem entre 03h e 12h\n(Sábado)':'km_sabado_03_12',
-        'Partidas entre 12h e 21h\n(Sábado)':"partidas_sabado_12_21",
-        'Quilometragem entre 12h e 21h\n(Sábado)':'km_sabado_12_21',
-        'Partidas entre\n21h e 24h\n(Sábado)':"partidas_sabado_21_24",
-        'Quilometragem entre 21h e 24h\n(Sábado)':'km_sabado_21_24',
-        'Partidas entre 24h e 03h\n(dia seguinte)\n(Sábado)':"partidas_sabado_seguinte",
-        'Quilometragem entre\n24h e 03h\n(dia seguinte)\n(Sábado)':'km_sabado_seguinte',
-        'Partidas entre\n00h e 03h\n(Domingo)':'partidas_domingo_00_03',
-        'Quilometragem entre 00h e 03h\n(Domingo)':'km_domingo_00_03',
-        'Partidas entre\n03h e 12h\n(Domingo)':'partidas_domingo_03_12',
-        'Quilometragem entre 03h e 12h\n(Domingo)':'km_domingo_03_12',
-        'Partidas entre\n12h e 21h\n(Domingo)':'partidas_domingo_12_21',
-        'Quilometragem entre 12h e 21h\n(Domingo)':'km_domingo_12_21',
-        'Partidas entre\n21h e 24h\n(Domingo)':'partidas_domingo_21_24',
-        'Quilometragem entre 21h e 24h\n(Domingo)':'km_domingo_21_24',
-        'Partidas entre 24h e 03h\n(dia seguinte)\n(Domingo)':'partidas_domingo_seguinte',
-        'Quilometragem entre\n24h e 03h\n(dia seguinte)\n(Domingo)':'km_domingo_seguinte'
-        }
+        "Serviço": "servico",
+        "Consórcio": "consorcio",
+        "Partidas entre\n00h e 03h\n(Dias Úteis)": "partidas_dia_util_00_03",
+        "Quilometragem entre 00h e 03h\n(Dias Úteis)": "km_dia_util_00_03",
+        "Partidas entre\n03h e 12h\n(Dias Úteis)": "partidas_du_03_12",
+        "Quilometragem entre 03h e 12h\n(Dias Úteis)": "km_dia_util_03_12",
+        "Partidas entre\n12h e 21h\n(Dias Úteis)": "partidas_dia_util_12_21",
+        "Quilometragem entre 12h e 21h\n(Dias Úteis)": "km_dia_util_12_21",
+        "Partidas entre\n21h e 24h\n(Dias Úteis)": "partidas_dia_util_21_24",
+        "Quilometragem entre 21h e 24h\n(Dias Úteis)": "km_dia_util_21_24",
+        "Partidas entre 24h e 03h\n(dia seguinte)\n(Dias Úteis)": "partidas_dia_util_seguinte",
+        "Quilometragem entre\n24h e 03h\n(dia seguinte)\n(Dias Úteis)": "km_dia_util_seguinte",
+        "Partidas entre\n00h e 03h\n(Sábado)": "partidas_sabado_00_03",
+        "Quilometragem entre\n00h e 03h\n(Sábado)": "km_sabado_00_03",
+        "Partidas entre\n03h e 12h\n(Sábado)": "partidas_sabado_03_12",
+        "Quilometragem entre 03h e 12h\n(Sábado)": "km_sabado_03_12",
+        "Partidas entre 12h e 21h\n(Sábado)": "partidas_sabado_12_21",
+        "Quilometragem entre 12h e 21h\n(Sábado)": "km_sabado_12_21",
+        "Partidas entre\n21h e 24h\n(Sábado)": "partidas_sabado_21_24",
+        "Quilometragem entre 21h e 24h\n(Sábado)": "km_sabado_21_24",
+        "Partidas entre 24h e 03h\n(dia seguinte)\n(Sábado)": "partidas_sabado_seguinte",
+        "Quilometragem entre\n24h e 03h\n(dia seguinte)\n(Sábado)": "km_sabado_seguinte",
+        "Partidas entre\n00h e 03h\n(Domingo)": "partidas_domingo_00_03",
+        "Quilometragem entre 00h e 03h\n(Domingo)": "km_domingo_00_03",
+        "Partidas entre\n03h e 12h\n(Domingo)": "partidas_domingo_03_12",
+        "Quilometragem entre 03h e 12h\n(Domingo)": "km_domingo_03_12",
+        "Partidas entre\n12h e 21h\n(Domingo)": "partidas_domingo_12_21",
+        "Quilometragem entre 12h e 21h\n(Domingo)": "km_domingo_12_21",
+        "Partidas entre\n21h e 24h\n(Domingo)": "partidas_domingo_21_24",
+        "Quilometragem entre 21h e 24h\n(Domingo)": "km_domingo_21_24",
+        "Partidas entre 24h e 03h\n(dia seguinte)\n(Domingo)": "partidas_domingo_seguinte",
+        "Quilometragem entre\n24h e 03h\n(dia seguinte)\n(Domingo)": "km_domingo_seguinte",
+    }
 
     quadro = quadro.rename(columns=columns)
 
@@ -751,6 +751,8 @@ def change_feed_info_dates(
             zip_file.writestr(file_name, io.BytesIO(file_data).getvalue())
 
     return zip_buffer
+
+
 def processa_ordem_servico_faixa_horaria(sheetnames, file_bytes, local_filepath, raw_filepaths):
     """
     Process 'Faixa Horária' from an Excel file.
