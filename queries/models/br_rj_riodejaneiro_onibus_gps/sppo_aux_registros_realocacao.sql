@@ -32,6 +32,7 @@ with realocacao as (
     datetime_diff(datetime_operacao, datetime_entrada, minute) between 0 and 60
     and data between DATE("{{var('date_range_start')}}")
     and DATE(datetime_add("{{var('date_range_end')}}", interval 1 hour))
+    and (datetime_saida >= datetime("{{var('date_range_start')}}") or datetime_operacao >= datetime("{{var('date_range_start')}}"))
 ),
 -- 2. Altera registros de GPS com servicos realocados
 gps as (
