@@ -188,10 +188,6 @@ Itinerário do serviço (ex: Bananal ↔ Saens Peña)
 Viagens planejadas no período
 {% enddocs %}
 
-{% docs tipo_dia %}
-Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo
-{% enddocs %}
-
 {% docs inicio_periodo %}
 Início do período de operação planejado
 {% enddocs %}

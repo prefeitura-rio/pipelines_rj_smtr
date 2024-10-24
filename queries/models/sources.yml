@@ -50,6 +50,7 @@ sources:
       - name: trips
       - name: ordem_servico
       - name: ordem_servico_trajeto_alternativo
+      - name: ordem_servico_faixa_horaria
 
   - name: br_rj_riodejaneiro_stu_staging
     database: rj-smtr-staging
@@ -85,7 +86,8 @@ sources:
 
     tables:
       - name: rho_registros_sppo
-      - name: rho5_registros_stpl
+      - name: rho_registros_stpl
+      - name: rdo_registros_stpl
 
   - name: br_rj_riodejaneiro_rdo
     database: rj-smtr
@@ -164,3 +166,9 @@ sources:
     tables:
       - name: autuacoes_citran
       - name: receita_autuacao
+
+  - name: source_rioonibus
+    database: rj-smtr-staging
+
+    tables:
+      - name: viagem_informada

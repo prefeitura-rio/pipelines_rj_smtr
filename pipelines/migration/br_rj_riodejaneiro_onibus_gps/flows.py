@@ -326,7 +326,10 @@ captura_sppo_v2.run_config = KubernetesRun(
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 captura_sppo_v2.schedule = every_minute
-captura_sppo_v2.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
+captura_sppo_v2.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+]
 
 with Flow(
     "SMTR: GPS SPPO Realocação - Recaptura (subflow)",

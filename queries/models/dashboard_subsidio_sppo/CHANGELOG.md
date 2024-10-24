@@ -1,5 +1,23 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [7.0.5] - 2024-10-16
+
+### Corrigido
+
+- Corrigido join em `sumario_servico_dia_historico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/271)
+
+## [7.0.4] - 2024-09-27
+
+### Corrigido
+
+- Remove agrupamento de viagens planejadas em `sumario_servico_dia` e `sumario_servico_dia_tipo` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/250)
+
+## [7.0.3] - 2024-09-20
+
+### Alterado
+
+- Remove kms de veículos "Não licenciado" e "Não vistoriado" do cálculo do pof na CTE `servico_faixa_km_apuracao` do modelo `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/239)
+
 ## [7.0.2] - 2024-08-29
 
 ### Alterado

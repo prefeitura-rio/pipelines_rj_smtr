@@ -1,6 +1,46 @@
 # Changelog - projeto_subsidio_sppo
 
-## [6.0.5] - 2024-08-29
+## [9.0.6] - 2024-10-22
+
+### Corrigido
+
+- Alterado o tipo_os de 2024-10-06 para `Eleição` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/281)
+
+## [9.0.5] - 2024-10-08
+
+### Corrigido
+
+- Corrigido a duplicação de viagens no modelo `viagens_planejadas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/266)
+
+## [9.0.4] - 2024-10-07
+
+### Alterado
+
+- Alterados os tipo_os de `13/09/24` a `15/09/24` e `19/09/24` a `22/09/24` para `Rock in Rio` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/264)
+
+## [9.0.3] - 2024-09-23
+
+### Alterado
+
+- Adicionado subtipo_dia `Verão` em `2024-09-14` e `2024-09-15` no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/242)
+
+## [9.0.2] - 2024-09-17
+
+### Corrigido
+
+- corrigidas as referencias a tabela `gps_sppo` em `aux_registro_status_trajeto` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/234)
+
+### Alterado
+
+- Alterada a consulta por shapes em `aux_registro_status_trajeto` para buscar o feed_start_date do particionamento da tabela shapes_geom em `data_versao_efetiva`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/234)
+
+## [9.0.1] - 2024-09-11
+
+### Alterado
+
+- Adicionado subtipo_dia `CNU` em `2024-08-18` conforme processo.rio MTR-PRO-2024/13252 no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/208)
+
+## [9.0.0] - 2024-08-29
 
 ### Alterado
 

@@ -12,7 +12,7 @@ WITH
   dados AS (
   SELECT
     SAFE_CAST(data_versao AS DATE) AS data_versao,
-    SAFE_CAST(tipo_os AS DATE) AS tipo_os,
+    SAFE_CAST(tipo_os AS STRING) AS tipo_os,
     SAFE_CAST(servico AS STRING) AS servico,
     SAFE_CAST(JSON_VALUE(content, "$.consorcio") AS STRING) AS consorcio,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_00h_e_03h_dias_uteis') AS STRING) AS partidas_entre_00h_e_03h_dias_uteis,
@@ -25,6 +25,8 @@ WITH
     SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_21h_e_24h_dias_uteis') AS STRING) AS quilometragem_entre_21h_e_24h_dias_uteis,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_24h_e_03h_diaseguinte_dias_uteis') AS STRING) AS partidas_entre_24h_e_03h_diaseguinte_dias_uteis,
     SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_24h_e_03h_diaseguinte_dias_uteis') AS STRING) AS quilometragem_entre_24h_e_03h_diaseguinte_dias_uteis,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_00h_e_03h_sabado') AS STRING) AS partidas_entre_00h_e_03h_sabado,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_00h_e_03h_sabado') AS STRING) AS quilometragem_entre_00h_e_03h_sabado,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_03h_e_12h_sabado') AS STRING) AS partidas_entre_03h_e_12h_sabado,
     SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_03h_e_12h_sabado') AS STRING) AS quilometragem_entre_03h_e_12h_sabado,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_12h_e_21h_sabado') AS STRING) AS partidas_entre_12h_e_21h_sabado,
@@ -33,6 +35,8 @@ WITH
     SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_21h_e_24h_sabado') AS STRING) AS quilometragem_entre_21h_e_24h_sabado,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_24h_e_03h_diaseguinte_sabado') AS STRING) AS partidas_entre_24h_e_03h_diaseguinte_sabado,
     SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_24h_e_03h_diaseguinte_sabado') AS STRING) AS quilometragem_entre_24h_e_03h_diaseguinte_sabado,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_00h_e_03h_domingo') AS STRING) AS partidas_entre_00h_e_03h_domingo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_00h_e_03h_domingo') AS STRING) AS quilometragem_entre_00h_e_03h_domingo,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_03h_e_12h_domingo') AS STRING) AS partidas_entre_03h_e_12h_domingo,
     SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_03h_e_12h_domingo') AS STRING) AS quilometragem_entre_03h_e_12h_domingo,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_12h_e_21h_domingo') AS STRING) AS partidas_entre_12h_e_21h_domingo,
@@ -41,6 +45,8 @@ WITH
     SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_21h_e_24h_domingo') AS STRING) AS quilometragem_entre_21h_e_24h_domingo,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_24h_e_03h_diaseguinte_domingo') AS STRING) AS partidas_entre_24h_e_03h_diaseguinte_domingo,
     SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_24h_e_03h_diaseguinte_domingo') AS STRING) AS quilometragem_entre_24h_e_03h_diaseguinte_domingo,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_00h_e_03h_ponto_facultativo') AS STRING) AS partidas_entre_00h_e_03h_ponto_facultativo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_00h_e_03h_ponto_facultativo') AS STRING) AS quilometragem_entre_00h_e_03h_ponto_facultativo,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_03h_e_12h_ponto_facultativo') AS STRING) AS partidas_entre_03h_e_12h_ponto_facultativo,
     SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_03h_e_12h_ponto_facultativo') AS STRING) AS quilometragem_entre_03h_e_12h_ponto_facultativo,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_12h_e_21h_ponto_facultativo') AS STRING) AS partidas_entre_12h_e_21h_ponto_facultativo,
@@ -113,6 +119,8 @@ WITH
       quilometragem_entre_21h_e_24h_dias_uteis,
       partidas_entre_24h_e_03h_diaseguinte_dias_uteis,
       quilometragem_entre_24h_e_03h_diaseguinte_dias_uteis,
+      partidas_entre_00h_e_03h_sabado,
+      quilometragem_entre_00h_e_03h_sabado,
       partidas_entre_03h_e_12h_sabado,
       quilometragem_entre_03h_e_12h_sabado,
       partidas_entre_12h_e_21h_sabado,
@@ -121,6 +129,8 @@ WITH
       quilometragem_entre_21h_e_24h_sabado,
       partidas_entre_24h_e_03h_diaseguinte_sabado,
       quilometragem_entre_24h_e_03h_diaseguinte_sabado,
+      partidas_entre_00h_e_03h_domingo,
+      quilometragem_entre_00h_e_03h_domingo,
       partidas_entre_03h_e_12h_domingo,
       quilometragem_entre_03h_e_12h_domingo,
       partidas_entre_12h_e_21h_domingo,
@@ -129,6 +139,8 @@ WITH
       quilometragem_entre_21h_e_24h_domingo,
       partidas_entre_24h_e_03h_diaseguinte_domingo,
       quilometragem_entre_24h_e_03h_diaseguinte_domingo,
+      partidas_entre_00h_e_03h_ponto_facultativo,
+      quilometragem_entre_00h_e_03h_ponto_facultativo,
       partidas_entre_03h_e_12h_ponto_facultativo,
       quilometragem_entre_03h_e_12h_ponto_facultativo,
       partidas_entre_12h_e_21h_ponto_facultativo,
@@ -139,7 +151,7 @@ WITH
       quilometragem_entre_24h_e_03h_diaseguinte_ponto_facultativo
     )
   )
-  GROUP BY 1, 2, 3, 4, 5, 6
+  GROUP BY 1, 2, 3, 4, 5, 6, 7
 )
 SELECT
   fi.feed_version,
@@ -159,5 +171,5 @@ WHERE
   AND fi.feed_start_date = '{{ var("data_versao_gtfs") }}'
 {% else %}
 WHERE
-  d.data_versao >= var("DATA_SUBSIDIO_V9_INICIO")
+  d.data_versao >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
 {%- endif %}

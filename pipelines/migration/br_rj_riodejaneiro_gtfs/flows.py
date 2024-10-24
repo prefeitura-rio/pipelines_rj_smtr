@@ -2,7 +2,7 @@
 """
 Flows for gtfs
 
-DBT 2024-09-10
+DBT 2024-09-24
 """
 
 from prefect import Parameter, case, task
@@ -26,8 +26,8 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.tasks import (
     get_gtfs_zipfile,
     get_last_capture_os,
     get_os_info,
-    get_raw_drive_files,
     send_check_report,
+    get_raw_gtfs_files,
     update_last_captured_os,
     validate_gtfs_os,
 )
@@ -139,6 +139,7 @@ gtfs_validator.run_config = KubernetesRun(
 # ]
 
 with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
+    upload_from_gcs = Parameter("upload_from_gcs", default=False)
     materialize_only = Parameter("materialize_only", default=False)
     regular_sheet_index = Parameter("regular_sheet_index", default=None)
     data_versao_gtfs_param = Parameter("data_versao_gtfs", default=None)
@@ -184,10 +185,11 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 filename=unmapped(filename),
             )
 
-            raw_filepaths, primary_keys = get_raw_drive_files(
+            raw_filepaths, primary_keys = get_raw_gtfs_files(
                 os_control=os_control,
                 local_filepath=local_filepaths,
                 regular_sheet_index=regular_sheet_index,
+                upload_from_gcs=upload_from_gcs,
             )
 
             transform_raw_to_nested_structure_results = transform_raw_to_nested_structure.map(
@@ -243,7 +245,9 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
         dbt_vars = get_join_dict([{"data_versao_gtfs": data_versao_gtfs}], version)[0]
 
         wait_run_dbt_model = run_dbt_model(
-            dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value,
+            dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value
+            + " "
+            + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,
             _vars=dbt_vars,
         ).set_upstream(task=wait_captura)
 
@@ -268,6 +272,10 @@ gtfs_captura_nova.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
 gtfs_captura_nova.run_config = KubernetesRun(
     image=constants.DOCKER_IMAGE.value,
     labels=[constants.RJ_SMTR_AGENT_LABEL.value],
+    cpu_limit="1000m",
+    memory_limit="4600Mi",
+    cpu_request="500m",
+    memory_request="1000Mi",
 )
 gtfs_captura_nova.state_handlers = [
     handler_inject_bd_credentials,

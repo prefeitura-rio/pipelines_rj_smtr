@@ -4,8 +4,9 @@ from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
-from prefeitura_rio.pipelines_utils.state_handlers import (  # handler_inject_bd_credentials,
+from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
+    handler_inject_bd_credentials,
 )
 
 from pipelines.constants import constants as emd_constants
@@ -34,7 +35,7 @@ janitor_flow.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
 )
-janitor_flow.state_handlers = [handler_initialize_sentry]
+janitor_flow.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
 janitor_flow.schedule = every_5_minutes
 
 # # trigger cd

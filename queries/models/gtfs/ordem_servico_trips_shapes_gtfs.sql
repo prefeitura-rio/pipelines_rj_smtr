@@ -53,8 +53,9 @@ WITH
         t.feed_version = o.feed_version
         AND o.servico = t.trip_short_name
         AND
-          (o.tipo_dia = t.tipo_dia
-          OR (o.tipo_dia = "Ponto Facultativo" AND t.tipo_dia = "Dia Útil"))
+          ((o.tipo_dia = t.tipo_dia AND o.tipo_os != "CNU")
+          OR (o.tipo_dia = "Ponto Facultativo" AND t.tipo_dia = "Dia Útil" AND o.tipo_os != "CNU")
+          OR (o.feed_start_date = "2024-08-16" AND o.tipo_os = "CNU" AND o.tipo_dia = "Domingo" AND t.tipo_dia = "Sabado")) -- Domingo CNU
         AND
           ((o.sentido IN ("I", "C") AND t.direction_id = "0")
           OR (o.sentido = "V" AND t.direction_id = "1"))
@@ -169,25 +170,25 @@ SELECT
   tipo_dia,
   servico,
   vista,
-  consorcio,
+  o.consorcio,
   sentido,
   CASE
-    WHEN feed_start_date >= var("DATA_SUBSIDIO_V9_INICIO") THEN fh.partidas
+    WHEN feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}' THEN fh.partidas
     ELSE NULL
   END AS partidas_total_planejada,
   distancia_planejada,
   CASE
-    WHEN feed_start_date >= var("DATA_SUBSIDIO_V9_INICIO") THEN fh.quilometragem
+    WHEN feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}' THEN fh.quilometragem
     ELSE distancia_total_planejada
   END AS distancia_total_planejada,
   inicio_periodo,
   fim_periodo,
   CASE
-    WHEN feed_start_date >= var("DATA_SUBSIDIO_V9_INICIO") THEN fh.faixa_horaria_inicio
+    WHEN feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}' THEN fh.faixa_horaria_inicio
     ELSE "00:00:00"
   END AS faixa_horaria_inicio,
   CASE
-    WHEN feed_start_date >= var("DATA_SUBSIDIO_V9_INICIO") THEN fh.faixa_horaria_fim
+    WHEN feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}' THEN fh.faixa_horaria_fim
     ELSE "23:59:59"
   END AS faixa_horaria_fim,
   trip_id_planejado,
@@ -217,7 +218,19 @@ LEFT JOIN
   -- rj-smtr-dev.gtfs.ordem_servico_faixa_horaria AS fh
 USING
   (feed_version, feed_start_date, tipo_os, tipo_dia, servico)
-{% if is_incremental() -%}
 WHERE
-  feed_start_date = '{{ var("data_versao_gtfs") }}'
+{% if is_incremental() -%}
+  feed_start_date = '{{ var("data_versao_gtfs") }}' AND
 {% endif -%}
+  (
+    (
+    feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
+    AND
+      (
+        fh.quilometragem != 0
+        AND (fh.partidas != 0 OR fh.partidas IS NULL)
+      )
+    )
+    OR
+      feed_start_date < '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
+  )

@@ -98,7 +98,7 @@ WITH
     data_fim,
     status,
     subsidio_km,
-    MAX(subsidio_km) OVER (PARTITION BY data_inicio, data_fim) AS subsidio_km_teto,
+    MAX(subsidio_km) OVER (PARTITION BY DATE_TRUNC(data_inicio, YEAR), data_fim) AS subsidio_km_teto,
     indicador_penalidade_judicial
   FROM
     {{ ref("subsidio_valor_km_tipo_viagem") }}
@@ -145,7 +145,7 @@ WITH
     p.consorcio,
     p.servico,
     p.km_planejada AS km_planejada,
-    COALESCE(ROUND(100 * SUM(v.distancia_planejada) / p.km_planejada,2), 0) AS pof
+    COALESCE(ROUND(100 * SUM(IF(v.tipo_viagem NOT IN ("Não licenciado","Não vistoriado"),v.distancia_planejada, 0)) / p.km_planejada,2), 0) AS pof
   FROM
     viagem_planejada AS p
   LEFT JOIN
@@ -160,22 +160,22 @@ WITH
   )
 -- 6. Flag de viagens que serão consideradas ou não para fins de remuneração (apuração de valor de subsídio) - RESOLUÇÃO SMTR Nº 3645/2023
 SELECT
-  v.* EXCEPT(rn, datetime_partida),
+  v.* EXCEPT(rn, datetime_partida, viagens_planejadas, viagens_planejadas_ida_volta, km_planejada, tipo_dia, consorcio, faixa_horaria_inicio, faixa_horaria_fim),
   CASE
-    WHEN p.data >= DATE("{{ var("DATA_SUBSIDIO_V3A_INICIO") }}")
-        AND p.tipo_dia = "Dia Útil"
+    WHEN v.data >= DATE("{{ var("DATA_SUBSIDIO_V3A_INICIO") }}")
+        AND v.tipo_dia = "Dia Útil"
         AND viagens_planejadas > 10
         AND pof > 120
         AND rn > viagens_planejadas_ida_volta*1.2
         THEN FALSE
-    WHEN p.data >= DATE("{{ var("DATA_SUBSIDIO_V3A_INICIO") }}")
-        AND p.tipo_dia = "Dia Útil"
+    WHEN v.data >= DATE("{{ var("DATA_SUBSIDIO_V3A_INICIO") }}")
+        AND v.tipo_dia = "Dia Útil"
         AND viagens_planejadas <= 10
         AND pof > 200
         AND rn > viagens_planejadas_ida_volta*2
         THEN FALSE
-    WHEN p.data >= DATE("{{ var("DATA_SUBSIDIO_V3A_INICIO") }}")
-        AND (p.tipo_dia = "Dia Útil"
+    WHEN v.data >= DATE("{{ var("DATA_SUBSIDIO_V3A_INICIO") }}")
+        AND (v.tipo_dia = "Dia Útil"
           AND (viagens_planejadas IS NULL
             OR pof IS NULL
             OR rn IS NULL
@@ -187,10 +187,11 @@ SELECT
     END AS indicador_viagem_dentro_limite
 FROM (
 SELECT
-  *,
-  ROW_NUMBER() OVER(PARTITION BY data, servico ORDER BY subsidio_km*distancia_planejada DESC) AS rn
+  v.*,
+  p.* EXCEPT(data, servico),
+  ROW_NUMBER() OVER(PARTITION BY v.data, v.servico, faixa_horaria_inicio, faixa_horaria_fim ORDER BY subsidio_km*distancia_planejada DESC) AS rn
 FROM
-  viagem_km_tipo ) AS v
+  viagem_km_tipo AS v
 LEFT JOIN
   viagem_planejada AS p
 ON
@@ -198,6 +199,7 @@ ON
   AND p.servico = v.servico
   AND v.datetime_partida BETWEEN p.faixa_horaria_inicio
   AND p.faixa_horaria_fim
+) AS v
 LEFT JOIN
   servico_faixa_km_apuracao AS s
 ON
