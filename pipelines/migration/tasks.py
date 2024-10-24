@@ -629,6 +629,12 @@ def get_raw(  # pylint: disable=R0912
         )
 
         if response.ok:  # status code is less than 400
+            if not response.content and url in [
+                constants.GPS_SPPO_API_BASE_URL_V2.value,
+                constants.GPS_SPPO_API_BASE_URL.value,
+            ]:
+                error = "Dados de GPS vazios"
+
             if filetype == "json":
                 data = response.json()
 
