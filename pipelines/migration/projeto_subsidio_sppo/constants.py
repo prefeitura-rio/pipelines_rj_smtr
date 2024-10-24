@@ -295,7 +295,7 @@ class constants(Enum):  # pylint: disable=c0103
                     DISTINCT valor_penalidade AS value_field,
                     COUNT(*) AS n_records
                 FROM
-                    `rj-smtr`.`{dataset_id}`.`{table_id}`
+                    `rj-smtr`.`{dataset_id2}`.`{table_id}`
                 WHERE
                     DATA BETWEEN DATE("{start_timestamp}")
                     AND DATE("{end_timestamp}")
@@ -321,7 +321,7 @@ class constants(Enum):  # pylint: disable=c0103
                         SELECT
                             *
                         FROM
-                            `rj-smtr`.`{dataset_id}`.`{table_id}`
+                            `rj-smtr`.`{dataset_id2}`.`{table_id}`
                         WHERE
                             DATA BETWEEN DATE("{start_timestamp}")
                             AND DATE("{end_timestamp}")),
@@ -356,6 +356,19 @@ class constants(Enum):  # pylint: disable=c0103
                 SELECT
                     *
                 FROM
+                    `rj-smtr`.`{dataset_id2}`.`{table_id}`
+                WHERE
+                    (DATA BETWEEN DATE("{start_timestamp}")
+                    AND DATE("{end_timestamp}"))
+                    AND NOT({expression})
+            """,
+            "order_columns": ["data"],
+        },
+        "expression_is_true_viagens_remuneradas": {
+            "query": """
+                SELECT
+                    *
+                FROM
                     `rj-smtr`.`{dataset_id}`.`{table_id}`
                 WHERE
                     (DATA BETWEEN DATE("{start_timestamp}")
@@ -365,6 +378,21 @@ class constants(Enum):  # pylint: disable=c0103
             "order_columns": ["data"],
         },
         "unique_combination": {
+            "query": """
+            SELECT
+                {expression}
+            FROM
+                `rj-smtr`.`{dataset_id2}`.`{table_id}`
+            WHERE
+                DATA BETWEEN DATE("{start_timestamp}")
+                AND DATE("{end_timestamp}")
+            GROUP BY
+                {expression}
+            HAVING
+                COUNT(*) > 1
+            """,
+        },
+        "unique_combination_viagens_remuneradas": {
             "query": """
             SELECT
                 {expression}
@@ -380,6 +408,40 @@ class constants(Enum):  # pylint: disable=c0103
             """,
         },
         "teste_completude": {
+            "query": """
+            WITH
+                time_array AS (
+                SELECT
+                    *
+                FROM
+                    UNNEST(GENERATE_DATE_ARRAY(DATE("{start_timestamp}"), DATE("{end_timestamp}"))) AS DATA ),
+                {table_id} AS (
+                SELECT
+                    DATA,
+                    COUNT(*) AS q_registros
+                FROM
+                    `rj-smtr`.`{dataset_id2}`.`{table_id}`
+                WHERE
+                    DATA BETWEEN DATE("{start_timestamp}")
+                    AND DATE("{end_timestamp}")
+                GROUP BY
+                    1 )
+            SELECT
+                DATA,
+                q_registros
+            FROM
+                time_array
+            LEFT JOIN
+                {table_id}
+            USING
+                (DATA)
+            WHERE
+                q_registros IS NULL
+                OR q_registros = 0
+            """,
+            "order_columns": ["DATA"],
+        },
+        "teste_completude_viagens_remuneradas": {
             "query": """
             WITH
                 time_array AS (
@@ -418,21 +480,21 @@ class constants(Enum):  # pylint: disable=c0103
             WITH
                 kms AS (
                 SELECT
-                    * EXCEPT(km_apurada),
-                    km_apurada,
+                    * EXCEPT({column_id}),
+                    {column_id},
                     ROUND(COALESCE(km_apurada_registrado_com_ar_inoperante,0) + COALESCE(km_apurada_n_licenciado,0) + COALESCE(km_apurada_autuado_ar_inoperante,0) + COALESCE(km_apurada_autuado_seguranca,0) + COALESCE(km_apurada_autuado_limpezaequipamento,0) + COALESCE(km_apurada_licenciado_sem_ar_n_autuado,0) + COALESCE(km_apurada_licenciado_com_ar_n_autuado,0) + COALESCE(km_apurada_n_vistoriado, 0) + COALESCE(km_apurada_sem_transacao, 0),2) AS km_apurada2
                 FROM
-                    `rj-smtr`.`{dataset_id_v2}`.`{table_id_v2}`
+                    `rj-smtr`.`{dataset_id2}`.`{table_id2}`
                 WHERE
                     DATA BETWEEN DATE("{start_timestamp}")
                     AND DATE("{end_timestamp}"))
             SELECT
                 *,
-                ABS(km_apurada2-km_apurada) AS dif
+                ABS(km_apurada2-{column_id}) AS dif
             FROM
                 kms
             WHERE
-                ABS(km_apurada2-km_apurada) > 0.02
+                ABS(km_apurada2-{column_id}) > 0.02
             """,
             "order_columns": ["dif"],
         },
@@ -507,7 +569,7 @@ class constants(Enum):  # pylint: disable=c0103
                     data,
                     datetime_ultima_atualizacao
                 FROM
-                    `rj-smtr.dashboard_subsidio_sppo.sumario_servico_dia_historico`
+                    `rj-smtr`.`{dataset_id2}`.`{table_id3}`
                 WHERE
                     DATA BETWEEN DATE("{start_timestamp}")
                     AND DATE("{end_timestamp}"))
@@ -677,35 +739,85 @@ class constants(Enum):  # pylint: disable=c0103
             },
         },
         "viagens_remuneradas": {
-            "Todas as datas possuem dados": {"test": "teste_completude"},
+            "Todas as datas possuem dados": {"test": "teste_completude_viagens_remuneradas"},
             "Todas viagens são únicas": {
-                "test": "unique_combination",
+                "test": "unique_combination_viagens_remuneradas",
                 "expression": "id_viagem",
             },
             "Todas viagens possuem data": {
+                "test": "expression_is_true_viagens_remuneradas",
                 "expression": "data IS NOT NULL",
             },
             "Todas viagens possuem serviço não nulo": {
+                "test": "expression_is_true_viagens_remuneradas",
                 "expression": "servico IS NOT NULL",
             },
             "Todas viagens possuem ID não nulo": {
+                "test": "expression_is_true_viagens_remuneradas",
                 "expression": "id_viagem IS NOT NULL",
             },
             "Todas viagens possuem indicador de viagem remunerada não nulo e verdadeiro/falso": {
+                "test": "expression_is_true_viagens_remuneradas",
                 "expression": "indicador_viagem_dentro_limite IS NOT NULL\
                 AND indicador_viagem_dentro_limite IN (TRUE, FALSE)",
             },
             "Todas viagens com distância planejada não nula e maior ou igual a zero": {
+                "test": "expression_is_true_viagens_remuneradas",
                 "expression": "distancia_planejada IS NOT NULL AND distancia_planejada >= 0",
             },
             "Todas viagens com valor de subsídio por km não nulo e maior ou igual a zero": {
+                "test": "expression_is_true_viagens_remuneradas",
                 "expression": "subsidio_km IS NOT NULL AND subsidio_km >= 0",
             },
             "Todas viagens atualizadas antes do processamento do subsídio": {
-                "test": "teste_subsido_viagens_atualizadas"
+                "test": "teste_subsido_viagens_atualizadas",
             },
             "Todas viagens processadas com feed atualizado do GTFS": {
                 "test": "check_viagem_completa",
+            },
+        },
+        "sumario_servico_dia_pagamento": {
+            "Todas as datas possuem dados": {"test": "teste_completude"},
+            "Todos serviços com valores de penalidade aceitos": {
+                "test": "accepted_values_valor_penalidade"
+            },
+            "Todos serviços abaixo do teto de pagamento de valor do subsídio": {
+                "test": "teto_pagamento_valor_subsidio_pago",
+                "expression": "ROUND((valor_a_pagar - valor_penalidade)/subsidio_km_teto,2) <= ROUND(km_apurada_dia+0.01,2)",
+            },
+            "Todos serviços são únicos em cada data": {
+                "test": "unique_combination",
+                "expression": "data, servico",
+            },
+            "Todos serviços possuem data não nula": {
+                "expression": "data IS NOT NULL",
+            },
+            "Todos serviços possuem tipo de dia não nulo": {
+                "expression": "tipo_dia IS NOT NULL",
+            },
+            "Todos serviços possuem consórcio não nulo": {
+                "expression": "consorcio IS NOT NULL",
+            },
+            "Todas as datas possuem serviço não nulo": {
+                "expression": "servico IS NOT NULL",
+            },
+            "Todos serviços com quantidade de viagens não nula e maior ou igual a zero": {
+                "expression": "viagens_dia IS NOT NULL AND viagens_dia >= 0",
+            },
+            "Todos serviços com quilometragem apurada não nula e maior ou igual a zero": {
+                "expression": "km_apurada_dia IS NOT NULL AND km_apurada_dia >= 0",
+            },
+            "Todos serviços com quilometragem planejada não nula e maior ou igual a zero": {
+                "expression": "km_planejada_dia IS NOT NULL AND km_planejada_dia >= 0",
+            },
+            "Todos serviços com Percentual de Operação por Faixa Horária (POF) não nulo e maior ou igual a zero": {
+                "expression": "media_pof IS NOT NULL AND media_pof >= 0",
+            },
+            "Todos serviços com valor de subsídio pago não nulo e maior ou igual a zero": {
+                "expression": "(valor_a_pagar - valor_penalidade) IS NOT NULL AND (valor_a_pagar - valor_penalidade) >= 0",
+            },
+            "Todas as somas dos tipos de quilometragem são equivalentes a quilometragem total": {
+                "test": "teste_sumario_servico_dia_tipo_soma_km"
             },
         },
     }
