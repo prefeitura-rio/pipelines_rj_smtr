@@ -167,6 +167,12 @@ sources:
       - name: autuacoes_citran
       - name: receita_autuacao
 
+  - name: dados_mestres
+    database: datario
+
+    tables:
+      - name: logradouro
+
   - name: source_rioonibus
     database: rj-smtr-staging
 
