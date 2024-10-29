@@ -172,7 +172,8 @@ with Flow(
         default=constants.GPS_SPPO_MATERIALIZE_DELAY_HOURS.value,
     )
     truncate_minutes = Parameter("truncate_minutes", default=True)
-    test_only = Parameter("test_only", False)
+    test_only = Parameter("test_only", default=False)
+    run_time_test = Parameter("run_time_test", default="01:00:00")
 
     LABELS = get_current_flow_labels()
     MODE = get_current_flow_mode()
@@ -243,7 +244,7 @@ with Flow(
             )
 
             RUN_TEST, datetime_start, datetime_end = check_dbt_test_run(
-                date_range_start, date_range_end, "00:00:00", upstream_tasks=[RUN_FALSE]
+                date_range_start, date_range_end, run_time_test, upstream_tasks=[RUN_FALSE]
             )
 
             _vars = {"date_range_start": datetime_start, "date_range_end": datetime_end}
