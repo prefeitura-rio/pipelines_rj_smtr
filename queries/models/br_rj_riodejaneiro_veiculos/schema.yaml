@@ -50,22 +50,16 @@ models:
           combination_of_columns:
             - timestamp_gps
             - id_veiculo
-            - servico
             - latitude
             - longitude
-          config:
-            where: "DATA BETWEEN DATE('{{ var('date_range_start') }}') AND DATE('{{ var('date_range_end') }}')"
     columns:
       - name: modo
         description: "SPPO – nesse arquivo só consta esse modo"
       - name: timestamp_gps
         description: "{{ doc('timestamp_gps') }}"
         tests:
-          - dbt_utils.not_null_proportion:
+          - not_null:
               name: not_null_timestamp_gps
-              at_least: 1
-              config:
-                where: DATA BETWEEN DATE("{{ var('date_range_start') }}") AND DATE("{{ var('date_range_end') }}")
       - name: data
         description: "{{ doc('data_gps') }}"
       - name: hora
@@ -73,35 +67,23 @@ models:
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
         tests:
-          - dbt_utils.not_null_proportion:
+          - not_null:
               name: not_null_id_veiculo
-              at_least: 1
-              config:
-                where: DATA BETWEEN DATE("{{ var('date_range_start') }}") AND DATE("{{ var('date_range_end') }}")
       - name: servico
         description: "{{ doc('servico') }}"
         tests:
-          - dbt_utils.not_null_proportion:
+          - not_null:
               name: not_null_servico
-              at_least: 1
-              config:
-                where: DATA BETWEEN DATE("{{ var('date_range_start') }}") AND DATE("{{ var('date_range_end') }}")
       - name: latitude
         description: "{{ doc('latitude_gps') }}"
         tests:
-          - dbt_utils.not_null_proportion:
+          - not_null:
               name: not_null_latitude
-              at_least: 1
-              config:
-                where: DATA BETWEEN DATE("{{ var('date_range_start') }}") AND DATE("{{ var('date_range_end') }}")
       - name: longitude
         description: "{{ doc('longitude_gps') }}"
         tests:
-          - dbt_utils.not_null_proportion:
+          - not_null:
               name: not_null_longitude
-              at_least: 1
-              config:
-                where: DATA BETWEEN DATE("{{ var('date_range_start') }}") AND DATE("{{ var('date_range_end') }}")
       - name: flag_em_operacao
         description: "{{ doc('flag_em_operacao') }}"
       - name: flag_em_movimento
@@ -117,11 +99,8 @@ models:
       - name: status
         description: "{{ doc('status_veiculo_gps') }}"
         tests:
-          - dbt_utils.not_null_proportion:
+          - not_null:
               name: not_null_status
-              at_least: 1
-              config:
-                where: DATA BETWEEN DATE("{{ var('date_range_start') }}") AND DATE("{{ var('date_range_end') }}")
       - name: velocidade_instantanea
         description: "{{ doc('velocidade_instantanea') }}"
       - name: velocidade_estimada_10_min
