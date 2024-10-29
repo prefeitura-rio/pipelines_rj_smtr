@@ -3,14 +3,11 @@ import re
 from datetime import datetime, timedelta
 
 from google.cloud.dataplex_v1 import DataScanJob
-from prefect import context
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
 from pipelines.constants import constants
-from pipelines.migration.tasks import format_send_discord_message
 from pipelines.utils.discord import send_discord_embed_message
-from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import (
     convert_timezone,
     cron_get_last_date,
@@ -272,51 +269,3 @@ def parse_dbt_test_output(dbt_logs: str) -> dict:
     log(log_message)
 
     return results
-
-
-def send_data_quality_discord_message(checks_list: dict, checks_results: dict, params: dict):
-    """
-    Sends a data quality check message to Discord.
-
-    Args:
-        checks_list (dict): Dictionary with the names of the tests and their descriptions.
-        checks_results (dict): Dictionary containing the results of the tests.
-        params (dict): Dictionary containing parameters for the message.
-    """
-
-    webhook_url = get_secret(secret_path=constants.WEBHOOKS_SECRET_PATH.value)["dataplex"]
-
-    dados_tag = f" - <@&{constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>\n"
-
-    test_check = all(test["result"] == "PASS" for test in checks_results.values())
-
-    date_range = (
-        params["date_range_start"]
-        if params["date_range_start"] == params["date_range_end"]
-        else f'{params["date_range_start"]} a {params["date_range_end"]}'
-    )
-
-    formatted_messages = [
-        ":green_circle: " if test_check else ":red_circle: ",
-        f"**Data Quality Checks - {context.get('flow_name')} - {date_range}**\n\n",
-    ]
-
-    for table_id, tests in checks_list.items():
-        formatted_messages.append(
-            f"*{table_id}:*\n"
-            + "\n".join(
-                f'{":white_check_mark:" if checks_results[test_id]["result"] == "PASS" else ":x:"} '
-                f'{test["description"]}'
-                for test_id, test in tests.items()
-            )
-        )
-
-    formatted_messages.append("\n\n")
-    formatted_messages.append(
-        ":tada: **Status:** Sucesso"
-        if test_check
-        else ":warning: **Status:** Testes falharam. Necessidade de revisão dos dados finais!\n"
-    )
-
-    formatted_messages.append(dados_tag)
-    format_send_discord_message(formatted_messages, webhook_url)
