@@ -59,7 +59,7 @@ models:
         description: "{{ doc('timestamp_gps') }}"
         tests:
           - not_null:
-              name: not_null_timestamp_gps
+              name: not_null__timestamp_gps__gps_sppo
       - name: data
         description: "{{ doc('data_gps') }}"
       - name: hora
@@ -68,22 +68,22 @@ models:
         description: "{{ doc('id_veiculo') }}"
         tests:
           - not_null:
-              name: not_null_id_veiculo
+              name: not_null__id_veiculo__gps_sppo
       - name: servico
         description: "{{ doc('servico') }}"
         tests:
           - not_null:
-              name: not_null_servico
+              name: not_null__servico__gps_sppo
       - name: latitude
         description: "{{ doc('latitude_gps') }}"
         tests:
           - not_null:
-              name: not_null_latitude
+              name: not_null__latitude__gps_sppo
       - name: longitude
         description: "{{ doc('longitude_gps') }}"
         tests:
           - not_null:
-              name: not_null_longitude
+              name: not_null__longitude__gps_sppo
       - name: flag_em_operacao
         description: "{{ doc('flag_em_operacao') }}"
       - name: flag_em_movimento
@@ -100,7 +100,7 @@ models:
         description: "{{ doc('status_veiculo_gps') }}"
         tests:
           - not_null:
-              name: not_null_status
+              name: not_null__status__gps_sppo
       - name: velocidade_instantanea
         description: "{{ doc('velocidade_instantanea') }}"
       - name: velocidade_estimada_10_min
