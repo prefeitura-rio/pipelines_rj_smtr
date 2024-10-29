@@ -37,7 +37,13 @@ def dump_serpro(jdbc: JDBC, batch_size: int) -> List[str]:
 
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-    query = "SELECT * FROM dbpro_radar_view_SMTR_VBL.tb_infracao_view"
+    query = """            SELECT
+                *
+            FROM
+                dbpro_radar_view_SMTR_VBL.tb_infracao_view
+            WHERE
+                SUBSTRING(auinf_dt_infracao, 1, 10) = '2024-10-28'
+            """
 
     jdbc.execute_query(query)
 
