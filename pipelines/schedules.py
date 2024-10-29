@@ -12,6 +12,9 @@ from pytz import timezone
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
 
+cron_every_day_hour_7 = "0 7 * * *"
+cron_every_day_hour_7_minute_10 = "10 7 * * *"
+
 
 def generate_interval_schedule(
     interval: timedelta, agent_label: str, params: dict = None

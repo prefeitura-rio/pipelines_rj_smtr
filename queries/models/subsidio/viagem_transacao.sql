@@ -217,6 +217,7 @@ SELECT
       AND (COALESCE(tr.quantidade_transacao_riocard, 0) = 0
         OR COALESCE(eev.indicador_estado_equipamento_aberto, FALSE) = FALSE)
       AND ve.status IN ("Licenciado com ar e não autuado", "Licenciado sem ar e não autuado")
+      AND v.datetime_partida NOT BETWEEN "2024-10-06 06:00:00" AND "2024-10-06 20:00:00" --  Eleição (2024-10-06)
       THEN "Sem transação"
     ELSE ve.status
   END AS tipo_viagem,
