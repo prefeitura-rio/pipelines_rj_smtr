@@ -633,7 +633,12 @@ def save_raw_local_func(
             json.dump(data, fi, default=custom_serialization)
 
     if filetype in ("txt", "csv"):
-        with open(_filepath, "w", encoding="utf-8") as file:
+        if constants.CONTROLE_FINANCEIRO_DATASET_ID.value in _filepath:
+            encoding = "Windows-1252"
+        else:
+            encoding = "utf-8"
+
+        with open(_filepath, "w", encoding=encoding) as file:
             file.write(data)
 
     log(f"Raw data saved to: {_filepath}")

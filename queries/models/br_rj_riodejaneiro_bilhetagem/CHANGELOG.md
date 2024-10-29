@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [2.5.1] - 2024-10-07
+
+### Alterado
+- Retira tratamento de valores nulos da coluna `tipo_gratuidade` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/261)
+- Adiciona tratamento de valores nulos na coluna `tipo_transacao_detalhe_smtr` no modelo `aux_passageiros_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/261)
+
 ## [2.5.0] - 2024-09-10
 
 ### Alterado
