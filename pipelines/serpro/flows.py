@@ -10,16 +10,17 @@ from prefeitura_rio.pipelines_utils.state_handlers import handler_inject_bd_cred
 from pipelines.constants import constants as smtr_constants
 
 # from pipelines.migration.tasks import upload_raw_data_to_gcs
-from pipelines.serpro.tasks import wait_sleeping
+from pipelines.serpro.tasks import dump_serpro, get_db_object, wait_sleeping
 from pipelines.serpro.utils import handler_setup_serpro
 
 with Flow("SMTR - Teste Conexão Serpro") as flow:
     batch_size = Parameter("batch_size", default=100000)
     # setup_serpro()
-    wait_sleeping()
 
-    # jdbc = get_db_object()
-    # csv_files = dump_serpro(jdbc, batch_size)
+    jdbc = get_db_object()
+    csv_files = dump_serpro(jdbc, batch_size)
+
+    wait_sleeping()
 
     # upload_raw_data_to_gcs.map(
     #     dataset_id=unmapped("radar_serpro"),
