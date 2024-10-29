@@ -188,7 +188,7 @@ vars:
 
 tests:
   rj_smtr:
-    where: "DATA BETWEEN DATE('{{ var('date_range_start') }}') AND DATE('{{ var('date_range_end') }}')"
+    where: "DATA BETWEEN DATE('__date_range_start__') AND DATE('__date_range_end__')"
 
 models:
   +persist_docs:
