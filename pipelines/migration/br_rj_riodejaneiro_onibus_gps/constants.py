@@ -13,16 +13,24 @@ class constants(Enum):  # pylint: disable=c0103
 
     GPS_DATA_CHECKS_LIST = {
         "gps_sppo": {
-            "unique_columns_gps_sppo": {"description": "Todos os registros são únicos"},
-            "not_null_timestamp_gps": {
+            "unique_columns__gps_sppo": {"description": "Todos os registros são únicos"},
+            "not_null__timestamp_gps__gps_sppo": {
                 "description": "Todos os registros possuem timestamp_gps não nulo"
             },
-            "not_null_id_veiculo": {
+            "not_null__id_veiculo__gps_sppo": {
                 "description": "Todos os registros possuem id_veiculo não nulo"
             },
-            "not_null_servico": {"description": "Todos os registros possuem servico não nulo"},
-            "not_null_latitude": {"description": "Todos os registros possuem latitude não nula"},
-            "not_null_longitude": {"description": "Todos os registros possuem longitude não nula"},
-            "not_null_status": {"description": "Todos os registros possuem servico não nulo"},
+            "not_null__servico__gps_sppo": {
+                "description": "Todos os registros possuem servico não nulo"
+            },
+            "not_null__latitude__gps_sppo": {
+                "description": "Todos os registros possuem latitude não nula"
+            },
+            "not_null__longitude__gps_sppo": {
+                "description": "Todos os registros possuem longitude não nula"
+            },
+            "not_null__status__gps_sppo": {
+                "description": "Todos os registros possuem servico não nulo"
+            },
         }
     }
