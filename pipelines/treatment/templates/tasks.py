@@ -5,22 +5,23 @@ from typing import Dict, List, Union
 
 import basedosdados as bd
 import requests
-from prefect import task
+from prefect import context, task
 from prefeitura_rio.pipelines_utils.logging import log
 from pytz import timezone
 
 from pipelines.constants import constants
+from pipelines.migration.tasks import format_send_discord_message
 from pipelines.treatment.templates.utils import (
     DBTSelector,
     IncompleteDataError,
     create_dataplex_log_message,
     parse_dbt_test_output,
-    send_data_quality_discord_message,
     send_dataplex_discord_message,
 )
 from pipelines.utils.dataplex import DataQuality, DataQualityCheckArgs
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.prefect import flow_is_running_local, rename_current_flow_run
+from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import convert_timezone
 
 # from pipelines.utils.utils import get_last_materialization_redis_key
@@ -366,9 +367,9 @@ def check_dbt_test_run(
     datetime_start = datetime.fromisoformat(date_range_start)
     datetime_end = datetime.fromisoformat(date_range_end)
 
-    time = datetime.strptime(run_time, "%H:%M:%S").time()
+    run_time = datetime.strptime(run_time, "%H:%M:%S").time()
 
-    if datetime_start.time() == time:
+    if datetime_start.time() == run_time:
         datetime_start_str = (datetime_start - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S")
         datetime_end_str = (datetime_end - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S")
         return True, datetime_start_str, datetime_end_str
@@ -460,7 +461,7 @@ def run_dbt_tests(
 
 
 @task
-def dbt_data_quality_checks(dbt_logs: str, checks_list: dict, date_range: dict):
+def dbt_data_quality_checks(dbt_logs: str, checks_list: dict, params: dict):
     """
     Extracts the results of DBT tests and sends a message with the information to Discord.
 
@@ -470,6 +471,41 @@ def dbt_data_quality_checks(dbt_logs: str, checks_list: dict, date_range: dict):
         date_range (dict): Dictionary representing a date range.
     """
 
-    results = parse_dbt_test_output(dbt_logs)
+    checks_results = parse_dbt_test_output(dbt_logs)
 
-    send_data_quality_discord_message(checks_list, results, date_range)
+    webhook_url = get_secret(secret_path=constants.WEBHOOKS_SECRET_PATH.value)["dataplex"]
+
+    dados_tag = f" - <@&{constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>\n"
+
+    test_check = all(test["result"] == "PASS" for test in checks_results.values())
+
+    date_range = (
+        params["date_range_start"]
+        if params["date_range_start"] == params["date_range_end"]
+        else f'{params["date_range_start"]} a {params["date_range_end"]}'
+    )
+
+    formatted_messages = [
+        ":green_circle: " if test_check else ":red_circle: ",
+        f"**Data Quality Checks - {context.get('flow_name')} - {date_range}**\n\n",
+    ]
+
+    for table_id, tests in checks_list.items():
+        formatted_messages.append(
+            f"*{table_id}:*\n"
+            + "\n".join(
+                f'{":white_check_mark:" if checks_results[test_id]["result"] == "PASS" else ":x:"} '
+                f'{test["description"]}'
+                for test_id, test in tests.items()
+            )
+        )
+
+    formatted_messages.append("\n\n")
+    formatted_messages.append(
+        ":tada: **Status:** Sucesso"
+        if test_check
+        else ":warning: **Status:** Testes falharam. Necessidade de revisão dos dados finais!\n"
+    )
+
+    formatted_messages.append(dados_tag)
+    format_send_discord_message(formatted_messages, webhook_url)
