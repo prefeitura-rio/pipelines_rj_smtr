@@ -508,4 +508,8 @@ def dbt_data_quality_checks(dbt_logs: str, checks_list: dict, params: dict):
     )
 
     formatted_messages.append(dados_tag)
-    format_send_discord_message(formatted_messages, webhook_url)
+    try:
+        format_send_discord_message(formatted_messages, webhook_url)
+    except Exception as e:
+        log(f"Falha ao enviar mensagem para o Discord: {e}", level="error")
+        raise
