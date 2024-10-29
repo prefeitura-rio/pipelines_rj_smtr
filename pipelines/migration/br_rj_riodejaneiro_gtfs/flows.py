@@ -23,10 +23,13 @@ from pipelines.constants import constants
 
 # SMTR Imports #
 from pipelines.migration.br_rj_riodejaneiro_gtfs.tasks import (
+    get_gtfs_zipfile,
     get_last_capture_os,
     get_os_info,
     get_raw_gtfs_files,
+    send_check_report,
     update_last_captured_os,
+    validate_gtfs_os,
 )
 from pipelines.migration.tasks import (
     create_date_hour_partition,
@@ -97,6 +100,43 @@ from pipelines.tasks import get_scheduled_timestamp, parse_timestamp_to_string
 #     flow=gtfs_materializacao,
 #     default_parameters=constants.GTFS_MATERIALIZACAO_PARAMS.value,
 # )
+
+with Flow("SMTR: GTFS - Validação") as gtfs_validator:
+    data_versao_gtfs_param = Parameter("data_versao_gtfs", default=None)
+
+    mode = get_current_flow_mode()
+    data_versao_gtfs_task = None
+    last_captured_os_none = None
+    with case(data_versao_gtfs_param, None):
+        last_captured_os_redis = get_last_capture_os(
+            mode=mode, dataset_id=constants.GTFS_DATASET_ID.value
+        )
+
+    last_captured_os = merge(last_captured_os_none, last_captured_os_redis)
+
+    flag_new_os, os_control, data_index, data_versao_gtfs_task = get_os_info(
+        last_captured_os=last_captured_os, data_versao_gtfs=data_versao_gtfs_param
+    )
+    gtfs_file, os_file = get_gtfs_zipfile(os_control=os_control)
+
+    messages = validate_gtfs_os(
+        os_file=os_file,
+        gtfs_file=gtfs_file,
+        os_initial_date=data_index,
+        os_final_date=data_versao_gtfs_task,
+    )
+    send_check_report(messages=messages)
+
+gtfs_validator.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
+gtfs_validator.run_config = KubernetesRun(
+    image=constants.DOCKER_IMAGE.value,
+    labels=[constants.RJ_SMTR_AGENT_LABEL.value],
+)
+# gtfs_validator.state_handlers = [
+#     handler_inject_bd_credentials,
+#     handler_initialize_sentry,
+#     handler_skip_if_running,
+# ]
 
 with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
     upload_from_gcs = Parameter("upload_from_gcs", default=False)

@@ -5,10 +5,11 @@ Tasks for gtfs
 import io
 import os
 import zipfile
-from datetime import datetime
+from datetime import date, datetime
 
 import openpyxl as xl
 import pandas as pd
+import pytz
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from prefect import task
@@ -17,15 +18,24 @@ from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
 from pipelines.constants import constants
 from pipelines.migration.br_rj_riodejaneiro_gtfs.utils import (
+    check_os_columns,
+    check_os_columns_order,
     download_controle_os_csv,
     download_file,
     download_xlsx,
     filter_valid_rows,
+    get_board,
+    get_trips,
     processa_ordem_servico,
     processa_ordem_servico_faixa_horaria,
     processa_ordem_servico_trajeto_alternativo,
 )
-from pipelines.migration.utils import get_upload_storage_blob, save_raw_local_func
+from pipelines.migration.tasks import format_send_discord_message
+from pipelines.migration.utils import (
+    get_secret,
+    get_upload_storage_blob,
+    save_raw_local_func,
+)
 
 
 @task
@@ -41,7 +51,7 @@ def get_last_capture_os(dataset_id: str, mode: str = "prod") -> dict:
         dict: The last captured OS.
 
     """
-    redis_client = get_redis_client()
+    redis_client = get_redis_client("localhost")
     fetch_key = f"{dataset_id}.last_captured_os"
     if mode != "prod":
         fetch_key = f"{mode}.{fetch_key}"
@@ -259,3 +269,217 @@ def get_raw_gtfs_files(
                 raw_filepaths.append(raw_file_path)
 
     return raw_filepaths, list(constants.GTFS_TABLE_CAPTURE_PARAMS.value.values())
+
+
+### Validation
+
+
+@task(nout=2)
+def get_gtfs_zipfile(os_control):
+    """
+    Downloads raw files from Google Drive and processes them.
+
+    Args:
+        os_control (dict): A dictionary containing information about the OS (Ordem de Serviço).
+        local_filepath (list): A list of local file paths where the downloaded files will be saved.
+
+    Returns:
+        raw_filepaths (list): A list of file paths where the downloaded raw files are saved.
+        primary_keys (list[list]): A list with the primary_keys for the tables.
+    """
+
+    log(f"Baixando arquivos: {os_control}")
+
+    # Autenticar usando o arquivo de credenciais
+    credentials = service_account.Credentials.from_service_account_file(
+        filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
+        scopes=["https://www.googleapis.com/auth/drive.readonly"],
+    )
+
+    # Criar o serviço da API Google Drive e Google Sheets
+    drive_service = build("drive", "v3", credentials=credentials)
+
+    # Baixa planilha de OS
+    file_link = os_control["Link da OS"]
+    file_bytes_os = download_xlsx(file_link=file_link, drive_service=drive_service)
+
+    # Baixa GTFS
+    os_files = []
+    file_link = os_control["Link do GTFS"]
+    file_bytes_gtfs = download_file(file_link=file_link, drive_service=drive_service)
+
+    # Salva os nomes das planilhas
+    sheetnames = xl.load_workbook(file_bytes_os).sheetnames
+    sheetnames = [name for name in sheetnames if "ANEXO" in name]
+    log(f"tabs encontradas na planilha Controle OS: {sheetnames}")
+    return file_bytes_gtfs, file_bytes_os
+
+
+@task
+def validate_gtfs_os(os_file, gtfs_file, os_initial_date, os_final_date):
+    messages = []
+    # with open(gtfs_filepath, "rb") as f:
+    #     gtfs_file = f.read()
+    # Check OS and GTFS files
+    if os_file and gtfs_file:
+        os_sheets = pd.read_excel(os_file, None)
+
+        # if len(os_sheets) == 1:
+        #     os_df = os_sheets.popitem()[1]
+        # else:
+        #     messages.append("O arquivo possui mais de uma aba")
+        os_df = os_sheets.popitem()[1]
+        viagens_cols = [
+            "Partidas entre\n00h e 03h\n(Dias Úteis)",
+            "Partidas entre\n03h e 12h\n(Dias Úteis)",
+            "Partidas entre\n12h e 21h\n(Dias Úteis)",
+            "Partidas entre\n21h e 24h\n(Dias Úteis)",
+            "Partidas entre 24h e 03h\n(dia seguinte)\n(Dias Úteis)",
+            "Partidas entre\n00h e 03h\n(Sábado)",
+            "Partidas entre\n03h e 12h\n(Sábado)",
+            "Partidas entre 12h e 21h\n(Sábado)",
+            "Partidas entre\n21h e 24h\n(Sábado)",
+            "Partidas entre 24h e 03h\n(dia seguinte)\n(Sábado)",
+            "Partidas entre\n00h e 03h\n(Domingo)",
+            "Partidas entre\n03h e 12h\n(Domingo)",
+            "Partidas entre\n12h e 21h\n(Domingo)",
+            "Partidas entre\n21h e 24h\n(Domingo)",
+            "Partidas entre 24h e 03h\n(dia seguinte)\n(Domingo)",
+        ]
+        km_cols = [
+            "Quilometragem entre 00h e 03h\n(Dias Úteis)",
+            "Quilometragem entre 03h e 12h\n(Dias Úteis)",
+            "Quilometragem entre 12h e 21h\n(Dias Úteis)",
+            "Quilometragem entre 21h e 24h\n(Dias Úteis)",
+            "Quilometragem entre\n24h e 03h\n(dia seguinte)\n(Dias Úteis)",
+            "Quilometragem entre\n00h e 03h\n(Sábado)",
+            "Quilometragem entre 03h e 12h\n(Sábado)",
+            "Quilometragem entre 12h e 21h\n(Sábado)",
+            "Quilometragem entre 21h e 24h\n(Sábado)",
+            "Quilometragem entre\n24h e 03h\n(dia seguinte)\n(Sábado)",
+            "Quilometragem entre 00h e 03h\n(Domingo)",
+            "Quilometragem entre 03h e 12h\n(Domingo)",
+            "Quilometragem entre 12h e 21h\n(Domingo)",
+            "Quilometragem entre 21h e 24h\n(Domingo)",
+            "Quilometragem entre\n24h e 03h\n(dia seguinte)\n(Domingo)",
+        ]
+
+        if not check_os_columns(os_df):
+            log("Checking OS columns")
+            messages.append(":warning: O arquivo OS não contém as colunas esperadas!")
+            # return
+        log(os_df.columns)
+        for col in viagens_cols + km_cols:
+            os_df[col] = (
+                os_df[col]
+                .astype(str)
+                .str.strip()
+                .str.replace("—", "0")
+                .str.replace(",", ".")
+                .str.replace("\n", " ")
+                .astype(float)
+                .fillna(0)
+            )
+            os_df[col] = os_df[col].astype(float)
+
+        if not check_os_columns_order(os_df):
+            log("Checking OS column order")
+            messages.append(
+                f":warning: O arquivo OS contém as colunas esperadas, porém não segue a ordem esperada:\n{constants.OS_COLUMNS.value}"
+            )
+
+        # Check dates
+
+        if (os_initial_date is not None) and (os_final_date is not None):
+            log("Checking OS dates")
+            if not isinstance(os_initial_date, date):
+                os_initial_date = os_initial_date.split("_")[0]
+                os_initial_date = date.fromisoformat(os_initial_date)
+
+            if os_initial_date > datetime.now().date():
+                messages.append(":warning:  Você está subindo uma OS cuja operação já começou!")
+            log("Checking Trips and quadro")
+            trips_agg = get_trips(gtfs_file)
+            quadro = get_board(os_df)
+            quadro_merged = quadro.merge(trips_agg, on="servico", how="left")
+
+            if (
+                len(
+                    quadro_merged[
+                        (quadro_merged["trip_id_ida"].isna())
+                        & (quadro_merged["trip_id_volta"].isna())
+                    ]
+                )
+                > 0
+            ):
+                messages.append(":warning:  Existem trip_ids nulas")
+            partidas_cols = [col for col in quadro_merged.columns if "partida" in col]
+            for col in partidas_cols:
+                if (
+                    len(
+                        quadro_merged[
+                            ((quadro_merged[col] > 0) & (quadro_merged["trip_id_ida"].isna()))
+                            | ((quadro_merged[col] > 0) & (quadro_merged["trip_id_volta"].isna()))
+                        ].sort_values("servico")
+                    )
+                    > 0
+                ):
+                    messages.append(
+                        f"""
+                        :warning:  Existem viagens com ida e volta que possuem trip_ids nulas
+                        Coluna: {col}
+                        """
+                    )
+
+            # if (
+            #     len(
+            #         quadro_merged[
+            #             (
+            #                 (quadro_merged["extensao_ida"] == 0)
+            #                 & ~(quadro_merged["trip_id_ida"].isna())
+            #             )
+            #             | (
+            #                 (quadro_merged["extensao_volta"] == 0)
+            #                 & ~(quadro_merged["trip_id_volta"].isna())
+            #             )
+            #         ]
+            #     )
+            #     > 0
+            # ):
+            #     messages.append(
+            #         ":warning:  Existem viagens programadas sem extensão definida"
+            #     )
+            # Check data
+            # TODO: Partidas x Extensão, Serviços OS x GTFS (routes, trips, shapes), Extensão OS x GTFS"
+
+            # # Numero de servicos por consorcio
+            # tb = pd.DataFrame(os_df.groupby(
+            #     "Consórcio")["Serviço"].count())
+            # tb.loc["Total"] = tb.sum()
+            # st.table(tb)
+
+            # # Numero de viagens por consorcio
+            # tb = pd.DataFrame(os_df.groupby(
+            #     "Consórcio")[viagens_cols].sum())
+            # tb.loc["Total"] = tb.sum()
+            # st.table(tb.style.format("{:.1f}"))
+
+            # # Numero de KM por consorcio
+            # tb = pd.DataFrame(os_df.groupby(
+            #     "Consórcio")[km_cols].sum())
+            # tb.loc["Total"] = tb.sum()
+            # st.table(tb.style.format("{:.3f}"))
+    return messages
+
+
+@task
+def send_check_report(messages=None):
+    webhook_url = get_secret("gtfs_check_webhook")["url"]
+    base_msg = f'**Reporte de validação GTFS e OS {datetime.now(tz=pytz.timezone("America/Sao_Paulo")).date().isoformat()}**\n'
+    if not messages:
+        msg = ":green_circle: GTFS e OS passaram na validação!"
+        send_msg = f"{base_msg}\n{msg}"
+        format_send_discord_message([send_msg], webhook_url)
+        return
+    send_msgs = [f":red_circle: {base_msg}"] + [f"- {msg}\n" for msg in messages]
+    format_send_discord_message(send_msgs, webhook_url)
