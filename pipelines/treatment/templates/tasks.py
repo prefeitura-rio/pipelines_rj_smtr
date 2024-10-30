@@ -4,8 +4,9 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Union
 
 import basedosdados as bd
+import prefect
 import requests
-from prefect import context, task
+from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 from pytz import timezone
 
@@ -487,7 +488,7 @@ def dbt_data_quality_checks(dbt_logs: str, checks_list: dict, params: dict):
 
     formatted_messages = [
         ":green_circle: " if test_check else ":red_circle: ",
-        f"**Data Quality Checks - {context.get('flow_name')} - {date_range}**\n\n",
+        f"**Data Quality Checks - {prefect.context.get('flow_name')} - {date_range}**\n\n",
     ]
 
     for table_id, tests in checks_list.items():
