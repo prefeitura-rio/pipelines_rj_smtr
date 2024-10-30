@@ -120,7 +120,7 @@ vars:
   # Feature Apuração Madonna · The Celebration Tour in Rio
   DATA_SUBSIDIO_V7_INICIO: "2024-05-01"
   # Feature Viagens sem transação
-  DATA_SUBSIDIO_V8_INICIO: "2024-07-19"
+  DATA_SUBSIDIO_V8_INICIO: "2024-07-20"
   # Feature Apuração por faixa horária
   DATA_SUBSIDIO_V9_INICIO: "2024-08-16"
   # valor_subsidio: "`rj-smtr-dev.projeto_subsidio_sppo.valor_subsidio`"
@@ -185,6 +185,10 @@ vars:
 
   ### Encontro de Contas ###
   encontro_contas_modo: ""
+
+tests:
+  rj_smtr:
+    where: "DATA BETWEEN DATE('__date_range_start__') AND DATE('__date_range_end__')"
 
 models:
   +persist_docs:
@@ -321,3 +325,10 @@ models:
       staging:
         +materialized: view
         +schema: transito_staging
+    monitoramento:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: monitoramento
+      staging:
+        +materialized: view
+        +schema: monitoramento_staging

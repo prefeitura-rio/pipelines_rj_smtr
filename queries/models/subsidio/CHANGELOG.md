@@ -1,5 +1,9 @@
 # Changelog - subsidio
 
+## [1.0.2] - 2024-10-24
+
+- cria exceção na verificação d viagens sem transacao para a eleição de 2024-10-06 em viagem_transacao de 06h as 20h (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/286)
+
 ## [1.0.1] - 2024-09-12
 
 ### Corrigido
