@@ -152,7 +152,7 @@ with
             case
                 when tipo_dia = "Domingo"
                 then regexp_replace(service_id, "^[U|S]_", "D_")
-                when tipo_dia = "Sábado"
+                when tipo_dia = "Sabado"
                 then regexp_replace(service_id, "^[U|D]_", "S_")
                 when tipo_dia = "Dia Útil"
                 then regexp_replace(service_id, "^[S|D]_", "U_")
