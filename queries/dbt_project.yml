@@ -186,6 +186,10 @@ vars:
   ### Encontro de Contas ###
   encontro_contas_modo: ""
 
+tests:
+  rj_smtr:
+    where: "DATA BETWEEN DATE('__date_range_start__') AND DATE('__date_range_end__')"
+
 models:
   +persist_docs:
     relation: true
