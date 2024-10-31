@@ -1,91 +1,82 @@
-{{
-    config(
-        materialized='ephemeral'
-    )
-}}
-/*
-Descrição:
-Estimativa das velocidades dos veículos nos últimos 10 minutos contados a partir da timestamp_gps atual.
-Essa metodologia serve para determinar quais carros estão em movimento e quais estão parados.
-1. Calculamos a velocidade do veículo no último trecho de 10 minutos de operação.
-A implementação utiliza a função 'first_value' com uma janela (cláusula 'over') de até 10 minutos anteriores à
-timestamp_gps atual e calcula a distância do ponto mais antigo (o first_value na janela) ao ponto atual (posicao_veiculo_geo).
-Dividimos essa distância pela diferença de tempo entre a timestamp_gps atual e a timestamp_gps do ponto mais
-antigo da janela (o qual recuperamos novamente com o uso de first_value).
-Esta diferença de tempo (datetime_diff) é calculada em segundos, portanto multiplicamos o resultado da divisão por um fator
-3.6 para que a velocidade esteja em quilômetros por hora. O resultado final é arrendondado sem casas decimais.
-Por fim, cobrimos esse cálculo com a função 'if_null' e retornamos zero para a velocidade em casos onde a divisão retornaria
-um valor nulo.
-2. Após o calculo da velocidade, definimos a coluna 'status_movimento'. Veículos abaixo da 'velocidade_limiar_parado', são
-considerados como 'parado'. Caso contrário, são considerados 'andando'
-*/
+{{ config(materialized="ephemeral") }}
+
 with
     t_velocidade as (
-    select
-        data,
-        id_veiculo,
-        timestamp_gps,
-        linha,
-        ST_DISTANCE(
+        select
+            data,
+            id_veiculo,
+            datetime_gps,
+            servico,
+            st_distance(
                 posicao_veiculo_geo,
                 lag(posicao_veiculo_geo) over (
-                partition by id_veiculo, linha
-                order by timestamp_gps)
-        ) distancia,
-        IFNULL(
-            SAFE_DIVIDE(
-                ST_DISTANCE(
-                posicao_veiculo_geo,
-                lag(posicao_veiculo_geo) over (
-                partition by id_veiculo, linha
-                order by timestamp_gps)
+                    partition by id_veiculo, servico order by datetime_gps
+                )
+            ) distancia,
+            ifnull(
+                safe_divide(
+                    st_distance(
+                        posicao_veiculo_geo,
+                        lag(posicao_veiculo_geo) over (
+                            partition by id_veiculo, servico order by datetime_gps
+                        )
+                    ),
+                    datetime_diff(
+                        datetime_gps,
+                        lag(datetime_gps) over (
+                            partition by id_veiculo, servico order by datetime_gps
+                        ),
+                        second
+                    )
                 ),
-                DATETIME_DIFF(
-                timestamp_gps,
-                lag(timestamp_gps) over (
-                partition by id_veiculo, linha
-                order by timestamp_gps),
-                SECOND
-                )),
-            0
-        ) * 3.6 velocidade
-    FROM  {{ ref("aux_gps_filtrada" ~ var('fonte_gps')) }}
-    {%if not flags.FULL_REFRESH -%}
-    WHERE
-        data between DATE("{{var('date_range_start')}}") and DATE("{{var('date_range_end')}}")
-    AND timestamp_gps > "{{var('date_range_start')}}" and timestamp_gps <="{{var('date_range_end')}}"
-    {%- endif -%}
+                0
+            )
+            * 3.6 velocidade
+        from {{ ref("aux_gps_filtrada") }}
+        {% if not flags.FULL_REFRESH -%}
+            where
+                data between date("{{var('date_range_start')}}") and date(
+                    "{{var('date_range_end')}}"
+                )
+                and datetime_gps > "{{var('date_range_start')}}"
+                and datetime_gps <= "{{var('date_range_end')}}"
+        {%- endif -%}
     ),
     medias as (
         select
-        data,
-        id_veiculo,
-        timestamp_gps,
-        linha,
-        distancia,
-        velocidade, # velocidade do pontual
-        AVG(velocidade) OVER (
-            PARTITION BY id_veiculo, linha
-            ORDER BY unix_seconds(timestamp(timestamp_gps))
-            RANGE BETWEEN {{ var('janela_movel_velocidade') }} PRECEDING AND CURRENT ROW
-        ) velocidade_media # velocidade com média móvel
-    from t_velocidade
+            data,
+            id_veiculo,
+            datetime_gps,
+            servico,
+            distancia,
+            velocidade,  -- velocidade do pontual
+            avg(velocidade) over (
+                partition by id_veiculo, servico
+                order by
+                    unix_seconds(timestamp(datetime_gps))
+                    range
+                    between {{ var("janela_movel_velocidade") }} preceding
+                    and current row
+            ) velocidade_media  -- velocidade com média móvel
+        from t_velocidade
     )
-SELECT
-    timestamp_gps,
+select
     data,
+    datetime_gps,
     id_veiculo,
-    linha,
+    servico,
     distancia,
-    ROUND(
-        CASE WHEN velocidade_media > {{ var('velocidade_maxima') }}
-            THEN {{ var('velocidade_maxima') }}
-            ELSE velocidade_media
-        END,
-        1) as velocidade,
-    -- 2. Determinação do estado de movimento do veículo.
+    round(
+        case
+            when velocidade_media > {{ var("velocidade_maxima") }}
+            then {{ var("velocidade_maxima") }}
+            else velocidade_media
+        end,
+        1
+    ) as velocidade,
     case
-        when velocidade_media < {{ var('velocidade_limiar_parado') }} then false
+        when velocidade_media < {{ var("velocidade_limiar_parado") }}
+        then false
         else true
-    end flag_em_movimento,
-FROM medias
+    end indicador_em_movimento,
+from medias

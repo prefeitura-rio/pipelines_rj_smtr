@@ -1,17 +1,19 @@
-{{ config(alias=this.name ~ var('fonte_gps')) }}
+{{ config(alias=this.name ~ var("fonte_gps")) }}
 
-SELECT
-    SAFE_CAST(ordem AS STRING) ordem,
-    SAFE_CAST(REPLACE(latitude, ',', '.') AS FLOAT64) latitude,
-    SAFE_CAST(REPLACE(longitude, ',', '.') AS FLOAT64) longitude,
-    SAFE_CAST(DATETIME(TIMESTAMP(datahora), "America/Sao_Paulo") AS DATETIME) timestamp_gps,
-    SAFE_CAST(velocidade AS INT64) velocidade,
+select
+    data,
+    safe_cast(
+        datetime(timestamp(datahora), "America/Sao_Paulo") as datetime
+    ) datetime_gps,
+    safe_cast(ordem as string) id_veiculo,
     concat(
-        ifnull(REGEXP_EXTRACT(linha, r'[A-Z]+'), ""),
-        ifnull(REGEXP_EXTRACT(linha, r'[0-9]+'), "")
-    ) as linha,
-    SAFE_CAST(DATETIME(TIMESTAMP(timestamp_captura), "America/Sao_Paulo") AS DATETIME) timestamp_captura,
-    SAFE_CAST(data AS DATE) data,
-    SAFE_CAST(hora AS INT64) hora
-from
-    {{var('sppo_registros_staging')}} as t
+        ifnull(regexp_extract(linha, r'[A-Z]+'), ""),
+        ifnull(regexp_extract(linha, r'[0-9]+'), "")
+    ) as servico,
+    safe_cast(replace(latitude, ',', '.') as float64) latitude,
+    safe_cast(replace(longitude, ',', '.') as float64) longitude,
+    safe_cast(
+        datetime(timestamp(timestamp_captura), "America/Sao_Paulo") as datetime
+    ) datetime_captura,
+    safe_cast(velocidade as int64) velocidade
+from {{ var("sppo_registros_staging") }}

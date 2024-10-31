@@ -1,17 +1,25 @@
-{{ config(alias=this.name ~ var('fonte_gps')) }}
+{{ config(alias=this.name ~ var("fonte_gps")) }}
 
-SELECT
-  SAFE_CAST(id_veiculo AS STRING) id_veiculo,
-  SAFE_CAST(DATETIME(TIMESTAMP(datetime_operacao), "America/Sao_Paulo") AS DATETIME) datetime_operacao,
-  concat(
-    ifnull(REGEXP_EXTRACT(servico, r'[A-Z]+'), ""),
-    ifnull(REGEXP_EXTRACT(servico, r'[0-9]+'), "")
-  ) as servico,
-  SAFE_CAST(DATETIME(TIMESTAMP(datetime_entrada), "America/Sao_Paulo") AS DATETIME) as datetime_entrada,
-  SAFE_CAST(DATETIME(TIMESTAMP(datetime_saida), "America/Sao_Paulo") AS DATETIME) as datetime_saida,
-  SAFE_CAST(DATETIME(TIMESTAMP(timestamp_processamento), "America/Sao_Paulo") AS DATETIME) as timestamp_processamento,
-  SAFE_CAST(DATETIME(TIMESTAMP(timestamp_captura), "America/Sao_Paulo") AS DATETIME) as timestamp_captura,
-  data,
-  hora
-FROM
-  {{var('sppo_realocacao_staging')}} as t
+select
+    data,
+    safe_cast(
+        datetime(timestamp(datetime_operacao), "America/Sao_Paulo") as datetime
+    ) datetime_operacao,
+    safe_cast(id_veiculo as string) id_veiculo,
+    concat(
+        ifnull(regexp_extract(servico, r'[A-Z]+'), ""),
+        ifnull(regexp_extract(servico, r'[0-9]+'), "")
+    ) as servico,
+    safe_cast(
+        datetime(timestamp(datetime_entrada), "America/Sao_Paulo") as datetime
+    ) as datetime_entrada,
+    safe_cast(
+        datetime(timestamp(datetime_saida), "America/Sao_Paulo") as datetime
+    ) as datetime_saida,
+    safe_cast(
+        datetime(timestamp(timestamp_processamento), "America/Sao_Paulo") as datetime
+    ) as datetime_processamento,
+    safe_cast(
+        datetime(timestamp(timestamp_captura), "America/Sao_Paulo") as datetime
+    ) as datetime_captura,
+from {{ var("sppo_realocacao_staging") }}
