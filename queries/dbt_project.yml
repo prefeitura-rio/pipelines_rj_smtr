@@ -186,6 +186,9 @@ vars:
   ### Encontro de Contas ###
   encontro_contas_modo: ""
 
+  modo_gps: ""
+  fonte_gps: ""
+
 tests:
   rj_smtr:
     where: "DATA BETWEEN DATE('__date_range_start__') AND DATE('__date_range_end__')"
