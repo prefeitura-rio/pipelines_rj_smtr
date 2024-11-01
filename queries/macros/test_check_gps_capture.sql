@@ -5,9 +5,9 @@ WITH
     SELECT
         DATETIME(timestamp_array) AS timestamp_array
     FROM
-        UNNEST( GENERATE_TIMESTAMP_ARRAY( TIMESTAMP("{{ var('start_date') }}"), TIMESTAMP("{{ var('end_date') }}"), INTERVAL {{ interval }} minute) ) AS timestamp_array
+        UNNEST( GENERATE_TIMESTAMP_ARRAY( TIMESTAMP("{{ var('date_range_start') }}"), TIMESTAMP("{{ var('date_range_end') }}"), INTERVAL {{ interval }} minute) ) AS timestamp_array
     WHERE
-        timestamp_array < TIMESTAMP("{{ var('end_date') }}") ),
+        timestamp_array < TIMESTAMP("{{ var('date_range_end') }}") ),
     logs_table AS (
     SELECT
         SAFE_CAST(DATETIME(TIMESTAMP(timestamp_captura), "America/Sao_Paulo") AS DATETIME) timestamp_captura,
@@ -15,7 +15,7 @@ WITH
         SAFE_CAST(erro AS STRING) erro,
         SAFE_CAST(DATA AS DATE) DATA
     FROM
-        rj-smtr-staging.{{model.schema}}_staging.{{ table_id }}_logs AS t ),
+        rj-smtr-staging.br_rj_riodejaneiro_onibus_gps_staging.{{ table_id }}_logs AS t ),
     logs AS (
     SELECT
         *,
@@ -23,10 +23,10 @@ WITH
     FROM
         logs_table
     WHERE
-        DATA BETWEEN DATE(TIMESTAMP("{{ var('start_date') }}"))
-        AND DATE(TIMESTAMP("{{ var('end_date') }}"))
-        AND timestamp_captura BETWEEN "{{ var('start_date') }}"
-        AND "{{ var('end_date') }}" )
+        DATA BETWEEN DATE(TIMESTAMP("{{ var('date_range_start') }}"))
+        AND DATE(TIMESTAMP("{{ var('date_range_end') }}"))
+        AND timestamp_captura BETWEEN "{{ var('date_range_start') }}"
+        AND "{{ var('date_range_end') }}" )
     SELECT
         COALESCE(logs.timestamp_captura, t.timestamp_array) AS timestamp_captura,
         logs.erro

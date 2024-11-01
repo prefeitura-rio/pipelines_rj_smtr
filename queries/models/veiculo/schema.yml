@@ -149,7 +149,13 @@ models:
   - name: sppo_veiculo_dia
     description: "Tabela resumo dos veículos que operaram no SPPO e seus respectivos indicadores"
     tests:
-      - check_sppo_veiculo_dia
+      - check_sppo_veiculo_dia:
+          name: check_sppo_veiculo_dia__sppo_veiculo_dia
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+          - data
+          - id_veiculo
+          name: unique_combination__data_id_veiculo__sppo_veiculo_dia
     columns:
       - name: data
         description: "Data de operação"
@@ -181,6 +187,9 @@ models:
                       - Autuado por limpeza/equipamento - Veículo que operou, foi licenciado, mas foi autuado cumulativamente por infrações relacionadas à limpeza e equipamentos do veículo\n
                       - Sem ar e não autuado - Veículo que operou, foi licenciado sem ar condicionado e não foi autuado\n
                       - Com ar e não autuado - Veículo que operou, foi licenciado com ar condicionado e não foi autuado"
+        tests:
+          - not_null:
+              name: not_null__status__sppo_veiculo_dia
       - name: versao
         description: "SHA do repositório no Github"
   - name: sppo_registro_agente_verao

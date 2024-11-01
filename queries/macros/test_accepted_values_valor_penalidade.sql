@@ -1,16 +1,17 @@
-{% test accepted_values_valor_penalidade(model) -%}
+{% test accepted_values_in_table(model, column_name, ref_table, ref_column) %}
 WITH
     all_values AS (
     SELECT
-        DISTINCT valor_penalidade AS value_field,
+        DISTINCT {{ column_name }} AS value_field,
         COUNT(*) AS n_records
     FROM
         {{ model }}
     WHERE
-        DATA BETWEEN DATE("{{ var('start_date') }}")
-        AND DATE("{{ var('end_date') }}")
+        DATA BETWEEN DATE("{{ var('date_range_start') }}")
+        AND DATE("{{ var('date_range_end') }}")
     GROUP BY
-        valor_penalidade )
+        {{ column_name }}
+    )
     SELECT
         *
     FROM
@@ -18,9 +19,8 @@ WITH
     WHERE
         value_field NOT IN (
             SELECT
-                valor
+                {{ ref_column }}
             FROM
-                -- `rj-smtr`.`dashboard_subsidio_sppo`.`valor_tipo_penalidade`
-                {{ ref('valor_tipo_penalidade') }}
-                 )
+                {{ ref(ref_table) }}
+        )
 {%- endtest %}

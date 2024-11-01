@@ -59,97 +59,80 @@ models:
   - name: sumario_servico_dia_pagamento
     description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia."
     tests:
-      - completude
-      - accepted_values_valor_penalidade
+      - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
+          date_col: data
+          test_start_date: "{{ var('date_range_start') }}" # (Optional. Replace 'yyyy-mm-dd' with a date. Default is 'None')
+          test_end_date: "{{ var('date_range_end') }}" # (Optional. Replace 'yyyy-mm-dd' with a date. Default is 'None')
+          name: completude__sumario_servico_dia_pagamento
       - teto_pagamento_valor_subsidio_pago:
+          table_id: sumario_servico_dia_pagamento
           expression: ROUND((valor_a_pagar - valor_penalidade)/subsidio_km_teto,2) <= ROUND(km_apurada_dia+0.01,2)
+          name: teto_pagamento_valor_subsidio_pago__sumario_servico_dia_pagamento
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
           - data
           - servico
-          config:
-            where: DATA BETWEEN DATE("{{ var('start_date') }}") AND DATE("{{ var('end_date') }}")
+          name: unique_combination__sumario_servico_dia_pagamento
       - dbt_utils.expression_is_true:
           expression: (valor_a_pagar - valor_penalidade) IS NOT NULL AND (valor_a_pagar - valor_penalidade) >= 0
-          config:
-            where: DATA BETWEEN DATE("{{ var('start_date') }}") AND DATE("{{ var('end_date') }}")
+          name: expression_is_true__sumario_servico_dia_pagamento
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS."
         tests:
-          - dbt_utils.not_null_proportion:
-              at_least: 1
-              config:
-                where: DATA BETWEEN DATE("{{ var('start_date') }}") AND DATE("{{ var('end_date') }}")
+          - not_null:
+              name: not_null__data__sumario_servico_dia_pagamento
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo."
         tests:
-          - dbt_utils.not_null_proportion:
-              at_least: 1
-              config:
-                where: DATA BETWEEN DATE("{{ var('start_date') }}") AND DATE("{{ var('end_date') }}")
+          - not_null:
+              name: not_null__tipo_dia__sumario_servico_dia_pagamento
       - name: consorcio
         description: "Consórcio que opera o serviço."
         tests:
-          - dbt_utils.not_null_proportion:
-              at_least: 1
-              config:
-                where: DATA BETWEEN DATE("{{ var('start_date') }}") AND DATE("{{ var('end_date') }}")
+          - not_null:
+              name: not_null__consorcio__sumario_servico_dia_pagamento 
       - name: servico
         description: "Serviço realizado pelo veículo."
         tests:
-          - dbt_utils.not_null_proportion:
-              at_least: 1
-              config:
-                where: DATA BETWEEN DATE("{{ var('start_date') }}") AND DATE("{{ var('end_date') }}")
+          - not_null:
+              name: not_null__servico__sumario_servico_dia_pagamento
       - name: viagens_dia
         description: "Quantidade de viagens apuradas por dia."
         tests:
-          - dbt_utils.not_null_proportion:
-              at_least: 1
-              config:
-                where: DATA BETWEEN DATE("{{ var('start_date') }}") AND DATE("{{ var('end_date') }}")
+          - not_null:
+              name: not_null__viagens_dia__sumario_servico_dia_pagamento
           - dbt_utils.accepted_range:
               min_value: 0
-              config:
-                where: DATA BETWEEN DATE("{{ var('start_date') }}") AND DATE("{{ var('end_date') }}")
+              name: grater_than_zero__viagens_dia__sumario_servico_dia_pagamento
       - name: km_apurada_dia
         description: "Distância apurada para o serviço por dia (km)."
         tests:
-          - dbt_utils.not_null_proportion:
-              at_least: 1
-              config:
-                where: DATA BETWEEN DATE("{{ var('start_date') }}") AND DATE("{{ var('end_date') }}")
+          - not_null:
+              name: not_null__viagens_dia__sumario_servico_dia_pagamento
           - dbt_utils.accepted_range:
               min_value: 0
-              config:
-                where: DATA BETWEEN DATE("{{ var('start_date') }}") AND DATE("{{ var('end_date') }}")
-        tests:
-          - sumario_servico_dia_tipo_soma_km
+              name: grater_than_zero__viagens_dia__sumario_servico_dia_pagamento
+          - sumario_servico_dia_tipo_soma_km:
+              name: soma_km__km_apurada_dia__sumario_servico_dia_pagamento
       - name: km_subsidiada_dia
         description: "Distância subsidiada para o serviço por dia (km)."
       - name: km_planejada_dia
         description: "Distância planejada para o serviço por dia (km)."
         tests:
-          - dbt_utils.not_null_proportion:
-              at_least: 1
-              config:
-                where: DATA BETWEEN DATE("{{ var('start_date') }}") AND DATE("{{ var('end_date') }}")
+          - not_null:
+              name: not_null__km_planejada_dia__sumario_servico_dia_pagamento
           - dbt_utils.accepted_range:
               min_value: 0
-              config:
-                where: DATA BETWEEN DATE("{{ var('start_date') }}") AND DATE("{{ var('end_date') }}")
+              name: grater_than_zero__km_planejada_dia__sumario_servico_dia_pagamento
       - name: media_pof
         description: "Média do indicador percentual de operação por faixa horária."
         tests:
-          - dbt_utils.not_null_proportion:
-              at_least: 1
-              config:
-                where: DATA BETWEEN DATE("{{ var('start_date') }}") AND DATE("{{ var('end_date') }}")
+          - not_null:
+              name: not_null__media_pof__sumario_servico_dia_pagamento
           - dbt_utils.accepted_range:
               min_value: 0
-              config:
-                where: DATA BETWEEN DATE("{{ var('start_date') }}") AND DATE("{{ var('end_date') }}")
+              name: grater_than_zero__media_pof__sumario_servico_dia_pagamento
       - name: desvp_pof
         description: "Desvio padrão do indicador percentual de operação por faixa horária."
       - name: km_apurada_registrado_com_ar_inoperante
@@ -184,6 +167,11 @@ models:
         description: "Valor de glosa depositada em juízo (Autuação por ar inoperante, Veículo licenciado sem ar, Penalidade abaixo de 60% e Notificação dos Agentes de Verão)."
       - name: valor_penalidade
         description: "Valor penalidade [negativa] (POF =< 60%)."
+        tests:
+          - accepted_values_in_table:
+              ref_column: valor
+              ref_table: valor_tipo_penalidade
+              name: accepted_values__valor_penalidade__sumario_servico_dia_pagamento
       - name: versao
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao

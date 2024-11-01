@@ -241,6 +241,7 @@ models:
       - check_gps_capture:
           table_id: realocacao
           interval: 10
+          name: check_gps_capture__sppo_realocacao
     columns:
       - name: id_veiculo
         description: "Código identificador do veículo (número de ordem)"
@@ -292,6 +293,7 @@ models:
       - check_gps_capture:
           table_id: registros
           interval: 1
+          name: check_gps_capture__sppo_registros
     columns:
       - name: ordem
         description: "Código identificador do veículo (número de ordem)"

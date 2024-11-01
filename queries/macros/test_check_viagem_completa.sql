@@ -7,7 +7,7 @@ WITH
         -- rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva
         {{ ref('subsidio_data_versao_efetiva') }}
     WHERE
-        DATA >= "2024-04-01"
+        DATA >= "{{ var('DATA_SUBSIDIO_V6_INICIO') }}"
         AND DATA BETWEEN DATE("{{ var('start_date') }}")
         AND DATE("{{ var('end_date') }}")),
     viagem_completa AS (
@@ -17,7 +17,7 @@ WITH
         -- rj-smtr.projeto_subsidio_sppo.viagem_completa
         {{ ref('viagem_completa') }}
     WHERE
-        DATA >= "2024-04-01"
+        DATA >= "{{ var('DATA_SUBSIDIO_V6_INICIO') }}"
         AND DATA BETWEEN DATE("{{ var('start_date') }}")
         AND DATE("{{ var('end_date') }}")),
     feed_info AS (
