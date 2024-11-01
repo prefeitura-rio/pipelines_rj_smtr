@@ -28,7 +28,7 @@ models:
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
         tests:
-          - not_null: 
+          - not_null:
               name: not_null__tipo_dia__sumario_servico_dia
       - name: consorcio
         description: "Consórcio que opera o serviço"
@@ -370,7 +370,7 @@ models:
           test_end_date: DATE("{{ var("end_date") }}") # (Optional. Replace 'yyyy-mm-dd' with a date. Default is 'None')
           name: completude__sumario_servico_dia_tipo_sem_glosa
       - teto_pagamento_valor_subsidio_pago:
-          table_id: sumario_servico_dia_tipo_sem_glosa 
+          table_id: sumario_servico_dia_tipo_sem_glosa
           expression: ROUND(valor_total_subsidio/subsidio_km_teto,2) <= ROUND(distancia_total_subsidio+0.01,2)
           name: teto_pagamento_valor_subsidio_pago__sumario_servico_dia_tipo_sem_glosa
       - dbt_utils.unique_combination_of_columns:
@@ -618,6 +618,5 @@ models:
         tests:
           - not_null:
               name: not_null__indicador_viagem_dentro_limite__viagens_remuneradas
-               
-               
-                 
+
+

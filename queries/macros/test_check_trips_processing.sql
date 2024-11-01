@@ -13,7 +13,7 @@ FROM (
     FROM
         rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva
     WHERE
-        DATA >= "{{ var('DATA_SUBSIDIO_V6_INICIO') }}" 
+        DATA >= "{{ var('DATA_SUBSIDIO_V6_INICIO') }}"
         AND DATA BETWEEN DATE("{{ var('start_date') }}")
             AND DATE("{{ var('end_date') }}")
     ) AS s

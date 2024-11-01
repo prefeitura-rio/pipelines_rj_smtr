@@ -91,7 +91,7 @@ models:
         description: "Consórcio que opera o serviço."
         tests:
           - not_null:
-              name: not_null__consorcio__sumario_servico_dia_pagamento 
+              name: not_null__consorcio__sumario_servico_dia_pagamento
       - name: servico
         description: "Serviço realizado pelo veículo."
         tests:
