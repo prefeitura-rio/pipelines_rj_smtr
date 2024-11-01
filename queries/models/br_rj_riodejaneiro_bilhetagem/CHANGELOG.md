@@ -1,5 +1,49 @@
 # Changelog - bilhetagem
 
+## [2.5.1] - 2024-10-07
+
+### Alterado
+- Retira tratamento de valores nulos da coluna `tipo_gratuidade` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/261)
+- Adiciona tratamento de valores nulos na coluna `tipo_transacao_detalhe_smtr` no modelo `aux_passageiros_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/261)
+
+## [2.5.0] - 2024-09-10
+
+### Alterado
+- Adiciona coluna `id_ordem_pagamento_consorcio_operador_dia` no modelo `ordem_pagamento_consorcio_operador_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/191)
+- Cria tratamento da coluna `timestamp_captura` no modelo `staging_linha_consorcio_operadora_transporte.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/191)
+
+
+## [2.4.0] - 2024-09-05
+
+### Alterado
+- Adiciona coluna `hash_cliente` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/189)
+
+## [2.3.0] - 2024-08-26
+
+### Adicionado
+- Cria modelos `staging_linha_consorcio_operadora_transporte.sql` e `staging_endereco.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/164)
+
+### Alterado
+- Utiliza data e hora no filtro incremental dos modelos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/164):
+  - `transacao.sql`
+  - `transacao_riocard.sql`
+  - `passageiros_hora.sql`
+  - `passageiros_tile_hora.sql`
+- Adiciona coluna geo_point_transacao nos modelos `transacao.sql` e `transacao_riocard.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/164)
+- Altera materialized do modelo `aux_passageiros_hora.sql` de `table` para `ephemeral` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/164)
+- Adiciona transações do RioCard no modelo `aux_passageiros_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/164)
+
+
+## [2.2.1] - 2024-08-09
+
+### Adicionado
+- Adiciona descrição da coluna `id_validador` em `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/139)
+- Adiciona descrição da coluna `quantidade_total_transacao` em `ordem_pagamento_consorcio_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/139)
+- Adiciona descrição das colunas `quantidade_total_transacao` e `valor_pago` em `ordem_pagamento_consorcio_operador_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/139)
+- Adiciona descrição da coluna `quantidade_total_transacao` em `ordem_pagamento_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/139)
+- Adiciona descrição das colunas `tipo_gratuidade` e `tipo_pagamento` em `passageiros_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/139)
+- Adiciona descrição das colunas `tipo_gratuidade` e `tipo_pagamento` em `passageiros_tile_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/139)
+
 ## [2.2.0] - 2024-08-05
 
 ### Adicionado

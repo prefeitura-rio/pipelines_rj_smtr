@@ -2,7 +2,7 @@
 """
 Flows for br_rj_riodejaneiro_onibus_gps_zirix
 
-DBT 2024-07-02
+DBT 2024-08-26
 """
 from prefect import Parameter, case
 from prefect.run_configs import KubernetesRun
@@ -172,7 +172,7 @@ with Flow(
         )
         set_last_run_timestamp(
             dataset_id=dataset_id,
-            table_id=table_id,
+            table_id="gps_sppo",
             timestamp=date_range["date_range_end"],
             wait=RUN,
             mode=MODE,

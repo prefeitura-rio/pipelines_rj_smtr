@@ -4,7 +4,7 @@ import re
 
 from jinja2 import Environment
 
-from pipelines.constants import constants
+# from pipelines.constants import constants
 
 
 def render_template(
@@ -30,11 +30,11 @@ def render_template(
 
     """
 
-    def is_incremental() -> bool:
-        return execution_mode == constants.MODE_INCR.value
+    # def is_incremental() -> bool:
+    #     return execution_mode == constants.MODE_INCR.value
 
     template_env = Environment()
-    template_env.globals["is_incremental"] = is_incremental
+    # template_env.globals["is_incremental"] = is_incremental
     template = template_env.from_string(template_string)
 
     rendered_string = template.render(_vars)

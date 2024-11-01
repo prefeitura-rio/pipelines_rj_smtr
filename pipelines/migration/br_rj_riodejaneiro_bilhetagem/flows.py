@@ -2,7 +2,7 @@
 """
 Flows for br_rj_riodejaneiro_bilhetagem
 
-DBT: 2024-08-06
+DBT: 2024-10-09
 """
 
 from copy import deepcopy
@@ -42,6 +42,7 @@ from pipelines.schedules import (
 )
 from pipelines.treatment.templates.tasks import run_data_quality_checks
 from pipelines.utils.dataplex import DataQualityCheckArgs
+from pipelines.utils.prefect import handler_skip_if_running_tolerant
 
 # BILHETAGEM TRANSAÇÃO - CAPTURA A CADA MINUTO #
 
@@ -144,7 +145,7 @@ bilhetagem_tracking_captura = set_default_parameters(
 bilhetagem_tracking_captura.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
-    handler_skip_if_running,
+    handler_skip_if_running_tolerant(tolerance_minutes=3),
 ]
 
 
@@ -508,6 +509,21 @@ with Flow(
 
         wait_materializacao_transacao = wait_for_flow_run(
             run_materializacao_transacao,
+            stream_states=True,
+            stream_logs=True,
+            raise_final_state=True,
+        )
+
+        run_materializacao_passageiros_hora = create_flow_run(
+            flow_name=bilhetagem_materializacao_transacao.name,
+            project_name=PROJECT,
+            labels=LABELS,
+            upstream_tasks=[wait_materializacao_transacao],
+            parameters=constants.BILHETAGEM_MATERIALIZACAO_PASSAGEIROS_HORA_PARAMS.value,
+        )
+
+        wait_materializacao_passageiros_hora = wait_for_flow_run(
+            run_materializacao_passageiros_hora,
             stream_states=True,
             stream_logs=True,
             raise_final_state=True,

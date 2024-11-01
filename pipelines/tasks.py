@@ -11,6 +11,7 @@ from pytz import timezone
 
 from pipelines.constants import constants
 from pipelines.utils.prefect import FailedSubFlow, create_subflow_run, wait_subflow_run
+from pipelines.utils.utils import convert_timezone
 
 
 @task
@@ -60,10 +61,7 @@ def get_scheduled_timestamp(timestamp: str = None) -> datetime:
     else:
         timestamp = prefect.context["scheduled_start_time"]
 
-    if timestamp.tzinfo is None:
-        timestamp = timestamp.replace(tzinfo=timezone(constants.TIMEZONE.value))
-    else:
-        timestamp = timestamp.astimezone(tz=timezone(constants.TIMEZONE.value))
+    timestamp = convert_timezone(timestamp=timestamp).replace(second=0, microsecond=0)
 
     log(f"Created timestamp: {timestamp}")
     return timestamp

@@ -445,8 +445,8 @@ class constants(Enum):  # pylint: disable=c0103
                     WHERE
                         DT_INCLUSAO BETWEEN '{start}'
                         AND '{end}'
-                        OR DT_FIM_VALIDADE BETWEEN '{start}'
-                        AND '{end}'
+                        OR DT_FIM_VALIDADE BETWEEN DATE('{start}')
+                        AND DATE('{end}')
                 """,
             },
             "primary_key": [
@@ -454,6 +454,54 @@ class constants(Enum):  # pylint: disable=c0103
                 "CD_LINHA",
             ],  # id column to nest data on
             "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
+        },
+        {
+            "table_id": "linha_consorcio_operadora_transporte",
+            "partition_date_only": True,
+            "extract_params": {
+                "database": "principal_db",
+                "query": """
+                    SELECT
+                        *
+                    FROM
+                        LINHA_CONSORCIO_OPERADORA_TRANSPORTE
+                    WHERE
+                        DT_INCLUSAO BETWEEN '{start}'
+                        AND '{end}'
+                        OR DT_FIM_VALIDADE BETWEEN DATE('{start}')
+                        AND DATE('{end}')
+                """,
+            },
+            "primary_key": [
+                "CD_CONSORCIO",
+                "CD_OPERADORA_TRANSPORTE",
+                "CD_LINHA",
+            ],  # id column to nest data on
+            "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
+        },
+        {
+            "table_id": "endereco",
+            "partition_date_only": True,
+            "extract_params": {
+                "database": "principal_db",
+                "query": """
+                    SELECT
+                        *
+                    FROM
+                        ENDERECO
+                    WHERE
+                        DT_INCLUSAO BETWEEN '{start}'
+                        AND '{end}'
+                        OR
+                        DT_INATIVACAO BETWEEN '{start}'
+                        AND '{end}'
+                """,
+            },
+            "primary_key": [
+                "NR_SEQ_ENDERECO",
+            ],  # id column to nest data on
+            "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
+            "save_bucket_name": BILHETAGEM_PRIVATE_BUCKET,
         },
     ]
 
@@ -476,8 +524,8 @@ class constants(Enum):  # pylint: disable=c0103
     }
 
     BILHETAGEM_MATERIALIZACAO_TRANSACAO_PARAMS = {
-        "dataset_id": BILHETAGEM_JAE_DASHBOARD_DATASET_ID,
-        "table_id": "view_passageiros_hora",
+        "dataset_id": smtr_constants.BILHETAGEM_DATASET_ID.value,
+        "table_id": "transacao",
         "upstream": True,
         "dbt_vars": {
             "date_range": {
@@ -490,7 +538,25 @@ class constants(Enum):  # pylint: disable=c0103
 ordem_pagamento_dia ordem_pagamento_consorcio_dia ordem_pagamento_consorcio_operador_dia \
 staging_ordem_pagamento_consorcio staging_ordem_pagamento \
 ordem_pagamento_servico_operador_dia staging_ordem_pagamento_consorcio_operadora \
-aux_retorno_ordem_pagamento",
+aux_retorno_ordem_pagamento staging_arquivo_retorno",
+    }
+
+    BILHETAGEM_MATERIALIZACAO_PASSAGEIROS_HORA_PARAMS = {
+        "dataset_id": BILHETAGEM_JAE_DASHBOARD_DATASET_ID,
+        "table_id": "view_passageiros_hora",
+        "upstream": True,
+        "dbt_vars": {
+            "date_range": {
+                "table_run_datetime_column_name": "data",
+                "delay_hours": 0,
+                "truncate_minutes": False,
+            },
+            "version": {},
+        },
+        "exclude": "+transacao",
+        "source_dataset_ids": [],
+        "source_table_ids": [],
+        "capture_intervals_minutes": [],
     }
 
     BILHETAGEM_MATERIALIZACAO_DASHBOARD_CONTROLE_VINCULO_PARAMS = {
@@ -522,7 +588,8 @@ aux_retorno_ordem_pagamento",
         "dataset_id": smtr_constants.BILHETAGEM_DATASET_ID.value,
         "upstream": True,
         "downstream": True,
-        "exclude": f"{BILHETAGEM_EXCLUDE} veiculo_validacao veiculo_indicadores_dia",
+        "exclude": f"{BILHETAGEM_EXCLUDE} veiculo_validacao veiculo_indicadores_dia \
+viagem_transacao+",
         "dbt_vars": {
             "date_range": {
                 "table_run_datetime_column_name": "datetime_captura",

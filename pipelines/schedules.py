@@ -12,6 +12,9 @@ from pytz import timezone
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
 
+cron_every_day_hour_7 = "0 7 * * *"
+cron_every_day_hour_7_minute_10 = "10 7 * * *"
+
 
 def generate_interval_schedule(
     interval: timedelta, agent_label: str, params: dict = None
@@ -202,5 +205,17 @@ every_friday_seven_thirty = Schedule(
                 emd_constants.RJ_SMTR_AGENT_LABEL.value,
             ],
         )
+    ]
+)
+
+every_15_minutes = Schedule(
+    clocks=[
+        IntervalClock(
+            interval=timedelta(minutes=15),
+            start_date=datetime(2021, 1, 1, 0, 0, 0, tzinfo=timezone(constants.TIMEZONE.value)),
+            labels=[
+                emd_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        ),
     ]
 )

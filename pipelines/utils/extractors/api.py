@@ -7,129 +7,92 @@ import requests
 from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.constants import constants
-from pipelines.utils.extractors.base import DataExtractor
-from pipelines.utils.fs import get_filetype
 
 
-class APIExtractor(DataExtractor):
+def get_raw_api(
+    url: str,
+    headers: Union[None, dict] = None,
+    params: Union[None, dict] = None,
+    raw_filetype: str = "json",
+) -> Union[str, dict, list[dict]]:
     """
-    Classe para extrair dados de API com uma página
+    Função para extrair dados de API com uma página
 
     Args:
         url (str): URL para fazer o request
         headers (Union[None, dict]): Headers para o request
         params (Union[None, dict]): Paramêtros para o request
-        save_filepath (str): Caminho para salvar os dados
+        raw_filetype (str): Tipo de dado do arquivo (csv, json, ...)
+
+    Returns:
+        Union[str, dict, list[dict]]: Dados capturados da API
     """
+    for retry in range(constants.MAX_RETRIES.value):
+        response = requests.get(
+            url,
+            headers=headers,
+            timeout=constants.MAX_TIMEOUT_SECONDS.value,
+            params=params,
+        )
 
-    def __init__(
-        self,
-        url: str,
-        headers: Union[None, dict],
-        params: Union[None, dict],
-        save_filepath: str,
-    ) -> None:
-        super().__init__(save_filepath=save_filepath)
-        self.url = url
-        self.params = params
-        self.headers = headers
-        self.filetype = get_filetype(save_filepath)
-
-    def _get_data(self) -> Union[list[dict], dict, str]:
-        """
-        Extrai os dados da API
-
-        Returns:
-            Union[list[dict], dict, str]: list[dict] ou dict para APIs json
-                str para outros tipos
-        """
-        for retry in range(constants.MAX_RETRIES.value):
-            response = requests.get(
-                self.url,
-                headers=self.headers,
-                timeout=constants.MAX_TIMEOUT_SECONDS.value,
-                params=self.params,
-            )
-
-            if response.ok:
-                break
-            if response.status_code >= 500:
-                log(f"Server error {response.status_code}")
-                if retry == constants.MAX_RETRIES.value - 1:
-                    response.raise_for_status()
-                time.sleep(60)
-            else:
+        if response.ok:
+            break
+        if response.status_code >= 500:
+            log(f"Server error {response.status_code}")
+            if retry == constants.MAX_RETRIES.value - 1:
                 response.raise_for_status()
-
-        if self.filetype == "json":
-            data = response.json()
+            time.sleep(60)
         else:
-            data = response.text
+            response.raise_for_status()
 
-        return data
+    if raw_filetype == "json":
+        data = response.json()
+    else:
+        data = response.text
+
+    return data
 
 
-class APIExtractorTopSkip(APIExtractor):
+def get_raw_api_top_skip(
+    url: str,
+    headers: Union[None, dict],
+    params: Union[None, dict],
+    top_param_name: str,
+    skip_param_name: str,
+    page_size: int,
+    max_page: int,
+) -> list[dict]:
     """
-    Classe para extrair dados de uma API paginada do tipo Top/Skip
-
+    Função para extrair dados de API paginada do tipo top e skip. Deve
     Args:
         url (str): URL para fazer o request
         headers (Union[None, dict]): Headers para o request
-        params (Union[None, dict]): Paramêtros para o request (exceto os de top e skip)
-        top_param_name (str): Nome do parâmetro de top (que define o tamanho da página)
-        skip_param_name (str): Nome do parâmetro de skip (quantidade de linhas a serem puladas)
-        page_size (int): Número de registros por página (valor a ser passado no parâmetro de top)
-        save_filepath (str): Caminho para salvar os dados
+        params (Union[None, dict]): Paramêtros para o request
+        top_param_name (str): Nome do parâmetro que define a quantidade de registros em uma página
+        skip_param_name (str): Nome do parâmetro que define quantos registros pular
+        page_size (int): Número máximo de registros em uma página
+        max_page (int): Número máximo de páginas a serem capturadas
+
+    Returns:
+        list[dict]: Dados capturados da API
     """
+    data = []
+    params[top_param_name] = page_size
+    params[skip_param_name] = 0
 
-    def __init__(
-        self,
-        url: str,
-        headers: Union[dict, None],
-        params: dict,
-        top_param_name: str,
-        skip_param_name: str,
-        page_size: int,
-        save_filepath: str,
-    ) -> None:
-        super().__init__(
-            url=url,
-            headers=headers,
-            params=params,
-            save_filepath=save_filepath,
-        )
-
-        if self.filetype != "json":
-            raise ValueError("File Type must be json")
-
-        self.params[top_param_name] = page_size
-        self.skip_param_name = skip_param_name
-        self.params[skip_param_name] = 0
-        self.page_size = page_size
-
-    def _prepare_next_page(self):
-        """
-        Incrementa o valor do skip para buscar a próxima página
-        """
-        super()._prepare_next_page()
-        self.params[self.skip_param_name] += self.page_size
-
-    def _check_if_last_page(self) -> bool:
-        """
-        Verifica se a página tem menos registros do que o máximo
-        ou se chegou ao limite de páginas
-        """
-        page_data_len = len(self.page_data)
-        current_page = self.current_page + 1
+    for page in range(max_page):
+        page_data = get_raw_api(url=url, headers=headers, params=params, raw_filetype="json")
+        page_data_len = len(page_data)
         log(
             f"""
-            Page size: {self.page_size}
-            Current page: {current_page}
+            Page size: {page_size}
+            Current page: {page}
             Current page returned {page_data_len} rows"""
         )
-
-        last_page = page_data_len < self.page_size
-        if last_page:
+        data += page_data
+        if page_data_len < page_size:
             log("Last page, ending extraction")
-        return last_page
+            break
+
+        params[skip_param_name] += page_size
+    return data

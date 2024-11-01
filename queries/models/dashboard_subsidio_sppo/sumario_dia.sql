@@ -10,13 +10,18 @@ WITH
     CASE
       WHEN sentido = "C" THEN MAX(distancia_planejada)
     ELSE
-    SUM(distancia_planejada)
-  END
+      SUM(distancia_planejada)
+    END
     AS distancia_planejada,
-    MAX(distancia_total_planejada) AS distancia_total_planejada,
+    CASE
+      WHEN sentido = "C" THEN MAX(distancia_total_planejada)
+    ELSE
+      SUM(distancia_total_planejada)
+    END AS distancia_total_planejada,
     NULL AS viagens_planejadas
   FROM
-    {{ ref("viagem_planejada") }} --``rj-smtr`.`projeto_subsidio_sppo`.`viagem_planejada`
+    {{ ref("viagem_planejada") }}
+    -- `rj-smtr`.`projeto_subsidio_sppo`.`viagem_planejada`
   WHERE
     data >= "2022-06-01"
     AND data < DATE( "{{ var("DATA_SUBSIDIO_V2_INICIO") }}" )
@@ -34,7 +39,8 @@ WITH
     trip_id,
     COUNT(id_viagem) AS viagens_realizadas
   FROM
-    {{ ref("viagem_completa") }} -- `rj-smtr`.`projeto_subsidio_sppo`.`viagem_completa`
+    {{ ref("viagem_completa") }}
+    -- `rj-smtr`.`projeto_subsidio_sppo`.`viagem_completa`
   WHERE
     data >= "2022-06-01"
     AND data < DATE( "{{ var("DATA_SUBSIDIO_V2_INICIO") }}" )
@@ -98,7 +104,8 @@ WITH
     SELECT
       *
     FROM
-      {{ ref("subsidio_data_versao_efetiva") }} -- `rj-smtr`.`projeto_subsidio_sppo`.`subsidio_data_versao_efetiva`
+      {{ ref("subsidio_data_versao_efetiva") }}
+      -- `rj-smtr`.`projeto_subsidio_sppo`.`subsidio_data_versao_efetiva`
     WHERE
       data >= "2022-06-01"
       AND data < DATE( "{{ var("DATA_SUBSIDIO_V2_INICIO") }}" )) AS v

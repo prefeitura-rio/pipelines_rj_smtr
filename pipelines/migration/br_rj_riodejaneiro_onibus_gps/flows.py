@@ -2,8 +2,10 @@
 """
 Flows for br_rj_riodejaneiro_onibus_gps
 
-DBT 2024-07-02
+DBT 2024-08-20
 """
+
+from copy import deepcopy
 
 from prefect import Parameter, case, task
 from prefect.run_configs import KubernetesRun
@@ -52,7 +54,13 @@ from pipelines.migration.tasks import (  # get_local_dbt_client,
     set_last_run_timestamp,
     upload_logs_to_bq,
 )
-from pipelines.schedules import every_10_minutes, every_hour_minute_six, every_minute
+from pipelines.migration.utils import set_default_parameters
+from pipelines.schedules import (
+    every_10_minutes,
+    every_15_minutes,
+    every_hour_minute_six,
+    every_minute,
+)
 
 # from pipelines.utils.execute_dbt_model.tasks import get_k8s_dbt_client
 
@@ -150,6 +158,12 @@ with Flow(
     rematerialization = Parameter("rematerialization", default=False)
     date_range_start = Parameter("date_range_start", default=None)
     date_range_end = Parameter("date_range_end", default=None)
+    fifteen_minutes = Parameter("fifteen_minutes", default="")
+    materialize_delay_hours = Parameter(
+        "materialize_delay_hours",
+        default=constants.GPS_SPPO_MATERIALIZE_DELAY_HOURS.value,
+    )
+    truncate_minutes = Parameter("truncate_minutes", default=True)
 
     LABELS = get_current_flow_labels()
     MODE = get_current_flow_mode()
@@ -168,7 +182,8 @@ with Flow(
             raw_table_id=raw_table_id,
             table_run_datetime_column_name="timestamp_gps",
             mode=MODE,
-            delay_hours=constants.GPS_SPPO_MATERIALIZE_DELAY_HOURS.value,
+            delay_hours=materialize_delay_hours,
+            truncate_minutes=truncate_minutes,
         )
 
         RUN_CLEAN_FALSE = task(
@@ -203,7 +218,7 @@ with Flow(
             table_id=table_id,
             upstream=True,
             exclude="+data_versao_efetiva",
-            _vars=[date_range, dataset_sha],
+            _vars=[date_range, dataset_sha, {"fifteen_minutes": fifteen_minutes}],
             flags="--full-refresh",
         )
 
@@ -213,7 +228,7 @@ with Flow(
             dataset_id=dataset_id,
             table_id=table_id,
             exclude="+data_versao_efetiva",
-            _vars=[date_range, dataset_sha],
+            _vars=[date_range, dataset_sha, {"fifteen_minutes": fifteen_minutes}],
             upstream=True,
         )
 
@@ -311,7 +326,10 @@ captura_sppo_v2.run_config = KubernetesRun(
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 captura_sppo_v2.schedule = every_minute
-captura_sppo_v2.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
+captura_sppo_v2.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+]
 
 with Flow(
     "SMTR: GPS SPPO Realocação - Recaptura (subflow)",
@@ -516,6 +534,66 @@ recaptura.run_config = KubernetesRun(
 )
 recaptura.schedule = every_hour_minute_six
 recaptura.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+    handler_skip_if_running,
+]
+
+
+materialize_gps_15_min = deepcopy(materialize_sppo)
+materialize_gps_15_min = set_default_parameters(
+    flow=materialize_gps_15_min,
+    default_parameters={
+        "raw_table_id": "sppo_registros",
+        "table_id": constants.GPS_SPPO_15_MIN_TREATED_TABLE_ID.value,
+        "materialize_delay_hours": 0,
+        "truncate_minutes": False,
+        "fifteen_minutes": "_15_minutos",
+    },
+)
+materialize_gps_15_min.name = "SMTR: GPS SPPO 15 Minutos - Materialização (subflow)"
+
+with Flow("SMTR: GPS SPPO 15 Minutos - Tratamento") as recaptura_15min:
+    version = Parameter("version", default=2)
+    datetime_filter_gps = Parameter("datetime_filter_gps", default=None)
+    rebuild = Parameter("rebuild", default=False)
+    # SETUP #
+    LABELS = get_current_flow_labels()
+    PROJECT = get_flow_project()
+
+    rename_flow_run = rename_current_flow_run_now_time(
+        prefix=recaptura.name + ": ", now_time=get_now_time()
+    )
+
+    materialize_no_error = create_flow_run(
+        flow_name=materialize_gps_15_min.name,
+        project_name=PROJECT,
+        labels=LABELS,
+        run_name=materialize_gps_15_min.name,
+        parameters={
+            "table_id": constants.GPS_SPPO_15_MIN_TREATED_TABLE_ID.value,
+            "rebuild": rebuild,
+            "materialize_delay_hours": 0,
+            "truncate_minutes": False,
+            "fifteen_minutes": "_15_minutos",
+        },
+    )
+
+    wait_materialize_no_error = wait_for_flow_run(
+        materialize_no_error,
+        stream_states=True,
+        stream_logs=True,
+        raise_final_state=True,
+    )
+
+
+recaptura_15min.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
+recaptura_15min.run_config = KubernetesRun(
+    image=emd_constants.DOCKER_IMAGE.value,
+    labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
+)
+recaptura_15min.schedule = every_15_minutes
+recaptura_15min.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
     handler_skip_if_running,

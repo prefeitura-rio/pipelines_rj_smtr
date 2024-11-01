@@ -1,0 +1,33 @@
+selectors:
+  - name: apuracao_subsidio_v8
+    description: Apuração sem faixa horária
+    definition:
+      union:
+        - method: path
+          value: models/dashboard_subsidio_sppo_staging
+        - method: fqn
+          value: viagem_transacao
+        - method: path
+          value: models/dashboard_subsidio_sppo
+
+  - name: apuracao_subsidio_v9
+    description: Apuração com faixa horária
+    definition:
+      union:
+        - method: path
+          value: models/dashboard_subsidio_sppo_staging
+        - method: fqn
+          value: viagem_transacao
+        - method: fqn
+          value: viagens_remuneradas
+        - method: path
+          value: models/financeiro
+        - method: path
+          value: models/dashboard_subsidio_sppo_v2
+
+  - name: viagem_informada
+    description: Materialização da tabela de viagens informadas
+    definition:
+      method: file
+      value: viagem_informada_monitoramento
+      parents: true
