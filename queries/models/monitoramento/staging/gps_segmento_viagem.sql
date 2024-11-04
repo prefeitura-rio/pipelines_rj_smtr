@@ -11,28 +11,52 @@
 }}
 
 {% set incremental_filter %}
-    data = date_sub(date('{{ var("run_date") }}'), interval 1 day)
+        data between
+            date('{{ var("date_range_start") }}')
+            and date('{{ var("date_range_end") }}')
 {% endset %}
-{# {% set data_versao_efetiva = ref("subsidio_data_versao_efetiva") %} #}
-{% set data_versao_efetiva = (
-    "rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva"
-) %}
+
+{% set calendario = ref("calendario") %}
 
 {% if execute %}
-    {% set data_versao_gtfs_query %}
-        select format_date("%Y-%m-%d", feed_start_date) from {{ data_versao_efetiva }} where {{ incremental_filter }}
-    {% endset %}
+    {% if is_incremental() %}
+        {% set gtfs_feeds_query %}
+            select distinct concat("'", feed_start_date, "'") as feed_start_date
+            from {{ calendario }}
+            where {{ incremental_filter }}
+        {% endset %}
 
-    {% set data_versao_gtfs = (
-        run_query(data_versao_gtfs_query).columns[0].values()[0]
-    ) %}
+        {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
+    {% endif %}
 {% endif %}
 
 with
+    calendario as (
+        select *
+        from {{ calendario }}
+        {% if is_incremental() %}
+            where
+                data between date("{{ var('date_range_start') }}") and date(
+                    "{{ var('date_range_end') }}"
+                )
+        {% endif %}
+    ),
     gps_viagem as (
-        select id_viagem, shape_id, geo_point_gps
-        from {{ ref("gps_viagem") }}
-        where {{ incremental_filter }}
+        select
+            data,
+            gv.id_viagem,
+            gv.shape_id,
+            gv.geo_point_gps,
+            c.feed_version,
+            c.feed_start_date
+        from {{ ref("gps_viagem") }} gv
+        join calendario c using (data)
+        {% if is_incremental() %}
+            where
+                data between date_sub(
+                    date('{{ var("date_range_start") }}'), interval 1 day
+                ) and date('{{ var("date_range_end") }}')
+        {% endif %}
     ),
     segmento as (
         select
@@ -44,14 +68,17 @@ with
             buffer,
             indicador_segmento_desconsiderado
         from {{ ref("segmento_shape") }}
-        where feed_start_date = '{{ data_versao_gtfs }}'
+        {% if is_incremental() %}
+            where feed_start_date in ({{ gtfs_feeds | join(", ") }})
+        {% endif %}
     ),
     gps_segmento as (
         select g.id_viagem, g.shape_id, s.id_segmento, count(*) as quantidade_gps
         from gps_viagem g
         join
             segmento s
-            on g.shape_id = s.shape_id
+            on g.feed_version = s.feed_version
+            and g.shape_id = s.shape_id
             and st_intersects(s.buffer, g.geo_point_gps)
         group by 1, 2, 3
     ),
@@ -68,7 +95,7 @@ with
             servico,
             sentido
         from {{ ref("viagem_informada_monitoramento") }}
-        where {{ incremental_filter }}
+        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
     viagem_segmento as (
         select

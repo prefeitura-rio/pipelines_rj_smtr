@@ -19,27 +19,16 @@
 }}
 
 
-{# {% set gtfs_feed_info = ref("feed_info_gtfs") %} #}
-{% set gtfs_feed_info = "rj-smtr.gtfs.feed_info" %}
 {% set calendario = ref("calendario") %}
 
 {% if execute %}
     {% if is_incremental() %}
         {% set gtfs_feeds_query %}
-            select concat("'", feed_start_date, "'") as feed_start_date
-            from {{ gtfs_feed_info }}
-            where
-                feed_start_date <= date("{{ var('date_range_end') }}")
-                and (feed_end_date IS NULL OR feed_end_date >= date("{{ var('date_range_end') }}"))
-
-            union distinct
-
             select distinct concat("'", feed_start_date, "'") as feed_start_date
             from {{ calendario }}
             where
                 data between date("{{ var('date_range_start') }}")
                 and date("{{ var('date_range_end') }}")
-                and feed_start_date is not null
         {% endset %}
 
         {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}

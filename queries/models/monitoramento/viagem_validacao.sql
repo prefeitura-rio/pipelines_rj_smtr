@@ -30,8 +30,13 @@ with
             feed_end_date
         from {{ ref("gps_segmento_viagem") }}
         where
-            data = date_sub(date('{{ var("run_date") }}'), interval 1 day)
-            and not indicador_segmento_desconsiderado
+            not indicador_segmento_desconsiderado
+            {% if is_incremental() %}
+
+                and data between date('{{ var("date_range_start") }}') and date(
+                    '{{ var("date_range_end") }}'
+                )
+            {% endif %}
         group by
             data,
             id_viagem,
