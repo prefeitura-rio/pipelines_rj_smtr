@@ -24,7 +24,6 @@ with
         select
             r.*,
             s.feed_version,
-            s.servico,
             s.route_id,
             -- 1. Histórico de intersecções nos últimos 10 minutos a partir da
             -- datetime_gps atual
@@ -58,9 +57,11 @@ with
         left join
             (
                 select *
-                from {{ ref("viagem_planejada_planejamento") }}
+                -- from {{ ref("viagem_planejada") }} --viagem_planejada_planejamento
+                from `rj-smtr-dev`.`rafael__planejamento`.`viagem_planejada`
                 left join
-                    {{ ref("shapes_geom_gtfs") }} using (
+                    -- {{ ref("shapes_geom_gtfs") }} using (
+                    `rj-smtr`.`gtfs`.`shapes_geom` using (
                         feed_version, feed_start_date, shape_id
                     )
                 where
