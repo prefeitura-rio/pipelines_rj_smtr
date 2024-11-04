@@ -1,5 +1,19 @@
 {{ config(materialized="ephemeral") }}
 
+{% if execute %}
+    {% set feed_start_date = (
+        run_query(
+            "SELECT DISTINCT feed_start_date FROM rj-smtr-dev.rafael__planejamento.calendario WHERE data BETWEEN DATE('"
+            ~ var("date_range_start")
+            ~ "') AND DATE('"
+            ~ var("date_range_end")
+            ~ "')"
+        )
+        .columns[0]
+        .values()[0]
+    ) %}
+{% endif %}
+
 with
     terminais as (
         -- 1. Selecionamos terminais, criando uma geometria de ponto para cada.
@@ -7,8 +21,9 @@ with
             st_geogpoint(stop_lon, stop_lat) as ponto_parada,
             stop_name as nome_parada,
             'terminal' as tipo_parada
-        from {{ ref("stops_gtfs") }}
-        where location_type = "1"
+        -- from {{ ref("stops_gtfs") }}
+        from `rj-smtr`.`gtfs`.`stops`
+        where location_type = "1" and feed_start_date = date("{{ feed_start_date }}")
     ),
     garagens as (
         -- 1. Selecionamos as garagens, , criando uma geometria de ponto para cada.
@@ -16,11 +31,17 @@ with
             st_geogpoint(stop_lon, stop_lat) as ponto_parada,
             stop_name as nome_parada,
             'garagens' as tipo_parada
-        from {{ ref("stops_gtfs") }}
+        -- from {{ ref("stops_gtfs") }}
+        from `rj-smtr`.`gtfs`.`stops`
         left join
-            {{ ref("stop_times_gtfs") }} using (feed_version, feed_start_date, stop_id)
+            -- {{ ref("stop_times_gtfs") }} using (feed_version, feed_start_date,
+            -- stop_id)
+            `rj-smtr`.`gtfs`.`stop_times` using (feed_version, feed_start_date, stop_id)
         where
-            pickup_type is null and drop_off_type is null and stop_name like "Garagem%"
+            pickup_type is null
+            and drop_off_type is null
+            and stop_name like "Garagem%"
+            and feed_start_date = date("{{ feed_start_date }}")
     ),
     pontos_parada as (
         -- Unimos terminais e garagens para obter todos os pontos de parada
