@@ -455,84 +455,148 @@ def processa_ordem_servico_faixa_horaria(sheetnames, file_bytes, local_filepath,
         "Serviço": "servico",
         "Consórcio": "consorcio",
         "Partidas entre 00h e 03h — Dias Úteis": "partidas_entre_00h_e_03h_dias_uteis",
-        "Quilometragem entre 00h e 03h — Dias Úteis": "quilometragem_entre_00h_e_03h_dias_uteis",
-        "Partidas entre 03h e 12h — Dias Úteis": "partidas_entre_03h_e_12h_dias_uteis",
-        "Quilometragem entre 03h e 12h — Dias Úteis": "quilometragem_entre_03h_e_12h_dias_uteis",
-        "Partidas entre 12h e 21h — Dias Úteis": "partidas_entre_12h_e_21h_dias_uteis",
-        "Quilometragem entre 12h e 21h — Dias Úteis": "quilometragem_entre_12h_e_21h_dias_uteis",
-        "Partidas entre 21h e 24h — Dias Úteis": "partidas_entre_21h_e_24h_dias_uteis",
-        "Quilometragem entre 21h e 24h — Dias Úteis": "quilometragem_entre_21h_e_24h_dias_uteis",
-        "Partidas entre 24h e 03h (dia seguinte) — Dias Úteis": "partidas_entre_24h_e_03h_diaseguinte_dias_uteis",  # noqa
-        "Quilometragem entre 24h e 03h (dia seguinte) — Dias Úteis": "quilometragem_entre_24h_e_03h_diaseguinte_dias_uteis",  # noqa
-        "Partidas entre 00h e 03h — Sábado": "partidas_entre_00h_e_03h_sabado",
-        "Quilometragem entre 00h e 03h — Sábado": "quilometragem_entre_00h_e_03h_sabado",
-        "Partidas entre 03h e 12h — Sábado": "partidas_entre_03h_e_12h_sabado",
-        "Quilometragem entre 03h e 12h — Sábado": "quilometragem_entre_03h_e_12h_sabado",
-        "Partidas entre 12h e 21h — Sábado": "partidas_entre_12h_e_21h_sabado",
-        "Quilometragem entre 12h e 21h — Sábado": "quilometragem_entre_12h_e_21h_sabado",
-        "Partidas entre 21h e 24h — Sábado": "partidas_entre_21h_e_24h_sabado",
-        "Quilometragem entre 21h e 24h — Sábado": "quilometragem_entre_21h_e_24h_sabado",
-        "Partidas entre 24h e 03h (dia seguinte) — Sábado": "partidas_entre_24h_e_03h_diaseguinte_sabado",  # noqa
-        "Quilometragem entre 24h e 03h (dia seguinte) — Sábado": "quilometragem_entre_24h_e_03h_diaseguinte_sabado",  # noqa
-        "Partidas entre 00h e 03h — Domingo": "partidas_entre_00h_e_03h_domingo",
-        "Quilometragem entre 00h e 03h — Domingo": "quilometragem_entre_00h_e_03h_domingo",
-        "Partidas entre 03h e 12h — Domingo": "partidas_entre_03h_e_12h_domingo",
-        "Quilometragem entre 03h e 12h — Domingo": "quilometragem_entre_03h_e_12h_domingo",
-        "Partidas entre 12h e 21h — Domingo": "partidas_entre_12h_e_21h_domingo",
-        "Quilometragem entre 12h e 21h — Domingo": "quilometragem_entre_12h_e_21h_domingo",
-        "Partidas entre 21h e 24h — Domingo": "partidas_entre_21h_e_24h_domingo",
-        "Quilometragem entre 21h e 24h — Domingo": "quilometragem_entre_21h_e_24h_domingo",
-        "Partidas entre 24h e 03h (dia seguinte) — Domingo": "partidas_entre_24h_e_03h_diaseguinte_domingo",  # noqa
-        "Quilometragem entre 24h e 03h (dia seguinte) — Domingo": "quilometragem_entre_24h_e_03h_diaseguinte_domingo",  # noqa
-        "Partidas entre 00h e 03h — Ponto Facultativo": "partidas_entre_00h_e_03h_ponto_facultativo",  # noqa
-        "Quilometragem entre 00h e 03h — Ponto Facultativo": "quilometragem_entre_00h_e_03h_ponto_facultativo",  # noqa
-        "Partidas entre 03h e 12h — Ponto Facultativo": "partidas_entre_03h_e_12h_ponto_facultativo",  # noqa
-        "Quilometragem entre 03h e 12h — Ponto Facultativo": "quilometragem_entre_03h_e_12h_ponto_facultativo",  # noqa
-        "Partidas entre 12h e 21h — Ponto Facultativo": "partidas_entre_12h_e_21h_ponto_facultativo",  # noqa
-        "Quilometragem entre 12h e 21h — Ponto Facultativo": "quilometragem_entre_12h_e_21h_ponto_facultativo",  # noqa
-        "Partidas entre 21h e 24h — Ponto Facultativo": "partidas_entre_21h_e_24h_ponto_facultativo",  # noqa
-        "Quilometragem entre 21h e 24h — Ponto Facultativo": "quilometragem_entre_21h_e_24h_ponto_facultativo",  # noqa
-        "Partidas entre 24h e 03h (dia seguinte) — Ponto Facultativo": "partidas_entre_24h_e_03h_diaseguinte_ponto_facultativo",  # noqa
-        "Quilometragem entre 24h e 03h (dia seguinte) — Ponto Facultativo": "quilometragem_entre_24h_e_03h_diaseguinte_ponto_facultativo",  # noqa
         "Partidas entre 00h e 03h (Dias Úteis)": "partidas_entre_00h_e_03h_dias_uteis",
-        "Quilometragem entre 00h e 03h (Dias Úteis)": "quilometragem_entre_00h_e_03h_dias_uteis",
-        "Partidas entre 03h e 12h (Dias Úteis)": "partidas_entre_03h_e_12h_dias_uteis",
-        "Quilometragem entre 03h e 12h (Dias Úteis)": "quilometragem_entre_03h_e_12h_dias_uteis",
-        "Partidas entre 12h e 21h (Dias Úteis)": "partidas_entre_12h_e_21h_dias_uteis",
-        "Quilometragem entre 12h e 21h (Dias Úteis)": "quilometragem_entre_12h_e_21h_dias_uteis",
+        "Partidas entre 03h e 06h — Dias Úteis": "partidas_entre_03h_e_06h_dias_uteis",
+        "Partidas entre 03h e 06h (Dias Úteis)": "partidas_entre_03h_e_06h_dias_uteis",
+        "Partidas entre 06h e 09h — Dias Úteis": "partidas_entre_06h_e_09h_dias_uteis",
+        "Partidas entre 06h e 09h (Dias Úteis)": "partidas_entre_06h_e_09h_dias_uteis",
+        "Partidas entre 09h e 12h — Dias Úteis": "partidas_entre_09h_e_12h_dias_uteis",
+        "Partidas entre 09h e 12h (Dias Úteis)": "partidas_entre_09h_e_12h_dias_uteis",
+        "Partidas entre 12h e 15h — Dias Úteis": "partidas_entre_12h_e_15h_dias_uteis",
+        "Partidas entre 12h e 15h (Dias Úteis)": "partidas_entre_12h_e_15h_dias_uteis",
+        "Partidas entre 15h e 18h — Dias Úteis": "partidas_entre_15h_e_18h_dias_uteis",
+        "Partidas entre 15h e 18h (Dias Úteis)": "partidas_entre_15h_e_18h_dias_uteis",
+        "Partidas entre 18h e 21h — Dias Úteis": "partidas_entre_18h_e_21h_dias_uteis",
+        "Partidas entre 18h e 21h (Dias Úteis)": "partidas_entre_18h_e_21h_dias_uteis",
+        "Partidas entre 21h e 24h — Dias Úteis": "partidas_entre_21h_e_24h_dias_uteis",
         "Partidas entre 21h e 24h (Dias Úteis)": "partidas_entre_21h_e_24h_dias_uteis",
-        "Quilometragem entre 21h e 24h (Dias Úteis)": "quilometragem_entre_21h_e_24h_dias_uteis",
+        "Partidas entre 24h e 03h (dia seguinte) — Dias Úteis": "partidas_entre_24h_e_03h_diaseguinte_dias_uteis",  # noqa
         "Partidas entre 24h e 03h (dia seguinte) (Dias Úteis)": "partidas_entre_24h_e_03h_diaseguinte_dias_uteis",  # noqa
-        "Quilometragem entre 24h e 03h (dia seguinte) (Dias Úteis)": "quilometragem_entre_24h_e_03h_diaseguinte_dias_uteis",  # noqa
+        "Partidas entre 00h e 03h — Sábado": "partidas_entre_00h_e_03h_sabado",
         "Partidas entre 00h e 03h (Sábado)": "partidas_entre_00h_e_03h_sabado",
-        "Quilometragem entre 00h e 03h (Sábado)": "quilometragem_entre_00h_e_03h_sabado",
-        "Partidas entre 03h e 12h (Sábado)": "partidas_entre_03h_e_12h_sabado",
-        "Quilometragem entre 03h e 12h (Sábado)": "quilometragem_entre_03h_e_12h_sabado",
-        "Partidas entre 12h e 21h (Sábado)": "partidas_entre_12h_e_21h_sabado",
-        "Quilometragem entre 12h e 21h (Sábado)": "quilometragem_entre_12h_e_21h_sabado",
+        "Partidas entre 03h e 06h — Sábado": "partidas_entre_03h_e_06h_sabado",
+        "Partidas entre 03h e 06h (Sábado)": "partidas_entre_03h_e_06h_sabado",
+        "Partidas entre 06h e 09h — Sábado": "partidas_entre_06h_e_09h_sabado",
+        "Partidas entre 06h e 09h (Sábado)": "partidas_entre_06h_e_09h_sabado",
+        "Partidas entre 09h e 12h — Sábado": "partidas_entre_09h_e_12h_sabado",
+        "Partidas entre 09h e 12h (Sábado)": "partidas_entre_09h_e_12h_sabado",
+        "Partidas entre 12h e 15h — Sábado": "partidas_entre_12h_e_15h_sabado",
+        "Partidas entre 12h e 15h (Sábado)": "partidas_entre_12h_e_15h_sabado",
+        "Partidas entre 15h e 18h — Sábado": "partidas_entre_15h_e_18h_sabado",
+        "Partidas entre 15h e 18h (Sábado)": "partidas_entre_15h_e_18h_sabado",
+        "Partidas entre 18h e 21h — Sábado": "partidas_entre_18h_e_21h_sabado",
+        "Partidas entre 18h e 21h (Sábado)": "partidas_entre_18h_e_21h_sabado",
+        "Partidas entre 21h e 24h — Sábado": "partidas_entre_21h_e_24h_sabado",
         "Partidas entre 21h e 24h (Sábado)": "partidas_entre_21h_e_24h_sabado",
-        "Quilometragem entre 21h e 24h (Sábado)": "quilometragem_entre_21h_e_24h_sabado",
+        "Partidas entre 24h e 03h (dia seguinte) — Sábado": "partidas_entre_24h_e_03h_diaseguinte_sabado",  # noqa
         "Partidas entre 24h e 03h (dia seguinte) (Sábado)": "partidas_entre_24h_e_03h_diaseguinte_sabado",  # noqa
-        "Quilometragem entre 24h e 03h (dia seguinte) (Sábado)": "quilometragem_entre_24h_e_03h_diaseguinte_sabado",  # noqa
+        "Partidas entre 00h e 03h — Domingo": "partidas_entre_00h_e_03h_domingo",
         "Partidas entre 00h e 03h (Domingo)": "partidas_entre_00h_e_03h_domingo",
-        "Quilometragem entre 00h e 03h (Domingo)": "quilometragem_entre_00h_e_03h_domingo",
-        "Partidas entre 03h e 12h (Domingo)": "partidas_entre_03h_e_12h_domingo",
-        "Quilometragem entre 03h e 12h (Domingo)": "quilometragem_entre_03h_e_12h_domingo",
-        "Partidas entre 12h e 21h (Domingo)": "partidas_entre_12h_e_21h_domingo",
-        "Quilometragem entre 12h e 21h (Domingo)": "quilometragem_entre_12h_e_21h_domingo",
+        "Partidas entre 03h e 06h — Domingo": "partidas_entre_03h_e_06h_domingo",
+        "Partidas entre 03h e 06h (Domingo)": "partidas_entre_03h_e_06h_domingo",
+        "Partidas entre 06h e 09h — Domingo": "partidas_entre_06h_e_09h_domingo",
+        "Partidas entre 06h e 09h (Domingo)": "partidas_entre_06h_e_09h_domingo",
+        "Partidas entre 09h e 12h — Domingo": "partidas_entre_09h_e_12h_domingo",
+        "Partidas entre 09h e 12h (Domingo)": "partidas_entre_09h_e_12h_domingo",
+        "Partidas entre 12h e 15h — Domingo": "partidas_entre_12h_e_15h_domingo",
+        "Partidas entre 12h e 15h (Domingo)": "partidas_entre_12h_e_15h_domingo",
+        "Partidas entre 15h e 18h — Domingo": "partidas_entre_15h_e_18h_domingo",
+        "Partidas entre 15h e 18h (Domingo)": "partidas_entre_15h_e_18h_domingo",
+        "Partidas entre 18h e 21h — Domingo": "partidas_entre_18h_e_21h_domingo",
+        "Partidas entre 18h e 21h (Domingo)": "partidas_entre_18h_e_21h_domingo",
+        "Partidas entre 21h e 24h — Domingo": "partidas_entre_21h_e_24h_domingo",
         "Partidas entre 21h e 24h (Domingo)": "partidas_entre_21h_e_24h_domingo",
-        "Quilometragem entre 21h e 24h (Domingo)": "quilometragem_entre_21h_e_24h_domingo",
+        "Partidas entre 24h e 03h (dia seguinte) — Domingo": "partidas_entre_24h_e_03h_diaseguinte_domingo",  # noqa
         "Partidas entre 24h e 03h (dia seguinte) (Domingo)": "partidas_entre_24h_e_03h_diaseguinte_domingo",  # noqa
-        "Quilometragem entre 24h e 03h (dia seguinte) (Domingo)": "quilometragem_entre_24h_e_03h_diaseguinte_domingo",  # noqa
+        "Partidas entre 00h e 03h — Ponto Facultativo": "partidas_entre_00h_e_03h_ponto_facultativo",  # noqa
         "Partidas entre 00h e 03h (Ponto Facultativo)": "partidas_entre_00h_e_03h_ponto_facultativo",  # noqa
-        "Quilometragem entre 00h e 03h (Ponto Facultativo)": "quilometragem_entre_00h_e_03h_ponto_facultativo",  # noqa
-        "Partidas entre 03h e 12h (Ponto Facultativo)": "partidas_entre_03h_e_12h_ponto_facultativo",  # noqa
-        "Quilometragem entre 03h e 12h (Ponto Facultativo)": "quilometragem_entre_03h_e_12h_ponto_facultativo",  # noqa
-        "Partidas entre 12h e 21h (Ponto Facultativo)": "partidas_entre_12h_e_21h_ponto_facultativo",  # noqa
-        "Quilometragem entre 12h e 21h (Ponto Facultativo)": "quilometragem_entre_12h_e_21h_ponto_facultativo",  # noqa
+        "Partidas entre 03h e 06h — Ponto Facultativo": "partidas_entre_03h_e_06h_ponto_facultativo",  # noqa
+        "Partidas entre 03h e 06h (Ponto Facultativo)": "partidas_entre_03h_e_06h_ponto_facultativo",  # noqa
+        "Partidas entre 06h e 09h — Ponto Facultativo": "partidas_entre_06h_e_09h_ponto_facultativo",  # noqa
+        "Partidas entre 06h e 09h (Ponto Facultativo)": "partidas_entre_06h_e_09h_ponto_facultativo",  # noqa
+        "Partidas entre 09h e 12h — Ponto Facultativo": "partidas_entre_09h_e_12h_ponto_facultativo",  # noqa
+        "Partidas entre 09h e 12h (Ponto Facultativo)": "partidas_entre_09h_e_12h_ponto_facultativo",  # noqa
+        "Partidas entre 12h e 15h — Ponto Facultativo": "partidas_entre_12h_e_15h_ponto_facultativo",  # noqa
+        "Partidas entre 12h e 15h (Ponto Facultativo)": "partidas_entre_12h_e_15h_ponto_facultativo",  # noqa
+        "Partidas entre 15h e 18h — Ponto Facultativo": "partidas_entre_15h_e_18h_ponto_facultativo",  # noqa
+        "Partidas entre 15h e 18h (Ponto Facultativo)": "partidas_entre_15h_e_18h_ponto_facultativo",  # noqa
+        "Partidas entre 18h e 21h — Ponto Facultativo": "partidas_entre_18h_e_21h_ponto_facultativo",  # noqa
+        "Partidas entre 18h e 21h (Ponto Facultativo)": "partidas_entre_18h_e_21h_ponto_facultativo",  # noqa
+        "Partidas entre 21h e 24h — Ponto Facultativo": "partidas_entre_21h_e_24h_ponto_facultativo",  # noqa
         "Partidas entre 21h e 24h (Ponto Facultativo)": "partidas_entre_21h_e_24h_ponto_facultativo",  # noqa
-        "Quilometragem entre 21h e 24h (Ponto Facultativo)": "quilometragem_entre_21h_e_24h_ponto_facultativo",  # noqa
+        "Partidas entre 24h e 03h (dia seguinte) — Ponto Facultativo": "partidas_entre_24h_e_03h_diaseguinte_ponto_facultativo",  # noqa
         "Partidas entre 24h e 03h (dia seguinte) (Ponto Facultativo)": "partidas_entre_24h_e_03h_diaseguinte_ponto_facultativo",  # noqa
+        "Quilometragem entre 00h e 03h — Dias Úteis": "quilometragem_entre_00h_e_03h_dias_uteis",
+        "Quilometragem entre 00h e 03h (Dias Úteis)": "quilometragem_entre_00h_e_03h_dias_uteis",
+        "Quilometragem entre 03h e 06h — Dias Úteis": "quilometragem_entre_03h_e_06h_dias_uteis",
+        "Quilometragem entre 03h e 06h (Dias Úteis)": "quilometragem_entre_03h_e_06h_dias_uteis",
+        "Quilometragem entre 06h e 09h — Dias Úteis": "quilometragem_entre_06h_e_09h_dias_uteis",
+        "Quilometragem entre 06h e 09h (Dias Úteis)": "quilometragem_entre_06h_e_09h_dias_uteis",
+        "Quilometragem entre 09h e 12h — Dias Úteis": "quilometragem_entre_09h_e_12h_dias_uteis",
+        "Quilometragem entre 09h e 12h (Dias Úteis)": "quilometragem_entre_09h_e_12h_dias_uteis",
+        "Quilometragem entre 12h e 15h — Dias Úteis": "quilometragem_entre_12h_e_15h_dias_uteis",
+        "Quilometragem entre 12h e 15h (Dias Úteis)": "quilometragem_entre_12h_e_15h_dias_uteis",
+        "Quilometragem entre 15h e 18h — Dias Úteis": "quilometragem_entre_15h_e_18h_dias_uteis",
+        "Quilometragem entre 15h e 18h (Dias Úteis)": "quilometragem_entre_15h_e_18h_dias_uteis",
+        "Quilometragem entre 18h e 21h — Dias Úteis": "quilometragem_entre_18h_e_21h_dias_uteis",
+        "Quilometragem entre 18h e 21h (Dias Úteis)": "quilometragem_entre_18h_e_21h_dias_uteis",
+        "Quilometragem entre 21h e 24h — Dias Úteis": "quilometragem_entre_21h_e_24h_dias_uteis",
+        "Quilometragem entre 21h e 24h (Dias Úteis)": "quilometragem_entre_21h_e_24h_dias_uteis",
+        "Quilometragem entre 24h e 03h (dia seguinte) — Dias Úteis": "quilometragem_entre_24h_e_03h_diaseguinte_dias_uteis",  # noqa
+        "Quilometragem entre 24h e 03h (dia seguinte) (Dias Úteis)": "quilometragem_entre_24h_e_03h_diaseguinte_dias_uteis",  # noqa
+        "Quilometragem entre 00h e 03h — Sábado": "quilometragem_entre_00h_e_03h_sabado",
+        "Quilometragem entre 00h e 03h (Sábado)": "quilometragem_entre_00h_e_03h_sabado",
+        "Quilometragem entre 03h e 06h — Sábado": "quilometragem_entre_03h_e_06h_sabado",
+        "Quilometragem entre 03h e 06h (Sábado)": "quilometragem_entre_03h_e_06h_sabado",
+        "Quilometragem entre 06h e 09h — Sábado": "quilometragem_entre_06h_e_09h_sabado",
+        "Quilometragem entre 06h e 09h (Sábado)": "quilometragem_entre_06h_e_09h_sabado",
+        "Quilometragem entre 09h e 12h — Sábado": "quilometragem_entre_09h_e_12h_sabado",
+        "Quilometragem entre 09h e 12h (Sábado)": "quilometragem_entre_09h_e_12h_sabado",
+        "Quilometragem entre 12h e 15h — Sábado": "quilometragem_entre_12h_e_15h_sabado",
+        "Quilometragem entre 12h e 15h (Sábado)": "quilometragem_entre_12h_e_15h_sabado",
+        "Quilometragem entre 15h e 18h — Sábado": "quilometragem_entre_15h_e_18h_sabado",
+        "Quilometragem entre 15h e 18h (Sábado)": "quilometragem_entre_15h_e_18h_sabado",
+        "Quilometragem entre 18h e 21h — Sábado": "quilometragem_entre_18h_e_21h_sabado",
+        "Quilometragem entre 18h e 21h (Sábado)": "quilometragem_entre_18h_e_21h_sabado",
+        "Quilometragem entre 21h e 24h — Sábado": "quilometragem_entre_21h_e_24h_sabado",
+        "Quilometragem entre 21h e 24h (Sábado)": "quilometragem_entre_21h_e_24h_sabado",
+        "Quilometragem entre 24h e 03h (dia seguinte) — Sábado": "quilometragem_entre_24h_e_03h_diaseguinte_sabado",  # noqa
+        "Quilometragem entre 24h e 03h (dia seguinte) (Sábado)": "quilometragem_entre_24h_e_03h_diaseguinte_sabado",  # noqa
+        "Quilometragem entre 00h e 03h — Domingo": "quilometragem_entre_00h_e_03h_domingo",
+        "Quilometragem entre 00h e 03h (Domingo)": "quilometragem_entre_00h_e_03h_domingo",
+        "Quilometragem entre 03h e 06h — Domingo": "quilometragem_entre_03h_e_06h_domingo",
+        "Quilometragem entre 03h e 06h (Domingo)": "quilometragem_entre_03h_e_06h_domingo",
+        "Quilometragem entre 06h e 09h — Domingo": "quilometragem_entre_06h_e_09h_domingo",
+        "Quilometragem entre 06h e 09h (Domingo)": "quilometragem_entre_06h_e_09h_domingo",
+        "Quilometragem entre 09h e 12h — Domingo": "quilometragem_entre_09h_e_12h_domingo",
+        "Quilometragem entre 09h e 12h (Domingo)": "quilometragem_entre_09h_e_12h_domingo",
+        "Quilometragem entre 12h e 15h — Domingo": "quilometragem_entre_12h_e_15h_domingo",
+        "Quilometragem entre 12h e 15h (Domingo)": "quilometragem_entre_12h_e_15h_domingo",
+        "Quilometragem entre 15h e 18h — Domingo": "quilometragem_entre_15h_e_18h_domingo",
+        "Quilometragem entre 15h e 18h (Domingo)": "quilometragem_entre_15h_e_18h_domingo",
+        "Quilometragem entre 18h e 21h — Domingo": "quilometragem_entre_18h_e_21h_domingo",
+        "Quilometragem entre 18h e 21h (Domingo)": "quilometragem_entre_18h_e_21h_domingo",
+        "Quilometragem entre 21h e 24h — Domingo": "quilometragem_entre_21h_e_24h_domingo",
+        "Quilometragem entre 21h e 24h (Domingo)": "quilometragem_entre_21h_e_24h_domingo",
+        "Quilometragem entre 24h e 03h (dia seguinte) — Domingo": "quilometragem_entre_24h_e_03h_diaseguinte_domingo",  # noqa
+        "Quilometragem entre 24h e 03h (dia seguinte) (Domingo)": "quilometragem_entre_24h_e_03h_diaseguinte_domingo",  # noqa
+        "Quilometragem entre 00h e 03h — Ponto Facultativo": "quilometragem_entre_00h_e_03h_ponto_facultativo",  # noqa
+        "Quilometragem entre 00h e 03h (Ponto Facultativo)": "quilometragem_entre_00h_e_03h_ponto_facultativo",  # noqa
+        "Quilometragem entre 03h e 06h — Ponto Facultativo": "quilometragem_entre_03h_e_06h_ponto_facultativo",  # noqa
+        "Quilometragem entre 03h e 06h (Ponto Facultativo)": "quilometragem_entre_03h_e_06h_ponto_facultativo",  # noqa
+        "Quilometragem entre 06h e 09h — Ponto Facultativo": "quilometragem_entre_06h_e_09h_ponto_facultativo",  # noqa
+        "Quilometragem entre 06h e 09h (Ponto Facultativo)": "quilometragem_entre_06h_e_09h_ponto_facultativo",  # noqa
+        "Quilometragem entre 09h e 12h — Ponto Facultativo": "quilometragem_entre_09h_e_12h_ponto_facultativo",  # noqa
+        "Quilometragem entre 09h e 12h (Ponto Facultativo)": "quilometragem_entre_09h_e_12h_ponto_facultativo",  # noqa
+        "Quilometragem entre 12h e 15h — Ponto Facultativo": "quilometragem_entre_12h_e_15h_ponto_facultativo",  # noqa
+        "Quilometragem entre 12h e 15h (Ponto Facultativo)": "quilometragem_entre_12h_e_15h_ponto_facultativo",  # noqa
+        "Quilometragem entre 15h e 18h — Ponto Facultativo": "quilometragem_entre_15h_e_18h_ponto_facultativo",  # noqa
+        "Quilometragem entre 15h e 18h (Ponto Facultativo)": "quilometragem_entre_15h_e_18h_ponto_facultativo",  # noqa
+        "Quilometragem entre 18h e 21h — Ponto Facultativo": "quilometragem_entre_18h_e_21h_ponto_facultativo",  # noqa
+        "Quilometragem entre 18h e 21h (Ponto Facultativo)": "quilometragem_entre_18h_e_21h_ponto_facultativo",  # noqa
+        "Quilometragem entre 21h e 24h — Ponto Facultativo": "quilometragem_entre_21h_e_24h_ponto_facultativo",  # noqa
+        "Quilometragem entre 21h e 24h (Ponto Facultativo)": "quilometragem_entre_21h_e_24h_ponto_facultativo",  # noqa
+        "Quilometragem entre 24h e 03h (dia seguinte) — Ponto Facultativo": "quilometragem_entre_24h_e_03h_diaseguinte_ponto_facultativo",  # noqa
         "Quilometragem entre 24h e 03h (dia seguinte) (Ponto Facultativo)": "quilometragem_entre_24h_e_03h_diaseguinte_ponto_facultativo",  # noqa
         "tipo_os": "tipo_os",
     }
