@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [7.0.6] - 2024-11-05
+
+### Alterado
+
+- Altera regras do modelo `viagens_remuneradas` conforme Resolução N° 3777/2024 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/300)
+
 ## [7.0.5] - 2024-10-16
 
 ### Corrigido
