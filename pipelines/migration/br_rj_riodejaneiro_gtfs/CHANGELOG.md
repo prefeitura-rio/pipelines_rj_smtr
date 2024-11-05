@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.1.3] - 2024-10-30
+
+### Alterado
+
+- Alterado arquivo `utils.py` em razão das novas faixas horárias (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/295)
+
 ## [1.1.2] - 2024-10-21
 
 ### Alterado
