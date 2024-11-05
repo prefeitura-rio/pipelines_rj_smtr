@@ -1,5 +1,14 @@
 # Changelog - veiculo
 
+## [2.0.0] - 2024-08-06
+
+### Adicionado
+- Criado os modelos `infracao.sql` e `licenciamento.sql` para guardar os dados completos de infração e licenciamento do STU (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/126)
+
+### Alterado
+- Altera tipo dos modelos `sppo_infracao.sql` e `sppo_licenciamento.sql` para `ephemeral` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/126)
+- Adiciona colunas `placa`, `data_licenciamento`, `data_infracao` e `datetime_ultima_atualizacao` no modelo `sppo_veiculo_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/126)
+
 ## [1.1.3] - 2024-10-25
 
 #### Alterado
@@ -12,36 +21,36 @@
 
 ## [1.1.2] - 2024-04-25
 
-#### Adicionado
+### Adicionado
 
 - Criada macro `get_license_date.sql` para retornar relacionamento entre `run_date` e data de licenciamento dos modelos `sppo_licenciamento_stu_staging.sql`, `sppo_licenciamento.sql` e `sppo_veiculo_dia.sql`. Nesta macro, serão admitidas apenas versões do STU igual ou após 2024-04-09 a partir de abril/24 devido à falha de atualização na fonte da dados (SIURB) (https://github.com/prefeitura-rio/queries-rj-smtr/pull/280)
 
-#### Corrigido
+### Corrigido
 
 - Altera lógica de particionamento nos modelos `sppo_licenciamento_stu_staging.sql`, `sppo_licenciamento.sql`, `sppo_infracao_staging.sql` e `sppo_infracao.sql` (https://github.com/prefeitura-rio/queries-rj-smtr/pull/280)
 
 ## [1.1.1] - 2024-04-16
 
-#### Corrigido
+### Corrigido
 
 - Cria lógica de deduplicação na tabela `sppo_registro_agente_verao` (https://github.com/prefeitura-rio/queries-rj-smtr/pull/271)
 
 ## [1.1.0] - 2024-04-15
 
-#### Alterado
+### Alterado
 
 - Reorganizar modelos intermediários de licenciamento em staging (https://github.com/prefeitura-rio/queries-rj-smtr/pull/255)
 - Atualiza schema para refletir as alterações (https://github.com/prefeitura-rio/queries-rj-smtr/pull/255)
 
 ## [1.0.2] - 2024-04-12
 
-#### Alterado
+### Alterado
 
 - Fixa versão do STU em `2024-04-09` para mar/Q2 devido à falha de atualização na fonte da dados (SIURB) nos modelos `sppo_licenciamento.sql` e `sppo_veiculo_dia.sql` (https://github.com/prefeitura-rio/queries-rj-smtr/pull/264)
 
 ## [1.0.1] - 2024-04-05
 
-#### Alterado
+### Alterado
 - Altera a localização da verificação de validade da vistoria de `sppo_licenciamento` para `sppo_veiculo_dia` (https://github.com/prefeitura-rio/queries-rj-smtr/pull/252)
 - Adiciona coluna `data_inicio_veiculo` na tabela `sppo_licenciamento` (https://github.com/prefeitura-rio/queries-rj-smtr/pull/252)
 
@@ -65,7 +74,7 @@
 - Atualiza documentação de tabelas e colunas (https://github.com/prefeitura-rio/queries-rj-smtr/pull/239)
 - Alterações feitas em https://github.com/prefeitura-rio/queries-rj-smtr/pull/229 e https://github.com/prefeitura-rio/queries-rj-smtr/pull/236 corrigidas em https://github.com/prefeitura-rio/queries-rj-smtr/pull/239
 
-## Corrigido
+### Corrigido
 
 - Corrige versão dos dados de licenciamento do STU a partir de 01/03/24
   na tabela `sppo_licenciamento` (https://github.com/prefeitura-rio/queries-rj-smtr/pull/239)

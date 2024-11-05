@@ -1,19 +1,18 @@
--- depends_on: {{ ref('sppo_licenciamento_stu_staging') }}
+-- depends_on: {{ ref('licenciamento_stu_staging') }}
 {{
-    config(
-        materialized="incremental",
-        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-        unique_key=["data", "id_veiculo"],
-        incremental_strategy="insert_overwrite",
-    )
+  config(
+    materialized="incremental",
+    partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+    unique_key=["data", "id_veiculo"],
+    incremental_strategy="insert_overwrite",
+  )
 }}
 
 {% if execute %}
   {% set licenciamento_date = run_query(get_license_date()).columns[0].values()[0] %}
 {% endif %}
 
-WITH
-  licenciamento AS (
+WITH licenciamento AS (
   SELECT
     DATE("{{ var('run_date') }}") AS data,
     id_veiculo,
@@ -22,23 +21,24 @@ WITH
     indicador_ar_condicionado,
     TRUE AS indicador_licenciado,
     CASE
-    WHEN ano_ultima_vistoria_atualizado >= CAST(EXTRACT(YEAR FROM DATE_SUB(DATE("{{ var('run_date') }}"), INTERVAL {{ var('sppo_licenciamento_validade_vistoria_ano') }} YEAR)) AS INT64) THEN TRUE -- Última vistoria realizada dentro do período válido
-    WHEN data_ultima_vistoria IS NULL AND DATE_DIFF(DATE("{{ var('run_date') }}"), data_inicio_vinculo, DAY) <=  {{ var('sppo_licenciamento_tolerancia_primeira_vistoria_dia') }} THEN TRUE -- Caso o veículo seja novo, existe a tolerância de 15 dias para a primeira vistoria
-    WHEN ano_fabricacao IN (2023, 2024) AND CAST(EXTRACT(YEAR FROM DATE("{{ var('run_date') }}")) AS INT64) = 2024 THEN TRUE -- Caso o veículo tiver ano de fabricação 2023 ou 2024, será considerado como vistoriado apenas em 2024 (regra de transição)
-  ELSE FALSE
-  END AS indicador_vistoriado,
+      WHEN ano_ultima_vistoria_atualizado >= CAST(EXTRACT(YEAR FROM DATE_SUB(DATE("{{ var('run_date') }}"), INTERVAL {{ var('sppo_licenciamento_validade_vistoria_ano') }} YEAR)) AS INT64) THEN TRUE -- Última vistoria realizada dentro do período válido
+      WHEN data_ultima_vistoria IS NULL AND DATE_DIFF(DATE("{{ var('run_date') }}"), data_inicio_vinculo, DAY) <=  {{ var('sppo_licenciamento_tolerancia_primeira_vistoria_dia') }} THEN TRUE -- Caso o veículo seja novo, existe a tolerância de 15 dias para a primeira vistoria
+      WHEN ano_fabricacao IN (2023, 2024) AND CAST(EXTRACT(YEAR FROM DATE("{{ var('run_date') }}")) AS INT64) = 2024 THEN TRUE -- Caso o veículo tiver ano de fabricação 2023 ou 2024, será considerado como vistoriado apenas em 2024 (regra de transição)
+      ELSE FALSE
+    END AS indicador_vistoriado,
+    data_inicio_vinculo
   FROM
-    {{ ref("sppo_licenciamento") }} --`rj-smtr`.`veiculo`.`sppo_licenciamento`
+    {{ ref("sppo_licenciamento") }} --`rj-smtr`.`veiculo`.`licenciamento`
   WHERE
     data = DATE("{{ licenciamento_date }}")
-  ),
-  gps AS (
+),
+gps AS (
   SELECT
     DISTINCT data,
     id_veiculo
   FROM
-    {{ ref("gps_sppo") }}
-    -- rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo
+    -- {{ ref("gps_sppo") }}
+    `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
   WHERE
     data = DATE("{{ var('run_date') }}") ),
   autuacoes AS (
@@ -54,18 +54,18 @@ WITH
   {% endif -%}
     data = DATE("{{ infracao_date }}")
     AND data_infracao = DATE("{{ var('run_date') }}")
-    AND modo = "ONIBUS"),
-  registros_agente_verao AS (
-    SELECT
-      DISTINCT data,
-      id_veiculo,
-      TRUE AS indicador_registro_agente_verao_ar_condicionado
-    FROM
-      {{ ref("sppo_registro_agente_verao") }}
-      -- rj-smtr.veiculo.sppo_registro_agente_verao
-    WHERE
-      data = DATE("{{ var('run_date') }}") ),
-  autuacao_ar_condicionado AS (
+),
+registros_agente_verao AS (
+  SELECT
+    DISTINCT data,
+    id_veiculo,
+    TRUE AS indicador_registro_agente_verao_ar_condicionado
+  FROM
+    {{ ref("sppo_registro_agente_verao") }}
+  WHERE
+    data = DATE("{{ var('run_date') }}")
+),
+autuacao_ar_condicionado AS (
   SELECT
     data,
     placa,
@@ -100,8 +100,9 @@ WITH
       "025.XII",
       "025.XIII",
       "025.XIV",
-      "026.X") ),
-  autuacao_equipamento AS (
+      "026.X")
+),
+autuacao_equipamento AS (
   SELECT
     data,
     placa,
@@ -126,8 +127,9 @@ WITH
       "025.VIII",
       "025.IX",
       "025.X",
-      "025.XI") ),
-  autuacao_limpeza AS (
+      "025.XI")
+),
+autuacao_limpeza AS (
   SELECT
     data,
     placa,
@@ -145,20 +147,15 @@ WITH
     autuacao_ar_condicionado
   FULL JOIN
     autuacao_seguranca
-  USING
-    (data,
-      placa)
+  USING(data, placa)
   FULL JOIN
     autuacao_equipamento
-  USING
-    (data,
-      placa)
+  USING(data, placa)
   FULL JOIN
     autuacao_limpeza
-  USING
-    (data,
-      placa) ),
-  gps_licenciamento_autuacao AS (
+  USING(data, placa)
+),
+gps_licenciamento_autuacao AS (
   SELECT
     data,
     id_veiculo,
@@ -201,29 +198,28 @@ WITH
               COALESCE(a.indicador_autuacao_equipamento, FALSE)           AS indicador_autuacao_equipamento,
               COALESCE(r.indicador_registro_agente_verao_ar_condicionado, FALSE)   AS indicador_registro_agente_verao_ar_condicionado)
     {% endif %}
-    AS indicadores
+    AS indicadores,
+    l.placa
   FROM
     gps g
   LEFT JOIN
     licenciamento AS l
-  USING
-    (data,
-      id_veiculo)
+  USING(data, id_veiculo)
   LEFT JOIN
     autuacoes_agg AS a
-  USING
-    (data,
-      placa)
+  USING(data, placa)
   LEFT JOIN
     registros_agente_verao AS r
-  USING
-    (data,
-      id_veiculo))
+  USING(data, id_veiculo)
+)
 {% if var("run_date") < var("DATA_SUBSIDIO_V5_INICIO") %}
 SELECT
   gla.* EXCEPT(indicadores),
   TO_JSON(indicadores) AS indicadores,
   status,
+  DATE("{{ licenciamento_date }}") AS data_licenciamento,
+  DATE("{{ infracao_date }}") AS data_infracao,
+  CURRENT_DATETIME("America/Sao_Paulo") AS datetime_ultima_atualizacao,
   "{{ var("version") }}" AS versao
 FROM
   gps_licenciamento_autuacao AS gla
@@ -253,6 +249,9 @@ SELECT
     WHEN indicadores.indicador_ar_condicionado IS TRUE THEN "Licenciado com ar e não autuado"
     ELSE NULL
   END AS status,
+  DATE("{{ licenciamento_date }}") AS data_licenciamento,
+  DATE("{{ infracao_date }}") AS data_infracao,
+  CURRENT_DATETIME("America/Sao_Paulo") AS datetime_ultima_atualizacao,
   "{{ var("version") }}" AS versao
 FROM
   gps_licenciamento_autuacao
