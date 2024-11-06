@@ -53,6 +53,8 @@ vars:
   velocidade_limiar_parado: 3
   ## Distância mínima para que o veículo seja identificado parado em um terminal ou garagem em aux_registros_parada
   distancia_limiar_parada: 250
+  ## Tamanho do buffer do segmento
+  buffer_segmento_metros: 20 # flag_trajeto_correto
 
   ### [ANTIGO] SIGMOB ###
 

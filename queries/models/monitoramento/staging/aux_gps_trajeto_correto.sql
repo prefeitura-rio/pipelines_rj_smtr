@@ -35,7 +35,7 @@ with
                                 st_dwithin(
                                     shape,
                                     posicao_veiculo_geo,
-                                    {{ var("tamanho_buffer_metros") }}
+                                    {{ var("buffer_segmento_metros") }}
                                 )
                             then 1
                         end
