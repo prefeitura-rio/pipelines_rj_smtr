@@ -49,7 +49,7 @@ with
             datetime_gps,
             servico,
             distancia,
-            velocidade,  -- velocidade do pontual
+            velocidade,
             avg(velocidade) over (
                 partition by id_veiculo, servico
                 order by

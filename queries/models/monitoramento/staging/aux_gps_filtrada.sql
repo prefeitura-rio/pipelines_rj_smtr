@@ -23,8 +23,7 @@ with
         from gps g
         left join
             {{ ref("aux_gps_realocacao" ~ var("fonte_gps")) }} r
-            on g.id_veiculo = r.id_veiculo
-            and g.datetime_gps = r.datetime_gps
+            using(id_veiculo, datetime_gps)
     ),
     filtrada as (
         /* 1,2, e 3. Muda o nome de variáveis para o padrão do projeto.*/

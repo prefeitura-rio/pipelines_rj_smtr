@@ -84,21 +84,13 @@ from registros r
 
 join
     indicadores i
-    on r.id_veiculo = i.id_veiculo
-    and r.datetime_gps = i.datetime_gps
-    and r.servico = i.servico
-
+using(id_veiculo, datetime_gps, servico)
 join
     velocidades v
-    on r.id_veiculo = v.id_veiculo
-    and r.datetime_gps = v.datetime_gps
-    and r.servico = v.servico
-
+using(id_veiculo, datetime_gps, servico)
 join
     paradas p
-    on r.id_veiculo = p.id_veiculo
-    and r.datetime_gps = p.datetime_gps
-    and r.servico = p.servico
+using(id_veiculo, datetime_gps, servico)
 {% if is_incremental() -%}
     where
         date(r.datetime_gps) between date("{{var('date_range_start')}}") and date(

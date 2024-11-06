@@ -69,8 +69,7 @@ with
                         "{{var('date_range_end')}}"
                     )
             ) s
-            on r.servico = s.servico
-            and r.data = s.data
+            using (servico, data)
     )
 -- 3. Agregação com LOGICAL_OR para evitar duplicação de registros
 select
