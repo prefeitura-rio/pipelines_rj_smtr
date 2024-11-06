@@ -27,8 +27,8 @@ with
     ),
     garagens as (
         -- 1. Selecionamos as garagens, , criando uma geometria de ponto para cada.
-        select
-            st_geogpoint(stop_lon, stop_lat) as ponto_parada,
+        select distinct
+            st_astext(st_geogpoint(stop_lon, stop_lat)) as ponto_parada,
             stop_name as nome_parada,
             'garagens' as tipo_parada
         -- from {{ ref("stops_gtfs") }}
@@ -40,7 +40,7 @@ with
         where
             pickup_type is null
             and drop_off_type is null
-            and stop_name like "Garagem%"
+            and stop_name like "%Garagem%"
             and feed_start_date = date("{{ feed_start_date }}")
     ),
     pontos_parada as (
@@ -48,7 +48,8 @@ with
         select *
         from terminais
         union all
-        select *
+        select  st_geogfromtext(ponto_parada) as ponto_parada,
+                * except(ponto_parada)
         from garagens
     ),
     distancia as (
