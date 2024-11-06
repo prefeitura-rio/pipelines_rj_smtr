@@ -22,6 +22,7 @@ from prefect import Client, task
 from prefect.backend import FlowRunView
 from prefeitura_rio.pipelines_utils.dbt import run_dbt_model as run_dbt_model_func
 from prefeitura_rio.pipelines_utils.infisical import inject_bd_credentials
+from prefeitura_rio.pipelines_utils.io import get_root_path
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
@@ -405,7 +406,8 @@ def create_local_partition_path(
     either to save raw or staging files.
     """
     data_folder = os.getenv("DATA_FOLDER", "data")
-    file_path = f"{os.getcwd()}/{data_folder}/{{mode}}/{dataset_id}/{table_id}"
+    root = str(get_root_path())
+    file_path = f"{root}/{data_folder}/{{mode}}/{dataset_id}/{table_id}"
     file_path += f"/{partitions}/{filename}.{{filetype}}"
     log(f"Creating file path: {file_path}")
     return file_path
