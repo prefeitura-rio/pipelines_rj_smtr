@@ -26,8 +26,7 @@ with
             count(*) as quantidade_segmentos_verificados,
             countif(quantidade_gps > 0) as quantidade_segmentos_validos,
             feed_version,
-            feed_start_date,
-            feed_end_date
+            feed_start_date
         from {{ ref("gps_segmento_viagem") }}
         where
             not indicador_segmento_desconsiderado
@@ -49,8 +48,7 @@ with
             servico,
             sentido,
             feed_version,
-            feed_start_date,
-            feed_end_date
+            feed_start_date
     ),
     indice as (
         select
@@ -69,8 +67,7 @@ with
             quantidade_segmentos_validos
             / quantidade_segmentos_verificados as indice_validacao,
             feed_version,
-            feed_start_date,
-            feed_end_date
+            feed_start_date
         from contagem
     )
 select
@@ -90,6 +87,5 @@ select
     indice_validacao >= {{ parametro_validacao }} as indicador_viagem_valida,
     {{ parametro_validacao }} as parametro_validacao,
     feed_version,
-    feed_start_date,
-    feed_end_date
+    feed_start_date
 from indice

@@ -85,16 +85,19 @@ with
     viagem as (
         select
             data,
-            id_viagem,
-            datetime_partida,
-            datetime_chegada,
-            id_veiculo,
-            trip_id,
-            route_id,
-            shape_id,
-            servico,
-            sentido
-        from {{ ref("viagem_informada_monitoramento") }}
+            v.id_viagem,
+            v.datetime_partida,
+            v.datetime_chegada,
+            v.id_veiculo,
+            v.trip_id,
+            v.route_id,
+            v.shape_id,
+            v.servico,
+            v.sentido,
+            c.feed_start_date,
+            c.feed_version
+        from {{ ref("viagem_informada_monitoramento") }} v
+        join calendario c using (data)
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
     viagem_segmento as (
@@ -111,11 +114,10 @@ with
             s.indicador_segmento_desconsiderado,
             v.servico,
             v.sentido,
-            s.feed_version,
-            s.feed_start_date,
-            s.feed_end_date
+            feed_version,
+            feed_start_date
         from viagem v
-        join segmento s using (shape_id)
+        join segmento s using (shape_id, feed_version, feed_start_date)
     )
 select
     v.data,
@@ -133,7 +135,6 @@ select
     ifnull(g.quantidade_gps, 0) as quantidade_gps,
     v.feed_version,
     v.feed_start_date,
-    v.feed_end_date,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
 from viagem_segmento v
