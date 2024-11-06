@@ -160,7 +160,7 @@ class constants(Enum):  # pylint: disable=c0103
         "databases": {
             "principal_db": {
                 "engine": "mysql",
-                "host": "10.5.114.121",
+                "host": "10.5.114.227",
             },
             "tarifa_db": {
                 "engine": "postgresql",
