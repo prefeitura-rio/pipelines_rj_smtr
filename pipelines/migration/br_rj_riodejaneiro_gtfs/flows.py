@@ -145,11 +145,16 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 filename=unmapped(filename),
             )
 
+            data_versao_gtfs_str = parse_timestamp_to_string(
+                timestamp=data_versao_gtfs_task, pattern="%Y-%m-%d"
+            )
+
             raw_filepaths, primary_keys = get_raw_gtfs_files(
                 os_control=os_control,
                 local_filepath=local_filepaths,
                 regular_sheet_index=regular_sheet_index,
                 upload_from_gcs=upload_from_gcs,
+                data_versao_gtfs=data_versao_gtfs_str,
             )
 
             transform_raw_to_nested_structure_results = transform_raw_to_nested_structure.map(
