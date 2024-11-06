@@ -22,4 +22,4 @@ select
     safe_cast(
         datetime(timestamp(timestamp_captura), "America/Sao_Paulo") as datetime
     ) as datetime_captura,
-from {{ var("sppo_realocacao_staging") }}
+from {{ source('br_rj_riodejaneiro_onibus_gps_' ~ var("fonte_gps") ~ '_staging', "realocacao") }}

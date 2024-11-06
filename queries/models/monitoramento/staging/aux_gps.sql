@@ -16,4 +16,4 @@ select
         datetime(timestamp(timestamp_captura), "America/Sao_Paulo") as datetime
     ) datetime_captura,
     safe_cast(velocidade as int64) velocidade
-from {{ var("sppo_registros_staging") }}
+from {{ source('br_rj_riodejaneiro_onibus_gps_' ~ var("fonte_gps") ~ '_staging', "registros") }}
