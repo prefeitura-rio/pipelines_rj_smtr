@@ -37,6 +37,7 @@ from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
 
 from pipelines.constants import constants
+from pipelines.utils.discord import send_discord_message
 from pipelines.utils.implicit_ftp import ImplicitFtpTls
 from pipelines.utils.secret import get_secret
 
@@ -52,19 +53,6 @@ def set_default_parameters(flow: prefect.Flow, default_parameters: dict) -> pref
         if parameter.name in default_parameters:
             parameter.default = default_parameters[parameter.name]
     return flow
-
-
-def send_discord_message(
-    message: str,
-    webhook_url: str,
-) -> None:
-    """
-    Sends a message to a Discord channel.
-    """
-    requests.post(
-        webhook_url,
-        data={"content": message},
-    )
 
 
 def log_critical(message: str, secret_path: str = constants.CRITICAL_SECRET_PATH.value):
