@@ -70,6 +70,7 @@ with
 select
     v.data,
     g.timestamp_gps,
+    v.modo,
     g.id_veiculo,
     g.servico,
     v.sentido,

@@ -113,7 +113,8 @@ with
                 when agency_id = "20001"
                 then "BRT"
             end as modo
-        from `rj-smtr.gtfs.routes`
+        {# from `rj-smtr.gtfs.routes` #}
+        from {{ ref("routes_gtfs") }}
         {% if is_incremental() %}
             where feed_start_date in ({{ gtfs_feeds | join(", ") }})
         {% endif %}

@@ -13,6 +13,8 @@
 {% endset %}
 
 {% set staging_viagem_informada_rioonibus = ref("staging_viagem_informada_rioonibus") %}
+{% set calendario = ref("calendario") %}
+
 {% if execute %}
     {% if is_incremental() %}
         {% set partitions_query %}
@@ -25,7 +27,16 @@
         {% endset %}
 
         {% set partitions = run_query(partitions_query).columns[0].values() %}
+
+        {% set gtfs_feeds_query %}
+            select distinct concat("'", feed_start_date, "'") as feed_start_date
+            from {{ calendario }}
+            where {{ incremental_filter }}
+        {% endset %}
+
+        {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
     {% endif %}
+
 {% endif %}
 
 with
@@ -51,7 +62,7 @@ with
             end as sentido,
             fornecedor as fonte_gps,
             datetime_processamento,
-            timestamp_captura as datetime_captura,
+            timestamp_captura as datetime_captura
         from {{ staging_viagem_informada_rioonibus }}
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
@@ -62,7 +73,7 @@ with
         {% if is_incremental() and partitions | length > 0 %}
             union all
 
-            select * except (versao, datetime_ultima_atualizacao), 1 as priority
+            select * except (modo, versao, datetime_ultima_atualizacao), 1 as priority
             from {{ this }}
             where data in ({{ partitions | join(", ") }})
         {% endif %}
@@ -79,9 +90,41 @@ with
                 from complete_partitions
             )
         where rn = 1
+    ),
+    calendario as (
+        select *
+        from {{ calendario }}
+        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
+    ),
+    routes as (
+        select *
+        from {{ ref("routes_gtfs") }}
+        {% if is_incremental() %}
+            where feed_start_date in ({{ gtfs_feeds | join(", ") }})
+        {% endif %}
+    ),
+    viagem_modo as (
+        select
+            data,
+            v.id_viagem,
+            v.datetime_partida,
+            v.datetime_chegada,
+            if(r.route_type = '200', 'Ônibus Executivo', 'Ônibus SPPO') as modo,
+            v.id_veiculo,
+            v.trip_id,
+            v.route_id,
+            v.shape_id,
+            v.servico,
+            v.sentido,
+            v.fonte_gps,
+            v.datetime_processamento,
+            v.datetime_captura
+        from deduplicado v
+        join calendario c using (data)
+        left join routes r using (route_id, feed_start_date, feed_info)
     )
 select
     *,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
-from deduplicado
+from viagem_modo

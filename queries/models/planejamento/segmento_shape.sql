@@ -110,8 +110,8 @@ from indicador_validacao_shape
         s.indicador_segmento_desconsiderado,
         s.versao
     from {{ this }} s
-    {# join {{ ref("feed_info_gtfs") }} fi using (feed_start_date) #}
-    join `rj-smtr.gtfs.feed_info` fi using (feed_start_date)
+    join {{ ref("feed_info_gtfs") }} fi using (feed_start_date)
+    {# join `rj-smtr.gtfs.feed_info` fi using (feed_start_date) #}
     where feed_start_date = '{{ last_feed_version }}'
 
 {% endif %}

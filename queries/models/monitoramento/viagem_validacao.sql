@@ -17,6 +17,7 @@ with
             id_viagem,
             datetime_partida,
             datetime_chegada,
+            modo,
             id_veiculo,
             trip_id,
             route_id,
@@ -31,7 +32,6 @@ with
         where
             not indicador_segmento_desconsiderado
             {% if is_incremental() %}
-
                 and data between date('{{ var("date_range_start") }}') and date(
                     '{{ var("date_range_end") }}'
                 )
@@ -41,6 +41,7 @@ with
             id_viagem,
             datetime_partida,
             datetime_chegada,
+            modo,
             id_veiculo,
             trip_id,
             route_id,
@@ -56,6 +57,7 @@ with
             id_viagem,
             datetime_partida,
             datetime_chegada,
+            modo,
             id_veiculo,
             trip_id,
             route_id,
@@ -75,6 +77,7 @@ select
     id_viagem,
     datetime_partida,
     datetime_chegada,
+    modo,
     id_veiculo,
     trip_id,
     route_id,

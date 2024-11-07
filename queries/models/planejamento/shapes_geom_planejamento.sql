@@ -25,9 +25,8 @@ with
             shape_pt_sequence,
             st_geogpoint(shape_pt_lon, shape_pt_lat) as ponto_shape,
             concat(shape_pt_lon, " ", shape_pt_lat) as lon_lat,
-        from
-            {# {{ ref("shapes_gtfs") }} s #}
-            `rj-smtr.gtfs.shapes` s
+        from {{ ref("shapes_gtfs") }} s
+        {# `rj-smtr.gtfs.shapes` s #}
         {% if is_incremental() %}
             where
                 feed_start_date
