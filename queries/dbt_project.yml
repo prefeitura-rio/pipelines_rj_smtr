@@ -125,6 +125,8 @@ vars:
   DATA_SUBSIDIO_V9_INICIO: "2024-08-16"
   # valor_subsidio: "`rj-smtr-dev.projeto_subsidio_sppo.valor_subsidio`"
 
+  DATA_FAIXA_HORARIA_V2: "2024-11-06"
+
   # Recursos #
   recurso_staging: "rj-smtr-staging.projeto_subsidio_sppo_staging.recurso"
   recurso_prazo: "rj-smtr.projeto_subsidio_sppo.recurso_prazo"
