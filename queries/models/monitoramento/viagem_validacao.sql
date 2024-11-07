@@ -90,5 +90,7 @@ select
     indice_validacao >= {{ parametro_validacao }} as indicador_viagem_valida,
     {{ parametro_validacao }} as parametro_validacao,
     feed_version,
-    feed_start_date
+    feed_start_date,
+    '{{ var("version") }}' as versao,
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
 from indice
