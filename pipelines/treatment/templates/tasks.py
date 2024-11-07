@@ -11,7 +11,6 @@ from prefeitura_rio.pipelines_utils.logging import log
 from pytz import timezone
 
 from pipelines.constants import constants
-from pipelines.migration.tasks import format_send_discord_message
 from pipelines.treatment.templates.utils import (
     DBTSelector,
     IncompleteDataError,
@@ -20,6 +19,7 @@ from pipelines.treatment.templates.utils import (
     send_dataplex_discord_message,
 )
 from pipelines.utils.dataplex import DataQuality, DataQualityCheckArgs
+from pipelines.utils.discord import format_send_discord_message
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.prefect import flow_is_running_local, rename_current_flow_run
 from pipelines.utils.secret import get_secret
@@ -486,10 +486,16 @@ def dbt_data_quality_checks(dbt_logs: str, checks_list: dict, params: dict):
         else f'{params["date_range_start"]} a {params["date_range_end"]}'
     )
 
-    formatted_messages = [
-        ":green_circle: " if test_check else ":red_circle: ",
-        f"**Data Quality Checks - {prefect.context.get('flow_name')} - {date_range}**\n\n",
-    ]
+    if "(target='dev')" in dbt_logs or "(target='hmg')" in dbt_logs:
+        formatted_messages = [
+            ":green_circle: " if test_check else ":red_circle: ",
+            f"**[DEV] Data Quality Checks - {prefect.context.get('flow_name')} - {date_range}**\n\n",  # noqa
+        ]
+    else:
+        formatted_messages = [
+            ":green_circle: " if test_check else ":red_circle: ",
+            f"**Data Quality Checks - {prefect.context.get('flow_name')} - {date_range}**\n\n",
+        ]
 
     for table_id, tests in checks_list.items():
         formatted_messages.append(

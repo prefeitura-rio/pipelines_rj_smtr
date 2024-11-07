@@ -11,7 +11,7 @@ from prefect import context
 # from datetime import datetime as dt
 # from datetime import timedelta
 from pipelines.constants import constants as smtr_constants
-from pipelines.migration.tasks import format_send_discord_message
+from pipelines.utils.discord import format_send_discord_message
 from pipelines.utils.secret import get_secret
 
 # import pandas as pd
