@@ -42,7 +42,7 @@ with
                 data between date_sub(
                     date('{{ var("date_range_start") }}'), interval 1 day
                 ) and date_sub(date('{{ var("date_range_end") }}'))
-            {% else %} data >= date("2024-10-26")
+            {% else %} data >= date("2024-10-11")
             {% endif %}
 
     ),
@@ -55,7 +55,7 @@ with
                 data between date_sub(
                     date('{{ var("date_range_start") }}'), interval 1 day
                 ) and date_sub(date('{{ var("date_range_end") }}'))
-            {% else %} data >= date("2024-10-26")
+            {% else %} data >= date("2024-10-11")
             {% endif %}
     ),
     gps_union as (
