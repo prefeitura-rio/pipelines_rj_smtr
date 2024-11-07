@@ -1,5 +1,11 @@
 # Changelog - br_rj_riodejaneiro_veiculos
 
+## [1.0.4] - 2024-10-25
+
+#### Adicionado
+
+- Adiciona testes do DBT no schema (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/287)
+
 ## [1.0.3] - 2024-08-09
 
 ### Adicionado
