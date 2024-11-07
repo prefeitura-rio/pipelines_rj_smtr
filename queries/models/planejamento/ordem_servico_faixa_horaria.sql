@@ -16,44 +16,76 @@ WITH
     SAFE_CAST(servico AS STRING) AS servico,
     SAFE_CAST(JSON_VALUE(content, "$.consorcio") AS STRING) AS consorcio,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_00h_e_03h_dias_uteis') AS STRING) AS partidas_entre_00h_e_03h_dias_uteis,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_00h_e_03h_dias_uteis') AS STRING) AS quilometragem_entre_00h_e_03h_dias_uteis,
-    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_03h_e_12h_dias_uteis') AS STRING) AS partidas_entre_03h_e_12h_dias_uteis,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_03h_e_12h_dias_uteis') AS STRING) AS quilometragem_entre_03h_e_12h_dias_uteis,
-    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_12h_e_21h_dias_uteis') AS STRING) AS partidas_entre_12h_e_21h_dias_uteis,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_12h_e_21h_dias_uteis') AS STRING) AS quilometragem_entre_12h_e_21h_dias_uteis,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_03h_e_06h_dias_uteis') AS STRING) AS partidas_entre_03h_e_06h_dias_uteis,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_06h_e_09h_dias_uteis') AS STRING) AS partidas_entre_06h_e_09h_dias_uteis,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_09h_e_12h_dias_uteis') AS STRING) AS partidas_entre_09h_e_12h_dias_uteis,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_12h_e_15h_dias_uteis') AS STRING) AS partidas_entre_12h_e_15h_dias_uteis,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_15h_e_18h_dias_uteis') AS STRING) AS partidas_entre_15h_e_18h_dias_uteis,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_18h_e_21h_dias_uteis') AS STRING) AS partidas_entre_18h_e_21h_dias_uteis,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_21h_e_24h_dias_uteis') AS STRING) AS partidas_entre_21h_e_24h_dias_uteis,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_21h_e_24h_dias_uteis') AS STRING) AS quilometragem_entre_21h_e_24h_dias_uteis,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_24h_e_03h_diaseguinte_dias_uteis') AS STRING) AS partidas_entre_24h_e_03h_diaseguinte_dias_uteis,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_24h_e_03h_diaseguinte_dias_uteis') AS STRING) AS quilometragem_entre_24h_e_03h_diaseguinte_dias_uteis,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_00h_e_03h_sabado') AS STRING) AS partidas_entre_00h_e_03h_sabado,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_00h_e_03h_sabado') AS STRING) AS quilometragem_entre_00h_e_03h_sabado,
-    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_03h_e_12h_sabado') AS STRING) AS partidas_entre_03h_e_12h_sabado,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_03h_e_12h_sabado') AS STRING) AS quilometragem_entre_03h_e_12h_sabado,
-    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_12h_e_21h_sabado') AS STRING) AS partidas_entre_12h_e_21h_sabado,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_12h_e_21h_sabado') AS STRING) AS quilometragem_entre_12h_e_21h_sabado,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_03h_e_06h_sabado') AS STRING) AS partidas_entre_03h_e_06h_sabado,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_06h_e_09h_sabado') AS STRING) AS partidas_entre_06h_e_09h_sabado,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_09h_e_12h_sabado') AS STRING) AS partidas_entre_09h_e_12h_sabado,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_12h_e_15h_sabado') AS STRING) AS partidas_entre_12h_e_15h_sabado,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_15h_e_18h_sabado') AS STRING) AS partidas_entre_15h_e_18h_sabado,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_18h_e_21h_sabado') AS STRING) AS partidas_entre_18h_e_21h_sabado,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_21h_e_24h_sabado') AS STRING) AS partidas_entre_21h_e_24h_sabado,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_21h_e_24h_sabado') AS STRING) AS quilometragem_entre_21h_e_24h_sabado,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_24h_e_03h_diaseguinte_sabado') AS STRING) AS partidas_entre_24h_e_03h_diaseguinte_sabado,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_24h_e_03h_diaseguinte_sabado') AS STRING) AS quilometragem_entre_24h_e_03h_diaseguinte_sabado,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_00h_e_03h_domingo') AS STRING) AS partidas_entre_00h_e_03h_domingo,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_00h_e_03h_domingo') AS STRING) AS quilometragem_entre_00h_e_03h_domingo,
-    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_03h_e_12h_domingo') AS STRING) AS partidas_entre_03h_e_12h_domingo,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_03h_e_12h_domingo') AS STRING) AS quilometragem_entre_03h_e_12h_domingo,
-    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_12h_e_21h_domingo') AS STRING) AS partidas_entre_12h_e_21h_domingo,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_12h_e_21h_domingo') AS STRING) AS quilometragem_entre_12h_e_21h_domingo,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_03h_e_06h_domingo') AS STRING) AS partidas_entre_03h_e_06h_domingo,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_06h_e_09h_domingo') AS STRING) AS partidas_entre_06h_e_09h_domingo,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_09h_e_12h_domingo') AS STRING) AS partidas_entre_09h_e_12h_domingo,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_12h_e_15h_domingo') AS STRING) AS partidas_entre_12h_e_15h_domingo,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_15h_e_18h_domingo') AS STRING) AS partidas_entre_15h_e_18h_domingo,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_18h_e_21h_domingo') AS STRING) AS partidas_entre_18h_e_21h_domingo,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_21h_e_24h_domingo') AS STRING) AS partidas_entre_21h_e_24h_domingo,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_21h_e_24h_domingo') AS STRING) AS quilometragem_entre_21h_e_24h_domingo,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_24h_e_03h_diaseguinte_domingo') AS STRING) AS partidas_entre_24h_e_03h_diaseguinte_domingo,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_24h_e_03h_diaseguinte_domingo') AS STRING) AS quilometragem_entre_24h_e_03h_diaseguinte_domingo,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_00h_e_03h_ponto_facultativo') AS STRING) AS partidas_entre_00h_e_03h_ponto_facultativo,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_00h_e_03h_ponto_facultativo') AS STRING) AS quilometragem_entre_00h_e_03h_ponto_facultativo,
-    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_03h_e_12h_ponto_facultativo') AS STRING) AS partidas_entre_03h_e_12h_ponto_facultativo,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_03h_e_12h_ponto_facultativo') AS STRING) AS quilometragem_entre_03h_e_12h_ponto_facultativo,
-    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_12h_e_21h_ponto_facultativo') AS STRING) AS partidas_entre_12h_e_21h_ponto_facultativo,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_12h_e_21h_ponto_facultativo') AS STRING) AS quilometragem_entre_12h_e_21h_ponto_facultativo,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_03h_e_06h_ponto_facultativo') AS STRING) AS partidas_entre_03h_e_06h_ponto_facultativo,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_06h_e_09h_ponto_facultativo') AS STRING) AS partidas_entre_06h_e_09h_ponto_facultativo,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_09h_e_12h_ponto_facultativo') AS STRING) AS partidas_entre_09h_e_12h_ponto_facultativo,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_12h_e_15h_ponto_facultativo') AS STRING) AS partidas_entre_12h_e_15h_ponto_facultativo,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_15h_e_18h_ponto_facultativo') AS STRING) AS partidas_entre_15h_e_18h_ponto_facultativo,
+    SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_18h_e_21h_ponto_facultativo') AS STRING) AS partidas_entre_18h_e_21h_ponto_facultativo,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_21h_e_24h_ponto_facultativo') AS STRING) AS partidas_entre_21h_e_24h_ponto_facultativo,
-    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_21h_e_24h_ponto_facultativo') AS STRING) AS quilometragem_entre_21h_e_24h_ponto_facultativo,
     SAFE_CAST(JSON_VALUE(content, '$.partidas_entre_24h_e_03h_diaseguinte_ponto_facultativo') AS STRING) AS partidas_entre_24h_e_03h_diaseguinte_ponto_facultativo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_00h_e_03h_dias_uteis') AS STRING) AS quilometragem_entre_00h_e_03h_dias_uteis,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_03h_e_06h_dias_uteis') AS STRING) AS quilometragem_entre_03h_e_06h_dias_uteis,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_06h_e_09h_dias_uteis') AS STRING) AS quilometragem_entre_06h_e_09h_dias_uteis,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_09h_e_12h_dias_uteis') AS STRING) AS quilometragem_entre_09h_e_12h_dias_uteis,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_12h_e_15h_dias_uteis') AS STRING) AS quilometragem_entre_12h_e_15h_dias_uteis,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_15h_e_18h_dias_uteis') AS STRING) AS quilometragem_entre_15h_e_18h_dias_uteis,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_18h_e_21h_dias_uteis') AS STRING) AS quilometragem_entre_18h_e_21h_dias_uteis,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_21h_e_24h_dias_uteis') AS STRING) AS quilometragem_entre_21h_e_24h_dias_uteis,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_24h_e_03h_diaseguinte_dias_uteis') AS STRING) AS quilometragem_entre_24h_e_03h_diaseguinte_dias_uteis,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_00h_e_03h_sabado') AS STRING) AS quilometragem_entre_00h_e_03h_sabado,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_03h_e_06h_sabado') AS STRING) AS quilometragem_entre_03h_e_06h_sabado,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_06h_e_09h_sabado') AS STRING) AS quilometragem_entre_06h_e_09h_sabado,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_09h_e_12h_sabado') AS STRING) AS quilometragem_entre_09h_e_12h_sabado,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_12h_e_15h_sabado') AS STRING) AS quilometragem_entre_12h_e_15h_sabado,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_15h_e_18h_sabado') AS STRING) AS quilometragem_entre_15h_e_18h_sabado,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_18h_e_21h_sabado') AS STRING) AS quilometragem_entre_18h_e_21h_sabado,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_21h_e_24h_sabado') AS STRING) AS quilometragem_entre_21h_e_24h_sabado,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_24h_e_03h_diaseguinte_sabado') AS STRING) AS quilometragem_entre_24h_e_03h_diaseguinte_sabado,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_00h_e_03h_domingo') AS STRING) AS quilometragem_entre_00h_e_03h_domingo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_03h_e_06h_domingo') AS STRING) AS quilometragem_entre_03h_e_06h_domingo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_06h_e_09h_domingo') AS STRING) AS quilometragem_entre_06h_e_09h_domingo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_09h_e_12h_domingo') AS STRING) AS quilometragem_entre_09h_e_12h_domingo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_12h_e_15h_domingo') AS STRING) AS quilometragem_entre_12h_e_15h_domingo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_15h_e_18h_domingo') AS STRING) AS quilometragem_entre_15h_e_18h_domingo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_18h_e_21h_domingo') AS STRING) AS quilometragem_entre_18h_e_21h_domingo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_21h_e_24h_domingo') AS STRING) AS quilometragem_entre_21h_e_24h_domingo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_24h_e_03h_diaseguinte_domingo') AS STRING) AS quilometragem_entre_24h_e_03h_diaseguinte_domingo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_00h_e_03h_ponto_facultativo') AS STRING) AS quilometragem_entre_00h_e_03h_ponto_facultativo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_03h_e_06h_ponto_facultativo') AS STRING) AS quilometragem_entre_03h_e_06h_ponto_facultativo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_06h_e_09h_ponto_facultativo') AS STRING) AS quilometragem_entre_06h_e_09h_ponto_facultativo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_09h_e_12h_ponto_facultativo') AS STRING) AS quilometragem_entre_09h_e_12h_ponto_facultativo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_12h_e_15h_ponto_facultativo') AS STRING) AS quilometragem_entre_12h_e_15h_ponto_facultativo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_15h_e_18h_ponto_facultativo') AS STRING) AS quilometragem_entre_15h_e_18h_ponto_facultativo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_18h_e_21h_ponto_facultativo') AS STRING) AS quilometragem_entre_18h_e_21h_ponto_facultativo,
+    SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_21h_e_24h_ponto_facultativo') AS STRING) AS quilometragem_entre_21h_e_24h_ponto_facultativo,
     SAFE_CAST(JSON_VALUE(content, '$.quilometragem_entre_24h_e_03h_diaseguinte_ponto_facultativo') AS STRING) AS quilometragem_entre_24h_e_03h_diaseguinte_ponto_facultativo
   FROM
     {{ source("br_rj_riodejaneiro_gtfs_staging", "ordem_servico_faixa_horaria") }}
@@ -77,10 +109,18 @@ WITH
     CASE
       WHEN column_name LIKE '%00h_e_03h%' THEN
           '00:00:00'
-      WHEN column_name LIKE '%03h_e_12h%' THEN
+      WHEN column_name LIKE '%03h_e_06h%' THEN
           '03:00:00'
-      WHEN column_name LIKE '%12h_e_21h%' THEN
+      WHEN column_name LIKE '%06h_e_09h%' THEN
+          '06:00:00'
+      WHEN column_name LIKE '%09h_e_12h%' THEN
+          '09:00:00'
+      WHEN column_name LIKE '%12h_e_15h%' THEN
           '12:00:00'
+      WHEN column_name LIKE '%15h_e_18h%' THEN
+          '15:00:00'
+      WHEN column_name LIKE '%18h_e_21h%' THEN
+          '18:00:00'
       WHEN column_name LIKE '%21h_e_24h%' THEN
           '21:00:00'
       WHEN column_name LIKE '%24h_e_03h_diaseguinte%' THEN
@@ -89,9 +129,17 @@ WITH
     CASE
       WHEN column_name LIKE '%00h_e_03h%' THEN
           '02:59:59'
-      WHEN column_name LIKE '%03h_e_12h%' THEN
+      WHEN column_name LIKE '%03h_e_06h%' THEN
+          '05:59:59'
+      WHEN column_name LIKE '%06h_e_09h%' THEN
+          '08:59:59'
+      WHEN column_name LIKE '%09h_e_12h%' THEN
           '11:59:59'
-      WHEN column_name LIKE '%12h_e_21h%' THEN
+      WHEN column_name LIKE '%12h_e_15h%' THEN
+          '14:59:59'
+      WHEN column_name LIKE '%15h_e_18h%' THEN
+          '17:59:59'
+      WHEN column_name LIKE '%18h_e_21h%' THEN
           '20:59:59'
       WHEN column_name LIKE '%21h_e_24h%' THEN
           '23:59:59'
@@ -111,40 +159,72 @@ WITH
     value FOR column_name IN (
       partidas_entre_00h_e_03h_dias_uteis,
       quilometragem_entre_00h_e_03h_dias_uteis,
-      partidas_entre_03h_e_12h_dias_uteis,
-      quilometragem_entre_03h_e_12h_dias_uteis,
-      partidas_entre_12h_e_21h_dias_uteis,
-      quilometragem_entre_12h_e_21h_dias_uteis,
+      partidas_entre_03h_e_06h_dias_uteis,
+      quilometragem_entre_03h_e_06h_dias_uteis,
+      partidas_entre_06h_e_09h_dias_uteis,
+      quilometragem_entre_06h_e_09h_dias_uteis,
+      partidas_entre_09h_e_12h_dias_uteis,
+      quilometragem_entre_09h_e_12h_dias_uteis,
+      partidas_entre_12h_e_15h_dias_uteis,
+      quilometragem_entre_12h_e_15h_dias_uteis,
+      partidas_entre_15h_e_18h_dias_uteis,
+      quilometragem_entre_15h_e_18h_dias_uteis,
+      partidas_entre_18h_e_21h_dias_uteis,
+      quilometragem_entre_18h_e_21h_dias_uteis,
       partidas_entre_21h_e_24h_dias_uteis,
       quilometragem_entre_21h_e_24h_dias_uteis,
       partidas_entre_24h_e_03h_diaseguinte_dias_uteis,
       quilometragem_entre_24h_e_03h_diaseguinte_dias_uteis,
       partidas_entre_00h_e_03h_sabado,
       quilometragem_entre_00h_e_03h_sabado,
-      partidas_entre_03h_e_12h_sabado,
-      quilometragem_entre_03h_e_12h_sabado,
-      partidas_entre_12h_e_21h_sabado,
-      quilometragem_entre_12h_e_21h_sabado,
+      partidas_entre_03h_e_06h_sabado,
+      quilometragem_entre_03h_e_06h_sabado,
+      partidas_entre_06h_e_09h_sabado,
+      quilometragem_entre_06h_e_09h_sabado,
+      partidas_entre_09h_e_12h_sabado,
+      quilometragem_entre_09h_e_12h_sabado,
+      partidas_entre_12h_e_15h_sabado,
+      quilometragem_entre_12h_e_15h_sabado,
+      partidas_entre_15h_e_18h_sabado,
+      quilometragem_entre_15h_e_18h_sabado,
+      partidas_entre_18h_e_21h_sabado,
+      quilometragem_entre_18h_e_21h_sabado,
       partidas_entre_21h_e_24h_sabado,
       quilometragem_entre_21h_e_24h_sabado,
       partidas_entre_24h_e_03h_diaseguinte_sabado,
       quilometragem_entre_24h_e_03h_diaseguinte_sabado,
       partidas_entre_00h_e_03h_domingo,
       quilometragem_entre_00h_e_03h_domingo,
-      partidas_entre_03h_e_12h_domingo,
-      quilometragem_entre_03h_e_12h_domingo,
-      partidas_entre_12h_e_21h_domingo,
-      quilometragem_entre_12h_e_21h_domingo,
+      partidas_entre_03h_e_06h_domingo,
+      quilometragem_entre_03h_e_06h_domingo,
+      partidas_entre_06h_e_09h_domingo,
+      quilometragem_entre_06h_e_09h_domingo,
+      partidas_entre_09h_e_12h_domingo,
+      quilometragem_entre_09h_e_12h_domingo,
+      partidas_entre_12h_e_15h_domingo,
+      quilometragem_entre_12h_e_15h_domingo,
+      partidas_entre_15h_e_18h_domingo,
+      quilometragem_entre_15h_e_18h_domingo,
+      partidas_entre_18h_e_21h_domingo,
+      quilometragem_entre_18h_e_21h_domingo,
       partidas_entre_21h_e_24h_domingo,
       quilometragem_entre_21h_e_24h_domingo,
       partidas_entre_24h_e_03h_diaseguinte_domingo,
       quilometragem_entre_24h_e_03h_diaseguinte_domingo,
       partidas_entre_00h_e_03h_ponto_facultativo,
       quilometragem_entre_00h_e_03h_ponto_facultativo,
-      partidas_entre_03h_e_12h_ponto_facultativo,
-      quilometragem_entre_03h_e_12h_ponto_facultativo,
-      partidas_entre_12h_e_21h_ponto_facultativo,
-      quilometragem_entre_12h_e_21h_ponto_facultativo,
+      partidas_entre_03h_e_06h_ponto_facultativo,
+      quilometragem_entre_03h_e_06h_ponto_facultativo,
+      partidas_entre_06h_e_09h_ponto_facultativo,
+      quilometragem_entre_06h_e_09h_ponto_facultativo,
+      partidas_entre_09h_e_12h_ponto_facultativo,
+      quilometragem_entre_09h_e_12h_ponto_facultativo,
+      partidas_entre_12h_e_15h_ponto_facultativo,
+      quilometragem_entre_12h_e_15h_ponto_facultativo,
+      partidas_entre_15h_e_18h_ponto_facultativo,
+      quilometragem_entre_15h_e_18h_ponto_facultativo,
+      partidas_entre_18h_e_21h_ponto_facultativo,
+      quilometragem_entre_18h_e_21h_ponto_facultativo,
       partidas_entre_21h_e_24h_ponto_facultativo,
       quilometragem_entre_21h_e_24h_ponto_facultativo,
       partidas_entre_24h_e_03h_diaseguinte_ponto_facultativo,
