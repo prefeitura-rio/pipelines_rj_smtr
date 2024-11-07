@@ -42,7 +42,8 @@ from pipelines.migration.tasks import (
     upload_raw_data_to_gcs,
     upload_staging_data_to_gcs,
 )
-from pipelines.schedules import every_5_minutes
+
+# from pipelines.schedules import every_5_minutes
 from pipelines.tasks import get_scheduled_timestamp, parse_timestamp_to_string
 
 # from pipelines.capture.templates.flows import create_default_capture_flow
