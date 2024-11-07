@@ -2,7 +2,7 @@
 """
 Flows for gtfs
 
-DBT 2024-09-24
+DBT 2024-11-07
 """
 
 from prefect import Parameter, case, task
@@ -247,7 +247,7 @@ gtfs_captura_nova.state_handlers = [
     handler_initialize_sentry,
     handler_skip_if_running,
 ]
-gtfs_captura_nova.schedule = every_5_minutes
+# gtfs_captura_nova.schedule = every_5_minutes
 
 
 # with Flow(
