@@ -18,6 +18,10 @@ models:
         description: Data e hora da chegada da viagem em GMT-3
         data_type: datetime
         quote: true
+      - name: modo
+        description: "Tipo de transporte (BRT, Ônibus Executivo, ...)"
+        data_type: string
+        quote: true
       - name: id_veiculo
         description: Código identificador do veículo (número de ordem)
         data_type: string
@@ -35,7 +39,7 @@ models:
         data_type: string
         quote: true
       - name: servico
-        description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação"
+        description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...)"
         data_type: string
         quote: true
       - name: sentido
@@ -53,6 +57,89 @@ models:
       - name: datetime_captura
         description: Data e hora da captura da integração em GMT-3
         data_type: string
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+  - name: viagem_validacao
+    description: Tabela que informa se a viagem informada está ou não válida de acordo com os parâmetros definidos.
+    columns:
+      - name: data
+        description: Data da viagem (partição).
+        data_type: date
+        quote: true
+      - name: id_viagem
+        description: Identificador único da viagem.
+        data_type: string
+        quote: true
+      - name: datetime_partida
+        description: Data e hora da partida da viagem em GMT-3.
+        data_type: datetime
+        quote: true
+      - name: datetime_chegada
+        description: Data e hora da chegada da viagem em GMT-3.
+        data_type: datetime
+        quote: true
+      - name: modo
+        description: "Tipo de transporte (BRT, Ônibus Executivo, ...)"
+        data_type: string
+        quote: true
+      - name: id_veiculo
+        description: Código identificador do veículo (número de ordem).
+        data_type: string
+        quote: true
+      - name: trip_id
+        description: Identificador de uma viagem da tabela trips do GTFS.
+        data_type: int64
+        quote: true
+      - name: route_id
+        description: Identificador de uma rota da tabela routes do GTFS.
+        data_type: string
+        quote: true
+      - name: shape_id
+        description: Identificador de um shape da tabela shapes do GTFS.
+        data_type: string
+        quote: true
+      - name: servico
+        description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...)."
+        data_type: string
+        quote: true
+      - name: sentido
+        description: Sentido de operação do serviço.
+        data_type: string
+        quote: true
+      - name: quantidade_segmentos_verificados
+        description: Quantidade de segmentos considerados no validação.
+        data_type: int64
+        quote: true
+      - name: quantidade_segmentos_validos
+        description: Quantidade de segmentos com pelo menos um sinal de gps.
+        data_type: int64
+        quote: true
+      - name: indice_validacao
+        description: quantidade_segmentos_validos dividido por quantidade_segmentos_verificados
+        data_type: float64
+        quote: true
+      - name: indicador_viagem_valida
+        description: Indica se a viagem está válida ou não.
+        data_type: boolean
+        quote: true
+      - name: parametro_validacao
+        description: Valor mínimo do indice_validacao para que a viagem seja validada.
+        data_type: float64
+        quote: true
+      - name: feed_version
+        description: String que indica a versão atual do conjunto de dados GTFS.
+        data_type: string
+        quote: true
+      - name: feed_start_date
+        description: Data inicial do feed (versão).
+        data_type: date
         quote: true
       - name: versao
         description: "{{ doc('versao') }}"
