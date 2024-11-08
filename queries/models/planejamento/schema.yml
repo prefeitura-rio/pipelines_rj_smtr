@@ -24,7 +24,7 @@ models:
         data_type: string
         quote: true
       - name: feed_start_date
-        description: Partição) Data inicial do feed (versão).
+        description: "{{ doc('feed_start_date') }}"
         data_type: date
         quote: true
       - name: feed_end_date
@@ -87,7 +87,7 @@ models:
         data_type: string
         quote: true
       - name: feed_start_date
-        description: (Partição) Data inicial do feed (versão).
+        description: "{{ doc('feed_start_date') }}"
         data_type: date
         quote: true
       - name: feed_end_date

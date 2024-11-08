@@ -7,23 +7,23 @@ models:
         data_type: date
         quote: true
       - name: id_viagem
-        description: Identificador único da viagem
+        description: "{{ doc('id_viagem') }}"
         data_type: string
         quote: true
       - name: datetime_partida
-        description: Data e hora da partida da viagem em GMT-3
+        description: "{{ doc('datetime_partida') }}"
         data_type: datetime
         quote: true
       - name: datetime_chegada
-        description: Data e hora da chegada da viagem em GMT-3
+        description: "{{ doc('datetime_chegada') }}"
         data_type: datetime
         quote: true
       - name: modo
-        description: "Tipo de transporte (BRT, Ônibus Executivo, ...)"
+        description: "{{ doc('modo') }}"
         data_type: string
         quote: true
       - name: id_veiculo
-        description: Código identificador do veículo (número de ordem)
+        description: "{{ doc('id_veiculo') }}"
         data_type: string
         quote: true
       - name: trip_id
@@ -39,11 +39,11 @@ models:
         data_type: string
         quote: true
       - name: servico
-        description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...)"
+        description: "{{ doc('servico') }}"
         data_type: string
         quote: true
       - name: sentido
-        description: Sentido de operação do serviço
+        description: "{{ doc('sentido') }}"
         data_type: string
         quote: true
       - name: fonte_gps
@@ -74,23 +74,23 @@ models:
         data_type: date
         quote: true
       - name: id_viagem
-        description: Identificador único da viagem.
+        description: "{{ doc('id_viagem') }}"
         data_type: string
         quote: true
       - name: datetime_partida
-        description: Data e hora da partida da viagem em GMT-3.
+        description: "{{ doc('datetime_partida') }}"
         data_type: datetime
         quote: true
       - name: datetime_chegada
-        description: Data e hora da chegada da viagem em GMT-3.
+        description: "{{ doc('datetime_chegada') }}"
         data_type: datetime
         quote: true
       - name: modo
-        description: "Tipo de transporte (BRT, Ônibus Executivo, ...)"
+        description: "{{ doc('modo') }}"
         data_type: string
         quote: true
       - name: id_veiculo
-        description: Código identificador do veículo (número de ordem).
+        description: "{{ doc('id_veiculo') }}"
         data_type: string
         quote: true
       - name: trip_id
@@ -106,11 +106,11 @@ models:
         data_type: string
         quote: true
       - name: servico
-        description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...)."
+        description: "{{ doc('servico') }}"
         data_type: string
         quote: true
       - name: sentido
-        description: Sentido de operação do serviço.
+        description: "{{ doc('sentido') }}"
         data_type: string
         quote: true
       - name: quantidade_segmentos_verificados
@@ -138,7 +138,7 @@ models:
         data_type: string
         quote: true
       - name: feed_start_date
-        description: Data inicial do feed (versão).
+        description: "{{ doc('feed_start_date') }}"
         data_type: date
         quote: true
       - name: versao
