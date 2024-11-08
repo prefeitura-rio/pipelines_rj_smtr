@@ -55,7 +55,7 @@ with
                     {% if is_incremental() %}
                         date("{{ var('date_range_start') }}"),
                         date("{{ var('date_range_end') }}")
-                    {% else %}date("2024-09-01"), current_date("America/Sao_Paulo")
+                    {% else %}date("2024-10-12"), current_date("America/Sao_Paulo")
                     {% endif %}
                 )
             ) as data
@@ -96,7 +96,7 @@ with
             cd.exception_type,
             cd.feed_start_date,
         {# from `rj-smtr.gtfs.calendar_dates` cd #}
-        from {{ ref("calendar_gtfs") }} cd
+        from {{ ref("calendar_dates_gtfs") }} cd
         join
             modificacao_manual m
             on cd.date = m.data
@@ -181,7 +181,7 @@ select
         when "D_REG" in unnest(c.service_ids)
         then "Domingo"
         when "S_REG" in unnest(c.service_ids)
-        then "Sábado"
+        then "Sabado"
         when "U_REG" in unnest(c.service_ids)
         then "Dia Útil"
     end as tipo_dia,
