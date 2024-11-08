@@ -7,6 +7,7 @@ import basedosdados as bd
 import requests
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
+from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
 
 from pipelines.constants import constants
@@ -19,7 +20,7 @@ from pipelines.treatment.templates.utils import (
 from pipelines.utils.dataplex import DataQuality, DataQualityCheckArgs
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.prefect import flow_is_running_local, rename_current_flow_run
-from pipelines.utils.utils import convert_timezone
+from pipelines.utils.utils import convert_timezone, cron_get_last_date
 
 # from pipelines.utils.utils import get_last_materialization_redis_key
 
@@ -119,7 +120,7 @@ def wait_data_sources(
     env: str,
     datetime_start: datetime,
     datetime_end: datetime,
-    data_sources: list[Union[SourceTable, DBTSelector]],
+    data_sources: list[Union[SourceTable, DBTSelector, dict]],
     skip: bool,
 ):
     """
@@ -129,7 +130,7 @@ def wait_data_sources(
         env (str): prod ou dev
         datetime_start (datetime): Datetime inicial da materialização
         datetime_end (datetime): Datetime final da materialização
-        data_sources (list[Union[SourceTable, DBTSelector]]): Fontes de dados para esperar
+        data_sources (list[Union[SourceTable, DBTSelector, dict]]): Fontes de dados para esperar
         skip (bool): se a verificação deve ser pulada ou não
     """
     if skip:
@@ -150,6 +151,22 @@ def wait_data_sources(
             elif isinstance(ds, DBTSelector):
                 name = f"{ds.name}"
                 complete = ds.is_up_to_date(env=env, timestamp=datetime_end)
+            elif isinstance(ds, dict):
+                # source dicionário utilizado para compatibilização com flows antigos
+                name = ds["redis_key"]
+                redis_client = get_redis_client()
+                last_materialization = datetime.strptime(
+                    redis_client.get(name)[ds["dict_key"]],
+                    ds["datetime_format"],
+                )
+                last_schedule = cron_get_last_date(
+                    cron_expr=ds["schedule_cron"],
+                    timestamp=datetime_end,
+                )
+                complete = last_materialization >= last_schedule - timedelta(
+                    hours=ds.get("delay_hours", 0)
+                )
+
             else:
                 raise NotImplementedError(f"Espera por fontes do tipo {type(ds)} não implementada")
 
