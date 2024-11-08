@@ -34,7 +34,7 @@ queries:
       location: us
       method: service-account
       priority: interactive
-      project: rj-smtr-dev
+      project: rj-smtr
       threads: 1
       type: bigquery
 
@@ -78,4 +78,4 @@ queries:
             spark.executor.instances: "2"
             spark.driver.memory: 4g
             spark.driver.memoryOverhead: 1g
-  target: prod
+  target: hmg
