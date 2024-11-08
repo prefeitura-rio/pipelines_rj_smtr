@@ -24,3 +24,9 @@ repos:
     rev: 6.0.0
     hooks:
     - id: flake8
+-   repo: https://github.com/tconbeer/sqlfmt
+    rev: v0.23.2
+    hooks:
+    -   id: sqlfmt
+        language_version: python
+        additional_dependencies: ['.[jinjafmt]']
