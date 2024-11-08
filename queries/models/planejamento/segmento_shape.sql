@@ -28,13 +28,19 @@ with
         from {{ ref("aux_segmento_shape") }}
     ),
     tunel as (
-        select st_union_agg(st_buffer(geometry, 50)) as buffer_tunel
+        select
+            st_union_agg(
+                st_buffer(geometry, {{ var("buffer_tunel_metros") }})
+            ) as buffer_tunel
         from {{ source("dados_mestres", "logradouro") }}
         where tipo = "Túnel"
 
     ),
     buffer_segmento as (
-        select *, st_buffer(segmento, 20) as buffer_completo, from aux_segmento
+        select
+            *,
+            st_buffer(segmento, {{ var("buffer_segmento_metros") }}) as buffer_completo,
+        from aux_segmento
     ),
     intercessao_segmento as (
         select
@@ -64,8 +70,10 @@ with
             s.*,
             st_intersects(s.segmento, t.buffer_tunel) as indicador_tunel,
             st_area(s.buffer) / st_area(s.buffer_completo)
-            < 0.5 as indicador_area_prejudicada,
-            s.comprimento_segmento < 990 as indicador_segmento_pequeno,
+            < {{ var("limite_reducao_area_buffer") }} as indicador_area_prejudicada,
+            s.comprimento_segmento
+            < {{ var("comprimento_minimo_segmento_shape") }}
+            as indicador_segmento_pequeno,
             cast(id_segmento as integer) as id_segmento_int
         from buffer_segmento_recortado s
         cross join tunel t

@@ -186,6 +186,13 @@ vars:
   ### Encontro de Contas ###
   encontro_contas_modo: ""
 
+  ### Viagens 2.0 ###
+
+  limite_reducao_area_buffer:  0.5
+  comprimento_minimo_segmento_shape: 990
+  buffer_segmento_metros: 20
+  buffer_tunel_metros: 50
+
 tests:
   rj_smtr:
     where: "DATA BETWEEN DATE('__date_range_start__') AND DATE('__date_range_end__')"
