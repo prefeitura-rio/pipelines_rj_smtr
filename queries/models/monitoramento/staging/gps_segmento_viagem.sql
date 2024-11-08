@@ -11,9 +11,9 @@
 }}
 
 {% set incremental_filter %}
-        data between
-            date('{{ var("date_range_start") }}')
-            and date('{{ var("date_range_end") }}')
+    data between
+        date('{{ var("date_range_start") }}')
+        and date('{{ var("date_range_end") }}')
 {% endset %}
 
 {% set calendario = ref("calendario") %}
@@ -95,6 +95,7 @@ with
             v.shape_id,
             v.servico,
             v.sentido,
+            c.tipo_dia,
             c.feed_start_date,
             c.feed_version
         from {{ ref("viagem_informada_monitoramento") }} v
@@ -116,6 +117,7 @@ with
             s.indicador_segmento_desconsiderado,
             v.servico,
             v.sentido,
+            v.tipo_dia,
             feed_version,
             feed_start_date
         from viagem v
@@ -138,6 +140,7 @@ select
     ifnull(g.quantidade_gps, 0) as quantidade_gps,
     v.feed_version,
     v.feed_start_date,
+    v.tipo_dia,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
 from viagem_segmento v
