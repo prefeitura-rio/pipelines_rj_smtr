@@ -167,9 +167,9 @@ def wait_data_sources(
                     cron_expr=ds["schedule_cron"],
                     timestamp=datetime_end,
                 )
-                complete = last_materialization >= last_schedule - timedelta(
-                    hours=ds.get("delay_hours", 0)
-                )
+                complete = convert_timezone(
+                    timestamp=last_materialization
+                ) >= last_schedule - timedelta(hours=ds.get("delay_hours", 0))
 
             else:
                 raise NotImplementedError(f"Espera por fontes do tipo {type(ds)} não implementada")
