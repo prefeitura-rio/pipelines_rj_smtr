@@ -107,9 +107,10 @@ WITH
       {{ 'quilometragem_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_' ~ dia|lower }},
       {% else %}
       {{ 'partidas_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_diaseguinte_' ~ dia|lower }},
-      {{ 'quilometragem_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_diaseguinte_' ~ dia|lower }},
+      {{ 'quilometragem_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_diaseguinte_' ~ dia|lower }}
       {% endif %}
       {% endfor %}
+      {% if not loop.last %},{% endif %}
       {% endfor %}
     )
   )
