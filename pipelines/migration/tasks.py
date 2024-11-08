@@ -22,6 +22,7 @@ from prefect import Client, task
 from prefect.backend import FlowRunView
 from prefeitura_rio.pipelines_utils.dbt import run_dbt_model as run_dbt_model_func
 from prefeitura_rio.pipelines_utils.infisical import inject_bd_credentials
+from prefeitura_rio.pipelines_utils.io import get_root_path
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
@@ -43,7 +44,6 @@ from pipelines.migration.utils import (
     read_raw_data,
     save_raw_local_func,
     save_treated_local_func,
-    send_discord_message,
     upload_run_logs_to_bq,
 )
 from pipelines.utils.secret import get_secret
@@ -405,7 +405,8 @@ def create_local_partition_path(
     either to save raw or staging files.
     """
     data_folder = os.getenv("DATA_FOLDER", "data")
-    file_path = f"{os.getcwd()}/{data_folder}/{{mode}}/{dataset_id}/{table_id}"
+    root = str(get_root_path())
+    file_path = f"{root}/{data_folder}/{{mode}}/{dataset_id}/{table_id}"
     file_path += f"/{partitions}/{filename}.{{filetype}}"
     log(f"Creating file path: {file_path}")
     return file_path
@@ -629,6 +630,12 @@ def get_raw(  # pylint: disable=R0912
         )
 
         if response.ok:  # status code is less than 400
+            if not response.content and url in [
+                constants.GPS_SPPO_API_BASE_URL_V2.value,
+                constants.GPS_SPPO_API_BASE_URL.value,
+            ]:
+                error = "Dados de GPS vazios"
+
             if filetype == "json":
                 data = response.json()
 
@@ -1650,44 +1657,6 @@ def perform_checks_for_table(
         )
 
     return checks
-
-
-def format_send_discord_message(formatted_messages: list, webhook_url: str):
-    """
-    Format and send a message to discord
-
-    Args:
-        formatted_messages (list): The formatted messages
-        webhook_url (str): The webhook url
-
-    Returns:
-        None
-    """
-    formatted_message = "".join(formatted_messages)
-    log(formatted_message)
-    msg_ext = len(formatted_message)
-    if msg_ext > 2000:
-        log(f"** Message too long ({msg_ext} characters), will be split into multiple messages **")
-        # Split message into lines
-        lines = formatted_message.split("\n")
-        message_chunks = []
-        chunk = ""
-        for line in lines:
-            if len(chunk) + len(line) + 1 > 2000:  # +1 for the newline character
-                message_chunks.append(chunk)
-                chunk = ""
-            chunk += line + "\n"
-        message_chunks.append(chunk)  # Append the last chunk
-        for chunk in message_chunks:
-            send_discord_message(
-                message=chunk,
-                webhook_url=webhook_url,
-            )
-    else:
-        send_discord_message(
-            message=formatted_message,
-            webhook_url=webhook_url,
-        )
 
 
 ###############

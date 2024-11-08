@@ -2,7 +2,7 @@
 """
 Flows for gtfs
 
-DBT 2024-09-24
+DBT 2024-11-07
 """
 
 from prefect import Parameter, case, task
@@ -42,7 +42,8 @@ from pipelines.migration.tasks import (
     upload_raw_data_to_gcs,
     upload_staging_data_to_gcs,
 )
-from pipelines.schedules import every_5_minutes
+
+# from pipelines.schedules import every_5_minutes
 from pipelines.tasks import get_scheduled_timestamp, parse_timestamp_to_string
 
 # from pipelines.capture.templates.flows import create_default_capture_flow
@@ -145,11 +146,16 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 filename=unmapped(filename),
             )
 
+            data_versao_gtfs_str = parse_timestamp_to_string(
+                timestamp=data_versao_gtfs_task, pattern="%Y-%m-%d"
+            )
+
             raw_filepaths, primary_keys = get_raw_gtfs_files(
                 os_control=os_control,
                 local_filepath=local_filepaths,
                 regular_sheet_index=regular_sheet_index,
                 upload_from_gcs=upload_from_gcs,
+                data_versao_gtfs=data_versao_gtfs_str,
             )
 
             transform_raw_to_nested_structure_results = transform_raw_to_nested_structure.map(
@@ -242,7 +248,7 @@ gtfs_captura_nova.state_handlers = [
     handler_initialize_sentry,
     handler_skip_if_running,
 ]
-gtfs_captura_nova.schedule = every_5_minutes
+# gtfs_captura_nova.schedule = every_5_minutes
 
 
 # with Flow(
