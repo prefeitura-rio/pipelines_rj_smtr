@@ -72,7 +72,7 @@ class DBTSelector:
             )
         )
 
-        return last_datetime
+        return convert_timezone(timestamp=last_datetime)
 
     def get_datetime_end(self, timestamp: datetime) -> datetime:
         """
@@ -99,7 +99,9 @@ class DBTSelector:
         """
         last_materialization = self.get_last_materialized_datetime(env=env)
         last_schedule = cron_get_last_date(cron_expr=self.schedule_cron, timestamp=timestamp)
-        return last_materialization >= last_schedule - timedelta(hours=self.incremental_delay_hours)
+        return convert_timezone(timestamp=last_materialization) >= last_schedule - timedelta(
+            hours=self.incremental_delay_hours
+        )
 
     def get_next_schedule_datetime(self, timestamp: datetime) -> datetime:
         """
