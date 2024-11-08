@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.1.10] - 2024-11-08
+
+### Corrigido
+
+- Correção do planejamento dos serviços no domingo de `Eleição` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/308)
+
 ## [1.1.9] - 2024-09-10
 
 ### Alterado
