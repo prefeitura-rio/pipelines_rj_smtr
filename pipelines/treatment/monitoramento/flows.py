@@ -28,7 +28,7 @@ VIAGEM_VALIDACAO_MATERIALIZACAO = create_default_materialization_flow(
     selector=constants.VIAGEM_VALIDACAO_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[
-        constants.VIAGEM_INFORMADA_SELECTOR.value,
+        # constants.VIAGEM_INFORMADA_SELECTOR.value,
         {
             "redis_key": f"{smtr_constants.GPS_SPPO_DATASET_ID.value}\
 .{smtr_constants.GPS_SPPO_TREATED_TABLE_ID.value}",
