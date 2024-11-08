@@ -9,7 +9,7 @@
 }}
 
 {% if execute %}
-  {% if var("data_versao_gtfs") < var("DATA_FAIXA_HORARIA_V2") %}
+  {% if var("data_versao_gtfs") < var("DATA_SUBSIDIO_V11_INICIO") %}
     {% set intervalos = [
       {'inicio': '00', 'fim': '03'},
       {'inicio': '03', 'fim': '12'},
