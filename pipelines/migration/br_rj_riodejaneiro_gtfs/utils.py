@@ -489,9 +489,16 @@ def processa_ordem_servico_faixa_horaria(
         for dia in dias
         for formato in formatos
     }
+    fh_columns["Serviço"] = "servico"
+    fh_columns["Consórcio"] = "consorcio"
     fh_columns["tipo_os"] = "tipo_os"
 
-    ordem_servico_faixa_horaria.columns = ordem_servico_faixa_horaria.columns.str.replace("\n", " ")
+    ordem_servico_faixa_horaria.columns = (
+        ordem_servico_faixa_horaria.columns.str.replace("\n", " ")
+        .str.strip()
+        .str.replace(r"\s+", " ", regex=True)
+    )
+
     ordem_servico_faixa_horaria = ordem_servico_faixa_horaria.rename(columns=fh_columns)
 
     if "tipo_os" not in ordem_servico_faixa_horaria.columns:
