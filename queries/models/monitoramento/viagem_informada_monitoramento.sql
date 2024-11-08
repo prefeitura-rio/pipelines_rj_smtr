@@ -28,13 +28,16 @@
 
         {% set partitions = run_query(partitions_query).columns[0].values() %}
 
-        {% set gtfs_feeds_query %}
+        {% if partitions | length > 0 %}
+            {% set gtfs_feeds_query %}
             select distinct concat("'", feed_start_date, "'") as feed_start_date
             from {{ calendario }}
-            where {{ incremental_filter }}
-        {% endset %}
+            where data in ({{ partitions | join(", ") }})
+            {% endset %}
 
-        {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
+            {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
+        {% else %} {% set gtfs_feeds = [] %}
+        {% endif %}
     {% endif %}
 
 {% endif %}
@@ -121,7 +124,7 @@ with
             v.datetime_captura
         from deduplicado v
         join calendario c using (data)
-        left join routes r using (route_id, feed_start_date, feed_info)
+        left join routes r using (route_id, feed_start_date, feed_version)
     )
 select
     *,
