@@ -17,6 +17,7 @@ with
             id_viagem,
             datetime_partida,
             datetime_chegada,
+            modo,
             id_veiculo,
             trip_id,
             route_id,
