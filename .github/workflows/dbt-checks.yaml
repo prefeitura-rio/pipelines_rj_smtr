@@ -8,6 +8,9 @@ on:
     paths:
       - "queries/**/*.sql"
 
+env:
+  DBT_USER: ${{ github.actor }}
+
 jobs:
   check-files:
     name: Compile DBT models and format SQL
