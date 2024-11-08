@@ -17,9 +17,9 @@
 with
     aux_segmento as (
         select
-            feed_version,
             feed_start_date,
             feed_end_date,
+            feed_version,
             shape_id,
             id_segmento,
             st_geogfromtext(wkt_segmento) as segmento,
@@ -94,9 +94,9 @@ from indicador_validacao_shape
     union all
 
     select
-        s.feed_version,
         s.feed_start_date,
         fi.feed_end_date,
+        s.feed_version,
         s.shape_id,
         s.id_segmento,
         s.segmento,

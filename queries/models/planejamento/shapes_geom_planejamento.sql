@@ -34,9 +34,9 @@ with
         {% endif %}
     )
 select
-    feed_version,
     feed_start_date,
     feed_end_date,
+    feed_version,
     shape_id,
     st_makeline(array_agg(ponto_shape order by shape_pt_sequence)) as shape,
     concat(
