@@ -62,8 +62,9 @@ def run_dbt_tests(
     os.system(run_command)
 
 
-from utils import run_dbt_model
 from datetime import datetime, timedelta
+
+from utils import run_dbt_model
 
 # ordem_servico_trips_shapes_gtfs ##
 run_dbt_model(
