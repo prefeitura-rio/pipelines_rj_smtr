@@ -13,8 +13,8 @@ WITH
       id_veiculo,
       datetime_transacao
     FROM
-      {{ ref("transacao") }}
-      -- rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao
+      -- {{ ref("transacao") }}
+      rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao
     WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE_ADD(DATE("{{ var("end_date") }}"), INTERVAL 1 DAY)
@@ -25,8 +25,8 @@ WITH
       id_veiculo,
       datetime_transacao
     FROM
-      {{ ref("transacao_riocard") }}
-      -- rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard
+      -- {{ ref("transacao_riocard") }}
+      rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard
     WHERE
       data BETWEEN DATE("{{ var("start_date") }}")
       AND DATE_ADD(DATE("{{ var("end_date") }}"), INTERVAL 1 DAY)
@@ -42,8 +42,8 @@ WITH
       latitude,
       longitude
     FROM
-      {{ ref("gps_validador") }}
-      -- rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador
+      -- {{ ref("gps_validador") }}
+      rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador
     WHERE
       data BETWEEN DATE("{{ var("start_date") }}")
       AND DATE_ADD(DATE("{{ var("end_date") }}"), INTERVAL 1 DAY)
@@ -72,8 +72,8 @@ WITH
     id_veiculo,
     status
   FROM
-    {{ ref("sppo_veiculo_dia") }}
-    -- rj-smtr.veiculo.sppo_veiculo_dia
+    -- {{ ref("sppo_veiculo_dia") }}
+    rj-smtr.veiculo.sppo_veiculo_dia
   WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE("{{ var("end_date") }}") ),

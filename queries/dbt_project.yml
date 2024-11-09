@@ -91,7 +91,7 @@ vars:
   trips_staging: "rj-smtr-staging.br_rj_riodejaneiro_sigmob_staging.trips"
 
   ## GTFS
-  data_versao_gtfs: "2024-05-03" # fixada última data disponível
+  data_versao_gtfs: "2024-09-29" # fixada última data disponível
 
   ### Subsídio SPPO (Ônibus) ###
   buffer: 500 # distância em metros para buffer
@@ -197,10 +197,10 @@ models:
   rj_smtr:
     projeto_subsidio_sppo:
       +materialized: view
-      +schema: projeto_subsidio_sppo
+      +schema:  victor__projeto_subsidio_sppo
       deprecated:
         +materialized: view
-        +schema: projeto_subsidio_sppo
+        +schema:  victor__projeto_subsidio_sppo
     br_rj_riodejaneiro_sigmob:
       +materialized: view
       +schema: br_rj_riodejaneiro_sigmob
@@ -218,10 +218,10 @@ models:
       +schema: br_rj_riodejaneiro_veiculos
     dashboard_subsidio_sppo:
       +materialized: view
-      +schema: dashboard_subsidio_sppo
+      +schema:  victor__dashboard_subsidio_sppo
     dashboard_subsidio_sppo_staging:
       +materialized: view
-      +schema: dashboard_subsidio_sppo_staging
+      +schema:  victor__dashboard_subsidio_sppo_staging
     veiculo:
       +materialized: view
       +schema: veiculo
@@ -300,18 +300,18 @@ models:
     financeiro:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
-      +schema: financeiro
+      +schema:  victor__financeiro
       staging:
         +materialized: incremental
         +incremental_strategy: insert_overwrite
-        +schema: financeiro_staging
+        +schema:  victor__financeiro_staging
     dashboard_subsidio_sppo_v2:
       +materialized: view
-      +schema: dashboard_subsidio_sppo_v2
+      +schema:  victor__dashboard_subsidio_sppo_v2
     subsidio:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
-      +schema: subsidio
+      +schema:  victor__subsidio
     catalogo:
       +materialized: view
       +schema: catalogo

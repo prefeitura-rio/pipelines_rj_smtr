@@ -49,7 +49,7 @@ with
                         and (
                             (
                                 o.tipo_dia = t.tipo_dia
-                                and o.tipo_os not in ("CNU", "Eleição")
+                                and o.tipo_os not in ("CNU", "Eleição", "Enem")
                             )
                             or (
                                 o.tipo_dia = "Ponto Facultativo"
@@ -222,8 +222,8 @@ select
 from ordem_servico_trips as o
 left join shapes as s using (feed_version, feed_start_date, shape_id)
 left join
-    {{ ref("ordem_servico_faixa_horaria") }} as fh
-    -- `rj-smtr.planejamento.ordem_servico_faixa_horaria` as fh
+      {{ ref("ordem_servico_faixa_horaria") }} AS fh
+      -- `rj-smtr.planejamento.ordem_servico_faixa_horaria` as fh 
     using (
         feed_version, feed_start_date, tipo_os, tipo_dia, servico
     )
