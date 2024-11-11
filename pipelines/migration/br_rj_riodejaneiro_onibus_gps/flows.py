@@ -243,6 +243,9 @@ with Flow(
                 upstream=True,
             )
 
+            date_range_start = date_range["date_range_start"]
+            date_range_end = date_range["date_range_end"]
+
             RUN_TEST, datetime_start, datetime_end = check_dbt_test_run(
                 date_range_start, date_range_end, run_time_test, upstream_tasks=[RUN_FALSE]
             )
