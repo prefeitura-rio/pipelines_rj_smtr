@@ -192,6 +192,7 @@ vars:
   comprimento_minimo_segmento_shape: 990
   buffer_segmento_metros: 20
   buffer_tunel_metros: 50
+  parametro_validacao: 0.9
 
 tests:
   rj_smtr:
