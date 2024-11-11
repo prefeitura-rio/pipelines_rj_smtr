@@ -501,6 +501,12 @@ def processa_ordem_servico_faixa_horaria(
 
     ordem_servico_faixa_horaria = ordem_servico_faixa_horaria.rename(columns=fh_columns)
 
+    for col in ordem_servico_faixa_horaria.columns:
+        if "quilometragem" in col:
+            ordem_servico_faixa_horaria[col] = (
+                ordem_servico_faixa_horaria[col].astype(str).replace(",", ".")
+            )
+
     if "tipo_os" not in ordem_servico_faixa_horaria.columns:
         ordem_servico_faixa_horaria["tipo_os"] = "Regular"
 
