@@ -353,6 +353,7 @@ WITH
       WHEN data = DATE(2024,09,13) THEN "Rock in Rio"
       WHEN data BETWEEN DATE(2024,09,14) AND DATE(2024,09,15) THEN "Verão + Rock in Rio"
       WHEN data BETWEEN DATE(2024,09,19) AND DATE(2024,09,22) THEN "Rock in Rio"
+      WHEN data = DATE(2024,10,06) THEN "Eleição"
       WHEN data = DATE(2024,11,03) THEN "Enem"
       WHEN data = DATE(2024,11,10) THEN "Enem"
       ELSE "Regular"
