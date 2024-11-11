@@ -126,6 +126,7 @@ vars:
   # Feature Apuração por novas faixas horárias (RESOLUÇÃO SMTR 3777/2024)
   DATA_SUBSIDIO_V10_INICIO: "2024-11-01"
   # valor_subsidio: "`rj-smtr-dev.projeto_subsidio_sppo.valor_subsidio`"
+  DATA_SUBSIDIO_V11_INICIO: "2024-11-06"
 
   # Recursos #
   recurso_staging: "rj-smtr-staging.projeto_subsidio_sppo_staging.recurso"
