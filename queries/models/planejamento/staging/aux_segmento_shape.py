@@ -29,7 +29,7 @@ def cut(line, distance):
 
     dist_mod = line_len % distance
     dist_range = list(np.arange(0, line_len, distance))
-    middle_index = len(dist_range) // 2
+    middle_index = (len(dist_range) // 2) + 1
 
     last_final_dist = 0
     lines = []
