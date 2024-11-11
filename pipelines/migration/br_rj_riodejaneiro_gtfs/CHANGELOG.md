@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.1.4] - 2024-11-07
+
+### Alterado
+
+- Refatora função `processa_ordem_servico_faixa_horaria` no arquivo `utils.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/306)
+
 ## [1.1.3] - 2024-10-30
 
 ### Alterado

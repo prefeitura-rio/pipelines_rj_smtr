@@ -1,8 +1,16 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.0.7] - 2024-11-11
+
+### Alterado
+
+- Alterado o tipo_os de `2024-11-03` e `2024-11-10` e  para `Enem`  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/311)
+
+- Alterado o tipo_dia de `2024-10-21`, `2024-10-28`, `2024-11-18`, `2024-11-19` e  para `Ponto Facultativo`  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/311)
+
 ## [9.0.6] - 2024-10-22
 
-### Corrigido
+### Alterado
 
 - Alterado o tipo_os de 2024-10-06 para `Eleição` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/281)
 
