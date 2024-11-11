@@ -47,8 +47,8 @@ WITH
     SAFE_CAST(JSON_VALUE(content, "$.partidas_entre_{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h_{{ dia|lower }}") AS STRING) AS {{ 'partidas_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_' ~ dia|lower }},
     SAFE_CAST(JSON_VALUE(content, "$.quilometragem_entre_{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h_{{ dia|lower }}") AS STRING) AS {{ 'quilometragem_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_' ~ dia|lower }},
     {% else %}
-    SAFE_CAST(JSON_VALUE(content, "$.partidas_entre_{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h_diaseguinte_{{ dia|lower }}") AS STRING) AS {{ 'partidas_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_diaseguinte_' ~ dia|lower }},
-    SAFE_CAST(JSON_VALUE(content, "$.quilometragem_entre_{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h_diaseguinte_{{ dia|lower }}") AS STRING) AS {{ 'quilometragem_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_diaseguinte_' ~ dia|lower }},
+    SAFE_CAST(JSON_VALUE(content, "$.partidas_entre_{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h_dia_seguinte_{{ dia|lower }}") AS STRING) AS {{ 'partidas_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_dia_seguinte_' ~ dia|lower }},
+    SAFE_CAST(JSON_VALUE(content, "$.quilometragem_entre_{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h_dia_seguinte_{{ dia|lower }}") AS STRING) AS {{ 'quilometragem_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_dia_seguinte_' ~ dia|lower }},
     {% endif %}
     {% endfor %}
     {% endfor %}
@@ -76,7 +76,7 @@ WITH
       {% if intervalo.inicio != '24' %}
       WHEN column_name LIKE '%{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h%' THEN '{{ intervalo.inicio }}:00:00'
       {% else %}
-      WHEN column_name LIKE '%{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h_diaseguinte%' THEN '{{ intervalo.inicio }}:00:00'
+      WHEN column_name LIKE '%{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h_dia_seguinte%' THEN '{{ intervalo.inicio }}:00:00'
       {% endif %}
       {% endfor %}
     END AS faixa_horaria_inicio,
@@ -85,7 +85,7 @@ WITH
       {% if intervalo.inicio != '24' %}
       WHEN column_name LIKE '%{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h%' THEN '{{ '%02d'|format(intervalo.fim|int - 1) }}:59:59'
       {% else %}
-      WHEN column_name LIKE '%{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h_diaseguinte%' THEN '26:59:59'
+      WHEN column_name LIKE '%{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h_dia_seguinte%' THEN '26:59:59'
       {% endif %}
       {% endfor %}
     END AS faixa_horaria_fim,
@@ -106,8 +106,8 @@ WITH
       {{ 'partidas_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_' ~ dia|lower }},
       {{ 'quilometragem_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_' ~ dia|lower }},
       {% else %}
-      {{ 'partidas_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_diaseguinte_' ~ dia|lower }},
-      {{ 'quilometragem_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_diaseguinte_' ~ dia|lower }}
+      {{ 'partidas_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_dia_seguinte_' ~ dia|lower }},
+      {{ 'quilometragem_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_dia_seguinte_' ~ dia|lower }}
       {% endif %}
       {% endfor %}
       {% if not loop.last %},{% endif %}
