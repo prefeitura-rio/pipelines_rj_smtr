@@ -34,7 +34,7 @@ queries:
       location: us
       method: service-account
       priority: interactive
-      project: rj-smtr
+      project: rj-smtr-dev
       threads: 1
       type: bigquery
 
