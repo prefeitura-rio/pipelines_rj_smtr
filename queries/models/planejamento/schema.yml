@@ -20,7 +20,7 @@ models:
     description: Tabela contendo os shapes segmentados usados na validação de viagens.
     columns:
       - name: feed_version
-        description: String que indica a versão atual do conjunto de dados GTFS.
+        description: "{{ doc('feed_version') }}"
         data_type: string
         quote: true
       - name: feed_start_date
@@ -83,7 +83,7 @@ models:
     description: Tabela contendo shapes em formatos geográficos
     columns:
       - name: feed_version
-        description: String que indica a versão atual do conjunto de dados GTFS.
+        description: "{{ doc('feed_version') }}"
         data_type: string
         quote: true
       - name: feed_start_date

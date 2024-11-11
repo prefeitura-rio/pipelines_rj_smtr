@@ -134,11 +134,11 @@ models:
         data_type: float64
         quote: true
       - name: feed_version
-        description: String que indica a versão atual do conjunto de dados GTFS.
+        description: "{{ doc('feed_version') }}"
         data_type: string
         quote: true
       - name: feed_start_date
-        description: "{{ doc('feed_start_date') }}"
+        description: "Data inicial do feed (versão)."
         data_type: date
         quote: true
       - name: versao
