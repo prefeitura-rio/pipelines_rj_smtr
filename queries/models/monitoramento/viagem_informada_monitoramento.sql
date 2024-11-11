@@ -112,7 +112,12 @@ with
             v.id_viagem,
             v.datetime_partida,
             v.datetime_chegada,
-            if(r.route_type = '200', 'Ônibus Executivo', 'Ônibus SPPO') as modo,
+            case
+                when r.route_type = '200'
+                then 'Ônibus Executivo'
+                when r.route_type = '700'
+                then 'Ônibus SPPO'
+            end as modo,
             v.id_veiculo,
             v.trip_id,
             v.route_id,
