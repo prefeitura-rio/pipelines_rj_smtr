@@ -14,9 +14,6 @@
         and date('{{ var("date_range_end") }}')
 {% endset %}
 
-
-{% set parametro_validacao = 0.9 %}
-
 with
     contagem as (
         select
@@ -33,6 +30,7 @@ with
             sentido,
             count(*) as quantidade_segmentos_verificados,
             countif(quantidade_gps > 0) as quantidade_segmentos_validos,
+            service_ids,
             tipo_dia,
             feed_version,
             feed_start_date
@@ -52,6 +50,7 @@ with
             shape_id,
             servico,
             sentido,
+            service_ids,
             tipo_dia,
             feed_version,
             feed_start_date
@@ -73,6 +72,7 @@ with
             quantidade_segmentos_validos,
             quantidade_segmentos_validos
             / quantidade_segmentos_verificados as indice_validacao,
+            service_ids,
             tipo_dia,
             feed_version,
             feed_start_date
@@ -83,25 +83,24 @@ with
             feed_start_date,
             feed_version,
             route_id,
-            case
-                when service_id like "D_%"
-                then "Domingo"
-                when service_id like "S_%"
-                then "Sabado"
-                when service_id like "U_%"
-                then "Dia Útil"
-            end as tipo_dia
+            array_agg(service_id) as service_ids,
         from {{ ref("trips_gtfs") }}
-        where
-            (service_id like "D_%" or service_id like "S_%" or service_id like "U_%")
-            {% if is_incremental() %}
-                and feed_start_date in ({{ gtfs_feeds | join(", ") }})
-            {% endif %}
+        {% if is_incremental() %}
+            where feed_start_date in ({{ gtfs_feeds | join(", ") }})
+        {% endif %}
+        group by 1, 2, 3
     ),
     servicos_planejados as (
-        select i.*, t.tipo_dia is not null as indicador_servico_planejado
+        select
+            i.*,
+            (
+                select count(*)
+                from unnest(i.service_ids) as service_id
+                join unnest(t.service_ids) as service_id using (service_id)
+            )
+            > 0 as indicador_servico_planejado
         from indice i
-        left join trips t using (feed_start_date, feed_version, route_id, tipo_dia)
+        left join trips t using (feed_start_date, feed_version, route_id)
     )
 select
     data,
@@ -118,11 +117,11 @@ select
     quantidade_segmentos_verificados,
     quantidade_segmentos_validos,
     indice_validacao,
-    indice_validacao >= {{ parametro_validacao }} as indicador_trajeto_valido,
+    indice_validacao >= {{ var("parametro_validacao") }} as indicador_trajeto_valido,
     indicador_servico_planejado,
-    indice_validacao >= {{ parametro_validacao }}
+    indice_validacao >= {{ var("parametro_validacao") }}
     and indicador_servico_planejado as indicador_viagem_valida,
-    {{ parametro_validacao }} as parametro_validacao,
+    {{ var("parametro_validacao") }} as parametro_validacao,
     tipo_dia,
     feed_version,
     feed_start_date,

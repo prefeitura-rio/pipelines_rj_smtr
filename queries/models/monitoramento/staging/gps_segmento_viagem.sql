@@ -90,6 +90,7 @@ with
             v.shape_id,
             v.servico,
             v.sentido,
+            c.service_ids,
             c.tipo_dia,
             c.feed_start_date,
             c.feed_version
@@ -112,6 +113,7 @@ with
             s.indicador_segmento_desconsiderado,
             v.servico,
             v.sentido,
+            v.service_ids,
             v.tipo_dia,
             feed_version,
             feed_start_date
@@ -135,6 +137,7 @@ select
     ifnull(g.quantidade_gps, 0) as quantidade_gps,
     v.feed_version,
     v.feed_start_date,
+    v.service_ids,
     v.tipo_dia,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
