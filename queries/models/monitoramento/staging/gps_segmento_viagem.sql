@@ -51,12 +51,7 @@ with
             c.feed_start_date
         from {{ ref("gps_viagem") }} gv
         join calendario c using (data)
-        {% if is_incremental() %}
-            where
-                data between date_sub(
-                    date('{{ var("date_range_start") }}'), interval 1 day
-                ) and date('{{ var("date_range_end") }}')
-        {% endif %}
+        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
     segmento as (
         select

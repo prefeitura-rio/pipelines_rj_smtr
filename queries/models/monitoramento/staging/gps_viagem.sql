@@ -42,7 +42,7 @@ with
             {% if is_incremental() %}
                 data between date_sub(
                     date('{{ var("date_range_start") }}'), interval 1 day
-                ) and date_sub(date('{{ var("date_range_end") }}'))
+                ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
             {% else %} data >= date("2024-10-11")
             {% endif %}
 
@@ -55,7 +55,7 @@ with
             {% if is_incremental() %}
                 data between date_sub(
                     date('{{ var("date_range_start") }}'), interval 1 day
-                ) and date_sub(date('{{ var("date_range_end") }}'))
+                ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
             {% else %} data >= date("2024-10-11")
             {% endif %}
     ),
