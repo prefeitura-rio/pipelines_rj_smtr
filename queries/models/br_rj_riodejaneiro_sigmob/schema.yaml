@@ -1,159 +1,159 @@
-version: 2
+# version: 2
 
-models:
-  - name: data_versao_efetiva
-    description: "Especifica qual data versao mais recente disponível para uma determinada data (Descontinuada a partir de 2022-09-13)."
-    columns:
-      - name: data
-        description: "The primary key for this table"
-  #       tests:
-  #         - not_null:
-  #             partition_column: data
-      - name: data_versao_efetiva_agency
-        description: "data_versao mais recente para a tabela descrita no sufixo"
-  #       tests:
-  #         - not_null:
-  #             partition_column: data
-      - name: data_versao_efetiva_calendar
-        description: "data_versao mais recente para a tabela descrita no sufixo"
-  #       tests:
-  #         - not_null:
-  #             partition_column: data
-      - name: data_versao_efetiva_frota_determinada
-        description: "data_versao mais recente para a tabela descrita no sufixo"
-  #       tests:
-  #         - not_null:
-  #             partition_column: data
-      - name: data_versao_efetiva_holidays
-        description: "data_versao mais recente para a tabela descrita no sufixo"
-  #       tests:
-  #         - not_null:
-  #             partition_column: data
-      - name: data_versao_efetiva_linhas
-        description: "data_versao mais recente para a tabela descrita no sufixo"
-  #       tests:
-  #         - not_null:
-  #             partition_column: data
-      - name: data_versao_efetiva_routes
-        description: "data_versao mais recente para a tabela descrita no sufixo"
-  #       tests:
-  #         - not_null:
-  #             partition_column: data
-      - name: data_versao_efetiva_shapes
-        description: "data_versao mais recente para a tabela descrita no sufixo"
-  #       tests:
-  #         - not_null:
-  #             partition_column: data
-      - name: data_versao_efetiva_stop_details
-        description: "data_versao mais recente para a tabela descrita no sufixo"
-  #       tests:
-  #         - not_null:
-  #             partition_column: data
-      - name: data_versao_efetiva_stop_times
-        description: "data_versao mais recente para a tabela descrita no sufixo"
-  #       tests:
-  #         - not_null:
-  #             partition_column: data
-      - name: data_versao_efetiva_stops
-        description: "data_versao mais recente para a tabela descrita no sufixo"
-  #       tests:
-  #         - not_null:
-  #             partition_column: data
-      - name: data_versao_efetiva_trips
-        description: "data_versao mais recente para a tabela descrita no sufixo"
-  #       tests:
-  #         - not_null:
-  #             partition_column: data
-  - name: routes
-    description: "View para os dados capturados em staging do cadastro dos serviços (Descontinuada a partir de 2022-09-13)."
-  - name: routes_desaninhada
-    description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro dos serviços (routes) (Descontinuada a partir de 2022-09-13)."
-    columns:
-      - name: route_id
-        tests:
-          - not_null:
-              partition_column: data_versao
-          - unique_key:
-              partition_column: data_versao
-              combined_keys: ""
-  - name: trips
-    description: "View para os dados capturados em staging do cadastro dos itinerários (Descontinuada a partir de 2022-09-13)."
-  - name: trips_desaninhada
-    description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro dos itinerários (trips) (Descontinuada a partir de 2022-09-13)."
-    columns:
-      - name: trip_id
-        description: "Identificador único para um itinerário"
-        tests:
-          - not_null:
-              partition_column: data_versao
-          - unique_key:
-              partition_column: data_versao
-              combined_keys: ""
-          - one_to_one:
-              partition_column: data_versao
-              to_table: ref('shapes_geom')
-      - name: route_id
-        description: "Identificador única para a route (serviço)"
-        tests:
-          - many_to_one:
-              foreign_key: route_id
-              partition_column: data_versao
-              to_table: ref('routes_desaninhada')
-  - name: shapes_geom
-    description: "Tabela com as linestrings de cada itinarário consolidadas a partir da captura ponto a ponto (Descontinuada a partir de 2022-09-13)."
-    columns:
-      - name: shape_id
-        tests:
-          - not_null:
-              partition_column: data_versao
-      - name: trip_id
-        tests:
-          - not_null:
-              partition_column: data_versao
-          - unique_key:
-              partition_column: data_versao
-              combined_keys: ""
-          - one_to_one:
-              partition_column: data_versao
-              to_table: ref('trips_desaninhada')
-  - name: agency
-    description: "View para os dados capturados em staging do cadastro das agências de transporte público (Descontinuada a partir de 2022-09-13)."
-    columns:
-      - name: agency_id
-        description: "Identificador único para uma agência"
-      - name: content
-        description: "{{ doc('content') }}"
-      - name: data_versao
-        description: "{{ doc('data_versao') }}"
-  - name: agency_desaninhada
-    description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro das agências de transporte público (agency) (Descontinuada a partir de 2022-09-13)."
-  - name: agg_stops_vistoriadas
-    description: "View com os dados agrupados dos pontos de paradas existentes e vistoriados (Descontinuada a partir de 2022-09-13)."
-  - name: calendar
-    description: "View para os dados capturados em staging do cadastro das datas de serviço especificadas usando uma programação semanal com datas de início e término (Descontinuada a partir de 2022-09-13)."
-  - name: calendar_desaninhada
-    description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro das datas de serviço especificadas (calendar) (Descontinuada a partir de 2022-09-13)."
-  - name: frota_determinada
-    description: "View para os dados capturados em staging do cadastro da frota determinada (Descontinuada a partir de 2022-09-13)."
-  - name: frota_determinada_desaninhada
-    description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro da frota determinada (frota_determinada) (Descontinuada a partir de 2022-09-13)."
-  - name: holidays
-    description: "View para os dados capturados em staging do cadastro dos feriados (Descontinuada a partir de 2022-09-13)."
-  - name: linhas
-    description: "View para os dados capturados em staging do cadastro das linhas (Descontinuada a partir de 2022-09-13)."
-  - name: linhas_desaninhada
-    description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro das linhas (linhas) (Descontinuada a partir de 2022-09-13)."
-  - name: shapes
-    description: "View para os dados capturados em staging do cadastro das regras para mapear caminhos de deslocamento de veículos (Descontinuada a partir de 2022-09-13)."
-  - name: stop_details
-    description: "View para os dados capturados em staging do cadastro detalhado dos pontos de parada (Descontinuada a partir de 2022-09-13)."
-  - name: stop_details_desaninhada
-    description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro detalhado dos pontos de parada (stop_details) (Descontinuada a partir de 2022-09-13)."
-  - name: stop_times
-    description: "View para os dados capturados em staging do cadastro dos horários em que um veículo chega e sai das paradas de cada viagem (Descontinuada a partir de 2022-09-13)."
-  - name: stop_times_desaninhada
-    description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro dos horários em que um veículo chega e sai das paradas de cada viagem (stop_times) (Descontinuada a partir de 2022-09-13)."
-  - name: stops
-    description: "View para os dados capturados em staging do cadastro dos pontos de parada (Descontinuada a partir de 2022-09-13)."
-  - name: stops_desaninhada
-    description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro dos pontos de parada (stops) (Descontinuada a partir de 2022-09-13)."
+# models:
+#   - name: data_versao_efetiva
+#     description: "Especifica qual data versao mais recente disponível para uma determinada data (Descontinuada a partir de 2022-09-13)."
+#     columns:
+#       - name: data
+#         description: "The primary key for this table"
+#   #       tests:
+#   #         - not_null:
+#   #             partition_column: data
+#       - name: data_versao_efetiva_agency
+#         description: "data_versao mais recente para a tabela descrita no sufixo"
+#   #       tests:
+#   #         - not_null:
+#   #             partition_column: data
+#       - name: data_versao_efetiva_calendar
+#         description: "data_versao mais recente para a tabela descrita no sufixo"
+#   #       tests:
+#   #         - not_null:
+#   #             partition_column: data
+#       - name: data_versao_efetiva_frota_determinada
+#         description: "data_versao mais recente para a tabela descrita no sufixo"
+#   #       tests:
+#   #         - not_null:
+#   #             partition_column: data
+#       - name: data_versao_efetiva_holidays
+#         description: "data_versao mais recente para a tabela descrita no sufixo"
+#   #       tests:
+#   #         - not_null:
+#   #             partition_column: data
+#       - name: data_versao_efetiva_linhas
+#         description: "data_versao mais recente para a tabela descrita no sufixo"
+#   #       tests:
+#   #         - not_null:
+#   #             partition_column: data
+#       - name: data_versao_efetiva_routes
+#         description: "data_versao mais recente para a tabela descrita no sufixo"
+#   #       tests:
+#   #         - not_null:
+#   #             partition_column: data
+#       - name: data_versao_efetiva_shapes
+#         description: "data_versao mais recente para a tabela descrita no sufixo"
+#   #       tests:
+#   #         - not_null:
+#   #             partition_column: data
+#       - name: data_versao_efetiva_stop_details
+#         description: "data_versao mais recente para a tabela descrita no sufixo"
+#   #       tests:
+#   #         - not_null:
+#   #             partition_column: data
+#       - name: data_versao_efetiva_stop_times
+#         description: "data_versao mais recente para a tabela descrita no sufixo"
+#   #       tests:
+#   #         - not_null:
+#   #             partition_column: data
+#       - name: data_versao_efetiva_stops
+#         description: "data_versao mais recente para a tabela descrita no sufixo"
+#   #       tests:
+#   #         - not_null:
+#   #             partition_column: data
+#       - name: data_versao_efetiva_trips
+#         description: "data_versao mais recente para a tabela descrita no sufixo"
+#   #       tests:
+#   #         - not_null:
+#   #             partition_column: data
+#   - name: routes
+#     description: "View para os dados capturados em staging do cadastro dos serviços (Descontinuada a partir de 2022-09-13)."
+#   - name: routes_desaninhada
+#     description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro dos serviços (routes) (Descontinuada a partir de 2022-09-13)."
+#     columns:
+#       - name: route_id
+#         tests:
+#           - not_null:
+#               partition_column: data_versao
+#           - unique_key:
+#               partition_column: data_versao
+#               combined_keys: ""
+#   - name: trips
+#     description: "View para os dados capturados em staging do cadastro dos itinerários (Descontinuada a partir de 2022-09-13)."
+#   - name: trips_desaninhada
+#     description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro dos itinerários (trips) (Descontinuada a partir de 2022-09-13)."
+#     columns:
+#       - name: trip_id
+#         description: "Identificador único para um itinerário"
+#         tests:
+#           - not_null:
+#               partition_column: data_versao
+#           - unique_key:
+#               partition_column: data_versao
+#               combined_keys: ""
+#           - one_to_one:
+#               partition_column: data_versao
+#               to_table: ref('shapes_geom')
+#       - name: route_id
+#         description: "Identificador única para a route (serviço)"
+#         tests:
+#           - many_to_one:
+#               foreign_key: route_id
+#               partition_column: data_versao
+#               to_table: ref('routes_desaninhada')
+#   - name: shapes_geom
+#     description: "Tabela com as linestrings de cada itinarário consolidadas a partir da captura ponto a ponto (Descontinuada a partir de 2022-09-13)."
+#     columns:
+#       - name: shape_id
+#         tests:
+#           - not_null:
+#               partition_column: data_versao
+#       - name: trip_id
+#         tests:
+#           - not_null:
+#               partition_column: data_versao
+#           - unique_key:
+#               partition_column: data_versao
+#               combined_keys: ""
+#           - one_to_one:
+#               partition_column: data_versao
+#               to_table: ref('trips_desaninhada')
+#   - name: agency
+#     description: "View para os dados capturados em staging do cadastro das agências de transporte público (Descontinuada a partir de 2022-09-13)."
+#     columns:
+#       - name: agency_id
+#         description: "Identificador único para uma agência"
+#       - name: content
+#         description: "{{ doc('content') }}"
+#       - name: data_versao
+#         description: "{{ doc('data_versao') }}"
+#   - name: agency_desaninhada
+#     description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro das agências de transporte público (agency) (Descontinuada a partir de 2022-09-13)."
+#   - name: agg_stops_vistoriadas
+#     description: "View com os dados agrupados dos pontos de paradas existentes e vistoriados (Descontinuada a partir de 2022-09-13)."
+#   - name: calendar
+#     description: "View para os dados capturados em staging do cadastro das datas de serviço especificadas usando uma programação semanal com datas de início e término (Descontinuada a partir de 2022-09-13)."
+#   - name: calendar_desaninhada
+#     description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro das datas de serviço especificadas (calendar) (Descontinuada a partir de 2022-09-13)."
+#   - name: frota_determinada
+#     description: "View para os dados capturados em staging do cadastro da frota determinada (Descontinuada a partir de 2022-09-13)."
+#   - name: frota_determinada_desaninhada
+#     description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro da frota determinada (frota_determinada) (Descontinuada a partir de 2022-09-13)."
+#   - name: holidays
+#     description: "View para os dados capturados em staging do cadastro dos feriados (Descontinuada a partir de 2022-09-13)."
+#   - name: linhas
+#     description: "View para os dados capturados em staging do cadastro das linhas (Descontinuada a partir de 2022-09-13)."
+#   - name: linhas_desaninhada
+#     description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro das linhas (linhas) (Descontinuada a partir de 2022-09-13)."
+#   - name: shapes
+#     description: "View para os dados capturados em staging do cadastro das regras para mapear caminhos de deslocamento de veículos (Descontinuada a partir de 2022-09-13)."
+#   - name: stop_details
+#     description: "View para os dados capturados em staging do cadastro detalhado dos pontos de parada (Descontinuada a partir de 2022-09-13)."
+#   - name: stop_details_desaninhada
+#     description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro detalhado dos pontos de parada (stop_details) (Descontinuada a partir de 2022-09-13)."
+#   - name: stop_times
+#     description: "View para os dados capturados em staging do cadastro dos horários em que um veículo chega e sai das paradas de cada viagem (Descontinuada a partir de 2022-09-13)."
+#   - name: stop_times_desaninhada
+#     description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro dos horários em que um veículo chega e sai das paradas de cada viagem (stop_times) (Descontinuada a partir de 2022-09-13)."
+#   - name: stops
+#     description: "View para os dados capturados em staging do cadastro dos pontos de parada (Descontinuada a partir de 2022-09-13)."
+#   - name: stops_desaninhada
+#     description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro dos pontos de parada (stops) (Descontinuada a partir de 2022-09-13)."
