@@ -251,8 +251,10 @@ with Flow(
     RUN_CLEAN = merge(RUN_CLEAN_TRUE, RUN_CLEAN_FALSE)
 
     date_range = merge(date_range_true, date_range_false)
+
     dataset_sha = fetch_dataset_sha(
         dataset_id=dataset_id,
+        upstream_tasks=[RUN_CLEAN],
     )
 
     # Run materialization #
