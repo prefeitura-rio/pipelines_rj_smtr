@@ -4,3 +4,6 @@ models:
   - name: aux_segmento_shape
     config:
       buffer_segmento_metros: "{{ var('buffer_segmento_metros') }}"
+      comprimento_shape: "{{ var('comprimento_shape') }}"
+      projecao_shapely: "{{ var('projecao_shapely') }}"
+      projecao_bq: "{{ var('projecao_bq') }}"

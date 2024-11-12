@@ -9,69 +9,66 @@ from shapely import wkt
 from shapely.ops import substring, transform
 
 
-def transform_projection(shape, from_utm=False):
-    bq_projection = pyproj.CRS("EPSG:4326")
-    shapely_projection = pyproj.CRS("EPSG:31983")
-    if from_utm:
-        project = pyproj.Transformer.from_crs(
-            shapely_projection, bq_projection, always_xy=True
-        ).transform
-    else:
-        project = pyproj.Transformer.from_crs(
-            bq_projection, shapely_projection, always_xy=True
-        ).transform
-
-    return transform(project, shape)
-
-
-# calcular distancia e criar buffer aqui
-def cut(line, distance, buffer_size):
-    line_len = line.length
-
-    dist_mod = line_len % distance
-    dist_range = list(np.arange(0, line_len, distance))
-    middle_index = (len(dist_range) // 2) + 1
-
-    last_final_dist = 0
-    lines = []
-
-    for i, _ in enumerate(dist_range, start=1):
-        if i == middle_index:
-            cut_distance = dist_mod
-        else:
-            cut_distance = distance
-        final_dist = last_final_dist + cut_distance
-        segment = substring(line, last_final_dist, final_dist)
-        lines.append(
-            [
-                str(i),
-                transform_projection(segment, True).wkt,
-                segment.length,
-                transform_projection(segment.buffer(distance=buffer_size), True).wkt,
-            ]
-        )
-        last_final_dist = final_dist
-
-    return lines
-
-
-def cut_udf(wkt_string, buffer_size):
-    line = transform_projection(wkt.loads(wkt_string))
-    return cut(line, distance=1000, buffer_size=buffer_size)
-
-
-cut_udf = udf(cut_udf, ArrayType(ArrayType(StringType())))
-
-
 def model(dbt, session):
     dbt.config(
         materialized="table",
     )
     df = dbt.ref("aux_shapes_geom_filtrada")
+    bq_projection = pyproj.CRS(dbt.config.get("projecao_bq"))
+    shapely_projection = pyproj.CRS(dbt.config.get("projecao_shapely"))
 
+    def transform_projection(shape, from_shapely=False):
+        if from_shapely:
+            project = pyproj.Transformer.from_crs(
+                shapely_projection, bq_projection, always_xy=True
+            ).transform
+        else:
+            project = pyproj.Transformer.from_crs(
+                bq_projection, shapely_projection, always_xy=True
+            ).transform
+
+        return transform(project, shape)
+
+    def cut(line, distance, buffer_size):
+        line_len = line.length
+        dist_mod = line_len % distance
+        dist_range = list(np.arange(0, line_len, distance))
+        middle_index = (len(dist_range) // 2) + 1
+
+        last_final_dist = 0
+        lines = []
+
+        for i, _ in enumerate(dist_range, start=1):
+            if i == middle_index:
+                cut_distance = dist_mod
+            else:
+                cut_distance = distance
+            final_dist = last_final_dist + cut_distance
+            segment = substring(line, last_final_dist, final_dist)
+            lines.append(
+                [
+                    str(i),
+                    transform_projection(segment, True).wkt,
+                    segment.length,
+                    transform_projection(segment.buffer(distance=buffer_size), True).wkt,
+                ]
+            )
+            last_final_dist = final_dist
+
+        return lines
+
+    def cut_udf(wkt_string, distance, buffer_size):
+        line = transform_projection(wkt.loads(wkt_string))
+        return cut(line, distance, buffer_size=buffer_size)
+
+    cut_udf = udf(cut_udf, ArrayType(ArrayType(StringType())))
     df_segments = df.withColumn(
         "shape_lists",
-        cut_udf(col("wkt_shape"), lit(dbt.config.get("buffer_segmento_metros"))),
+        cut_udf(
+            col("wkt_shape"),
+            lit(dbt.config.get("comprimento_shape")),
+            lit(dbt.config.get("buffer_segmento_metros")),
+        ),
     )
 
     df_exploded = (
