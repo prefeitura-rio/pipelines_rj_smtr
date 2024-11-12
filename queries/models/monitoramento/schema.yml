@@ -122,8 +122,16 @@ models:
         data_type: int64
         quote: true
       - name: indice_validacao
-        description: quantidade_segmentos_validos dividido por quantidade_segmentos_verificados
+        description: quantidade_segmentos_validos dividido por quantidade_segmentos_verificados.
         data_type: float64
+        quote: true
+      - name: indicador_trajeto_valido
+        description: Indica se o veículo cumpriu o trajeto (indice_validacao >= parametro_validacao).
+        data_type: boolean
+        quote: true
+      - name: indicador_servico_planejado
+        description: Indica se o serviço estava planejado para o tipo dia.
+        data_type: boolean
         quote: true
       - name: indicador_viagem_valida
         description: Indica se a viagem está válida ou não.
