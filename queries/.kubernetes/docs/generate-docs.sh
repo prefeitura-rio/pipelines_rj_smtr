@@ -37,4 +37,6 @@ queries:
 
 ls ./profiles
 
+dbt deps
+
 dbt docs generate --profiles-dir ./profiles
