@@ -497,11 +497,10 @@ def dbt_data_quality_checks(dbt_logs: str, checks_list: dict, params: dict):
 
     test_check = all(test["result"] == "PASS" for test in checks_results.values())
 
-    date_range = (
-        params["date_range_start"]
-        if params["date_range_start"] == params["date_range_end"]
-        else f'{params["date_range_start"]} a {params["date_range_end"]}'
-    )
+    start_date = params["date_range_start"].split("T")[0]
+    end_date = params["date_range_end"].split("T")[0]
+
+    date_range = start_date if start_date == end_date else f"{start_date} a {end_date}"  # noqa
 
     if "(target='dev')" in dbt_logs or "(target='hmg')" in dbt_logs:
         formatted_messages = [
@@ -531,7 +530,9 @@ def dbt_data_quality_checks(dbt_logs: str, checks_list: dict, params: dict):
         else ":warning: **Status:** Testes falharam. Necessidade de revisão dos dados finais!\n"
     )
 
-    formatted_messages.append(dados_tag)
+    if not test_check:
+        formatted_messages.append(dados_tag)
+
     try:
         format_send_discord_message(formatted_messages, webhook_url)
     except Exception as e:
