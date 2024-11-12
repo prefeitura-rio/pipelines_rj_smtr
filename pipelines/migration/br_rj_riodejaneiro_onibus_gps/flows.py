@@ -164,8 +164,8 @@ with Flow(
     table_id = Parameter("table_id", default=constants.GPS_SPPO_TREATED_TABLE_ID.value)
     rebuild = Parameter("rebuild", False)
     rematerialization = Parameter("rematerialization", default=False)
-    date_range_start = Parameter("date_range_start", default=None)
-    date_range_end = Parameter("date_range_end", default=None)
+    date_range_start_param = Parameter("date_range_start", default=None)
+    date_range_end_param = Parameter("date_range_end", default=None)
     fifteen_minutes = Parameter("fifteen_minutes", default="")
     materialize_delay_hours = Parameter(
         "materialize_delay_hours",
@@ -208,7 +208,7 @@ with Flow(
                     "date_range_start": start,
                     "date_range_end": end,
                 }
-            )(start=date_range_start, end=date_range_end)
+            )(start=date_range_start_param, end=date_range_end_param)
 
             RUN_CLEAN_TRUE = clean_br_rj_riodejaneiro_onibus_gps(date_range_true)
 
@@ -287,7 +287,7 @@ with Flow(
         materialize_sppo.set_reference_tasks([RUN, RUN_CLEAN, SET])
     with case(test_only, True):
 
-        _vars = {"date_range_start": date_range_start, "date_range_end": date_range_end}
+        _vars = {"date_range_start": date_range_start_param, "date_range_end": date_range_end_param}
 
         gps_sppo_data_quality = run_dbt_tests(
             dataset_id=dataset_id,
