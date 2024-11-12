@@ -14,6 +14,7 @@ env:
   GKE_CLUSTER: ${{ secrets.GKE_APP_CLUSTER_NAME }}
   GKE_ZONE: ${{ secrets.GKE_CLUSTER_ZONE }}
   IMAGE_NAME: gcr.io/rj-smtr/dbt-docs
+  DBT_USER: ${{ github.actor }}
 
 jobs:
   build-container:
