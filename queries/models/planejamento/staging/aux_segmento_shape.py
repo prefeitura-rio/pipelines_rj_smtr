@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pyproj
-from pyspark.sql.functions import col, explode, udf
+from pyspark.sql.functions import col, explode, lit, udf
 from pyspark.sql.types import ArrayType, StringType
 from shapely import wkt
 
@@ -24,7 +24,8 @@ def transform_projection(shape, from_utm=False):
     return transform(project, shape)
 
 
-def cut(line, distance):
+# calcular distancia e criar buffer aqui
+def cut(line, distance, buffer_size):
     line_len = line.length
 
     dist_mod = line_len % distance
@@ -40,17 +41,23 @@ def cut(line, distance):
         else:
             cut_distance = distance
         final_dist = last_final_dist + cut_distance
+        segment = substring(line, last_final_dist, final_dist)
         lines.append(
-            [str(i), transform_projection(substring(line, last_final_dist, final_dist), True).wkt]
+            [
+                str(i),
+                transform_projection(segment, True).wkt,
+                segment.length,
+                transform_projection(segment.buffer(distance=buffer_size), True).wkt,
+            ]
         )
         last_final_dist = final_dist
 
     return lines
 
 
-def cut_udf(wkt_string):
+def cut_udf(wkt_string, buffer_size):
     line = transform_projection(wkt.loads(wkt_string))
-    return cut(line, distance=1000)
+    return cut(line, distance=1000, buffer_size=buffer_size)
 
 
 cut_udf = udf(cut_udf, ArrayType(ArrayType(StringType())))
@@ -62,7 +69,10 @@ def model(dbt, session):
     )
     df = dbt.ref("aux_shapes_geom_filtrada")
 
-    df_segments = df.withColumn("shape_lists", cut_udf(col("wkt_shape")))
+    df_segments = df.withColumn(
+        "shape_lists",
+        cut_udf(col("wkt_shape"), lit(dbt.config.get("buffer_segmento_metros"))),
+    )
 
     df_exploded = (
         df_segments.select(
@@ -74,6 +84,8 @@ def model(dbt, session):
         )
         .withColumn("id_segmento", col("shape_list").getItem(0))
         .withColumn("wkt_segmento", col("shape_list").getItem(1))
+        .withColumn("comprimento_segmento", col("shape_list").getItem(2))
+        .withColumn("buffer_completo", col("shape_list").getItem(3))
         .drop("shape_list")
     )
 

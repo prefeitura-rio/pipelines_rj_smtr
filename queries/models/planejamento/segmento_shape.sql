@@ -24,7 +24,8 @@ with
             id_segmento,
             st_geogfromtext(wkt_segmento) as segmento,
             wkt_segmento,
-            round(st_length(st_geogfromtext(wkt_segmento)), 1) as comprimento_segmento
+            round(cast(comprimento_segmento as float64), 1) as comprimento_segmento,
+            st_geogfromtext(buffer_completo) as buffer_completo
         from {{ ref("aux_segmento_shape") }}
     ),
     tunel as (
@@ -36,33 +37,27 @@ with
         where tipo = "Túnel"
 
     ),
-    buffer_segmento as (
-        select
-            *,
-            st_buffer(segmento, {{ var("buffer_segmento_metros") }}) as buffer_completo,
-        from aux_segmento
-    ),
     intercessao_segmento as (
         select
-            b1.shape_id,
-            b1.id_segmento,
-            st_union(array_agg(b2.buffer_completo)) as buffer_segmento_posterior
-        from buffer_segmento b1
+            s1.shape_id,
+            s1.id_segmento,
+            st_union(array_agg(s2.buffer_completo)) as buffer_segmento_posterior
+        from aux_segmento s1
         join
-            buffer_segmento b2
-            on b1.shape_id = b2.shape_id
-            and b1.id_segmento < b2.id_segmento
-            and st_intersects(b1.buffer_completo, b2.buffer_completo)
+            aux_segmento s2
+            on s1.shape_id = s2.shape_id
+            and s1.id_segmento < s2.id_segmento
+            and st_intersects(s1.buffer_completo, s2.buffer_completo)
         group by 1, 2
     ),
     buffer_segmento_recortado as (
         select
-            b.*,
+            s.*,
             coalesce(
                 st_difference(buffer_completo, i.buffer_segmento_posterior),
                 buffer_completo
             ) as buffer
-        from buffer_segmento b
+        from aux_segmento s
         left join intercessao_segmento i using (shape_id, id_segmento)
     ),
     indicador_validacao_shape as (

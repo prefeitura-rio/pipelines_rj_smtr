@@ -1,0 +1,6 @@
+version: 2
+
+models:
+  - name: aux_segmento_shape
+    config:
+      buffer_segmento_metros: "{{ var('buffer_segmento_metros') }}"
