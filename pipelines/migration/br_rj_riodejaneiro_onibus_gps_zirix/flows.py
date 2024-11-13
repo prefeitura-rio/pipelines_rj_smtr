@@ -113,7 +113,7 @@ realocacao_sppo_zirix.state_handlers = [handler_initialize_sentry, handler_injec
 realocacao_sppo_zirix.schedule = every_10_minutes
 
 with Flow(
-    "SMTR: GPS SPPO Realocação - Recaptura (subflow)",
+    "SMTR: GPS SPPO Zirix Realocação - Recaptura (subflow)",
 ) as recaptura_realocacao_sppo_zirix:
     timestamp = Parameter("timestamp", default=None)
     recapture_window_days = Parameter("recapture_window_days", default=1)
