@@ -215,6 +215,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             + " "
             + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,
             _vars=dbt_vars,
+            exclude="calendario",
         ).set_upstream(task=wait_captura)
 
         wait_materialize_true = update_last_captured_os(

@@ -6,7 +6,7 @@ authors = ["Gabriel Gazola Milan <gabriel.gazola@poli.ufrj.br>"]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11"
-dbt-bigquery = "1.7.2"
+dbt-bigquery = "1.7.3"
 google-cloud-storage = "2.13.0"
 prefect = "1.4.1"
 prefeitura-rio = "1.1.3a1"
