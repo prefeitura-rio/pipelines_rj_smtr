@@ -195,8 +195,8 @@ vars:
   buffer_tunel_metros: 50
   parametro_validacao: 0.9
   comprimento_shape: 1000
-  projecao_shapely: "EPSG:31983"
-  projecao_bq: "EPSG:4326"
+  projecao_sirgas_2000: "EPSG:31983"
+  projecao_wgs_84: "EPSG:4326"
 
 tests:
   rj_smtr:

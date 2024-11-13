@@ -5,5 +5,5 @@ models:
     config:
       buffer_segmento_metros: "{{ var('buffer_segmento_metros') }}"
       comprimento_shape: "{{ var('comprimento_shape') }}"
-      projecao_shapely: "{{ var('projecao_shapely') }}"
-      projecao_bq: "{{ var('projecao_bq') }}"
+      projecao_sirgas_2000: "{{ var('projecao_sirgas_2000') }}"
+      projecao_wgs_84: "{{ var('projecao_wgs_84') }}"

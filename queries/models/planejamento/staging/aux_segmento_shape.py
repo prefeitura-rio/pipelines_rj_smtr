@@ -14,8 +14,8 @@ def model(dbt, session):
         materialized="table",
     )
     df = dbt.ref("aux_shapes_geom_filtrada")
-    bq_projection = pyproj.CRS(dbt.config.get("projecao_bq"))
-    shapely_projection = pyproj.CRS(dbt.config.get("projecao_shapely"))
+    bq_projection = pyproj.CRS(dbt.config.get("projecao_wgs_84"))
+    shapely_projection = pyproj.CRS(dbt.config.get("projecao_sirgas_2000"))
 
     def transform_projection(shape, from_shapely=False):
         if from_shapely:
