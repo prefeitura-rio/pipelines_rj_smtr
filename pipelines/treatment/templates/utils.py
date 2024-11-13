@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 from datetime import datetime, timedelta
 
 from google.cloud.dataplex_v1 import DataScanJob
@@ -205,3 +206,66 @@ def send_dataplex_discord_message(
         embed_messages=embed,
         timestamp=timestamp,
     )
+
+
+def parse_dbt_test_output(dbt_logs: str) -> dict:
+    """Parses DBT test output and returns a list of test results.
+
+    Args:
+        dbt_logs: The DBT test output as a string.
+
+    Returns:
+        A list of dictionaries, each representing a test result with the following keys:
+        - name: The test name.
+        - result: "PASS", "FAIL" or "ERROR".
+        - query: Query to see test failures.
+        - error: Message error.
+    """
+
+    # Remover sequências ANSI
+    dbt_logs = re.sub(r"\x1B[@-_][0-?]*[ -/]*[@-~]", "", dbt_logs)
+
+    results = {}
+    result_pattern = r"\d+ of \d+ (PASS|FAIL|ERROR) (\d+ )?([\w_]+) .* \[(PASS|FAIL|ERROR) .*\]"
+    fail_pattern = r"Failure in test ([\w_]+) .*\n.*\n.*\n.* compiled Code at (.*)\n"
+    error_pattern = r"Error in test ([\w_]+) \(.*schema.yaml\)\n  (.*)\n"
+
+    for match in re.finditer(result_pattern, dbt_logs):
+        groups = match.groups()
+        test_name = groups[2]
+        results[test_name] = {"result": groups[3]}
+
+    for match in re.finditer(fail_pattern, dbt_logs):
+        groups = match.groups()
+        test_name = groups[0]
+        file = groups[1]
+
+        with open(file, "r") as arquivo:
+            query = arquivo.read()
+
+        query = re.sub(r"\n+", "\n", query)
+        results[test_name]["query"] = query
+
+    for match in re.finditer(error_pattern, dbt_logs):
+        groups = match.groups()
+        test_name = groups[0]
+        error = groups[1]
+        results[test_name]["error"] = error
+
+    log_message = ""
+    for test, info in results.items():
+        result = info["result"]
+        log_message += f"Test: {test} Status: {result}\n"
+
+        if result == "FAIL":
+            log_message += "Query:\n"
+            log_message += f"{info['query']}\n"
+
+        if result == "ERROR":
+            log_message += f"Error: {info['error']}\n"
+
+        log_message += "\n"
+
+    log(log_message)
+
+    return results
