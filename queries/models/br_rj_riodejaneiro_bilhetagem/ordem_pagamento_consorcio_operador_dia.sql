@@ -31,18 +31,22 @@
 
         {% set partitions = run_query(partitions_query).columns[0].values() %}
 
-        {% if partitions | length > 0 %}
-            {% set paid_orders_query %}
-                select distinct concat("'", date(data_ordem), "'") as data_ordem
-                from {{ aux_retorno_ordem_pagamento }}
-                where data_ordem in ({{ partitions | join(", ") }})
-            {% endset %}
+        {% set paid_orders_query %}
+            SELECT
+                CONCAT("'", PARSE_DATE("%Y%m%d", partition_id), "'") AS data
+            FROM
+                -- `{{ aux_retorno_ordem_pagamento.database }}.{{ aux_retorno_ordem_pagamento.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+                `rj-smtr.controle_financeiro_staging.INFORMATION_SCHEMA.PARTITIONS`
+            WHERE
+                table_name = "{{ aux_retorno_ordem_pagamento.identifier }}"
+                AND partition_id != "__NULL__"
+                AND DATETIME(last_modified_time, "America/Sao_Paulo") BETWEEN DATETIME("{{var('date_range_start')}}") AND (DATETIME("{{var('date_range_end')}}"))
+        {% endset %}
 
-            {% set paid_orders = run_query(paid_orders_query).columns[0].values() %}
-        {% else %} {% set paid_orders = [] %}
-        {% endif %}
+        {% set paid_orders = run_query(paid_orders_query).columns[0].values() %}
     {% endif %}
 {% endif %}
+
 
 with
     pagamento as (
@@ -55,6 +59,10 @@ with
                     data_ordem in ({{ partitions | join(", ") }})
                 {% else %} data_ordem = '2000-01-01'
                 {% endif %}
+                {% if paid_orders | length > 0 %}
+                    or data_ordem in ({{ paid_orders | join(", ") }})
+                {% endif %}
+
         {% endif %}
     ),
     ordem_pagamento as (
