@@ -72,7 +72,7 @@ class DBTSelector:
             )
         )
 
-        return last_datetime
+        return convert_timezone(timestamp=last_datetime)
 
     def get_datetime_end(self, timestamp: datetime) -> datetime:
         """
