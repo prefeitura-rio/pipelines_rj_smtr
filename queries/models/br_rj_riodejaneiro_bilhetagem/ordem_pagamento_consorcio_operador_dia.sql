@@ -103,8 +103,8 @@ with
                 date(o.data) between date("{{var('date_range_start')}}") and date(
                     "{{var('date_range_end')}}"
                 )
-                and timestamp_captura > datetime("{{var('date_range_start')}}")
-                and timestamp_captura <= datetime("{{var('date_range_end')}}")
+                and o.timestamp_captura > datetime("{{var('date_range_start')}}")
+                and o.timestamp_captura <= datetime("{{var('date_range_end')}}")
         {% else %} where date(o.data) < date("2024-11-13")
         {% endif %}
     ),
