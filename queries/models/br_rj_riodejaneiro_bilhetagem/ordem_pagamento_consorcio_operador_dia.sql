@@ -35,8 +35,8 @@
             SELECT
                 CONCAT("'", PARSE_DATE("%Y%m%d", partition_id), "'") AS data
             FROM
-                -- `{{ aux_retorno_ordem_pagamento.database }}.{{ aux_retorno_ordem_pagamento.schema }}.INFORMATION_SCHEMA.PARTITIONS`
-                `rj-smtr.controle_financeiro_staging.INFORMATION_SCHEMA.PARTITIONS`
+                `{{ aux_retorno_ordem_pagamento.database }}.{{ aux_retorno_ordem_pagamento.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+                {# `rj-smtr.controle_financeiro_staging.INFORMATION_SCHEMA.PARTITIONS` #}
             WHERE
                 table_name = "{{ aux_retorno_ordem_pagamento.identifier }}"
                 AND partition_id != "__NULL__"
@@ -97,15 +97,13 @@ with
         from {{ ordem_pagamento_consorcio_operadora_staging }} o
         -- `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.ordem_pagamento_consorcio_operadora` o
         join
-            {# {{ ref("staging_ordem_pagamento") }} op #}
-            `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.ordem_pagamento` op
+            {{ ref("staging_ordem_pagamento") }} op
+            {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.ordem_pagamento` op #}
             on o.data_ordem = op.data_ordem
-        left join
-            {# {{ ref("operadoras") }} do #}
-            `rj-smtr.cadastro.operadoras` do on o.id_operadora = do.id_operadora_jae
-        left join
-            {# {{ ref("consorcios") }} dc #}
-            `rj-smtr.cadastro.consorcios` dc on o.id_consorcio = dc.id_consorcio_jae
+        left join {{ ref("operadoras") }} do
+        {# `rj-smtr.cadastro.operadoras` do on o.id_operadora = do.id_operadora_jae #}
+        left join {{ ref("consorcios") }} dc
+        {# `rj-smtr.cadastro.consorcios` dc on o.id_consorcio = dc.id_consorcio_jae #}
         {% if is_incremental() %}
             where
                 date(o.data) between date("{{var('date_range_start')}}") and date(
