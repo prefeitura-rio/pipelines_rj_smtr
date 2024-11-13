@@ -24,7 +24,7 @@ with
             id_segmento,
             st_geogfromtext(wkt_segmento) as segmento,
             wkt_segmento,
-            round(cast(comprimento_segmento as float64), 1) as comprimento_segmento,
+            round(cast(comprimento_segmento as float64), 2) as comprimento_segmento,
             st_geogfromtext(buffer_completo) as buffer_completo
         from {{ ref("aux_segmento_shape") }}
     ),
