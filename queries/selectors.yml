@@ -31,6 +31,11 @@ selectors:
       method: file
       value: viagem_informada_monitoramento
       parents: true
+      exclude:
+        - method: fqn
+          value: gtfs
+        - method: fqn
+          value: planejamento
 
   - name: viagem_validacao
     description: Materialização da tabela de validação das viagens informadas
