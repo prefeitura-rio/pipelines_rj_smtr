@@ -429,6 +429,10 @@ models:
         description: "Valor pago ao operador ou consórcio (R$)"
       - name: versao
         description: "Código de controle de versão do dado (SHA Github)"
+      - name: datetime_ultima_atualizacao
+        data_type: datetime
+        quote: true
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: ordem_pagamento_dia
     description: "Tabela com os valores totais de pagamento da Jaé agregados por dia"
     columns:
