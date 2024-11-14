@@ -103,8 +103,8 @@ with
             and cd.feed_start_date = m.feed_start_date
         where
             {% if is_incremental() %}
-                feed_start_date in ({{ gtfs_feeds | join(", ") }})
-                and date between date("{{ var('date_range_start') }}") and date(
+                cd.feed_start_date in ({{ gtfs_feeds | join(", ") }})
+                and cd.date between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
                 )
             {% else %} date <= current_date("America/Sao_Paulo")
