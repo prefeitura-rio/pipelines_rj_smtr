@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Flows de tratamento dos dados de planejamento
+
+DBT 2024-11-14
 """
 
 from pipelines.constants import constants as smtr_constants
