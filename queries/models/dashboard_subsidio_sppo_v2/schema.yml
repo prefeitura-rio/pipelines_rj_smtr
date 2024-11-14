@@ -63,8 +63,8 @@ models:
           date_col: data
           row_condition: "data is not null"
           test_start_date: "{{ var('date_range_start') }}"
-          test_end_date: "'||SAFE_CAST(DATE_ADD(DATE('{{ var('date_range_end') }}'), INTERVAL 1 DAY) AS STRING)||'"
-          name: completude__sumario_servico_dia_pagamento
+          test_end_date: "{{ modules.datetime.date.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
+          name: completness__sumario_servico_dia_pagamento
       - teto_pagamento_valor_subsidio_pago:
           table_id: sumario_servico_dia_pagamento
           expression: ROUND((valor_a_pagar - valor_penalidade)/subsidio_km_teto,2) <= ROUND(km_apurada_dia+0.01,2)

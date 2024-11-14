@@ -8,8 +8,8 @@ models:
           date_col: data
           row_condition: "data is not null"
           test_start_date: "{{ var('date_range_start') }}"
-          test_end_date: "'||SAFE_CAST(DATE_ADD(DATE('{{ var('date_range_end') }}'), INTERVAL 1 DAY) AS STRING)||'"
-          name: completude__sumario_servico_dia
+          test_end_date: "{{ modules.datetime.date.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
+          name: completness__sumario_servico_dia
       - teto_pagamento_valor_subsidio_pago:
           table_id: sumario_servico_dia
           expression: ROUND(valor_subsidio_pago/subsidio_km_teto,2) <= ROUND(km_apurada+0.01,2)
@@ -367,8 +367,8 @@ models:
           date_col: data
           row_condition: "data is not null"
           test_start_date: "{{ var('date_range_start') }}"
-          test_end_date: "'||SAFE_CAST(DATE_ADD(DATE('{{ var('date_range_end') }}'), INTERVAL 1 DAY) AS STRING)||'"
-          name: completude__sumario_servico_dia_tipo_sem_glosa
+          test_end_date: "{{ modules.datetime.date.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
+          name: completness__sumario_servico_dia_tipo_sem_glosa
       - teto_pagamento_valor_subsidio_pago:
           table_id: sumario_servico_dia_tipo_sem_glosa
           expression: ROUND(valor_total_subsidio/subsidio_km_teto,2) <= ROUND(distancia_total_subsidio+0.01,2)
@@ -574,7 +574,7 @@ models:
           date_col: data
           row_condition: "data is not null"
           test_start_date: "{{ var('date_range_start') }}"
-          test_end_date: "'||SAFE_CAST(DATE_ADD(DATE('{{ var('date_range_end') }}'), INTERVAL 1 DAY) AS STRING)||'"
+          test_end_date: "{{ modules.datetime.date.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
       - check_viagem_completa:
           name: viagem_completa__viagens_remuneradas
     columns:
