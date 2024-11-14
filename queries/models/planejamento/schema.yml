@@ -3,6 +3,17 @@ version: 2
 models:
   - name: ordem_servico_faixa_horaria
     description: "Quantidade de viagens planejadas por faixa horária."
+    tests:
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          name: consistency__ordem_servico_faixa_horaria
+          expression: count(distinct tipo_os)
+          compare_model: ref("ordem_servico_gtfs")
+          compare_expression: count(distinct tipo_os)
+          group_by: [feed_start_date, tipo_os]
+          compare_group_by: [feed_start_date, tipo_os]
+          row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+          compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+          where: "1=1"
     columns:
       - name: servico
         description: "{{ doc('servico') }}"
@@ -14,8 +25,22 @@ models:
         description: "{{ doc('faixa_horaria_fim') }}"
       - name: partidas
         description: "{{ doc('partidas') }}"
+        tests:
+          - dbt_expectations.expect_column_sum_to_be_between:
+              name: validity__partidas__ordem_servico_faixa_horaria
+              min_value: 0
+              group_by: [feed_start_date, tipo_os, tipo_dia, servico]
+              strictly: true
+              where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
       - name: quilometragem
         description: "{{ doc('quilometragem') }}"
+        tests:
+          - dbt_expectations.expect_column_sum_to_be_between:
+              name: validity__quilometragem__ordem_servico_faixa_horaria
+              min_value: 0
+              group_by: [feed_start_date, tipo_os, tipo_dia, servico]
+              strictly: true
+              where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
   - name: segmento_shape
     description: Tabela contendo os shapes segmentados usados na validação de viagens.
     columns:

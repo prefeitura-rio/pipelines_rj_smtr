@@ -30,6 +30,11 @@ models:
     columns:
       - name: service_id
         description: "Identifica um conjunto de datas em que o serviço está disponível para uma ou mais rotas."
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              name: consistency__service_id__calendar_gtfs
+              regex: "^([USD]_|EXCEP)"
+              where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
       - name: monday
         description: "Indica se o serviço funciona todas as segundas-feiras no intervalo de datas especificado pelos campos start_date e end_date"
       - name: tuesday
@@ -450,6 +455,17 @@ models:
 
   - name: ordem_servico_trajeto_alternativo_gtfs
     description: "Anexo da Ordem de Serviço (OS) com trajetos alternativos de serviços"
+    tests:
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          name: consistency__ordem_servico_trajeto_alternativo_gtfs
+          expression: count(distinct tipo_os)
+          compare_model: ref("ordem_servico_gtfs")
+          compare_expression: count(distinct tipo_os)
+          group_by: [feed_start_date, tipo_os]
+          compare_group_by: [feed_start_date, tipo_os]
+          row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+          compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+          where: "1=1"
     columns:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
@@ -483,6 +499,26 @@ models:
         description: "Tipo de Ordem de Serviço (ex: 'Regular', 'Extraordinária - Verão')"
   - name: ordem_servico_trips_shapes_gtfs
     description: "Junção da Ordem de Serviço (OS) com trips e shapes dos serviços"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          name: unique_columns__ordem_servico_trips_shapes_gtfs
+          combination_of_columns:
+            - feed_start_date
+            - tipo_dia
+            - tipo_os
+            - servico
+            - sentido
+            - faixa_horaria_inicio
+            - shape_id
+          where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          name: validity__ordem_servico_trips_shapes_gtfs
+          min_value: 1
+          max_value: 2
+          group_by: [feed_start_date, tipo_dia, tipo_os, servico, faixa_horaria_inicio, shape_id]
+          row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+          strictly: false
+          where: "1=1"
     columns:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
@@ -528,3 +564,15 @@ models:
         description: "Tipo de trajeto (0 - Regular, 1 - Alternativo)"
       - name: tipo_os
         description: "Tipo de Ordem de Serviço (ex: 'Regular', 'Extraordinária - Verão')"
+  - name: aux_test_ordem_servico_trips_shapes_gtfs
+    description: "Modelo ephemeral para teste de consistência do modelo ordem_servico_trips_shapes_gtfs"
+    tests:
+      - dbt_expectations.expect_table_row_count_to_equal_other_table:
+          name: consistency__ordem_servico_trips_shapes_gtfs
+          compare_model: ref("ordem_servico_faixa_horaria")
+          group_by: [feed_start_date, tipo_os, tipo_dia, servico, faixa_horaria_inicio]
+          compare_group_by: [feed_start_date, tipo_os, tipo_dia, servico, faixa_horaria_inicio]
+          factor: 1
+          row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+          compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}' AND (quilometragem != 0 AND (partidas != 0 OR partidas IS NULL))"
+          where: "1=1"
