@@ -48,4 +48,6 @@ selectors:
     definition:
       union:
         - method: fqn
+          value: aux_calendario_manual
+        - method: fqn
           value: calendario
