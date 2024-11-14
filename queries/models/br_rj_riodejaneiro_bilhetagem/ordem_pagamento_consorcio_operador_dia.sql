@@ -100,9 +100,9 @@ with
             {{ ref("staging_ordem_pagamento") }} op
             {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.ordem_pagamento` op #}
             on o.data_ordem = op.data_ordem
-        left join {{ ref("operadoras") }} do
+        left join {{ ref("operadoras") }} do on o.id_operadora = do.id_operadora_jae
         {# `rj-smtr.cadastro.operadoras` do on o.id_operadora = do.id_operadora_jae #}
-        left join {{ ref("consorcios") }} dc
+        left join {{ ref("consorcios") }} dc on o.id_consorcio = dc.id_consorcio_jae
         {# `rj-smtr.cadastro.consorcios` dc on o.id_consorcio = dc.id_consorcio_jae #}
         {% if is_incremental() %}
             where
