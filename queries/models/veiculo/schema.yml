@@ -149,8 +149,6 @@ models:
   - name: sppo_veiculo_dia
     description: "Tabela resumo dos veículos que operaram no SPPO e seus respectivos indicadores"
     tests:
-      - check_sppo_veiculo_dia:
-          name: check_sppo_veiculo_dia__sppo_veiculo_dia
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
           - data

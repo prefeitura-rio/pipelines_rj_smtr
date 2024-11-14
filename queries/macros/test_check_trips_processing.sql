@@ -11,7 +11,8 @@ FROM (
     SELECT
         *
     FROM
-        rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva
+        {{ ref('subsidio_data_versao_efetiva') }}
+        -- rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva
     WHERE
         DATA >= "{{ var('DATA_SUBSIDIO_V6_INICIO') }}"
         AND DATA BETWEEN DATE("{{ var('start_date') }}")

@@ -6,9 +6,9 @@ models:
     tests:
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data
-          row_condition: "data is not null" # (Optional)
-          test_start_date: "{{ var('date_range_start') }}" # (Optional. Replace 'yyyy-mm-dd' with a date. Default is 'None')
-          test_end_date: "{{ var('date_range_end') }}" # (Optional. Replace 'yyyy-mm-dd' with a date. Default is 'None')
+          row_condition: "data is not null"
+          test_start_date: "{{ var('date_range_start') }}"
+          test_end_date: "'||SAFE_CAST(DATE_ADD(DATE('{{ var('date_range_end') }}'), INTERVAL 1 DAY) AS STRING)||'"
           name: completude__sumario_servico_dia
       - teto_pagamento_valor_subsidio_pago:
           table_id: sumario_servico_dia
@@ -365,9 +365,9 @@ models:
     tests:
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data
-          row_condition: "data is not null" # (Optional)
-          test_start_date: DATE("{{ var("start_date") }}") # (Optional. Replace 'yyyy-mm-dd' with a date. Default is 'None')
-          test_end_date: DATE("{{ var("end_date") }}") # (Optional. Replace 'yyyy-mm-dd' with a date. Default is 'None')
+          row_condition: "data is not null"
+          test_start_date: "{{ var('date_range_start') }}"
+          test_end_date: "'||SAFE_CAST(DATE_ADD(DATE('{{ var('date_range_end') }}'), INTERVAL 1 DAY) AS STRING)||'"
           name: completude__sumario_servico_dia_tipo_sem_glosa
       - teto_pagamento_valor_subsidio_pago:
           table_id: sumario_servico_dia_tipo_sem_glosa
@@ -566,15 +566,15 @@ models:
   - name: viagens_remuneradas
     description: "Tabela com indicação de remuneração de viagens para fins de verificação de teto de pagamento conforme regra de 120%/200% (RESOLUÇÃO SMTR Nº 3.645/2023)"
     tests:
-      # - dbt_utils.unique_combination_of_columns:
-      #     combination_of_columns:
-      #     - id_viagem
-      #     name: unique_combination__id_viagem__viagens_remuneradas
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+          - id_viagem
+          name: unique_combination__id_viagem__viagens_remuneradas
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data
-          test_start_date: "{{ var('date_range_start') }}" # (Optional. Replace 'yyyy-mm-dd' with a date. Default is 'None')
-          test_end_date: "{{ var('date_range_end') }}" # (Optional. Replace 'yyyy-mm-dd' with a date. Default is 'None')
-          name: completude__viagens_remuneradas
+          row_condition: "data is not null"
+          test_start_date: "{{ var('date_range_start') }}"
+          test_end_date: "'||SAFE_CAST(DATE_ADD(DATE('{{ var('date_range_end') }}'), INTERVAL 1 DAY) AS STRING)||'"
       - check_viagem_completa:
           name: viagem_completa__viagens_remuneradas
     columns:
