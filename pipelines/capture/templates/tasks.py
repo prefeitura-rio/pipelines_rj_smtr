@@ -225,7 +225,7 @@ def upload_source_data_to_gcs(source: SourceTable, partition: str, filepaths: di
     if not source.exists():
         log("Staging Table does not exist, creating table...")
         source.append(source_filepath=filepaths["source"], partition=partition)
-        source.create()
+        source.create(sample_filepath=filepaths["source"])
     else:
         log("Staging Table already exists, appending to it...")
         source.append(source_filepath=filepaths["source"], partition=partition)
