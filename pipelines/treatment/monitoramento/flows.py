@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de monitoramento
 
-DBT: 2024-10-23
+DBT: 2024-11-21
 """
 
 from pipelines.capture.rioonibus.constants import (
