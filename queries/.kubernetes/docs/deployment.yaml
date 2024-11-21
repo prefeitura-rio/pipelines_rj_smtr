@@ -73,9 +73,9 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: gsperim@gmail.com
+    email: caiorogerio@prefeitura.rio
     privateKeySecretRef:
-      name: dbt-docs-tls
+      name: p-dbt-docs-tls
     solvers:
       - http01:
           ingress:
