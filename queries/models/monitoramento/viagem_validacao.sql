@@ -14,6 +14,19 @@
         and date('{{ var("date_range_end") }}')
 {% endset %}
 
+{% set calendario = ref("calendario") %}
+
+{% if execute %}
+    {% if is_incremental() %}
+        {% set gtfs_feeds_query %}
+            select distinct concat("'", feed_start_date, "'") as feed_start_date
+            from {{ calendario }}
+            where {{ incremental_filter }}
+        {% endset %}
+        {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
+    {% endif %}
+{% endif %}
+
 with
     contagem as (
         select
@@ -37,7 +50,7 @@ with
         from {{ ref("gps_segmento_viagem") }}
         where
             not indicador_segmento_desconsiderado
-            {% if is_incremental() %} {{ incremental_filter }} {% endif %}
+            {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
         group by
             data,
             id_viagem,
