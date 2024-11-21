@@ -227,7 +227,7 @@ class SourceTable(BQTable):
         uri = f"gs://{self.bucket_name}/source/{self.dataset_id}/{self.table_id}/*"
         external_config.source_uris = uri
         hive_partitioning = HivePartitioningOptions()
-        hive_partitioning.mode = "STRINGS"
+        hive_partitioning.mode = "AUTO"
         hive_partitioning.source_uri_prefix = uri.replace("*", "")
         external_config.hive_partitioning = hive_partitioning
 
