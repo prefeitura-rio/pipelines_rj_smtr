@@ -14,7 +14,7 @@ from prefeitura_rio.pipelines_utils.logging import log
 from pipelines.constants import constants
 from pipelines.utils.gcp.base import GCPBase
 from pipelines.utils.gcp.storage import Storage
-from pipelines.utils.utils import convert_timezone, cron_date_range
+from pipelines.utils.utils import convert_timezone, cron_date_range, cron_get_last_date
 
 
 class Dataset(GCPBase):
@@ -232,6 +232,19 @@ class SourceTable(BQTable):
         external_config.hive_partitioning = hive_partitioning
 
         return external_config
+
+    def get_last_scheduled_timestamp(self, timestamp: datetime) -> datetime:
+        """
+        Retorna o último timestamp programado antes do timestamp fornecido
+        com base na expressão cron configurada
+
+        Args:
+            timestamp (datetime): O timestamp de referência
+
+        Returns:
+            datetime: O último timestamp programado com base na expressão cron
+        """
+        return cron_get_last_date(cron_expr=self.schedule_cron, timestamp=timestamp)
 
     def get_uncaptured_timestamps(self, timestamp: datetime, retroactive_days: int = 2) -> list:
         """
