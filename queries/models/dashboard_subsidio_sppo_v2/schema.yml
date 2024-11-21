@@ -63,7 +63,7 @@ models:
           date_col: data
           row_condition: "data is not null"
           test_start_date: "{{ var('date_range_start') }}"
-          test_end_date: "{{ modules.datetime.date.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
+          test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
           name: completness__sumario_servico_dia_pagamento
       - teto_pagamento_valor_subsidio_pago:
           table_id: sumario_servico_dia_pagamento
