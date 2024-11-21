@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de monitoramento
 
-DBT: 2024-10-23
+DBT: 2024-11-21
 """
 
 from pipelines.capture.rioonibus.constants import (
@@ -23,7 +23,10 @@ VIAGEM_INFORMADA_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="viagem_informada - materializacao",
     selector=constants.VIAGEM_INFORMADA_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
-    wait=[rioonibus_source_constants.VIAGEM_INFORMADA_SOURCE.value],
+    wait=[
+        planejamento_constants.PLANEJAMENTO_DIARIO_SELECTOR.value,
+        rioonibus_source_constants.VIAGEM_INFORMADA_SOURCE.value,
+    ],
 )
 
 VIAGEM_VALIDACAO_MATERIALIZACAO = create_default_materialization_flow(
