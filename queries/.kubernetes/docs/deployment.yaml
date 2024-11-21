@@ -53,7 +53,7 @@ spec:
   tls:
     - hosts:
         - docs.mobilidade.rio
-      secretName: dbt-docs-tls
+      secretName: p-dbt-docs-tls
   rules:
     - host: docs.mobilidade.rio
       http:
@@ -75,7 +75,7 @@ spec:
     server: https://acme-v02.api.letsencrypt.org/directory
     email: caiorogerio@prefeitura.rio
     privateKeySecretRef:
-      name: p-dbt-docs-tls
+      name: dbt-docs-tls
     solvers:
       - http01:
           ingress:
