@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Módulo para interagir com tabelas e datasets do BigQuery"""
-
+import csv
 from datetime import datetime, timedelta
 from typing import Callable
 
@@ -198,12 +198,12 @@ class SourceTable(BQTable):
         self.pretreat_funcs = pretreat_funcs or []
         self.schedule_cron = schedule_cron
 
-    def _create_table_schema(self) -> list[bigquery.SchemaField]:
+    def _create_table_schema(self, sample_filepath: str) -> list[bigquery.SchemaField]:
         """
         Cria schema para os argumentos da criação de tabela externa no BQ
         """
         log("Creating table schema...")
-        columns = self.primary_keys + ["content", "timestamp_captura"]
+        columns = next(csv.reader(open(sample_filepath, encoding="utf-8")))
 
         log(f"Columns: {columns}")
         schema = [
@@ -212,7 +212,7 @@ class SourceTable(BQTable):
         log("Schema created!")
         return schema
 
-    def _create_table_config(self) -> bigquery.ExternalConfig:
+    def _create_table_config(self, sample_filepath: str) -> bigquery.ExternalConfig:
         """
         Cria as configurações da tabela externa no BQ
         """
@@ -220,7 +220,7 @@ class SourceTable(BQTable):
         external_config.options.skip_leading_rows = 1
         external_config.options.allow_quoted_newlines = True
         external_config.autodetect = False
-        external_config.schema = self._create_table_schema()
+        external_config.schema = self._create_table_schema(sample_filepath=sample_filepath)
         external_config.options.field_delimiter = ","
         external_config.options.allow_jagged_rows = False
 
@@ -294,12 +294,13 @@ class SourceTable(BQTable):
             partition=partition,
         )
 
-    def create(self, location: str = "US"):
+    def create(self, sample_filepath: str, location: str = "US"):
         """
         Cria tabela externa do BQ
 
         Args:
             location (str): Localização do dataset
+            sample_filepath (str): Caminho com dados da tabela (usados para criar o schema)
         """
         log(f"Creating External Table: {self.table_full_name}")
         dataset_obj = Dataset(dataset_id=self.dataset_id, env=self.env, location=location)
@@ -309,7 +310,9 @@ class SourceTable(BQTable):
 
         bq_table = bigquery.Table(self.table_full_name)
         bq_table.description = f"staging table for `{self.table_full_name}`"
-        bq_table.external_data_configuration = self._create_table_config()
+        bq_table.external_data_configuration = self._create_table_config(
+            sample_filepath=sample_filepath
+        )
 
         client.create_table(bq_table)
         log("Table created!")
