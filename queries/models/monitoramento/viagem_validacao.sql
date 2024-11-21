@@ -23,10 +23,9 @@
             from {{ calendario }}
             where {{ incremental_filter }}
         {% endset %}
+        {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
     {% endif %}
-
 {% endif %}
-{% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
 
 with
     contagem as (
