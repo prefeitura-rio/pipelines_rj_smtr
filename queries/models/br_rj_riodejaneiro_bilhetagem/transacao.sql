@@ -1,16 +1,6 @@
 -- depends_on: {{ ref('operadoras_contato') }}
 -- depends_on: {{ ref('servico_operadora') }}
 -- depends_on: {{ ref('transacao_riocard') }}
-{{
-    config(
-        materialized="incremental",
-        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-        incremental_strategy="insert_overwrite",
-    )
-}}
-
--- TODO: Usar variável de run_date_hour para otimizar o numero de partições lidas em
--- staging
 {% set incremental_filter %}
   DATE(data) BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
   AND timestamp_captura BETWEEN DATETIME("{{var('date_range_start')}}") AND DATETIME("{{var('date_range_end')}}")
@@ -18,54 +8,89 @@
 
 {% set transacao_staging = ref("staging_transacao") %}
 {% set integracao_staging = ref("staging_integracao_transacao") %}
+{% set transacao_ordem = ref("aux_transacao_id_ordem_pagamento") %}
 {% if execute %}
     {% if is_incremental() %}
         {% set transacao_partitions_query %}
-      WITH particoes_integracao AS (
-        SELECT DISTINCT
-          CONCAT("'", DATE(data_transacao), "'") AS data_transacao
-        FROM
-          {{ integracao_staging }},
-          UNNEST([
-            data_transacao_t0,
-            data_transacao_t1,
-            data_transacao_t2,
-            data_transacao_t3,
-            data_transacao_t4
-          ]) AS data_transacao
-        WHERE
-          {{ incremental_filter }}
-        ),
-        particoes_transacao AS (
-          SELECT DISTINCT
-            CONCAT("'", DATE(data_transacao), "'") AS data_transacao
-          FROM
-            {{ transacao_staging }}
-          WHERE
-            {{ incremental_filter }}
-        )
-        SELECT
-          COALESCE(t.data_transacao, i.data_transacao) AS data_transacao
-        FROM
-          particoes_transacao t
-        FULL OUTER JOIN
-          particoes_integracao i
-        USING(data_transacao)
-        WHERE
-          COALESCE(t.data_transacao, i.data_transacao) IS NOT NULL
+            WITH particoes_integracao AS (
+                SELECT DISTINCT
+                CONCAT("'", DATE(data_transacao), "'") AS data_transacao
+                FROM
+                    {{ integracao_staging }},
+                    UNNEST([
+                        data_transacao_t0,
+                        data_transacao_t1,
+                        data_transacao_t2,
+                        data_transacao_t3,
+                        data_transacao_t4
+                    ]) AS data_transacao
+                WHERE
+                    {{ incremental_filter }}
+            ),
+            particoes_transacao AS (
+                SELECT DISTINCT
+                    CONCAT("'", DATE(data_transacao), "'") AS data_transacao
+                FROM
+                    {{ transacao_staging }}
+                WHERE
+                    {{ incremental_filter }}
+            ),
+            particoes_transacao_ordem AS (
+                 SELECT
+                    CONCAT("'", PARSE_DATE("%Y%m%d", partition_id), "'") AS data
+                FROM
+                    `rj-smtr.{{ transacao_ordem.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+                WHERE
+                    table_name = "{{ transacao_ordem.identifier }}"
+                    AND partition_id != "__NULL__"
+                    AND DATETIME(last_modified_time, "America/Sao_Paulo") BETWEEN DATETIME("{{var('date_range_start')}}") AND (DATETIME("{{var('date_range_end')}}"))
+            )
+            SELECT
+                data_transacao
+            FROM
+                particoes_transacao
+            WHERE
+                data_transacao IS NOT NULL
+            UNION DISTINCT
+            SELECT
+                data_transacao
+            FROM
+                particoes_integracao
+            WHERE
+                data_transacao IS NOT NULL
+            UNION DISTINCT
+            SELECT
+                data_transacao
+            FROM
+                particoes_transacao_ordem
+            WHERE
+                data_transacao IS NOT NULL
+
         {% endset %}
 
         {% set transacao_partitions = run_query(transacao_partitions_query) %}
 
         {% set transacao_partition_list = transacao_partitions.columns[0].values() %}
+
     {% endif %}
 {% endif %}
+
+{{
+    config(
+        materialized="incremental",
+        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+        incremental_strategy="insert_overwrite",
+        incremental_predicates=[
+            "DBT_INTERNAL_DEST.data in (" + transacao_partition_list
+            | join(", ") + ")"
+        ],
+    )
+}}
 
 with
     transacao as (
         select *
         from {{ transacao_staging }}
-        -- `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.transacao`
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
     tipo_transacao as (
@@ -92,6 +117,17 @@ with
         select id_transacao, valor_rateio, datetime_processamento_integracao
         from {{ ref("integracao") }}
         -- `rj-smtr.br_rj_riodejaneiro_bilhetagem.integracao`
+        {% if is_incremental() %}
+            where
+                {% if transacao_partition_list | length > 0 %}
+                    data in ({{ transacao_partition_list | join(", ") }})
+                {% else %} data = "2000-01-01"
+                {% endif %}
+        {% endif %}
+    ),
+    transacao_ordem as (
+        select *
+        from {{ ref("aux_transacao_id_ordem_pagamento") }}
         {% if is_incremental() %}
             where
                 {% if transacao_partition_list | length > 0 %}
@@ -153,10 +189,7 @@ with
             {{ ref("consorcios") }} dc
             -- `rj-smtr.cadastro.consorcios` dc
             on t.cd_consorcio = dc.id_consorcio_jae
-        left join
-            {{ ref("staging_linha") }} l
-            -- `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.linha` l
-            on t.cd_linha = l.cd_linha
+        left join {{ ref("staging_linha") }} l on t.cd_linha = l.cd_linha
         -- LEFT JOIN
         -- {{ ref("servicos") }} AS s
         -- ON
@@ -171,8 +204,6 @@ with
             and (t.data_transacao < g.data_fim_validade or g.data_fim_validade is null)
         left join
             {{ ref("staging_linha_sem_ressarcimento") }} lsr
-            -- `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.linha_sem_ressarcimento`
-            -- lsr
             on t.cd_linha = lsr.id_linha
         where lsr.id_linha is null and date(data_transacao) >= "2023-07-17"
     ),
@@ -310,10 +341,17 @@ select
     case
         when
             i.id_transacao is not null
+            or o.id_transacao is not null
             or date(t.datetime_processamento)
             < (select max(data_ordem) from {{ ref("ordem_pagamento_dia") }})
         then coalesce(i.valor_rateio, t.valor_transacao) * 0.96
     end as valor_pagamento,
+    o.data_ordem,
+    o.id_ordem_pagamento_servico_operador_dia,
+    o.id_ordem_pagamento_consorcio_operadora_dia,
+    o.id_ordem_pagamento_consorcio_dia,
+    o.id_ordem_pagamento,
     '{{ var("version") }}' as versao
 from transacao_deduplicada t
 left join integracao i using (id_transacao)
+left join transacao_ordem o using (id_transacao)
