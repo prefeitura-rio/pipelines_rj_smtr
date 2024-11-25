@@ -180,7 +180,7 @@ sources:
       - name: viagem_informada
 
   - name: source_jae
-    database: rj-smtr-dev
+    database: rj-smtr-staging
 
     tables:
       - name: transacao_ordem

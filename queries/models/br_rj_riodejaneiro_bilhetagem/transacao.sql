@@ -47,7 +47,7 @@
                  SELECT
                     CONCAT("'", PARSE_DATE("%Y%m%d", partition_id), "'") AS data_transacao
                 FROM
-                    `rj-smtr-dev.{{ transacao_ordem.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+                    `rj-smtr.{{ transacao_ordem.schema }}.INFORMATION_SCHEMA.PARTITIONS`
                 WHERE
                     table_name = "{{ transacao_ordem.identifier }}"
                     AND partition_id != "__NULL__"
