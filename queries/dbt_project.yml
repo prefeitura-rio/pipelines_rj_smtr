@@ -353,3 +353,10 @@ models:
       staging:
         +materialized: view
         +schema: monitoramento_staging
+    bilhetagem:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: bilhetagem
+      staging:
+        +materialized: view
+        +schema: bilhetagem_staging
