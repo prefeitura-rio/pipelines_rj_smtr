@@ -15,7 +15,7 @@ ordem_pagamento_materialize_params = (
     old_constants.BILHETAGEM_MATERIALIZACAO_ORDEM_PAGAMENTO_PARAMS.value
 )
 
-PLANEJAMENTO_DIARIO_MATERIALIZACAO = create_default_materialization_flow(
+TRANSACAO_ORDEM_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="transacao_ordem - materializacao",
     selector=constants.TRANSACAO_ORDEM_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
