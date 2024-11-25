@@ -189,6 +189,17 @@ vars:
   ### Encontro de Contas ###
   encontro_contas_modo: ""
 
+  ### Viagens 2.0 ###
+
+  limite_reducao_area_buffer:  0.5
+  comprimento_minimo_segmento_shape: 990
+  buffer_segmento_metros: 20
+  buffer_tunel_metros: 50
+  parametro_validacao: 0.9
+  comprimento_shape: 1000
+  projecao_sirgas_2000: "EPSG:31983"
+  projecao_wgs_84: "EPSG:4326"
+
 tests:
   rj_smtr:
     where: "DATA BETWEEN DATE('__date_range_start__') AND DATE('__date_range_end__')"
@@ -328,6 +339,13 @@ models:
       staging:
         +materialized: view
         +schema: transito_staging
+    planejamento:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: planejamento
+      staging:
+        +materialized: view
+        +schema: planejamento_staging
     monitoramento:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
