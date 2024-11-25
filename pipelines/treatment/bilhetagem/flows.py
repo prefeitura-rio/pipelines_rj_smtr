@@ -13,6 +13,7 @@ from pipelines.treatment.templates.flows import create_default_materialization_f
 
 ordem_pagamento_materialize_params = (
     old_constants.BILHETAGEM_MATERIALIZACAO_ORDEM_PAGAMENTO_PARAMS.value
+)
 
 TRANSACAO_ORDEM_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="transacao_ordem - materializacao",
