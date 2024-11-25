@@ -50,7 +50,7 @@ with
             s.datetime_processamento,
             o.data_ordem,
             id_ordem_pagamento_servico_operador_dia,
-            o.id_ordem_pagamento_consorcio_operadora_dia,
+            o.id_ordem_pagamento_consorcio_operador_dia,
             o.id_ordem_pagamento_consorcio_dia,
             o.id_ordem_pagamento,
             s.datetime_captura
