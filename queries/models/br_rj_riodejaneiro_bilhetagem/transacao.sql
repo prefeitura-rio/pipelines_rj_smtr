@@ -1,6 +1,14 @@
 -- depends_on: {{ ref('operadoras_contato') }}
 -- depends_on: {{ ref('servico_operadora') }}
 -- depends_on: {{ ref('transacao_riocard') }}
+{{
+    config(
+        materialized="incremental",
+        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+        incremental_strategy="insert_overwrite",
+    )
+}}
+
 {% set incremental_filter %}
   DATE(data) BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
   AND timestamp_captura BETWEEN DATETIME("{{var('date_range_start')}}") AND DATETIME("{{var('date_range_end')}}")
@@ -37,9 +45,9 @@
             ),
             particoes_transacao_ordem AS (
                  SELECT
-                    CONCAT("'", PARSE_DATE("%Y%m%d", partition_id), "'") AS data
+                    CONCAT("'", PARSE_DATE("%Y%m%d", partition_id), "'") AS data_transacao
                 FROM
-                    `rj-smtr.{{ transacao_ordem.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+                    `rj-smtr-dev.{{ transacao_ordem.schema }}.INFORMATION_SCHEMA.PARTITIONS`
                 WHERE
                     table_name = "{{ transacao_ordem.identifier }}"
                     AND partition_id != "__NULL__"
@@ -74,18 +82,6 @@
 
     {% endif %}
 {% endif %}
-
-{{
-    config(
-        materialized="incremental",
-        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-        incremental_strategy="insert_overwrite",
-        incremental_predicates=[
-            "DBT_INTERNAL_DEST.data in (" + transacao_partition_list
-            | join(", ") + ")"
-        ],
-    )
-}}
 
 with
     transacao as (
@@ -207,6 +203,17 @@ with
             on t.cd_linha = lsr.id_linha
         where lsr.id_linha is null and date(data_transacao) >= "2023-07-17"
     ),
+    {% if is_incremental() %}
+        transacao_atual as (
+            select *
+            from {{ this }}
+            where
+                {% if transacao_partition_list | length > 0 %}
+                    data in ({{ transacao_partition_list | join(", ") }})
+                {% else %} data = "2000-01-01"
+                {% endif %}
+        ),
+    {% endif %}
     complete_partitions as (
         select
             data,
@@ -277,12 +284,7 @@ with
                 stop_lon,
                 valor_transacao,
                 1 as priority
-            from {{ this }}
-            where
-                {% if transacao_partition_list | length > 0 %}
-                    data in ({{ transacao_partition_list | join(", ") }})
-                {% else %} data = "2000-01-01"
-                {% endif %}
+            from transacao_atual
         {% endif %}
     ),
     transacao_deduplicada as (
@@ -298,60 +300,109 @@ with
                 from complete_partitions
             )
         where rn = 1
+    ),
+    transacao_final as (
+        select
+            t.data,
+            t.hora,
+            t.datetime_transacao,
+            t.datetime_processamento,
+            t.datetime_captura,
+            t.modo,
+            t.id_consorcio,
+            t.consorcio,
+            t.id_operadora,
+            t.operadora,
+            t.id_servico_jae,
+            t.servico_jae,
+            t.descricao_servico_jae,
+            t.sentido,
+            t.id_veiculo,
+            t.id_validador,
+            t.id_cliente,
+            sha256(t.id_cliente) as hash_cliente,
+            t.id_transacao,
+            t.tipo_pagamento,
+            t.tipo_transacao,
+            case
+                when t.tipo_transacao = "Integração" or i.id_transacao is not null
+                then "Integração"
+                when t.tipo_transacao in ("Débito", "Botoeira")
+                then "Integral"
+                else t.tipo_transacao
+            end as tipo_transacao_smtr,
+            t.tipo_gratuidade,
+            t.id_tipo_integracao,
+            t.id_integracao,
+            t.latitude,
+            t.longitude,
+            t.geo_point_transacao,
+            t.stop_id,
+            t.stop_lat,
+            t.stop_lon,
+            t.valor_transacao,
+            case
+                when
+                    i.id_transacao is not null
+                    or o.id_transacao is not null
+                    or date(t.datetime_processamento)
+                    < (select max(data_ordem) from {{ ref("ordem_pagamento_dia") }})
+                then coalesce(i.valor_rateio, t.valor_transacao) * 0.96
+            end as valor_pagamento,
+            o.data_ordem,
+            o.id_ordem_pagamento_servico_operador_dia,
+            o.id_ordem_pagamento_consorcio_operadora_dia,
+            o.id_ordem_pagamento_consorcio_dia,
+            o.id_ordem_pagamento
+        from transacao_deduplicada t
+        left join integracao i using (id_transacao)
+        left join transacao_ordem o using (id_transacao)
     )
+    {% set columns = (
+        list_columns()
+        | reject("in", ["versao", "datetime_ultima_atualizacao"])
+        | list
+    ) %}
 select
-    t.data,
-    t.hora,
-    t.datetime_transacao,
-    t.datetime_processamento,
-    t.datetime_captura,
-    t.modo,
-    t.id_consorcio,
-    t.consorcio,
-    t.id_operadora,
-    t.operadora,
-    t.id_servico_jae,
-    t.servico_jae,
-    t.descricao_servico_jae,
-    t.sentido,
-    t.id_veiculo,
-    t.id_validador,
-    t.id_cliente,
-    sha256(t.id_cliente) as hash_cliente,
-    t.id_transacao,
-    t.tipo_pagamento,
-    t.tipo_transacao,
-    case
-        when t.tipo_transacao = "Integração" or i.id_transacao is not null
-        then "Integração"
-        when t.tipo_transacao in ("Débito", "Botoeira")
-        then "Integral"
-        else t.tipo_transacao
-    end as tipo_transacao_smtr,
-    t.tipo_gratuidade,
-    t.id_tipo_integracao,
-    t.id_integracao,
-    t.latitude,
-    t.longitude,
-    t.geo_point_transacao,
-    t.stop_id,
-    t.stop_lat,
-    t.stop_lon,
-    t.valor_transacao,
-    case
-        when
-            i.id_transacao is not null
-            or o.id_transacao is not null
-            or date(t.datetime_processamento)
-            < (select max(data_ordem) from {{ ref("ordem_pagamento_dia") }})
-        then coalesce(i.valor_rateio, t.valor_transacao) * 0.96
-    end as valor_pagamento,
-    o.data_ordem,
-    o.id_ordem_pagamento_servico_operador_dia,
-    o.id_ordem_pagamento_consorcio_operadora_dia,
-    o.id_ordem_pagamento_consorcio_dia,
-    o.id_ordem_pagamento,
-    '{{ var("version") }}' as versao
-from transacao_deduplicada t
-left join integracao i using (id_transacao)
-left join transacao_ordem o using (id_transacao)
+    f.*,
+    '{{ var("version") }}' as versao,
+    {% if is_incremental() %}
+        case
+            when
+                a.id_transacao is null
+                or sha256(
+                    concat(
+                        {% for c in columns %}
+                            {% if c == "geo_point_transacao" %}
+                                ifnull(st_astext(f.geo_point_transacao), 'n/a')
+                            {% elif c == "hash_cliente" %}
+                                ifnull(to_base64(f.hash_cliente), 'n/a')
+                            {% else %}ifnull(cast(f.{{ c }} as string), 'n/a')
+                            {% endif %}
+
+                            {% if not loop.last %}, {% endif %}
+
+                        {% endfor %}
+                    )
+                ) != sha256(
+                    concat(
+                        {% for c in columns %}
+                            {% if c == "geo_point_transacao" %}
+                                ifnull(st_astext(a.geo_point_transacao), 'n/a')
+                            {% elif c == "hash_cliente" %}
+                                ifnull(to_base64(f.hash_cliente), 'n/a')
+                            {% else %}ifnull(cast(a.{{ c }} as string), 'n/a')
+                            {% endif %}
+
+                            {% if not loop.last %}, {% endif %}
+
+                        {% endfor %}
+                    )
+                )
+            then current_datetime("America/Sao_Paulo")
+            else a.datetime_ultima_atualizacao
+        end
+    {% else %} current_datetime("America/Sao_Paulo")
+    {% endif %} as datetime_ultima_atualizacao
+from transacao_final f
+{% if is_incremental() %} left join transacao_atual a using (id_transacao) {% endif %}
