@@ -63,8 +63,8 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     transacao
                 WHERE
-                    DATE(data_processamento) >= DATE('{{ start }}')
-                    AND DATE(data_processamento) <= DATE('{{ end }}')
+                    DATE(data_processamento) >= DATE('{start}')
+                    AND DATE(data_processamento) <= DATE('{end}')
                     AND id_ordem_ressarcimento IS NOT NULL
             """,
             "database": "transacao_db",
