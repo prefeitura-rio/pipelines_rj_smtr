@@ -6,12 +6,13 @@
 
 select
     data,
-    hora,
     id,
     datetime(
         parse_timestamp('%Y-%m-%d %H:%M:%S%Ez', timestamp_captura), "America/Sao_Paulo"
     ) as timestamp_captura,
-    id_ordem_ressarcimento,
+    cast(
+        cast(cast(id_ordem_ressarcimento as float64) as integer) as string
+    ) as id_ordem_ressarcimento,
     datetime(
         parse_timestamp('%Y-%m-%dT%H:%M:%E6S%Ez', data_processamento),
         "America/Sao_Paulo"
