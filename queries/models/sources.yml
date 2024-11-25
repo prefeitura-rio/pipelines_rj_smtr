@@ -178,3 +178,9 @@ sources:
 
     tables:
       - name: viagem_informada
+
+  - name: source_jae
+    database: rj-smtr-dev
+
+    tables:
+      - name: transacao_ordem
