@@ -351,7 +351,7 @@ with
             end as valor_pagamento,
             o.data_ordem,
             o.id_ordem_pagamento_servico_operador_dia,
-            o.id_ordem_pagamento_consorcio_operadora_dia,
+            o.id_ordem_pagamento_consorcio_operador_dia,
             o.id_ordem_pagamento_consorcio_dia,
             o.id_ordem_pagamento
         from transacao_deduplicada t

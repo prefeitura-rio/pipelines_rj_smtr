@@ -24,7 +24,7 @@ with
             l.nr_linha as servico_jae,
             l.nm_linha as descricao_servico_jae,
             r.id_ordem_pagamento_consorcio_operadora
-            as id_ordem_pagamento_consorcio_operadora_dia,
+            as id_ordem_pagamento_consorcio_operador_dia,
             r.id_ordem_pagamento_consorcio as id_ordem_pagamento_consorcio_dia,
             r.id_ordem_pagamento as id_ordem_pagamento,
             r.id_ordem_ressarcimento as id_ordem_ressarcimento,
