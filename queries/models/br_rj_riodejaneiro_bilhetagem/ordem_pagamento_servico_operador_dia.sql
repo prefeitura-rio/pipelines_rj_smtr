@@ -78,7 +78,7 @@ select
     id_servico_jae,
     servico_jae,
     descricao_servico_jae,
-    id_ordem_pagamento_consorcio_operadora_dia,
+    id_ordem_pagamento_consorcio_operador_dia,
     id_ordem_pagamento_consorcio_dia,
     id_ordem_pagamento,
     id_ordem_ressarcimento,
