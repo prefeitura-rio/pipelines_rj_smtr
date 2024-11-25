@@ -169,7 +169,7 @@ SELECT
         AND viagens_planejadas < 10
         AND viagens_planejadas > 5
         AND pof > 100
-        AND rn > (viagens_planejadas_ida_volta + IF(indicador_circular, 2, 1))
+        AND rn > (viagens_planejadas_ida_volta + IF(indicador_circular, 1, 2))
         THEN FALSE
     WHEN v.data >= DATE("{{ var("DATA_SUBSIDIO_V10_INICIO") }}")
         AND v.tipo_dia = "Dia Útil"
@@ -187,7 +187,7 @@ SELECT
         AND v.tipo_dia != "Dia Útil"
         AND viagens_planejadas < 5
         AND pof > 100
-        AND rn > (viagens_planejadas_ida_volta + IF(indicador_circular, 2, 1))
+        AND rn > (viagens_planejadas_ida_volta + IF(indicador_circular, 1, 2))
         THEN FALSE
     WHEN v.data >= DATE("{{ var("DATA_SUBSIDIO_V10_INICIO") }}")
         AND v.tipo_dia != "Dia Útil"

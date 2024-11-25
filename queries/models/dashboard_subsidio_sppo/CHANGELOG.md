@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Altera regras do modelo `viagens_remuneradas` conforme Resolução SMTR N° 3777/2024 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/300)
+- Altera regras do modelo `viagens_remuneradas` conforme Resolução SMTR N° 3777/2024 e MTR-MEM-2024/02465 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/300)
 
 ## [7.0.5] - 2024-10-16
 
