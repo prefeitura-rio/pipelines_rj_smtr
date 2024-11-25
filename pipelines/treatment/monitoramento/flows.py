@@ -12,12 +12,14 @@ from pipelines.constants import constants as smtr_constants
 from pipelines.migration.br_rj_riodejaneiro_onibus_gps_zirix.constants import (
     constants as gps_zirix_constants,
 )
-from pipelines.schedules import cron_every_hour_minute_6
+from pipelines.schedules import create_hourly_cron
 from pipelines.treatment.monitoramento.constants import constants
 from pipelines.treatment.planejamento.constants import (
     constants as planejamento_constants,
 )
 from pipelines.treatment.templates.flows import create_default_materialization_flow
+
+cron_every_hour_minute_6 = create_hourly_cron(minute=6)
 
 VIAGEM_INFORMADA_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="viagem_informada - materializacao",
