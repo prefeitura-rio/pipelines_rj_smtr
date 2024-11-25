@@ -20,7 +20,6 @@ with
             do.id_operadora,
             do.operadora,
             r.id_linha as id_servico_jae,
-            -- s.servico,
             l.nr_linha as servico_jae,
             l.nm_linha as descricao_servico_jae,
             r.id_ordem_pagamento_consorcio_operadora
@@ -62,10 +61,6 @@ with
         left join {{ ref("operadoras") }} as do on r.id_operadora = do.id_operadora_jae
         left join {{ ref("consorcios") }} as dc on r.id_consorcio = dc.id_consorcio_jae
         left join {{ ref("staging_linha") }} as l on r.id_linha = l.cd_linha
-        -- LEFT JOIN
-        -- {{ ref("servicos") }} AS s
-        -- ON
-        -- r.id_linha = s.id_servico_jae
         {% if is_incremental() %}
             where
                 date(r.data) between date("{{var('date_range_start')}}") and date(
