@@ -276,7 +276,9 @@ class SourceTable(BQTable):
             files = files + [
                 convert_timezone(datetime.strptime(b.name.split("/")[-1], "%Y-%m-%d-%H-%M-%S.csv"))
                 for b in st.bucket.list_blobs(prefix=prefix)
+                if ".csv" in b.name
             ]
+
         return [d for d in full_range if d not in files][: self.max_recaptures]
 
     def upload_raw_file(self, raw_filepath: str, partition: str):
