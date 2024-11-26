@@ -123,6 +123,8 @@ vars:
   DATA_SUBSIDIO_V8_INICIO: "2024-07-20"
   # Feature Apuração por faixa horária
   DATA_SUBSIDIO_V9_INICIO: "2024-08-16"
+  # Feature Apuração por novas faixas horárias (RESOLUÇÃO SMTR 3777/2024)
+  DATA_SUBSIDIO_V10_INICIO: "2024-11-01"
   # valor_subsidio: "`rj-smtr-dev.projeto_subsidio_sppo.valor_subsidio`"
   DATA_SUBSIDIO_V11_INICIO: "2024-11-06"
 
