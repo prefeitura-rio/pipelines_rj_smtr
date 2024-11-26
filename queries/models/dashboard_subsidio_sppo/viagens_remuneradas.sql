@@ -162,7 +162,7 @@ WITH
   )
 -- 6. Flag de viagens que serão consideradas ou não para fins de remuneração (apuração de valor de subsídio) - RESOLUÇÃO SMTR Nº 3645/2023
 SELECT
-  v.* EXCEPT(rn, datetime_partida, viagens_planejadas, viagens_planejadas_ida_volta, km_planejada, tipo_dia, consorcio, faixa_horaria_inicio, faixa_horaria_fim),
+  v.* EXCEPT(rn, datetime_partida, viagens_planejadas, viagens_planejadas_ida_volta, km_planejada, tipo_dia, consorcio, faixa_horaria_inicio, faixa_horaria_fim, indicador_circular),
   CASE
     WHEN v.data >= DATE("{{ var("DATA_SUBSIDIO_V10_INICIO") }}")
         AND v.tipo_dia = "Dia Útil"
