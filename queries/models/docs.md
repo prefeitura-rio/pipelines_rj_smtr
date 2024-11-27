@@ -335,3 +335,7 @@ Nome do trajeto.
 {% docs sentido %}
 Sentido da linha
 {% enddocs %}
+
+{% docs velocidade_media %}
+Velocidade média da viagem (km/h)
+{% enddocs %}
