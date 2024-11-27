@@ -25,7 +25,7 @@ def create_viagem_informada_extractor(source: SourceTable, timestamp: datetime):
             "guididentificacao"
         ],
         "datetime_processamento_inicio": extraction_day.isoformat() + "T00:00:00",
-        "datetime_processamento_fim": extraction_day.isoformat() + "T23:59:59",
+        "datetime_processamento_fim": timestamp.date().isoformat() + "T23:59:59",
     }
     return partial(
         get_raw_api,
