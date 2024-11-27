@@ -70,7 +70,7 @@ with
             where data in ({{ partitions | join(", ") }})
         {% endif %}
     )
-select * except (rn)
+select * except (rn, priority)
 from
     (
         select
