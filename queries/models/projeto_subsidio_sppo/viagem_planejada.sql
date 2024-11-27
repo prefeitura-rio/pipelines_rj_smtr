@@ -262,7 +262,7 @@ WITH
     "{{ tipo_oss[1] }}" AS tipo_os,
     "{{ tipo_dias[1] }}" AS tipo_dia,
     ts.servico,
-    ts.vista, 
+    ts.vista,
     ts.consorcio,
     ts.sentido,
     ts.partidas_total_planejada,
