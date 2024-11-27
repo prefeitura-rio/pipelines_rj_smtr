@@ -3,12 +3,13 @@
 from datetime import datetime, timedelta
 from functools import partial
 
+import pandas as pd
 import requests
 from prefect import task
 
 from pipelines.capture.sonda.constants import constants
 from pipelines.constants import constants as smtr_constants
-from pipelines.utils.extractors.api import get_raw_api
+from pipelines.utils.extractors.api import get_raw_api_params_list
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.secret import get_secret
 
@@ -17,10 +18,14 @@ from pipelines.utils.secret import get_secret
     max_retries=smtr_constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=smtr_constants.RETRY_DELAY.value),
 )
-def create_viagem_informada_extractor(source: SourceTable, timestamp: datetime):
+def create_viagem_informada_extractor(
+    source: SourceTable,  # pylint: disable=W0613
+    timestamp: datetime,
+):
     """Cria a extração de viagens informadas na api da SONDA"""
 
-    extraction_day = timestamp.date() - timedelta(days=2)
+    end_date = timestamp.date()
+    start_date = end_date - timedelta(days=2)
 
     loging_response = requests.post(
         constants.VIAGEM_INFORMADA_LOGIN_URL.value,
@@ -32,16 +37,18 @@ def create_viagem_informada_extractor(source: SourceTable, timestamp: datetime):
 
     key = loging_response.json()["IdentificacaoLogin"]
 
-    params = {
-        "datetime_processamento": extraction_day.strftime("%d/%m/%Y 00:00:00"),
-    }
+    params = [
+        {
+            "datetime_processamento": d.strftime("%d/%m/%Y 00:00:00"),
+        }
+        for d in pd.date_range(start_date, end_date)
+    ]
 
     headers = {"Authorization": key}
 
     return partial(
-        get_raw_api,
+        get_raw_api_params_list,
         url=constants.VIAGEM_INFORMADA_BASE_URL.value,
-        params=params,
+        params_list=params,
         headers=headers,
-        raw_filetype=source.raw_filetype,
     )

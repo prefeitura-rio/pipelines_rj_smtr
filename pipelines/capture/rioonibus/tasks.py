@@ -17,12 +17,14 @@ from pipelines.utils.secret import get_secret
     max_retries=smtr_constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=smtr_constants.RETRY_DELAY.value),
 )
-def create_viagem_informada_extractor(source: SourceTable, timestamp: datetime):
+def create_viagem_informada_extractor(
+    source: SourceTable,  # pylint: disable=W0613
+    timestamp: datetime,
+):
     """Cria a extração de viagens informadas na api da Rio Ônibus"""
 
     end_date = timestamp.date()
     start_date = end_date - timedelta(days=2)
-    date_range = pd.date_range(start_date, end_date)
     api_key = get_secret(constants.RIO_ONIBUS_SECRET_PATH.value)["guididentificacao"]
     params = [
         {
@@ -30,7 +32,7 @@ def create_viagem_informada_extractor(source: SourceTable, timestamp: datetime):
             "datetime_processamento_inicio": d.date().isoformat() + "T00:00:00",
             "datetime_processamento_fim": d.date().isoformat() + "T23:59:59",
         }
-        for d in date_range
+        for d in pd.date_range(start_date, end_date)
     ]
 
     return partial(
