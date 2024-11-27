@@ -222,43 +222,79 @@ WITH
   WHERE
     data BETWEEN DATE_SUB("{{ var('run_date') }}", INTERVAL 2 DAY) AND DATE_SUB("{{ var('run_date') }}", INTERVAL 1 DAY)
   ),
+  dia_atual as (
+    SELECT
+        feed_version,
+        feed_start_date,
+        feed_end_date,
+        tipo_os,
+        tipo_dia,
+        servico,
+        vista,
+        consorcio,
+        sentido,
+        partidas_total_planejada,
+        distancia_planejada,
+        distancia_total_planejada,
+        inicio_periodo,
+        fim_periodo,
+        faixa_horaria_inicio,
+        faixa_horaria_fim,
+        shape_id,
+        shape_id_planejado,
+        sentido_shape,
+        id_tipo_trajeto,
+    FROM
+      {{ ref("ordem_servico_trips_shapes_gtfs") }}
+       -- rj-smtr.gtfs.ordem_servico_trips_shapes
+    WHERE
+      tipo_os = "{{ tipo_oss[1] }}"
+      AND feed_version = "{{ feed_versions[1] }}"
+      AND feed_start_date = DATE("{{ feed_start_dates[1] }}")
+      AND tipo_dia = "{{ tipo_dias[1] }}"
+  ),
   -- 2. Busca partidas e quilometragem da faixa horaria (dia anterior)
   dia_anterior AS (
     SELECT
     "{{ feed_versions[1] }}" AS feed_version,
     DATE("{{ feed_start_dates[1] }}") AS feed_start_date,
-    feed_end_date,
+    ts.feed_end_date,
     "{{ tipo_oss[1] }}" AS tipo_os,
     "{{ tipo_dias[1] }}" AS tipo_dia,
-    servico,
-    vista,
-    consorcio,
-    sentido,
-    partidas_total_planejada,
-    distancia_planejada,
-    distancia_total_planejada,
-    inicio_periodo,
-    fim_periodo,
+    ts.servico,
+    ts.vista, 
+    ts.consorcio,
+    ts.sentido,
+    ts.partidas_total_planejada,
+    da.distancia_planejada,
+    da.distancia_total_planejada,
+    da.inicio_periodo,
+    da.fim_periodo,
     "00:00:00" AS faixa_horaria_inicio,
     "02:59:59" AS faixa_horaria_fim,
-    trip_id_planejado,
-    trip_id,
-    shape_id,
-    shape_id_planejado,
-    shape,
-    sentido_shape,
-    start_pt,
-    end_pt,
-    id_tipo_trajeto,
+    ts.trip_id_planejado,
+    ts.trip_id,
+    ts.shape_id,
+    ts.shape_id_planejado,
+    ts.shape,
+    ts.sentido_shape,
+    ts.start_pt,
+    ts.end_pt,
+    ts.id_tipo_trajeto,
     FROM
-      {{ ref("ordem_servico_trips_shapes_gtfs") }}
-      -- rj-smtr.gtfs.ordem_servico_trips_shapes
+      {{ ref("ordem_servico_trips_shapes_gtfs") }} as ts
+      -- rj-smtr.gtfs.ordem_servico_trips_shapes as ts
+    LEFT JOIN
+        dia_atual as da
+    using(servico, sentido, shape_id)
     WHERE
-      faixa_horaria_inicio = "24:00:00"
-      AND tipo_os = "{{ tipo_oss[0] }}"
-      AND feed_version = "{{ feed_versions[0] }}"
-      AND feed_start_date = DATE("{{ feed_start_dates[0] }}")
-      AND tipo_dia = "{{ tipo_dias[0] }}"
+      ts.faixa_horaria_inicio = "24:00:00"
+      AND ts.tipo_os = "{{ tipo_oss[0] }}"
+      AND ts.feed_version = "{{ feed_versions[0] }}"
+      AND ts.feed_start_date = DATE("{{ feed_start_dates[0] }}")
+      AND ts.tipo_dia = "{{ tipo_dias[0] }}"
+      AND da.faixa_horaria_inicio = "00:00:00"
+      AND da.faixa_horaria_fim = "02:59:59"
   ),
   trips AS (
     SELECT DISTINCT
@@ -273,7 +309,7 @@ WITH
         shape_id,
     FROM
       {{ ref("ordem_servico_trips_shapes_gtfs") }}
-    --   rj-smtr.gtfs.ordem_servico_trips_shapes
+    -- rj-smtr.gtfs.ordem_servico_trips_shapes
     WHERE
       tipo_os = "{{ tipo_oss[1] }}"
       AND feed_version = "{{ feed_versions[1] }}"
@@ -302,14 +338,7 @@ combina_trips_shapes AS (
         shape_id_planejado,
         sentido_shape,
         id_tipo_trajeto,
-    FROM
-      {{ ref("ordem_servico_trips_shapes_gtfs") }}
-    --   rj-smtr.gtfs.ordem_servico_trips_shapes
-    WHERE
-      tipo_os = "{{ tipo_oss[1] }}"
-      AND feed_version = "{{ feed_versions[1] }}"
-      AND feed_start_date = DATE("{{ feed_start_dates[1] }}")
-      AND tipo_dia = "{{ tipo_dias[1] }}"
+    FROM dia_atual
     UNION ALL
     SELECT
         feed_version,
