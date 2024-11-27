@@ -40,7 +40,8 @@ def get_raw_db(
     for retry in range(1, max_retries + 1):
         try:
             log(f"[ATTEMPT {retry}/{max_retries}]: {query}")
-            data = pd.read_sql(sql=query, con=connection).to_dict(orient="records")
+            data = pd.read_sql(sql=query, con=connection)
+            data = data.to_dict(orient="records")
             for d in data:
                 for k, v in d.items():
                     if pd.isna(v):
@@ -50,7 +51,7 @@ def get_raw_db(
             if retry == max_retries:
                 raise err
 
-        return data
+    return data
 
 
 def get_raw_db_paginated(
