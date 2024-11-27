@@ -21,7 +21,7 @@ def get_raw_api(
     Args:
         url (str): URL para fazer o request
         headers (Union[None, dict]): Headers para o request
-        params (Union[None, dict]): Paramêtros para o request
+        params (Union[None, dict]): Parâmetros para o request
         raw_filetype (str): Tipo de dado do arquivo (csv, json, ...)
 
     Returns:
@@ -63,11 +63,12 @@ def get_raw_api_top_skip(
     max_page: int,
 ) -> list[dict]:
     """
-    Função para extrair dados de API paginada do tipo top e skip. Deve
+    Função para extrair dados de API paginada do tipo top e skip.
+
     Args:
         url (str): URL para fazer o request
         headers (Union[None, dict]): Headers para o request
-        params (Union[None, dict]): Paramêtros para o request
+        params (Union[None, dict]): Parâmetros para o request
         top_param_name (str): Nome do parâmetro que define a quantidade de registros em uma página
         skip_param_name (str): Nome do parâmetro que define quantos registros pular
         page_size (int): Número máximo de registros em uma página
@@ -95,4 +96,28 @@ def get_raw_api_top_skip(
             break
 
         params[skip_param_name] += page_size
+    return data
+
+
+def get_raw_api_params_list(
+    url: str,
+    headers: Union[None, dict],
+    params_list: list[dict],
+) -> list[dict]:
+    """
+    Função para extrair dados de API agregando dados de multiplas
+    chamadas com parâmetros diferentes.
+
+    Args:
+        url (str): URL para fazer o request
+        headers (Union[None, dict]): Headers para o request
+        params_list (list[dict): Lista de parâmetros para os requests
+
+    Returns:
+        list[dict]: Dados capturados da API
+    """
+    data = []
+    for params in params_list:
+        page_data = get_raw_api(url=url, headers=headers, params=params, raw_filetype="json")
+        data += page_data
     return data

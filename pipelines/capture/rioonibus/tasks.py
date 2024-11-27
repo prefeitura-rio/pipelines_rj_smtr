@@ -3,11 +3,12 @@
 from datetime import datetime, timedelta
 from functools import partial
 
+import pandas as pd
 from prefect import task
 
 from pipelines.capture.rioonibus.constants import constants
 from pipelines.constants import constants as smtr_constants
-from pipelines.utils.extractors.api import get_raw_api
+from pipelines.utils.extractors.api import get_raw_api_params_list
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.secret import get_secret
 
@@ -19,17 +20,21 @@ from pipelines.utils.secret import get_secret
 def create_viagem_informada_extractor(source: SourceTable, timestamp: datetime):
     """Cria a extração de viagens informadas na api da Rio Ônibus"""
 
-    extraction_day = timestamp.date() - timedelta(days=2)
-    params = {
-        "guidIdentificacao": get_secret(constants.RIO_ONIBUS_SECRET_PATH.value)[
-            "guididentificacao"
-        ],
-        "datetime_processamento_inicio": extraction_day.isoformat() + "T00:00:00",
-        "datetime_processamento_fim": timestamp.date().isoformat() + "T23:59:59",
-    }
+    end_date = timestamp.date()
+    start_date = end_date - timedelta(days=2)
+    date_range = pd.date_range(start_date, end_date)
+    api_key = get_secret(constants.RIO_ONIBUS_SECRET_PATH.value)["guididentificacao"]
+    params = [
+        {
+            "guidIdentificacao": api_key,
+            "datetime_processamento_inicio": d.date().isoformat() + "T00:00:00",
+            "datetime_processamento_fim": d.date().isoformat() + "T23:59:59",
+        }
+        for d in date_range
+    ]
+
     return partial(
-        get_raw_api,
+        get_raw_api_params_list,
         url=constants.VIAGEM_INFORMADA_BASE_URL.value,
-        params=params,
-        raw_filetype=source.raw_filetype,
+        params_list=params,
     )
