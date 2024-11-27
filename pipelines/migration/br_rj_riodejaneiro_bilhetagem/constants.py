@@ -538,7 +538,8 @@ class constants(Enum):  # pylint: disable=c0103
 ordem_pagamento_dia ordem_pagamento_consorcio_dia ordem_pagamento_consorcio_operador_dia \
 staging_ordem_pagamento_consorcio staging_ordem_pagamento \
 ordem_pagamento_servico_operador_dia staging_ordem_pagamento_consorcio_operadora \
-aux_retorno_ordem_pagamento staging_arquivo_retorno",
+aux_retorno_ordem_pagamento staging_arquivo_retorno aux_transacao_id_ordem_pagamento \
+staging_transacao_ordem",
     }
 
     BILHETAGEM_MATERIALIZACAO_PASSAGEIROS_HORA_PARAMS = {
