@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de bilhetagem
 
-DBT: 2024-11-25
+DBT: 2024-11-27
 """
 
 from pipelines.constants import constants as smtr_constants
