@@ -95,6 +95,7 @@ vars:
 
   ### Subsídio SPPO (Ônibus) ###
   buffer: 500 # distância em metros para buffer
+  conformidade_velocidade: 200
   perc_conformidade_distancia_min: 0
   perc_conformidade_shape_min: 80
   perc_conformidade_registros_min: 50
