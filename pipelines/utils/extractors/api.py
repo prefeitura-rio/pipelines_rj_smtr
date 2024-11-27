@@ -101,17 +101,17 @@ def get_raw_api_top_skip(
 
 def get_raw_api_params_list(
     url: str,
-    headers: Union[None, dict],
     params_list: list[dict],
+    headers: Union[None, dict] = None,
 ) -> list[dict]:
     """
     Função para extrair dados de API agregando dados de multiplas
     chamadas com parâmetros diferentes.
 
     Args:
-        url (str): URL para fazer o request
-        headers (Union[None, dict]): Headers para o request
+        url (str): URL para fazer os requests
         params_list (list[dict): Lista de parâmetros para os requests
+        headers (Union[None, dict]): Headers para o request
 
     Returns:
         list[dict]: Dados capturados da API
