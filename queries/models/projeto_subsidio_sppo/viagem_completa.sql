@@ -112,7 +112,7 @@ left join
 using
   (shape_id)
 where (
-    velocidade_media < {{ var("conformidade_velocidade") }} or ST_DISTANCE(s.start_pt, s.end_pt) between 1900 and 1950
+    velocidade_media < {{ var("conformidade_velocidade_min") }} or ST_DISTANCE(s.start_pt, s.end_pt) between 1900 and 1950
 )
 and (
     perc_conformidade_shape >= {{ var("perc_conformidade_shape_min") }}
