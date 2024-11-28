@@ -35,7 +35,7 @@ VIAGEM_INFORMADA_MATERIALIZACAO = create_default_materialization_flow(
 
 wait_viagem_informada = deepcopy(constants.VIAGEM_INFORMADA_SELECTOR.value)
 wait_viagem_informada.incremental_delay_hours = (
-    constants.VIAGEM_VALIDACAO_SELECTOR.value.incremental_delay_hours
+    -constants.VIAGEM_VALIDACAO_SELECTOR.value.incremental_delay_hours
 )
 
 VIAGEM_VALIDACAO_MATERIALIZACAO = create_default_materialization_flow(

@@ -98,9 +98,9 @@ class DBTSelector:
             bool: se está atualizado ou não
         """
         last_materialization = self.get_last_materialized_datetime(env=env)
-        log(f"Last materialization datetime = {last_materialization}")
+
         last_schedule = cron_get_last_date(cron_expr=self.schedule_cron, timestamp=timestamp)
-        log(f"Last scheduled datetime = {last_schedule}")
+
         return last_materialization >= last_schedule - timedelta(hours=self.incremental_delay_hours)
 
     def get_next_schedule_datetime(self, timestamp: datetime) -> datetime:

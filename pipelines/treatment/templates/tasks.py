@@ -151,7 +151,7 @@ def wait_data_sources(
                     timestamp=datetime_end,
                     retroactive_days=max(2, (datetime_end - datetime_start).days),
                 )
-                log(f"Uncaptured timestamps: {uncaptured_timestamps}")
+
                 complete = len(uncaptured_timestamps) == 0
             elif isinstance(ds, DBTSelector):
                 name = f"{ds.name}"
@@ -169,8 +169,7 @@ def wait_data_sources(
                     timestamp=datetime_end,
                 )
                 last_materialization = convert_timezone(timestamp=last_materialization)
-                log(f"Last materialization datetime = {last_materialization}")
-                log(f"Last scheduled datetime = {last_schedule}")
+
                 complete = last_materialization >= last_schedule - timedelta(
                     hours=ds.get("delay_hours", 0)
                 )
