@@ -65,15 +65,7 @@ with
             route_id,
             shape_id,
             servico,
-            case
-                when sentido = 'I'
-                then 'Ida'
-                when sentido = 'V'
-                then 'Volta'
-                when sentido = 'C'
-                then 'Circular'
-                else sentido
-            end as sentido,
+            sentido,
             fornecedor as fonte_gps,
             datetime_processamento,
             timestamp_captura as datetime_captura
@@ -91,6 +83,33 @@ with
             route_id,
             shape_id,
             servico,
+            sentido,
+            "brt" as fonte_gps,
+            datetime_processamento,
+            timestamp_captura as datetime_captura
+        from {{ staging_viagem_informada_brt }}
+        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
+    ),
+    staging_union as (
+        select *
+        from staging_rioonibus
+
+        union all
+
+        select *
+        from staging_brt
+    ),
+    staging as (
+        select
+            data,
+            id_viagem,
+            datetime_partida,
+            datetime_chegada,
+            id_veiculo,
+            trip_id,
+            route_id,
+            shape_id,
+            servico,
             case
                 when sentido = 'I'
                 then 'Ida'
@@ -100,20 +119,10 @@ with
                 then 'Circular'
                 else sentido
             end as sentido,
-            "brt" as fonte_gps,
+            fonte_gps,
             datetime_processamento,
-            timestamp_captura as datetime_captura
-        from {{ staging_viagem_informada_brt }}
-        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
-    ),
-    staging as (
-        select *
-        from staging_rioonibus
-
-        union all
-
-        select *
-        from staging_brt
+            datetime_captura
+        from staging_union
     ),
     complete_partitions as (
         select *, 0 as priority
