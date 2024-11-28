@@ -14,8 +14,8 @@
 
 {% set staging_viagem_informada_rioonibus = ref("staging_viagem_informada_rioonibus") %}
 {% set staging_viagem_informada_brt = ref("staging_viagem_informada_brt") %}
-{% set calendario = ref("calendario") %}
-{# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
+{# {% set calendario = ref("calendario") %} #}
+{% set calendario = "rj-smtr.planejamento.calendario" %}
 {% if execute %}
     {% if is_incremental() %}
         {% set partitions_query %}
