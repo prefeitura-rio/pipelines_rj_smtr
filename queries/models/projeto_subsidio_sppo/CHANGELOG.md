@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Alterado o tipo_os de `2024-11-24` para `Parada LGBTQI+` no modelo `subsidio_data_versao_efetiva` ()
+- Alterado o tipo_os de `2024-11-24` para `Parada LGBTQI+` no modelo `subsidio_data_versao_efetiva` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/345)
 
 ## [9.0.7] - 2024-11-11
 
