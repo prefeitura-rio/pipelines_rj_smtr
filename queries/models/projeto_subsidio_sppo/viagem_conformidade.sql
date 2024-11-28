@@ -62,11 +62,12 @@ with viagem as (
 select distinct
     v.* except(versao_modelo),
     d.* except(id_viagem, versao_modelo),
-    v.distancia_planejada*60/tempo_viagem as velocidade_media,
+    IF(data >= DATE("{{ var("DATA_SUBSIDIO_V12_INICIO") }}"), v.distancia_planejada*60/tempo_viagem, NULL) as velocidade_media,
     round(100 * n_registros_shape/n_registros_total, 2) as perc_conformidade_shape,
     round(100 * d.distancia_aferida/v.distancia_planejada, 2) as perc_conformidade_distancia,
     round(100 * n_registros_minuto/tempo_viagem, 2) as perc_conformidade_registros,
-    '{{ var("version") }}' as versao_modelo
+    '{{ var("version") }}' as versao_modelo,
+    CURRENT_DATETIME("America/Sao_Paulo") as datetime_ultima_atualizacao
 from
     viagem v
 inner join
