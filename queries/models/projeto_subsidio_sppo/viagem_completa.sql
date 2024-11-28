@@ -112,9 +112,12 @@ left join
 using
   (shape_id)
 where (
-    velocidade_media < {{ var("conformidade_velocidade_min") }} or ST_DISTANCE(s.start_pt, s.end_pt) between 1900 and 1950
+{% if var("run_date") > var("DATA_SUBSIDIO_V12_INICIO")  %}
+  velocidade_media < {{ var("conformidade_velocidade_min") }} or (((ST_NUMGEOMETRIES(ST_INTERSECTION(ST_BUFFER(start_pt, 500), shape)) > 1 or ST_NUMGEOMETRIES(ST_INTERSECTION(ST_BUFFER(end_pt, 500), shape)) > 1)
+  and ST_DISTANCE(start_pt, end_pt) < 2000) and sentido != "C")
 )
 and (
+{% endif %}
     perc_conformidade_shape >= {{ var("perc_conformidade_shape_min") }}
 )
 and (
