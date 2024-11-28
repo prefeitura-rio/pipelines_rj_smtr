@@ -1,5 +1,14 @@
 # Changelog - monitoramento
 
+## [1.2.0] - 2024-11-28
+
+### Adicionado
+- Cria modelo `staging_viagem_informada_brt.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/337)
+
+### Alterado
+- Adiciona viagens BRT no modelo: `gps_viagem.sql` e `viagem_informada_monitoramento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/337)
+- Altera data hardcoded por variável no modelo `gps_viagem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/337)
+
 ## [1.1.0] - 2024-11-08
 
 ### Adicionado
