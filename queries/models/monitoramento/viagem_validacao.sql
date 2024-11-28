@@ -14,8 +14,8 @@
         and date('{{ var("date_range_end") }}')
 {% endset %}
 
-{# {% set calendario = ref("calendario") %} #}
-{% set calendario = "rj-smtr.planejamento.calendario" %}
+{% set calendario = ref("calendario") %}
+{# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
 {% if execute %}
     {% if is_incremental() %}
         {% set gtfs_feeds_query %}
@@ -97,8 +97,8 @@ with
             feed_version,
             route_id,
             array_agg(service_id) as service_ids,
-        {# from {{ ref("trips_gtfs") }} #}
-        from `rj-smtr.gtfs.trips`
+        from {{ ref("trips_gtfs") }}
+        {# from `rj-smtr.gtfs.trips` #}
         {% if is_incremental() %}
             where feed_start_date in ({{ gtfs_feeds | join(", ") }})
         {% endif %}
