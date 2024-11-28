@@ -95,6 +95,7 @@ vars:
 
   ### Subsídio SPPO (Ônibus) ###
   buffer: 500 # distância em metros para buffer
+  conformidade_velocidade_min: 200
   perc_conformidade_distancia_min: 0
   perc_conformidade_shape_min: 80
   perc_conformidade_registros_min: 50
@@ -127,6 +128,8 @@ vars:
   DATA_SUBSIDIO_V10_INICIO: "2024-11-01"
   # valor_subsidio: "`rj-smtr-dev.projeto_subsidio_sppo.valor_subsidio`"
   DATA_SUBSIDIO_V11_INICIO: "2024-11-06"
+  # Parâmetro 200km/h
+  DATA_SUBSIDIO_V12_INICIO: "2024-11-16"
 
   # Recursos #
   recurso_staging: "rj-smtr-staging.projeto_subsidio_sppo_staging.recurso"
