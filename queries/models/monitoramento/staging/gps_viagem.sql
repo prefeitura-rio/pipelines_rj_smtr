@@ -36,8 +36,8 @@ with
     ),
     gps_conecta as (
         select data, timestamp_gps, servico, id_veiculo, latitude, longitude
-        {# from `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo` #}
-        from {{ ref("gps_sppo") }}
+        from `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
+        {# from {{ ref("gps_sppo") }} #}
         where
             {% if is_incremental() %}
                 data between date_sub(
@@ -49,8 +49,8 @@ with
     ),
     gps_zirix as (
         select data, timestamp_gps, servico, id_veiculo, latitude, longitude
-        {# from `rj-smtr.br_rj_riodejaneiro_onibus_gps_zirix.gps_sppo` #}
-        from {{ ref("gps_sppo_zirix") }}
+        from `rj-smtr.br_rj_riodejaneiro_onibus_gps_zirix.gps_sppo`
+        {# from {{ ref("gps_sppo_zirix") }} #}
         where
             {% if is_incremental() %}
                 data between date_sub(
@@ -61,8 +61,8 @@ with
     ),
     gps_brt as (
         select data, timestamp_gps, servico, id_veiculo, latitude, longitude
-        {# from `rj-smtr.br_rj_riodejaneiro_veiculos.gps_brt` #}
-        from {{ ref("gps_brt") }}
+        from `rj-smtr.br_rj_riodejaneiro_veiculos.gps_brt`
+        {# from {{ ref("gps_brt") }} #}
         where
             {% if is_incremental() %}
                 data between date_sub(
@@ -111,3 +111,6 @@ join
     and g.id_veiculo = v.id_veiculo
     and g.servico = v.servico
     and g.fornecedor = v.fonte_gps
+{% if not is_incremental() %}
+    where v.data <= date_sub(current_date("America/Sao_Paulo"), interval 2 day)
+{% endif %}

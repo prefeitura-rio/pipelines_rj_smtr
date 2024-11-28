@@ -16,8 +16,8 @@
         and date('{{ var("date_range_end") }}')
 {% endset %}
 
-{% set calendario = ref("calendario") %}
-{# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
+{# {% set calendario = ref("calendario") %} #}
+{% set calendario = "rj-smtr.planejamento.calendario" %}
 {% if execute %}
     {% if is_incremental() %}
         {% set gtfs_feeds_query %}
@@ -62,8 +62,8 @@ with
             id_segmento,
             buffer,
             indicador_segmento_desconsiderado
-        from {{ ref("segmento_shape") }}
-        {# from `rj-smtr.planejamento.segmento_shape` #}
+        {# from {{ ref("segmento_shape") }} #}
+        from `rj-smtr.planejamento.segmento_shape`
         {% if is_incremental() %}
             where feed_start_date in ({{ gtfs_feeds | join(", ") }})
         {% endif %}
@@ -144,3 +144,6 @@ select
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
 from viagem_segmento v
 left join gps_segmento g using (id_viagem, shape_id, id_segmento)
+{% if not is_incremental() %}
+    where v.data <= date_sub(current_date("America/Sao_Paulo"), interval 2 day)
+{% endif %}
