@@ -356,6 +356,7 @@ WITH
       WHEN data = DATE(2024,10,06) THEN "Eleição"
       WHEN data = DATE(2024,11,03) THEN "Enem"
       WHEN data = DATE(2024,11,10) THEN "Enem"
+      WHEN data = DATE(2024,11,24) THEN "Parada LGBTQI+" -- Processo.Rio MTR-DES-2024/70057
       ELSE "Regular"
     END AS tipo_os,
   FROM UNNEST(GENERATE_DATE_ARRAY("{{var('DATA_SUBSIDIO_V6_INICIO')}}", "2024-12-31")) AS data),
