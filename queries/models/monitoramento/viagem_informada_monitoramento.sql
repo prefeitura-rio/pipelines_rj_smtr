@@ -147,8 +147,8 @@ with
     ),
     routes as (
         select *
-        from {{ ref("routes_gtfs") }}
-        {# from `rj-smtr.gtfs.routes` #}
+        {# from {{ ref("routes_gtfs") }} #}
+        from `rj-smtr.gtfs.routes`
         {% if is_incremental() %}
             where feed_start_date in ({{ gtfs_feeds | join(", ") }})
         {% endif %}
