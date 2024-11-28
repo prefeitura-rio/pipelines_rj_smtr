@@ -1,6 +1,6 @@
 # Changelog - monitoramento
 
-## [1.1.1] - 2024-11-28
+## [1.1.2] - 2024-11-28
 
 ### Alterado
 
