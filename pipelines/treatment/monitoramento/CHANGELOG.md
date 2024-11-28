@@ -1,5 +1,15 @@
 # Changelog - monitoramento
 
+## [1.1.1] - 2024-11-28
+
+### Alterado
+
+- Altera hora de execução da validação de viagens e da materialização das viagens informadas (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/337)
+
+### Corrigido
+
+- Ajusta espera pelos dados de viagem informada na materialização da validação (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/337)
+
 ## [1.1.1] - 2024-11-25
 
 ### Alterado

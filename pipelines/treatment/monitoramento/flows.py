@@ -5,6 +5,8 @@ Flows de tratamento dos dados de monitoramento
 DBT: 2024-11-21
 """
 
+from copy import deepcopy
+
 from pipelines.capture.rioonibus.constants import (
     constants as rioonibus_source_constants,
 )
@@ -31,12 +33,17 @@ VIAGEM_INFORMADA_MATERIALIZACAO = create_default_materialization_flow(
     ],
 )
 
+wait_viagem_informada = deepcopy(constants.VIAGEM_INFORMADA_SELECTOR.value)
+wait_viagem_informada.incremental_delay_hours = (
+    constants.VIAGEM_VALIDACAO_SELECTOR.value.incremental_delay_hours
+)
+
 VIAGEM_VALIDACAO_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="viagem_validacao - materializacao",
     selector=constants.VIAGEM_VALIDACAO_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[
-        constants.VIAGEM_INFORMADA_SELECTOR.value,
+        wait_viagem_informada,
         planejamento_constants.PLANEJAMENTO_DIARIO_SELECTOR.value,
         {
             "redis_key": f"{smtr_constants.GPS_SPPO_DATASET_ID.value}\
