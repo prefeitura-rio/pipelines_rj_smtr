@@ -13,17 +13,28 @@
 {% endset %}
 
 {% set staging_viagem_informada_rioonibus = ref("staging_viagem_informada_rioonibus") %}
+{% set staging_viagem_informada_brt = ref("staging_viagem_informada_brt") %}
 {% set calendario = ref("calendario") %}
-
+{# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
 {% if execute %}
     {% if is_incremental() %}
         {% set partitions_query %}
-      SELECT DISTINCT
-        CONCAT("'", DATE(data_viagem), "'") AS data_viagem
-      FROM
-        {{ staging_viagem_informada_rioonibus }}
-      WHERE
-        {{ incremental_filter }}
+            SELECT DISTINCT
+                CONCAT("'", DATE(data_viagem), "'") AS data_viagem
+            FROM
+                {{ staging_viagem_informada_rioonibus }}
+            WHERE
+                {{ incremental_filter }}
+
+            UNION DISTINCT
+
+            SELECT DISTINCT
+                CONCAT("'", DATE(data_viagem), "'") AS data_viagem
+            FROM
+                {{ staging_viagem_informada_brt }}
+            WHERE
+                {{ incremental_filter }}
+
         {% endset %}
 
         {% set partitions = run_query(partitions_query).columns[0].values() %}
@@ -69,9 +80,44 @@ with
         from {{ staging_viagem_informada_rioonibus }}
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
+    staging_brt as (
+        select
+            data_viagem as data,
+            id_viagem,
+            datetime_partida,
+            datetime_chegada,
+            id_veiculo,
+            trip_id,
+            route_id,
+            shape_id,
+            servico,
+            case
+                when sentido = 'I'
+                then 'Ida'
+                when sentido = 'V'
+                then 'Volta'
+                when sentido = 'C'
+                then 'Circular'
+                else sentido
+            end as sentido,
+            "brt" as fonte_gps,
+            datetime_processamento,
+            timestamp_captura as datetime_captura
+        from {{ staging_viagem_informada_brt }}
+        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
+    ),
+    staging as (
+        select *
+        from staging_rioonibus
+
+        union all
+
+        select *
+        from staging_brt
+    ),
     complete_partitions as (
         select *, 0 as priority
-        from staging_rioonibus
+        from staging
 
         {% if is_incremental() and partitions | length > 0 %}
             union all
@@ -102,6 +148,7 @@ with
     routes as (
         select *
         from {{ ref("routes_gtfs") }}
+        {# from `rj-smtr.gtfs.routes` #}
         {% if is_incremental() %}
             where feed_start_date in ({{ gtfs_feeds | join(", ") }})
         {% endif %}
@@ -113,6 +160,8 @@ with
             v.datetime_partida,
             v.datetime_chegada,
             case
+                when v.fonte_gps = 'brt'
+                then 'BRT'
                 when r.route_type = '200'
                 then 'Ônibus Executivo'
                 when r.route_type = '700'

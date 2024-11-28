@@ -17,7 +17,7 @@
 {% endset %}
 
 {% set calendario = ref("calendario") %}
-
+{# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
 {% if execute %}
     {% if is_incremental() %}
         {% set gtfs_feeds_query %}
@@ -63,6 +63,7 @@ with
             buffer,
             indicador_segmento_desconsiderado
         from {{ ref("segmento_shape") }}
+        {# from `rj-smtr.planejamento.segmento_shape` #}
         {% if is_incremental() %}
             where feed_start_date in ({{ gtfs_feeds | join(", ") }})
         {% endif %}
