@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.0.8] - 2024-11-28
+
+### Alterado
+
+- Alterado o tipo_os de `2024-11-24` para `Parada LGBTQI+` no modelo `subsidio_data_versao_efetiva` ()
+
 ## [9.0.7] - 2024-11-11
 
 ### Alterado
