@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrigida a origem da distancia total planejada na faixa horaria de 24 a 27 horas no modelo `viagem_planejada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/346)
+- Corrigida a origem da coluna `distancia_total_planejada` na faixa hor[aria de 24h às 27h no modelo `viagem_planejada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/346)
 
 ## [9.0.8] - 2024-11-28
 
