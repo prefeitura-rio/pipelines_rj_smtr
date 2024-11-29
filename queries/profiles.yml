@@ -56,7 +56,7 @@ queries:
       dataset: dbt
       job_execution_timeout_seconds: 600
       job_retries: 1
-      keyfile: /mnt/c/Users/Softex/.basedosdados/credentials/staging.json
+      keyfile: /tmp/credentials.json
       location: us
       method: service-account
       priority: interactive
@@ -71,7 +71,7 @@ queries:
       dataproc_batch:
         environment_config:
           execution_config:
-            service_account: victor-miguel@rj-smtr.iam.gserviceaccount.com
+            service_account: prefect@rj-smtr.iam.gserviceaccount.com
 
         runtime_config:
           properties:

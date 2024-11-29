@@ -9,7 +9,7 @@ models:
           row_condition: "data is not null"
           test_start_date: "{{ var('date_range_start') }}"
           test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
-          name: completness__sumario_servico_dia
+          name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_servico_dia
       - teto_pagamento_valor_subsidio_pago:
           table_id: sumario_servico_dia
           expression: ROUND(valor_subsidio_pago/subsidio_km_teto,2) <= ROUND(km_apurada+0.01,2)
@@ -18,7 +18,17 @@ models:
           combination_of_columns:
           - data
           - servico
-          name: unique_combination__data_servico__sumario_servico_dia
+          name: dbt_utils.unique_combination_of_columns__data_servico__sumario_servico_dia
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          name: dbt_expectations.expect_table_aggregation_to_equal_other_table__sumario_servico_dia
+          expression: count(distinct valor_penalidade)
+          compare_model: ref("valor_tipo_penalidade")
+          compare_expression: count(distinct valor)
+          group_by: [valor_penalidade]
+          compare_group_by: [-valor]
+          row_condition: "DATA BETWEEN DATE('{{ var('date_range_start') }}') AND DATE('{{ var('date_range_end') }}') AND valor_penalidade IS NOT null AND valor_penalidade != 0"
+          compare_row_condition: "valor IS NOT null AND valor != 0" 
+          where: "1=1"
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS"
@@ -47,7 +57,7 @@ models:
               name: not_null__viagens__sumario_servico_dia
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__viagens__sumario_servico_dia
+              name: dbt_utils.accepted_range__viagens__sumario_servico_dia
       - name: km_apurada
         description: "Distância apurada do serviço (km)\n
                       Distância planejada da viagem multiplicada pela quantidade de viagens"
@@ -56,7 +66,7 @@ models:
               name: not_null__km_apurada__sumario_servico_dia
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__km_apurada__sumario_servico_dia
+              name: dbt_utils.accepted_range__km_apurada__sumario_servico_dia
       - name: km_planejada
         description: "Distância planejada para o serviço (km)"
         tests:
@@ -64,7 +74,7 @@ models:
               name: not_null__km_planejada__sumario_servico_dia
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__km_planejada__sumario_servico_dia
+              name: dbt_utils.accepted_range__km_planejada__sumario_servico_dia
       - name: perc_km_planejada
         description: "Indicador percentual de quilometragem apurada em relação à planejada da linha"
         tests:
@@ -72,7 +82,7 @@ models:
               name: not_null__perc_km_planejada__sumario_servico_dia
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__perc_km_planejada__sumario_servico_dia
+              name: dbt_utils.accepted_range__perc_km_planejada__sumario_servico_dia
       - name: valor_subsidio_pago
         description: "Valor de subsídio apurado (R$)\n
                       Distância apurada do serviço multiplicada pelos respectivos valores pela classificação do veículo"
@@ -80,16 +90,11 @@ models:
           - not_null
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__valor_subsidio_pago__sumario_servico_dia
+              name: dbt_utils.accepted_range__valor_subsidio_pago__sumario_servico_dia
       - name: valor_penalidade
         description: "Valor de penalidade apurado (R$)\n
                       Linha com operação entre 40% e 60% da quilometragem estipulada - penalidade equivalente a uma infração média prevista no Código Disciplinar do Serviço Público de Transporte de Passageiros por Meio de Ônibus do Município do Rio de Janeiro - SPPO.\n
                       Linha com operação inferior a 40% da quilometragem estipulada - penalidade equivalente a uma infração grave prevista no Código Disciplinar do Serviço Público de Transporte de Passageiros por Meio de Ônibus do Município do Rio de Janeiro - SPPO."
-        tests:
-          - accepted_values_in_table:
-              ref_column: valor
-              ref_table: valor_tipo_penalidade
-              name: accepted_values__valor_penalidade__sumario_servico_dia_pagamento
   - name: sumario_servico_dia_historico
     description: "Sumário histórico do subsídio dos serviços de ônibus (SPPO) por dia"
     tests:
@@ -340,7 +345,7 @@ models:
         description: "Distância do shape (trajeto) planejado (km)"
       - name: distancia_aferida
         description: "Distância aferida da viagem (distância euclidiana entre posições consecutivas do sinal de GPS)"
-      - name: n_registros_start ## nao tem
+      - name: n_registros_start 
         description: "Contagem de sinais de GPS emitidos no meio do trajeto."
       - name: n_registros_shape
         description: "Contagem de sinais de GPS emitidos dentro do trajeto."
@@ -368,7 +373,7 @@ models:
           row_condition: "data is not null"
           test_start_date: "{{ var('date_range_start') }}"
           test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
-          name: completness__sumario_servico_dia_tipo_sem_glosa
+          name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_servico_dia_tipo_sem_glosa
       - teto_pagamento_valor_subsidio_pago:
           table_id: sumario_servico_dia_tipo_sem_glosa
           expression: ROUND(valor_total_subsidio/subsidio_km_teto,2) <= ROUND(distancia_total_subsidio+0.01,2)
@@ -377,7 +382,7 @@ models:
           combination_of_columns:
           - data
           - servico
-          name: unique_combination__data_servico__sumario_servico_dia_tipo_sem_glosa
+          name: dbt_utils.unique_combination_of_columns__data_servico__sumario_servico_dia_tipo_sem_glosa
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS."
@@ -406,7 +411,7 @@ models:
               name: not_null__viagens_subsidio__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__viagens_subsidio__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__viagens_subsidio__sumario_servico_dia_tipo_sem_glosa
       - name: distancia_total_planejada
         description: "Distância planejada para o serviço (km)."
         tests:
@@ -414,7 +419,7 @@ models:
               name: not_null__distancia_total_planejada__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__distancia_total_planejada__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__distancia_total_planejada__sumario_servico_dia_tipo_sem_glosa
       - name: distancia_total_subsidio
         description: "Distância apurada para o serviço (km)."
         tests:
@@ -422,9 +427,10 @@ models:
               name: not_null__distancia_total_subsidio__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__distancia_total_planejada__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__distancia_total_planejada__sumario_servico_dia_tipo_sem_glosa
       - name: valor_total_aferido
-        description: "."
+        description: "Valor de subsídio aferido (R$)\n
+                      Distância apurada do serviço multiplicada pelo valor de subsídio (R$/km)"
       - name: perc_distancia_total_subsidio
         description: "Indicador percentual de quilometragem apurada em relação à planejada da linha."
         tests:
@@ -432,7 +438,7 @@ models:
               name: not_null__perc_distancia_total_subsidio__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__perc_distancia_total_subsidio__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__perc_distancia_total_subsidio__sumario_servico_dia_tipo_sem_glosa
       - name: valor_total_subsidio
         description: "Valor da distância apurada multiplicada pelo subsídio por quilômetro (sem glosa). É zerado quando POD < 80%."
         tests:
@@ -440,7 +446,7 @@ models:
               name: not_null__valor_total_subsidio__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__valor_total_subsidio__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__valor_total_subsidio__sumario_servico_dia_tipo_sem_glosa
       - name: viagens_n_licenciado
         description: "Quantidade de viagens de veículos não licenciados."
       - name: km_apurada_n_licenciado
@@ -450,7 +456,7 @@ models:
               name: not_null__km_apurada_n_licenciado__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__km_apurada_n_licenciado__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__km_apurada_n_licenciado__sumario_servico_dia_tipo_sem_glosa
       - name: viagens_autuado_ar_inoperante
         description: "Quantidade de viagens de veículos autuados por ar inoperante."
         tests:
@@ -458,7 +464,7 @@ models:
               name: not_null__viagens_autuado_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__viagens_autuado_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__viagens_autuado_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_autuado_ar_inoperante
         description: "Quilometragem apurada de viagens de veículos autuados por ar inoperante."
         tests:
@@ -466,7 +472,7 @@ models:
               name: not_null__km_apurada_autuado_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__km_apurada_autuado_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__km_apurada_autuado_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
       - name: viagens_autuado_seguranca
         description: "Quantidade de viagens de veículos autuados por segurança."
         tests:
@@ -474,7 +480,7 @@ models:
               name: not_null__viagens_autuado_seguranca__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__viagens_autuado_seguranca__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__viagens_autuado_seguranca__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_autuado_seguranca
         description: "Quilometragem apurada de viagens de veículos autuados por segurança."
         tests:
@@ -482,7 +488,7 @@ models:
               name: not_null__km_apurada_autuado_seguranca__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__km_apurada_autuado_seguranca__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__km_apurada_autuado_seguranca__sumario_servico_dia_tipo_sem_glosa
       - name: viagens_autuado_limpezaequipamento
         description: "Quantidade de viagens de veículos autuados por limpeza ou equipamento."
         tests:
@@ -490,7 +496,7 @@ models:
               name: not_null__viagens_autuado_limpezaequipamento__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__viagens_autuado_limpezaequipamento__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__viagens_autuado_limpezaequipamento__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_autuado_limpezaequipamento
         description: "Quilometragem apurada de viagens de veículos autuados por limpeza ou equipamento."
         tests:
@@ -498,7 +504,7 @@ models:
               name: not_null__km_apurada_autuado_limpezaequipamento__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__km_apurada_autuado_limpezaequipamento__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__km_apurada_autuado_limpezaequipamento__sumario_servico_dia_tipo_sem_glosa
       - name: viagens_licenciado_sem_ar_n_autuado
         description: "Quantidade de viagens de veículos sem ar e não autuados."
         tests:
@@ -506,7 +512,7 @@ models:
               name: not_null__viagens_licenciado_sem_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__viagens_licenciado_sem_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__viagens_licenciado_sem_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_licenciado_sem_ar_n_autuado
         description: "Quilometragem apurada de viagens de veículos sem ar e não autuados."
         tests:
@@ -514,7 +520,7 @@ models:
               name: not_null__km_apurada_licenciado_sem_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__km_apurada_licenciado_sem_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__km_apurada_licenciado_sem_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
       - name: viagens_licenciado_com_ar_n_autuado
         description: "Quantidade de viagens de veículos com ar e não autuados."
         tests:
@@ -522,7 +528,7 @@ models:
               name: not_null__viagens_licenciado_com_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__viagens_licenciado_com_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__viagens_licenciado_com_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_licenciado_com_ar_n_autuado
         description: "Quilometragem apurada de viagens de veículos com ar e não autuados."
         tests:
@@ -530,7 +536,7 @@ models:
               name: not_null__km_apurada_licenciado_com_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__km_apurada_licenciado_com_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__km_apurada_licenciado_com_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
       - name: viagens_n_vistoriado
         description: "Quantidade de viagens apuradas realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria."
         tests:
@@ -538,7 +544,7 @@ models:
               name: not_null__viagens_n_vistoriado__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__viagens_n_vistoriado__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__viagens_n_vistoriado__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_n_vistoriado
         description: "Distância apurada de viagens realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria (km)."
         tests:
@@ -546,7 +552,7 @@ models:
               name: not_null__km_apurada_n_vistoriado__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__km_apurada_n_vistoriado__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__km_apurada_n_vistoriado__sumario_servico_dia_tipo_sem_glosa
       - name: viagens_registrado_com_ar_inoperante
         description: "Quantidade de viagens apuradas realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste."
         tests:
@@ -554,7 +560,7 @@ models:
               name: not_null__viagens_registrado_com_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__viagens_registrado_com_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__viagens_registrado_com_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_registrado_com_ar_inoperante
         description: "Distância apurada de viagens realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste (km)."
         tests:
@@ -562,21 +568,21 @@ models:
               name: not_null__km_apurada_registrado_com_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__km_apurada_registrado_com_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
+              name: dbt_utils.accepted_range__km_apurada_registrado_com_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
   - name: viagens_remuneradas
     description: "Tabela com indicação de remuneração de viagens para fins de verificação de teto de pagamento conforme regra de 120%/200% (RESOLUÇÃO SMTR Nº 3.645/2023)"
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
           - id_viagem
-          name: unique_combination__id_viagem__viagens_remuneradas
+          name: dbt_utils.unique_combination_of_columns__id_viagem__viagens_remuneradas
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data
           row_condition: "data is not null"
           test_start_date: "{{ var('date_range_start') }}"
           test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
       - check_viagem_completa:
-          name: viagem_completa__viagens_remuneradas
+          name: check_viagem_completa__viagens_remuneradas
     columns:
       - name: data
         description: "Data da viagem."
@@ -602,7 +608,7 @@ models:
               name: not_null__distancia_planejada__viagens_remuneradas
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__distancia_planejada__viagens_remuneradas
+              name: dbt_utils.accepted_range__distancia_planejada__viagens_remuneradas
       - name: subsidio_km
         description: "Valor de subsídio, conforme tipo de viagem (R$/km)."
         tests:
@@ -610,7 +616,7 @@ models:
               name: not_null__subsidio_km__viagens_remuneradas
           - dbt_utils.accepted_range:
               min_value: 0
-              name: greater_than_zero__subsidio_km__viagens_remuneradas
+              name: dbt_utils.accepted_range__subsidio_km__viagens_remuneradas
       - name: subsidio_km_teto
         description: "Valor máximo de subsídio, conforme tipo de viagem (R$/km)."
       - name: indicador_viagem_dentro_limite
