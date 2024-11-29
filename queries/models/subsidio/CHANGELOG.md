@@ -4,7 +4,7 @@
 
 # Alterado
 
-- Alterada a janela de dados considerados no modelo `viagem_transacao` para 6 dias (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/346)
+- Alterada a janela de dados considerados no modelo `viagem_transacao.sql` para 6 dias (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/346)
 
 ## [1.0.2] - 2024-10-24
 
