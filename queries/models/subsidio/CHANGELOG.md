@@ -16,7 +16,7 @@
 
 ### Corrigido
 
-- Corrigido o tratamento de `viagem_transacao` para lidar com casos de mudança aberto/fechado ao longo da viagem, lat, long zerada do validador, mais de um validador associado ao veículo e viagem que inicia/encerra em dia diferente(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/210)
+- Corrigido o tratamento do modelo `viagem_transacao.sql` para lidar com casos de mudança aberto/fechado ao longo da viagem, lat, long zerada do validador, mais de um validador associado ao veículo e viagem que inicia/encerra em dia diferente (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/210)
 
 ## [1.0.0] - 2024-07-31
 
