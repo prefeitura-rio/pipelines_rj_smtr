@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.0.9] - 2024-11-29
+
+### Corrigido
+
+- Corrigida a origem da coluna `distancia_total_planejada` na faixa hor[aria de 24h às 27h no modelo `viagem_planejada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/346)
+
 ## [9.0.8] - 2024-11-28
 
 ### Alterado
