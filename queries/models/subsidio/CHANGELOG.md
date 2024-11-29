@@ -10,7 +10,7 @@
 
 ### Adicionado
 
-- Adicionada exceção na verificação d viagens sem transacao para a eleição de 2024-10-06 em viagem_transacao de 06h as 20h (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/286)
+- Adicionada exceção na verificação de viagens sem transação para a eleição de 2024-10-06 no modelo `viagem_transacao.sql` de 06h às 20h (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/286)
 
 ## [1.0.1] - 2024-09-12
 
