@@ -27,7 +27,7 @@ models:
           group_by: [valor_penalidade]
           compare_group_by: [-valor]
           row_condition: "DATA BETWEEN DATE('{{ var('date_range_start') }}') AND DATE('{{ var('date_range_end') }}') AND valor_penalidade IS NOT null AND valor_penalidade != 0"
-          compare_row_condition: "valor IS NOT null AND valor != 0" 
+          compare_row_condition: "valor IS NOT null AND valor != 0"
           where: "1=1"
     columns:
       - name: data
@@ -345,7 +345,7 @@ models:
         description: "Distância do shape (trajeto) planejado (km)"
       - name: distancia_aferida
         description: "Distância aferida da viagem (distância euclidiana entre posições consecutivas do sinal de GPS)"
-      - name: n_registros_start 
+      - name: n_registros_start
         description: "Contagem de sinais de GPS emitidos no meio do trajeto."
       - name: n_registros_shape
         description: "Contagem de sinais de GPS emitidos dentro do trajeto."
