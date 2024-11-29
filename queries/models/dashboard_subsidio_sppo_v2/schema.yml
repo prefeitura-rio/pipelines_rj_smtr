@@ -64,7 +64,7 @@ models:
           row_condition: "data is not null"
           test_start_date: "{{ var('date_range_start') }}"
           test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
-          name: completness__sumario_servico_dia_pagamento
+          name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_servico_dia_pagamento
       - teto_pagamento_valor_subsidio_pago:
           table_id: sumario_servico_dia_pagamento
           expression: ROUND((valor_a_pagar - valor_penalidade)/subsidio_km_teto,2) <= ROUND(km_apurada_dia+0.01,2)
@@ -73,7 +73,7 @@ models:
           combination_of_columns:
           - data
           - servico
-          name: unique_combination__sumario_servico_dia_pagamento
+          name: unique_combination_of_columns__sumario_servico_dia_pagamento
       - dbt_utils.expression_is_true:
           expression: (valor_a_pagar - valor_penalidade) IS NOT NULL AND (valor_a_pagar - valor_penalidade) >= 0
           name: expression_is_true__sumario_servico_dia_pagamento
@@ -115,7 +115,7 @@ models:
               name: not_null__viagens_dia__sumario_servico_dia_pagamento
           - dbt_utils.accepted_range:
               min_value: 0
-              name: grater_than_zero__viagens_dia__sumario_servico_dia_pagamento
+              name: dbt_utils.accepted_range__viagens_dia__sumario_servico_dia_pagamento
       - name: km_apurada_dia
         description: "Distância apurada para o serviço por dia (km)."
         tests:
@@ -123,11 +123,17 @@ models:
               name: not_null__viagens_dia__sumario_servico_dia_pagamento
           - dbt_utils.accepted_range:
               min_value: 0
-              name: grater_than_zero__viagens_dia__sumario_servico_dia_pagamento
+              name: dbt_utils.accepted_range__viagens_dia__sumario_servico_dia_pagamento
           - sumario_servico_dia_tipo_soma_km:
-              name: soma_km__km_apurada_dia__sumario_servico_dia_pagamento
+              name: sumario_servico_dia_tipo_soma_km__km_apurada_dia__sumario_servico_dia_pagamento
       - name: km_subsidiada_dia
         description: "Distância subsidiada para o serviço por dia (km)."
+        tests:
+          - not_null:
+              name: not_null__km_subsidiada_dia__sumario_servico_dia_pagamento
+          - dbt_utils.accepted_range:
+              min_value: 0
+              name: dbt_utils.accepted_range__km_subsidiada_dia__sumario_servico_dia_pagamento
       - name: km_planejada_dia
         description: "Distância planejada para o serviço por dia (km)."
         tests:
@@ -135,7 +141,7 @@ models:
               name: not_null__km_planejada_dia__sumario_servico_dia_pagamento
           - dbt_utils.accepted_range:
               min_value: 0
-              name: grater_than_zero__km_planejada_dia__sumario_servico_dia_pagamento
+              name: dbt_utils.accepted_range__km_planejada_dia__sumario_servico_dia_pagamento
       - name: media_pof
         description: "Média do indicador percentual de operação por faixa horária."
         tests:
@@ -143,7 +149,7 @@ models:
               name: not_null__media_pof__sumario_servico_dia_pagamento
           - dbt_utils.accepted_range:
               min_value: 0
-              name: grater_than_zero__media_pof__sumario_servico_dia_pagamento
+              name: dbt_utils.accepted_range__media_pof__sumario_servico_dia_pagamento
       - name: desvp_pof
         description: "Desvio padrão do indicador percentual de operação por faixa horária."
       - name: km_apurada_registrado_com_ar_inoperante

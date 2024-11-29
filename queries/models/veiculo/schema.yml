@@ -153,7 +153,7 @@ models:
           combination_of_columns:
           - data
           - id_veiculo
-          name: unique_combination__data_id_veiculo__sppo_veiculo_dia
+          name: dbt_utils.unique_combination_of_columns__data_id_veiculo__sppo_veiculo_dia
     columns:
       - name: data
         description: "Data de operação"
