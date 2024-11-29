@@ -267,7 +267,7 @@ WITH
     ts.sentido,
     ts.partidas_total_planejada,
     da.distancia_planejada,
-    da.distancia_total_planejada,
+    ts.distancia_total_planejada,
     da.inicio_periodo,
     da.fim_periodo,
     "00:00:00" AS faixa_horaria_inicio,
