@@ -23,7 +23,7 @@ class constants(Enum):  # pylint: disable=c0103
     VIAGEM_INFORMADA_SOURCE = SourceTable(
         source_name=SONDA_SOURCE_NAME,
         table_id=VIAGEM_INFORMADA_TABLE_ID,
-        first_timestamp=datetime(2024, 10, 16, 0, 0, 0),
+        first_timestamp=datetime(2024, 9, 10, 0, 0, 0),
         schedule_cron=create_daily_cron(hour=7, minute=10),
         partition_date_only=True,
         max_recaptures=5,

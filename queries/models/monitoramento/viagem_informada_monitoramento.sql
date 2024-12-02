@@ -88,7 +88,9 @@ with
             datetime_processamento,
             timestamp_captura as datetime_captura
         from {{ staging_viagem_informada_brt }}
-        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
+        where
+            {% if is_incremental() %} {{ incremental_filter }} and {% endif %}
+            datetime_processamento >= "2024-09-10 13:00:00"
     ),
     staging_union as (
         select *
