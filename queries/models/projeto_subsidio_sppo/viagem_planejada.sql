@@ -257,7 +257,7 @@
                 shape_id_planejado,
                 sentido_shape,
                 id_tipo_trajeto,
-            from 
+            from
             {{ ref("ordem_servico_trips_shapes_gtfs") }}
              -- `rj-smtr.gtfs.ordem_servico_trips_shapes`
             where
@@ -294,7 +294,7 @@
                 ts.start_pt,
                 ts.end_pt,
                 ts.id_tipo_trajeto,
-            from 
+            from
             {{ ref("ordem_servico_trips_shapes_gtfs") }} as ts
             -- `rj-smtr.gtfs.ordem_servico_trips_shapes` as ts
             left join
@@ -326,7 +326,7 @@
                 trip_id_planejado,
                 trip_id,
                 shape_id,
-            from 
+            from
             {{ ref("ordem_servico_trips_shapes_gtfs") }}
             -- `rj-smtr.gtfs.ordem_servico_trips_shapes`
             where
@@ -644,7 +644,7 @@
         ),
         shapes as (
             select *
-            from 
+            from
             {{ ref("shapes_geom_gtfs") }}
             -- `rj-smtr.gtfs.shapes_geom`
             where
