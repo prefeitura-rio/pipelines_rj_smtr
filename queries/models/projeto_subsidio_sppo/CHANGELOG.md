@@ -5,7 +5,7 @@
 
 ### Corrigido
 
-- Corrigido o cálculo de quilometragem e viagens nas faixas horárias de 24h às 27h e 00h às 03h na mudança de feed do GTFS no modelo `viagem_planejada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Corrigido o cálculo de quilometragem e viagens nas faixas horárias de 24h às 27h e 00h às 03h na mudança de feed do GTFS no modelo `viagem_planejada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/349)
 
 ## [9.0.9] - 2024-11-29
 
