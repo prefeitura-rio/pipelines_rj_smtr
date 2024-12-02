@@ -199,6 +199,7 @@ vars:
   comprimento_shape: 1000
   projecao_sirgas_2000: "EPSG:31983"
   projecao_wgs_84: "EPSG:4326"
+  data_inicial_gps_validacao_viagem: "2024-10-11"
 
 tests:
   rj_smtr:

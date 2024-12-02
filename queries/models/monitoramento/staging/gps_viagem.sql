@@ -43,7 +43,7 @@ with
                 data between date_sub(
                     date('{{ var("date_range_start") }}'), interval 1 day
                 ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
-            {% else %} data >= date("2024-10-11")
+            {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
             {% endif %}
 
     ),
@@ -56,7 +56,19 @@ with
                 data between date_sub(
                     date('{{ var("date_range_start") }}'), interval 1 day
                 ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
-            {% else %} data >= date("2024-10-11")
+            {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
+            {% endif %}
+    ),
+    gps_brt as (
+        select data, timestamp_gps, servico, id_veiculo, latitude, longitude
+        {# from `rj-smtr.br_rj_riodejaneiro_veiculos.gps_brt` #}
+        from {{ ref("gps_brt") }}
+        where
+            {% if is_incremental() %}
+                data between date_sub(
+                    date('{{ var("date_range_start") }}'), interval 1 day
+                ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
+            {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
             {% endif %}
     ),
     gps_union as (
@@ -67,6 +79,11 @@ with
 
         select *, 'zirix' as fornecedor
         from gps_zirix
+
+        union all
+
+        select *, 'brt' as fornecedor
+        from gps_brt
     )
 select
     v.data,
@@ -94,3 +111,6 @@ join
     and g.id_veiculo = v.id_veiculo
     and g.servico = v.servico
     and g.fornecedor = v.fonte_gps
+{% if not is_incremental() %}
+    where v.data <= date_sub(current_date("America/Sao_Paulo"), interval 2 day)
+{% endif %}
