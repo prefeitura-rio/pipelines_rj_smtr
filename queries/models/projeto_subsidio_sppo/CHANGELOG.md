@@ -1,5 +1,24 @@
 # Changelog - projeto_subsidio_sppo
 
+
+## [9.1.0] - 2024-12-02
+
+### Corrigido
+
+- Corrigido o cálculo de quilometragem e viagens nas faixas horárias de 24h às 27h e 00h às 03h na mudança de feed do GTFS no modelo `viagem_planejada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/349)
+
+## [9.0.9] - 2024-11-29
+
+### Corrigido
+
+- Corrigida a origem da coluna `distancia_total_planejada` na faixa horária de 24h às 27h no modelo `viagem_planejada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/346)
+
+## [9.0.8] - 2024-11-28
+
+### Alterado
+
+- Alterado o tipo_os de `2024-11-24` para `Parada LGBTQI+` no modelo `subsidio_data_versao_efetiva` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/345)
+
 ## [9.0.7] - 2024-11-11
 
 ### Alterado

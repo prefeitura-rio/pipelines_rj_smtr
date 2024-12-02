@@ -18,6 +18,7 @@ WITH
     WHERE
     data BETWEEN DATE("{{ var("start_date") }}")
     AND DATE_ADD(DATE("{{ var("end_date") }}"), INTERVAL 1 DAY)
+    AND DATE(datetime_processamento) <= DATE_ADD(DATE("{{ var("end_date") }}"), INTERVAL 6 DAY)
   ),
   -- 2. Transações RioCard
   transacao_riocard AS (
@@ -30,6 +31,7 @@ WITH
     WHERE
       data BETWEEN DATE("{{ var("start_date") }}")
       AND DATE_ADD(DATE("{{ var("end_date") }}"), INTERVAL 1 DAY)
+      AND DATE(datetime_processamento) <= DATE_ADD(DATE("{{ var("end_date") }}"), INTERVAL 6 DAY)
   ),
   -- 3. GPS Validador
   gps_validador AS (
@@ -48,6 +50,7 @@ WITH
       data BETWEEN DATE("{{ var("start_date") }}")
       AND DATE_ADD(DATE("{{ var("end_date") }}"), INTERVAL 1 DAY)
       AND (latitude != 0 OR longitude != 0)
+      AND DATE(datetime_captura) <= DATE_ADD(DATE("{{ var("end_date") }}"), INTERVAL 6 DAY)
   ),
   -- 4. Viagens realizadas
   viagem AS (
