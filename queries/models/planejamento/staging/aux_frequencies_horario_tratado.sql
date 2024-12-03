@@ -6,8 +6,8 @@ with
             *,
             split(start_time, ":") as start_time_parts,
             split(end_time, ":") as end_time_parts,
-        from `rj-smtr.gtfs.frequencies`
-    {# from {{ ref("frequencies_gtfs") }} #}
+        {# from `rj-smtr.gtfs.frequencies` #}
+        from {{ ref("frequencies_gtfs") }}
     )
 
 select

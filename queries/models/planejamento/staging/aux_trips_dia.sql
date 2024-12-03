@@ -29,9 +29,9 @@ select
     t.feed_version,
     t.feed_start_date,
     regexp_extract(t.trip_headsign, r'\[.*?\]') as evento
-from `rj-smtr.planejamento.calendario` c
-{# from {{ ref("calendario") }} c #}
-join `rj-smtr.gtfs.trips` t using (feed_start_date, feed_version)
-{# join {{ ref('trips_gtfs') }} t using (feed_start_date, feed_version) #}
+{# from `rj-smtr.planejamento.calendario` c #}
+from {{ ref("calendario") }} c
+{# join `rj-smtr.gtfs.trips` t using (feed_start_date, feed_version) #}
+join {{ ref("trips_gtfs") }} t using (feed_start_date, feed_version)
 join routes r using (feed_start_date, feed_version, route_id)
 where t.service_id in unnest(c.service_ids)
