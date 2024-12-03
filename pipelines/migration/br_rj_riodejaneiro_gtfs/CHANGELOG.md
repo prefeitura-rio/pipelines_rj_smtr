@@ -1,5 +1,13 @@
 # Changelog - gtfs
 
+## [1.1.5] - 2024-12-03
+
+### Corrigido
+
+- Corrige a conversão de valores para float na OS por faixa horaria (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/350)
+
+- Corrige a captura dos arquivos do GTFS no drive compartilhado (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/350)
+
 ## [1.1.4] - 2024-11-07
 
 ### Alterado
