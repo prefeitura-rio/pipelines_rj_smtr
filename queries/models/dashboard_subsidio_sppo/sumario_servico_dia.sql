@@ -95,8 +95,8 @@ SELECT
 FROM
   servico_km_apuracao AS s
 LEFT JOIN
-  {{ ref("valor_tipo_penalidade") }} AS p
-  -- `rj-smtr`.`dashboard_subsidio_sppo`.`valor_tipo_penalidade` AS p
+  -- {{ ref("valor_tipo_penalidade") }} AS p
+  `rj-smtr`.`dashboard_subsidio_sppo`.`valor_tipo_penalidade` AS p
 ON
   s.data BETWEEN p.data_inicio
   AND p.data_fim

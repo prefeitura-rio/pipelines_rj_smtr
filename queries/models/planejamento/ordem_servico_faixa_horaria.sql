@@ -54,10 +54,10 @@ WITH
     {% endfor %}
   FROM
     {{ source("br_rj_riodejaneiro_gtfs_staging", "ordem_servico_faixa_horaria") }}
-  {% if is_incremental() -%}
+  {# {% if is_incremental() -%} #}
   WHERE
     data_versao = '{{ var("data_versao_gtfs") }}'
-  {%- endif %}
+  {# {%- endif %} #}
   ),
   dados_agrupados AS (
   SELECT
@@ -128,11 +128,11 @@ LEFT JOIN
   {{ ref('feed_info_gtfs') }} AS fi
 ON
   d.data_versao = fi.feed_start_date
-{% if is_incremental() -%}
+{# {% if is_incremental() -%} #}
 WHERE
   d.data_versao = '{{ var("data_versao_gtfs") }}'
   AND fi.feed_start_date = '{{ var("data_versao_gtfs") }}'
-{% else %}
+{# {% else %}
 WHERE
   d.data_versao >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
-{%- endif %}
+{%- endif %} #}
