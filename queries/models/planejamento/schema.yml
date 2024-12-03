@@ -135,7 +135,16 @@ models:
         description: "{{ doc('versao') }}"
         data_type: string
         quote: true
+      - name: start_pt
+        description: Primeiro ponto do shape
+        data_type: geography
+        quote: true
+      - name: end_pt
+        description: Último ponto do shape
+        data_type: geography
+        quote: true
   - name: viagem_planejada_planejamento
+    description: Tabela contendo as viagens planejadas para o dia com base no GTFS
     columns:
       - name: data
         description: Data da viagem (partição)
@@ -207,6 +216,45 @@ models:
         quote: true
       - name: feed_start_date
         description: Data inicial do feed do GTFS (versão).
+        data_type: date
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+  - name: calendario
+    description: Tabela calendário
+    columns:
+      - name: data
+        description: Data
+        data_type: date
+        quote: true
+      - name: tipo_dia
+        description: "{{ doc('tipo_dia') }}"
+        data_type: string
+        quote: true
+      - name: subtipo_dia
+        description: "Subtipo de dia (ex: 'Verão')"
+        data_type: string
+        quote: true
+      - name: tipo_os
+        description: "Tipo de Ordem de Serviço (ex: 'Regular', 'Extraordinária - Verão')"
+        data_type: string
+        quote: true
+      - name: service_ids
+        description: Lista de service_ids válidos para o dia
+        data_type: string
+        quote: true
+      - name: feed_version
+        description: "{{ doc('feed_version') }}"
+        data_type: string
+        quote: true
+      - name: feed_start_date
+        description: "{{ doc('feed_start_date') }}"
         data_type: date
         quote: true
       - name: versao
