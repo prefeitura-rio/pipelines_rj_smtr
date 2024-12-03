@@ -42,7 +42,7 @@ with
         where
             {% if is_incremental() %}
                 feed_start_date in ({{ gtfs_feeds | join(", ") }})
-                data between date("{{ var('date_range_start') }}") and date(
+                and data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
                 )
             {% else %} feed_start_date >= '{{ var("feed_inicial_viagem_planejada") }}'
@@ -81,8 +81,8 @@ with
     ),
     os_trajetos_alternativos as (
         select *
-        from `rj-smtr.gtfs.ordem_servico_trajeto_alternativo`
-        {# from {{ ref('ordem_servico_trajeto_alternativo_gtfs') }} #}
+        {# from `rj-smtr.gtfs.ordem_servico_trajeto_alternativo` #}
+        from {{ ref("ordem_servico_trajeto_alternativo_gtfs") }}
         where
             {% if is_incremental() %} feed_start_date in ({{ gtfs_feeds | join(", ") }})
             {% else %} feed_start_date >= '{{ var("feed_inicial_viagem_planejada") }}'
@@ -163,6 +163,17 @@ with
                 )
             )
     ),
+    servico_circular as (
+        select feed_start_date, feed_version, shape_id
+        {# from `rj-smtr.planejamento.shapes_geom` #}
+        from {{ ref("shapes_geom_planejamento") }}
+        where
+            {% if is_incremental() %} feed_start_date in ({{ gtfs_feeds | join(", ") }})
+            {% else %} feed_start_date >= '{{ var("feed_inicial_viagem_planejada") }}'
+            {% endif %}
+            and round(st_y(start_pt), 4) = round(st_y(end_pt), 4)
+            and round(st_x(start_pt), 4) = round(st_x(end_pt), 4)
+    ),
     viagem_planejada as (
         select
             date(datetime_partida) as data,
@@ -182,7 +193,13 @@ with
             route_id,
             shape_id,
             servico,
-            case when direction_id = '0' then "Ida" else "Volta" end as sentido,
+            case
+                when c.shape_id is not null
+                then "Circular"
+                when direction_id = '0'
+                then "Ida"
+                else "Volta"
+            end as sentido,
             extensao,
             trajetos_alternativos,
             data as data_referencia,
@@ -193,7 +210,8 @@ with
             feed_start_date,
             '{{ var("version") }}' as versao,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
-        from viagem_os
+        from viagem_os v
+        left join servico_circular c using (shape_id, feed_version, feed_start_date)
     )
 select * except (rn)
 from
