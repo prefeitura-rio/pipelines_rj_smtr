@@ -20,6 +20,9 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 )
 
 from pipelines.constants import constants
+from pipelines.migration.br_rj_riodejaneiro_gtfs.constants import (
+    constants as gtfs_constants,
+)
 
 # SMTR Imports #
 from pipelines.migration.br_rj_riodejaneiro_gtfs.tasks import (
@@ -45,6 +48,11 @@ from pipelines.migration.tasks import (
 
 # from pipelines.schedules import every_5_minutes
 from pipelines.tasks import get_scheduled_timestamp, parse_timestamp_to_string
+from pipelines.treatment.templates.tasks import (
+    dbt_data_quality_checks,
+    log_discord,
+    run_dbt_tests,
+)
 
 # from pipelines.capture.templates.flows import create_default_capture_flow
 
@@ -129,6 +137,12 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
             data_versao_gtfs_task = get_current_timestamp(data_versao_gtfs_task)
 
+            data_versao_gtfs_str = parse_timestamp_to_string(
+                timestamp=data_versao_gtfs_task, pattern="%Y-%m-%d"
+            )
+
+            log_discord("Captura do GTFS " + data_versao_gtfs_str + " iniciada", "gtfs")
+
             partition = create_date_hour_partition(
                 timestamp=data_versao_gtfs_task,
                 partition_date_name="data_versao",
@@ -144,10 +158,6 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 table_id=table_ids,
                 partitions=unmapped(partition),
                 filename=unmapped(filename),
-            )
-
-            data_versao_gtfs_str = parse_timestamp_to_string(
-                timestamp=data_versao_gtfs_task, pattern="%Y-%m-%d"
             )
 
             raw_filepaths, primary_keys = get_raw_gtfs_files(
@@ -186,6 +196,12 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 timestamp=unmapped(data_versao_gtfs_task),
                 error=errors,
             )
+
+            with case(wait_captura_true, False):
+                log_discord(
+                    "Falha na subida dos dados do GTFS " + data_versao_gtfs_str, "gtfs", True
+                )
+
     with case(materialize_only, True):
         wait_captura_false = task()
 
@@ -218,11 +234,35 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             exclude="calendario aux_calendario_manual",
         ).set_upstream(task=wait_captura)
 
+        with case(wait_run_dbt_model, False):
+            log_discord(
+                "Falha na materialização dos dados do GTFS " + data_versao_gtfs_str, "gtfs", True
+            )
+
         wait_materialize_true = update_last_captured_os(
             dataset_id=constants.GTFS_DATASET_ID.value,
             data_index=data_index,
             mode=mode,
         ).set_upstream(task=wait_run_dbt_model)
+
+        gtfs_data_quality = run_dbt_tests(
+            dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value
+            + " "
+            + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,
+            _vars=dbt_vars,
+        ).set_upstream(task=wait_run_dbt_model)
+
+        gtfs_data_quality_results = dbt_data_quality_checks(
+            gtfs_data_quality, gtfs_constants.GTFS_DATA_CHECKS_LIST.value, dbt_vars
+        )
+
+        with case(gtfs_data_quality, True):
+            log_discord(
+                "Captura e materialização do GTFS "
+                + data_versao_gtfs_str
+                + " finalizada com sucesso!",
+                "gtfs",
+            )
 
     with case(verifica_materialize, False):
         wait_materialize_false = task()
