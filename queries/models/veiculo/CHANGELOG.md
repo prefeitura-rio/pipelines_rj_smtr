@@ -1,5 +1,22 @@
 # Changelog - veiculo
 
+
+## [1.1.4] - 2024-11-13
+
+#### Adicionado
+
+- Adiciona testes do subsidio para `sppo_veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/256)
+
+## [1.1.3] - 2024-10-25
+
+#### Alterado
+
+- Altera lógica do filtro do modelo `sppo_aux_registros_realocacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/287)
+
+#### Adicionado
+
+- Adiciona testes do DBT no schema (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/287)
+
 ## [1.1.2] - 2024-04-25
 
 #### Adicionado
