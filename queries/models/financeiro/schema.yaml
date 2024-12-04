@@ -18,6 +18,10 @@ models:
         description: "Serviço realizado pelo veículo."
       - name: indicador_ar_condicionado
         description: "Indicador se o veículo foi licenciado com ar condicionado."
+      - name: indicador_penalidade_judicial
+        description: "{{ doc('indicador_penalidade_judicial') }}"
+      - name: indicador_viagem_dentro_limite
+        description: "{{ doc('indicador_viagem_dentro_limite') }}"
       - name: tipo_viagem
         description: "Tipo de viagem"
       - name: viagens_faixa
@@ -67,6 +71,23 @@ models:
         description: "Valor total das viagens apuradas, subtraídas as penalidades (POF =< 60%)."
       - name: valor_judicial
         description: "Valor de glosa depositada em juízo (Autuação por ar inoperante, Veículo licenciado sem ar, Penalidade abaixo de 60% e Notificação dos Agentes de Verão)."
+      - name: valor_penalidade
+        description: "Valor penalidade [negativa] (POF =< 60%)."
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+  - name: subsidio_penalidade_servico_dia
+    description: "Tabela com o valor penalidade dos serviços de ônibus (SPPO) por dia e serviço."
+    columns:
+      - name: data
+        description: "{{ doc('data_gps') }}"
+      - name: tipo_dia
+        description: "{{ doc('tipo_dia') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
       - name: valor_penalidade
         description: "Valor penalidade [negativa] (POF =< 60%)."
       - name: versao

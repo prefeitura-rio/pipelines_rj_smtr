@@ -67,7 +67,7 @@ models:
     columns:
       - name: service_id
         description: "Identifica um conjunto de datas quando ocorre uma exceção de serviço para uma ou mais rotas"
-      - name: date
+      - name: DATE
         description: "Data em que ocorre a exceção de serviço."
       - name: exception_type
         description: "Indica se o serviço está disponível na data especificada no campo de data."
@@ -546,6 +546,8 @@ models:
         description: "Nome do consórcio responsável pelo serviço."
       - name: sentido
         description: "Sentido planejado - categorias: I (ida), V (volta), C (circular)"
+      - name: partidas_total_planejada
+        description: "{{ doc('partidas') }}"
       - name: distancia_planejada
         description: "Distância planejada de uma viagem do serviço (km)."
       - name: distancia_total_planejada
@@ -554,6 +556,10 @@ models:
         description: "Horário inicial de funcionamento do serviço."
       - name: fim_periodo
         description: "Horário da final de funcionamento do serviço."
+      - name: faixa_horaria_inicio
+        description: "{{ doc('faixa_horaria_inicio') }}"
+      - name: faixa_horaria_fim
+        description: "{{ doc('faixa_horaria_fim') }}"
       - name: trip_id_planejado
         description: "Código identificador de trip de referência no GTFS"
       - name: trip_id
