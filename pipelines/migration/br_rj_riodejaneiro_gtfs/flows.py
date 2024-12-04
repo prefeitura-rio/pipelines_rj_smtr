@@ -3,7 +3,6 @@
 Flows for gtfs
 
 DBT 2024-12-04a
-"""
 
 from prefect import Parameter, case, task
 from prefect.run_configs import KubernetesRun
