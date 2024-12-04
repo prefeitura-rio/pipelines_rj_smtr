@@ -25,23 +25,36 @@ with
             shape_pt_sequence,
             st_geogpoint(shape_pt_lon, shape_pt_lat) as ponto_shape,
             concat(shape_pt_lon, " ", shape_pt_lat) as lon_lat,
-        from {{ ref("shapes_gtfs") }} s
-        {# `rj-smtr.gtfs.shapes` s #}
+        from {{ ref("shapes_gtfs") }}
+        {# from `rj-smtr.gtfs.shapes` #}
         {% if is_incremental() %}
             where
                 feed_start_date
                 in ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
         {% endif %}
+    ),
+    shapes_agg as (
+        select
+            feed_start_date,
+            feed_end_date,
+            feed_version,
+            shape_id,
+            array_agg(ponto_shape order by shape_pt_sequence) as array_shape,
+            concat(
+                "LINESTRING(", string_agg(lon_lat, ", " order by shape_pt_sequence), ")"
+            ) as wkt_shape
+
+        from shapes
+        group by 1, 2, 3, 4
     )
 select
     feed_start_date,
     feed_end_date,
     feed_version,
     shape_id,
-    st_makeline(array_agg(ponto_shape order by shape_pt_sequence)) as shape,
-    concat(
-        "LINESTRING(", string_agg(lon_lat, ", " order by shape_pt_sequence), ")"
-    ) as wkt_shape,
+    st_makeline(array_shape) as shape,
+    wkt_shape,
+    array_shape[ordinal(1)] as start_pt,
+    array_shape[ordinal(array_length(array_shape))] as end_pt,
     '{{ var("version") }}' as versao
-from shapes
-group by 1, 2, 3, 4
+from shapes_agg

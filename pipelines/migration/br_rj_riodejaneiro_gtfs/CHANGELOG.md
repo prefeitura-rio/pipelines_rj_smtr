@@ -1,5 +1,9 @@
 # Changelog - gtfs
 
+## [1.1.6] - 2024-12-04
+
+- Adiciona o modelo `viagem_planejada_planejamento` no exclude da materialização (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/352)
+
 ## [1.1.5] - 2024-12-03
 
 ### Corrigido

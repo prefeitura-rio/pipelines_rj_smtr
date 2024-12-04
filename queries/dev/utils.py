@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 # flake8: noqa
+import json
 import os
 import re
 import subprocess
+from pathlib import Path
 from typing import Dict, List, Union
 
+import basedosdados as bd
 import requests
 from prefect import context
 
@@ -15,6 +18,7 @@ from pipelines.utils.discord import format_send_discord_message
 from pipelines.utils.secret import get_secret
 
 # import pandas as pd
+bd.config.from_file = True
 
 
 def run_dbt_model(
@@ -66,6 +70,41 @@ def run_dbt_model(
         else:
             vars_str = f'"{_vars}"'
             run_command += f" --vars {vars_str}"
+    if flags:
+        run_command += f" {flags}"
+
+    print(f"\n>>> RUNNING: {run_command}\n")
+    os.chdir(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+    return os.system(run_command)
+
+
+def run_dbt_selector(
+    selector_name: str,
+    flags: str = None,
+    _vars: dict | list[dict] = None,
+):
+    """
+    Runs a DBT selector.
+
+    Args:
+        selector_name (str): The name of the DBT selector to run.
+        flags (str, optional): Flags to pass to the dbt run command.
+        _vars (Union[dict, list[dict]], optional): Variables to pass to dbt. Defaults to None.
+    """
+    # Build the dbt command
+    run_command = f"dbt run --selector {selector_name}"
+
+    if _vars:
+        if isinstance(_vars, list):
+            vars_dict = {}
+            for elem in _vars:
+                vars_dict.update(elem)
+            vars_str = f'"{vars_dict}"'
+            run_command += f" --vars {vars_str}"
+        else:
+            vars_str = f'"{_vars}"'
+            run_command += f" --vars {vars_str}"
+
     if flags:
         run_command += f" {flags}"
 
@@ -243,3 +282,119 @@ def dbt_data_quality_checks(
 
     formatted_messages.append(dados_tag)
     format_send_discord_message(formatted_messages, webhook_url)
+
+
+def get_model_table_info(model_name):
+    os.chdir(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+    target_path = Path("target/manifest.json")
+
+    with target_path.open() as file:
+        manifest = json.load(file)
+    for _, node in manifest["nodes"].items():
+        if node["resource_type"] == "model" and node["name"] == model_name:
+            return {
+                "project": node["database"],
+                "dataset_id": node["schema"],
+                "table_id": node["alias"],
+            }
+
+    raise ValueError("modelo não encontrado no arquivo manifest.json")
+
+
+def test_incremental_model(
+    model: str,
+    _vars: dict,
+    partition_column_name: str,
+    expected_changed_partitions: list[str],
+    unique_key: Union[str, list[str]] = None,
+):
+    model_info = get_model_table_info(model_name=model)
+    changed_partitions_sql = f"""
+            select
+                cast(parse_date('%Y%m%d', partition_id) as string) as particao,
+                last_modified_time
+            from {model_info["project"]}.{model_info["dataset_id"]}.INFORMATION_SCHEMA.PARTITIONS
+            where table_name = '{model_info["table_id"]}' and partition_id != "__NULL__"
+        """
+    changed_partitions_before = bd.read_sql(changed_partitions_sql).rename(
+        columns={"last_modified_time": "last_modified_time_before"}
+    )
+    partition_filter = ",".join([f"'{p}'" for p in expected_changed_partitions])
+    partition_count_sql = f"""
+        select
+            {partition_column_name} as particao,
+            count(*) as qt_registros
+        from {model_info["project"]}.{model_info["dataset_id"]}.{model_info["table_id"]}
+        where {partition_column_name} in ({partition_filter})
+        group by 1
+    """
+
+    partition_count_before = bd.read_sql(partition_count_sql).rename(
+        columns={"qt_registros": "qt_registros_before"}
+    )
+
+    assert run_dbt_model(model=model, _vars=_vars) == 0, "DBT Falhou!"
+
+    changed_partitions_after = bd.read_sql(changed_partitions_sql).rename(
+        columns={"last_modified_time": "last_modified_time_after"}
+    )
+
+    partition_count_after = bd.read_sql(partition_count_sql).rename(
+        columns={"qt_registros": "qt_registros_after"}
+    )
+
+    changed_partitions = changed_partitions_before.merge(changed_partitions_after, on="particao")
+    changed_partitions = changed_partitions.loc[
+        changed_partitions["last_modified_time_before"]
+        != changed_partitions["last_modified_time_after"]
+    ]
+    changed_partitions = changed_partitions["particao"].to_list()
+    not_expected_changed = [p for p in changed_partitions if p not in expected_changed_partitions]
+    expected_not_changed = [p for p in expected_changed_partitions if p not in changed_partitions]
+
+    if len(not_expected_changed) > 0:
+        print(f"Foram alteradas partições não esperadas: {', '.join(not_expected_changed)}")
+    if len(expected_not_changed) > 0:
+        print(f"Não foram alteradas partições esperadas: {', '.join(expected_not_changed)}")
+
+    changed_record_count = partition_count_before.merge(partition_count_after, on="particao")
+    changed_record_count = changed_record_count.loc[
+        changed_record_count["qt_registros_before"] != changed_record_count["qt_registros_after"]
+    ]
+
+    changed_record_count = changed_record_count.to_dict("records")
+
+    if len(changed_record_count) > 0:
+        print("Contagem de registros modificada:")
+        print(
+            "\n".join(
+                [
+                    f"{a['particao']}: {a['qt_registros_before']} > {a['qt_registros_after']}"
+                    for a in changed_record_count
+                ]
+            )
+        )
+
+    if unique_key:
+        join_pattern = ", '_', "
+        unique_key = (
+            unique_key
+            if isinstance(unique_key, str)
+            else f"concat({join_pattern.join(unique_key)})"
+        )
+        partition_filter = ",".join(
+            [f"'{p}'" for p in changed_partitions_after["particao"].to_list()]
+        )
+        unique_count_sql = f"""
+            select
+                {unique_key} as unique_key,
+                count(*) as qtd
+            from {model_info["project"]}.{model_info["dataset_id"]}.{model_info["table_id"]}
+            where {partition_column_name} in ({partition_filter})
+            group by 1
+            having count(*) > 1
+        """
+        unique_count = bd.read_sql(unique_count_sql)
+        if len(unique_count) > 0:
+            print("Linhas duplicadas:")
+            print(unique_count)
