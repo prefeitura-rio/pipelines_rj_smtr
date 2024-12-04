@@ -1538,13 +1538,10 @@ def transform_raw_to_nested_structure(
                 else:
                     log(f"Raw data:\n{data_info_str(data)}", level="info")
 
-                    log("Adding captured timestamp column...", level="info")
-                    data["timestamp_captura"] = timestamp
-
                     if "customFieldValues" not in data:
                         log("Striping string columns...", level="info")
-                        for col in data.columns[data.dtypes == "object"].to_list():
-                            data[col] = data[col].str.strip()
+                        object_cols = data.select_dtypes(include=["object"]).columns
+                        data[object_cols] = data[object_cols].apply(lambda x: x.str.strip())
 
                     if (
                         constants.GTFS_DATASET_ID.value in raw_filepath
@@ -1556,22 +1553,21 @@ def transform_raw_to_nested_structure(
                     log(f"Finished cleaning! Data:\n{data_info_str(data)}", level="info")
 
                     log("Creating nested structure...", level="info")
-                    pk_cols = primary_key + ["timestamp_captura"]
 
-                    data = (
-                        data.groupby(pk_cols)
-                        .apply(
-                            lambda x: x[data.columns.difference(pk_cols)].to_json(
-                                orient="records",
-                                force_ascii=(
-                                    constants.CONTROLE_FINANCEIRO_DATASET_ID.value
-                                    not in raw_filepath
-                                ),
-                            )
-                        )
-                        .str.strip("[]")
-                        .reset_index(name="content")[primary_key + ["content", "timestamp_captura"]]
+                    content_columns = [c for c in data.columns if c not in primary_key]
+                    data["content"] = data.apply(
+                        lambda row: json.dumps(
+                            row[content_columns].to_dict(),
+                            ensure_ascii=(
+                                constants.CONTROLE_FINANCEIRO_DATASET_ID.value not in raw_filepath
+                            ),
+                        ),
+                        axis=1,
                     )
+
+                    log("Adding captured timestamp column...", level="info")
+                    data["timestamp_captura"] = timestamp
+                    data = data[primary_key + ["content", "timestamp_captura"]]
 
                     log(
                         f"Finished nested structure! Data:\n{data_info_str(data)}",
