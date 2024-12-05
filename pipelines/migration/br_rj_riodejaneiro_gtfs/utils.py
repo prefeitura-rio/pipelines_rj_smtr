@@ -131,7 +131,9 @@ def download_xlsx(file_link, drive_service):
     """
     file_id = file_link.split("/")[-2]
 
-    file = drive_service.files().get(fileId=file_id).execute()  # pylint: disable=E1101
+    file = (
+        drive_service.files().get(fileId=file_id, supportsAllDrives=True).execute()
+    )  # pylint: disable=E1101
     mime_type = file.get("mimeType")
 
     if "google-apps" in mime_type:
@@ -141,7 +143,6 @@ def download_xlsx(file_link, drive_service):
         )
     else:
         request = drive_service.files().get_media(fileId=file_id)  # pylint: disable=E1101
-
     file_bytes = io.BytesIO()
     downloader = MediaIoBaseDownload(file_bytes, request)
 
@@ -419,7 +420,7 @@ def download_file(file_link, drive_service):
     """
     file_id = file_link.split("/")[-2]
 
-    request = drive_service.files().get_media(fileId=file_id)  # pylint: disable=E1101
+    request = drive_service.files().get_media(fileId=file_id, supportsAllDrives=True)
     file_bytes = io.BytesIO()
     downloader = MediaIoBaseDownload(file_bytes, request)
     done = False
@@ -504,7 +505,7 @@ def processa_ordem_servico_faixa_horaria(
     for col in ordem_servico_faixa_horaria.columns:
         if "quilometragem" in col:
             ordem_servico_faixa_horaria[col] = (
-                ordem_servico_faixa_horaria[col].astype(str).replace(",", ".")
+                ordem_servico_faixa_horaria[col].astype(str).apply(convert_to_float).astype(float)
             )
 
     if "tipo_os" not in ordem_servico_faixa_horaria.columns:
