@@ -1,5 +1,15 @@
 # Changelog - subsidio
 
+## [2.0.0] - 2024-12-06
+
+# Corrigido
+
+- Corrigido e refatorado o modelo `viagem_transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/357):
+    - Reformatação conforme padrão `sqlfmt`
+    - Passa a considerar registros de GPS do validador com coordenadas zeradas a partir de `DATA_SUBSIDIO_V12_INICIO`
+    - Alterada janela de dados da CTE `viagem`, de forma a não ocorrer sobreposição entre viagens finalizadas na partição do dia anterior ao `start_date`
+    - Passa a considerar uma transação RioCard ou Jaé para fins de validação do SBD a partir de `DATA_SUBSIDIO_V12_INICIO`
+
 ## [1.0.3] - 2024-11-29
 
 # Alterado
