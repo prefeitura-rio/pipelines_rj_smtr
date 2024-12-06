@@ -4,7 +4,7 @@
 
 # Corrigido
 
-- Corrigido e refatorado o modelo `viagem_transacao.sql`:
+- Corrigido e refatorado o modelo `viagem_transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/357):
     - Reformatação conforme padrão `sqlfmt`
     - Passa a considerar registros de GPS do validador com coordenadas zeradas a partir de `DATA_SUBSIDIO_V12_INICIO`
     - Alterada janela de dados da CTE `viagem`, de forma a não ocorrer sobreposição entre viagens finalizadas na partição do dia anterior ao `start_date`
