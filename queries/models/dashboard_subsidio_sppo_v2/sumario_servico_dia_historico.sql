@@ -1,7 +1,9 @@
 {{
-  config(
-    materialized="view",
-  )
+    config(
+        materialized="incremental",
+        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+        incremental_strategy="insert_overwrite",
+    )
 }}
 WITH
   pre_faixa_horaria AS (
@@ -21,7 +23,11 @@ WITH
     {{ ref('sumario_servico_dia_historico')}}
     -- `rj-smtr.dashboard_subsidio_sppo.sumario_servico_dia_historico`
   WHERE
-    data < DATE("{{ var("DATA_SUBSIDIO_V9_INICIO") }}") ),
+    data < DATE("{{ var("DATA_SUBSIDIO_V9_INICIO") }}")
+    {% if is_incremental() %}
+      AND data BETWEEN DATE("{{ var("start_date") }}")
+      AND DATE_ADD(DATE("{{ var("end_date") }}"), INTERVAL 1 DAY)
+    {% endif %} ),
   planejada AS (
   SELECT
     DISTINCT data,
@@ -53,16 +59,21 @@ WITH
     valor_a_pagar AS valor_subsidio_pago,
     valor_penalidade
   FROM
-    {{ ref('sumario_servico_dia_pagamento')}}
+    {{ ref('subsidio_sumario_servico_dia_pagamento')}} AS sdp
     -- `rj-smtr.dashboard_subsidio_sppo_v2.sumario_servico_dia_pagamento`
   LEFT JOIN
-    planejada
+    planejada AS P
   USING
     (data,
       servico,
       consorcio)
   WHERE
-    data >= "2024-08-16" ),
+    data >= DATE("{{ var("DATA_SUBSIDIO_V9_INICIO") }}")
+	{% if is_incremental() %}
+      AND data BETWEEN DATE("{{ var("start_date") }}")
+      AND DATE_ADD(DATE("{{ var("end_date") }}"), INTERVAL 1 DAY)
+    {% endif %} 
+	),
   pos_faixa_horaria AS (
   SELECT
     data,
