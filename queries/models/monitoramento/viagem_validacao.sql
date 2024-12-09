@@ -45,6 +45,7 @@ with
             countif(quantidade_gps > 0) as quantidade_segmentos_validos,
             service_ids,
             tipo_dia,
+            tipo_os,
             feed_version,
             feed_start_date
         from {{ ref("gps_segmento_viagem") }}
@@ -65,6 +66,7 @@ with
             sentido,
             service_ids,
             tipo_dia,
+            tipo_os,
             feed_version,
             feed_start_date
     ),
@@ -87,6 +89,7 @@ with
             / quantidade_segmentos_verificados as indice_validacao,
             service_ids,
             tipo_dia,
+            tipo_os,
             feed_version,
             feed_start_date
         from contagem
@@ -117,28 +120,29 @@ with
         left join trips t using (feed_start_date, feed_version, route_id)
     )
 select
-    data,
-    id_viagem,
-    datetime_partida,
-    datetime_chegada,
-    modo,
-    id_veiculo,
-    trip_id,
-    route_id,
-    shape_id,
-    servico,
-    sentido,
-    quantidade_segmentos_verificados,
-    quantidade_segmentos_validos,
-    indice_validacao,
-    indice_validacao >= {{ var("parametro_validacao") }} as indicador_trajeto_valido,
-    indicador_servico_planejado,
-    indice_validacao >= {{ var("parametro_validacao") }}
-    and indicador_servico_planejado as indicador_viagem_valida,
+    s.data,
+    s.id_viagem,
+    s.datetime_partida,
+    s.datetime_chegada,
+    s.modo,
+    s.id_veiculo,
+    s.trip_id,
+    s.route_id,
+    s.shape_id,
+    s.servico,
+    s.sentido,
+    s.quantidade_segmentos_verificados,
+    s.quantidade_segmentos_validos,
+    s.indice_validacao,
+    s.indice_validacao >= {{ var("parametro_validacao") }} as indicador_trajeto_valido,
+    s.indicador_servico_planejado,
+    s.indice_validacao >= {{ var("parametro_validacao") }}
+    and s.indicador_servico_planejado as indicador_viagem_valida,
     {{ var("parametro_validacao") }} as parametro_validacao,
-    tipo_dia,
-    feed_version,
-    feed_start_date,
+    s.tipo_dia,
+    s.tipo_os,
+    s.feed_version,
+    s.feed_start_date,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
-from servicos_planejados
+from servicos_planejados s

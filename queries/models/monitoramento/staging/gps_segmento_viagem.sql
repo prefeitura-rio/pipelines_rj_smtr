@@ -93,6 +93,7 @@ with
             v.sentido,
             c.service_ids,
             c.tipo_dia,
+            c.tipo_os,
             c.feed_start_date,
             c.feed_version
         from {{ ref("viagem_informada_monitoramento") }} v
@@ -116,6 +117,7 @@ with
             v.sentido,
             v.service_ids,
             v.tipo_dia,
+            v.tipo_os,
             feed_version,
             feed_start_date
         from viagem v
@@ -140,6 +142,7 @@ select
     v.feed_start_date,
     v.service_ids,
     v.tipo_dia,
+    v.tipo_os,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
 from viagem_segmento v

@@ -10,8 +10,8 @@
     )
 }}
 
-{% set gtfs_feed_info = ref("feed_info_gtfs") %}
-{# {% set gtfs_feed_info = "rj-smtr.gtfs.feed_info" %} #}
+{# {% set gtfs_feed_info = ref("feed_info_gtfs") %} #}
+{% set gtfs_feed_info = "rj-smtr.gtfs.feed_info" %}
 {% set calendario_manual = ref("aux_calendario_manual") %}
 
 {% if execute %}
@@ -40,8 +40,8 @@
 with
     calendar as (
         select *
-        {# from `rj-smtr.gtfs.calendar` #}
-        from {{ ref("calendar_gtfs") }}
+        from `rj-smtr.gtfs.calendar`
+        {# from {{ ref("calendar_gtfs") }} #}
         {% if is_incremental() %}
             where feed_start_date in ({{ gtfs_feeds | join(", ") }})
         {% endif %}
@@ -95,8 +95,8 @@ with
             end as service_id,
             cd.exception_type,
             cd.feed_start_date,
-        {# from `rj-smtr.gtfs.calendar_dates` cd #}
-        from {{ ref("calendar_dates_gtfs") }} cd
+        from `rj-smtr.gtfs.calendar_dates` cd
+        {# from {{ ref("calendar_dates_gtfs") }} cd #}
         join
             modificacao_manual m
             on cd.date = m.data
