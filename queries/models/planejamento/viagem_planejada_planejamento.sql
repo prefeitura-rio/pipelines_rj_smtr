@@ -58,7 +58,7 @@ with
     ),
     trips_frequences_dia as (
         select
-            td.* except (evento),
+            td.*,
             timestamp(
                 concat(
                     cast(date_add(data, interval f.days_to_add_start day) as string),
@@ -79,15 +79,6 @@ with
         from trips_dia td
         join frequencies_tratada f using (feed_start_date, feed_version, trip_id)
     ),
-    os_trajetos_alternativos as (
-        select *
-        {# from `rj-smtr.gtfs.ordem_servico_trajeto_alternativo` #}
-        from {{ ref("ordem_servico_trajeto_alternativo_gtfs") }}
-        where
-            {% if is_incremental() %} feed_start_date in ({{ gtfs_feeds | join(", ") }})
-            {% else %} feed_start_date >= '{{ var("feed_inicial_viagem_planejada") }}'
-            {% endif %}
-    ),
     trips_alternativas as (
         select
             data,
@@ -95,22 +86,13 @@ with
             direction_id,
             array_agg(
                 struct(
-                    td.trip_id as trip_id,
-                    td.shape_id as shape_id,
+                    trip_id as trip_id,
+                    shape_id as shape_id,
                     evento as evento,
-                    case
-                        when td.direction_id = '0'
-                        then os.extensao_ida
-                        when td.direction_id = '1'
-                        then os.extensao_volta
-                    end as extensao
+                    extensao as extensao
                 )
             ) as trajetos_alternativos
         from trips_dia td
-        join
-            os_trajetos_alternativos os using (
-                feed_start_date, feed_version, tipo_os, servico, evento
-            )
         where td.trip_id not in (select trip_id from frequencies_tratada)
         group by 1, 2, 3
     ),
@@ -130,36 +112,16 @@ with
             ) as partida
         left join trips_alternativas ta using (data, servico, direction_id)
     ),
-    ordem_servico_tratada as (
-        select *
-        from {{ ref("aux_ordem_servico_horario_tratado") }}
-        where
-            {% if is_incremental() %} feed_start_date in ({{ gtfs_feeds | join(", ") }})
-            {% else %} feed_start_date >= '{{ var("feed_inicial_viagem_planejada") }}'
-            {% endif %}
-    ),
-    viagem_os as (
+    viagem_filtrada as (
         -- filtra viagens fora do horario de inicio e fim e em dias não previstos na OS
-        select
-            v.*,
-            case
-                when v.direction_id = '0'
-                then os.extensao_ida
-                when v.direction_id = '1'
-                then os.extensao_volta
-            end as extensao
-        from viagens v
-        left join
-            ordem_servico_tratada os using (
-                feed_start_date, feed_version, tipo_os, tipo_dia, servico
-            )
+        select *
+        from viagens
         where
-            (os.distancia_total_planejada is null or os.distancia_total_planejada > 0)
+            (distancia_total_planejada is null or distancia_total_planejada > 0)
             and (
-                os.feed_start_date is null
-                or v.datetime_partida
-                between datetime(data, os.horario_inicio) and datetime(
-                    date_add(data, interval os.dias_horario_fim day), os.horario_fim
+                not indicador_possui_os
+                or datetime_partida between datetime(data, horario_inicio) and datetime(
+                    date_add(data, interval dias_horario_fim day), horario_fim
                 )
             )
     ),
@@ -191,6 +153,7 @@ with
                 then "I"
                 else "V"
             end as sentido,
+            evento,
             extensao,
             trajetos_alternativos,
             data as data_referencia,
@@ -201,7 +164,7 @@ with
             feed_start_date,
             '{{ var("version") }}' as versao,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
-        from viagem_os v
+        from viagem_filtrada v
         left join servico_circular c using (shape_id, feed_version, feed_start_date)
     ),
     viagem_planejada_id as (

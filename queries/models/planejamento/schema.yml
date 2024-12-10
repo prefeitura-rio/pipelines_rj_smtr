@@ -186,6 +186,10 @@ models:
         description: "{{ doc('sentido') }}"
         data_type: string
         quote: true
+      - name: evento
+        description: "Evento relacionado ao trajeto (nulo se o trajeto for regular)"
+        data_type: string
+        quote: true
       - name: extensao
         description: Distância planejada da viagem, conforme Ordem de Serviço (OS)
         data_type: float64
