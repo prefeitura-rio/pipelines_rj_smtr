@@ -177,15 +177,6 @@ with
     viagem_planejada as (
         select
             date(datetime_partida) as data,
-            concat(
-                servico,
-                "_",
-                direction_id,
-                "_",
-                shape_id,
-                "_",
-                format_datetime("%Y%m%d%H%M%S", datetime_partida)
-            ) as id_viagem,
             datetime_partida,
             modo,
             service_id,
