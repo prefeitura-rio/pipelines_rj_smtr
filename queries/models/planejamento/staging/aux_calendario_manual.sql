@@ -17,7 +17,7 @@ with
             date(null) as feed_start_date,
             case
                 when data = "2024-10-21"
-                then "Ponto Facultativo"  -- Ponto Facultativo - Dia do Comérciario - (Processo.Rio MTR-DES-2024/64171)
+                then "Ponto Facultativo"  -- Ponto Facultativo - Dia do Comerciário - (Processo.Rio MTR-DES-2024/64171)
                 when data = "2024-10-28"
                 then "Ponto Facultativo"  -- Ponto Facultativo - Dia do Servidor Público - (Processo.Rio MTR-DES-2024/64417)
                 when data between date(2024, 11, 18) and date(2024, 11, 19)

@@ -187,15 +187,15 @@ models:
         data_type: string
         quote: true
       - name: extensao
-        description: Distância percorrida na viagem
+        description: Distância planejada da viagem, conforme Ordem de Serviço (OS)
         data_type: float64
         quote: true
       - name: trajetos_alternativos
-        description: Outros trajetos que podem,  alternativamento, serem feitos na viagem
+        description: Outros trajetos que podem, alternativamente, serem utilizados na viagem
         data_type: record
         quote: true
       - name: data_referencia
-        description: Data que foi utilizada de base para gerar a viagem
+        description: Data de referência que foi utilizada de base para gerar a viagem
         data_type: date
         quote: true
       - name: tipo_dia
