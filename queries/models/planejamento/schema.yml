@@ -187,7 +187,7 @@ models:
         data_type: string
         quote: true
       - name: extensao
-        description: Distância percorrida na viagem
+        description: Distância planejada da viagem, conforme Ordem de Serviço (OS)
         data_type: float64
         quote: true
       - name: trajetos_alternativos
