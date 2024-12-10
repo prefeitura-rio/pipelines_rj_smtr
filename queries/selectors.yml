@@ -56,6 +56,8 @@ selectors:
           value: aux_calendario_manual
         - method: fqn
           value: calendario
+        - method: fqn
+          value: viagem_planejada_planejamento
 
   - name: transacao_ordem
     description: Materialização da tabela auxiliar de relacionamento entre as ordens de pagamento e as transações
