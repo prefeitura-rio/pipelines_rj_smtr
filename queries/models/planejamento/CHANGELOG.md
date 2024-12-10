@@ -11,7 +11,7 @@
   - `viagem_planejada_planejamento.sql`
 
 ### Alterado
-- Adiciona colunas start_pt e end_pt no modelo `shapes_geom_planejamento,sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/352)
+- Adiciona colunas start_pt e end_pt no modelo `shapes_geom_planejamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/352)
 
 ## [1.1.0] - 2024-11-08
 
