@@ -195,10 +195,10 @@ with
             servico,
             case
                 when c.shape_id is not null
-                then "Circular"
+                then "C"
                 when direction_id = '0'
-                then "Ida"
-                else "Volta"
+                then "I"
+                else "V"
             end as sentido,
             extensao,
             trajetos_alternativos,
@@ -212,8 +212,22 @@ with
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
         from viagem_os v
         left join servico_circular c using (shape_id, feed_version, feed_start_date)
+    ),
+    viagem_planejada_id as (
+        select
+            *,
+            concat(
+                servico,
+                "_",
+                sentido,
+                "_",
+                shape_id,
+                "_",
+                format_datetime("%Y%m%d%H%M%S", datetime_partida)
+            ) as id_viagem
+        from viagem_planejada
     )
-select * except (rn)
+select data, id_viagem, * except (data, id_viagem, rn)
 from
     (
         select
@@ -221,6 +235,6 @@ from
             row_number() over (
                 partition by id_viagem order by data_referencia desc
             ) as rn
-        from viagem_planejada
+        from viagem_planejada_id
     )
 where rn = 1
