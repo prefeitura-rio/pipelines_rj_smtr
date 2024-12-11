@@ -152,6 +152,7 @@ def wait_data_sources(
                     timestamp=datetime_end,
                     retroactive_days=max(2, (datetime_end - datetime_start).days),
                 )
+
                 complete = len(uncaptured_timestamps) == 0
             elif isinstance(ds, DBTSelector):
                 name = f"{ds.name}"
@@ -168,9 +169,11 @@ def wait_data_sources(
                     cron_expr=ds["schedule_cron"],
                     timestamp=datetime_end,
                 )
-                complete = convert_timezone(
-                    timestamp=last_materialization
-                ) >= last_schedule - timedelta(hours=ds.get("delay_hours", 0))
+                last_materialization = convert_timezone(timestamp=last_materialization)
+
+                complete = last_materialization >= last_schedule - timedelta(
+                    hours=ds.get("delay_hours", 0)
+                )
 
             else:
                 raise NotImplementedError(f"Espera por fontes do tipo {type(ds)} não implementada")

@@ -143,6 +143,7 @@ def download_xlsx(file_link, drive_service):
         )
     else:
         request = drive_service.files().get_media(fileId=file_id)  # pylint: disable=E1101
+
     file_bytes = io.BytesIO()
     downloader = MediaIoBaseDownload(file_bytes, request)
 
