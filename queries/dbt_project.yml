@@ -128,6 +128,8 @@ vars:
   # valor_subsidio: "`rj-smtr-dev.projeto_subsidio_sppo.valor_subsidio`"
   DATA_SUBSIDIO_V11_INICIO: "2024-11-06"
 
+  DATA_SUBSIDIO_V12_INICIO: "2024-11-16"
+
   # Recursos #
   recurso_staging: "rj-smtr-staging.projeto_subsidio_sppo_staging.recurso"
   recurso_prazo: "rj-smtr.projeto_subsidio_sppo.recurso_prazo"
