@@ -491,6 +491,8 @@ def dbt_data_quality_checks(dbt_logs: str, checks_list: dict, params: dict):
     """
     if isinstance(dbt_logs, list):
         dbt_logs = "\n".join(dbt_logs)
+    elif not isinstance(dbt_logs, str):
+        return
 
     checks_results = parse_dbt_test_output(dbt_logs)
 
@@ -592,7 +594,7 @@ def dbt_data_quality_checks(dbt_logs: str, checks_list: dict, params: dict):
         raise
 
 
-@task(trigger=all_finished)
+@task
 def log_discord(message: str, key: str, dados_tag: bool = False):
     """Logs message to discord channel specified
 
