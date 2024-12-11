@@ -47,7 +47,12 @@ from pipelines.migration.tasks import (
 )
 
 # from pipelines.schedules import every_5_minutes
-from pipelines.tasks import get_scheduled_timestamp, parse_timestamp_to_string
+from pipelines.tasks import (
+    check_fail,
+    get_scheduled_timestamp,
+    parse_timestamp_to_string,
+    task_value_is_none,
+)
 from pipelines.treatment.templates.tasks import (
     dbt_data_quality_checks,
     log_discord,
@@ -197,7 +202,9 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 error=errors,
             )
 
-            with case(wait_captura_true, False):
+            upload_failed = check_fail(wait_captura_true)
+
+            with case(upload_failed, True):
                 log_discord(
                     "Falha na subida dos dados do GTFS " + data_versao_gtfs_str, "gtfs", True
                 )
@@ -234,9 +241,17 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             exclude="calendario aux_calendario_manual",
         ).set_upstream(task=wait_captura)
 
-        with case(wait_run_dbt_model, False):
+        run_dbt_failed = task_value_is_none(wait_run_dbt_model)
+
+        with case(run_dbt_failed, False):
             log_discord(
-                "Falha na materialização dos dados do GTFS " + data_versao_gtfs_str, "gtfs", True
+                "Falha na materialização dos dados do GTFS " + data_versao_gtfs, "gtfs", True
+            )
+
+        with case(run_dbt_failed, True):
+            log_discord(
+                "Captura e materialização do GTFS " + data_versao_gtfs + " finalizada com sucesso!",
+                "gtfs",
             )
 
         wait_materialize_true = update_last_captured_os(
@@ -255,14 +270,6 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
         gtfs_data_quality_results = dbt_data_quality_checks(
             gtfs_data_quality, gtfs_constants.GTFS_DATA_CHECKS_LIST.value, dbt_vars
         )
-
-        with case(gtfs_data_quality, True):
-            log_discord(
-                "Captura e materialização do GTFS "
-                + data_versao_gtfs_str
-                + " finalizada com sucesso!",
-                "gtfs",
-            )
 
     with case(verifica_materialize, False):
         wait_materialize_false = task()
