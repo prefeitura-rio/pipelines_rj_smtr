@@ -31,6 +31,9 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.tasks import (
     get_raw_gtfs_files,
     update_last_captured_os,
 )
+
+# transform_raw_to_nested_structure,
+# unpack_mapped_results_nout2,
 from pipelines.migration.tasks import (
     create_date_hour_partition,
     create_local_partition_path,
@@ -38,10 +41,9 @@ from pipelines.migration.tasks import (
     get_current_flow_mode,
     get_current_timestamp,
     get_join_dict,
+    process_files_to_nested_structure,
     rename_current_flow_run_now_time,
     run_dbt_model,
-    transform_raw_to_nested_structure,
-    unpack_mapped_results_nout2,
     upload_raw_data_to_gcs,
     upload_staging_data_to_gcs,
 )
@@ -173,16 +175,23 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 data_versao_gtfs=data_versao_gtfs_str,
             )
 
-            transform_raw_to_nested_structure_results = transform_raw_to_nested_structure.map(
-                raw_filepath=raw_filepaths,
-                filepath=local_filepaths,
-                primary_key=primary_keys,
-                timestamp=unmapped(data_versao_gtfs_task),
-                error=unmapped(None),
-            )
+            # transform_raw_to_nested_structure_results = transform_raw_to_nested_structure.map(
+            #     raw_filepath=raw_filepaths,
+            #     filepath=local_filepaths,
+            #     primary_key=primary_keys,
+            #     timestamp=unmapped(data_versao_gtfs_task),
+            #     error=unmapped(None),
+            # )
 
-            errors, treated_filepaths = unpack_mapped_results_nout2(
-                mapped_results=transform_raw_to_nested_structure_results
+            # errors, treated_filepaths = unpack_mapped_results_nout2(
+            #     mapped_results=transform_raw_to_nested_structure_results
+            # )
+
+            errors, treated_filepaths = process_files_to_nested_structure(
+                raw_filepaths=raw_filepaths,
+                local_filepaths=local_filepaths,
+                primary_keys=primary_keys,
+                timestamp=data_versao_gtfs_task,
             )
 
             errors = upload_raw_data_to_gcs.map(
@@ -286,10 +295,10 @@ gtfs_captura_nova.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
 gtfs_captura_nova.run_config = KubernetesRun(
     image=constants.DOCKER_IMAGE.value,
     labels=[constants.RJ_SMTR_AGENT_LABEL.value],
-    cpu_limit="1000m",
-    memory_limit="4600Mi",
-    cpu_request="500m",
-    memory_request="1000Mi",
+    # cpu_limit="1000m",
+    # memory_limit="4600Mi",
+    # cpu_request="500m",
+    # memory_request="1000Mi",
 )
 gtfs_captura_nova.state_handlers = [
     handler_inject_bd_credentials,

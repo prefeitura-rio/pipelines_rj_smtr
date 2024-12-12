@@ -1584,6 +1584,40 @@ def transform_raw_to_nested_structure(
     return error, filepath
 
 
+@task(nout=2)
+def process_files_to_nested_structure(
+    raw_filepaths: list, local_filepaths: list, timestamp: datetime, primary_keys: list = None
+) -> tuple[list, list]:
+    errors = []
+    processed_filepaths = []
+
+    for raw_filepath, local_filepath, primary_key in zip(
+        raw_filepaths, local_filepaths, primary_keys
+    ):
+        try:
+            error, filepath = transform_raw_to_nested_structure.run(
+                raw_filepath=raw_filepath,
+                filepath=local_filepath,
+                error=None,
+                timestamp=timestamp,
+                primary_key=primary_key,
+            )
+
+            if error:
+                errors.append(error)
+                log(f"Error processing {raw_filepath}: {error}", level="error")
+            else:
+                processed_filepaths.append(filepath)
+
+        except Exception as e:
+            log(f"Critical error processing {raw_filepath}: {str(e)}", level="error")
+            errors.append(str(e))
+
+    if errors:
+        return errors, processed_filepaths
+    return None, processed_filepaths
+
+
 # SUBSIDIO CHECKS
 
 
