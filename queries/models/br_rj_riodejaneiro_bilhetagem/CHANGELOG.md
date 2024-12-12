@@ -3,7 +3,7 @@
 ## [2.0.1] - 2024-12-12
 
 ### Alterado
-- Adiciona coluna `datetime_captura` no modelo `ordem_pagamento_consorcio_operador_dia.sql`
+- Adiciona coluna `datetime_captura` no modelo `ordem_pagamento_consorcio_operador_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/360)
 
 ## [2.0.0] - 2024-11-25
 
