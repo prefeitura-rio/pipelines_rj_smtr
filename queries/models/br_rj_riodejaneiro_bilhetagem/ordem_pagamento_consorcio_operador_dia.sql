@@ -93,6 +93,7 @@ with
             o.valor_bruto as valor_total_transacao_bruto,
             o.valor_taxa as valor_desconto_taxa,
             o.valor_liquido as valor_total_transacao_liquido_ordem,
+            o.timestamp_captura as datetime_captura,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
         from {{ ordem_pagamento_consorcio_operadora_staging }} o
         -- `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.ordem_pagamento_consorcio_operadora` o
@@ -145,6 +146,7 @@ with
                 valor_total_transacao_bruto,
                 valor_desconto_taxa,
                 valor_total_transacao_liquido_ordem,
+                datetime_captura,
                 datetime_ultima_atualizacao,
                 1 as priority
             from {{ this }}
@@ -178,6 +180,7 @@ with
             o.valor_total_transacao_liquido_ordem,
             p.data_pagamento,
             p.valor_pago,
+            o.datetime_captura,
             o.datetime_ultima_atualizacao,
             row_number() over (
                 partition by data_ordem, id_consorcio, id_operadora order by priority
@@ -216,6 +219,7 @@ select
     end as valor_total_transacao_liquido,
     data_pagamento,
     valor_pago,
+    datetime_captura,
     '{{ var("version") }}' as versao,
     datetime_ultima_atualizacao
 from ordem_valor_pagamento
