@@ -46,6 +46,7 @@ from pipelines.migration.utils import (
     save_treated_local_func,
     upload_run_logs_to_bq,
 )
+from pipelines.utils.pretreatment import transform_to_nested_structure
 from pipelines.utils.secret import get_secret
 
 
@@ -1554,20 +1555,28 @@ def transform_raw_to_nested_structure(
 
                     log("Creating nested structure...", level="info")
 
-                    content_columns = [c for c in data.columns if c not in primary_key]
-                    data["content"] = data.apply(
-                        lambda row: json.dumps(
-                            row[content_columns].to_dict(),
-                            ensure_ascii=(
-                                constants.CONTROLE_FINANCEIRO_DATASET_ID.value not in raw_filepath
-                            ),
-                        ),
-                        axis=1,
-                    )
+                    # content_columns = [c for c in data.columns if c not in primary_key]
+                    # data["content"] = data.apply(
+                    #     lambda row: json.dumps(
+                    #         row[content_columns].to_dict(),
+                    #         ensure_ascii=(
+                    #             constants.CONTROLE_FINANCEIRO_DATASET_ID.value not in raw_filepath
+                    #         ),
+                    #     ),
+                    #     axis=1,
+                    # )
+                    content_chunks = []
+                    for chunk in (
+                        data[i:i + 50000] for i in range(0, data.shape[0], 50000)  # fmt: skip
+                    ):
+                        transformed_chunk = transform_to_nested_structure(chunk, primary_key)
+                        content_chunks.append(transformed_chunk)
+
+                    data = pd.concat(content_chunks, ignore_index=True)
 
                     log("Adding captured timestamp column...", level="info")
                     data["timestamp_captura"] = timestamp
-                    data = data[primary_key + ["content", "timestamp_captura"]]
+                    # data = data[primary_key + ["content", "timestamp_captura"]]
 
                     log(
                         f"Finished nested structure! Data:\n{data_info_str(data)}",
@@ -1584,38 +1593,49 @@ def transform_raw_to_nested_structure(
     return error, filepath
 
 
-@task(nout=2)
-def process_files_to_nested_structure(
-    raw_filepaths: list, local_filepaths: list, timestamp: datetime, primary_keys: list = None
-) -> tuple[list, list]:
-    errors = []
-    processed_filepaths = []
+# @task(nout=2)
+# def process_files_to_nested_structure(
+#     raw_filepaths: list, local_filepaths: list, timestamp: datetime, primary_keys: list = None
+# ) -> tuple[list, list]:
+#     """
+#     Args:
+#         raw_filepaths (list[str]): List of paths to the saved raw files
+#         local_filepaths (list[str]): List of paths where treated files will be saved
+#         primary_keys (list[str], optional): Primary keys to be used in nested structures
+#         timestamp (datetime): Timestamp for the flow run
 
-    for raw_filepath, local_filepath, primary_key in zip(
-        raw_filepaths, local_filepaths, primary_keys
-    ):
-        try:
-            error, filepath = transform_raw_to_nested_structure.run(
-                raw_filepath=raw_filepath,
-                filepath=local_filepath,
-                error=None,
-                timestamp=timestamp,
-                primary_key=primary_key,
-            )
+#     Returns:
+#         - errors (list[str] or None): List of error tracebacks, or None if no errors
+#         - processed_filepaths (list[str]): List of paths to successfully saved treated files
+#     """
+#     errors = []
+#     processed_filepaths = []
 
-            if error:
-                errors.append(error)
-                log(f"Error processing {raw_filepath}: {error}", level="error")
-            else:
-                processed_filepaths.append(filepath)
+#     for raw_filepath, local_filepath, primary_key in zip(
+#         raw_filepaths, local_filepaths, primary_keys
+#     ):
+#         try:
+#             error, filepath = transform_raw_to_nested_structure.run(
+#                 raw_filepath=raw_filepath,
+#                 filepath=local_filepath,
+#                 error=None,
+#                 timestamp=timestamp,
+#                 primary_key=primary_key,
+#             )
 
-        except Exception as e:
-            log(f"Critical error processing {raw_filepath}: {str(e)}", level="error")
-            errors.append(str(e))
+#             if error:
+#                 errors.append(error)
+#                 log(f"Error processing {raw_filepath}: {error}", level="error")
+#             else:
+#                 processed_filepaths.append(filepath)
 
-    if errors:
-        return errors, processed_filepaths
-    return None, processed_filepaths
+#         except Exception as e:
+#             log(f"Critical error processing {raw_filepath}: {str(e)}", level="error")
+#             errors.append(str(e))
+
+#     if errors:
+#         return errors, processed_filepaths
+#     return None, processed_filepaths
 
 
 # SUBSIDIO CHECKS
