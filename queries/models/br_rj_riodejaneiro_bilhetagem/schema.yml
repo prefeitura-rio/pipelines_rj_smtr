@@ -437,6 +437,8 @@ models:
         description: "Data em que foi realizado o pagamento ao operador ou consórcio"
       - name: valor_pago
         description: "Valor pago ao operador ou consórcio (R$)"
+      - name: datetime_captura
+        description: Data e hora da captura da ordem em GMT-3
       - name: versao
         description: "Código de controle de versão do dado (SHA Github)"
       - name: datetime_ultima_atualizacao
