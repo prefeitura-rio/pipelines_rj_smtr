@@ -286,10 +286,10 @@ gtfs_captura_nova.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
 gtfs_captura_nova.run_config = KubernetesRun(
     image=constants.DOCKER_IMAGE.value,
     labels=[constants.RJ_SMTR_AGENT_LABEL.value],
-    # cpu_limit="1000m",
-    # memory_limit="4600Mi",
-    # cpu_request="500m",
-    # memory_request="1000Mi",
+    cpu_limit="1000m",
+    memory_limit="4600Mi",
+    cpu_request="500m",
+    memory_request="1000Mi",
 )
 gtfs_captura_nova.state_handlers = [
     handler_inject_bd_credentials,
