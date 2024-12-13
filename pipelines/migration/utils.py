@@ -911,6 +911,8 @@ def save_treated_local_func(
         data (pd.DataFrame): Dataframe to save
         error (str): Error catched during execution
         mode (str, optional): Folder to save locally, later folder which to upload to GCS.
+        log_param (bool, optional): Whether to log the path of the saved file. Defaults to True.
+        args (dict, optional): arguments to pass to pandas.to_csv. Defaults to None.
 
     Returns:
         str: Path to the saved file
