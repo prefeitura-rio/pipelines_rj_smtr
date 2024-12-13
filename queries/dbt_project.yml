@@ -95,10 +95,12 @@ vars:
 
   ### Subsídio SPPO (Ônibus) ###
   buffer: 500 # distância em metros para buffer
+  conformidade_velocidade_min: 110
   perc_conformidade_distancia_min: 0
   perc_conformidade_shape_min: 80
   perc_conformidade_registros_min: 50
   perc_distancia_total_subsidio: 80
+  distancia_inicio_fim_conformidade_velocidade_min: 2000
   quadro_horario: "`rj-smtr-staging.projeto_subsidio_sppo_staging.quadro_horario`"
   subsidio_shapes: "`rj-smtr-staging.projeto_subsidio_sppo_staging.shapes`"
   subsidio_trips: "`rj-smtr-staging.projeto_subsidio_sppo_staging.trips`"
@@ -125,10 +127,9 @@ vars:
   DATA_SUBSIDIO_V9_INICIO: "2024-08-16"
   # Feature Apuração por novas faixas horárias (RESOLUÇÃO SMTR 3777/2024)
   DATA_SUBSIDIO_V10_INICIO: "2024-11-01"
-  # valor_subsidio: "`rj-smtr-dev.projeto_subsidio_sppo.valor_subsidio`"
+  # Feature Apuração por novas faixas horárias (RESOLUÇÃO SMTR 3777/2024) - Feed (GTFS)
   DATA_SUBSIDIO_V11_INICIO: "2024-11-06"
-
-  # Alterações de regras do modelo `viagem_transacao.sql`
+  # Parâmetro 110 km/h + alterações de regras do modelo `viagem_transacao.sql`
   DATA_SUBSIDIO_V12_INICIO: "2024-11-16"
 
   # Recursos #
