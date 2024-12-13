@@ -621,7 +621,7 @@ models:
           - not_null
           - greater_than_zero
       - name: velocidade_media
-        description: "{{ doc('velocidade_media') }}"
+        description: "Velocidade média da viagem [km/h]"
       - name: perc_conformidade_shape
         description: "Percentual de sinais emitidos dentro do shape (trajeto) ao
         longo da viagem"
