@@ -219,7 +219,16 @@ def run_subflow(
 
 
 @task(trigger=all_finished)
-def check_fail(results):
+def check_fail(results: Union[list, str]):
+    """
+    Checks if any task result indicates failure.
+
+    Args:
+        results (Union[list, str]): A result or list of results to check.
+
+    Returns:
+        bool: True if any result is an instance of `FAIL`, otherwise False.
+    """
     if isinstance(results, list):
         return any(isinstance(result, FAIL) for result in results)
     else:

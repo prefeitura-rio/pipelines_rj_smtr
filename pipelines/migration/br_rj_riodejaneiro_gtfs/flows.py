@@ -20,6 +20,9 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 )
 
 from pipelines.constants import constants
+from pipelines.migration.br_rj_riodejaneiro_gtfs.constants import (
+    constants as gtfs_constants,
+)
 
 # SMTR Imports #
 from pipelines.migration.br_rj_riodejaneiro_gtfs.tasks import (
@@ -28,10 +31,6 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.tasks import (
     get_raw_gtfs_files,
     update_last_captured_os,
 )
-
-# transform_raw_to_nested_structure,
-# unpack_mapped_results_nout2,
-# process_files_to_nested_structure,
 from pipelines.migration.tasks import (
     create_date_hour_partition,
     create_local_partition_path,
@@ -54,14 +53,11 @@ from pipelines.tasks import (
     parse_timestamp_to_string,
     task_value_is_none,
 )
-from pipelines.treatment.templates.tasks import (  # dbt_data_quality_checks,; run_dbt_tests,
+from pipelines.treatment.templates.tasks import (
+    dbt_data_quality_checks,
     log_discord,
+    run_dbt_tests,
 )
-
-# from pipelines.migration.br_rj_riodejaneiro_gtfs.constants import (
-#     constants as gtfs_constants,
-# )
-
 
 # from pipelines.capture.templates.flows import create_default_capture_flow
 
@@ -184,20 +180,13 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                     primary_key=primary_keys,
                     timestamp=unmapped(data_versao_gtfs_task),
                     error=unmapped(None),
-                    reader_args=unmapped({"chunksize": 50000}),
+                    chunksize=unmapped(50000),
                 )
             )
 
             errors, treated_filepaths = unpack_mapped_results_nout2(
                 mapped_results=transform_raw_to_nested_structure_results
             )
-
-            # errors, treated_filepaths = process_files_to_nested_structure(
-            #     raw_filepaths=raw_filepaths,
-            #     local_filepaths=local_filepaths,
-            #     primary_keys=primary_keys,
-            #     timestamp=data_versao_gtfs_task,
-            # )
 
             errors = upload_raw_data_to_gcs.map(
                 dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
@@ -218,10 +207,10 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
             upload_failed = check_fail(wait_captura_true)
 
-            # with case(upload_failed, True):
-            #     log_discord(
-            #         "Falha na subida dos dados do GTFS " + data_versao_gtfs_str, "gtfs", True
-            #     )
+            with case(upload_failed, True):
+                log_discord(
+                    "Falha na subida dos dados do GTFS " + data_versao_gtfs_str, "gtfs", True
+                )
 
     with case(materialize_only, True):
         wait_captura_false = task()
@@ -257,16 +246,16 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
         run_dbt_failed = task_value_is_none(wait_run_dbt_model)
 
-        # with case(run_dbt_failed, False):
-        #     log_discord(
-        #         "Falha na materialização dos dados do GTFS " + data_versao_gtfs, "gtfs", True
-        #     )
+        with case(run_dbt_failed, False):
+            log_discord(
+                "Falha na materialização dos dados do GTFS " + data_versao_gtfs, "gtfs", True
+            )
 
-        # with case(run_dbt_failed, True):
-        #     log_discord(
-        #       "Captura e materialização do GTFS " + data_versao_gtfs + " finalizada com sucesso!",
-        #         "gtfs",
-        #     )
+        with case(run_dbt_failed, True):
+            log_discord(
+                "Captura e materialização do GTFS " + data_versao_gtfs + " finalizada com sucesso!",
+                "gtfs",
+            )
 
         wait_materialize_true = update_last_captured_os(
             dataset_id=constants.GTFS_DATASET_ID.value,
@@ -274,16 +263,16 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             mode=mode,
         ).set_upstream(task=wait_run_dbt_model)
 
-        # gtfs_data_quality = run_dbt_tests(
-        #     dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value
-        #     + " "
-        #     + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,
-        #     _vars=dbt_vars,
-        # ).set_upstream(task=wait_run_dbt_model)
+        gtfs_data_quality = run_dbt_tests(
+            dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value
+            + " "
+            + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,
+            _vars=dbt_vars,
+        ).set_upstream(task=wait_run_dbt_model)
 
-        # gtfs_data_quality_results = dbt_data_quality_checks(
-        #     gtfs_data_quality, gtfs_constants.GTFS_DATA_CHECKS_LIST.value, dbt_vars
-        # )
+        gtfs_data_quality_results = dbt_data_quality_checks(
+            gtfs_data_quality, gtfs_constants.GTFS_DATA_CHECKS_LIST.value, dbt_vars
+        )
 
     with case(verifica_materialize, False):
         wait_materialize_false = task()
@@ -300,10 +289,6 @@ gtfs_captura_nova.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
 gtfs_captura_nova.run_config = KubernetesRun(
     image=constants.DOCKER_IMAGE.value,
     labels=[constants.RJ_SMTR_AGENT_LABEL.value],
-    # cpu_limit="1000m",
-    # memory_limit="4600Mi",
-    # cpu_request="500m",
-    # memory_request="1000Mi",
 )
 gtfs_captura_nova.state_handlers = [
     handler_inject_bd_credentials,

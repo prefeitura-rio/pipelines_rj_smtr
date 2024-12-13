@@ -1591,6 +1591,7 @@ def transform_raw_to_nested_structure_chunked(
     filepath: str,
     error: str,
     timestamp: datetime,
+    chunksize: int,
     primary_key: list = None,
     reader_args: dict = None,
 ) -> tuple[str, str]:
@@ -1602,6 +1603,7 @@ def transform_raw_to_nested_structure_chunked(
         filepath (str): Path to the saved treated .csv file
         error (str): Error catched from upstream tasks
         timestamp (datetime): timestamp for flow run
+        chunksize (int): Number of lines to read from the file per chunk
         primary_key (list, optional): Primary key to be used on nested structure
         reader_args (dict): arguments to pass to pandas.read_csv or read_json
 
@@ -1612,7 +1614,9 @@ def transform_raw_to_nested_structure_chunked(
     if error is None:
         try:
             # leitura do dado raw
-            error, data_chunks = read_raw_data(filepath=raw_filepath, reader_args=reader_args)
+            error, data_chunks = read_raw_data(
+                filepath=raw_filepath, reader_args={"chunksize": chunksize}
+            )
 
             if primary_key is None:
                 primary_key = []
@@ -1621,7 +1625,6 @@ def transform_raw_to_nested_structure_chunked(
 
                 log("Creating nested structure...", level="info")
 
-                # content_chunks = []
                 index = 0
                 for chunk in data_chunks:
 
@@ -1654,71 +1657,14 @@ def transform_raw_to_nested_structure_chunked(
                             args={"header": False, "mode": "a"},
                         )
                     index += 1
-                    # content_chunks.append(transformed_chunk)
 
-                # data = pd.concat(content_chunks, ignore_index=True)
-                # log("Adding captured timestamp column...", level="info")
-                # data["timestamp_captura"] = timestamp
-
-                # log(
-                #     f"Finished nested structure! Data:\n{data_info_str(data)}",
-                #     level="info",
-                # )
                 log("Finished nested structure!", level="info")
-
-            # save treated local
-            # filepath = save_treated_local_func(data=data, error=error, filepath=filepath)
 
         except Exception:  # pylint: disable=W0703
             error = traceback.format_exc()
             log(f"[CATCHED] Task failed with error: \n{error}", level="error")
 
     return error, filepath
-
-
-# @task(nout=2)
-# def process_files_to_nested_structure(
-#     raw_filepaths: list, local_filepaths: list, timestamp: datetime, primary_keys: list = None
-# ) -> tuple[list, list]:
-#     """
-#     Args:
-#         raw_filepaths (list[str]): List of paths to the saved raw files
-#         local_filepaths (list[str]): List of paths where treated files will be saved
-#         primary_keys (list[str], optional): Primary keys to be used in nested structures
-#         timestamp (datetime): Timestamp for the flow run
-
-#     Returns:
-#         - errors (list[str] or None): List of error tracebacks, or None if no errors
-#         - processed_filepaths (list[str]): List of paths to successfully saved treated files
-#     """
-#     errors = []
-#     processed_filepaths = []
-
-#     for raw_filepath, local_filepath, primary_key in zip(
-#         raw_filepaths, local_filepaths, primary_keys
-#     ):
-#         try:
-#             error, filepath = transform_raw_to_nested_structure.run(
-#                 raw_filepath=raw_filepath,
-#                 filepath=local_filepath,
-#                 error=None,
-#                 timestamp=timestamp,
-#                 primary_key=primary_key,
-#             )
-
-#             if error:
-#                 errors.append(error)
-#                 log(f"Error processing {raw_filepath}: {error}", level="error")
-#             else:
-#                 processed_filepaths.append(filepath)
-
-#         except Exception as e:
-#             log(f"Critical error processing {raw_filepath}: {str(e)}", level="error")
-#             errors.append(str(e))
-
-#     if errors:
-#         return errors, processed_filepaths
-#     return None, processed_filepaths
 
 
 # SUBSIDIO CHECKS
