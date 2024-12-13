@@ -17,13 +17,13 @@ class constants(Enum):  # pylint: disable=c0103
 
     VIAGEM_INFORMADA_SELECTOR = DBTSelector(
         name="viagem_informada",
-        schedule_cron=create_daily_cron(hour=7, minute=10),
+        schedule_cron=create_daily_cron(hour=7, minute=30),
         initial_datetime=datetime(2024, 10, 16, 0, 0, 0),
     )
 
     VIAGEM_VALIDACAO_SELECTOR = DBTSelector(
         name="viagem_validacao",
-        schedule_cron=create_daily_cron(hour=6),
+        schedule_cron=create_daily_cron(hour=8),
         initial_datetime=datetime(2024, 10, 12, 0, 0, 0),
         incremental_delay_hours=48,
     )

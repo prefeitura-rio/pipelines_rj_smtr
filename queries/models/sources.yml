@@ -184,3 +184,9 @@ sources:
 
     tables:
       - name: transacao_ordem
+
+  - name: source_sonda
+    database: rj-smtr-staging
+
+    tables:
+      - name: viagem_informada
