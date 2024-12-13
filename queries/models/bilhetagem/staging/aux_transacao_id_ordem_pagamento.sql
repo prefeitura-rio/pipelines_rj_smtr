@@ -67,10 +67,10 @@ with
             union all
             select *, 1 as priority
             from {{ this }}
-            where data in ({{ transacao_partition_list | join(", ") }})
+            where data in ({{ partitions | join(", ") }})
         {% endif %}
     )
-select * except (rn)
+select * except (rn, priority)
 from
     (
         select
