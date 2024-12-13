@@ -67,7 +67,6 @@ select distinct
     round(100 * d.distancia_aferida/v.distancia_planejada, 2) as perc_conformidade_distancia,
     round(100 * n_registros_minuto/tempo_viagem, 2) as perc_conformidade_registros,
     '{{ var("version") }}' as versao_modelo,
-    CURRENT_DATETIME("America/Sao_Paulo") as datetime_ultima_atualizacao
 from
     viagem v
 inner join
