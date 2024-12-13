@@ -113,8 +113,8 @@ using
   (shape_id)
 where (
 {% if var("run_date") > var("DATA_SUBSIDIO_V12_INICIO")  %}
-  velocidade_media < {{ var("conformidade_velocidade_min") }} or (((ST_NUMGEOMETRIES(ST_INTERSECTION(ST_BUFFER(start_pt, 500), shape)) > 1 or ST_NUMGEOMETRIES(ST_INTERSECTION(ST_BUFFER(end_pt, 500), shape)) > 1)
-  and ST_DISTANCE(start_pt, end_pt) < 2000) and sentido != "C")
+  velocidade_media < {{ var("conformidade_velocidade_min") }} or (((ST_NUMGEOMETRIES(ST_INTERSECTION(ST_BUFFER(start_pt, {{ var("buffer") }}), shape)) > 1 or ST_NUMGEOMETRIES(ST_INTERSECTION(ST_BUFFER(end_pt, {{ var("buffer") }}), shape)) > 1)
+  and ST_DISTANCE(start_pt, end_pt) < {{ var("distancia_inicio_fim_conformidade_velocidade_min") }}) and sentido != "C")
 )
 and (
 {% endif %}

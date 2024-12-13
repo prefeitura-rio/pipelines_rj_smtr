@@ -1,12 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
-## [9.0.8] - 2024-11-27
+## [9.1.1] - 2024-12-13
 
 ### Adicionado
 
 - Adiciona coluna `velocidade_media` no modelo `viagem_conformidade.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/340)
-- Adiciona filtro para remover as viagens com velocidade superior a 200km/h, exceto os serviços com distância linear entre o início e o final inferior a 2000m e que possuem interseção entre o trajeto e os buffers de 500m gerados a partir dos pontos de início ou final do trajeto, desconsiderando serviços circulares no modelo `viagem_completa.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/340)
-
+- Adiciona filtro para remover as viagens com velocidade média superior a 110 km/h, exceto os serviços com itinerários complexos - não circulares com distância linear entre início e fim inferior a 2 km e mais de uma interseção entre o buffer de início/fim e o itinerário no modelo `viagem_completa.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/340)
 
 ## [9.1.0] - 2024-12-02
 
