@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona coluna `velocidade_media` no modelo `viagem_conformidade.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/340)
+- Adiciona coluna `velocidade_media` e `datetime_ultima_atualizacao` no modelo `viagem_conformidade.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/340)
 - Adiciona filtro para remover as viagens com velocidade média superior a 110 km/h, exceto os serviços com itinerários complexos - não circulares com distância linear entre início e fim inferior a 2 km e mais de uma interseção entre o buffer de início/fim e o itinerário - no modelo `viagem_completa.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/340)
 
 ## [9.1.0] - 2024-12-02
