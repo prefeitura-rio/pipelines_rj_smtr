@@ -1,5 +1,22 @@
 # Changelog - gtfs
 
+## [1.1.6] - 2024-12-13
+
+### Adicionado
+
+- Cria arquivo `constants.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/359)
+- Adiciona automação dos testes do DBT no arquivo `flows.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/359)
+- Adiciona compatibilidade com padrão "KM" na função `processa_ordem_servico` no arquivo `utils.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/359)
+
+### Alterado
+
+- Remove parâmetros personalizados de execução no arquivo `flows.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/359)
+- Troca task `transform_raw_to_nested_structure` pela `transform_raw_to_nested_structure_chunked` no arquivo `flows.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/359)
+
+### Corrigido
+
+- Corrige parâmetro `supportsAllDrives` na função `download_xlsx` arquivo `utils.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/359)
+
 ## [1.1.5] - 2024-12-03
 
 ### Corrigido
