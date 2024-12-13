@@ -896,7 +896,12 @@ def get_raw_data_db(
 
 
 def save_treated_local_func(
-    filepath: str, data: pd.DataFrame, error: str, mode: str = "staging"
+    filepath: str,
+    data: pd.DataFrame,
+    error: str,
+    mode: str = "staging",
+    log_param: bool = True,
+    args: dict = None,
 ) -> str:
     """
     Save treated file to CSV.
@@ -910,11 +915,14 @@ def save_treated_local_func(
     Returns:
         str: Path to the saved file
     """
+    if args is None:
+        args = {}
     _filepath = filepath.format(mode=mode, filetype="csv")
     Path(_filepath).parent.mkdir(parents=True, exist_ok=True)
     if error is None:
-        data.to_csv(_filepath, index=False)
-        log(f"Treated data saved to: {_filepath}")
+        data.to_csv(_filepath, index=False, **args)
+        if log_param:
+            log(f"Treated data saved to: {_filepath}")
     return _filepath
 
 

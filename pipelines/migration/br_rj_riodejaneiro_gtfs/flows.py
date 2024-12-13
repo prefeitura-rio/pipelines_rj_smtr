@@ -41,7 +41,7 @@ from pipelines.migration.tasks import (
     get_join_dict,
     rename_current_flow_run_now_time,
     run_dbt_model,
-    transform_raw_to_nested_structure,
+    transform_raw_to_nested_structure_chunked,
     unpack_mapped_results_nout2,
     upload_raw_data_to_gcs,
     upload_staging_data_to_gcs,
@@ -177,12 +177,15 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 data_versao_gtfs=data_versao_gtfs_str,
             )
 
-            transform_raw_to_nested_structure_results = transform_raw_to_nested_structure.map(
-                raw_filepath=raw_filepaths,
-                filepath=local_filepaths,
-                primary_key=primary_keys,
-                timestamp=unmapped(data_versao_gtfs_task),
-                error=unmapped(None),
+            transform_raw_to_nested_structure_results = (
+                transform_raw_to_nested_structure_chunked.map(
+                    raw_filepath=raw_filepaths,
+                    filepath=local_filepaths,
+                    primary_key=primary_keys,
+                    timestamp=unmapped(data_versao_gtfs_task),
+                    error=unmapped(None),
+                    reader_args=unmapped({"chunksize": 50000}),
+                )
             )
 
             errors, treated_filepaths = unpack_mapped_results_nout2(
@@ -215,10 +218,10 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
             upload_failed = check_fail(wait_captura_true)
 
-            with case(upload_failed, True):
-                log_discord(
-                    "Falha na subida dos dados do GTFS " + data_versao_gtfs_str, "gtfs", True
-                )
+            # with case(upload_failed, True):
+            #     log_discord(
+            #         "Falha na subida dos dados do GTFS " + data_versao_gtfs_str, "gtfs", True
+            #     )
 
     with case(materialize_only, True):
         wait_captura_false = task()
@@ -254,16 +257,16 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
         run_dbt_failed = task_value_is_none(wait_run_dbt_model)
 
-        with case(run_dbt_failed, False):
-            log_discord(
-                "Falha na materialização dos dados do GTFS " + data_versao_gtfs, "gtfs", True
-            )
+        # with case(run_dbt_failed, False):
+        #     log_discord(
+        #         "Falha na materialização dos dados do GTFS " + data_versao_gtfs, "gtfs", True
+        #     )
 
-        with case(run_dbt_failed, True):
-            log_discord(
-                "Captura e materialização do GTFS " + data_versao_gtfs + " finalizada com sucesso!",
-                "gtfs",
-            )
+        # with case(run_dbt_failed, True):
+        #     log_discord(
+        #       "Captura e materialização do GTFS " + data_versao_gtfs + " finalizada com sucesso!",
+        #         "gtfs",
+        #     )
 
         wait_materialize_true = update_last_captured_os(
             dataset_id=constants.GTFS_DATASET_ID.value,
