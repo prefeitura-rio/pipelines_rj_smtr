@@ -13,7 +13,6 @@ WITH
     tipo_dia,
     consorcio,
     servico,
-    sentido,
     distancia_total_planejada AS km_planejada
   FROM
     -- rj-smtr.projeto_subsidio_sppo.viagem_planejada
