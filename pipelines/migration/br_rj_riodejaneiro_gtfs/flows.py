@@ -241,7 +241,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             + " "
             + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,
             _vars=dbt_vars,
-            exclude="calendario aux_calendario_manual aux_segmento_shape aux_shapes_geom_filtrada segmento_shape shapes_geom_planejamento",  # noqa
+            exclude="calendario aux_calendario_manual",
         ).set_upstream(task=wait_captura)
 
         run_dbt_failed = task_value_is_none(wait_run_dbt_model)
