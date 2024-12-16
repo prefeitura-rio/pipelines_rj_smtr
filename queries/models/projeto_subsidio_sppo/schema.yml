@@ -218,6 +218,8 @@ models:
         identificação do trajeto)"
         tests:
           - not_null
+      - name: trip_id
+        description: "Código identificador do itinerário operado"
       - name: shape_id
         description: "Código identificador do shape (trajeto) do serviço"
         tests:
@@ -532,6 +534,8 @@ models:
         identificação do trajeto)"
         tests:
           - not_null
+      - name: trip_id
+        description: "Código identificador do itinerário operado"
       - name: shape_id
         description: "Código identificador do shape (trajeto) do serviço"
         tests:
@@ -582,6 +586,8 @@ models:
         tests:
           - not_null
           - greater_than_zero
+      - name: distancia_inicio_fim
+        description: "Soma da distância entre o ponto inicial do shape e o primeiro sinal de gps da viagem e a distância entre o ponto final do shape e o último sinal de gps da viagem (Km)"
       - name: n_registros_middle
         description: "Contagem de sinais de GPS emitidos no meio do
       trajeto."

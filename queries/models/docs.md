@@ -335,3 +335,15 @@ Nome do trajeto.
 {% docs sentido %}
 Sentido da linha
 {% enddocs %}
+
+{% docs indicador_viagem_dentro_limite %}
+Indica se a viagem foi remunerada por estar abaixo do teto de 120%/200%.
+{% enddocs %}
+
+{% docs indicador_penalidade_judicial %}
+Indica que o valor encontra-se sob julgamento de ação judicial e será depositado em juízo.
+{% enddocs %}
+
+{% docs tipo_os %}
+Tipo de Ordem de Serviço (ex: 'Regular', 'Extraordinária - Verão')
+{% enddocs %}

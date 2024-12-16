@@ -141,6 +141,10 @@ models:
         description: Valor mínimo do indice_validacao para que a viagem seja validada.
         data_type: float64
         quote: true
+      - name: tipo_dia
+        description: "{{ doc('tipo_dia') }}"
+        data_type: string
+        quote: true
       - name: feed_version
         description: "{{ doc('feed_version') }}"
         data_type: string
