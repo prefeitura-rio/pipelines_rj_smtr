@@ -23,3 +23,6 @@ WORKDIR /app
 COPY . .
 RUN python3.10 -m pip install --prefer-binary --no-cache-dir -U .
 RUN python3 -m pip install jaydebeapi
+WORKDIR /app/queries
+RUN dbt deps
+WORKDIR /app
