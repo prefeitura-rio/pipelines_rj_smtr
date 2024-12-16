@@ -3,7 +3,7 @@
 ## [1.0.1] - 2024-12-16
 
 ### Alterado
-- Altera IP do banco de tracking da Jaé
+- Altera IP do banco de tracking da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/362)
 
 ## [1.0.0] - 2024-11-25
 
