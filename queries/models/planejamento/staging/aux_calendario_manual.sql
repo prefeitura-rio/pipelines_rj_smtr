@@ -22,7 +22,7 @@ with
                 then "Ponto Facultativo"  -- Ponto Facultativo - Dia do Servidor Público - (Processo.Rio MTR-DES-2024/64417)
                 when data between date(2024, 11, 18) and date(2024, 11, 19)
                 then "Ponto Facultativo"  -- Ponto Facultativo - G20 - (Processo.Rio MTR-DES-2024/67477)
-            end as tipo_dia
+            end as tipo_dia,
             case
                 when data between date(2024, 09, 14) and date(2024, 09, 15)
                 then "Verão + Rock in Rio"
