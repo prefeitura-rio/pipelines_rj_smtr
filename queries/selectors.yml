@@ -24,3 +24,44 @@ selectors:
           value: models/financeiro
         - method: path
           value: models/dashboard_subsidio_sppo_v2
+
+  - name: viagem_informada
+    description: Materialização da tabela de viagens informadas
+    definition:
+      method: file
+      value: viagem_informada_monitoramento
+      parents: true
+      exclude:
+        - method: fqn
+          value: gtfs
+        - method: fqn
+          value: planejamento
+
+  - name: viagem_validacao
+    description: Materialização da tabela de validação das viagens informadas
+    definition:
+      union:
+        - method: fqn
+          value: gps_viagem
+        - method: fqn
+          value: gps_segmento_viagem
+        - method: fqn
+          value: viagem_validacao
+
+  - name: planejamento_diario
+    description: Materialização das tabelas de planejamento que devem rodar diariamente
+    definition:
+      union:
+        - method: fqn
+          value: aux_calendario_manual
+        - method: fqn
+          value: calendario
+
+  - name: transacao_ordem
+    description: Materialização da tabela auxiliar de relacionamento entre as ordens de pagamento e as transações
+    definition:
+      union:
+        - method: fqn
+          value: staging_transacao_ordem
+        - method: fqn
+          value: aux_transacao_id_ordem_pagamento

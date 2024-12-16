@@ -3,6 +3,17 @@ version: 2
 models:
   - name: ordem_servico_faixa_horaria
     description: "Quantidade de viagens planejadas por faixa horária."
+    tests:
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          name: dbt_expectations.expect_table_aggregation_to_equal_other_table__ordem_servico_faixa_horaria
+          expression: count(distinct tipo_os)
+          compare_model: ref("ordem_servico_gtfs")
+          compare_expression: count(distinct tipo_os)
+          group_by: [feed_start_date, tipo_os]
+          compare_group_by: [feed_start_date, tipo_os]
+          row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+          compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+          where: "1=1"
     columns:
       - name: servico
         description: "{{ doc('servico') }}"
@@ -14,5 +25,113 @@ models:
         description: "{{ doc('faixa_horaria_fim') }}"
       - name: partidas
         description: "{{ doc('partidas') }}"
+        tests:
+          - dbt_expectations.expect_column_sum_to_be_between:
+              name: dbt_expectations.expect_column_sum_to_be_between__partidas__ordem_servico_faixa_horaria
+              min_value: 0
+              group_by: [feed_start_date, tipo_os, tipo_dia, servico]
+              strictly: true
+              where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
       - name: quilometragem
         description: "{{ doc('quilometragem') }}"
+        tests:
+          - dbt_expectations.expect_column_sum_to_be_between:
+              name: dbt_expectations.expect_column_sum_to_be_between__quilometragem__ordem_servico_faixa_horaria
+              min_value: 0
+              group_by: [feed_start_date, tipo_os, tipo_dia, servico]
+              strictly: true
+              where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+  - name: segmento_shape
+    description: Tabela contendo os shapes segmentados usados na validação de viagens.
+    columns:
+      - name: feed_version
+        description: "{{ doc('feed_version') }}"
+        data_type: string
+        quote: true
+      - name: feed_start_date
+        description: "{{ doc('feed_start_date') }}"
+        data_type: date
+        quote: true
+      - name: feed_end_date
+        description: Data final do feed (versão).
+        data_type: date
+        quote: true
+      - name: shape_id
+        description: Identificador de shape.
+        data_type: string
+        quote: true
+      - name: id_segmento
+        description: Identificador do segmento.
+        data_type: string
+        quote: true
+      - name: segmento
+        description: Segmento em formato geográfico.
+        data_type: geography
+        quote: true
+      - name: wkt_segmento
+        description: Segmento em formato string WKT
+        data_type: string
+        quote: true
+      - name: comprimento_segmento
+        description: Comprimento do segmento emm metros.
+        data_type: float64
+        quote: true
+      - name: buffer_completo
+        description: Área de 20m ao redor do segmento.
+        data_type: geography
+        quote: true
+      - name: buffer
+        description: Área de 20m ao redor do segmento com tratamento para não haver interseções entre ele e os segmentos posteriores.
+        data_type: geography
+        quote: true
+      - name: indicador_tunel
+        description: Indica se o segmento passa por um túnel.
+        data_type: boolean
+        quote: true
+      - name: indicador_area_prejudicada
+        description: Indica se o buffer teve a área reduzida em mais de 50% após o tratamento.
+        data_type: boolean
+        quote: true
+      - name: indicador_segmento_pequeno
+        description: Indica se o segmento é menor que 990 metros.
+        data_type: boolean
+        quote: true
+      - name: indicador_segmento_desconsiderado
+        description: Indica se o segmento deve ser desconsiderado na validação de viagens
+        data_type: boolean
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+  - name: shapes_geom_planejamento
+    description: Tabela contendo shapes em formatos geográficos
+    columns:
+      - name: feed_version
+        description: "{{ doc('feed_version') }}"
+        data_type: string
+        quote: true
+      - name: feed_start_date
+        description: "{{ doc('feed_start_date') }}"
+        data_type: date
+        quote: true
+      - name: feed_end_date
+        description: Data final do feed (versão).
+        data_type: date
+        quote: true
+      - name: shape_id
+        description: Identificador de shape.
+        data_type: string
+        quote: true
+      - name: shape
+        description: Shape em formato geográfico (usualmente LineString).
+        data_type: geography
+        quote: true
+      - name: wkt_shape
+        description: Shape em formato string WKT
+        data_type: string
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true

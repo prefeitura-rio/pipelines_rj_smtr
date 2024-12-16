@@ -1,58 +1,45 @@
 # -*- coding: utf-8 -*-
-"""Tasks for pipelines.capture.jae"""
-from datetime import datetime
-from typing import Union
+"""Tasks de captura dos dados da Jaé"""
+from datetime import datetime, timedelta
+from functools import partial
 
-from pipelines.capture.jae.constants import constants as jae_constants
-from pipelines.utils.extractors.db import DBExtractor, PaginatedDBExtractor
-from pipelines.utils.incremental_capture_strategy import IncrementalInfo
-from pipelines.utils.jinja import render_template
-from pipelines.utils.prefect import extractor_task
+from prefect import task
+from pytz import timezone
+
+from pipelines.capture.jae.constants import constants
+from pipelines.constants import constants as smtr_constants
+from pipelines.utils.extractors.db import get_raw_db
+from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.secret import get_secret
 
 
-@extractor_task
-def create_extractor_jae(
-    table_id: str,
-    save_filepath: str,
-    data_extractor_params: dict,
-    incremental_info: IncrementalInfo,
-) -> Union[DBExtractor, PaginatedDBExtractor]:
-    """Cria o extrator de dados para capturas da JAE"""
-    credentials = get_secret("smtr_jae_access_data")
-    database = data_extractor_params["database"]
-    database_details = jae_constants.JAE_DATABASES.value[database]
+@task(
+    max_retries=smtr_constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=smtr_constants.RETRY_DELAY.value),
+)
+def create_jae_general_extractor(source: SourceTable, timestamp: datetime):
+    """Cria a extração de tabelas da Jaé"""
 
-    start = incremental_info.start_value
-    end = incremental_info.end_value
+    credentials = get_secret(constants.JAE_SECRET_PATH.value)
+    params = constants.JAE_TABLE_CAPTURE_PARAMS.value[source.table_id]
 
-    if isinstance(start, datetime):
-        start = start.strftime("%Y-%m-%d %H:%M:%S")
+    start = (
+        source.get_last_scheduled_timestamp(timestamp=timestamp)
+        .astimezone(tz=timezone("UTC"))
+        .strftime("%Y-%m-%d %H:%M:%S")
+    )
+    end = timestamp.astimezone(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S")
 
-    if isinstance(end, datetime):
-        end = end.strftime("%Y-%m-%d %H:%M:%S")
+    query = params["query"].format(start=start, end=end)
+    database_name = params["database"]
+    database = constants.JAE_DATABASE_SETTINGS.value[database_name]
 
-    extractor_general_args = {
-        "query": render_template(
-            template_string=data_extractor_params["query"],
-            execution_mode=incremental_info.execution_mode,
-            _vars={
-                "start": start,
-                "end": end,
-            },
-        ),
-        "engine": database_details["engine"],
-        "host": database_details["host"],
-        "user": credentials["user"],
-        "password": credentials["password"],
-        "database": database,
-        "save_filepath": save_filepath,
-    }
-
-    if table_id == jae_constants.GPS_VALIDADOR_CAPTURE_PARAMS.value["table_id"]:
-        return PaginatedDBExtractor(
-            page_size=data_extractor_params["page_size"],
-            **extractor_general_args,
-        )
-
-    return DBExtractor(**extractor_general_args)
+    return partial(
+        get_raw_db,
+        query=query,
+        engine=database["engine"],
+        host=database["host"],
+        user=credentials["user"],
+        password=credentials["password"],
+        database=database_name,
+    )

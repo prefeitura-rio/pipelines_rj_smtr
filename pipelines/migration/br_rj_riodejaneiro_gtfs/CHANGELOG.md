@@ -1,5 +1,31 @@
 # Changelog - gtfs
 
+## [1.1.5] - 2024-12-03
+
+### Corrigido
+
+- Corrige a conversão de valores para float na OS por faixa horaria (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/350)
+
+- Corrige a captura dos arquivos do GTFS no drive compartilhado (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/350)
+
+## [1.1.4] - 2024-11-07
+
+### Alterado
+
+- Refatora função `processa_ordem_servico_faixa_horaria` no arquivo `utils.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/306)
+
+## [1.1.3] - 2024-10-30
+
+### Alterado
+
+- Alterado arquivo `utils.py` em razão das novas faixas horárias (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/295)
+
+## [1.1.2] - 2024-10-21
+
+### Alterado
+
+- Alterado o link da planilha `Control OS` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/278)
+
 ## [1.1.1] - 2024-09-13
 
 ### Alterado
