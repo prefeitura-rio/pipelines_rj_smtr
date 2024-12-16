@@ -22,7 +22,9 @@ def get_db_object(secret_path="radar_serpro", environment: str = "dev"):
 
 
 @task(checkpoint=False, nout=2)
-def get_raw_serpro(jdbc: JDBC, timestamp: datetime, local_filepath: str) -> str:
+def get_raw_serpro(
+    jdbc: JDBC, timestamp: datetime, local_filepath: str, batch_size: int = 100000
+) -> str:
     date = timestamp.date()
     raw_filepath = local_filepath.format(mode="raw", filetype="csv")
     Path(raw_filepath).parent.mkdir(parents=True, exist_ok=True)
@@ -32,7 +34,7 @@ def get_raw_serpro(jdbc: JDBC, timestamp: datetime, local_filepath: str) -> str:
     jdbc.execute_query(query)
     columns = jdbc.get_columns()
 
-    rows = jdbc.fetch_all()
+    rows = jdbc.fetch_batch(batch_size=batch_size)
 
     with open(raw_filepath, "w", newline="") as csvfile:
         writer = csv.writer(csvfile)
