@@ -368,3 +368,6 @@ models:
       staging:
         +materialized: view
         +schema: bilhetagem_staging
+    datario:
+      +materialized: view
+      +schema: datario
