@@ -1,5 +1,18 @@
 # Changelog - planejamento
 
+## [1.2.0] - 2024-12-04
+
+### Adicionado
+
+- Cria modelos para tabela de viagens planejadas de acordo com o GTFS (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/352):
+  - `aux_frequencies_horario_tratado.sql`
+  - `aux_ordem_servico_horario_tratado.sql`
+  - `aux_trips_dia.sql`
+  - `viagem_planejada_planejamento.sql`
+
+### Alterado
+- Adiciona colunas start_pt e end_pt no modelo `shapes_geom_planejamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/352)
+
 ## [1.1.0] - 2024-11-08
 
 ### Adicionado
