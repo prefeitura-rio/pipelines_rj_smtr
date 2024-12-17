@@ -67,3 +67,9 @@ selectors:
           value: staging_transacao_ordem
         - method: fqn
           value: aux_transacao_id_ordem_pagamento
+
+  - name: datario
+    description: Materialização das views para o datario
+    definition:
+      method: fqn
+      value: datario
