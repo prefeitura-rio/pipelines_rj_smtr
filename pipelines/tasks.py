@@ -5,6 +5,8 @@ from typing import Any, Union
 
 import prefect
 from prefect import task
+from prefect.engine.signals import FAIL
+from prefect.triggers import all_finished
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 from pytz import timezone
@@ -14,7 +16,7 @@ from pipelines.utils.prefect import FailedSubFlow, create_subflow_run, wait_subf
 from pipelines.utils.utils import convert_timezone
 
 
-@task
+@task(trigger=all_finished)
 def task_value_is_none(task_value: Union[Any, None]) -> bool:
     """Testa se o valor retornado por uma Task é None
 
@@ -214,3 +216,20 @@ def run_subflow(
 
     if flag_failed_runs:
         raise FailedSubFlow(failed_message)
+
+
+@task(trigger=all_finished)
+def check_fail(results: Union[list, str]):
+    """
+    Checks if any task result indicates failure.
+
+    Args:
+        results (Union[list, str]): A result or list of results to check.
+
+    Returns:
+        bool: True if any result is an instance of `FAIL`, otherwise False.
+    """
+    if isinstance(results, list):
+        return any(isinstance(result, FAIL) for result in results)
+    else:
+        return isinstance(results, FAIL)
