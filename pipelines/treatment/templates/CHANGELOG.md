@@ -1,5 +1,11 @@
 # Changelog - treatment
 
+## [1.0.4] - 2024-12-17
+
+### Adicionado
+
+- Adiciona raise FAIL caso os testes do DBT falhem na task `dbt_data_quality_checks` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/256)
+
 ## [1.0.3] - 2024-12-13
 
 ### Adicionado
