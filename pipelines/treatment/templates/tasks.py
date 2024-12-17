@@ -7,6 +7,7 @@ import basedosdados as bd
 import prefect
 import requests
 from prefect import task
+from prefect.engine.signals import FAIL
 from prefect.triggers import all_finished
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
@@ -595,6 +596,9 @@ def dbt_data_quality_checks(dbt_logs: str, checks_list: dict, params: dict):
     except Exception as e:
         log(f"Falha ao enviar mensagem para o Discord: {e}", level="error")
         raise
+
+    if not test_check:
+        raise FAIL
 
 
 @task
