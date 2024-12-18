@@ -50,14 +50,11 @@ from pipelines.migration.tasks import (
 from pipelines.tasks import (
     check_fail,
     get_scheduled_timestamp,
+    log_discord,
     parse_timestamp_to_string,
     task_value_is_none,
 )
-from pipelines.treatment.templates.tasks import (
-    dbt_data_quality_checks,
-    log_discord,
-    run_dbt_tests,
-)
+from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt_tests
 
 # from pipelines.capture.templates.flows import create_default_capture_flow
 
