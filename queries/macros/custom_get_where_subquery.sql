@@ -12,7 +12,7 @@
             {% set where = where | replace("__date_range_end__", date_range_end) %}
         {% endif %}
         {%- set filtered -%}
-            (select * from {{ relation }} where {{ where }}) dbt_subquery
+            (select * from {{ relation }} where {{ where }})
         {%- endset -%}
         {% do return(filtered) %}
     {%- else -%}
