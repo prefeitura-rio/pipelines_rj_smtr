@@ -484,7 +484,9 @@ def run_dbt_tests(
 
 
 @task(trigger=all_finished)
-def dbt_data_quality_checks(dbt_logs: str, checks_list: dict, params: dict):
+def dbt_data_quality_checks(
+    dbt_logs: str, checks_list: dict, params: dict, webhook_key: str = "dataplex"
+):
     """
     Extracts the results of DBT tests and sends a message with the information to Discord.
 
@@ -500,7 +502,7 @@ def dbt_data_quality_checks(dbt_logs: str, checks_list: dict, params: dict):
 
     checks_results = parse_dbt_test_output(dbt_logs)
 
-    webhook_url = get_secret(secret_path=constants.WEBHOOKS_SECRET_PATH.value)["dataplex"]
+    webhook_url = get_secret(secret_path=constants.WEBHOOKS_SECRET_PATH.value)[webhook_key]
 
     dados_tag = f" - <@&{constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>\n"
 
