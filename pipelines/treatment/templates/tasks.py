@@ -21,7 +21,7 @@ from pipelines.treatment.templates.utils import (
     send_dataplex_discord_message,
 )
 from pipelines.utils.dataplex import DataQuality, DataQualityCheckArgs
-from pipelines.utils.discord import format_send_discord_message, send_discord_message
+from pipelines.utils.discord import format_send_discord_message
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.prefect import flow_is_running_local, rename_current_flow_run
 from pipelines.utils.secret import get_secret
@@ -595,20 +595,3 @@ def dbt_data_quality_checks(dbt_logs: str, checks_list: dict, params: dict):
     except Exception as e:
         log(f"Falha ao enviar mensagem para o Discord: {e}", level="error")
         raise
-
-
-@task
-def log_discord(message: str, key: str, dados_tag: bool = False):
-    """Logs message to discord channel specified
-
-    Args:
-        message (str): Message to post on the channel
-        key (str): Key to secret path storing the webhook to channel.
-        dados_tag (bool): Indicates whether the message will tag the data team
-    """
-    if dados_tag:
-        message = (
-            message + f" - <@&{constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>\n"
-        )
-    url = get_secret(secret_path=constants.WEBHOOKS_SECRET_PATH.value)[key]
-    send_discord_message(message=message, webhook_url=url)
