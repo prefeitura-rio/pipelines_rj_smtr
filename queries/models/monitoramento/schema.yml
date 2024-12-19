@@ -1,0 +1,159 @@
+models:
+  - name: viagem_informada_monitoramento
+    description: "Detalhes das viagens informadas pelas operadoras de ônibus"
+    columns:
+      - name: data
+        description: Data da viagem (partição)
+        data_type: date
+        quote: true
+      - name: id_viagem
+        description: "{{ doc('id_viagem') }}"
+        data_type: string
+        quote: true
+      - name: datetime_partida
+        description: "{{ doc('datetime_partida') }}"
+        data_type: datetime
+        quote: true
+      - name: datetime_chegada
+        description: "{{ doc('datetime_chegada') }}"
+        data_type: datetime
+        quote: true
+      - name: modo
+        description: "{{ doc('modo') }}"
+        data_type: string
+        quote: true
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+        data_type: string
+        quote: true
+      - name: trip_id
+        description: Identificador de uma viagem da tabela trips do GTFS
+        data_type: int64
+        quote: true
+      - name: route_id
+        description: Identificador de uma rota da tabela routes do GTFS
+        data_type: string
+        quote: true
+      - name: shape_id
+        description: Identificador de um shape da tabela shapes do GTFS
+        data_type: string
+        quote: true
+      - name: servico
+        description: "{{ doc('servico') }}"
+        data_type: string
+        quote: true
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+        data_type: string
+        quote: true
+      - name: fonte_gps
+        description: Fornecedor de dados de GPS a ser considerado para validar a viagem
+        data_type: string
+        quote: true
+      - name: datetime_processamento
+        description: Data e hora do processamento da viagem em GMT-3
+        data_type: datetime
+        quote: true
+      - name: datetime_captura
+        description: Data e hora da captura da integração em GMT-3
+        data_type: string
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+  - name: viagem_validacao
+    description: Tabela que informa se a viagem informada está ou não válida de acordo com os parâmetros definidos.
+    columns:
+      - name: data
+        description: Data da viagem (partição).
+        data_type: date
+        quote: true
+      - name: id_viagem
+        description: "{{ doc('id_viagem') }}"
+        data_type: string
+        quote: true
+      - name: datetime_partida
+        description: "{{ doc('datetime_partida') }}"
+        data_type: datetime
+        quote: true
+      - name: datetime_chegada
+        description: "{{ doc('datetime_chegada') }}"
+        data_type: datetime
+        quote: true
+      - name: modo
+        description: "{{ doc('modo') }}"
+        data_type: string
+        quote: true
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+        data_type: string
+        quote: true
+      - name: trip_id
+        description: Identificador de uma viagem da tabela trips do GTFS.
+        data_type: int64
+        quote: true
+      - name: route_id
+        description: Identificador de uma rota da tabela routes do GTFS.
+        data_type: string
+        quote: true
+      - name: shape_id
+        description: Identificador de um shape da tabela shapes do GTFS.
+        data_type: string
+        quote: true
+      - name: servico
+        description: "{{ doc('servico') }}"
+        data_type: string
+        quote: true
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+        data_type: string
+        quote: true
+      - name: quantidade_segmentos_verificados
+        description: Quantidade de segmentos considerados no validação.
+        data_type: int64
+        quote: true
+      - name: quantidade_segmentos_validos
+        description: Quantidade de segmentos com pelo menos um sinal de gps.
+        data_type: int64
+        quote: true
+      - name: indice_validacao
+        description: quantidade_segmentos_validos dividido por quantidade_segmentos_verificados.
+        data_type: float64
+        quote: true
+      - name: indicador_trajeto_valido
+        description: Indica se o veículo cumpriu o trajeto (indice_validacao >= parametro_validacao).
+        data_type: boolean
+        quote: true
+      - name: indicador_servico_planejado
+        description: Indica se o serviço estava planejado para o tipo dia.
+        data_type: boolean
+        quote: true
+      - name: indicador_viagem_valida
+        description: Indica se a viagem está válida ou não.
+        data_type: boolean
+        quote: true
+      - name: parametro_validacao
+        description: Valor mínimo do indice_validacao para que a viagem seja validada.
+        data_type: float64
+        quote: true
+      - name: feed_version
+        description: "{{ doc('feed_version') }}"
+        data_type: string
+        quote: true
+      - name: feed_start_date
+        description: "Data inicial do feed (versão)."
+        data_type: date
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true

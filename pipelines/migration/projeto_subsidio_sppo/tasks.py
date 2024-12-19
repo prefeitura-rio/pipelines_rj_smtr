@@ -10,10 +10,8 @@ from prefect.tasks.core.operators import GreaterThanOrEqual
 
 from pipelines.constants import constants as smtr_constants
 from pipelines.migration.projeto_subsidio_sppo.constants import constants
-from pipelines.migration.tasks import (  # perform_check,
-    format_send_discord_message,
-    perform_checks_for_table,
-)
+from pipelines.migration.tasks import perform_checks_for_table  # perform_check,
+from pipelines.utils.discord import format_send_discord_message
 from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import log
 

@@ -13,6 +13,7 @@
 -- depends_on: {{ ref("ordem_pagamento_consorcio_operador_dia") }}
 SELECT
     o.data_ordem,
+    o.id_ordem_pagamento_consorcio as id_ordem_pagamento_consorcio_dia,
     dc.id_consorcio,
     dc.consorcio,
     o.id_ordem_pagamento AS id_ordem_pagamento,

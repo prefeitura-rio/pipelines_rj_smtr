@@ -2,44 +2,27 @@
 """Module to get data from GCS"""
 from prefeitura_rio.pipelines_utils.logging import log
 
-from pipelines.utils.extractors.base import DataExtractor
-from pipelines.utils.fs import get_filetype
-from pipelines.utils.gcp import Storage
+from pipelines.utils.gcp.storage import Storage
 
 
-class GCSExtractor(DataExtractor):
+def get_raw_gcs(
+    env: str,
+    folder: str,
+    filename: str,
+    filetype: str,
+    bucket_names: dict[str] = None,
+):
     """
-    Classe para extrair dados do GCS
+    Captura dados do GCS
 
     Args:
         env (str): dev ou prod
         folder (str): pasta que está o arquivo
         filename (str): nome do arquivo sem extensão
-        save_filepath (str): Caminho para salvar o arquivo
-            (deve ter a mesma extensão do arquivo no GCS)
+        filetype (str): Extensão do arquivo
         bucket_name (str): Nome do bucket no GCS
     """
-
-    def __init__(
-        self,
-        env: str,
-        folder: str,
-        filename: str,
-        save_filepath: str,
-        bucket_names: dict[str] = None,
-    ) -> None:
-        super().__init__(save_filepath=save_filepath)
-        filetype = get_filetype(filepath=save_filepath)
-        self.complete_filename = f"{filename}.{filetype}"
-        self.storage = Storage(env=env, dataset_id=folder, bucket_names=bucket_names)
-
-    def _get_data(self) -> str:
-        """Baixa o arquivo como string
-
-        Returns:
-            str: conteúdo do arquivo
-        """
-        log(f"Getting file: {self.complete_filename}")
-        data = self.storage.get_blob_string(mode="upload", filename=self.complete_filename)
-
-        return data
+    storage = Storage(env=env, dataset_id=folder, bucket_names=bucket_names)
+    complete_filename = f"{filename}.{filetype}"
+    log(f"Getting file: {complete_filename}")
+    return storage.get_blob_string(mode="upload", filename=complete_filename)

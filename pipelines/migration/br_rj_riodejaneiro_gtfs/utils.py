@@ -9,6 +9,7 @@ import pandas as pd
 import requests
 from googleapiclient.http import MediaIoBaseDownload
 from prefeitura_rio.pipelines_utils.logging import log
+from unidecode import unidecode
 
 from pipelines.constants import constants
 from pipelines.migration.utils import save_raw_local_func
@@ -130,7 +131,9 @@ def download_xlsx(file_link, drive_service):
     """
     file_id = file_link.split("/")[-2]
 
-    file = drive_service.files().get(fileId=file_id).execute()  # pylint: disable=E1101
+    file = (
+        drive_service.files().get(fileId=file_id, supportsAllDrives=True).execute()
+    )  # pylint: disable=E1101
     mime_type = file.get("mimeType")
 
     if "google-apps" in mime_type:
@@ -228,18 +231,22 @@ def processa_ordem_servico(
         "Partidas Volta Dia Útil": "partidas_volta_du",
         "Viagens Dia Útil": "viagens_du",
         "Quilometragem Dia Útil": "km_dia_util",
+        "KM Dia Útil": "km_dia_util",
         "Partidas Ida Sábado": "partidas_ida_sabado",
         "Partidas Volta Sábado": "partidas_volta_sabado",
         "Viagens Sábado": "viagens_sabado",
         "Quilometragem Sábado": "km_sabado",
+        "KM Sábado": "km_sabado",
         "Partidas Ida Domingo": "partidas_ida_domingo",
         "Partidas Volta Domingo": "partidas_volta_domingo",
         "Viagens Domingo": "viagens_domingo",
         "Quilometragem Domingo": "km_domingo",
+        "KM Domingo": "km_domingo",
         "Partidas Ida Ponto Facultativo": "partidas_ida_pf",
         "Partidas Volta Ponto Facultativo": "partidas_volta_pf",
         "Viagens Ponto Facultativo": "viagens_pf",
         "Quilometragem Ponto Facultativo": "km_pf",
+        "KM Ponto Facultativo": "km_pf",
         "tipo_os": "tipo_os",
     }
 
@@ -418,7 +425,7 @@ def download_file(file_link, drive_service):
     """
     file_id = file_link.split("/")[-2]
 
-    request = drive_service.files().get_media(fileId=file_id)  # pylint: disable=E1101
+    request = drive_service.files().get_media(fileId=file_id, supportsAllDrives=True)
     file_bytes = io.BytesIO()
     downloader = MediaIoBaseDownload(file_bytes, request)
     done = False
@@ -427,7 +434,9 @@ def download_file(file_link, drive_service):
     return file_bytes
 
 
-def processa_ordem_servico_faixa_horaria(sheetnames, file_bytes, local_filepath, raw_filepaths):
+def processa_ordem_servico_faixa_horaria(
+    sheetnames, file_bytes, local_filepath, raw_filepaths, data_versao_gtfs
+):
     """
     Process 'Faixa Horária' from an Excel file.
 
@@ -451,94 +460,58 @@ def processa_ordem_servico_faixa_horaria(sheetnames, file_bytes, local_filepath,
         file_bytes, sheet_name=sheetnames[sheet], dtype=object
     )
 
-    fh_columns = {
-        "Serviço": "servico",
-        "Consórcio": "consorcio",
-        "Partidas entre 00h e 03h — Dias Úteis": "partidas_entre_00h_e_03h_dias_uteis",
-        "Quilometragem entre 00h e 03h — Dias Úteis": "quilometragem_entre_00h_e_03h_dias_uteis",
-        "Partidas entre 03h e 12h — Dias Úteis": "partidas_entre_03h_e_12h_dias_uteis",
-        "Quilometragem entre 03h e 12h — Dias Úteis": "quilometragem_entre_03h_e_12h_dias_uteis",
-        "Partidas entre 12h e 21h — Dias Úteis": "partidas_entre_12h_e_21h_dias_uteis",
-        "Quilometragem entre 12h e 21h — Dias Úteis": "quilometragem_entre_12h_e_21h_dias_uteis",
-        "Partidas entre 21h e 24h — Dias Úteis": "partidas_entre_21h_e_24h_dias_uteis",
-        "Quilometragem entre 21h e 24h — Dias Úteis": "quilometragem_entre_21h_e_24h_dias_uteis",
-        "Partidas entre 24h e 03h (dia seguinte) — Dias Úteis": "partidas_entre_24h_e_03h_diaseguinte_dias_uteis",  # noqa
-        "Quilometragem entre 24h e 03h (dia seguinte) — Dias Úteis": "quilometragem_entre_24h_e_03h_diaseguinte_dias_uteis",  # noqa
-        "Partidas entre 00h e 03h — Sábado": "partidas_entre_00h_e_03h_sabado",
-        "Quilometragem entre 00h e 03h — Sábado": "quilometragem_entre_00h_e_03h_sabado",
-        "Partidas entre 03h e 12h — Sábado": "partidas_entre_03h_e_12h_sabado",
-        "Quilometragem entre 03h e 12h — Sábado": "quilometragem_entre_03h_e_12h_sabado",
-        "Partidas entre 12h e 21h — Sábado": "partidas_entre_12h_e_21h_sabado",
-        "Quilometragem entre 12h e 21h — Sábado": "quilometragem_entre_12h_e_21h_sabado",
-        "Partidas entre 21h e 24h — Sábado": "partidas_entre_21h_e_24h_sabado",
-        "Quilometragem entre 21h e 24h — Sábado": "quilometragem_entre_21h_e_24h_sabado",
-        "Partidas entre 24h e 03h (dia seguinte) — Sábado": "partidas_entre_24h_e_03h_diaseguinte_sabado",  # noqa
-        "Quilometragem entre 24h e 03h (dia seguinte) — Sábado": "quilometragem_entre_24h_e_03h_diaseguinte_sabado",  # noqa
-        "Partidas entre 00h e 03h — Domingo": "partidas_entre_00h_e_03h_domingo",
-        "Quilometragem entre 00h e 03h — Domingo": "quilometragem_entre_00h_e_03h_domingo",
-        "Partidas entre 03h e 12h — Domingo": "partidas_entre_03h_e_12h_domingo",
-        "Quilometragem entre 03h e 12h — Domingo": "quilometragem_entre_03h_e_12h_domingo",
-        "Partidas entre 12h e 21h — Domingo": "partidas_entre_12h_e_21h_domingo",
-        "Quilometragem entre 12h e 21h — Domingo": "quilometragem_entre_12h_e_21h_domingo",
-        "Partidas entre 21h e 24h — Domingo": "partidas_entre_21h_e_24h_domingo",
-        "Quilometragem entre 21h e 24h — Domingo": "quilometragem_entre_21h_e_24h_domingo",
-        "Partidas entre 24h e 03h (dia seguinte) — Domingo": "partidas_entre_24h_e_03h_diaseguinte_domingo",  # noqa
-        "Quilometragem entre 24h e 03h (dia seguinte) — Domingo": "quilometragem_entre_24h_e_03h_diaseguinte_domingo",  # noqa
-        "Partidas entre 00h e 03h — Ponto Facultativo": "partidas_entre_00h_e_03h_ponto_facultativo",  # noqa
-        "Quilometragem entre 00h e 03h — Ponto Facultativo": "quilometragem_entre_00h_e_03h_ponto_facultativo",  # noqa
-        "Partidas entre 03h e 12h — Ponto Facultativo": "partidas_entre_03h_e_12h_ponto_facultativo",  # noqa
-        "Quilometragem entre 03h e 12h — Ponto Facultativo": "quilometragem_entre_03h_e_12h_ponto_facultativo",  # noqa
-        "Partidas entre 12h e 21h — Ponto Facultativo": "partidas_entre_12h_e_21h_ponto_facultativo",  # noqa
-        "Quilometragem entre 12h e 21h — Ponto Facultativo": "quilometragem_entre_12h_e_21h_ponto_facultativo",  # noqa
-        "Partidas entre 21h e 24h — Ponto Facultativo": "partidas_entre_21h_e_24h_ponto_facultativo",  # noqa
-        "Quilometragem entre 21h e 24h — Ponto Facultativo": "quilometragem_entre_21h_e_24h_ponto_facultativo",  # noqa
-        "Partidas entre 24h e 03h (dia seguinte) — Ponto Facultativo": "partidas_entre_24h_e_03h_diaseguinte_ponto_facultativo",  # noqa
-        "Quilometragem entre 24h e 03h (dia seguinte) — Ponto Facultativo": "quilometragem_entre_24h_e_03h_diaseguinte_ponto_facultativo",  # noqa
-        "Partidas entre 00h e 03h (Dias Úteis)": "partidas_entre_00h_e_03h_dias_uteis",
-        "Quilometragem entre 00h e 03h (Dias Úteis)": "quilometragem_entre_00h_e_03h_dias_uteis",
-        "Partidas entre 03h e 12h (Dias Úteis)": "partidas_entre_03h_e_12h_dias_uteis",
-        "Quilometragem entre 03h e 12h (Dias Úteis)": "quilometragem_entre_03h_e_12h_dias_uteis",
-        "Partidas entre 12h e 21h (Dias Úteis)": "partidas_entre_12h_e_21h_dias_uteis",
-        "Quilometragem entre 12h e 21h (Dias Úteis)": "quilometragem_entre_12h_e_21h_dias_uteis",
-        "Partidas entre 21h e 24h (Dias Úteis)": "partidas_entre_21h_e_24h_dias_uteis",
-        "Quilometragem entre 21h e 24h (Dias Úteis)": "quilometragem_entre_21h_e_24h_dias_uteis",
-        "Partidas entre 24h e 03h (dia seguinte) (Dias Úteis)": "partidas_entre_24h_e_03h_diaseguinte_dias_uteis",  # noqa
-        "Quilometragem entre 24h e 03h (dia seguinte) (Dias Úteis)": "quilometragem_entre_24h_e_03h_diaseguinte_dias_uteis",  # noqa
-        "Partidas entre 00h e 03h (Sábado)": "partidas_entre_00h_e_03h_sabado",
-        "Quilometragem entre 00h e 03h (Sábado)": "quilometragem_entre_00h_e_03h_sabado",
-        "Partidas entre 03h e 12h (Sábado)": "partidas_entre_03h_e_12h_sabado",
-        "Quilometragem entre 03h e 12h (Sábado)": "quilometragem_entre_03h_e_12h_sabado",
-        "Partidas entre 12h e 21h (Sábado)": "partidas_entre_12h_e_21h_sabado",
-        "Quilometragem entre 12h e 21h (Sábado)": "quilometragem_entre_12h_e_21h_sabado",
-        "Partidas entre 21h e 24h (Sábado)": "partidas_entre_21h_e_24h_sabado",
-        "Quilometragem entre 21h e 24h (Sábado)": "quilometragem_entre_21h_e_24h_sabado",
-        "Partidas entre 24h e 03h (dia seguinte) (Sábado)": "partidas_entre_24h_e_03h_diaseguinte_sabado",  # noqa
-        "Quilometragem entre 24h e 03h (dia seguinte) (Sábado)": "quilometragem_entre_24h_e_03h_diaseguinte_sabado",  # noqa
-        "Partidas entre 00h e 03h (Domingo)": "partidas_entre_00h_e_03h_domingo",
-        "Quilometragem entre 00h e 03h (Domingo)": "quilometragem_entre_00h_e_03h_domingo",
-        "Partidas entre 03h e 12h (Domingo)": "partidas_entre_03h_e_12h_domingo",
-        "Quilometragem entre 03h e 12h (Domingo)": "quilometragem_entre_03h_e_12h_domingo",
-        "Partidas entre 12h e 21h (Domingo)": "partidas_entre_12h_e_21h_domingo",
-        "Quilometragem entre 12h e 21h (Domingo)": "quilometragem_entre_12h_e_21h_domingo",
-        "Partidas entre 21h e 24h (Domingo)": "partidas_entre_21h_e_24h_domingo",
-        "Quilometragem entre 21h e 24h (Domingo)": "quilometragem_entre_21h_e_24h_domingo",
-        "Partidas entre 24h e 03h (dia seguinte) (Domingo)": "partidas_entre_24h_e_03h_diaseguinte_domingo",  # noqa
-        "Quilometragem entre 24h e 03h (dia seguinte) (Domingo)": "quilometragem_entre_24h_e_03h_diaseguinte_domingo",  # noqa
-        "Partidas entre 00h e 03h (Ponto Facultativo)": "partidas_entre_00h_e_03h_ponto_facultativo",  # noqa
-        "Quilometragem entre 00h e 03h (Ponto Facultativo)": "quilometragem_entre_00h_e_03h_ponto_facultativo",  # noqa
-        "Partidas entre 03h e 12h (Ponto Facultativo)": "partidas_entre_03h_e_12h_ponto_facultativo",  # noqa
-        "Quilometragem entre 03h e 12h (Ponto Facultativo)": "quilometragem_entre_03h_e_12h_ponto_facultativo",  # noqa
-        "Partidas entre 12h e 21h (Ponto Facultativo)": "partidas_entre_12h_e_21h_ponto_facultativo",  # noqa
-        "Quilometragem entre 12h e 21h (Ponto Facultativo)": "quilometragem_entre_12h_e_21h_ponto_facultativo",  # noqa
-        "Partidas entre 21h e 24h (Ponto Facultativo)": "partidas_entre_21h_e_24h_ponto_facultativo",  # noqa
-        "Quilometragem entre 21h e 24h (Ponto Facultativo)": "quilometragem_entre_21h_e_24h_ponto_facultativo",  # noqa
-        "Partidas entre 24h e 03h (dia seguinte) (Ponto Facultativo)": "partidas_entre_24h_e_03h_diaseguinte_ponto_facultativo",  # noqa
-        "Quilometragem entre 24h e 03h (dia seguinte) (Ponto Facultativo)": "quilometragem_entre_24h_e_03h_diaseguinte_ponto_facultativo",  # noqa
-        "tipo_os": "tipo_os",
-    }
+    metricas = ["Partidas", "Quilometragem", "KM"]
+    dias = ["Dias Úteis", "Sábado", "Domingo", "Ponto Facultativo"]
+    formatos = ["{metrica} entre {intervalo} — {dia}", "{metrica} entre {intervalo} ({dia})"]
 
-    ordem_servico_faixa_horaria.columns = ordem_servico_faixa_horaria.columns.str.replace("\n", " ")
+    if data_versao_gtfs >= "2024-11-06":
+        intervalos = [
+            "00h e 03h",
+            "03h e 06h",
+            "06h e 09h",
+            "09h e 12h",
+            "12h e 15h",
+            "15h e 18h",
+            "18h e 21h",
+            "21h e 24h",
+            "24h e 03h (dia seguinte)",
+        ]
+    else:
+        intervalos = [
+            "00h e 03h",
+            "03h e 12h",
+            "12h e 21h",
+            "21h e 24h",
+            "24h e 03h (dia seguinte)",
+        ]
+
+    fh_columns = {
+        formato.format(metrica=metrica, intervalo=intervalo, dia=dia): unidecode(
+            ("quilometragem" if metrica in ["Quilometragem", "KM"] else "partidas")
+            + f"_entre_{intervalo.replace(' ', '_').replace('(', '').replace(')', '').replace('-', '_')}_{dia.lower().replace(' ', '_')}"  # noqa
+        )
+        for metrica in metricas
+        for intervalo in intervalos
+        for dia in dias
+        for formato in formatos
+    }
+    fh_columns["Serviço"] = "servico"
+    fh_columns["Consórcio"] = "consorcio"
+    fh_columns["tipo_os"] = "tipo_os"
+
+    ordem_servico_faixa_horaria.columns = (
+        ordem_servico_faixa_horaria.columns.str.replace("\n", " ")
+        .str.strip()
+        .str.replace(r"\s+", " ", regex=True)
+    )
+
     ordem_servico_faixa_horaria = ordem_servico_faixa_horaria.rename(columns=fh_columns)
+
+    for col in ordem_servico_faixa_horaria.columns:
+        if "quilometragem" in col:
+            ordem_servico_faixa_horaria[col] = (
+                ordem_servico_faixa_horaria[col].astype(str).apply(convert_to_float).astype(float)
+            )
 
     if "tipo_os" not in ordem_servico_faixa_horaria.columns:
         ordem_servico_faixa_horaria["tipo_os"] = "Regular"

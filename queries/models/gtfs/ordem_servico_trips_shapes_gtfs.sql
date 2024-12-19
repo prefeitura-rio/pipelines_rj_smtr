@@ -53,9 +53,10 @@ WITH
         t.feed_version = o.feed_version
         AND o.servico = t.trip_short_name
         AND
-          ((o.tipo_dia = t.tipo_dia AND o.tipo_os != "CNU")
+          ((o.tipo_dia = t.tipo_dia AND o.tipo_os NOT IN ("CNU", "Enem"))
           OR (o.tipo_dia = "Ponto Facultativo" AND t.tipo_dia = "Dia Útil" AND o.tipo_os != "CNU")
-          OR (o.feed_start_date = "2024-08-16" AND o.tipo_os = "CNU" AND o.tipo_dia = "Domingo" AND t.tipo_dia = "Sabado")) -- Domingo CNU
+          OR (o.feed_start_date = "2024-08-16" AND o.tipo_os = "CNU" AND o.tipo_dia = "Domingo" AND t.tipo_dia = "Sabado") -- Domingo CNU
+          OR (o.feed_start_date IN ("2024-09-29", "2024-11-06") AND o.tipo_os = "Enem" AND o.tipo_dia = "Domingo" AND t.tipo_dia = "Sabado")) -- Domingo Enem
         AND
           ((o.sentido IN ("I", "C") AND t.direction_id = "0")
           OR (o.sentido = "V" AND t.direction_id = "1"))

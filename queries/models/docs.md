@@ -200,6 +200,10 @@ Fim do período de operação planejado
 (Partição) Data inicial do feed (versão).
 {% enddocs %}
 
+{% docs feed_version %}
+String que indica a versão atual do conjunto de dados GTFS.
+{% enddocs %}
+
 {% docs linha %}
 Número da Linha
 {% enddocs %}

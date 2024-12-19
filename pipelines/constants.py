@@ -2,7 +2,7 @@
 """
 Valores constantes gerais para pipelines da rj-smtr
 
-DBT 2024-09-11
+DBT 2024-11-11
 """
 
 from enum import Enum
@@ -25,8 +25,8 @@ class constants(Enum):  # pylint: disable=c0103
     GCS_FLOWS_BUCKET = "datario-public"
     # PROJECT_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr"}
     # DEFAULT_BUCKET_NAME = {"dev": "br-rj-smtr-dev", "prod": "br-rj-smtr"}
-    PROJECT_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr-dev"}
-    DEFAULT_BUCKET_NAME = {"dev": "br-rj-smtr-dev", "prod": "br-rj-smtr-dev"}
+    PROJECT_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr-staging"}
+    DEFAULT_BUCKET_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr-staging"}
     FILE_MAX_SIZE = 20_000
     PREFECT_DEFAULT_PROJECT = "production"
 
@@ -54,9 +54,6 @@ class constants(Enum):  # pylint: disable=c0103
     # PATTERNS #
     FILENAME_PATTERN = "%Y-%m-%d-%H-%M-%S"
     MATERIALIZATION_LAST_RUN_PATTERN = "%Y-%m-%dT%H:%M:%S"
-    SOURCE_DATASET_ID_PATTERN = "{source_name}_source"
-    MODE_FULL = "full"
-    MODE_INCR = "incr"
     FLOW_RUN_URL_PATTERN = "https://pipelines.dados.rio/smtr/flow-run/{run_id}"
 
     # URLS #
@@ -163,7 +160,7 @@ class constants(Enum):  # pylint: disable=c0103
         "databases": {
             "principal_db": {
                 "engine": "mysql",
-                "host": "10.5.114.121",
+                "host": "10.5.114.227",
             },
             "tarifa_db": {
                 "engine": "postgresql",
@@ -175,7 +172,7 @@ class constants(Enum):  # pylint: disable=c0103
             },
             "tracking_db": {
                 "engine": "postgresql",
-                "host": "10.5.15.25",
+                "host": "10.5.12.67",
             },
             "ressarcimento_db": {
                 "engine": "postgresql",
@@ -214,9 +211,9 @@ class constants(Enum):  # pylint: disable=c0103
     }
 
     # GTFS
-    GTFS_CONTROLE_OS_URL = "https://docs.google.com/spreadsheets/d/e/2PAC\
-X-1vRvFcyr9skfBIrjxc4FSJZ3-g4gUCF56YjGPOmd1f5qH8vndpy22P6f6KdcYgWaqzUmtSBL\
-4Rs1Ardz/pub?gid=0&single=true&output=csv"
+    GTFS_CONTROLE_OS_URL = "https://docs.google.com/spreadsheets/d/\
+1Jn7fmaDOhuHMdMqHo5SGWHCRuerXNWJRmhRjnHxJ9O4\
+/pub?gid=0&single=true&output=csv"
     GTFS_DATASET_ID = "br_rj_riodejaneiro_gtfs"
 
     GTFS_GENERAL_CAPTURE_PARAMS = {

@@ -155,7 +155,11 @@ def get_os_info(last_captured_os: str = None, data_versao_gtfs: str = None) -> d
 
 @task(nout=2)
 def get_raw_gtfs_files(
-    os_control, local_filepath: list, regular_sheet_index: int = None, upload_from_gcs: bool = False
+    os_control,
+    local_filepath: list,
+    regular_sheet_index: int = None,
+    upload_from_gcs: bool = False,
+    data_versao_gtfs: str = None,
 ):
     """
     Downloads raw files and processes them.
@@ -241,6 +245,7 @@ def get_raw_gtfs_files(
                     file_bytes=file_bytes_os,
                     local_filepath=local_filepath,
                     raw_filepaths=raw_filepaths,
+                    data_versao_gtfs=data_versao_gtfs,
                 )
 
             else:

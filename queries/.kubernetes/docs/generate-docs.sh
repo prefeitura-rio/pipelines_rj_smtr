@@ -1,40 +1,42 @@
 echo "Current working directory is:" && pwd
 
-echo "Creating directories..."
+# echo "Creating directories..."
 
-mkdir ./credentials-dev
+# mkdir ./credentials-dev
 
-mkdir ./credentials-prod
+# mkdir ./credentials-prod
 
-mkdir ./profiles
+# mkdir ./profiles
 
 echo "Mounting files from env..."
 
-bash -c "echo $1 | base64 --decode > ./credentials-dev/dev.json"
+# bash -c "echo $1 | base64 --decode > ./credentials-dev/dev.json"
 
-bash -c "echo $1 | base64 --decode > ./credentials-prod/prod.json"
+bash -c "echo $1 | base64 --decode > /tmp/credentials.json"
 
-echo """
-queries:
-  target: dev
-  outputs:
-    dev:
-      type: bigquery
-      method: service-account
-      project: rj-smtr
-      dataset: dbt
-      location: US
-      threads: 2
-      keyfile: $PWD/credentials-dev/dev.json
-    prod:
-      type: bigquery
-      method: service-account
-      project: rj-smtr
-      dataset: dbt
-      location: US
-      threads: 2
-      keyfile: $PWD/credentials-prod/prod.json""" > profiles/profiles.yml
+# echo """
+# queries:
+#   target: dev
+#   outputs:
+#     dev:
+#       type: bigquery
+#       method: service-account
+#       project: rj-smtr
+#       dataset: dbt
+#       location: US
+#       threads: 2
+#       keyfile: $PWD/credentials-dev/dev.json
+#     prod:
+#       type: bigquery
+#       method: service-account
+#       project: rj-smtr
+#       dataset: dbt
+#       location: US
+#       threads: 2
+#       keyfile: $PWD/credentials-prod/prod.json""" > profiles/profiles.yml
 
-ls ./profiles
+# ls ./profiles
 
-dbt docs generate --profiles-dir ./profiles
+dbt deps
+
+dbt docs generate

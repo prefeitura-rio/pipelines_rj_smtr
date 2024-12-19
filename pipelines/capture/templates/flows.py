@@ -1,239 +1,159 @@
 # -*- coding: utf-8 -*-
+"""Flow genérico de captura"""
 
 from datetime import datetime
 from types import NoneType
-from typing import Callable
 
-import pandas as pd
-from prefect import Parameter
+from prefect import unmapped
 from prefect.run_configs import KubernetesRun
+from prefect.schedules import Schedule
+from prefect.schedules.clocks import CronClock
 from prefect.storage import GCS
 from prefect.tasks.core.function import FunctionTask
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
     handler_inject_bd_credentials,
-    handler_skip_if_running,
 )
+from pytz import timezone
 
 from pipelines.capture.templates.tasks import (
-    create_incremental_strategy,
-    create_table_object,
+    create_filepaths,
+    create_partition_task,
+    get_capture_timestamps,
     get_raw_data,
     rename_capture_flow,
-    save_incremental_redis,
+    set_env,
     transform_raw_to_nested_structure,
     upload_raw_file_to_gcs,
     upload_source_data_to_gcs,
 )
 from pipelines.constants import constants
-from pipelines.tasks import get_current_timestamp, get_run_env
+from pipelines.tasks import get_run_env, get_scheduled_timestamp
+from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.prefect import TypedParameter
-
-# from pipelines.utils.pretreatment import strip_string_columns
 
 
 def create_default_capture_flow(
     flow_name: str,
-    source_name: str,
-    partition_date_only: bool,
+    source: SourceTable,
     create_extractor_task: FunctionTask,
-    overwrite_flow_params: dict,
     agent_label: str,
-    pretreat_funcs: list[Callable[[pd.DataFrame, datetime, list], pd.DataFrame]] = None,
-    skip_if_running=True,
+    recapture_days: int = 2,
+    generate_schedule: bool = True,
 ):  # pylint: disable=R0914, R0913
     """
     Cria um flow de captura
 
     Args:
         flow_name (str): O nome do flow
-        source_name (str): Nome da fonte do dado (exemplo: jae)
-        partition_date_only (bool): True se o particionamento deve ser feito apenas por data
-            False se o particionamento deve ser feito por data e hora
+        source (SourceTable): Objeto representando a fonte de dados que será capturada
         create_extractor_task (FunctionTask):
-            A task que cria o DataExtractor
+            A task que prepara a função de extração
             Pode receber os argumentos:
-                env (str): dev ou prod
-                source_name (str): O nome do source
-                table_id (str): table_id no BigQuery
-                save_filepath (str): O caminho para salvar o arquivo raw localmente
-                data_extractor_params (dict): Dicionario com parametros personalizados
-                incremental_info (IncrementalInfo): Objeto contendo informações sobre
-                    a execução incremental
-            Deve retornar uma classe derivada de DataExtractor
-        overwrite_optional_flow_params (dict): Dicionário para substituir
-            o valor padrão dos parâmetros opcionais do flow
+                source (SourceTable): Objeto representando a fonte de dados que será capturada
+                timestamp (datetime): a timestamp de referência da execução
+            Deve retornar uma função que execute sem argumentos
         agent_label (str): Label do flow
-        pretreat_funcs (list[Callable[[pd.DataFrame, datetime, list], pd.DataFrame]], optional):
-            Lista de funções de pre-tratamento para serem executadas antes de aninhar os dados
-            A função pode receber os argumentos:
-                data (pd.DataFrame): O DataFrame para ser tratado
-                timestamp (datetime): A timestamp do flow
-                primary_key (list): A lista de primary keys
-            Deve retornar um DataFrame
+        recapture_days (int): A quantidade de dias que o flows vai considerar para achar datas
+            a serem recapturadas
+        generate_schedule (bool): Se a função vai agendar o flow com base
+            no parametro schedule_cron do source
 
     Returns:
-        Flow: The capture flow
+        Flow: O flow de captura
     """
 
-    if pretreat_funcs is None:
-        pretreat_funcs = []
-
     with Flow(flow_name) as capture_flow:
-        # Parâmetros Gerais #
 
-        # table_id no BigQuery
-        table_id = TypedParameter(
-            name="table_id",
-            default=overwrite_flow_params.get("table_id"),
-            accepted_types=str,
-        )
-        # Tipo do arquivo raw (json, csv...)
-        raw_filetype = TypedParameter(
-            name="raw_filetype",
-            default=overwrite_flow_params.get("raw_filetype"),
-            accepted_types=str,
+        timestamp = TypedParameter(
+            name="timestamp",
+            default=None,
+            accepted_types=(NoneType, str),
         )
 
-        # Parâmetros Incremental #
-
-        # Dicionário para gerar o objeto de estratégia incremental
-        # Modo de usar:
-        # Instancie o objeto da estrategia escolhida e chame o metodo to_dict()
-        # ex.: DatetimeIncremental(max_incremental_window={"hours": 3}).to_dict()
-        incremental_capture_strategy = TypedParameter(
-            name="incremental_capture_strategy",
-            default=overwrite_flow_params.get("incremental_capture_strategy"),
-            accepted_types=(dict, NoneType),
-        )
-        # Valor inicial de captura para sobrescrever o padrão
-        # valor inicial padrão = valor do salvo no Redis
-        # para incrementais do tipo datetime, o valor deve ser uma string
-        # de data no formato iso (timezone padrão = UTC)
-        # para incrementais de id deve ser um inteiro
-        incremental_start_value = TypedParameter(
-            name="incremental_start_value",
-            default=overwrite_flow_params.get("incremental_start_value"),
-            accepted_types=(str, int, NoneType),
-        )
-        # Valor final de captura para sobrescrever o padrão
-        # valor final padrão = valor inicial + max_incremental_window
-        # para incrementais do tipo datetime, o valor deve ser uma string
-        # de data no formato iso (timezone padrão = UTC)
-        # para incrementais de id deve ser um inteiro
-        incremental_end_value = TypedParameter(
-            name="incremental_end_value",
-            default=overwrite_flow_params.get("incremental_end_value"),
-            accepted_types=(str, int, NoneType),
+        recapture_days = TypedParameter(
+            name="recapture_days",
+            default=recapture_days,
+            accepted_types=int,
         )
 
-        # Parâmetros para Captura #
-
-        # Dicionário com valores personalizados para serem acessados na task
-        # passada no argumento create_extractor_task
-        data_extractor_params = Parameter(
-            "data_extractor_params",
-            default=overwrite_flow_params.get("data_extractor_params"),
-        )
-
-        # Parâmetros para Pré-tratamento #
-
-        # Lista de primary keys da tabela
-        primary_keys = TypedParameter(
-            name="primary_keys",
-            default=overwrite_flow_params.get("primary_keys"),
-            accepted_types=(list, NoneType),
-        )
-        # Dicionário com argumentos para serem passados na função de ler os dados raw:
-        # pd.read_csv ou pd.read_json
-        pretreatment_reader_args = TypedParameter(
-            name="pretreatment_reader_args",
-            default=overwrite_flow_params.get("pretreatment_reader_args"),
-            accepted_types=(dict, NoneType),
-        )
-
-        # Parâmetros para Carregamento de Dados #
-
-        # Nome do bucket para salvar os dados
-        # Se for None, salva no bucket padrão do ambiente atual
-        save_bucket_names = TypedParameter(
-            name="save_bucket_names",
-            default=overwrite_flow_params.get("save_bucket_names"),
-            accepted_types=(dict, NoneType),
+        recapture = TypedParameter(
+            name="recapture",
+            default=False,
+            accepted_types=bool,
         )
 
         # Preparar execução #
 
-        timestamp = get_current_timestamp()
-        dataset_id = source_name + "_source"
+        timestamp = get_scheduled_timestamp(timestamp=timestamp)
 
         env = get_run_env()
 
-        table = create_table_object(
-            env=env,
-            dataset_id=dataset_id,
-            table_id=table_id,
-            bucket_names=save_bucket_names,
+        activated_source = set_env(env=env, source=source)
+
+        timestamps = get_capture_timestamps(
+            source=activated_source,
             timestamp=timestamp,
-            partition_date_only=partition_date_only,
-            raw_filetype=raw_filetype,
+            recapture=recapture,
+            recapture_days=recapture_days,
         )
 
-        incremental_capture_strategy = create_incremental_strategy(
-            strategy_dict=incremental_capture_strategy,
-            table=table,
-            overwrite_start_value=incremental_start_value,
-            overwrite_end_value=incremental_end_value,
+        rename_capture_flow(
+            flow_name=flow_name,
+            timestamp=timestamp,
+            recapture=recapture,
         )
 
-        incremental_info = incremental_capture_strategy["incremental_info"]
+        partitions = create_partition_task.map(
+            source=unmapped(activated_source),
+            timestamp=timestamps,
+        )
 
-        rename_flow_run = rename_capture_flow(
-            dataset_id=dataset_id,
-            table_id=table_id,
-            timestamp=timestamp,
-            incremental_info=incremental_info,
+        filepaths = create_filepaths.map(
+            source=unmapped(activated_source),
+            partition=partitions,
+            timestamp=timestamps,
         )
 
         # Extração #
 
-        data_extractor = create_extractor_task(
-            env=env,
-            dataset_id=dataset_id,
-            table_id=table_id,
-            save_filepath=table["raw_filepath"],
-            data_extractor_params=data_extractor_params,
-            incremental_info=incremental_info,
+        data_extractors = create_extractor_task.map(
+            source=unmapped(activated_source),
+            timestamp=timestamps,
         )
 
-        data_extractor.set_upstream(rename_flow_run)
+        get_raw = get_raw_data.map(
+            data_extractor=data_extractors,
+            filepaths=filepaths,
+            raw_filetype=unmapped(activated_source["raw_filetype"]),
+        )
 
-        get_raw = get_raw_data(data_extractor=data_extractor)
-
-        upload_raw_gcs = upload_raw_file_to_gcs(table=table, upstream_tasks=[get_raw])
+        upload_raw = upload_raw_file_to_gcs.map(
+            source=unmapped(activated_source),
+            filepaths=filepaths,
+            partition=partitions,
+        )
+        upload_raw.set_upstream(get_raw)
 
         # Pré-tratamento #
 
-        pretreatment = transform_raw_to_nested_structure(
-            pretreat_funcs=pretreat_funcs,
-            raw_filepath=table["raw_filepath"],
-            source_filepath=table["source_filepath"],
-            timestamp=timestamp,
-            primary_keys=primary_keys,
-            print_inputs=save_bucket_names.is_equal(None),
-            reader_args=pretreatment_reader_args,
-            upstream_tasks=[get_raw],
+        pretreatment = transform_raw_to_nested_structure.map(
+            filepaths=filepaths,
+            timestamp=timestamps,
+            primary_keys=unmapped(activated_source["primary_keys"]),
+            reader_args=unmapped(activated_source["pretreatment_reader_args"]),
+            pretreat_funcs=unmapped(activated_source["pretreat_funcs"]),
+        )
+        pretreatment.set_upstream(get_raw)
+
+        upload_source = upload_source_data_to_gcs.map(
+            source=unmapped(activated_source),
+            partition=partitions,
+            filepaths=filepaths,
         )
 
-        upload_source_gcs = upload_source_data_to_gcs(table=table, upstream_tasks=[pretreatment])
-
-        # Finalizar Flow #
-
-        save_incremental_redis(
-            incremental_capture_strategy=incremental_capture_strategy,
-            upstream_tasks=[upload_source_gcs, upload_raw_gcs],
-        )
+        upload_source.set_upstream(pretreatment)
 
     capture_flow.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
     capture_flow.run_config = KubernetesRun(
@@ -242,7 +162,18 @@ def create_default_capture_flow(
     )
     capture_flow.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
-    if skip_if_running:
-        capture_flow.state_handlers.append(handler_skip_if_running)
+    if generate_schedule:
+
+        capture_flow.schedule = Schedule(
+            [
+                CronClock(
+                    source.schedule_cron,
+                    labels=[
+                        agent_label,
+                    ],
+                    start_date=datetime.now(tz=timezone(constants.TIMEZONE.value)),
+                )
+            ]
+        )
 
     return capture_flow
