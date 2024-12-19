@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.1.2] - 2024-12-18
+
+### Alterado
+
+- Alterado o tipo os de `2024-12-07`, `2024-12-08`, `2024-12-14` e `2024-12-15` para `Extraordinária - Verão` no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/365)
+
 ## [9.1.1] - 2024-12-13
 
 ### Adicionado
