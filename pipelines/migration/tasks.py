@@ -1558,7 +1558,10 @@ def transform_raw_to_nested_structure(
                     content_columns = [c for c in data.columns if c not in primary_key]
                     data["content"] = data.apply(
                         lambda row: json.dumps(
-                            row[content_columns].to_dict(),
+                            {
+                                key: value if not pd.isna(value) else None
+                                for key, value in row[content_columns].to_dict().items()
+                            },
                             ensure_ascii=(
                                 constants.CONTROLE_FINANCEIRO_DATASET_ID.value not in raw_filepath
                             ),
