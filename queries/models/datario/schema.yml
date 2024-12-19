@@ -1,0 +1,107 @@
+version: 2
+
+models:
+  - name: gps_brt_datario
+    description: "Dados tratados de registros de GPS do BRT."
+    columns:
+      - name: modo
+        description: "BRT – nesse arquivo só consta esse modo"
+      - name: timestamp_gps
+        description: "{{ doc('timestamp_gps') }}"
+      - name: data
+        description: "{{ doc('data_gps') }}"
+      - name: hora
+        description: "{{ doc('hora_gps') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: latitude
+        description: "{{ doc('latitude_gps') }}"
+      - name: longitude
+        description: "{{ doc('longitude_gps') }}"
+      - name: flag_em_movimento
+        description: "{{ doc('flag_em_movimento') }}"
+      - name: tipo_parada
+        description: "{{ doc('tipo_parada') }}"
+      - name: flag_linha_existe_sigmob
+        description: "{{ doc('flag_linha_existe_sigmob') }}"
+      - name: velocidade_instantanea
+        description: "{{ doc('velocidade_instantanea') }}"
+      - name: velocidade_estimada_10_min
+        description: "{{ doc('velocidade_estimada_10_min') }}"
+      - name: distancia
+        description: "{{ doc('distancia_gps') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+
+  - name: gps_onibus_datario
+    description: "Dados tratados de registros de GPS dos Ônibus."
+    columns:
+      - name: modo
+        description: "BRT – nesse arquivo só consta esse modo"
+      - name: timestamp_gps
+        description: "{{ doc('timestamp_gps') }}"
+      - name: data
+        description: "{{ doc('data_gps') }}"
+      - name: hora
+        description: "{{ doc('hora_gps') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: latitude
+        description: "{{ doc('latitude_gps') }}"
+      - name: longitude
+        description: "{{ doc('longitude_gps') }}"
+      - name: flag_em_movimento
+        description: "{{ doc('flag_em_movimento') }}"
+      - name: tipo_parada
+        description: "{{ doc('tipo_parada') }}"
+      - name: flag_linha_existe_sigmob
+        description: "{{ doc('flag_linha_existe_sigmob') }}"
+      - name: velocidade_instantanea
+        description: "{{ doc('velocidade_instantanea') }}"
+      - name: velocidade_estimada_10_min
+        description: "{{ doc('velocidade_estimada_10_min') }}"
+      - name: distancia
+        description: "{{ doc('distancia_gps') }}"
+      - name: fonte_gps
+        description: "Fornecedor dos dados de GPS (zirix ou conecta)"
+      - name: versao
+        description: "{{ doc('versao') }}"
+  - name: viagem_onibus_datario
+    description: "Detalhes de todas as viagens completas identificadas."
+    columns:
+      - name: data
+        description: "Data da viagem"
+      - name: consorcio
+        description: "Consórcio ao qual o serviço pertence"
+      - name: tipo_dia
+        description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sábado, Domingo"
+      - name: id_empresa
+        description: "Código identificador da empresa que opera o veículo"
+      - name: id_veiculo
+        description: "Código identificador do veículo (número de ordem)"
+      - name: id_viagem
+        description: "Código identificador da viagem (ex: id_veiculo + servico + sentido + shape_id + datetime_partida)"
+      - name: servico
+        description: "Serviço realizado pelo veículo (com base na identificação do trajeto)"
+      - name: shape_id
+        description: "Código identificador do trajeto (shape) operado"
+      - name: sentido
+        description: "Sentido do trajeto identificado - categorias: I (ida), V (volta), C (circular)"
+      - name: datetime_partida
+        description: "Horário de início da viagem"
+      - name: datetime_chegada
+        description: "Horário de fim da viagem"
+      - name: tempo_viagem
+        description: "Tempo aferido da viagem (em minutos)"
+      - name: distancia_planejada
+        description: "Distância do shape (trajeto) planejado"
+      - name: perc_conformidade_shape
+        description: "Percentual de sinais emitidos dentro do shape (trajeto) ao longo da viagem"
+      - name: perc_conformidade_registros
+        description: "Percentual de minutos da viagem com registro de sinal de GPS"
+      - name: versao_modelo
+        description: "Versão da metodologia de cálculo da respectiva linha na tabela"

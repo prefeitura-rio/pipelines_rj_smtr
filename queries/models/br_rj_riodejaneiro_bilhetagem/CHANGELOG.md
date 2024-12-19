@@ -1,5 +1,28 @@
 # Changelog - bilhetagem
 
+## [2.0.1] - 2024-12-12
+
+### Alterado
+- Adiciona coluna `datetime_captura` no modelo `ordem_pagamento_consorcio_operador_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/360)
+
+## [2.0.0] - 2024-11-25
+
+### Adicionado
+- Cria os modelos `aux_transacao_id_ordem_pagamento.sql` e  `staging_transacao_ordem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/333)
+
+### Alterado
+- Adiciona colunas de ordem de pagamento e `datetime_ultima_atualizacao` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/333)
+- Adiciona colunas de id único nos modelos `ordem_pagamento_consorcio_dia.sql` e `ordem_pagamento_servico_operador_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/333)
+
+## [2.5.2] - 2024-11-13
+
+### Alterado
+- Cria coluna `datetime_ultima_atualizacao` no modelo `ordem_pagamento_consorcio_operador_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/321)
+- Converte `timestamp_captura` para datetime no modelo `staging_ordem_pagamento_consorcio_operadora` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/321)
+
+### Corrigido
+- Ajusta lógica de preenchimento de valores pagos no modelo `ordem_pagamento_consorcio_operador_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/321)
+
 ## [2.5.1] - 2024-10-07
 
 ### Alterado

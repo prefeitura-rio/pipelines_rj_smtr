@@ -22,6 +22,7 @@ from prefect import Client, task
 from prefect.backend import FlowRunView
 from prefeitura_rio.pipelines_utils.dbt import run_dbt_model as run_dbt_model_func
 from prefeitura_rio.pipelines_utils.infisical import inject_bd_credentials
+from prefeitura_rio.pipelines_utils.io import get_root_path
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
@@ -43,9 +44,9 @@ from pipelines.migration.utils import (
     read_raw_data,
     save_raw_local_func,
     save_treated_local_func,
-    send_discord_message,
     upload_run_logs_to_bq,
 )
+from pipelines.utils.pretreatment import transform_to_nested_structure
 from pipelines.utils.secret import get_secret
 
 
@@ -405,7 +406,8 @@ def create_local_partition_path(
     either to save raw or staging files.
     """
     data_folder = os.getenv("DATA_FOLDER", "data")
-    file_path = f"{os.getcwd()}/{data_folder}/{{mode}}/{dataset_id}/{table_id}"
+    root = str(get_root_path())
+    file_path = f"{root}/{data_folder}/{{mode}}/{dataset_id}/{table_id}"
     file_path += f"/{partitions}/{filename}.{{filetype}}"
     log(f"Creating file path: {file_path}")
     return file_path
@@ -1537,13 +1539,10 @@ def transform_raw_to_nested_structure(
                 else:
                     log(f"Raw data:\n{data_info_str(data)}", level="info")
 
-                    log("Adding captured timestamp column...", level="info")
-                    data["timestamp_captura"] = timestamp
-
                     if "customFieldValues" not in data:
                         log("Striping string columns...", level="info")
-                        for col in data.columns[data.dtypes == "object"].to_list():
-                            data[col] = data[col].str.strip()
+                        object_cols = data.select_dtypes(include=["object"]).columns
+                        data[object_cols] = data[object_cols].apply(lambda x: x.str.strip())
 
                     if (
                         constants.GTFS_DATASET_ID.value in raw_filepath
@@ -1555,22 +1554,24 @@ def transform_raw_to_nested_structure(
                     log(f"Finished cleaning! Data:\n{data_info_str(data)}", level="info")
 
                     log("Creating nested structure...", level="info")
-                    pk_cols = primary_key + ["timestamp_captura"]
 
-                    data = (
-                        data.groupby(pk_cols)
-                        .apply(
-                            lambda x: x[data.columns.difference(pk_cols)].to_json(
-                                orient="records",
-                                force_ascii=(
-                                    constants.CONTROLE_FINANCEIRO_DATASET_ID.value
-                                    not in raw_filepath
-                                ),
-                            )
-                        )
-                        .str.strip("[]")
-                        .reset_index(name="content")[primary_key + ["content", "timestamp_captura"]]
+                    content_columns = [c for c in data.columns if c not in primary_key]
+                    data["content"] = data.apply(
+                        lambda row: json.dumps(
+                            {
+                                key: value if not pd.isna(value) else None
+                                for key, value in row[content_columns].to_dict().items()
+                            },
+                            ensure_ascii=(
+                                constants.CONTROLE_FINANCEIRO_DATASET_ID.value not in raw_filepath
+                            ),
+                        ),
+                        axis=1,
                     )
+
+                    log("Adding captured timestamp column...", level="info")
+                    data["timestamp_captura"] = timestamp
+                    data = data[primary_key + ["content", "timestamp_captura"]]
 
                     log(
                         f"Finished nested structure! Data:\n{data_info_str(data)}",
@@ -1579,6 +1580,88 @@ def transform_raw_to_nested_structure(
 
             # save treated local
             filepath = save_treated_local_func(data=data, error=error, filepath=filepath)
+
+        except Exception:  # pylint: disable=W0703
+            error = traceback.format_exc()
+            log(f"[CATCHED] Task failed with error: \n{error}", level="error")
+
+    return error, filepath
+
+
+@task(nout=2)
+def transform_raw_to_nested_structure_chunked(
+    raw_filepath: str,
+    filepath: str,
+    error: str,
+    timestamp: datetime,
+    chunksize: int,
+    primary_key: list = None,
+    reader_args: dict = None,
+) -> tuple[str, str]:
+    """
+    Task to transform raw data to nested structure
+
+    Args:
+        raw_filepath (str): Path to the saved raw .json file
+        filepath (str): Path to the saved treated .csv file
+        error (str): Error catched from upstream tasks
+        timestamp (datetime): timestamp for flow run
+        chunksize (int): Number of lines to read from the file per chunk
+        primary_key (list, optional): Primary key to be used on nested structure
+        reader_args (dict): arguments to pass to pandas.read_csv or read_json
+
+    Returns:
+        str: Error traceback
+        str: Path to the saved treated .csv file
+    """
+    if error is None:
+        try:
+            # leitura do dado raw
+            error, data_chunks = read_raw_data(
+                filepath=raw_filepath, reader_args={"chunksize": chunksize}
+            )
+
+            if primary_key is None:
+                primary_key = []
+
+            if error is None:
+
+                log("Creating nested structure...", level="info")
+
+                index = 0
+                for chunk in data_chunks:
+
+                    if "customFieldValues" not in chunk:
+                        object_cols = chunk.select_dtypes(include=["object"]).columns
+                        chunk[object_cols] = chunk[object_cols].apply(lambda x: x.str.strip())
+
+                    if (
+                        constants.GTFS_DATASET_ID.value in raw_filepath
+                        and "ordem_servico" in raw_filepath
+                        and "tipo_os" not in chunk.columns
+                    ):
+                        chunk["tipo_os"] = "Regular"
+
+                    transformed_chunk = transform_to_nested_structure(chunk, primary_key)
+                    transformed_chunk["timestamp_captura"] = timestamp
+                    if index == 0:
+                        filepath = save_treated_local_func(
+                            data=transformed_chunk,
+                            error=error,
+                            filepath=filepath,
+                            args={"header": True, "mode": "w"},
+                        )
+                    else:
+                        filepath = save_treated_local_func(
+                            data=transformed_chunk,
+                            error=error,
+                            filepath=filepath,
+                            log_param=False,
+                            args={"header": False, "mode": "a"},
+                        )
+                    index += 1
+
+                log("Finished nested structure!", level="info")
 
         except Exception:  # pylint: disable=W0703
             error = traceback.format_exc()
@@ -1656,44 +1739,6 @@ def perform_checks_for_table(
         )
 
     return checks
-
-
-def format_send_discord_message(formatted_messages: list, webhook_url: str):
-    """
-    Format and send a message to discord
-
-    Args:
-        formatted_messages (list): The formatted messages
-        webhook_url (str): The webhook url
-
-    Returns:
-        None
-    """
-    formatted_message = "".join(formatted_messages)
-    log(formatted_message)
-    msg_ext = len(formatted_message)
-    if msg_ext > 2000:
-        log(f"** Message too long ({msg_ext} characters), will be split into multiple messages **")
-        # Split message into lines
-        lines = formatted_message.split("\n")
-        message_chunks = []
-        chunk = ""
-        for line in lines:
-            if len(chunk) + len(line) + 1 > 2000:  # +1 for the newline character
-                message_chunks.append(chunk)
-                chunk = ""
-            chunk += line + "\n"
-        message_chunks.append(chunk)  # Append the last chunk
-        for chunk in message_chunks:
-            send_discord_message(
-                message=chunk,
-                webhook_url=webhook_url,
-            )
-    else:
-        send_discord_message(
-            message=formatted_message,
-            webhook_url=webhook_url,
-        )
 
 
 ###############
