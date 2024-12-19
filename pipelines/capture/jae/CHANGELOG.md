@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Cria flow `verificacao_ip` para alertar sobre falhas de conexão com o banco de dados da Jaé
+- Cria flow `verificacao_ip` para alertar sobre falhas de conexão com o banco de dados da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/366)
 
 ## [1.0.1] - 2024-12-16
 
