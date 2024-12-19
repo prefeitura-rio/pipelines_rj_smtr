@@ -85,4 +85,4 @@ def create_database_error_discord_message(failed_connections: list[str]) -> str:
     message = "Falha de conexão com o(s) banco(s) de dados:\n"
     failed_connections = "\n".join(failed_connections)
     message += failed_connections
-    return message
+    return message + "\n"
