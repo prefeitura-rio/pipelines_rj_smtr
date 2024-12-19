@@ -76,6 +76,16 @@ models:
         description: "Valor debitado na transação atual (R$)"
       - name: valor_pagamento
         description: "Valor valor a ser pago pela transação (R$). Valores nulos indicam que o valor de pagamento para a transação ainda não foi calculado."
+      - name: data_ordem
+        description: "Data da ordem de pagamento da transação"
+      - name: id_ordem_pagamento_servico_operador_dia
+        description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_servico_operador_dia"
+      - name: id_ordem_pagamento_consorcio_operador_dia
+        description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_operador_dia"
+      - name: id_ordem_pagamento_consorcio_dia
+        description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_dia"
+      - name: id_ordem_pagamento
+        description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_dia"
       - name: versao
         description: "Código de controle de versão do dado (SHA Github)"
   - name: integracao
@@ -427,6 +437,8 @@ models:
         description: "Data em que foi realizado o pagamento ao operador ou consórcio"
       - name: valor_pago
         description: "Valor pago ao operador ou consórcio (R$)"
+      - name: datetime_captura
+        description: Data e hora da captura da ordem em GMT-3
       - name: versao
         description: "Código de controle de versão do dado (SHA Github)"
       - name: datetime_ultima_atualizacao

@@ -7,6 +7,8 @@ import basedosdados as bd
 import prefect
 import requests
 from prefect import task
+from prefect.engine.signals import FAIL
+from prefect.triggers import all_finished
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
@@ -151,6 +153,7 @@ def wait_data_sources(
                     timestamp=datetime_end,
                     retroactive_days=max(2, (datetime_end - datetime_start).days),
                 )
+
                 complete = len(uncaptured_timestamps) == 0
             elif isinstance(ds, DBTSelector):
                 name = f"{ds.name}"
@@ -167,9 +170,11 @@ def wait_data_sources(
                     cron_expr=ds["schedule_cron"],
                     timestamp=datetime_end,
                 )
-                complete = convert_timezone(
-                    timestamp=last_materialization
-                ) >= last_schedule - timedelta(hours=ds.get("delay_hours", 0))
+                last_materialization = convert_timezone(timestamp=last_materialization)
+
+                complete = last_materialization >= last_schedule - timedelta(
+                    hours=ds.get("delay_hours", 0)
+                )
 
             else:
                 raise NotImplementedError(f"Espera por fontes do tipo {type(ds)} não implementada")
@@ -478,8 +483,10 @@ def run_dbt_tests(
     return dbt_logs
 
 
-@task
-def dbt_data_quality_checks(dbt_logs: str, checks_list: dict, params: dict):
+@task(trigger=all_finished)
+def dbt_data_quality_checks(
+    dbt_logs: str, checks_list: dict, params: dict, webhook_key: str = "dataplex"
+):
     """
     Extracts the results of DBT tests and sends a message with the information to Discord.
 
@@ -488,19 +495,48 @@ def dbt_data_quality_checks(dbt_logs: str, checks_list: dict, params: dict):
         checks_list (dict): Dictionary with the names of the tests and their descriptions.
         date_range (dict): Dictionary representing a date range.
     """
+    if isinstance(dbt_logs, list):
+        dbt_logs = "\n".join(dbt_logs)
+    elif not isinstance(dbt_logs, str):
+        return
 
     checks_results = parse_dbt_test_output(dbt_logs)
 
-    webhook_url = get_secret(secret_path=constants.WEBHOOKS_SECRET_PATH.value)["dataplex"]
+    webhook_url = get_secret(secret_path=constants.WEBHOOKS_SECRET_PATH.value)[webhook_key]
 
     dados_tag = f" - <@&{constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>\n"
 
     test_check = all(test["result"] == "PASS" for test in checks_results.values())
 
-    start_date = params["date_range_start"].split("T")[0]
-    end_date = params["date_range_end"].split("T")[0]
+    keys = [
+        ("date_range_start", "date_range_end"),
+        ("start_date", "end_date"),
+        ("run_date", None),
+        ("data_versao_gtfs", None),
+    ]
 
-    date_range = start_date if start_date == end_date else f"{start_date} a {end_date}"  # noqa
+    start_date = None
+    end_date = None
+
+    for start_key, end_key in keys:
+        if start_key in params and "T" in params[start_key]:
+            start_date = params[start_key].split("T")[0]
+
+            if end_key and end_key in params and "T" in params[end_key]:
+                end_date = params[end_key].split("T")[0]
+
+            break
+        elif start_key in params:
+            start_date = params[start_key]
+
+            if end_key and end_key in params:
+                end_date = params[end_key]
+
+    date_range = (
+        start_date
+        if not end_date
+        else (start_date if start_date == end_date else f"{start_date} a {end_date}")
+    )
 
     if "(target='dev')" in dbt_logs or "(target='hmg')" in dbt_logs:
         formatted_messages = [
@@ -513,17 +549,41 @@ def dbt_data_quality_checks(dbt_logs: str, checks_list: dict, params: dict):
             f"**Data Quality Checks - {prefect.context.get('flow_name')} - {date_range}**\n\n",
         ]
 
-    for table_id, tests in checks_list.items():
-        formatted_messages.append(
-            f"*{table_id}:*\n"
-            + "\n".join(
-                f'{":white_check_mark:" if checks_results[test_id]["result"] == "PASS" else ":x:"} '
-                f'{test["description"]}'
-                for test_id, test in tests.items()
-            )
+    for test_id, test_result in checks_results.items():
+        parts = test_id.split("__")
+
+        if len(parts) == 2:
+            table_name = parts[1]
+        else:
+            table_name = parts[2]
+
+        matched_description = None
+        for existing_table_id, tests in checks_list.items():
+            if table_name in existing_table_id:
+                for existing_test_id, test_info in tests.items():
+                    if test_id.endswith(existing_test_id):
+                        matched_description = test_info.get("description", test_id)
+                        break
+                if matched_description:
+                    break
+
+        test_id = test_id.replace("_", "\\_")
+        description = matched_description or f"Teste: {test_id}"
+
+        test_message = (
+            f'{":white_check_mark:" if test_result["result"] == "PASS" else ":x:"} '
+            f"{description}"
         )
 
-    formatted_messages.append("\n\n")
+        table_exists = any(table_name in existing_table_id for existing_table_id in checks_list)
+        if table_exists or len(parts) >= 2:
+            table_header_exists = any(f"*{table_name}:*" in msg for msg in formatted_messages)
+            if not table_header_exists:
+                formatted_messages.append(f"*{table_name}:*\n")
+
+        formatted_messages.append(test_message + "\n")
+
+    formatted_messages.append("\n")
     formatted_messages.append(
         ":tada: **Status:** Sucesso"
         if test_check
@@ -538,3 +598,6 @@ def dbt_data_quality_checks(dbt_logs: str, checks_list: dict, params: dict):
     except Exception as e:
         log(f"Falha ao enviar mensagem para o Discord: {e}", level="error")
         raise
+
+    if not test_check:
+        raise FAIL

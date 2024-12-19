@@ -56,3 +56,18 @@ selectors:
           value: aux_calendario_manual
         - method: fqn
           value: calendario
+
+  - name: transacao_ordem
+    description: Materialização da tabela auxiliar de relacionamento entre as ordens de pagamento e as transações
+    definition:
+      union:
+        - method: fqn
+          value: staging_transacao_ordem
+        - method: fqn
+          value: aux_transacao_id_ordem_pagamento
+
+  - name: datario
+    description: Materialização das views para o datario
+    definition:
+      method: fqn
+      value: datario
