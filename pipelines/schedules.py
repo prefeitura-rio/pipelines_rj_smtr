@@ -12,8 +12,32 @@ from pytz import timezone
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
 
-cron_every_day_hour_7 = "0 7 * * *"
-cron_every_day_hour_7_minute_10 = "10 7 * * *"
+
+def create_daily_cron(hour: int, minute: int = 0) -> str:
+    """
+    Cria uma expressão cron de execução diário na hora e minuto definido
+
+    Args:
+        hour (int): Hora de execução
+        minute (int): Minuto da execução
+
+    Returns:
+        str: expressão cron
+    """
+    return f"{minute} {hour} * * *"
+
+
+def create_hourly_cron(minute: int = 0) -> str:
+    """
+    Cria uma expressão cron de execução de hora em hora no minuto definido
+
+    Args:
+        minute (int): Minuto da execução
+
+    Returns:
+        str: expressão cron
+    """
+    return f"{minute} * * * *"
 
 
 def generate_interval_schedule(

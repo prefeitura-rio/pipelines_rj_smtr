@@ -1,5 +1,47 @@
 # Changelog - gtfs
 
+
+## [1.1.7] - 2024-12-13
+
+### Adicionado
+
+- Cria arquivo `constants.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/359)
+- Adiciona automação dos testes do DBT no arquivo `flows.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/359)
+- Adiciona compatibilidade com padrão "KM" na função `processa_ordem_servico` no arquivo `utils.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/359)
+
+### Alterado
+
+- Remove parâmetros personalizados de execução no arquivo `flows.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/359)
+- Troca task `transform_raw_to_nested_structure` pela `transform_raw_to_nested_structure_chunked` no arquivo `flows.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/359)
+
+### Corrigido
+
+- Corrige parâmetro `supportsAllDrives` na função `download_xlsx` arquivo `utils.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/359)
+
+## [1.1.6] - 2024-12-04
+
+- Adiciona o modelo `viagem_planejada_planejamento` no exclude da materialização (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/352)
+
+## [1.1.5] - 2024-12-03
+
+### Corrigido
+
+- Corrige a conversão de valores para float na OS por faixa horaria (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/350)
+
+- Corrige a captura dos arquivos do GTFS no drive compartilhado (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/350)
+
+## [1.1.4] - 2024-11-07
+
+### Alterado
+
+- Refatora função `processa_ordem_servico_faixa_horaria` no arquivo `utils.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/306)
+
+## [1.1.3] - 2024-10-30
+
+### Alterado
+
+- Alterado arquivo `utils.py` em razão das novas faixas horárias (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/295)
+
 ## [1.1.2] - 2024-10-21
 
 ### Alterado

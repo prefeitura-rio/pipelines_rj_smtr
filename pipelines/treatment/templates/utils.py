@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+import re
 from datetime import datetime, timedelta
 
 from google.cloud.dataplex_v1 import DataScanJob
+from prefeitura_rio.pipelines_utils.io import get_root_path
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
@@ -71,7 +73,7 @@ class DBTSelector:
             )
         )
 
-        return last_datetime
+        return convert_timezone(timestamp=last_datetime)
 
     def get_datetime_end(self, timestamp: datetime) -> datetime:
         """
@@ -97,7 +99,9 @@ class DBTSelector:
             bool: se está atualizado ou não
         """
         last_materialization = self.get_last_materialized_datetime(env=env)
+
         last_schedule = cron_get_last_date(cron_expr=self.schedule_cron, timestamp=timestamp)
+
         return last_materialization >= last_schedule - timedelta(hours=self.incremental_delay_hours)
 
     def get_next_schedule_datetime(self, timestamp: datetime) -> datetime:
@@ -205,3 +209,69 @@ def send_dataplex_discord_message(
         embed_messages=embed,
         timestamp=timestamp,
     )
+
+
+def parse_dbt_test_output(dbt_logs: str) -> dict:
+    """Parses DBT test output and returns a list of test results.
+
+    Args:
+        dbt_logs: The DBT test output as a string.
+
+    Returns:
+        A list of dictionaries, each representing a test result with the following keys:
+        - name: The test name.
+        - result: "PASS", "FAIL" or "ERROR".
+        - query: Query to see test failures.
+        - error: Message error.
+    """
+
+    # Remover sequências ANSI
+    dbt_logs = re.sub(r"\x1B[@-_][0-?]*[ -/]*[@-~]", "", dbt_logs)
+
+    results = {}
+    result_pattern = r"\d+ of \d+ (PASS|FAIL|ERROR) (\d+ )?([\w._]+) .* \[(PASS|FAIL|ERROR) .*\]"
+    fail_pattern = r"Failure in test ([\w._]+) .*\n.*\n.*\n.* compiled Code at (.*)\n"
+    error_pattern = r"Error in test ([\w._]+) \(.*schema.yaml\)\n  (.*)\n"
+
+    root_path = get_root_path()
+
+    for match in re.finditer(result_pattern, dbt_logs):
+        groups = match.groups()
+        test_name = groups[2]
+        results[test_name] = {"result": groups[3]}
+
+    for match in re.finditer(fail_pattern, dbt_logs):
+        groups = match.groups()
+        test_name = groups[0]
+        file = groups[1]
+        filepath = f"{root_path}/queries/{file}"
+
+        with open(filepath, "r") as arquivo:
+            query = arquivo.read()
+
+        query = re.sub(r"\n+", "\n", query)
+        results[test_name]["query"] = query
+
+    for match in re.finditer(error_pattern, dbt_logs):
+        groups = match.groups()
+        test_name = groups[0]
+        error = groups[1]
+        results[test_name]["error"] = error
+
+    log_message = ""
+    for test, info in results.items():
+        result = info["result"]
+        log_message += f"Test: {test} Status: {result}\n"
+
+        if result == "FAIL":
+            log_message += "Query:\n"
+            log_message += f"{info['query']}\n"
+
+        if result == "ERROR":
+            log_message += f"Error: {info['error']}\n"
+
+        log_message += "\n"
+
+    log(log_message)
+
+    return results

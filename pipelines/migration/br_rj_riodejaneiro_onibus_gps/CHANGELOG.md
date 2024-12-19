@@ -1,5 +1,11 @@
 # Changelog - br_rj_riodejaneiro_onibus_gps
 
+## [1.0.3] - 2024-10-29
+
+### Alterado
+
+- Altera o flow `materialize_sppo` para utilizar as tasks que rodam os testes do DBT (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/288)
+
 ## [1.0.2] - 2024-08-25
 
 ### Adicionado

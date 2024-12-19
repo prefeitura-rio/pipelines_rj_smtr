@@ -322,6 +322,9 @@ WITH
       WHEN data = "2024-04-22" THEN "Ponto Facultativo" -- Ponto Facultativo - DECRETO RIO Nº 54267/2024
       WHEN data = "2024-05-30" THEN "Domingo" -- Feriado de Corpus Christi - (Decreto Rio Nº 54525/2024)
       WHEN data = "2024-05-31" THEN "Ponto Facultativo" -- Ponto Facultativo - (Decreto Rio Nº 54525/2024)
+      WHEN data = "2024-10-21" THEN "Ponto Facultativo" -- Ponto Facultativo - Dia do Comérciario - (Processo.Rio MTR-DES-2024/64171)
+      WHEN data = "2024-10-28" THEN "Ponto Facultativo" -- Ponto Facultativo - Dia do Servidor Público - (Processo.Rio MTR-DES-2024/64417)
+      WHEN data BETWEEN DATE(2024,11,18) AND DATE(2024,11,19) THEN "Ponto Facultativo" -- Ponto Facultativo - G20 - (Processo.Rio MTR-DES-2024/67477)
       WHEN EXTRACT(DAY FROM data) = 20 AND EXTRACT(MONTH FROM data) = 1 THEN "Domingo" -- Dia de São Sebastião -- Art. 8°, I - Lei Municipal nº 5146/2010
       WHEN EXTRACT(DAY FROM data) = 23 AND EXTRACT(MONTH FROM data) = 4 THEN "Domingo" -- Dia de São Jorge -- Art. 8°, II - Lei Municipal nº 5146/2010 / Lei Estadual Nº 5198/2008 / Lei Estadual Nº 5645/2010
       WHEN EXTRACT(DAY FROM data) = 20 AND EXTRACT(MONTH FROM data) = 11 THEN "Domingo" -- Aniversário de morte de Zumbi dos Palmares / Dia da Consciência Negra -- Art. 8°, IV - Lei Municipal nº 5146/2010 / Lei Estadual nº 526/1982 / Lei Estadual nº 1929/1991 / Lei Estadual nº 4007/2002 / Lei Estadual Nº 5645/2010
@@ -351,6 +354,11 @@ WITH
       WHEN data BETWEEN DATE(2024,09,14) AND DATE(2024,09,15) THEN "Verão + Rock in Rio"
       WHEN data BETWEEN DATE(2024,09,19) AND DATE(2024,09,22) THEN "Rock in Rio"
       WHEN data = DATE(2024,10,06) THEN "Eleição"
+      WHEN data = DATE(2024,11,03) THEN "Enem"
+      WHEN data = DATE(2024,11,10) THEN "Enem"
+      WHEN data = DATE(2024,11,24) THEN "Parada LGBTQI+" -- Processo.Rio MTR-DES-2024/70057
+      WHEN data BETWEEN DATE(2024,12,07) AND DATE(2024,12,08) THEN "Extraordinária - Verão" -- Processo.Rio MTR-DES-2024/72800
+      WHEN data BETWEEN DATE(2024,12,14) AND DATE(2024,12,15) THEN "Extraordinária - Verão" -- Processo.Rio MTR-DES-2024/74396
       ELSE "Regular"
     END AS tipo_os,
   FROM UNNEST(GENERATE_DATE_ARRAY("{{var('DATA_SUBSIDIO_V6_INICIO')}}", "2024-12-31")) AS data),

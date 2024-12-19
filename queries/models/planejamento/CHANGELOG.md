@@ -1,5 +1,37 @@
 # Changelog - planejamento
 
+## [1.2.0] - 2024-12-04
+
+### Adicionado
+
+- Cria modelos para tabela de viagens planejadas de acordo com o GTFS (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/352):
+  - `aux_frequencies_horario_tratado.sql`
+  - `aux_ordem_servico_horario_tratado.sql`
+  - `aux_trips_dia.sql`
+  - `viagem_planejada_planejamento.sql`
+
+### Alterado
+- Adiciona colunas start_pt e end_pt no modelo `shapes_geom_planejamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/352)
+
+## [1.1.0] - 2024-11-08
+
+### Adicionado
+
+- Cria modelos para tabela de calendario: `aux_calendario_manual.sql` e `calendario.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/237)
+- Cria modelos para divisão de shapes: `aux_segmento_shape.py`, `aux_shapes_geom_filtrada.sql`, `shapes_geom_planejamento.sql` e `segmento_shape.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/237)
+
+## [1.0.2] - 2024-11-07
+
+### Alterado
+
+- Refatora modelo `ordem_servico_faixa_horaria` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/306)
+
+## [1.0.1] - 2024-10-30
+
+### Alterado
+
+- Alterado modelo `ordem_servico_faixa_horaria` em razão das novas faixas horárias (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/295)
+
 ## [1.0.0] - 2024-08-29
 
 ### Adicionado
