@@ -5,24 +5,20 @@ from typing import Any, Union
 
 import prefect
 from prefect import task
-
-try:
-    from prefect.tasks.dbt.dbt import DbtShellTask
-except ImportError:
-    from prefeitura_rio.utils import base_assert_dependencies
-
-    base_assert_dependencies(["prefect"], extras=["pipelines"])
-
-from prefeitura_rio.pipelines_utils.io import get_root_path
+from prefect.engine.signals import FAIL
+from prefect.triggers import all_finished
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 from pytz import timezone
 
 from pipelines.constants import constants
+from pipelines.utils.discord import send_discord_message
 from pipelines.utils.prefect import FailedSubFlow, create_subflow_run, wait_subflow_run
+from pipelines.utils.secret import get_secret
+from pipelines.utils.utils import convert_timezone
 
 
-@task
+@task(trigger=all_finished)
 def task_value_is_none(task_value: Union[Any, None]) -> bool:
     """Testa se o valor retornado por uma Task é None
 
@@ -69,10 +65,7 @@ def get_scheduled_timestamp(timestamp: str = None) -> datetime:
     else:
         timestamp = prefect.context["scheduled_start_time"]
 
-    if timestamp.tzinfo is None:
-        timestamp = timestamp.replace(tzinfo=timezone(constants.TIMEZONE.value))
-    else:
-        timestamp = timestamp.astimezone(tz=timezone(constants.TIMEZONE.value))
+    timestamp = convert_timezone(timestamp=timestamp).replace(second=0, microsecond=0)
 
     log(f"Created timestamp: {timestamp}")
     return timestamp
@@ -227,47 +220,35 @@ def run_subflow(
         raise FailedSubFlow(failed_message)
 
 
-@task
-def run_dbt_selector(
-    selector_name: str,
-    flags: str = None,
-    _vars: dict | list[dict] = None,
-):
+@task(trigger=all_finished)
+def check_fail(results: Union[list, str]):
     """
-    Runs a DBT selector.
+    Checks if any task result indicates failure.
 
     Args:
-        selector_name (str): The name of the DBT selector to run.
-        flags (str, optional): Flags to pass to the dbt run command.
-        _vars (Union[dict, list[dict]], optional): Variables to pass to dbt. Defaults to None.
+        results (Union[list, str]): A result or list of results to check.
+
+    Returns:
+        bool: True if any result is an instance of `FAIL`, otherwise False.
     """
-    # Build the dbt command
-    run_command = f"dbt run --selector {selector_name}"
+    if isinstance(results, list):
+        return any(isinstance(result, FAIL) for result in results)
+    else:
+        return isinstance(results, FAIL)
 
-    if _vars:
-        if isinstance(_vars, list):
-            vars_dict = {}
-            for elem in _vars:
-                vars_dict.update(elem)
-            vars_str = f'"{vars_dict}"'
-            run_command += f" --vars {vars_str}"
-        else:
-            vars_str = f'"{_vars}"'
-            run_command += f" --vars {vars_str}"
 
-    if flags:
-        run_command += f" {flags}"
+@task
+def log_discord(message: str, key: str, dados_tag: bool = False):
+    """Logs message to discord channel specified
 
-    log(f"Running dbt with command: {run_command}")
-    root_path = get_root_path()
-    queries_dir = str(root_path / "queries")
-    dbt_task = DbtShellTask(
-        profiles_dir=queries_dir,
-        helper_script=f"cd {queries_dir}",
-        log_stderr=True,
-        return_all=True,
-        command=run_command,
-    )
-    dbt_logs = dbt_task.run()
-
-    log("\n".join(dbt_logs))
+    Args:
+        message (str): Message to post on the channel
+        key (str): Key to secret path storing the webhook to channel.
+        dados_tag (bool): Indicates whether the message will tag the data team
+    """
+    if dados_tag:
+        message = (
+            message + f" - <@&{constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>\n"
+        )
+    url = get_secret(secret_path=constants.WEBHOOKS_SECRET_PATH.value)[key]
+    send_discord_message(message=message, webhook_url=url)
