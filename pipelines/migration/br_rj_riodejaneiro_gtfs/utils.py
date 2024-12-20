@@ -131,7 +131,9 @@ def download_xlsx(file_link, drive_service):
     """
     file_id = file_link.split("/")[-2]
 
-    file = drive_service.files().get(fileId=file_id).execute()  # pylint: disable=E1101
+    file = (
+        drive_service.files().get(fileId=file_id, supportsAllDrives=True).execute()
+    )  # pylint: disable=E1101
     mime_type = file.get("mimeType")
 
     if "google-apps" in mime_type:
@@ -140,7 +142,7 @@ def download_xlsx(file_link, drive_service):
             mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
     else:
-        request = drive_service.files().get_media(fileId=file_id, supportsAllDrives=True)
+        request = drive_service.files().get_media(fileId=file_id)  # pylint: disable=E1101
 
     file_bytes = io.BytesIO()
     downloader = MediaIoBaseDownload(file_bytes, request)
@@ -229,18 +231,22 @@ def processa_ordem_servico(
         "Partidas Volta Dia Útil": "partidas_volta_du",
         "Viagens Dia Útil": "viagens_du",
         "Quilometragem Dia Útil": "km_dia_util",
+        "KM Dia Útil": "km_dia_util",
         "Partidas Ida Sábado": "partidas_ida_sabado",
         "Partidas Volta Sábado": "partidas_volta_sabado",
         "Viagens Sábado": "viagens_sabado",
         "Quilometragem Sábado": "km_sabado",
+        "KM Sábado": "km_sabado",
         "Partidas Ida Domingo": "partidas_ida_domingo",
         "Partidas Volta Domingo": "partidas_volta_domingo",
         "Viagens Domingo": "viagens_domingo",
         "Quilometragem Domingo": "km_domingo",
+        "KM Domingo": "km_domingo",
         "Partidas Ida Ponto Facultativo": "partidas_ida_pf",
         "Partidas Volta Ponto Facultativo": "partidas_volta_pf",
         "Viagens Ponto Facultativo": "viagens_pf",
         "Quilometragem Ponto Facultativo": "km_pf",
+        "KM Ponto Facultativo": "km_pf",
         "tipo_os": "tipo_os",
     }
 

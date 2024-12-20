@@ -205,6 +205,9 @@ vars:
   projecao_wgs_84: "EPSG:4326"
   data_inicial_gps_validacao_viagem: "2024-10-11"
 
+  ### Planejamento ###
+  feed_inicial_viagem_planejada: "2024-11-16"
+
 tests:
   rj_smtr:
     where: "DATA BETWEEN DATE('__date_range_start__') AND DATE('__date_range_end__')"
@@ -365,3 +368,6 @@ models:
       staging:
         +materialized: view
         +schema: bilhetagem_staging
+    datario:
+      +materialized: view
+      +schema: datario
