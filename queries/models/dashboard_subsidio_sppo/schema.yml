@@ -241,6 +241,10 @@ models:
         description: "Quantidade de viagens apuradas realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste."
       - name: km_apurada_registrado_com_ar_inoperante
         description: "Distância apurada de viagens realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste (km)."
+      - name: viagens_sem_transacao
+        description: "Quantidade de viagens apuradas realizadas por veículo licenciado sem registros de transações RioCard."
+      - name: km_apurada_sem_transacao
+        description: "Distância apurada de viagens realizadas por veículo licenciado sem registros de transações RioCard."
   - name: valor_tipo_penalidade
     description: "Valores de penalidades de subsídio"
     columns:
@@ -628,9 +632,9 @@ models:
           - not_null:
               name: not_null__distancia_planejada__subsidio_km_teto
       - name: indicador_viagem_dentro_limite
-        description: "Indica se a viagem foi remunerada por estar abaixo do teto de 120%/200%."
+        description: "{{ doc('indicador_viagem_dentro_limite') }}"
         tests:
           - not_null:
               name: not_null__indicador_viagem_dentro_limite__viagens_remuneradas
-
-
+      - name: indicador_penalidade_judicial
+        description: "{{ doc('indicador_penalidade_judicial') }}"
