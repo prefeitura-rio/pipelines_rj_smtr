@@ -25,7 +25,7 @@ def create_tickets_extractor(
     start = datetime.strftime(timestamp - timedelta(days=1), "%Y-%m-%dT%H:%M:%S.%MZ")
     end = datetime.strftime(timestamp, "%Y-%m-%dT%H:%M:%S.%MZ")
     token = get_secret(constants.MOVIDESK_SECRET_PATH.value)["token"]
-    service = "recursos_sppo_viagens_individuais"
+    service = "Viagem Individual"
     params = {
         "token": token,
         "$select": "id,protocol,createdDate,lastUpdate",
