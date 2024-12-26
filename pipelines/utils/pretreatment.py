@@ -22,8 +22,12 @@ def transform_to_nested_structure(data: pd.DataFrame, primary_keys: list) -> pd.
     data["content"] = data.apply(
         lambda row: json.dumps(
             {
-                key: value if not pd.isna(value) else None
-                for key, value in row[content_columns].to_dict().items()
+                key: (
+                    row[key]
+                    if isinstance(row[key], (list, dict)) or not pd.isna(row[key])
+                    else None
+                )
+                for key in content_columns
             }
         ),
         axis=1,
