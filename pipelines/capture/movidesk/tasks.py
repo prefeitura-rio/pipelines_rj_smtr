@@ -39,6 +39,7 @@ def create_tickets_extractor(
     return partial(
         get_raw_api_top_skip,
         url=constants.TICKETS_BASE_URL.value,
+        headers=None,
         params=params,
         top_param_name="$top",
         skip_param_name="$skip",
