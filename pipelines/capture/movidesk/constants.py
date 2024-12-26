@@ -15,7 +15,7 @@ class constants(Enum):  # pylint: disable=c0103
     Valores constantes para captura de dados do MoviDesk
     """
 
-    MOVIDESK_SOURCE_NAME = "rioonibus"
+    MOVIDESK_SOURCE_NAME = "movidesk"
     MOVIDESK_SECRET_PATH = "sppo_subsidio_recursos_api"  # movidesk_api
     TICKETS_BASE_URL = "https://api.movidesk.com/public/v1/tickets"
     TICKETS_TABLE_ID = "tickets"
