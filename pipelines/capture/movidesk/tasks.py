@@ -36,13 +36,18 @@ def create_tickets_extractor(
         for service in smtr_constants.SUBSIDIO_SPPO_RECURSO_TABLE_CAPTURE_PARAMS.value
     ]
 
-    return partial(
-        get_raw_api_top_skip,
-        url=constants.TICKETS_BASE_URL.value,
-        headers=None,
-        params=params,
-        top_param_name="$top",
-        skip_param_name="$skip",
-        page_size=1000,
-        max_page=10,
-    )
+    partial_list = [
+        partial(
+            get_raw_api_top_skip,
+            url=constants.TICKETS_BASE_URL.value,
+            headers=None,
+            params=param,
+            top_param_name="$top",
+            skip_param_name="$skip",
+            page_size=1000,
+            max_page=10,
+        )
+        for param in params
+    ]
+
+    return partial_list
