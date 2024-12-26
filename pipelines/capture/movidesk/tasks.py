@@ -25,29 +25,22 @@ def create_tickets_extractor(
     start = datetime.strftime(timestamp - timedelta(days=1), "%Y-%m-%dT%H:%M:%S.%MZ")
     end = datetime.strftime(timestamp, "%Y-%m-%dT%H:%M:%S.%MZ")
     token = get_secret(constants.MOVIDESK_SECRET_PATH.value)["token"]
-    params = [
-        {
-            "token": token,
-            "$select": "id,protocol,createdDate,lastUpdate",
-            "$filter": f"serviceFirstLevel eq '{service} - Recurso Viagens Subsídio'and (lastUpdate ge {start} and lastUpdate lt {end} or createdDate ge {start} and createdDate lt {end})",  # noqa
-            "$expand": "customFieldValues,customFieldValues($expand=items)",
-            "$orderby": "createdDate asc",
-        }
-        for service in smtr_constants.SUBSIDIO_SPPO_RECURSO_TABLE_CAPTURE_PARAMS.value
-    ]
+    service = "recursos_sppo_reprocessamento"
+    params = {
+        "token": token,
+        "$select": "id,protocol,createdDate,lastUpdate",
+        "$filter": f"serviceFirstLevel eq '{service} - Recurso Viagens Subsídio'and (lastUpdate ge {start} and lastUpdate lt {end} or createdDate ge {start} and createdDate lt {end})",  # noqa
+        "$expand": "customFieldValues,customFieldValues($expand=items)",
+        "$orderby": "createdDate asc",
+    }
 
-    partial_list = [
-        partial(
-            get_raw_api_top_skip,
-            url=constants.TICKETS_BASE_URL.value,
-            headers=None,
-            params=param,
-            top_param_name="$top",
-            skip_param_name="$skip",
-            page_size=1000,
-            max_page=10,
-        )
-        for param in params
-    ]
-
-    return partial_list
+    return partial(
+        get_raw_api_top_skip,
+        url=constants.TICKETS_BASE_URL.value,
+        headers=None,
+        params=params,
+        top_param_name="$top",
+        skip_param_name="$skip",
+        page_size=1000,
+        max_page=10,
+    )
