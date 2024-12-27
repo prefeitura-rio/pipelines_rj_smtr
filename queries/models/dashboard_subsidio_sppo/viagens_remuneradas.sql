@@ -26,6 +26,7 @@ WITH
     faixa_horaria_fim,
     partidas_total_planejada,
     distancia_total_planejada AS km_planejada,
+    IF(sentido = "C", TRUE, FALSE) AS indicador_circular
   FROM
     {{ ref("viagem_planejada") }}
     -- rj-smtr.projeto_subsidio_sppo.viagem_planejada
@@ -75,7 +76,8 @@ WITH
     p.faixa_horaria_fim,
     v.viagens_planejadas,
     p.km_planejada,
-    IF(p.data >= DATE("{{ var("DATA_SUBSIDIO_V9_INICIO") }}"), p.partidas_total_planejada, v.partidas_ida + v.partidas_volta) AS viagens_planejadas_ida_volta
+    IF(p.data >= DATE("{{ var("DATA_SUBSIDIO_V9_INICIO") }}"), p.partidas_total_planejada, v.partidas_ida + v.partidas_volta) AS viagens_planejadas_ida_volta,
+    p.indicador_circular
   FROM
     planejado AS p
   LEFT JOIN
@@ -160,8 +162,39 @@ WITH
   )
 -- 6. Flag de viagens que serão consideradas ou não para fins de remuneração (apuração de valor de subsídio) - RESOLUÇÃO SMTR Nº 3645/2023
 SELECT
-  v.* EXCEPT(rn, datetime_partida, viagens_planejadas, viagens_planejadas_ida_volta, km_planejada, tipo_dia, consorcio, faixa_horaria_inicio, faixa_horaria_fim),
+  v.* EXCEPT(rn, datetime_partida, viagens_planejadas, viagens_planejadas_ida_volta, km_planejada, tipo_dia, consorcio, faixa_horaria_inicio, faixa_horaria_fim, indicador_circular),
   CASE
+    WHEN v.data >= DATE("{{ var("DATA_SUBSIDIO_V10_INICIO") }}")
+        AND v.tipo_dia = "Dia Útil"
+        AND viagens_planejadas < 10
+        AND viagens_planejadas > 5
+        AND pof > 100
+        AND rn > (viagens_planejadas_ida_volta + IF(indicador_circular, 1, 2))
+        THEN FALSE
+    WHEN v.data >= DATE("{{ var("DATA_SUBSIDIO_V10_INICIO") }}")
+        AND v.tipo_dia = "Dia Útil"
+        AND viagens_planejadas >= 10
+        AND pof > 110
+        AND rn > viagens_planejadas_ida_volta*1.1
+        THEN FALSE
+    WHEN v.data >= DATE("{{ var("DATA_SUBSIDIO_V10_INICIO") }}")
+        AND v.tipo_dia = "Dia Útil"
+        AND viagens_planejadas <= 5
+        AND pof > 200
+        AND rn > viagens_planejadas_ida_volta*2
+        THEN FALSE
+    WHEN v.data >= DATE("{{ var("DATA_SUBSIDIO_V10_INICIO") }}")
+        AND v.tipo_dia != "Dia Útil"
+        AND viagens_planejadas < 5
+        AND pof > 100
+        AND rn > (viagens_planejadas_ida_volta + IF(indicador_circular, 1, 2))
+        THEN FALSE
+    WHEN v.data >= DATE("{{ var("DATA_SUBSIDIO_V10_INICIO") }}")
+        AND v.tipo_dia != "Dia Útil"
+        AND viagens_planejadas >= 5
+        AND pof > 120
+        AND rn > viagens_planejadas_ida_volta*1.2
+        THEN FALSE
     WHEN v.data >= DATE("{{ var("DATA_SUBSIDIO_V3A_INICIO") }}")
         AND v.tipo_dia = "Dia Útil"
         AND viagens_planejadas > 10
@@ -184,7 +217,9 @@ SELECT
       THEN NULL
     ELSE
         TRUE
-    END AS indicador_viagem_dentro_limite
+    END AS indicador_viagem_dentro_limite,
+    '{{ var("version") }}' AS versao,
+    CURRENT_DATETIME("America/Sao_Paulo") as datetime_ultima_atualizacao
 FROM (
 SELECT
   v.*,
