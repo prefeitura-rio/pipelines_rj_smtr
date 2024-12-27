@@ -37,11 +37,8 @@ vars:
   sppo_registros_staging: "rj-smtr-staging.br_rj_riodejaneiro_onibus_gps_staging.registros"
   sppo_realocacao_staging: "rj-smtr-staging.br_rj_riodejaneiro_onibus_gps_staging.realocacao"
   data_inicio_realocacao: "2022-11-15"
-<<<<<<< HEAD
   stpl_registros_staging: "rj-smtr-staging.br_rj_riodejaneiro_stpl_gps_staging.registros"
-=======
   fifteen_minutes: ""
->>>>>>> main
 
   # Parametros de intersecção do ônibus com rota
   ## Tamanho do buffer da rota
