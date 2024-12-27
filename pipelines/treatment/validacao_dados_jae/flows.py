@@ -23,7 +23,6 @@ VALIDACAO_DADOS_JAE_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="validacao_dados_jae - materializacao",
     selector=constants.VALIDACAO_DADOS_JAE_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
-    generate_schedule=False,
     wait=[
         {
             "redis_key": f"{integracao_materializacao_params['dataset_id']}\

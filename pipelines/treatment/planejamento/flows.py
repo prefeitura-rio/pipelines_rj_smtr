@@ -19,4 +19,5 @@ MATRIZ_INTEGRACAO_SMTR_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="matriz_integracao_smtr - materializacao",
     selector=constants.MATRIZ_INTEGRACAO_SMTR_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    generate_schedule=False,
 )
