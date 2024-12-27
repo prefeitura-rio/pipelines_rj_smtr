@@ -15,11 +15,32 @@ with
             date(data_versao_matriz) as data_versao_matriz,
             id_tipo_integracao,
             primeira_perna,
-            porcentagem_primeira_perna,
+            cast(
+                if(
+                    trim(porcentagem_primeira_perna) = '',
+                    null,
+                    porcentagem_primeira_perna
+                ) as numeric
+            )
+            / 100 as porcentagem_primeira_perna,
             segunda_perna,
-            porcentagem_segunda_perna,
+            cast(
+                if(
+                    trim(porcentagem_segunda_perna) = '',
+                    null,
+                    porcentagem_segunda_perna
+                ) as numeric
+            )
+            / 100 as porcentagem_segunda_perna,
             terceira_perna,
-            porcentagem_terceira_perna,
+            cast(
+                if(
+                    trim(porcentagem_terceira_perna) = '',
+                    null,
+                    porcentagem_terceira_perna
+                ) as numeric
+            )
+            / 100 as porcentagem_terceira_perna,
             cast(tempo_integracao_minutos as float64) as tempo_integracao_minutos
         from {{ source("source_smtr", "matriz_integracao") }}
     ),
@@ -41,18 +62,22 @@ with
             mi.id_tipo_integracao as id_matriz_integracao,
             p.sequencia_integracao,
             if(trim(p.modo) = '', null, p.modo) as modo,
-            cast(
-                if(
-                    trim(p.porcentagem_rateio) = '', null, p.porcentagem_rateio
-                ) as numeric
-            ) as porcentagem_rateio,
-            concat(
-                primeira_perna,
-                ', ',
-                segunda_perna,
-                if(terceira_perna is not null and trim(terceira_perna) != '', ', ', ''),
-                terceira_perna
-            ) as sequencia_completa_integracao,
+            p.percentual_rateio,
+            case
+                when mi.terceira_perna is not null and trim(mi.terceira_perna) != ''
+                then [mi.primeira_perna, mi.segunda_perna, mi.terceira_perna]
+                else [mi.primeira_perna, mi.segunda_perna]
+            end as sequencia_completa_modo,
+            case
+                when mi.porcentagem_terceira_perna is not null
+                then
+                    [
+                        mi.porcentagem_primeira_perna,
+                        mi.porcentagem_segunda_perna,
+                        mi.porcentagem_terceira_perna
+                    ]
+                else [mi.porcentagem_primeira_perna, mi.porcentagem_segunda_perna]
+            end as sequencia_completa_rateio,
             mi.tempo_integracao_minutos
         from
             matriz_staging mi,
@@ -60,17 +85,17 @@ with
                 [
                     struct(
                         primeira_perna as modo,
-                        porcentagem_primeira_perna as porcentagem_rateio,
+                        porcentagem_primeira_perna as percentual_rateio,
                         1 as sequencia_integracao
                     ),
                     struct(
                         segunda_perna as modo,
-                        porcentagem_segunda_perna as porcentagem_rateio,
+                        porcentagem_segunda_perna as percentual_rateio,
                         2 as sequencia_integracao
                     ),
                     struct(
                         terceira_perna as modo,
-                        porcentagem_terceira_perna as porcentagem_rateio,
+                        porcentagem_terceira_perna as percentual_rateio,
                         3 as sequencia_integracao
                     )
                 ]

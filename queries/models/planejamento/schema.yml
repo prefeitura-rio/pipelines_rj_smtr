@@ -269,3 +269,45 @@ models:
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
         quote: true
+  - name: matriz_integracao
+    description: "Matriz de repartição tarifária de integrações válidas no sistema de transporte municipal"
+    columns:
+      - name: id_matriz_integracao
+        description: "Identificador único da integração"
+        data_type: string
+      - name: sequencia_integracao
+        description: "Sequencia da transação dentro da integração"
+        data_type: int64
+      - name: modo
+        description: "Tipo de transporte (Ônibus, Van, BRT)"
+        data_type: string
+      - name: percentual_rateio
+        description: "Percentual de rateio do valor total para a operadora"
+        data_type: numeric
+      - name: data_inicio_validade
+        description: "Data de início da validade da matriz"
+      - name: data_fim_validade
+        description: "Data de fim da validade da matriz"
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+      - name: data_inicio_matriz
+        description: "{{ doc('data_inicio_matriz') }}"
+        data_type: date
+        quote: true
+      - name: data_fim_matriz
+        description: Data de fim da versão da matriz de integração
+        data_type: date
+        quote: true
+      - name: sequencia_completa_modo
+        description: Lista com o conjunto de modos da integração completa
+        data_type: string
+        quote: true
+      - name: sequencia_completa_rateio
+        description: Lista com o conjunto de valores de rateio da integração completa
+        data_type: numeric
+        quote: true
+      - name: tempo_integracao_minutos
+        description: Tempo máximo entre a primeira e a última perna para a integração ser realizada
+        data_type: float64
+        quote: true

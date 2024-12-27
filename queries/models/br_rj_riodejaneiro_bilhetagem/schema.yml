@@ -145,23 +145,6 @@ models:
         description: "Observação adicional"
       - name: versao
         description: "Código de controle de versão do dado (SHA Github)"
-  - name: matriz_integracao
-    description: "Matriz de repartição tarifária de integrações válidas no sistema de transporte municipal"
-    columns:
-      - name: id_matriz_integracao
-        description: "Identificador único da integração"
-      - name: sequencia_integracao
-        description: "Sequencia da transação dentro da integração"
-      - name: modo
-        description: "Tipo de transporte (Ônibus, Van, BRT)"
-      - name: percentual_rateio
-        description: "Percentual de rateio do valor total para a operadora"
-      - name: data_inicio_validade
-        description: "Data de início da validade da matriz"
-      - name: data_fim_validade
-        description: "Data de fim da validade da matriz"
-      - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
   - name: gps_validador
     description: "Tabela de posições de GPS de todos os validadores da Jaé, incluindo estado do equipamento (Aberto/Fechado), serviço, sentido e veículo associado e temperatura do veículo."
     columns:
