@@ -3,8 +3,8 @@
 with
     planejada as (
         select distinct data, consorcio, servico, vista
-        from -- {{ ref("viagem_planejada") }}
-        `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
+        from {{ ref("viagem_planejada") }}
+        -- `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
         where
             data >= date("{{ var("DATA_SUBSIDIO_V9_INICIO") }}")
             and (id_tipo_trajeto = 0 or id_tipo_trajeto is null)
@@ -42,16 +42,16 @@ with
             km_planejada_dia as km_planejada,
             valor_a_pagar as valor_subsidio_pago,
             valor_penalidade
-        from -- {{ ref("subsidio_sumario_servico_dia_pagamento") }} as sdp
-        `rj-smtr.dashboard_subsidio_sppo_v2.sumario_servico_dia_pagamento`
+        from {{ ref("subsidio_sumario_servico_dia_pagamento") }} as sdp
+        --`rj-smtr.dashboard_subsidio_sppo_v2.sumario_servico_dia_pagamento`
         left join planejada as p using (data, servico, consorcio)
         where
             data >= date("{{ var("DATA_SUBSIDIO_V9_INICIO") }}")
-            {# {% if is_incremental() %} #}
+            {% if is_incremental() %}
                 and data between date("{{ var("start_date") }}") and date_add(
                     date("{{ var("end_date") }}"), interval 1 day
                 )
-            {# {% endif %} #}
+            {% endif %}
     )
 select
     data,
