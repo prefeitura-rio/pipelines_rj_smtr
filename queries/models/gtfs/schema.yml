@@ -30,6 +30,11 @@ models:
     columns:
       - name: service_id
         description: "Identifica um conjunto de datas em que o serviço está disponível para uma ou mais rotas."
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              name: dbt_expectations.expect_column_values_to_match_regex__service_id__calendar_gtfs
+              regex: "^([USD]_|EXCEP)"
+              where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
       - name: monday
         description: "Indica se o serviço funciona todas as segundas-feiras no intervalo de datas especificado pelos campos start_date e end_date"
       - name: tuesday
@@ -62,7 +67,7 @@ models:
     columns:
       - name: service_id
         description: "Identifica um conjunto de datas quando ocorre uma exceção de serviço para uma ou mais rotas"
-      - name: date
+      - name: DATE
         description: "Data em que ocorre a exceção de serviço."
       - name: exception_type
         description: "Indica se o serviço está disponível na data especificada no campo de data."
@@ -369,13 +374,47 @@ models:
 
   - name: ordem_servico_diaria
     description: "Dados diários das linhas presentes no município."
+    columns:
+      - name: DATA
+        description: "Data da ordem de serviço."
+      - name: tipo_dia
+        description: "{{ doc('tipo_dia') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: vista
+        description: "{{ doc('vista') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+      - name: viagens_planejadas
+        description: "{{ doc('viagens_planejadas') }}"
+      - name: inicio_periodo
+        description: "{{ doc('inicio_periodo') }}"
+      - name: fim_periodo
+        description: "{{ doc('fim_periodo') }}"
 
   - name: ordem_servico_viagens_planejadas
     description: "Viagens planejadas das linhas presentes no município."
+    columns:
+      - name: data
+        description: "Data da ordem de serviço."
+      - name: tipo_dia
+        description: "{{ doc('tipo_dia') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: viagens_planejadas
+        description: "{{ doc('viagens_planejadas') }}"
 
   - name: servicos_sentido
     description: "Sentido dos serviços (I - Ida, V - Volta, C - Circular)"
-
+    columns:
+      - name: feed_start_date
+        description: "{{ doc('feed_start_date') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
   - name: ordem_servico_gtfs
     description: "Dados das linhas presentes no município."
     columns:
@@ -416,6 +455,17 @@ models:
 
   - name: ordem_servico_trajeto_alternativo_gtfs
     description: "Anexo da Ordem de Serviço (OS) com trajetos alternativos de serviços"
+    tests:
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          name: dbt_expectations.expect_table_aggregation_to_equal_other_table__ordem_servico_trajeto_alternativo_gtfs
+          expression: count(distinct tipo_os)
+          compare_model: ref("ordem_servico_gtfs")
+          compare_expression: count(distinct tipo_os)
+          group_by: [feed_start_date, tipo_os]
+          compare_group_by: [feed_start_date, tipo_os]
+          row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+          compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+          where: "1=1"
     columns:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
@@ -449,6 +499,36 @@ models:
         description: "Tipo de Ordem de Serviço (ex: 'Regular', 'Extraordinária - Verão')"
   - name: ordem_servico_trips_shapes_gtfs
     description: "Junção da Ordem de Serviço (OS) com trips e shapes dos serviços"
+    tests:
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          name: dbt_expectations.expect_table_aggregation_to_equal_other_table__ordem_servico_trips_shapes_gtfs
+          expression: count(distinct feed_start_date)
+          compare_model: ref("ordem_servico_faixa_horaria")
+          compare_expression: count(distinct feed_start_date)
+          group_by: [feed_start_date, tipo_os, tipo_dia, servico, faixa_horaria_inicio]
+          compare_group_by: [feed_start_date, tipo_os, tipo_dia, servico, faixa_horaria_inicio]
+          row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+          compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}' AND (quilometragem != 0 AND (partidas != 0 OR partidas IS NULL))"
+          where: "1=1"
+      - dbt_utils.unique_combination_of_columns:
+          name: dbt_utils.unique_combination_of_columns__ordem_servico_trips_shapes_gtfs
+          combination_of_columns:
+            - feed_start_date
+            - tipo_dia
+            - tipo_os
+            - servico
+            - sentido
+            - faixa_horaria_inicio
+            - shape_id
+          where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          name: dbt_expectations.expect_table_row_count_to_be_between__ordem_servico_trips_shapes_gtfs
+          min_value: 1
+          max_value: 2
+          group_by: [feed_start_date, tipo_dia, tipo_os, servico, faixa_horaria_inicio, shape_id]
+          row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+          strictly: false
+          where: "1=1"
     columns:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
@@ -466,6 +546,8 @@ models:
         description: "Nome do consórcio responsável pelo serviço."
       - name: sentido
         description: "Sentido planejado - categorias: I (ida), V (volta), C (circular)"
+      - name: partidas_total_planejada
+        description: "{{ doc('partidas') }}"
       - name: distancia_planejada
         description: "Distância planejada de uma viagem do serviço (km)."
       - name: distancia_total_planejada
@@ -474,6 +556,10 @@ models:
         description: "Horário inicial de funcionamento do serviço."
       - name: fim_periodo
         description: "Horário da final de funcionamento do serviço."
+      - name: faixa_horaria_inicio
+        description: "{{ doc('faixa_horaria_inicio') }}"
+      - name: faixa_horaria_fim
+        description: "{{ doc('faixa_horaria_fim') }}"
       - name: trip_id_planejado
         description: "Código identificador de trip de referência no GTFS"
       - name: trip_id

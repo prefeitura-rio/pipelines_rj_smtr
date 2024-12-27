@@ -80,7 +80,7 @@ WITH
     IFNULL(v.viagens, 0) AS viagens,
     IFNULL(v.km_apurada, 0) AS km_apurada,
   FROM
-    planejado p
+    planejado AS p
   LEFT JOIN
     servico_km_tipo_atualizado v
   ON

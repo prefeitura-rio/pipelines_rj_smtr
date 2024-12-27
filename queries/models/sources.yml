@@ -28,6 +28,9 @@ sources:
       - name: ordem_pagamento_consorcio_operadora
       - name: ordem_pagamento_consorcio
       - name: linha_consorcio
+      - name: linha_consorcio_operadora_transporte
+      - name: endereco
+
 
   - name: br_rj_riodejaneiro_gtfs_staging
     database: rj-smtr-staging
@@ -47,6 +50,7 @@ sources:
       - name: trips
       - name: ordem_servico
       - name: ordem_servico_trajeto_alternativo
+      - name: ordem_servico_faixa_horaria
 
   - name: br_rj_riodejaneiro_stu_staging
     database: rj-smtr-staging
@@ -82,7 +86,8 @@ sources:
 
     tables:
       - name: rho_registros_sppo
-      - name: rho5_registros_stpl
+      - name: rho_registros_stpl
+      - name: rdo_registros_stpl
 
   - name: br_rj_riodejaneiro_rdo
     database: rj-smtr
@@ -150,6 +155,37 @@ sources:
       - name: h3_res9
 
   - name: br_rj_riodejaneiro_viagem_zirix_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: viagem_informada
+
+  - name: infracao_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: autuacoes_citran
+      - name: receita_autuacao
+
+  - name: dados_mestres
+    database: datario
+
+    tables:
+      - name: logradouro
+
+  - name: source_rioonibus
+    database: rj-smtr-staging
+
+    tables:
+      - name: viagem_informada
+
+  - name: source_jae
+    database: rj-smtr-staging
+
+    tables:
+      - name: transacao_ordem
+
+  - name: source_sonda
     database: rj-smtr-staging
 
     tables:

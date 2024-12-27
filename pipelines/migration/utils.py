@@ -37,6 +37,7 @@ from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
 
 from pipelines.constants import constants
+from pipelines.utils.discord import send_discord_message
 from pipelines.utils.implicit_ftp import ImplicitFtpTls
 from pipelines.utils.secret import get_secret
 
@@ -52,19 +53,6 @@ def set_default_parameters(flow: prefect.Flow, default_parameters: dict) -> pref
         if parameter.name in default_parameters:
             parameter.default = default_parameters[parameter.name]
     return flow
-
-
-def send_discord_message(
-    message: str,
-    webhook_url: str,
-) -> None:
-    """
-    Sends a message to a Discord channel.
-    """
-    requests.post(
-        webhook_url,
-        data={"content": message},
-    )
 
 
 def log_critical(message: str, secret_path: str = constants.CRITICAL_SECRET_PATH.value):
@@ -714,6 +702,8 @@ def get_upload_storage_blob(
         .list_blobs(prefix=f"upload/{dataset_id}/{filename}.")
     )
 
+    log(f"blob_list: {blob_list}")
+
     return blob_list[0]
 
 
@@ -906,7 +896,12 @@ def get_raw_data_db(
 
 
 def save_treated_local_func(
-    filepath: str, data: pd.DataFrame, error: str, mode: str = "staging"
+    filepath: str,
+    data: pd.DataFrame,
+    error: str,
+    mode: str = "staging",
+    log_param: bool = True,
+    args: dict = None,
 ) -> str:
     """
     Save treated file to CSV.
@@ -916,15 +911,20 @@ def save_treated_local_func(
         data (pd.DataFrame): Dataframe to save
         error (str): Error catched during execution
         mode (str, optional): Folder to save locally, later folder which to upload to GCS.
+        log_param (bool, optional): Whether to log the path of the saved file. Defaults to True.
+        args (dict, optional): arguments to pass to pandas.to_csv. Defaults to None.
 
     Returns:
         str: Path to the saved file
     """
+    if args is None:
+        args = {}
     _filepath = filepath.format(mode=mode, filetype="csv")
     Path(_filepath).parent.mkdir(parents=True, exist_ok=True)
     if error is None:
-        data.to_csv(_filepath, index=False)
-        log(f"Treated data saved to: {_filepath}")
+        data.to_csv(_filepath, index=False, **args)
+        if log_param:
+            log(f"Treated data saved to: {_filepath}")
     return _filepath
 
 

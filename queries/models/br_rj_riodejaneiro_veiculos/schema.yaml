@@ -3,7 +3,193 @@ version: 2
 models:
   - name: gps_brt
     description: "Tabela com os dados tratados de registros de GPS do BRT, incluindo velocidade estimada, estado de movimento, parada em terminal ou garagem e interseção com o traçado da linha informada."
+    columns:
+      - name: modo
+        description: "BRT – nesse arquivo só consta esse modo"
+      - name: timestamp_gps
+        description: "{{ doc('timestamp_gps') }}"
+      - name: data
+        description: "{{ doc('data_gps') }}"
+      - name: hora
+        description: "{{ doc('hora_gps') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: latitude
+        description: "{{ doc('latitude_gps') }}"
+      - name: longitude
+        description: "{{ doc('longitude_gps') }}"
+      - name: flag_em_operacao
+        description: "{{ doc('flag_em_operacao') }}"
+      - name: flag_em_movimento
+        description: "{{ doc('flag_em_movimento') }}"
+      - name: tipo_parada
+        description: "{{ doc('tipo_parada') }}"
+      - name: flag_linha_existe_sigmob
+        description: "{{ doc('flag_linha_existe_sigmob') }}"
+      - name: flag_trajeto_correto
+        description: "{{ doc('flag_trajeto_correto') }}"
+      - name: flag_trajeto_correto_hist
+        description: "{{ doc('flag_trajeto_correto_hist') }}"
+      - name: status
+        description: "{{ doc('status_veiculo_gps') }}"
+      - name: velocidade_instantanea
+        description: "{{ doc('velocidade_instantanea') }}"
+      - name: velocidade_estimada_10_min
+        description: "{{ doc('velocidade_estimada_10_min') }}"
+      - name: distancia
+        description: "{{ doc('distancia_gps') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
   - name: gps_sppo
     description: "Tabela com os dados tratados de registros de GPS do SPPO, incluindo velocidade estimada, estado de movimento, parada em terminal ou garagem e interseção com o traçado da linha informada."
+    tests:
+      - check_gps_treatment:
+          name: check_gps_treatment__gps_sppo
+      - dbt_utils.unique_combination_of_columns:
+          name: dbt_utils.unique_combination_of_columns__gps_sppo
+          combination_of_columns:
+            - timestamp_gps
+            - id_veiculo
+            - latitude
+            - longitude
+    columns:
+      - name: modo
+        description: "SPPO – nesse arquivo só consta esse modo"
+      - name: timestamp_gps
+        description: "{{ doc('timestamp_gps') }}"
+        tests:
+          - not_null:
+              name: not_null__timestamp_gps__gps_sppo
+      - name: data
+        description: "{{ doc('data_gps') }}"
+      - name: hora
+        description: "{{ doc('hora_gps') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+        tests:
+          - not_null:
+              name: not_null__id_veiculo__gps_sppo
+      - name: servico
+        description: "{{ doc('servico') }}"
+        tests:
+          - not_null:
+              name: not_null__servico__gps_sppo
+      - name: latitude
+        description: "{{ doc('latitude_gps') }}"
+        tests:
+          - not_null:
+              name: not_null__latitude__gps_sppo
+      - name: longitude
+        description: "{{ doc('longitude_gps') }}"
+        tests:
+          - not_null:
+              name: not_null__longitude__gps_sppo
+      - name: flag_em_operacao
+        description: "{{ doc('flag_em_operacao') }}"
+      - name: flag_em_movimento
+        description: "{{ doc('flag_em_movimento') }}"
+      - name: tipo_parada
+        description: "{{ doc('tipo_parada') }}"
+      - name: flag_linha_existe_sigmob
+        description: "{{ doc('flag_linha_existe_sigmob') }}"
+      - name: flag_trajeto_correto
+        description: "{{ doc('flag_trajeto_correto') }}"
+      - name: flag_trajeto_correto_hist
+        description: "{{ doc('flag_trajeto_correto_hist') }}"
+      - name: status
+        description: "{{ doc('status_veiculo_gps') }}"
+        tests:
+          - not_null:
+              name: not_null__status__gps_sppo
+      - name: velocidade_instantanea
+        description: "{{ doc('velocidade_instantanea') }}"
+      - name: velocidade_estimada_10_min
+        description: "{{ doc('velocidade_estimada_10_min') }}"
+      - name: distancia
+        description: "{{ doc('distancia_gps') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
   - name: gps_brt_15_minutos
     description: "Tabela com os dados tratados de registros de GPS do BRT, incluindo velocidade estimada, estado de movimento, parada em terminal ou garagem e interseção com o traçado da linha informada."
+    columns:
+      - name: modo
+        description: "BRT – nesse arquivo só consta esse modo"
+      - name: timestamp_gps
+        description: "{{ doc('timestamp_gps') }}"
+      - name: data
+        description: "{{ doc('data_gps') }}"
+      - name: hora
+        description: "{{ doc('hora_gps') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: latitude
+        description: "{{ doc('latitude_gps') }}"
+      - name: longitude
+        description: "{{ doc('longitude_gps') }}"
+      - name: flag_em_operacao
+        description: "{{ doc('flag_em_operacao') }}"
+      - name: flag_em_movimento
+        description: "{{ doc('flag_em_movimento') }}"
+      - name: tipo_parada
+        description: "{{ doc('tipo_parada') }}"
+      - name: flag_linha_existe_sigmob
+        description: "{{ doc('flag_linha_existe_sigmob') }}"
+      - name: flag_trajeto_correto
+        description: "{{ doc('flag_trajeto_correto') }}"
+      - name: flag_trajeto_correto_hist
+        description: "{{ doc('flag_trajeto_correto_hist') }}"
+      - name: status
+        description: "{{ doc('status_veiculo_gps') }}"
+      - name: velocidade_instantanea
+        description: "{{ doc('velocidade_instantanea') }}"
+      - name: velocidade_estimada_10_min
+        description: "{{ doc('velocidade_estimada_10_min') }}"
+      - name: distancia
+        description: "{{ doc('distancia_gps') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+  - name: gps_sppo_15_minutos
+    description: "Tabela com os dados tratados de registros de GPS do SPPO da última hora e 15 minutos, incluindo velocidade estimada, estado de movimento, parada em terminal ou garagem e interseção com o traçado da linha informada."
+    columns:
+      - name: modo
+        description: "SPPO – nesse arquivo só consta esse modo"
+      - name: timestamp_gps
+        description: "{{ doc('timestamp_gps') }}"
+      - name: data
+        description: "{{ doc('data_gps') }}"
+      - name: hora
+        description: "{{ doc('hora_gps') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: latitude
+        description: "{{ doc('latitude_gps') }}"
+      - name: longitude
+        description: "{{ doc('longitude_gps') }}"
+      - name: flag_em_operacao
+        description: "{{ doc('flag_em_operacao') }}"
+      - name: flag_em_movimento
+        description: "{{ doc('flag_em_movimento') }}"
+      - name: tipo_parada
+        description: "{{ doc('tipo_parada') }}"
+      - name: flag_linha_existe_sigmob
+        description: "{{ doc('flag_linha_existe_sigmob') }}"
+      - name: flag_trajeto_correto
+        description: "{{ doc('flag_trajeto_correto') }}"
+      - name: flag_trajeto_correto_hist
+        description: "{{ doc('flag_trajeto_correto_hist') }}"
+      - name: status
+        description: "{{ doc('status_veiculo_gps') }}"
+      - name: velocidade_instantanea
+        description: "{{ doc('velocidade_instantanea') }}"
+      - name: velocidade_estimada_10_min
+        description: "{{ doc('velocidade_estimada_10_min') }}"
+      - name: distancia
+        description: "{{ doc('distancia_gps') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"

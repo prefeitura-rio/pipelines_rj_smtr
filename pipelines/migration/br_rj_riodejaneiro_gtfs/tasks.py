@@ -2,6 +2,7 @@
 """
 Tasks for gtfs
 """
+import io
 import os
 import zipfile
 from datetime import datetime
@@ -21,9 +22,10 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.utils import (
     download_xlsx,
     filter_valid_rows,
     processa_ordem_servico,
+    processa_ordem_servico_faixa_horaria,
     processa_ordem_servico_trajeto_alternativo,
 )
-from pipelines.migration.utils import save_raw_local_func
+from pipelines.migration.utils import get_upload_storage_blob, save_raw_local_func
 
 
 @task
@@ -152,13 +154,22 @@ def get_os_info(last_captured_os: str = None, data_versao_gtfs: str = None) -> d
 
 
 @task(nout=2)
-def get_raw_drive_files(os_control, local_filepath: list, regular_sheet_index: int = None):
+def get_raw_gtfs_files(
+    os_control,
+    local_filepath: list,
+    regular_sheet_index: int = None,
+    upload_from_gcs: bool = False,
+    data_versao_gtfs: str = None,
+):
     """
-    Downloads raw files from Google Drive and processes them.
+    Downloads raw files and processes them.
 
     Args:
         os_control (dict): A dictionary containing information about the OS (Ordem de Serviço).
         local_filepath (list): A list of local file paths where the downloaded files will be saved.
+        regular_sheet_index (int, optional): The index of the regular sheet. Defaults to None.
+        upload_from_gcs (bool, optional):
+            A boolean indicating whether the files should be uploaded from GCS. Defaults to False.
 
     Returns:
         raw_filepaths (list): A list of file paths where the downloaded raw files are saved.
@@ -169,22 +180,42 @@ def get_raw_drive_files(os_control, local_filepath: list, regular_sheet_index: i
 
     log(f"Baixando arquivos: {os_control}")
 
-    # Autenticar usando o arquivo de credenciais
-    credentials = service_account.Credentials.from_service_account_file(
-        filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
-        scopes=["https://www.googleapis.com/auth/drive.readonly"],
-    )
+    if upload_from_gcs:
+        log("Baixando arquivos através do GCS")
 
-    # Criar o serviço da API Google Drive e Google Sheets
-    drive_service = build("drive", "v3", credentials=credentials)
+        # Baixa planilha de OS
+        file_bytes_os = io.BytesIO(
+            get_upload_storage_blob(
+                dataset_id=constants.GTFS_DATASET_ID.value, filename="os"
+            ).download_as_bytes()
+        )
 
-    # Baixa planilha de OS
-    file_link = os_control["Link da OS"]
-    file_bytes_os = download_xlsx(file_link=file_link, drive_service=drive_service)
+        # Baixa GTFS
+        file_bytes_gtfs = io.BytesIO(
+            get_upload_storage_blob(
+                dataset_id=constants.GTFS_DATASET_ID.value, filename="gtfs"
+            ).download_as_bytes()
+        )
 
-    # Baixa GTFS
-    file_link = os_control["Link do GTFS"]
-    file_bytes_gtfs = download_file(file_link=file_link, drive_service=drive_service)
+    else:
+        log("Baixando arquivos através do Google Drive")
+
+        # Autenticar usando o arquivo de credenciais
+        credentials = service_account.Credentials.from_service_account_file(
+            filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
+            scopes=["https://www.googleapis.com/auth/drive.readonly"],
+        )
+
+        # Criar o serviço da API Google Drive e Google Sheets
+        drive_service = build("drive", "v3", credentials=credentials)
+
+        # Baixa planilha de OS
+        file_link = os_control["Link da OS"]
+        file_bytes_os = download_xlsx(file_link=file_link, drive_service=drive_service)
+
+        # Baixa GTFS
+        file_link = os_control["Link do GTFS"]
+        file_bytes_gtfs = download_file(file_link=file_link, drive_service=drive_service)
 
     # Salva os nomes das planilhas
     sheetnames = xl.load_workbook(file_bytes_os).sheetnames
@@ -207,6 +238,14 @@ def get_raw_drive_files(os_control, local_filepath: list, regular_sheet_index: i
                     file_bytes=file_bytes_os,
                     local_filepath=local_filepath,
                     raw_filepaths=raw_filepaths,
+                )
+            elif filename == "ordem_servico_faixa_horaria":
+                processa_ordem_servico_faixa_horaria(
+                    sheetnames=sheetnames,
+                    file_bytes=file_bytes_os,
+                    local_filepath=local_filepath,
+                    raw_filepaths=raw_filepaths,
+                    data_versao_gtfs=data_versao_gtfs,
                 )
 
             else:

@@ -1,5 +1,49 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [7.0.6] - 2024-10-30
+
+### Adicionado
+
+- Adiciona testes do subsidio para `sumario_servico_dia`, `sumario_servico_dia_historico`, `sumario_servico_dia_tipo`, `sumario_servico_dia_tipo_sem_glosa` e `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/256)
+
+## [7.0.6] - 2024-11-05
+
+### Alterado
+
+- Altera regras do modelo `viagens_remuneradas` conforme Resolução SMTR N° 3777/2024 e MTR-MEM-2024/02465 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/300)
+
+## [7.0.5] - 2024-10-16
+
+### Corrigido
+
+- Corrigido join em `sumario_servico_dia_historico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/271)
+
+## [7.0.4] - 2024-09-27
+
+### Corrigido
+
+- Remove agrupamento de viagens planejadas em `sumario_servico_dia` e `sumario_servico_dia_tipo` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/250)
+
+## [7.0.3] - 2024-09-20
+
+### Alterado
+
+- Remove kms de veículos "Não licenciado" e "Não vistoriado" do cálculo do pof na CTE `servico_faixa_km_apuracao` do modelo `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/239)
+
+## [7.0.2] - 2024-08-29
+
+### Alterado
+
+- Alterado os modelos `sumario_dia`, `sumario_servico_dia` e `sumario_servico_dia_tipo` em razão de alterações no modelo `viagem_planejada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
+
+- Alterado modelo `viagens_remuneradas` em razão da apuração por faixa horária (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
+
+## [7.0.1] - 2024-08-19
+
+## Adicionado
+
+- Adicionada coluna `datetime_ultima_atualizacao` na tabela `sumario_servico_dia_historico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/147)
+
 ## [7.0.0] - 2024-07-31
 
 ### Alterado

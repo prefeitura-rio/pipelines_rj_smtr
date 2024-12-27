@@ -1,5 +1,20 @@
 # Changelog - gtfs
 
+## [1.2.0] - 2024-12-04
+
+### Alterado
+
+- Inserido ajuste para o tipo_os `Enem` com feed_start_date `2024-09-29` e `2024-11-06` para considerar o planejamento do GTFS de sábado no domingo. Afetado o modelo `ordem_servico_trips_shapes_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/354)
+
+## [1.1.9] - 2024-09-10
+
+### Alterado
+
+- Altera modelo `ordem_servico_trips_shapes_gtfs` em razão da apuração por faixa horária (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
+
+### Corrigido
+- Corrigido `schema.yml` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/202)
+
 ## [1.1.8] - 2024-08-02
 
 ### Alterado

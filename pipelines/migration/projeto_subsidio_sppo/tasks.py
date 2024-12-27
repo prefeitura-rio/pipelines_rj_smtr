@@ -6,13 +6,12 @@ Tasks for projeto_subsidio_sppo
 from datetime import datetime, timedelta
 
 from prefect import task
+from prefect.tasks.core.operators import GreaterThanOrEqual
 
 from pipelines.constants import constants as smtr_constants
 from pipelines.migration.projeto_subsidio_sppo.constants import constants
-from pipelines.migration.tasks import (  # perform_check,
-    format_send_discord_message,
-    perform_checks_for_table,
-)
+from pipelines.migration.tasks import perform_checks_for_table  # perform_check,
+from pipelines.utils.discord import format_send_discord_message
 from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import log
 
@@ -60,9 +59,20 @@ def subsidio_data_quality_check(
         ).strftime("%Y-%m-%d %H:%M:%S"),
     }
 
+    gte = GreaterThanOrEqual()
+    gte_result = gte.run(params["start_date"], constants.DATA_SUBSIDIO_V9_INICIO.value)
+
     if mode == "pos":
         request_params["end_timestamp"] = f"""{params["end_date"]} 00:00:00"""
         request_params["dataset_id"] = constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value
+        if gte_result:
+            request_params["dataset_id_v2"] = constants.SUBSIDIO_SPPO_DASHBOARD_V2_DATASET_ID.value
+            request_params[
+                "table_id_v2"
+            ] = constants.SUBSIDIO_SPPO_DASHBOARD_SUMARIO_TABLE_ID_V2.value
+        else:
+            request_params["dataset_id_v2"] = constants.SUBSIDIO_SPPO_DASHBOARD_DATASET_ID.value
+            request_params["table_id_v2"] = constants.SUBSIDIO_SPPO_DASHBOARD_SUMARIO_TABLE_ID.value
 
     checks_list = (
         constants.SUBSIDIO_SPPO_DATA_CHECKS_PRE_LIST.value
@@ -132,6 +142,7 @@ def subsidio_data_quality_check(
             else ":warning: **Status:** Testes falharam. Necessidade de revisão dos dados finais!\n"
         )
 
+    # fmt: off
     if not test_check:
         at_code_owners = [
             f'   - <@{smtr_constants.OWNERS_DISCORD_MENTIONS.value[code_owner]["user_id"]}>\n'
@@ -145,7 +156,7 @@ def subsidio_data_quality_check(
         ]
 
         formatted_messages.extend(at_code_owners)
-
+    # fmt: on
     format_send_discord_message(formatted_messages, webhook_url)
 
     return test_check
