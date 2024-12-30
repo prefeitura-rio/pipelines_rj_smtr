@@ -20,3 +20,8 @@ class constants(Enum):  # pylint: disable=c0103
         schedule_cron=create_daily_cron(hour=1),
         initial_datetime=datetime(2024, 9, 1, 0, 0, 0),
     )
+
+    MATRIZ_INTEGRACAO_SMTR_SELECTOR = DBTSelector(
+        name="matriz_integracao_smtr",
+        initial_datetime=datetime(2024, 12, 30, 0, 0, 0),
+    )

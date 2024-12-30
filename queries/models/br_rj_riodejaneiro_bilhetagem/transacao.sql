@@ -120,6 +120,12 @@ with
                 {% else %} data = "2000-01-01"
                 {% endif %}
         {% endif %}
+        qualify
+            row_number() over (
+                partition by id_transacao
+                order by datetime_processamento_integracao desc
+            )
+            = 1
     ),
     transacao_ordem as (
         select *

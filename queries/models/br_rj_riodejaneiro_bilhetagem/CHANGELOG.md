@@ -1,5 +1,14 @@
 # Changelog - bilhetagem
 
+## [2.0.2] - 2024-12-30
+
+### Removido
+- Move `matriz_integracao.sql` para o planejamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/371)
+
+
+### Alterado
+- Muda deduplicação de integração para considerar integrações diferentes que compartilham transações nos modelos `transacao.sql` e `integracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/371)
+
 ## [2.0.1] - 2024-12-12
 
 ### Alterado

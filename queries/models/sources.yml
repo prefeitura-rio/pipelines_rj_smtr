@@ -190,3 +190,8 @@ sources:
 
     tables:
       - name: viagem_informada
+  - name: source_smtr
+    database: rj-smtr-dev
+
+    tables:
+      - name: matriz_integracao
