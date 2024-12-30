@@ -347,3 +347,7 @@ Indica que o valor encontra-se sob julgamento de ação judicial e será deposit
 {% docs tipo_os %}
 Tipo de Ordem de Serviço (ex: 'Regular', 'Extraordinária - Verão')
 {% enddocs %}
+
+{% docs data_inicio_matriz %}
+Data de inicio da versão da matriz de integração
+{% enddocs %}

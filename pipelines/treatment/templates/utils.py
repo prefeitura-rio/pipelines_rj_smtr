@@ -39,8 +39,8 @@ class DBTSelector:
     def __init__(
         self,
         name: str,
-        schedule_cron: str,
         initial_datetime: datetime,
+        schedule_cron: str = None,
         incremental_delay_hours: int = 0,
     ):
         self.name = name
@@ -98,6 +98,8 @@ class DBTSelector:
         Returns:
             bool: se está atualizado ou não
         """
+        if self.schedule_cron is None:
+            raise ValueError("O selector não possui agendamento")
         last_materialization = self.get_last_materialized_datetime(env=env)
 
         last_schedule = cron_get_last_date(cron_expr=self.schedule_cron, timestamp=timestamp)
@@ -115,6 +117,8 @@ class DBTSelector:
         Returns:
             datetime: próximo datetime do cron
         """
+        if self.schedule_cron is None:
+            raise ValueError("O selector não possui agendamento")
         return cron_get_next_date(cron_expr=self.schedule_cron, timestamp=timestamp)
 
     def set_redis_materialized_datetime(self, env: str, timestamp: datetime):
