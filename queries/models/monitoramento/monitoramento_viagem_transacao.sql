@@ -3,7 +3,6 @@
         materialized="incremental",
         partition_by={"field": "data", "data_type": "date", "granularity": "day"},
         incremental_strategy="insert_overwrite",
-        alias="viagem_transacao",
     )
 }}
 
@@ -11,30 +10,26 @@ with
     -- 1. Transações Jaé
     transacao as (
         select id_veiculo, datetime_transacao
-        from
-            -- {{ ref("transacao") }}
-            rj - smtr.br_rj_riodejaneiro_bilhetagem.transacao
+        from {{ ref("transacao") }}
+        -- rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao
         where
-            data >= date("2024-10-01")
-            {% if is_incremental() %}
-                and data between date("{{ var(" start_date ") }}") and date_add(
-                    date("{{ var(" end_date ") }}"), interval 1 day
-                )
-            {% endif %}
+            data between date("{{ var('start_date') }}") and date_add(
+                date("{{ var('end_date') }}"), interval 1 day
+            )
+            and date(datetime_processamento)
+            <= date_add(date("{{ var('end_date') }}"), interval 6 day)
     ),
     -- 2. Transações RioCard
     transacao_riocard as (
         select id_veiculo, datetime_transacao
-        from
-            -- {{ ref("transacao_riocard") }}
-            rj - smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard
+        from {{ ref("transacao_riocard") }}
+        -- rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard
         where
-            data >= date("2024-10-01")
-            {% if is_incremental() %}
-                and data between date("{{ var(" start_date ") }}") and date_add(
-                    date("{{ var(" end_date ") }}"), interval 1 day
-                )
-            {% endif %}
+            data between date("{{ var('start_date') }}") and date_add(
+                date("{{ var('end_date') }}"), interval 1 day
+            )
+            and date(datetime_processamento)
+            <= date_add(date("{{ var('end_date') }}"), interval 6 day)
     ),
     -- 3. GPS Validador
     gps_validador as (
@@ -46,17 +41,21 @@ with
             estado_equipamento,
             latitude,
             longitude
-        from
-            -- {{ ref("gps_validador") }}
-            rj - smtr.br_rj_riodejaneiro_bilhetagem.gps_validador
+        from {{ ref("gps_validador") }}
+        -- rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador
         where
-            data >= date("2024-10-01")
-            {% if is_incremental() %}
-                and data between date("{{ var(" start_date ") }}") and date_add(
-                    date("{{ var(" end_date ") }}"), interval 1 day
+            data between date("{{ var('start_date') }}") and date_add(
+                date("{{ var('end_date') }}"), interval 1 day
+            )
+            and (
+                (
+                    data < date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
+                    and (latitude != 0 or longitude != 0)
                 )
-            {% endif %}
-            and (latitude != 0 or longitude != 0)
+                or data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
+            )
+            and date(datetime_captura)
+            <= date_add(date("{{ var('end_date') }}"), interval 6 day)
     ),
     -- 4. Viagens realizadas
     viagem as (
@@ -67,36 +66,27 @@ with
             datetime_chegada,
             id_veiculo,
             id_viagem,
-            sentido,
             distancia_planejada
-        from
-            -- {{ ref("viagem_completa") }}
-            rj - smtr.projeto_subsidio_sppo.viagem_completa
+        from {{ ref("viagem_completa") }}
+        -- rj-smtr.projeto_subsidio_sppo.viagem_completa
         where
-            data >= date("2024-10-01")
-            {% if is_incremental() %}
-                and data between date("{{ var(" start_date ") }}") and date(
-                    "{{ var(" end_date ") }}"
-                )
-            {% endif %}
+            data
+            between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
+                "{{ var('end_date') }}"
+            )
     ),
-    -- 5. Status dos veículos 
+    -- 5. Status dos veículos
     veiculos as (
         select data, id_veiculo, status
-        from
-            -- {{ ref("sppo_veiculo_dia") }}
-            rj - smtr.veiculo.sppo_veiculo_dia
+        from {{ ref("sppo_veiculo_dia") }}
+        -- rj-smtr.veiculo.sppo_veiculo_dia
         where
-            data >= date("2024-10-01")
-            {% if is_incremental() %}
-                and data between date("{{ var(" start_date ") }}") and date(
-                    "{{ var(" end_date ") }}"
-                )
-            {% endif %}
+            data
+            between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
     ),
     -- 6. Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
     -- limitada pela viagem anterior
-    viagem_com_tolerancia as (
+    viagem_com_tolerancia_previa as (
         select
             v.*,
             lag(v.datetime_chegada) over (
@@ -125,7 +115,15 @@ with
             end as datetime_partida_com_tolerancia
         from viagem as v
     ),
-    -- 7. Contagem de transações Jaé
+    -- 7. Considera apenas as viagens realizadas no período de apuração
+    viagem_com_tolerancia as (
+        select *
+        from viagem_com_tolerancia_previa
+        where
+            data
+            between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
+    ),
+-- 8. Contagem de transações Jaé
     transacao_contagem as (
         select v.data, v.id_viagem, count(t.datetime_transacao) as quantidade_transacao
         from transacao as t
@@ -136,7 +134,7 @@ with
             between v.datetime_partida_com_tolerancia and v.datetime_chegada
         group by v.data, v.id_viagem
     ),
-    -- 5. Contagem de transações RioCard
+    -- 9. Contagem de transações RioCard
     transacao_riocard_contagem as (
         select
             v.data,
@@ -150,26 +148,57 @@ with
             between v.datetime_partida_com_tolerancia and v.datetime_chegada
         group by v.data, v.id_viagem
     ),
-    -- 6. Ajusta estado do equipamento
+    -- 10. Ajusta estado do equipamento
     -- Agrupa mesma posição para mesmo validador e veículo, mantendo preferencialmente
-    -- o estado do equipamento "ABERTO"
+    -- o estado do equipamento "ABERTO" quanto latitude e longitude for diferente de
+    -- (0,0)
     estado_equipamento_aux as (
-        select
-            data,
-            id_validador,
-            id_veiculo,
-            latitude,
-            longitude,
-            if(
-                count(case when estado_equipamento = "ABERTO" then 1 end) >= 1,
-                "ABERTO",
-                "FECHADO"
-            ) as estado_equipamento,
-            min(datetime_gps) as datetime_gps,
-        from gps_validador
-        group by 1, 2, 3, 4, 5
+        select *
+        from
+            (
+                (
+                    select
+                        data,
+                        id_validador,
+                        id_veiculo,
+                        latitude,
+                        longitude,
+                        if(
+                            count(case when estado_equipamento = "ABERTO" then 1 end)
+                            >= 1,
+                            "ABERTO",
+                            "FECHADO"
+                        ) as estado_equipamento,
+                        min(datetime_gps) as datetime_gps,
+                    from gps_validador
+                    where
+                        (
+                            data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
+                            and latitude != 0
+                            and longitude != 0
+                        )
+                        or data < date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
+                    group by 1, 2, 3, 4, 5
+                )
+                union all
+                (
+                    select
+                        data,
+                        id_validador,
+                        id_veiculo,
+                        latitude,
+                        longitude,
+                        estado_equipamento,
+                        datetime_gps,
+                    from gps_validador
+                    where
+                        data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
+                        and latitude = 0
+                        and longitude = 0
+                )
+            )
     ),
-    -- 7. Relacionamento entre estado do equipamento e viagem
+    -- 11. Relacionamento entre estado do equipamento e viagem
     gps_validador_viagem as (
         select
             v.data,
@@ -185,7 +214,8 @@ with
             on e.id_veiculo = substr(v.id_veiculo, 2)
             and e.datetime_gps between v.datetime_partida and v.datetime_chegada
     ),
-    -- 8. Calcula a porcentagem de estado do equipamento "ABERTO" por validador e viagem
+    -- 12. Calcula a porcentagem de estado do equipamento "ABERTO" por validador e
+    -- viagem
     estado_equipamento_perc as (
         select
             data,
@@ -196,7 +226,7 @@ with
         from gps_validador_viagem
         group by 1, 2, 3
     ),
-    -- 9. Considera o validador com maior porcentagem de estado do equipamento
+    -- 13. Considera o validador com maior porcentagem de estado do equipamento
     -- "ABERTO" por viagem
     estado_equipamento_max_perc as (
         select
@@ -209,7 +239,7 @@ with
         from estado_equipamento_perc
         group by 1, 2
     ),
-    -- 10. Verifica se a viagem possui estado do equipamento "ABERTO" em pelo menos
+    -- 14. Verifica se a viagem possui estado do equipamento "ABERTO" em pelo menos
     -- 80% dos registros
     estado_equipamento_verificacao as (
         select
