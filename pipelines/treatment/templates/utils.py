@@ -99,7 +99,7 @@ class DBTSelector:
             bool: se está atualizado ou não
         """
         if self.schedule_cron is None:
-            raise ValueError("O source não possui agendamento")
+            raise ValueError("O selector não possui agendamento")
         last_materialization = self.get_last_materialized_datetime(env=env)
 
         last_schedule = cron_get_last_date(cron_expr=self.schedule_cron, timestamp=timestamp)
@@ -118,7 +118,7 @@ class DBTSelector:
             datetime: próximo datetime do cron
         """
         if self.schedule_cron is None:
-            raise ValueError("O source não possui agendamento")
+            raise ValueError("O selector não possui agendamento")
         return cron_get_next_date(cron_expr=self.schedule_cron, timestamp=timestamp)
 
     def set_redis_materialized_datetime(self, env: str, timestamp: datetime):
