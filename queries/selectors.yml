@@ -71,3 +71,18 @@ selectors:
     definition:
       method: fqn
       value: datario
+
+  - name: matriz_integracao_smtr
+    description: Materialização da matriz de integração da SMTR
+    definition:
+      method: fqn
+      value: matriz_integracao
+
+  - name: validacao_dados_jae
+    description: Materialização das tabelas de validação dos dados da Jaé
+    definition:
+      union:
+        - method: fqn
+          value: integracao_invalida
+        - method: fqn
+          value: integracao_nao_realizada
