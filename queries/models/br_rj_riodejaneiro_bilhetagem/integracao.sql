@@ -18,8 +18,8 @@ with
                         partition by id order by timestamp_captura desc
                     ) as rn
                 from
-                    {# {{ ref("staging_integracao_transacao") }} #}
-                    `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.integracao_transacao`
+                    {{ ref("staging_integracao_transacao") }}
+                    {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.integracao_transacao` #}
                 {% if is_incremental() -%}
                     where
                         date(data) between date("{{var('date_range_start')}}") and date(
@@ -119,15 +119,15 @@ with
             {{ source("cadastro", "modos") }} m
             on i.id_tipo_modal = m.id_modo
             and m.fonte = "jae"
-        {# left join {{ ref("operadoras") }} do on i.id_operadora = do.id_operadora_jae #}
         left join
-            `rj-smtr.cadastro.operadoras` do on i.id_operadora = do.id_operadora_jae
-        {# left join {{ ref("consorcios") }} dc on i.id_consorcio = dc.id_consorcio_jae #}
+            {{ ref("operadoras") }} do on i.id_operadora = do.id_operadora_jae
+            {# `rj-smtr.cadastro.operadoras` do on i.id_operadora = do.id_operadora_jae #}
         left join
-            `rj-smtr.cadastro.consorcios` dc on i.id_consorcio = dc.id_consorcio_jae
+            {{ ref("consorcios") }} dc on i.id_consorcio = dc.id_consorcio_jae
+            {# `rj-smtr.cadastro.consorcios` dc on i.id_consorcio = dc.id_consorcio_jae #}
         left join
-            {# {{ ref("staging_linha") }} l #}
-            `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.linha` l
+            {{ ref("staging_linha") }} l
+            {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.linha` l #}
             on i.id_linha = l.cd_linha
         where i.id_transacao is not null
     ),
@@ -135,8 +135,8 @@ with
         select distinct i.id_integracao
         from integracao_rn i
         left join
-            {# {{ ref("staging_linha_sem_ressarcimento") }} l #}
-            `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.linha_sem_ressarcimento` l
+            {{ ref("staging_linha_sem_ressarcimento") }} l
+            {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.linha_sem_ressarcimento` l #}
             on i.id_servico_jae = l.id_linha
         where l.id_linha is not null or i.data < "2023-07-17"
     )
