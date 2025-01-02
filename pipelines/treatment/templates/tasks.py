@@ -13,6 +13,7 @@ from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
 
+from pipelines.capture.templates.utils import SourceTable
 from pipelines.constants import constants
 from pipelines.treatment.templates.utils import (
     DBTSelector,
@@ -23,7 +24,6 @@ from pipelines.treatment.templates.utils import (
 )
 from pipelines.utils.dataplex import DataQuality, DataQualityCheckArgs
 from pipelines.utils.discord import format_send_discord_message
-from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.prefect import flow_is_running_local, rename_current_flow_run
 from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import convert_timezone, cron_get_last_date
@@ -147,9 +147,10 @@ def wait_data_sources(
         log("Checando completude dos dados")
         complete = False
         while not complete:
-            if isinstance(ds, SourceTable):
+            if issubclass(ds, SourceTable):
                 name = f"{ds.source_name}.{ds.table_id}"
-                uncaptured_timestamps = ds.set_env(env=env).get_uncaptured_timestamps(
+                uncaptured_timestamps = ds.is_up_to_date(
+                    env=env,
                     timestamp=datetime_end,
                     retroactive_days=max(2, (datetime_end - datetime_start).days),
                 )

@@ -4,12 +4,17 @@ Tasks for rj_smtr
 """
 from copy import deepcopy
 from datetime import datetime, timedelta
-from typing import Callable
+from typing import Callable, Union
 
 import pandas as pd
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 
+from pipelines.capture.templates.utils import (
+    DateRangeSourceTable,
+    DefaultSourceTable,
+    SourceTable,
+)
 from pipelines.constants import constants
 from pipelines.utils.fs import (
     create_capture_filepath,
@@ -17,10 +22,13 @@ from pipelines.utils.fs import (
     read_raw_data,
     save_local_file,
 )
-from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.prefect import rename_current_flow_run
 from pipelines.utils.pretreatment import transform_to_nested_structure
-from pipelines.utils.utils import create_timestamp_captura, data_info_str
+from pipelines.utils.utils import (
+    convert_timezone,
+    create_timestamp_captura,
+    data_info_str,
+)
 
 ############################
 # Flow Configuration Tasks #
@@ -75,7 +83,7 @@ def rename_capture_flow(flow_name: str, timestamp: datetime, recapture: bool) ->
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
 def get_capture_timestamps(
-    source: SourceTable,
+    source: DefaultSourceTable,
     timestamp: datetime,
     recapture: bool,
     recapture_days: int,
@@ -84,7 +92,7 @@ def get_capture_timestamps(
     Retorna os timestamps que serão capturados pelo flow
 
     Args:
-        source (SourceTable): Objeto representando a fonte de dados que será capturada
+        source (DefaultSourceTable): Objeto representando a fonte de dados que será capturada
         timestamp (datetime): Datetime de referência da execução do flow
         recapture (bool): Se a execução é uma recaptura ou não
         recapture_days (int): A quantidade de dias que serão considerados para achar datas
@@ -100,6 +108,55 @@ def get_capture_timestamps(
         )
 
     return [timestamp]
+
+
+@task(
+    max_retries=constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
+)
+def get_capture_date_range(
+    source: DateRangeSourceTable,
+    timestamp: datetime,
+    date_range_start_param: Union[None, str],
+    date_range_end_param: Union[None, str],
+) -> dict:
+    """
+    Retorna um dicionário contendo as keys
+    date_range_start e date_range_end para fazer captura com base em u range de datas
+
+    Args:
+        source (DateRangeSourceTable): Objeto representando a fonte de dados que será capturada
+        timestamp (datetime): Datetime de referência da execução do flow
+        date_range_start_param (Union[None, str]): Parâmetro manual do flow
+        date_range_end_param (Union[None, str]): Parâmetro manual do flow
+
+    Returns:
+        dict: Dicionário com range de datas
+    """
+    date_range = source.get_capture_date_range(timestamp=timestamp)
+    if date_range_start_param:
+        date_range_start_param = convert_timezone(
+            timestamp=datetime.fromisoformat(date_range_start_param)
+        )
+
+        if date_range_start_param > date_range["date_range_start"]:
+            raise ValueError("A data de início é maior que a última captura")
+        date_range["date_range_start"] = date_range_start_param
+
+    if date_range_end_param:
+        date_range["date_range_end"] = convert_timezone(
+            timestamp=datetime.fromisoformat(date_range_end_param)
+        )
+
+    return date_range
+
+
+@task(
+    max_retries=constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
+)
+def set_capture_date_range_redis(source: DateRangeSourceTable, date_range: dict):
+    source.set_redis_last_captured_datetime(timestamp=date_range["date_range_end"])
 
 
 #####################

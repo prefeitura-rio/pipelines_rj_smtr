@@ -6,8 +6,10 @@ Valores constantes para captura de dados da Jaé
 from datetime import datetime
 from enum import Enum
 
-from pipelines.schedules import create_daily_cron
-from pipelines.utils.gcp.bigquery import SourceTable
+from pipelines.capture.templates.utils import DateRangeSourceTable, DefaultSourceTable
+from pipelines.schedules import create_daily_cron, create_hourly_cron
+
+JAE_SOURCE_NAME = "jae"
 
 
 class constants(Enum):  # pylint: disable=c0103
@@ -15,7 +17,7 @@ class constants(Enum):  # pylint: disable=c0103
     Valores constantes para captura de dados da Jaé
     """
 
-    JAE_SOURCE_NAME = "jae"
+    JAE_SOURCE_NAME = JAE_SOURCE_NAME
 
     JAE_DATABASE_SETTINGS = {
         "principal_db": {
@@ -219,16 +221,21 @@ class constants(Enum):  # pylint: disable=c0103
         },
     }
 
-    # JAE_AUXILIAR_SOURCES = {
-    #     k: SourceTable(
-    #         source_name=JAE_SORCE_NAME,
-    #         table_id=k,
-    #         first_timestamp=datetime(2024, 12, 30, 0, 0, 0),
-    #         schedule_cron=create_hourly_cron(),
-    #         primary_keys=v["primary_keys"],
-    #     )
-    #     for k, v in JAE_AUXILIAR_CAPTURE_PARAMS
-    # }
+    JAE_AUXILIAR_SOURCES = {
+        k: DateRangeSourceTable(
+            source_name=JAE_SOURCE_NAME,
+            table_id=k,
+            first_timestamp=datetime(2024, 12, 30, 0, 0, 0),
+            schedule_cron=create_hourly_cron(),
+            primary_keys=v["primary_keys"],
+            pretreatment_reader_args=v.get("pretreatment_reader_args"),
+            pretreat_funcs=v.get("pretreat_funcs"),
+            bucket_names=v.get("bucket_names"),
+            partition_date_only=v.get("partition_date_only", False),
+            max_capture_hours=v.get("max_capture_hours", 5),
+        )
+        for k, v in JAE_AUXILIAR_CAPTURE_PARAMS
+    }
 
     TRANSACAO_ORDEM_TABLE_ID = "transacao_ordem"
 
@@ -251,7 +258,7 @@ class constants(Enum):  # pylint: disable=c0103
         }
     }
 
-    TRANSACAO_ORDEM_SOURCE = SourceTable(
+    TRANSACAO_ORDEM_SOURCE = DefaultSourceTable(
         source_name=JAE_SOURCE_NAME,
         table_id=TRANSACAO_ORDEM_TABLE_ID,
         first_timestamp=datetime(2024, 11, 21, 0, 0, 0),

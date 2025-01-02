@@ -6,8 +6,8 @@ Valores constantes para captura de dados da Rio Ônibus
 from datetime import datetime
 from enum import Enum
 
+from pipelines.capture.templates.utils import DefaultSourceTable
 from pipelines.schedules import create_daily_cron
-from pipelines.utils.gcp.bigquery import SourceTable
 
 
 class constants(Enum):  # pylint: disable=c0103
@@ -19,7 +19,7 @@ class constants(Enum):  # pylint: disable=c0103
     RIO_ONIBUS_SECRET_PATH = "rioonibus_api"
     VIAGEM_INFORMADA_BASE_URL = "https://us-east1-papo-tec.cloudfunctions.net/viagem_informada_smtr"
     VIAGEM_INFORMADA_TABLE_ID = "viagem_informada"
-    VIAGEM_INFORMADA_SOURCE = SourceTable(
+    VIAGEM_INFORMADA_SOURCE = DefaultSourceTable(
         source_name=RIO_ONIBUS_SOURCE_NAME,
         table_id="viagem_informada",
         first_timestamp=datetime(2024, 10, 16, 0, 0, 0),
