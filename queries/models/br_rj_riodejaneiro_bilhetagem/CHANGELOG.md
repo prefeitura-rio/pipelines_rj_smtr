@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Altera incremental strategy do modelo `integracao.sql` para `insert_overwrite`
+- Altera incremental strategy do modelo `integracao.sql` para `insert_overwrite` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/375)
 
 ## [2.0.2] - 2024-12-30
 
