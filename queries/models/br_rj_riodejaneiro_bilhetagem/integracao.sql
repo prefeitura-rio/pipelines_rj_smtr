@@ -2,10 +2,49 @@
 {{
     config(
         materialized="incremental",
+        incremental_strategy="insert_overwrite",
         partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-        unique_key="id_transacao",
     )
 }}
+
+{% set incremental_filter %}
+    date(data) between date("{{var('date_range_start')}}") and date(
+                            "{{var('date_range_end')}}"
+    )
+    and timestamp_captura
+    between datetime("{{var('date_range_start')}}") and datetime(
+        "{{var('date_range_end')}}"
+                        )
+{% endset %}
+
+{% set integracao_staging = ref("staging_integracao_transacao") %}
+
+{% if execute %}
+    {% if is_incremental() %}
+        {% set integracao_partitions_query %}
+
+            SELECT DISTINCT
+                CONCAT("'", DATE(data_transacao), "'") AS data_transacao
+            FROM
+                {{ integracao_staging }},
+                UNNEST([
+                    data_transacao_t0,
+                    data_transacao_t1,
+                    data_transacao_t2,
+                    data_transacao_t3,
+                    data_transacao_t4
+                ]) AS data_transacao
+            WHERE
+                {{ incremental_filter }}
+
+        {% endset %}
+
+        {% set integracao_partitions = (
+            run_query(integracao_partitions_query).columns[0].values()
+        ) %}
+
+    {% endif %}
+{% endif %}
 
 with
     integracao_transacao_deduplicada as (
@@ -17,19 +56,9 @@ with
                     row_number() over (
                         partition by id order by timestamp_captura desc
                     ) as rn
-                from
-                    {{ ref("staging_integracao_transacao") }}
-                    {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.integracao_transacao` #}
-                {% if is_incremental() -%}
-                    where
-                        date(data) between date("{{var('date_range_start')}}") and date(
-                            "{{var('date_range_end')}}"
-                        )
-                        and timestamp_captura
-                        between datetime("{{var('date_range_start')}}") and datetime(
-                            "{{var('date_range_end')}}"
-                        )
-                {%- endif %}
+                from {{ ref("staging_integracao_transacao") }}
+                {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.integracao_transacao` #}
+                {% if is_incremental() -%} where {{ incremental_filter }} {%- endif %}
             )
         where rn = 1
     ),
@@ -77,7 +106,7 @@ with
                 ]
             ) as im
     ),
-    integracao_rn as (
+    integracao_new as (
         select
             i.data,
             i.hora,
@@ -109,39 +138,53 @@ with
             i.valor_transacao,
             i.valor_transacao_total,
             i.texto_adicional,
-            '{{ var("version") }}' as versao,
-            row_number() over (
-                partition by id_integracao, id_transacao
-                order by datetime_processamento_integracao desc
-            ) as rn
+            '{{ var("version") }}' as versao
         from integracao_melt i
         left join
             {{ source("cadastro", "modos") }} m
             on i.id_tipo_modal = m.id_modo
             and m.fonte = "jae"
-        left join
-            {{ ref("operadoras") }} do on i.id_operadora = do.id_operadora_jae
-            {# `rj-smtr.cadastro.operadoras` do on i.id_operadora = do.id_operadora_jae #}
-        left join
-            {{ ref("consorcios") }} dc on i.id_consorcio = dc.id_consorcio_jae
-            {# `rj-smtr.cadastro.consorcios` dc on i.id_consorcio = dc.id_consorcio_jae #}
+        left join {{ ref("operadoras") }} do on i.id_operadora = do.id_operadora_jae
+        {# `rj-smtr.cadastro.operadoras` do on i.id_operadora = do.id_operadora_jae #}
+        left join {{ ref("consorcios") }} dc on i.id_consorcio = dc.id_consorcio_jae
+        {# `rj-smtr.cadastro.consorcios` dc on i.id_consorcio = dc.id_consorcio_jae #}
         left join
             {{ ref("staging_linha") }} l
             {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.linha` l #}
             on i.id_linha = l.cd_linha
         where i.id_transacao is not null
     ),
+    complete_partitions as (
+        select *, 0 as priority
+        from integracao_new
+
+        {% if is_incremental() %}
+            union all
+
+            select *, 1 as priority
+            from {{ this }}
+            where
+                {% if integracao_partitions | length > 0 %}
+                    data in ({{ integracao_partitions | join(", ") }})
+                {% else %} data = "2000-01-01"
+                {% endif %}
+        {% endif %}
+    ),
     integracoes_teste_invalidas as (
         select distinct i.id_integracao
-        from integracao_rn i
+        from complete_partitions i
         left join
             {{ ref("staging_linha_sem_ressarcimento") }} l
             {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.linha_sem_ressarcimento` l #}
             on i.id_servico_jae = l.id_linha
         where l.id_linha is not null or i.data < "2023-07-17"
     )
-select * except (rn)
-from integracao_rn
-where
-    rn = 1
-    and id_integracao not in (select id_integracao from integracoes_teste_invalidas)
+select * except (priority)
+from complete_partitions
+where id_integracao not in (select id_integracao from integracoes_teste_invalidas)
+qualify
+    row_number() over (
+        partition by id_integracao, id_transacao, priority
+        order by datetime_processamento_integracao desc
+    )
+    = 1

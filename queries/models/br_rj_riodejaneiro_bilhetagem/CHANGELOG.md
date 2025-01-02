@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [2.0.3] - 2025-01-02
+
+### Corrigido
+
+- Altera incremental strategy do modelo `integracao.sql` para `insert_overwrite`
+
 ## [2.0.2] - 2024-12-30
 
 ### Removido
