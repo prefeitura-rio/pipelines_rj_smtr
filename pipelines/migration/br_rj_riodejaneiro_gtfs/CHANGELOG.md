@@ -1,5 +1,10 @@
 # Changelog - gtfs
 
+## [1.1.9] - 2025-01-02
+
+### Alterado
+- Remove teste de verificação de quilometragem task `processa_ordem_servico`
+
 ## [1.1.8] - 2024-12-30
 
 ### Alterado
