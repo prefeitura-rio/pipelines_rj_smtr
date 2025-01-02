@@ -56,7 +56,7 @@ with
                     row_number() over (
                         partition by id order by timestamp_captura desc
                     ) as rn
-                from {{ ref("staging_integracao_transacao") }}
+                from {{ integracao_staging }}
                 {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.integracao_transacao` #}
                 {% if is_incremental() -%} where {{ incremental_filter }} {%- endif %}
             )
