@@ -204,9 +204,6 @@ def processa_ordem_servico(
         None
     """
 
-    if len(sheetnames) != 3 and regular_sheet_index is None:
-        raise Exception("More than 3 tabs in the file. Please specify the regular sheet index.")
-
     if regular_sheet_index is None:
         regular_sheet_index = next(
             (i for i, name in enumerate(sheetnames) if "ANEXO I" in name), None
