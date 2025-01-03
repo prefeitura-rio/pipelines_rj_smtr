@@ -45,7 +45,6 @@ from pipelines.migration.tasks import (
     upload_raw_data_to_gcs,
     upload_staging_data_to_gcs,
 )
-
 from pipelines.schedules import every_5_minutes
 from pipelines.tasks import (
     check_fail,
