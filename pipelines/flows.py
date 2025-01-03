@@ -3,6 +3,7 @@
 Imports all flows for every project so we can register all of them.
 """
 from pipelines.capture.jae.flows import *  # noqa
+from pipelines.capture.movidesk.flows import *  # noqa
 from pipelines.capture.rioonibus.flows import *  # noqa
 from pipelines.capture.sonda.flows import *  # noqa
 from pipelines.exemplo import *  # noqa
