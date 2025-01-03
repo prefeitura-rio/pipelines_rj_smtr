@@ -107,6 +107,7 @@ vars:
   subsidio_parametros: "`rj-smtr-staging.dashboard_subsidio_sppo_staging.subsidio_parametros`"
   shapes_version: "YYYY-MM-DD"
   frequencies_version: "YYYY-MM-DD"
+  tipo_materializacao: subsidio
   # Feature penalidade de autuação por inoperância do ar condicionado (DECRETO RIO 51940/2023)
   DATA_SUBSIDIO_V2_INICIO: "2023-01-16"
   # Feature penalidade de autuação por segurança e limpeza/equipamento (DECRETO RIO 52820/2023)

@@ -4,6 +4,16 @@
 
 # Corrigido
 
+- Corrigido e refatorado o modelo `viagem_transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/372)
+
+# Adicionado
+
+- Adicionado o modelo `viagem_transacao_aux.sql`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/372)
+
+## [2.0.0] - 2024-12-06
+
+# Corrigido
+
 - Corrigido e refatorado o modelo `viagem_transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/357):
     - Reformatação conforme padrão `sqlfmt`
     - Passa a considerar registros de GPS do validador com coordenadas zeradas a partir de `DATA_SUBSIDIO_V12_INICIO`

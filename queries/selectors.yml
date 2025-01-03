@@ -24,6 +24,8 @@ selectors:
           value: models/financeiro
         - method: path
           value: models/dashboard_subsidio_sppo_v2
+        - method: fqn
+          value: monitoramento_viagem_transacao
 
   - name: viagem_informada
     description: Materialização da tabela de viagens informadas
@@ -86,3 +88,9 @@ selectors:
           value: integracao_invalida
         - method: fqn
           value: integracao_nao_realizada
+
+  - name: monitoramento_subsidio
+    description: Materialização das tabelas utilizadas nos dashboards do subsidio
+    definition:
+      method: fqn
+      value: monitoramento_viagem_transacao
