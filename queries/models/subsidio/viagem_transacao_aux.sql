@@ -107,7 +107,7 @@ with
                                 lag(v.datetime_chegada) over (
                                     partition by v.id_veiculo
                                     order by v.datetime_partida
-                                ) 
+                                )
                             ),
                             interval 1 second
                         )
