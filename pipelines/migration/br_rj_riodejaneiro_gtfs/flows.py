@@ -46,7 +46,7 @@ from pipelines.migration.tasks import (
     upload_staging_data_to_gcs,
 )
 
-# from pipelines.schedules import every_5_minutes
+from pipelines.schedules import every_5_minutes
 from pipelines.tasks import (
     check_fail,
     get_scheduled_timestamp,
@@ -293,7 +293,7 @@ gtfs_captura_nova.state_handlers = [
     handler_initialize_sentry,
     handler_skip_if_running,
 ]
-# gtfs_captura_nova.schedule = every_5_minutes
+gtfs_captura_nova.schedule = every_5_minutes
 
 
 # with Flow(

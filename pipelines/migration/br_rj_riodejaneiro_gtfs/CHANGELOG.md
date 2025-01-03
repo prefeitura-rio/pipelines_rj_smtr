@@ -1,5 +1,13 @@
 # Changelog - gtfs
 
+## [1.2.0] - 2025-01-03
+
+### Adicionado
+- Adicionado schedule de 5 minutis do flow de captura do gtfs (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
+### Removido
+- Removido o teste de quantidade de abas na planilha da Ordem de Serviço (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
 ## [1.1.9] - 2025-01-02
 
 ### Alterado
