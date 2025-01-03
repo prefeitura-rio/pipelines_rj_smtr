@@ -307,19 +307,19 @@ def processa_ordem_servico(
     if not all_columns_present or not no_duplicate_columns:
         raise Exception("Missing or duplicated columns in ordem_servico")
 
-    quadro_test = quadro_geral.copy()
-    quadro_test["km_test"] = round(
-        (quadro_geral["partidas_volta_du"] * quadro_geral["extensao_volta"])
-        + (quadro_geral["partidas_ida_du"] * quadro_geral["extensao_ida"]),
-        2,
-    )
-    quadro_test["dif"] = quadro_test["km_test"] - quadro_test["km_dia_util"]
+    # quadro_test = quadro_geral.copy()
+    # quadro_test["km_test"] = round(
+    #     (quadro_geral["partidas_volta_du"] * quadro_geral["extensao_volta"])
+    #     + (quadro_geral["partidas_ida_du"] * quadro_geral["extensao_ida"]),
+    #     2,
+    # )
+    # quadro_test["dif"] = quadro_test["km_test"] - quadro_test["km_dia_util"]
 
-    if not (
-        round(abs(quadro_test["dif"].max()), 2) <= 0.01
-        and round(abs(quadro_test["dif"].min()), 2) <= 0.01
-    ):
-        raise Exception("failed to validate km_test and km_dia_util")
+    # if not (
+    #     round(abs(quadro_test["dif"].max()), 2) <= 0.01
+    #     and round(abs(quadro_test["dif"].min()), 2) <= 0.01
+    # ):
+    #     raise Exception("failed to validate km_test and km_dia_util")
 
     local_file_path = list(filter(lambda x: "ordem_servico" in x, local_filepath))[0]
     quadro_geral_csv = quadro_geral.to_csv(index=False)

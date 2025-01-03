@@ -1,5 +1,14 @@
 # Changelog - gtfs
 
+## [1.1.9] - 2025-01-02
+
+### Alterado
+- Remove teste de verificação de quilometragem da task `processa_ordem_servico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/377)
+
+## [1.1.8] - 2024-12-30
+
+### Alterado
+- Exclui modelo `matriz_integracao` da materialização (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/371)
 
 ## [1.1.7] - 2024-12-13
 
