@@ -361,7 +361,7 @@ WITH
       WHEN data BETWEEN DATE(2024,12,14) AND DATE(2024,12,15) THEN "Extraordinária - Verão" -- Processo.Rio MTR-DES-2024/74396
       ELSE "Regular"
     END AS tipo_os,
-  FROM UNNEST(GENERATE_DATE_ARRAY("{{var('DATA_SUBSIDIO_V6_INICIO')}}", "2024-12-31")) AS data),
+  FROM UNNEST(GENERATE_DATE_ARRAY("{{var('DATA_SUBSIDIO_V6_INICIO')}}", "2025-12-31")) AS data),
   data_versao_efetiva_manual AS (
   SELECT
     data,
