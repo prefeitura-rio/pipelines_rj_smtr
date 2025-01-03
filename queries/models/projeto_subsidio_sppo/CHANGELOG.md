@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Alterado a data final no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Alterado a data final no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/378)
 
 ## [9.1.2] - 2024-12-18
 
