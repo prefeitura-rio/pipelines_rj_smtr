@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.1.3] - 2025-01-03
+
+### Alterado
+
+- Alterado a data final no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
 ## [9.1.2] - 2024-12-18
 
 ### Alterado
