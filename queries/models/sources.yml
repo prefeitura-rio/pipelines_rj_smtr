@@ -167,6 +167,7 @@ sources:
       - name: autuacoes_citran
       - name: autuacoes_serpro
       - name: receita_autuacao
+      - name: infracoes_renainf
 
   - name: dados_mestres
     database: datario
