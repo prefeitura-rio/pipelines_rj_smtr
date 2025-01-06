@@ -3,7 +3,9 @@
 ## [1.2.0] - 2025-01-03
 
 ### Adicionado
-- Adicionado schedule de 5 minutis do flow de captura do gtfs (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/379)
+- Adicionado schedule de 5 minutos do flow de captura do gtfs (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/379)
+
+- Adicionado parâmetros personalizados de execução no arquivo `flows.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/379)
 
 ### Removido
 - Removido o teste de quantidade de abas na planilha da Ordem de Serviço (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/379)
