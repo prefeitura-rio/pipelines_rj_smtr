@@ -9,7 +9,15 @@
     incremental_strategy='insert_overwrite'
 ) }}
 
-WITH citran AS (
+-- add lógica para ter um historico da autuação com base na coluna de data_atualização
+
+WITH infracoes_renainf AS (
+    SELECT CONCAT(codigo_infracao, desdobramento) AS codigo_enquadramento,
+        descricao_infracao AS tipificacao_resumida
+    FROM
+        {{ source("infracao_staging", "infracoes_renainf") }}
+),
+citran AS (
     SELECT
         data,
         id_auto_infracao,
@@ -19,7 +27,7 @@ WITH citran AS (
         situacao_atual AS descricao_situacao_autuacao,
         IF(status_infracao != "", status_infracao, NULL) AS status_infracao,
         REPLACE(codigo_enquadramento, '-', '') AS codigo_enquadramento,
-        IF(tipificacao_resumida != "", tipificacao_resumida, NULL) AS tipificacao_resumida,
+        i.tipificacao_resumida,
         SAFE_CAST(SUBSTR(REGEXP_EXTRACT(pontuacao, r'\d+'), 2) AS STRING) AS pontuacao,
         CASE
             WHEN INITCAP(REGEXP_REPLACE(pontuacao, r'\d+', '')) = 'Media' THEN 'Média'
@@ -61,6 +69,9 @@ WITH citran AS (
         FALSE AS status_sne,
         "CITRAN" AS fonte
     FROM {{ ref('autuacao_citran') }}
+    LEFT JOIN
+        infracoes_renainf AS i
+    USING(codigo_enquadramento)
     {% if is_incremental() %}
         WHERE
             data BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
@@ -75,8 +86,8 @@ serpro AS (
         data_limite_recurso,
         descricao_situacao_autuacao,
         IF(status_infracao != "", status_infracao, NULL) AS status_infracao,
-        IF(codigo_enquadramento != "", codigo_enquadramento, NULL) AS codigo_enquadramento,
-        IF(tipificacao_resumida != "", tipificacao_resumida, NULL) AS tipificacao_resumida,
+        CONCAT(codigo_enquadramento, codigo_desdobramento)  AS codigo_enquadramento,
+        i.tipificacao_resumida,
         SUBSTR(pontuacao, 1, 1) AS pontuacao,
         gravidade,
         amparo_legal,
@@ -93,7 +104,7 @@ serpro AS (
         SAFE_CAST(NULL AS STRING) AS cep_proprietario,
         valor_infracao,
         valor_pago,
-        SAFE_CAST(NULL AS STRING) AS data_pagamento,
+        data_pagamento,
         COALESCE(id_autuador, "260010") AS id_autuador,
         IF(descricao_autuador != "", descricao_autuador, NULL) AS descricao_autuador,
         COALESCE(id_municipio_autuacao,"6001") AS id_municipio_autuacao,
@@ -111,6 +122,9 @@ serpro AS (
         IF(status_sne = "1.0", TRUE, FALSE) AS status_sne,
         "SERPRO" AS fonte
     FROM {{ ref('autuacao_serpro') }}
+    LEFT JOIN
+        infracoes_renainf AS i
+    USING(codigo_enquadramento)
     {% if is_incremental() %}
         WHERE
             data BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
