@@ -1,6 +1,6 @@
 # Changelog - subsidio
 
-## [2.0.0] - 2024-12-06
+## [2.0.1] - 2025-01-06
 
 # Corrigido
 

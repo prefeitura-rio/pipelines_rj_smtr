@@ -15,8 +15,8 @@ with
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
             )
-            and date(datetime_processamento)
-            <= date_add(date("{{ var('end_date') }}"), interval 6 day)
+            and date(datetime_processamento) 
+            <= date_add(date(datetime_transacao), interval 6 day)
     ),
     -- 2. Transações RioCard
     transacao_riocard as (
@@ -28,7 +28,7 @@ with
                 date("{{ var('end_date') }}"), interval 1 day
             )
             and date(datetime_processamento)
-            <= date_add(date("{{ var('end_date') }}"), interval 6 day)
+            <= date_add(date(datetime_transacao), interval 6 day)
     ),
     -- 3. GPS Validador
     gps_validador as (
@@ -54,7 +54,7 @@ with
                 or data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
             )
             and date(datetime_captura)
-            <= date_add(date("{{ var('end_date') }}"), interval 6 day)
+            <= date_add(date(datetime_gps), interval 6 day)
     ),
     -- 4. Viagens realizadas
     viagem as (
