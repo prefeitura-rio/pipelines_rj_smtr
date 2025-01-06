@@ -1,5 +1,15 @@
 # Changelog - subsidio
 
+## [2.0.1] - 2025-01-06
+
+# Corrigido
+
+- Corrigido e refatorado o modelo `viagem_transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/372)
+
+# Adicionado
+
+- Adicionado o modelo `viagem_transacao_aux.sql`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/372)
+
 ## [2.0.0] - 2024-12-06
 
 # Corrigido
