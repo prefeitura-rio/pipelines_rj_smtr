@@ -15,7 +15,7 @@ with
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
             )
-            and date(datetime_processamento) 
+            and date(datetime_processamento)
             <= date_add(date(datetime_transacao), interval 6 day)
     ),
     -- 2. Transações RioCard
