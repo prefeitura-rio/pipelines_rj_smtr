@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adicionadas datas com os tipo os `Fim de ano`, `Reveillon` e tipo dia `Ponto facultativo` no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Adicionadas datas com os tipo os `Fim de ano`, `Reveillon` e tipo dia `Ponto facultativo` no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/383)
 
 ## [9.1.3] - 2025-01-03
 
