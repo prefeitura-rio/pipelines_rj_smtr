@@ -9,26 +9,24 @@ with
     -- 1. Transações Jaé
     transacao as (
         select id_veiculo, datetime_transacao
-        from --{{ ref("transacao") }}
-        rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao
+        from {{ ref("transacao") }}
+        -- rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
             )
-            and date(datetime_processamento)
-            <= date_add(date(datetime_transacao), interval 6 day)
+            and date(datetime_processamento) - date(datetime_transacao) <= interval 6 day
     ),
     -- 2. Transações RioCard
     transacao_riocard as (
         select id_veiculo, datetime_transacao
-        from -- {{ ref("transacao_riocard") }}
-        rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard
+        from {{ ref("transacao_riocard") }}
+        -- rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
             )
-            and date(datetime_processamento)
-            <= date_add(date(datetime_transacao), interval 6 day)
+            and date(datetime_processamento) - date(datetime_transacao) <= interval 6 day
     ),
     -- 3. GPS Validador
     gps_validador as (
@@ -40,8 +38,8 @@ with
             estado_equipamento,
             latitude,
             longitude
-        from -- {{ ref("gps_validador") }}
-         rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador
+        from {{ ref("gps_validador") }}
+        -- rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
@@ -53,8 +51,7 @@ with
                 )
                 or data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
             )
-            and date(datetime_captura)
-            <= date_add(date(datetime_gps), interval 6 day)
+            and date(datetime_processamento) - date(datetime_transacao) <= interval 6 day
     ),
     -- 4. Viagens realizadas
     viagem as (
@@ -67,8 +64,8 @@ with
             id_viagem,
             distancia_planejada,
             sentido
-        from -- {{ ref("viagem_completa") }}
-        rj-smtr.projeto_subsidio_sppo.viagem_completa
+        from {{ ref("viagem_completa") }}
+        -- rj-smtr.projeto_subsidio_sppo.viagem_completa
         where
             data
             between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
@@ -78,8 +75,8 @@ with
     -- 5. Status dos veículos
     veiculos as (
         select data, id_veiculo, status
-        from -- {{ ref("sppo_veiculo_dia") }}
-        rj-smtr.veiculo.sppo_veiculo_dia
+        from {{ ref("sppo_veiculo_dia") }}
+        -- rj-smtr.veiculo.sppo_veiculo_dia
         where
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
