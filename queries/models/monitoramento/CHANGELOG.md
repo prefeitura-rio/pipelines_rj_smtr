@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Cria modelos `sumario_servico_dia_pagamento_historico`, `sumario_servico_dia_tipo_viagem_historico` e `monitoramento_viagem_transacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/258)
+- Cria modelos `sumario_servico_dia_pagamento_historico` e `sumario_servico_dia_tipo_viagem_historico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/258)
 
 ## [1.0.0] - 2024-10-21
 
