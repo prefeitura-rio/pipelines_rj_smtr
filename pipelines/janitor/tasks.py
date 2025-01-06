@@ -14,12 +14,11 @@ from pipelines.utils.utils import log
 
 
 @task
-def query_active_flow_names(prefix="%SMTR%", prefect_client=None, prefect_project="production"):
+def query_active_flow_names(prefect_client=None, prefect_project="production"):
     query = """
-query ($prefix: String, $offset: Int, $project_name: String){
+query ($offset: Int, $project_name: String){
     flow(
         where: {
-            name: {_like: $prefix},
             archived: {_eq: false},
             project: {name:{_eq: $project_name}}
         }
@@ -32,7 +31,7 @@ query ($prefix: String, $offset: Int, $project_name: String){
 """
     if not prefect_client:
         prefect_client = Client()
-    variables = {"prefix": prefix, "offset": 0, "project_name": prefect_project}
+    variables = {"offset": 0, "project_name": prefect_project}
     # flow_names = []
     response = prefect_client.graphql(query=query, variables=variables)["data"]
     active_flows = []
@@ -137,8 +136,8 @@ def get_prefect_client():
 
 
 @task
-def get_active_flow_names(prefix="%SMTR%"):
-    flow_names = query_active_flow_names(prefix=prefix)
+def get_active_flow_names():
+    flow_names = query_active_flow_names()
     log(f"Got flow_names\n{flow_names[:10]}\n...\n{flow_names[-10:-1]}")
     return flow_names
 

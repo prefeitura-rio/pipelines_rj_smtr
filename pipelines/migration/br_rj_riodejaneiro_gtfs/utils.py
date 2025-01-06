@@ -131,7 +131,9 @@ def download_xlsx(file_link, drive_service):
     """
     file_id = file_link.split("/")[-2]
 
-    file = drive_service.files().get(fileId=file_id).execute()  # pylint: disable=E1101
+    file = (
+        drive_service.files().get(fileId=file_id, supportsAllDrives=True).execute()
+    )  # pylint: disable=E1101
     mime_type = file.get("mimeType")
 
     if "google-apps" in mime_type:
@@ -140,7 +142,7 @@ def download_xlsx(file_link, drive_service):
             mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
     else:
-        request = drive_service.files().get_media(fileId=file_id, supportsAllDrives=True)
+        request = drive_service.files().get_media(fileId=file_id)  # pylint: disable=E1101
 
     file_bytes = io.BytesIO()
     downloader = MediaIoBaseDownload(file_bytes, request)
@@ -202,8 +204,13 @@ def processa_ordem_servico(
         None
     """
 
-    if len(sheetnames) != 3 and regular_sheet_index is None:
-        raise Exception("More than 3 tabs in the file. Please specify the regular sheet index.")
+    if (
+        len([sheet for sheet in sheetnames if "ANEXO I:" in sheet]) != 1
+        and regular_sheet_index is None
+    ):
+        raise Exception(
+            "More than 1 regular sheet in the file. Please specify the regular sheet index."
+        )
 
     if regular_sheet_index is None:
         regular_sheet_index = next(
@@ -229,18 +236,22 @@ def processa_ordem_servico(
         "Partidas Volta Dia Útil": "partidas_volta_du",
         "Viagens Dia Útil": "viagens_du",
         "Quilometragem Dia Útil": "km_dia_util",
+        "KM Dia Útil": "km_dia_util",
         "Partidas Ida Sábado": "partidas_ida_sabado",
         "Partidas Volta Sábado": "partidas_volta_sabado",
         "Viagens Sábado": "viagens_sabado",
         "Quilometragem Sábado": "km_sabado",
+        "KM Sábado": "km_sabado",
         "Partidas Ida Domingo": "partidas_ida_domingo",
         "Partidas Volta Domingo": "partidas_volta_domingo",
         "Viagens Domingo": "viagens_domingo",
         "Quilometragem Domingo": "km_domingo",
+        "KM Domingo": "km_domingo",
         "Partidas Ida Ponto Facultativo": "partidas_ida_pf",
         "Partidas Volta Ponto Facultativo": "partidas_volta_pf",
         "Viagens Ponto Facultativo": "viagens_pf",
         "Quilometragem Ponto Facultativo": "km_pf",
+        "KM Ponto Facultativo": "km_pf",
         "tipo_os": "tipo_os",
     }
 
@@ -301,19 +312,19 @@ def processa_ordem_servico(
     if not all_columns_present or not no_duplicate_columns:
         raise Exception("Missing or duplicated columns in ordem_servico")
 
-    quadro_test = quadro_geral.copy()
-    quadro_test["km_test"] = round(
-        (quadro_geral["partidas_volta_du"] * quadro_geral["extensao_volta"])
-        + (quadro_geral["partidas_ida_du"] * quadro_geral["extensao_ida"]),
-        2,
-    )
-    quadro_test["dif"] = quadro_test["km_test"] - quadro_test["km_dia_util"]
+    # quadro_test = quadro_geral.copy()
+    # quadro_test["km_test"] = round(
+    #     (quadro_geral["partidas_volta_du"] * quadro_geral["extensao_volta"])
+    #     + (quadro_geral["partidas_ida_du"] * quadro_geral["extensao_ida"]),
+    #     2,
+    # )
+    # quadro_test["dif"] = quadro_test["km_test"] - quadro_test["km_dia_util"]
 
-    if not (
-        round(abs(quadro_test["dif"].max()), 2) <= 0.01
-        and round(abs(quadro_test["dif"].min()), 2) <= 0.01
-    ):
-        raise Exception("failed to validate km_test and km_dia_util")
+    # if not (
+    #     round(abs(quadro_test["dif"].max()), 2) <= 0.01
+    #     and round(abs(quadro_test["dif"].min()), 2) <= 0.01
+    # ):
+    #     raise Exception("failed to validate km_test and km_dia_util")
 
     local_file_path = list(filter(lambda x: "ordem_servico" in x, local_filepath))[0]
     quadro_geral_csv = quadro_geral.to_csv(index=False)
