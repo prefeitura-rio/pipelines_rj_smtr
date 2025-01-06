@@ -243,6 +243,7 @@ def get_timestamp_range(start_date: str = None, end_date: str = None) -> List[st
 
     return timestamps
 
+
 @task(trigger=all_finished)
 def check_fail(results: Union[list, str]):
     """
