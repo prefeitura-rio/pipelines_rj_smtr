@@ -51,7 +51,7 @@ with
                 )
                 or data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
             )
-            and date(datetime_processamento) - date(datetime_transacao) <= interval 6 day
+            and date(datetime_captura) - date(datetime_gps) <= interval 6 day
     ),
     -- 4. Viagens realizadas
     viagem as (
