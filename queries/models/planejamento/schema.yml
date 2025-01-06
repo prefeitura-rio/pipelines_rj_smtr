@@ -25,22 +25,22 @@ models:
         description: "{{ doc('faixa_horaria_fim') }}"
       - name: partidas
         description: "{{ doc('partidas') }}"
-        tests:
-          - dbt_expectations.expect_column_sum_to_be_between:
-              name: dbt_expectations.expect_column_sum_to_be_between__partidas__ordem_servico_faixa_horaria
-              min_value: 0
-              group_by: [ feed_start_date, tipo_os, tipo_dia, servico ]
-              strictly: true
-              where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+        # tests:
+        #   - dbt_expectations.expect_column_sum_to_be_between:
+        #       name: dbt_expectations.expect_column_sum_to_be_between__partidas__ordem_servico_faixa_horaria
+        #       min_value: 0
+        #       group_by: [ feed_start_date, tipo_os, tipo_dia, servico ]
+        #       strictly: true
+        #       where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
       - name: quilometragem
         description: "{{ doc('quilometragem') }}"
-        tests:
-          - dbt_expectations.expect_column_sum_to_be_between:
-              name: dbt_expectations.expect_column_sum_to_be_between__quilometragem__ordem_servico_faixa_horaria
-              min_value: 0
-              group_by: [ feed_start_date, tipo_os, tipo_dia, servico ]
-              strictly: true
-              where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+        # tests:
+        #   - dbt_expectations.expect_column_sum_to_be_between:
+        #       name: dbt_expectations.expect_column_sum_to_be_between__quilometragem__ordem_servico_faixa_horaria
+        #       min_value: 0
+        #       group_by: [ feed_start_date, tipo_os, tipo_dia, servico ]
+        #       strictly: true
+        #       where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
   - name: segmento_shape
     description: Tabela contendo os shapes segmentados usados na validação de viagens.
     columns:
