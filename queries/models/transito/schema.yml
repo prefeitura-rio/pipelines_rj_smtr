@@ -60,7 +60,7 @@ models:
         description: "Indicador de adesão do veículo ao SNE"
 
   - name: autuacao_serpro
-    description: "Tabela com dados de autuações fornecidos pelo sistema CITRAN/IplanRio"
+    description: "Tabela com dados de autuações fornecidos pelo sistema SERPRO"
     columns:
       - name: data
         description: "Data da autuação (Coluna de particionamento)"
