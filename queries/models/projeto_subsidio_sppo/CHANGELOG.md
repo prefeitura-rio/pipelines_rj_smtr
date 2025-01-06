@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.0.7] - 2024-10-22
+
+### Adicionado
+
+- Adicionado label `dashboard` ao modelo `viagem_completa.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/258)
+
 ## [9.0.6] - 2024-10-22
 
 ### Corrigido
