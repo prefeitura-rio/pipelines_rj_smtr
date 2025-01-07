@@ -22,7 +22,7 @@ def get_db_object(secret_path="radar_serpro", environment: str = "dev"):
 
 @task(checkpoint=False, nout=2)
 def get_raw_serpro(
-    jdbc: JDBC, start_date: str, end_date: str, local_filepath: str, batch_size: int = 100000
+    jdbc: JDBC, start_date: str, end_date: str, local_filepath: str, batch_size: int = 50000
 ) -> str:
     """
     Task para capturar dados brutos do SERPRO com base em um intervalo de datas.
