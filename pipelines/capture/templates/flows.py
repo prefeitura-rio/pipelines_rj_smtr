@@ -43,6 +43,7 @@ def create_default_capture_flow(
     agent_label: str,
     recapture_days: int = 2,
     generate_schedule: bool = True,
+    recapture_schedule_cron: str = None,
 ):  # pylint: disable=R0914, R0913
     """
     Cria um flow de captura com captura e recaptura
@@ -166,18 +167,29 @@ def create_default_capture_flow(
     capture_flow.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
     if generate_schedule:
+        clocks = [
+            CronClock(
+                source.schedule_cron,
+                labels=[
+                    agent_label,
+                ],
+                start_date=datetime.now(tz=timezone(constants.TIMEZONE.value)),
+            )
+        ]
 
-        capture_flow.schedule = Schedule(
-            [
+        if recapture_schedule_cron:
+            clocks.append(
                 CronClock(
-                    source.schedule_cron,
+                    recapture_schedule_cron,
                     labels=[
                         agent_label,
                     ],
                     start_date=datetime.now(tz=timezone(constants.TIMEZONE.value)),
+                    parameter_defaults={"recapture": True},
                 )
-            ]
-        )
+            )
+
+        capture_flow.schedule = Schedule(clocks)
 
     return capture_flow
 
@@ -228,7 +240,7 @@ def create_date_range_capture_flow(
         )
 
         date_range_end_param = TypedParameter(
-            name="date_range_start",
+            name="date_range_end",
             default=None,
             accepted_types=(NoneType, str),
         )
@@ -301,7 +313,7 @@ def create_date_range_capture_flow(
         )(sources=activated_sources)
 
         reader_args = task(
-            lambda sources: [s["reader_args"] for s in sources], name="get_reader_args"
+            lambda sources: [s["pretreatment_reader_args"] for s in sources], name="get_reader_args"
         )(sources=activated_sources)
 
         pretreat_funcs = task(
