@@ -16,7 +16,7 @@ class constants(Enum):  # pylint: disable=c0103
     AUTUACAO_MATERIALIZACAO_DATASET_ID = "transito"
     AUTUACAO_MATERIALIZACAO_TABLE_ID = "autuacao"
 
-    INFRACAO_PRIVATE_BUCKET = "rj-smtr-infracao-private"
+    INFRACAO_PRIVATE_BUCKET = "rj-smtr-dev-infracao-private"
 
     SERPRO_CAPTURE_PARAMS = {
         "query": """
@@ -25,7 +25,8 @@ class constants(Enum):  # pylint: disable=c0103
             FROM
                 dbpro_radar_view_SMTR_VBL.tb_infracao_view
             WHERE
-                PARSEDATE(SUBSTRING(auinf_dt_infracao, 1, 10), 'yyyy-MM-dd') = '{date}'
+                PARSEDATE(SUBSTRING(auinf_dt_infracao, 1, 10), 'yyyy-MM-dd') BETWEEN '{start_date}'
+                AND '{end_date}'
         """,
         "primary_key": ["auinf_num_auto"],
         "pre_treatment_reader_args": {"dtype": "object"},

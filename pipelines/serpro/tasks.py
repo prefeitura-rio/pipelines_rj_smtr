@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import csv
-from datetime import datetime
 from pathlib import Path
 from time import sleep
 
@@ -23,13 +22,28 @@ def get_db_object(secret_path="radar_serpro", environment: str = "dev"):
 
 @task(checkpoint=False, nout=2)
 def get_raw_serpro(
-    jdbc: JDBC, timestamp: datetime, local_filepath: str, batch_size: int = 100000
+    jdbc: JDBC, start_date: str, end_date: str, local_filepath: str, batch_size: int = 100000
 ) -> str:
-    date = timestamp.date()
+    """
+    Task para capturar dados brutos do SERPRO com base em um intervalo de datas.
+
+    Args:
+        jdbc (JDBC): Instância para execução de queries via JDBC.
+        start_date (str): Data de início no formato "YYYY-MM-DD".
+        end_date (str): Data de fim no formato "YYYY-MM-DD".
+        local_filepath (str): Local onde o arquivo será salvo.
+        batch_size (int): Tamanho do lote.
+
+    Returns:
+        str: Caminho do arquivo salvo.
+    """
+
     raw_filepath = local_filepath.format(mode="raw", filetype="csv")
     Path(raw_filepath).parent.mkdir(parents=True, exist_ok=True)
 
-    query = constants.SERPRO_CAPTURE_PARAMS.value["query"].format(date=date.strftime("%Y-%m-%d"))
+    query = constants.SERPRO_CAPTURE_PARAMS.value["query"].format(
+        start_date=start_date, end_date=end_date
+    )
 
     jdbc.execute_query(query)
     columns = jdbc.get_columns()

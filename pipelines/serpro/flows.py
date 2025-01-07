@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-from prefect import Parameter, case
+from prefect import Parameter
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
-from prefect.tasks.control_flow import merge
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
@@ -16,6 +15,7 @@ from pipelines.migration.tasks import (
     create_local_partition_path,
     get_current_timestamp,
     get_now_time,
+    get_previous_date,
     parse_timestamp_to_string,
     rename_current_flow_run_now_time,
     run_dbt_model,
@@ -27,73 +27,68 @@ from pipelines.migration.tasks import (
 from pipelines.serpro.constants import constants
 from pipelines.serpro.tasks import get_db_object, get_raw_serpro
 from pipelines.serpro.utils import handler_setup_serpro
-from pipelines.tasks import get_timestamp_range
 
 with Flow("SMTR: SERPRO - Captura/Tratamento") as serpro_captura:
-    start_date = Parameter("start_date", default=None)
-    end_date = Parameter("end_date", default=None)
+    start_date = Parameter("start_date", default=get_previous_date.run(1))
+    end_date = Parameter("end_date", default=get_previous_date.run(1))
 
     rename_flow_run = rename_current_flow_run_now_time(
         prefix=serpro_captura.name + " ",
         now_time=get_now_time(),
     )
 
-    capture_timestamps = get_timestamp_range(start_date, end_date)
-    with case(start_date, None):
-        current_timestamp = get_current_timestamp()
+    timestamp = get_current_timestamp()
 
-    timestamps = merge(current_timestamp, capture_timestamps)
-
-    partitions = create_date_hour_partition.map(
-        timestamps,
+    partitions = create_date_hour_partition(
+        timestamp,
         partition_date_only=unmapped(True),
     )
 
-    filenames = parse_timestamp_to_string.map(timestamps)
+    filenames = parse_timestamp_to_string(timestamp)
 
-    local_filepaths = create_local_partition_path.map(
-        dataset_id=unmapped(constants.INFRACAO_DATASET_ID.value),
-        table_id=unmapped(constants.AUTUACAO_SERPRO_TABLE_ID.value),
+    local_filepaths = create_local_partition_path(
+        dataset_id=constants.INFRACAO_DATASET_ID.value,
+        table_id=constants.AUTUACAO_SERPRO_TABLE_ID.value,
         partitions=partitions,
         filename=filenames,
     )
 
     jdbc = get_db_object()
 
-    raw_filepaths = get_raw_serpro.map(
-        jdbc=unmapped(jdbc), timestamp=timestamps, local_filepath=local_filepaths
+    raw_filepaths = get_raw_serpro(
+        jdbc=jdbc, start_date=start_date, end_date=end_date, local_filepath=local_filepaths
     )
 
-    transform_raw_to_nested_structure_results = transform_raw_to_nested_structure.map(
+    transform_raw_to_nested_structure_results = transform_raw_to_nested_structure(
         raw_filepath=raw_filepaths,
         filepath=local_filepaths,
-        primary_key=unmapped(constants.SERPRO_CAPTURE_PARAMS.value["primary_key"]),
-        timestamp=timestamps,
-        reader_args=unmapped(constants.SERPRO_CAPTURE_PARAMS.value["pre_treatment_reader_args"]),
-        error=unmapped(None),
+        primary_key=constants.SERPRO_CAPTURE_PARAMS.value["primary_key"],
+        timestamp=timestamp,
+        reader_args=constants.SERPRO_CAPTURE_PARAMS.value["pre_treatment_reader_args"],
+        error=None,
     )
 
     errors, treated_filepaths = unpack_mapped_results_nout2(
         mapped_results=transform_raw_to_nested_structure_results
     )
 
-    errors = upload_raw_data_to_gcs.map(
-        dataset_id=unmapped(constants.INFRACAO_DATASET_ID.value),
-        table_id=unmapped(constants.AUTUACAO_SERPRO_TABLE_ID.value),
+    errors = upload_raw_data_to_gcs(
+        dataset_id=constants.INFRACAO_DATASET_ID.value,
+        table_id=constants.AUTUACAO_SERPRO_TABLE_ID.value,
         raw_filepath=raw_filepaths,
         partitions=partitions,
-        error=unmapped(None),
-        # bucket_name=unmapped(constants.INFRACAO_PRIVATE_BUCKET.value),
+        error=None,
+        bucket_name=constants.INFRACAO_PRIVATE_BUCKET.value,
     )
 
-    wait_captura_true = upload_staging_data_to_gcs.map(
-        dataset_id=unmapped(constants.INFRACAO_DATASET_ID.value),
-        table_id=unmapped(constants.AUTUACAO_SERPRO_TABLE_ID.value),
+    wait_captura_true = upload_staging_data_to_gcs(
+        dataset_id=constants.INFRACAO_DATASET_ID.value,
+        table_id=constants.AUTUACAO_SERPRO_TABLE_ID.value,
         staging_filepath=treated_filepaths,
         partitions=partitions,
-        timestamp=timestamps,
+        timestamp=timestamp,
         error=errors,
-        # bucket_name=unmapped(constants.INFRACAO_PRIVATE_BUCKET.value),
+        bucket_name=constants.INFRACAO_PRIVATE_BUCKET.value,
     )
 
     wait_run_dbt_model = run_dbt_model(
