@@ -134,19 +134,27 @@ def get_capture_date_range(
         dict: Dicionário com range de datas
     """
     date_range = source.get_capture_date_range(timestamp=timestamp)
+    log(f"Date range automático: {date_range}")
     if date_range_start_param:
         date_range_start_param = convert_timezone(
             timestamp=datetime.fromisoformat(date_range_start_param)
         )
+
+        log(f"date_range_start_param: {date_range_start_param}")
 
         if date_range_start_param > date_range["date_range_start"]:
             raise ValueError("A data de início é maior que a última captura")
         date_range["date_range_start"] = date_range_start_param
 
     if date_range_end_param:
-        date_range["date_range_end"] = convert_timezone(
+        date_range_end_param = convert_timezone(
             timestamp=datetime.fromisoformat(date_range_end_param)
         )
+        log(f"date_range_end_param: {date_range_end_param}")
+
+        date_range["date_range_end"] = date_range_end_param
+
+    log(f"Date range final: {date_range}")
 
     return date_range
 
