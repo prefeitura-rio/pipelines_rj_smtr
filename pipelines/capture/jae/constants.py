@@ -85,3 +85,5 @@ class constants(Enum):  # pylint: disable=c0103
             "data_transacao",
         ],
     )
+
+    ALERT_WEBHOOK = "alertas_bilhetagem"

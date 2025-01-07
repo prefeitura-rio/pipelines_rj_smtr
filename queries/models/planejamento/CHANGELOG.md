@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.3.0] - 2024-12-30
+
+### Adicionado
+
+- Cria modelo `matriz_integracao.sql` com a matriz publicada pela SMTR (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/371)
+
 ## [1.2.0] - 2024-12-04
 
 ### Adicionado

@@ -56,8 +56,6 @@ selectors:
           value: aux_calendario_manual
         - method: fqn
           value: calendario
-        - method: fqn
-          value: viagem_planejada_planejamento
 
   - name: transacao_ordem
     description: Materialização da tabela auxiliar de relacionamento entre as ordens de pagamento e as transações
@@ -67,3 +65,24 @@ selectors:
           value: staging_transacao_ordem
         - method: fqn
           value: aux_transacao_id_ordem_pagamento
+
+  - name: datario
+    description: Materialização das views para o datario
+    definition:
+      method: fqn
+      value: datario
+
+  - name: matriz_integracao_smtr
+    description: Materialização da matriz de integração da SMTR
+    definition:
+      method: fqn
+      value: matriz_integracao
+
+  - name: validacao_dados_jae
+    description: Materialização das tabelas de validação dos dados da Jaé
+    definition:
+      union:
+        - method: fqn
+          value: integracao_invalida
+        - method: fqn
+          value: integracao_nao_realizada

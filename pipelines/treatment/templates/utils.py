@@ -3,6 +3,7 @@ import re
 from datetime import datetime, timedelta
 
 from google.cloud.dataplex_v1 import DataScanJob
+from prefeitura_rio.pipelines_utils.io import get_root_path
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
@@ -38,8 +39,8 @@ class DBTSelector:
     def __init__(
         self,
         name: str,
-        schedule_cron: str,
         initial_datetime: datetime,
+        schedule_cron: str = None,
         incremental_delay_hours: int = 0,
     ):
         self.name = name
@@ -97,6 +98,8 @@ class DBTSelector:
         Returns:
             bool: se está atualizado ou não
         """
+        if self.schedule_cron is None:
+            raise ValueError("O selector não possui agendamento")
         last_materialization = self.get_last_materialized_datetime(env=env)
 
         last_schedule = cron_get_last_date(cron_expr=self.schedule_cron, timestamp=timestamp)
@@ -114,6 +117,8 @@ class DBTSelector:
         Returns:
             datetime: próximo datetime do cron
         """
+        if self.schedule_cron is None:
+            raise ValueError("O selector não possui agendamento")
         return cron_get_next_date(cron_expr=self.schedule_cron, timestamp=timestamp)
 
     def set_redis_materialized_datetime(self, env: str, timestamp: datetime):
@@ -228,9 +233,11 @@ def parse_dbt_test_output(dbt_logs: str) -> dict:
     dbt_logs = re.sub(r"\x1B[@-_][0-?]*[ -/]*[@-~]", "", dbt_logs)
 
     results = {}
-    result_pattern = r"\d+ of \d+ (PASS|FAIL|ERROR) (\d+ )?([\w_]+) .* \[(PASS|FAIL|ERROR) .*\]"
-    fail_pattern = r"Failure in test ([\w_]+) .*\n.*\n.*\n.* compiled Code at (.*)\n"
-    error_pattern = r"Error in test ([\w_]+) \(.*schema.yaml\)\n  (.*)\n"
+    result_pattern = r"\d+ of \d+ (PASS|FAIL|ERROR) (\d+ )?([\w._]+) .* \[(PASS|FAIL|ERROR) .*\]"
+    fail_pattern = r"Failure in test ([\w._]+) .*\n.*\n.*\n.* compiled Code at (.*)\n"
+    error_pattern = r"Error in test ([\w._]+) \(.*schema.yaml\)\n  (.*)\n"
+
+    root_path = get_root_path()
 
     for match in re.finditer(result_pattern, dbt_logs):
         groups = match.groups()
@@ -241,8 +248,9 @@ def parse_dbt_test_output(dbt_logs: str) -> dict:
         groups = match.groups()
         test_name = groups[0]
         file = groups[1]
+        filepath = f"{root_path}/queries/{file}"
 
-        with open(file, "r") as arquivo:
+        with open(filepath, "r") as arquivo:
             query = arquivo.read()
 
         query = re.sub(r"\n+", "\n", query)

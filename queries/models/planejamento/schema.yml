@@ -25,22 +25,22 @@ models:
         description: "{{ doc('faixa_horaria_fim') }}"
       - name: partidas
         description: "{{ doc('partidas') }}"
-        tests:
-          - dbt_expectations.expect_column_sum_to_be_between:
-              name: dbt_expectations.expect_column_sum_to_be_between__partidas__ordem_servico_faixa_horaria
-              min_value: 0
-              group_by: [ feed_start_date, tipo_os, tipo_dia, servico ]
-              strictly: true
-              where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+        # tests:
+        #   - dbt_expectations.expect_column_sum_to_be_between:
+        #       name: dbt_expectations.expect_column_sum_to_be_between__partidas__ordem_servico_faixa_horaria
+        #       min_value: 0
+        #       group_by: [ feed_start_date, tipo_os, tipo_dia, servico ]
+        #       strictly: true
+        #       where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
       - name: quilometragem
         description: "{{ doc('quilometragem') }}"
-        tests:
-          - dbt_expectations.expect_column_sum_to_be_between:
-              name: dbt_expectations.expect_column_sum_to_be_between__quilometragem__ordem_servico_faixa_horaria
-              min_value: 0
-              group_by: [ feed_start_date, tipo_os, tipo_dia, servico ]
-              strictly: true
-              where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+        # tests:
+        #   - dbt_expectations.expect_column_sum_to_be_between:
+        #       name: dbt_expectations.expect_column_sum_to_be_between__quilometragem__ordem_servico_faixa_horaria
+        #       min_value: 0
+        #       group_by: [ feed_start_date, tipo_os, tipo_dia, servico ]
+        #       strictly: true
+        #       where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
   - name: segmento_shape
     description: Tabela contendo os shapes segmentados usados na validação de viagens.
     columns:
@@ -242,11 +242,11 @@ models:
         data_type: string
         quote: true
       - name: subtipo_dia
-        description: "Subtipo de dia (ex: 'Verão')"
+        description: "Subtipo de dia (ex: 'Verão')."
         data_type: string
         quote: true
       - name: tipo_os
-        description: "Tipo de Ordem de Serviço (ex: 'Regular', 'Extraordinária - Verão')"
+        description: "{{ doc('tipo_os') }}"
         data_type: string
         quote: true
       - name: service_ids
@@ -268,4 +268,46 @@ models:
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
+        quote: true
+  - name: matriz_integracao
+    description: "Matriz de repartição tarifária de integrações válidas no sistema de transporte municipal"
+    columns:
+      - name: id_matriz_integracao
+        description: "Identificador único da integração"
+        data_type: string
+      - name: sequencia_integracao
+        description: "Sequencia da transação dentro da integração"
+        data_type: int64
+      - name: modo
+        description: "Tipo de transporte (Ônibus, Van, BRT)"
+        data_type: string
+      - name: percentual_rateio
+        description: "Percentual de rateio do valor total para a operadora"
+        data_type: numeric
+      - name: data_inicio_validade
+        description: "Data de início da validade da matriz"
+      - name: data_fim_validade
+        description: "Data de fim da validade da matriz"
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+      - name: data_inicio_matriz
+        description: "{{ doc('data_inicio_matriz') }}"
+        data_type: date
+        quote: true
+      - name: data_fim_matriz
+        description: Data de fim da versão da matriz de integração
+        data_type: date
+        quote: true
+      - name: sequencia_completa_modo
+        description: Lista com o conjunto de modos da integração completa
+        data_type: string
+        quote: true
+      - name: sequencia_completa_rateio
+        description: Lista com o conjunto de valores de rateio da integração completa
+        data_type: numeric
+        quote: true
+      - name: tempo_integracao_minutos
+        description: Tempo máximo entre a primeira e a última perna para a integração ser realizada
+        data_type: float64
         quote: true

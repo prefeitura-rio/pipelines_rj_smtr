@@ -5,16 +5,20 @@ from typing import Any, List, Union
 
 import prefect
 from prefect import task
+from prefect.engine.signals import FAIL
+from prefect.triggers import all_finished
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 from pytz import timezone
 
 from pipelines.constants import constants
+from pipelines.utils.discord import send_discord_message
 from pipelines.utils.prefect import FailedSubFlow, create_subflow_run, wait_subflow_run
+from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import convert_timezone
 
 
-@task
+@task(trigger=all_finished)
 def task_value_is_none(task_value: Union[Any, None]) -> bool:
     """Testa se o valor retornado por uma Task é None
 
@@ -238,3 +242,37 @@ def get_timestamp_range(start_date: str = None, end_date: str = None) -> List[st
         start_date_dt += timedelta(days=1)
 
     return timestamps
+
+
+@task(trigger=all_finished)
+def check_fail(results: Union[list, str]):
+    """
+    Checks if any task result indicates failure.
+
+    Args:
+        results (Union[list, str]): A result or list of results to check.
+
+    Returns:
+        bool: True if any result is an instance of `FAIL`, otherwise False.
+    """
+    if isinstance(results, list):
+        return any(isinstance(result, FAIL) for result in results)
+    else:
+        return isinstance(results, FAIL)
+
+
+@task
+def log_discord(message: str, key: str, dados_tag: bool = False):
+    """Logs message to discord channel specified
+
+    Args:
+        message (str): Message to post on the channel
+        key (str): Key to secret path storing the webhook to channel.
+        dados_tag (bool): Indicates whether the message will tag the data team
+    """
+    if dados_tag:
+        message = (
+            message + f" - <@&{constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>\n"
+        )
+    url = get_secret(secret_path=constants.WEBHOOKS_SECRET_PATH.value)[key]
+    send_discord_message(message=message, webhook_url=url)
