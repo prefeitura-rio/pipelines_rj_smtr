@@ -25,8 +25,9 @@ class constants(Enum):  # pylint: disable=c0103
             FROM
                 dbpro_radar_view_SMTR_VBL.tb_infracao_view
             WHERE
-                PARSEDATE(SUBSTRING(auinf_dt_infracao, 1, 10), 'yyyy-MM-dd') BETWEEN '{start_date}'
-                AND '{end_date}'
+                PARSEDATE(SUBSTRING(auinf_dt_infracao, 1, 10), 'yyyy-MM-dd')
+                BETWEEN PARSEDATE('{start_date}', 'yyyy-MM-dd')
+                AND PARSEDATE('{end_date}', 'yyyy-MM-dd')
         """,
         "primary_key": ["auinf_num_auto"],
         "pre_treatment_reader_args": {"dtype": "object"},
