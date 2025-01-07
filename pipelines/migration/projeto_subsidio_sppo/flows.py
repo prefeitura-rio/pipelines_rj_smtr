@@ -3,7 +3,7 @@
 """
 Flows for projeto_subsidio_sppo
 
-DBT: 2024-12-20
+DBT: 2025-01-06
 """
 
 from prefect import Parameter, case, task
@@ -275,6 +275,18 @@ with Flow(
                     _vars=dbt_vars_2,
                     upstream_tasks=[dbt_vars_2],
                 )
+                dbt_vars_3 = get_join_dict(
+                    dict_list=[dbt_vars_1],
+                    new_dict=date_intervals["second_range"]
+                    | {"tipo_materializacao": "monitoramento"},
+                    upstream_tasks=[SUBSIDIO_SPPO_APURACAO_RUN_2],
+                )[0]
+
+                SUBSIDIO_SPPO_APURACAO_RUN_3 = run_dbt_selector(
+                    selector_name="monitoramento_subsidio",
+                    _vars=dbt_vars_3,
+                    upstream_tasks=[dbt_vars_3],
+                )
 
                 # POST-DATA QUALITY CHECK #
                 SUBSIDIO_SPPO_DATA_QUALITY_POS_2 = run_dbt_tests(
@@ -323,6 +335,11 @@ with Flow(
                         _vars=_vars,
                     )
 
+                    SUBSIDIO_SPPO_APURACAO_RUN_2 = run_dbt_selector(
+                        selector_name="monitoramento_subsidio",
+                        _vars=_vars | {"tipo_materializacao": "monitoramento"},
+                        upstream_tasks=[SUBSIDIO_SPPO_APURACAO_RUN],
+                    )
                     # POST-DATA QUALITY CHECK #
                     SUBSIDIO_SPPO_DATA_QUALITY_POS = run_dbt_tests(
                         dataset_id="viagens_remuneradas sumario_servico_dia_pagamento",
@@ -373,6 +390,7 @@ with Flow(
             dataset_id="sppo_registros sppo_realocacao check_gps_treatment__gps_sppo sppo_veiculo_dia",  # noqa
             _vars=dbt_vars,
         )
+
         DATA_QUALITY_PRE = dbt_data_quality_checks(
             dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_PRE,
             checks_list={},

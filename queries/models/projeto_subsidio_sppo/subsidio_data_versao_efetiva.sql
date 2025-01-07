@@ -325,6 +325,7 @@ WITH
       WHEN data = "2024-10-21" THEN "Ponto Facultativo" -- Ponto Facultativo - Dia do Comérciario - (Processo.Rio MTR-DES-2024/64171)
       WHEN data = "2024-10-28" THEN "Ponto Facultativo" -- Ponto Facultativo - Dia do Servidor Público - (Processo.Rio MTR-DES-2024/64417)
       WHEN data BETWEEN DATE(2024,11,18) AND DATE(2024,11,19) THEN "Ponto Facultativo" -- Ponto Facultativo - G20 - (Processo.Rio MTR-DES-2024/67477)
+      WHEN data = DATE(2024,12,24) THEN "Ponto Facultativo" -- Ponto Facultativo - Véspera de Natal - (Processo.Rio MTR-DES-2024/75723)
       WHEN EXTRACT(DAY FROM data) = 20 AND EXTRACT(MONTH FROM data) = 1 THEN "Domingo" -- Dia de São Sebastião -- Art. 8°, I - Lei Municipal nº 5146/2010
       WHEN EXTRACT(DAY FROM data) = 23 AND EXTRACT(MONTH FROM data) = 4 THEN "Domingo" -- Dia de São Jorge -- Art. 8°, II - Lei Municipal nº 5146/2010 / Lei Estadual Nº 5198/2008 / Lei Estadual Nº 5645/2010
       WHEN EXTRACT(DAY FROM data) = 20 AND EXTRACT(MONTH FROM data) = 11 THEN "Domingo" -- Aniversário de morte de Zumbi dos Palmares / Dia da Consciência Negra -- Art. 8°, IV - Lei Municipal nº 5146/2010 / Lei Estadual nº 526/1982 / Lei Estadual nº 1929/1991 / Lei Estadual nº 4007/2002 / Lei Estadual Nº 5645/2010
@@ -359,9 +360,15 @@ WITH
       WHEN data = DATE(2024,11,24) THEN "Parada LGBTQI+" -- Processo.Rio MTR-DES-2024/70057
       WHEN data BETWEEN DATE(2024,12,07) AND DATE(2024,12,08) THEN "Extraordinária - Verão" -- Processo.Rio MTR-DES-2024/72800
       WHEN data BETWEEN DATE(2024,12,14) AND DATE(2024,12,15) THEN "Extraordinária - Verão" -- Processo.Rio MTR-DES-2024/74396
+      WHEN data = DATE(2024,12,23) THEN "Fim de ano" -- Processo.Rio MTR-DES-2024/75723
+      WHEN data BETWEEN DATE(2024,12,26) AND DATE(2024,12,27) THEN "Fim de ano" -- Processo.Rio MTR-DES-2024/75723
+      WHEN data = DATE(2024,12,30) THEN "Fim de ano" -- Processo.Rio MTR-DES-2024/75723
+      WHEN data = DATE(2024,12,31) THEN "Vespera de Reveillon" -- Processo.Rio MTR-DES-2024/76453
+      WHEN data = DATE(2025,01,01) THEN "Reveillon" -- Processo.Rio MTR-DES-2024/76453
+      WHEN data BETWEEN DATE(2025,01,02) AND DATE(2025,01,03) THEN "Fim de ano" -- Processo.Rio MTR-DES-2024/77046
       ELSE "Regular"
     END AS tipo_os,
-  FROM UNNEST(GENERATE_DATE_ARRAY("{{var('DATA_SUBSIDIO_V6_INICIO')}}", "2024-12-31")) AS data),
+  FROM UNNEST(GENERATE_DATE_ARRAY("{{var('DATA_SUBSIDIO_V6_INICIO')}}", "2025-12-31")) AS data),
   data_versao_efetiva_manual AS (
   SELECT
     data,
@@ -369,6 +376,7 @@ WITH
     CASE
       WHEN tipo_os = "Extraordinária - Verão" THEN "Verão"
       WHEN tipo_os LIKE "%Madonna%" THEN "Madonna"
+      WHEN tipo_os LIKE "%Reveillon%" THEN "Reveillon"
       WHEN tipo_os = "Regular" THEN NULL
       ELSE tipo_os
     END AS subtipo_dia,
