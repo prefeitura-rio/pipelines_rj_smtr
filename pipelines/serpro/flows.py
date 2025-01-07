@@ -20,7 +20,6 @@ from pipelines.migration.tasks import (
     rename_current_flow_run_now_time,
     run_dbt_model,
     transform_raw_to_nested_structure,
-    unpack_mapped_results_nout2,
     upload_raw_data_to_gcs,
     upload_staging_data_to_gcs,
 )
@@ -59,17 +58,13 @@ with Flow("SMTR: SERPRO - Captura/Tratamento") as serpro_captura:
         jdbc=jdbc, start_date=start_date, end_date=end_date, local_filepath=local_filepaths
     )
 
-    transform_raw_to_nested_structure_results = transform_raw_to_nested_structure(
+    errors, treated_filepaths = transform_raw_to_nested_structure(
         raw_filepath=raw_filepaths,
         filepath=local_filepaths,
         primary_key=constants.SERPRO_CAPTURE_PARAMS.value["primary_key"],
         timestamp=timestamp,
         reader_args=constants.SERPRO_CAPTURE_PARAMS.value["pre_treatment_reader_args"],
         error=None,
-    )
-
-    errors, treated_filepaths = unpack_mapped_results_nout2(
-        mapped_results=transform_raw_to_nested_structure_results
     )
 
     errors = upload_raw_data_to_gcs(
