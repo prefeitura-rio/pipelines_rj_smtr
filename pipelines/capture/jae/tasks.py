@@ -50,8 +50,8 @@ def create_jae_general_extractor(source: DefaultSourceTable, timestamp: datetime
     max_retries=smtr_constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=smtr_constants.RETRY_DELAY.value),
 )
-def create_jae_auxiliar_extractor(source: DateRangeSourceTable, date_range: dict):
-    """Cria a extração de tabelas auxiliares da Jaé"""
+def create_jae_date_range_extractor(source: DateRangeSourceTable, date_range: dict):
+    """Cria a extração de tabelas da Jaé capturadas com souces date range"""
     credentials = get_secret(constants.JAE_SECRET_PATH.value)
 
     start = (
@@ -60,7 +60,10 @@ def create_jae_auxiliar_extractor(source: DateRangeSourceTable, date_range: dict
 
     end = date_range["date_range_end"].astimezone(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S")
 
-    params = constants.JAE_AUXILIAR_CAPTURE_PARAMS.value[source.table_id]
+    if source.table_id in constants.JAE_AUXILIAR_CAPTURE_PARAMS.value.keys():
+        params = constants.JAE_AUXILIAR_CAPTURE_PARAMS.value[source.table_id]
+    else:
+        params = constants.JAE_ORDEM_PAGAMENTO_CAPTURE_PARAMS.value[source.table_id]
 
     query = params["query"].format(start=start, end=end)
     database_name = params["database"]

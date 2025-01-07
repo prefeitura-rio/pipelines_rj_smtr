@@ -7,7 +7,11 @@ from datetime import datetime
 from enum import Enum
 
 from pipelines.capture.templates.utils import DateRangeSourceTable, DefaultSourceTable
-from pipelines.schedules import create_daily_cron, create_hourly_cron
+from pipelines.schedules import (
+    create_daily_cron,
+    create_hourly_cron,
+    create_minute_cron,
+)
 
 JAE_SOURCE_NAME = "jae"
 
@@ -54,6 +58,8 @@ class constants(Enum):  # pylint: disable=c0103
 
     JAE_PRIVATE_BUCKET_NAMES = {"prod": "rj-smtr-jae-private", "dev": "rj-smtr-dev-private"}
 
+    ALERT_WEBHOOK = "alertas_bilhetagem"
+
     JAE_AUXILIAR_CAPTURE_PARAMS = {
         "linha": {
             "query": """
@@ -66,7 +72,7 @@ class constants(Enum):  # pylint: disable=c0103
                     AND '{end}'
             """,
             "database": "principal_db",
-            "primary_key": ["CD_LINHA"],
+            "primary_keys": ["CD_LINHA"],
         },
         "operadora_transporte": {
             "query": """
@@ -84,7 +90,7 @@ class constants(Enum):  # pylint: disable=c0103
                     AND '{end}'
             """,
             "database": "principal_db",
-            "primary_key": ["CD_OPERADORA_TRANSPORTE"],
+            "primary_keys": ["CD_OPERADORA_TRANSPORTE"],
         },
         "cliente": {
             "query": """
@@ -97,7 +103,7 @@ class constants(Enum):  # pylint: disable=c0103
                     AND '{end}'
             """,
             "database": "principal_db",
-            "primary_key": ["CD_CLIENTE"],
+            "primary_keys": ["CD_CLIENTE"],
             "pre_treatment_reader_args": {"dtype": {"NR_DOCUMENTO": "object"}},
         },
         "pessoa_fisica": {
@@ -116,7 +122,7 @@ class constants(Enum):  # pylint: disable=c0103
                     AND '{end}'
             """,
             "database": "principal_db",
-            "primary_key": ["CD_CLIENTE"],
+            "primary_keys": ["CD_CLIENTE"],
             "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
         },
         "gratuidade": {
@@ -135,7 +141,7 @@ class constants(Enum):  # pylint: disable=c0103
                     AND '{end}'
             """,
             "database": "gratuidade_db",
-            "primary_key": ["id"],
+            "primary_keys": ["id"],
             "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
         },
         "consorcio": {
@@ -149,7 +155,7 @@ class constants(Enum):  # pylint: disable=c0103
                     AND '{end}'
             """,
             "database": "principal_db",
-            "primary_key": ["CD_CONSORCIO"],
+            "primary_keys": ["CD_CONSORCIO"],
         },
         "percentual_rateio_integracao": {
             "query": """
@@ -162,7 +168,7 @@ class constants(Enum):  # pylint: disable=c0103
                     AND '{end}'
             """,
             "database": "ressarcimento_db",
-            "primary_key": ["id"],
+            "primary_keys": ["id"],
         },
         "linha_consorcio": {
             "query": """
@@ -177,7 +183,7 @@ class constants(Enum):  # pylint: disable=c0103
                     AND DATE('{end}')
             """,
             "database": "principal_db",
-            "primary_key": [
+            "primary_keys": [
                 "CD_CONSORCIO",
                 "CD_LINHA",
             ],
@@ -195,7 +201,7 @@ class constants(Enum):  # pylint: disable=c0103
                     AND DATE('{end}')
             """,
             "database": "principal_db",
-            "primary_key": [
+            "primary_keys": [
                 "CD_CONSORCIO",
                 "CD_OPERADORA_TRANSPORTE",
                 "CD_LINHA",
@@ -215,7 +221,7 @@ class constants(Enum):  # pylint: disable=c0103
                     AND '{end}'
             """,
             "database": "principal_db",
-            "primary_key": [
+            "primary_keys": [
                 "NR_SEQ_ENDERECO",
             ],
         },
@@ -225,21 +231,73 @@ class constants(Enum):  # pylint: disable=c0103
         k: DateRangeSourceTable(
             source_name=JAE_SOURCE_NAME,
             table_id=k,
-            first_timestamp=datetime(2024, 12, 30, 0, 0, 0),
+            first_timestamp=datetime(2024, 1, 7, 0, 0, 0),
             schedule_cron=create_hourly_cron(),
             primary_keys=v["primary_keys"],
             pretreatment_reader_args=v.get("pretreatment_reader_args"),
             pretreat_funcs=v.get("pretreat_funcs"),
             bucket_names=v.get("bucket_names"),
             partition_date_only=v.get("partition_date_only", False),
-            max_capture_hours=v.get("max_capture_hours", 5),
+            max_capture_hours=v.get("max_capture_hours", 24),
         )
-        for k, v in JAE_AUXILIAR_CAPTURE_PARAMS
+        for k, v in JAE_AUXILIAR_CAPTURE_PARAMS.items()
     }
 
+    TRANSACAO_TABLE_ID = "transacao"
+    TRANSACAO_RIOCARD_TABLE_ID = "transacao_riocard"
+    GPS_VALIDADOR_TABLE_ID = "gps_validador"
+    INTEGRACAO_TABLE_ID = "integracao_transacao"
     TRANSACAO_ORDEM_TABLE_ID = "transacao_ordem"
 
     JAE_TABLE_CAPTURE_PARAMS = {
+        TRANSACAO_TABLE_ID: {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    transacao
+                WHERE
+                    data_processamento >= timestamp '{start}' - INTERVAL '5 minutes'
+                    AND data_processamento < timestamp '{end}' - INTERVAL '5 minutes'
+            """,
+            "database": "transacao_db",
+        },
+        TRANSACAO_RIOCARD_TABLE_ID: {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    transacao_riocard
+                WHERE
+                    data_processamento >= timestamp '{start}' - INTERVAL '5 minutes'
+                    AND data_processamento < timestamp '{end}' - INTERVAL '5 minutes'
+            """,
+            "database": "transacao_db",
+        },
+        GPS_VALIDADOR_TABLE_ID: {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    tracking_detalhe
+                WHERE
+                    data_tracking >= timestamp '{start}' - INTERVAL '10 minutes'
+                    AND data_tracking < timestamp '{end}' - INTERVAL '10 minutes'
+            """,
+            "database": "tracking_db",
+        },
+        INTEGRACAO_TABLE_ID: {
+            "database": "ressarcimento_db",
+            "query": """
+                SELECT
+                    *
+                FROM
+                    integracao_transacao
+                WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'
+            """,
+        },
         TRANSACAO_ORDEM_TABLE_ID: {
             "query": """
                 SELECT
@@ -255,8 +313,41 @@ class constants(Enum):  # pylint: disable=c0103
                     AND id_ordem_ressarcimento IS NOT NULL
             """,
             "database": "transacao_db",
-        }
+        },
     }
+
+    TRANSACAO_SOURCE = DefaultSourceTable(
+        source_name=JAE_SOURCE_NAME,
+        table_id=TRANSACAO_TABLE_ID,
+        first_timestamp=datetime(2025, 1, 7, 0, 0, 0),
+        schedule_cron=create_minute_cron(),
+        primary_keys=["id"],
+    )
+
+    TRANSACAO_RIOCARD_SOURCE = DefaultSourceTable(
+        source_name=JAE_SOURCE_NAME,
+        table_id=TRANSACAO_RIOCARD_TABLE_ID,
+        first_timestamp=datetime(2025, 1, 7, 0, 0, 0),
+        schedule_cron=create_minute_cron(),
+        primary_keys=["id"],
+    )
+
+    GPS_VALIDADOR_SOURCE = DefaultSourceTable(
+        source_name=JAE_SOURCE_NAME,
+        table_id=GPS_VALIDADOR_TABLE_ID,
+        first_timestamp=datetime(2025, 1, 7, 0, 0, 0),
+        schedule_cron=create_minute_cron(),
+        primary_keys=["id"],
+    )
+
+    INTEGRACAO_SOURCE = DefaultSourceTable(
+        source_name=JAE_SOURCE_NAME,
+        table_id=INTEGRACAO_TABLE_ID,
+        first_timestamp=datetime(2025, 1, 7, 0, 0, 0),
+        schedule_cron=create_daily_cron(hour=5),
+        primary_keys=["id"],
+        max_recaptures=2,
+    )
 
     TRANSACAO_ORDEM_SOURCE = DefaultSourceTable(
         source_name=JAE_SOURCE_NAME,
@@ -273,4 +364,99 @@ class constants(Enum):  # pylint: disable=c0103
         ],
     )
 
-    ALERT_WEBHOOK = "alertas_bilhetagem"
+    JAE_ORDEM_PAGAMENTO_CAPTURE_PARAMS = {
+        "ordem_ressarcimento": {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    ordem_ressarcimento
+                WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'
+            """,
+            "database": "ressarcimento_db",
+            "primary_keys": ["id"],
+        },
+        "ordem_pagamento": {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    ordem_pagamento
+                WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'
+            """,
+            "database": "ressarcimento_db",
+            "primary_keys": ["id"],
+        },
+        "ordem_pagamento_consorcio_operadora": {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    ordem_pagamento_consorcio_operadora
+                WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'
+            """,
+            "database": "ressarcimento_db",
+            "primary_keys": ["id"],
+        },
+        "ordem_pagamento_consorcio": {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    ordem_pagamento_consorcio
+                WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'
+            """,
+            "database": "ressarcimento_db",
+            "primary_keys": ["id"],
+        },
+        "ordem_rateio": {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    ordem_rateio
+                WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'
+            """,
+            "database": "ressarcimento_db",
+            "primary_keys": ["id"],
+        },
+        "linha_sem_ressarcimento": {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    linha_sem_ressarcimento
+                WHERE
+                    dt_inclusao BETWEEN '{start}'
+                    AND '{end}'
+            """,
+            "database": "ressarcimento_db",
+            "primary_keys": ["id_linha"],
+        },
+    }
+
+    ORDEM_PAGAMENTO_SOURCES = {
+        k: DateRangeSourceTable(
+            source_name=JAE_SOURCE_NAME,
+            table_id=k,
+            first_timestamp=datetime(2024, 12, 30, 0, 0, 0),
+            schedule_cron=create_hourly_cron(),
+            primary_keys=v["primary_keys"],
+            pretreatment_reader_args=v.get("pretreatment_reader_args"),
+            pretreat_funcs=v.get("pretreat_funcs"),
+            bucket_names=v.get("bucket_names"),
+            partition_date_only=v.get("partition_date_only", False),
+            max_capture_hours=v.get("max_capture_hours", 72),
+        )
+        for k, v in JAE_ORDEM_PAGAMENTO_CAPTURE_PARAMS.items()
+    }
