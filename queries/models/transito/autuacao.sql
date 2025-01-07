@@ -1,138 +1,281 @@
-{{ config(
-    materialized='incremental',
-    partition_by={
-      "field":"data",
-      "data_type":"date",
-      "granularity": "day"
-    },
-    unique_key='id_autuacao',
-    incremental_strategy='insert_overwrite'
-) }}
+{{
+    config(
+        materialized="incremental",
+        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+        unique_key="id_autuacao",
+        incremental_strategy="insert_overwrite",
+    )
+}}
 
--- add lógica para ter um historico da autuação com base na coluna de data_atualização
-
-WITH infracoes_renainf AS (
-    SELECT CONCAT(codigo_infracao, desdobramento) AS codigo_enquadramento,
-        descricao_infracao AS tipificacao_resumida
-    FROM
-        {{ source("infracao_staging", "infracoes_renainf") }}
-),
-citran AS (
-    SELECT
-        data,
-        id_auto_infracao,
-        DATETIME(concat(data,' ',hora,':00')) AS datetime_autuacao,
-        data_limite_defesa_previa,
-        data_limite_recurso,
-        situacao_atual AS descricao_situacao_autuacao,
-        IF(status_infracao != "", status_infracao, NULL) AS status_infracao,
-        REPLACE(codigo_enquadramento, '-', '') AS codigo_enquadramento,
-        i.tipificacao_resumida,
-        SAFE_CAST(SUBSTR(REGEXP_EXTRACT(pontuacao, r'\d+'), 2) AS STRING) AS pontuacao,
-        CASE
-            WHEN INITCAP(REGEXP_REPLACE(pontuacao, r'\d+', '')) = 'Media' THEN 'Média'
-            WHEN INITCAP(REGEXP_REPLACE(pontuacao, r'\d+', '')) = 'Gravissima' THEN 'Gravíssima'
-            ELSE INITCAP(REGEXP_REPLACE(pontuacao, r'\d+', ''))
-        END AS gravidade,
-        SAFE_CAST(NULL AS STRING) AS amparo_legal,
-        INITCAP(tipo_veiculo) AS tipo_veiculo,
-        IF(descricao_veiculo != "", descricao_veiculo, NULL) AS descricao_veiculo,
-        SAFE_CAST(NULL AS STRING) AS placa_veiculo,
-        SAFE_CAST(NULL AS STRING) AS ano_fabricacao_veiculo,
-        SAFE_CAST(NULL AS STRING) AS ano_modelo_veiculo,
-        SAFE_CAST(NULL AS STRING) AS cor_veiculo,
-        CASE
-            WHEN INITCAP(REGEXP_REPLACE(especie_veiculo, r'\d+', '')) IN ('Misto', '0Misto') THEN 'Misto'
-            WHEN INITCAP(REGEXP_REPLACE(especie_veiculo, r'\d+', '')) IN ('Passageir', '0Passageir', 'Passageiro', '0Passageiro') THEN 'Passageiro'
-            WHEN INITCAP(REGEXP_REPLACE(especie_veiculo, r'\d+', '')) IN ('Tracao', '0Tracao', 'Tracao') THEN 'Tração'
-            WHEN INITCAP(REGEXP_REPLACE(especie_veiculo, r'\d+', '')) IN ('Nao Inform', '0Nao Inform', 'Nao Informado', '0Nao Informado') THEN 'Não informado'
-            WHEN INITCAP(REGEXP_REPLACE(especie_veiculo, r'\d+', '')) IN ('Carga', '0Carga') THEN 'Carga'
-            ELSE 'Inválido'
-        END AS especie_veiculo,
-        SAFE_CAST(NULL AS STRING) AS uf_infrator,
-        SAFE_CAST(NULL AS STRING) AS uf_principal_condutor,
-        IF(uf_proprietario != "", uf_proprietario, NULL) AS uf_proprietario,
-        IF(cep_proprietario != "", cep_proprietario, NULL) AS cep_proprietario,
-        valor_infracao / 100 AS valor_infracao,
-        valor_pago  / 100 AS valor_pago,
-        data_pagamento,
-        "260010" AS id_autuador,
-        IF(descricao_autuador != "", descricao_autuador, NULL) AS descricao_autuador,
-        "6001" AS id_municipio_autuacao,
-        "RIO DE JANEIRO" AS descricao_municipio,
-        "RJ" AS uf_autuacao,
-        endereco_autuacao AS cep_autuacao,
-        NULL AS tile_autuacao,
-        IF(processo_defesa_autuacao != "00000000" AND processo_defesa_autuacao != "" , processo_defesa_autuacao, NULL) AS processo_defesa_autuacao,
-        IF(recurso_penalidade_multa != "00000000" AND recurso_penalidade_multa != "" , recurso_penalidade_multa, NULL) AS recurso_penalidade_multa,
-        IF(processo_troca_real_infrator != "00000000" AND processo_troca_real_infrator != "" , processo_troca_real_infrator, NULL) AS processo_troca_real_infrator,
-        FALSE AS status_sne,
-        "CITRAN" AS fonte
-    FROM {{ ref('autuacao_citran') }}
-    LEFT JOIN
-        infracoes_renainf AS i
-    USING(codigo_enquadramento)
-    {% if is_incremental() %}
-        WHERE
-            data BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
-    {% endif %}
-),
-serpro AS (
-    SELECT
-        data,
-        id_auto_infracao,
-        datetime_autuacao,
-        data_limite_defesa_previa,
-        data_limite_recurso,
-        descricao_situacao_autuacao,
-        IF(status_infracao != "", status_infracao, NULL) AS status_infracao,
-        CONCAT(codigo_enquadramento, codigo_desdobramento)  AS codigo_enquadramento,
-        i.tipificacao_resumida,
-        SUBSTR(pontuacao, 1, 1) AS pontuacao,
-        gravidade,
-        amparo_legal,
-        INITCAP(tipo_veiculo) AS tipo_veiculo,
-        IF(descricao_veiculo != "", descricao_veiculo, NULL) AS descricao_veiculo,
-        placa_veiculo,
-        ano_fabricacao_veiculo,
-        ano_modelo_veiculo,
-        cor_veiculo,
-        especie_veiculo,
-        uf_infrator,
-        uf_principal_condutor,
-        IF(uf_proprietario != "", uf_proprietario, NULL) AS uf_proprietario,
-        SAFE_CAST(NULL AS STRING) AS cep_proprietario,
-        valor_infracao,
-        valor_pago,
-        data_pagamento,
-        COALESCE(id_autuador, "260010") AS id_autuador,
-        IF(descricao_autuador != "", descricao_autuador, NULL) AS descricao_autuador,
-        COALESCE(id_municipio_autuacao,"6001") AS id_municipio_autuacao,
-        COALESCE(descricao_municipio, "RIO DE JANEIRO") AS descricao_municipio,
-        COALESCE(uf_autuacao,"RJ") AS uf_autuacao,
-        CASE
-            WHEN logradouro_autuacao IS NOT NULL THEN
-                RTRIM(REGEXP_REPLACE(CONCAT(logradouro_autuacao, ' ', bairro_autuacao, ' ', complemento), r'\s+', ' '))
-            ELSE NULL
-        END AS cep_autuacao,
-        NULL AS tile_autuacao,
-        processo_defesa_autuacao,
-        recurso_penalidade_multa,
-        processo_troca_real_infrator,
-        IF(status_sne = "1.0", TRUE, FALSE) AS status_sne,
-        "SERPRO" AS fonte
-    FROM {{ ref('autuacao_serpro') }}
-    LEFT JOIN
-        infracoes_renainf AS i
-    USING(codigo_enquadramento)
-    {% if is_incremental() %}
-        WHERE
-            data BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
-    {% endif %}
-)
-SELECT
+with
+    infracoes_renainf as (
+        select
+            concat(codigo_infracao, desdobramento) as codigo_enquadramento,
+            descricao_infracao as tipificacao_resumida
+        from {{ source("infracao_staging", "infracoes_renainf") }}
+    ),
+    citran as (
+        select
+            data,
+            id_auto_infracao,
+            datetime(concat(data, ' ', hora, ':00')) as datetime_autuacao,
+            data_limite_defesa_previa,
+            data_limite_recurso,
+            situacao_atual as descricao_situacao_autuacao,
+            if(status_infracao != "", status_infracao, null) as status_infracao,
+            replace(codigo_enquadramento, '-', '') as codigo_enquadramento,
+            safe_cast(
+                substr(regexp_extract(pontuacao, r'\d+'), 2) as string
+            ) as pontuacao,
+            case
+                when initcap(regexp_replace(pontuacao, r'\d+', '')) = 'Media'
+                then 'Média'
+                when initcap(regexp_replace(pontuacao, r'\d+', '')) = 'Gravissima'
+                then 'Gravíssima'
+                else initcap(regexp_replace(pontuacao, r'\d+', ''))
+            end as gravidade,
+            safe_cast(null as string) as amparo_legal,
+            initcap(tipo_veiculo) as tipo_veiculo,
+            if(descricao_veiculo != "", descricao_veiculo, null) as descricao_veiculo,
+            safe_cast(null as string) as placa_veiculo,
+            safe_cast(null as string) as ano_fabricacao_veiculo,
+            safe_cast(null as string) as ano_modelo_veiculo,
+            safe_cast(null as string) as cor_veiculo,
+            case
+                when
+                    initcap(regexp_replace(especie_veiculo, r'\d+', ''))
+                    in ('Misto', '0Misto')
+                then 'Misto'
+                when
+                    initcap(regexp_replace(especie_veiculo, r'\d+', ''))
+                    in ('Passageir', '0Passageir', 'Passageiro', '0Passageiro')
+                then 'Passageiro'
+                when
+                    initcap(regexp_replace(especie_veiculo, r'\d+', ''))
+                    in ('Tracao', '0Tracao', 'Tracao')
+                then 'Tração'
+                when
+                    initcap(regexp_replace(especie_veiculo, r'\d+', ''))
+                    in ('Nao Inform', '0Nao Inform', 'Nao Informado', '0Nao Informado')
+                then 'Não informado'
+                when
+                    initcap(regexp_replace(especie_veiculo, r'\d+', ''))
+                    in ('Carga', '0Carga')
+                then 'Carga'
+                else 'Inválido'
+            end as especie_veiculo,
+            safe_cast(null as string) as uf_infrator,
+            safe_cast(null as string) as uf_principal_condutor,
+            if(uf_proprietario != "", uf_proprietario, null) as uf_proprietario,
+            if(cep_proprietario != "", cep_proprietario, null) as cep_proprietario,
+            valor_infracao / 100 as valor_infracao,
+            valor_pago / 100 as valor_pago,
+            data_pagamento,
+            "260010" as id_autuador,
+            if(
+                descricao_autuador != "", descricao_autuador, null
+            ) as descricao_autuador,
+            "6001" as id_municipio_autuacao,
+            "RIO DE JANEIRO" as descricao_municipio,
+            "RJ" as uf_autuacao,
+            endereco_autuacao as cep_autuacao,
+            null as tile_autuacao,
+            if(
+                processo_defesa_autuacao != "00000000"
+                and processo_defesa_autuacao != "",
+                processo_defesa_autuacao,
+                null
+            ) as processo_defesa_autuacao,
+            if(
+                recurso_penalidade_multa != "00000000"
+                and recurso_penalidade_multa != "",
+                recurso_penalidade_multa,
+                null
+            ) as recurso_penalidade_multa,
+            if(
+                processo_troca_real_infrator != "00000000"
+                and processo_troca_real_infrator != "",
+                processo_troca_real_infrator,
+                null
+            ) as processo_troca_real_infrator,
+            false as status_sne,
+            "CITRAN" as fonte,
+            datetime("2023-08-26") as datetime_ultima_atualizacao
+        from {{ ref("autuacao_citran") }}
+        {% if is_incremental() %}
+            where
+                data between date("{{var('date_range_start')}}") and date(
+                    "{{var('date_range_end')}}"
+                )
+        {% endif %}
+    ),
+    serpro as (
+        select
+            data,
+            id_auto_infracao,
+            datetime_autuacao,
+            data_limite_defesa_previa,
+            data_limite_recurso,
+            descricao_situacao_autuacao,
+            if(status_infracao != "", status_infracao, null) as status_infracao,
+            concat(codigo_enquadramento, codigo_desdobramento) as codigo_enquadramento,
+            substr(pontuacao, 1, 1) as pontuacao,
+            gravidade,
+            amparo_legal,
+            initcap(tipo_veiculo) as tipo_veiculo,
+            if(descricao_veiculo != "", descricao_veiculo, null) as descricao_veiculo,
+            placa_veiculo,
+            ano_fabricacao_veiculo,
+            ano_modelo_veiculo,
+            cor_veiculo,
+            especie_veiculo,
+            uf_infrator,
+            uf_principal_condutor,
+            if(uf_proprietario != "", uf_proprietario, null) as uf_proprietario,
+            safe_cast(null as string) as cep_proprietario,
+            valor_infracao,
+            valor_pago,
+            data_pagamento,
+            coalesce(id_autuador, "260010") as id_autuador,
+            if(
+                descricao_autuador != "", descricao_autuador, null
+            ) as descricao_autuador,
+            coalesce(id_municipio_autuacao, "6001") as id_municipio_autuacao,
+            coalesce(descricao_municipio, "RIO DE JANEIRO") as descricao_municipio,
+            coalesce(uf_autuacao, "RJ") as uf_autuacao,
+            case
+                when logradouro_autuacao is not null
+                then
+                    rtrim(
+                        regexp_replace(
+                            concat(
+                                logradouro_autuacao,
+                                ' ',
+                                bairro_autuacao,
+                                ' ',
+                                complemento
+                            ),
+                            r'\s+',
+                            ' '
+                        )
+                    )
+                when logradouro_autuacao_2 is not null
+                then logradouro_autuacao_2
+                else null
+            end as cep_autuacao,
+            null as tile_autuacao,
+            processo_defesa_autuacao,
+            recurso_penalidade_multa,
+            processo_troca_real_infrator,
+            if(status_sne = "1.0", true, false) as status_sne,
+            "SERPRO" as fonte,
+            current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
+        from {{ ref("autuacao_serpro") }}
+        {% if is_incremental() %}
+            where
+                data between date("{{var('date_range_start')}}") and date(
+                    "{{var('date_range_end')}}"
+                )
+        {% endif %}
+    ),
+    autuacao as (
+        select
+            data,
+            to_hex(sha256(concat(generate_uuid(), id_auto_infracao))) as id_autuacao,  -- trocar generate_uuid ?
+            id_auto_infracao,
+            datetime_autuacao,
+            data_limite_defesa_previa,
+            data_limite_recurso,
+            descricao_situacao_autuacao,
+            status_infracao,
+            codigo_enquadramento,
+            pontuacao,
+            gravidade,
+            amparo_legal,
+            tipo_veiculo,
+            descricao_veiculo,
+            placa_veiculo,
+            ano_fabricacao_veiculo,
+            ano_modelo_veiculo,
+            cor_veiculo,
+            especie_veiculo,
+            uf_infrator,
+            uf_principal_condutor,
+            uf_proprietario,
+            cep_proprietario,
+            valor_infracao,
+            valor_pago,
+            data_pagamento,
+            id_autuador,
+            descricao_autuador,
+            id_municipio_autuacao,
+            descricao_municipio,
+            uf_autuacao,
+            cep_autuacao,
+            tile_autuacao,
+            processo_defesa_autuacao,
+            recurso_penalidade_multa,
+            processo_troca_real_infrator,
+            status_sne,
+            fonte,
+            datetime_ultima_atualizacao
+        from citran
+        union all
+        select
+            data,
+            to_hex(sha256(concat(generate_uuid(), id_auto_infracao))) as id_autuacao,  -- trocar generate_uuid ?
+            id_auto_infracao,
+            datetime_autuacao,
+            data_limite_defesa_previa,
+            data_limite_recurso,
+            descricao_situacao_autuacao,
+            status_infracao,
+            codigo_enquadramento,
+            pontuacao,
+            gravidade,
+            amparo_legal,
+            tipo_veiculo,
+            descricao_veiculo,
+            placa_veiculo,
+            ano_fabricacao_veiculo,
+            ano_modelo_veiculo,
+            cor_veiculo,
+            especie_veiculo,
+            uf_infrator,
+            uf_principal_condutor,
+            uf_proprietario,
+            cep_proprietario,
+            valor_infracao,
+            valor_pago,
+            data_pagamento,
+            id_autuador,
+            descricao_autuador,
+            id_municipio_autuacao,
+            descricao_municipio,
+            uf_autuacao,
+            cep_autuacao,
+            tile_autuacao,
+            processo_defesa_autuacao,
+            recurso_penalidade_multa,
+            processo_troca_real_infrator,
+            status_sne,
+            fonte,
+            datetime_ultima_atualizacao
+        from serpro
+    ),
+    update_partition as (
+        select a.*
+        from autuacao a
+        {% if is_incremental() %}
+            left join {{ this }} as t using (id_auto_infracao)
+            where
+                a.status_infracao != t.status_infracao
+                or a.data_pagamento != t.data_pagamento
+        {% endif %}
+    )
+select
     data,
-    TO_HEX(SHA256(CONCAT(GENERATE_UUID(), id_auto_infracao))) AS id_autuacao,
+    id_autuacao,
     id_auto_infracao,
     datetime_autuacao,
     data_limite_defesa_previa,
@@ -140,7 +283,7 @@ SELECT
     descricao_situacao_autuacao,
     status_infracao,
     codigo_enquadramento,
-    tipificacao_resumida,
+    i.tipificacao_resumida,
     pontuacao,
     gravidade,
     amparo_legal,
@@ -169,49 +312,7 @@ SELECT
     recurso_penalidade_multa,
     processo_troca_real_infrator,
     status_sne,
-    fonte
-FROM
-    citran
-UNION ALL
-SELECT
-    data,
-    TO_HEX(SHA256(CONCAT(GENERATE_UUID(), id_auto_infracao))) AS id_autuacao,
-    id_auto_infracao,
-    datetime_autuacao,
-    data_limite_defesa_previa,
-    data_limite_recurso,
-    descricao_situacao_autuacao,
-    status_infracao,
-    codigo_enquadramento,
-    tipificacao_resumida,
-    pontuacao,
-    gravidade,
-    amparo_legal,
-    tipo_veiculo,
-    descricao_veiculo,
-    placa_veiculo,
-    ano_fabricacao_veiculo,
-    ano_modelo_veiculo,
-    cor_veiculo,
-    especie_veiculo,
-    uf_infrator,
-    uf_principal_condutor,
-    uf_proprietario,
-    cep_proprietario,
-    valor_infracao,
-    valor_pago,
-    data_pagamento,
-    id_autuador,
-    descricao_autuador,
-    id_municipio_autuacao,
-    descricao_municipio,
-    uf_autuacao,
-    cep_autuacao,
-    tile_autuacao,
-    processo_defesa_autuacao,
-    recurso_penalidade_multa,
-    processo_troca_real_infrator,
-    status_sne,
-    fonte
-FROM
-    serpro
+    fonte,
+    datetime_ultima_atualizacao
+from update_partition
+left join infracoes_renainf as i using (codigo_enquadramento)

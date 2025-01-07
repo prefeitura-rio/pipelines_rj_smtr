@@ -113,6 +113,7 @@ select
     safe_cast(
         json_value(content, '$.auinf_infrator_condutor_habilitado_numero_doc') as string
     ) as cnh_infrator,
+    safe_cast(json_value(content, '$.uf_infrator') as string) as uf_infrator,
     safe_cast(
         json_value(content, '$.auinf_infracao_valor') as numeric
     ) as valor_infracao,
