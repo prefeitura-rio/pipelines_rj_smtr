@@ -1,5 +1,10 @@
 # Changelog - monitoramento
 
+## [1.2.1] - 2025-01-03
+
+### Adicionado
+- Cria modelo `monitoramento_viagem_transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/372)
+
 ## [1.2.0] - 2024-11-28
 
 ### Adicionado
