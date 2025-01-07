@@ -1,4 +1,5 @@
 -- depends_on: {{ ref('licenciamento_stu_staging') }}
+-- depends_on: {{ ref("infracao") }}
 {{
   config(
     materialized="incremental",
@@ -18,6 +19,14 @@ WITH licenciamento AS (
     id_veiculo,
     placa,
     tipo_veiculo,
+    CASE
+      WHEN tipo_veiculo LIKE "%BASIC%" OR tipo_veiculo LIKE "%BS%" THEN "BASICO" 
+      WHEN tipo_veiculo LIKE "%MIDI%" THEN "MIDI"
+      WHEN tipo_veiculo LIKE "%MINI%" THEN "MINI"
+      WHEN tipo_veiculo LIKE "%PDRON%" OR tipo_veiculo LIKE "%PADRON%" THEN "PADRON"
+      WHEN tipo_veiculo LIKE "%ARTICULADO%" THEN "ARTICULADO"
+      ELSE NULL
+    END AS tecnologia,
     indicador_ar_condicionado,
     TRUE AS indicador_licenciado,
     CASE
@@ -37,8 +46,8 @@ gps AS (
     DISTINCT data,
     id_veiculo
   FROM
-    -- {{ ref("gps_sppo") }}
-    `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
+     {{ ref("gps_sppo") }}
+    -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
   WHERE
     data = DATE("{{ var('run_date') }}") ),
   autuacoes AS (
@@ -47,10 +56,11 @@ gps AS (
     placa,
     id_infracao
   FROM
-    {{ ref("sppo_infracao") }}
+     {{ ref("sppo_infracao") }}
+    --`rj-smtr.veiculo.sppo_infracao`
   WHERE
   {%- if execute %}
-    {% set infracao_date = run_query("SELECT MIN(data) FROM " ~ ref("sppo_infracao") ~ " WHERE data >= DATE_ADD(DATE('" ~ var("run_date") ~ "'), INTERVAL 7 DAY)").columns[0].values()[0] %}
+    {% set infracao_date = run_query("SELECT MIN(data) FROM " ~ ref("infracao") ~ " WHERE data >= DATE_ADD(DATE('" ~ var("run_date") ~ "'), INTERVAL 7 DAY)").columns[0].values()[0] %}
   {% endif -%}
     data = DATE("{{ infracao_date }}")
     AND data_infracao = DATE("{{ var('run_date') }}")
@@ -62,6 +72,7 @@ registros_agente_verao AS (
     TRUE AS indicador_registro_agente_verao_ar_condicionado
   FROM
     {{ ref("sppo_registro_agente_verao") }}
+    -- `rj-smtr.veiculo.sppo_registro_agente_verao`
   WHERE
     data = DATE("{{ var('run_date') }}")
 ),
@@ -199,7 +210,8 @@ gps_licenciamento_autuacao AS (
               COALESCE(r.indicador_registro_agente_verao_ar_condicionado, FALSE)   AS indicador_registro_agente_verao_ar_condicionado)
     {% endif %}
     AS indicadores,
-    l.placa
+    l.placa,
+    tecnologia
   FROM
     gps g
   LEFT JOIN
@@ -224,7 +236,8 @@ SELECT
 FROM
   gps_licenciamento_autuacao AS gla
 LEFT JOIN
-  {{ ref("subsidio_parametros") }} AS p --`rj-smtr.dashboard_subsidio_sppo.subsidio_parametros`
+  {{ ref("subsidio_parametros") }} AS p 
+  -- `rj-smtr.dashboard_subsidio_sppo.subsidio_parametros` AS p 
 ON
   gla.indicadores.indicador_licenciado = p.indicador_licenciado
   AND gla.indicadores.indicador_ar_condicionado = p.indicador_ar_condicionado

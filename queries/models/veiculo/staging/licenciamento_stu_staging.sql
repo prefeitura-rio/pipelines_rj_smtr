@@ -43,4 +43,4 @@ SELECT
       SAFE_CAST(PARSE_DATETIME("%d/%m/%Y", JSON_VALUE(content,"$.data_inicio_vinculo")) AS DATE)
   END AS data_inicio_vinculo,
  FROM
-    {{ source('veiculo_staging','licenciamento_stu') }} as t
+    {{ source('veiculo_staging','sppo_licenciamento_stu') }} as t
