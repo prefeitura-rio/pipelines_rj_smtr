@@ -19,7 +19,7 @@ with
             vista,
             viagens_dia as viagens,
             case
-                when data >= date("{{ var("DATA_SUBSIDIO_V10_INICIO") }}")
+                when data >= date("{{ var("DATA_SUBSIDIO_V9A_INICIO") }}")
                 then
                     coalesce(km_apurada_registrado_com_ar_inoperante, 0)
                     + coalesce(km_apurada_autuado_ar_inoperante, 0)
