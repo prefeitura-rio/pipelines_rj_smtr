@@ -22,7 +22,7 @@ def get_db_object(secret_path="radar_serpro", environment: str = "dev"):
 
 @task(checkpoint=False, nout=2)
 def get_raw_serpro(
-    jdbc: JDBC, start_date: str, end_date: str, local_filepath: str, batch_size: int = 50000
+    jdbc: JDBC, start_date: str, end_date: str, local_filepath: str, batch_size: int = 100000
 ) -> str:
     """
     Task para capturar dados brutos do SERPRO com base em um intervalo de datas.
@@ -48,12 +48,14 @@ def get_raw_serpro(
     jdbc.execute_query(query)
     columns = jdbc.get_columns()
 
-    rows = jdbc.fetch_batch(batch_size=batch_size)
-
     with open(raw_filepath, "w", newline="") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(columns)
-        writer.writerows(rows)
+        while True:
+            rows = jdbc.fetch_batch(batch_size=batch_size)
+            if not rows:
+                break
+            writer.writerows(rows)
 
     log(f"Raw data saved to: {raw_filepath}")
     return raw_filepath
