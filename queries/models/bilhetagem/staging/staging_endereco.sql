@@ -22,7 +22,7 @@ WITH
             SAFE_CAST(JSON_VALUE(content, '$.TX_COMPLEMENTO_LOGRADOURO') AS STRING) AS tx_complemento_logradouro,
             SAFE_CAST(JSON_VALUE(content, '$.TX_LOGRADOURO') AS STRING) AS tx_logradouro
         FROM
-            {{ source("br_rj_riodejaneiro_bilhetagem_staging", "endereco") }}
+            {{ source("source_jae", "endereco") }}
     ),
     endereco_rn AS (
         SELECT

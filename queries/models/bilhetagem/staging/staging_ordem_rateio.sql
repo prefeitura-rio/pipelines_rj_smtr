@@ -43,7 +43,7 @@ WITH ordem_rateio AS (
         SAFE_CAST(JSON_VALUE(content, '$.valor_rateio_compensacao_debito_t4') AS NUMERIC) AS valor_rateio_compensacao_debito_t4,
         SAFE_CAST(JSON_VALUE(content, '$.valor_rateio_compensacao_debito_total') AS NUMERIC) AS valor_rateio_compensacao_debito_total
   FROM
-    {{ source('br_rj_riodejaneiro_bilhetagem_staging', 'ordem_rateio') }}
+    {{ source('source_jae', 'ordem_rateio') }}
 )
 SELECT
   * EXCEPT(rn)

@@ -19,15 +19,15 @@ with
             end as tipo_documento,
             c.nr_documento,
             c.nm_cliente,
-            cb.cd_agencia,
+            {# cb.cd_agencia,
             cb.cd_tipo_conta,
             cb.nm_banco,
             cb.nr_banco,
-            cb.nr_conta
-        from {{ ref("staging_operadora_transporte") }} as ot
+            cb.nr_conta #}
+        from {{ ref("staging_operadora_transporte_jae") }} as ot
         join {{ ref("staging_cliente") }} as c on ot.cd_cliente = c.cd_cliente
-        left join
-            {{ ref("staging_conta_bancaria") }} as cb on ot.cd_cliente = cb.cd_cliente
+        {# left join
+            {{ ref("staging_conta_bancaria") }} as cb on ot.cd_cliente = cb.cd_cliente #}
         join
             {{ source("cadastro", "modos") }} m
             on ot.cd_tipo_modal = m.id_modo

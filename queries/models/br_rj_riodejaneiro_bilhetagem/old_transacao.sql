@@ -1,4 +1,3 @@
--- depends_on: {{ ref('operadoras_contato') }}
 -- depends_on: {{ ref('servico_operadora') }}
 -- depends_on: {{ ref('transacao_riocard') }}
 {{
@@ -100,7 +99,7 @@ with
             tipo_gratuidade,
             data_inicio_validade,
             data_fim_validade
-        from {{ ref("gratuidade_aux") }}
+        from {{ ref("aux_gratuidade") }}
     -- `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.gratuidade_aux`
     -- TODO: FILTRAR PARTIÇÕES DE FORMA EFICIENTE
     ),

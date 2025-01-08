@@ -28,7 +28,7 @@ WITH
             SAFE_CAST(JSON_VALUE(content, '$.GTFS_ROUTE_ID') AS STRING) AS gtfs_route_id,
             SAFE_CAST(JSON_VALUE(content, '$.GTFS_STOP_ID') AS STRING) AS gtfs_stop_id
         FROM
-            {{ source("br_rj_riodejaneiro_bilhetagem_staging", "linha") }}
+            {{ source("source_jae", "linha") }}
     ),
     linha_rn AS (
         SELECT

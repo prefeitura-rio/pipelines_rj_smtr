@@ -15,7 +15,7 @@ WITH linha_consorcio_operadora_transporte AS (
     PARSE_DATE("%Y-%m-%d", SAFE_CAST(JSON_VALUE(content, '$.DT_INICIO_VALIDADE') AS STRING)) AS dt_inicio_validade,
     PARSE_DATE("%Y-%m-%d", SAFE_CAST(JSON_VALUE(content, '$.DT_FIM_VALIDADE') AS STRING)) AS dt_fim_validade
   FROM
-    {{ source("br_rj_riodejaneiro_bilhetagem_staging", "linha_consorcio_operadora_transporte") }}
+    {{ source("source_jae", "linha_consorcio_operadora_transporte") }}
 ),
 linha_consorcio_operadora_transporte_rn AS (
   SELECT

@@ -17,7 +17,7 @@
 --             cd_operadora,
 --             ROW_NUMBER() OVER (PARTITION BY id_servico, nr_logico_midia ORDER BY timestamp_captura DESC) AS rn
 --         FROM
---             {{ ref("staging_servico_motorista") }}
+{# --             {{ ref("staging_servico_motorista") }} #}
 --         {% if is_incremental() %}
 --             WHERE
 --                 DATE(data) BETWEEN DATE_SUB(DATE("{{var('date_range_start')}}"), INTERVAL 1 DAY) AND DATE("{{var('date_range_end')}}")

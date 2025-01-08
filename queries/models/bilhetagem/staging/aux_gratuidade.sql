@@ -24,6 +24,8 @@ WITH gratuidade_complete_partitions AS (
         CAST(CAST(cd_cliente AS FLOAT64) AS INT64) AS id_cliente,
         id AS id_gratuidade,
         tipo_gratuidade,
+        deficiencia_permanente,
+        rede_ensino,
         data_inclusao AS data_inicio_validade,
         timestamp_captura
     FROM
@@ -47,6 +49,8 @@ SELECT
     id_cliente,
     id_gratuidade,
     tipo_gratuidade,
+    deficiencia_permanente,
+    rede_ensino,
     data_inicio_validade,
     LEAD(data_inicio_validade) OVER (PARTITION BY id_cliente ORDER BY data_inicio_validade) AS data_fim_validade,
     timestamp_captura

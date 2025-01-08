@@ -1,6 +1,7 @@
 {{
   config(
     materialized="table",
+    alias="dicionario",
   )
 }}
 SELECT
@@ -10,4 +11,4 @@ SELECT
   SAFE_CAST(coluna AS STRING) AS coluna,
   SAFE_CAST(valor AS STRING) AS valor
 FROM
-  {{ source("br_rj_riodejaneiro_bilhetagem_staging", "dicionario") }}
+  {{ source("source_jae", "dicionario") }}

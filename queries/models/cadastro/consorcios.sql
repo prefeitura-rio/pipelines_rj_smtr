@@ -32,7 +32,7 @@ WITH stu AS (
     s.id_consorcio AS id_consorcio_stu,
     j.cd_consorcio AS id_consorcio_jae,
     s.processo AS id_processo
-  FROM {{ ref("staging_consorcio") }} AS j
+  FROM {{ ref("staging_consorcio_jae") }} AS j
   FULL OUTER JOIN
     stu AS s
   ON

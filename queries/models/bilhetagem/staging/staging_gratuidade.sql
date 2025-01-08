@@ -12,7 +12,10 @@ SELECT
     DATETIME(PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*S%Ez', SAFE_CAST(JSON_VALUE(content, '$.data_inclusao') AS STRING)), 'America/Sao_Paulo') AS data_inclusao,
     SAFE_CAST(JSON_VALUE(content, '$.id_status_gratuidade') AS STRING) AS id_status_gratuidade,
     SAFE_CAST(JSON_VALUE(content, '$.id_tipo_gratuidade') AS STRING) AS id_tipo_gratuidade,
-    SAFE_CAST(JSON_VALUE(content, '$.tipo_gratuidade') AS STRING) AS tipo_gratuidade
+    SAFE_CAST(JSON_VALUE(content, '$.tipo_gratuidade') AS STRING) AS tipo_gratuidade,
+    SAFE_CAST(JSON_VALUE(content, '$.deficiencia_permanente') AS bool) AS deficiencia_permanente,
+    SAFE_CAST(JSON_VALUE(content, '$.rede_ensino') AS STRING) AS rede_ensino,
+
 FROM
-  {{ source('br_rj_riodejaneiro_bilhetagem_staging', 'gratuidade') }}
+  {{ source('source_jae', 'gratuidade') }}
 

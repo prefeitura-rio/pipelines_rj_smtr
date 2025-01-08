@@ -31,4 +31,4 @@ SELECT
   SAFE_CAST(JSON_VALUE(content, '$.valor_transacao_total') AS FLOAT64) AS valor_transacao_total,
   SAFE_CAST(JSON_VALUE(content, '$.tx_adicional') AS STRING) AS tx_adicional
 FROM
-  {{ source('br_rj_riodejaneiro_bilhetagem_staging', 'integracao_transacao') }}
+  {{ source('source_jae', 'integracao_transacao') }}

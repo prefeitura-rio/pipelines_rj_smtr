@@ -21,7 +21,7 @@ WITH
             SAFE_CAST(JSON_VALUE(content, '$.NR_TELEFONE') AS STRING) AS nr_telefone,
             SAFE_CAST(JSON_VALUE(content, '$.DT_CADASTRO') AS STRING) AS dt_cadastro
         FROM
-            {{ source("br_rj_riodejaneiro_bilhetagem_staging", "cliente") }}
+            {{ source("source_jae", "cliente") }}
     ),
     cliente_rn AS (
         SELECT
