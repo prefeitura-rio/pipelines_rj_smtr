@@ -74,6 +74,19 @@ class constants(Enum):  # pylint: disable=c0103
             "database": "principal_db",
             "primary_keys": ["CD_LINHA"],
         },
+        "produto": {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    PRODUTO
+                WHERE
+                    DT_INCLUSAO BETWEEN '{start}'
+                    AND '{end}'
+            """,
+            "database": "principal_db",
+            "primary_keys": ["CD_PRODUTO"],
+        },
         "operadora_transporte": {
             "query": """
                 SELECT
@@ -105,6 +118,7 @@ class constants(Enum):  # pylint: disable=c0103
             "database": "principal_db",
             "primary_keys": ["CD_CLIENTE"],
             "pre_treatment_reader_args": {"dtype": {"NR_DOCUMENTO": "object"}},
+            "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
         },
         "pessoa_fisica": {
             "query": """
@@ -129,13 +143,27 @@ class constants(Enum):  # pylint: disable=c0103
             "query": """
                 SELECT
                     g.*,
-                    t.descricao AS tipo_gratuidade
+                    t.descricao AS tipo_gratuidade,
+                    lp.deficiencia_permanente,
+                    re.descricao as rede_ensino
                 FROM
                     gratuidade g
                 LEFT JOIN
                     tipo_gratuidade t
                 ON
                     g.id_tipo_gratuidade = t.id
+                LEFT JOIN
+                    laudo_pcd lp
+                USING(cd_cliente)
+                LEFT JOIN
+                    estudante e
+                USING(cd_cliente)
+                LEFT JOIN
+                    escola ec
+                USING(codigo_escola)
+                LEFT JOIN
+                    rede_ensino re
+                ON ec.id_rede_ensino = re.id
                 WHERE
                     g.data_inclusao BETWEEN '{start}'
                     AND '{end}'
@@ -234,10 +262,10 @@ class constants(Enum):  # pylint: disable=c0103
             first_timestamp=datetime(2024, 1, 7, 0, 0, 0),
             schedule_cron=create_hourly_cron(),
             primary_keys=v["primary_keys"],
-            pretreatment_reader_args=v.get("pretreatment_reader_args"),
+            pretreatment_reader_args=v.get("pre_treatment_reader_args"),
             pretreat_funcs=v.get("pretreat_funcs"),
-            bucket_names=v.get("bucket_names"),
-            partition_date_only=v.get("partition_date_only", False),
+            bucket_names=v.get("save_bucket_names"),
+            partition_date_only=v.get("partition_date_only", True),
             max_capture_hours=v.get("max_capture_hours", 24),
         )
         for k, v in JAE_AUXILIAR_CAPTURE_PARAMS.items()
@@ -347,6 +375,7 @@ class constants(Enum):  # pylint: disable=c0103
         schedule_cron=create_daily_cron(hour=5),
         primary_keys=["id"],
         max_recaptures=2,
+        partition_date_only=True,
     )
 
     TRANSACAO_ORDEM_SOURCE = DefaultSourceTable(
