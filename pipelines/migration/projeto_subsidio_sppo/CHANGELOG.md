@@ -1,5 +1,17 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.0.7] - 2025-01-03
+
+### Adicionado
+
+- Adiciona a materialização dos modelos do dataset `monitoramento` ao flow do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/372)
+
+## [1.0.6] - 2024-12-17
+
+### Adicionado
+
+- Adiciona automação dos testes do DBT no arquivo `flows.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/256)
+
 ## [1.0.5] - 2024-08-29
 
 ### Alterado

@@ -1,3 +1,4 @@
+-- depends_on: {{ ref('subsidio_data_versao_efetiva') }}
 {{
 config(
     materialized='incremental',
@@ -11,6 +12,11 @@ config(
     labels = {'dashboard': 'yes'}
 )
 }}
+
+{% if execute %}
+  {% set result = run_query("SELECT feed_start_date FROM " ~ ref('subsidio_data_versao_efetiva') ~ " WHERE data = DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 1 DAY)") %}
+  {% set feed_start_date =  result.columns[0].values()[0] %}
+{% endif %}
 -- 1. Identifica viagens que estão dentro do quadro planejado (por
 --    enquanto, consideramos o dia todo).
 with viagem_periodo as (
@@ -52,6 +58,14 @@ with viagem_periodo as (
         v.trip_id = p.trip_id
         and v.data = p.data
 ),
+shapes AS (
+  SELECT
+    *
+  FROM
+    {{ ref("shapes_geom_gtfs") }}
+  WHERE
+    feed_start_date = "{{ feed_start_date }}"
+),
 -- 2. Seleciona viagens completas de acordo com a conformidade
 viagem_comp_conf as (
 select distinct
@@ -83,6 +97,7 @@ select distinct
     n_registros_shape,
     n_registros_total,
     n_registros_minuto,
+    velocidade_media,
     perc_conformidade_shape,
     perc_conformidade_distancia,
     perc_conformidade_registros,
@@ -93,7 +108,17 @@ select distinct
     CURRENT_DATETIME("America/Sao_Paulo") as datetime_ultima_atualizacao
 from
     viagem_periodo v
+left join
+  shapes AS s
+using
+  (shape_id)
 where (
+{% if var("run_date") > var("DATA_SUBSIDIO_V12_INICIO")  %}
+  velocidade_media <= {{ var("conformidade_velocidade_min") }} or (((ST_NUMGEOMETRIES(ST_INTERSECTION(ST_BUFFER(start_pt, {{ var("buffer") }}), shape)) > 1 or ST_NUMGEOMETRIES(ST_INTERSECTION(ST_BUFFER(end_pt, {{ var("buffer") }}), shape)) > 1)
+  and ST_DISTANCE(start_pt, end_pt) < {{ var("distancia_inicio_fim_conformidade_velocidade_min") }}) and sentido != "C")
+)
+and (
+{% endif %}
     perc_conformidade_shape >= {{ var("perc_conformidade_shape_min") }}
 )
 and (
