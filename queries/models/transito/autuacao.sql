@@ -14,8 +14,18 @@ with
             descricao_infracao as tipificacao_resumida
         from {{ source("infracao_staging", "infracoes_renainf") }}
     ),
+    autuacao_ids as (
+        select data, id_autuacao, id_auto_infracao
+        from {{ ref("aux_autuacao_id") }}
+        {% if is_incremental() %}
+            where
+                data between date("{{var('date_range_start')}}") and date(
+                    "{{var('date_range_end')}}"
+                )
+        {% endif %}
+    ),
     citran as (
-        select
+        select distinct
             data,
             id_auto_infracao,
             datetime(concat(data, ' ', hora, ':00')) as datetime_autuacao,
@@ -110,7 +120,7 @@ with
         {% endif %}
     ),
     serpro as (
-        select
+        select distinct
             data,
             id_auto_infracao,
             datetime_autuacao,
@@ -159,8 +169,8 @@ with
                             ' '
                         )
                     )
-                when logradouro_autuacao_2 is not null
-                then logradouro_autuacao_2
+                when logradouro_rodovia_autuacao is not null
+                then logradouro_rodovia_autuacao
                 else null
             end as cep_autuacao,
             null as tile_autuacao,
@@ -181,7 +191,6 @@ with
     autuacao as (
         select
             data,
-            to_hex(sha256(concat(generate_uuid(), id_auto_infracao))) as id_autuacao,  -- trocar generate_uuid ?
             id_auto_infracao,
             datetime_autuacao,
             data_limite_defesa_previa,
@@ -223,7 +232,6 @@ with
         union all
         select
             data,
-            to_hex(sha256(concat(generate_uuid(), id_auto_infracao))) as id_autuacao,  -- trocar generate_uuid ?
             id_auto_infracao,
             datetime_autuacao,
             data_limite_defesa_previa,
@@ -274,9 +282,9 @@ with
         {% endif %}
     )
 select
-    data,
-    id_autuacao,
-    id_auto_infracao,
+    u.data,
+    a.id_autuacao,
+    u.id_auto_infracao,
     datetime_autuacao,
     data_limite_defesa_previa,
     data_limite_recurso,
@@ -314,5 +322,6 @@ select
     status_sne,
     fonte,
     datetime_ultima_atualizacao
-from update_partition
+from update_partition as u
+left join autuacao_ids as a using (id_auto_infracao)
 left join infracoes_renainf as i using (codigo_enquadramento)

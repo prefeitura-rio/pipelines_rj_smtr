@@ -2,7 +2,17 @@
 
 
 select
-    date(data) as data,
+    date(
+        parse_timestamp(
+            '%Y-%m-%d %H:%M:%S',
+            regexp_replace(
+                safe_cast(json_value(content, '$.auinf_dt_infracao') as string),
+                r'\.\d+',
+                ''
+            )
+        ),
+        'America/Sao_Paulo'
+    ) as data,
     auinf_num_auto as id_auto_infracao,
     safe_cast(
         json_value(content, '$.auinf_origem_desc') as string
@@ -164,7 +174,7 @@ select
     safe_cast(json_value(content, '$.complemento') as string) as complemento,
     safe_cast(
         json_value(content, '$.auinf_local_rodovia') as string
-    ) as logradouro_autuacao_2,  -- Deveria ser somente rodovias
+    ) as logradouro_rodovia_autuacao,
     safe_cast(
         json_value(content, '$.auinf_observacao') as string
     ) as observacao_autuacao,
