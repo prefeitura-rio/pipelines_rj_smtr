@@ -19,7 +19,7 @@ with
             end as tipo_documento,
             c.nr_documento,
             c.nm_cliente,
-            {# cb.cd_agencia,
+        {# cb.cd_agencia,
             cb.cd_tipo_conta,
             cb.nm_banco,
             cb.nr_banco,
@@ -105,11 +105,6 @@ with
             safe_cast(
                 j.in_situacao_atividade as boolean
             ) as indicador_operador_ativo_jae,
-            j.cd_agencia as agencia,
-            j.cd_tipo_conta as tipo_conta,
-            j.nm_banco as banco,
-            lpad(j.nr_banco, 3, '0') as codigo_banco,
-            j.nr_conta as conta
         from stu as s
         full outer join
             operadora_jae as j on s.documento = j.nr_documento and s.modo = j.modo_join
@@ -128,11 +123,6 @@ select
     tipo_operadora,
     tipo_documento,
     documento,
-    codigo_banco,
-    banco,
-    agencia,
-    tipo_conta,
-    conta,
     id_operadora_stu,
     id_operadora_jae,
     id_processo,
