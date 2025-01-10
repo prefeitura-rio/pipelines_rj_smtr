@@ -1,5 +1,11 @@
 # Changelog - pipelines
 
+## [1.0.2] - 2025-01-10
+
+### Adicionado
+
+- Adiciona task `get_timestamp_range` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/255)
+
 ## [1.0.1] - 2024-12-13
 
 ### Adicionado
