@@ -252,6 +252,7 @@ class constants(Enum):  # pylint: disable=c0103
             "primary_keys": [
                 "NR_SEQ_ENDERECO",
             ],
+            "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
         },
     }
 
