@@ -10,8 +10,8 @@ SELECT
   sdp.viagens_dia,
   SUM(
     CASE
-      WHEN data >= DATE("2024-09-01") 
-           AND tipo_viagem NOT IN ("Não licenciado", "Não vistoriado") 
+      WHEN data >= DATE("2024-09-01")
+           AND tipo_viagem NOT IN ("Não licenciado", "Não vistoriado")
       THEN km_apurada_faixa
       WHEN data < DATE("2024-09-01")
       THEN km_apurada_faixa
