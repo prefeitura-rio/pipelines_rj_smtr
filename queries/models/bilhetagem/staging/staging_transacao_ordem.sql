@@ -20,4 +20,4 @@ select
     datetime(
         parse_timestamp('%Y-%m-%dT%H:%M:%E6S%Ez', data_transacao), "America/Sao_Paulo"
     ) as data_transacao
-from {{ source("source_jae", "transacao_ordem") }}
+from {{ source("source_jae_prod", "transacao_ordem") }}

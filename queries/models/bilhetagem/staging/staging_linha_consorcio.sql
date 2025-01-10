@@ -1,31 +1,41 @@
 {{
-  config(
-    alias='linha_consorcio',
-  )
+    config(
+        alias="linha_consorcio",
+    )
 }}
 
-WITH linha_consorcio AS (
-  SELECT
-    data,
-    SAFE_CAST(CD_CONSORCIO AS STRING) AS cd_consorcio,
-    SAFE_CAST(CD_LINHA AS STRING) AS cd_linha,
-    timestamp_captura,
-    DATETIME(PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%S%Ez', SAFE_CAST(JSON_VALUE(content, '$.DT_INCLUSAO') AS STRING)), "America/Sao_Paulo") AS dt_inclusao,
-    PARSE_DATE("%Y-%m-%d", SAFE_CAST(JSON_VALUE(content, '$.DT_INICIO_VALIDADE') AS STRING)) AS dt_inicio_validade,
-    PARSE_DATE("%Y-%m-%d", SAFE_CAST(JSON_VALUE(content, '$.DT_FIM_VALIDADE') AS STRING)) AS dt_fim_validade
-  FROM
-    {{ source("source_jae", "linha_consorcio") }}
-),
-linha_consorcio_rn AS (
-  SELECT
-    *,
-    ROW_NUMBER() OVER (PARTITION BY cd_consorcio, cd_linha ORDER BY timestamp_captura DESC) AS rn
-  FROM
-    linha_consorcio
-)
-SELECT
-  * EXCEPT(rn)
-FROM
-  linha_consorcio_rn
-WHERE
-  rn = 1
+with
+    linha_consorcio as (
+        select
+            data,
+            safe_cast(cd_consorcio as string) as cd_consorcio,
+            safe_cast(cd_linha as string) as cd_linha,
+            timestamp_captura,
+            datetime(
+                parse_timestamp(
+                    '%Y-%m-%dT%H:%M:%S%Ez',
+                    safe_cast(json_value(content, '$.DT_INCLUSAO') as string)
+                ),
+                "America/Sao_Paulo"
+            ) as dt_inclusao,
+            parse_date(
+                "%Y-%m-%d",
+                safe_cast(json_value(content, '$.DT_INICIO_VALIDADE') as string)
+            ) as dt_inicio_validade,
+            parse_date(
+                "%Y-%m-%d",
+                safe_cast(json_value(content, '$.DT_FIM_VALIDADE') as string)
+            ) as dt_fim_validade
+        from {{ source("source_jae", "linha_consorcio") }}
+    ),
+    linha_consorcio_rn as (
+        select
+            *,
+            row_number() over (
+                partition by cd_consorcio, cd_linha order by timestamp_captura desc
+            ) as rn
+        from linha_consorcio
+    )
+select * except (rn)
+from linha_consorcio_rn
+where rn = 1

@@ -1,39 +1,50 @@
 {{
-  config(
-    alias='endereco',
-  )
+    config(
+        alias="endereco",
+    )
 }}
 
-WITH
-    endereco AS (
-        SELECT
+with
+    endereco as (
+        select
             data,
-            SAFE_CAST(NR_SEQ_ENDERECO AS STRING) AS nr_seq_endereco,
+            safe_cast(nr_seq_endereco as string) as nr_seq_endereco,
             timestamp_captura,
-            SAFE_CAST(JSON_VALUE(content, '$.CD_CLIENTE') AS STRING) AS cd_cliente,
-            SAFE_CAST(JSON_VALUE(content, '$.CD_TIPO_ENDERECO') AS STRING) AS cd_tipo_endereco,
-            SAFE_CAST(JSON_VALUE(content, '$.CD_TIPO_LOGRADOURO') AS STRING) AS cd_tipo_logradouro,
-            DATETIME(PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%S%Ez', SAFE_CAST(JSON_VALUE(content, '$.DT_INCLUSAO') AS STRING)), "America/Sao_Paulo") AS dt_inclusao,
-            SAFE_CAST(JSON_VALUE(content, '$.NM_BAIRRO') AS STRING) AS nm_bairro,
-            SAFE_CAST(JSON_VALUE(content, '$.NM_CIDADE') AS STRING) AS nm_cidade,
-            SAFE_CAST(JSON_VALUE(content, '$.NR_CEP') AS STRING) AS nr_cep,
-            SAFE_CAST(JSON_VALUE(content, '$.NR_LOGRADOURO') AS STRING) AS nr_logradouro,
-            SAFE_CAST(JSON_VALUE(content, '$.SG_UF') AS STRING) AS sg_uf,
-            SAFE_CAST(JSON_VALUE(content, '$.TX_COMPLEMENTO_LOGRADOURO') AS STRING) AS tx_complemento_logradouro,
-            SAFE_CAST(JSON_VALUE(content, '$.TX_LOGRADOURO') AS STRING) AS tx_logradouro
-        FROM
-            {{ source("source_jae", "endereco") }}
+            safe_cast(json_value(content, '$.CD_CLIENTE') as string) as cd_cliente,
+            safe_cast(
+                json_value(content, '$.CD_TIPO_ENDERECO') as string
+            ) as cd_tipo_endereco,
+            safe_cast(
+                json_value(content, '$.CD_TIPO_LOGRADOURO') as string
+            ) as cd_tipo_logradouro,
+            datetime(
+                parse_timestamp(
+                    '%Y-%m-%dT%H:%M:%S%Ez',
+                    safe_cast(json_value(content, '$.DT_INCLUSAO') as string)
+                ),
+                "America/Sao_Paulo"
+            ) as dt_inclusao,
+            safe_cast(json_value(content, '$.NM_BAIRRO') as string) as nm_bairro,
+            safe_cast(json_value(content, '$.NM_CIDADE') as string) as nm_cidade,
+            safe_cast(json_value(content, '$.NR_CEP') as string) as nr_cep,
+            safe_cast(
+                json_value(content, '$.NR_LOGRADOURO') as string
+            ) as nr_logradouro,
+            safe_cast(json_value(content, '$.SG_UF') as string) as sg_uf,
+            safe_cast(
+                json_value(content, '$.TX_COMPLEMENTO_LOGRADOURO') as string
+            ) as tx_complemento_logradouro,
+            safe_cast(json_value(content, '$.TX_LOGRADOURO') as string) as tx_logradouro
+        from {{ source("source_jae", "endereco") }}
     ),
-    endereco_rn AS (
-        SELECT
+    endereco_rn as (
+        select
             *,
-            ROW_NUMBER() OVER (PARTITION BY nr_seq_endereco ORDER BY timestamp_captura DESC) AS rn
-        FROM
-            endereco
+            row_number() over (
+                partition by nr_seq_endereco order by timestamp_captura desc
+            ) as rn
+        from endereco
     )
-SELECT
-  * EXCEPT(rn)
-FROM
-  endereco_rn
-WHERE
-  rn = 1
+select * except (rn)
+from endereco_rn
+where rn = 1

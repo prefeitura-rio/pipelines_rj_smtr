@@ -1,14 +1,13 @@
 {{
-  config(
-    materialized="table",
-    alias="dicionario",
-  )
+    config(
+        materialized="table",
+        alias="dicionario",
+    )
 }}
-SELECT
-  SAFE_CAST(chave AS STRING) AS chave,
-  SAFE_CAST(cobertura_temporal AS STRING) AS cobertura_temporal,
-  SAFE_CAST(id_tabela AS STRING) AS id_tabela,
-  SAFE_CAST(coluna AS STRING) AS coluna,
-  SAFE_CAST(valor AS STRING) AS valor
-FROM
-  {{ source("source_jae", "dicionario") }}
+select
+    safe_cast(chave as string) as chave,
+    safe_cast(cobertura_temporal as string) as cobertura_temporal,
+    safe_cast(id_tabela as string) as id_tabela,
+    safe_cast(coluna as string) as coluna,
+    safe_cast(valor as string) as valor
+from {{ source("source_jae", "dicionario") }}

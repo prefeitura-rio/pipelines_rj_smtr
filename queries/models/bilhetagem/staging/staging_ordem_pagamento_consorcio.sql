@@ -1,46 +1,77 @@
 {{
-  config(
-    alias='ordem_pagamento_consorcio',
-  )
+    config(
+        alias="ordem_pagamento_consorcio",
+    )
 }}
 
-WITH ordem_pagamento_consorcio AS (
-  SELECT
-    data,
-    SAFE_CAST(id AS STRING) AS id_ordem_pagamento_consorcio,
-    timestamp_captura,
-    DATETIME(PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*S%Ez', SAFE_CAST(JSON_VALUE(content, '$.data_inclusao') AS STRING)), "America/Sao_Paulo") AS datetime_inclusao,
-    PARSE_DATE('%Y-%m-%d', SAFE_CAST(JSON_VALUE(content, '$.data_ordem') AS STRING)) AS data_ordem,
-    SAFE_CAST(JSON_VALUE(content, '$.id_consorcio') AS STRING) AS id_consorcio,
-    SAFE_CAST(JSON_VALUE(content, '$.id_ordem_pagamento') AS STRING) AS id_ordem_pagamento,
-    SAFE_CAST(JSON_VALUE(content, '$.qtd_debito') AS INTEGER) AS qtd_debito,
-    SAFE_CAST(JSON_VALUE(content, '$.qtd_gratuidade') AS INTEGER) AS qtd_gratuidade,
-    SAFE_CAST(JSON_VALUE(content, '$.qtd_integracao') AS INTEGER) AS qtd_integracao,
-    SAFE_CAST(JSON_VALUE(content, '$.qtd_rateio_credito') AS INTEGER) AS qtd_rateio_credito,
-    SAFE_CAST(JSON_VALUE(content, '$.qtd_rateio_debito') AS INTEGER) AS qtd_rateio_debito,
-    SAFE_CAST(JSON_VALUE(content, '$.qtd_vendaabordo') AS INTEGER) AS qtd_vendaabordo,
-    SAFE_CAST(JSON_VALUE(content, '$.valor_bruto') AS NUMERIC) AS valor_bruto,
-    SAFE_CAST(JSON_VALUE(content, '$.valor_debito') AS NUMERIC) AS valor_debito,
-    SAFE_CAST(JSON_VALUE(content, '$.valor_gratuidade') AS NUMERIC) AS valor_gratuidade,
-    SAFE_CAST(JSON_VALUE(content, '$.valor_integracao') AS NUMERIC) AS valor_integracao,
-    SAFE_CAST(JSON_VALUE(content, '$.valor_liquido') AS NUMERIC) AS valor_liquido,
-    SAFE_CAST(JSON_VALUE(content, '$.valor_rateio_credito') AS NUMERIC) AS valor_rateio_credito,
-    SAFE_CAST(JSON_VALUE(content, '$.valor_rateio_debito') AS NUMERIC) AS valor_rateio_debito,
-    SAFE_CAST(JSON_VALUE(content, '$.valor_taxa') AS NUMERIC) AS valor_taxa,
-    SAFE_CAST(JSON_VALUE(content, '$.valor_vendaabordo') AS NUMERIC) AS valor_vendaabordo
-  FROM
-      {{ source("source_jae", "ordem_pagamento_consorcio") }}
-),
-ordem_pagamento_consorcio_rn AS (
-  SELECT
-      *,
-      ROW_NUMBER() OVER (PARTITION BY id_ordem_pagamento_consorcio ORDER BY timestamp_captura DESC) AS rn
-  FROM
-      ordem_pagamento_consorcio
-)
-SELECT
-  * EXCEPT(rn)
-FROM
-  ordem_pagamento_consorcio_rn
-WHERE
-  rn = 1
+with
+    ordem_pagamento_consorcio as (
+        select
+            data,
+            safe_cast(id as string) as id_ordem_pagamento_consorcio,
+            timestamp_captura,
+            datetime(
+                parse_timestamp(
+                    '%Y-%m-%dT%H:%M:%E*S%Ez',
+                    safe_cast(json_value(content, '$.data_inclusao') as string)
+                ),
+                "America/Sao_Paulo"
+            ) as datetime_inclusao,
+            parse_date(
+                '%Y-%m-%d', safe_cast(json_value(content, '$.data_ordem') as string)
+            ) as data_ordem,
+            safe_cast(json_value(content, '$.id_consorcio') as string) as id_consorcio,
+            safe_cast(
+                json_value(content, '$.id_ordem_pagamento') as string
+            ) as id_ordem_pagamento,
+            safe_cast(json_value(content, '$.qtd_debito') as integer) as qtd_debito,
+            safe_cast(
+                json_value(content, '$.qtd_gratuidade') as integer
+            ) as qtd_gratuidade,
+            safe_cast(
+                json_value(content, '$.qtd_integracao') as integer
+            ) as qtd_integracao,
+            safe_cast(
+                json_value(content, '$.qtd_rateio_credito') as integer
+            ) as qtd_rateio_credito,
+            safe_cast(
+                json_value(content, '$.qtd_rateio_debito') as integer
+            ) as qtd_rateio_debito,
+            safe_cast(
+                json_value(content, '$.qtd_vendaabordo') as integer
+            ) as qtd_vendaabordo,
+            safe_cast(json_value(content, '$.valor_bruto') as numeric) as valor_bruto,
+            safe_cast(json_value(content, '$.valor_debito') as numeric) as valor_debito,
+            safe_cast(
+                json_value(content, '$.valor_gratuidade') as numeric
+            ) as valor_gratuidade,
+            safe_cast(
+                json_value(content, '$.valor_integracao') as numeric
+            ) as valor_integracao,
+            safe_cast(
+                json_value(content, '$.valor_liquido') as numeric
+            ) as valor_liquido,
+            safe_cast(
+                json_value(content, '$.valor_rateio_credito') as numeric
+            ) as valor_rateio_credito,
+            safe_cast(
+                json_value(content, '$.valor_rateio_debito') as numeric
+            ) as valor_rateio_debito,
+            safe_cast(json_value(content, '$.valor_taxa') as numeric) as valor_taxa,
+            safe_cast(
+                json_value(content, '$.valor_vendaabordo') as numeric
+            ) as valor_vendaabordo
+        from {{ source("source_jae", "ordem_pagamento_consorcio") }}
+    ),
+    ordem_pagamento_consorcio_rn as (
+        select
+            *,
+            row_number() over (
+                partition by id_ordem_pagamento_consorcio
+                order by timestamp_captura desc
+            ) as rn
+        from ordem_pagamento_consorcio
+    )
+select * except (rn)
+from ordem_pagamento_consorcio_rn
+where rn = 1
