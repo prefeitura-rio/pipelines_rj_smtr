@@ -17,6 +17,17 @@ def wait_sleeping(interval_seconds: int = 54000):
 
 @task(checkpoint=False)
 def get_db_object(secret_path="radar_serpro", environment: str = "dev"):
+    """
+    Creates a JDBC object.
+
+    Args:
+        secret_path (str): The path to the secret containing database credentials.
+                           Defaults to "radar_serpro".
+        environment (str): The environment for the connection. Defaults to "dev".
+
+    Returns:
+        JDBC: A JDBC connection object.
+    """
     return JDBC(db_params_secret_path=secret_path, environment=environment)
 
 
@@ -25,17 +36,17 @@ def get_raw_serpro(
     jdbc: JDBC, start_date: str, end_date: str, local_filepath: str, batch_size: int = 100000
 ) -> str:
     """
-    Task para capturar dados brutos do SERPRO com base em um intervalo de datas.
+    Task to fetch raw data from SERPRO based on a date range.
 
     Args:
-        jdbc (JDBC): Instância para execução de queries via JDBC.
-        start_date (str): Data de início no formato "YYYY-MM-DD".
-        end_date (str): Data de fim no formato "YYYY-MM-DD".
-        local_filepath (str): Local onde o arquivo será salvo.
-        batch_size (int): Tamanho do lote.
+        jdbc (JDBC): Instance for executing queries via JDBC.
+        start_date (str): Start date in the format "YYYY-MM-DD".
+        end_date (str): End date in the format "YYYY-MM-DD".
+        local_filepath (str): Path where the file will be saved.
+        batch_size (int): Batch size.
 
     Returns:
-        str: Caminho do arquivo salvo.
+        str: Path of the saved file.
     """
 
     raw_filepath = local_filepath.format(mode="raw", filetype="csv")
