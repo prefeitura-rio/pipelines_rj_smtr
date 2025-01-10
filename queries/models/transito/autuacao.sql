@@ -2,7 +2,7 @@
     config(
         materialized="incremental",
         partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-        unique_key="id_autuacao",
+        unique_key=["id_autuacao", "status_infracao", "data_pagamento"],
         incremental_strategy="insert_overwrite",
     )
 }}
