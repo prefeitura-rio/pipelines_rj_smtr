@@ -35,7 +35,7 @@ from
             row_number() over (
                 partition by id_transmissao_gps order by datetime_captura desc
             ) as rn
-        from {{ ref("gps_validador_aux") }}
+        from {{ ref("aux_gps_validador") }}
         {% if is_incremental() %}
             where
                 date(data) between date("{{var('date_range_start')}}") and date(
