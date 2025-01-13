@@ -191,7 +191,7 @@ from complete_partitions
 where id_integracao not in (select id_integracao from integracoes_teste_invalidas)
 qualify
     row_number() over (
-        partition by id_integracao, id_transacao, priority
-        order by datetime_processamento_integracao desc
+        partition by id_integracao, id_transacao
+        order by datetime_processamento_integracao desc, priority
     )
     = 1
