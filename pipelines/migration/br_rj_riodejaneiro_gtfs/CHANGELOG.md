@@ -1,5 +1,10 @@
 # Changelog - gtfs
 
+## [1.2.1] - 2025-01-13
+
+### Corrigido
+- Removido teste de Ordem de Serviço regular (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/386)
+
 ## [1.2.0] - 2025-01-03
 
 ### Adicionado
