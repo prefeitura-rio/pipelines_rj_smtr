@@ -50,7 +50,7 @@ select
     * except (id_transacao, geo_point_transacao),
     count(id_transacao) as quantidade_passageiros,
     '{{ var("version") }}' as versao
-from {{ ref("aux_passageiros_hora") }}
+from {{ ref("aux_passageiro_hora") }}
 where
     {% if is_incremental() %}
         {% if partition_list | length > 0 %} data in ({{ partition_list | join(", ") }})

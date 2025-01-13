@@ -51,7 +51,7 @@ select
     geo.tile_id,
     count(id_transacao) as quantidade_passageiros,
     '{{ var("version") }}' as versao
-from {{ ref("aux_passageiros_hora") }} p
+from {{ ref("aux_passageiro_hora") }} p
 join {{ ref("aux_h3_res9") }} geo on st_contains(geo.geometry, geo_point_transacao)
 where
     {% if is_incremental() %}

@@ -9,7 +9,7 @@
         incremental_strategy="insert_overwrite",
     )
 }}
--- depends_on: {{ ref("ordem_pagamento_servico_operador_dia") }}
+-- depends_on: {{ ref("bilhetagem_servico_operador_dia") }}
 {% set ordem_pagamento_consorcio_operadora_staging = ref(
     "staging_ordem_pagamento_consorcio_operadora"
 ) %}
@@ -112,7 +112,6 @@ with
                 )
                 and o.timestamp_captura > datetime("{{var('date_range_start')}}")
                 and o.timestamp_captura <= datetime("{{var('date_range_end')}}")
-        {% else %} where date(o.data) < date("2024-11-13")
         {% endif %}
     ),
     ordem_pagamento_completa as (

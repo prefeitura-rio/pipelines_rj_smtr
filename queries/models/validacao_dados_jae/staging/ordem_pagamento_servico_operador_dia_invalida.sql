@@ -62,7 +62,7 @@ ordem_pagamento AS (
   SELECT
     *
   FROM
-    {{ ref("ordem_pagamento_servico_operador_dia") }}
+    {{ ref("bilhetagem_servico_operador_dia") }}
   {% if is_incremental() %}
     WHERE
       data_ordem = DATE("{{var('run_date')}}")
@@ -73,7 +73,7 @@ id_ordem_pagamento AS (
     data_ordem,
     id_ordem_pagamento
   FROM
-    {{ ref("ordem_pagamento_dia") }}
+    {{ ref("bilhetagem_dia") }}
   {% if is_incremental() %}
     WHERE
       data_ordem = DATE("{{var('run_date')}}")

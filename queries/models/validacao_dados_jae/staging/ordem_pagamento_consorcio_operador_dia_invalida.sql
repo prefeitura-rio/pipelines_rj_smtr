@@ -19,7 +19,7 @@ WITH ordem_pagamento_servico_operador_dia AS (
     SUM(quantidade_total_transacao) AS quantidade_total_transacao,
     SUM(valor_total_transacao_liquido) AS valor_total_transacao_liquido,
   FROM
-    {{ ref("ordem_pagamento_servico_operador_dia") }}
+    {{ ref("bilhetagem_servico_operador_dia") }}
   {% if is_incremental() %}
     WHERE
       data_ordem = DATE("{{var('run_date')}}")
@@ -39,7 +39,7 @@ ordem_pagamento_consorcio_operador_dia AS (
     quantidade_total_transacao,
     valor_total_transacao_liquido_ordem AS valor_total_transacao_liquido
   FROM
-    {{ ref("ordem_pagamento_consorcio_operador_dia") }}
+    {{ ref("bilhetagem_consorcio_operador_dia") }}
   {% if is_incremental() %}
     WHERE
       data_ordem = DATE("{{var('run_date')}}")

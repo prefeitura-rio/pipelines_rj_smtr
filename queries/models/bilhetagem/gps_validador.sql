@@ -3,6 +3,7 @@
         materialized="incremental",
         partition_by={"field": "data", "data_type": "date", "granularity": "day"},
         tags=["geolocalizacao"],
+        schema="br_rj_riodejaneiro_bilhetagem",
     )
 }}
 
@@ -15,7 +16,6 @@ select
     id_operadora,
     operadora,
     id_servico_jae,
-    -- s.servico,
     servico_jae,
     descricao_servico_jae,
     case

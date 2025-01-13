@@ -10,7 +10,7 @@
   )
 }}
 
--- depends_on: {{ ref("ordem_pagamento_consorcio_dia") }}
+-- depends_on: {{ ref("bilhetagem_consorcio_dia") }}
 SELECT
     o.data_ordem,
     o.data_pagamento,

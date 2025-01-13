@@ -56,7 +56,7 @@ with
             s.datetime_captura
         from staging s
         join
-            {{ ref("ordem_pagamento_servico_operador_dia") }} o using (
+            {{ ref("bilhetagem_servico_operador_dia") }} o using (
                 id_ordem_pagamento_servico_operador_dia
             )
     ),

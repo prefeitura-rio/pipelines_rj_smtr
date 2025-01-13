@@ -265,7 +265,7 @@ with
                     i.id_transacao is not null
                     or o.id_transacao is not null
                     or date(t.datetime_processamento)
-                    < (select max(data_ordem) from {{ ref("ordem_pagamento_dia") }})
+                    < (select max(data_ordem) from {{ ref("bilhetagem_dia") }})
                 then coalesce(i.valor_rateio, t.valor_transacao) * 0.96
             end as valor_pagamento,
             o.data_ordem,
