@@ -204,18 +204,15 @@ def processa_ordem_servico(
         None
     """
 
-    if (
-        len([sheet for sheet in sheetnames if "ANEXO I:" in sheet]) != 1
-        and regular_sheet_index is None
-    ):
-        raise Exception(
-            "More than 1 regular sheet in the file. Please specify the regular sheet index."
-        )
+    # if (
+    #     len([sheet for sheet in sheetnames if "ANEXO I " in sheet]) != 1
+    #     and regular_sheet_index is None
+    # ):
+    #     raise Exception(
+    #         "More than 1 regular sheet in the file. Please specify the regular sheet index."
+    #     )
 
-    if regular_sheet_index is None:
-        regular_sheet_index = next(
-            (i for i, name in enumerate(sheetnames) if "ANEXO I" in name), None
-        )
+    regular_sheet_index = next((i for i, name in enumerate(sheetnames) if "ANEXO I" in name), None)
 
     quadro_geral = pd.DataFrame()
 
