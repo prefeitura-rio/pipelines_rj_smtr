@@ -47,8 +47,7 @@ select
     "RioCard" as tipo_usuario,
     "RioCard" as meio_pagamento,
     st_geogpoint(longitude, latitude) as geo_point_transacao
-{# from {{ ref("transacao_riocard") }} #}
-from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard`
+from {{ ref("transacao_riocard") }}
 where
     (id_servico_jae not in ("140", "142") or id_servico_jae is null)
     and (id_operadora != "2" or id_operadora is null)
