@@ -20,7 +20,7 @@ WITH licenciamento AS (
     placa,
     tipo_veiculo,
     CASE
-      WHEN tipo_veiculo LIKE "%BASIC%" OR tipo_veiculo LIKE "%BS%" THEN "BASICO" 
+      WHEN tipo_veiculo LIKE "%BASIC%" OR tipo_veiculo LIKE "%BS%" THEN "BASICO"
       WHEN tipo_veiculo LIKE "%MIDI%" THEN "MIDI"
       WHEN tipo_veiculo LIKE "%MINI%" THEN "MINI"
       WHEN tipo_veiculo LIKE "%PDRON%" OR tipo_veiculo LIKE "%PADRON%" THEN "PADRON"
@@ -236,8 +236,8 @@ SELECT
 FROM
   gps_licenciamento_autuacao AS gla
 LEFT JOIN
-  {{ ref("subsidio_parametros") }} AS p 
-  -- `rj-smtr.dashboard_subsidio_sppo.subsidio_parametros` AS p 
+  {{ ref("subsidio_parametros") }} AS p
+  -- `rj-smtr.dashboard_subsidio_sppo.subsidio_parametros` AS p
 ON
   gla.indicadores.indicador_licenciado = p.indicador_licenciado
   AND gla.indicadores.indicador_ar_condicionado = p.indicador_ar_condicionado
