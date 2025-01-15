@@ -156,6 +156,12 @@ models:
                       Renumeração - Solicitação de alteração de número de ordem de veículo já incluído no Sistema de Transporte Urbano (STU)"
   - name: sppo_veiculo_dia
     description: "Tabela resumo dos veículos que operaram no SPPO e seus respectivos indicadores"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+          - data
+          - id_veiculo
+          name: dbt_utils.unique_combination_of_columns__data_id_veiculo__sppo_veiculo_dia
     columns:
       - name: data
         description: "Data de operação"
@@ -195,6 +201,9 @@ models:
         description: "Data do arquivo de licenciamento utilizado"
       - name: data_infracao
         description: "Data do arquivo de infrações utilizado"
+        tests:
+          - not_null:
+              name: not_null__status__sppo_veiculo_dia
       - name: versao
         description: "SHA do repositório no Github"
   - name: sppo_registro_agente_verao

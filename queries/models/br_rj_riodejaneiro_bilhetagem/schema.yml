@@ -76,6 +76,16 @@ models:
         description: "Valor debitado na transação atual (R$)"
       - name: valor_pagamento
         description: "Valor valor a ser pago pela transação (R$). Valores nulos indicam que o valor de pagamento para a transação ainda não foi calculado."
+      - name: data_ordem
+        description: "Data da ordem de pagamento da transação"
+      - name: id_ordem_pagamento_servico_operador_dia
+        description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_servico_operador_dia"
+      - name: id_ordem_pagamento_consorcio_operador_dia
+        description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_operador_dia"
+      - name: id_ordem_pagamento_consorcio_dia
+        description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_dia"
+      - name: id_ordem_pagamento
+        description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_dia"
       - name: versao
         description: "Código de controle de versão do dado (SHA Github)"
   - name: integracao
@@ -133,23 +143,6 @@ models:
         description: "Valor total das transações da integração (R$)"
       - name: texto_adicional
         description: "Observação adicional"
-      - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
-  - name: matriz_integracao
-    description: "Matriz de repartição tarifária de integrações válidas no sistema de transporte municipal"
-    columns:
-      - name: id_matriz_integracao
-        description: "Identificador único da integração"
-      - name: sequencia_integracao
-        description: "Sequencia da transação dentro da integração"
-      - name: modo
-        description: "Tipo de transporte (Ônibus, Van, BRT)"
-      - name: percentual_rateio
-        description: "Percentual de rateio do valor total para a operadora"
-      - name: data_inicio_validade
-        description: "Data de início da validade da matriz"
-      - name: data_fim_validade
-        description: "Data de fim da validade da matriz"
       - name: versao
         description: "Código de controle de versão do dado (SHA Github)"
   - name: gps_validador
@@ -427,8 +420,14 @@ models:
         description: "Data em que foi realizado o pagamento ao operador ou consórcio"
       - name: valor_pago
         description: "Valor pago ao operador ou consórcio (R$)"
+      - name: datetime_captura
+        description: Data e hora da captura da ordem em GMT-3
       - name: versao
         description: "Código de controle de versão do dado (SHA Github)"
+      - name: datetime_ultima_atualizacao
+        data_type: datetime
+        quote: true
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: ordem_pagamento_dia
     description: "Tabela com os valores totais de pagamento da Jaé agregados por dia"
     columns:

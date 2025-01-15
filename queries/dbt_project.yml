@@ -95,16 +95,19 @@ vars:
 
   ### Subsídio SPPO (Ônibus) ###
   buffer: 500 # distância em metros para buffer
+  conformidade_velocidade_min: 110
   perc_conformidade_distancia_min: 0
   perc_conformidade_shape_min: 80
   perc_conformidade_registros_min: 50
   perc_distancia_total_subsidio: 80
+  distancia_inicio_fim_conformidade_velocidade_min: 2000
   quadro_horario: "`rj-smtr-staging.projeto_subsidio_sppo_staging.quadro_horario`"
   subsidio_shapes: "`rj-smtr-staging.projeto_subsidio_sppo_staging.shapes`"
   subsidio_trips: "`rj-smtr-staging.projeto_subsidio_sppo_staging.trips`"
   subsidio_parametros: "`rj-smtr-staging.dashboard_subsidio_sppo_staging.subsidio_parametros`"
   shapes_version: "YYYY-MM-DD"
   frequencies_version: "YYYY-MM-DD"
+  tipo_materializacao: "subsidio"
   # Feature penalidade de autuação por inoperância do ar condicionado (DECRETO RIO 51940/2023)
   DATA_SUBSIDIO_V2_INICIO: "2023-01-16"
   # Feature penalidade de autuação por segurança e limpeza/equipamento (DECRETO RIO 52820/2023)
@@ -123,7 +126,12 @@ vars:
   DATA_SUBSIDIO_V8_INICIO: "2024-07-20"
   # Feature Apuração por faixa horária
   DATA_SUBSIDIO_V9_INICIO: "2024-08-16"
-  # valor_subsidio: "`rj-smtr-dev.projeto_subsidio_sppo.valor_subsidio`"
+  # Feature Apuração por novas faixas horárias (RESOLUÇÃO SMTR 3777/2024)
+  DATA_SUBSIDIO_V10_INICIO: "2024-11-01"
+  # Feature Apuração por novas faixas horárias (RESOLUÇÃO SMTR 3777/2024) - Feed (GTFS)
+  DATA_SUBSIDIO_V11_INICIO: "2024-11-06"
+  # Parâmetro 110 km/h + alterações de regras do modelo `viagem_transacao.sql`
+  DATA_SUBSIDIO_V12_INICIO: "2024-11-16"
 
   # Recursos #
   recurso_staging: "rj-smtr-staging.projeto_subsidio_sppo_staging.recurso"
@@ -185,6 +193,21 @@ vars:
 
   ### Encontro de Contas ###
   encontro_contas_modo: ""
+
+  ### Viagens 2.0 ###
+
+  limite_reducao_area_buffer:  0.5
+  comprimento_minimo_segmento_shape: 990
+  buffer_segmento_metros: 20
+  buffer_tunel_metros: 50
+  parametro_validacao: 0.9
+  comprimento_shape: 1000
+  projecao_sirgas_2000: "EPSG:31983"
+  projecao_wgs_84: "EPSG:4326"
+  data_inicial_gps_validacao_viagem: "2024-10-11"
+
+  ### Planejamento ###
+  feed_inicial_viagem_planejada: "2024-11-16"
 
 tests:
   rj_smtr:
@@ -325,6 +348,13 @@ models:
       staging:
         +materialized: view
         +schema: transito_staging
+    planejamento:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: planejamento
+      staging:
+        +materialized: view
+        +schema: planejamento_staging
     monitoramento:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
@@ -332,3 +362,13 @@ models:
       staging:
         +materialized: view
         +schema: monitoramento_staging
+    bilhetagem:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: bilhetagem
+      staging:
+        +materialized: view
+        +schema: bilhetagem_staging
+    datario:
+      +materialized: view
+      +schema: datario

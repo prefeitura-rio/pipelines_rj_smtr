@@ -1,5 +1,17 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [7.0.6] - 2024-10-30
+
+### Adicionado
+
+- Adiciona testes do subsidio para `sumario_servico_dia`, `sumario_servico_dia_historico`, `sumario_servico_dia_tipo`, `sumario_servico_dia_tipo_sem_glosa` e `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/256)
+
+## [7.0.6] - 2024-11-05
+
+### Alterado
+
+- Altera regras do modelo `viagens_remuneradas` conforme Resolução SMTR N° 3777/2024 e MTR-MEM-2024/02465 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/300)
+
 ## [7.0.5] - 2024-10-16
 
 ### Corrigido

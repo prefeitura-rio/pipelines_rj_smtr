@@ -2,7 +2,7 @@
 """
 Flows for gtfs
 
-DBT 2024-09-24
+DBT 2025-01-13
 """
 
 from prefect import Parameter, case, task
@@ -20,6 +20,9 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 )
 
 from pipelines.constants import constants
+from pipelines.migration.br_rj_riodejaneiro_gtfs.constants import (
+    constants as gtfs_constants,
+)
 
 # SMTR Imports #
 from pipelines.migration.br_rj_riodejaneiro_gtfs.tasks import (
@@ -37,13 +40,20 @@ from pipelines.migration.tasks import (
     get_join_dict,
     rename_current_flow_run_now_time,
     run_dbt_model,
-    transform_raw_to_nested_structure,
+    transform_raw_to_nested_structure_chunked,
     unpack_mapped_results_nout2,
     upload_raw_data_to_gcs,
     upload_staging_data_to_gcs,
 )
 from pipelines.schedules import every_5_minutes
-from pipelines.tasks import get_scheduled_timestamp, parse_timestamp_to_string
+from pipelines.tasks import (
+    check_fail,
+    get_scheduled_timestamp,
+    log_discord,
+    parse_timestamp_to_string,
+    task_value_is_none,
+)
+from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt_tests
 
 # from pipelines.capture.templates.flows import create_default_capture_flow
 
@@ -128,6 +138,12 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
             data_versao_gtfs_task = get_current_timestamp(data_versao_gtfs_task)
 
+            data_versao_gtfs_str = parse_timestamp_to_string(
+                timestamp=data_versao_gtfs_task, pattern="%Y-%m-%d"
+            )
+
+            log_discord("Captura do GTFS " + data_versao_gtfs_str + " iniciada", "gtfs")
+
             partition = create_date_hour_partition(
                 timestamp=data_versao_gtfs_task,
                 partition_date_name="data_versao",
@@ -150,14 +166,18 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 local_filepath=local_filepaths,
                 regular_sheet_index=regular_sheet_index,
                 upload_from_gcs=upload_from_gcs,
+                data_versao_gtfs=data_versao_gtfs_str,
             )
 
-            transform_raw_to_nested_structure_results = transform_raw_to_nested_structure.map(
-                raw_filepath=raw_filepaths,
-                filepath=local_filepaths,
-                primary_key=primary_keys,
-                timestamp=unmapped(data_versao_gtfs_task),
-                error=unmapped(None),
+            transform_raw_to_nested_structure_results = (
+                transform_raw_to_nested_structure_chunked.map(
+                    raw_filepath=raw_filepaths,
+                    filepath=local_filepaths,
+                    primary_key=primary_keys,
+                    timestamp=unmapped(data_versao_gtfs_task),
+                    error=unmapped(None),
+                    chunksize=unmapped(50000),
+                )
             )
 
             errors, treated_filepaths = unpack_mapped_results_nout2(
@@ -180,6 +200,14 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 timestamp=unmapped(data_versao_gtfs_task),
                 error=errors,
             )
+
+            upload_failed = check_fail(wait_captura_true)
+
+            with case(upload_failed, True):
+                log_discord(
+                    "Falha na subida dos dados do GTFS " + data_versao_gtfs_str, "gtfs", True
+                )
+
     with case(materialize_only, True):
         wait_captura_false = task()
 
@@ -209,13 +237,39 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             + " "
             + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,
             _vars=dbt_vars,
+            exclude="calendario aux_calendario_manual viagem_planejada_planejamento \
+matriz_integracao",
         ).set_upstream(task=wait_captura)
+
+        run_dbt_failed = task_value_is_none(wait_run_dbt_model)
+
+        with case(run_dbt_failed, False):
+            log_discord(
+                "Falha na materialização dos dados do GTFS " + data_versao_gtfs, "gtfs", True
+            )
+
+        with case(run_dbt_failed, True):
+            log_discord(
+                "Captura e materialização do GTFS " + data_versao_gtfs + " finalizada com sucesso!",
+                "gtfs",
+            )
 
         wait_materialize_true = update_last_captured_os(
             dataset_id=constants.GTFS_DATASET_ID.value,
             data_index=data_index,
             mode=mode,
         ).set_upstream(task=wait_run_dbt_model)
+
+        gtfs_data_quality = run_dbt_tests(
+            dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value
+            + " "
+            + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,
+            _vars=dbt_vars,
+        ).set_upstream(task=wait_run_dbt_model)
+
+        gtfs_data_quality_results = dbt_data_quality_checks(
+            gtfs_data_quality, gtfs_constants.GTFS_DATA_CHECKS_LIST.value, dbt_vars
+        )
 
     with case(verifica_materialize, False):
         wait_materialize_false = task()

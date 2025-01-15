@@ -225,7 +225,7 @@ def upload_source_data_to_gcs(source: SourceTable, partition: str, filepaths: di
     if not source.exists():
         log("Staging Table does not exist, creating table...")
         source.append(source_filepath=filepaths["source"], partition=partition)
-        source.create()
+        source.create(sample_filepath=filepaths["source"])
     else:
         log("Staging Table already exists, appending to it...")
         source.append(source_filepath=filepaths["source"], partition=partition)
@@ -275,7 +275,8 @@ def transform_raw_to_nested_structure(
         for step in pretreat_funcs:
             data = step(data=data, timestamp=timestamp, primary_keys=primary_keys)
 
-        data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
+        if len(primary_keys) < len(data.columns):
+            data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
 
         timestamp = create_timestamp_captura(timestamp=timestamp)
         data["timestamp_captura"] = timestamp

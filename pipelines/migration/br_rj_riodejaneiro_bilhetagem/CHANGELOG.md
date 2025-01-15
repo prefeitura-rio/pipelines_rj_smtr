@@ -1,5 +1,15 @@
 # Changelog - br_rj_riodejaneiro_bilhetagem
 
+## [1.4.9] - 2024-12-30
+
+### Alterado
+- Desativa schedule do flow `bilhetagem_validacao_jae` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/371)
+
+## [1.4.8] - 2024-12-16
+
+### Alterado
+- Altera IP do banco de tracking da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/362)
+
 ## [1.4.7] - 2024-09-16
 
 ### Alterado

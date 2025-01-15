@@ -4,6 +4,8 @@ import pandas as pd
 from prefeitura_rio.pipelines_utils.logging import log
 from sqlalchemy import create_engine
 
+from pipelines.utils.database import create_database_url
+
 
 def get_raw_db(
     query: str,
@@ -27,20 +29,21 @@ def get_raw_db(
     Returns:
         list[str]: Dados em formato JSON
     """
-    engine_mapping = {
-        "mysql": {"driver": "pymysql", "port": "3306"},
-        "postgresql": {"driver": "psycopg2", "port": "5432"},
-    }
 
-    engine_details = engine_mapping[engine]
-    driver = engine_details["driver"]
-    port = engine_details["port"]
-    connection = create_engine(f"{engine}+{driver}://{user}:{password}@{host}:{port}/{database}")
+    url = create_database_url(
+        engine=engine,
+        host=host,
+        user=user,
+        password=password,
+        database=database,
+    )
+    connection = create_engine(url)
     max_retries = 10
     for retry in range(1, max_retries + 1):
         try:
             log(f"[ATTEMPT {retry}/{max_retries}]: {query}")
-            data = pd.read_sql(sql=query, con=connection).to_dict(orient="records")
+            data = pd.read_sql(sql=query, con=connection)
+            data = data.to_dict(orient="records")
             for d in data:
                 for k, v in d.items():
                     if pd.isna(v):
@@ -50,7 +53,7 @@ def get_raw_db(
             if retry == max_retries:
                 raise err
 
-        return data
+    return data
 
 
 def get_raw_db_paginated(

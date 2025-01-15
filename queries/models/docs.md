@@ -200,6 +200,10 @@ Fim do período de operação planejado
 (Partição) Data inicial do feed (versão).
 {% enddocs %}
 
+{% docs feed_version %}
+String que indica a versão atual do conjunto de dados GTFS.
+{% enddocs %}
+
 {% docs linha %}
 Número da Linha
 {% enddocs %}
@@ -330,4 +334,20 @@ Nome do trajeto.
 
 {% docs sentido %}
 Sentido da linha
+{% enddocs %}
+
+{% docs indicador_viagem_dentro_limite %}
+Indica se a viagem foi remunerada por estar abaixo do teto de 120%/200%.
+{% enddocs %}
+
+{% docs indicador_penalidade_judicial %}
+Indica que o valor encontra-se sob julgamento de ação judicial e será depositado em juízo.
+{% enddocs %}
+
+{% docs tipo_os %}
+Tipo de Ordem de Serviço (ex: 'Regular', 'Extraordinária - Verão')
+{% enddocs %}
+
+{% docs data_inicio_matriz %}
+Data de inicio da versão da matriz de integração
 {% enddocs %}
