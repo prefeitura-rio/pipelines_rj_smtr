@@ -10,4 +10,4 @@ FROM
   {{ ref("licenciamento") }}
 WHERE
   tipo_veiculo NOT LIKE "%ROD%"
-  and modo ='Ônibus'
+  and modo = 'ONIBUS'
