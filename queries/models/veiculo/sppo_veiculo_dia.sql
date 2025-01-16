@@ -39,8 +39,8 @@ gps AS (
     DISTINCT data,
     id_veiculo
   FROM
-     {{ ref("gps_sppo") }}
-    -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
+    -- {{ ref("gps_sppo") }}
+    `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
   WHERE
     data = DATE("{{ var('run_date') }}") ),
   autuacoes AS (
@@ -264,8 +264,13 @@ SELECT
     placa,
     DATE("{{ licenciamento_date }}") AS data_licenciamento,
     DATE("{{ infracao_date }}") AS data_infracao,
-    CURRENT_DATETIME("America/Sao_Paulo") AS datetime_ultima_atualizacao,
+  {% else %}
+    null as tecnologia,
+    null as placa,
+    null as data_licenciamento,
+    null as data_infracao,
   {% endif %}
+  CURRENT_DATETIME("America/Sao_Paulo") AS datetime_ultima_atualizacao,
   "{{ var("version") }}" AS versao
 FROM
   gps_licenciamento_autuacao

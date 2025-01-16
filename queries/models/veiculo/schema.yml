@@ -195,20 +195,17 @@ models:
                       - Autuado por limpeza/equipamento - Veículo que operou, foi licenciado, mas foi autuado cumulativamente por infrações relacionadas à limpeza e equipamentos do veículo\n
                       - Sem ar e não autuado - Veículo que operou, foi licenciado sem ar condicionado e não foi autuado\n
                       - Com ar e não autuado - Veículo que operou, foi licenciado com ar condicionado e não foi autuado"
+        tests:
+          - not_null:
+              name: not_null__status__sppo_veiculo_dia
       - name: datetime_ultima_atualizacao
         description: "Última atualização (GMT-3)."
       - name: data_licenciamento
         description: "Data do arquivo de licenciamento utilizado"
       - name: data_infracao
         description: "Data do arquivo de infrações utilizado"
-<<<<<<< Updated upstream
-        tests:
-          - not_null:
-              name: not_null__status__sppo_veiculo_dia
-=======
       - name: tecnologia
         description: "Tecnologia utilizada no veiculo (BASICO, MIDI, MINI, PADRON, ARTICULADO)"
->>>>>>> Stashed changes
       - name: versao
         description: "SHA do repositório no Github"
   - name: sppo_registro_agente_verao
