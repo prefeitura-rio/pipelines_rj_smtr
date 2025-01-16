@@ -10,8 +10,8 @@ SELECT
   sdp.viagens_dia,
   SUM(
     CASE
-      WHEN data >= DATE("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}") 
-           AND tipo_viagem NOT IN ("Não licenciado", "Não vistoriado") 
+      WHEN data >= DATE("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}")
+           AND tipo_viagem NOT IN ("Não licenciado", "Não vistoriado")
       THEN km_apurada_faixa
       WHEN data < DATE("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}")
       THEN km_apurada_faixa
