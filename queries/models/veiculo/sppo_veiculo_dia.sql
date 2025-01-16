@@ -222,13 +222,18 @@ SELECT
   gla.* EXCEPT(indicadores, tecnologia, placa),
   TO_JSON(indicadores) AS indicadores,
   status,
-  {% if var("run_date") >= var("DATA_SUBSIDIO_V3B_INICIO") %}
+  {% if var("run_date") >= var("DATA_SUBSIDIO_V13_INICIO") %}
     tecnologia,
     placa,
     DATE("{{ licenciamento_date }}") AS data_licenciamento,
     DATE("{{ infracao_date }}") AS data_infracao,
-    CURRENT_DATETIME("America/Sao_Paulo") AS datetime_ultima_atualizacao,
+  {% else %}
+    null as tecnologia,
+    null as placa,
+    null as data_licenciamento,
+    null as data_infracao,
   {% endif %}
+  CURRENT_DATETIME("America/Sao_Paulo") AS datetime_ultima_atualizacao,
   "{{ var("version") }}" AS versao
 FROM
   gps_licenciamento_autuacao AS gla
@@ -259,7 +264,7 @@ SELECT
     WHEN indicadores.indicador_ar_condicionado IS TRUE THEN "Licenciado com ar e não autuado"
     ELSE NULL
   END AS status,
-  {% if var("run_date") >= var("DATA_SUBSIDIO_V3B_INICIO") %}
+  {% if var("run_date") >= var("DATA_SUBSIDIO_V13_INICIO") %}
     tecnologia,
     placa,
     DATE("{{ licenciamento_date }}") AS data_licenciamento,
