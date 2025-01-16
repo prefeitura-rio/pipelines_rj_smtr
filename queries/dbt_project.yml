@@ -134,6 +134,8 @@ vars:
   DATA_SUBSIDIO_V11_INICIO: "2024-11-06"
   # Parâmetro 110 km/h + alterações de regras do modelo `viagem_transacao.sql`
   DATA_SUBSIDIO_V12_INICIO: "2024-11-16"
+  # Inclusão de colunas de tecnologia em sppo_veiculo_dia
+  DATA_SUBSIDIO_V13_INICIO: "2025-01-01"
 
 
   # Recursos #
