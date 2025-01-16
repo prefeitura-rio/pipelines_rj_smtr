@@ -8,7 +8,8 @@ config(
             "granularity":"day"
     },
     unique_key=['id_viagem'],
-    incremental_strategy='insert_overwrite'
+    incremental_strategy='insert_overwrite',
+    labels = {'dashboard': 'yes'}
 )
 }}
 
