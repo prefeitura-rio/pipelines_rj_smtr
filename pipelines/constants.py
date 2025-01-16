@@ -203,8 +203,8 @@ class constants(Enum):  # pylint: disable=c0103
                 WHERE
                     id > {last_id} AND id <= {max_id}
             """,
-            "page_size": 1000,
-            "max_pages": 70,
+            "page_size": 35000,
+            "max_pages": 2,
         },
         "primary_key": ["id"],
         "interval_minutes": 5,
