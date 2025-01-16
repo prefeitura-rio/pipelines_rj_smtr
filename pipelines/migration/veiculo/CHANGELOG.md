@@ -1,6 +1,6 @@
 # Changelog - veiculo
 
-## [1.1.0] - 2024-08-06
+## [1.1.0] - 2025-01-16
 
 ### Alterado
 - Alterações no tratamento do arquivo de infrações (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/126):

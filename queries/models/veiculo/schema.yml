@@ -46,7 +46,7 @@ models:
       - name: data
         description: "Data da captura (partição)"
       - name: modo
-        description: "Modo de operação do veiculo (Ônibus, BRT, Etc...)"
+        description: "Modo de operação do veículo"
       - name: id_veiculo
         description: "Número de ordem do veículo, identificação que é exibida na lateral do ônibus"
       - name: ano_fabricacao

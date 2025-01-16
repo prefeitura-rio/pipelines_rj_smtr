@@ -1,6 +1,6 @@
 # Changelog - veiculo
 
-## [2.0.0] - 2024-08-06
+## [2.0.0] - 2025-01-16
 
 ### Adicionado
 - Criado os modelos `infracao.sql` e `licenciamento.sql` para guardar os dados completos de infração e licenciamento do STU (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/126)

@@ -67,7 +67,7 @@ models:
       - name: timestamp_captura
         description: "Timestamp de captura dos dados de licenciamento"
       - name: modo
-        description: "Modo de operação do veiculo (Ônibus, BRT, Etc...)"
+        description: "Modo de operação do veiculo"
       - name: id_veiculo
         description: "Número de ordem do veículo, identificação que é exibida na lateral do ônibus"
       - name: ano_fabricacao
