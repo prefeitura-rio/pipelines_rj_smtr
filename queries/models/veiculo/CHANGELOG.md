@@ -7,7 +7,7 @@
 
 ### Alterado
 - Altera tipo dos modelos `sppo_infracao.sql` e `sppo_licenciamento.sql` para `ephemeral` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/126)
-- Adiciona colunas `tecnologia`,`placa`, `data_licenciamento`, `data_infracao` e `datetime_ultima_atualizacao` no modelo `sppo_veiculo_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/126)
+- Adiciona colunas `tecnologia`, `placa`, `data_licenciamento`, `data_infracao` e `datetime_ultima_atualizacao` no modelo `sppo_veiculo_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/126)
 
 ## [1.1.4] - 2024-11-13
 
