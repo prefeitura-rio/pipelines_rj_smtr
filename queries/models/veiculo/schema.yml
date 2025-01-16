@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: sppo_infracao
+  - name: infracao
     description: "Tabela histórica de todas as multas aplicadas aos modos de transporte no município do Rio de Janeiro, com qualquer situação.
     Dados capturados diariamente de: https://www.data.rio/documents/multas-aplicadas-aos-modos-de-transporte-nos-%C3%BAltimos-cinco-anos"
     columns:
@@ -34,15 +34,19 @@ models:
                       CANCELADA - Multa foi cancelada através de um Processo de Recurso"
       - name: data_pagamento
         description: "Data de pagamento"
-  - name: sppo_licenciamento
-    description: "Tabela histórica de dados cadastrais dos veículos que operam o sistema de ônibus (BRT e SPPO),
+      - name: datetime_ultima_atualizacao
+        description: "Última atualização (GMT-3)."
+      - name: versao
+        description: "SHA do repositório no Github"
+  - name: licenciamento
+    description: "Tabela histórica de dados cadastrais dos veículos que operam o sistema de transporte rodoviário,
                   considerando tanto os licenciados no Sistema de Transporte Urbano (STU) quanto as solicitações
                   válidas em andamento para ingresso no sistema"
     columns:
       - name: data
         description: "Data da captura (partição)"
       - name: modo
-        description: "ÔNIBUS – nesse arquivo só constam os ônibus"
+        description: "Modo de operação do veículo"
       - name: id_veiculo
         description: "Número de ordem do veículo, identificação que é exibida na lateral do ônibus"
       - name: ano_fabricacao
@@ -90,6 +94,10 @@ models:
         description: "Ano atualizado da última vistoria realizada pelo veículo"
       - name: data_inicio_vinculo
         description: "Data de início do vínculo do veículo no STU"
+      - name: datetime_ultima_atualizacao
+        description: "Última atualização (GMT-3)."
+      - name: versao
+        description: "SHA do repositório no Github"
   - name: sppo_licenciamento_solicitacao
     description: "Tabela histórica de dados cadastrais das solicitações em andamento para ingresso no Sistema de Transporte Urbano (STU)"
     columns:
@@ -159,6 +167,8 @@ models:
         description: "Data de operação"
       - name: id_veiculo
         description: "Número de ordem do veículo, identificação que é exibida na lateral do ônibus"
+      - name: placa
+        description: "Placa do veículo"
       - name: indicadores
         description: "Indicadores para caraterização do status do veículo"
       - name: indicadores.indicador_licenciado
@@ -188,6 +198,14 @@ models:
         tests:
           - not_null:
               name: not_null__status__sppo_veiculo_dia
+      - name: datetime_ultima_atualizacao
+        description: "Última atualização (GMT-3)."
+      - name: data_licenciamento
+        description: "Data do arquivo de licenciamento utilizado"
+      - name: data_infracao
+        description: "Data do arquivo de infrações utilizado"
+      - name: tecnologia
+        description: "Tecnologia utilizada no veiculo (BASICO, MIDI, MINI, PADRON, ARTICULADO)"
       - name: versao
         description: "SHA do repositório no Github"
   - name: sppo_registro_agente_verao
