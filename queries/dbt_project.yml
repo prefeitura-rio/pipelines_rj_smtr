@@ -126,12 +126,15 @@ vars:
   DATA_SUBSIDIO_V8_INICIO: "2024-07-20"
   # Feature Apuração por faixa horária
   DATA_SUBSIDIO_V9_INICIO: "2024-08-16"
+  # Feature desconsideração de km não vistoriado e não licenciado
+  DATA_SUBSIDIO_V9A_INICIO: "2024-09-01"
   # Feature Apuração por novas faixas horárias (RESOLUÇÃO SMTR 3777/2024)
   DATA_SUBSIDIO_V10_INICIO: "2024-11-01"
   # Feature Apuração por novas faixas horárias (RESOLUÇÃO SMTR 3777/2024) - Feed (GTFS)
   DATA_SUBSIDIO_V11_INICIO: "2024-11-06"
   # Parâmetro 110 km/h + alterações de regras do modelo `viagem_transacao.sql`
   DATA_SUBSIDIO_V12_INICIO: "2024-11-16"
+
 
   # Recursos #
   recurso_staging: "rj-smtr-staging.projeto_subsidio_sppo_staging.recurso"
