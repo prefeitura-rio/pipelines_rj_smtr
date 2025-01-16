@@ -1,5 +1,15 @@
 # Changelog - gtfs
 
+## [1.2.1] - 2025-01-16
+
+### Alterado
+
+- Move modelos `ordem_servico_diaria.sql` e `servicos_sentido.sql` para o dataset `dashboard_operacao_onibus`
+
+### Removido
+
+- Modelo `ordem_servico_viagens_planejadas.sql` deletado
+
 ## [1.2.0] - 2024-12-04
 
 ### Alterado
