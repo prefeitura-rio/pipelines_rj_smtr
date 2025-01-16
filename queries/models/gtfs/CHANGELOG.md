@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Move modelos `ordem_servico_diaria.sql` e `servicos_sentido.sql` para o dataset `dashboard_operacao_onibus`
+- Move modelos `ordem_servico_diaria.sql` e `servicos_sentido.sql` para o dataset `dashboard_operacao_onibus` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/389)
 
 ### Removido
 
