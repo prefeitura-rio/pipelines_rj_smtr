@@ -73,7 +73,7 @@ SELECT
   permissao,
   placa,
   CASE
-    WHEN tipo_veiculo LIKE "%BASIC%" OR tipo_veiculo LIKE "%BS%" THEN "BASICO" 
+    WHEN tipo_veiculo LIKE "%BASIC%" OR tipo_veiculo LIKE "%BS%" THEN "BASICO"
     WHEN tipo_veiculo LIKE "%MIDI%" THEN "MIDI"
     WHEN tipo_veiculo LIKE "%MINI%" THEN "MINI"
     WHEN tipo_veiculo LIKE "%PDRON%" OR tipo_veiculo LIKE "%PADRON%" THEN "PADRON"

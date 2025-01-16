@@ -223,7 +223,7 @@ SELECT
   TO_JSON(indicadores) AS indicadores,
   status,
   {% if var("run_date") >= var("DATA_SUBSIDIO_V3B_INICIO") %}
-    tecnologia, 
+    tecnologia,
     placa,
     DATE("{{ licenciamento_date }}") AS data_licenciamento,
     DATE("{{ infracao_date }}") AS data_infracao,
@@ -260,7 +260,7 @@ SELECT
     ELSE NULL
   END AS status,
   {% if var("run_date") >= var("DATA_SUBSIDIO_V3B_INICIO") %}
-    tecnologia, 
+    tecnologia,
     placa,
     DATE("{{ licenciamento_date }}") AS data_licenciamento,
     DATE("{{ infracao_date }}") AS data_infracao,

@@ -114,7 +114,7 @@ vars:
   DATA_SUBSIDIO_V3_INICIO: "2023-07-04"
   # Feature viagens remuneradas (RESOLUÇÃO SMTR Nº 3645/2023)
   DATA_SUBSIDIO_V3A_INICIO: "2023-09-16"
-  # Inclusão de colunas de tecnologia em sppo_veiculo_dia 
+  # Inclusão de colunas de tecnologia em sppo_veiculo_dia
   DATA_SUBSIDIO_V3B_INICIO: "2024-01-01"
   # Feature penalidade aplicada por agente de verão (DECRETO RIO 53856/2023 e RESOLUÇÃO SMTR 3682/2024)
   DATA_SUBSIDIO_V4_INICIO: "2024-01-04"
