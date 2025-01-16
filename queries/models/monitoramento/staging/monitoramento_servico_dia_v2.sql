@@ -10,10 +10,10 @@ SELECT
   sdp.viagens_dia,
   SUM(
     CASE
-      WHEN data >= DATE("2024-09-01")
-           AND tipo_viagem NOT IN ("Não licenciado", "Não vistoriado")
+      WHEN data >= DATE("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}") 
+           AND tipo_viagem NOT IN ("Não licenciado", "Não vistoriado") 
       THEN km_apurada_faixa
-      WHEN data < DATE("2024-09-01")
+      WHEN data < DATE("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}")
       THEN km_apurada_faixa
       ELSE 0
     END
@@ -27,8 +27,8 @@ FROM
 left join {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }} as sdtv
   using (data, servico)
   WHERE
-    data BETWEEN DATE("{{ var("start_date") }}")
-    AND DATE("{{ var("end_date") }}")
+    data BETWEEN DATE("{{ var('start_date') }}")
+    AND DATE("{{ var('end_date') }}")
   group by data,
   tipo_dia,
   consorcio,
@@ -43,7 +43,7 @@ left join {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }} as sdtv
         from {{ ref("viagem_planejada") }}
         -- `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
         where
-            data >= date("{{ var("DATA_SUBSIDIO_V9_INICIO") }}")
+            data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}")
             and (id_tipo_trajeto = 0 or id_tipo_trajeto is null)
             and format_time("%T", time(faixa_horaria_inicio)) != "00:00:00"
     ),
@@ -62,10 +62,10 @@ left join {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }} as sdtv
         from valores_subsidio as sdp
         left join planejada as p using (data, servico, consorcio)
         where
-            data >= date("{{ var("DATA_SUBSIDIO_V9_INICIO") }}")
+            data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}")
             {% if is_incremental() %}
-                and data between date("{{ var("start_date") }}") and date_add(
-                    date("{{ var("end_date") }}"), interval 1 day
+                and data between date("{{ var('start_date') }}") and date_add(
+                    date("{{ var('end_date') }}"), interval 1 day
                 )
             {% endif %}
     )
