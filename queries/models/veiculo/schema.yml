@@ -39,14 +39,14 @@ models:
       - name: versao
         description: "SHA do repositório no Github"
   - name: licenciamento
-    description: "Tabela histórica de dados cadastrais dos veículos que operam o sistema de ônibus (BRT e SPPO),
+    description: "Tabela histórica de dados cadastrais dos veículos que operam o sistema de transporte rodoviário,
                   considerando tanto os licenciados no Sistema de Transporte Urbano (STU) quanto as solicitações
                   válidas em andamento para ingresso no sistema"
     columns:
       - name: data
         description: "Data da captura (partição)"
       - name: modo
-        description: "ÔNIBUS – nesse arquivo só constam os ônibus"
+        description: "Modo de operação do veiculo (Ônibus, BRT, Etc...)"
       - name: id_veiculo
         description: "Número de ordem do veículo, identificação que é exibida na lateral do ônibus"
       - name: ano_fabricacao
@@ -201,9 +201,14 @@ models:
         description: "Data do arquivo de licenciamento utilizado"
       - name: data_infracao
         description: "Data do arquivo de infrações utilizado"
+<<<<<<< Updated upstream
         tests:
           - not_null:
               name: not_null__status__sppo_veiculo_dia
+=======
+      - name: tecnologia
+        description: "Tecnologia utilizada no veiculo (BASICO, MIDI, MINI, PADRON, ARTICULADO)"
+>>>>>>> Stashed changes
       - name: versao
         description: "SHA do repositório no Github"
   - name: sppo_registro_agente_verao

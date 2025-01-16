@@ -19,14 +19,7 @@ WITH licenciamento AS (
     id_veiculo,
     placa,
     tipo_veiculo,
-    CASE
-      WHEN tipo_veiculo LIKE "%BASIC%" OR tipo_veiculo LIKE "%BS%" THEN "BASICO"
-      WHEN tipo_veiculo LIKE "%MIDI%" THEN "MIDI"
-      WHEN tipo_veiculo LIKE "%MINI%" THEN "MINI"
-      WHEN tipo_veiculo LIKE "%PDRON%" OR tipo_veiculo LIKE "%PADRON%" THEN "PADRON"
-      WHEN tipo_veiculo LIKE "%ARTICULADO%" THEN "ARTICULADO"
-      ELSE NULL
-    END AS tecnologia,
+    tecnologia,
     indicador_ar_condicionado,
     TRUE AS indicador_licenciado,
     CASE
@@ -37,7 +30,7 @@ WITH licenciamento AS (
     END AS indicador_vistoriado,
     data_inicio_vinculo
   FROM
-    {{ ref("sppo_licenciamento") }} --`rj-smtr`.`veiculo`.`licenciamento`
+    {{ ref("sppo_licenciamento") }}
   WHERE
     data = DATE("{{ licenciamento_date }}")
 ),
@@ -226,12 +219,16 @@ gps_licenciamento_autuacao AS (
 )
 {% if var("run_date") < var("DATA_SUBSIDIO_V5_INICIO") %}
 SELECT
-  gla.* EXCEPT(indicadores),
+  gla.* EXCEPT(indicadores, tecnologia, placa),
   TO_JSON(indicadores) AS indicadores,
   status,
-  DATE("{{ licenciamento_date }}") AS data_licenciamento,
-  DATE("{{ infracao_date }}") AS data_infracao,
-  CURRENT_DATETIME("America/Sao_Paulo") AS datetime_ultima_atualizacao,
+  {% if var("run_date") >= var("DATA_SUBSIDIO_V3B_INICIO") %}
+    tecnologia, 
+    placa,
+    DATE("{{ licenciamento_date }}") AS data_licenciamento,
+    DATE("{{ infracao_date }}") AS data_infracao,
+    CURRENT_DATETIME("America/Sao_Paulo") AS datetime_ultima_atualizacao,
+  {% endif %}
   "{{ var("version") }}" AS versao
 FROM
   gps_licenciamento_autuacao AS gla
@@ -249,7 +246,7 @@ ON
   AND (data BETWEEN p.data_inicio AND p.data_fim)
 {% else %}
 SELECT
-  * EXCEPT(indicadores),
+  * EXCEPT(indicadores, tecnologia, placa),
   TO_JSON(indicadores) AS indicadores,
   CASE
     WHEN indicadores.indicador_licenciado IS FALSE THEN "Não licenciado"
@@ -262,9 +259,13 @@ SELECT
     WHEN indicadores.indicador_ar_condicionado IS TRUE THEN "Licenciado com ar e não autuado"
     ELSE NULL
   END AS status,
-  DATE("{{ licenciamento_date }}") AS data_licenciamento,
-  DATE("{{ infracao_date }}") AS data_infracao,
-  CURRENT_DATETIME("America/Sao_Paulo") AS datetime_ultima_atualizacao,
+  {% if var("run_date") >= var("DATA_SUBSIDIO_V3B_INICIO") %}
+    tecnologia, 
+    placa,
+    DATE("{{ licenciamento_date }}") AS data_licenciamento,
+    DATE("{{ infracao_date }}") AS data_infracao,
+    CURRENT_DATETIME("America/Sao_Paulo") AS datetime_ultima_atualizacao,
+  {% endif %}
   "{{ var("version") }}" AS versao
 FROM
   gps_licenciamento_autuacao
