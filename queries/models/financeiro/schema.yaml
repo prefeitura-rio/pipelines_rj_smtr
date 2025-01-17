@@ -77,8 +77,8 @@ models:
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
-  - name: subsidio_penalidade_servico_dia
-    description: "Tabela com o valor penalidade dos serviços de ônibus (SPPO) por dia e serviço."
+  - name: subsidio_penalidade_servico_faixa
+    description: "Tabela com o valor penalidade dos serviços de ônibus (SPPO) por faixa horária e serviço."
     columns:
       - name: data
         description: "{{ doc('data_gps') }}"

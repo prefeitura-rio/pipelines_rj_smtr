@@ -264,7 +264,7 @@ models:
       - name: data_fim
         description: "Data final do período de vigência dos demais atributos"
   - name: subsidio_parametros
-    description: "Parâmetros de remuneração do subsídio dos serviços de ônibus (SPPO) por tipo de viagem"
+    description: "Parâmetros de remuneração do subsídio dos serviços de ônibus (SPPO) por tipo de viagem (Descontinuada a partir de 2024-03-01)"
     columns:
       - name: indicador_licenciado
         description: "Indicador se o veículo encontra-se licenciado"

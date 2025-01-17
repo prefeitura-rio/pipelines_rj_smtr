@@ -1,32 +1,32 @@
 {{ config(materialized="ephemeral") }}
 
-{% if var('tipo_materializacao') == 'monitoramento' %}
-    {% set interval_minutes = 120 %}
-{% elif var('tipo_materializacao') == 'subsidio' %}
-    {% set interval_minutes = 30 %}
+{% if var("tipo_materializacao") == "monitoramento" %} {% set interval_minutes = 120 %}
+{% elif var("tipo_materializacao") == "subsidio" %} {% set interval_minutes = 30 %}
 {% endif %}
 with
     -- 1. Transações Jaé
     transacao as (
         select id_veiculo, datetime_transacao
         from {{ ref("transacao") }}
-        -- rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao
+        -- `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
             )
-            and date(datetime_processamento) - date(datetime_transacao) <= interval 6 day
+            and date(datetime_processamento) - date(datetime_transacao)
+            <= interval 6 day
     ),
     -- 2. Transações RioCard
     transacao_riocard as (
         select id_veiculo, datetime_transacao
         from {{ ref("transacao_riocard") }}
-        -- rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard
+        -- `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard`
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
             )
-            and date(datetime_processamento) - date(datetime_transacao) <= interval 6 day
+            and date(datetime_processamento) - date(datetime_transacao)
+            <= interval 6 day
     ),
     -- 3. GPS Validador
     gps_validador as (
@@ -39,7 +39,7 @@ with
             latitude,
             longitude
         from {{ ref("gps_validador") }}
-        -- rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador
+        -- `rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador`
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
@@ -65,7 +65,7 @@ with
             distancia_planejada,
             sentido
         from {{ ref("viagem_completa") }}
-        -- rj-smtr.projeto_subsidio_sppo.viagem_completa
+        -- `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         where
             data
             between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
@@ -74,9 +74,9 @@ with
     ),
     -- 5. Status dos veículos
     veiculos as (
-        select data, id_veiculo, status
+        select data, id_veiculo, status, tecnologia
         from {{ ref("sppo_veiculo_dia") }}
-        -- rj-smtr.veiculo.sppo_veiculo_dia
+        -- `rj-smtr-dev.victor__veiculo.sppo_veiculo_dia`
         where
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
@@ -95,12 +95,20 @@ with
                         partition by v.id_veiculo order by v.datetime_partida
                     )
                     is null
-                then datetime(timestamp_sub(datetime_partida, interval {{ interval_minutes }} minute))
+                then
+                    datetime(
+                        timestamp_sub(
+                            datetime_partida, interval {{ interval_minutes }} minute
+                        )
+                    )
                 else
                     datetime(
                         timestamp_add(
                             greatest(
-                                timestamp_sub(datetime_partida, interval {{ interval_minutes }} minute),
+                                timestamp_sub(
+                                    datetime_partida,
+                                    interval {{ interval_minutes }} minute
+                                ),
                                 lag(v.datetime_chegada) over (
                                     partition by v.id_veiculo
                                     order by v.datetime_partida
@@ -290,6 +298,7 @@ select
         then "Sem transação"
         else ve.status
     end as tipo_viagem,
+    ve.tecnologia,
     v.sentido,
     v.distancia_planejada,
     coalesce(t.quantidade_transacao, 0) as quantidade_transacao,

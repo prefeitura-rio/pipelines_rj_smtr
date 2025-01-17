@@ -14,6 +14,8 @@ models:
         description: "{{ doc('servico') }}"
       - name: tipo_viagem
         description: "{{ doc('tipo_viagem_status') }}"
+      - name: tecnologia
+        description: "Tecnologia utilizada no veiculo (BASICO, MIDI, MINI, PADRON)"
       - name: distancia_planejada
         description: "{{ doc('distancia_planejada') }}"
       - name: quantidade_transacao
@@ -30,3 +32,29 @@ models:
         description: "{{ doc('datetime_chegada') }}"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
+
+  - name: valor_km_tipo_viagem
+    description: "Tabela de referência do valor do subsídio por tipo de viagem e tecnologia"
+    columns:
+      - name: status
+        description: "Classificação, observados os demais parâmetros - Categorias:\n
+                      - Não licenciado - Veículo que operou, mas não é licenciado\n
+                      - Autuado por ar inoperante - Veículo que operou, foi licenciado com ar condicionado e foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado (023.II)\n
+                      - Autuado por segurança - Veículo que operou, foi licenciado, mas foi autuado por infração relacionada à segurança do veículo\n
+                      - Autuado por limpeza/equipamento - Veículo que operou, foi licenciado, mas foi autuado cumulativamente por infrações relacionadas à limpeza e equipamentos do veículo\n
+                      - Sem ar e não autuado - Veículo que operou, foi licenciado sem ar condicionado e não foi autuado\n
+                      - Com ar e não autuado - Veículo que operou, foi licenciado com ar condicionado e não foi autuado"
+      - name: tecnologia
+        description: "Tipo de tecnologia do veículo (PADRON, BASICO, MIDI, MINI)"
+      - name: subsidio_km
+        description: "Valor de subsídio de remuneração (R$/km)"
+      - name: irk
+        description: "Índice de Remuneração por km (R$/km)"
+      - name: data_inicio
+        description: "Data inicial do período de vigência dos demais atributos"
+      - name: data_fim
+        description: "Data final do período de vigência dos demais atributos"
+      - name: indicador_penalidade_judicial
+        description: "{{ doc('indicador_penalidade_judicial') }}"
+      - name: legislacao
+        description: "Legislação que estabelece o valor e regras de remuneração"

@@ -1,159 +1,196 @@
 {{
-  config(
-    materialized="incremental",
-    partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-    incremental_strategy="insert_overwrite",
-  )
+    config(
+        materialized="incremental",
+        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+        incremental_strategy="insert_overwrite",
+    )
 }}
 
-WITH
-  subsidio_faixa_dia AS (
-  SELECT
+with
+    subsidio_faixa_dia as (
+        select
+            data,
+            tipo_dia,
+            faixa_horaria_inicio,
+            faixa_horaria_fim,
+            consorcio,
+            servico,
+            pof
+        from {{ ref("subsidio_faixa_servico_dia") }}
+        -- `rj-smtr.financeiro_staging.subsidio_faixa_servico_dia`
+        where
+            data
+            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+    ),
+    servico_km_apuracao as (
+        select
+            data,
+            servico,
+            case
+                when tipo_viagem = "Nao licenciado"
+                then "Não licenciado"
+                when tipo_viagem = "Licenciado com ar e autuado (023.II)"
+                then "Autuado por ar inoperante"
+                when tipo_viagem = "Licenciado sem ar"
+                then "Licenciado sem ar e não autuado"
+                when tipo_viagem = "Licenciado com ar e não autuado (023.II)"
+                then "Licenciado com ar e não autuado"
+                else tipo_viagem
+            end as tipo_viagem,
+            id_viagem,
+            distancia_planejada,
+            subsidio_km,
+            subsidio_km_teto,
+            indicador_penalidade_judicial,
+            indicador_viagem_dentro_limite
+        from {{ ref("viagens_remuneradas") }}
+        -- `rj-smtr.dashboard_subsidio_sppo.viagens_remuneradas`
+        where
+            data
+            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+    ),
+    indicador_ar as (
+        select
+            data,
+            id_veiculo,
+            status,
+            safe_cast(
+                json_value(indicadores, "$.indicador_ar_condicionado") as bool
+            ) as indicador_ar_condicionado
+        from {{ ref("sppo_veiculo_dia") }}
+        -- `rj-smtr.veiculo.sppo_veiculo_dia`
+        where
+            data
+            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+    ),
+    viagem as (
+        select
+            data, servico_realizado as servico, id_veiculo, id_viagem, datetime_partida
+        from {{ ref("viagem_completa") }}
+        -- `rj-smtr.projeto_subsidio_sppo.viagem_completa`
+        where
+            data
+            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+    ),
+    ar_viagem as (
+        select
+            v.data,
+            v.servico,
+            v.id_viagem,
+            v.datetime_partida,
+            coalesce(ia.indicador_ar_condicionado, false) as indicador_ar_condicionado
+        from viagem v
+        left join indicador_ar ia on ia.data = v.data and ia.id_veiculo = v.id_veiculo
+    ),
+    subsidio_servico_ar as (
+        select
+            sfd.data,
+            sfd.tipo_dia,
+            sfd.faixa_horaria_inicio,
+            sfd.faixa_horaria_fim,
+            sfd.consorcio,
+            sfd.servico,
+            sfd.pof,
+            coalesce(s.tipo_viagem, "Sem viagem apurada") as tipo_viagem,
+            s.id_viagem,
+            safe_cast(s.distancia_planejada as numeric) as distancia_planejada,
+            safe_cast(s.subsidio_km as numeric) as subsidio_km,
+            safe_cast(s.subsidio_km_teto as numeric) as subsidio_km_teto,
+            s.indicador_viagem_dentro_limite,
+            case
+                when sfd.pof < 60 then true else s.indicador_penalidade_judicial
+            end as indicador_penalidade_judicial,
+            coalesce(av.indicador_ar_condicionado, false) as indicador_ar_condicionado
+        from subsidio_faixa_dia as sfd
+        left join
+            ar_viagem as av
+            on sfd.data = av.data
+            and sfd.servico = av.servico
+            and av.datetime_partida
+            between sfd.faixa_horaria_inicio and sfd.faixa_horaria_fim
+        left join
+            servico_km_apuracao as s
+            on sfd.data = s.data
+            and sfd.servico = s.servico
+            and s.id_viagem = av.id_viagem
+    )
+select
     data,
     tipo_dia,
     faixa_horaria_inicio,
     faixa_horaria_fim,
     consorcio,
     servico,
-    pof
-  FROM
-    {{ ref("subsidio_faixa_servico_dia") }}
-    -- rj-smtr.financeiro_staging.subsidio_faixa_servico_dia
-  WHERE
-    data BETWEEN DATE("{{ var("start_date") }}")
-    AND DATE("{{ var("end_date") }}")
-  ),
-  servico_km_apuracao AS (
-  SELECT
-    data,
-    servico,
-    CASE
-      WHEN tipo_viagem = "Nao licenciado" THEN "Não licenciado"
-      WHEN tipo_viagem = "Licenciado com ar e autuado (023.II)" THEN "Autuado por ar inoperante"
-      WHEN tipo_viagem = "Licenciado sem ar" THEN "Licenciado sem ar e não autuado"
-      WHEN tipo_viagem = "Licenciado com ar e não autuado (023.II)" THEN "Licenciado com ar e não autuado"
-      ELSE tipo_viagem
-    END AS tipo_viagem,
-    id_viagem,
-    distancia_planejada,
-    subsidio_km,
-    subsidio_km_teto,
+    indicador_ar_condicionado,
     indicador_penalidade_judicial,
-    indicador_viagem_dentro_limite
-  FROM
-    {{ ref("viagens_remuneradas") }}
-    -- rj-smtr.dashboard_subsidio_sppo.viagens_remuneradas
-  WHERE
-    data BETWEEN DATE("{{ var("start_date") }}")
-    AND DATE("{{ var("end_date") }}")
-  ),
-  indicador_ar AS (
-  SELECT
+    indicador_viagem_dentro_limite,
+    tipo_viagem,
+    safe_cast(coalesce(count(id_viagem), 0) as int64) as viagens_faixa,
+    safe_cast(coalesce(sum(distancia_planejada), 0) as numeric) as km_apurada_faixa,
+    safe_cast(
+        coalesce(
+            sum(
+                if(
+                    indicador_viagem_dentro_limite = true
+                    and pof >= 80
+                    and subsidio_km > 0,
+                    distancia_planejada,
+                    0
+                )
+            ),
+            0
+        ) as numeric
+    ) as km_subsidiada_faixa,
+    safe_cast(
+        sum(
+            if(
+                indicador_viagem_dentro_limite = true and pof >= 80,
+                distancia_planejada * subsidio_km,
+                0
+            )
+        ) as numeric
+    ) as valor_apurado,
+    safe_cast(
+        - coalesce(
+            sum(
+                if(
+                    indicador_viagem_dentro_limite = true,
+                    0,
+                    distancia_planejada * subsidio_km
+                )
+            ),
+            0
+        ) as numeric
+    ) as valor_acima_limite,
+    safe_cast(
+        sum(
+            if(
+                pof >= 80 and tipo_viagem != "Não licenciado",
+                distancia_planejada * subsidio_km_teto,
+                0
+            )
+        ) - coalesce(
+            sum(
+                if(
+                    indicador_viagem_dentro_limite = true,
+                    0,
+                    distancia_planejada * subsidio_km
+                )
+            ),
+            0
+        ) as numeric
+    ) as valor_total_sem_glosa,
+    '{{ var("version") }}' as versao,
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
+from subsidio_servico_ar
+group by
     data,
-    id_veiculo,
-    status,
-    SAFE_CAST(JSON_VALUE(indicadores,"$.indicador_ar_condicionado") AS BOOL) AS indicador_ar_condicionado
-  FROM
-    {{ ref("sppo_veiculo_dia") }}
-    -- rj-smtr.veiculo.sppo_veiculo_dia
-  WHERE
-    data BETWEEN DATE("{{ var("start_date") }}")
-    AND DATE("{{ var("end_date") }}")
-  ),
-  viagem AS (
-  SELECT
-    data,
-    servico_realizado AS servico,
-    id_veiculo,
-    id_viagem,
-    datetime_partida
-  FROM
-    {{ ref("viagem_completa") }}
-    -- rj-smtr.projeto_subsidio_sppo.viagem_completa
-  WHERE
-    data BETWEEN DATE("{{ var("start_date") }}")
-    AND DATE("{{ var("end_date") }}")
-  ),
-  ar_viagem AS (
-  SELECT
-    v.data,
-    v.servico,
-    v.id_viagem,
-    v.datetime_partida,
-    COALESCE(ia.indicador_ar_condicionado, FALSE) AS indicador_ar_condicionado
-  FROM
-    viagem v
-  LEFT JOIN
-    indicador_ar ia
-  ON
-    ia.data = v.data
-    AND ia.id_veiculo = v.id_veiculo
-  ),
-  subsidio_servico_ar AS (
-    SELECT
-      sfd.data,
-      sfd.tipo_dia,
-      sfd.faixa_horaria_inicio,
-      sfd.faixa_horaria_fim,
-      sfd.consorcio,
-      sfd.servico,
-      sfd.pof,
-      COALESCE(s.tipo_viagem, "Sem viagem apurada") AS tipo_viagem,
-      s.id_viagem,
-      SAFE_CAST(s.distancia_planejada AS NUMERIC) AS distancia_planejada,
-      SAFE_CAST(s.subsidio_km AS NUMERIC) AS subsidio_km,
-      SAFE_CAST(s.subsidio_km_teto AS NUMERIC) AS subsidio_km_teto,
-      s.indicador_viagem_dentro_limite,
-      CASE
-        WHEN sfd.pof < 60 THEN TRUE
-        ELSE s.indicador_penalidade_judicial
-      END AS indicador_penalidade_judicial,
-      COALESCE(av.indicador_ar_condicionado, FALSE) AS indicador_ar_condicionado
-    FROM
-      subsidio_faixa_dia AS sfd
-    LEFT JOIN
-      ar_viagem AS av
-    ON
-      sfd.data = av.data
-      AND sfd.servico = av.servico
-      AND av.datetime_partida BETWEEN sfd.faixa_horaria_inicio
-      AND sfd.faixa_horaria_fim
-    LEFT JOIN
-      servico_km_apuracao AS s
-    ON
-      sfd.data = s.data
-      AND sfd.servico = s.servico
-      AND s.id_viagem = av.id_viagem
-  )
-SELECT
-  data,
-  tipo_dia,
-  faixa_horaria_inicio,
-  faixa_horaria_fim,
-  consorcio,
-  servico,
-  indicador_ar_condicionado,
-  indicador_penalidade_judicial,
-  indicador_viagem_dentro_limite,
-  tipo_viagem,
-  SAFE_CAST(COALESCE(COUNT(id_viagem), 0) AS INT64) AS viagens_faixa,
-  SAFE_CAST(COALESCE(SUM(distancia_planejada), 0) AS NUMERIC) AS km_apurada_faixa,
-  SAFE_CAST(COALESCE(SUM(IF(indicador_viagem_dentro_limite = TRUE AND pof >= 80 AND subsidio_km > 0, distancia_planejada, 0)), 0) AS NUMERIC) AS km_subsidiada_faixa,
-  SAFE_CAST(SUM(IF(indicador_viagem_dentro_limite = TRUE AND pof >= 80, distancia_planejada*subsidio_km, 0)) AS NUMERIC) AS valor_apurado,
-  SAFE_CAST(-COALESCE(SUM(IF(indicador_viagem_dentro_limite = TRUE, 0, distancia_planejada*subsidio_km)), 0) AS NUMERIC) AS valor_acima_limite,
-  SAFE_CAST(SUM(IF(pof >= 80 AND tipo_viagem != "Não licenciado", distancia_planejada*subsidio_km_teto, 0)) - COALESCE(SUM(IF(indicador_viagem_dentro_limite = TRUE, 0, distancia_planejada*subsidio_km)), 0) AS NUMERIC) AS valor_total_sem_glosa,
-  '{{ var("version") }}' as versao,
-  CURRENT_DATETIME("America/Sao_Paulo") as datetime_ultima_atualizacao
-FROM
-  subsidio_servico_ar
-GROUP BY
-  data,
-  tipo_dia,
-  faixa_horaria_inicio,
-  faixa_horaria_fim,
-  consorcio,
-  servico,
-  indicador_ar_condicionado,
-  indicador_penalidade_judicial,
-  indicador_viagem_dentro_limite,
-  tipo_viagem
+    tipo_dia,
+    faixa_horaria_inicio,
+    faixa_horaria_fim,
+    consorcio,
+    servico,
+    indicador_ar_condicionado,
+    indicador_penalidade_judicial,
+    indicador_viagem_dentro_limite,
+    tipo_viagem
