@@ -18,6 +18,31 @@ with
                 )
             )
     ),
+    ordem_servico_regular as (
+        select feed_start_date, servico, partidas_ida_du, partidas_volta_du, km_du
+        from ordem_servico_pivot
+        where tipo_os = "Regular"
+    ),
+    ordem_servico_tratada as (
+        select
+
+            osp.* except (partidas_ida_du, partidas_volta_du, km_du),
+            case
+                when osp.partidas_ida_du = 0 or osp.partidas_ida_du is null
+                then osr.partidas_ida_du
+                else osp.partidas_ida_du
+            end as partidas_ida_du,
+            case
+                when osp.partidas_volta_du = 0 or osp.partidas_volta_du is null
+                then osr.partidas_volta_du
+                else osp.partidas_volta_du
+            end as partidas_volta_du,
+            case
+                when osp.km_du = 0 or osp.km_du is null then osr.km_du else osp.km_du
+            end as km_du
+        from ordem_servico_pivot osp
+        left join ordem_servico_regular osr using (feed_start_date, servico)
+    ),
     subsidio_feed_start_date_efetiva as (
         select
             data,
@@ -38,22 +63,31 @@ select
     consorcio,
     sentido,
     case
-        when sentido in ('I', 'C') and tipo_dia = "Dia Útil"
-        then partidas_ida_du
-        when sentido in ('I', 'C') and tipo_dia = "Ponto Facultativo"
-        then partidas_ida_pf
-        when sentido in ('I', 'C') and tipo_dia = "Sabado"
-        then round(safe_divide((partidas_ida_du * km_sab), km_du))
-        when sentido in ('I', 'C') and tipo_dia = "Domingo"
-        then round(safe_divide((partidas_ida_du * km_dom), km_du))
-        when sentido = "V" and tipo_dia = "Dia Útil"
-        then partidas_volta_du
-        when sentido = "V" and tipo_dia = "Ponto Facultativo"
-        then partidas_volta_pf
-        when sentido = "V" and tipo_dia = "Sabado"
-        then round(safe_divide((partidas_volta_du * km_sab), km_du))
-        when sentido = "V" and tipo_dia = "Domingo"
-        then round(safe_divide((partidas_volta_du * km_dom), km_du))
+        {% set tipo_dia = {
+            "Dia Útil": "du",
+            "Ponto Facultativo": "pf",
+            "Sabado": "sab",
+            "Domingo": "dom",
+        } %}
+        {% set sentido = {"ida": ("I", "C"), "volta": "V"} %}
+        {%- for key_s, value_s in sentido.items() %}
+            {%- for key_td, value_td in tipo_dia.items() %}
+                when
+                    sentido
+                    {% if key_s == "ida" %} in {{ value_s }}
+                    {% else %} = "{{ value_s }}"
+                    {% endif %} and tipo_dia = "{{ key_td }}"
+                then
+                    {% if key_td in ["Sabado", "Domingo"] %}
+                        round(
+                            safe_divide(
+                                (partidas_{{ key_s }}_du * km_{{ value_td }}), km_du
+                            )
+                        )
+                    {% else %} partidas_{{ key_s }}_{{ value_td }}
+                    {% endif %}
+            {% endfor -%}
+        {% endfor -%}
     end as viagens_planejadas,
     horario_inicio as inicio_periodo,
     horario_fim as fim_periodo
@@ -65,7 +99,6 @@ from
         )
     ) as data
 left join feed_info as d on data between d.feed_start_date and d.feed_end_date
-left join ordem_servico_pivot as o using (feed_start_date)
+left join ordem_servico_tratada as o using (feed_start_date)
 inner join subsidio_feed_start_date_efetiva as sd using (data, tipo_os)
 left join ordem_servico_trips_shapes using (feed_start_date, servico, tipo_os)
-where data >= "{{ var('data_inicio_trips_shapes') }}"
