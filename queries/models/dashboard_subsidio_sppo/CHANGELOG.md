@@ -1,6 +1,13 @@
 # Changelog - dashboard_subsidio_sppo
 
-## [7.0.6] - 2024-10-30
+## [7.0.8] - 2025-01-21
+
+### Adicionado
+
+- Altera regras do modelo `viagens_remuneradas` para apuração por tecnologia (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+- Adiciona valores atualizados das infrações no modelo `valor_tipo_penalidade` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+
+## [7.0.7] - 2024-10-30
 
 ### Adicionado
 

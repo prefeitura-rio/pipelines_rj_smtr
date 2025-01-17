@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo_v2
 
+## [1.0.3] - 2025-01-21
+
+### Adicionado
+
+- Adiciona coluna `valor_penalidade` no modelo `sumario_faixa_servico_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+
 ## [1.0.2] - 2024-10-02
 
 ### Adicionado

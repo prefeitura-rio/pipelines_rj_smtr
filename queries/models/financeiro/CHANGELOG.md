@@ -1,5 +1,15 @@
 # Changelog - financeiro
 
+## [1.0.2] - 2025-01-21
+
+### Adicionado
+
+- Cria modelo `subsidio_penalidade_servico_faixa` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+
+### Removido
+
+- Remove modelo `subsidio_penalidade_servico_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+
 ## [1.0.1] - 2024-09-20
 
 ### Alterado
