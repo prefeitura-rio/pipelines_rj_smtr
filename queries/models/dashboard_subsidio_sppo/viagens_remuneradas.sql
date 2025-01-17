@@ -171,7 +171,7 @@ with
                 then t.maior_tecnologia_permitida
                 when
                     p.prioridade < p_menor.prioridade
-                    and data >= date('{{ var("DATA_SUBSIDIO_V13A_INICIO") }}')
+                    and data >= date('{{ var("DATA_SUBSIDIO_V14A_INICIO") }}')
                 then null
                 else vt.tecnologia
             end as tecnologia_remunerada,

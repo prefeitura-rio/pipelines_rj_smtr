@@ -16,9 +16,9 @@ with
             faixa_horaria_inicio,
             faixa_horaria_fim,
             case
-                when data < date('{{ var("DATA_SUBSIDIO_V13_INICIO") }}') and rn = 1
+                when data < date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}') and rn = 1
                 then min_pof
-                when data >= date('{{ var("DATA_SUBSIDIO_V13_INICIO") }}')
+                when data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
                 then pof
                 else null
             end as min_pof
