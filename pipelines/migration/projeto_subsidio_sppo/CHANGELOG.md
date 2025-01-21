@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- corrigida a materialização dos modelos do dataset `monitoramento` no flow do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- corrigida a materialização dos modelos do dataset `monitoramento` no flow do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/391)
 
 ## [1.0.7] - 2025-01-03
 

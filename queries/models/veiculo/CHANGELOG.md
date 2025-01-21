@@ -3,7 +3,7 @@
 ## [2.0.1] - 2025-01-21
 
 ### Corrigido
-- Corrigido os sources dos modelos `infracao.sql` e `licenciamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Corrigido os sources dos modelos `infracao.sql` e `licenciamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/391)
 
 ## [2.0.0] - 2025-01-16
 
