@@ -276,9 +276,8 @@ with Flow(
                     upstream_tasks=[dbt_vars_2],
                 )
                 dbt_vars_3 = get_join_dict(
-                    dict_list=[dbt_vars_1],
-                    new_dict=date_intervals["second_range"]
-                    | {"tipo_materializacao": "monitoramento"},
+                    dict_list=[dbt_vars_2],
+                    new_dict={"tipo_materializacao": "monitoramento"},
                     upstream_tasks=[SUBSIDIO_SPPO_APURACAO_RUN_2],
                 )[0]
 
@@ -335,10 +334,16 @@ with Flow(
                         _vars=_vars,
                     )
 
+                    _vars_2 = get_join_dict(
+                        dict_list=[_vars],
+                        new_dict={"tipo_materializacao": "monitoramento"},
+                        upstream_tasks=[SUBSIDIO_SPPO_APURACAO_RUN],
+                    )[0]
+
                     SUBSIDIO_SPPO_APURACAO_RUN_2 = run_dbt_selector(
                         selector_name="monitoramento_subsidio",
-                        _vars=_vars | {"tipo_materializacao": "monitoramento"},
-                        upstream_tasks=[SUBSIDIO_SPPO_APURACAO_RUN],
+                        _vars=_vars_2,
+                        upstream_tasks=[_vars_2],
                     )
                     # POST-DATA QUALITY CHECK #
                     SUBSIDIO_SPPO_DATA_QUALITY_POS = run_dbt_tests(
