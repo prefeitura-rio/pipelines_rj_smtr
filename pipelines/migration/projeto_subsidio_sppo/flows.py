@@ -480,7 +480,7 @@ with Flow(
 
 subsidio_sppo_apuracao.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 subsidio_sppo_apuracao.run_config = KubernetesRun(
-    image=smtr_constants.DOCKER_IMAGE.value, labels=[smtr_constants.RJ_SMTR_DEV_AGENT_LABEL.value]
+    image=smtr_constants.DOCKER_IMAGE.value, labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value]
 )
 subsidio_sppo_apuracao.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
 subsidio_sppo_apuracao.schedule = every_day_hour_seven_minute_five
