@@ -1,5 +1,20 @@
 # Changelog - monitoramento
 
+## [1.2.3] - 2025-01-22
+
+### Alterado
+
+- Adiciona as colunas `indicador_servico_planejado_gtfs`, `indicador_servico_planejado_os`, `indicador_servico_divergente` e `indicador_shape_invalido` no modelo `viagem_validacao.sql`
+
+- Adiciona a coluna `indicador_servico_divergente` no modelo `gps_segmento_viagem.sql`
+
+- Remove tratamento de sentido no modelo `viagem_informada_monitoramento.sql`
+
+### Corrigido
+
+- Corrige trip_id inteiro nos modelos `staging_viagem_informada_rioonibus.sql` e `staging_viagem_informada_brt.sql`
+
+- Corrige filtro incremental no modelo `viagem_informada_monitoramento.sql`
 
 ## [1.2.2] - 2025-01-08
 

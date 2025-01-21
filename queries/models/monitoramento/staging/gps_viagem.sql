@@ -43,7 +43,7 @@ with
                 data between date_sub(
                     date('{{ var("date_range_start") }}'), interval 1 day
                 ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
-            {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
+            {% else %} data = date('{{ var("data_inicial_gps_validacao_viagem") }}')
             {% endif %}
 
     ),
@@ -56,7 +56,7 @@ with
                 data between date_sub(
                     date('{{ var("date_range_start") }}'), interval 1 day
                 ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
-            {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
+            {% else %} data = date('{{ var("data_inicial_gps_validacao_viagem") }}')
             {% endif %}
     ),
     gps_brt as (
@@ -68,7 +68,7 @@ with
                 data between date_sub(
                     date('{{ var("date_range_start") }}'), interval 1 day
                 ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
-            {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
+            {% else %} data = date('{{ var("data_inicial_gps_validacao_viagem") }}')
             {% endif %}
     ),
     gps_union as (
@@ -90,7 +90,8 @@ select
     g.timestamp_gps,
     v.modo,
     g.id_veiculo,
-    g.servico,
+    v.servico as servico_viagem,
+    g.servico as servico_gps,
     v.sentido,
     g.latitude,
     g.longitude,
@@ -109,7 +110,6 @@ join
     viagem v
     on g.timestamp_gps between v.datetime_partida and v.datetime_chegada
     and g.id_veiculo = v.id_veiculo
-    and g.servico = v.servico
     and g.fornecedor = v.fonte_gps
 {% if not is_incremental() %}
     where v.data <= date_sub(current_date("America/Sao_Paulo"), interval 2 day)
