@@ -76,7 +76,7 @@ with
     veiculos as (
         select data, id_veiculo, status, tecnologia
         from {{ ref("sppo_veiculo_dia") }}
-        -- `rj-smtr-dev.victor__veiculo.sppo_veiculo_dia`
+        -- `rj-smtr.veiculo.sppo_veiculo_dia`
         where
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")

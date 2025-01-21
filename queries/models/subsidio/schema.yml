@@ -37,13 +37,7 @@ models:
     description: "Tabela de referência do valor do subsídio por tipo de viagem e tecnologia"
     columns:
       - name: status
-        description: "Classificação, observados os demais parâmetros - Categorias:\n
-                      - Não licenciado - Veículo que operou, mas não é licenciado\n
-                      - Autuado por ar inoperante - Veículo que operou, foi licenciado com ar condicionado e foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado (023.II)\n
-                      - Autuado por segurança - Veículo que operou, foi licenciado, mas foi autuado por infração relacionada à segurança do veículo\n
-                      - Autuado por limpeza/equipamento - Veículo que operou, foi licenciado, mas foi autuado cumulativamente por infrações relacionadas à limpeza e equipamentos do veículo\n
-                      - Sem ar e não autuado - Veículo que operou, foi licenciado sem ar condicionado e não foi autuado\n
-                      - Com ar e não autuado - Veículo que operou, foi licenciado com ar condicionado e não foi autuado"
+        description: "{{ doc('tipo_viagem_status') }}"
       - name: tecnologia
         description: "{{ doc('tecnologia') }}"
       - name: subsidio_km
