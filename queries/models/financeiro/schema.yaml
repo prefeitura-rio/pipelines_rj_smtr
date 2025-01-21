@@ -88,6 +88,10 @@ models:
         description: "{{ doc('consorcio') }}"
       - name: servico
         description: "{{ doc('servico') }}"
+      - name: faixa_horaria_inicio
+        description: "Horário inicial da faixa horária"
+      - name: faixa_horaria_fim
+        description: "Horário final da faixa horária"
       - name: valor_penalidade
         description: "Valor penalidade [negativa] (POF =< 60%)."
       - name: versao

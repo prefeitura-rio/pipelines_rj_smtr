@@ -351,3 +351,7 @@ Tipo de Ordem de Serviço (ex: 'Regular', 'Extraordinária - Verão')
 {% docs data_inicio_matriz %}
 Data de inicio da versão da matriz de integração
 {% enddocs %}
+
+{% docs tecnologia %}
+Tecnologia utilizada no veiculo (BASICO, MIDI, MINI, PADRON).
+{% enddocs %}

@@ -15,7 +15,7 @@ models:
       - name: tipo_viagem
         description: "{{ doc('tipo_viagem_status') }}"
       - name: tecnologia
-        description: "Tecnologia utilizada no veiculo (BASICO, MIDI, MINI, PADRON)"
+        description: "{{ doc('tecnologia') }}"
       - name: distancia_planejada
         description: "{{ doc('distancia_planejada') }}"
       - name: quantidade_transacao
@@ -45,7 +45,7 @@ models:
                       - Sem ar e não autuado - Veículo que operou, foi licenciado sem ar condicionado e não foi autuado\n
                       - Com ar e não autuado - Veículo que operou, foi licenciado com ar condicionado e não foi autuado"
       - name: tecnologia
-        description: "Tipo de tecnologia do veículo (PADRON, BASICO, MIDI, MINI)"
+        description: "{{ doc('tecnologia') }}"
       - name: subsidio_km
         description: "Valor de subsídio de remuneração (R$/km)"
       - name: irk
