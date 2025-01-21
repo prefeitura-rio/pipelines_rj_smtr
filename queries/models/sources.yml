@@ -202,3 +202,9 @@ sources:
 
     tables:
       - name: valor_km_tipo_viagem
+
+  - name: planejamento
+    database: rj-smtr
+
+    tables:
+      - name: tecnologia_servico

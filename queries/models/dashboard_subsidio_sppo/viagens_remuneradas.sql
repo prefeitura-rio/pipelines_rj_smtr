@@ -139,7 +139,7 @@ with
                 then "PADRON"
                 else null
             end as menor_tecnologia_permitida,
-        from {{ var("tecnologia_servico") }}
+        from {{ source("planejamento", "tecnologia_servico") }}
     ),
     prioridade_tecnologia as (
         select "MINI" as tecnologia, 1 as prioridade

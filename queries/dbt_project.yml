@@ -105,7 +105,6 @@ vars:
   subsidio_shapes: "`rj-smtr-staging.projeto_subsidio_sppo_staging.shapes`"
   subsidio_trips: "`rj-smtr-staging.projeto_subsidio_sppo_staging.trips`"
   subsidio_parametros: "`rj-smtr-staging.dashboard_subsidio_sppo_staging.subsidio_parametros`"
-  tecnologia_servico: "rj-smtr.planejamento.tecnologia_servico"
   shapes_version: "YYYY-MM-DD"
   frequencies_version: "YYYY-MM-DD"
   tipo_materializacao: "subsidio"
