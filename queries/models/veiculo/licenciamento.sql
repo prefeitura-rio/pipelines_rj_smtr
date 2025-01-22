@@ -87,6 +87,6 @@ select
     data_inicio_vinculo,
     ano_ultima_vistoria_atualizado,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
-    "{{ var(" version ") }}" as versao
+    "{{ var('version') }}" as versao
 from stu_ano_ultima_vistoria
 where rn = 1
