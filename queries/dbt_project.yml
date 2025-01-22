@@ -108,6 +108,7 @@ vars:
   shapes_version: "YYYY-MM-DD"
   frequencies_version: "YYYY-MM-DD"
   tipo_materializacao: "subsidio"
+  data_inicio_trips_shapes: "2023-04-01"
   # Feature penalidade de autuação por inoperância do ar condicionado (DECRETO RIO 51940/2023)
   DATA_SUBSIDIO_V2_INICIO: "2023-01-16"
   # Feature penalidade de autuação por segurança e limpeza/equipamento (DECRETO RIO 52820/2023)
@@ -371,3 +372,10 @@ models:
     datario:
       +materialized: view
       +schema: datario
+    dashboard_operacao_onibus:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: dashboard_operacao_onibus
+      staging:
+        +materialized: view
+        +schema: dashboard_operacao_onibus_staging
