@@ -3,7 +3,7 @@
 """
 Flows for veiculos
 
-DBT: 2025-01-21
+DBT: 2025-01-22
 """
 
 from copy import deepcopy
@@ -223,7 +223,6 @@ with Flow(
     # Get default parameters #
     start_date = Parameter("start_date", default=get_previous_date.run(1))
     end_date = Parameter("end_date", default=get_previous_date.run(1))
-    stu_data_versao = Parameter("stu_data_versao", default="")
 
     run_dates = get_run_dates(start_date, end_date)
 
@@ -243,8 +242,7 @@ with Flow(
         dataset_id=smtr_constants.VEICULO_DATASET_ID.value,
     )
 
-    dict_list = get_join_dict(dict_list=run_dates, new_dict=dataset_sha)
-    _vars = get_join_dict(dict_list=dict_list, new_dict={"stu_data_versao": stu_data_versao})
+    _vars = get_join_dict(dict_list=run_dates, new_dict=dataset_sha)
 
     # 2. TREAT #
     run_dbt_model.map(

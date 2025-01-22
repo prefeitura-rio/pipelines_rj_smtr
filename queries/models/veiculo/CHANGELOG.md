@@ -1,5 +1,10 @@
 # Changelog - veiculo
 
+## [2.0.2] - 2025-01-22
+
+### Alterado
+- Encerrada regra de transição com dados temporários da CGLF no modelo `licenciamento.sql` e reformatação deste ()
+
 ## [2.0.1] - 2025-01-21
 
 ### Corrigido

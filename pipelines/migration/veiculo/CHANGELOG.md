@@ -1,5 +1,10 @@
 # Changelog - veiculo
 
+## [1.1.1] - 2025-01-22
+
+### Alterado
+- Remove parâmetro `stu_data_versao` do flow `sppo_veiculo_dia` ()
+
 ## [1.1.0] - 2025-01-16
 
 ### Alterado
