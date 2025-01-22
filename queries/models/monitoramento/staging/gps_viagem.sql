@@ -43,7 +43,7 @@ with
                 data between date_sub(
                     date('{{ var("date_range_start") }}'), interval 1 day
                 ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
-            {% else %} data = date('{{ var("data_inicial_gps_validacao_viagem") }}')
+            {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
             {% endif %}
 
     ),
@@ -56,7 +56,7 @@ with
                 data between date_sub(
                     date('{{ var("date_range_start") }}'), interval 1 day
                 ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
-            {% else %} data = date('{{ var("data_inicial_gps_validacao_viagem") }}')
+            {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
             {% endif %}
     ),
     gps_brt as (
@@ -68,7 +68,7 @@ with
                 data between date_sub(
                     date('{{ var("date_range_start") }}'), interval 1 day
                 ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
-            {% else %} data = date('{{ var("data_inicial_gps_validacao_viagem") }}')
+            {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
             {% endif %}
     ),
     gps_union as (
