@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Remove parâmetro `stu_data_versao` do flow `subsidio_sppo_apuracao` ()
+- Remove parâmetro `stu_data_versao` do flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/395)
 
 ## [1.0.8] - 2025-01-03
 

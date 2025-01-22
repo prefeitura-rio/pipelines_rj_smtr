@@ -3,7 +3,7 @@
 ## [2.0.2] - 2025-01-22
 
 ### Alterado
-- Encerrada regra de transição com dados temporários da CGLF no modelo `licenciamento.sql` e reformatação deste ()
+- Encerrada regra de transição com dados temporários da CGLF no modelo `licenciamento.sql` e reformatação deste (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/395)
 
 ## [2.0.1] - 2025-01-21
 
