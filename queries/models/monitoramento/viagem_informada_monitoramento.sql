@@ -112,15 +112,7 @@ with
             route_id,
             shape_id,
             servico,
-            case
-                when sentido = 'I'
-                then 'Ida'
-                when sentido = 'V'
-                then 'Volta'
-                when sentido = 'C'
-                then 'Circular'
-                else sentido
-            end as sentido,
+            sentido,
             fonte_gps,
             datetime_processamento,
             datetime_captura
@@ -154,7 +146,9 @@ with
     calendario as (
         select *
         from {{ calendario }}
-        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
+        {% if is_incremental() %}
+            where data in ({{ partitions | join(", ") }})
+        {% endif %}
     ),
     routes as (
         select *

@@ -39,5 +39,5 @@ select
     safe_cast(json_value(content, '$.sentido') as string) as sentido,
     safe_cast(json_value(content, '$.servico') as string) as servico,
     safe_cast(json_value(content, '$.shape_id') as string) as shape_id,
-    safe_cast(json_value(content, '$.trip_id') as integer) as trip_id
+    safe_cast(json_value(content, '$.trip_id') as string) as trip_id
 from {{ source("source_sonda", "viagem_informada") }}
