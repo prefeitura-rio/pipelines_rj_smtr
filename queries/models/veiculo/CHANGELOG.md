@@ -1,6 +1,6 @@
 # Changelog - veiculo
 
-## [2.0.2] - 2025-01-22
+## [2.0.2] - 2025-01-23
 
 ### Alterado
 - Encerrada regra de transição com dados temporários da CGLF no modelo `licenciamento.sql` e reformatação deste (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/395)
