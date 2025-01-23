@@ -1,5 +1,13 @@
 # Changelog - veiculo
 
+## [2.0.2] - 2025-01-23
+
+### Alterado
+- Encerrada regra de transição com dados temporários da CGLF no modelo `licenciamento.sql` e reformatação deste (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/395)
+
+### Corrigido
+- Corrigidos os tipos das colunas `tecnologia`, `placa`, `data_licenciamento` e `data_infracao` na materialização antes de `2025-01-01` no modelo `sppo_veiculo_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/395)
+
 ## [2.0.1] - 2025-01-21
 
 ### Corrigido
