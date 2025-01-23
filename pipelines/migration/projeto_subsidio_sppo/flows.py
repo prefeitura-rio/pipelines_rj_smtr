@@ -147,7 +147,6 @@ with Flow(
 
     end_date = merge(end_date_get, end_date_def)
 
-    stu_data_versao = Parameter("stu_data_versao", default="")
     materialize_sppo_veiculo_dia = Parameter("materialize_sppo_veiculo_dia", True)
     test_only = Parameter("test_only", False)
     # publish = Parameter("publish", False)
@@ -182,7 +181,6 @@ with Flow(
             parameters = {
                 "start_date": start_date,
                 "end_date": end_date,
-                "stu_data_versao": stu_data_versao,
             }
 
             SPPO_VEICULO_DIA_RUN = create_flow_run(

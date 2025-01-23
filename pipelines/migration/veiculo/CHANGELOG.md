@@ -1,5 +1,10 @@
 # Changelog - veiculo
 
+## [1.1.1] - 2025-01-23
+
+### Alterado
+- Remove parâmetro `stu_data_versao` do flow `sppo_veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/395)
+
 ## [1.1.0] - 2025-01-16
 
 ### Alterado
