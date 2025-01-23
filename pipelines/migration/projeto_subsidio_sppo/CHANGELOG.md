@@ -1,10 +1,16 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.0.9] - 2025-01-23
+
+### Alterado
+
+- Remove parâmetro `stu_data_versao` do flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/395)
+
 ## [1.0.8] - 2025-01-03
 
 ### Corrigido
 
-- corrigida a materialização dos modelos do dataset `monitoramento` no flow do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/391)
+- Corrigida a materialização dos modelos do dataset `monitoramento` no flow do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/391)
 
 ## [1.0.7] - 2025-01-03
 
