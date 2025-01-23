@@ -37,10 +37,13 @@ with
                 then "Licenciado com ar e não autuado"
                 else tipo_viagem
             end as tipo_viagem,
+            tecnologia_apurada,
+            tecnologia_remunerada,
             id_viagem,
             distancia_planejada,
             subsidio_km,
             subsidio_km_teto,
+            valor_glosado_tecnologia,
             indicador_penalidade_judicial,
             indicador_viagem_dentro_limite
         from {{ ref("viagens_remuneradas") }}
@@ -92,10 +95,12 @@ with
             sfd.servico,
             sfd.pof,
             coalesce(s.tipo_viagem, "Sem viagem apurada") as tipo_viagem,
+            s.tecnologia_remunerada,
             s.id_viagem,
             safe_cast(s.distancia_planejada as numeric) as distancia_planejada,
             safe_cast(s.subsidio_km as numeric) as subsidio_km,
             safe_cast(s.subsidio_km_teto as numeric) as subsidio_km_teto,
+            s.valor_glosado_tecnologia,
             s.indicador_viagem_dentro_limite,
             case
                 when sfd.pof < 60 then true else s.indicador_penalidade_judicial
@@ -125,6 +130,7 @@ select
     indicador_penalidade_judicial,
     indicador_viagem_dentro_limite,
     tipo_viagem,
+    tecnologia_remunerada,
     safe_cast(coalesce(count(id_viagem), 0) as int64) as viagens_faixa,
     safe_cast(coalesce(sum(distancia_planejada), 0) as numeric) as km_apurada_faixa,
     safe_cast(
@@ -150,6 +156,7 @@ select
             )
         ) as numeric
     ) as valor_apurado,
+    safe_cast(sum(valor_glosado_tecnologia) as numeric) as valor_glosado_tecnologia,
     safe_cast(
         - coalesce(
             sum(
@@ -193,4 +200,5 @@ group by
     indicador_ar_condicionado,
     indicador_penalidade_judicial,
     indicador_viagem_dentro_limite,
-    tipo_viagem
+    tipo_viagem,
+    tecnologia_remunerada

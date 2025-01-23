@@ -108,7 +108,7 @@ with
             tecnologia,
             subsidio_km,
             max(subsidio_km) over (
-                partition by date_trunc(data_inicio, year), data_fim
+                partition by date_trunc(data_inicio, year), data_fim, tecnologia
             ) as subsidio_km_teto,
             indicador_penalidade_judicial
         from {{ ref("valor_km_tipo_viagem") }}
@@ -139,7 +139,7 @@ with
                 then "PADRON"
                 else null
             end as menor_tecnologia_permitida,
-        from {{ source("planejamento", "tecnologia_servico") }}
+        from {{ ref("tecnologia_servico") }}
     ),
     prioridade_tecnologia as (
         select "MINI" as tecnologia, 1 as prioridade
@@ -179,6 +179,9 @@ with
             vt.datetime_partida,
             vt.distancia_planejada,
             case
+                when p.prioridade > p_maior.prioridade then true else false
+            end as indicador_penalidade_acima,
+            case
                 when p.prioridade < p_menor.prioridade then true else false
             end as indicador_penalidade_tecnologia
         from viagem_transacao as vt
@@ -203,6 +206,16 @@ with
             vt.distancia_planejada,
             sp.subsidio_km,
             sp.subsidio_km_teto,
+            -- ta.subsidio_km_teto as subsidio_km_tecnologia_apurada,
+            case
+                when
+                    data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
+                    and indicador_penalidade_acima is true
+                then ta.subsidio_km_teto - sp.subsidio_km
+                when data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
+                then sp.subsidio_km_teto - sp.subsidio_km
+                else 0
+            end as valor_glosado_tecnologia,
             vt.indicador_penalidade_tecnologia,
             sp.indicador_penalidade_judicial
         from viagem_tecnologia as vt
@@ -214,8 +227,16 @@ with
                 vt.tecnologia_remunerada = sp.tecnologia
                 or (vt.tecnologia_remunerada is null and sp.tecnologia is null)
             )
+        left join
+            subsidio_parametros as ta
+            on vt.data between sp.data_inicio and sp.data_fim
+            and vt.tipo_viagem = sp.status
+            and (
+                vt.tecnologia_apurada = sp.tecnologia
+                or (vt.tecnologia_apurada is null and sp.tecnologia is null)
+            )
     ),
-    -- 5. Apuração de km realizado e Percentual de Operação Diário (POD)
+    -- 5. Apuração de km realizado e Percentual de Operação por Faixa Horária (POF)
     servico_faixa_km_apuracao as (
         select
             p.data,
