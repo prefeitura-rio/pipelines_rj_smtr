@@ -34,7 +34,7 @@ with
                         order by pof, faixa_horaria_inicio
                     ) as rn
                 from {{ ref("subsidio_faixa_servico_dia") }}
-                -- `rj-smtr.financeiro_staging.subsidio_faixa_servico_dia`
+                -- from `rj-smtr.financeiro_staging.subsidio_faixa_servico_dia`
                 {% if is_incremental() %}
                     where
                         data between date('{{ var("start_date") }}') and date(
@@ -51,7 +51,7 @@ with
             perc_km_superior,
             ifnull(- valor, 0) as valor_penalidade
         from {{ ref("valor_tipo_penalidade") }}
-    -- `rj-smtr.dashboard_subsidio_sppo.valor_tipo_penalidade`
+    -- from `rj-smtr.dashboard_subsidio_sppo.valor_tipo_penalidade`
     )
 select
     s.data,

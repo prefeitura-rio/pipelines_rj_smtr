@@ -36,7 +36,7 @@ with
             distancia_total_planejada as km_planejada,
             if(sentido = "C", true, false) as indicador_circular
         from {{ ref("viagem_planejada") }}
-        -- `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
+        -- from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
@@ -53,7 +53,7 @@ with
             partidas_volta,
             tipo_os,
         from {{ ref("ordem_servico_gtfs") }}
-        -- `rj-smtr.gtfs.ordem_servico`
+        -- from `rj-smtr.gtfs.ordem_servico`
         where feed_start_date in ('{{ feed_start_dates|join("', '") }}')
     ),
     data_versao_efetiva as (
@@ -68,7 +68,7 @@ with
                 data_versao_frequencies
             ) as feed_start_date
         from {{ ref("subsidio_data_versao_efetiva") }}
-        -- `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
+        -- from `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
         -- (alterar também query no bloco execute)
         where
             data
@@ -112,7 +112,7 @@ with
             ) as subsidio_km_teto,
             indicador_penalidade_judicial
         from {{ ref("valor_km_tipo_viagem") }}
-    -- `rj-smtr.subsidio.valor_km_tipo_viagem`
+    -- from `rj-smtr.subsidio.valor_km_tipo_viagem`
     ),
     tecnologias as (
         select
@@ -154,14 +154,14 @@ with
     viagem_transacao as (
         select *
         from {{ ref("viagem_transacao") }}
-        -- `rj-smtr.subsidio.viagem_transacao`
+        -- from `rj-smtr.subsidio.viagem_transacao`
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
     ),
     -- 4. Viagens com tipo e valor de subsídio por km
     viagem_tecnologia as (
-        select
+        select distinct
             vt.data,
             vt.servico,
             vt.tipo_viagem,
@@ -195,7 +195,7 @@ with
             on t.menor_tecnologia_permitida = p_menor.tecnologia
     ),
     viagem_km_tipo as (
-        select
+        select distinct
             vt.data,
             vt.servico,
             vt.tipo_viagem,
@@ -206,14 +206,9 @@ with
             vt.distancia_planejada,
             sp.subsidio_km,
             sp.subsidio_km_teto,
-            -- ta.subsidio_km_teto as subsidio_km_tecnologia_apurada,
             case
-                when
-                    data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
-                    and indicador_penalidade_acima is true
-                then ta.subsidio_km_teto - sp.subsidio_km
                 when data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
-                then sp.subsidio_km_teto - sp.subsidio_km
+                then ta.subsidio_km_teto - sp.subsidio_km
                 else 0
             end as valor_glosado_tecnologia,
             vt.indicador_penalidade_tecnologia,
@@ -224,17 +219,30 @@ with
             on vt.data between sp.data_inicio and sp.data_fim
             and vt.tipo_viagem = sp.status
             and (
-                vt.tecnologia_remunerada = sp.tecnologia
-                or (vt.tecnologia_remunerada is null and sp.tecnologia is null)
+                (
+                    vt.data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
+                    and (
+                        vt.tecnologia_remunerada = sp.tecnologia
+                        or (vt.tecnologia_remunerada is null and sp.tecnologia is null)
+                    )
+                )
+                or (
+                    vt.data < date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
+                    and sp.tecnologia is null
+                )
             )
         left join
             subsidio_parametros as ta
-            on vt.data between sp.data_inicio and sp.data_fim
-            and vt.tipo_viagem = sp.status
+            on vt.data between ta.data_inicio and ta.data_fim
+            and vt.tipo_viagem = ta.status
             and (
-                vt.tecnologia_apurada = sp.tecnologia
-                or (vt.tecnologia_apurada is null and sp.tecnologia is null)
+                vt.data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
+                and (
+                    vt.tecnologia_apurada = ta.tecnologia
+                    or (vt.tecnologia_apurada is null and ta.tecnologia is null)
+                )
             )
+
     ),
     -- 5. Apuração de km realizado e Percentual de Operação por Faixa Horária (POF)
     servico_faixa_km_apuracao as (

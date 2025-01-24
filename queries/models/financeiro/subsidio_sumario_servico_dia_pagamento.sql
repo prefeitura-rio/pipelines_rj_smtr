@@ -16,7 +16,7 @@ with
             sum(viagens_faixa) as viagens_dia,
             sum(km_planejada_faixa) as km_planejada_dia
         from {{ ref("subsidio_faixa_servico_dia") }}
-        -- `rj-smtr.financeiro_staging.subsidio_faixa_servico_dia`
+        -- from `rj-smtr.financeiro_staging.subsidio_faixa_servico_dia`
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
@@ -32,7 +32,7 @@ with
                 partition by data_inicio, data_fim
             ) as subsidio_km_teto
         from {{ ref("valor_km_tipo_viagem") }}
-    -- `rj-smtr.subsidio.valor_km_tipo_viagem`
+    -- from `rj-smtr.subsidio.valor_km_tipo_viagem`
     ),
     penalidade as (
         select
@@ -42,12 +42,16 @@ with
             servico,
             sum(valor_penalidade) as valor_penalidade
         from {{ ref("subsidio_penalidade_servico_faixa") }}
+        -- from `rj-smtr.financeiro.subsidio_penalidade_servico_faixa`
+        where
+            data
+            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
         group by data, tipo_dia, consorcio, servico
     ),
     subsidio_dia_tipo_viagem as (
         select *
         from {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
-        -- `rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem`
+        -- from `rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem`
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')

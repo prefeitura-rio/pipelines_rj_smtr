@@ -17,7 +17,7 @@ with
             servico,
             pof
         from {{ ref("subsidio_faixa_servico_dia") }}
-        -- `rj-smtr.financeiro_staging.subsidio_faixa_servico_dia`
+        -- from `rj-smtr.financeiro_staging.subsidio_faixa_servico_dia`
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
@@ -61,7 +61,7 @@ with
                 json_value(indicadores, "$.indicador_ar_condicionado") as bool
             ) as indicador_ar_condicionado
         from {{ ref("sppo_veiculo_dia") }}
-        -- `rj-smtr.veiculo.sppo_veiculo_dia`
+        -- from `rj-smtr.veiculo.sppo_veiculo_dia`
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
@@ -70,7 +70,7 @@ with
         select
             data, servico_realizado as servico, id_veiculo, id_viagem, datetime_partida
         from {{ ref("viagem_completa") }}
-        -- `rj-smtr.projeto_subsidio_sppo.viagem_completa`
+        -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
@@ -95,12 +95,13 @@ with
             sfd.servico,
             sfd.pof,
             coalesce(s.tipo_viagem, "Sem viagem apurada") as tipo_viagem,
+            s.tecnologia_apurada,
             s.tecnologia_remunerada,
             s.id_viagem,
             safe_cast(s.distancia_planejada as numeric) as distancia_planejada,
             safe_cast(s.subsidio_km as numeric) as subsidio_km,
             safe_cast(s.subsidio_km_teto as numeric) as subsidio_km_teto,
-            s.valor_glosado_tecnologia,
+            coalesce(s.valor_glosado_tecnologia, 0) as valor_glosado_tecnologia,
             s.indicador_viagem_dentro_limite,
             case
                 when sfd.pof < 60 then true else s.indicador_penalidade_judicial
@@ -130,6 +131,7 @@ select
     indicador_penalidade_judicial,
     indicador_viagem_dentro_limite,
     tipo_viagem,
+    tecnologia_apurada,
     tecnologia_remunerada,
     safe_cast(coalesce(count(id_viagem), 0) as int64) as viagens_faixa,
     safe_cast(coalesce(sum(distancia_planejada), 0) as numeric) as km_apurada_faixa,
@@ -201,4 +203,5 @@ group by
     indicador_penalidade_judicial,
     indicador_viagem_dentro_limite,
     tipo_viagem,
+    tecnologia_apurada,
     tecnologia_remunerada

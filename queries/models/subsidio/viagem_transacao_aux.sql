@@ -8,7 +8,7 @@ with
     transacao as (
         select id_veiculo, datetime_transacao
         from {{ ref("transacao") }}
-        -- `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
+        -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
@@ -20,7 +20,7 @@ with
     transacao_riocard as (
         select id_veiculo, datetime_transacao
         from {{ ref("transacao_riocard") }}
-        -- `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard`
+        -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard`
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
@@ -39,7 +39,7 @@ with
             latitude,
             longitude
         from {{ ref("gps_validador") }}
-        -- `rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador`
+        -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador`
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
@@ -65,7 +65,7 @@ with
             distancia_planejada,
             sentido
         from {{ ref("viagem_completa") }}
-        -- `rj-smtr.projeto_subsidio_sppo.viagem_completa`
+        -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         where
             data
             between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
@@ -76,7 +76,7 @@ with
     veiculos as (
         select data, id_veiculo, status, tecnologia
         from {{ ref("sppo_veiculo_dia") }}
-        -- `rj-smtr.veiculo.sppo_veiculo_dia`
+        -- from `rj-smtr.veiculo.sppo_veiculo_dia`
         where
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
