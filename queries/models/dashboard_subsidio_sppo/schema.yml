@@ -621,7 +621,7 @@ models:
       - name: tecnologia_apurada
         description: "{{ doc('tecnologia') }}"
       - name: tecnologia_remunerada
-        description: "Tecnologia remunerada conforme legislação em vigor."
+        description: "{{ doc('tecnologia_remunerada') }}"
       - name: subsidio_km
         description: "Valor de subsídio, conforme tipo de viagem (R$/km)."
         tests:
@@ -635,6 +635,8 @@ models:
         tests:
           - not_null:
               name: not_null__distancia_planejada__subsidio_km_teto
+      - name: valor_glosado_tecnologia
+        description: "{{ doc('valor_glosado_tecnologia') }}"
       - name: indicador_penalidade_tecnologia
         description: "Indica se a viagem foi penalizada por utilizar uma tecnologia inferior a permitida."
       - name: indicador_viagem_dentro_limite

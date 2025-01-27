@@ -355,3 +355,15 @@ Data de inicio da versão da matriz de integração
 {% docs tecnologia %}
 Tecnologia utilizada no veiculo (BASICO, MIDI, MINI, PADRON).
 {% enddocs %}
+
+{% docs tecnologia_remunerada %}
+Tecnologia remunerada conforme legislação em vigor.
+{% enddocs %}
+
+{% docs pof %}
+Indicador percentual de quilometragem apurada em relação à planejada da linha por faixa horária (não inclui veículos não licenciados e não vistoriados a partir de 01/09/2024).
+{% enddocs %}
+
+{% docs valor_glosado_tecnologia %}
+Valor da diferença entre a tecnologia remunerada e da tecnologia apurada.
+{% enddocs %}
