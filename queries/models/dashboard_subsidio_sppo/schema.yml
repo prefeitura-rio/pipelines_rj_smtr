@@ -264,7 +264,7 @@ models:
       - name: data_fim
         description: "Data final do período de vigência dos demais atributos"
   - name: subsidio_parametros
-    description: "Parâmetros de remuneração do subsídio dos serviços de ônibus (SPPO) por tipo de viagem"
+    description: "Parâmetros de remuneração do subsídio dos serviços de ônibus (SPPO) por tipo de viagem (Descontinuada a partir de 2024-03-01)"
     columns:
       - name: indicador_licenciado
         description: "Indicador se o veículo encontra-se licenciado"
@@ -618,6 +618,10 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               name: dbt_utils.accepted_range__distancia_planejada__viagens_remuneradas
+      - name: tecnologia_apurada
+        description: "{{ doc('tecnologia') }}"
+      - name: tecnologia_remunerada
+        description: "{{ doc('tecnologia_remunerada') }}"
       - name: subsidio_km
         description: "Valor de subsídio, conforme tipo de viagem (R$/km)."
         tests:
@@ -631,6 +635,10 @@ models:
         tests:
           - not_null:
               name: not_null__distancia_planejada__subsidio_km_teto
+      - name: valor_glosado_tecnologia
+        description: "{{ doc('valor_glosado_tecnologia') }}"
+      - name: indicador_penalidade_tecnologia
+        description: "Indica se a viagem foi penalizada por utilizar uma tecnologia inferior a permitida."
       - name: indicador_viagem_dentro_limite
         description: "{{ doc('indicador_viagem_dentro_limite') }}"
         tests:

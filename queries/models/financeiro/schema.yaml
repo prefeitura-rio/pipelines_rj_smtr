@@ -24,6 +24,10 @@ models:
         description: "{{ doc('indicador_viagem_dentro_limite') }}"
       - name: tipo_viagem
         description: "Tipo de viagem"
+      - name: tecnologia_apurada
+        description: "{{ doc('tecnologia') }}"
+      - name: tecnologia_remunerada
+        description: "{{ doc('tecnologia_remunerada') }}"
       - name: viagens_faixa
         description: "Quantidade de viagens apuradas por faixa horária."
       - name: km_apurada_faixa
@@ -32,6 +36,8 @@ models:
         description: "Distância subsidiada para o serviço por faixa horária (km)"
       - name: valor_apurado
         description: "Valor da distância apurada multiplicada pelo subsídio por quilômetro (sem glosa). É zerado quando POF < 80%."
+      - name: valor_glosado_tecnologia
+        description: "{{ doc('valor_glosado_tecnologia') }}"
       - name: valor_acima_limite
         description: "Valor apurado das viagens que não foram remuneradas (por estar acima do teto de 120% / 200%)."
       - name: valor_total_sem_glosa
@@ -41,7 +47,7 @@ models:
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: subsidio_sumario_servico_dia_pagamento
-    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia"
+    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia (Descontinuada a partir de 2025-01-05)."
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS."
@@ -77,8 +83,8 @@ models:
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
-  - name: subsidio_penalidade_servico_dia
-    description: "Tabela com o valor penalidade dos serviços de ônibus (SPPO) por dia e serviço."
+  - name: subsidio_penalidade_servico_faixa
+    description: "Tabela com o valor penalidade dos serviços de ônibus (SPPO) por faixa horária e serviço."
     columns:
       - name: data
         description: "{{ doc('data_gps') }}"
@@ -88,6 +94,10 @@ models:
         description: "{{ doc('consorcio') }}"
       - name: servico
         description: "{{ doc('servico') }}"
+      - name: faixa_horaria_inicio
+        description: "Horário inicial da faixa horária"
+      - name: faixa_horaria_fim
+        description: "Horário final da faixa horária"
       - name: valor_penalidade
         description: "Valor penalidade [negativa] (POF =< 60%)."
       - name: versao

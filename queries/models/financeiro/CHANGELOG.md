@@ -1,5 +1,20 @@
 # Changelog - financeiro
 
+## [1.0.2] - 2025-01-27
+
+### Adicionado
+
+- Cria modelo `subsidio_penalidade_servico_faixa` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+- Adiciona as colunas `tecnologia_apurada`, `tecnologia_remunerada` e `valor_glosado_tecnologia` no modelo `subsidio_faixa_servico_dia_tipo_viagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+
+### Alterado
+
+- Altera lógica do modelo `subsidio_sumario_servico_dia_pagamento` para não materializar quando a data for maior que `DATA_SUBSIDIO_V14_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+
+### Removido
+
+- Remove modelo `subsidio_penalidade_servico_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+
 ## [1.0.1] - 2024-09-20
 
 ### Alterado

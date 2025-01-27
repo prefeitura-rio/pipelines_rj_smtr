@@ -14,6 +14,8 @@ models:
         description: "{{ doc('servico') }}"
       - name: tipo_viagem
         description: "{{ doc('tipo_viagem_status') }}"
+      - name: tecnologia
+        description: "{{ doc('tecnologia') }}"
       - name: distancia_planejada
         description: "{{ doc('distancia_planejada') }}"
       - name: quantidade_transacao
@@ -30,3 +32,23 @@ models:
         description: "{{ doc('datetime_chegada') }}"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
+
+  - name: valor_km_tipo_viagem
+    description: "Tabela de referência do valor do subsídio por tipo de viagem e tecnologia"
+    columns:
+      - name: status
+        description: "{{ doc('tipo_viagem_status') }}"
+      - name: tecnologia
+        description: "{{ doc('tecnologia') }}"
+      - name: subsidio_km
+        description: "Valor de subsídio de remuneração (R$/km)"
+      - name: irk
+        description: "Índice de Remuneração por km (R$/km)"
+      - name: data_inicio
+        description: "Data inicial do período de vigência dos demais atributos"
+      - name: data_fim
+        description: "Data final do período de vigência dos demais atributos"
+      - name: indicador_penalidade_judicial
+        description: "{{ doc('indicador_penalidade_judicial') }}"
+      - name: legislacao
+        description: "Legislação que estabelece o valor e regras de remuneração"
