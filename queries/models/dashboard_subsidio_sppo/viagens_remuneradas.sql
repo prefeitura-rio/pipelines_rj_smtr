@@ -23,7 +23,7 @@
 {% endif -%}
 
 with
-    -- 1. Viagens planejadas (agrupadas por data e serviço)
+    -- Viagens planejadas (agrupadas por data e serviço)
     planejado as (
         select distinct
             data,
@@ -99,7 +99,7 @@ with
             and p.servico = v.servico
             and (d.tipo_os = v.tipo_os or (d.tipo_os is null and v.tipo_os = "Regular"))
     ),
-    -- 2. Parâmetros de subsídio
+    -- Parâmetros de subsídio
     subsidio_parametros as (
         select distinct
             data_inicio,
@@ -150,7 +150,7 @@ with
         union all
         select "PADRON" as tecnologia, 4 as prioridade
     ),
-    -- 3. Viagens com quantidades de transações
+    -- Viagens com quantidades de transações
     viagem_transacao as (
         select *
         from {{ ref("viagem_transacao") }}
@@ -159,7 +159,7 @@ with
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
     ),
-    -- 4. Viagens com tipo e valor de subsídio por km
+    -- Viagens com tipo e valor de subsídio por km
     viagem_tecnologia as (
         select distinct
             vt.data,
@@ -179,9 +179,6 @@ with
             vt.datetime_partida,
             vt.distancia_planejada,
             case
-                when p.prioridade > p_maior.prioridade then true else false
-            end as indicador_penalidade_acima,
-            case
                 when p.prioridade < p_menor.prioridade then true else false
             end as indicador_penalidade_tecnologia
         from viagem_transacao as vt
@@ -193,6 +190,39 @@ with
         left join
             prioridade_tecnologia as p_menor
             on t.menor_tecnologia_permitida = p_menor.tecnologia
+    ),
+    -- Apuração de km realizado e Percentual de Operação por Faixa Horária (POF)
+    servico_faixa_km_apuracao as (
+        select
+            p.data,
+            p.tipo_dia,
+            p.faixa_horaria_inicio,
+            p.faixa_horaria_fim,
+            p.consorcio,
+            p.servico,
+            p.km_planejada as km_planejada,
+            coalesce(
+                round(
+                    100 * sum(
+                        if(
+                            v.tipo_viagem not in ("Não licenciado", "Não vistoriado"),
+                            v.distancia_planejada,
+                            0
+                        )
+                    )
+                    / p.km_planejada,
+                    2
+                ),
+                0
+            ) as pof
+        from viagem_planejada as p
+        left join
+            viagem_tecnologia as v
+            on p.data = v.data
+            and p.servico = v.servico
+            and v.datetime_partida
+            between p.faixa_horaria_inicio and p.faixa_horaria_fim
+        group by 1, 2, 3, 4, 5, 6, 7
     ),
     viagem_km_tipo as (
         select distinct
@@ -207,8 +237,18 @@ with
             sp.subsidio_km,
             sp.subsidio_km_teto,
             case
-                when data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
-                then ta.subsidio_km_teto - sp.subsidio_km
+                when
+                    vt.data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
+                    and s.pof >= 80
+                    and vt.tipo_viagem in (
+                        "Licenciado com ar e não autuado",
+                        "Licenciado sem ar e não autuado"
+                    )
+                then
+                    - (
+                        ta.subsidio_km * vt.distancia_planejada
+                        - sp.subsidio_km * vt.distancia_planejada
+                    )
                 else 0
             end as valor_glosado_tecnologia,
             vt.indicador_penalidade_tecnologia,
@@ -242,43 +282,16 @@ with
                     or (vt.tecnologia_apurada is null and ta.tecnologia is null)
                 )
             )
-
-    ),
-    -- 5. Apuração de km realizado e Percentual de Operação por Faixa Horária (POF)
-    servico_faixa_km_apuracao as (
-        select
-            p.data,
-            p.tipo_dia,
-            p.faixa_horaria_inicio,
-            p.faixa_horaria_fim,
-            p.consorcio,
-            p.servico,
-            p.km_planejada as km_planejada,
-            coalesce(
-                round(
-                    100 * sum(
-                        if(
-                            v.tipo_viagem not in ("Não licenciado", "Não vistoriado"),
-                            v.distancia_planejada,
-                            0
-                        )
-                    )
-                    / p.km_planejada,
-                    2
-                ),
-                0
-            ) as pof
-        from viagem_planejada as p
         left join
-            viagem_km_tipo as v
-            on p.data = v.data
-            and p.servico = v.servico
-            and v.datetime_partida
-            between p.faixa_horaria_inicio and p.faixa_horaria_fim
-        group by 1, 2, 3, 4, 5, 6, 7
+            servico_faixa_km_apuracao as s
+            on s.data = vt.data
+            and s.servico = vt.servico
+            and vt.datetime_partida
+            between s.faixa_horaria_inicio and s.faixa_horaria_fim
+
     )
--- 6. Flag de viagens que serão consideradas ou não para fins de remuneração (apuração
--- de valor de subsídio) - RESOLUÇÃO SMTR Nº 3645/2023
+-- Flag de viagens que serão consideradas ou não para fins de remuneração (apuração de
+-- valor de subsídio) - RESOLUÇÃO SMTR Nº 3645/2023
 select
     v.* except (
         rn,
