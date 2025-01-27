@@ -137,7 +137,9 @@ vars:
   DATA_SUBSIDIO_V12_INICIO: "2024-11-16"
   # Inclusão de colunas de tecnologia em sppo_veiculo_dia
   DATA_SUBSIDIO_V13_INICIO: "2025-01-01"
-
+  # Feature Apuração por tecnologia e penalidade por faixa horária (DECRETO 55631/2025)
+  DATA_SUBSIDIO_V14_INICIO: "2025-01-05"
+  DATA_SUBSIDIO_V14A_INICIO: "2025-07-01"
 
   # Recursos #
   recurso_staging: "rj-smtr-staging.projeto_subsidio_sppo_staging.recurso"
