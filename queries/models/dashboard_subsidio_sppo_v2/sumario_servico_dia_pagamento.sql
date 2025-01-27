@@ -52,7 +52,7 @@
                 (
                     select
                         data,
-                        tipo_di '{{ end_date }}' a,
+                        tipo_dia,
                         consorcio,
                         servico,
                         tipo_viagem,

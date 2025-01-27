@@ -5,7 +5,7 @@
 ### Adicionado
 
 - Altera regras do modelo `viagens_remuneradas` para apuração por tecnologia conforme DECRETO RIO N° 55631/2025 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
-- Adiciona valores atualizados das infrações no modelo `valor_tipo_penalidade` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+- Adiciona valores atualizados das infrações no modelo `valor_tipo_penalidade` conforme MTR-MEM-2025/00005 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
 
 ## [7.0.7] - 2024-10-30
 

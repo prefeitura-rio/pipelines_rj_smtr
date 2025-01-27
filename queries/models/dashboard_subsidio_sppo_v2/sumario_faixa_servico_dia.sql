@@ -46,7 +46,7 @@ with
             tecnologia,
             subsidio_km,
             max(subsidio_km) over (
-                partition by data_inicio, data_fim, tecnologia
+                partition by date_trunc(data_inicio, year), data_fim, tecnologia
             ) as subsidio_km_teto
         from {{ ref("valor_km_tipo_viagem") }}
     -- from `rj-smtr.subsidio.valor_km_tipo_viagem`

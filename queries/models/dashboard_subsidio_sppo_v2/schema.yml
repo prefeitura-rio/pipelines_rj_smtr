@@ -83,7 +83,7 @@ models:
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: sumario_servico_dia_pagamento
-    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia (Descontinuada a partir de 05/01/2025)."
+    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia (Descontinuada a partir de 2025-01-05)."
     tests:
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data

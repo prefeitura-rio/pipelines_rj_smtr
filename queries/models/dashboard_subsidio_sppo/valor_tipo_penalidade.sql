@@ -26,7 +26,7 @@ with
             0 as perc_km_inferior,
             40 as perc_km_superior,
             "Grave" as tipo_penalidade,
-            1235.21 as valor,
+            1235.31 as valor,
             date("2025-01-01") as data_inicio,
             date("2025-12-31") as data_fim
         union all
@@ -42,7 +42,7 @@ with
             40 as perc_km_inferior,
             60 as perc_km_superior,
             "Média" as tipo_penalidade,
-            617.60 as valor,
+            617.64 as valor,
             date("2025-01-01") as data_inicio,
             date("2025-12-31") as data_fim
         union all

@@ -47,7 +47,7 @@ models:
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: subsidio_sumario_servico_dia_pagamento
-    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia (Descontinuada a partir de 05/01/2025)."
+    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia (Descontinuada a partir de 2025-01-05)."
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS."
