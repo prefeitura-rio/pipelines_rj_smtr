@@ -213,7 +213,7 @@ models:
       - name: id_veiculo
         description: "Número de ordem do veículo, identificação que é exibida na lateral do ônibus"
       - name: servico
-        description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, SN011, ...)"
+        description: "{{ doc('servico') }}"
       - name: link_foto
         description: "Link com a imagem interna do veículo"
       - name: validacao
