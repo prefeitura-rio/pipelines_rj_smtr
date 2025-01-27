@@ -3,7 +3,7 @@
 """
 Flows for veiculos
 
-DBT: 2025-01-22
+DBT: 2025-01-27
 """
 
 from copy import deepcopy
