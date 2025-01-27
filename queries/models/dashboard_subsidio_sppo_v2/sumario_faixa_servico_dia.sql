@@ -250,7 +250,6 @@ select
         else coalesce(km_apurada_licenciado_com_ar_n_autuado, 0)
     end as km_apurada_total_licenciado_com_ar_n_autuado,
     agg.valor_total_com_glosa as valor_a_pagar,
-    agg.valor_apurado,  -- if(indicador_viagem_dentro_limite = true and pof >= 80,distancia_planejada * subsidio_km, 0)
     agg.valor_glosado_tecnologia,
     agg.valor_total_com_glosa - agg.valor_total_sem_glosa as valor_total_glosado,
     agg.valor_acima_limite,
