@@ -57,7 +57,7 @@ with Flow(
     source_type = Parameter("source_type", default=None)
     interval_minutes = Parameter("interval_minutes", default=None)
     recapture = Parameter("recapture", default=False)
-    recapture_window_days = Parameter("recapture_window_days", default=1)
+    recapture_window_days = Parameter("recapture_window_days", default=5)
     timestamp = Parameter("timestamp", default=None)
 
     # Parâmetros Pré-tratamento #
@@ -81,6 +81,7 @@ with Flow(
             datetime_filter=current_timestamp,
             interval_minutes=interval_minutes,
             recapture_window_days=recapture_window_days,
+            max_recaptures=500,
         )
 
     with case(recapture, False):

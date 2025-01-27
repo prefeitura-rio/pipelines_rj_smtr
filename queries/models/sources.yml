@@ -179,12 +179,6 @@ sources:
     tables:
       - name: viagem_informada
 
-  - name: source_jae
-    database: rj-smtr-staging
-
-    tables:
-      - name: transacao_ordem
-
   - name: source_sonda
     database: rj-smtr-staging
 
@@ -195,3 +189,34 @@ sources:
 
     tables:
       - name: matriz_integracao
+
+  - name: source_jae
+    database: rj-smtr-dev
+
+    tables:
+      - name: transacao
+      - name: transacao_riocard
+      - name: linha
+      - name: dicionario
+      - name: consorcio
+      - name: operadora_transporte
+      - name: ordem_pagamento
+      - name: ordem_ressarcimento
+      - name: conta_bancaria
+      - name: contato_pessoa_juridica
+      - name: cliente
+      - name: percentual_rateio_integracao
+      - name: integracao_transacao
+      - name: tipo_modal
+      - name: gps_validador
+      - name: gratuidade
+      - name: ordem_rateio
+      - name: servico_motorista
+      - name: linha_sem_ressarcimento
+      - name: ordem_pagamento_consorcio_operadora
+      - name: ordem_pagamento_consorcio
+      - name: linha_consorcio
+      - name: linha_consorcio_operadora_transporte
+      - name: endereco
+      - name: transacao_ordem
+      - name: produto

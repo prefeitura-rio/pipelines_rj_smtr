@@ -7,9 +7,9 @@ import pandas as pd
 from prefect import task
 
 from pipelines.capture.rioonibus.constants import constants
+from pipelines.capture.templates.utils import DefaultSourceTable
 from pipelines.constants import constants as smtr_constants
 from pipelines.utils.extractors.api import get_raw_api_params_list
-from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.secret import get_secret
 
 
@@ -18,7 +18,7 @@ from pipelines.utils.secret import get_secret
     retry_delay=timedelta(seconds=smtr_constants.RETRY_DELAY.value),
 )
 def create_viagem_informada_extractor(
-    source: SourceTable,  # pylint: disable=W0613
+    source: DefaultSourceTable,  # pylint: disable=W0613
     timestamp: datetime,
 ):
     """Cria a extração de viagens informadas na api da Rio Ônibus"""
