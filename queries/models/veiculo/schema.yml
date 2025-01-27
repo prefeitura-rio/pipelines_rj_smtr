@@ -16,7 +16,7 @@ models:
       - name: placa
         description: "Placa do veículo"
       - name: servico
-        description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, SN011, ...)"
+        description: "{{ doc('servico') }}"
       - name: id_auto_infracao
         description: "Identificador do auto de infração da multa aplicada"
       - name: data_infracao
