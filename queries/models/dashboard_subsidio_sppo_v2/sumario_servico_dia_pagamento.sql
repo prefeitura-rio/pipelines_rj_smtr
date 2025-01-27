@@ -9,8 +9,9 @@
     )
 }}
 
-{% set run_model = false %}
-{% if var("end_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
+{% if var("start_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
+    {% set run_model = false %}
+{% elif var("end_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
     {% set end_date = (
         modules.datetime.datetime.strptime(
             var("DATA_SUBSIDIO_V14_INICIO"), "%Y-%m-%d"
@@ -18,6 +19,8 @@
         - modules.datetime.timedelta(days=1)
     ).strftime("%Y-%m-%d") %}
     {% set run_model = true %}
+{% elif var("end_date") < var("DATA_SUBSIDIO_V14_INICIO") %}
+    {% set end_date = var("end_date") %} {% set run_model = true %}
 {% endif %}
 
 {% if run_model == true %}
