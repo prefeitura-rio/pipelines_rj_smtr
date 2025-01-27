@@ -351,3 +351,19 @@ Tipo de Ordem de Serviço (ex: 'Regular', 'Extraordinária - Verão')
 {% docs data_inicio_matriz %}
 Data de inicio da versão da matriz de integração
 {% enddocs %}
+
+{% docs tecnologia %}
+Tecnologia utilizada no veiculo (BASICO, MIDI, MINI, PADRON).
+{% enddocs %}
+
+{% docs tecnologia_remunerada %}
+Tecnologia remunerada conforme legislação em vigor.
+{% enddocs %}
+
+{% docs pof %}
+Indicador percentual de quilometragem apurada em relação à planejada do serviço por faixa horária (não inclui veículos não licenciados e não vistoriados a partir de 2024-09-01).
+{% enddocs %}
+
+{% docs valor_glosado_tecnologia %}
+Valor da diferença entre a tecnologia remunerada e tecnologia apurada.
+{% enddocs %}

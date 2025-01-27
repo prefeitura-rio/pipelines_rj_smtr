@@ -1,5 +1,20 @@
 # Changelog - dashboard_subsidio_sppo_v2
 
+## [1.0.3] - 2025-01-27
+
+### Adicionado
+
+- Adiciona as colunas `km_apurada_licenciado_sem_ar_n_autuado_mini`, `km_apurada_licenciado_com_ar_n_autuado_mini`, `km_apurada_licenciado_sem_ar_n_autuado_midi`, `km_apurada_licenciado_com_ar_n_autuado_midi`, `km_apurada_licenciado_sem_ar_n_autuado_basico`, `km_apurada_licenciado_com_ar_n_autuado_basico`, `km_apurada_licenciado_sem_ar_n_autuado_padron`, `km_apurada_licenciado_com_ar_n_autuado_padron`, `km_apurada_total_licenciado_sem_ar_n_autuado`, `km_apurada_total_licenciado_com_ar_n_autuado`, `valor_a_pagar`, `valor_glosado_tecnologia`, `valor_total_glosado`, `valor_total_apurado`, `valor_judicial`, `valor_penalidade` no modelo `sumario_faixa_servico_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+
+### Alterado
+
+- Altera nome da coluna `km_apurada_licenciado_sem_ar_n_autuado` para `km_apurada_total_licenciado_sem_ar_n_autuado`, `km_apurada_licenciado_com_ar_n_autuado` para `km_apurada_total_licenciado_com_ar_n_autuado` e `valor_glosado` para `valor_total_glosado` no modelo `sumario_faixa_servico_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+- Altera lógica do modelo `sumario_servico_dia_pagamento` para não materializar quando a data for maior que `DATA_SUBSIDIO_V14_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+
+### Removido
+
+- Remove a coluna `valor_apurado` no modelo `sumario_faixa_servico_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+
 ## [1.0.2] - 2024-10-02
 
 ### Adicionado
