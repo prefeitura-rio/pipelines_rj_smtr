@@ -107,9 +107,18 @@ with
             status,
             tecnologia,
             subsidio_km,
-            max(subsidio_km) over (
-                partition by date_trunc(data_inicio, year), data_fim, tecnologia
-            ) as subsidio_km_teto,
+            case
+                when tecnologia is null
+                then
+                    max(subsidio_km) over (
+                        partition by date_trunc(data_inicio, year), data_fim
+                    ) as subsidio_km_teto,
+                when tecnologia is not null
+                then
+                    max(subsidio_km) over (
+                        partition by date_trunc(data_inicio, year), data_fim, tecnologia
+                    )
+            end as subsidio_km_teto,
             indicador_penalidade_judicial
         from {{ ref("valor_km_tipo_viagem") }}
     -- from `rj-smtr.subsidio.valor_km_tipo_viagem`
