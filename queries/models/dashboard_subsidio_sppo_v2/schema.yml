@@ -2,6 +2,61 @@ version: 2
 
 models:
   - name: sumario_faixa_servico_dia
+    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia e faixa horária (Descontinuada a partir de 2025-01-05)."
+    columns:
+      - name: data
+        description: "Data de emissão do sinal de GPS."
+      - name: tipo_dia
+        description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo."
+      - name: faixa_horaria_inicio
+        description: "Horário inicial da faixa horária"
+      - name: faixa_horaria_fim
+        description: "Horário final da faixa horária"
+      - name: consorcio
+        description: "Consórcio que opera o serviço."
+      - name: servico
+        description: "Serviço realizado pelo veículo."
+      - name: viagens_faixa
+        description: "Quantidade de viagens apuradas por faixa horária."
+      - name: km_apurada_faixa
+        description: "Distância apurada para o serviço por faixa horária(km)."
+      - name: km_subsidiada_faixa
+        description: "Distância subsidiada para o serviço por faixa horária (km)."
+      - name: km_planejada_faixa
+        description: "Distância planejada para o serviço por faixa horária (km)."
+      - name: pof
+        description: "{{ doc('pof') }}"
+      - name: km_apurada_registrado_com_ar_inoperante
+        description: "Distância apurada de viagens realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste (km)."
+      - name: km_apurada_n_licenciado
+        description: "Quilometragem apurada de viagens de veículos não licenciados."
+      - name: km_apurada_autuado_ar_inoperante
+        description: "Quilometragem apurada de viagens de veículos autuados por ar inoperante."
+      - name: km_apurada_autuado_seguranca
+        description: "Quilometragem apurada de viagens de veículos autuados por segurança."
+      - name: km_apurada_autuado_limpezaequipamento
+        description: "Quilometragem apurada de viagens de veículos autuados por limpeza ou equipamento."
+      - name: km_apurada_licenciado_sem_ar_n_autuado
+        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados."
+      - name: km_apurada_licenciado_com_ar_n_autuado
+        description: "Quilometragem apurada de viagens de veículos com ar e não autuados."
+      - name: km_apurada_n_vistoriado
+        description: "Distância apurada de viagens realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria (km)."
+      - name: km_apurada_sem_transacao
+        description: "Distância apurada de viagens realizadas sem passageiro registrado."
+      - name: valor_apurado
+        description: "Valor da distância apurada multiplicada pelo subsídio por quilômetro (sem glosa). É zerado quando POF < 80%."
+      - name: valor_acima_limite
+        description: "Valor apurado das viagens que não foram remuneradas (por estar acima do teto de 120% / 200%)."
+      - name: valor_total_sem_glosa
+        description: "Valor total das viagens considerando o valor máximo por km."
+      - name: valor_judicial
+        description: "Valor de glosa depositada em juízo (Autuação por ar inoperante, Veículo licenciado sem ar, Penalidade abaixo de 60% e Notificação dos Agentes de Verão)."
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+  - name: sumario_faixa_servico_dia_pagamento
     description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia e faixa horária."
     columns:
       - name: data
