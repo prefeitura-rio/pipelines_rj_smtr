@@ -1,5 +1,15 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [7.0.9] - 2025-01-28
+
+### Corrigido
+
+- Corrige case dentro da CTE subsidio_parametros no modelo `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/400)
+
+### Alterado
+
+- Altera lógica da coluna `valor_glosado_tecnologia` para converter o valor em NUMERIC no modelo `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/400)
+
 ## [7.0.8] - 2025-01-27
 
 ### Adicionado
