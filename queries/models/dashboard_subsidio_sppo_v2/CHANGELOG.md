@@ -1,5 +1,19 @@
 # Changelog - dashboard_subsidio_sppo_v2
 
+## [1.0.4] - 2025-01-28
+
+### Removido
+
+- Remove alterações no modelo `sumario_faixa_servico_dia` pelo PR #390 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/400)
+
+### Alterado
+
+- Altera lógica do modelo `sumario_faixa_servico_dia` para não materializar quando a data for maior que `DATA_SUBSIDIO_V14_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/400)
+
+### Adicionado
+
+- Cria modelo `sumario_faixa_servico_dia_pagamento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/400)
+
 ## [1.0.3] - 2025-01-27
 
 ### Adicionado
