@@ -1,20 +1,28 @@
 {% test sumario_servico_dia_tipo_soma_km(model, column_name) -%}
-WITH
-    kms AS (
-    SELECT
-        * EXCEPT({{ column_name }}),
-        {{ column_name }},
-        ROUND(COALESCE(km_apurada_registrado_com_ar_inoperante,0) + COALESCE(km_apurada_n_licenciado,0) + COALESCE(km_apurada_autuado_ar_inoperante,0) + COALESCE(km_apurada_autuado_seguranca,0) + COALESCE(km_apurada_autuado_limpezaequipamento,0) + COALESCE(km_apurada_licenciado_sem_ar_n_autuado,0) + COALESCE(km_apurada_licenciado_com_ar_n_autuado,0) + COALESCE(km_apurada_n_vistoriado, 0) + COALESCE(km_apurada_sem_transacao, 0),2) AS km_apurada2
-    FROM
-        {{ model }}
-    WHERE
-        DATA BETWEEN DATE("{{ var('start_date') }}")
-        AND DATE("{{ var('end_date') }}"))
-SELECT
-    *,
-    ABS(km_apurada2-{{ column_name }}) AS dif
-FROM
-    kms
-WHERE
-    ABS(km_apurada2-{{ column_name }}) > 0.02
+    with
+        kms as (
+            select
+                * except ({{ column_name }}),
+                {{ column_name }},
+                round(
+                    coalesce(km_apurada_registrado_com_ar_inoperante, 0)
+                    + coalesce(km_apurada_n_licenciado, 0)
+                    + coalesce(km_apurada_autuado_ar_inoperante, 0)
+                    + coalesce(km_apurada_autuado_seguranca, 0)
+                    + coalesce(km_apurada_autuado_limpezaequipamento, 0)
+                    + coalesce(km_apurada_total_licenciado_sem_ar_n_autuado, 0)
+                    + coalesce(km_apurada_total_licenciado_com_ar_n_autuado, 0)
+                    + coalesce(km_apurada_n_vistoriado, 0)
+                    + coalesce(km_apurada_sem_transacao, 0),
+                    2
+                ) as km_apurada2
+            from {{ model }}
+            where
+                data between date("{{ var('start_date') }}") and date(
+                    "{{ var('end_date') }}"
+                )
+        )
+    select *, abs(km_apurada2 -{{ column_name }}) as dif
+    from kms
+    where abs(km_apurada2 -{{ column_name }}) > 0.02
 {%- endtest %}
