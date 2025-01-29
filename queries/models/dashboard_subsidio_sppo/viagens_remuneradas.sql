@@ -112,7 +112,7 @@ with
                 then
                     max(subsidio_km) over (
                         partition by date_trunc(data_inicio, year), data_fim
-                    ) as subsidio_km_teto,
+                    )
                 when tecnologia is not null
                 then
                     max(subsidio_km) over (
@@ -254,11 +254,13 @@ with
                         "Licenciado sem ar e não autuado"
                     )
                 then
-                    - (
-                        ta.subsidio_km * vt.distancia_planejada
-                        - sp.subsidio_km * vt.distancia_planejada
+                    safe_cast(
+                        - (
+                            ta.subsidio_km * vt.distancia_planejada
+                            - sp.subsidio_km * vt.distancia_planejada
+                        ) as numeric
                     )
-                else 0
+                else safe_cast(0 as numeric)
             end as valor_glosado_tecnologia,
             vt.indicador_penalidade_tecnologia,
             sp.indicador_penalidade_judicial
