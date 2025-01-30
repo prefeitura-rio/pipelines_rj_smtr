@@ -73,7 +73,9 @@ with
             sum(valor_apurado) as valor_apurado,
             sum(valor_glosado_tecnologia) as valor_glosado_tecnologia,
             sum(valor_acima_limite) as valor_acima_limite,
-            sum(valor_total_sem_glosa) as valor_total_sem_glosa,
+            sum(
+                valor_total_sem_glosa - valor_glosado_tecnologia
+            ) as valor_total_sem_glosa,
             sum(valor_apurado) + p.valor_penalidade as valor_total_com_glosa,
             case
                 when p.valor_penalidade != 0
