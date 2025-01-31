@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Transforma dados em branco em nulos no modelo `viagem_informada_monitoramento.sql`
+- Transforma dados em branco em nulos no modelo `viagem_informada_monitoramento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/408)
 
 
 ## [1.3.0] - 2025-01-22
