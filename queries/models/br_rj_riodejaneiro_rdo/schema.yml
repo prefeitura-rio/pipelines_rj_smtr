@@ -301,7 +301,7 @@ models:
         quote: true
         description: "{{ doc('datetime_ultima_atualizacao') }}"
     description: Tabela materializada para acesso geral aos dados do RDO STPL
-  - name: dicionario
+  - name: dicionario_rdo
     description: "Dicionário de dados"
     columns:
       - name: chave
