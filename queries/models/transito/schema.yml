@@ -35,9 +35,9 @@ models:
       - name: cep_proprietario
         description: "CEP do proprietário do veículo [protegido]"
       - name: valor_infracao
-        description: "Valor monetário da autuação (100%) [R$]"
+        description: "Valor monetário da autuação (100%) (R$)"
       - name: valor_pago
-        description: "Valor pago da autuação [R$]"
+        description: "Valor pago da autuação (R$)"
       - name: data_pagamento
         description: "Data de pagamento da autuação"
       - name: id_autuador
@@ -117,9 +117,9 @@ models:
         policy_tags:
         - 'projects/rj-smtr/locations/us/taxonomies/7968932463054912793/policyTags/5243840798726507169'
       - name: valor_infracao
-        description: "Valor monetário da autuação (100%) [R$]"
+        description: "Valor monetário da autuação (100%) (R$)"
       - name: valor_pago
-        description: "Valor pago da autuação [R$]"
+        description: "Valor pago da autuação (R$)"
       - name: data_pagamento
         description: "Data de pagamento da autuação"
       - name: id_autuador
