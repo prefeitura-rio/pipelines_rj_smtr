@@ -172,13 +172,13 @@ with
                 when r.route_type = '700'
                 then 'Ônibus SPPO'
             end as modo,
-            v.id_veiculo,
-            v.trip_id,
-            v.route_id,
-            v.shape_id,
-            v.servico,
-            v.sentido,
-            v.fonte_gps,
+            if(trim(v.id_veiculo) = '', null, v.id_veiculo) id_veiculo,
+            if(trim(v.trip_id) = '', null, v.trip_id) trip_id,
+            if(trim(v.route_id) = '', null, v.route_id) route_id,
+            if(trim(v.shape_id) = '', null, v.shape_id) shape_id,
+            if(trim(v.servico) = '', null, v.servico) servico,
+            if(trim(v.sentido) = '', null, v.sentido) sentido,
+            if(trim(v.fonte_gps) = '', null, v.fonte_gps) fonte_gps,
             v.datetime_processamento,
             v.datetime_captura
         from deduplicado v
