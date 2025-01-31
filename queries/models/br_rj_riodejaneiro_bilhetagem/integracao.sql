@@ -90,7 +90,8 @@ with
             im.valor_rateio,
             im.valor_transacao,
             i.valor_transacao_total,
-            i.tx_adicional as texto_adicional
+            i.tx_adicional as texto_adicional,
+            im.id_ordem_rateio
         from
             integracao_transacao_deduplicada i,
             -- Transforma colunas com os dados de cada transação da integração em
@@ -145,16 +146,19 @@ with
             i.valor_transacao,
             i.valor_transacao_total,
             i.texto_adicional,
+            i.id_ordem_rateio,
             '{{ var("version") }}' as versao
         from integracao_melt i
         left join
             {{ source("cadastro", "modos") }} m
             on i.id_tipo_modal = m.id_modo
             and m.fonte = "jae"
-        left join {{ ref("operadoras") }} do on i.id_operadora = do.id_operadora_jae
-        {# `rj-smtr.cadastro.operadoras` do on i.id_operadora = do.id_operadora_jae #}
-        left join {{ ref("consorcios") }} dc on i.id_consorcio = dc.id_consorcio_jae
-        {# `rj-smtr.cadastro.consorcios` dc on i.id_consorcio = dc.id_consorcio_jae #}
+        left join
+            {# {{ ref("operadoras") }} do on i.id_operadora = do.id_operadora_jae #}
+            `rj-smtr.cadastro.operadoras` do on i.id_operadora = do.id_operadora_jae
+        left join
+            {# {{ ref("consorcios") }} dc on i.id_consorcio = dc.id_consorcio_jae #}
+            `rj-smtr.cadastro.consorcios` dc on i.id_consorcio = dc.id_consorcio_jae
         left join
             {{ ref("staging_linha") }} l
             {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.linha` l #}
