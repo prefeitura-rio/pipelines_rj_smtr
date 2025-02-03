@@ -7,7 +7,7 @@
 }}
 
 {% if var("start_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
-    {% set run_model = false %}
+    select * from {{ this }} where false {% set run_model = false %}
 {% elif var("end_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
     {% set end_date = (
         modules.datetime.datetime.strptime(
