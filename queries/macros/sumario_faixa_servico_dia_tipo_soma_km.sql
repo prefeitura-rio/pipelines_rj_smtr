@@ -1,4 +1,4 @@
-{% test sumario_servico_dia_tipo_soma_km(model, column_name) -%}
+{% test sumario_faixa_servico_dia_tipo_soma_km(model, column_name) -%}
     with
         kms as (
             select
@@ -10,8 +10,8 @@
                     + coalesce(km_apurada_autuado_ar_inoperante, 0)
                     + coalesce(km_apurada_autuado_seguranca, 0)
                     + coalesce(km_apurada_autuado_limpezaequipamento, 0)
-                    + coalesce(km_apurada_licenciado_sem_ar_n_autuado, 0)
-                    + coalesce(km_apurada_licenciado_com_ar_n_autuado, 0)
+                    + coalesce(km_apurada_total_licenciado_sem_ar_n_autuado, 0)
+                    + coalesce(km_apurada_total_licenciado_com_ar_n_autuado, 0)
                     + coalesce(km_apurada_n_vistoriado, 0)
                     + coalesce(km_apurada_sem_transacao, 0),
                     2

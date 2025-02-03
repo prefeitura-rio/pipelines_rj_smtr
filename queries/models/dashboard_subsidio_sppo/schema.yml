@@ -604,7 +604,7 @@ models:
         description: "Classificação do tipo de viagem."
         tests:
           - not_null:
-              name: not_null__data__tipo_viagem
+              name: not_null__tipo_viagem__viagens_remuneradas
       - name: id_viagem
         description: "Código único identificador da viagem."
         tests:
@@ -634,7 +634,7 @@ models:
         description: "Valor máximo de subsídio, conforme tipo de viagem (R$/km)."
         tests:
           - not_null:
-              name: not_null__distancia_planejada__subsidio_km_teto
+              name: not_null__subsidio_km_teto__viagens_remuneradas
       - name: valor_glosado_tecnologia
         description: "{{ doc('valor_glosado_tecnologia') }}"
       - name: indicador_penalidade_tecnologia
