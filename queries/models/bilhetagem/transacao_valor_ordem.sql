@@ -74,6 +74,21 @@
             run_query(transacao_partitions_query).columns[0].values()
         ) %}
 
+        {% set ordens_pagamento_modificadas_query %}
+            select distinct concat("'", data_ordem, "'") from {{ transacao }} where data in ({{ transacao_partitions | join(", ") }}) and data_ordem is not null
+
+            union distinct
+
+            select distinct concat("'", data_ordem, "'") from {{ integracao }} where data in ({{ transacao_partitions | join(", ") }}) and data_ordem is not null
+        {% endset %}
+        {% if transacao_partitions_query | length > 0 %}
+            {% set ordens_pagamento_modificadas = (
+                run_query(ordens_pagamento_modificadas_query)
+                .columns[0]
+                .values()
+            ) %}
+        {% else %} {% set ordens_pagamento_modificadas = [] %}
+        {% endif %}
     {% endif %}
 {% endif %}
 
@@ -102,34 +117,24 @@ with
     ),
     integracao as (
         select
-            o.data_ordem,
-            i.data as data_transacao,
-            i.id_transacao,
-            i.modo,
-            i.consorcio,
-            i.id_operadora,
-            i.id_servico_jae,
-            ifnull(sum(i.valor_rateio_compensacao), 0) as valor_transacao_rateio,
-            o.id_ordem_pagamento,
-            o.id_ordem_pagamento_consorcio as id_ordem_pagamento_consorcio_dia,
-            o.id_ordem_pagamento_consorcio_operadora
+            data_ordem,
+            data as data_transacao,
+            id_transacao,
+            modo,
+            consorcio,
+            id_operadora,
+            id_servico_jae,
+            ifnull(sum(valor_rateio_compensacao), 0) as valor_transacao_rateio,
+            id_ordem_pagamento,
+            id_ordem_pagamento_consorcio as id_ordem_pagamento_consorcio_dia,
+            id_ordem_pagamento_consorcio_operadora
             as id_ordem_pagamento_consorcio_operador_dia
-        {# ifnull(o.id_ordem_pagamento, t.id_ordem_pagamento) as id_ordem_pagamento,
-            ifnull(
-                o.id_ordem_pagamento_consorcio, t.id_ordem_pagamento_consorcio_dia
-            ) as id_ordem_pagamento_consorcio_dia,
-            ifnull(
-                o.id_ordem_pagamento_consorcio_operadora,
-                t.id_ordem_pagamento_consorcio_operador_dia
-            ) as id_ordem_pagamento_consorcio_operador_dia #}
-        from {{ integracao }} i
-        left join {{ ref("staging_ordem_rateio") }} o using (id_ordem_rateio)
-        join transacao t using (id_transacao)
+        from {{ integracao }}
         {% if is_incremental() %}
             where
                 {% if transacao_partitions | length > 0 %}
-                    i.data in ({{ transacao_partitions | join(", ") }})
-                {% else %} i.data = "2000-01-01"
+                    data in ({{ transacao_partitions | join(", ") }})
+                {% else %} data = "2000-01-01"
                 {% endif %}
         {% endif %}
         group by all
@@ -140,21 +145,37 @@ with
         union all
         select *
         from integracao
+    ),
+    ordem_agrupada as (
+        select
+            data_ordem,
+            data_transacao,
+            id_transacao,
+            modo,
+            consorcio,
+            id_operadora,
+            id_servico_jae,
+            sum(valor_transacao_rateio) as valor_transacao_rateio,
+            id_ordem_pagamento,
+            id_ordem_pagamento_consorcio_dia,
+            id_ordem_pagamento_consorcio_operador_dia
+        from transacao_integracao
+        where data_ordem is not null
+        group by all
+    ),
+    particao_completa as (
+        select *, 0 as priority
+        from ordem_agrupada
+        {% if is_incremental() and ordens_pagamento_modificadas | length > 0 %}
+            union all
+            select *, 1 as priority
+            from {{ this }}
+            where data_ordem in ({{ ordens_pagamento_modificadas | join(", ") }})
+        {% endif %}
     )
 select
-    data_ordem,
-    data_transacao,
-    id_transacao,
-    modo,
-    consorcio,
-    id_operadora,
-    id_servico_jae,
-    sum(valor_transacao_rateio) as valor_transacao_rateio,
-    id_ordem_pagamento,
-    id_ordem_pagamento_consorcio_dia,
-    id_ordem_pagamento_consorcio_operador_dia,
+    * except (priority),
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
-from transacao_integracao
-where data_ordem is not null
-group by all
+from particao_completa
+qualify row_number() over (partition by id_transacao, data_ordem order by priority) = 1

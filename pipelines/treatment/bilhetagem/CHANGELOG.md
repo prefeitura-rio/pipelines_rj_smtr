@@ -1,7 +1,13 @@
 # Changelog - bilhetagem
 
+## [1.1.0] - 2025-02-04
+
+### Adicionado
+
+- Cria flow de tratamento da tabela `transacao_valor_ordem`
+
 ## [1.0.0] - 2024-11-25
 
 ### Adicionado
 
-- Cria flow de tratamento da tabela auxiliar `aux_transacao_id_ordem_pagamento`
+- Cria flow de tratamento da tabela auxiliar `aux_transacao_id_ordem_pagamento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/333)

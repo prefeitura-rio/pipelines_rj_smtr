@@ -147,6 +147,11 @@ with
             i.valor_transacao_total,
             i.texto_adicional,
             i.id_ordem_rateio,
+            o.data_ordem,
+            o.id_ordem_pagamento,
+            o.id_ordem_pagamento_consorcio as id_ordem_pagamento_consorcio_dia,
+            o.id_ordem_pagamento_consorcio_operadora
+            as id_ordem_pagamento_consorcio_operador_dia
             '{{ var("version") }}' as versao
         from integracao_melt i
         left join
@@ -163,6 +168,7 @@ with
             {{ ref("staging_linha") }} l
             {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.linha` l #}
             on i.id_linha = l.cd_linha
+        left join {{ ref("staging_ordem_rateio") }} o using (id_ordem_rateio)
         where i.id_transacao is not null
     ),
     complete_partitions as (

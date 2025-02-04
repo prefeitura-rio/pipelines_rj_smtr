@@ -70,6 +70,12 @@ selectors:
         - method: fqn
           value: aux_transacao_id_ordem_pagamento
 
+  - name: transacao_valor_ordem
+    description: Materialização da tabela contendo os valores das transações em cada ordem de pagamento
+    definition:
+      method: fqn
+      value: transacao_valor_ordem
+
   - name: datario
     description: Materialização das views para o datario
     definition:
