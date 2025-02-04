@@ -6,7 +6,7 @@ models:
     tests:
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data
-          row_condition: "data is not null"
+          row_condition: "1=1"
           test_start_date: "{{ var('date_range_start') }}"
           test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
           name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_servico_dia
@@ -375,7 +375,7 @@ models:
     tests:
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data
-          row_condition: "data is not null"
+          row_condition: "1=1"
           test_start_date: "{{ var('date_range_start') }}"
           test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
           name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_servico_dia_tipo_sem_glosa
@@ -583,7 +583,7 @@ models:
           name: dbt_utils.unique_combination_of_columns__viagens_remuneradas
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data
-          row_condition: "data is not null"
+          row_condition: "1=1"
           test_start_date: "{{ var('date_range_start') }}"
           test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
           name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__viagens_remuneradas

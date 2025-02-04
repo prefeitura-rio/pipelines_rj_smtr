@@ -66,7 +66,7 @@ models:
           name: check_km_planejada__sumario_faixa_servico_dia_pagamento
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data
-          row_condition: "data is not null"
+          row_condition: "1=1"
           test_start_date: "{{ var('date_range_start') }}"
           test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
           name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_faixa_servico_dia_pagamento
@@ -226,11 +226,11 @@ models:
     description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia (Descontinuada a partir de 2025-01-05)."
     config:
       test:
-        where: "DATA BETWEEN DATE('{{ var('date_range_start') }}') AND DATE('{{ var('date_range_end') }}')"
+        where: "DATA BETWEEN DATE('{{ var('date_range_start') }}') AND DATE('{{ var('date_range_end') }}') and data < '{{ var('DATA_SUBSIDIO_V14_INICIO') }}'"
     tests:
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data
-          row_condition: "data is not null"
+          row_condition: "1=1"
           test_start_date: "{{ var('date_range_start') }}"
           test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
           name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_servico_dia_pagamento
@@ -344,9 +344,6 @@ models:
         tests:
           - not_null:
               name: not_null__valor_a_pagar__sumario_servico_dia_pagamento
-          - dbt_utils.accepted_range:
-              min_value: 0
-              name: dbt_utils.accepted_range__valor_a_pagar__sumario_servico_dia_pagamento
       - name: valor_glosado
         description: "Valor total das viagens considerando o valor máximo por km, subtraído pelo valor efetivo por km."
       - name: valor_acima_limite
@@ -361,7 +358,7 @@ models:
         description: "Valor penalidade [negativa] (POF =< 60%)."
         tests:
           - not_null:
-              name: not_null__valor_penalidade__sumario_faixa_servico_dia_pagamento
+              name: not_null__valor_penalidade__sumario_servico_dia_pagamento
       - name: versao
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao

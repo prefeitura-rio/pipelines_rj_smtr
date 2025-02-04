@@ -745,7 +745,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todos os valores da coluna `{column_name}` maiores ou igual a zero"
             },
             "dbt_utils.unique_combination_of_columns__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todas as linhas de `sumario_faixa_servico_dia_pagamento` são unicas"
+                "description": "Todos os registros de `sumario_faixa_servico_dia_pagamento` são unicos"
             },
             "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_faixa_servico_dia_pagamento": {
                 "description": "Todas as datas possuem dados"
@@ -787,7 +787,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todos os valores da coluna `{column_name}` maiores ou igual a zero"
             },
             "dbt_utils.unique_combination_of_columns__sumario_servico_dia_pagamento": {
-                "description": "Todas as linhas de `sumario_servico_dia_pagamento` são unicas"
+                "description": "Todos os registros de `sumario_servico_dia_pagamento` são unicos"
             },
             "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_servico_dia_pagamento": {
                 "description": "Todas as datas possuem dados"
@@ -820,7 +820,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todos serviços abaixo do teto de pagamento de valor do subsídio"
             },
             "dbt_utils.unique_combination_of_columns__sumario_servico_dia": {
-                "description": "Todas as linhas de sumario_servico_dia são unicas"
+                "description": "Todos os registros de sumario_servico_dia são unicos"
             },
             "dbt_expectations.expect_table_aggregation_to_equal_other_table__sumario_servico_dia": {
                 "description": "Todos serviços com valores de penalidade aceitos"
