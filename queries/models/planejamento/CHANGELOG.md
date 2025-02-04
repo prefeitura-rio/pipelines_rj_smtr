@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.3.1] - 2025-01-27
+
+### Adicionado
+
+- Cria modelo `tecnologia_servico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+
 ## [1.3.0] - 2024-12-30
 
 ### Adicionado
