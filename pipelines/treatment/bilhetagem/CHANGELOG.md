@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Cria flow de tratamento da tabela `transacao_valor_ordem`
+- Cria flow de tratamento da tabela `transacao_valor_ordem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/411)
 
 ## [1.0.0] - 2024-11-25
 
