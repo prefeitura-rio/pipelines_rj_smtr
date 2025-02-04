@@ -389,17 +389,17 @@ with Flow(
     with case(test_only, True):
         dbt_vars = {"date_range_start": start_date, "date_range_end": end_date}
 
-        # SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt_tests(
-        #     dataset_id="sppo_registros sppo_realocacao check_gps_treatment__gps_sppo sppo_veiculo_dia",  # noqa
-        #     _vars=dbt_vars,
-        # )
+        SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt_tests(
+            dataset_id="sppo_registros sppo_realocacao check_gps_treatment__gps_sppo sppo_veiculo_dia",  # noqa
+            _vars=dbt_vars,
+        )
 
-        # DATA_QUALITY_PRE = dbt_data_quality_checks(
-        #     dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_PRE,
-        #     checks_list=constants.SUBSIDIO_SPPO_PRE_CHECKS_LIST.value,
-        #     webhook_key="subsidio_data_check",
-        #     params=dbt_vars,
-        # )
+        DATA_QUALITY_PRE = dbt_data_quality_checks(
+            dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_PRE,
+            checks_list=constants.SUBSIDIO_SPPO_PRE_CHECKS_LIST.value,
+            webhook_key="subsidio_data_check",
+            params=dbt_vars,
+        )
 
         date_in_range = check_date_in_range(
             _vars["start_date"], _vars["end_date"], constants.DATA_SUBSIDIO_V9_INICIO.value

@@ -571,8 +571,11 @@ def dbt_data_quality_checks(
             for existing_table_id, test_configs in checks_list.items():
                 if table_name in existing_table_id:
                     for existing_test_id, test_info in test_configs.items():
-                        if test_id.endswith(existing_test_id):
-                            matched_description = test_info.get("description", test_id)
+                        if existing_test_id in test_id:
+                            matched_description = test_info.get("description", test_id).replace(
+                                "{column_name}",
+                                test_id.split("__")[1] if "__" in test_id else test_id,
+                            )
                             break
                     if matched_description:
                         break

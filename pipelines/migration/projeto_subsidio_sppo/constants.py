@@ -725,91 +725,33 @@ class constants(Enum):  # pylint: disable=c0103
         "gps_sppo": {
             "check_gps_treatment__gps_sppo": {
                 "description": "Todos os dados de GPS foram devidamente tratados"
-            }
+            },
+            "dbt_utils.unique_combination_of_columns__gps_sppo": {
+                "description": "Todos os registros são únicos"
+            },
         },
         "sppo_veiculo_dia": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
             "dbt_utils.unique_combination_of_columns__data_id_veiculo__sppo_veiculo_dia": {
-                "description": "Todos os dados de status dos veículos foram devidamente tratados"
-            }
+                "description": "Todos os registros são únicos"
+            },
         },
     }
 
     SUBSIDIO_SPPO_POS_CHECKS_LIST = {
         "sumario_faixa_servico_dia_pagamento": {
-            "not_null__data__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna data não nulos"
-            },
-            "not_null__valor_penalidade__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna valor_penalidade não nulos"
-            },
-            "not_null__tipo_dia__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna tipo_dia não nulos"
-            },
-            "not_null__consorcio__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna consorcio não nulos"
-            },
-            "not_null__servico__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna servico não nulos"
-            },
-            "not_null__viagens_faixa__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna viagens_faixa não nulos"
-            },
-            "not_null__km_apurada_faixa__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna km_apurada_faixa não nulos"
-            },
-            "not_null__km_subsidiada_faixa__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna km_subsidiada_faixa não nulos"
-            },
-            "not_null__km_planejada_faixa__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna km_planejada_faixa não nulos"
-            },
-            "not_null__pof__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna pof não nulos"
-            },
-            "not_null__valor_a_pagar__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna valor_a_pagar não nulos"
-            },
-            "dbt_utils.accepted_range__viagens_dia__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna viagens_dia maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__viagens_faixa__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna viagens_faixa maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__km_planejada_faixa__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna km_planejada_faixa maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__km_apurada_faixa__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna km_apurada_faixa maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__km_subsidiada_faixa__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna km_subsidiada_faixa maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__pof__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna pof maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__km_apurada_dia__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna km_apurada_dia maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__km_subsidiada_dia__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna km_subsidiada_dia maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__km_planejada_dia__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna km_planejada_dia maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__media_pof__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna media_pof maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__valor_a_pagar__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna valor_a_pagar maiores ou igual a zero"
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.accepted_range": {
+                "description": "Todos os valores da coluna `{column_name}` maiores ou igual a zero"
             },
             "dbt_utils.unique_combination_of_columns__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todas as linhas de sumario_faixa_servico_dia_pagamento são unicas"
+                "description": "Todas as linhas de `sumario_faixa_servico_dia_pagamento` são unicas"
             },
             "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_faixa_servico_dia_pagamento": {
                 "description": "Todas as datas possuem dados"
             },
             "check_km_planejada__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todas as viagens possuem km_planejada correspondente a OS"
+                "description": "Todas as viagens possuem `km_planejada` correspondente à OS"
             },
             "teto_pagamento_valor_subsidio_pago__sumario_faixa_servico_dia_pagamento": {
                 "description": "Todos serviços abaixo do teto de pagamento de valor do subsídio"
@@ -818,45 +760,19 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todos serviços com valores de penalidade aceitos"
             },
             "sumario_servico_dia_tipo_soma_km__km_apurada_dia__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todas as somas dos tipos de quilometragem são equivalentes a quilometragem total"
+                "description": "Todas as somas dos tipos de quilometragem são equivalentes à quilometragem total"
             },
             "expression_is_true__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todas as somas de valor_a_pagar e valor_penalidade não nulos e maior ou igual a zero"
+                "description": "Todas as somas de `valor_a_pagar` e `valor_penalidade` não nulas e maiores ou iguais a zero"
             },
         },
         "viagens_remuneradas": {
-            "not_null__data__viagens_remuneradas": {
-                "description": "Todos os valores da coluna data não nulos"
-            },
-            "not_null__servico__viagens_remuneradas": {
-                "description": "Todos os valores da coluna servico não nulos"
-            },
-            "not_null__tipo_viagem__viagens_remuneradas": {
-                "description": "Todos os valores da coluna tipo_viagem não nulos"
-            },
-            "not_null__id_viagem__viagens_remuneradas": {
-                "description": "Todos os valores da coluna id_viagem não nulos"
-            },
-            "not_null__distancia_planejada__viagens_remuneradas": {
-                "description": "Todos os valores da coluna distancia_planejada não nulos"
-            },
-            "dbt_utils.accepted_range__distancia_planejada__viagens_remuneradas": {
-                "description": "Todos os valores da coluna distancia_planejada maiores ou igual a zero"
-            },
-            "not_null__subsidio_km__viagens_remuneradas": {
-                "description": "Todos os valores da coluna subsidio_km não nulos"
-            },
-            "not_null__subsidio_km_teto__viagens_remuneradas": {
-                "description": "Todos os valores da coluna subsidio_km_teto não nulos"
-            },
-            "not_null__indicador_viagem_dentro_limite__viagens_remuneradas": {
-                "description": "Todos os valores da coluna indicador_viagem_dentro_limite não nulos"
-            },
-            "dbt_utils.accepted_range__subsidio_km__viagens_remuneradas": {
-                "description": "Todos os valores da coluna subsidio_km maiores ou igual a zero"
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.accepted_range": {
+                "description": "Todos os valores da coluna `{column_name}` maiores ou igual a zero"
             },
             "dbt_utils.unique_combination_of_columns__viagens_remuneradas": {
-                "description": "Todas as viagens são unicas"
+                "description": "Todas as viagens são únicas"
             },
             "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__viagens_remuneradas": {
                 "description": "Todas as datas possuem dados"
@@ -866,59 +782,12 @@ class constants(Enum):  # pylint: disable=c0103
             },
         },
         "sumario_servico_dia_pagamento": {
-            "not_null__data__sumario_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna data não nulos"
-            },
-            "not_null__tipo_dia__sumario_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna tipo_dia não nulos"
-            },
-            "not_null__consorcio__sumario_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna consorcio não nulos"
-            },
-            "not_null__servico__sumario_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna servico não nulos"
-            },
-            "not_null__viagens_dia__sumario_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna viagens não nulos"
-            },
-            "not_null__km_apurada_dia__sumario_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna km_apurada_dia não nulos"
-            },
-            "not_null__km_subsidiada_dia__sumario_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna km_subsidiada_dia não nulos"
-            },
-            "not_null__km_planejada_dia__sumario_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna km_planejada_dia não nulos"
-            },
-            "not_null__media_pof__sumario_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna {media_pof não nulos"
-            },
-            "not_null__valor_a_pagar__sumario_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna valor_a_pagar não nulos"
-            },
-            "dbt_utils.accepted_range__viagens_dia__sumario_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna viagens_dia maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__km_apurada_dia__sumario_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna km_apurada_dia maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__km_subsidiada_dia__sumario_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna km_subsidiada_dia maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__km_planejada_dia__sumario_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna km_planejada_dia_dia maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__media_pof__sumario_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna media_pof maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__valor_a_pagar__sumario_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna valor_a_pagar maiores ou igual a zero"
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.accepted_range": {
+                "description": "Todos os valores da coluna `{column_name}` maiores ou igual a zero"
             },
             "dbt_utils.unique_combination_of_columns__sumario_servico_dia_pagamento": {
-                "description": "Todas as linhas de sumario_servico_dia_pagamento são unicas"
-            },
-            "not_null__valor_penalidade__sumario_servico_dia_pagamento": {
-                "description": "Todos os valores da coluna valor_penalidade não nulos"
+                "description": "Todas as linhas de `sumario_servico_dia_pagamento` são unicas"
             },
             "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_servico_dia_pagamento": {
                 "description": "Todas as datas possuem dados"
@@ -932,55 +801,17 @@ class constants(Enum):  # pylint: disable=c0103
             "dbt_expectations.expect_table_aggregation_to_equal_other_table__sumario_servico_dia_pagamento": {
                 "description": "Todos serviços com valores de penalidade aceitos"
             },
-            "sumario_servico_dia_tipo_soma_km__sumario_servico_dia_pagamento": {
-                "description": "Todas as somas dos tipos de quilometragem são equivalentes a quilometragem total"
+            "sumario_servico_dia_tipo_soma_km__km_apurada_dia__sumario_servico_dia_pagamento": {
+                "description": "Todas as somas dos tipos de quilometragem são equivalentes à quilometragem total"
             },
             "expression_is_true__sumario_servico_dia_pagamento": {
-                "description": "Todas as somas de valor_a_pagar e valor_penalidade não nulos e maior ou igual a zero"
+                "description": "Todas as somas de `valor_a_pagar` e `valor_penalidade` não nulos e maior ou igual a zero"
             },
         },
         "sumario_servico_dia": {
-            "not_null__data__sumario_servico_dia": {
-                "description": "Todos os valores da coluna data não nulos"
-            },
-            "not_null__tipo_dia__sumario_servico_dia": {
-                "description": "Todos os valores da coluna tipo_dia não nulos"
-            },
-            "not_null__consorcio__sumario_servico_dia": {
-                "description": "Todos os valores da coluna consorcio não nulos"
-            },
-            "not_null__servico__sumario_servico_dia": {
-                "description": "Todos os valores da coluna servico não nulos"
-            },
-            "not_null__viagens__sumario_servico_dia": {
-                "description": "Todos os valores da coluna viagens não nulos"
-            },
-            "not_null__km_apurada__sumario_servico_dia": {
-                "description": "Todos os valores da coluna km_apurada não nulos"
-            },
-            "not_null__km_planejada__sumario_servico_dia": {
-                "description": "Todos os valores da coluna km_planejada não nulos"
-            },
-            "not_null__perc_km_planejada__sumario_servico_dia": {
-                "description": "Todos os valores da coluna perc_km_planejada não nulos"
-            },
-            "not_null__valor_subsidio_pago__sumario_servico_dia": {
-                "description": "Todos os valores da coluna valor_subsidio_pago não nulos"
-            },
-            "dbt_utils.accepted_range__viagens__sumario_servico_dia": {
-                "description": "Todos os valores da coluna viagens maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__km_apurada__sumario_servico_dia": {
-                "description": "Todos os valores da coluna km_apurada maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__km_planejada__sumario_servico_dia": {
-                "description": "Todos os valores da coluna km_planejada maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__perc_km_planejada__sumario_servico_dia": {
-                "description": "Todos os valores da coluna perc_km_planejada maiores ou igual a zero"
-            },
-            "dbt_utils.accepted_range__valor_subsidio_pago__sumario_servico_dia": {
-                "description": "Todos os valores da coluna valor_subsidio_pago maiores ou igual a zero"
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.accepted_range": {
+                "description": "Todos os valores da coluna `{column_name}` maiores ou igual a zero"
             },
             "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart_sumario_servico_dia": {
                 "description": "Todas as datas possuem dados"
