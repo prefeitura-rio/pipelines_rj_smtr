@@ -1,5 +1,15 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.1.0] - 2025-02-04
+
+### Adicionado
+
+- Adicionados os testes do modelo `sumario_faixa_servico_dia_pagamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/401)
+
+### Corrigido
+
+- Corrigidos a descrição dos testes do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/401)
+
 ## [1.0.9] - 2025-01-23
 
 ### Alterado
