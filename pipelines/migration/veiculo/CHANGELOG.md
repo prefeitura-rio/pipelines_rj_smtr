@@ -3,6 +3,11 @@
 ## [1.1.1] - 2025-01-23
 
 ### Alterado
+- Alterados os schedules dos flows de captura de `infração` e `licenciamento_stu` para `todos os dias às 06:50` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
+## [1.1.1] - 2025-01-23
+
+### Alterado
 - Remove parâmetro `stu_data_versao` do flow `sppo_veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/395)
 
 ## [1.1.0] - 2025-01-16
