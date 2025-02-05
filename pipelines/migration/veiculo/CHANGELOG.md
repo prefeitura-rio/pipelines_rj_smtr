@@ -1,5 +1,10 @@
 # Changelog - veiculo
 
+## [1.1.2] - 2025-02-05
+
+### Alterado
+- Alterados os schedules dos flows de captura de `infracao` e `licenciamento_stu` para `todos os dias às 06:50` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/415)
+
 ## [1.1.1] - 2025-01-23
 
 ### Alterado

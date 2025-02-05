@@ -47,7 +47,7 @@ from pipelines.migration.veiculo.tasks import (
     pre_treatment_sppo_infracao,
     pre_treatment_sppo_licenciamento,
 )
-from pipelines.schedules import every_day_hour_seven
+from pipelines.schedules import every_day_hour_seven, every_day_hour_six_minute_fifty
 
 # Flows #
 
@@ -133,7 +133,7 @@ sppo_licenciamento_captura.state_handlers = [
     handler_initialize_sentry,
     handler_inject_bd_credentials,
 ]
-sppo_licenciamento_captura.schedule = every_day_hour_seven
+sppo_licenciamento_captura.schedule = every_day_hour_six_minute_fifty
 
 with Flow(
     f"SMTR: {smtr_constants.VEICULO_DATASET_ID.value} \
@@ -211,7 +211,7 @@ sppo_infracao_captura.run_config = KubernetesRun(
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 sppo_infracao_captura.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
-sppo_infracao_captura.schedule = every_day_hour_seven
+sppo_infracao_captura.schedule = every_day_hour_six_minute_fifty
 
 # flake8: noqa: E501
 with Flow(
