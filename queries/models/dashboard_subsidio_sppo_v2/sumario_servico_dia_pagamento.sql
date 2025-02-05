@@ -1,21 +1,17 @@
-{% if var("start_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
-    {{ config(enabled=false) }}
-{% elif var("end_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
+{% set is_disabled = var("start_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
+
+{% if var("end_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
     {% set end_date = (
         modules.datetime.datetime.strptime(
             var("DATA_SUBSIDIO_V14_INICIO"), "%Y-%m-%d"
         )
         - modules.datetime.timedelta(days=1)
     ).strftime("%Y-%m-%d") %}
-    {{
-        config(
-            materialized="incremental",
-            partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-            incremental_strategy="insert_overwrite",
-        )
-    }}
-{% elif var("end_date") < var("DATA_SUBSIDIO_V14_INICIO") %}
-    {% set end_date = var("end_date") %}
+{% else %} {% set end_date = var("end_date") %}
+{% endif %}
+
+{% if is_disabled %} {{ config(enabled=false) }}
+{% else %}
     {{
         config(
             materialized="incremental",
