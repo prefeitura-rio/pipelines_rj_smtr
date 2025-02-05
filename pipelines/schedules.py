@@ -177,6 +177,18 @@ every_5_minutes = Schedule(
     ]
 )
 
+every_day_hour_six_minute_fifty = Schedule(
+    clocks=[
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(2025, 2, 1, 6, 50, 0, tzinfo=timezone(constants.TIMEZONE.value)),
+            labels=[
+                emd_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        ),
+    ]
+)
+
 every_day_hour_seven = Schedule(
     clocks=[
         IntervalClock(
