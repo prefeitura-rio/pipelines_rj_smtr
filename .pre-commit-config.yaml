@@ -1,3 +1,5 @@
+ci:
+    autofix_prs: false
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
@@ -24,3 +26,9 @@ repos:
     rev: 6.0.0
     hooks:
     - id: flake8
+-   repo: https://github.com/tconbeer/sqlfmt
+    rev: v0.23.2
+    hooks:
+    -   id: sqlfmt
+        language_version: python
+        additional_dependencies: ['.[jinjafmt]']
