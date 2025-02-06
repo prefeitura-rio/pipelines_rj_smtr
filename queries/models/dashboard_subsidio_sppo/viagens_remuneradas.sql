@@ -44,16 +44,28 @@ with
             and (id_tipo_trajeto = 0 or id_tipo_trajeto is null)
     ),
     viagens_planejadas as (
-        select
-            feed_start_date,
-            servico,
-            tipo_dia,
-            viagens_planejadas,
-            partidas_ida,
-            partidas_volta,
-            tipo_os,
-        from {{ ref("ordem_servico_gtfs") }}
+        {% if var("data_versao_gtfs") < var("GTFS_DATA_MODELO_OS") %}
+            select
+                feed_start_date,
+                servico,
+                tipo_dia,
+                viagens_planejadas,
+                partidas_ida,
+                partidas_volta,
+                tipo_os,
+            from {{ ref("ordem_servico_gtfs") }}
         -- from `rj-smtr.gtfs.ordem_servico`
+        {% else %}
+            select
+                feed_start_date,
+                tipo_os,
+                servico,
+                tipo_dia,
+                partidas_ida_dia as partidas_ida,
+                partidas_volta_dia as partidas_volta,
+                viagens_dia as viagens_planejadas,
+            from {{ ref("ordem_servico_faixa_horaria") }}
+        {% endif %}
         where feed_start_date in ('{{ feed_start_dates|join("', '") }}')
     ),
     data_versao_efetiva as (

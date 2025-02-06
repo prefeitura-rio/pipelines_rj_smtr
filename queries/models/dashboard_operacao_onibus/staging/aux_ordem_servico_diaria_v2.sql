@@ -4,9 +4,30 @@
 with
     feed_info as (select * from `rj-smtr`.`gtfs`.`feed_info`),
     ordem_servico_pivot as (
-        select *
-        from
-            {{ ref("ordem_servico_gtfs") }} pivot (
+        {% if var("data_versao_gtfs") < var("GTFS_DATA_MODELO_OS") %}
+            select * from {{ ref("ordem_servico_gtfs") }}
+        {% else %}
+            select
+                feed_version,
+                feed_start_date,
+                feed_end_date,
+                tipo_os,
+                servico,
+                vista,
+                consorcio,
+                extensao_ida,
+                extensao_volta,
+                tipo_dia,
+                horario_inicio,
+                horario_fim,
+                partidas_ida_dia as partidas_ida,
+                partidas_volta_dia as partidas_volta,
+                viagens_dia as viagens_planejadas,
+                sum(quilometragem) as distancia_total_planejada,
+            from {{ ref("ordem_servico_faixa_horaria") }}
+            group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+        {% endif %}
+            pivot (
                 max(partidas_ida) as partidas_ida,
                 max(partidas_volta) as partidas_volta,
                 max(viagens_planejadas) as viagens_planejadas,
