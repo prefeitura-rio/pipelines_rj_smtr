@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Altera os dias `2025-01-18`, `2025-01-19`, `2025-01-20`,  `2025-01-25` e `2025-01-26` para tipo_dia `Verão` no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Altera os dias `2025-01-18`, `2025-01-19`, `2025-01-20`,  `2025-01-25` e `2025-01-26` para tipo_dia `Verão` no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/416)
 
 ## [9.1.6] - 2025-01-23
 
