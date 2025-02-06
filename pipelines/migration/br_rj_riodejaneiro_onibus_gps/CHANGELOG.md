@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrige as descrições de testes do modelo `gps_sppo (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/401)
+- Corrige as descrições de testes do modelo `gps_sppo` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/401)
 
 ## [1.0.3] - 2024-10-29
 

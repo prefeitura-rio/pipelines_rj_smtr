@@ -8,7 +8,7 @@
 
 ### Corrigido
 
-- Corrigidos a descrição dos testes do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/401)
+- Corrigidas e refatoradas as descrições dos testes do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/401)
 
 ## [1.0.9] - 2025-01-23
 
