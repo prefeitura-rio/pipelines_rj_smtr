@@ -9,6 +9,7 @@ from prefect import Parameter, case, task
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.tasks.control_flow import merge
+from prefect.tasks.core.operators import GreaterThanOrEqual
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
 
@@ -51,6 +52,7 @@ from pipelines.tasks import (
     get_scheduled_timestamp,
     log_discord,
     parse_timestamp_to_string,
+    remove_key_from_dict,
     task_value_is_none,
 )
 from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt_tests
@@ -152,7 +154,20 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
             filename = parse_timestamp_to_string(data_versao_gtfs_task)
 
-            table_ids = task(lambda: list(constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys()))()
+            gte = GreaterThanOrEqual()
+            modelo_novo_os = gte.run(data_versao_gtfs_str, constants.GTFS_DATA_MODELO_OS.value)
+            with case(modelo_novo_os, False):
+                table_ids_false = task(
+                    lambda: list(constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys())
+                )()
+
+            with case(modelo_novo_os, True):
+                dict_gtfs = remove_key_from_dict(
+                    constants.GTFS_TABLE_CAPTURE_PARAMS.value, "ordem_servico"
+                ).set_upstream(task=modelo_novo_os)
+                table_ids_true = task(lambda x: list(x.keys()))(dict_gtfs)
+
+            table_ids = merge(table_ids_false, table_ids_true)
 
             local_filepaths = create_local_partition_path.map(
                 dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
