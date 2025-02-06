@@ -3,6 +3,7 @@
 Utils for gtfs
 """
 import io
+import re
 
 import openpyxl as xl
 import pandas as pd
@@ -204,20 +205,8 @@ def processa_ordem_servico(
         None
     """
 
-    # if (
-    #     len([sheet for sheet in sheetnames if "ANEXO I " in sheet]) != 1
-    #     and regular_sheet_index is None
-    # ):
-    #     raise Exception(
-    #         "More than 1 regular sheet in the file. Please specify the regular sheet index."
-    #     )
-
-    regular_sheet_index = next((i for i, name in enumerate(sheetnames) if "ANEXO I" in name), None)
-
-    quadro_geral = pd.DataFrame()
-
-    log(f"########## {sheetnames[regular_sheet_index]} ##########")
-    quadro = pd.read_excel(file_bytes, sheet_name=sheetnames[regular_sheet_index], dtype=object)
+    sheets = [(i, name) for i, name in enumerate(sheetnames) if "ANEXO I " in name]
+    sheets_data = []
 
     columns = {
         "Serviço": "servico",
@@ -252,47 +241,53 @@ def processa_ordem_servico(
         "tipo_os": "tipo_os",
     }
 
-    quadro = quadro.rename(columns=columns)
+    for sheet_index, sheet_name in sheets:
+        log(f"########## {sheet_name} ##########")
+        tipo_os = re.search(r"\((.*?)\)", sheet_name).group(1)
 
-    quadro["servico"] = quadro["servico"].astype(str)
-    quadro["servico"] = quadro["servico"].str.extract(r"([A-Z]+)", expand=False).fillna(
-        ""
-    ) + quadro["servico"].str.extract(r"([0-9]+)", expand=False).fillna("")
+        quadro = pd.read_excel(file_bytes, sheet_name=sheet_name, dtype=object)
 
-    if "tipo_os" not in quadro.columns:
-        quadro["tipo_os"] = "Regular"
+        quadro = quadro.rename(columns=columns)
 
-    quadro = quadro[list(set(columns.values()))]
-    quadro = quadro.replace("—", 0)
-    quadro = quadro.reindex(columns=list(set(columns.values())))
+        quadro["servico"] = quadro["servico"].astype(str)
+        quadro["servico"] = quadro["servico"].str.extract(r"([A-Z]+)", expand=False).fillna(
+            ""
+        ) + quadro["servico"].str.extract(r"([0-9]+)", expand=False).fillna("")
 
-    hora_cols = [coluna for coluna in quadro.columns if "horario" in coluna]
-    quadro[hora_cols] = quadro[hora_cols].astype(str)
+        quadro["tipo_os"] = tipo_os
 
-    for hora_col in hora_cols:
-        quadro[hora_col] = quadro[hora_col].apply(normalizar_horario)
+        quadro = quadro[list(set(columns.values()))]
+        quadro = quadro.replace("—", 0)
+        quadro = quadro.reindex(columns=list(set(columns.values())))
 
-    cols = [
-        coluna
-        for coluna in quadro.columns
-        if "km" in coluna or "viagens" in coluna or "partida" in coluna
-    ]
+        hora_cols = [coluna for coluna in quadro.columns if "horario" in coluna]
+        quadro[hora_cols] = quadro[hora_cols].astype(str)
 
-    for col in cols:
-        quadro[col] = quadro[col].astype(str).apply(convert_to_float).astype(float).fillna(0)
+        for hora_col in hora_cols:
+            quadro[hora_col] = quadro[hora_col].apply(normalizar_horario)
 
-    extensao_cols = ["extensao_ida", "extensao_volta"]
-    quadro[extensao_cols] = quadro[extensao_cols].astype(str)
-    for col in extensao_cols:
-        quadro[col] = quadro[col].str.replace(".", "", regex=False)
-    quadro[extensao_cols] = quadro[extensao_cols].apply(pd.to_numeric)
+        cols = [
+            coluna
+            for coluna in quadro.columns
+            if "km" in coluna or "viagens" in coluna or "partida" in coluna
+        ]
 
-    quadro["extensao_ida"] = quadro["extensao_ida"] / 1000
-    quadro["extensao_volta"] = quadro["extensao_volta"] / 1000
+        for col in cols:
+            quadro[col] = quadro[col].astype(str).apply(convert_to_float).astype(float).fillna(0)
 
-    quadro_geral = pd.concat([quadro_geral, quadro])
+        extensao_cols = ["extensao_ida", "extensao_volta"]
+        quadro[extensao_cols] = quadro[extensao_cols].astype(str)
+        for col in extensao_cols:
+            quadro[col] = quadro[col].str.replace(".", "", regex=False)
+        quadro[extensao_cols] = quadro[extensao_cols].apply(pd.to_numeric)
 
-    # Verificações
+        quadro["extensao_ida"] = quadro["extensao_ida"] / 1000
+        quadro["extensao_volta"] = quadro["extensao_volta"] / 1000
+
+        sheets_data.append(quadro)
+
+    quadro_geral = pd.concat(sheets_data, ignore_index=True)
+
     columns_in_dataframe = set(quadro_geral.columns)
     columns_in_values = set(list(columns.values()))
 
@@ -308,20 +303,6 @@ def processa_ordem_servico(
 
     if not all_columns_present or not no_duplicate_columns:
         raise Exception("Missing or duplicated columns in ordem_servico")
-
-    # quadro_test = quadro_geral.copy()
-    # quadro_test["km_test"] = round(
-    #     (quadro_geral["partidas_volta_du"] * quadro_geral["extensao_volta"])
-    #     + (quadro_geral["partidas_ida_du"] * quadro_geral["extensao_ida"]),
-    #     2,
-    # )
-    # quadro_test["dif"] = quadro_test["km_test"] - quadro_test["km_dia_util"]
-
-    # if not (
-    #     round(abs(quadro_test["dif"].max()), 2) <= 0.01
-    #     and round(abs(quadro_test["dif"].min()), 2) <= 0.01
-    # ):
-    #     raise Exception("failed to validate km_test and km_dia_util")
 
     local_file_path = list(filter(lambda x: "ordem_servico" in x, local_filepath))[0]
     quadro_geral_csv = quadro_geral.to_csv(index=False)
@@ -351,13 +332,9 @@ def processa_ordem_servico_trajeto_alternativo(
     Raises:
         Exception: If there are missing or duplicated columns in 'Trajetos Alternativos'.
     """
-    # Pre-tratamento para "Trajeto Alternativo"
-    sheet = next((i for i, name in enumerate(sheetnames) if "ANEXO II" in name), None)
-    log(f"########## {sheetnames[sheet]} ##########")
 
-    ordem_servico_trajeto_alternativo = pd.read_excel(
-        file_bytes, sheet_name=sheetnames[sheet], dtype=object
-    )
+    sheets = [(i, name) for i, name in enumerate(sheetnames) if "ANEXO II " in name]
+    sheets_data = []
 
     alt_columns = {
         "Serviço": "servico",
@@ -375,12 +352,17 @@ def processa_ordem_servico_trajeto_alternativo(
         "tipo_os": "tipo_os",
     }
 
-    ordem_servico_trajeto_alternativo = ordem_servico_trajeto_alternativo.rename(
-        columns=alt_columns
-    )
+    for sheet_index, sheet_name in sheets:
+        log(f"########## {sheet_name} ##########")
+        tipo_os = re.search(r"\((.*?)\)", sheet_name).group(1)
 
-    if "tipo_os" not in ordem_servico_trajeto_alternativo.columns:
-        ordem_servico_trajeto_alternativo["tipo_os"] = "Regular"
+        df = pd.read_excel(file_bytes, sheet_name=sheet_name, dtype=object)
+
+        df = df.rename(columns=alt_columns)
+        df["tipo_os"] = tipo_os
+        sheets_data.append(df)
+
+    ordem_servico_trajeto_alternativo = pd.concat(sheets_data, ignore_index=True)
 
     columns_in_dataframe = set(ordem_servico_trajeto_alternativo.columns)
     columns_in_values = set(list(alt_columns.values()))
@@ -439,30 +421,42 @@ def download_file(file_link, drive_service):
 def processa_ordem_servico_faixa_horaria(
     sheetnames, file_bytes, local_filepath, raw_filepaths, data_versao_gtfs
 ):
-    """
-    Process 'Faixa Horária' from an Excel file.
+    if data_versao_gtfs >= constants.GTFS_DATA_MODELO_OS.value:
+        sheets = [(i, name) for i, name in enumerate(sheetnames) if "ANEXO I " in name]
+    else:
+        sheets = [(i, name) for i, name in enumerate(sheetnames) if "ANEXO III " in name]
+    sheets_data = []
 
-    Args:
-        sheetnames (list): List of sheet names in the Excel file.
-        file_bytes (bytes): Bytes of the Excel file.
-        local_filepath (str): Local file path.
-        raw_filepaths (list): List of raw file paths.
+    columns = {
+        "Serviço": "servico",
+        "Vista": "vista",
+        "Consórcio": "consorcio",
+        "Extensão de Ida": "extensao_ida",
+        "Extensão de Volta": "extensao_volta",
+        "Horário Inicial Dias Úteis": "horario_inicio_dias_uteis",
+        "Horário Fim Dias Úteis": "horario_fim_dias_uteis",
+        "Partidas Ida - Dias Úteis": "partidas_ida_dias_uteis",
+        "Partidas Volta - Dias Úteis": "partidas_volta_dias_uteis",
+        "Viagens - Dias Úteis": "viagens_dias_uteis",
+        "Horário Inicial Sábado": "horario_inicio_sabado",
+        "Horário Fim Sábado": "horario_fim_sabado",
+        "Partidas Ida - Sábado": "partidas_ida_sabado",
+        "Partidas Volta - Sábado": "partidas_volta_sabado",
+        "Viagens - Sábado": "viagens_sabado",
+        "Horário Inicial Domingo": "horario_inicio_domingo",
+        "Horário Fim Domingo": "horario_fim_domingo",
+        "Partidas Ida - Domingo": "partidas_ida_domingo",
+        "Partidas Volta - Domingo": "partidas_volta_domingo",
+        "Viagens - Domingo": "viagens_domingo",
+        "Horário Inicial Ponto Facultativo": "horario_inicio_ponto_facultativo",
+        "Horário Fim Ponto Facultativo": "horario_fim_ponto_facultativo",
+        "Partidas Ida - Ponto Facultativo": "partidas_ida_ponto_facultativo",
+        "Partidas Volta - Ponto Facultativo": "partidas_volta_ponto_facultativo",
+        "Viagens - Ponto Facultativo": "viagens_ponto_facultativo",
+        "tipo_os": "tipo_os",
+    }
 
-    Returns:
-        None
-
-    Raises:
-        Exception: If there are missing or duplicated columns in 'Faixa Horária'.
-    """
-    # Pre-tratamento para "Faixa Horária"
-    sheet = next((i for i, name in enumerate(sheetnames) if "ANEXO III" in name), None)
-    log(f"########## {sheetnames[sheet]} ##########")
-
-    ordem_servico_faixa_horaria = pd.read_excel(
-        file_bytes, sheet_name=sheetnames[sheet], dtype=object
-    )
-
-    metricas = ["Partidas", "Quilometragem", "KM"]
+    metricas = ["Partidas Ida", "Partidas Volta", "Quilometragem", "KM"]
     dias = ["Dias Úteis", "Sábado", "Domingo", "Ponto Facultativo"]
     formatos = ["{metrica} entre {intervalo} — {dia}", "{metrica} entre {intervalo} ({dia})"]
 
@@ -489,7 +483,13 @@ def processa_ordem_servico_faixa_horaria(
 
     fh_columns = {
         formato.format(metrica=metrica, intervalo=intervalo, dia=dia): unidecode(
-            ("quilometragem" if metrica in ["Quilometragem", "KM"] else "partidas")
+            (
+                "quilometragem"
+                if metrica in ["Quilometragem", "KM"]
+                else "partidas_ida"
+                if metrica == "Partidas Ida"
+                else "partidas_volta"
+            )
             + f"_entre_{intervalo.replace(' ', '_').replace('(', '').replace(')', '').replace('-', '_')}_{dia.lower().replace(' ', '_')}"  # noqa
         )
         for metrica in metricas
@@ -497,34 +497,49 @@ def processa_ordem_servico_faixa_horaria(
         for dia in dias
         for formato in formatos
     }
-    fh_columns["Serviço"] = "servico"
-    fh_columns["Consórcio"] = "consorcio"
-    fh_columns["tipo_os"] = "tipo_os"
 
-    ordem_servico_faixa_horaria.columns = (
-        ordem_servico_faixa_horaria.columns.str.replace("\n", " ")
-        .str.strip()
-        .str.replace(r"\s+", " ", regex=True)
-    )
+    if data_versao_gtfs >= constants.GTFS_DATA_MODELO_OS.value:
+        columns.update(fh_columns)
+    else:
+        fh_columns["Serviço"] = "servico"
+        fh_columns["Consórcio"] = "consorcio"
+        fh_columns["tipo_os"] = "tipo_os"
+        columns = fh_columns.copy()
 
-    ordem_servico_faixa_horaria = ordem_servico_faixa_horaria.rename(columns=fh_columns)
+    for sheet_index, sheet_name in sheets:
+        log(f"########## {sheet_name} ##########")
+        tipo_os = re.search(r"\((.*?)\)", sheet_name).group(1)
 
-    for col in ordem_servico_faixa_horaria.columns:
-        if "quilometragem" in col:
-            ordem_servico_faixa_horaria[col] = (
-                ordem_servico_faixa_horaria[col].astype(str).apply(convert_to_float).astype(float)
-            )
+        df = pd.read_excel(file_bytes, sheet_name=sheet_name, dtype=object)
 
-    if "tipo_os" not in ordem_servico_faixa_horaria.columns:
-        ordem_servico_faixa_horaria["tipo_os"] = "Regular"
+        df.columns = (
+            df.columns.str.replace("\n", " ").str.strip().str.replace(r"\s+", " ", regex=True)
+        )
+        df = df.rename(columns=lambda x: x.replace("Dia Útil", "Dias Úteis"))
+        df = df.rename(columns=columns)
 
-    aux_columns_in_dataframe = set(ordem_servico_faixa_horaria.columns)
-    columns_in_values = set(list(fh_columns.values()))
-    aux_missing_columns = columns_in_values - aux_columns_in_dataframe
+        for col in df.columns:
+            if "quilometragem" in col or "viagens" in col or "partidas" in col:
+                df[col] = df[col].astype(str).replace("—", 0)
+            if "quilometragem" in col:
+                df[col] = df[col].astype(str).apply(convert_to_float).astype(float)
+            if "extensao_" in col:
+                df[col] = df[col].apply(pd.to_numeric)
+                df[col] = df[col] / 1000
 
-    for coluna in aux_missing_columns:
-        if "ponto_facultativo" in coluna:
-            ordem_servico_faixa_horaria[coluna] = 0
+        df["tipo_os"] = tipo_os
+
+        aux_columns_in_dataframe = set(df.columns)
+        columns_in_values = set(list(columns.values()))
+        aux_missing_columns = columns_in_values - aux_columns_in_dataframe
+
+        for coluna in aux_missing_columns:
+            if "ponto_facultativo" in coluna:
+                df[coluna] = 0
+
+        sheets_data.append(df)
+
+    ordem_servico_faixa_horaria = pd.concat(sheets_data, ignore_index=True)
 
     columns_in_dataframe = set(ordem_servico_faixa_horaria.columns)
     missing_columns = columns_in_values - columns_in_dataframe
