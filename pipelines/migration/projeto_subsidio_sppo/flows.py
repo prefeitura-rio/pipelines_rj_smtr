@@ -3,7 +3,7 @@
 """
 Flows for projeto_subsidio_sppo
 
-DBT: 2025-01-31
+DBT: 2025-02-05
 """
 
 from prefect import Parameter, case, task
