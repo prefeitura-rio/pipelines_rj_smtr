@@ -12,41 +12,39 @@ with
                 ),
                 last_day(feed_start_date, month)
             ) as data_fim
-        from
-            (
-                select distinct feed_start_date
-                from
-                    {% if var("data_versao_gtfs") < var("GTFS_DATA_MODELO_OS") %}
-                        {{ ref("ordem_servico_gtfs") }}
-                    {% else %} {{ ref("ordem_servico_faixa_horaria") }}
-                    {% endif %}
-            )
+        from (select distinct feed_start_date from {{ ref("feed_info_gtfs") }})
+    ),
+    ordem_servico as (
+        select *
+        from `rj-smtr.gtfs.ordem_servico`
+        where feed_start_date < date('{{ var("GTFS_DATA_MODELO_OS") }}')
+        union all
+        select
+            feed_version,
+            feed_start_date,
+            feed_end_date,
+            tipo_os,
+            servico,
+            vista,
+            consorcio,
+            horario_inicio,
+            horario_fim,
+            extensao_ida,
+            extensao_volta,
+            partidas_ida_dia as partidas_ida,
+            partidas_volta_dia as partidas_volta,
+            viagens_dia as viagens_planejadas,
+            sum(quilometragem) as distancia_total_planejada,
+            tipo_dia,
+            versao_modelo
+        from {{ ref("ordem_servico_faixa_horaria") }}
+        where feed_start_date >= date('{{ var("GTFS_DATA_MODELO_OS") }}')
+        group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17
     ),
     ordem_servico_pivot as (
-        {% if var("data_versao_gtfs") < var("GTFS_DATA_MODELO_OS") %}
-            select * from {{ ref("ordem_servico_gtfs") }}
-        {% else %}
-            select
-                feed_version,
-                feed_start_date,
-                feed_end_date,
-                tipo_os,
-                servico,
-                vista,
-                consorcio,
-                extensao_ida,
-                extensao_volta,
-                tipo_dia,
-                horario_inicio,
-                horario_fim,
-                partidas_ida_dia as partidas_ida,
-                partidas_volta_dia as partidas_volta,
-                viagens_dia as viagens_planejadas,
-                sum(quilometragem) as distancia_total_planejada,
-            from {{ ref("ordem_servico_faixa_horaria") }}
-            group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
-        {% endif %}
-            pivot (
+        select *
+        from
+            ordem_servico pivot (
                 max(partidas_ida) as partidas_ida,
                 max(partidas_volta) as partidas_volta,
                 max(viagens_planejadas) as viagens_planejadas,

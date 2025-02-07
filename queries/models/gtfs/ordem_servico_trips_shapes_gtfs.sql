@@ -182,7 +182,7 @@ select
     sentido,
     case
         when feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
-        then fh.partidas_ida + fh.partidas_volta
+        then fh.partidas
         else null
     end as partidas_total_planejada,
     distancia_planejada,

@@ -54,17 +54,18 @@ WITH
     {% if intervalo.inicio != '24' %}
     SAFE_CAST(JSON_VALUE(content, "$.partidas_ida_entre_{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h_{{ dia|lower }}") AS STRING) AS {{ 'partidas_ida_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_' ~ dia|lower }},
     SAFE_CAST(JSON_VALUE(content, "$.partidas_volta_entre_{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h_{{ dia|lower }}") AS STRING) AS {{ 'partidas_volta_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_' ~ dia|lower }},
+    SAFE_CAST(JSON_VALUE(content, "$.partidas_entre_{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h_{{ dia|lower }}") AS STRING) AS {{ 'partidas_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_' ~ dia|lower }},
     SAFE_CAST(JSON_VALUE(content, "$.quilometragem_entre_{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h_{{ dia|lower }}") AS STRING) AS {{ 'quilometragem_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_' ~ dia|lower }},
     {% else %}
     SAFE_CAST(JSON_VALUE(content, "$.partidas_ida_entre_{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h_dia_seguinte_{{ dia|lower }}") AS STRING) AS {{ 'partidas_ida_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_dia_seguinte_' ~ dia|lower }},
     SAFE_CAST(JSON_VALUE(content, "$.partidas_volta_entre_{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h_dia_seguinte_{{ dia|lower }}") AS STRING) AS {{ 'partidas_volta_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_dia_seguinte_' ~ dia|lower }},
+    SAFE_CAST(JSON_VALUE(content, "$.partidas_entre_{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h_dia_seguinte_{{ dia|lower }}") AS STRING) AS {{ 'partidas_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_dia_seguinte_' ~ dia|lower }},
     SAFE_CAST(JSON_VALUE(content, "$.quilometragem_entre_{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h_dia_seguinte_{{ dia|lower }}") AS STRING) AS {{ 'quilometragem_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_dia_seguinte_' ~ dia|lower }},
     {% endif %}
     {% endfor %}
     {% endfor %}
   FROM
     {{ source("br_rj_riodejaneiro_gtfs_staging", "ordem_servico_faixa_horaria") }}
-    -- `rj-smtr-dev`.`br_rj_riodejaneiro_gtfs_staging`.`ordem_servico_faixa_horaria`
   {% if is_incremental() -%}
   WHERE
     data_versao = '{{ var("data_versao_gtfs") }}'
@@ -86,10 +87,10 @@ WITH
         WHEN column_name LIKE '%ponto_facultativo%' THEN 'Ponto Facultativo'
       END AS tipo_dia,
       MAX(CASE
-          WHEN column_name LIKE '%horario_inicio%' THEN SAFE_CAST(value AS STRING)
+          WHEN column_name LIKE '%horario_inicio%' THEN NULLIF(SAFE_CAST(value AS STRING),"—")
       END) AS horario_inicio,
       MAX(CASE
-          WHEN column_name LIKE '%horario_fim%' THEN SAFE_CAST(value AS STRING)
+          WHEN column_name LIKE '%horario_fim%' THEN NULLIF(SAFE_CAST(value AS STRING),"—")
       END) AS horario_fim,
       MAX(CASE
           WHEN column_name LIKE '%partidas_ida_%' AND NOT column_name LIKE '%entre%'
@@ -103,7 +104,7 @@ WITH
           WHEN column_name LIKE '%viagens_%' THEN SAFE_CAST(value AS FLOAT64)
       END) AS viagens_dia
     FROM dados
-    UNPIVOT (
+    UNPIVOT INCLUDE NULLS(
       value FOR column_name IN (
         {% for dia in dias %}
         horario_inicio_{{ dia|lower }},
@@ -159,21 +160,27 @@ WITH
           ELSE 0
       END) AS partidas_volta,
       SUM(CASE
+        WHEN column_name LIKE '%partidas_entre%' THEN SAFE_CAST(value AS INT64)
+        ELSE 0
+      END) AS partidas,
+      SUM(CASE
           WHEN column_name LIKE '%quilometragem%' THEN SAFE_CAST(value AS FLOAT64)
           ELSE 0
       END) AS quilometragem
     FROM dados
-    UNPIVOT (
+    UNPIVOT INCLUDE NULLS(
       value FOR column_name IN (
         {% for dia in dias %}
         {% for intervalo in intervalos %}
         {% if intervalo.inicio != '24' %}
         {{ 'partidas_ida_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_' ~ dia|lower }},
         {{ 'partidas_volta_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_' ~ dia|lower }},
+        {{ 'partidas_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_' ~ dia|lower }},
         {{ 'quilometragem_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_' ~ dia|lower }},
         {% else %}
         {{ 'partidas_ida_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_dia_seguinte_' ~ dia|lower }},
         {{ 'partidas_volta_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_dia_seguinte_' ~ dia|lower }},
+        {{ 'partidas_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_dia_seguinte_' ~ dia|lower }},
         {{ 'quilometragem_entre_' ~ intervalo.inicio ~ 'h_e_' ~ intervalo.fim ~ 'h_dia_seguinte_' ~ dia|lower }}
         {% endif %}
         {% endfor %}
@@ -191,6 +198,10 @@ WITH
       df.faixa_horaria_fim,
       df.partidas_ida,
       df.partidas_volta,
+      CASE
+        WHEN date('{{ var("data_versao_gtfs") }}') < date('{{var("GTFS_DATA_MODELO_OS") }}') THEN df.partidas
+        ELSE df.partidas_ida + df.partidas_volta
+      END as partidas,
       df.quilometragem
     FROM dados_dia as dd
     INNER JOIN dados_faixa as df

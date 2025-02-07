@@ -3,6 +3,7 @@
         materialized="incremental",
         partition_by={"field": "data", "data_type": "date", "granularity": "day"},
         incremental_strategy="insert_overwrite",
+        enabled=false,
     )
 }}
 
@@ -17,11 +18,8 @@ with
                 -- rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva AS sdve
                 using (data)
             left join
-                {% if var("data_versao_gtfs") < var("GTFS_DATA_MODELO_OS") %}
-                    {{ ref("ordem_servico_gtfs") }} as o
+                {{ ref("ordem_servico_gtfs") }} as o
                 -- rj-smtr.gtfs.ordem_servico AS o
-                {% else %} {{ ref("ordem_servico_faixa_horaria") }} as o
-                {% endif %}
                 on v.feed_start_date = o.feed_start_date
                 and v.servico = o.servico
                 and sdve.tipo_os = o.tipo_os
