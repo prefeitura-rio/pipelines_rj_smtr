@@ -456,7 +456,7 @@ def processa_ordem_servico_faixa_horaria(
         "tipo_os": "tipo_os",
     }
 
-    metricas = ["Partidas Ida", "Partidas Volta", "Quilometragem", "KM"]
+    metricas = ["Partidas", "Partidas Ida", "Partidas Volta", "Quilometragem", "KM"]
     dias = ["Dias Úteis", "Sábado", "Domingo", "Ponto Facultativo"]
     formatos = ["{metrica} entre {intervalo} — {dia}", "{metrica} entre {intervalo} ({dia})"]
 
@@ -486,9 +486,13 @@ def processa_ordem_servico_faixa_horaria(
             (
                 "quilometragem"
                 if metrica in ["Quilometragem", "KM"]
-                else "partidas_ida"
-                if metrica == "Partidas Ida"
-                else "partidas_volta"
+                else (
+                    "partidas_ida"
+                    if metrica == "Partidas Ida"
+                    else "partidas_volta"
+                    if metrica == "Partidas Volta"
+                    else "partidas"
+                )
             )
             + f"_entre_{intervalo.replace(' ', '_').replace('(', '').replace(')', '').replace('-', '_')}_{dia.lower().replace(' ', '_')}"  # noqa
         )
