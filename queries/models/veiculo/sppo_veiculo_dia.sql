@@ -1,5 +1,6 @@
 -- depends_on: {{ ref('licenciamento_stu_staging') }}
 -- depends_on: {{ ref("infracao") }}
+-- depends_on: {{ ref("infracao_staging") }}
 {{
     config(
         materialized="incremental",
