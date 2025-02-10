@@ -155,7 +155,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             filename = parse_timestamp_to_string(data_versao_gtfs_task)
 
             gte = GreaterThanOrEqual()
-            modelo_novo_os = gte.run(data_versao_gtfs_str, constants.GTFS_DATA_MODELO_OS.value)
+            modelo_novo_os = gte.run(data_versao_gtfs_str, constants.DATA_GTFS_V2_INICIO.value)
             with case(modelo_novo_os, False):
                 table_ids_false = task(
                     lambda: list(constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys())

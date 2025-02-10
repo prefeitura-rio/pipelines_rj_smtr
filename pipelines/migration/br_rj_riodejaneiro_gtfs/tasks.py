@@ -222,7 +222,7 @@ def get_raw_gtfs_files(
     sheetnames = [name for name in sheetnames if "ANEXO" in name]
     log(f"tabs encontradas na planilha Controle OS: {sheetnames}")
 
-    data_novo_modelo = datetime.strptime(constants.GTFS_DATA_MODELO_OS.value, "%Y-%m-%d").date()
+    data_novo_modelo = datetime.strptime(constants.DATA_GTFS_V2_INICIO.value, "%Y-%m-%d").date()
     data_versao = datetime.strptime(data_versao_gtfs, "%Y-%m-%d").date()
     dict_gtfs = constants.GTFS_TABLE_CAPTURE_PARAMS.value
     if data_versao >= data_novo_modelo:

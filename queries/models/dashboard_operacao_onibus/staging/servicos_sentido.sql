@@ -10,14 +10,14 @@ with
                 where
                     tipo_dia = "Dia Útil"
                     and viagens_planejadas = 0
-                    and feed_start_date < date('{{ var("GTFS_DATA_MODELO_OS") }}')
+                    and feed_start_date < date('{{ var("DATA_GTFS_V2_INICIO") }}')
                 union all
                 select distinct servico
                 from {{ ref("ordem_servico_faixa_horaria") }}
                 where
                     tipo_dia = "Dia Útil"
                     and viagens_dia = 0
-                    and feed_start_date >= date('{{ var("GTFS_DATA_MODELO_OS") }}')
+                    and feed_start_date >= date('{{ var("DATA_GTFS_V2_INICIO") }}')
             )
     ),
     servicos as (

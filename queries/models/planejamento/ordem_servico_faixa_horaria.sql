@@ -199,7 +199,7 @@ WITH
       df.partidas_ida,
       df.partidas_volta,
       CASE
-        WHEN date('{{ var("data_versao_gtfs") }}') < date('{{var("GTFS_DATA_MODELO_OS") }}') THEN df.partidas
+        WHEN date('{{ var("data_versao_gtfs") }}') < date('{{var("DATA_GTFS_V2_INICIO") }}') THEN df.partidas
         ELSE df.partidas_ida + df.partidas_volta
       END as partidas,
       df.quilometragem

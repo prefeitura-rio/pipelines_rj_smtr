@@ -17,7 +17,7 @@ with
     ordem_servico as (
         select *
         from `rj-smtr.gtfs.ordem_servico`
-        where feed_start_date < date('{{ var("GTFS_DATA_MODELO_OS") }}')
+        where feed_start_date < date('{{ var("DATA_GTFS_V2_INICIO") }}')
         union all
         select
             feed_version,
@@ -38,7 +38,7 @@ with
             tipo_dia,
             versao_modelo
         from {{ ref("ordem_servico_faixa_horaria") }}
-        where feed_start_date >= date('{{ var("GTFS_DATA_MODELO_OS") }}')
+        where feed_start_date >= date('{{ var("DATA_GTFS_V2_INICIO") }}')
         group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17
     ),
     ordem_servico_pivot as (

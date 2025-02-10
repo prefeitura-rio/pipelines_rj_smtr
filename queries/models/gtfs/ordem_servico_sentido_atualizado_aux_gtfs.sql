@@ -29,7 +29,7 @@ with
     ),
     -- 2. Busca principais informações na Ordem de Serviço (OS)
     ordem_servico as (
-        {% if var("data_versao_gtfs") < var("GTFS_DATA_MODELO_OS") %}
+        {% if var("data_versao_gtfs") < var("DATA_GTFS_V2_INICIO") %}
             select
                 * except (horario_inicio, horario_fim),
                 horario_inicio as inicio_periodo,

@@ -2,7 +2,7 @@
 
 with
     ordem_servico as (
-        {% if var("data_versao_gtfs") < var("GTFS_DATA_MODELO_OS") %}
+        {% if var("data_versao_gtfs") < var("DATA_GTFS_V2_INICIO") %}
             select
                 * except (horario_inicio, horario_fim),
                 parse_time("%H:%M:%S", lpad(horario_inicio, 8, '0')) as horario_inicio,

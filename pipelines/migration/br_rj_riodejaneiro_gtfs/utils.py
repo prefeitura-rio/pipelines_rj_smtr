@@ -421,7 +421,7 @@ def download_file(file_link, drive_service):
 def processa_ordem_servico_faixa_horaria(
     sheetnames, file_bytes, local_filepath, raw_filepaths, data_versao_gtfs
 ):
-    if data_versao_gtfs >= constants.GTFS_DATA_MODELO_OS.value:
+    if data_versao_gtfs >= constants.DATA_GTFS_V2_INICIO.value:
         sheets = [(i, name) for i, name in enumerate(sheetnames) if "ANEXO I " in name]
     else:
         sheets = [(i, name) for i, name in enumerate(sheetnames) if "ANEXO III " in name]
@@ -502,7 +502,7 @@ def processa_ordem_servico_faixa_horaria(
         for formato in formatos
     }
 
-    if data_versao_gtfs >= constants.GTFS_DATA_MODELO_OS.value:
+    if data_versao_gtfs >= constants.DATA_GTFS_V2_INICIO.value:
         columns.update(fh_columns)
     else:
         fh_columns["Serviço"] = "servico"

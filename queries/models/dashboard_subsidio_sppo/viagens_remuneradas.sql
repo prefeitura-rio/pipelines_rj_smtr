@@ -55,7 +55,7 @@ with
         from `rj-smtr.gtfs.ordem_servico`
         where
             feed_start_date in ('{{ feed_start_dates|join("', '") }}')
-            and feed_start_date < date('{{ var("GTFS_DATA_MODELO_OS") }}')
+            and feed_start_date < date('{{ var("DATA_GTFS_V2_INICIO") }}')
         union all
         select distinct
             feed_start_date,
@@ -68,7 +68,7 @@ with
         from {{ ref("ordem_servico_faixa_horaria") }}
         where
             feed_start_date in ('{{ feed_start_dates|join("', '") }}')
-            and feed_start_date >= date('{{ var("GTFS_DATA_MODELO_OS") }}')
+            and feed_start_date >= date('{{ var("DATA_GTFS_V2_INICIO") }}')
     ),
     data_versao_efetiva as (
         select

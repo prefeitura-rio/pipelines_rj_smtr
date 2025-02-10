@@ -1,4 +1,4 @@
-{% if var("data_versao_gtfs") < var("GTFS_DATA_MODELO_OS") %}
+{% if var("data_versao_gtfs") < var("DATA_GTFS_V2_INICIO") %}
     {{
         config(
             partition_by={
