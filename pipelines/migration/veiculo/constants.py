@@ -90,3 +90,17 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "primary_key": ["datetime_registro", "email"],
     }
+
+    VEICULO_DATA_QUALITY_CHECK_LIST = {
+        "infracao": {
+            "dbt_expectations.expect_table_aggregation_to_equal_other_table__infracao": {
+                "description": "Todas as datas possuem dados"
+            }
+        },
+        "sppo_veiculo_dia": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.unique_combination_of_columns__data_id_veiculo__sppo_veiculo_dia": {
+                "description": "Todos os registros são únicos"
+            },
+        },
+    }
