@@ -28,8 +28,10 @@ def create_billingpay_backup_filepath(
     )
 
 
-def get_redis_last_backup(env: str, table_name: str, incremental_type: str) -> Union[int, datetime]:
-    redis_key = f"{env}.backup_jae_billingpay.{table_name}"
+def get_redis_last_backup(
+    env: str, table_name: str, database_name: str, incremental_type: str
+) -> Union[int, datetime]:
+    redis_key = f"{env}.backup_jae_billingpay.{database_name}.{table_name}"
     log(f"Consultando Redis: {redis_key}")
     redis_client = get_redis_client(host="localhost")
     content = redis_client.get(redis_key)

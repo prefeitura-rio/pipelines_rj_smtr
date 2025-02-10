@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """Tasks de captura dos dados da Jaé"""
-import os
 from datetime import datetime, timedelta
 from functools import partial
 
@@ -130,7 +129,6 @@ def get_table_info(
         for t in inspector.get_table_names()
         if t not in tables_config["exclude"]
         and isinstance(tables_config["filter"].get(t, []), list)
-        and t not in os.listdir("data/backup_jae_billingpay/principal_db")
     ]
     result = [
         {
@@ -177,6 +175,7 @@ def get_table_info(
                 "last_capture": get_redis_last_backup(
                     env=env,
                     table_name=table,
+                    database_name=database_name,
                     incremental_type=incremental_type,
                 ),
                 "partition": partition,
@@ -188,9 +187,10 @@ def get_table_info(
 
 @task
 def get_non_filtered_tables(
-    database_name: str, database_url: str, table_info: list[dict[str, str]]
+    database_name: str, database_config: dict, table_info: list[dict[str, str]]
 ):
     tables_config = constants.BACKUP_JAE_BILLING_PAY.value[database_name]
+    database_url = create_database_url(**database_config)
     engine = create_engine(database_url)
     result = []
     with engine.connect() as conn:
@@ -200,7 +200,7 @@ def get_non_filtered_tables(
             result.append(df)
     df_final = pd.concat(result)
     return (
-        df_final.loc[df_final["ct"] > 1000]
+        df_final.loc[df_final["ct"] > 5000]
         .sort_values("ct", ascending=False)
         .to_dict(orient="records")
     )
@@ -276,10 +276,15 @@ def upload_backup_billingpay(env: str, table_info: dict[str, str], database_name
 
 
 @task
-def set_redis_backup_billingpay(env: str, table_info: dict[str, str], timestamp: datetime):
+def set_redis_backup_billingpay(
+    env: str,
+    table_info: dict[str, str],
+    database_name: str,
+    timestamp: datetime,
+):
     if table_info["incremental_type"] is None:
         return
-    redis_key = f"{env}.backup_jae_billingpay.{table_info['table_name']}"
+    redis_key = f"{env}.backup_jae_billingpay.{database_name}.{table_info['table_name']}"
     redis_client = get_redis_client(host="localhost")
     content = redis_client.get(redis_key)
     if table_info["incremental_type"] == "datetime":

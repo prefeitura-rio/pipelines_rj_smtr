@@ -13,7 +13,9 @@ from pipelines.capture.jae.constants import constants
 from pipelines.capture.jae.tasks import (
     create_database_error_discord_message,
     create_jae_general_extractor,
+    create_non_filtered_discord_message,
     get_jae_db_config,
+    get_non_filtered_tables,
     get_raw_backup_billingpay,
     get_table_info,
     set_redis_backup_billingpay,
@@ -69,11 +71,27 @@ with Flow("jae: backup dados BillingPay") as backup_billingpay:
         database_config=database_config,
         timestamp=timestamp,
     )
+    table_count = get_non_filtered_tables(
+        database_name=database_name,
+        database_config=database_config,
+        table_info=table_info,
+    )
+    message = create_non_filtered_discord_message(
+        database_name=database_name,
+        table_count=table_count,
+    )
+
+    send_discord_message = log_discord(
+        message=message,
+        key=constants.ALERT_WEBHOOK.value,
+        dados_tag=True,
+    )
 
     table_info = get_raw_backup_billingpay(
         table_info=table_info,
         database_config=database_config,
         timestamp=timestamp,
+        upstream_tasks=[send_discord_message],
     )
 
     table_info = upload_backup_billingpay.map(
@@ -85,6 +103,7 @@ with Flow("jae: backup dados BillingPay") as backup_billingpay:
     SET_REDIS_BACKUP = set_redis_backup_billingpay.map(
         env=unmapped(env),
         table_info=table_info,
+        database_name=database_name,
         timestamp=unmapped(timestamp),
     )
 
