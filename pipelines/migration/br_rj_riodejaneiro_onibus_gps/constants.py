@@ -13,7 +13,12 @@ class constants(Enum):  # pylint: disable=c0103
 
     GPS_DATA_CHECKS_LIST = {
         "gps_sppo": {
-            "unique_columns__gps_sppo": {"description": "Todos os registros são únicos"},
+            "check_gps_treatment__gps_sppo": {
+                "description": "Todos os dados de GPS foram devidamente tratados"
+            },
+            "dbt_utils.unique_combination_of_columns__gps_sppo": {
+                "description": "Todos os registros são únicos"
+            },
             "not_null__timestamp_gps__gps_sppo": {
                 "description": "Todos os registros possuem timestamp_gps não nulo"
             },
