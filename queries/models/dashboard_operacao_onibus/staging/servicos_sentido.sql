@@ -2,23 +2,9 @@
 
 with
     servicos_exclusivos_sabado as (
-        select *
-        from
-            (
-                select distinct servico
-                from `rj-smtr.gtfs.ordem_servico`
-                where
-                    tipo_dia = "Dia Útil"
-                    and viagens_planejadas = 0
-                    and feed_start_date < date('{{ var("DATA_GTFS_V2_INICIO") }}')
-                union all
-                select distinct servico
-                from {{ ref("ordem_servico_faixa_horaria") }}
-                where
-                    tipo_dia = "Dia Útil"
-                    and viagens_dia = 0
-                    and feed_start_date >= date('{{ var("DATA_GTFS_V2_INICIO") }}')
-            )
+        select distinct servico
+        from {{ source("gtfs", "ordem_servico") }}
+        where tipo_dia = "Dia Útil" and viagens_planejadas = 0
     ),
     servicos as (
         select * except (versao_modelo, shape)

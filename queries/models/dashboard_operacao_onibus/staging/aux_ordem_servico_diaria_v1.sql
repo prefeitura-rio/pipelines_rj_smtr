@@ -16,7 +16,7 @@ with
     ),
     ordem_servico as (
         select *
-        from `rj-smtr.gtfs.ordem_servico`
+        from {{ source("gtfs", "ordem_servico") }}
         where feed_start_date < date('{{ var("DATA_GTFS_V2_INICIO") }}')
         union all
         select

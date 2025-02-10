@@ -527,7 +527,7 @@ def processa_ordem_servico_faixa_horaria(
                 df[col] = df[col].astype(str).replace("—", 0)
             if "quilometragem" in col:
                 df[col] = df[col].astype(str).apply(convert_to_float).astype(float)
-            if "extensao_" in col:
+            if "extensao" in col:
                 df[col] = df[col].apply(pd.to_numeric)
                 df[col] = df[col] / 1000
 

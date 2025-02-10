@@ -1,11 +1,13 @@
-{{
-    config(
-        materialized="incremental",
-        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-        incremental_strategy="insert_overwrite",
-        enabled=false,
-    )
-}}
+{% if var("start_date") >= var("DATA_SUBSIDIO_V9_INICIO") %} {{ config(enabled=false) }}
+{% else %}
+    {{
+        config(
+            materialized="incremental",
+            partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+            incremental_strategy="insert_overwrite",
+        )
+    }}
+{% endif %}
 
 with
     viagem_planejada as (
@@ -18,7 +20,7 @@ with
                 -- rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva AS sdve
                 using (data)
             left join
-                {{ ref("ordem_servico_gtfs") }} as o
+                {{ source("gtfs", "ordem_servico") }} as o
                 -- rj-smtr.gtfs.ordem_servico AS o
                 on v.feed_start_date = o.feed_start_date
                 and v.servico = o.servico

@@ -208,3 +208,9 @@ sources:
 
     tables:
       - name: tecnologia_servico
+
+  - name: gtfs
+    database: rj-smtr
+
+    tables:
+      - name: ordem_servico
