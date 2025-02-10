@@ -1,16 +1,5 @@
-{% set is_disabled = var("start_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
-
-{% if var("end_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
-    {% set end_date = (
-        modules.datetime.datetime.strptime(
-            var("DATA_SUBSIDIO_V14_INICIO"), "%Y-%m-%d"
-        )
-        - modules.datetime.timedelta(days=1)
-    ).strftime("%Y-%m-%d") %}
-{% else %} {% set end_date = var("end_date") %}
-{% endif %}
-
-{% if is_disabled %} {{ config(enabled=false) }}
+{% if var("start_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
+    {{ config(enabled=false) }}
 {% else %}
     {{
         config(
@@ -32,7 +21,10 @@ with
             sum(km_planejada_faixa) as km_planejada_dia
         from {{ ref("subsidio_faixa_servico_dia") }}
         -- from `rj-smtr.financeiro_staging.subsidio_faixa_servico_dia`
-        where data between date('{{ var("start_date") }}') and date('{{ end_date }}')
+        where
+            data
+            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data < date("{{ var('DATA_SUBSIDIO_V14_INICIO') }}")
         group by data, tipo_dia, consorcio, servico
     ),
     subsidio_parametros as (
@@ -56,14 +48,20 @@ with
             sum(valor_penalidade) as valor_penalidade
         from {{ ref("subsidio_penalidade_servico_faixa") }}
         -- from `rj-smtr.financeiro.subsidio_penalidade_servico_faixa`
-        where data between date('{{ var("start_date") }}') and date('{{ end_date }}')
+        where
+            data
+            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data < date("{{ var('DATA_SUBSIDIO_V14_INICIO') }}")
         group by data, tipo_dia, consorcio, servico
     ),
     subsidio_dia_tipo_viagem as (
         select *
         from {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
         -- from `rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem`
-        where data between date('{{ var("start_date") }}') and date('{{ end_date }}')
+        where
+            data
+            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data < date("{{ var('DATA_SUBSIDIO_V14_INICIO') }}")
     ),
     valores_calculados as (
         select

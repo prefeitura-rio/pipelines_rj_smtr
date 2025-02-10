@@ -26,7 +26,6 @@ with
         where
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
-            and data >= date("{{ var('DATA_SUBSIDIO_V14_INICIO') }}")
         group by
             data, tipo_dia, consorcio, servico, faixa_horaria_inicio, faixa_horaria_fim
     ),

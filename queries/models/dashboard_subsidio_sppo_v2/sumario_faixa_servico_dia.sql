@@ -1,16 +1,5 @@
-{% set is_disabled = var("start_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
-
-{% if var("end_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
-    {% set end_date = (
-        modules.datetime.datetime.strptime(
-            var("DATA_SUBSIDIO_V14_INICIO"), "%Y-%m-%d"
-        )
-        - modules.datetime.timedelta(days=1)
-    ).strftime("%Y-%m-%d") %}
-{% else %} {% set end_date = var("end_date") %}
-{% endif %}
-
-{% if is_disabled %} {{ config(enabled=false) }}
+{% if var("start_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
+    {{ config(enabled=false) }}
 {% else %}
     {{
         config(
@@ -35,7 +24,10 @@ with
             pof
         from {{ ref("subsidio_faixa_servico_dia") }}
         -- from `rj-smtr.financeiro_staging.subsidio_faixa_servico_dia`
-        where data between date('{{ var("start_date") }}') and date('{{ end_date }}')
+        where
+            data
+            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data < date("{{ var('DATA_SUBSIDIO_V14_INICIO') }}")
     ),
     subsidio_faixa_agg as (
         select
@@ -52,7 +44,10 @@ with
             sum(valor_total_sem_glosa) as valor_total_sem_glosa
         from {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
         -- from `rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem`
-        where data between date('{{ var("start_date") }}') and date('{{ end_date }}')
+        where
+            data
+            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data < date("{{ var('DATA_SUBSIDIO_V14_INICIO') }}")
         group by
             data, tipo_dia, faixa_horaria_inicio, faixa_horaria_fim, consorcio, servico
     ),
@@ -72,8 +67,10 @@ with
                 from {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
                 -- from `rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem`
                 where
-                    data
-                    between date('{{ var("start_date") }}') and date('{{ end_date }}')
+                    data between date('{{ var("start_date") }}') and date(
+                        '{{ var("end_date") }}'
+                    )
+                    and data < date("{{ var('DATA_SUBSIDIO_V14_INICIO') }}")
             ) pivot (
                 sum(km_apurada_faixa) as km_apurada for tipo_viagem in (
                     "Registrado com ar inoperante" as registrado_com_ar_inoperante,
