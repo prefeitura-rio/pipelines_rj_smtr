@@ -2,7 +2,10 @@ version: 2
 
 models:
   - name: sumario_faixa_servico_dia
-    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia e faixa horária (Descontinuada a partir de 2025-01-05)."
+    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia e faixa horária. (Descontinuada a partir de 2025-01-05)"
+    tests:
+      - check_km_planejada:
+          name: check_km_planejada__sumario_faixa_servico_dia
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS."
@@ -58,29 +61,105 @@ models:
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: sumario_faixa_servico_dia_pagamento
     description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia e faixa horária."
+    tests:
+      - check_km_planejada:
+          name: check_km_planejada__sumario_faixa_servico_dia_pagamento
+      - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
+          date_col: data
+          row_condition: "1=1"
+          test_start_date: "{{ var('date_range_start') }}"
+          test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
+          name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_faixa_servico_dia_pagamento
+      - teto_pagamento_valor_subsidio_pago:
+          table_id: sumario_faixa_servico_dia_pagamento
+          expression: ROUND((valor_a_pagar - valor_penalidade)/subsidio_km_teto,2) <= ROUND(km_apurada_faixa+0.01,2)
+          name: teto_pagamento_valor_subsidio_pago__sumario_faixa_servico_dia_pagamento
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+          - data
+          - servico
+          - faixa_horaria_inicio
+          name: dbt_utils.unique_combination_of_columns__sumario_faixa_servico_dia_pagamento
+      - dbt_utils.expression_is_true:
+          expression: (valor_a_pagar - valor_penalidade) IS NOT NULL AND (valor_a_pagar - valor_penalidade) >= 0
+          name: expression_is_true__sumario_faixa_servico_dia_pagamento
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          name: dbt_expectations.expect_table_aggregation_to_equal_other_table__sumario_faixa_servico_dia_pagamento
+          expression: count(distinct valor_penalidade)
+          compare_model: ref("valor_tipo_penalidade")
+          compare_expression: count(distinct valor)
+          group_by: [valor_penalidade]
+          compare_group_by: [-valor]
+          row_condition: "DATA BETWEEN DATE('{{ var('date_range_start') }}') AND DATE('{{ var('date_range_end') }}') AND valor_penalidade IS NOT null AND valor_penalidade != 0"
+          compare_row_condition: "valor IS NOT null AND valor != 0 and data_fim >= DATE('{{ var('date_range_start') }}') and data_inicio <= DATE('{{ var('date_range_end') }}')"
+          where: "1=1"
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS."
+        tests:
+          - not_null:
+              name: not_null__data__sumario_faixa_servico_dia_pagamento
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo."
+        tests:
+          - not_null:
+              name: not_null__tipo_dia__sumario_faixa_servico_dia_pagamento
       - name: faixa_horaria_inicio
         description: "Horário inicial da faixa horária"
       - name: faixa_horaria_fim
         description: "Horário final da faixa horária"
       - name: consorcio
         description: "Consórcio que opera o serviço."
+        tests:
+          - not_null:
+              name: not_null__consorcio__sumario_faixa_servico_dia_pagamento
       - name: servico
         description: "Serviço realizado pelo veículo."
+        tests:
+          - not_null:
+              name: not_null__servico__sumario_faixa_servico_dia_pagamento
       - name: viagens_faixa
         description: "Quantidade de viagens apuradas por faixa horária."
+        tests:
+          - not_null:
+              name: not_null__viagens_faixa__sumario_faixa_servico_dia_pagamento
+          - dbt_utils.accepted_range:
+              min_value: 0
+              name: dbt_utils.accepted_range__viagens_faixa__sumario_faixa_servico_dia_pagamento
       - name: km_apurada_faixa
         description: "Distância apurada para o serviço por faixa horária(km)."
+        tests:
+          - not_null:
+              name: not_null__km_apurada_faixa__sumario_faixa_servico_dia_pagamento
+          - dbt_utils.accepted_range:
+              min_value: 0
+              name: dbt_utils.accepted_range__km_apurada_faixa__sumario_faixa_servico_dia_pagamento
+          - sumario_servico_dia_tipo_soma_km:
+              name: sumario_servico_dia_tipo_soma_km__km_apurada_dia__sumario_faixa_servico_dia_pagamento
       - name: km_subsidiada_faixa
         description: "Distância subsidiada para o serviço por faixa horária (km)."
+        tests:
+          - not_null:
+              name: not_null__km_subsidiada_faixa__sumario_faixa_servico_dia_pagamento
+          - dbt_utils.accepted_range:
+              min_value: 0
+              name: dbt_utils.accepted_range__km_subsidiada_faixa__sumario_faixa_servico_dia_pagamento
       - name: km_planejada_faixa
         description: "Distância planejada para o serviço por faixa horária (km)."
+        tests:
+          - not_null:
+              name: not_null__km_planejada_faixa__sumario_faixa_servico_dia_pagamento
+          - dbt_utils.accepted_range:
+              min_value: 0
+              name: dbt_utils.accepted_range__km_planejada_faixa__sumario_faixa_servico_dia_pagamento
       - name: pof
         description: "{{ doc('pof') }}"
+        tests:
+          - not_null:
+              name: not_null__pof__sumario_faixa_servico_dia_pagamento
+          - dbt_utils.accepted_range:
+              min_value: 0
+              name: dbt_utils.accepted_range__pof__sumario_faixa_servico_dia_pagamento
       - name: km_apurada_registrado_com_ar_inoperante
         description: "Distância apurada de viagens realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste (km)."
       - name: km_apurada_n_licenciado
@@ -117,6 +196,9 @@ models:
         description: "Quilometragem total apurada de viagens de veículos com ar e não autuados."
       - name: valor_a_pagar
         description: "Valor efetivo de pagamento (valor_total_apurado - valor_acima_limite - valor_glosado)."
+        tests:
+          - not_null:
+              name: not_null__valor_a_pagar__sumario_faixa_servico_dia_pagamento
       - name: valor_glosado_tecnologia
         description: "{{ doc('valor_glosado_tecnologia') }}"
       - name: valor_total_glosado
@@ -133,16 +215,22 @@ models:
         description: "Valor de glosa depositada em juízo (Autuação por ar inoperante, Veículo licenciado sem ar, Penalidade abaixo de 60% e Notificação dos Agentes de Verão)."
       - name: valor_penalidade
         description: "Valor penalidade [negativa] (POF =< 60%)."
+        tests:
+          - not_null:
+              name: not_null__valor_penalidade__sumario_faixa_servico_dia_pagamento
       - name: versao
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: sumario_servico_dia_pagamento
     description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia (Descontinuada a partir de 2025-01-05)."
+    config:
+      test:
+        where: "DATA BETWEEN DATE('{{ var('date_range_start') }}') AND DATE('{{ var('date_range_end') }}') and data < '{{ var('DATA_SUBSIDIO_V14_INICIO') }}'"
     tests:
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data
-          row_condition: "data is not null"
+          row_condition: "1=1"
           test_start_date: "{{ var('date_range_start') }}"
           test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
           name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_servico_dia_pagamento
@@ -154,7 +242,7 @@ models:
           combination_of_columns:
           - data
           - servico
-          name: unique_combination_of_columns__sumario_servico_dia_pagamento
+          name: dbt_utils.unique_combination_of_columns__sumario_servico_dia_pagamento
       - dbt_utils.expression_is_true:
           expression: (valor_a_pagar - valor_penalidade) IS NOT NULL AND (valor_a_pagar - valor_penalidade) >= 0
           name: expression_is_true__sumario_servico_dia_pagamento
@@ -166,7 +254,7 @@ models:
           group_by: [valor_penalidade]
           compare_group_by: [-valor]
           row_condition: "DATA BETWEEN DATE('{{ var('date_range_start') }}') AND DATE('{{ var('date_range_end') }}') AND valor_penalidade IS NOT null AND valor_penalidade != 0"
-          compare_row_condition: "valor IS NOT null AND valor != 0"
+          compare_row_condition: "valor IS NOT null AND valor != 0 and data_fim >= DATE('{{ var('date_range_start') }}') and data_inicio <= DATE('{{ var('date_range_end') }}')"
           where: "1=1"
     columns:
       - name: data
@@ -201,10 +289,10 @@ models:
         description: "Distância apurada para o serviço por dia (km)."
         tests:
           - not_null:
-              name: not_null__viagens_dia__sumario_servico_dia_pagamento
+              name: not_null__km_apurada_dia__sumario_servico_dia_pagamento
           - dbt_utils.accepted_range:
               min_value: 0
-              name: dbt_utils.accepted_range__viagens_dia__sumario_servico_dia_pagamento
+              name: dbt_utils.accepted_range__km_apurada_dia__sumario_servico_dia_pagamento
           - sumario_servico_dia_tipo_soma_km:
               name: sumario_servico_dia_tipo_soma_km__km_apurada_dia__sumario_servico_dia_pagamento
       - name: km_subsidiada_dia
@@ -253,6 +341,9 @@ models:
         description: "Distância apurada de viagens realizadas sem passageiro registrado."
       - name: valor_a_pagar
         description: "Valor efetivo de pagamento (valor_total_apurado - valor_acima_limite - valor_glosado)."
+        tests:
+          - not_null:
+              name: not_null__valor_a_pagar__sumario_servico_dia_pagamento
       - name: valor_glosado
         description: "Valor total das viagens considerando o valor máximo por km, subtraído pelo valor efetivo por km."
       - name: valor_acima_limite
@@ -265,6 +356,9 @@ models:
         description: "Valor de glosa depositada em juízo (Autuação por ar inoperante, Veículo licenciado sem ar, Penalidade abaixo de 60% e Notificação dos Agentes de Verão)."
       - name: valor_penalidade
         description: "Valor penalidade [negativa] (POF =< 60%)."
+        tests:
+          - not_null:
+              name: not_null__valor_penalidade__sumario_servico_dia_pagamento
       - name: versao
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
