@@ -1,5 +1,10 @@
 # Changelog - veiculo
 
+## [1.1.3] - 2025-02-06
+
+### Adicionado
+- Adicionados testes no modelo `infracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/401)
+
 ## [2.0.2] - 2025-01-23
 
 ### Alterado

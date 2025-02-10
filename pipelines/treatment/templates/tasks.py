@@ -549,39 +549,45 @@ def dbt_data_quality_checks(
             f"**Data Quality Checks - {prefect.context.get('flow_name')} - {date_range}**\n\n",
         ]
 
+    table_groups = {}
+
     for test_id, test_result in checks_results.items():
         parts = test_id.split("__")
-
         if len(parts) == 2:
             table_name = parts[1]
         else:
             table_name = parts[2]
 
-        matched_description = None
-        for existing_table_id, tests in checks_list.items():
-            if table_name in existing_table_id:
-                for existing_test_id, test_info in tests.items():
-                    if test_id.endswith(existing_test_id):
-                        matched_description = test_info.get("description", test_id)
+        if table_name not in table_groups:
+            table_groups[table_name] = []
+
+        table_groups[table_name].append((test_id, test_result))
+
+    for table_name, tests in table_groups.items():
+        formatted_messages.append(f"*{table_name}:*\n")
+
+        for test_id, test_result in tests:
+            matched_description = None
+            for existing_table_id, test_configs in checks_list.items():
+                if table_name in existing_table_id:
+                    for existing_test_id, test_info in test_configs.items():
+                        if existing_test_id in test_id:
+                            matched_description = test_info.get("description", test_id).replace(
+                                "{column_name}",
+                                test_id.split("__")[1] if "__" in test_id else test_id,
+                            )
+                            break
+                    if matched_description:
                         break
-                if matched_description:
-                    break
 
-        test_id = test_id.replace("_", "\\_")
-        description = matched_description or f"Teste: {test_id}"
+            test_id = test_id.replace("_", "\\_")
+            description = matched_description or f"Teste: {test_id}"
 
-        test_message = (
-            f'{":white_check_mark:" if test_result["result"] == "PASS" else ":x:"} '
-            f"{description}"
-        )
-
-        table_exists = any(table_name in existing_table_id for existing_table_id in checks_list)
-        if table_exists or len(parts) >= 2:
-            table_header_exists = any(f"*{table_name}:*" in msg for msg in formatted_messages)
-            if not table_header_exists:
-                formatted_messages.append(f"*{table_name}:*\n")
-
-        formatted_messages.append(test_message + "\n")
+            test_message = (
+                f'{":white_check_mark:" if test_result["result"] == "PASS" else ":x:"} '
+                f"{description}\n"
+            )
+            formatted_messages.append(test_message)
 
     formatted_messages.append("\n")
     formatted_messages.append(
