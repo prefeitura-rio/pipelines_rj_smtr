@@ -29,37 +29,14 @@ with
     ),
     -- 2. Busca principais informações na Ordem de Serviço (OS)
     ordem_servico as (
-        {% if var("data_versao_gtfs") < var("DATA_GTFS_V2_INICIO") %}
-            select
-                * except (horario_inicio, horario_fim),
-                horario_inicio as inicio_periodo,
-                horario_fim as fim_periodo,
-            from {{ ref("ordem_servico_gtfs") }}
-            {% if is_incremental() -%}
-                where feed_start_date = '{{ var("data_versao_gtfs") }}'
-            {%- endif %}
-        {% else %}
-            select
-                feed_version,
-                feed_start_date,
-                feed_end_date,
-                tipo_os,
-                servico,
-                vista,
-                consorcio,
-                extensao_ida,
-                extensao_volta,
-                tipo_dia,
-                horario_inicio as inicio_periodo,
-                horario_fim as fim_periodo,
-                partidas_ida_dia as partidas_ida,
-                partidas_volta_dia as partidas_volta,
-                viagens_dia as viagens_planejadas,
-                sum(quilometragem) as distancia_total_planejada,
-            from {{ ref("ordem_servico_faixa_horaria") }}
+        select
+            * except (horario_inicio, horario_fim),
+            horario_inicio as inicio_periodo,
+            horario_fim as fim_periodo,
+        from {{ ref("aux_ordem_servico_diaria") }}
+        {% if is_incremental() -%}
             where feed_start_date = '{{ var("data_versao_gtfs") }}'
-            group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
-        {% endif %}
+        {%- endif %}
     ),
     -- 3. Despivota ordem de serviço por sentido
     ordem_servico_sentido as (

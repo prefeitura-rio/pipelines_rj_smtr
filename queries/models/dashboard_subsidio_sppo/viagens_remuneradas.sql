@@ -7,8 +7,6 @@
     )
 }}
 
-{% set is_disabled = var("start_date") >= var("DATA_GTFS_V2_INICIO") %}
-
 {%- if execute %}
     {% set query = (
         "SELECT DISTINCT COALESCE(feed_start_date, data_versao_trips, data_versao_shapes, data_versao_frequencies) FROM "
@@ -46,33 +44,16 @@ with
             and (id_tipo_trajeto = 0 or id_tipo_trajeto is null)
     ),
     viagens_planejadas as (
-        {% if is_disabled %}
-            select
-                feed_start_date,
-                servico,
-                tipo_dia,
-                viagens_planejadas,
-                partidas_ida,
-                partidas_volta,
-                tipo_os,
-            from {{ ref("ordem_servico_gtfs") }}
-            where
-                feed_start_date in ('{{ feed_start_dates|join("', '") }}')
-                and feed_start_date < date('{{ var("DATA_GTFS_V2_INICIO") }}')
-            union all
-        {% endif %}
-        select distinct
+        select
             feed_start_date,
             servico,
             tipo_dia,
-            viagens_dia as viagens_planejadas,
-            partidas_ida_dia as partidas_ida,
-            partidas_volta_dia as partidas_volta,
-            tipo_os
-        from {{ ref("ordem_servico_faixa_horaria") }}
-        where
-            feed_start_date in ('{{ feed_start_dates|join("', '") }}')
-            and feed_start_date >= date('{{ var("DATA_GTFS_V2_INICIO") }}')
+            viagens_planejadas,
+            partidas_ida,
+            partidas_volta,
+            tipo_os,
+        from {{ ref("aux_ordem_servico_diaria") }}
+        where feed_start_date in ('{{ feed_start_dates|join("', '") }}')
     ),
     data_versao_efetiva as (
         select
