@@ -39,7 +39,7 @@ class constants(Enum):  # pylint: disable=c0103
         "wifi": "indicador_wifi",
         "usb": "indicador_usb",
         "data_inicio_vinculo": "data_inicio_vinculo",
-        "situacao": "situacao",
+        "ultima_situacao": "ultima_situacao",
         "ano_ultima_vistoria": "ano_ultima_vistoria",
     }
 
