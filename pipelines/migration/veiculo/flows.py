@@ -48,6 +48,7 @@ from pipelines.migration.veiculo.tasks import (
     pre_treatment_sppo_licenciamento,
 )
 from pipelines.schedules import every_day_hour_seven, every_day_hour_six_minute_fifty
+from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt_tests
 
 # Flows #
 
@@ -245,12 +246,29 @@ with Flow(
     _vars = get_join_dict(dict_list=run_dates, new_dict=dataset_sha)
 
     # 2. TREAT #
-    run_dbt_model.map(
+    WAIT_DBT_RUN = run_dbt_model.map(
         dataset_id=unmapped(smtr_constants.VEICULO_DATASET_ID.value),
         table_id=unmapped(constants.SPPO_VEICULO_DIA_TABLE_ID.value),
         upstream=unmapped(True),
         exclude=unmapped("+gps_sppo"),
         _vars=_vars,
+    )
+
+    dbt_vars = get_join_dict(
+        dict_list=[{"date_range_start": start_date, "date_range_end": end_date}],
+        new_dict=dataset_sha,
+    )[0]
+
+    VEICULO_DATA_QUALITY_TEST = run_dbt_tests(
+        dataset_id=smtr_constants.VEICULO_DATASET_ID.value,
+        _vars=dbt_vars,
+    ).set_upstream(WAIT_DBT_RUN)
+
+    DATA_QUALITY_PRE = dbt_data_quality_checks(
+        dbt_logs=VEICULO_DATA_QUALITY_TEST,
+        checks_list=constants.VEICULO_DATA_QUALITY_CHECK_LIST.value,
+        webhook_key="subsidio_data_check",
+        params=dbt_vars,
     )
 
 sppo_veiculo_dia.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)

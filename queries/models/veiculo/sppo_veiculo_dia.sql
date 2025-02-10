@@ -1,5 +1,6 @@
 -- depends_on: {{ ref('licenciamento_stu_staging') }}
 -- depends_on: {{ ref("infracao") }}
+-- depends_on: {{ ref("infracao_staging") }}
 {{
     config(
         materialized="incremental",
@@ -11,6 +12,7 @@
 
 {% if execute %}
     {% set licenciamento_date = run_query(get_license_date()).columns[0].values()[0] %}
+    {% set infracao_date = run_query(get_violation_date()).columns[0].values()[0] %}
 {% endif %}
 
 with
@@ -60,8 +62,8 @@ with
     ),
     gps as (
         select distinct data, id_veiculo
-        from -- {{ ref("gps_sppo") }}
-        `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
+        from {{ ref("gps_sppo") }}
+           -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
         where data = date("{{ var('run_date') }}")
     ),
     autuacoes as (
@@ -69,19 +71,6 @@ with
         from {{ ref("sppo_infracao") }}
         -- `rj-smtr.veiculo.sppo_infracao`
         where
-            {%- if execute %}
-                {% set infracao_date = (
-                    run_query(
-                        "SELECT MIN(data) FROM "
-                        ~ ref("infracao")
-                        ~ " WHERE data >= DATE_ADD(DATE('"
-                        ~ var("run_date")
-                        ~ "'), INTERVAL 7 DAY)"
-                    )
-                    .columns[0]
-                    .values()[0]
-                ) %}
-            {% endif -%}
             data = date("{{ infracao_date }}")
             and data_infracao = date("{{ var('run_date') }}")
     ),
