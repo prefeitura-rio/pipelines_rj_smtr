@@ -1,3 +1,5 @@
+{% set is_disabled = var("start_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
+
 {{ config(materialized="ephemeral") }}
 
 with
@@ -56,50 +58,42 @@ with
             and data >= date("{{ var('DATA_SUBSIDIO_V14_INICIO') }}")
         group by data, tipo_dia, consorcio, servico
     ),
-    sumario_servico_dia as (
-        select
-            data,
-            sdp.tipo_dia,
-            sdp.consorcio,
-            servico,
-            sdp.viagens_dia,
-            sum(
-                case
-                    when
-                        data >= date("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}")
-                        and tipo_viagem not in ("Não licenciado", "Não vistoriado")
-                    then km_apurada_faixa
-                    when data < date("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}")
-                    then km_apurada_faixa
-                    else 0
-                end
-            ) as km_apurada,
-            km_planejada_dia,
-            valor_a_pagar,
-            valor_penalidade
-        from `rj-smtr.financeiro.subsidio_sumario_servico_dia_pagamento` as sdp
-        left join
-            {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }} as sdtv using (
-                data, servico
-            )
-        where
-            data
-            between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
-            and data < date("{{ var('DATA_SUBSIDIO_V14_INICIO') }}")
-        group by
-            data,
-            tipo_dia,
-            consorcio,
-            servico,
-            viagens_dia,
-            km_planejada_dia,
-            valor_a_pagar,
-            valor_penalidade
-    ),
+    {% if is_disabled %}
+        sumario_servico_dia as (
+            select
+                data,
+                sdp.tipo_dia,
+                sdp.consorcio,
+                servico,
+                sdp.viagens_dia,
+                sum(km_apurada_faixa) as km_apurada,
+                km_planejada_dia,
+                valor_a_pagar,
+                valor_penalidade
+            from {{ ref("subsidio_sumario_servico_dia_pagamento") }} as sdp
+            left join subsidio_faixa_agg using (data, servico)
+            where
+                data between date("{{ var('start_date') }}") and date(
+                    "{{ var('end_date') }}"
+                )
+                and data < date("{{ var('DATA_SUBSIDIO_V14_INICIO') }}")
+            group by
+                data,
+                tipo_dia,
+                consorcio,
+                servico,
+                viagens_dia,
+                km_planejada_dia,
+                valor_a_pagar,
+                valor_penalidade
+        ),
+    {% endif %}
     valores_subsidio as (
-        select *
-        from sumario_servico_dia
-        union all
+        {% if is_disabled %}
+            select *
+            from sumario_servico_dia
+            union all
+        {% endif %}
         select *
         from sumario_faixa_servico_dia
     ),
