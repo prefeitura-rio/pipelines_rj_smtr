@@ -2,8 +2,18 @@ version: 2
 
 models:
   - name: infracao
-    description: "Tabela histórica de todas as multas aplicadas aos modos de transporte no município do Rio de Janeiro, com qualquer situação.
-    Dados capturados diariamente de: https://www.data.rio/documents/multas-aplicadas-aos-modos-de-transporte-nos-%C3%BAltimos-cinco-anos"
+    description: "Tabela histórica de todas as multas aplicadas aos modos de transporte no município do Rio de Janeiro, com qualquer situação"
+    tests:
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          name: dbt_expectations.expect_table_aggregation_to_equal_other_table__infracao
+          expression: count(distinct data)
+          compare_model: ref('infracao_staging')
+          compare_expression: count(distinct data)
+          group_by: [data]
+          compare_group_by: [Date(data)]
+          row_condition: "data between DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_start')) + modules.datetime.timedelta(7) }}') AND DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(8) }}')"
+          compare_row_condition: "data between '{{ modules.datetime.datetime.fromisoformat(var('date_range_start')) + modules.datetime.timedelta(7) }}' AND '{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(8) }}'"
+          where: "DATE(data) between DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_start')) + modules.datetime.timedelta(7) }}') AND DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(8) }}')"
     columns:
       - name: data
         description: "Data da captura (partição)"
