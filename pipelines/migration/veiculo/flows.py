@@ -243,16 +243,16 @@ with Flow(
         dataset_id=smtr_constants.VEICULO_DATASET_ID.value,
     )
 
-    _vars = get_join_dict(dict_list=run_dates, new_dict=dataset_sha)
+    # _vars = get_join_dict(dict_list=run_dates, new_dict=dataset_sha)
 
     # 2. TREAT #
-    WAIT_DBT_RUN = run_dbt_model.map(
-        dataset_id=unmapped(smtr_constants.VEICULO_DATASET_ID.value),
-        table_id=unmapped(constants.SPPO_VEICULO_DIA_TABLE_ID.value),
-        upstream=unmapped(True),
-        exclude=unmapped("+gps_sppo"),
-        _vars=_vars,
-    )
+    # WAIT_DBT_RUN = run_dbt_model.map(
+    #     dataset_id=unmapped(smtr_constants.VEICULO_DATASET_ID.value),
+    #     table_id=unmapped(constants.SPPO_VEICULO_DIA_TABLE_ID.value),
+    #     upstream=unmapped(True),
+    #     exclude=unmapped("+gps_sppo"),
+    #     _vars=_vars,
+    # )
 
     dbt_vars = get_join_dict(
         dict_list=[{"date_range_start": start_date, "date_range_end": end_date}],
@@ -262,7 +262,7 @@ with Flow(
     VEICULO_DATA_QUALITY_TEST = run_dbt_tests(
         dataset_id=smtr_constants.VEICULO_DATASET_ID.value,
         _vars=dbt_vars,
-    ).set_upstream(WAIT_DBT_RUN)
+    )
 
     DATA_QUALITY_PRE = dbt_data_quality_checks(
         dbt_logs=VEICULO_DATA_QUALITY_TEST,
