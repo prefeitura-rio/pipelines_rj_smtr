@@ -21,6 +21,7 @@ from pipelines.utils.extractors.db import get_raw_db
 from pipelines.utils.fs import create_partition, save_local_file
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.gcp.storage import Storage
+from pipelines.utils.prefect import rename_current_flow_run
 from pipelines.utils.secret import get_secret
 
 
@@ -100,7 +101,28 @@ def create_database_error_discord_message(failed_connections: list[str]) -> str:
 
 # TASKS PARA O BACKUP DA BILLINGPAY #
 @task
+def rename_flow_run_backup_billingpay(database_name: str, timestamp: datetime):
+    """
+    Renomeia e execução do flow
+
+    Args:
+        database_name (str): Nome do banco de dados
+        timestamp (datetime): Timestamp de referência da execução
+    """
+    rename_current_flow_run(name=f"{database_name}: {timestamp.isoformat()}")
+
+
+@task
 def get_jae_db_config(database_name: str) -> dict[str, str]:
+    """
+    Cria as configurações de conexão com o banco de dados
+
+    Args:
+        database_name (str): Nome do banco de dados
+
+    Returns:
+        dict[str, str]: Dicionário com os argumentos para a função create_database_url
+    """
     secrets = get_secret(constants.JAE_SECRET_PATH.value)
     settings = constants.JAE_DATABASE_SETTINGS.value[database_name]
     return {
@@ -119,6 +141,23 @@ def get_table_info(
     database_config: dict,
     timestamp: datetime,
 ) -> list[dict[str, str]]:
+    """
+    Busca as informações de todas as tabelas disponíveis em um banco de dados
+
+    Args:
+        env (str): prod ou dev
+        database_name (str): Nome do banco de dados
+        database_config (dict): Dicionário com os argumentos para a função create_database_url
+        timestamp (datetime): Timestamp de referência da execução
+
+    Returns:
+        list[dict[str, str]]: Lista com dicionários contendo:
+            - nome da tabela
+            - tipo de carga incremental
+            - caminho para salvar o arquivo
+            - valor salvo no redis (se houver)
+            - partição do arquivo
+    """
     database_url = create_database_url(**database_config)
     engine = create_engine(database_url)
     inspector = inspect(engine)
@@ -187,8 +226,22 @@ def get_table_info(
 
 @task(nout=2)
 def get_non_filtered_tables(
-    database_name: str, database_config: dict, table_info: tuple[bool, list[dict[str, str]]]
-):
+    database_name: str,
+    database_config: dict,
+    table_info: list[dict[str, str]],
+) -> tuple[bool, list[dict]]:
+    """
+    Busca tabelas com mais de 5000 linhas que não estejam com filtro configurado
+
+    Args:
+        database_name (str): Nome do banco de dados
+        database_config (dict): Dicionário com os argumentos para a função create_database_url
+        table_info (list[dict[str, str]]): Lista com as informações das tabelas
+
+    Returns:
+        bool: Se deve notificar o discord ou não
+        list[dict]: Dicionário com as tabelas com mais de 5000 registros
+    """
     tables_config = constants.BACKUP_JAE_BILLING_PAY.value[database_name]
     database_url = create_database_url(**database_config)
     engine = create_engine(database_url)
@@ -210,19 +263,25 @@ def get_non_filtered_tables(
     return len(tables) > 0, tables
 
 
-@task(nout=2)
-def create_non_filtered_discord_message(
-    database_name: str, table_count: list[dict]
-) -> tuple[bool, str]:
-    if len(table_count) > 0:
-        message = f"""
+@task
+def create_non_filtered_discord_message(database_name: str, table_count: list[dict]) -> str:
+    """
+    Cria a mensagem para ser enviada no discord caso haja tabelas grandes sem filtro
+
+    Args:
+        database_name (str): Nome do banco de dados
+        table_count (list[dict]): Dicionário com as tabelas e a contagem de registros
+
+    Returns:
+        str: Mensagem para ser enviada no discord
+    """
+    message = f"""
 Database: {database_name}
 As seguintes tabelas não possuem filtros:
 """
-        message += "\n"
-        message += "\n".join([f"{t['table']}: {t['ct']} registros" for t in table_count])
-        return True, message
-    return False, None
+    message += "\n"
+    message += "\n".join([f"{t['table']}: {t['ct']} registros" for t in table_count])
+    return message
 
 
 @task
@@ -231,6 +290,17 @@ def get_raw_backup_billingpay(
     database_config: dict,
     timestamp: datetime,
 ) -> list[dict[str, str]]:
+    """
+    Captura os dados das tabelas do banco informado
+
+    Args:
+        table_info (list[dict[str, str]]): Lista com as informações das tabelas
+        database_config (dict): Dicionário com os argumentos para a função create_database_url
+        timestamp (datetime): Timestamp de referência da execução
+
+    Returns:
+        list[dict[str, str]]: Lista com as informações das tabelas atualizada
+    """
     timestamp_str = timestamp.astimezone(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S")
     new_table_info = []
     for table in table_info:
@@ -270,6 +340,17 @@ def get_raw_backup_billingpay(
 
 @task
 def upload_backup_billingpay(env: str, table_info: dict[str, str], database_name: str) -> dict:
+    """
+    Sobe os dados do backup para o storage
+
+    Args:
+        env (str): prod ou dev
+        table_info (list[dict[str, str]]): Dicionário com as informações da tabela
+        database_name (str): Nome do banco de dados
+
+    Retuns:
+        dict: Dicionário com informações da tabela
+    """
     Storage(env=env, dataset_id=database_name, table_id=table_info["table_name"],).upload_file(
         mode=constants.BACKUP_BILLING_PAY_FOLDER.value,
         filepath=table_info["filepath"],
@@ -286,6 +367,15 @@ def set_redis_backup_billingpay(
     database_name: str,
     timestamp: datetime,
 ):
+    """
+    Atualiza o Redis com os novos dados capturados
+
+    Args:
+        env (str): prod ou dev
+        table_info (list[dict[str, str]]): Dicionário com as informações da tabela
+        database_name (str): Nome do banco de dados
+        timestamp (datetime): Timestamp de referência da execução
+    """
     if table_info["incremental_type"] is None:
         return
     redis_key = f"{env}.backup_jae_billingpay.{database_name}.{table_info['table_name']}"

@@ -18,6 +18,18 @@ def create_billingpay_backup_filepath(
     partition: str,
     timestamp: datetime,
 ) -> str:
+    """
+    Cria o caminho para salvar os dados de backup da BillingPay
+
+    Args:
+        table_name (str): Nome da tabela
+        database_name (str): Nome do banco de dados
+        partition (str): Partição no formato Hive
+        timestamp (datetime): Timestamp de referência da execução
+
+    Returns:
+        str: Caminho para o arquivo
+    """
     return os.path.join(
         get_data_folder_path(),
         constants.BACKUP_BILLING_PAY_FOLDER.value,
@@ -29,8 +41,24 @@ def create_billingpay_backup_filepath(
 
 
 def get_redis_last_backup(
-    env: str, table_name: str, database_name: str, incremental_type: str
+    env: str,
+    table_name: str,
+    database_name: str,
+    incremental_type: str,
 ) -> Union[int, datetime]:
+    """
+    Consulta no Redis o último valor capturado de uma tabela
+
+    Args:
+        env (str): prod ou dev
+        table_name (str): Nome da tabela
+        database_name (str): Nome do banco de dados
+        database_config (dict): Dicionário com os argumentos para a função create_database_url
+        incremental_type (str): Tipo de carga incremental (datetime ou integer)
+
+    Returns:
+        Union[int, datetime]: Último valor capturado
+    """
     redis_key = f"{env}.backup_jae_billingpay.{database_name}.{table_name}"
     log(f"Consultando Redis: {redis_key}")
     redis_client = get_redis_client()
