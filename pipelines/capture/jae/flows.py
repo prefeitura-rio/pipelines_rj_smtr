@@ -103,7 +103,7 @@ with Flow("jae: backup dados BillingPay") as backup_billingpay:
     SET_REDIS_BACKUP = set_redis_backup_billingpay.map(
         env=unmapped(env),
         table_info=table_info,
-        database_name=database_name,
+        database_name=unmapped(database_name),
         timestamp=unmapped(timestamp),
     )
 
