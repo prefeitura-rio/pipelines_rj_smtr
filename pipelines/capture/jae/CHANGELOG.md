@@ -1,5 +1,9 @@
 # Changelog - source_jae
 
+## [1.2.0] - 2025-02-11
+
+- Cria flow `backup_billingpay` para fazer o backup diário dos dados da Jaé dos bancos da BillingPay (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/422)
+
 ## [1.1.0] - 2024-12-19
 
 ### Adicionado
