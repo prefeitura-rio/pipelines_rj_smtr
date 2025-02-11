@@ -1,5 +1,11 @@
 # Changelog - pipelines
 
+## [1.0.2] - 2025-01-11
+
+### Adicionado
+
+- Adiciona task `transform_task_state` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/423)
+
 ## [1.0.1] - 2024-12-13
 
 ### Adicionado
