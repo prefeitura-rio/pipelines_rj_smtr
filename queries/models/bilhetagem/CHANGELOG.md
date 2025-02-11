@@ -1,5 +1,15 @@
 # Changelog - bilhetagem
 
+## [3.1.0] - 2025-02-04
+
+### Adicionado
+- Cria modelo `transacao_valor_ordem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/411)
+
+### Alterado
+- Adiciona colunas com informação das ordens de pagamento no modelo `integracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/411)
+- Renomeia coluna `id` para `id_ordem_rateio` no modelo `staging_ordem_rateio.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/411)
+- Remove coluna `id_ordem_ressarcimento` no modelo `ordem_pagamento_servico_operador_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/411)
+
 ## [3.0.0] - 2024-11-25
 
 ### Adicionado
