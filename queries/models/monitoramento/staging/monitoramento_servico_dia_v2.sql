@@ -1,4 +1,4 @@
-{% set is_disabled = var("start_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
+{% set is_disabled = var("start_date") < var("DATA_SUBSIDIO_V14_INICIO") %}
 
 {{ config(materialized="ephemeral") }}
 
