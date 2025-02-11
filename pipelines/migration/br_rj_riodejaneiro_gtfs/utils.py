@@ -530,6 +530,9 @@ def processa_ordem_servico_faixa_horaria(
             if "extensao" in col:
                 df[col] = df[col].apply(pd.to_numeric)
                 df[col] = df[col] / 1000
+            if "horario" in col:
+                df[col] = df[col].astype(str)
+                df[col] = df[col].apply(normalizar_horario)
 
         df["tipo_os"] = tipo_os
 
