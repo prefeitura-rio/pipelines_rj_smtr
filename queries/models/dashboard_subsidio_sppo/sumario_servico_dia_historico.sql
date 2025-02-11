@@ -126,7 +126,5 @@ with
 select *, current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
 from dados_completos
 {% if is_incremental() %}
-    where
-        data
-        between date("{{ var(" start_date ") }}") and date("{{ var(" end_date ") }}")
+    where data between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
 {% endif %}
