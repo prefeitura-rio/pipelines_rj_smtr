@@ -107,9 +107,9 @@ with Flow("jae: backup dados BillingPay") as backup_billingpay:
         timestamp=unmapped(timestamp),
     )
 
-verificacao_ip.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
-verificacao_ip.run_config = KubernetesRun(
+backup_billingpay.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
+backup_billingpay.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-verificacao_ip.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
+backup_billingpay.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
