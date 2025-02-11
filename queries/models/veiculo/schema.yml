@@ -11,8 +11,8 @@ models:
           compare_expression: count(distinct data)
           group_by: [data]
           compare_group_by: [Date(data)]
-          row_condition: "data between DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_start')) + modules.datetime.timedelta(7) }}') AND DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(8) }}')"
-          compare_row_condition: "data between '{{ modules.datetime.datetime.fromisoformat(var('date_range_start')) + modules.datetime.timedelta(7) }}' AND '{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(8) }}'"
+          row_condition: "DATE(data) between DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_start')) + modules.datetime.timedelta(7) }}') AND DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(8) }}')"
+          compare_row_condition: "DATE(data) between DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_start')) + modules.datetime.timedelta(7) }}') AND DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(8) }}')"
           where: "DATE(data) between DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_start')) + modules.datetime.timedelta(7) }}') AND DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(8) }}')"
     columns:
       - name: data
