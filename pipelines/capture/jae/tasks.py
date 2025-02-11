@@ -194,7 +194,9 @@ def get_non_filtered_tables(
     engine = create_engine(database_url)
     result = []
     with engine.connect() as conn:
-        for table in [t for t in table_info if t["table_name"] not in tables_config["filter"]]:
+        for table in [
+            t["table_name"] for t in table_info if t["table_name"] not in tables_config["filter"]
+        ]:
             df = pd.read_sql(f"select count(*) as ct from {table}", conn)
             df["table"] = table
             result.append(df)
