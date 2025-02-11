@@ -185,9 +185,9 @@ def get_table_info(
     return result
 
 
-@task
+@task(nout=2)
 def get_non_filtered_tables(
-    database_name: str, database_config: dict, table_info: list[dict[str, str]]
+    database_name: str, database_config: dict, table_info: tuple[bool, list[dict[str, str]]]
 ):
     tables_config = constants.BACKUP_JAE_BILLING_PAY.value[database_name]
     database_url = create_database_url(**database_config)
@@ -199,11 +199,13 @@ def get_non_filtered_tables(
             df["table"] = table
             result.append(df)
     df_final = pd.concat(result)
-    return (
+    tables = (
         df_final.loc[df_final["ct"] > 5000]
         .sort_values("ct", ascending=False)
         .to_dict(orient="records")
     )
+
+    return len(tables) > 0, tables
 
 
 @task(nout=2)

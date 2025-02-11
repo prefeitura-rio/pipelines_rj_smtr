@@ -71,27 +71,27 @@ with Flow("jae: backup dados BillingPay") as backup_billingpay:
         database_config=database_config,
         timestamp=timestamp,
     )
-    table_count = get_non_filtered_tables(
+    send_message, table_count = get_non_filtered_tables(
         database_name=database_name,
         database_config=database_config,
         table_info=table_info,
     )
-    message = create_non_filtered_discord_message(
-        database_name=database_name,
-        table_count=table_count,
-    )
+    with case(send_message, True):
+        message = create_non_filtered_discord_message(
+            database_name=database_name,
+            table_count=table_count,
+        )
 
-    send_discord_message = log_discord(
-        message=message,
-        key=constants.ALERT_WEBHOOK.value,
-        dados_tag=True,
-    )
+        send_discord_message = log_discord(
+            message=message,
+            key=constants.ALERT_WEBHOOK.value,
+            dados_tag=True,
+        )
 
     table_info = get_raw_backup_billingpay(
         table_info=table_info,
         database_config=database_config,
         timestamp=timestamp,
-        upstream_tasks=[send_discord_message],
     )
 
     table_info = upload_backup_billingpay.map(
