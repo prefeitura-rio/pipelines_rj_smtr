@@ -223,8 +223,7 @@ with Flow(
             params=dbt_vars,
         )
 
-        # test_failed = check_fail(DATA_QUALITY_PRE)
-        test_failed = True
+        test_failed = check_fail(DATA_QUALITY_PRE)
 
         with case(test_failed, False):
             # 4. CALCULATE #
