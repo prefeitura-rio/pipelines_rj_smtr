@@ -1,0 +1,56 @@
+models:
+  - name: transacao_valor_ordem
+    description: Tabela contendo o valor de cada transação em uma ordem de pagamento
+    columns:
+      - name: data_ordem
+        description: Data da ordem de pagamento (partição)
+        data_type: date
+        quote: true
+      - name: data_transacao
+        description: Data da transação
+        data_type: date
+        quote: true
+      - name: id_transacao
+        description: Identificador único da transação
+        data_type: string
+        quote: true
+      - name: modo
+        description: "{{ doc('modo' ) }}"
+        data_type: string
+        quote: true
+      - name: consorcio
+        description: "{{  doc('consorcio') }}"
+        data_type: string
+        quote: true
+      - name: id_operadora
+        description: Identificador da operadora na tabela cadastro.operadoras
+        data_type: string
+        quote: true
+      - name: id_servico_jae
+        description: Identificador da linha no banco de dados da jaé (É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae)
+        data_type: string
+        quote: true
+      - name: valor_transacao_rateio
+        description: Valor da transação com o rateio (se houver) (R$)
+        data_type: float64
+        quote: true
+      - name: id_ordem_pagamento
+        description: Identificador da ordem pagamento no banco de dados da Jaé
+        data_type: string
+        quote: true
+      - name: id_ordem_pagamento_consorcio_dia
+        description: Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_dia
+        data_type: string
+        quote: true
+      - name: id_ordem_pagamento_consorcio_operador_dia
+        description: Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_operador_dia
+        data_type: string
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
