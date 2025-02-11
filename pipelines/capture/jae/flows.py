@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
 """Flows de captura dos dados da Jaé"""
+from datetime import datetime, timedelta
+
 from prefect import Parameter, case, unmapped
 from prefect.run_configs import KubernetesRun
+from prefect.schedules import Schedule
+from prefect.schedules.clocks import IntervalClock
 from prefect.storage import GCS
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
     handler_inject_bd_credentials,
 )
+from pytz import timezone
 
 from pipelines.capture.jae.constants import constants
 from pipelines.capture.jae.tasks import (
@@ -18,6 +23,7 @@ from pipelines.capture.jae.tasks import (
     get_non_filtered_tables,
     get_raw_backup_billingpay,
     get_table_info,
+    rename_flow_run_backup_billingpay,
     set_redis_backup_billingpay,
     test_jae_databases_connections,
     upload_backup_billingpay,
@@ -64,6 +70,8 @@ with Flow("jae: backup dados BillingPay") as backup_billingpay:
     database_config = get_jae_db_config(database_name=database_name)
 
     timestamp = get_scheduled_timestamp()
+
+    rename_flow_run_backup_billingpay(database_name=database_name, timestamp=timestamp)
 
     table_info = get_table_info(
         env=env,
@@ -113,3 +121,19 @@ backup_billingpay.run_config = KubernetesRun(
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 backup_billingpay.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
+
+backup_billingpay.schedule = Schedule(
+    [
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(
+                2021, 1, 1, 0, 30 * idx, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+            ),
+            labels=[
+                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+            parameter_defaults={"database_name": db},
+        )
+        for idx, db in enumerate(constants.BACKUP_JAE_BILLING_PAY.value.keys())
+    ]
+)
