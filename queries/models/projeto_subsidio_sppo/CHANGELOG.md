@@ -1,10 +1,16 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.1.7] - 2025-02-05
+
+### Adicionado
+
+- Altera os dias `2025-01-18`, `2025-01-19`, `2025-01-20`,  `2025-01-25` e `2025-01-26` para tipo_dia `Verão` no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/416)
+
 ## [9.1.6] - 2025-01-23
 
 ### Adicionado
 
-- Altera os dias `2025-01-11` e `2025-01-12` para tipo_dia `Verão` ao modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/398)
+- Altera os dias `2025-01-11` e `2025-01-12` para tipo_dia `Verão` no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/398)
 
 ## [9.1.5] - 2025-01-08
 

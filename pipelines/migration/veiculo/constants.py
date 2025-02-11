@@ -39,6 +39,8 @@ class constants(Enum):  # pylint: disable=c0103
         "wifi": "indicador_wifi",
         "usb": "indicador_usb",
         "data_inicio_vinculo": "data_inicio_vinculo",
+        "ultima_situacao": "ultima_situacao",
+        "ano_ultima_vistoria": "ano_ultima_vistoria",
     }
 
     SPPO_LICENCIAMENTO_CSV_ARGS = {
@@ -89,4 +91,18 @@ class constants(Enum):  # pylint: disable=c0103
             "names": SPPO_REGISTRO_AGENTE_VERAO_COLUMNS,
         },
         "primary_key": ["datetime_registro", "email"],
+    }
+
+    VEICULO_DATA_QUALITY_CHECK_LIST = {
+        "infracao": {
+            "dbt_expectations.expect_table_aggregation_to_equal_other_table__infracao": {
+                "description": "Todas as datas possuem dados"
+            }
+        },
+        "sppo_veiculo_dia": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.unique_combination_of_columns__data_id_veiculo__sppo_veiculo_dia": {
+                "description": "Todos os registros são únicos"
+            },
+        },
     }

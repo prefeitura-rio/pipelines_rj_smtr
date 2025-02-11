@@ -1,5 +1,15 @@
 # Changelog - veiculo
 
+## [1.1.4] - 2025-02-10
+
+### Adicionado
+- Adicionados novos campos na constante `SPPO_LICENCIAMENTO_MAPPING_KEYS` conforme novo leiaute informado pela IPLANRIO/PRE/DPN/GTIS-6 por e-mail em 2025-02-10 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/420)
+
+## [1.1.3] - 2025-02-06
+
+### Adicionado
+- Adicionados testes no modelo `infracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/401)
+
 ## [1.1.2] - 2025-02-05
 
 ### Alterado

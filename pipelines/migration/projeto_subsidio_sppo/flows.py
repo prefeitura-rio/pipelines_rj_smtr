@@ -3,7 +3,7 @@
 """
 Flows for projeto_subsidio_sppo
 
-DBT: 2025-02-03
+DBT: 2025-02-05
 """
 
 from prefect import Parameter, case, task
@@ -216,7 +216,7 @@ with Flow(
 
         DATA_QUALITY_PRE = dbt_data_quality_checks(
             dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_PRE,
-            checks_list={},
+            checks_list=constants.SUBSIDIO_SPPO_PRE_CHECKS_LIST.value,
             webhook_key="subsidio_data_check",
             params=dbt_vars,
         )
@@ -254,7 +254,7 @@ with Flow(
 
                 DATA_QUALITY_POS = dbt_data_quality_checks(
                     dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS,
-                    checks_list={},
+                    checks_list=constants.SUBSIDIO_SPPO_POS_CHECKS_LIST.value,
                     webhook_key="subsidio_data_check",
                     params={
                         "date_range_start": date_intervals["first_range"]["start_date"],
@@ -296,7 +296,7 @@ with Flow(
 
                 DATA_QUALITY_POS_2 = dbt_data_quality_checks(
                     dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS_2,
-                    checks_list={},
+                    checks_list=constants.SUBSIDIO_SPPO_POS_CHECKS_LIST.value,
                     webhook_key="subsidio_data_check",
                     params={
                         "date_range_start": date_intervals["second_range"]["start_date"],
@@ -306,9 +306,11 @@ with Flow(
 
             with case(date_in_range, False):
                 gte = GreaterThanOrEqual()
-                gte_result = gte.run(_vars["start_date"], constants.DATA_SUBSIDIO_V9_INICIO.value)
+                data_maior_ou_igual_v9 = gte.run(
+                    _vars["start_date"], constants.DATA_SUBSIDIO_V9_INICIO.value
+                )
 
-                with case(gte_result, False):
+                with case(data_maior_ou_igual_v9, False):
                     SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_selector(
                         selector_name="apuracao_subsidio_v8",
                         _vars=_vars,
@@ -321,12 +323,12 @@ with Flow(
 
                     DATA_QUALITY_POS = dbt_data_quality_checks(
                         dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS,
-                        checks_list={},
+                        checks_list=constants.SUBSIDIO_SPPO_POS_CHECKS_LIST.value,
                         webhook_key="subsidio_data_check",
                         params=dbt_vars,
                     )
 
-                with case(gte_result, True):
+                with case(data_maior_ou_igual_v9, True):
                     SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_selector(
                         selector_name="apuracao_subsidio_v9",
                         _vars=_vars,
@@ -344,18 +346,80 @@ with Flow(
                         upstream_tasks=[_vars_2],
                     )
                     # POST-DATA QUALITY CHECK #
-                    SUBSIDIO_SPPO_DATA_QUALITY_POS = run_dbt_tests(
-                        dataset_id="viagens_remuneradas sumario_servico_dia_pagamento",
-                        _vars=dbt_vars,
-                    ).set_upstream(task=SUBSIDIO_SPPO_APURACAO_RUN)
-
-                    DATA_QUALITY_POS = dbt_data_quality_checks(
-                        dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS,
-                        checks_list={},
-                        webhook_key="subsidio_data_check",
-                        params=dbt_vars,
+                    date_in_range = check_date_in_range(
+                        _vars["start_date"],
+                        _vars["end_date"],
+                        constants.DATA_SUBSIDIO_V14_INICIO.value,
                     )
 
+                    with case(date_in_range, True):
+                        date_intervals = split_date_range(
+                            _vars["start_date"],
+                            _vars["end_date"],
+                            constants.DATA_SUBSIDIO_V14_INICIO.value,
+                        )
+
+                        SUBSIDIO_SPPO_DATA_QUALITY_POS = run_dbt_tests(
+                            dataset_id="viagens_remuneradas sumario_servico_dia_pagamento",  # noqa
+                            _vars={
+                                "date_range_start": date_intervals["first_range"]["start_date"],
+                                "date_range_end": date_intervals["first_range"]["end_date"],
+                            },
+                        )
+
+                        DATA_QUALITY_POS = dbt_data_quality_checks(
+                            dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS,
+                            checks_list=constants.SUBSIDIO_SPPO_POS_CHECKS_LIST.value,
+                            webhook_key="subsidio_data_check",
+                            params={
+                                "date_range_start": date_intervals["first_range"]["start_date"],
+                                "date_range_end": date_intervals["first_range"]["end_date"],
+                            },
+                        )
+
+                        SUBSIDIO_SPPO_DATA_QUALITY_POS_2 = run_dbt_tests(
+                            dataset_id="viagens_remuneradas sumario_faixa_servico_dia_pagamento",  # noqa
+                            _vars={
+                                "date_range_start": date_intervals["second_range"]["start_date"],
+                                "date_range_end": date_intervals["second_range"]["end_date"],
+                            },
+                        ).set_upstream(task=SUBSIDIO_SPPO_DATA_QUALITY_POS)
+
+                        DATA_QUALITY_POS_2 = dbt_data_quality_checks(
+                            dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS_2,
+                            checks_list=constants.SUBSIDIO_SPPO_POS_CHECKS_LIST.value,
+                            webhook_key="subsidio_data_check",
+                            params={
+                                "date_range_start": date_intervals["second_range"]["start_date"],
+                                "date_range_end": date_intervals["second_range"]["end_date"],
+                            },
+                        )
+                    with case(date_in_range, False):
+                        data_maior_ou_igual_v14 = gte.run(
+                            _vars["start_date"], constants.DATA_SUBSIDIO_V14_INICIO.value
+                        )
+                        with case(data_maior_ou_igual_v14, False):
+                            SUBSIDIO_SPPO_DATA_QUALITY_POS_V9 = run_dbt_tests(
+                                dataset_id="viagens_remuneradas sumario_servico_dia_pagamento",  # noqa
+                                _vars=dbt_vars,
+                            )
+
+                        with case(data_maior_ou_igual_v14, True):
+                            SUBSIDIO_SPPO_DATA_QUALITY_POS_V14 = run_dbt_tests(
+                                dataset_id="viagens_remuneradas sumario_faixa_servico_dia_pagamento",  # noqa
+                                _vars=dbt_vars,
+                            )
+
+                        SUBSIDIO_SPPO_DATA_QUALITY_POS = merge(
+                            SUBSIDIO_SPPO_DATA_QUALITY_POS_V9, SUBSIDIO_SPPO_DATA_QUALITY_POS_V14
+                        )
+
+                        DATA_QUALITY_POS = dbt_data_quality_checks(
+                            dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS,
+                            checks_list=constants.SUBSIDIO_SPPO_POS_CHECKS_LIST.value,
+                            webhook_key="subsidio_data_check",
+                            params=dbt_vars,
+                        )
             # TODO: test upstream_tasks=[SUBSIDIO_SPPO_DASHBOARD_RUN]
             # 6. PUBLISH #
             # with case(publish, True):
@@ -396,7 +460,7 @@ with Flow(
 
         DATA_QUALITY_PRE = dbt_data_quality_checks(
             dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_PRE,
-            checks_list={},
+            checks_list=constants.SUBSIDIO_SPPO_PRE_CHECKS_LIST.value,
             webhook_key="subsidio_data_check",
             params=dbt_vars,
         )
@@ -420,7 +484,7 @@ with Flow(
 
             DATA_QUALITY_POS = dbt_data_quality_checks(
                 dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS,
-                checks_list={},
+                checks_list=constants.SUBSIDIO_SPPO_POS_CHECKS_LIST.value,
                 webhook_key="subsidio_data_check",
                 params={
                     "date_range_start": date_intervals["first_range"]["start_date"],
@@ -438,7 +502,7 @@ with Flow(
 
             DATA_QUALITY_POS_2 = dbt_data_quality_checks(
                 dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS_2,
-                checks_list={},
+                checks_list=constants.SUBSIDIO_SPPO_POS_CHECKS_LIST.value,
                 webhook_key="subsidio_data_check",
                 params={
                     "date_range_start": date_intervals["second_range"]["start_date"],
@@ -448,9 +512,11 @@ with Flow(
 
         with case(date_in_range, False):
             gte = GreaterThanOrEqual()
-            gte_result = gte.run(_vars["start_date"], constants.DATA_SUBSIDIO_V9_INICIO.value)
+            data_maior_ou_igual_v9 = gte.run(
+                _vars["start_date"], constants.DATA_SUBSIDIO_V9_INICIO.value
+            )
 
-            with case(gte_result, False):
+            with case(data_maior_ou_igual_v9, False):
                 SUBSIDIO_SPPO_DATA_QUALITY_POS = run_dbt_tests(
                     dataset_id="dashboard_subsidio_sppo",
                     _vars=dbt_vars,
@@ -458,24 +524,84 @@ with Flow(
 
                 DATA_QUALITY_POS = dbt_data_quality_checks(
                     dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS,
-                    checks_list={},
+                    checks_list=constants.SUBSIDIO_SPPO_POS_CHECKS_LIST.value,
                     webhook_key="subsidio_data_check",
                     params=dbt_vars,
                 )
 
-            with case(gte_result, True):
-                SUBSIDIO_SPPO_DATA_QUALITY_POS = run_dbt_tests(
-                    dataset_id="viagens_remuneradas sumario_servico_dia_pagamento",
-                    _vars=dbt_vars,
+            with case(data_maior_ou_igual_v9, True):
+                date_in_range = check_date_in_range(
+                    _vars["start_date"], _vars["end_date"], constants.DATA_SUBSIDIO_V14_INICIO.value
                 )
 
-                DATA_QUALITY_POS = dbt_data_quality_checks(
-                    dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS,
-                    checks_list={},
-                    webhook_key="subsidio_data_check",
-                    params=dbt_vars,
-                )
+                with case(date_in_range, True):
+                    date_intervals = split_date_range(
+                        _vars["start_date"],
+                        _vars["end_date"],
+                        constants.DATA_SUBSIDIO_V14_INICIO.value,
+                    )
 
+                    SUBSIDIO_SPPO_DATA_QUALITY_POS = run_dbt_tests(
+                        dataset_id="viagens_remuneradas sumario_servico_dia_pagamento",  # noqa
+                        _vars={
+                            "date_range_start": date_intervals["first_range"]["start_date"],
+                            "date_range_end": date_intervals["first_range"]["end_date"],
+                        },
+                    )
+
+                    DATA_QUALITY_POS = dbt_data_quality_checks(
+                        dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS,
+                        checks_list=constants.SUBSIDIO_SPPO_POS_CHECKS_LIST.value,
+                        webhook_key="subsidio_data_check",
+                        params={
+                            "date_range_start": date_intervals["first_range"]["start_date"],
+                            "date_range_end": date_intervals["first_range"]["end_date"],
+                        },
+                    )
+
+                    SUBSIDIO_SPPO_DATA_QUALITY_POS_2 = run_dbt_tests(
+                        dataset_id="viagens_remuneradas sumario_faixa_servico_dia_pagamento",  # noqa
+                        _vars={
+                            "date_range_start": date_intervals["second_range"]["start_date"],
+                            "date_range_end": date_intervals["second_range"]["end_date"],
+                        },
+                    ).set_upstream(task=SUBSIDIO_SPPO_DATA_QUALITY_POS)
+
+                    DATA_QUALITY_POS_2 = dbt_data_quality_checks(
+                        dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS_2,
+                        checks_list=constants.SUBSIDIO_SPPO_POS_CHECKS_LIST.value,
+                        webhook_key="subsidio_data_check",
+                        params={
+                            "date_range_start": date_intervals["second_range"]["start_date"],
+                            "date_range_end": date_intervals["second_range"]["end_date"],
+                        },
+                    )
+                with case(date_in_range, False):
+                    data_maior_ou_igual_v14 = gte.run(
+                        _vars["start_date"], constants.DATA_SUBSIDIO_V14_INICIO.value
+                    )
+                    with case(data_maior_ou_igual_v14, False):
+                        SUBSIDIO_SPPO_DATA_QUALITY_POS_V9 = run_dbt_tests(
+                            dataset_id="viagens_remuneradas sumario_servico_dia_pagamento",  # noqa
+                            _vars=dbt_vars,
+                        )
+
+                    with case(data_maior_ou_igual_v14, True):
+                        SUBSIDIO_SPPO_DATA_QUALITY_POS_V14 = run_dbt_tests(
+                            dataset_id="viagens_remuneradas sumario_faixa_servico_dia_pagamento",  # noqa
+                            _vars=dbt_vars,
+                        )
+
+                    SUBSIDIO_SPPO_DATA_QUALITY_POS = merge(
+                        SUBSIDIO_SPPO_DATA_QUALITY_POS_V9, SUBSIDIO_SPPO_DATA_QUALITY_POS_V14
+                    )
+
+                    DATA_QUALITY_POS = dbt_data_quality_checks(
+                        dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS,
+                        checks_list=constants.SUBSIDIO_SPPO_POS_CHECKS_LIST.value,
+                        webhook_key="subsidio_data_check",
+                        params=dbt_vars,
+                    )
 subsidio_sppo_apuracao.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 subsidio_sppo_apuracao.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value, labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value]
