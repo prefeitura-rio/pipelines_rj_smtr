@@ -287,7 +287,7 @@ def set_redis_backup_billingpay(
     if table_info["incremental_type"] is None:
         return
     redis_key = f"{env}.backup_jae_billingpay.{database_name}.{table_info['table_name']}"
-    redis_client = get_redis_client(host="localhost")
+    redis_client = get_redis_client()
     content = redis_client.get(redis_key)
     if table_info["incremental_type"] == "datetime":
         save_value = timestamp.strftime(smtr_constants.MATERIALIZATION_LAST_RUN_PATTERN.value)
