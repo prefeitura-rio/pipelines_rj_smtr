@@ -406,11 +406,8 @@ with Flow(
                                 _vars=dbt_vars,
                             ).set_upstream(task=SUBSIDIO_SPPO_APURACAO_RUN)
 
-                            DATA_QUALITY_POS = dbt_data_quality_checks(
-                                dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS_V9,
-                                checks_list=constants.SUBSIDIO_SPPO_POS_CHECKS_LIST.value,
-                                webhook_key="subsidio_data_check",
-                                params=dbt_vars,
+                            SUBSIDIO_SPPO_DATA_QUALITY_POS_V9 = transform_task_state(
+                                SUBSIDIO_SPPO_DATA_QUALITY_POS_V9
                             )
 
                         with case(data_maior_ou_igual_v14, True):
@@ -419,12 +416,21 @@ with Flow(
                                 _vars=dbt_vars,
                             ).set_upstream(task=SUBSIDIO_SPPO_APURACAO_RUN)
 
-                            DATA_QUALITY_POS = dbt_data_quality_checks(
-                                dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS_V14,
-                                checks_list=constants.SUBSIDIO_SPPO_POS_CHECKS_LIST.value,
-                                webhook_key="subsidio_data_check",
-                                params=dbt_vars,
+                            SUBSIDIO_SPPO_DATA_QUALITY_POS_V14 = transform_task_state(
+                                SUBSIDIO_SPPO_DATA_QUALITY_POS_V14
                             )
+
+                        SUBSIDIO_SPPO_DATA_QUALITY_POS = merge(
+                            SUBSIDIO_SPPO_DATA_QUALITY_POS_V9, SUBSIDIO_SPPO_DATA_QUALITY_POS_V14
+                        )
+
+                        DATA_QUALITY_POS = dbt_data_quality_checks(
+                            dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS,
+                            checks_list=constants.SUBSIDIO_SPPO_POS_CHECKS_LIST.value,
+                            webhook_key="subsidio_data_check",
+                            params=dbt_vars,
+                        )
+
             # TODO: test upstream_tasks=[SUBSIDIO_SPPO_DASHBOARD_RUN]
             # 6. PUBLISH #
             # with case(publish, True):
@@ -591,11 +597,8 @@ with Flow(
                             _vars=dbt_vars,
                         )
 
-                        DATA_QUALITY_POS = dbt_data_quality_checks(
-                            dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS_V9,
-                            checks_list=constants.SUBSIDIO_SPPO_POS_CHECKS_LIST.value,
-                            webhook_key="subsidio_data_check",
-                            params=dbt_vars,
+                        SUBSIDIO_SPPO_DATA_QUALITY_POS_V9 = transform_task_state(
+                            SUBSIDIO_SPPO_DATA_QUALITY_POS_V9
                         )
 
                     with case(data_maior_ou_igual_v14, True):
@@ -604,12 +607,20 @@ with Flow(
                             _vars=dbt_vars,
                         )
 
-                        DATA_QUALITY_POS = dbt_data_quality_checks(
-                            dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS_V14,
-                            checks_list=constants.SUBSIDIO_SPPO_POS_CHECKS_LIST.value,
-                            webhook_key="subsidio_data_check",
-                            params=dbt_vars,
+                        SUBSIDIO_SPPO_DATA_QUALITY_POS_V14 = transform_task_state(
+                            SUBSIDIO_SPPO_DATA_QUALITY_POS_V14
                         )
+
+                    SUBSIDIO_SPPO_DATA_QUALITY_POS = merge(
+                        SUBSIDIO_SPPO_DATA_QUALITY_POS_V9, SUBSIDIO_SPPO_DATA_QUALITY_POS_V14
+                    )
+
+                    DATA_QUALITY_POS = dbt_data_quality_checks(
+                        dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS,
+                        checks_list=constants.SUBSIDIO_SPPO_POS_CHECKS_LIST.value,
+                        webhook_key="subsidio_data_check",
+                        params=dbt_vars,
+                    )
 subsidio_sppo_apuracao.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 subsidio_sppo_apuracao.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value, labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value]
