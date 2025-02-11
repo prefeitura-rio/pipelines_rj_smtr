@@ -35,7 +35,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todos os registros possuem longitude não nula"
             },
             "not_null__status__gps_sppo": {
-                "description": "Todos os registros possuem servico não nulo"
+                "description": "Todos os registros possuem status não nulo"
             },
         }
     }
