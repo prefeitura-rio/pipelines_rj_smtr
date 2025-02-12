@@ -796,7 +796,7 @@ models:
         tests:
           - not_null
       - name: datetime_ultima_atualizacao
-        description: "Última atualização (GMT-3)"
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: subsidio_data_versao_efetiva
     description: "Relacionamento entre datas de operação de planejamento dos serviços."
     columns:

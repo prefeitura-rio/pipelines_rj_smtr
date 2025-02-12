@@ -70,7 +70,7 @@ models:
       - name: versao
         description: "{{ doc('versao') }}"
   - name: view_integracao
-    description: "Tabela de integrações realizadas entre modos do sistema de transporte municipal, contendo os valores da repartição tarifária (quando houver). [Dados em fase de teste]"
+    description: "Tabela de integrações realizadas entre modos do sistema de transporte municipal, contendo os valores da repartição tarifária [quando houver - dados em fase de teste]"
     columns:
       - name: data
         description: "Data da transação (partição)"

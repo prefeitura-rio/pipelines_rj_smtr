@@ -72,7 +72,7 @@ models:
       - name: placa
         description: "{{ doc('placa') }}"
       - name: linha
-        description: "Linha de ônibus (serviço) ou, se realocada, informada pela empresa operadora"
+        description: "{{ doc('linha') }}"
       - name: latitude
         description: "{{ doc('latitude_gps') }}"
       - name: longitude

@@ -51,11 +51,11 @@ models:
         data_type: string
         quote: true
       - name: datetime_processamento
-        description: Data e hora do processamento da viagem em GMT-3
+        description: Data e hora do processamento da viagem [GMT-3]
         data_type: datetime
         quote: true
       - name: datetime_captura
-        description: Data e hora da captura da integração em GMT-3
+        description: Data e hora da captura da integração [GMT-3]
         data_type: string
         quote: true
       - name: versao

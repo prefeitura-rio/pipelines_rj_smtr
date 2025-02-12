@@ -9,11 +9,11 @@ models:
       - name: hora
         description: "Hora da transação"
       - name: datetime_transacao
-        description: "Data e hora da transação em GMT-3 (formato YYYY-MM-ddTHH:mm:ss.ssssss)"
+        description: "Data e hora da transação [GMT-3 - formato YYYY-MM-ddTHH:mm:ss.ssssss]"
       - name: datetime_processamento
-        description: "Data e hora de processamento da transação em GMT-3 (formato YYYY-MM-ddTHH:mm:ss.ssssss)"
+        description: "Data e hora de processamento da transação [GMT-3 - formato YYYY-MM-ddTHH:mm:ss.ssssss]"
       - name: datetime_captura
-        description: "Timestamp de captura em GMT-3 (formato YYYY-MM-dd HH:mm:ssTZD)"
+        description: "Timestamp de captura [GMT-3 - formato YYYY-MM-dd HH:mm:ssTZD)"
       - name: modo
         description: "Tipo de transporte (Ônibus, Van, BRT)"
       - name: id_consorcio
@@ -89,18 +89,18 @@ models:
       - name: versao
         description: "{{ doc('versao') }}"
   - name: integracao
-    description: "Tabela de integrações realizadas entre modos do sistema de transporte municipal, contendo os valores da repartição tarifária (quando houver). [Dados em fase de teste]"
+    description: "Tabela de integrações realizadas entre modos do sistema de transporte municipal, contendo os valores da repartição tarifária [quando houver - dados em fase de teste]"
     columns:
       - name: data
         description: "Data da transação (partição)"
       - name: hora
         description: "Hora da transação"
       - name: datetime_processamento_integracao
-        description: "Data e hora de processamento da integração em GMT-3"
+        description: "Data e hora de processamento da integração [GMT-3]"
       - name: datetime_captura
-        description: "Data e hora da captura da integração em GMT-3"
+        description: "Data e hora da captura da integração [GMT-3]"
       - name: datetime_transacao
-        description: "Data e hora da transação em GMT-3"
+        description: "Data e hora da transação [GMT-3]"
       - name: intervalo_integracao
         description: "Tempo entre a perna atual da integração e a anterior em minutos"
       - name: id_integracao
@@ -165,9 +165,9 @@ models:
       - name: hora
         description: "Hora do recebimento da transmissão do GPS"
       - name: datetime_gps
-        description: "Data e hora do recebimento da transmissão do GPS em GMT-3"
+        description: "Data e hora do recebimento da transmissão do GPS [GMT-3]"
       - name: datetime_captura
-        description: "Data e hora da captura do dado de GPS em GMT-3"
+        description: "Data e hora da captura do dado de GPS [GMT-3]"
       - name: id_operadora
         description: "Identificador da operadora na tabela cadastro.operadoras"
       - name: operadora
@@ -210,9 +210,9 @@ models:
       - name: hora
         description: "Hora do recebimento da transmissão do GPS"
       - name: datetime_gps
-        description: "Data e hora do recebimento da transmissão do GPS em GMT-3"
+        description: "Data e hora do recebimento da transmissão do GPS [GMT-3]"
       - name: datetime_captura
-        description: "Data e hora da captura do dado de GPS em GMT-3"
+        description: "Data e hora da captura do dado de GPS [GMT-3]"
       - name: id_operadora
         description: "Identificador da operadora na tabela cadastro.operadoras"
       - name: operadora
@@ -431,7 +431,7 @@ models:
       - name: valor_pago
         description: "Valor pago ao operador ou consórcio (R$)"
       - name: datetime_captura
-        description: Data e hora da captura da ordem em GMT-3
+        description: "Data e hora da captura da ordem [GMT-3]"
       - name: versao
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
@@ -552,11 +552,11 @@ models:
       - name: hora
         description: "Hora da transação"
       - name: datetime_transacao
-        description: "Data e hora da transação em GMT-3 (formato YYYY-MM-ddTHH:mm:ss.ssssss)"
+        description: "Data e hora da transação [GMT-3 - formato YYYY-MM-ddTHH:mm:ss.ssssss]"
       - name: datetime_processamento
-        description: "Data e hora de processamento da transação em GMT-3 (formato YYYY-MM-ddTHH:mm:ss.ssssss)"
+        description: "Data e hora de processamento da transação [GMT-3 - formato YYYY-MM-ddTHH:mm:ss.ssssss]"
       - name: datetime_captura
-        description: "Timestamp de captura em GMT-3 (formato YYYY-MM-dd HH:mm:ssTZD)"
+        description: "Timestamp de captura [GMT-3 - formato YYYY-MM-dd HH:mm:ssTZD)"
       - name: modo
         description: "Tipo de transporte (Ônibus, Van, BRT)"
       - name: id_consorcio

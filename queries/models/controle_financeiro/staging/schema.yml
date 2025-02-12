@@ -5,9 +5,9 @@ models:
     description: "View desaninhada para os dados capturados em rj-smtr-staging.controle_financeiro.arquivo_retorno"
     columns:
       - name: data
-        description: "{{ doc('data_captura') }} (partição)"
+        description: "{{ doc('data_captura') }} [partição]"
       - name: timestamp_captura
-        description: "Data e hora da captura em GMT-3"
+        description: "Data e hora da captura [GMT-3]"
       - name: id
         description: "Identificador único do pagamento"
       - name: dataCaptura

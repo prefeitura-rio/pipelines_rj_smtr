@@ -7,7 +7,7 @@ Código identificador do veículo (número de ordem).
 {% enddocs %}
 
 {% docs datetime_ultima_atualizacao %}
-Última atualização (GMT-3)
+Última atualização [GMT-3]
 {% enddocs %}
 
 {% docs datetime_partida %}
@@ -202,10 +202,6 @@ Fim do período de operação planejado
 
 {% docs feed_version %}
 String que indica a versão atual do conjunto de dados GTFS.
-{% enddocs %}
-
-{% docs linha %}
-Número da Linha
 {% enddocs %}
 
 {% docs tipo_servico %}
@@ -449,8 +445,8 @@ Tipo de veículo
 {% enddocs %}
 
 {% docs status %}
-Licenciado - Veículo licenciado no Sistema de Transporte Urbano (STU)\n
-Válido - Veículo com solicitação válida para ingresso no Sistema de Transporte Urbano (STU)
+Licenciado - Veículo licenciado no Sistema de Transporte Urbano [STU]\n
+Válido - Veículo com solicitação válida para ingresso no Sistema de Transporte Urbano [STU]
 {% enddocs %}
 
 {% docs ano_ultima_vistoria_atualizado %}
@@ -469,3 +465,6 @@ BRT – nesta tabela consta apenas este modo
 SPPO – nesta tabela consta apenas este modo
 {% enddocs %}
 
+{% docs linha %}
+Serviço de ônibus [linha] ou, se realocada, informada pela empresa operadora
+{% enddocs %}

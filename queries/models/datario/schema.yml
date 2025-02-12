@@ -108,11 +108,11 @@ models:
 
   - name: licenciamento_veiculo_datario
     description: "Tabela histórica de dados cadastrais dos veículos que operam o sistema de transporte rodoviário,
-                  considerando tanto os licenciados no Sistema de Transporte Urbano (STU) quanto as solicitações
+                  considerando tanto os licenciados no Sistema de Transporte Urbano [STU] quanto as solicitações
                   válidas em andamento para ingresso no sistema"
     columns:
       - name: data
-        description: "{{ doc('data_captura') }} (partição)"
+        description: "{{ doc('data_captura') }} [partição]"
       - name: modo
         description: "{{ doc('modo') }}"
       - name: id_veiculo

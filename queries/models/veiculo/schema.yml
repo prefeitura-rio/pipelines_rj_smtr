@@ -16,7 +16,7 @@ models:
           where: "DATE(data) between DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_start')) + modules.datetime.timedelta(7) }}') AND DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(8) }}')"
     columns:
       - name: data
-        description: "{{ doc('data_captura') }} (partição)"
+        description: "{{ doc('data_captura') }} [partição]"
       - name: timestamp_captura
         description: "Timestamp de captura dos dados de infração"
       - name: modo
@@ -52,11 +52,11 @@ models:
         description: "{{ doc('versao') }}"
   - name: licenciamento
     description: "Tabela histórica de dados cadastrais dos veículos que operam o sistema de transporte rodoviário,
-                  considerando tanto os licenciados no Sistema de Transporte Urbano (STU) quanto as solicitações
+                  considerando tanto os licenciados no Sistema de Transporte Urbano [STU] quanto as solicitações
                   válidas em andamento para ingresso no sistema"
     columns:
       - name: data
-        description: "{{ doc('data_captura') }} (partição)"
+        description: "{{ doc('data_captura') }} [partição]"
       - name: modo
         description: "{{ doc('modo') }}"
       - name: id_veiculo
@@ -112,10 +112,10 @@ models:
       - name: versao
         description: "{{ doc('versao') }}"
   - name: sppo_licenciamento_solicitacao
-    description: "Tabela histórica de dados cadastrais das solicitações em andamento para ingresso no Sistema de Transporte Urbano (STU)"
+    description: "Tabela histórica de dados cadastrais das solicitações em andamento para ingresso no Sistema de Transporte Urbano [STU]"
     columns:
       - name: data
-        description: "{{ doc('data_captura') }} (partição)"
+        description: "{{ doc('data_captura') }} [partição]"
       - name: timestamp_captura
         description: "Timestamp de captura dos dados de licenciamento"
       - name: modo
@@ -161,12 +161,11 @@ models:
       - name: tipo_veiculo
         description: "{{ doc('tipo_veiculo') }}"
       - name: status
-        description: "Inválido - Veículo com solicitação inválida para ingresso no Sistema de Transporte Urbano (STU)\n
-                      Válido - Veículo com solicitação válida para ingresso no Sistema de Transporte Urbano (STU)"
+        description: "{{ doc('status') }}"
       - name: solicitacao
-        description: "Inclusão - Solicitação de ingresso de veículo no Sistema de Transporte Urbano (STU)\n
-                      Baixa - Solicitação de baixa de veículo já incluído no Sistema de Transporte Urbano (STU)\n
-                      Renumeração - Solicitação de alteração de número de ordem de veículo já incluído no Sistema de Transporte Urbano (STU)"
+        description: "Inclusão - Solicitação de ingresso de veículo no Sistema de Transporte Urbano [STU]\n
+                      Baixa - Solicitação de baixa de veículo já incluído no Sistema de Transporte Urbano [STU]\n
+                      Renumeração - Solicitação de alteração de número de ordem de veículo já incluído no Sistema de Transporte Urbano [STU]"
   - name: sppo_veiculo_dia
     description: "Tabela resumo dos veículos que operaram no SPPO e seus respectivos indicadores"
     tests:
@@ -233,7 +232,7 @@ models:
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: servico
-        description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, SN011, ...)"
+        description: "{{ doc('servico') }}"
       - name: link_foto
         description: "Link com a imagem interna do veículo"
       - name: validacao
