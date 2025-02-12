@@ -5,7 +5,7 @@ models:
     description: "sppo_vistoria_tr_subtt_cglf_2023"
     columns:
       - name: data
-        description: "Data da captura"
+        description: "{{ doc('data_captura') }}"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: placa
@@ -26,7 +26,7 @@ models:
     description: "sppo_vistoria_tr_subtt_cglf_2024"
     columns:
       - name: data
-        description: "Data da captura"
+        description: "{{ doc('data_captura') }}"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: placa
@@ -47,7 +47,7 @@ models:
     description: "sppo_vistoria_tr_subtt_cglf_pendentes_2024"
     columns:
       - name: data
-        description: "Data da captura"
+        description: "{{ doc('data_captura') }}"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: placa
