@@ -163,9 +163,9 @@ models:
       - name: status
         description: "{{ doc('status') }}"
       - name: solicitacao
-        description: "Inclusão - Solicitação de ingresso de veículo no Sistema de Transporte Urbano [STU]\n
-                      Baixa - Solicitação de baixa de veículo já incluído no Sistema de Transporte Urbano [STU]\n
-                      Renumeração - Solicitação de alteração de número de ordem de veículo já incluído no Sistema de Transporte Urbano [STU]"
+        description: "Inclusão - Solicitação de ingresso de veículo no STU\n
+                      Baixa - Solicitação de baixa de veículo já incluído no STU\n
+                      Renumeração - Solicitação de alteração de número de ordem de veículo já incluído no STU"
   - name: sppo_veiculo_dia
     description: "Tabela resumo dos veículos que operaram no SPPO e seus respectivos indicadores"
     tests:

@@ -109,7 +109,7 @@ models:
       - name: tipo_veiculo
         description: "{{ doc('tipo_veiculo') }}"
       - name: status
-        description: "Licenciado - Veículo licenciado no Sistema de Transporte Urbano [STU]"
+        description: "Licenciado - Veículo licenciado no STU"
       - name: data_inicio_vinculo
         description: "{{ doc('data_inicio_vinculo') }}"
   - name: infracao_staging
@@ -197,9 +197,9 @@ models:
       - name: status
         description: "{{ doc('status') }}"
       - name: solicitacao
-        description: "Inclusão - Solicitação de ingresso de veículo no Sistema de Transporte Urbano [STU]\n
-                      Baixa - Solicitação de baixa de veículo já incluído no Sistema de Transporte Urbano [STU]\n
-                      Renumeração - Solicitação de alteração de número de ordem de veículo já incluído no Sistema de Transporte Urbano [STU]"
+        description: "Inclusão - Solicitação de ingresso de veículo no STU\n
+                      Baixa - Solicitação de baixa de veículo já incluído no STU\n
+                      Renumeração - Solicitação de alteração de número de ordem de veículo já incluído no STU"
   - name: sppo_registro_agente_verao_staging
     description: "View com registros de Agentes de Verão para fins de cálculo de subsídio nos termos da RESOLUÇÃO SMTR Nº 3.682/2024"
     columns:

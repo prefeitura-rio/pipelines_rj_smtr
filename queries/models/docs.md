@@ -445,8 +445,8 @@ Tipo de veículo
 {% enddocs %}
 
 {% docs status %}
-Licenciado - Veículo licenciado no Sistema de Transporte Urbano [STU]
-Válido - Veículo com solicitação válida para ingresso no Sistema de Transporte Urbano [STU]
+Licenciado - Veículo licenciado no STU
+Válido - Veículo com solicitação válida para ingresso no STU
 {% enddocs %}
 
 {% docs ano_ultima_vistoria_atualizado %}
