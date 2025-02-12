@@ -35,7 +35,7 @@ models:
       - name: quantidade_passageiros
         description: "Quantidade de transações que aconteceram em determinada data e hora"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: view_passageiros_tile_hora
     description: "View criada para uso no painel de bilhetagem. Junta os dados da tabela br_rj_riodejaneiro_bilhetagem.passageiros_tile_hora com a tabela cadastro.servicos"
     columns:
@@ -68,7 +68,7 @@ models:
       - name: quantidade_passageiros
         description: "Quantidade de transações que aconteceram em determinada data e hora"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: view_integracao
     description: "Tabela de integrações realizadas entre modos do sistema de transporte municipal, contendo os valores da repartição tarifária (quando houver). [Dados em fase de teste]"
     columns:
@@ -105,4 +105,4 @@ models:
       - name: tempo_integracao_minutos
         description: "Tempo em minutos entre a trasação atual e a próxima transação da integração"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"

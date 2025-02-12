@@ -44,7 +44,7 @@ models:
       - name: nome
         description: "Nome do operador"
       - name: placa
-        description: "Placa do veículo"
+        description: "{{ doc('placa') }}"
       - name: id_modo
         description: "Identificador do modo de transporte"
       - name: modo

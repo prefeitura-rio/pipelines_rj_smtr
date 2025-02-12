@@ -29,6 +29,6 @@ models:
       - name: id_viagem
         description: "Identificador de um shape da tabela shapes do GTFS"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
-        description: "Última atualização (GMT-3)."
+        description: "{{ doc('datetime_ultima_atualizacao') }}"

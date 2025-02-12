@@ -87,7 +87,7 @@ models:
       - name: id_ordem_pagamento
         description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_dia"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: integracao
     description: "Tabela de integrações realizadas entre modos do sistema de transporte municipal, contendo os valores da repartição tarifária (quando houver). [Dados em fase de teste]"
     columns:
@@ -154,7 +154,7 @@ models:
       - name: id_ordem_pagamento
         description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_dia"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: gps_validador
     description: "Tabela de posições de GPS de todos os validadores da Jaé, incluindo estado do equipamento (Aberto/Fechado), serviço, sentido e veículo associado e temperatura do veículo."
     columns:
@@ -199,7 +199,7 @@ models:
       - name: versao_app
         description: "Versão do Software do validador"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: gps_validador_van
     description: "Tabela de posições de GPS de todos os validadores da Jaé instalados em vans, incluindo estado do equipamento (Aberto/Fechado), serviço, sentido e veículo associado e temperatura do veículo."
     columns:
@@ -248,7 +248,7 @@ models:
       - name: versao_app
         description: "Versão do Software do validador"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: passageiros_hora
     description: "Tabela de contagem do número de passageiros por hora. Agrega valores da tabela de transações por: data, hora, modo, consorcio, operadora, servico, sentido e tipo_transacao"
     columns:
@@ -281,7 +281,7 @@ models:
       - name: quantidade_passageiros
         description: "Quantidade de transações que aconteceram em determinada data e hora"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: passageiros_tile_hora
     description: "Tabela de contagem do número de passageiros por hora. Agrega valores das tabelas transacao e transacao_riocard por: data, hora, modo, consorcio, operadora, servico, sentido, tipo_transacao e tile_id"
     columns:
@@ -316,7 +316,7 @@ models:
       - name: quantidade_passageiros
         description: "Quantidade de transações que aconteceram em determinada data e hora"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: dicionario
     description: "Dicionário de dados"
     columns:
@@ -374,7 +374,7 @@ models:
       - name: valor_desconto_taxa
         description: "Valor da taxa descontado do valor total (R$)"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: ordem_pagamento_consorcio_operador_dia
     description: "Tabela com os valores totais de pagamento da Jaé agregados por consorcio, operador e dia"
     columns:
@@ -433,7 +433,7 @@ models:
       - name: datetime_captura
         description: Data e hora da captura da ordem em GMT-3
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
         data_type: datetime
         quote: true
@@ -480,7 +480,7 @@ models:
       - name: valor_total_transacao_liquido
         description: "Valor total das transações menos o valor_desconto_taxa (R$)"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: ordem_pagamento_servico_operador_dia
     descriptions: "Tabela com os valores totais de pagamento da Jaé agregados por serviço, operador e dia"
     columns:
@@ -543,7 +543,7 @@ models:
       - name: valor_total_transacao_captura
         description: "Valor total das transações realizadas calculada pela captura de transações (R$)"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: transacao_riocard
     description: "Tabela com as transações feitas com RioCard que foram registradas pelo validador da Jaé."
     columns:
@@ -592,4 +592,4 @@ models:
       - name: valor_transacao
         description: "Valor debitado na transação atual (R$)"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"

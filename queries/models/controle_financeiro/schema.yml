@@ -29,4 +29,4 @@ models:
       - name: indicador_pagamento_realizado
         description: "Indica se o pagamento foi realizado ou não"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"

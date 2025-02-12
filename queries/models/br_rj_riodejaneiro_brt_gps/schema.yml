@@ -70,7 +70,7 @@ models:
       - name: codigo
         description: "{{ doc('codigo') }}"
       - name: placa
-        description: "Placa do veículo"
+        description: "{{ doc('placa') }}"
       - name: linha
         description: "Linha de ônibus (serviço) ou, se realocada, informada pela empresa operadora"
       - name: latitude
