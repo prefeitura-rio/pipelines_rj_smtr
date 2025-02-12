@@ -349,7 +349,7 @@ Data de inicio da versão da matriz de integração
 {% enddocs %}
 
 {% docs tecnologia %}
-Tecnologia utilizada no veículo (BASICO, MIDI, MINI, PADRON, ARTICULADO)
+Tecnologia utilizada no veículo [BASICO, MIDI, MINI, PADRON, ARTICULADO]
 {% enddocs %}
 
 {% docs tecnologia_remunerada %}

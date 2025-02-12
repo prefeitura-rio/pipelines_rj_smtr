@@ -62,7 +62,7 @@ models:
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: ano_fabricacao
-        description: "{{ doc('ano_fabricacao') }} (chassi)"
+        description: "{{ doc('ano_fabricacao') }} [chassi]"
       - name: carroceria
         description: "{{ doc('carroceria') }}"
       - name: data_ultima_vistoria
