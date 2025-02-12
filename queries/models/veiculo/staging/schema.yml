@@ -121,7 +121,7 @@ models:
       - name: timestamp_captura
         description: "Timestamp de captura dos dados de infração"
       - name: modo
-        description: "ÔNIBUS – nesse arquivo só constam os ônibus"
+        description: "{{ doc('modo_onibus') }}"
       - name: permissao
         description: "{{ doc('permissao') }}"
       - name: placa
@@ -153,7 +153,7 @@ models:
       - name: timestamp_captura
         description: "Timestamp de captura dos dados de licenciamento"
       - name: modo
-        description: "ÔNIBUS – nesse arquivo só constam os ônibus"
+        description: "{{ doc('modo_onibus') }}"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: ano_fabricacao

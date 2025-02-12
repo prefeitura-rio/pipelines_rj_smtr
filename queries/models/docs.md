@@ -3,7 +3,7 @@ Consórcio ao qual o serviço pertence.
 {% enddocs %}
 
 {% docs id_veiculo %}
-Código identificador do veículo (número de ordem).
+Código identificador do veículo [número de ordem]
 {% enddocs %}
 
 {% docs datetime_ultima_atualizacao %}
@@ -125,7 +125,7 @@ Distância da última posição do GPS em relação à posição atual (m)
 {% enddocs %}
 
 {% docs versao %}
-Código de controle de versão do dado (SHA Github)
+Código de controle de versão do dado [SHA Github]
 {% enddocs %}
 
 {% docs id_validador %}
@@ -177,7 +177,7 @@ Dados brutos capturados aninhados em formato JSON
 {% enddocs %}
 
 {% docs modo %}
-Tipo de transporte (Ônibus, Van, BRT)
+Tipo de transporte [Ônibus, Van, BRT]
 {% enddocs %}
 
 {% docs vista %}
@@ -357,11 +357,11 @@ Tecnologia remunerada conforme legislação em vigor.
 {% enddocs %}
 
 {% docs pof %}
-Indicador percentual de quilometragem apurada em relação à planejada do serviço por faixa horária (não inclui veículos não licenciados e não vistoriados a partir de 2024-09-01).
+Indicador percentual de quilometragem apurada em relação à planejada do serviço por faixa horária [não inclui veículos não licenciados e não vistoriados a partir de 2024-09-01]
 {% enddocs %}
 
 {% docs valor_glosado_tecnologia %}
-Valor da diferença entre a tecnologia remunerada e tecnologia apurada.
+Valor da diferença entre a tecnologia remunerada e tecnologia apurada
 {% enddocs %}
 
 {% docs data_captura %}
@@ -445,7 +445,7 @@ Tipo de veículo
 {% enddocs %}
 
 {% docs status %}
-Licenciado - Veículo licenciado no Sistema de Transporte Urbano [STU]\n
+Licenciado - Veículo licenciado no Sistema de Transporte Urbano [STU]
 Válido - Veículo com solicitação válida para ingresso no Sistema de Transporte Urbano [STU]
 {% enddocs %}
 
@@ -463,6 +463,10 @@ BRT – nesta tabela consta apenas este modo
 
 {% docs modo_sppo %}
 SPPO – nesta tabela consta apenas este modo
+{% enddocs %}
+
+{% docs modo_onibus %}
+ÔNIBUS – nesta tabela consta apenas este modo
 {% enddocs %}
 
 {% docs linha %}
