@@ -367,3 +367,7 @@ Indicador percentual de quilometragem apurada em relação à planejada do servi
 {% docs valor_glosado_tecnologia %}
 Valor da diferença entre a tecnologia remunerada e tecnologia apurada.
 {% enddocs %}
+
+{% docs feed_end_date %}
+Data final do feed [versão]
+{% enddocs %}
