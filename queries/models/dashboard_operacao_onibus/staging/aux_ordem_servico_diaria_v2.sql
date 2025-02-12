@@ -6,7 +6,7 @@ with
     ordem_servico_pivot as (
         select *
         from
-            {{ ref("ordem_servico_gtfs") }} pivot (
+            {{ ref("aux_ordem_servico_diaria") }} pivot (
                 max(partidas_ida) as partidas_ida,
                 max(partidas_volta) as partidas_volta,
                 max(viagens_planejadas) as viagens_planejadas,

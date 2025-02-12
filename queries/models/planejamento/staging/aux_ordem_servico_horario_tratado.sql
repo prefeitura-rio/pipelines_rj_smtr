@@ -6,8 +6,7 @@ with
             * except (horario_inicio, horario_fim),
             parse_time("%H:%M:%S", lpad(horario_inicio, 8, '0')) as horario_inicio,
             split(horario_fim, ":") horario_fim_parts
-        {# from `rj-smtr.gtfs.ordem_servico` #}
-        from {{ ref("ordem_servico_gtfs") }}
+        from {{ ref("aux_ordem_servico_diaria") }}
     )
 select
     * except (horario_fim_parts),

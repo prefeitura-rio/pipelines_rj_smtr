@@ -19,7 +19,7 @@ models:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
       - name: feed_end_date
-        description: "Data final do feed (versão)."
+        description: "{{ doc('feed_end_date') }}"
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
@@ -56,7 +56,7 @@ models:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
       - name: feed_end_date
-        description: "Data final do feed (versão)."
+        description: "{{ doc('feed_end_date') }}"
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
@@ -74,7 +74,7 @@ models:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
       - name: feed_end_date
-        description: "Data final do feed (versão)."
+        description: "{{ doc('feed_end_date') }}"
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
@@ -100,7 +100,7 @@ models:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
       - name: feed_end_date
-        description: "Data final do feed (versão)."
+        description: "{{ doc('feed_end_date') }}"
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
@@ -122,7 +122,7 @@ models:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
       - name: feed_end_date
-        description: "Data final do feed (versão)."
+        description: "{{ doc('feed_end_date') }}"
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
@@ -142,7 +142,7 @@ models:
       - name: feed_start_date
         description: "O conjunto de dados fornece informações de programação completas e confiáveis ​​para serviço no período que vai do início do dia feed_start_date até o final do dia feed_end_date."
       - name: feed_end_date
-        description: "O conjunto de dados fornece informações de programação completas e confiáveis ​​para serviço no período que vai do início do dia feed_start_date até o final do dia feed_end_date."
+        description: "{{ doc('feed_end_date') }}"
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: feed_contact_email
@@ -172,7 +172,7 @@ models:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
       - name: feed_end_date
-        description: "Data final do feed (versão)."
+        description: "{{ doc('feed_end_date') }}"
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
@@ -210,7 +210,7 @@ models:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
       - name: feed_end_date
-        description: "Data final do feed (versão)."
+        description: "{{ doc('feed_end_date') }}"
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
@@ -222,7 +222,7 @@ models:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
       - name: feed_end_date
-        description: "Data final do feed (versão)."
+        description: "{{ doc('feed_end_date') }}"
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS."
       - name: shape_id
@@ -256,7 +256,7 @@ models:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
       - name: feed_end_date
-        description: "Data final do feed (versão)."
+        description: "{{ doc('feed_end_date') }}"
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
@@ -298,7 +298,7 @@ models:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
       - name: feed_end_date
-        description: "Data final do feed (versão)."
+        description: "{{ doc('feed_end_date') }}"
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
@@ -334,7 +334,7 @@ models:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
       - name: feed_end_date
-        description: "Data final do feed (versão)."
+        description: "{{ doc('feed_end_date') }}"
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
@@ -366,7 +366,7 @@ models:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
       - name: feed_end_date
-        description: "Data final do feed (versão)."
+        description: "{{ doc('feed_end_date') }}"
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
@@ -402,7 +402,7 @@ models:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
       - name: feed_end_date
-        description: "Data final do feed (versão)."
+        description: "{{ doc('feed_end_date') }}"
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS."
       - name: versao_modelo
@@ -427,7 +427,7 @@ models:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
       - name: feed_end_date
-        description: "Data final do feed (versão)."
+        description: "{{ doc('feed_end_date') }}"
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS."
       - name: servico
@@ -490,7 +490,7 @@ models:
       - name: feed_start_date
         description: "(Partição) Data inicial do feed (versão)."
       - name: feed_end_date
-        description: "Data final do feed (versão)."
+        description: "{{ doc('feed_end_date') }}"
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS."
       - name: tipo_dia

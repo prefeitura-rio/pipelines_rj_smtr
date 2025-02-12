@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.2.2] - 2025-02-12
+
+### Alterado
+
+- Refatora flow, task `get_raw_gtfs_files` e funções `processa_ordem_servico`, `processa_ordem_servico_trajeto_alternativo` e `processa_ordem_servico_faixa_horaria` para subir automaticamente diferentes tipos de OS e novo modelo de OS (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/418)
+
 ## [1.2.1] - 2025-01-13
 
 ### Corrigido

@@ -260,3 +260,19 @@ def log_discord(message: str, key: str, dados_tag: bool = False):
         )
     url = get_secret(secret_path=constants.WEBHOOKS_SECRET_PATH.value)[key]
     send_discord_message(message=message, webhook_url=url)
+
+
+@task
+def remove_key_from_dict(data: dict, key: str) -> dict:
+    """Removes a specific key from a dictionary.
+
+    Args:
+        data (dict): The original dictionary.
+        key (str): The key to be removed.
+
+    Returns:
+        dict: The dictionary without the specified key.
+    """
+    data_copy = data.copy()
+    data_copy.pop(key, None)
+    return data_copy

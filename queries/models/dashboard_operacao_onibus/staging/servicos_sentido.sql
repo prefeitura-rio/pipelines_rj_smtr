@@ -3,7 +3,7 @@
 with
     servicos_exclusivos_sabado as (
         select distinct servico
-        from {{ ref("ordem_servico_gtfs") }}
+        from {{ source("gtfs", "ordem_servico") }}
         where tipo_dia = "Dia Útil" and viagens_planejadas = 0
     ),
     servicos as (

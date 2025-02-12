@@ -1,5 +1,15 @@
 # Changelog - planejamento
 
+## [1.3.2] - 2025-02-12
+
+### Adicionado
+
+- Cria modelo `aux_ordem_servico_diaria` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/418)
+
+### Alterado
+
+- Refatora `aux_ordem_servico_horario_tratado` para remover dependência do `ordem_servico_gtfs` (desativado) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/418)
+
 ## [1.3.1] - 2025-01-27
 
 ### Adicionado
