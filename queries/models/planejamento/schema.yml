@@ -15,10 +15,36 @@ models:
           compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
           where: "1=1"
     columns:
+      - name: feed_version
+        description: "{{ doc('feed_version') }}"
+      - name: feed_start_date
+        description: "{{ doc('feed_start_date') }}"
+      - name: feed_end_date
+        description: "Data final do feed (versão)"
+      - name: tipo_os
+        description: "{{ doc('tipo_os') }}"
       - name: servico
         description: "{{ doc('servico') }}"
+      - name: vista
+        description: "{{ doc('vista') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: extensao_ida
+        description: "Distância percorrida na ida"
+      - name: extensao_volta
+        description: "Distância percorrida na volta"
       - name: tipo_dia
         description: "{{ doc('tipo_dia') }}"
+      - name: horario_inicio
+        description: "Horário inicial de funcionamento"
+      - name: horario_fim
+        description: "Horário da última viagem"
+      - name: partidas_ida_dia
+        description: "Quantidade de partidas no sentido ida"
+      - name: partidas_volta_dia
+        description: "Quantidade de partidas no sentido volta"
+      - name: viagens_dia
+        description: "Quantidade de viagens planejadas no dia"
       - name: faixa_horaria_inicio
         description: "{{ doc('faixa_horaria_inicio') }}"
       - name: faixa_horaria_fim
@@ -41,6 +67,8 @@ models:
         #       group_by: [ feed_start_date, tipo_os, tipo_dia, servico ]
         #       strictly: true
         #       where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+      - name: versao
+        description: "{{ doc('versao') }}"
   - name: segmento_shape
     description: Tabela contendo os shapes segmentados usados na validação de viagens.
     columns:
