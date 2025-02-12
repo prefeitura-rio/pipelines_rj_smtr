@@ -71,6 +71,25 @@ with
             between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
                 "{{ var('end_date') }}"
             )
+            and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
+        union all
+        select
+            data,
+            servico,
+            datetime_partida,
+            datetime_chegada,
+            id_veiculo,
+            id_viagem,
+            distancia_planejada,
+            sentido
+        from {{ ref("viagem_valida") }}
+        -- from `rj-smtr.monitoramento.viagem_valida`
+        where
+            data
+            between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
+                "{{ var('end_date') }}"
+            )
+            and data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
     ),
     -- 5. Status dos veículos
     veiculos as (

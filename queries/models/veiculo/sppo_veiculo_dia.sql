@@ -3,10 +3,7 @@
 -- depends_on: {{ ref("infracao_staging") }}
 {{
     config(
-        materialized="incremental",
-        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-        unique_key=["data", "id_veiculo"],
-        incremental_strategy="insert_overwrite",
+        materialized="ephemeral",
     )
 }}
 
@@ -63,7 +60,7 @@ with
     gps as (
         select distinct data, id_veiculo
         from {{ ref("gps_sppo") }}
-           -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
+        -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
         where data = date("{{ var('run_date') }}")
     ),
     autuacoes as (
