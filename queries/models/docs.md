@@ -401,19 +401,19 @@ Código da planta do veículo
 {% enddocs %}
 
 {% docs indicador_ar_condicionado %}
-Indicador se possui ar condicionado (Verdadeiro/Falso)
+Indicador se possui ar condicionado [Verdadeiro/Falso]
 {% enddocs %}
 
 {% docs indicador_elevador %}
-Indicador se possui elevador (Verdadeiro/Falso)
+Indicador se possui elevador [Verdadeiro/Falso]
 {% enddocs %}
 
 {% docs indicador_usb %}
-Indicador se tem USB (Verdadeiro/Falso)
+Indicador se tem USB [Verdadeiro/Falso]
 {% enddocs %}
 
 {% docs indicador_wifi %}
-Indicador se tem Wi-fi (Verdadeiro/Falso)
+Indicador se tem Wi-fi [Verdadeiro/Falso]
 {% enddocs %}
 
 {% docs nome_chassi %}

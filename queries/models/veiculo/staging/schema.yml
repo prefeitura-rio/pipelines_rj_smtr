@@ -60,7 +60,7 @@ models:
         description: "Ano da última vistoria realizada pelo veículo"
   - name: licenciamento_stu_staging
     description: "View de Dados cadastrais dos veículos que operam o sistema de transporte rodoviário no município do Rio de Janeiro.\n
-    Dados capturados diariamente de: https://www.data.rio/documents/c6c97d3c15434b5088965e25f85e27c3"
+    Dados capturados diariamente através de STFP"
     columns:
       - name: data
         description: "{{ doc('data_captura') }} [partição]"
@@ -114,7 +114,7 @@ models:
         description: "{{ doc('data_inicio_vinculo') }}"
   - name: infracao_staging
     description: "View de todas as multas aplicadas aos modos de transporte no município do Rio de Janeiro, com qualquer situação.
-    Dados capturados diariamente de: https://www.data.rio/documents/multas-aplicadas-aos-modos-de-transporte-nos-%C3%BAltimos-cinco-anos"
+    Dados capturados diariamente através de SFTP"
     columns:
       - name: data
         description: "{{ doc('data_captura') }} [partição]"

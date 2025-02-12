@@ -156,7 +156,7 @@ models:
       - name: versao
         description: "{{ doc('versao') }}"
   - name: gps_validador
-    description: "Tabela de posições de GPS de todos os validadores da Jaé, incluindo estado do equipamento (Aberto/Fechado), serviço, sentido e veículo associado e temperatura do veículo."
+    description: "Tabela de posições de GPS de todos os validadores da Jaé, incluindo estado do equipamento [Aberto/Fechado], serviço, sentido e veículo associado e temperatura do veículo."
     columns:
       - name: modo
         description: "Tipo de transporte (Ônibus, Van, BRT)"
@@ -201,7 +201,7 @@ models:
       - name: versao
         description: "{{ doc('versao') }}"
   - name: gps_validador_van
-    description: "Tabela de posições de GPS de todos os validadores da Jaé instalados em vans, incluindo estado do equipamento (Aberto/Fechado), serviço, sentido e veículo associado e temperatura do veículo."
+    description: "Tabela de posições de GPS de todos os validadores da Jaé instalados em vans, incluindo estado do equipamento [Aberto/Fechado], serviço, sentido e veículo associado e temperatura do veículo."
     columns:
       - name: modo
         description: "Tipo de transporte (Ônibus, Van, BRT)"
