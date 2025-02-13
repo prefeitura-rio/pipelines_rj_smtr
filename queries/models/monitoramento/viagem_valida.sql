@@ -44,7 +44,9 @@ select
     ve.status as tipo_viagem,
     vv.servico,
     vv.sentido,
-    sp.distancia_planejada,
+    case
+        when sentido in ("I", "C") then extensao_ida else extensao_volta
+    end as distancia_planejada,
     sp.feed_start_date,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao

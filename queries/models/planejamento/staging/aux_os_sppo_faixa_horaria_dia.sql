@@ -64,6 +64,10 @@ with
             tipo_dia,
             tipo_os,
             servico,
+            consorcio,
+            extensao_ida,
+            extensao_volta,
+            viagens_dia,
             datetime(
                 concat(
                     cast(
@@ -125,4 +129,4 @@ with
     )
 select *
 from faixas_agregadas
-where rn = 1
+where rn = 1 and data = extract(date from faixa_horaria_inicio)
