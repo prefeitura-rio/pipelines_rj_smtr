@@ -130,7 +130,7 @@ models:
       - name: data_fim_vigencia
         description: "Data de fim da vigência do serviço segundo o GTFS"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: servico_operadora
     description: "Tabela com a relação entre serviço, consorcio e operadora de transporte de acordo com a base da Jaé"
     columns:

@@ -51,11 +51,11 @@ models:
         data_type: string
         quote: true
       - name: datetime_processamento
-        description: Data e hora do processamento da viagem em GMT-3
+        description: Data e hora do processamento da viagem [GMT-3]
         data_type: datetime
         quote: true
       - name: datetime_captura
-        description: Data e hora da captura da integração em GMT-3
+        description: Data e hora da captura da integração [GMT-3]
         data_type: string
         quote: true
       - name: versao
@@ -154,11 +154,11 @@ models:
         data_type: date
         quote: true
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
         data_type: string
         quote: true
       - name: datetime_ultima_atualizacao
-        description: "Última atualização (GMT-3)."
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
         quote: true
       - name: indicador_servico_planejado_gtfs
