@@ -5,6 +5,8 @@ import jaydebeapi as jdb
 
 from pipelines.utils.secret import get_secret
 
+# from prefeitura_rio.pipelines_utils.logging import log
+
 
 class JDBC:
     def __init__(self, db_params_secret_path: str, environment: str = "staging") -> None:
@@ -68,3 +70,10 @@ class JDBC:
         Fetches all rows from the JDBC database.
         """
         return [list(item) for item in self._cursor.fetchall()]
+
+    def close_connection(self):
+        """
+        Closes the JDBC connection.
+        """
+        if self._connection:
+            self._connection.close()
