@@ -315,7 +315,7 @@ models:
     description: "Tabela auxiliar de tecnologias permitidas por serviço."
     columns:
       - name: servico
-        description: "{{ doc('linha') }}"
+        description: "{{ doc('servico') }}"
         data_type: string
       - name: codigo_tecnologia
         description: "Código binário onde cada caractere representa uma tecnologia."

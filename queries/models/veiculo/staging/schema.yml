@@ -5,17 +5,17 @@ models:
     description: "sppo_vistoria_tr_subtt_cglf_2023"
     columns:
       - name: data
-        description: "Data da captura"
+        description: "{{ doc('data_captura') }}"
       - name: id_veiculo
-        description: "Número de ordem do veículo, identificação que é exibida na lateral do ônibus"
+        description: "{{ doc('id_veiculo') }}"
       - name: placa
-        description: "Placa do veículo"
+        description: "{{ doc('placa') }}"
       - name: permissao
-        description: "Número da permissão do ônibus"
+        description: "{{ doc('permissao') }}"
       - name: chassi
         description: "Chassi do veículo"
       - name: ano_fabricacao
-        description: "Ano de fabricação do veículo"
+        description: "{{ doc('ano_fabricacao') }}"
       - name: selo
         description: "Selo"
       - name: darm
@@ -26,17 +26,17 @@ models:
     description: "sppo_vistoria_tr_subtt_cglf_2024"
     columns:
       - name: data
-        description: "Data da captura"
+        description: "{{ doc('data_captura') }}"
       - name: id_veiculo
-        description: "Número de ordem do veículo, identificação que é exibida na lateral do ônibus"
+        description: "{{ doc('id_veiculo') }}"
       - name: placa
-        description: "Placa do veículo"
+        description: "{{ doc('placa') }}"
       - name: permissao
-        description: "Número da permissão do ônibus"
+        description: "{{ doc('permissao') }}"
       - name: chassi
         description: "Chassi do veículo"
       - name: ano_fabricacao
-        description: "Ano de fabricação do veículo"
+        description: "{{ doc('ano_fabricacao') }}"
       - name: selo
         description: "Selo"
       - name: darm
@@ -47,85 +47,85 @@ models:
     description: "sppo_vistoria_tr_subtt_cglf_pendentes_2024"
     columns:
       - name: data
-        description: "Data da captura"
+        description: "{{ doc('data_captura') }}"
       - name: id_veiculo
-        description: "Número de ordem do veículo, identificação que é exibida na lateral do ônibus"
+        description: "{{ doc('id_veiculo') }}"
       - name: placa
-        description: "Placa do veículo"
+        description: "{{ doc('placa') }}"
       - name: permissao
-        description: "Número da permissão do ônibus"
+        description: "{{ doc('permissao') }}"
       - name: empresa
         description: "Empresa ao qual o veículo está vinculado"
       - name: ano_ultima_vistoria
         description: "Ano da última vistoria realizada pelo veículo"
   - name: licenciamento_stu_staging
     description: "View de Dados cadastrais dos veículos que operam o sistema de transporte rodoviário no município do Rio de Janeiro.\n
-    Dados capturados diariamente de: https://www.data.rio/documents/c6c97d3c15434b5088965e25f85e27c3"
+    Dados capturados diariamente através de STFP"
     columns:
       - name: data
-        description: "Data da captura (partição)"
+        description: "{{ doc('data_captura') }} [partição]"
       - name: timestamp_captura
         description: "Timestamp de captura dos dados de licenciamento"
       - name: modo
         description: "Modo de operação do veiculo"
       - name: id_veiculo
-        description: "Número de ordem do veículo, identificação que é exibida na lateral do ônibus"
+        description: "{{ doc('id_veiculo') }}"
       - name: ano_fabricacao
-        description: "Ano de fabricação do veículo"
+        description: "{{ doc('ano_fabricacao') }}"
       - name: carroceria
-        description: "Descrição do modelo da carroceria"
+        description: "{{ doc('carroceria') }}"
       - name: data_ultima_vistoria
-        description: "Data da última vistoria do veículo"
+        description: "{{ doc('data_ultima_vistoria') }}"
       - name: id_carroceria
-        description: "Código do modelo da carroceria"
+        description: "{{ doc('id_carroceria') }}"
       - name: id_chassi
-        description: "Código do modelo do chassi"
+        description: "{{ doc('id_chassi') }}"
       - name: id_fabricante_chassi
-        description: "Identificador do fabricante do chassi"
+        description: "{{ doc('id_fabricante_chassi') }}"
       - name: id_interno_carroceria
-        description: "Código interno do modelo de carroceria"
+        description: "{{ doc('id_interno_carroceria') }}"
       - name: id_planta
-        description: "Código da planta do veículo"
+        description: "{{ doc('id_planta') }}"
       - name: indicador_ar_condicionado
-        description: "Indicador se possui ar condicionado (Verdadeiro/Falso)"
+        description: "{{ doc('indicador_ar_condicionado') }}"
       - name: indicador_elevador
-        description: "Indicador se possui elevador (Verdadeiro/Falso)"
+        description: "{{ doc('indicador_elevador') }}"
       - name: indicador_usb
-        description: "Indicador se tem USB (Verdadeiro/Falso)"
+        description: "{{ doc('indicador_usb') }}"
       - name: indicador_wifi
-        description: "Indicador se tem Wi-fi (Verdadeiro/Falso)"
+        description: "{{ doc('indicador_wifi') }}"
       - name: nome_chassi
-        description: "Descrição do modelo do chassi"
+        description: "{{ doc('nome_chassi') }}"
       - name: permissao
-        description: "Número da permissão do ônibus"
+        description: "{{ doc('permissao') }}"
       - name: placa
-        description: "Placa do veículo"
+        description: "{{ doc('placa') }}"
       - name: quantidade_lotacao_pe
-        description: "Quantidade de passageiros em pé"
+        description: "{{ doc('quantidade_lotacao_pe') }}"
       - name: quantidade_lotacao_sentado
-        description: "Quantidade de passageiros sentados"
+        description: "{{ doc('quantidade_lotacao_sentado') }}"
       - name: tipo_combustivel
-        description: "Combustível utilizado"
+        description: "{{ doc('tipo_combustivel') }}"
       - name: tipo_veiculo
-        description: "Tipo de veículo"
+        description: "{{ doc('tipo_veiculo') }}"
       - name: status
-        description: "Licenciado - Veículo licenciado no Sistema de Transporte Urbano (STU)"
+        description: "Licenciado - Veículo licenciado no STU"
       - name: data_inicio_vinculo
-        description: "Data de início do vínculo do veículo no STU"
+        description: "{{ doc('data_inicio_vinculo') }}"
   - name: infracao_staging
     description: "View de todas as multas aplicadas aos modos de transporte no município do Rio de Janeiro, com qualquer situação.
-    Dados capturados diariamente de: https://www.data.rio/documents/multas-aplicadas-aos-modos-de-transporte-nos-%C3%BAltimos-cinco-anos"
+    Dados capturados diariamente através de SFTP"
     columns:
       - name: data
-        description: "Data da captura (partição)"
+        description: "{{ doc('data_captura') }} [partição]"
       - name: timestamp_captura
         description: "Timestamp de captura dos dados de infração"
       - name: modo
-        description: "ÔNIBUS – nesse arquivo só constam os ônibus"
+        description: "{{ doc('modo_onibus') }}"
       - name: permissao
-        description: "Número da permissão do ônibus"
+        description: "{{ doc('permissao') }}"
       - name: placa
-        description: "Placa do veículo"
+        description: "{{ doc('placa') }}"
       - name: id_auto_infracao
         description: "Identificador do auto de infração da multa aplicada"
       - name: data_infracao
@@ -146,61 +146,60 @@ models:
       - name: data_pagamento
         description: "Data de pagamento"
   - name: sppo_licenciamento_solicitacao_staging
-    description: "View de dados cadastrais das solicitações em andamento para ingresso no Sistema de Transporte Urbano (STU)"
+    description: "View de dados cadastrais das solicitações em andamento para ingresso no Sistema de Transporte Urbano [STU]"
     columns:
       - name: data
-        description: "Data da captura (partição)"
+        description: "{{ doc('data_captura') }} [partição]"
       - name: timestamp_captura
         description: "Timestamp de captura dos dados de licenciamento"
       - name: modo
-        description: "ÔNIBUS – nesse arquivo só constam os ônibus"
+        description: "{{ doc('modo_onibus') }}"
       - name: id_veiculo
-        description: "Número de ordem do veículo, identificação que é exibida na lateral do ônibus"
+        description: "{{ doc('id_veiculo') }}"
       - name: ano_fabricacao
-        description: "Ano de fabricação do veículo"
+        description: "{{ doc('ano_fabricacao') }}"
       - name: carroceria
-        description: "Descrição do modelo da carroceria"
+        description: "{{ doc('carroceria') }}"
       - name: data_ultima_vistoria
-        description: "Data da última vistoria do veículo"
+        description: "{{ doc('data_ultima_vistoria') }}"
       - name: id_carroceria
-        description: "Código do modelo da carroceria"
+        description: "{{ doc('id_carroceria') }}"
       - name: id_chassi
-        description: "Código do modelo do chassi"
+        description: "{{ doc('id_chassi') }}"
       - name: id_fabricante_chassi
-        description: "Identificador do fabricante do chassi"
+        description: "{{ doc('id_fabricante_chassi') }}"
       - name: id_interno_carroceria
-        description: "Código interno do modelo de carroceria"
+        description: "{{ doc('id_interno_carroceria') }}"
       - name: id_planta
-        description: "Código da planta do veículo"
+        description: "{{ doc('id_planta') }}"
       - name: indicador_ar_condicionado
-        description: "Indicador se possui ar condicionado (Verdadeiro/Falso)"
+        description: "{{ doc('indicador_ar_condicionado') }}"
       - name: indicador_elevador
-        description: "Indicador se possui elevador (Verdadeiro/Falso)"
+        description: "{{ doc('indicador_elevador') }}"
       - name: indicador_usb
-        description: "Indicador se tem USB (Verdadeiro/Falso)"
+        description: "{{ doc('indicador_usb') }}"
       - name: indicador_wifi
-        description: "Indicador se tem Wi-fi (Verdadeiro/Falso)"
+        description: "{{ doc('indicador_wifi') }}"
       - name: nome_chassi
-        description: "Descrição do modelo do chassi"
+        description: "{{ doc('nome_chassi') }}"
       - name: permissao
-        description: "Número da permissão do ônibus"
+        description: "{{ doc('permissao') }}"
       - name: placa
-        description: "Placa do veículo"
+        description: "{{ doc('placa') }}"
       - name: quantidade_lotacao_pe
-        description: "Quantidade de passageiros em pé"
+        description: "{{ doc('quantidade_lotacao_pe') }}"
       - name: quantidade_lotacao_sentado
-        description: "Quantidade de passageiros sentados"
+        description: "{{ doc('quantidade_lotacao_sentado') }}"
       - name: tipo_combustivel
-        description: "Combustível utilizado"
+        description: "{{ doc('tipo_combustivel') }}"
       - name: tipo_veiculo
-        description: "Tipo de veículo"
+        description: "{{ doc('tipo_veiculo') }}"
       - name: status
-        description: "Inválido - Veículo com solicitação inválida para ingresso no Sistema de Transporte Urbano (STU)\n
-                      Válido - Veículo com solicitação válida para ingresso no Sistema de Transporte Urbano (STU)"
+        description: "{{ doc('status') }}"
       - name: solicitacao
-        description: "Inclusão - Solicitação de ingresso de veículo no Sistema de Transporte Urbano (STU)\n
-                      Baixa - Solicitação de baixa de veículo já incluído no Sistema de Transporte Urbano (STU)\n
-                      Renumeração - Solicitação de alteração de número de ordem de veículo já incluído no Sistema de Transporte Urbano (STU)"
+        description: "Inclusão - Solicitação de ingresso de veículo no STU\n
+                      Baixa - Solicitação de baixa de veículo já incluído no STU\n
+                      Renumeração - Solicitação de alteração de número de ordem de veículo já incluído no STU"
   - name: sppo_registro_agente_verao_staging
     description: "View com registros de Agentes de Verão para fins de cálculo de subsídio nos termos da RESOLUÇÃO SMTR Nº 3.682/2024"
     columns:
@@ -211,7 +210,7 @@ models:
       - name: id_registro
         description: "ID do registro (HASH SHA256)"
       - name: id_veiculo
-        description: "Número de ordem do veículo, identificação que é exibida na lateral do ônibus"
+        description: "{{ doc('id_veiculo') }}"
       - name: servico
         description: "{{ doc('servico') }}"
       - name: link_foto
@@ -221,4 +220,4 @@ models:
       - name: datetime_captura
         description: "Datetime de captura do registro pela pipeline"
       - name: versao
-        description: "SHA do repositório no Github"
+        description: "{{ doc('versao') }}"

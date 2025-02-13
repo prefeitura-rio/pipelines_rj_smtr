@@ -32,7 +32,7 @@ models:
         #   - not_negative:
         #       partition_column: data
       - name: linha
-        description: "Linha de ônibus (serviço) ou, se realocada, informada pela empresa operadora"
+        description: "{{ doc('linha') }}"
         # tests:
         #   - not_null:
         #       partition_column: data

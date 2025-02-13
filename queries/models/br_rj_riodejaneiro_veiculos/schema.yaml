@@ -5,7 +5,7 @@ models:
     description: "Tabela com os dados tratados de registros de GPS do BRT, incluindo velocidade estimada, estado de movimento, parada em terminal ou garagem e interseção com o traçado da linha informada."
     columns:
       - name: modo
-        description: "BRT – nesse arquivo só consta esse modo"
+        description: "{{ doc('modo_brt') }}"
       - name: timestamp_gps
         description: "{{ doc('timestamp_gps') }}"
       - name: data
@@ -56,7 +56,7 @@ models:
             - longitude
     columns:
       - name: modo
-        description: "SPPO – nesse arquivo só consta esse modo"
+        description: "{{ doc('modo_sppo') }}"
       - name: timestamp_gps
         description: "{{ doc('timestamp_gps') }}"
         tests:
@@ -115,7 +115,7 @@ models:
     description: "Tabela com os dados tratados de registros de GPS do BRT, incluindo velocidade estimada, estado de movimento, parada em terminal ou garagem e interseção com o traçado da linha informada."
     columns:
       - name: modo
-        description: "BRT – nesse arquivo só consta esse modo"
+        description: "{{ doc('modo_brt') }}"
       - name: timestamp_gps
         description: "{{ doc('timestamp_gps') }}"
       - name: data
@@ -156,7 +156,7 @@ models:
     description: "Tabela com os dados tratados de registros de GPS do SPPO da última hora e 15 minutos, incluindo velocidade estimada, estado de movimento, parada em terminal ou garagem e interseção com o traçado da linha informada."
     columns:
       - name: modo
-        description: "SPPO – nesse arquivo só consta esse modo"
+        description: "{{ doc('modo_sppo') }}"
       - name: timestamp_gps
         description: "{{ doc('timestamp_gps') }}"
       - name: data
