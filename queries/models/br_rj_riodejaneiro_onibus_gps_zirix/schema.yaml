@@ -32,7 +32,7 @@ models:
         #   - not_negative:
         #       partition_column: data
       - name: linha
-        description: "Linha de ônibus (serviço) ou, se realocada, informada pela empresa operadora"
+        description: "{{ doc('linha') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -334,7 +334,7 @@ models:
     description: "Tabela com os dados tratados de registros de GPS dos ônibus capturados utilizando a API da Zirix."
     columns:
       - name: modo
-        description: "SPPO – nesse arquivo só consta esse modo"
+        description: "{{ doc('modo_sppo') }}"
       - name: timestamp_gps
         description: "{{ doc('timestamp_gps') }}"
       - name: data

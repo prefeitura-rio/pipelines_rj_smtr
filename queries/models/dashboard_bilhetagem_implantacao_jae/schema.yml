@@ -17,9 +17,9 @@ models:
       - name: estado_equipamento
         description: Estado do validador da Jaé (ABERTO ou FECHADO)
       - name: primeiro_datetime_gps
-        description: "Data e hora do primeiro sinal de GPS transmitido pelo validador da Jaé em GMT-3"
+        description: "Data e hora do primeiro sinal de GPS transmitido pelo validador da Jaé [GMT-3]"
       - name: ultimo_datetime_gps
-        description: "Data e hora do último sinal de GPS transmitido pelo validador da Jaé em GMT-3"
+        description: "Data e hora do último sinal de GPS transmitido pelo validador da Jaé [GMT-3]"
       - name: qtde_min_entre_a_prim_e_ultima_transmissao
         description: "Quantidade em minutos entre a primeira e a ultima transmissão do GPS do validador da Jaé"
       - name: qtde_min_distintos_houve_transmissao
@@ -48,9 +48,9 @@ models:
       - name: estado_equipamento
         description: Estado do validador da Jaé (ABERTO ou FECHADO)
       - name: primeiro_datetime_gps
-        description: "Data e hora do primeiro sinal de GPS transmitido pelo validador da Jaé em GMT-3"
+        description: "Data e hora do primeiro sinal de GPS transmitido pelo validador da Jaé [GMT-3]"
       - name: ultimo_datetime_gps
-        description: "Data e hora do último sinal de GPS transmitido pelo validador da Jaé em GMT-3"
+        description: "Data e hora do último sinal de GPS transmitido pelo validador da Jaé [GMT-3]"
       - name: qtde_min_entre_a_prim_e_ultima_transmissao
         description: "Quantidade em minutos entre a primeira e a ultima transmissão do GPS do validador da Jaé"
       - name: qtde_min_distintos_houve_transmissao
@@ -75,9 +75,9 @@ models:
       - name: estado_equipamento
         description: Estado do validador da Jaé (ABERTO ou FECHADO)
       - name: primeiro_datetime_gps
-        description: "Data e hora do primeiro sinal de GPS transmitido pelo validador da Jaé em GMT-3"
+        description: "Data e hora do primeiro sinal de GPS transmitido pelo validador da Jaé [GMT-3]"
       - name: ultimo_datetime_gps
-        description: "Data e hora do último sinal de GPS transmitido pelo validador da Jaé em GMT-3"
+        description: "Data e hora do último sinal de GPS transmitido pelo validador da Jaé [GMT-3]"
       - name: qtde_min_entre_a_prim_e_ultima_transmissao
         description: "Quantidade em minutos entre a primeira e a ultima transmissão do GPS do validador da Jaé"
       - name: qtde_min_distintos_houve_transmissao
@@ -106,9 +106,9 @@ models:
       - name: estado_equipamento
         description: Estado do validador da Jaé (ABERTO ou FECHADO)
       - name: primeiro_datetime_gps
-        description: "Data e hora do primeiro sinal de GPS transmitido pelo validador da Jaé em GMT-3"
+        description: "Data e hora do primeiro sinal de GPS transmitido pelo validador da Jaé [GMT-3]"
       - name: ultimo_datetime_gps
-        description: "Data e hora do último sinal de GPS transmitido pelo validador da Jaé em GMT-3"
+        description: "Data e hora do último sinal de GPS transmitido pelo validador da Jaé [GMT-3]"
       - name: qtde_min_entre_a_prim_e_ultima_transmissao
         description: "Quantidade em minutos entre a primeira e a ultima transmissão do GPS do validador da Jaé"
       - name: qtde_min_distintos_houve_transmissao
