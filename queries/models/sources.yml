@@ -88,6 +88,7 @@ sources:
       - name: rho_registros_sppo
       - name: rho_registros_stpl
       - name: rdo_registros_stpl
+      - name: dicionario
 
   - name: br_rj_riodejaneiro_rdo
     database: rj-smtr
