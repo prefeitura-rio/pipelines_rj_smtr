@@ -33,7 +33,7 @@ models:
       - name: sentido
         description: "Sentido de operação do serviço (0 = ida, 1 = volta)"
       - name: id_veiculo
-        description: "Identificador único do veículo"
+        description: "{{ doc('id_veiculo') }}"
       - name: id_validador
         description: "{{ doc('id_validador') }}"
       - name: id_cliente
@@ -75,7 +75,7 @@ models:
       - name: valor_transacao
         description: "Valor debitado na transação atual (R$)"
       - name: valor_pagamento
-        description: "Valor valor a ser pago pela transação (R$). Valores nulos indicam que o valor de pagamento para a transação ainda não foi calculado."
+        description: "Valor valor a ser pago pela transação (R$). Valores nulos indicam que o valor de pagamento para a transação ainda não foi calculado"
       - name: data_ordem
         description: "Data da ordem de pagamento da transação"
       - name: id_ordem_pagamento_servico_operador_dia
@@ -156,7 +156,7 @@ models:
       - name: versao
         description: "{{ doc('versao') }}"
   - name: gps_validador
-    description: "Tabela de posições de GPS de todos os validadores da Jaé, incluindo estado do equipamento [Aberto/Fechado], serviço, sentido e veículo associado e temperatura do veículo."
+    description: "Tabela de posições de GPS de todos os validadores da Jaé, incluindo estado do equipamento [Aberto/Fechado], serviço, sentido e veículo associado e temperatura do veículo"
     columns:
       - name: modo
         description: "Tipo de transporte (Ônibus, Van, BRT)"
@@ -201,7 +201,7 @@ models:
       - name: versao
         description: "{{ doc('versao') }}"
   - name: gps_validador_van
-    description: "Tabela de posições de GPS de todos os validadores da Jaé instalados em vans, incluindo estado do equipamento [Aberto/Fechado], serviço, sentido e veículo associado e temperatura do veículo."
+    description: "Tabela de posições de GPS de todos os validadores da Jaé instalados em vans, incluindo estado do equipamento [Aberto/Fechado], serviço, sentido e veículo associado e temperatura do veículo"
     columns:
       - name: modo
         description: "Tipo de transporte (Ônibus, Van, BRT)"
@@ -545,7 +545,7 @@ models:
       - name: versao
         description: "{{ doc('versao') }}"
   - name: transacao_riocard
-    description: "Tabela com as transações feitas com RioCard que foram registradas pelo validador da Jaé."
+    description: "Tabela com as transações feitas com RioCard que foram registradas pelo validador da Jaé"
     columns:
       - name: data
         description: "Data da transação (partição)"
@@ -578,7 +578,7 @@ models:
       - name: sentido
         description: "Sentido de operação do serviço (0 = ida, 1 = volta)"
       - name: id_veiculo
-        description: "Identificador único do veículo"
+        description: "{{ doc('id_veiculo') }}"
       - name: id_validador
         description: "Número de série do validador"
       - name: id_transacao

@@ -60,7 +60,7 @@ models:
       - name: consorcio
         description: "Nome do consórcio"
       - name: servico
-        description: "Nome curto da linha operada pelo veículo com variação de serviço [ex: 010, 011SN, ...]"
+        description: "{{ doc('id_veiculo') }}"
       - name: km_subsidiada
         description: "Quilometragem apurada e subsidiada via algoritmo (km)"
       - name: receita_total_esperada
@@ -87,7 +87,7 @@ models:
       - name: consorcio
         description: "Nome do consórcio"
       - name: servico
-        description: "Nome curto da linha operada pelo veículo com variação de serviço [ex: 010, 011SN, ...]"
+        description: "{{ doc('id_veiculo') }}"
       - name: km_subsidiada
         description: "Quilometragem apurada e subsidiada via algoritmo (km)"
       - name: receita_total_esperada
@@ -145,7 +145,7 @@ models:
       - name: consorcio
         description: "Nome do consórcio"
       - name: servico
-        description: "Nome curto da linha operada pelo veículo com variação de serviço [ex: 010, 011SN, ...]"
+        description: "{{ doc('id_veiculo') }}"
       - name: quantidade_dias_subsidiado
         description: "Quantidade de dias subsidiado"
       - name: km_subsidiada
@@ -167,7 +167,7 @@ models:
       - name: saldo
         description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado (R$)"
   - name: receita_tarifaria_servico_nao_identificado_quinzena
-    description: "Receita tarifária proveniente do RDO para serviços de ônibus dos consórcios que não foram identificados nos planos operacionais dos respectivos dias."
+    description: "Receita tarifária proveniente do RDO para serviços de ônibus dos consórcios que não foram identificados nos planos operacionais dos respectivos dias"
     columns:
       - name: quinzena
         description: "Quinzena"

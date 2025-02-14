@@ -5,7 +5,7 @@ models:
     description: "Tabela com dados de autuações fornecidos pelo sistema CITRAN/IplanRio"
     columns:
       - name: data
-        description: "Data da autuação [Partição]"
+        description: "Data da autuação [partição]"
       - name: hora
         description: "Hora da autuação"
       - name: id_auto_infracao
@@ -63,7 +63,7 @@ models:
     description: "Tabela com dados de autuações [até abril/2023]"
     columns:
       - name: data
-        description: "Data da autuação [Partição]"
+        description: "Data da autuação [partição]"
       - name: id_autuacao
         description: "Identificador único da autuação"
       - name: id_auto_infracao

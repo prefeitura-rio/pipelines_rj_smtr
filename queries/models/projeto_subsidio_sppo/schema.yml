@@ -14,7 +14,7 @@ models:
         tests:
           - not_null
       - name: data_shape
-        description: "Data do shape capturado no SIGMOB [00h] [Válida até 2024-03-30]."
+        description: "Data do shape capturado no SIGMOB às 00h [Válida até 2024-03-30]"
         tests:
           - not_null
       - name: tipo_dia
@@ -65,7 +65,7 @@ models:
           - accepted_values:
               values: ["DD", "DU", "SS", "RT", "RM", "DA", "SA"]
       - name: sentido_shape
-        description: "Sentido do shape (codificado no shape_id - categorias: I [ida], V [volta], C [circular]"
+        description: "Sentido do shape [codificado no shape_id - categorias: I - Ida, V - Volta, C - Circular]"
         tests:
           - not_null
           - accepted_values:
@@ -79,7 +79,7 @@ models:
         tests:
           - not_null
       - name: distancia_total_planejada
-        description: "Distância total planejada do serviço [ida + volta] (km)."
+        description: "Distância total planejada do serviço [ida + volta] (km)"
         tests:
           - not_null
           - greater_than_zero
@@ -94,27 +94,27 @@ models:
       - name: shape_id_planejado
         description: "Código identificador de shape no GTFS com ajustes"
       - name: start_pt
-        description: "Ponto inicial do shape em formato geográfico (Point)."
+        description: "Ponto inicial do shape em formato geográfico (Point)"
       - name: end_pt
-        description: "Ponto final do shape em formato geográfico (Point)."
+        description: "Ponto final do shape em formato geográfico (Point)"
       - name: id_tipo_trajeto
-        description: "Tipo de trajeto [0 - Regular, 1 - Alternativo, válida a partir de 2024-04-01]."
+        description: "Tipo de trajeto [0 - Regular, 1 - Alternativo, válida a partir de 2024-04-01]"
       - name: feed_version
-        description: "String que indica a versão atual do conjunto de dados GTFS [Válida a partir de 2024-04-01]."
+        description: "String que indica a versão atual do conjunto de dados GTFS [Válida a partir de 2024-04-01]"
       - name: feed_start_date
         description: "Data inicial do feed do GTFS [Válida a partir de 2024-04-01]"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
 
   - name: aux_registros_status_trajeto
-    description: "Tabela auxiliar de classificação dos registros de GPS no trajeto [shape], com base no serviço informado pelo veículo [atualizada diariamente, sem histórico]."
+    description: "Tabela auxiliar de classificação dos registros de GPS no trajeto [shape], com base no serviço informado pelo veículo [atualizada diariamente, sem histórico]"
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS"
         tests:
           - not_null
       - name: id_veiculo
-        description: "Código identificador do veículo [número de ordem]"
+        description: "{{ doc('id_veiculo') }}"
         tests:
           - not_null
       - name: id_empresa
@@ -165,34 +165,34 @@ models:
         tests:
           - not_null
       - name: versao_modelo
-        description: "Versão da metodologia de cálculo da respectiva linha na tabela."
+        description: "{{ doc('versao') }}"
         tests:
           - not_null
       - name: sentido_shape
-        description: "Sentido do shape - categorias: I [ida], V [volta], C [circular]"
+        description: "Sentido do shape [categorias: I - Ida, V - Volta, C - Circular]"
         tests:
           - not_null
           - accepted_values:
               values: ["I", "V", "C"]
       - name: start_pt
-        description: "Ponto inicial do shape em formato geográfico (Point)."
+        description: "Ponto inicial do shape em formato geográfico (Point)"
       - name: end_pt
-        description: "Ponto final do shape em formato geográfico (Point)."
+        description: "Ponto final do shape em formato geográfico (Point)"
       - name: sentido
-        description: "Sentido do trajeto identificado - categorias: I [ida], V [volta], C [circular]"
+        description: "Sentido do trajeto identificado [categorias: I - Ida, V - Volta, C - Circular]"
         tests:
           - not_null
           - accepted_values:
               values: ["I", "V", "C"]
   - name: aux_viagem_inicio_fim
-    description: "Tabela auxiliar de identificação de início e fim de viagens [atualizada diariamente, sem histórico]."
+    description: "Tabela auxiliar de identificação de início e fim de viagens [atualizada diariamente, sem histórico]"
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS"
         tests:
           - not_null
       - name: id_veiculo
-        description: "Código identificador do veículo [número de ordem]"
+        description: "{{ doc('id_veiculo') }}"
         tests:
           - not_null
       - name: id_empresa
@@ -214,7 +214,7 @@ models:
         tests:
           - not_null
       - name: sentido_shape
-        description: "Sentido do shape - categorias: I [ida], V [volta], C [circular]"
+        description: "Sentido do shape [categorias: I - Ida, V - Volta, C - Circular]"
         tests:
           - not_null
           - accepted_values:
@@ -222,7 +222,7 @@ models:
       - name: distancia_inicio_fim
         description: "Soma da distância entre o ponto inicial do shape e o primeiro sinal de gps da viagem e a distância entre o ponto final do shape e o último sinal de gps da viagem (Km)"
       - name: sentido
-        description: "Sentido do trajeto identificado - categorias: I [ida], V [volta], C [circular]"
+        description: "Sentido do trajeto identificado [categorias: I - Ida, V - Volta, C - Circular]"
         tests:
           - not_null
           - accepted_values:
@@ -241,7 +241,7 @@ models:
         tests:
           - not_null
       - name: versao_modelo
-        description: "Versão da metodologia de cálculo da respectiva linha na tabela."
+        description: "{{ doc('versao') }}"
         tests:
           - not_null
       - name: distancia_planejada
@@ -253,14 +253,14 @@ models:
       - name: trip_id_planejado
         description: "Código identificador de trip de referência no GTFS"
   - name: aux_viagem_circular
-    description: "Tabela auxiliar de tratamento de viagens circulares [atualizada diariamente, sem histórico]."
+    description: "Tabela auxiliar de tratamento de viagens circulares [atualizada diariamente, sem histórico]"
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS"
         tests:
           - not_null
       - name: id_veiculo
-        description: "Código identificador do veículo [número de ordem]"
+        description: "{{ doc('id_veiculo') }}"
         tests:
           - not_null
       - name: id_empresa
@@ -282,7 +282,7 @@ models:
         tests:
           - not_null
       - name: sentido_shape
-        description: "Sentido do shape - categorias: I [ida], V [volta], C [circular]"
+        description: "Sentido do shape [categorias: I - Ida, V - Volta, C - Circular]"
         tests:
           - not_null
           - accepted_values:
@@ -290,7 +290,7 @@ models:
       - name: distancia_inicio_fim
         description: "Soma da distância entre o ponto inicial do shape e o primeiro sinal de gps da viagem e a distância entre o ponto final do shape e o último sinal de gps da viagem (Km)"
       - name: sentido
-        description: "Sentido do trajeto identificado - categorias: I [ida], V [volta], C [circular]"
+        description: "Sentido do trajeto identificado [categorias: I - Ida, V - Volta, C - Circular]"
         tests:
           - not_null
           - accepted_values:
@@ -309,7 +309,7 @@ models:
         tests:
           - not_null
       - name: versao_modelo
-        description: "Versão da metodologia de cálculo da respectiva linha na tabela."
+        description: "{{ doc('versao') }}"
         tests:
           - not_null
       - name: distancia_planejada
@@ -321,14 +321,14 @@ models:
       - name: trip_id_planejado
         description: "Código identificador de trip de referência no GTFS"
   - name: registros_status_viagem
-    description: "Registros de GPS clasificados por viagem."
+    description: "Registros de GPS clasificados por viagem"
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS"
         tests:
           - not_null
       - name: id_veiculo
-        description: "Código identificador do veículo [número de ordem]"
+        description: "{{ doc('id_veiculo') }}"
         tests:
           - not_null
       - name: id_empresa
@@ -374,13 +374,13 @@ models:
         tests:
           - not_null
       - name: sentido_shape
-        description: "Sentido do shape - categorias: I [ida], V [volta], C [circular]"
+        description: "Sentido do shape [categorias: I - Ida, V - Volta, C - Circular]"
         tests:
           - not_null
           - accepted_values:
               values: ["I", "V", "C"]
       - name: sentido
-        description: "Sentido do trajeto identificado - categorias: I [ida], V [volta], C [circular]"
+        description: "Sentido do trajeto identificado [categorias: I - Ida, V - Volta, C - Circular]"
         tests:
           - not_null
           - accepted_values:
@@ -401,7 +401,7 @@ models:
       - name: distancia_inicio_fim
         description: "Soma da distância entre o ponto inicial do shape e o primeiro sinal de gps da viagem e a distância entre o ponto final do shape e o último sinal de gps da viagem (Km)"
       - name: versao_modelo
-        description: "Versão da metodologia de cálculo da respectiva linha na tabela."
+        description: "{{ doc('versao') }}"
         tests:
           - not_null
       - name: shape_id
@@ -413,11 +413,11 @@ models:
       - name: trip_id_planejado
         description: "Código identificador de trip de referência no GTFS"
       - name: start_pt
-        description: "Ponto inicial do shape em formato geográfico (Point)."
+        description: "Ponto inicial do shape em formato geográfico (Point)"
       - name: end_pt
-        description: "Ponto final do shape em formato geográfico (Point)."
+        description: "Ponto final do shape em formato geográfico (Point)"
   - name: aux_viagem_registros
-    description: "Tabela auxiliar de cálculo da distância e total de registros de GPS das viagens identificadas [atualizada diariamente, sem histórico]."
+    description: "Tabela auxiliar de cálculo da distância e total de registros de GPS das viagens identificadas [atualizada diariamente, sem histórico]"
     columns:
       - name: id_viagem
         description: "Código identificador da viagem [id_veiculo + servico + datetime_partida]"
@@ -440,53 +440,53 @@ models:
       - name: distancia_inicio_fim
         description: "Soma da distância entre o ponto inicial do shape e o primeiro sinal de gps da viagem e a distância entre o ponto final do shape e o último sinal de gps da viagem (Km)"
       - name: n_registros_middle
-        description: "Contagem de sinais de GPS emitidos no meio do trajeto."
+        description: "Contagem de sinais de GPS emitidos no meio do trajeto"
         tests:
           - not_null
           - greater_than_zero
       - name: n_registros_start
-        description: "Contagem de sinais de GPS emitidos no ponto de início do trajeto."
+        description: "Contagem de sinais de GPS emitidos no ponto de início do trajeto"
         tests:
           - not_null
           - greater_than_zero
       - name: n_registros_end
-        description: "Contagem de sinais de GPS emitidos no ponto final do trajeto."
+        description: "Contagem de sinais de GPS emitidos no ponto final do trajeto"
         tests:
           - not_null
           - greater_than_zero
       - name: n_registros_out
-        description: "Contagem de sinais de GPS emitidos fora do trajeto."
+        description: "Contagem de sinais de GPS emitidos fora do trajeto"
         tests:
           - not_null
           - not_negative
       - name: n_registros_total
-        description: "Contagem de sinais de GPS emitidos no tempo da viagem."
+        description: "Contagem de sinais de GPS emitidos no tempo da viagem"
         tests:
           - not_null
           - greater_than_zero
       - name: n_registros_minuto
-        description: "Contagem de minutos do trajeto com pelo menos 1 sinal de GPS emitido."
+        description: "Contagem de minutos do trajeto com pelo menos 1 sinal de GPS emitido"
         tests:
           - not_null
           - greater_than_zero
       - name: versao_modelo
-        description: "Versão da metodologia de cálculo da respectiva linha na tabela."
+        description: "{{ doc('versao') }}"
         tests:
           - not_null
       - name: n_registros_shape
-        description: "Contagem total de sinais de GPS emitidos dentro do trajeto."
+        description: "Contagem total de sinais de GPS emitidos dentro do trajeto"
         tests:
           - not_null
           - not_negative
   - name: viagem_conformidade
-    description: "Tabela de cálculo da conformidade de viagens identificadas por GPS."
+    description: "Tabela de cálculo da conformidade de viagens identificadas por GPS"
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS"
         tests:
           - not_null
       - name: id_veiculo
-        description: "Código identificador do veículo [número de ordem]"
+        description: "{{ doc('id_veiculo') }}"
         tests:
           - not_null
       - name: id_empresa
@@ -508,13 +508,13 @@ models:
         tests:
           - not_null
       - name: sentido_shape
-        description: "Sentido do shape - categorias: I [ida], V [volta], C [circular]"
+        description: "Sentido do shape [categorias: I - Ida, V - Volta, C - Circular]"
         tests:
           - not_null
           - accepted_values:
               values: ["I", "V", "C"]
       - name: sentido
-        description: "Sentido do trajeto identificado - categorias: I [ida], V [volta], C [circular]"
+        description: "Sentido do trajeto identificado [categorias: I - Ida, V - Volta, C - Circular]"
         tests:
           - not_null
           - accepted_values:
@@ -553,37 +553,37 @@ models:
       - name: distancia_inicio_fim
         description: "Soma da distância entre o ponto inicial do shape e o primeiro sinal de gps da viagem e a distância entre o ponto final do shape e o último sinal de gps da viagem (Km)"
       - name: n_registros_middle
-        description: "Contagem de sinais de GPS emitidos no meio do trajeto."
+        description: "Contagem de sinais de GPS emitidos no meio do trajeto"
         tests:
           - not_null
           - greater_than_zero
       - name: n_registros_start
-        description: "Contagem de sinais de GPS emitidos no ponto de início do trajeto."
+        description: "Contagem de sinais de GPS emitidos no ponto de início do trajeto"
         tests:
           - not_null
           - greater_than_zero
       - name: n_registros_end
-        description: "Contagem de sinais de GPS emitidos no ponto final do trajeto."
+        description: "Contagem de sinais de GPS emitidos no ponto final do trajeto"
         tests:
           - not_null
           - greater_than_zero
       - name: n_registros_out
-        description: "Contagem de sinais de GPS emitidos fora do trajeto."
+        description: "Contagem de sinais de GPS emitidos fora do trajeto"
         tests:
           - not_null
           - not_negative
       - name: n_registros_shape
-        description: "Contagem total de sinais de GPS emitidos dentro do trajeto."
+        description: "Contagem total de sinais de GPS emitidos dentro do trajeto"
         tests:
           - not_null
           - not_negative
       - name: n_registros_total
-        description: "Contagem de sinais de GPS emitidos no tempo da viagem."
+        description: "Contagem de sinais de GPS emitidos no tempo da viagem"
         tests:
           - not_null
           - greater_than_zero
       - name: n_registros_minuto
-        description: "Contagem de minutos do trajeto com pelo menos 1 sinal de GPS emitido."
+        description: "Contagem de minutos do trajeto com pelo menos 1 sinal de GPS emitido"
         tests:
           - not_null
           - greater_than_zero
@@ -605,11 +605,11 @@ models:
           - not_null
           - greater_than_zero
       - name: versao_modelo
-        description: "Versão da metodologia de cálculo da respectiva linha na tabela."
+        description: "{{ doc('versao') }}"
         tests:
           - not_null
   - name: viagem_completa
-    description: "Detalhes de todas as viagens completas identificadas."
+    description: "Detalhes de todas as viagens completas identificadas"
     columns:
       - name: consorcio
         description: "Consórcio ao qual o serviço pertence"
@@ -626,7 +626,7 @@ models:
           - accepted_values:
               values: ["Dia Útil", "Sabado", "Domingo"]
       - name: id_veiculo
-        description: "Código identificador do veículo [número de ordem]"
+        description: "{{ doc('id_veiculo') }}"
         tests:
           - not_null
       - name: id_empresa
@@ -654,7 +654,7 @@ models:
         tests:
           - not_null
       - name: sentido
-        description: "Sentido do trajeto identificado - categorias: I [ida], V [volta], C [circular]"
+        description: "Sentido do trajeto identificado [categorias: I - Ida, V - Volta, C - Circular]"
         tests:
           - not_null
           - accepted_values:
@@ -708,17 +708,17 @@ models:
           - not_null
           - greater_than_zero
       - name: n_registros_shape
-        description: "Contagem de sinais de GPS emitidos dentro do trajeto."
+        description: "Contagem de sinais de GPS emitidos dentro do trajeto"
         tests:
           - not_null
           - greater_than_zero
       - name: n_registros_total
-        description: "Contagem de sinais de GPS emitidos no tempo da viagem."
+        description: "Contagem de sinais de GPS emitidos no tempo da viagem"
         tests:
           - not_null
           - greater_than_zero
       - name: n_registros_minuto
-        description: "Contagem de minutos do trajeto com pelo menos 1 sinal de GPS emitido."
+        description: "Contagem de minutos do trajeto com pelo menos 1 sinal de GPS emitido"
         tests:
           - not_null
           - greater_than_zero
@@ -745,31 +745,31 @@ models:
           # - not_null
           # - greater_than_zero
       - name: versao_modelo
-        description: "Versão da metodologia de cálculo da respectiva linha na tabela"
+        description: "{{ doc('versao') }}"
         tests:
           - not_null
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: subsidio_data_versao_efetiva
-    description: "Relacionamento entre datas de operação de planejamento dos serviços."
+    description: "Relacionamento entre datas de operação de planejamento dos serviços"
     columns:
       - name: data
-        description: "Data de Operação [Partição]."
+        description: "Data de Operação [Partição]"
       - name: tipo_dia
-        description: "Dia da semana - categorias: Dia Útil, Sabado, Domingo e Ponto Facultativo."
+        description: "Dia da semana - categorias: Dia Útil, Sabado, Domingo e Ponto Facultativo"
       - name: subtipo_dia
-        description: "Subtipo de dia [ex: 'Verão', válida a partir de 2024-04-01]."
+        description: "Subtipo de dia [ex: 'Verão', válida a partir de 2024-04-01]"
       - name: data_versao_trips
-        description: "Data da versão de planejamento de trips [Descontinuada a partir de 2024-04-01]."
+        description: "Data da versão de planejamento de trips [Descontinuada a partir de 2024-04-01]"
       - name: data_versao_shapes
-        description: "Data da versão de planejamento de shapes [Descontinuada a partir de 2024-04-01]."
+        description: "Data da versão de planejamento de shapes [Descontinuada a partir de 2024-04-01]"
       - name: data_versao_frequencies
-        description: "Data da versão de planejamento de frequencies [Descontinuada a partir de 2024-04-01]."
+        description: "Data da versão de planejamento de frequencies [Descontinuada a partir de 2024-04-01]"
       - name: valor_subsidio_por_km
-        description: "Valor do subsídio (R$/km) [Descontinuada a partir de 2023-01-07]."
+        description: "Valor do subsídio (R$/km) [Descontinuada a partir de 2023-01-07]"
       - name: feed_start_date
-        description: "Data inicial do feed [versão, válida a partir de 2024-04-01]."
+        description: "Data inicial do feed [versão válida a partir de 2024-04-01]"
       - name: feed_version
-        description: "String que indica a versão atual do conjunto de dados GTFS [Válida a partir de 2024-04-01]."
+        description: "String que indica a versão atual do conjunto de dados GTFS [Válida a partir de 2024-04-01]"
       - name: tipo_os
-        description: "Tipo de Ordem de Serviço [ex: 'Regular', 'Extraordinária - Verão', válida a partir de 2024-04-01]."
+        description: "Tipo de Ordem de Serviço [ex: 'Regular', 'Extraordinária - Verão', válida a partir de 2024-04-01]"

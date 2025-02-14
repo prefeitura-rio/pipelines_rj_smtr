@@ -183,15 +183,15 @@ models:
     description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia e tipo de viagem"
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS."
+        description: "Data de emissão do sinal de GPS"
       - name: tipo_dia
-        description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo."
+        description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: consorcio
-        description: "Consórcio que opera o serviço."
+        description: "Consórcio que opera o serviço"
       - name: servico
-        description: "Serviço realizado pelo veículo."
+        description: "Serviço realizado pelo veículo"
       - name: viagens
-        description: "Quantidade de viagens apuradas."
+        description: "Quantidade de viagens apuradas"
       - name: km_apurada
         description: "Distância apurada do serviço (km)
         Distância planejada da viagem multiplicada pela quantidade de viagens."
@@ -199,9 +199,9 @@ models:
           - sumario_servico_dia_tipo_soma_km:
               name: sumario_servico_dia_tipo_soma_km__km_apurada__sumario_servico_dia_tipo
       - name: km_planejada
-        description: "Distância planejada para o serviço (km)."
+        description: "Distância planejada para o serviço (km)"
       - name: perc_km_planejada
-        description: "Indicador percentual de quilometragem apurada em relação à planejada da linha."
+        description: "Indicador percentual de quilometragem apurada em relação à planejada da linha"
       - name: valor_subsidio_pago
         description: "Valor de subsídio apurado (R$)
         Distância apurada do serviço multiplicada pelos respectivos valores pela classificação do veículo."
@@ -210,41 +210,41 @@ models:
         Linha com operação entre 40% e 60% da quilometragem estipulada - penalidade equivalente a uma infração média prevista no Código Disciplinar do Serviço Público de Transporte de Passageiros por Meio de Ônibus do Município do Rio de Janeiro - SPPO.
         Linha com operação inferior a 40% da quilometragem estipulada - penalidade equivalente a uma infração grave prevista no Código Disciplinar do Serviço Público de Transporte de Passageiros por Meio de Ônibus do Município do Rio de Janeiro - SPPO."
       - name: viagens_n_licenciado
-        description: "Quantidade de viagens apuradas realizadas por veículo não licenciado."
+        description: "Quantidade de viagens apuradas realizadas por veículo não licenciado"
       - name: km_apurada_n_licenciado
-        description: "Distância apurada de viagens realizadas por veículo não licenciado (km)."
+        description: "Distância apurada de viagens realizadas por veículo não licenciado (km)"
       - name: viagens_autuado_ar_inoperante
-        description: "Quantidade de viagens apuradas realizadas por veículo licenciado com ar condicionado e autuado em razão de inoperância ou mau funcionamento deste."
+        description: "Quantidade de viagens apuradas realizadas por veículo licenciado com ar condicionado e autuado em razão de inoperância ou mau funcionamento deste"
       - name: km_apurada_autuado_ar_inoperante
-        description: "Distância apurada de viagens realizadas por veículo licenciado com ar condicionado e autuado em razão de inoperância ou mau funcionamento deste (km)."
+        description: "Distância apurada de viagens realizadas por veículo licenciado com ar condicionado e autuado em razão de inoperância ou mau funcionamento deste (km)"
       - name: viagens_autuado_seguranca
-        description: "Quantidade de viagens apuradas realizadas por veículo licenciado e autuado em razão de segurança."
+        description: "Quantidade de viagens apuradas realizadas por veículo licenciado e autuado em razão de segurança"
       - name: km_apurada_autuado_seguranca
-        description: "Distância apurada de viagens realizadas por veículo licenciado e autuado em razão de segurança (km)."
+        description: "Distância apurada de viagens realizadas por veículo licenciado e autuado em razão de segurança (km)"
       - name: viagens_autuado_limpezaequipamento
-        description: "Quantidade de viagens apuradas realizadas por veículo licenciado e autuado em razão de limpeza e equipamento."
+        description: "Quantidade de viagens apuradas realizadas por veículo licenciado e autuado em razão de limpeza e equipamento"
       - name: km_apurada_autuado_limpezaequipamento
-        description: "Distância apurada de viagens realizadas por veículo licenciado e autuado em razão de limpeza e equipamento (km)."
+        description: "Distância apurada de viagens realizadas por veículo licenciado e autuado em razão de limpeza e equipamento (km)"
       - name: viagens_licenciado_sem_ar_n_autuado
-        description: "Quantidade de viagens apuradas realizadas por veículo licenciado sem ar condicionado."
+        description: "Quantidade de viagens apuradas realizadas por veículo licenciado sem ar condicionado"
       - name: km_apurada_licenciado_sem_ar_n_autuado
-        description: "Distância apurada de viagens realizadas por veículo licenciado sem ar condicionado (km)."
+        description: "Distância apurada de viagens realizadas por veículo licenciado sem ar condicionado (km)"
       - name: viagens_licenciado_com_ar_n_autuado
-        description: "Quantidade de viagens apuradas realizadas por veículo licenciado com ar condicionado e não autuado em razão de inoperância ou mau funcionamento deste."
+        description: "Quantidade de viagens apuradas realizadas por veículo licenciado com ar condicionado e não autuado em razão de inoperância ou mau funcionamento deste"
       - name: km_apurada_licenciado_com_ar_n_autuado
-        description: "Distância apurada de viagens realizadas por veículo licenciado com ar condicionado e não autuado em razão de inoperância ou mau funcionamento deste (km)."
+        description: "Distância apurada de viagens realizadas por veículo licenciado com ar condicionado e não autuado em razão de inoperância ou mau funcionamento deste (km)"
       - name: viagens_n_vistoriado
-        description: "Quantidade de viagens apuradas realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria."
+        description: "Quantidade de viagens apuradas realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria"
       - name: km_apurada_n_vistoriado
-        description: "Distância apurada de viagens realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria (km)."
+        description: "Distância apurada de viagens realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria (km)"
       - name: viagens_registrado_com_ar_inoperante
-        description: "Quantidade de viagens apuradas realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste."
+        description: "Quantidade de viagens apuradas realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste"
       - name: km_apurada_registrado_com_ar_inoperante
-        description: "Distância apurada de viagens realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste (km)."
+        description: "Distância apurada de viagens realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste (km)"
       - name: viagens_sem_transacao
-        description: "Quantidade de viagens apuradas realizadas por veículo licenciado sem registros de transações RioCard."
+        description: "Quantidade de viagens apuradas realizadas por veículo licenciado sem registros de transações RioCard"
       - name: km_apurada_sem_transacao
-        description: "Distância apurada de viagens realizadas por veículo licenciado sem registros de transações RioCard."
+        description: "Distância apurada de viagens realizadas por veículo licenciado sem registros de transações RioCard"
   - name: valor_tipo_penalidade
     description: "Valores de penalidades de subsídio"
     columns:
@@ -299,7 +299,7 @@ models:
       - name: indicador_registro_agente_verao_ar_condicionado
         description: "Indicador se o veículo foi registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) com ar condicionado inoperante ou em mau funcionamento"
   - name: viagens_realizadas
-    description: "Detalhes de todas as viagens completas identificadas."
+    description: "Detalhes de todas as viagens completas identificadas"
     columns:
       - name: consorcio
         description: "Consórcio que opera o serviço"
@@ -351,13 +351,13 @@ models:
       - name: distancia_aferida
         description: "Distância aferida da viagem (distância euclidiana entre posições consecutivas do sinal de GPS)"
       - name: n_registros_start
-        description: "Contagem de sinais de GPS emitidos no meio do trajeto."
+        description: "Contagem de sinais de GPS emitidos no meio do trajeto"
       - name: n_registros_shape
-        description: "Contagem de sinais de GPS emitidos dentro do trajeto."
+        description: "Contagem de sinais de GPS emitidos dentro do trajeto"
       - name: n_registros_total
-        description: "Contagem de sinais de GPS emitidos no tempo da viagem."
+        description: "Contagem de sinais de GPS emitidos no tempo da viagem"
       - name: n_registros_minuto
-        description: "Contagem de minutos do trajeto com pelo menos 1 sinal de GPS emitido."
+        description: "Contagem de minutos do trajeto com pelo menos 1 sinal de GPS emitido"
       - name: perc_conformidade_shape
         description: "Percentual de sinais emitidos dentro do shape (trajeto) ao longo da viagem"
       - name: perc_conformidade_distancia
@@ -367,11 +367,11 @@ models:
       - name: perc_conformidade_tempo
         description: "Razão do tempo aferido da viagem pelo planejado x 100"
       - name: versao_modelo
-        description: "Versão da metodologia de cálculo da respectiva linha na tabela."
+        description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: sumario_servico_dia_tipo_sem_glosa
-    description: "Tabela temporária sem as glosas e com os detalhes de viagens subsidiadas por serviço-dia."
+    description: "Tabela temporária sem as glosas e com os detalhes de viagens subsidiadas por serviço-dia"
     tests:
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data
@@ -390,27 +390,27 @@ models:
           name: dbt_utils.unique_combination_of_columns__sumario_servico_dia_tipo_sem_glosa
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS."
+        description: "Data de emissão do sinal de GPS"
         tests:
           - not_null:
               name: not_null__data__sumario_servico_dia_tipo_sem_glosa
       - name: consorcio
-        description: "Consórcio que opera o serviço."
+        description: "Consórcio que opera o serviço"
         tests:
           - not_null:
               name: not_null__consorcio__sumario_servico_dia_tipo_sem_glosa
       - name: tipo_dia
-        description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo."
+        description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
         tests:
           - not_null:
               name: not_null__tipo_dia__sumario_servico_dia_tipo_sem_glosa
       - name: servico
-        description: "Serviço realizado pelo veículo."
+        description: "Serviço realizado pelo veículo"
         tests:
           - not_null:
               name: not_null__servico__sumario_servico_dia_tipo_sem_glosa
       - name: viagens_subsidio
-        description: "Quantidade de viagens apuradas."
+        description: "Quantidade de viagens apuradas"
         tests:
           - not_null:
               name: not_null__viagens_subsidio__sumario_servico_dia_tipo_sem_glosa
@@ -418,7 +418,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__viagens_subsidio__sumario_servico_dia_tipo_sem_glosa
       - name: distancia_total_planejada
-        description: "Distância planejada para o serviço (km)."
+        description: "Distância planejada para o serviço (km)"
         tests:
           - not_null:
               name: not_null__distancia_total_planejada__sumario_servico_dia_tipo_sem_glosa
@@ -426,7 +426,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__distancia_total_planejada__sumario_servico_dia_tipo_sem_glosa
       - name: distancia_total_subsidio
-        description: "Distância apurada para o serviço (km)."
+        description: "Distância apurada para o serviço (km)"
         tests:
           - not_null:
               name: not_null__distancia_total_subsidio__sumario_servico_dia_tipo_sem_glosa
@@ -437,7 +437,7 @@ models:
         description: "Valor de subsídio aferido (R$)\n
                       Distância apurada do serviço multiplicada pelo valor de subsídio (R$/km)"
       - name: perc_distancia_total_subsidio
-        description: "Indicador percentual de quilometragem apurada em relação à planejada da linha."
+        description: "Indicador percentual de quilometragem apurada em relação à planejada da linha"
         tests:
           - not_null:
               name: not_null__perc_distancia_total_subsidio__sumario_servico_dia_tipo_sem_glosa
@@ -445,7 +445,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__perc_distancia_total_subsidio__sumario_servico_dia_tipo_sem_glosa
       - name: valor_total_subsidio
-        description: "Valor da distância apurada multiplicada pelo subsídio por quilômetro (sem glosa). É zerado quando POD < 80%."
+        description: "Valor da distância apurada multiplicada pelo subsídio por quilômetro (sem glosa). É zerado quando POD < 80%"
         tests:
           - not_null:
               name: not_null__valor_total_subsidio__sumario_servico_dia_tipo_sem_glosa
@@ -453,9 +453,9 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__valor_total_subsidio__sumario_servico_dia_tipo_sem_glosa
       - name: viagens_n_licenciado
-        description: "Quantidade de viagens de veículos não licenciados."
+        description: "Quantidade de viagens de veículos não licenciados"
       - name: km_apurada_n_licenciado
-        description: "Quilometragem apurada de viagens de veículos não licenciados."
+        description: "Quilometragem apurada de viagens de veículos não licenciados"
         tests:
           - not_null:
               name: not_null__km_apurada_n_licenciado__sumario_servico_dia_tipo_sem_glosa
@@ -463,7 +463,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__km_apurada_n_licenciado__sumario_servico_dia_tipo_sem_glosa
       - name: viagens_autuado_ar_inoperante
-        description: "Quantidade de viagens de veículos autuados por ar inoperante."
+        description: "Quantidade de viagens de veículos autuados por ar inoperante"
         tests:
           - not_null:
               name: not_null__viagens_autuado_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
@@ -471,7 +471,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__viagens_autuado_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_autuado_ar_inoperante
-        description: "Quilometragem apurada de viagens de veículos autuados por ar inoperante."
+        description: "Quilometragem apurada de viagens de veículos autuados por ar inoperante"
         tests:
           - not_null:
               name: not_null__km_apurada_autuado_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
@@ -479,7 +479,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__km_apurada_autuado_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
       - name: viagens_autuado_seguranca
-        description: "Quantidade de viagens de veículos autuados por segurança."
+        description: "Quantidade de viagens de veículos autuados por segurança"
         tests:
           - not_null:
               name: not_null__viagens_autuado_seguranca__sumario_servico_dia_tipo_sem_glosa
@@ -487,7 +487,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__viagens_autuado_seguranca__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_autuado_seguranca
-        description: "Quilometragem apurada de viagens de veículos autuados por segurança."
+        description: "Quilometragem apurada de viagens de veículos autuados por segurança"
         tests:
           - not_null:
               name: not_null__km_apurada_autuado_seguranca__sumario_servico_dia_tipo_sem_glosa
@@ -495,7 +495,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__km_apurada_autuado_seguranca__sumario_servico_dia_tipo_sem_glosa
       - name: viagens_autuado_limpezaequipamento
-        description: "Quantidade de viagens de veículos autuados por limpeza ou equipamento."
+        description: "Quantidade de viagens de veículos autuados por limpeza ou equipamento"
         tests:
           - not_null:
               name: not_null__viagens_autuado_limpezaequipamento__sumario_servico_dia_tipo_sem_glosa
@@ -503,7 +503,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__viagens_autuado_limpezaequipamento__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_autuado_limpezaequipamento
-        description: "Quilometragem apurada de viagens de veículos autuados por limpeza ou equipamento."
+        description: "Quilometragem apurada de viagens de veículos autuados por limpeza ou equipamento"
         tests:
           - not_null:
               name: not_null__km_apurada_autuado_limpezaequipamento__sumario_servico_dia_tipo_sem_glosa
@@ -511,7 +511,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__km_apurada_autuado_limpezaequipamento__sumario_servico_dia_tipo_sem_glosa
       - name: viagens_licenciado_sem_ar_n_autuado
-        description: "Quantidade de viagens de veículos sem ar e não autuados."
+        description: "Quantidade de viagens de veículos sem ar e não autuados"
         tests:
           - not_null:
               name: not_null__viagens_licenciado_sem_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
@@ -519,7 +519,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__viagens_licenciado_sem_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_licenciado_sem_ar_n_autuado
-        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados."
+        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados"
         tests:
           - not_null:
               name: not_null__km_apurada_licenciado_sem_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
@@ -527,7 +527,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__km_apurada_licenciado_sem_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
       - name: viagens_licenciado_com_ar_n_autuado
-        description: "Quantidade de viagens de veículos com ar e não autuados."
+        description: "Quantidade de viagens de veículos com ar e não autuados"
         tests:
           - not_null:
               name: not_null__viagens_licenciado_com_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
@@ -535,7 +535,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__viagens_licenciado_com_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_licenciado_com_ar_n_autuado
-        description: "Quilometragem apurada de viagens de veículos com ar e não autuados."
+        description: "Quilometragem apurada de viagens de veículos com ar e não autuados"
         tests:
           - not_null:
               name: not_null__km_apurada_licenciado_com_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
@@ -543,7 +543,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__km_apurada_licenciado_com_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
       - name: viagens_n_vistoriado
-        description: "Quantidade de viagens apuradas realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria."
+        description: "Quantidade de viagens apuradas realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria"
         tests:
           - not_null:
               name: not_null__viagens_n_vistoriado__sumario_servico_dia_tipo_sem_glosa
@@ -551,7 +551,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__viagens_n_vistoriado__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_n_vistoriado
-        description: "Distância apurada de viagens realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria (km)."
+        description: "Distância apurada de viagens realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria (km)"
         tests:
           - not_null:
               name: not_null__km_apurada_n_vistoriado__sumario_servico_dia_tipo_sem_glosa
@@ -559,7 +559,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__km_apurada_n_vistoriado__sumario_servico_dia_tipo_sem_glosa
       - name: viagens_registrado_com_ar_inoperante
-        description: "Quantidade de viagens apuradas realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste."
+        description: "Quantidade de viagens apuradas realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste"
         tests:
           - not_null:
               name: not_null__viagens_registrado_com_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
@@ -567,7 +567,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__viagens_registrado_com_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_registrado_com_ar_inoperante
-        description: "Distância apurada de viagens realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste (km)."
+        description: "Distância apurada de viagens realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste (km)"
         tests:
           - not_null:
               name: not_null__km_apurada_registrado_com_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
@@ -591,27 +591,27 @@ models:
           name: check_viagem_completa__viagens_remuneradas
     columns:
       - name: data
-        description: "Data da viagem."
+        description: "Data da viagem"
         tests:
           - not_null:
               name: not_null__data__viagens_remuneradas
       - name: servico
-        description: "Serviço realizado pelo veículo."
+        description: "Serviço realizado pelo veículo"
         tests:
           - not_null:
               name: not_null__servico__viagens_remuneradas
       - name: tipo_viagem
-        description: "Classificação do tipo de viagem."
+        description: "Classificação do tipo de viagem"
         tests:
           - not_null:
               name: not_null__tipo_viagem__viagens_remuneradas
       - name: id_viagem
-        description: "Código único identificador da viagem."
+        description: "Código único identificador da viagem"
         tests:
           - not_null:
               name: not_null__id_viagem__viagens_remuneradas
       - name: distancia_planejada
-        description: "Distância planejada da viagem (km)."
+        description: "Distância planejada da viagem (km)"
         tests:
           - not_null:
               name: not_null__distancia_planejada__viagens_remuneradas
@@ -623,7 +623,7 @@ models:
       - name: tecnologia_remunerada
         description: "{{ doc('tecnologia_remunerada') }}"
       - name: subsidio_km
-        description: "Valor de subsídio, conforme tipo de viagem (R$/km)."
+        description: "Valor de subsídio, conforme tipo de viagem (R$/km)"
         tests:
           - not_null:
               name: not_null__subsidio_km__viagens_remuneradas
@@ -631,14 +631,14 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__subsidio_km__viagens_remuneradas
       - name: subsidio_km_teto
-        description: "Valor máximo de subsídio, conforme tipo de viagem (R$/km)."
+        description: "Valor máximo de subsídio, conforme tipo de viagem (R$/km)"
         tests:
           - not_null:
               name: not_null__subsidio_km_teto__viagens_remuneradas
       - name: valor_glosado_tecnologia
         description: "{{ doc('valor_glosado_tecnologia') }}"
       - name: indicador_penalidade_tecnologia
-        description: "Indica se a viagem foi penalizada por utilizar uma tecnologia inferior a permitida."
+        description: "Indica se a viagem foi penalizada por utilizar uma tecnologia inferior a permitida"
       - name: indicador_viagem_dentro_limite
         description: "{{ doc('indicador_viagem_dentro_limite') }}"
         tests:
