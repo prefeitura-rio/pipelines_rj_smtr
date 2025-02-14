@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: gps_brt_datario
-    description: "Dados tratados de registros de GPS do BRT."
+    description: "Dados tratados de registros de GPS do BRT"
     columns:
       - name: modo
         description: "{{ doc('modo_brt') }}"
@@ -36,7 +36,7 @@ models:
         description: "{{ doc('versao') }}"
 
   - name: gps_onibus_datario
-    description: "Dados tratados de registros de GPS dos Ônibus."
+    description: "Dados tratados de registros de GPS dos Ônibus"
     columns:
       - name: modo
         description: "{{ doc('modo_sppo') }}"
@@ -71,7 +71,7 @@ models:
       - name: versao
         description: "{{ doc('versao') }}"
   - name: viagem_onibus_datario
-    description: "Detalhes de todas as viagens completas identificadas."
+    description: "Detalhes de todas as viagens completas identificadas"
     columns:
       - name: data
         description: "Data da viagem"
@@ -82,7 +82,7 @@ models:
       - name: id_empresa
         description: "Código identificador da empresa que opera o veículo"
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
       - name: id_viagem
         description: "Código identificador da viagem (ex: id_veiculo + servico + sentido + shape_id + datetime_partida)"
       - name: servico
@@ -104,7 +104,7 @@ models:
       - name: perc_conformidade_registros
         description: "Percentual de minutos da viagem com registro de sinal de GPS"
       - name: versao_modelo
-        description: "Versão da metodologia de cálculo da respectiva linha na tabela"
+        description: "{{ doc('versao') }}"
 
   - name: licenciamento_veiculo_datario
     description: "Tabela histórica de dados cadastrais dos veículos que operam o sistema de transporte rodoviário,

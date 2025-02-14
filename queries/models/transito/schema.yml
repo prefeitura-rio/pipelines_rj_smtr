@@ -5,7 +5,7 @@ models:
     description: "Tabela com dados de autuações fornecidos pelo sistema CITRAN/IplanRio"
     columns:
       - name: data
-        description: "Data da autuação (Coluna de particionamento)"
+        description: "Data da autuação [partição]"
       - name: hora
         description: "Hora da autuação"
       - name: id_auto_infracao
@@ -35,9 +35,9 @@ models:
       - name: cep_proprietario
         description: "CEP do proprietário do veículo [protegido]"
       - name: valor_infracao
-        description: "Valor monetário da autuação (100%) [R$]"
+        description: "Valor monetário da autuação [100%] (R$)"
       - name: valor_pago
-        description: "Valor pago da autuação [R$]"
+        description: "Valor pago da autuação (R$)"
       - name: data_pagamento
         description: "Data de pagamento da autuação"
       - name: id_autuador
@@ -60,10 +60,10 @@ models:
         description: "Indicador de adesão do veículo ao SNE"
 
   - name: autuacao
-    description: "Tabela com dados de autuações (até abril/2023)"
+    description: "Tabela com dados de autuações [até abril/2023]"
     columns:
       - name: data
-        description: "Data da autuação (Coluna de particionamento)"
+        description: "Data da autuação [partição]"
       - name: id_autuacao
         description: "Identificador único da autuação"
       - name: id_auto_infracao
@@ -107,7 +107,7 @@ models:
       - name: especie_veiculo
         description: "Espécie do veículo"
       - name: uf_infrator
-        description: "Estado do condutor infrator (em caso de indicação de real condutor infrator)"
+        description: "Estado do condutor infrator [em caso de indicação de real condutor infrator]"
       - name: uf_principal_condutor
         description: "Estado do condutor principal do veículo"
       - name: uf_proprietario
@@ -117,9 +117,9 @@ models:
         policy_tags:
         - 'projects/rj-smtr/locations/us/taxonomies/7968932463054912793/policyTags/5243840798726507169'
       - name: valor_infracao
-        description: "Valor monetário da autuação (100%) [R$]"
+        description: "Valor monetário da autuação [100%] (R$)"
       - name: valor_pago
-        description: "Valor pago da autuação [R$]"
+        description: "Valor pago da autuação (R$)"
       - name: data_pagamento
         description: "Data de pagamento da autuação"
       - name: id_autuador
@@ -145,7 +145,7 @@ models:
       - name: processo_troca_real_infrator
         description: "Número do processo de troca de real condutor infrator"
       - name: status_sne
-        description: "Indicador de adesão do veículo ao Sistema de Notificação Eletrônica (SNE)"
+        description: "Indicador de adesão do veículo ao Sistema de Notificação Eletrônica - SNE"
       - name: fonte
         description: "Origem dos dados"
   - name: receita_autuacao
