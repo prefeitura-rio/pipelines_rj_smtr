@@ -166,8 +166,8 @@ def get_table_info(
     table_names = [
         t
         for t in inspector.get_table_names()
-        if t not in tables_config["exclude"]
-        and isinstance(tables_config["filter"].get(t, []), list)
+        if t not in tables_config.get("exclude", [])
+        and isinstance(tables_config.get("filter", {}).get(t, []), list)
     ]
     result = [
         {

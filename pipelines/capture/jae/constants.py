@@ -46,6 +46,46 @@ class constants(Enum):  # pylint: disable=c0103
             "engine": "postgresql",
             "host": "10.5.115.29",
         },
+        "atm_gateway_db": {
+            "engine": "postgresql",
+            "host": "10.5.12.45",
+        },
+        "device_db": {
+            "engine": "postgresql",
+            "host": "10.5.112.161",
+        },
+        "erp_integracao_db": {
+            "engine": "postgresql",
+            "host": "10.5.12.105",
+        },
+        "financeiro_db": {
+            "engine": "postgresql",
+            "host": "10.5.12.203",
+        },
+        "midia_db": {
+            "engine": "postgresql",
+            "host": "10.5.14.66",
+        },
+        "processador_transacao_db": {
+            "engine": "postgresql",
+            "host": "10.5.12.185",
+        },
+        "atendimento_db": {
+            "engine": "postgresql",
+            "host": "10.5.14.170",
+        },
+        "gateway_pagamento_db": {
+            "engine": "postgresql",
+            "host": "10.5.113.179",
+        },
+        "iam_db": {
+            "engine": "mysql",
+            "host": "10.5.13.201",
+        },
+        "vendas_db": {
+            "engine": "postgresql",
+            "host": "10.5.113.30",
+        },
     }
 
     JAE_SECRET_PATH = "smtr_jae_access_data"
@@ -172,5 +212,247 @@ class constants(Enum):  # pylint: disable=c0103
                     "DT_CANCELAMENTO",
                 ],
             },
-        }
+        },
+        "tarifa_db": {
+            "filter": {
+                "matriz_integracao": ["dt_inclusao"],
+                "linha_tarifa": [
+                    "dt_inicio_validade",
+                    "dt_inclusao",
+                ],
+            }
+        },
+        "transacao_db": {
+            "exclude": [
+                "transacao",
+                "transacao_riocard",
+                # "embossadora_producao_20240809",
+                # "transacao_faltante_23082023",
+                # duvida #
+                # "spatial_ref_sys",
+                # "us_rules",
+                # "us_lex",
+                # "us_gaz",
+            ],
+            "filter": {"confirmacao_envio_pms": ["data_confirmacao"]},
+        },
+        "tracking_db": {
+            "exclude": [
+                "tracking_detalhe",
+                # duvida #
+                # "mq_connections",
+            ],
+            "filter": {
+                "tracking_sumarizado": ["ultima_data_tracking"],
+                "spatial_ref_sys": ["srid"],
+            },
+        },
+        "ressarcimento_db": {
+            "exclude": [
+                "integracao_transacao",
+                "ordem_ressarcimento",
+                "ordem_pagamento",
+                "ordem_pagamento_consorcio_operadora",
+                "ordem_pagamento_consorcio",
+                "ordem_rateio",
+                "linha_sem_ressarcimento",
+                "percentual_rateio_integracao",
+            ],
+            "filter": {
+                "item_ordem_transferencia_custodia": ["data_inclusao"],
+                "batch_step_execution": [
+                    "create_time",
+                    "last_updated",
+                ],
+                "batch_step_execution_context": ["step_execution_id"],
+                "batch_job_execution_params": ["job_execution_id"],
+                "item_ordem_transferencia_custodia_old": ["data_inclusao"],
+                "batch_job_instance": ["job_instance_id"],
+                "batch_job_execution": [
+                    "create_time",
+                    "last_updated",
+                ],
+                "batch_job_execution_context": ["job_instance_id"],
+            },
+        },
+        "gratuidade_db": {
+            "exclude": [
+                "gratuidade",
+                # "estudante_import_old",
+                # "estudante_sme",
+                # "estudante_import_old",
+                # "gratuidade_import_pcd_old",
+                # "escola_importa",
+                # "cid_nova",
+                # "cid",
+                # sem permissão: #
+                "pcd_excluir",
+                "estudante_seeduc",
+                "pcd_nao_excluir",
+                "estudante_import_seeduc",
+                "check_cadastro_pcd_validar",
+                "gratuidade_import_pcd",
+                "estudante_seeduc_nov2024",
+                "check_cadastro_total1",
+                "check_cadastro_pcd_validado",
+                "estudante_federal",
+                "estudante_sme_2025",
+                "estudante_universitario",
+            ],
+            "filter": {
+                "lancamento_conta_gratuidade": ["data_inclusao"],
+                "historico_status_gratuidade": ["data_inclusao"],
+                "regra_gratuidade": ["data_fim_validade", "data_inclusao"],
+                "conta_gratuidade": [
+                    "data_cancelamento",
+                    "data_ultima_atualizacao",
+                    "data_inclusao",
+                ],
+                "estudante_prefeitura": ["id"],
+                "estudante_anterior": ["data_inclusao"],
+                "estudante": ["data_inclusao"],
+                "laudo_pcd_cid": ["data_inclusao"],
+                "laudo_pcd": ["data_inclusao"],
+                "pcd": ["data_inclusao"],
+                "laudo_pcd_tipo_doenca": ["data_inclusao"],
+                "escola": ["data_inclusao"],
+            },
+        },
+        "fiscalizacao_db": {
+            "filter": {"fiscalizacao": ["dt_inclusao"]},
+        },
+        "atm_gateway_db": {
+            "filter": {
+                "requisicao": [
+                    "dt_requisicao",
+                    "dt_resposta",
+                ]
+            }
+        },
+        "device_db": {
+            "filter": {
+                "device_operadora_grupo": ["data_desassociacao", "data_inclusao"],
+                "device_operadora": ["data_desassociacao", "data_inclusao"],
+                "device": ["data_inclusao", "data_ultimo_comando"],
+                "grupo_controle_device": ["data_inclusao"],
+            }
+        },
+        "erp_integracao_db": {},
+        "financeiro_db": {
+            "exclude": [
+                # "cliente_fraude_05092024",
+                # "cargas_garota_vip_18082023",
+                # duvida: #
+                # "conta",
+                # "lote_credito_conta",
+                # "sequencia_lancamento",
+                # "criar_conta_financeira",
+            ],
+            "filter": {
+                "lancamento": ["dt_lancamento"],
+                "evento_recebido": ["dt_inclusao"],
+                "movimento": ["dt_movimento"],
+                "evento_processado": ["dt_inclusao"],
+                "evento_erro": ["dt_inclusao"],
+                "midia_gravacao_fisica_141": ["id"],
+                "midia_gravacao_fisica_148": ["id"],
+                "midia_gravacao_fisica_145": ["id"],
+                "midia_gravacao_fisica_136": ["id"],
+                "midia_gravacao_fisica_142": ["id"],
+                "midia_gravacao_fisica_140": ["id"],
+                "midia_gravacao_fisica_137": ["id"],
+                "midia_gravacao_fisica_138": ["id"],
+                "midia_gravacao_fisica_135": ["id"],
+                "midia_gravacao_fisica_133": ["id"],
+                "midia_gravacao_fisica_139": ["id"],
+            },
+        },
+        "midia_db": {
+            "exclude": [
+                # "midia_chip_12092024",
+                # "midia_chip_30092024",
+                # "cargas_garota_vip_18082023",
+                # duvida #
+                # "retorno_geral",
+                # "midia_jall",
+                # sem permissão #
+                "tb_arquivos_validacao",
+                "jal_sp_cbd_producao_tudo",
+                "midia_chip",
+                "midia_chip_12122024",
+                "midia_gravacao_fisica_150",
+                "midia_gravacao_fisica",
+                "midia_gravacao_fisica_151",
+                "jall_midia_erro",
+                "jall_midia_nao_recebida",
+                "erros_504_criacao_dock",
+            ],
+            "filter": {
+                "midia_evento": ["dt_inclusao"],
+                "midia": [
+                    "dt_cancelamento_logico",
+                    "dt_cancelamento_fisico",
+                    "dt_gravacao",
+                    "dt_inclusao",
+                ],
+                "midia_cliente": [
+                    "dt_associacao",
+                    "dt_desassociacao",
+                ],
+                "midia_nova": [
+                    "dt_cancelamento_logico",
+                    "dt_cancelamento_fisico",
+                    "dt_gravacao",
+                    "dt_inclusao",
+                ],
+                "midia_backup": [
+                    "dt_cancelamento_logico",
+                    "dt_cancelamento_fisico",
+                    "dt_gravacao",
+                    "dt_inclusao",
+                ],
+                "midia_gravacao_fisica_141": ["id"],
+                "midia_gravacao_fisica_148": ["id"],
+                "midia_gravacao_fisica_145": ["id"],
+                "midia_gravacao_fisica_142": ["id"],
+                "midia_gravacao_fisica_140": ["id"],
+            },
+        },
+        # "processador_transacao_db": {},
+        "atendimento_db": {},
+        "gateway_pagamento_db": {
+            "exclude": [
+                # duvida #
+                # "cnab_transaction",
+            ],
+            "filter": {
+                "payment_processing": ["created_at"],
+                "card_processing": ["created_at"],
+            },
+        },
+        "iam_db": {
+            "exclude": [
+                # "gratuidade_import_pcd",
+                # "CLIENTE_FRAUDE_05092024",
+            ],
+            "filter": {
+                "CONTROLE_CODIGO_VERIFICACAO": ["NR_SEQ"],
+                "PERFIL_ACESSO": ["DT_INCLUSAO", "DT_CANCELAMENTO"],
+                "SEGURANCA_CONTA_ACESSO": ["DT_INCLUSAO"],
+                "CONTA_ACESSO": ["DT_EXPIRACAO", "DT_INCLUSAO"],
+                "ATIVACAO_CONTA_ACESSO": ["CRIADO_EM", "DT_ATIVACAO"],
+                "CONTA_ACESSO_BACK": ["DT_EXPIRACAO", "DT_INCLUSAO"],
+                "check_cadastro_pcd_validado": ["data_nascimento"],
+            },
+        },
+        "vendas_db": {
+            "filter": {
+                "venda": [
+                    "dt_cancelamento",
+                    "dt_pagamento",
+                    "dt_credito",
+                    "dt_venda",
+                ]
+            }
+        },
     }
