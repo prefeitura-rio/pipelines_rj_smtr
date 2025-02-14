@@ -7,13 +7,13 @@ models:
       - name: data
         description: "Data da viagem (partição)"
       - name: datetime_partida
-        description: "Data e hora da partida da viagem em GMT-3"
+        description: "Data e hora da partida da viagem [GMT-3]"
       - name: datetime_chegada
-        description: "Data e hora da chegada da viagem em GMT-3"
+        description: "Data e hora da chegada da viagem [GMT-3]"
       - name: datetime_processamento
-        description: "Data e hora do processamento da viagem em GMT-3"
+        description: "Data e hora do processamento da viagem [GMT-3]"
       - name: datetime_captura
-        description: "Data e hora da captura da integração em GMT-3"
+        description: "Data e hora da captura da integração [GMT-3]"
       - name: id_veiculo
         description: "Código identificador do veículo (número de ordem)"
       - name: trip_id
@@ -29,6 +29,6 @@ models:
       - name: id_viagem
         description: "Identificador de um shape da tabela shapes do GTFS"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
-        description: "Última atualização (GMT-3)."
+        description: "{{ doc('datetime_ultima_atualizacao') }}"

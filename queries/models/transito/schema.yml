@@ -95,11 +95,11 @@ models:
       - name: descricao_veiculo
         description: "Marca/modelo do veículo"
       - name: placa_veiculo
-        description: "Placa do veículo"
+        description: "{{ doc('placa') }}"
         policy_tags:
         - 'projects/rj-smtr/locations/us/taxonomies/7968932463054912793/policyTags/5243840798726507169'
       - name: ano_fabricacao_veiculo
-        description: "Ano de fabricação do veículo"
+        description: "{{ doc('ano_fabricacao') }}"
       - name: ano_modelo_veiculo
         description: "Ano do modelo do veículo"
       - name: cor_veiculo
