@@ -82,7 +82,7 @@ models:
       - name: id_empresa
         description: "Código identificador da empresa que opera o veículo"
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
       - name: id_viagem
         description: "Código identificador da viagem (ex: id_veiculo + servico + sentido + shape_id + datetime_partida)"
       - name: servico

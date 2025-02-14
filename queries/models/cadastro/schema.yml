@@ -114,13 +114,13 @@ models:
       - name: descricao_servico
         description: "Nome completo do serviço consolidado. Para linhas é, primariamente o route_long_name da tabela routes do GTFS. Para estações é primariamente a coluna stop_name da tabela stops do GTFS. (Caso o registro não exista no GTFS, busca o nome do serviço na base de dados da Jaé)"
       - name: descricao_servico_gtfs
-        description: "Nome completo do serviço no GTFS. Para linhas é, primariamente o route_long_name da tabela routes do GTFS. Para estações é primariamente a coluna stop_name da tabela stops do GTFS."
+        description: "Nome completo do serviço no GTFS [Para linhas é primariamente o route_long_name da tabela routes do GTFS, para estações é primariamente a coluna stop_name da tabela stops do GTFS]"
       - name: descricao_servico_jae
         description: "Nome completo do serviço no banco de dados da Jaé"
       - name: latitude
-        description: "Latitude da estação na tabela stops do GTFS."
+        description: "Latitude da estação na tabela stops do GTFS"
       - name: longitude
-        description: "Longitude da estação na tabela stops do GTFS."
+        description: "Longitude da estação na tabela stops do GTFS"
       - name: tabela_origem_gtfs
         description: "Tabela do GTFS de onde foram coletadas as informações (stops ou routes)"
       - name: feed_start_date_gtfs

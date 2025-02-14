@@ -309,7 +309,7 @@ models:
         description: "Dia da semana considerado para o cálculo da
         distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
       - name: id_empresa
         description: "Código identificador da empresa que opera o veículo"
       - name: servico_informado
