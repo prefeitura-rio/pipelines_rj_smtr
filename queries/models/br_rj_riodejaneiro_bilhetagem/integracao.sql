@@ -151,7 +151,7 @@ with
             o.id_ordem_pagamento,
             o.id_ordem_pagamento_consorcio as id_ordem_pagamento_consorcio_dia,
             o.id_ordem_pagamento_consorcio_operadora
-            as id_ordem_pagamento_consorcio_operador_dia
+            as id_ordem_pagamento_consorcio_operador_dia,
             '{{ var("version") }}' as versao
         from integracao_melt i
         left join
