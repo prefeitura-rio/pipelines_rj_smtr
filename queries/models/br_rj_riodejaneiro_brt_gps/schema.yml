@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: brt_aux_registros_filtrada
-    description: "Tabela auxiliar no tratamento do GPS do BRT. Remove registros fora do município do Rio de Janeiro e registros que tem diferença maior que 1 minuto entre o timestamp_captura e timestamp_gps."
+    description: "Tabela auxiliar no tratamento do GPS do BRT. Remove registros fora do município do Rio de Janeiro e registros que tem diferença maior que 1 minuto entre o timestamp_captura e timestamp_gps"
     columns:
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
@@ -42,7 +42,7 @@ models:
       - name: hora
         description: "Hora do 'timestamp_captura'"
   - name: brt_registros_desaninhada
-    description: "View para os dados capturados em staging com os valores da coluna content desaninhados."
+    description: "View para os dados capturados em staging com os valores da coluna content desaninhados"
     columns:
       - name: data
         description: "Data do 'timestamp_captura'"

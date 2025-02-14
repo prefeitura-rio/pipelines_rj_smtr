@@ -2,10 +2,10 @@ version: 2
 
 models:
   - name: sppo_aux_registros_filtrada_zirix
-    description: "Tabela com filtragem e tratamento básico de registros de GPS."
+    description: "Tabela com filtragem e tratamento básico de registros de GPS"
     columns:
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -64,7 +64,7 @@ models:
     description: "Tabela para verificação se o veículo está dentro do trajeto correto"
     columns:
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -96,7 +96,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: flag_trajeto_correto
-        description: "Flag de verificação se o ponto de GPS encontra-se até o limite de 'tamanho_buffer_metros' do shape da linha (true). Se não estiver, retorna false."
+        description: "Flag de verificação se o ponto de GPS encontra-se até o limite de 'tamanho_buffer_metros' do shape da linha [Verdadeiro/Falso]"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -104,7 +104,7 @@ models:
         #       values: [true, false]
         #       quote: false
       - name: flag_trajeto_correto_hist
-        description: "Flag de verificação se, nos últimos 'intervalo_max_desvio_segundos', ao menos algum ponto de GPS encontra-se até o limite de 'tamanho_buffer_metros' do shape da linha (true). Se não estiver, retorna false."
+        description: "Flag de verificação se, nos últimos 'intervalo_max_desvio_segundos', ao menos algum ponto de GPS encontra-se até o limite de 'tamanho_buffer_metros' do shape da linha [Verdadeiro/Falso]"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -121,13 +121,13 @@ models:
         #       quote: false
 
   - name: sppo_aux_registros_parada_zirix
-    description: "Tabela para identificação de veículos parados em terminais ou garagens conhecidas."
+    description: "Tabela para identificação de veículos parados em terminais ou garagens conhecidas"
     columns:
       - name: data
         description: "Data de partição, conforme 'timestamp_captura' da tabela 'sppo_registros'"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela) / Tabela ephemeral
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -144,21 +144,21 @@ models:
         #   - no_space:
         #       partition_column: data
       - name: tipo_parada
-        description: "Código identificador do veículo (número de ordem)"
+        description: "[REVISAR]"
         # tests:
         #   - not_null:
         #       partition_column: data
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
 
   - name: sppo_aux_registros_realocacao_zirix
-    description: "Tabela com realocações de linha válidas."
+    description: "Tabela com realocações de linha válidas"
     columns:
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -205,7 +205,7 @@ models:
         description: "Data de partição, conforme 'timestamp_captura' da tabela 'sppo_registros'"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela) / Tabela ephemeral
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -236,10 +236,10 @@ models:
         #       quote: false
 
   - name: sppo_realocacao_zirix
-    description: "Tabela com todas as realocações de linha informadas."
+    description: "Tabela com todas as realocações de linha informadas"
     columns:
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -283,10 +283,10 @@ models:
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
 
   - name: sppo_registros_zirix
-    description: "Tabela com todos os registros de GPS."
+    description: "Tabela com todos os registros de GPS"
     columns:
       - name: ordem
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -331,7 +331,7 @@ models:
         description: "Hora do 'timestamp_captura'"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
   - name: gps_sppo_zirix
-    description: "Tabela com os dados tratados de registros de GPS dos ônibus capturados utilizando a API da Zirix."
+    description: "Tabela com os dados tratados de registros de GPS dos ônibus capturados utilizando a API da Zirix"
     columns:
       - name: modo
         description: "{{ doc('modo_sppo') }}"
