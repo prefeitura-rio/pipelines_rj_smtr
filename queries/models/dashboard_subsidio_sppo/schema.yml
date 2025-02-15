@@ -31,7 +31,7 @@ models:
           where: "1=1"
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS"
+        description: "{{ doc('data_gps') }}"
         tests:
           - not_null:
               name: not_null__data__sumario_servico_dia
@@ -103,7 +103,7 @@ models:
           name: subsidio_viagens_atualizadas__sumario_servico_dia_historico
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS"
+        description: "{{ doc('data_gps') }}"
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: consorcio
@@ -134,7 +134,7 @@ models:
     description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia e tipo de viagem"
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS"
+        description: "{{ doc('data_gps') }}"
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: consorcio
@@ -142,21 +142,21 @@ models:
       - name: servico
         description: "Serviço realizado pelo veículo"
       - name: tipo_viagem
-        description: "Tipo de viagem"
+        description: "{{ doc('tipo_viagem_status') }}"
       - name: viagens
         description: "Quantidade de viagens apuradas"
       - name: km_apurada
         description: "Distância apurada do serviço (km)\n
                       Distância planejada da viagem multiplicada pela quantidade de viagens"
       - name: indicador_ar_condicionado
-        description: "Indicador se o veículo foi licenciado com ar condicionado"
+        description: "{{ doc('indicador_ar_condicionado') }}"
   - name: sumario_dia
     description: "sumario_dia"
     columns:
       - name: consorcio
         description: "Consórcio que opera o serviço"
       - name: data
-        description: "Data de emissão do sinal de GPS"
+        description: "{{ doc('data_gps') }}"
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: servico
@@ -183,7 +183,7 @@ models:
     description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia e tipo de viagem"
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS."
+        description: "{{ doc('data_gps') }}"
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo."
       - name: consorcio
@@ -240,7 +240,7 @@ models:
       - name: viagens_registrado_com_ar_inoperante
         description: "Quantidade de viagens apuradas realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste."
       - name: km_apurada_registrado_com_ar_inoperante
-        description: "Distância apurada de viagens realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste (km)."
+        description: "{{ doc('km_apurada_registrado_com_ar_inoperante') }}"
       - name: viagens_sem_transacao
         description: "Quantidade de viagens apuradas realizadas por veículo licenciado sem registros de transações RioCard."
       - name: km_apurada_sem_transacao
@@ -260,22 +260,22 @@ models:
       - name: valor
         description: "Valor da penalidade imposta (R$)"
       - name: data_inicio
-        description: "Data inicial do período de vigência dos demais atributos"
+        description: "{{ doc('data_inicio_parametros') }}"
       - name: data_fim
         description: "Data final do período de vigência dos demais atributos"
   - name: subsidio_parametros
     description: "Parâmetros de remuneração do subsídio dos serviços de ônibus (SPPO) por tipo de viagem (Descontinuada a partir de 2024-03-01)"
     columns:
       - name: indicador_licenciado
-        description: "Indicador se o veículo encontra-se licenciado"
+        description: "{{ doc('indicador_licenciado') }}"
       - name: indicador_ar_condicionado
-        description: "Indicador se o veículo foi licenciado com ar condicionado"
+        description: "{{ doc('indicador_ar_condicionado') }}"
       - name: indicador_autuacao_ar_condicionado
         description: "Indicador se o veículo foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado"
       - name: indicador_autuacao_seguranca
         description: "Indicador se o veículo foi autuado por infração relacionada à segurança do veículo"
       - name: indicador_autuacao_limpeza
-        description: "Indicador se o veículo foi autuado por infração relacionada à limpeza do veículo"
+        description: "{{ doc('indicador_autuacao_limpeza') }}"
       - name: indicador_autuacao_equipamento
         description: "Indicador se o veículo foi autuado por infração relacionada à inoperância ou mau funcionamento de equipamentos do veículo"
       - name: indicador_sensor_temperatura
@@ -289,7 +289,7 @@ models:
       - name: irk
         description: "Índice de Remuneração por km (R$/km)"
       - name: data_inicio
-        description: "Data inicial do período de vigência dos demais atributos"
+        description: "{{ doc('data_inicio_parametros') }}"
       - name: data_fim
         description: "Data final do período de vigência dos demais atributos"
       - name: legislacao
@@ -304,7 +304,7 @@ models:
       - name: consorcio
         description: "Consórcio que opera o serviço"
       - name: data
-        description: "Data de emissão do sinal de GPS"
+        description: "{{ doc('data_gps') }}"
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da
         distância planejada - categorias: Dia Útil, Sabado, Domingo"
@@ -321,7 +321,7 @@ models:
       - name: trip_id
         description: "Código identificador do itinerário (trip)"
       - name: shape_id
-        description: "Código identificador do shape (trajeto) do serviço"
+        description: "{{ doc('shape_id') }}"
       - name: sentido
         description: "Sentido do trajeto identificado - categorias: I
         (ida), V (volta), C (circular)"
@@ -363,11 +363,11 @@ models:
       - name: perc_conformidade_distancia
         description: "Razão da distância aferida pela distância teórica x 100"
       - name: perc_conformidade_registros
-        description: "Percentual de minutos da viagem com registro de sinal de GPS"
+        description: "{{ doc('perc_conformidade_registros') }}"
       - name: perc_conformidade_tempo
         description: "Razão do tempo aferido da viagem pelo planejado x 100"
       - name: versao_modelo
-        description: "Versão da metodologia de cálculo da respectiva linha na tabela."
+        description: "{{ doc('versao_modelo') }}"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: sumario_servico_dia_tipo_sem_glosa
@@ -390,7 +390,7 @@ models:
           name: dbt_utils.unique_combination_of_columns__sumario_servico_dia_tipo_sem_glosa
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS."
+        description: "{{ doc('data_gps') }}"
         tests:
           - not_null:
               name: not_null__data__sumario_servico_dia_tipo_sem_glosa
@@ -455,7 +455,7 @@ models:
       - name: viagens_n_licenciado
         description: "Quantidade de viagens de veículos não licenciados."
       - name: km_apurada_n_licenciado
-        description: "Quilometragem apurada de viagens de veículos não licenciados."
+        description: "{{ doc('km_apurada_n_licenciado') }}"
         tests:
           - not_null:
               name: not_null__km_apurada_n_licenciado__sumario_servico_dia_tipo_sem_glosa
@@ -471,7 +471,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__viagens_autuado_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_autuado_ar_inoperante
-        description: "Quilometragem apurada de viagens de veículos autuados por ar inoperante."
+        description: "{{ doc('km_apurada_autuado_ar_inoperante') }}"
         tests:
           - not_null:
               name: not_null__km_apurada_autuado_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
@@ -519,7 +519,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__viagens_licenciado_sem_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_licenciado_sem_ar_n_autuado
-        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados."
+        description: "{{ doc('km_apurada_licenciado_sem_ar_n_autuado') }}"
         tests:
           - not_null:
               name: not_null__km_apurada_licenciado_sem_ar_n_autuado__sumario_servico_dia_tipo_sem_glosa
@@ -567,7 +567,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__viagens_registrado_com_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_registrado_com_ar_inoperante
-        description: "Distância apurada de viagens realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste (km)."
+        description: "{{ doc('km_apurada_registrado_com_ar_inoperante') }}"
         tests:
           - not_null:
               name: not_null__km_apurada_registrado_com_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
@@ -591,7 +591,7 @@ models:
           name: check_viagem_completa__viagens_remuneradas
     columns:
       - name: data
-        description: "Data da viagem."
+        description: "{{ doc('data_viagem') }}"
         tests:
           - not_null:
               name: not_null__data__viagens_remuneradas
@@ -601,7 +601,7 @@ models:
           - not_null:
               name: not_null__servico__viagens_remuneradas
       - name: tipo_viagem
-        description: "Classificação do tipo de viagem."
+        description: "{{ doc('tipo_viagem_status') }}"
         tests:
           - not_null:
               name: not_null__tipo_viagem__viagens_remuneradas

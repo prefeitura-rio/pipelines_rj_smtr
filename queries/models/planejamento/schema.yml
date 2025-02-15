@@ -124,7 +124,7 @@ models:
         data_type: string
         quote: true
       - name: shape
-        description: Shape em formato geográfico (usualmente LineString).
+        description: "{{ doc('shape') }}"
         data_type: geography
         quote: true
       - name: wkt_shape
@@ -147,7 +147,7 @@ models:
     description: Tabela contendo as viagens planejadas para o dia com base no GTFS
     columns:
       - name: data
-        description: Data da viagem (partição)
+        description: "{{ doc('data_viagem') }} [partição]"
         data_type: date
         quote: true
       - name: id_viagem
@@ -234,7 +234,7 @@ models:
     description: Tabela calendário
     columns:
       - name: data
-        description: Data
+        description: "{{ doc('data') }}"
         data_type: date
         quote: true
       - name: tipo_dia
@@ -282,7 +282,7 @@ models:
         description: "Tipo de transporte (Ônibus, Van, BRT)"
         data_type: string
       - name: percentual_rateio
-        description: "Percentual de rateio do valor total para a operadora"
+        description: "{{ doc('percentual_rateio') }}"
         data_type: numeric
       - name: data_inicio_validade
         description: "Data de início da validade da matriz"

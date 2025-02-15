@@ -23,7 +23,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
-        description: "Código de controle de versão (SHA do GitHub)."
+        description: "{{ doc('versao_modelo') }}"
 
   - name: calendar_gtfs
     description: "Datas de serviço especificadas usando uma programação semanal com datas de início e término."
@@ -60,7 +60,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
-        description: "Código de controle de versão (SHA do GitHub)."
+        description: "{{ doc('versao_modelo') }}"
 
   - name: calendar_dates_gtfs
     description: "Exceções para os serviços definidos no calendar.txt."
@@ -78,7 +78,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
-        description: "Código de controle de versão (SHA do GitHub)."
+        description: "{{ doc('versao_modelo') }}"
 
   - name: fare_attributes_gtfs
     description: "Informações sobre tarifas para rotas de uma agência de transporte público."
@@ -104,7 +104,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
-        description: "Código de controle de versão (SHA do GitHub)."
+        description: "{{ doc('versao_modelo') }}"
 
   - name: fare_rules_gtfs
     description: "Regras para aplicação de tarifas de itinerários."
@@ -126,7 +126,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
-        description: "Código de controle de versão (SHA do GitHub)."
+        description: "{{ doc('versao_modelo') }}"
 
   - name: feed_info_gtfs
     description: "Metadados do conjunto de dados, incluindo informações sobre editor, versão e expiração."
@@ -154,7 +154,7 @@ models:
       - name: feed_update_datetime
         description: "Data e hora da última atualização do feed."
       - name: versao_modelo
-        description: "Código de controle de versão (SHA do GitHub)."
+        description: "{{ doc('versao_modelo') }}"
 
   - name: frequencies_gtfs
     description: "Intervalo (tempo entre viagens) para serviço baseado em intervalo ou uma representação compactada de serviço com horário fixo."
@@ -176,7 +176,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
-        description: "Código de controle de versão (SHA do GitHub)."
+        description: "{{ doc('versao_modelo') }}"
 
   - name: routes_gtfs
     description: "Rotas de trânsito. Uma rota é um grupo de viagens exibidas aos passageiros como um único serviço."
@@ -214,7 +214,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
-        description: "Código de controle de versão (SHA do GitHub)."
+        description: "{{ doc('versao_modelo') }}"
 
   - name: shapes_geom_gtfs
     description: "Shapes em formatos geográficos dos serviços."
@@ -226,9 +226,9 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS."
       - name: shape_id
-        description: "Identificador de shape."
+        description: "{{ doc('shape_id') }}"
       - name: shape
-        description: "Shape em formato geográfico (usualmente LineString)."
+        description: "{{ doc('shape') }}"
       - name: shape_distance
         description: "Extensão do shape."
       - name: start_pt
@@ -236,9 +236,9 @@ models:
       - name: end_pt
         description: "Ponto final do shape em formato geográfico (Point)."
       - name: data_versao
-        description: "Data de referência do planejamento (versão)."
+        description: "{{ doc('data_versao') }}"
       - name: versao_modelo
-        description: "Código de controle de versão (SHA do GitHub)."
+        description: "{{ doc('versao_modelo') }}"
 
   - name: shapes_gtfs
     description: "Regras para mapear caminhos de deslocamento de veículos, às vezes chamados de alinhamentos de rotas."
@@ -260,7 +260,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
-        description: "Código de controle de versão (SHA do GitHub)."
+        description: "{{ doc('versao_modelo') }}"
 
   - name: stops_gtfs
     description: "Paradas onde os veículos pegam ou deixam os passageiros. Também define estações e entradas de estação."
@@ -302,7 +302,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
-        description: "Código de controle de versão (SHA do GitHub)."
+        description: "{{ doc('versao_modelo') }}"
 
   - name: stop_times_gtfs
     description: "Horários em que um veículo chega e sai das paradas de cada viagem."
@@ -338,7 +338,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
-        description: "Código de controle de versão (SHA do GitHub)."
+        description: "{{ doc('versao_modelo') }}"
 
   - name: trips_gtfs
     description: "Viagens para cada rota."
@@ -358,7 +358,7 @@ models:
       - name: block_id
         description: "Identifica o bloco ao qual pertence a viagem."
       - name: shape_id
-        description: "Identifica uma forma geoespacial que descreve o caminho de deslocamento do veículo para uma viagem."
+        description: "{{ doc('shape_id') }}"
       - name: wheelchair_accessible
         description: "Indica acessibilidade para cadeiras de rodas."
       - name: bikes_allowed
@@ -370,7 +370,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados gtfs."
       - name: versao_modelo
-        description: "Código de controle de versão (SHA do GitHub)."
+        description: "{{ doc('versao_modelo') }}"
 
   - name: ordem_servico_gtfs
     description: "Dados das linhas presentes no município."
@@ -386,7 +386,7 @@ models:
       - name: horario_fim
         description: "Horário da última viagem."
       - name: extensao_ida
-        description: "Distância percorrida na ida."
+        description: "{{ doc('extensao_ida') }}"
       - name: extensao_volta
         description: "Distância percorrida na volta."
       - name: partidas_ida
@@ -406,7 +406,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS."
       - name: versao_modelo
-        description: "Código de controle de versão (SHA do GitHub)."
+        description: "{{ doc('versao_modelo') }}"
       - name: tipo_os
         description: "Tipo de Ordem de Serviço (ex: 'Regular', 'Extraordinária - Verão')"
 
@@ -451,7 +451,7 @@ models:
       - name: fim_periodo
         description: "Horário final de funcionamento do trajeto alternativo."
       - name: versao_modelo
-        description: "Código de controle de versão (SHA do GitHub)."
+        description: "{{ doc('versao_modelo') }}"
       - name: tipo_os
         description: "Tipo de Ordem de Serviço (ex: 'Regular', 'Extraordinária - Verão')"
   - name: ordem_servico_trips_shapes_gtfs
@@ -518,15 +518,15 @@ models:
       - name: faixa_horaria_fim
         description: "{{ doc('faixa_horaria_fim') }}"
       - name: trip_id_planejado
-        description: "Código identificador de trip de referência no GTFS"
+        description: "{{ doc('trip_id_planejado') }}"
       - name: trip_id
         description: "Código identificador de trip de referência no GTFS com ajustes"
       - name: shape_id
-        description: "Código identificador de shape no GTFS"
+        description: "{{ doc('shape_id') }}"
       - name: shape_id_planejado
         description: "Código identificador de shape no GTFS com ajustes"
       - name: shape
-        description: "Shape em formato geográfico (usualmente LineString)."
+        description: "{{ doc('shape') }}"
       - name: sentido_shape
         description: "Sentido do shape - categorias: I (ida), V (volta)"
       - name: start_pt

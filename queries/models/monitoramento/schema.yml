@@ -3,7 +3,7 @@ models:
     description: "Detalhes das viagens informadas pelas operadoras de ônibus"
     columns:
       - name: data
-        description: Data da viagem (partição)
+        description: "{{ doc('data_viagem') }} [partição]"
         data_type: date
         quote: true
       - name: id_viagem
@@ -70,7 +70,7 @@ models:
     description: Tabela que informa se a viagem informada está ou não válida de acordo com os parâmetros definidos.
     columns:
       - name: data
-        description: Data da viagem (partição).
+        description: "{{ doc('data_viagem') }} [partição]"
         data_type: date
         quote: true
       - name: id_viagem

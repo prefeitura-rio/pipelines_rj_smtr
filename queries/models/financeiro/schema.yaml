@@ -5,25 +5,25 @@ models:
     description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia, faixa horária e tipo de viagem."
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS."
+        description: "{{ doc('data_gps') }}"
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo."
       - name: faixa_horaria_inicio
         description: "Horário inicial da faixa horária"
       - name: faixa_horaria_fim
-        description: "Horário final da faixa horária"
+        description: "{{ doc('faixa_horaria_fim') }}"
       - name: consorcio
         description: "Consórcio que opera o serviço."
       - name: servico
         description: "Serviço realizado pelo veículo."
       - name: indicador_ar_condicionado
-        description: "Indicador se o veículo foi licenciado com ar condicionado."
+        description: "{{ doc('indicador_ar_condicionado') }}."
       - name: indicador_penalidade_judicial
         description: "{{ doc('indicador_penalidade_judicial') }}"
       - name: indicador_viagem_dentro_limite
         description: "{{ doc('indicador_viagem_dentro_limite') }}"
       - name: tipo_viagem
-        description: "Tipo de viagem"
+        description: "{{ doc('tipo_viagem_status') }}"
       - name: tecnologia_apurada
         description: "{{ doc('tecnologia') }}"
       - name: tecnologia_remunerada
@@ -39,7 +39,7 @@ models:
       - name: valor_glosado_tecnologia
         description: "{{ doc('valor_glosado_tecnologia') }}"
       - name: valor_acima_limite
-        description: "Valor apurado das viagens que não foram remuneradas (por estar acima do teto de 120% / 200%)."
+        description: "{{ doc('valor_acima_limite') }}"
       - name: valor_total_sem_glosa
         description: "Valor total das viagens considerando o valor máximo por km."
       - name: versao
@@ -50,7 +50,7 @@ models:
     description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia (Descontinuada a partir de 2025-01-05)."
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS."
+        description: "{{ doc('data_gps') }}"
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo."
       - name: consorcio
@@ -66,11 +66,11 @@ models:
       - name: km_planejada_dia
         description: "Distância planejada para o serviço por dia (km)."
       - name: valor_a_pagar
-        description: "Valor efetivo de pagamento (valor_total_apurado - valor_acima_limite - valor_glosado)."
+        description: "{{ doc('valor_a_pagar') }}"
       - name: valor_glosado
-        description: "Valor total das viagens considerando o valor máximo por km, subtraído pelo valor efetivo por km."
+        description: "{{ doc('valor_total_glosado') }}"
       - name: valor_acima_limite
-        description: "Valor apurado das viagens que não foram remuneradas (por estar acima do teto de 120% / 200%)."
+        description: "{{ doc('valor_acima_limite') }}"
       - name: valor_total_sem_glosa
         description: "Valor total das viagens considerando o valor máximo por km."
       - name: valor_total_apurado
@@ -97,7 +97,7 @@ models:
       - name: faixa_horaria_inicio
         description: "Horário inicial da faixa horária"
       - name: faixa_horaria_fim
-        description: "Horário final da faixa horária"
+        description: "{{ doc('faixa_horaria_fim') }}"
       - name: valor_penalidade
         description: "Valor penalidade [negativa] (POF =< 60%)."
       - name: versao

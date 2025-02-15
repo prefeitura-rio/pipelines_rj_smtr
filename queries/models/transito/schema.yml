@@ -5,27 +5,27 @@ models:
     description: "Tabela com dados de autuações fornecidos pelo sistema CITRAN/IplanRio"
     columns:
       - name: data
-        description: "Data da autuação (Coluna de particionamento)"
+        description: "{{ doc('data_autuacao') }} [partição]"
       - name: hora
         description: "Hora da autuação"
       - name: id_auto_infracao
-        description: "Código do auto de infração"
+        description: "{{ doc('id_auto_infracao') }}"
       - name: data_limite_defesa_previa
         description: "Data limite para defesa prévia"
       - name: data_limite_recurso
-        description: "Data limite para recurso em primeira instância"
+        description: "{{ doc('data_limite_recurso') }}"
       - name: situacao_atual
-        description: "Descrição da situação da autuação"
+        description: "{{ doc('descricao_situacao_autuacao') }}"
       - name: status_infracao
-        description: "Descrição do status da infração"
+        description: "{{ doc('status_infracao') }}"
       - name: codigo_enquadramento
         description: "Código da autuação"
       - name: tipificacao_resumida
-        description: "Descrição da autuação"
+        description: "{{ doc('tipificacao_resumida') }}"
       - name: pontuacao
         description: "Quantidade de pontos da autuação"
       - name: tipo_veiculo
-        description: "Tipo de veículo autuado"
+        description: "{{ doc('tipo_veiculo') }}"
       - name: descricao_veiculo
         description: "Marca/modelo do veículo"
       - name: especie_veiculo
@@ -37,13 +37,13 @@ models:
       - name: valor_infracao
         description: "Valor monetário da autuação (100%) [R$]"
       - name: valor_pago
-        description: "Valor pago da autuação [R$]"
+        description: "{{ doc('valor_pago') }}"
       - name: data_pagamento
         description: "Data de pagamento da autuação"
       - name: id_autuador
         description: "Código do órgão autuador"
       - name: descricao_autuador
-        description: "Descrição da unidade de autuação"
+        description: "{{ doc('descricao_autuador') }}"
       - name: id_municipio_autuacao
         description: "Código TOM do município da autuação"
       - name: descricao_municipio
@@ -53,7 +53,7 @@ models:
       - name: processo_defesa_autuacao
         description: "Número do processo de defesa prévia"
       - name: recurso_penalidade_multa
-        description: "Número do processo de recurso contra aplicação de penalidade de multa em primeira instância"
+        description: "{{ doc('recurso_penalidade_multa') }}"
       - name: processo_troca_real_condutor_infrator
         description: "Número do processo de troca de real condutor infrator"
       - name: status_sne
@@ -63,11 +63,11 @@ models:
     description: "Tabela com dados de autuações (até abril/2023)"
     columns:
       - name: data
-        description: "Data da autuação (Coluna de particionamento)"
+        description: "{{ doc('data_autuacao') }} [partição]"
       - name: id_autuacao
         description: "Identificador único da autuação"
       - name: id_auto_infracao
-        description: "Código do auto de infração [protegido]"
+        description: "{{ doc('id_auto_infracao') }} [protegido]"
         policy_tags:
         - 'projects/rj-smtr/locations/us/taxonomies/7968932463054912793/policyTags/5243840798726507169'
       - name: datetime_autuacao
@@ -75,15 +75,15 @@ models:
       - name: data_limite_defesa_previa
         description: "Data limite para defesa prévia"
       - name: data_limite_recurso
-        description: "Data limite para recurso em primeira instância"
+        description: "{{ doc('data_limite_recurso') }}"
       - name: descricao_situacao_autuacao
-        description: "Descrição da situação da autuação"
+        description: "{{ doc('descricao_situacao_autuacao') }}"
       - name: status_infracao
-        description: "Descrição do status da infração"
+        description: "{{ doc('status_infracao') }}"
       - name: codigo_enquadramento
         description: "Código da autuação"
       - name: tipificacao_resumida
-        description: "Descrição da autuação"
+        description: "{{ doc('tipificacao_resumida') }}"
       - name: pontuacao
         description: "Quantidade de pontos da autuação"
       - name: gravidade
@@ -91,7 +91,7 @@ models:
       - name: amparo_legal
         description: "Amparo legal da autuação"
       - name: tipo_veiculo
-        description: "Tipo de veículo autuado"
+        description: "{{ doc('tipo_veiculo') }}"
       - name: descricao_veiculo
         description: "Marca/modelo do veículo"
       - name: placa_veiculo
@@ -119,13 +119,13 @@ models:
       - name: valor_infracao
         description: "Valor monetário da autuação (100%) [R$]"
       - name: valor_pago
-        description: "Valor pago da autuação [R$]"
+        description: "{{ doc('valor_pago') }}"
       - name: data_pagamento
         description: "Data de pagamento da autuação"
       - name: id_autuador
         description: "Código do órgão autuador"
       - name: descricao_autuador
-        description: "Descrição da unidade de autuação"
+        description: "{{ doc('descricao_autuador') }}"
       - name: id_municipio_autuacao
         description: "Código TOM do município da autuação"
       - name: descricao_municipio
@@ -141,7 +141,7 @@ models:
       - name: processo_defesa_autuacao
         description: "Número do processo de defesa prévia"
       - name: recurso_penalidade_multa
-        description: "Número do processo de recurso contra aplicação de penalidade de multa em primeira instância"
+        description: "{{ doc('recurso_penalidade_multa') }}"
       - name: processo_troca_real_infrator
         description: "Número do processo de troca de real condutor infrator"
       - name: status_sne
