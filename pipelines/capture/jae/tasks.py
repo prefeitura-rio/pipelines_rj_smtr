@@ -180,6 +180,7 @@ def get_table_info(
                 timestamp=timestamp,
             ),
             "partition": partition,
+            "custom_select": tables_config.get("custom_select"),
         }
         for t in table_names
         if t not in tables_config["filter"]
@@ -188,6 +189,36 @@ def get_table_info(
     for table in [t for t in table_names if t in tables_config["filter"]]:
 
         filter_columns = tables_config["filter"][table]
+
+        if filter_columns[0] == "count(*)":
+            with engine.connect() as conn:
+                current_count = pd.read_sql(f"select count(*) as ct from {table}", conn).to_dict()[
+                    0
+                ]["ct"]
+                last_count = get_redis_last_backup(
+                    env=env,
+                    table_name=table,
+                    database_name=database_name,
+                    incremental_type="integer",
+                )
+
+                if current_count != last_count:
+                    result.append(
+                        {
+                            "table_name": table,
+                            "incremental_type": "count",
+                            "filepath": create_billingpay_backup_filepath(
+                                table_name=table,
+                                database_name=database_name,
+                                partition=partition,
+                                timestamp=timestamp,
+                            ),
+                            "partition": partition,
+                            "custom_select": tables_config.get("custom_select"),
+                            "max_id": current_count,
+                        }
+                    )
+            continue
 
         if len(filter_columns) > 1 or isinstance(
             [
@@ -218,6 +249,7 @@ def get_table_info(
                     incremental_type=incremental_type,
                 ),
                 "partition": partition,
+                "custom_select": tables_config.get("custom_select"),
             }
         )
 
@@ -305,6 +337,10 @@ def get_raw_backup_billingpay(
     new_table_info = []
     for table in table_info:
         table_name = table["table_name"]
+
+        if table_info["custom_select"] is not None:
+            table_name = f"({table_info['custom_select']})"
+
         sql = f"SELECT * FROM {table_name}"
         where = "1=1"
         if table["incremental_type"] == "datetime":
@@ -390,7 +426,10 @@ def set_redis_backup_billingpay(
         log(f"Saving value: {save_value} on key {redis_key}")
         content = {constants.BACKUP_BILLING_LAST_VALUE_REDIS_KEY.value: save_value}
         redis_client.set(redis_key, content)
-    elif content[constants.BACKUP_BILLING_LAST_VALUE_REDIS_KEY.value] < save_value:
+    elif (
+        content[constants.BACKUP_BILLING_LAST_VALUE_REDIS_KEY.value] < save_value
+        or table_info["incremental_type"] == "count"
+    ):
         log(f"Saving value: {save_value} on key {redis_key}")
         content[constants.BACKUP_BILLING_LAST_VALUE_REDIS_KEY.value] = save_value
         redis_client.set(redis_key, content)

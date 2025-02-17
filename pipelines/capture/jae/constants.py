@@ -228,13 +228,14 @@ class constants(Enum):  # pylint: disable=c0103
                 "transacao_riocard",
                 # "embossadora_producao_20240809",
                 # "transacao_faltante_23082023",
-                # duvida #
-                # "spatial_ref_sys",
-                # "us_rules",
-                # "us_lex",
-                # "us_gaz",
             ],
-            "filter": {"confirmacao_envio_pms": ["data_confirmacao"]},
+            "filter": {
+                "confirmacao_envio_pms": ["data_confirmacao"],
+                "spatial_ref_sys": ["count(*)"],
+                "us_rules": ["count(*)"],
+                "us_lex": ["count(*)"],
+                "us_gaz": ["count(*)"],
+            },
         },
         "tracking_db": {
             "exclude": [
