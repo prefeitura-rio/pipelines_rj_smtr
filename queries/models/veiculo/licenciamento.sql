@@ -44,7 +44,7 @@ with
             where date(data) = date("{{ licenciamento_date }}")
         {% endif %}
     ),
-    {# {% if "2022-03-21" <= var('run_date') <= "2023-03-09" %} #}
+    {% if var('licenciamento_solicitacao_inicio') <= var('run_date') <= var('licenciamento_solicitacao_fim') %}
     solicitacao as (
         select
             modo,
@@ -73,16 +73,18 @@ with
         from {{ ref("sppo_licenciamento_solicitacao") }} as t
         where
             data = date("{{ var('sppo_licenciamento_solicitacao_data_versao') }}")  -- fixo
-            {# mudar? #}
             and status = "Válido"
             and solicitacao != "Baixa"
             and tipo_veiculo not like "%ROD%"
-            and data between date("2022-03-21") and date("2023-03-09")
+            {# and data between date("2022-03-21") and date("2023-03-09") #}
     ),
+    {% endif %}
     stu_solicitacoes as (
+        {% if var('licenciamento_solicitacao_inicio') <= var('run_date') <= var('licenciamento_solicitacao_fim') %}
         select date_add(date("{{ var('run_date') }}"), interval 5 day) as data, *
         from solicitacao sol
         union all
+        {% endif %}
         -- Se tiver id_veiculo em solicitacao e for valido, substitui o que esta em
         -- licenciamento
         select stu.*
