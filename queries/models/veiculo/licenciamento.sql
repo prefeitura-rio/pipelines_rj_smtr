@@ -14,18 +14,88 @@
 
 with
     stu as (
-        select * except (data), date(data) as data
+        select
+            date(data) as data,
+            modo,
+            id_veiculo,
+            safe_cast(ano_fabricacao as integer) as ano_fabricacao,
+            carroceria,
+            date(data_ultima_vistoria) as data_ultima_vistoria,
+            id_carroceria,
+            id_chassi,
+            id_fabricante_chassi,
+            id_interno_carroceria,
+            id_planta,
+            indicador_ar_condicionado,
+            indicador_elevador,
+            indicador_usb,
+            indicador_wifi,
+            nome_chassi,
+            permissao,
+            placa,
+            quantidade_lotacao_pe,
+            quantidade_lotacao_sentado,
+            tipo_combustivel,
+            tipo_veiculo,
+            status,
+            data_inicio_vinculo
         from {{ ref("licenciamento_stu_staging") }} as t
         {% if is_incremental() %}
             where date(data) = date("{{ licenciamento_date }}")
         {% endif %}
     ),
+    {# {% if "2022-03-21" <= var('run_date') <= "2023-03-09" %} #}
+    solicitacao as (
+        select
+            modo,
+            id_veiculo,
+            safe_cast(ano_fabricacao as integer) as ano_fabricacao,
+            carroceria,
+            date(data_ultima_vistoria) as data_ultima_vistoria,
+            id_carroceria,
+            id_chassi,
+            id_fabricante_chassi,
+            id_interno_carroceria,
+            id_planta,
+            indicador_ar_condicionado,
+            indicador_elevador,
+            indicador_usb,
+            indicador_wifi,
+            nome_chassi,
+            permissao,
+            placa,
+            quantidade_lotacao_pe,
+            quantidade_lotacao_sentado,
+            tipo_combustivel,
+            tipo_veiculo,
+            status,
+            safe_cast(null as date) as data_inicio_vinculo
+        from {{ ref("sppo_licenciamento_solicitacao") }} as t
+        where
+            data = date("{{ var('sppo_licenciamento_solicitacao_data_versao') }}")  -- fixo 
+            {# mudar? #}
+            and status = "Válido"
+            and solicitacao != "Baixa"
+            and tipo_veiculo not like "%ROD%"
+            and data between date("2022-03-21") and date("2023-03-09")
+    ),
+    stu_solicitacoes as (
+        select date_add(date("{{ var('run_date') }}"), interval 5 day) as data, *
+        from solicitacao sol
+        union all
+        -- Se tiver id_veiculo em solicitacao e for valido, substitui o que esta em
+        -- licenciamento
+        select stu.*
+        from stu
+        left join solicitacao sol on stu.id_veiculo = sol.id_veiculo
+        where sol.id_veiculo is null
+    ),
     stu_rn as (
         select
-            * except (timestamp_captura),
+            *,
             extract(year from data_ultima_vistoria) as ano_ultima_vistoria,
             row_number() over (partition by data, id_veiculo) rn
-        from stu
+        from stu_solicitacoes
     ),
     stu_ano_ultima_vistoria as (
         -- Temporariamente considerando os dados de vistoria enviados pela TR/SUBTT/CGLF

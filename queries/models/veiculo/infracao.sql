@@ -1,44 +1,48 @@
-
 {{
-  config(
-    materialized='incremental',
-    partition_by={
-      "field":"data",
-      "data_type": "date",
-      "granularity":"day"
-    },
-    unique_key=['data', 'id_auto_infracao'],
-    incremental_strategy='insert_overwrite'
-  )
+    config(
+        materialized="incremental",
+        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+        unique_key=["data", "id_auto_infracao"],
+        incremental_strategy="insert_overwrite",
+    )
 }}
 
 {%- if execute and is_incremental() %}
-  {% set infracao_date = run_query("SELECT MIN(SAFE_CAST(data AS DATE)) FROM " ~ ref('infracao_staging') ~ " WHERE SAFE_CAST(data AS DATE) >= DATE_ADD(DATE('" ~ var("run_date") ~ "'), INTERVAL 7 DAY)").columns[0].values()[0] %}
+    {% set infracao_date = (
+        run_query(
+            "SELECT MIN(SAFE_CAST(data AS DATE)) FROM "
+            ~ ref("infracao_staging")
+            ~ " WHERE SAFE_CAST(data AS DATE) >= DATE_ADD(DATE('"
+            ~ var("run_date")
+            ~ "'), INTERVAL 7 DAY)"
+        )
+        .columns[0]
+        .values()[0]
+    ) %}
 {% endif -%}
 
-WITH infracao AS (
-  SELECT
-    * EXCEPT(data),
-    SAFE_CAST(data AS DATE) AS data
-  FROM
-    {{ ref("infracao_staging") }} as t
-  {% if is_incremental() %}
-    WHERE
-      DATE(data) = DATE("{{ infracao_date }}")
-  {% endif %}
-),
-infracao_rn AS (
-  SELECT
-    *,
-    ROW_NUMBER() OVER (PARTITION BY data, id_auto_infracao ORDER BY timestamp_captura DESC) rn
-  FROM
-    infracao
-)
-SELECT
-  * EXCEPT(rn),
-  CURRENT_DATETIME("America/Sao_Paulo") AS datetime_ultima_atualizacao,
-  "{{ var("version") }}" AS versao
-FROM
-  infracao_rn
-WHERE
-  rn = 1
+with
+    infracao as (
+        select * except (data), safe_cast(data as date) as data
+        from {{ ref("infracao_staging") }} as t
+        where
+            placa is not null
+            {% if is_incremental() %}
+
+                and date(data) = date("{{ infracao_date }}")
+            {% endif %}
+    ),
+    infracao_rn as (
+        select
+            *,
+            row_number() over (
+                partition by data, id_auto_infracao order by timestamp_captura desc
+            ) rn
+        from infracao
+    )
+select
+    * except (rn),
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+    "{{ var(" version ") }}" as versao
+from infracao_rn
+where rn = 1
