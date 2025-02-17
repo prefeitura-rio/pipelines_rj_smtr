@@ -617,6 +617,7 @@ models:
               name: not_null__distancia_planejada__viagens_remuneradas
           - dbt_utils.accepted_range:
               min_value: 0
+              inclusive: false
               name: dbt_utils.accepted_range__distancia_planejada__viagens_remuneradas
       - name: tecnologia_apurada
         description: "{{ doc('tecnologia') }}"
