@@ -136,21 +136,57 @@ models:
     columns:
       - name: id_consorcio
         description: "Identificador único do consórcio, podendo ser o código de permissionário ou código da Jaé"
+        data_type: string
       - name: consorcio
         description: "Nome do consórcio"
+        data_type: string
       - name: id_operadora
         description: "Identificador único do operador, podendo ser o código de permissionário ou código da Jaé"
+        data_type: string
       - name: operadora
         description: "Nome do operador (mascarado quando o operador é pessoa física)"
+        data_type: string
       - name: servico
         description: "Nome do serviço consolidado. Para linhas, é o nome curto da linha (ex: 010, 011SN). E para estações, é o stop_code do GTFS ou o código interno da estação no banco de dados da Jaé. (Caso o registro não exista no GTFS, busca o serviço na base de dados da Jaé)"
       - name: id_servico_jae
         description: "Identificador único do serviço no banco de dados da Jaé"
+        data_type: string
       - name: descricao_servico
         description: "Nome completo do serviço consolidado. Para linhas é, primariamente o route_long_name da tabela routes do GTFS. Para estações é primariamente a coluna stop_name da tabela stops do GTFS. (Caso o registro não exista no GTFS, busca o nome do serviço na base de dados da Jaé)"
       - name: data_inicio_validade
         description: "Data de inicio da validade do registro"
+        data_type: datetime
       - name: data_fim_validade
         description: "Data de fim da validade do registro"
+        data_type: datetime
       - name: versao
         description: "{{ doc('versao') }}"
+        data_type: string
+      - name: modo
+        description: "{{ doc('modo') }}"
+        data_type: string
+        quote: true
+      - name: servico_jae
+        description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação de BRT na Jaé"
+        data_type: string
+        quote: true
+      - name: descricao_servico_jae
+        description: "Nome longo da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou nome da estação de BRT na Jaé"
+        data_type: string
+        quote: true
+      - name: id_servico_gtfs
+        description: Identificador único do serviço no GTFS, podendo ser o stop_id (no caso de estações) ou o route_id (no caso de linhas)
+        data_type: string
+        quote: true
+      - name: tabela_origem_gtfs
+        description: Tabela do GTFS que o id_servico_gtfs pertence
+        data_type: string
+        quote: true
+      - name: tarifa_ida
+        description: Valor da tarifa no sentido Ida
+        data_type: numeric
+        quote: true
+      - name: tarifa_volta
+        description: Valor da tarifa no sentido Volta
+        data_type: numeric
+        quote: true

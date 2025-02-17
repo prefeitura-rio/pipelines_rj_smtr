@@ -30,6 +30,7 @@ sources:
       - name: linha_consorcio
       - name: linha_consorcio_operadora_transporte
       - name: endereco
+      - name: linha_tarifa
 
 
   - name: br_rj_riodejaneiro_gtfs_staging
