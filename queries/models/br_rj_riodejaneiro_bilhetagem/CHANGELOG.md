@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [2.1.0] - 2025-02-17
+
+### Adicionado
+
+- Cria modelo `staging_linha_tarifa.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/435)
+
 ## [2.0.3] - 2025-01-02
 
 ### Corrigido
