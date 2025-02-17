@@ -151,6 +151,7 @@ models:
               name: not_null__km_planejada_faixa__sumario_faixa_servico_dia_pagamento
           - dbt_utils.accepted_range:
               min_value: 0
+              inclusive: false
               name: dbt_utils.accepted_range__km_planejada_faixa__sumario_faixa_servico_dia_pagamento
       - name: pof
         description: "{{ doc('pof') }}"
