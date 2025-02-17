@@ -351,7 +351,11 @@ def upload_backup_billingpay(env: str, table_info: dict[str, str], database_name
     Retuns:
         dict: Dicionário com informações da tabela
     """
-    Storage(env=env, dataset_id=database_name, table_id=table_info["table_name"],).upload_file(
+    Storage(
+        env=env,
+        dataset_id=database_name,
+        table_id=table_info["table_name"],
+    ).upload_file(
         mode=constants.BACKUP_BILLING_PAY_FOLDER.value,
         filepath=table_info["filepath"],
         partition=table_info["partition"],
