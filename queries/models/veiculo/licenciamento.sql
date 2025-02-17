@@ -72,7 +72,7 @@ with
             safe_cast(null as date) as data_inicio_vinculo
         from {{ ref("sppo_licenciamento_solicitacao") }} as t
         where
-            data = date("{{ var('sppo_licenciamento_solicitacao_data_versao') }}")  -- fixo 
+            data = date("{{ var('sppo_licenciamento_solicitacao_data_versao') }}")  -- fixo
             {# mudar? #}
             and status = "Válido"
             and solicitacao != "Baixa"
