@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrige a descrição dos testes do modelo `sumario_faixa_servico_dia_pagamento.sql`  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Corrige a descrição dos testes do modelo `sumario_faixa_servico_dia_pagamento.sql`  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/433)
 
 ## [1.1.1] - 2025-02-11
 

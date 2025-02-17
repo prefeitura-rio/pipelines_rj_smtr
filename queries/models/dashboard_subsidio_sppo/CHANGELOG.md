@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrige teste de `distancia_planejada` maior que zero do modelo `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/4)
+- Corrige teste de `distancia_planejada` maior que zero do modelo `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/433)
 
 ## [7.0.9] - 2025-01-28
 

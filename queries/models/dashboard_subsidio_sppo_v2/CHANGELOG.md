@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrigido teste `km_planejada_faixa` maior que zero do modelo `sumario_faixa_servico_dia_pagamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Corrigido teste `km_planejada_faixa` maior que zero do modelo `sumario_faixa_servico_dia_pagamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/433)
 
 ## [1.0.5] - 2025-02-04
 
