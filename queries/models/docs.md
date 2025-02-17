@@ -628,3 +628,11 @@ Valor total das viagens considerando o valor máximo por km, subtraído pelo val
 {% docs versao_modelo %}
 Código de controle de versão [SHA do GitHub]
 {% enddocs %}
+
+{% docs cobertura_temporal %}
+Cobertura temporal
+{% enddocs %}
+
+{% docs cep_proprietario %}
+CEP do proprietário do veículo
+{% enddocs %}

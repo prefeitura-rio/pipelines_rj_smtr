@@ -323,7 +323,7 @@ models:
       - name: chave
         description: "Chave"
       - name: cobertura_temporal
-        description: "Cobertura temporal"
+        description: "{{ doc('cobertura_temporal') }}"
       - name: id_tabela
         description: "Nome da tabela"
       - name: coluna
