@@ -442,11 +442,9 @@ class constants(Enum):  # pylint: disable=c0103
                         *
                     FROM
                         linha_tarifa
-                    /*
                     WHERE
                         dt_inclusao BETWEEN '{start}'
                         AND '{end}'
-                    */
                 """,
             },
             "primary_key": [
