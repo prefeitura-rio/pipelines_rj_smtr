@@ -62,8 +62,8 @@ with
     ),
     gps as (
         select distinct data, id_veiculo
-        from {{ ref("gps_sppo") }}
-           -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
+        from -- {{ ref("gps_sppo") }}
+            `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
         where data = date("{{ var('run_date') }}")
     ),
     autuacoes as (
@@ -256,7 +256,7 @@ select
         safe_cast(null as date) as data_infracao,
     {% endif %}
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
-    "{{ var('version') }}" as versao
+    "{{ var('version') }}" as versao,
 {% if var("run_date") < var("DATA_SUBSIDIO_V5_INICIO") %}
         status,
     from gps_licenciamento_autuacao as gla
@@ -301,5 +301,5 @@ select
             then "Licenciado com ar e não autuado"
             else null
         end as status,
-    from gps_licenciamento_autuacao
+    from gps_licenciamento_autuacao as gla
 {% endif %}

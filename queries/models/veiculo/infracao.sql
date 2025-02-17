@@ -33,6 +33,6 @@ with
 select
     * except (rn),
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
-    "{{ var(" version ") }}" as versao
+    "{{ var('version') }}" as versao
 from infracao_rn
 where rn = 1

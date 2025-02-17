@@ -153,6 +153,7 @@ select
     quantidade_lotacao_sentado,
     tipo_combustivel,
     tipo_veiculo,
+    status,
     data_inicio_vinculo,
     ano_ultima_vistoria_atualizado,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
