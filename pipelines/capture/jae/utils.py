@@ -62,7 +62,7 @@ def get_redis_last_backup(
     """
     redis_key = f"{env}.backup_jae_billingpay.{database_name}.{table_name}"
     log(f"Consultando Redis: {redis_key}")
-    redis_client = get_redis_client(host="localhost")
+    redis_client = get_redis_client()
     content = redis_client.get(redis_key)
     log(f"content = {content}")
     if incremental_type == "datetime":
