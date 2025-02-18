@@ -13,6 +13,7 @@ with
             tipo_dia,
             consorcio,
             servico,
+            modo,
             faixa_horaria_inicio,
             faixa_horaria_fim,
             case
@@ -58,6 +59,7 @@ select
     s.tipo_dia,
     s.consorcio,
     s.servico,
+    s.modo,
     faixa_horaria_inicio,
     faixa_horaria_fim,
     safe_cast(coalesce(pe.valor_penalidade, 0) as numeric) as valor_penalidade,
