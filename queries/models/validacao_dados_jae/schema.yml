@@ -122,16 +122,16 @@ models:
     description: "Tabela contendo integrações que deveriam ter ocorrido mas não estão listadas na base da Jaé"
     columns:
       - name: data
-        description: "Data da transação (partição)."
+        description: "Data da transação (partição)"
         data_type: date
       - name: id_integracao
-        description: "Identificador único da integração (é igual ao id_transacao da primeira transação da integração)."
+        description: "Identificador único da integração (é igual ao id_transacao da primeira transação da integração)"
         data_type: string
       - name: sequencia_integracao
         description: "Sequência da transação dentro da integração"
         data_type: int64
       - name: datetime_transacao
-        description: "Data e hora da transação em GMT-3"
+        description: "Data e hora da transação [GMT-3]"
         data_type: datetime
       - name: id_transacao
         description: "Identificador único da transação"

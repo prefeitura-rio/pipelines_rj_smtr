@@ -3,11 +3,11 @@ Consórcio ao qual o serviço pertence.
 {% enddocs %}
 
 {% docs id_veiculo %}
-Código identificador do veículo (número de ordem).
+Código identificador do veículo [número de ordem]
 {% enddocs %}
 
 {% docs datetime_ultima_atualizacao %}
-Última atualização (GMT-3).
+Última atualização [GMT-3]
 {% enddocs %}
 
 {% docs datetime_partida %}
@@ -83,7 +83,7 @@ Veículos com 'velocidade' abaixo da 'velocidade_limiar_parado', são considerad
 {% enddocs %}
 
 {% docs flag_trajeto_correto_hist %}
-Flag de verificação se, nos últimos 'intervalo_max_desvio_segundos', ao menos algum ponto de GPS encontra-se até o limite de 'tamanho_buffer_metros' do shape da linha (true). Se não estiver, retorna false.
+Flag de verificação se, nos últimos 'intervalo_max_desvio_segundos', ao menos algum ponto de GPS encontra-se até o limite de 'tamanho_buffer_metros' do shape da linha [Verdadeiro/Falso]
 {% enddocs %}
 
 {% docs flag_em_operacao %}
@@ -125,7 +125,7 @@ Distância da última posição do GPS em relação à posição atual (m)
 {% enddocs %}
 
 {% docs versao %}
-Código de controle de versão do dado (SHA Github)
+Código de controle de versão do dado [SHA Github]
 {% enddocs %}
 
 {% docs id_validador %}
@@ -177,7 +177,7 @@ Dados brutos capturados aninhados em formato JSON
 {% enddocs %}
 
 {% docs modo %}
-Tipo de transporte (Ônibus, Van, BRT)
+Tipo de transporte [Ônibus, Van, BRT]
 {% enddocs %}
 
 {% docs vista %}
@@ -202,10 +202,6 @@ Fim do período de operação planejado
 
 {% docs feed_version %}
 String que indica a versão atual do conjunto de dados GTFS.
-{% enddocs %}
-
-{% docs linha %}
-Número da Linha
 {% enddocs %}
 
 {% docs tipo_servico %}
@@ -353,7 +349,7 @@ Data de inicio da versão da matriz de integração
 {% enddocs %}
 
 {% docs tecnologia %}
-Tecnologia utilizada no veiculo (BASICO, MIDI, MINI, PADRON).
+Tecnologia utilizada no veículo [BASICO, MIDI, MINI, PADRON, ARTICULADO]
 {% enddocs %}
 
 {% docs tecnologia_remunerada %}
@@ -361,9 +357,118 @@ Tecnologia remunerada conforme legislação em vigor.
 {% enddocs %}
 
 {% docs pof %}
-Indicador percentual de quilometragem apurada em relação à planejada do serviço por faixa horária (não inclui veículos não licenciados e não vistoriados a partir de 2024-09-01).
+Indicador percentual de quilometragem apurada em relação à planejada do serviço por faixa horária [não inclui veículos não licenciados e não vistoriados a partir de 2024-09-01]
 {% enddocs %}
 
 {% docs valor_glosado_tecnologia %}
-Valor da diferença entre a tecnologia remunerada e tecnologia apurada.
+Valor da diferença entre a tecnologia remunerada e tecnologia apurada
+{% enddocs %}
+
+{% docs data_captura %}
+Data da captura
+{% enddocs %}
+
+{% docs ano_fabricacao %}
+Ano de fabricação do veículo
+{% enddocs %}
+
+{% docs carroceria %}
+Descrição do modelo da carroceria
+{% enddocs %}
+
+{% docs data_ultima_vistoria %}
+Data da última vistoria do veículo
+{% enddocs %}
+
+{% docs id_carroceria %}
+Código do modelo da carroceria
+{% enddocs %}
+
+{% docs id_chassi %}
+Código do modelo do chassi
+{% enddocs %}
+
+{% docs id_fabricante_chassi %}
+Identificador do fabricante do chassi
+{% enddocs %}
+
+{% docs id_interno_carroceria %}
+Código interno do modelo de carroceria
+{% enddocs %}
+
+{% docs id_planta %}
+Código da planta do veículo
+{% enddocs %}
+
+{% docs indicador_ar_condicionado %}
+Indicador se possui ar condicionado [Verdadeiro/Falso]
+{% enddocs %}
+
+{% docs indicador_elevador %}
+Indicador se possui elevador [Verdadeiro/Falso]
+{% enddocs %}
+
+{% docs indicador_usb %}
+Indicador se tem USB [Verdadeiro/Falso]
+{% enddocs %}
+
+{% docs indicador_wifi %}
+Indicador se tem Wi-fi [Verdadeiro/Falso]
+{% enddocs %}
+
+{% docs nome_chassi %}
+Descrição do modelo do chassi
+{% enddocs %}
+
+{% docs permissao %}
+Número da permissão da operadora ao qual o veículo está vinculado no STU
+{% enddocs %}
+
+{% docs placa %}
+Placa do veículo
+{% enddocs %}
+
+{% docs quantidade_lotacao_pe %}
+Capacidade de passageiros em pé
+{% enddocs %}
+
+{% docs quantidade_lotacao_sentado %}
+Capacidade de passageiros sentados
+{% enddocs %}
+
+{% docs tipo_combustivel %}
+Tipo de combustível utilizado
+{% enddocs %}
+
+{% docs tipo_veiculo %}
+Tipo de veículo
+{% enddocs %}
+
+{% docs status %}
+Licenciado - Veículo licenciado no STU
+Válido - Veículo com solicitação válida para ingresso no STU
+{% enddocs %}
+
+{% docs ano_ultima_vistoria_atualizado %}
+Ano atualizado da última vistoria realizada pelo veículo
+{% enddocs %}
+
+{% docs data_inicio_vinculo %}
+Data de início do vínculo do veículo no STU
+{% enddocs %}
+
+{% docs modo_brt %}
+BRT – nesta tabela consta apenas este modo
+{% enddocs %}
+
+{% docs modo_sppo %}
+SPPO – nesta tabela consta apenas este modo
+{% enddocs %}
+
+{% docs modo_onibus %}
+ÔNIBUS – nesta tabela consta apenas este modo
+{% enddocs %}
+
+{% docs linha %}
+Serviço de ônibus [linha] ou, se realocada, informada pela empresa operadora
 {% enddocs %}

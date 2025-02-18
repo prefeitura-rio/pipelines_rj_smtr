@@ -744,8 +744,11 @@ class constants(Enum):  # pylint: disable=c0103
     SUBSIDIO_SPPO_POS_CHECKS_LIST = {
         "sumario_faixa_servico_dia_pagamento": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.accepted_range__km_planejada_faixa__sumario_faixa_servico_dia_pagamento": {
+                "description": "Todos os valores da coluna `{column_name}` maiores que zero"
+            },
             "dbt_utils.accepted_range": {
-                "description": "Todos os valores da coluna `{column_name}` maiores ou igual a zero"
+                "description": "Todos os valores da coluna `{column_name}` maiores ou iguais a zero"
             },
             "dbt_utils.unique_combination_of_columns__sumario_faixa_servico_dia_pagamento": {
                 "description": "Todos os registros de `sumario_faixa_servico_dia_pagamento` são unicos"
@@ -772,7 +775,7 @@ class constants(Enum):  # pylint: disable=c0103
         "viagens_remuneradas": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
             "dbt_utils.accepted_range": {
-                "description": "Todos os valores da coluna `{column_name}` maiores ou igual a zero"
+                "description": "Todos os valores da coluna `{column_name}` maiores ou iguais a zero"
             },
             "dbt_utils.unique_combination_of_columns__viagens_remuneradas": {
                 "description": "Todas as viagens são únicas"
@@ -787,7 +790,7 @@ class constants(Enum):  # pylint: disable=c0103
         "sumario_servico_dia_pagamento": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
             "dbt_utils.accepted_range": {
-                "description": "Todos os valores da coluna `{column_name}` maiores ou igual a zero"
+                "description": "Todos os valores da coluna `{column_name}` maiores ou iguais a zero"
             },
             "dbt_utils.unique_combination_of_columns__sumario_servico_dia_pagamento": {
                 "description": "Todos os registros de `sumario_servico_dia_pagamento` são unicos"
@@ -814,7 +817,7 @@ class constants(Enum):  # pylint: disable=c0103
         "sumario_servico_dia": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
             "dbt_utils.accepted_range": {
-                "description": "Todos os valores da coluna `{column_name}` maiores ou igual a zero"
+                "description": "Todos os valores da coluna `{column_name}` maiores ou iguais a zero"
             },
             "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart_sumario_servico_dia": {
                 "description": "Todas as datas possuem dados"

@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [7.1.0] - 2025-02-17
+
+### Corrigido
+
+- Corrige teste de `distancia_planejada` maior que zero do modelo `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/433)
+
 ## [7.0.9] - 2025-01-28
 
 ### Corrigido

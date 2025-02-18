@@ -2,22 +2,22 @@ version: 2
 
 models:
   - name: subsidio_faixa_servico_dia_tipo_viagem
-    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia, faixa horária e tipo de viagem."
+    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia, faixa horária e tipo de viagem"
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS."
+        description: "Data de emissão do sinal de GPS"
       - name: tipo_dia
-        description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo."
+        description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: faixa_horaria_inicio
         description: "Horário inicial da faixa horária"
       - name: faixa_horaria_fim
         description: "Horário final da faixa horária"
       - name: consorcio
-        description: "Consórcio que opera o serviço."
+        description: "Consórcio que opera o serviço"
       - name: servico
-        description: "Serviço realizado pelo veículo."
+        description: "Serviço realizado pelo veículo"
       - name: indicador_ar_condicionado
-        description: "Indicador se o veículo foi licenciado com ar condicionado."
+        description: "Indicador se o veículo foi licenciado com ar condicionado"
       - name: indicador_penalidade_judicial
         description: "{{ doc('indicador_penalidade_judicial') }}"
       - name: indicador_viagem_dentro_limite
@@ -29,62 +29,62 @@ models:
       - name: tecnologia_remunerada
         description: "{{ doc('tecnologia_remunerada') }}"
       - name: viagens_faixa
-        description: "Quantidade de viagens apuradas por faixa horária."
+        description: "Quantidade de viagens apuradas por faixa horária"
       - name: km_apurada_faixa
-        description: "Distância apurada para o serviço por faixa horária(km)."
+        description: "Distância apurada para o serviço por faixa horária (km)"
       - name: km_subsidiada_faixa
         description: "Distância subsidiada para o serviço por faixa horária (km)"
       - name: valor_apurado
-        description: "Valor da distância apurada multiplicada pelo subsídio por quilômetro (sem glosa). É zerado quando POF < 80%."
+        description: "Valor da distância apurada multiplicada pelo subsídio por quilômetro [sem glosa, é zerado quando POF < 80%]"
       - name: valor_glosado_tecnologia
         description: "{{ doc('valor_glosado_tecnologia') }}"
       - name: valor_acima_limite
-        description: "Valor apurado das viagens que não foram remuneradas (por estar acima do teto de 120% / 200%)."
+        description: "Valor apurado das viagens que não foram remuneradas (por estar acima do teto de 120% / 200%)"
       - name: valor_total_sem_glosa
-        description: "Valor total das viagens considerando o valor máximo por km."
+        description: "Valor total das viagens considerando o valor máximo por km"
       - name: versao
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: subsidio_sumario_servico_dia_pagamento
-    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia (Descontinuada a partir de 2025-01-05)."
+    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia (Descontinuada a partir de 2025-01-05)"
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS."
+        description: "Data de emissão do sinal de GPS"
       - name: tipo_dia
-        description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo."
+        description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: consorcio
-        description: "Consórcio que opera o serviço."
+        description: "Consórcio que opera o serviço"
       - name: servico
-        description: "Serviço realizado pelo veículo."
+        description: "Serviço realizado pelo veículo"
       - name: viagens_dia
-        description: "Quantidade de viagens apuradas por dia."
+        description: "Quantidade de viagens apuradas por dia"
       - name: km_apurada_dia
-        description: "Distância apurada para o serviço por dia (km)."
+        description: "Distância apurada para o serviço por dia (km)"
       - name: km_subsidiada_dia
-        description: "Distância subsidiada para o serviço por dia (km)."
+        description: "Distância subsidiada para o serviço por dia (km)"
       - name: km_planejada_dia
-        description: "Distância planejada para o serviço por dia (km)."
+        description: "Distância planejada para o serviço por dia (km)"
       - name: valor_a_pagar
-        description: "Valor efetivo de pagamento (valor_total_apurado - valor_acima_limite - valor_glosado)."
+        description: "Valor efetivo de pagamento (valor_total_apurado - valor_acima_limite - valor_glosado)"
       - name: valor_glosado
-        description: "Valor total das viagens considerando o valor máximo por km, subtraído pelo valor efetivo por km."
+        description: "Valor total das viagens considerando o valor máximo por km, subtraído pelo valor efetivo por km"
       - name: valor_acima_limite
-        description: "Valor apurado das viagens que não foram remuneradas (por estar acima do teto de 120% / 200%)."
+        description: "Valor apurado das viagens que não foram remuneradas (por estar acima do teto de 120% / 200%)"
       - name: valor_total_sem_glosa
-        description: "Valor total das viagens considerando o valor máximo por km."
+        description: "Valor total das viagens considerando o valor máximo por km"
       - name: valor_total_apurado
-        description: "Valor total das viagens apuradas, subtraídas as penalidades (POF =< 60%)."
+        description: "Valor total das viagens apuradas, subtraídas as penalidades (POF =< 60%)"
       - name: valor_judicial
-        description: "Valor de glosa depositada em juízo (Autuação por ar inoperante, Veículo licenciado sem ar, Penalidade abaixo de 60% e Notificação dos Agentes de Verão)."
+        description: "Valor de glosa depositada em juízo (Autuação por ar inoperante, Veículo licenciado sem ar, Penalidade abaixo de 60% e Notificação dos Agentes de Verão)"
       - name: valor_penalidade
-        description: "Valor penalidade [negativa] (POF =< 60%)."
+        description: "Valor penalidade [negativa] (POF =< 60%)"
       - name: versao
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: subsidio_penalidade_servico_faixa
-    description: "Tabela com o valor penalidade dos serviços de ônibus (SPPO) por faixa horária e serviço."
+    description: "Tabela com o valor penalidade dos serviços de ônibus (SPPO) por faixa horária e serviço"
     columns:
       - name: data
         description: "{{ doc('data_gps') }}"
@@ -99,7 +99,7 @@ models:
       - name: faixa_horaria_fim
         description: "Horário final da faixa horária"
       - name: valor_penalidade
-        description: "Valor penalidade [negativa] (POF =< 60%)."
+        description: "Valor penalidade [negativa] (POF =< 60%)"
       - name: versao
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao

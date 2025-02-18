@@ -51,11 +51,11 @@ models:
         data_type: string
         quote: true
       - name: datetime_processamento
-        description: Data e hora do processamento da viagem em GMT-3
+        description: Data e hora do processamento da viagem [GMT-3]
         data_type: datetime
         quote: true
       - name: datetime_captura
-        description: Data e hora da captura da integração em GMT-3
+        description: Data e hora da captura da integração [GMT-3]
         data_type: string
         quote: true
       - name: versao
@@ -74,15 +74,15 @@ models:
         data_type: date
         quote: true
       - name: id_viagem
-        description: "Código único identificador da viagem."
+        description: "Código único identificador da viagem"
         data_type: string
         quote: true
       - name: datetime_partida
-        description: "Horário de início da viagem."
+        description: "Horário de início da viagem"
         data_type: datetime
         quote: true
       - name: datetime_chegada
-        description: "Horário de fim da viagem."
+        description: "Horário de fim da viagem"
         data_type: datetime
         quote: true
       - name: modo
@@ -90,7 +90,7 @@ models:
         data_type: string
         quote: true
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)."
+        description: "{{ doc('id_veiculo') }}"
         data_type: string
         quote: true
       - name: trip_id
@@ -106,7 +106,7 @@ models:
         data_type: string
         quote: true
       - name: servico
-        description: "Serviço realizado pelo veículo."
+        description: "Serviço realizado pelo veículo"
         data_type: string
         quote: true
       - name: sentido
@@ -146,19 +146,19 @@ models:
         data_type: string
         quote: true
       - name: feed_version
-        description: "String que indica a versão atual do conjunto de dados GTFS."
+        description: "String que indica a versão atual do conjunto de dados GTFS"
         data_type: string
         quote: true
       - name: feed_start_date
-        description: "Data inicial do feed (versão)."
+        description: "Data inicial do feed (versão)"
         data_type: date
         quote: true
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
         data_type: string
         quote: true
       - name: datetime_ultima_atualizacao
-        description: "Última atualização (GMT-3)."
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
         quote: true
       - name: indicador_servico_planejado_gtfs
