@@ -1,5 +1,11 @@
 # Changelog - cadastro
 
+## [1.4.0] - 2025-02-17
+
+### Alterado
+- Adiciona informação de tarifa no modelo `servico_operadora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/435)
+
+
 ## [1.3.1] - 2024-10-08
 
 ### Alterado
