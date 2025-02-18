@@ -341,31 +341,61 @@ class constants(Enum):  # pylint: disable=c0103
         "erp_integracao_db": {},
         "financeiro_db": {
             "exclude": [
+                "sequencia_lancamento",
                 # "cliente_fraude_05092024",
                 # "cargas_garota_vip_18082023",
-                # duvida: #
-                # "conta",
-                # "lote_credito_conta",
-                # "sequencia_lancamento",
-                # "criar_conta_financeira",
             ],
             "filter": {
+                "conta": [
+                    "dt_abertura",
+                    "dt_fechamento",
+                    "dt_lancamento",
+                ],
+                "lote_credito_conta": [
+                    "dt_abertura",
+                    "dt_fechamento",
+                    "dt_inclusao",
+                ],
                 "lancamento": ["dt_lancamento"],
                 "evento_recebido": ["dt_inclusao"],
                 "movimento": ["dt_movimento"],
                 "evento_processado": ["dt_inclusao"],
                 "evento_erro": ["dt_inclusao"],
-                "midia_gravacao_fisica_141": ["id"],
+                "midia_gravacao_fisica_141": ["dt_gravacao"],
                 "midia_gravacao_fisica_148": ["id"],
                 "midia_gravacao_fisica_145": ["id"],
-                "midia_gravacao_fisica_136": ["id"],
-                "midia_gravacao_fisica_142": ["id"],
-                "midia_gravacao_fisica_140": ["id"],
-                "midia_gravacao_fisica_137": ["id"],
-                "midia_gravacao_fisica_138": ["id"],
-                "midia_gravacao_fisica_135": ["id"],
-                "midia_gravacao_fisica_133": ["id"],
-                "midia_gravacao_fisica_139": ["id"],
+                "midia_gravacao_fisica_136": ["dt_gravacao"],
+                "midia_gravacao_fisica_142": ["dt_gravacao"],
+                "midia_gravacao_fisica_140": ["dt_gravacao"],
+                "midia_gravacao_fisica_137": ["dt_gravacao"],
+                "midia_gravacao_fisica_138": ["dt_gravacao"],
+                "midia_gravacao_fisica_135": ["dt_gravacao"],
+                "midia_gravacao_fisica_133": ["dt_gravacao"],
+                "midia_gravacao_fisica_139": ["dt_gravacao"],
+                "criar_conta_financeira": ["count(*)"],
+            },
+            "custom_select": {
+                "conta": """
+                    select
+                        *
+                    from conta c
+                    left join (
+                        select
+                            id_conta,
+                            max(dt_lancamento) as dt_lancamento
+                            from lancamento
+                            group by id_conta
+                    ) l using(id_conta)
+                """,
+                "lote_credito_conta": """
+                    select
+                        lcc.*,
+                        lc.dt_abertura,
+                        lc.dt_fechamento,
+                        lc.dt_inclusao
+                    from lote_credito_conta lcc
+                    left join lote_credito lc using(id_lote_credito)
+                """,
             },
         },
         "midia_db": {
