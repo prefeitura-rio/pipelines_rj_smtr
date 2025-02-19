@@ -62,6 +62,7 @@ with
             datetime_chegada,
             id_veiculo,
             id_viagem,
+            "Ônibus SPPO" as modo,
             distancia_planejada,
             sentido
         from {{ ref("viagem_completa") }}
@@ -80,6 +81,7 @@ with
             datetime_chegada,
             id_veiculo,
             id_viagem,
+            modo,
             distancia_planejada,
             sentido
         from {{ ref("viagem_valida") }}
@@ -93,12 +95,21 @@ with
     ),
     -- 5. Status dos veículos
     veiculos as (
-        select data, id_veiculo, status, tecnologia
+        select data, id_veiculo, "Ônibus SPPO" as modo, status, tecnologia
         from {{ ref("sppo_veiculo_dia") }}
         -- from `rj-smtr.veiculo.sppo_veiculo_dia`
         where
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
+            and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
+        union all
+        select data, id_veiculo, modo, status, tecnologia
+        from {{ ref("status_dia") }}
+        -- from `rj-smtr.veiculo.status_dia`
+        where
+            data
+            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
     ),
     -- 6. Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
     -- limitada pela viagem anterior
@@ -317,6 +328,7 @@ select
         then "Sem transação"
         else ve.status
     end as tipo_viagem,
+    v.modo,
     ve.tecnologia,
     v.sentido,
     v.distancia_planejada,

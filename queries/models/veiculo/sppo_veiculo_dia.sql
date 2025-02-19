@@ -1,11 +1,22 @@
 -- depends_on: {{ ref('licenciamento_stu_staging') }}
 -- depends_on: {{ ref("infracao") }}
 -- depends_on: {{ ref("infracao_staging") }}
-{{
-    config(
-        materialized="ephemeral",
-    )
-}}
+{% if var("run_date") >= var("DATA_SUBSIDIO_V15_INICIO") %}
+    {{
+        config(
+            materialized="ephemeral",
+        )
+    }}
+{% else %}
+    {{
+        config(
+            materialized="incremental",
+            partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+            unique_key=["data", "id_veiculo"],
+            incremental_strategy="insert_overwrite",
+        )
+    }}
+{% endif %}
 
 {% if execute %}
     {% set licenciamento_date = run_query(get_license_date()).columns[0].values()[0] %}
