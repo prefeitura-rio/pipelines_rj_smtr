@@ -87,3 +87,90 @@ class constants(Enum):  # pylint: disable=c0103
     )
 
     ALERT_WEBHOOK = "alertas_bilhetagem"
+
+    BACKUP_BILLING_PAY_FOLDER = "backup_jae_billingpay"
+
+    BACKUP_BILLING_LAST_VALUE_REDIS_KEY = "last_backup_value"
+
+    BACKUP_JAE_BILLING_PAY = {
+        "principal_db": {
+            "exclude": [
+                "LINHA",
+                "OPERADORA_TRANSPORTE",
+                "CLIENTE",
+                "PESSOA_FISICA",
+                "CONSORCIO",
+                "CONTATO_PESSOA_JURIDICA",
+                "SERVICO_MOTORISTA",
+                "LINHA_CONSORCIO",
+                "LINHA_CONSORCIO_OPERADORA_TRANSPORTE",
+                "ENDERECO",
+                "CLIENTE_IMAGEM",
+                "check_cadastro_pcd_validado",
+                "importa_pcd_pf",
+                "gratuidade_import_pcd",
+                "recarga_duplicada",
+                "SEQUENCIA_SERVICO",
+                "CLIENTE_FRAUDE_05092024",
+                "stops_with_routes",
+                "cliente_com_data_nascimento",
+                "vt_verificar_cpf_setempedido_cartao",
+                "Linhas_empresa_csv",
+                "acerto_pedido_2",
+                "routes",
+                "fare_rules",
+            ],
+            "filter": {
+                "ITEM_PEDIDO": ["DT_INCLUSAO"],
+                "CLIENTE_CONTA_ACESSO": ["DT_INCLUSAO"],
+                "CLIENTE_PERFIL": ["DT_CADASTRO"],
+                "PEDIDO": [
+                    "DT_CONCLUSAO_PEDIDO",
+                    "DT_CANCELAMENTO",
+                    "DT_PAGAMENTO",
+                    "DT_INCLUSAO",
+                ],
+                "CONTROLE_PAGAMENTO_PEDIDO": [
+                    "DT_PAGAMENTO",
+                    "DT_BAIXA",
+                    "DT_CREDITO",
+                    "DT_INCLUSAO",
+                ],
+                "RESUMO_FECHAMENTO_SERVICO": [
+                    "DT_ABERTURA",
+                    "DT_FECHAMENTO",
+                ],
+                # "CLIENTE_IMAGEM": [
+                #     "DT_INCLUSAO",
+                #     "DT_ALTERACAO",
+                # ],
+                "IMPORTA_DET_LOTE_VT": ["DT_INCLUSAO"],
+                "ITEM_PEDIDO_ENDERECO": ["DT_INCLUSAO"],
+                "CLIENTE_FAVORECIDO": [
+                    "DT_CANCELAMENTO",
+                    "DT_INCLUSAO",
+                ],
+                "IMPORTA_DET_LOTE_VT_ERRO": ["DT_INCLUSAO"],
+                "ERRO_IMPORTACAO_COLABORADOR_DETALHE": ["DT_CRIACAO"],
+                "ERRO_IMPORTACAO_COLABORADOR": ["CD_ERRO"],
+                "IMPORTA_LOTE_VT": ["DT_INCLUSAO"],
+                "PESSOA_JURIDICA": ["CD_CLIENTE"],
+                "ERRO_IMPORTACAO_PEDIDO_DETALHE": ["DT_CRIACAO"],
+                "ERRO_IMPORTACAO_PEDIDO": ["CD_ERRO"],
+                "MOTORISTA_OPERADORA": [
+                    "DT_ASSOCIACAO",
+                    "DT_FIM_ASSOCIACAO",
+                ],
+                "MOTORISTA": ["CD_MOTORISTA"],
+                "IMPORTACAO_ARQUIVO": ["DT_INCLUSAO"],
+                "GRUPO_LINHA": [
+                    "DT_FIM_VALIDADE",
+                    "DT_INCLUSAO",
+                ],
+                "CLIENTE_DEPENDENTE": [
+                    "DT_INCLUSAO",
+                    "DT_CANCELAMENTO",
+                ],
+            },
+        }
+    }
