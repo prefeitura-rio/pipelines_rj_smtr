@@ -99,6 +99,7 @@ with
             p.faixa_horaria_fim,
             p.consorcio,
             p.servico,
+            p.modo,
             p.km_planejada
     )
 select

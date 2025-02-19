@@ -8,8 +8,8 @@
 
 {% set incremental_filter %}
     data between
-        date('{{ var("date_range_start") }}')
-        and date('{{ var("date_range_end") }}')
+        date('{{ var("start_date") }}')
+        and date('{{ var("end_date") }}')
 {% endset %}
 
 with
@@ -22,7 +22,7 @@ with
         select *
         from {{ ref("servico_planejado") }}
         where
-            viagens_dia > 0
+            quilometragem > 0
             {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
     ),
     subsidio_parametros as (
@@ -31,7 +31,7 @@ with
             data_fim,
             status,
             tecnologia,
-            modo,
+            "Ônibus SPPO" as modo,
             subsidio_km,
             case
                 when tecnologia is null
@@ -47,7 +47,7 @@ with
             end as subsidio_km_teto,
             indicador_penalidade_judicial
         from {{ ref("valor_km_tipo_viagem") }}
-    -- from `rj-smtr.subsidio.valor_km_tipo_viagem`
+    {# from `rj-smtr.subsidio.valor_km_tipo_viagem` #}
     ),
     viagem_tecnologia as (
         select distinct
@@ -65,6 +65,7 @@ with
                 else v.tecnologia
             end as tecnologia_remunerada,
             v.id_viagem,
+            v.sentido,
             v.modo,
             v.datetime_partida,
             v.distancia_planejada,
@@ -125,12 +126,13 @@ with
             vt.data,
             vt.servico,
             vt.tipo_viagem,
+            vt.id_viagem,
+            vt.distancia_planejada,
             vt.tecnologia_apurada,
             vt.tecnologia_remunerada,
-            vt.id_viagem,
+            vt.sentido,
             vt.modo,
             vt.datetime_partida,
-            vt.distancia_planejada,
             sp.subsidio_km,
             sp.subsidio_km_teto,
             case
@@ -193,15 +195,19 @@ select
     v.* except (
         rn,
         datetime_partida,
+        sentido,
         viagens_dia,
         partidas,
-        km_planejada,
+        quilometragem,
         tipo_dia,
         consorcio,
         faixa_horaria_inicio,
         faixa_horaria_fim,
         extensao_ida,
         extensao_volta,
+        feed_start_date,
+        feed_version,
+        tipo_os
     ),
     case
         when
@@ -243,7 +249,7 @@ from
     (
         select
             v.*,
-            sp.* except (data, servico),
+            sp.* except (data, servico, modo),
             row_number() over (
                 partition by v.data, v.servico, faixa_horaria_inicio, faixa_horaria_fim
                 order by subsidio_km * distancia_planejada desc

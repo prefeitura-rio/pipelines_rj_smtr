@@ -10,8 +10,8 @@ with
             *,
             split(faixa_horaria_inicio, ":") as faixa_horaria_inicio_parts,
             split(faixa_horaria_fim, ":") as faixa_horaria_fim_parts
-        {# from {{ ref("ordem_servico_faixa_horaria") }} #}
-        from `rj-smtr.planejamento.ordem_servico_faixa_horaria`
+        from {{ ref("ordem_servico_faixa_horaria") }}
+    {# from `rj-smtr.planejamento.ordem_servico_faixa_horaria` #}
     ),
     os_tratamento_horario as (
         select
@@ -86,8 +86,8 @@ with
             ) as faixa_horaria_fim,
             o.quilometragem,
             o.partidas
-        {# from {{ ref("calendario") }} c #}
-        from `rj-smtr.planejamento.calendario` c
+        from {{ ref("calendario") }} c
+        {# from `rj-smtr.planejamento.calendario` c #}
         join
             os_tratamento_horario o using (
                 feed_version, feed_start_date, tipo_dia, tipo_os
@@ -127,6 +127,6 @@ with
             ) as rn
         from os_faixa_horaria_dia
     )
-select *
+select * except (rn)
 from faixas_agregadas
 where rn = 1 and data = extract(date from faixa_horaria_inicio)

@@ -52,6 +52,12 @@ with
                 then "Reveillon"  -- Processo.Rio MTR-DES-2024/76453
                 when data between date(2025, 01, 02) and date(2025, 01, 03)
                 then "Fim de ano"  -- Processo.Rio MTR-DES-2024/77046
+                when data between date(2025, 01, 11) and date(2025, 01, 12)
+                then "Extraordinária - Verão"  -- Processo.Rio MTR-DES-2025/00831
+                when data between date(2025, 01, 18) and date(2025, 01, 20)
+                then "Extraordinária - Verão"  -- Processo.Rio MTR-DES-2025/01760 e MTR-DES-2025/02195
+                when data between date(2025, 01, 25) and date(2025, 01, 26)
+                then "Extraordinária - Verão"  -- Processo.Rio MTR-DES-2025/01468
             end as tipo_os
         from
             unnest(
