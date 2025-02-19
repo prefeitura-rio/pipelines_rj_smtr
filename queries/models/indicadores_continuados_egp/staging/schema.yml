@@ -17,7 +17,7 @@ models:
       - name: data_ultima_atualizacao
         description: "Data da última atualização do indicador"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   # - name: idade_media_frota_licenciada
   #   description: "Indicador de idade média da frota licenciada por mês"
   #   columns:
@@ -34,7 +34,7 @@ models:
   #     - name: data_ultima_atualizacao
   #       description: "Data da última atualização do indicador"
   #     - name: versao
-  #       description: "Código de controle de versão do dado (SHA Github)"
+  #       description: "{{ doc('versao') }}"
   - name: idade_media_frota_operante_onibus
     description: "Indicador de idade média da frota operante por mês"
     columns:
@@ -51,7 +51,7 @@ models:
       - name: data_ultima_atualizacao
         description: "Data da última atualização do indicador"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: passageiro_gratuidade
     description: "Indicador de gratuidades por mês"
     columns:
@@ -68,7 +68,7 @@ models:
       - name: data_ultima_atualizacao
         description: "Data da última atualização do indicador"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: passageiro_pagante
     description: "Indicador de passageiros pagantes por mês"
     columns:
@@ -85,4 +85,4 @@ models:
       - name: data_ultima_atualizacao
         description: "Data da última atualização do indicador"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"

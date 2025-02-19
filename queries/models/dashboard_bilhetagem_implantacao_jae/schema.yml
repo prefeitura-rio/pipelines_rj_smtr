@@ -17,9 +17,9 @@ models:
       - name: estado_equipamento
         description: Estado do validador da Jaé (ABERTO ou FECHADO)
       - name: primeiro_datetime_gps
-        description: "Data e hora do primeiro sinal de GPS transmitido pelo validador da Jaé em GMT-3"
+        description: "Data e hora do primeiro sinal de GPS transmitido pelo validador da Jaé [GMT-3]"
       - name: ultimo_datetime_gps
-        description: "Data e hora do último sinal de GPS transmitido pelo validador da Jaé em GMT-3"
+        description: "Data e hora do último sinal de GPS transmitido pelo validador da Jaé [GMT-3]"
       - name: qtde_min_entre_a_prim_e_ultima_transmissao
         description: "Quantidade em minutos entre a primeira e a ultima transmissão do GPS do validador da Jaé"
       - name: qtde_min_distintos_houve_transmissao
@@ -31,7 +31,7 @@ models:
       - name: percentual_registros_gps_georreferenciados
         description: "Percentual de sinais transmitidos pelo validador da Jaé  com latitude e longitude não nulos ou diferentes de zero"
       - name: percentual_transmissao_a_cada_min
-        description: "Percentual de minutos em que houve sinal de GPS recebido durante o tempo em que o validador da Jaé ficou ativo."
+        description: "Percentual de minutos em que houve sinal de GPS recebido durante o tempo em que o validador da Jaé ficou ativo"
   - name: gps_agregado_onibus
     description: "Tabela com registros de GPS dos ônibus utilizada no dashboard de acompanhamento da implantação dos validadores da Jaé (Contem apenas dados do dia atual)"
     columns:
@@ -48,9 +48,9 @@ models:
       - name: estado_equipamento
         description: Estado do validador da Jaé (ABERTO ou FECHADO)
       - name: primeiro_datetime_gps
-        description: "Data e hora do primeiro sinal de GPS transmitido pelo validador da Jaé em GMT-3"
+        description: "Data e hora do primeiro sinal de GPS transmitido pelo validador da Jaé [GMT-3]"
       - name: ultimo_datetime_gps
-        description: "Data e hora do último sinal de GPS transmitido pelo validador da Jaé em GMT-3"
+        description: "Data e hora do último sinal de GPS transmitido pelo validador da Jaé [GMT-3]"
       - name: qtde_min_entre_a_prim_e_ultima_transmissao
         description: "Quantidade em minutos entre a primeira e a ultima transmissão do GPS do validador da Jaé"
       - name: qtde_min_distintos_houve_transmissao
@@ -62,7 +62,7 @@ models:
       - name: percentual_registros_gps_georreferenciados
         description: "Percentual de sinais transmitidos pelo validador da Jaé  com latitude e longitude não nulos ou diferentes de zero"
       - name: percentual_transmissao_a_cada_min
-        description: "Percentual de minutos em que houve sinal de GPS recebido durante o tempo em que o validador da Jaé ficou ativo."
+        description: "Percentual de minutos em que houve sinal de GPS recebido durante o tempo em que o validador da Jaé ficou ativo"
   - name: gps_agregado_van
     description: "Tabela com registros de GPS das Vans utilizada no dashboard de acompanhamento da implantação dos validadores da Jaé (Contem apenas dados do dia atual)"
     columns:
@@ -75,9 +75,9 @@ models:
       - name: estado_equipamento
         description: Estado do validador da Jaé (ABERTO ou FECHADO)
       - name: primeiro_datetime_gps
-        description: "Data e hora do primeiro sinal de GPS transmitido pelo validador da Jaé em GMT-3"
+        description: "Data e hora do primeiro sinal de GPS transmitido pelo validador da Jaé [GMT-3]"
       - name: ultimo_datetime_gps
-        description: "Data e hora do último sinal de GPS transmitido pelo validador da Jaé em GMT-3"
+        description: "Data e hora do último sinal de GPS transmitido pelo validador da Jaé [GMT-3]"
       - name: qtde_min_entre_a_prim_e_ultima_transmissao
         description: "Quantidade em minutos entre a primeira e a ultima transmissão do GPS do validador da Jaé"
       - name: qtde_min_distintos_houve_transmissao
@@ -89,7 +89,7 @@ models:
       - name: percentual_registros_gps_georreferenciados
         description: "Percentual de sinais transmitidos pelo validador da Jaé  com latitude e longitude não nulos ou diferentes de zero"
       - name: percentual_transmissao_a_cada_min
-        description: "Percentual de minutos em que houve sinal de GPS recebido durante o tempo em que o validador da Jaé ficou ativo."
+        description: "Percentual de minutos em que houve sinal de GPS recebido durante o tempo em que o validador da Jaé ficou ativo"
   - name: gps_agregado_vlt
     description: "Tabela com registros agregados de GPS das VLTs utilizada no dashboard de acompanhamento da implantação dos validadores da Jaé (Contem apenas dados do dia atual)"
     columns:
@@ -106,9 +106,9 @@ models:
       - name: estado_equipamento
         description: Estado do validador da Jaé (ABERTO ou FECHADO)
       - name: primeiro_datetime_gps
-        description: "Data e hora do primeiro sinal de GPS transmitido pelo validador da Jaé em GMT-3"
+        description: "Data e hora do primeiro sinal de GPS transmitido pelo validador da Jaé [GMT-3]"
       - name: ultimo_datetime_gps
-        description: "Data e hora do último sinal de GPS transmitido pelo validador da Jaé em GMT-3"
+        description: "Data e hora do último sinal de GPS transmitido pelo validador da Jaé [GMT-3]"
       - name: qtde_min_entre_a_prim_e_ultima_transmissao
         description: "Quantidade em minutos entre a primeira e a ultima transmissão do GPS do validador da Jaé"
       - name: qtde_min_distintos_houve_transmissao
@@ -120,4 +120,4 @@ models:
       - name: percentual_registros_gps_georreferenciados
         description: "Percentual de sinais transmitidos pelo validador da Jaé  com latitude e longitude não nulos ou diferentes de zero"
       - name: percentual_transmissao_a_cada_min
-        description: "Percentual de minutos em que houve sinal de GPS recebido durante o tempo em que o validador da Jaé ficou ativo."
+        description: "Percentual de minutos em que houve sinal de GPS recebido durante o tempo em que o validador da Jaé ficou ativo"

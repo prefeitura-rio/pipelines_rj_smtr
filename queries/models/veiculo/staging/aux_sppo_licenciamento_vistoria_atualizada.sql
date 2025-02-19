@@ -5,7 +5,7 @@
 }}
 
 /* Dados auxiliares de vistoria de ônibus levantados pela Coordenadoria Geral de Licenciamento e Fiscalização (TR/SUBTT/CGLF),
-para atualização da data de última vistoria informada no sistema (STU). */
+para atualização da data de última vistoria informada no sistema [STU]. */
 
 SELECT
   data,
