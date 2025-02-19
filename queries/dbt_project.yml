@@ -140,6 +140,8 @@ vars:
   # Feature Apuração por tecnologia e penalidade por faixa horária (DECRETO 55631/2025)
   DATA_SUBSIDIO_V14_INICIO: "2025-01-05"
   DATA_SUBSIDIO_V14A_INICIO: "2025-07-01"
+  # Feature Apuração 2.0
+  DATA_SUBSIDIO_V15_INICIO: "2025-01-16"
 
   # Recursos #
   recurso_staging: "rj-smtr-staging.projeto_subsidio_sppo_staging.recurso"
