@@ -4,14 +4,7 @@
     )
 }}
 
-with
-    tecnologia as (
-        select
-            safe_cast(servico as string) as servico,
-            safe_cast(modo as string) as modo,
-            safe_cast(codigo_tecnologia as string) as codigo_tecnologia
-        from {{ source("planejamento_staging", "tecnologia_servico") }}
-    )
+with tecnologia as (select * from {{ ref("staging_tecnologia_servico") }})
 select
     servico,
     modo,
@@ -38,5 +31,6 @@ select
         then "PADRON"
         else null
     end as menor_tecnologia_permitida,
--- feed_start_date -- TODO: puxar essa coluna do gtfs
+    data_inicio_vigencia,
+    data_fim_vigencia
 from tecnologia
