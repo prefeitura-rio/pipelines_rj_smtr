@@ -3,6 +3,7 @@
         materialized="incremental",
         partition_by={"field": "data", "data_type": "date", "granularity": "day"},
         incremental_strategy="insert_overwrite",
+        alias="sumario_faixa_servico_dia_pagamento",
     )
 }}
 
@@ -15,6 +16,7 @@ with
             faixa_horaria_fim,
             consorcio,
             servico,
+            modo,
             viagens_faixa,
             km_planejada_faixa,
             pof
@@ -44,6 +46,7 @@ with
             data_fim,
             status,
             tecnologia,
+            "Ônibus SPPO" as modo,
             subsidio_km,
             case
                 when tecnologia is null
@@ -202,6 +205,7 @@ select
     s.faixa_horaria_fim,
     s.consorcio,
     s.servico,
+    s.modo,
     s.viagens_faixa,
     agg.km_apurada_faixa,
     agg.km_subsidiada_faixa,

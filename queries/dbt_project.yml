@@ -389,3 +389,7 @@ models:
       staging:
         +materialized: view
         +schema: dashboard_operacao_onibus_staging
+    dashboard_subsidio:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: dashboard_subsidio_sppo_v2
