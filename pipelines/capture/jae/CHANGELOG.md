@@ -1,6 +1,14 @@
 # Changelog - source_jae
 
+## [1.2.1] - 2025-02-20
+
+### Alterado
+
+- Adiciona parâmetros para captura de todos dos bancos da BillingPay, exceto processador_transacao_db (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/439)
+
 ## [1.2.0] - 2025-02-11
+
+### Adicionado
 
 - Cria flow `backup_billingpay` para fazer o backup diário dos dados da Jaé dos bancos da BillingPay (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/422)
 

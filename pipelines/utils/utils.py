@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """General purpose functions"""
 import io
+import uuid
 from datetime import date, datetime
 from typing import Any
 
@@ -34,6 +35,8 @@ def custom_serialization(obj: Any) -> Any:
             if obj.tzinfo is None:
                 obj = obj.tz_localize("UTC").tz_convert(constants.TIMEZONE.value)
         return obj.isoformat()
+    elif isinstance(obj, uuid.UUID):
+        return str(obj)
 
     raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
 
