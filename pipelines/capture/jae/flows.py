@@ -90,11 +90,11 @@ with Flow("jae: backup dados BillingPay") as backup_billingpay:
             table_count=table_count,
         )
 
-        send_discord_message = log_discord(
-            message=message,
-            key=constants.ALERT_WEBHOOK.value,
-            dados_tag=True,
-        )
+        # send_discord_message = log_discord(
+        #     message=message,
+        #     key=constants.ALERT_WEBHOOK.value,
+        #     dados_tag=True,
+        # )
 
     table_info = get_raw_backup_billingpay(
         table_info=table_info,
@@ -126,9 +126,8 @@ backup_billingpay.schedule = Schedule(
     [
         IntervalClock(
             interval=timedelta(days=1),
-            start_date=datetime(
-                2021, 1, 1, 0, 30 * idx, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
-            ),
+            start_date=datetime(2021, 1, 1, 0, 0, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value))
+            + timedelta(minutes=30 * idx),
             labels=[
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
             ],
