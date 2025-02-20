@@ -222,7 +222,7 @@ def get_table_info(
                         }
                     )
             continue
-        print(table)
+
         if (
             len(filter_columns) > 1
             or table in custom_select.keys()
