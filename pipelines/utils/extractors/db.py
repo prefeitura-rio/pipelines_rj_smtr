@@ -103,6 +103,7 @@ def get_raw_db_paginated(
             Current page returned {page_data_len} rows"""
         )
         current_page += 1
+        offset = current_page * page_size
         query = f"{base_query} OFFSET {offset}"
 
     return data
