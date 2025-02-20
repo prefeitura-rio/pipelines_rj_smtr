@@ -211,23 +211,21 @@ class constants(Enum):  # pylint: disable=c0103
                     "DT_INCLUSAO",
                     "DT_CANCELAMENTO",
                 ],
+                "pcd_mae": ["count(*)"],
             },
         },
         "tarifa_db": {
+            "exclude": ["linha_tarifa"],
             "filter": {
                 "matriz_integracao": ["dt_inclusao"],
-                "linha_tarifa": [
-                    "dt_inicio_validade",
-                    "dt_inclusao",
-                ],
-            }
+            },
         },
         "transacao_db": {
             "exclude": [
                 "transacao",
                 "transacao_riocard",
-                # "embossadora_producao_20240809",
-                # "transacao_faltante_23082023",
+                "embossadora_producao_20240809",
+                "transacao_faltante_23082023",
             ],
             "filter": {
                 "confirmacao_envio_pms": ["data_confirmacao"],
@@ -240,12 +238,11 @@ class constants(Enum):  # pylint: disable=c0103
         "tracking_db": {
             "exclude": [
                 "tracking_detalhe",
-                # duvida #
-                # "mq_connections",
             ],
             "filter": {
                 "tracking_sumarizado": ["ultima_data_tracking"],
                 "spatial_ref_sys": ["srid"],
+                "mq_connections": ["count(*)"],
             },
         },
         "ressarcimento_db": {
@@ -273,19 +270,15 @@ class constants(Enum):  # pylint: disable=c0103
                     "create_time",
                     "last_updated",
                 ],
-                "batch_job_execution_context": ["job_instance_id"],
+                "batch_job_execution_context": ["job_execution_id"],
             },
         },
         "gratuidade_db": {
             "exclude": [
                 "gratuidade",
-                # "estudante_import_old",
-                # "estudante_sme",
-                # "estudante_import_old",
-                # "gratuidade_import_pcd_old",
-                # "escola_importa",
-                # "cid_nova",
-                # "cid",
+                "estudante_import_old",
+                "estudante_import_old",
+                "gratuidade_import_pcd_old",
                 # sem permissão: #
                 "pcd_excluir",
                 "estudante_seeduc",
@@ -317,6 +310,10 @@ class constants(Enum):  # pylint: disable=c0103
                 "pcd": ["data_inclusao"],
                 "laudo_pcd_tipo_doenca": ["data_inclusao"],
                 "escola": ["data_inclusao"],
+                "estudante_sme": ["count(*)"],
+                "escola_importa": ["count(*)"],
+                "cid_nova": ["count(*)"],
+                "cid": ["count(*)"],
             },
         },
         "fiscalizacao_db": {
@@ -342,8 +339,8 @@ class constants(Enum):  # pylint: disable=c0103
         "financeiro_db": {
             "exclude": [
                 "sequencia_lancamento",
-                # "cliente_fraude_05092024",
-                # "cargas_garota_vip_18082023",
+                "cliente_fraude_05092024",
+                "cargas_garota_vip_18082023",
             ],
             "filter": {
                 "conta": [
@@ -400,12 +397,9 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "midia_db": {
             "exclude": [
-                # "midia_chip_12092024",
-                # "midia_chip_30092024",
-                # "cargas_garota_vip_18082023",
-                # duvida #
-                # "retorno_geral",
-                # "midia_jall",
+                "midia_chip_12092024",
+                "midia_chip_30092024",
+                "cargas_garota_vip_18082023",
                 # sem permissão #
                 "tb_arquivos_validacao",
                 "jal_sp_cbd_producao_tudo",
@@ -445,26 +439,25 @@ class constants(Enum):  # pylint: disable=c0103
                 "midia_gravacao_fisica_141": ["id"],
                 "midia_gravacao_fisica_148": ["id"],
                 "midia_gravacao_fisica_145": ["id"],
-                "midia_gravacao_fisica_142": ["id"],
-                "midia_gravacao_fisica_140": ["id"],
+                "midia_gravacao_fisica_142": ["dt_gravacao"],
+                "midia_gravacao_fisica_140": ["dt_gravacao"],
+                "retorno_geral": ["count(*)"],
+                "midia_jall": ["count(*)"],
             },
         },
         # "processador_transacao_db": {},
         "atendimento_db": {},
         "gateway_pagamento_db": {
-            "exclude": [
-                # duvida #
-                # "cnab_transaction",
-            ],
             "filter": {
                 "payment_processing": ["created_at"],
                 "card_processing": ["created_at"],
+                "cnab_transaction": ["count(*)"],
             },
         },
         "iam_db": {
             "exclude": [
-                # "gratuidade_import_pcd",
-                # "CLIENTE_FRAUDE_05092024",
+                "gratuidade_import_pcd",
+                "CLIENTE_FRAUDE_05092024",
             ],
             "filter": {
                 "CONTROLE_CODIGO_VERIFICACAO": ["NR_SEQ"],

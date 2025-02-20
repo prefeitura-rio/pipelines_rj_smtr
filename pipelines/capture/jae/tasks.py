@@ -171,6 +171,7 @@ def get_table_info(
         and isinstance(tables_config.get("filter", {}).get(t, []), list)
     ]
     custom_select = tables_config.get("custom_select", {})
+    filtered_tables = tables_config.get("filter", [])
     result = [
         {
             "table_name": t,
@@ -185,12 +186,12 @@ def get_table_info(
             "custom_select": custom_select.get(t),
         }
         for t in table_names
-        if t not in tables_config["filter"]
+        if t not in filtered_tables
     ]
 
-    for table in [t for t in table_names if t in tables_config["filter"]]:
+    for table in [t for t in table_names if t in filtered_tables]:
 
-        filter_columns = tables_config["filter"][table]
+        filter_columns = filtered_tables[table]
 
         if filter_columns[0] == "count(*)":
             with engine.connect() as conn:
@@ -217,11 +218,11 @@ def get_table_info(
                             ),
                             "partition": partition,
                             "custom_select": custom_select.get(table),
-                            "max_id": current_count,
+                            "redis_save_value": current_count,
                         }
                     )
             continue
-
+        print(table)
         if (
             len(filter_columns) > 1
             or table in custom_select.keys()
@@ -288,7 +289,9 @@ def get_non_filtered_tables(
     result = []
     with engine.connect() as conn:
         for table in [
-            t["table_name"] for t in table_info if t["table_name"] not in tables_config["filter"]
+            t["table_name"]
+            for t in table_info
+            if t["table_name"] not in tables_config.get("filter", [])
         ]:
             df = pd.read_sql(f"select count(*) as ct from {table}", conn)
             df["table"] = table
@@ -373,7 +376,7 @@ def get_raw_backup_billingpay(
                 **database_config,
             )[0]["max_id"]
             where = f"{id_column} BETWEEN {table['last_capture']} AND {max_id}"
-            table["max_id"] = max_id
+            table["redis_save_value"] = max_id
 
         sql += f" WHERE {where}"
 
@@ -432,7 +435,7 @@ def set_redis_backup_billingpay(
     if table_info["incremental_type"] == "datetime":
         save_value = timestamp.strftime(smtr_constants.MATERIALIZATION_LAST_RUN_PATTERN.value)
     else:
-        save_value = table_info["max_id"]
+        save_value = table_info["redis_save_value"]
 
     if not content:
         log(f"Saving value: {save_value} on key {redis_key}")
