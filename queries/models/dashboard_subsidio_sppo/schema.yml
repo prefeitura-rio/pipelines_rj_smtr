@@ -575,7 +575,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__km_apurada_registrado_com_ar_inoperante__sumario_servico_dia_tipo_sem_glosa
   - name: viagens_remuneradas
-    description: "Tabela com indicação de remuneração de viagens para fins de verificação de teto de pagamento conforme regra de 120%/200% (RESOLUÇÃO SMTR Nº 3.645/2023)"
+    description: "Tabela com indicação de remuneração de viagens para fins de verificação de teto de pagamento conforme regra de 120%/200% [RESOLUÇÃO SMTR Nº 3.645/2023] [Dados a partir de 2023-09-16]"
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
