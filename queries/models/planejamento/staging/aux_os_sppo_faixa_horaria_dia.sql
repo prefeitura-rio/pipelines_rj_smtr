@@ -59,15 +59,17 @@ with
     os_faixa_horaria_dia as (
         select
             c.data,
-            feed_version,
-            feed_start_date,
-            tipo_dia,
-            tipo_os,
-            servico,
-            consorcio,
-            extensao_ida,
-            extensao_volta,
-            viagens_dia,
+            o.* except (
+                faixa_horaria_inicio_parts,
+                faixa_horaria_fim_parts,
+                faixa_horaria_tratada_inicio,
+                faixa_horaria_tratada_fim,
+                faixa_horaria_inicio,
+                faixa_horaria_fim,
+                dia_soma_faixa_inicio,
+                dia_soma_faixa_fim,
+                versao_modelo
+            ),
             datetime(
                 concat(
                     cast(
@@ -83,9 +85,7 @@ with
                     ' ',
                     o.faixa_horaria_tratada_fim
                 )
-            ) as faixa_horaria_fim,
-            o.quilometragem,
-            o.partidas
+            ) as faixa_horaria_fim
         from {{ ref("calendario") }} c
         {# from `rj-smtr.planejamento.calendario` c #}
         join
@@ -95,7 +95,33 @@ with
     ),
     faixas_agregadas as (
         select
-            * except (partidas, quilometragem),
+            * except (partidas_ida, partidas_volta, partidas, quilometragem),
+            case
+                when
+                    lag(faixa_horaria_inicio) over (
+                        partition by servico order by data, faixa_horaria_inicio
+                    )
+                    = faixa_horaria_inicio
+                then
+                    lag(partidas_ida) over (
+                        partition by servico order by data, faixa_horaria_inicio
+                    )
+                    + partidas_ida
+                else partidas_ida
+            end partidas_ida,
+            case
+                when
+                    lag(faixa_horaria_inicio) over (
+                        partition by servico order by data, faixa_horaria_inicio
+                    )
+                    = faixa_horaria_inicio
+                then
+                    lag(partidas_volta) over (
+                        partition by servico order by data, faixa_horaria_inicio
+                    )
+                    + partidas_volta
+                else partidas_volta
+            end partidas_volta,
             case
                 when
                     lag(faixa_horaria_inicio) over (
