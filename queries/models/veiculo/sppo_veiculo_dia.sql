@@ -62,8 +62,8 @@ with
     ),
     gps as (
         select distinct data, id_veiculo
-        from {{ ref("gps_sppo") }}
-            -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
+        from -- {{ ref("gps_sppo") }}
+            `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
         where data = date("{{ var('run_date') }}")
     ),
     autuacoes as (

@@ -15,12 +15,10 @@ with
     infracao as (
         select * except (data), safe_cast(data as date) as data
         from {{ ref("infracao_staging") }} as t
-        where
-            placa is not null
-            {% if is_incremental() %}
-
-                and date(data) = date("{{ infracao_date }}")
-            {% endif %}
+        {% if is_incremental() %}
+            where
+                date(data) = date("{{ infracao_date }}")
+        {% endif %}
     ),
     infracao_rn as (
         select

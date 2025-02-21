@@ -15,7 +15,11 @@
 with
     stu as (
         select
-            date(data) as data,
+            {# {% if is_incremental() %} #}
+                date(t.data) as data,
+            {# {% else %}
+                date(dve.data) as data,
+            {% endif %} #}
             modo,
             id_veiculo,
             safe_cast(ano_fabricacao as integer) as ano_fabricacao,
@@ -41,56 +45,64 @@ with
             data_inicio_vinculo
         from {{ ref("licenciamento_stu_staging") }} as t
         {% if is_incremental() %}
-            where date(data) = date("{{ licenciamento_date }}")
+            where date(data) = date("{{ licenciamento_date }}") 
+        {% else %}
+            left join (select distinct data_versao from {{ ref('licenciamento_data_versao_efetiva') }} where data_versao is not null) dve
+            on date(t.data) = date(data_versao)
         {% endif %}
     ),
-    {% if var('licenciamento_solicitacao_inicio') <= var('run_date') <= var('licenciamento_solicitacao_fim') %}
-    solicitacao as (
-        select
-            modo,
-            id_veiculo,
-            safe_cast(ano_fabricacao as integer) as ano_fabricacao,
-            carroceria,
-            date(data_ultima_vistoria) as data_ultima_vistoria,
-            id_carroceria,
-            id_chassi,
-            id_fabricante_chassi,
-            id_interno_carroceria,
-            id_planta,
-            indicador_ar_condicionado,
-            indicador_elevador,
-            indicador_usb,
-            indicador_wifi,
-            nome_chassi,
-            permissao,
-            placa,
-            quantidade_lotacao_pe,
-            quantidade_lotacao_sentado,
-            tipo_combustivel,
-            tipo_veiculo,
-            status,
-            safe_cast(null as date) as data_inicio_vinculo
-        from {{ ref("sppo_licenciamento_solicitacao") }} as t
-        where
-            data = date("{{ var('sppo_licenciamento_solicitacao_data_versao') }}")  -- fixo
-            and status = "Válido"
-            and solicitacao != "Baixa"
-            and tipo_veiculo not like "%ROD%"
-            {# and data between date("2022-03-21") and date("2023-03-09") #}
-    ),
+    {% if var("licenciamento_solicitacao_inicio") <= var("run_date") <= var(
+        "licenciamento_solicitacao_fim"
+    ) %}
+        solicitacao as (
+            select
+                modo,
+                id_veiculo,
+                safe_cast(ano_fabricacao as integer) as ano_fabricacao,
+                carroceria,
+                date(data_ultima_vistoria) as data_ultima_vistoria,
+                id_carroceria,
+                id_chassi,
+                id_fabricante_chassi,
+                id_interno_carroceria,
+                id_planta,
+                indicador_ar_condicionado,
+                indicador_elevador,
+                indicador_usb,
+                indicador_wifi,
+                nome_chassi,
+                permissao,
+                placa,
+                quantidade_lotacao_pe,
+                quantidade_lotacao_sentado,
+                tipo_combustivel,
+                tipo_veiculo,
+                status,
+                safe_cast(null as date) as data_inicio_vinculo
+            from {{ ref("sppo_licenciamento_solicitacao") }} as t
+            where
+                data = date("{{ var('sppo_licenciamento_solicitacao_data_versao') }}")  -- fixo
+                and status = "Válido"
+                and solicitacao != "Baixa"
+                and tipo_veiculo not like "%ROD%"
+        ),
     {% endif %}
     stu_solicitacoes as (
-        {% if var('licenciamento_solicitacao_inicio') <= var('run_date') <= var('licenciamento_solicitacao_fim') %}
-        select date_add(date("{{ var('run_date') }}"), interval 5 day) as data, *
-        from solicitacao sol
-        union all
+        {% if var("licenciamento_solicitacao_inicio") <= var("run_date") <= var(
+            "licenciamento_solicitacao_fim"
+        ) %}
+            select date_add(date("{{ var('run_date') }}"), interval 5 day) as data, *
+            from solicitacao sol
+            union all
+            -- Se tiver id_veiculo em solicitacao e for valido, substitui o que esta em
+            -- licenciamento
+            select stu.*
+            from stu
+            left join solicitacao sol on stu.id_veiculo = sol.id_veiculo
+            where sol.id_veiculo is null
+                and data between DATE("{{ var('licenciamento_solicitacao_inicio') }}" ) and DATE("{{ var('licenciamento_solicitacao_fim') }}" )
+        {% else %}select stu.* from stu
         {% endif %}
-        -- Se tiver id_veiculo em solicitacao e for valido, substitui o que esta em
-        -- licenciamento
-        select stu.*
-        from stu
-        left join solicitacao sol on stu.id_veiculo = sol.id_veiculo
-        where sol.id_veiculo is null
     ),
     stu_rn as (
         select
