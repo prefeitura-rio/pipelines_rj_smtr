@@ -42,6 +42,7 @@ with
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
             and (distancia_total_planejada > 0 or distancia_total_planejada is null)
             and (id_tipo_trajeto = 0 or id_tipo_trajeto is null)
+            and data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
     ),
     viagens_planejadas as (
         select
@@ -73,6 +74,7 @@ with
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
     ),
     viagem_planejada as (
         select
@@ -167,6 +169,7 @@ with
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
     ),
     -- Viagens com tipo e valor de subsídio por km
     viagem_tecnologia as (
