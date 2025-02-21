@@ -1,5 +1,10 @@
 # Changelog - brt_gps
 
+## [1.0.1] - 2025-02-21
+
+### Alterado
+- Torna filtro de partição obrigatório no modelo `brt_aux_registros_filtrada.sql`
+
 ## [1.0.0] - 2024-07-02
 
 ### Adicionado

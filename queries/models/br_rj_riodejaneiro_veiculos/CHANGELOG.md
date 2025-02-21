@@ -1,5 +1,9 @@
 # Changelog - br_rj_riodejaneiro_veiculos
 
+## [1.0.6] - 2025-02-21
+
+### Alterado
+- Torna filtro de partição obrigatório nos modelos `gps_brt.sql` e `gps_sppo.sql`
 
 ## [1.0.5] - 2024-11-13
 

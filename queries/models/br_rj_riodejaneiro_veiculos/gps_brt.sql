@@ -1,12 +1,9 @@
 {{
     config(
-        materialized='incremental',
-        partition_by={
-            'field': 'data',
-            'data_type': 'date',
-            'granularity': 'day'
-        },
-        tags=['geolocalizacao']
+        materialized="incremental",
+        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+        tags=["geolocalizacao"],
+        require_partition_filter=true,
     )
 }}
 /*
@@ -23,51 +20,54 @@ do estado de movimento ('parado', 'andando')
 com o traçado da linha informada.
 5. As junções (joins) são feitas sobre o id_veículo e a timestamp_gps.
 */
-WITH
+with
     registros as (
-    -- 1. registros_filtrada
-    SELECT
-        id_veiculo,
-        timestamp_gps,
-        timestamp_captura,
-        velocidade,
-        servico,
-        latitude,
-        longitude,
-    FROM {{ ref('brt_aux_registros_filtrada') }}
-    {% if is_incremental() -%}
-    WHERE
-      data between DATE("{{var('date_range_start')}}") and DATE("{{var('date_range_end')}}")
-      AND timestamp_gps > "{{var('date_range_start')}}" and timestamp_gps <="{{var('date_range_end')}}"
-      AND DATETIME_DIFF(timestamp_captura, timestamp_gps, MINUTE) BETWEEN 0 AND 1
-    {%- endif -%}
+        -- 1. registros_filtrada
+        select
+            id_veiculo,
+            timestamp_gps,
+            timestamp_captura,
+            velocidade,
+            servico,
+            latitude,
+            longitude,
+        from {{ ref("brt_aux_registros_filtrada") }}
+        {% if is_incremental() -%}
+            where
+                data between date("{{var('date_range_start')}}") and date(
+                    "{{var('date_range_end')}}"
+                )
+                and timestamp_gps > "{{var('date_range_start')}}"
+                and timestamp_gps <= "{{var('date_range_end')}}"
+                and datetime_diff(timestamp_captura, timestamp_gps, minute)
+                between 0 and 1
+        {%- endif -%}
     ),
-    velocidades AS (
-    -- 2. velocidades
-    SELECT
-        id_veiculo, timestamp_gps, servico, velocidade, distancia, flag_em_movimento
-    FROM {{ ref('brt_aux_registros_velocidade') }}
+    velocidades as (
+        -- 2. velocidades
+        select
+            id_veiculo, timestamp_gps, servico, velocidade, distancia, flag_em_movimento
+        from {{ ref("brt_aux_registros_velocidade") }}
     ),
     paradas as (
-    -- 3. paradas
-    SELECT
-        id_veiculo, timestamp_gps, servico, tipo_parada,
-    FROM {{ ref('brt_aux_registros_parada') }}
+        -- 3. paradas
+        select id_veiculo, timestamp_gps, servico, tipo_parada,
+        from {{ ref("brt_aux_registros_parada") }}
     ),
-    flags AS (
-    -- 4. flag_trajeto_correto
-    SELECT
-        id_veiculo,
-        timestamp_gps,
-        servico,
-        route_id,
-        flag_linha_existe_sigmob,
-        flag_trajeto_correto,
-        flag_trajeto_correto_hist
-    FROM {{ ref('brt_aux_registros_flag_trajeto_correto') }}
+    flags as (
+        -- 4. flag_trajeto_correto
+        select
+            id_veiculo,
+            timestamp_gps,
+            servico,
+            route_id,
+            flag_linha_existe_sigmob,
+            flag_trajeto_correto,
+            flag_trajeto_correto_hist
+        from {{ ref("brt_aux_registros_flag_trajeto_correto") }}
     )
 -- 5. Junção final
-SELECT
+select
     "BRT" modo,
     r.timestamp_gps,
     date(r.timestamp_gps) data,
@@ -76,65 +76,63 @@ SELECT
     replace(r.servico, " ", "") as servico,
     r.latitude,
     r.longitude,
-    CASE
-        WHEN
-        flag_em_movimento IS true AND flag_trajeto_correto_hist is true
-        THEN true
-    ELSE false
-    END flag_em_operacao,
+    case
+        when flag_em_movimento is true and flag_trajeto_correto_hist is true
+        then true
+        else false
+    end flag_em_operacao,
     v.flag_em_movimento,
     p.tipo_parada,
     flag_linha_existe_sigmob,
     flag_trajeto_correto,
     flag_trajeto_correto_hist,
-    CASE
-        WHEN flag_em_movimento IS true AND flag_trajeto_correto_hist is true
-        THEN 'Em operação'
-        WHEN flag_em_movimento is true and flag_trajeto_correto_hist is false
-        THEN 'Operando fora trajeto'
-        WHEN flag_em_movimento is false
-        THEN
-            CASE
-                WHEN tipo_parada is not null
-                THEN concat("Parado ", tipo_parada)
-            ELSE
-                CASE
-                    WHEN flag_trajeto_correto_hist is true
-                    THEN 'Parado trajeto correto'
-                ELSE 'Parado fora trajeto'
-                END
-            END
-    END status,
+    case
+        when flag_em_movimento is true and flag_trajeto_correto_hist is true
+        then 'Em operação'
+        when flag_em_movimento is true and flag_trajeto_correto_hist is false
+        then 'Operando fora trajeto'
+        when flag_em_movimento is false
+        then
+            case
+                when tipo_parada is not null
+                then concat("Parado ", tipo_parada)
+                else
+                    case
+                        when flag_trajeto_correto_hist is true
+                        then 'Parado trajeto correto'
+                        else 'Parado fora trajeto'
+                    end
+            end
+    end status,
     r.velocidade velocidade_instantanea,
     v.velocidade velocidade_estimada_10_min,
     v.distancia,
-    "{{ var("version") }}" as versao
-FROM
-    registros r
+    "{{ var(" version ") }}" as versao
+from registros r
 
-JOIN
+join
     flags f
-ON
-    r.id_veiculo = f.id_veiculo
-    AND r.timestamp_gps = f.timestamp_gps
-    AND r.servico = f.servico
+    on r.id_veiculo = f.id_veiculo
+    and r.timestamp_gps = f.timestamp_gps
+    and r.servico = f.servico
 
-JOIN
+join
     velocidades v
-ON
-    r.id_veiculo = v.id_veiculo
-    AND  r.timestamp_gps = v.timestamp_gps
-    AND  r.servico = v.servico
+    on r.id_veiculo = v.id_veiculo
+    and r.timestamp_gps = v.timestamp_gps
+    and r.servico = v.servico
 
-JOIN
+join
     paradas p
-ON
-    r.id_veiculo = p.id_veiculo
-    AND  r.timestamp_gps = p.timestamp_gps
-    AND r.servico = p.servico
+    on r.id_veiculo = p.id_veiculo
+    and r.timestamp_gps = p.timestamp_gps
+    and r.servico = p.servico
 {% if is_incremental() -%}
-  WHERE
-  date(r.timestamp_gps) between DATE("{{var('date_range_start')}}") and DATE("{{var('date_range_end')}}")
-  AND r.timestamp_gps > "{{var('date_range_start')}}" and r.timestamp_gps <="{{var('date_range_end')}}"
-  AND DATETIME_DIFF(r.timestamp_captura, r.timestamp_gps, MINUTE) BETWEEN 0 AND 1
+    where
+        date(r.timestamp_gps) between date("{{var('date_range_start')}}") and date(
+            "{{var('date_range_end')}}"
+        )
+        and r.timestamp_gps > "{{var('date_range_start')}}"
+        and r.timestamp_gps <= "{{var('date_range_end')}}"
+        and datetime_diff(r.timestamp_captura, r.timestamp_gps, minute) between 0 and 1
 {%- endif -%}
