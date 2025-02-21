@@ -19,5 +19,5 @@ data_versao_calc AS (
     ) AS data_versao
   FROM periodo
 )
-SELECT * 
+SELECT *
 FROM data_versao_calc

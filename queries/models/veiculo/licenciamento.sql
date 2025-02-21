@@ -45,7 +45,7 @@ with
             data_inicio_vinculo
         from {{ ref("licenciamento_stu_staging") }} as t
         {% if is_incremental() %}
-            where date(data) = date("{{ licenciamento_date }}") 
+            where date(data) = date("{{ licenciamento_date }}")
         {% else %}
             left join (select distinct data_versao from {{ ref('licenciamento_data_versao_efetiva') }} where data_versao is not null) dve
             on date(t.data) = date(data_versao)
