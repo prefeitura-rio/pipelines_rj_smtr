@@ -3,7 +3,7 @@
 ## [1.0.5] - 2025-02-21
 
 ### Alterado
-- Torna filtro de partição obrigatório nos modelos `sppo_aux_registros_filtrada_zirix.sql` e `gps_sppo_zirix.sql`
+- Torna filtro de partição obrigatório nos modelos `sppo_aux_registros_filtrada_zirix.sql` e `gps_sppo_zirix.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/448)
 
 ## [1.0.4] - 2024-08-09
 

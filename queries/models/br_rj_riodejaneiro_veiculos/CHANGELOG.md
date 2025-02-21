@@ -3,7 +3,7 @@
 ## [1.0.6] - 2025-02-21
 
 ### Alterado
-- Torna filtro de partição obrigatório nos modelos `gps_brt.sql` e `gps_sppo.sql`
+- Torna filtro de partição obrigatório nos modelos `gps_brt.sql` e `gps_sppo.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/448)
 
 ## [1.0.5] - 2024-11-13
 

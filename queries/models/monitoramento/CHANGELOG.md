@@ -3,7 +3,7 @@
 ## [1.3.2] - 2025-02-21
 
 ### Alterado
-- Torna filtro de partição obrigatório no modelo `gps_viagem.sql`
+- Torna filtro de partição obrigatório no modelo `gps_viagem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/448)
 
 ## [1.3.1] - 2025-02-03
 

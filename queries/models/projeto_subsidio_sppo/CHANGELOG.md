@@ -3,7 +3,7 @@
 ## [9.1.8] - 2025-02-21
 
 ### Alterado
-- Torna filtro de partição obrigatório no modelo `registros_status_viagem.sql`
+- Torna filtro de partição obrigatório no modelo `registros_status_viagem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/448)
 
 ## [9.1.7] - 2025-02-05
 
