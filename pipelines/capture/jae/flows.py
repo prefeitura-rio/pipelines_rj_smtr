@@ -126,9 +126,8 @@ backup_billingpay.schedule = Schedule(
     [
         IntervalClock(
             interval=timedelta(days=1),
-            start_date=datetime(
-                2021, 1, 1, 0, 30 * idx, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
-            ),
+            start_date=datetime(2021, 1, 1, 0, 0, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value))
+            + timedelta(minutes=30 * idx),
             labels=[
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
             ],
