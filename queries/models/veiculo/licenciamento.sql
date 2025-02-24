@@ -14,17 +14,18 @@
 
 with
     stu as (
-        select
-            * except (data),date(data) as data,
+        select * except (data), date(data) as data
         from {{ ref("licenciamento_stu_staging") }} as t
         {% if is_incremental() %}
             where date(data) = date("{{ licenciamento_date }}")
         {% endif %}
     ),
-    -- Processo.Rio MTR-DES-2025/09057
+    -- Processo.Rio MTR-CAP-2025/01125 [Correção da alteração indevida do tipo de
+    -- veículo]
     stu_tipo_veiculo as (
-        select * except(tipo_veiculo),
-        case
+        select
+            * except (tipo_veiculo),
+            case
                 when
                     id_veiculo in (
                         "B27131",
@@ -68,13 +69,15 @@ with
                         "B31094",
                         "B31050"
                     )
-                    and date(data) between date(
-                        "2025-02-01"
-                    ) and date("2025-02-17")
+                    and data
+                    between date_add("2025-02-01", interval 5 day) and date_add(
+                        "2025-02-14", interval 5 day
+                    )
+                    and tipo_veiculo = "61 RODOV. C/AR E ELEV"
                 then "51 ONIBUS BS URB C/AR C/E 2CAT"
                 else tipo_veiculo
             end as tipo_veiculo
-            from stu
+        from stu
     ),
     stu_rn as (
         select
