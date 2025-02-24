@@ -160,6 +160,7 @@ def get_table_info(
             - partição do arquivo
     """
     database_url = create_database_url(**database_config)
+    log(database_url)
     engine = create_engine(database_url)
     inspector = inspect(engine)
     tables_config = constants.BACKUP_JAE_BILLING_PAY.value[database_name]
