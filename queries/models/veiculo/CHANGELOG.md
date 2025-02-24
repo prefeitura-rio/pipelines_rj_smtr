@@ -1,6 +1,11 @@
 # Changelog - veiculo
 
-## [1.1.3] - 2025-02-06
+## [2.0.4] - 2025-02-24
+
+### Alterado
+- Alterado o modelo `licenciamento.sql` para corrigir os dados modificados da coluna `tipo_veiculo` conforme Processo.Rio MTR-CAP-2025/01125 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/457)
+
+## [2.0.3] - 2025-02-06
 
 ### Adicionado
 - Adicionados testes no modelo `infracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/401)
