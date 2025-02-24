@@ -78,10 +78,10 @@ class constants(Enum):  # pylint: disable=c0103
             "engine": "postgresql",
             "host": "10.5.113.179",
         },
-        # "iam_db": {
-        #     "engine": "mysql",
-        #     "host": "10.5.13.201",
-        # },
+        "iam_db": {
+            "engine": "mysql",
+            "host": "10.5.13.201",
+        },
         "vendas_db": {
             "engine": "postgresql",
             "host": "10.5.113.30",
@@ -455,21 +455,21 @@ class constants(Enum):  # pylint: disable=c0103
                 "cnab_transaction": ["count(*)"],
             },
         },
-        # "iam_db": {
-        #     "exclude": [
-        #         "gratuidade_import_pcd",
-        #         "CLIENTE_FRAUDE_05092024",
-        #     ],
-        #     "filter": {
-        #         "CONTROLE_CODIGO_VERIFICACAO": ["NR_SEQ"],
-        #         "PERFIL_ACESSO": ["DT_INCLUSAO", "DT_CANCELAMENTO"],
-        #         "SEGURANCA_CONTA_ACESSO": ["DT_INCLUSAO"],
-        #         "CONTA_ACESSO": ["DT_EXPIRACAO", "DT_INCLUSAO"],
-        #         "ATIVACAO_CONTA_ACESSO": ["CRIADO_EM", "DT_ATIVACAO"],
-        #         "CONTA_ACESSO_BACK": ["DT_EXPIRACAO", "DT_INCLUSAO"],
-        #         "check_cadastro_pcd_validado": ["data_nascimento"],
-        #     },
-        # },
+        "iam_db": {
+            "exclude": [
+                "gratuidade_import_pcd",
+                "CLIENTE_FRAUDE_05092024",
+            ],
+            "filter": {
+                "CONTROLE_CODIGO_VERIFICACAO": ["NR_SEQ"],
+                "PERFIL_ACESSO": ["DT_INCLUSAO", "DT_CANCELAMENTO"],
+                "SEGURANCA_CONTA_ACESSO": ["DT_INCLUSAO"],
+                "CONTA_ACESSO": ["DT_EXPIRACAO", "DT_INCLUSAO"],
+                "ATIVACAO_CONTA_ACESSO": ["CRIADO_EM", "DT_ATIVACAO"],
+                "CONTA_ACESSO_BACK": ["DT_EXPIRACAO", "DT_INCLUSAO"],
+                "check_cadastro_pcd_validado": ["data_nascimento"],
+            },
+        },
         "vendas_db": {
             "filter": {
                 "venda": [
