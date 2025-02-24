@@ -20,12 +20,70 @@ with
             where date(data) = date("{{ licenciamento_date }}")
         {% endif %}
     ),
+    -- Processo.Rio MTR-CAP-2025/01125 [Correção da alteração do tipo de veículo]
+    stu_tipo_veiculo as (
+        select
+            * except (tipo_veiculo),
+            case
+                when
+                    id_veiculo in (
+                        "B27131",
+                        "B27009",
+                        "B27013",
+                        "B27014",
+                        "B27019",
+                        "B27020",
+                        "B27005",
+                        "B27075",
+                        "B27087",
+                        "B27085",
+                        "B27084",
+                        "B27025",
+                        "B27074",
+                        "B27070",
+                        "B27076",
+                        "B27026",
+                        "D13132",
+                        "D13128",
+                        "D13127",
+                        "D13126",
+                        "D13124",
+                        "C47600",
+                        "C47577",
+                        "C47584",
+                        "C47530",
+                        "C47543",
+                        "C47545",
+                        "B31101",
+                        "B31103",
+                        "B31102",
+                        "B31054",
+                        "B31055",
+                        "B31057",
+                        "B31058",
+                        "B31066",
+                        "B31100",
+                        "B31051",
+                        "B31099",
+                        "B31094",
+                        "B31050"
+                    )
+                    and data
+                    between date_add("2025-02-01", interval 5 day) and date_add(
+                        "2025-02-14", interval 5 day
+                    )
+                    and tipo_veiculo = "61 RODOV. C/AR E ELEV"
+                then "51 ONIBUS BS URB C/AR C/E 2CAT"
+                else tipo_veiculo
+            end as tipo_veiculo
+        from stu
+    ),
     stu_rn as (
         select
             * except (timestamp_captura),
             extract(year from data_ultima_vistoria) as ano_ultima_vistoria,
             row_number() over (partition by data, id_veiculo) rn
-        from stu
+        from stu_tipo_veiculo
     ),
     stu_ano_ultima_vistoria as (
         -- Temporariamente considerando os dados de vistoria enviados pela TR/SUBTT/CGLF
