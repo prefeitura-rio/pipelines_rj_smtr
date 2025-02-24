@@ -59,6 +59,6 @@ with
                 (select max_latitude from box)
             )
     )
-select * except (rn), "{{ var(" version ") }}" as versao
+select * except (rn), '{{ var("version") }}' as versao
 from filtrada
 where rn = 1
