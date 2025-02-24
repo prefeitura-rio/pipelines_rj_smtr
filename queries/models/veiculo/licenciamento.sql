@@ -15,9 +15,16 @@
 with
     stu as (
         select
-            * except (data, tipo_veiculo),
-            date(data) as data,
-            case
+            * except (data),date(data) as data,
+        from {{ ref("licenciamento_stu_staging") }} as t
+        {% if is_incremental() %}
+            where date(data) = date("{{ licenciamento_date }}")
+        {% endif %}
+    ),
+    -- Processo.Rio MTR-DES-2025/09057
+    stu_tipo_veiculo as (
+        select * except(tipo_veiculo),
+        case
                 when
                     id_veiculo in (
                         "B27131",
@@ -62,22 +69,19 @@ with
                         "B31050"
                     )
                     and date(data) between date(
-                        "{{ var('licenciamento_tipo_veiculo_inicio') }}"
-                    ) and date("{{ var('licenciamento_tipo_veiculo_fim') }}")
+                        "2025-02-01"
+                    ) and date("2025-02-17")
                 then "51 ONIBUS BS URB C/AR C/E 2CAT"
                 else tipo_veiculo
             end as tipo_veiculo
-        from {{ ref("licenciamento_stu_staging") }} as t
-        {% if is_incremental() %}
-            where date(data) = date("{{ licenciamento_date }}")
-        {% endif %}
+            from stu
     ),
     stu_rn as (
         select
             * except (timestamp_captura),
             extract(year from data_ultima_vistoria) as ano_ultima_vistoria,
             row_number() over (partition by data, id_veiculo) rn
-        from stu
+        from stu_tipo_veiculo
     ),
     stu_ano_ultima_vistoria as (
         -- Temporariamente considerando os dados de vistoria enviados pela TR/SUBTT/CGLF
