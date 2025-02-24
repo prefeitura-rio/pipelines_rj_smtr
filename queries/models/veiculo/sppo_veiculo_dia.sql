@@ -62,8 +62,8 @@ with
     ),
     gps as (
         select distinct data, id_veiculo
-        from {{ ref("gps_sppo") }}
-           -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
+        from -- {{ ref("gps_sppo") }}
+            `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
         where data = date("{{ var('run_date') }}")
     ),
     autuacoes as (
@@ -241,24 +241,24 @@ with
         left join autuacoes_agg as a using (data, placa)
         left join registros_agente_verao as r using (data, id_veiculo)
     )
+select
+    gla.* except (indicadores, tecnologia, placa),
+    to_json(indicadores) as indicadores,
+    {% if var("run_date") >= var("DATA_SUBSIDIO_V13_INICIO") %}
+        tecnologia,
+        placa,
+        date("{{ licenciamento_date }}") as data_licenciamento,
+        date("{{ infracao_date }}") as data_infracao,
+    {% else %}
+        safe_cast(null as string) as tecnologia,
+        safe_cast(null as string) as placa,
+        safe_cast(null as date) as data_licenciamento,
+        safe_cast(null as date) as data_infracao,
+    {% endif %}
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+    "{{ var('version') }}" as versao,
 {% if var("run_date") < var("DATA_SUBSIDIO_V5_INICIO") %}
-    select
-        gla.* except (indicadores, tecnologia, placa),
-        to_json(indicadores) as indicadores,
         status,
-        {% if var("run_date") >= var("DATA_SUBSIDIO_V13_INICIO") %}
-            tecnologia,
-            placa,
-            date("{{ licenciamento_date }}") as data_licenciamento,
-            date("{{ infracao_date }}") as data_infracao,
-        {% else %}
-            safe_cast(null as string) as tecnologia,
-            safe_cast(null as string) as placa,
-            safe_cast(null as date) as data_licenciamento,
-            safe_cast(null as date) as data_infracao,
-        {% endif %}
-        current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
-        "{{ var('version') }}" as versao
     from gps_licenciamento_autuacao as gla
     left join
         {{ ref("subsidio_parametros") }} as p
@@ -276,9 +276,6 @@ with
         = p.indicador_registro_agente_verao_ar_condicionado
         and (data between p.data_inicio and p.data_fim)
 {% else %}
-    select
-        * except (indicadores, tecnologia, placa),
-        to_json(indicadores) as indicadores,
         case
             when indicadores.indicador_licenciado is false
             then "Não licenciado"
@@ -304,18 +301,5 @@ with
             then "Licenciado com ar e não autuado"
             else null
         end as status,
-        {% if var("run_date") >= var("DATA_SUBSIDIO_V13_INICIO") %}
-            tecnologia,
-            placa,
-            date("{{ licenciamento_date }}") as data_licenciamento,
-            date("{{ infracao_date }}") as data_infracao,
-        {% else %}
-            safe_cast(null as string) as tecnologia,
-            safe_cast(null as string) as placa,
-            safe_cast(null as date) as data_licenciamento,
-            safe_cast(null as date) as data_infracao,
-        {% endif %}
-        current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
-        "{{ var('version') }}" as versao
-    from gps_licenciamento_autuacao
+    from gps_licenciamento_autuacao as gla
 {% endif %}

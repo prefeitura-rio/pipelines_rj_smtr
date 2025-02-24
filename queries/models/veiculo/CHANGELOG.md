@@ -1,6 +1,15 @@
 # Changelog - veiculo
 
-## [1.1.3] - 2025-02-06
+## [2.0.4] - 2025-02-17
+
+### Corrigido
+- Corrigida a coluna placa no modelo `infracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/434)
+
+### Alterado
+- Removida a da coluna status e adicionados os dados do modelo `sppo_licenciamento_solicitacao` entre `2022-03-21` e `2023-03-09` no modelo `licenciamento.sql`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/434)
+- Refatorada a query final no modelo `sppo_veiculo_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/434)
+
+## [2.0.3] - 2025-02-06
 
 ### Adicionado
 - Adicionados testes no modelo `infracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/401)
