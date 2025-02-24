@@ -3,7 +3,7 @@
 ## [2.0.4] - 2025-02-24
 
 ### Alterado
-- Alterado o modelo `licenciamento.sql` para corrigir os dados modificados indevidamente da coluna `tipo_veiculo` conforme Processo.Rio MTR-CAP-2025/01125 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/457)
+- Alterado o modelo `licenciamento.sql` para corrigir os dados modificados da coluna `tipo_veiculo` conforme Processo.Rio MTR-CAP-2025/01125 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/457)
 
 ## [2.0.3] - 2025-02-06
 

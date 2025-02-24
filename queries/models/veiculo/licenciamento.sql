@@ -20,8 +20,7 @@ with
             where date(data) = date("{{ licenciamento_date }}")
         {% endif %}
     ),
-    -- Processo.Rio MTR-CAP-2025/01125 [Correção da alteração indevida do tipo de
-    -- veículo]
+    -- Processo.Rio MTR-CAP-2025/01125 [Correção da alteração do tipo de veículo]
     stu_tipo_veiculo as (
         select
             * except (tipo_veiculo),
