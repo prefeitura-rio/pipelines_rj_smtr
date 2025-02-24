@@ -219,7 +219,11 @@ vars:
 
 tests:
   rj_smtr:
-    where: "DATA BETWEEN DATE('__date_range_start__') AND DATE('__date_range_end__')"
+    where: "data between date('{date_range_start}') and date('{date_range_end}')"
+    dashboard_subsidio_sppo:
+      where: "data between date('{date_range_start}') and date('{date_range_end}') and data < date('{DATA_SUBSIDIO_V9_INICIO}')"
+    dashboard_subsidio_sppo_v2:
+      where: "data between date('{date_range_start}') and date('{date_range_end}') and data < date('{DATA_SUBSIDIO_V14_INICIO}')"
 
 models:
   +persist_docs:
