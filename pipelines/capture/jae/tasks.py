@@ -281,18 +281,19 @@ def get_non_filtered_tables(
         bool: Se deve notificar o discord ou não
         list[dict]: Dicionário com as tabelas com mais de 5000 registros
     """
-    if len(table_info) == 0:
-        return False, []
     tables_config = constants.BACKUP_JAE_BILLING_PAY.value[database_name]
+    no_filter_tables = [
+        t["table_name"]
+        for t in table_info
+        if t["table_name"] not in tables_config.get("filter", [])
+    ]
+    if len(no_filter_tables) == 0:
+        return False, []
     database_url = create_database_url(**database_config)
     engine = create_engine(database_url)
     result = []
     with engine.connect() as conn:
-        for table in [
-            t["table_name"]
-            for t in table_info
-            if t["table_name"] not in tables_config.get("filter", [])
-        ]:
+        for table in no_filter_tables:
             df = pd.read_sql(f"select count(*) as ct from {table}", conn)
             df["table"] = table
             result.append(df)
