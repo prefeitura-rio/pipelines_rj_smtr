@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [7.1.1] - 2025-02-21
+
+### Alterado
+
+- Altera modelo `viagens_remuneradas` para não incrementar dados anteriores a `DATA_SUBSIDIO_V3A_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/447)
+
 ## [7.1.0] - 2025-02-17
 
 ### Corrigido
