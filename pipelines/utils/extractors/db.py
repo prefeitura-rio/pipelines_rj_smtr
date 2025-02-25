@@ -37,7 +37,6 @@ def get_raw_db(
         password=password,
         database=database,
     )
-    log(url)
     connection = create_engine(url)
     max_retries = 10
     for retry in range(1, max_retries + 1):
