@@ -1,5 +1,10 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.1.9] - 2025-02-25
+
+### Alterado
+- Torna filtro de partição obrigatório no modelo `registros_status_viagem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/448)
+
 ## [9.1.8] - 2025-02-24
 
 ### Adicionado
