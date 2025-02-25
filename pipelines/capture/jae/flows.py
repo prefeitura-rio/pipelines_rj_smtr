@@ -90,11 +90,11 @@ with Flow("jae: backup dados BillingPay") as backup_billingpay:
             table_count=table_count,
         )
 
-        # send_discord_message = log_discord(
-        #     message=message,
-        #     key=constants.ALERT_WEBHOOK.value,
-        #     dados_tag=True,
-        # )
+        send_discord_message = log_discord(
+            message=message,
+            key=constants.ALERT_WEBHOOK.value,
+            dados_tag=True,
+        )
 
     table_info = get_raw_backup_billingpay(
         table_info=table_info,
