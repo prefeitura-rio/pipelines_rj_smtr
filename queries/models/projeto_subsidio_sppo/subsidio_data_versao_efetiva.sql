@@ -369,6 +369,9 @@ WITH
       WHEN data BETWEEN DATE(2025,01,11) AND DATE(2025,01,12) THEN "Extraordinária - Verão" -- Processo.Rio MTR-DES-2025/00831
       WHEN data BETWEEN DATE(2025,01,18) AND DATE(2025,01,20) THEN "Extraordinária - Verão" -- Processo.Rio MTR-DES-2025/01760 e MTR-DES-2025/02195
       WHEN data BETWEEN DATE(2025,01,25) AND DATE(2025,01,26) THEN "Extraordinária - Verão" -- Processo.Rio MTR-DES-2025/01468
+      WHEN data BETWEEN DATE(2025,02,01) AND DATE(2025,02,02) THEN "Extraordinária - Verão" -- Processo.Rio MTR-DES-2025/04515
+      WHEN data BETWEEN DATE(2025,02,08) AND DATE(2025,02,09) THEN "Extraordinária - Verão" -- Processo.Rio MTR-PRO-2025/02376
+      WHEN data = DATE(2025,02,15) THEN "Extraordinária - Verão" -- Processo.Rio MTR-PRO-2025/03046
       ELSE "Regular"
     END AS tipo_os,
   FROM UNNEST(GENERATE_DATE_ARRAY("{{var('DATA_SUBSIDIO_V6_INICIO')}}", "2025-12-31")) AS data),
