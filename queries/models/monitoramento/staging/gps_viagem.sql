@@ -7,6 +7,7 @@
             "granularity": "day",
         },
         incremental_strategy="insert_overwrite",
+        require_partition_filter=true,
     )
 }}
 
