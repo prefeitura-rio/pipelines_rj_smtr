@@ -180,10 +180,10 @@ class constants(Enum):  # pylint: disable=c0103
                     "DT_ABERTURA",
                     "DT_FECHAMENTO",
                 ],
-                # "CLIENTE_IMAGEM": [
-                #     "DT_INCLUSAO",
-                #     "DT_ALTERACAO",
-                # ],
+                "CLIENTE_IMAGEM": [
+                    "DT_INCLUSAO",
+                    "DT_ALTERACAO",
+                ],
                 "IMPORTA_DET_LOTE_VT": ["DT_INCLUSAO"],
                 "ITEM_PEDIDO_ENDERECO": ["DT_INCLUSAO"],
                 "CLIENTE_FAVORECIDO": [
@@ -212,6 +212,19 @@ class constants(Enum):  # pylint: disable=c0103
                     "DT_CANCELAMENTO",
                 ],
                 "pcd_mae": ["count(*)"],
+            },
+            "custom_select": {
+                "CLIENTE_IMAGEM": """
+                    select
+                        *
+                    from CLIENTE_IMAGEM
+                    where ID_CLIENTE_IMAGEM IN (
+                        select distinct
+                            ID_CLIENTE_IMAGEM
+                        from CLIENTE_IMAGEM
+                        where {filter}
+                    )
+                """,
             },
         },
         "tarifa_db": {
@@ -446,7 +459,13 @@ class constants(Enum):  # pylint: disable=c0103
                 "midia_jall": ["count(*)"],
             },
         },
-        # "processador_transacao_db": {},
+        "processador_transacao_db": {
+            "filter": {
+                "transacao_erro": ["dt_inclusao"],
+                "transacao_processada": ["dt_inclusao"],
+                "transacao_recebida": ["dt_inclusao"],
+            }
+        },
         "atendimento_db": {},
         "gateway_pagamento_db": {
             "filter": {
@@ -479,5 +498,28 @@ class constants(Enum):  # pylint: disable=c0103
                     "dt_venda",
                 ]
             }
+        },
+    }
+
+    BACKUP_JAE_BILLING_PAY_HISTORIC = {
+        "principal_db": {
+            "CLIENTE_IMAGEM": {
+                "start": datetime(2023, 6, 13, 15, 0, 0),
+                "end": datetime(2025, 2, 27, 0, 0, 0),
+            },
+        },
+        "processador_transacao_db": {
+            "transacao_erro": {
+                "start": datetime(2023, 7, 17, 15, 0, 0),
+                "end": datetime(2025, 2, 27, 0, 0, 0),
+            },
+            "transacao_processada": {
+                "start": datetime(2023, 7, 17, 15, 0, 0),
+                "end": datetime(2025, 2, 27, 0, 0, 0),
+            },
+            "transacao_recebida": {
+                "start": datetime(2023, 7, 17, 15, 0, 0),
+                "end": datetime(2025, 2, 27, 0, 0, 0),
+            },
         },
     }
