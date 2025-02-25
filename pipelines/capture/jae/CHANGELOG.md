@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [1.3.0] - 2025-02-25
+
+### Adicionado
+
+- Cria flow `backup_billingpay_historico` para captura dos dados históricos das tabelas grandes (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/455)
+
 ## [1.2.1] - 2025-02-20
 
 ### Alterado
