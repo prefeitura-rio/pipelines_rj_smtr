@@ -397,7 +397,6 @@ def get_raw_backup_billingpay(
             where = f"{id_column} BETWEEN {table['last_capture']} AND {max_id}"
             table["redis_save_value"] = max_id
         sql = sql.format(filter=where)
-        # sql += f" WHERE {where}"
 
         filepath = get_table_data_backup_billingpay(
             query=sql, filepath=table["filepath"], **database_config
@@ -495,7 +494,7 @@ def get_timestamps_historic_table(
             f"{env}.backup_jae_billingpay_historic_capture.{database_name}.{table['table_name']}"
         )
         content = redis_client.get(redis_key)
-        print(content)
+
         if content is None:
             table["timestamp"] = convert_timezone(capture_tables[table["table_name"]]["start"])
         else:
