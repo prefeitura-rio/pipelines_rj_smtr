@@ -225,6 +225,7 @@ class constants(Enum):  # pylint: disable=c0103
                     )
                 """,
             },
+            "page_size": {"CLIENTE_IMAGEM": 1000},
         },
         "tarifa_db": {
             "exclude": ["linha_tarifa"],
