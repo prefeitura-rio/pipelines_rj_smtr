@@ -399,7 +399,12 @@ def get_raw_backup_billingpay(
         sql = sql.format(filter=where)
 
         filepath = get_table_data_backup_billingpay(
-            query=sql, filepath=table["filepath"], **database_config
+            query=sql,
+            filepath=table["filepath"],
+            page_size=constants.BACKUP_JAE_BILLING_PAY.value[database_config["database"]]
+            .get("page_size", {})
+            .get(table_name, 200_000),
+            **database_config,
         )
         table["filepath"] = filepath
         new_table_info.append(table)
