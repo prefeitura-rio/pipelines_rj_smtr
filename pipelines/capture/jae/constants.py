@@ -246,6 +246,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "us_rules": ["count(*)"],
                 "us_lex": ["count(*)"],
                 "us_gaz": ["count(*)"],
+                "midia_jall": ["count(*)"],
             },
         },
         "tracking_db": {
