@@ -505,21 +505,21 @@ class constants(Enum):  # pylint: disable=c0103
         "principal_db": {
             "CLIENTE_IMAGEM": {
                 "start": datetime(2023, 6, 13, 15, 0, 0),
-                "end": datetime(2025, 2, 27, 0, 0, 0),
+                "end": datetime(2025, 2, 26, 0, 0, 0),
             },
         },
         "processador_transacao_db": {
             "transacao_erro": {
                 "start": datetime(2023, 7, 17, 15, 0, 0),
-                "end": datetime(2025, 2, 27, 0, 0, 0),
+                "end": datetime(2025, 2, 26, 0, 0, 0),
             },
             "transacao_processada": {
                 "start": datetime(2023, 7, 17, 15, 0, 0),
-                "end": datetime(2025, 2, 27, 0, 0, 0),
+                "end": datetime(2025, 2, 26, 0, 0, 0),
             },
             "transacao_recebida": {
                 "start": datetime(2023, 7, 17, 15, 0, 0),
-                "end": datetime(2025, 2, 27, 0, 0, 0),
+                "end": datetime(2025, 2, 26, 0, 0, 0),
             },
         },
     }
