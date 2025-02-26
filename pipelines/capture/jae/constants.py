@@ -145,7 +145,6 @@ class constants(Enum):  # pylint: disable=c0103
                 "LINHA_CONSORCIO",
                 "LINHA_CONSORCIO_OPERADORA_TRANSPORTE",
                 "ENDERECO",
-                "CLIENTE_IMAGEM",
                 "check_cadastro_pcd_validado",
                 "importa_pcd_pf",
                 "gratuidade_import_pcd",
