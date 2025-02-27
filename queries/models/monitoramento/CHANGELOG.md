@@ -1,5 +1,10 @@
 # Changelog - monitoramento
 
+## [1.3.4] - 2025-02-27
+
+### Corrigido
+- Corrige os valores as colunas `valor_subsidio_pago` e `valor_penalidade` antes da apuração por faixa no modelo `monitoramento_servico_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/465)
+
 ## [1.3.2] - 2025-02-21
 
 ### Alterado
