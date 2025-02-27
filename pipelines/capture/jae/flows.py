@@ -169,6 +169,7 @@ with Flow("jae: backup historico BillingPay") as backup_billingpay_historico:
     table_info = get_end_value_historic_table(
         table_info=table_info,
         database_name=database_name,
+        database_config=database_config,
     )
 
     table_info = get_raw_backup_billingpay(
