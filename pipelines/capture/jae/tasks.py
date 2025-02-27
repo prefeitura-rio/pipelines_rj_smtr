@@ -142,7 +142,7 @@ def get_table_info(
     database_name: str,
     database_config: dict,
     timestamp: datetime,
-    historic: bool = False,
+    table_id: bool = False,
 ) -> list[dict[str, str]]:
     """
     Busca as informações de todas as tabelas disponíveis em um banco de dados
@@ -167,9 +167,8 @@ def get_table_info(
     inspector = inspect(engine)
     tables_config = constants.BACKUP_JAE_BILLING_PAY.value[database_name]
     partition = create_partition(timestamp=timestamp, partition_date_only=True)
-    if historic:
-        table_names = constants.BACKUP_JAE_BILLING_PAY_HISTORIC.value[database_name].keys()
-
+    if table_id is not None:
+        table_names = [table_id]
     else:
         table_names = [
             t
