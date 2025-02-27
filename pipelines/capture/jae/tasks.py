@@ -521,7 +521,9 @@ def get_timestamps_historic_table(
 
 
 @task
-def get_end_value_historic_table(table_info: list[dict], database_name: str) -> list[dict]:
+def get_end_value_historic_table(
+    table_info: list[dict], database_name: str, database_config: dict
+) -> list[dict]:
     """
     Atualiza as informações da tabela com o timestamp e o ultimo valor para capturar o histórico
     das tabelas grandes
@@ -535,14 +537,44 @@ def get_end_value_historic_table(table_info: list[dict], database_name: str) -> 
     """
     result = []
     for table in table_info:
+        table_name = table["table_name"]
         table_end = convert_timezone(
-            constants.BACKUP_JAE_BILLING_PAY_HISTORIC.value[database_name][table["table_name"]][
-                "end"
-            ]
+            constants.BACKUP_JAE_BILLING_PAY_HISTORIC.value[database_name][table_name]["end"]
         )
         if table["timestamp"] == table_end:
             continue
-        table["last_value"] = min(table["timestamp"] + timedelta(days=1), table_end)
+        filter_columns = constants.BACKUP_JAE_BILLING_PAY.value[database_config["database"]][
+            "filter"
+        ][table_name]
+
+        if len(filter_columns) == 1:
+            if table["custom_select"] is not None:
+                sql = table["custom_select"]
+            else:
+                sql = f"SELECT * FROM {table['table_name']}"
+
+            if "{filter}" not in sql:
+                sql += " WHERE {filter}"
+
+            last_capture_str = (
+                table["last_capture"].astimezone(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S")
+            )
+
+            where = f"{filter_columns[0]} >= '{last_capture_str}'"
+
+            sql = sql.format(filter=where)
+            max_dt = get_raw_db(
+                f"select max({filter_columns[0]}) as max_dt FROM ({sql} limit 2000000) a",
+                **database_config,
+            )[0]["max_dt"]
+            max_dt = min(
+                convert_timezone(max_dt.tz_localize("UTC").to_pydatetime()),
+                table["timestamp"] + timedelta(days=1),
+            )
+        else:
+            max_dt = table["timestamp"] + timedelta(days=1)
+
+        table["last_value"] = min(max_dt, table_end)
 
         result.append(table)
     return result
