@@ -203,7 +203,7 @@ backup_billingpay_historico.state_handlers = [
 backup_billingpay_historico.schedule = Schedule(
     [
         IntervalClock(
-            interval=timedelta(hours=2),
+            interval=timedelta(hours=1),
             start_date=datetime(
                 2021, 1, 1, 0, 0, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
             ),
