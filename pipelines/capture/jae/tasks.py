@@ -542,7 +542,7 @@ def get_end_value_historic_table(table_info: list[dict], database_name: str) -> 
         )
         if table["timestamp"] == table_end:
             continue
-        table["last_value"] = min(table["timestamp"] + timedelta(days=2), table_end)
+        table["last_value"] = min(table["timestamp"] + timedelta(days=1), table_end)
 
         result.append(table)
     return result
