@@ -567,7 +567,10 @@ def get_end_value_historic_table(
                 f"select max({filter_columns[0]}) as max_dt FROM ({sql} limit 2000000) a",
                 **database_config,
             )[0]["max_dt"]
-            max_dt = convert_timezone(max_dt.tz_localize("UTC").to_pydatetime())
+            max_dt = min(
+                convert_timezone(max_dt.tz_localize("UTC").to_pydatetime()),
+                table["timestamp"] + timedelta(days=1),
+            )
         else:
             max_dt = table["timestamp"] + timedelta(days=1)
 
