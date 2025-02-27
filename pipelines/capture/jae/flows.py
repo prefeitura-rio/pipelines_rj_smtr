@@ -143,6 +143,7 @@ backup_billingpay.schedule = Schedule(
 with Flow("jae: backup historico BillingPay") as backup_billingpay_historico:
 
     database_name = Parameter(name="database_name")
+    table_id = Parameter(name="table_id")
 
     env = get_run_env()
 
@@ -157,7 +158,7 @@ with Flow("jae: backup historico BillingPay") as backup_billingpay_historico:
         database_name=database_name,
         database_config=database_config,
         timestamp=timestamp,
-        historic=True,
+        table_id=table_id,
     )
 
     table_info = get_timestamps_historic_table(
@@ -204,15 +205,16 @@ backup_billingpay_historico.state_handlers = [
 backup_billingpay_historico.schedule = Schedule(
     [
         IntervalClock(
-            interval=timedelta(hours=1),
+            interval=timedelta(minutes=20),
             start_date=datetime(
                 2021, 1, 1, 0, 0, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
             ),
             labels=[
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
             ],
-            parameter_defaults={"database_name": db},
+            parameter_defaults={"database_name": db, "table_id": t},
         )
-        for db in constants.BACKUP_JAE_BILLING_PAY_HISTORIC.value.keys()
+        for db, v in constants.BACKUP_JAE_BILLING_PAY_HISTORIC.value.items()
+        for t in v.keys()
     ]
 )
