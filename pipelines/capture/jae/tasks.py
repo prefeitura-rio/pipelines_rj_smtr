@@ -142,7 +142,7 @@ def get_table_info(
     database_name: str,
     database_config: dict,
     timestamp: datetime,
-    table_id: bool = False,
+    table_id: str = None,
 ) -> list[dict[str, str]]:
     """
     Busca as informações de todas as tabelas disponíveis em um banco de dados
@@ -152,7 +152,6 @@ def get_table_info(
         database_name (str): Nome do banco de dados
         database_config (dict): Dicionário com os argumentos para a função create_database_url
         timestamp (datetime): Timestamp de referência da execução
-        historic (bool): Se a captura será historica ou não
 
     Returns:
         list[dict[str, str]]: Lista com dicionários contendo:
