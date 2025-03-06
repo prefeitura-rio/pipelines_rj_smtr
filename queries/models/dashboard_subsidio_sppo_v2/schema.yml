@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: sumario_faixa_servico_dia
-    description: "Sumário do subsídio dos serviços de ônibus [SPPO] por dia e faixa horária [Descontinuada a partir de 2025-01-05]"
+    description: "Sumário do subsídio dos serviços de ônibus [SPPO] por dia e faixa horária [Dados entre 2024-08-16 e 2025-01-05]"
     tests:
       - check_km_planejada:
           name: check_km_planejada__sumario_faixa_servico_dia
@@ -10,10 +10,11 @@ models:
       - name: data
         description: "Data de emissão do sinal de GPS"
         tests:
-          - dbt_expectations.expect_column_max_to_be_between:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'2024-08-15'"
               max_value: "'{{ var('DATA_SUBSIDIO_V14_INICIO') }}'"
               strictly: true
-              name: dbt_expectations.expect_column_max_to_be_between__data__sumario_faixa_servico_dia
+              name: dbt_expectations.expect_column_values_to_be_between__data__sumario_faixa_servico_dia
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: faixa_horaria_inicio
@@ -251,7 +252,7 @@ models:
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: sumario_servico_dia_pagamento
-    description: "Sumário do subsídio dos serviços de ônibus [SPPO] por dia [Descontinuada a partir de 2025-01-05]"
+    description: "Sumário do subsídio dos serviços de ônibus [SPPO] por dia [Dados entre 2024-08-16 e 2025-01-05]"
     tests:
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data
@@ -287,10 +288,11 @@ models:
         tests:
           - not_null:
               name: not_null__data__sumario_servico_dia_pagamento
-          - dbt_expectations.expect_column_max_to_be_between:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'2024-08-15'"
               max_value: "'{{ var('DATA_SUBSIDIO_V14_INICIO') }}'"
               strictly: true
-              name: dbt_expectations.expect_column_max_to_be_between__data__sumario_servico_dia_pagamento
+              name: dbt_expectations.expect_column_values_to_be_between__data__sumario_servico_dia_pagamento
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
         tests:
