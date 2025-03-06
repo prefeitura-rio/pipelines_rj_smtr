@@ -10,13 +10,14 @@ select
     km_apurada,
     km_planejada,
     perc_km_planejada,
-    valor_subsidio_pago,
-    valor_penalidade
+    valor_subsidio_pago + coalesce(valor_penalidade, 0) as valor_subsidio_pago,
+    coalesce(valor_penalidade, 0) as valor_penalidade
 from {{ ref("sumario_servico_dia_historico") }}
--- `rj-smtr.dashboard_subsidio_sppo.sumario_servico_dia_historico`
+    -- `rj-smtr.dashboard_subsidio_sppo.sumario_servico_dia_historico`
 where
-    data < DATE("{{ var("DATA_SUBSIDIO_V9_INICIO") }}") --noqa
+    data < date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}")  -- noqa
     {% if is_incremental() %}
-        AND data BETWEEN DATE("{{ var("start_date") }}")
-        AND DATE_ADD(DATE("{{ var("end_date") }}"), INTERVAL 1 DAY)
+        and data between date("{{ var('start_date') }}") and date_add(
+            date("{{ var('end_date') }}"), interval 1 day
+        )
     {% endif %}
