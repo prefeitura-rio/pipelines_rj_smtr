@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: subsidio_faixa_servico_dia_tipo_viagem
-    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia, faixa horária e tipo de viagem"
+    description: "Sumário do subsídio dos serviços de ônibus [SPPO] por dia, faixa horária e tipo de viagem"
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS"
@@ -47,10 +47,16 @@ models:
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: subsidio_sumario_servico_dia_pagamento
-    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia (Descontinuada a partir de 2025-01-05)"
+    description: "Sumário do subsídio dos serviços de ônibus [SPPO] por dia [Dados entre 2024-08-16 e 2025-01-05]"
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS"
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'2024-08-15'"
+              max_value: "'{{ var('DATA_SUBSIDIO_V14_INICIO') }}'"
+              strictly: true
+              name: dbt_expectations.expect_column_values_to_be_between__data__subsidio_sumario_servico_dia_pagamento
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: consorcio
@@ -84,7 +90,7 @@ models:
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: subsidio_penalidade_servico_faixa
-    description: "Tabela com o valor penalidade dos serviços de ônibus (SPPO) por faixa horária e serviço"
+    description: "Tabela com o valor penalidade dos serviços de ônibus [SPPO] por faixa horária e serviço"
     columns:
       - name: data
         description: "{{ doc('data_gps') }}"

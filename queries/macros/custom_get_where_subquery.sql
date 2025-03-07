@@ -1,21 +1,20 @@
 {% macro get_where_subquery(relation) -%}
-    {% set where = config.get('where') %}
+    {% set where = config.get("where") %}
     {% if where %}
-        {% if "__date_range_start__" in where %}
-            {# replace placeholder string with result of custom macro #}
-            {% set date_range_start = var('date_range_start') %}
-            {% set where = where | replace("__date_range_start__", date_range_start) %}
-        {% endif %}
-        {% if "__date_range_end__" in where %}
-            {# replace placeholder string with result of custom macro #}
-            {% set date_range_end = var('date_range_end') %}
-            {% set where = where | replace("__date_range_end__", date_range_end) %}
-        {% endif %}
-        {%- set filtered -%}
-            (select * from {{ relation }} where {{ where }})
-        {%- endset -%}
-        {% do return(filtered) %}
-    {%- else -%}
-        {% do return(relation) %}
+        {% set re = modules.re %}
+        {% set final_where = namespace(value=where) %}
+
+        {% set matches = re.finditer("\{([^}]+)\}", where) %}
+
+        {% for match in matches %}
+            {% set var_name = match.group(1) %}
+            {% set var_value = var(var_name) %}
+            {% set var_replace = "{" ~ var_name ~ "}" %}
+            {% set final_where.value = final_where.value.replace(
+                var_replace, var_value
+            ) %}
+        {% endfor %}
+        (select * from {{ relation }} where {{ final_where.value }})
+    {%- else -%} {{ relation }}
     {%- endif -%}
 {%- endmacro %}
