@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.2.0] - 2025-03-07
+
+### Adicionado
+
+- Altera os dias `2025-02-16`, `2025-02-22` e `2025-02-23` para tipo_dia `Verão` e `2025-02-28` para tipo_dia `Ponto Facultativo` no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
 ## [9.1.9] - 2025-02-25
 
 ### Alterado
