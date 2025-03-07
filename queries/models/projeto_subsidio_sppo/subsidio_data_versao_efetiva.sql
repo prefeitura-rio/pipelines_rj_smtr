@@ -326,6 +326,7 @@ WITH
       WHEN data = "2024-10-28" THEN "Ponto Facultativo" -- Ponto Facultativo - Dia do Servidor Público - (Processo.Rio MTR-DES-2024/64417)
       WHEN data BETWEEN DATE(2024,11,18) AND DATE(2024,11,19) THEN "Ponto Facultativo" -- Ponto Facultativo - G20 - (Processo.Rio MTR-DES-2024/67477)
       WHEN data = DATE(2024,12,24) THEN "Ponto Facultativo" -- Ponto Facultativo - Véspera de Natal - (Processo.Rio MTR-DES-2024/75723)
+      WHEN data = DATE(2025,02,28) THEN "Ponto Facultativo" -- Ponto Facultativo - Sexta-feira de Carnaval - (Processo.Rio MTR-PRO-2025/03920)
       WHEN EXTRACT(DAY FROM data) = 20 AND EXTRACT(MONTH FROM data) = 1 THEN "Domingo" -- Dia de São Sebastião -- Art. 8°, I - Lei Municipal nº 5146/2010
       WHEN EXTRACT(DAY FROM data) = 23 AND EXTRACT(MONTH FROM data) = 4 THEN "Domingo" -- Dia de São Jorge -- Art. 8°, II - Lei Municipal nº 5146/2010 / Lei Estadual Nº 5198/2008 / Lei Estadual Nº 5645/2010
       WHEN EXTRACT(DAY FROM data) = 20 AND EXTRACT(MONTH FROM data) = 11 THEN "Domingo" -- Aniversário de morte de Zumbi dos Palmares / Dia da Consciência Negra -- Art. 8°, IV - Lei Municipal nº 5146/2010 / Lei Estadual nº 526/1982 / Lei Estadual nº 1929/1991 / Lei Estadual nº 4007/2002 / Lei Estadual Nº 5645/2010
@@ -371,7 +372,8 @@ WITH
       WHEN data BETWEEN DATE(2025,01,25) AND DATE(2025,01,26) THEN "Extraordinária - Verão" -- Processo.Rio MTR-DES-2025/01468
       WHEN data BETWEEN DATE(2025,02,01) AND DATE(2025,02,02) THEN "Extraordinária - Verão" -- Processo.Rio MTR-DES-2025/04515
       WHEN data BETWEEN DATE(2025,02,08) AND DATE(2025,02,09) THEN "Extraordinária - Verão" -- Processo.Rio MTR-PRO-2025/02376
-      WHEN data = DATE(2025,02,15) THEN "Extraordinária - Verão" -- Processo.Rio MTR-PRO-2025/03046
+      WHEN data BETWEEN DATE(2025,02,15) AND DATE(2025,02,16) THEN "Extraordinária - Verão" -- Processo.Rio MTR-PRO-2025/03046
+      WHEN data BETWEEN DATE(2025,02,22) AND DATE(2025,02,23) THEN "Extraordinária - Verão" -- Processo.Rio MTR-PRO-2025/03740
       ELSE "Regular"
     END AS tipo_os,
   FROM UNNEST(GENERATE_DATE_ARRAY("{{var('DATA_SUBSIDIO_V6_INICIO')}}", "2025-12-31")) AS data),
