@@ -15,6 +15,7 @@ with
             faixa_horaria_fim,
             consorcio,
             servico,
+            modo,
             pof
         from {{ ref("subsidio_faixa_servico_dia") }}
         -- from `rj-smtr.financeiro_staging.subsidio_faixa_servico_dia`
@@ -51,11 +52,33 @@ with
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
+        union all
+        select
+            data,
+            servico,
+            tipo_viagem,
+            tecnologia_apurada,
+            tecnologia_remunerada,
+            id_viagem,
+            distancia_planejada,
+            subsidio_km,
+            subsidio_km_teto,
+            valor_glosado_tecnologia,
+            indicador_penalidade_judicial,
+            indicador_viagem_dentro_limite
+        from {{ ref("viagem_remunerada") }}
+        -- `rj-smtr.subsidio.viagem_remunerada`
+        where
+            data
+            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
     ),
     indicador_ar as (
         select
             data,
             id_veiculo,
+            "Ônibus SPPO" as modo,
             status,
             safe_cast(
                 json_value(indicadores, "$.indicador_ar_condicionado") as bool
@@ -65,6 +88,22 @@ with
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
+        union all
+        select
+            data,
+            id_veiculo,
+            modo,
+            status,
+            safe_cast(
+                json_value(indicadores, "$.indicador_ar_condicionado") as bool
+            ) as indicador_ar_condicionado
+        from {{ ref("status_dia") }}
+        -- from `rj-smtr.veiculo.status_dia`
+        where
+            data
+            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
     ),
     viagem as (
         select
@@ -74,6 +113,15 @@ with
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
+        union all
+        select data, servico, id_veiculo, id_viagem, datetime_partida
+        from {{ ref("viagem_valida") }}
+        -- from `rj-smtr.monitoramento.viagem_valida`
+        where
+            data
+            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
     ),
     ar_viagem as (
         select

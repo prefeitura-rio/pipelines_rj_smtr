@@ -4,7 +4,33 @@
     )
 }}
 
+with tecnologia as (select * from {{ ref("staging_tecnologia_servico") }})
 select
-    safe_cast(servico as string) as servico,
-    safe_cast(codigo_tecnologia as string) as codigo_tecnologia
-from {{ source("planejamento_staging", "tecnologia_servico") }}
+    servico,
+    modo,
+    codigo_tecnologia,
+    case
+        when substring(codigo_tecnologia, 4, 1) = "1"
+        then "PADRON"
+        when substring(codigo_tecnologia, 3, 1) = "1"
+        then "BASICO"
+        when substring(codigo_tecnologia, 2, 1) = "1"
+        then "MIDI"
+        when substring(codigo_tecnologia, 1, 1) = "1"
+        then "MINI"
+        else null
+    end as maior_tecnologia_permitida,
+    case
+        when substring(codigo_tecnologia, 1, 1) = "1"
+        then "MINI"
+        when substring(codigo_tecnologia, 2, 1) = "1"
+        then "MIDI"
+        when substring(codigo_tecnologia, 3, 1) = "1"
+        then "BASICO"
+        when substring(codigo_tecnologia, 4, 1) = "1"
+        then "PADRON"
+        else null
+    end as menor_tecnologia_permitida,
+    data_inicio_vigencia,
+    data_fim_vigencia
+from tecnologia
