@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Altera IP dos bancos de principal_db, gratuidade_db e midia_db da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/472)
+- Altera IP dos bancos principal_db e gratuidade_db da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/472)
 
 ## [1.0.2] - 2025-01-11
 
