@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.3.2] - 2025-03-10
+
+### Alterado
+
+- Ativa materialização do modelo `viagem_planejada_planejamento.sql` a partir de `2025-01-02`
+
 ## [1.3.1] - 2025-01-27
 
 ### Adicionado
