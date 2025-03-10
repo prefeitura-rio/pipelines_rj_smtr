@@ -1,5 +1,11 @@
 # Changelog - pipelines
 
+## [1.0.3] - 2025-03-10
+
+### Alterado
+
+- Altera IP dos bancos principal_db e gratuidade_db da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/472)
+
 ## [1.0.2] - 2025-01-11
 
 ### Adicionado
