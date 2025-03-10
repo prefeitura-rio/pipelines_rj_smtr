@@ -1,5 +1,11 @@
 # Changelog - pipelines
 
+## [1.0.3] - 2025-03-10
+
+### Alterado
+
+- Altera IP dos bancos de principal_db, gratuidade_db e midia_db da Jaé ()
+
 ## [1.0.2] - 2025-01-11
 
 ### Adicionado
