@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: sumario_servico_dia
-    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia"
+    description: "Sumário do subsídio dos serviços de ônibus [SPPO] por dia [Dados entre 2023-01-16 e 2024-08-16]"
     tests:
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data
@@ -35,6 +35,11 @@ models:
         tests:
           - not_null:
               name: not_null__data__sumario_servico_dia
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'2023-01-15'"
+              max_value: "'{{ var('DATA_SUBSIDIO_V9_INICIO') }}'"
+              strictly: true
+              name: dbt_expectations.expect_column_values_to_be_between__data__sumario_servico_dia
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
         tests:
@@ -97,13 +102,19 @@ models:
                       Linha com operação entre 40% e 60% da quilometragem estipulada - penalidade equivalente a uma infração média prevista no Código Disciplinar do Serviço Público de Transporte de Passageiros por Meio de Ônibus do Município do Rio de Janeiro - SPPO.\n
                       Linha com operação inferior a 40% da quilometragem estipulada - penalidade equivalente a uma infração grave prevista no Código Disciplinar do Serviço Público de Transporte de Passageiros por Meio de Ônibus do Município do Rio de Janeiro - SPPO."
   - name: sumario_servico_dia_historico
-    description: "Sumário histórico do subsídio dos serviços de ônibus (SPPO) por dia"
+    description: "Sumário histórico do subsídio dos serviços de ônibus [SPPO] por dia [Dados entre 2022-06-01 e 2024-08-16]"
     tests:
       - subsidio_viagens_atualizadas:
           name: subsidio_viagens_atualizadas__sumario_servico_dia_historico
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS"
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'2022-05-31'"
+              max_value: "'{{ var('DATA_SUBSIDIO_V9_INICIO') }}'"
+              strictly: true
+              name: dbt_expectations.expect_column_values_to_be_between__data__sumario_servico_dia_historico
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: consorcio
@@ -131,10 +142,16 @@ models:
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: sumario_servico_tipo_viagem_dia
-    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia e tipo de viagem"
+    description: "Sumário do subsídio dos serviços de ônibus [SPPO] por dia e tipo de viagem [Dados entre 2022-06-01 e 2024-08-16]"
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS"
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'2022-05-31'"
+              max_value: "'{{ var('DATA_SUBSIDIO_V9_INICIO') }}'"
+              strictly: true
+              name: dbt_expectations.expect_column_values_to_be_between__data__sumario_servico_tipo_viagem_dia
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: consorcio
@@ -151,12 +168,18 @@ models:
       - name: indicador_ar_condicionado
         description: "Indicador se o veículo foi licenciado com ar condicionado"
   - name: sumario_dia
-    description: "sumario_dia"
+    description: "Sumário do subsídio dos serviços de ônibus [SPPO] por dia [Dados entre 2022-06-01 e 2024-08-16]"
     columns:
       - name: consorcio
         description: "Consórcio que opera o serviço"
       - name: data
         description: "Data de emissão do sinal de GPS"
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'2022-05-31'"
+              max_value: "'{{ var('DATA_SUBSIDIO_V9_INICIO') }}'"
+              strictly: true
+              name: dbt_expectations.expect_column_values_to_be_between__data__sumario_dia
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: servico
@@ -180,10 +203,16 @@ models:
       - name: valor_total_subsidio
         description: "Valor de subsídio apurado (R$), observado o indicador percentual de quilometragem apurada em relação à planejada da linha"
   - name: sumario_servico_dia_tipo
-    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia e tipo de viagem"
+    description: "Sumário do subsídio dos serviços de ônibus [SPPO] por dia e tipo de viagem [Dados entre 2023-01-16 e 2024-08-16]"
     columns:
       - name: data
         description: "Data de emissão do sinal de GPS"
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'2023-01-15'"
+              max_value: "'{{ var('DATA_SUBSIDIO_V9_INICIO') }}'"
+              strictly: true
+              name: dbt_expectations.expect_column_values_to_be_between__data__sumario_servico_dia_tipo
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: consorcio
@@ -264,7 +293,7 @@ models:
       - name: data_fim
         description: "Data final do período de vigência dos demais atributos"
   - name: subsidio_parametros
-    description: "Parâmetros de remuneração do subsídio dos serviços de ônibus (SPPO) por tipo de viagem (Descontinuada a partir de 2024-03-01)"
+    description: "Parâmetros de remuneração do subsídio dos serviços de ônibus [SPPO] por tipo de viagem [Descontinuada a partir de 2024-03-01]"
     columns:
       - name: indicador_licenciado
         description: "Indicador se o veículo encontra-se licenciado"
@@ -299,12 +328,18 @@ models:
       - name: indicador_registro_agente_verao_ar_condicionado
         description: "Indicador se o veículo foi registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) com ar condicionado inoperante ou em mau funcionamento"
   - name: viagens_realizadas
-    description: "Detalhes de todas as viagens completas identificadas"
+    description: "Detalhes de todas as viagens completas identificadas [Dados entre 2022-06-01 e 2024-08-16]"
     columns:
       - name: consorcio
         description: "Consórcio que opera o serviço"
       - name: data
         description: "Data de emissão do sinal de GPS"
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'2022-05-31'"
+              max_value: "'{{ var('DATA_SUBSIDIO_V9_INICIO') }}'"
+              strictly: true
+              name: dbt_expectations.expect_column_values_to_be_between__data__viagens_realizadas
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da
         distância planejada - categorias: Dia Útil, Sabado, Domingo"
@@ -371,7 +406,7 @@ models:
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: sumario_servico_dia_tipo_sem_glosa
-    description: "Tabela temporária sem as glosas e com os detalhes de viagens subsidiadas por serviço-dia"
+    description: "Tabela temporária sem as glosas e com os detalhes de viagens subsidiadas por serviço-dia [Dados entre 2023-01-16 e 2024-08-16]"
     tests:
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data
@@ -394,6 +429,11 @@ models:
         tests:
           - not_null:
               name: not_null__data__sumario_servico_dia_tipo_sem_glosa
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'2023-01-15'"
+              max_value: "'{{ var('DATA_SUBSIDIO_V9_INICIO') }}'"
+              strictly: true
+              name: dbt_expectations.expect_column_values_to_be_between__data__sumario_servico_dia_tipo_sem_glosa
       - name: consorcio
         description: "Consórcio que opera o serviço"
         tests:
@@ -581,44 +621,53 @@ models:
           combination_of_columns:
           - id_viagem
           name: dbt_utils.unique_combination_of_columns__viagens_remuneradas
+          where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data
           row_condition: "1=1"
           test_start_date: "{{ var('date_range_start') }}"
           test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
           name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__viagens_remuneradas
+          where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - check_viagem_completa:
           name: check_viagem_completa__viagens_remuneradas
+          where: "data between date('{date_range_start}') and date('{date_range_end}')"
     columns:
       - name: data
         description: "Data da viagem"
         tests:
           - not_null:
               name: not_null__data__viagens_remuneradas
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: servico
         description: "Serviço realizado pelo veículo"
         tests:
           - not_null:
               name: not_null__servico__viagens_remuneradas
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: tipo_viagem
         description: "Classificação do tipo de viagem"
         tests:
           - not_null:
               name: not_null__tipo_viagem__viagens_remuneradas
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: id_viagem
         description: "Código único identificador da viagem"
         tests:
           - not_null:
               name: not_null__id_viagem__viagens_remuneradas
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: distancia_planejada
         description: "Distância planejada da viagem (km)"
         tests:
           - not_null:
               name: not_null__distancia_planejada__viagens_remuneradas
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
           - dbt_utils.accepted_range:
               min_value: 0
               inclusive: false
               name: dbt_utils.accepted_range__distancia_planejada__viagens_remuneradas
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: tecnologia_apurada
         description: "{{ doc('tecnologia') }}"
       - name: tecnologia_remunerada
@@ -628,14 +677,17 @@ models:
         tests:
           - not_null:
               name: not_null__subsidio_km__viagens_remuneradas
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
           - dbt_utils.accepted_range:
               min_value: 0
               name: dbt_utils.accepted_range__subsidio_km__viagens_remuneradas
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: subsidio_km_teto
         description: "Valor máximo de subsídio, conforme tipo de viagem (R$/km)"
         tests:
           - not_null:
               name: not_null__subsidio_km_teto__viagens_remuneradas
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: valor_glosado_tecnologia
         description: "{{ doc('valor_glosado_tecnologia') }}"
       - name: indicador_penalidade_tecnologia
@@ -645,5 +697,6 @@ models:
         tests:
           - not_null:
               name: not_null__indicador_viagem_dentro_limite__viagens_remuneradas
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: indicador_penalidade_judicial
         description: "{{ doc('indicador_penalidade_judicial') }}"
