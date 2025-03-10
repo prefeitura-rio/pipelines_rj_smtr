@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Ativa materialização do modelo `viagem_planejada_planejamento.sql` a partir de `2025-01-02`
+- Ativa materialização do modelo `viagem_planejada_planejamento.sql` a partir de `2025-01-02` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/471)
 
 ## [1.3.1] - 2025-01-27
 
