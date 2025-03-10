@@ -388,7 +388,7 @@ from
             p.* except (data, servico),
             row_number() over (
                 partition by v.data, v.servico, faixa_horaria_inicio, faixa_horaria_fim
-                order by subsidio_km * distancia_planejada desc
+                order by subsidio_km * distancia_planejada desc, datetime_partida asc
             ) as rn
         from viagem_km_tipo as v
         left join
