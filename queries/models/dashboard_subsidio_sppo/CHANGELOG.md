@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona ordenação de viagens por datetime_partida no modelo `viagens_remuneradas.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Adiciona ordenação de viagens por datetime_partida no modelo `viagens_remuneradas.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/470)
 
 ## [7.1.1] - 2025-02-21
 
