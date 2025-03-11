@@ -1,23 +1,44 @@
-{{ config(
-        materialized="table")}}
-
-WITH infracao_date AS (
-  SELECT DISTINCT SAFE_CAST(data AS DATE) AS data_infracao
-  FROM {{ ref('infracao_staging') }}
-),
-periodo AS (
-  SELECT DATE_ADD(DATE '2023-02-10', INTERVAL n DAY) AS data
-  FROM UNNEST(GENERATE_ARRAY(0, DATE_DIFF(DATE '2026-01-01', DATE '2023-02-10', DAY))) AS n
-),
-data_versao_calc AS (
-  SELECT
-    periodo.data,
-    (
-      SELECT MIN(data_infracao)
-      FROM infracao_date
-      WHERE data_infracao >= DATE_ADD(periodo.data, INTERVAL 7 DAY)
-    ) AS data_versao
-  FROM periodo
-)
-SELECT *
-FROM data_versao_calc
+{{
+    config(
+        materialized="incremental",
+        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+        incremental_strategy="insert_overwrite",
+    )
+}}
+with
+    infracao_date as (
+        -- verificar particionamento
+        select distinct date(data) as data_infracao
+        from
+            -- {{ ref("infracao_staging") }}
+            `rj-smtr.veiculo_staging.infracao`
+        {% if is_incremental() %}
+            where
+                data
+                between "{{ var('start_date')}}"
+                and "{{ modules.datetime.date.fromisoformat(var('end_date')) + modules.datetime.timedelta(14) }}"
+        {% endif %}
+    ),
+    periodo as (
+        select *
+        from
+            unnest(
+                generate_date_array('2023-02-10', current_date("America/Sao_Paulo"))
+            ) as data
+        {% if is_incremental() %}
+            where data between "{{ var('start_date')}}" and "{{ var('end_date')}}"
+        {% endif %}
+    ),
+    data_versao_calc as (
+        select
+            periodo.data,
+            (
+                select min(data_infracao)
+                from infracao_date
+                where data_infracao >= date_add(periodo.data, interval 7 day)
+            ) as data_versao
+        from periodo
+    )
+select *
+from data_versao_calc
+where data_versao is not null
