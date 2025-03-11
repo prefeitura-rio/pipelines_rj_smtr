@@ -382,16 +382,26 @@ models:
         description: "Data da ordem de pagamento (partição)"
       - name: id_ordem_pagamento_consorcio_operador_dia
         description: "Identificador único do registro no banco de dados da Jaé"
+        tests:
+          - not_null
       - name: id_consorcio
         description: "Identificador do consórcio na tabela cadastro.consorcios"
+        tests:
+          - not_null
       - name: consorcio
         description: "Nome do consórcio"
+        tests:
+          - not_null
       - name: id_operadora
         description: "Identificador da operadora na tabela cadastro.operadoras"
+        tests:
+          - not_null
       - name: operadora
         description: "Nome da operadora de transporte (mascarado se for pessoa física)"
       - name: id_ordem_pagamento
         description: "Identificador da ordem pagamento no banco de dados da Jaé"
+        tests:
+          - not_null
       - name: quantidade_transacao_debito
         description: "Quantidade de transações feitas na modalidade débito"
       - name: valor_debito
