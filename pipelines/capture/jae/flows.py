@@ -19,12 +19,15 @@ from pipelines.capture.jae.tasks import (
     create_database_error_discord_message,
     create_jae_general_extractor,
     create_non_filtered_discord_message,
+    get_end_value_historic_table,
     get_jae_db_config,
     get_non_filtered_tables,
     get_raw_backup_billingpay,
     get_table_info,
+    get_timestamps_historic_table,
     rename_flow_run_backup_billingpay,
     set_redis_backup_billingpay,
+    set_redis_historic_table,
     test_jae_databases_connections,
     upload_backup_billingpay,
 )
@@ -134,5 +137,84 @@ backup_billingpay.schedule = Schedule(
             parameter_defaults={"database_name": db},
         )
         for idx, db in enumerate(constants.BACKUP_JAE_BILLING_PAY.value.keys())
+    ]
+)
+
+with Flow("jae: backup historico BillingPay") as backup_billingpay_historico:
+
+    database_name = Parameter(name="database_name")
+    table_id = Parameter(name="table_id")
+
+    env = get_run_env()
+
+    database_config = get_jae_db_config(database_name=database_name)
+
+    timestamp = get_scheduled_timestamp()
+
+    rename_flow_run_backup_billingpay(database_name=database_name, timestamp=timestamp)
+
+    table_info = get_table_info(
+        env=env,
+        database_name=database_name,
+        database_config=database_config,
+        timestamp=timestamp,
+        table_id=table_id,
+    )
+
+    table_info = get_timestamps_historic_table(
+        env=env,
+        database_name=database_name,
+        table_info=table_info,
+    )
+
+    table_info = get_end_value_historic_table(
+        table_info=table_info,
+        database_name=database_name,
+        database_config=database_config,
+    )
+
+    table_info = get_raw_backup_billingpay(
+        table_info=table_info,
+        database_config=database_config,
+        timestamp=timestamp,
+    )
+
+    table_info = upload_backup_billingpay.map(
+        env=unmapped(env),
+        table_info=table_info,
+        database_name=unmapped(database_name),
+    )
+
+    set_redis_historic_table.map(
+        env=unmapped(env),
+        table_info=table_info,
+        database_name=unmapped(database_name),
+    )
+
+
+backup_billingpay_historico.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
+backup_billingpay_historico.run_config = KubernetesRun(
+    image=smtr_constants.DOCKER_IMAGE.value,
+    labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
+)
+backup_billingpay_historico.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+]
+
+backup_billingpay_historico.schedule = Schedule(
+    [
+        IntervalClock(
+            interval=timedelta(minutes=30),
+            start_date=datetime(
+                2021, 1, 1, 0, 0, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+            ),
+            labels=[
+                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+            parameter_defaults={"database_name": db, "table_id": t},
+        )
+        for db, v in constants.BACKUP_JAE_BILLING_PAY_HISTORIC.value.items()
+        for t in v.keys()
     ]
 )

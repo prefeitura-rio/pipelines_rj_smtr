@@ -20,7 +20,7 @@ class constants(Enum):  # pylint: disable=c0103
     JAE_DATABASE_SETTINGS = {
         "principal_db": {
             "engine": "mysql",
-            "host": "10.5.114.227",
+            "host": "10.5.115.153",
         },
         "tarifa_db": {
             "engine": "postgresql",
@@ -40,7 +40,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "gratuidade_db": {
             "engine": "postgresql",
-            "host": "10.5.12.107",
+            "host": "10.5.14.228",
         },
         "fiscalizacao_db": {
             "engine": "postgresql",
@@ -64,7 +64,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "midia_db": {
             "engine": "postgresql",
-            "host": "10.5.14.66",
+            "host": "10.5.12.62",
         },
         "processador_transacao_db": {
             "engine": "postgresql",
@@ -145,7 +145,6 @@ class constants(Enum):  # pylint: disable=c0103
                 "LINHA_CONSORCIO",
                 "LINHA_CONSORCIO_OPERADORA_TRANSPORTE",
                 "ENDERECO",
-                "CLIENTE_IMAGEM",
                 "check_cadastro_pcd_validado",
                 "importa_pcd_pf",
                 "gratuidade_import_pcd",
@@ -180,10 +179,10 @@ class constants(Enum):  # pylint: disable=c0103
                     "DT_ABERTURA",
                     "DT_FECHAMENTO",
                 ],
-                # "CLIENTE_IMAGEM": [
-                #     "DT_INCLUSAO",
-                #     "DT_ALTERACAO",
-                # ],
+                "CLIENTE_IMAGEM": [
+                    "DT_INCLUSAO",
+                    "DT_ALTERACAO",
+                ],
                 "IMPORTA_DET_LOTE_VT": ["DT_INCLUSAO"],
                 "ITEM_PEDIDO_ENDERECO": ["DT_INCLUSAO"],
                 "CLIENTE_FAVORECIDO": [
@@ -213,6 +212,20 @@ class constants(Enum):  # pylint: disable=c0103
                 ],
                 "pcd_mae": ["count(*)"],
             },
+            "custom_select": {
+                "CLIENTE_IMAGEM": """
+                    select
+                        *
+                    from CLIENTE_IMAGEM
+                    where ID_CLIENTE_IMAGEM IN (
+                        select distinct
+                            ID_CLIENTE_IMAGEM
+                        from CLIENTE_IMAGEM
+                        where {filter}
+                    )
+                """,
+            },
+            "page_size": {"CLIENTE_IMAGEM": 500},
         },
         "tarifa_db": {
             "exclude": ["linha_tarifa"],
@@ -233,6 +246,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "us_rules": ["count(*)"],
                 "us_lex": ["count(*)"],
                 "us_gaz": ["count(*)"],
+                "midia_jall": ["count(*)"],
             },
         },
         "tracking_db": {
@@ -446,7 +460,13 @@ class constants(Enum):  # pylint: disable=c0103
                 "midia_jall": ["count(*)"],
             },
         },
-        # "processador_transacao_db": {},
+        "processador_transacao_db": {
+            "filter": {
+                "transacao_erro": ["dt_inclusao"],
+                "transacao_processada": ["dt_inclusao"],
+                "transacao_recebida": ["dt_inclusao"],
+            }
+        },
         "atendimento_db": {},
         "gateway_pagamento_db": {
             "filter": {
@@ -479,5 +499,28 @@ class constants(Enum):  # pylint: disable=c0103
                     "dt_venda",
                 ]
             }
+        },
+    }
+
+    BACKUP_JAE_BILLING_PAY_HISTORIC = {
+        "principal_db": {
+            "CLIENTE_IMAGEM": {
+                "start": datetime(2023, 6, 13, 15, 0, 0),
+                "end": datetime(2025, 2, 26, 0, 0, 0),
+            },
+        },
+        "processador_transacao_db": {
+            "transacao_erro": {
+                "start": datetime(2023, 7, 17, 15, 0, 0),
+                "end": datetime(2025, 2, 26, 0, 0, 0),
+            },
+            "transacao_processada": {
+                "start": datetime(2023, 7, 17, 15, 0, 0),
+                "end": datetime(2025, 2, 26, 0, 0, 0),
+            },
+            "transacao_recebida": {
+                "start": datetime(2023, 7, 17, 15, 0, 0),
+                "end": datetime(2025, 2, 26, 0, 0, 0),
+            },
         },
     }
