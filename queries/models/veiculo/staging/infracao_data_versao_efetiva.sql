@@ -8,15 +8,14 @@
 with
     infracao_date as (
         -- verificar particionamento
-        select distinct date(data) as data_infracao
-        from
-            -- {{ ref("infracao_staging") }}
+        select distinct data as data_infracao
+        from -- {{ ref("infracao_staging") }}
             `rj-smtr.veiculo_staging.infracao`
         {% if is_incremental() %}
             where
                 data
-                between "{{ var('start_date')}}"
-                and "{{ modules.datetime.date.fromisoformat(var('end_date')) + modules.datetime.timedelta(14) }}"
+                between "{{ var('run_date')}}"
+                and "{{ modules.datetime.date.fromisoformat(var('run_date')) + modules.datetime.timedelta(14) }}"
         {% endif %}
     ),
     periodo as (
@@ -26,7 +25,7 @@ with
                 generate_date_array('2023-02-10', current_date("America/Sao_Paulo"))
             ) as data
         {% if is_incremental() %}
-            where data between "{{ var('start_date')}}" and "{{ var('end_date')}}"
+            where data between "{{ var('run_date')}}" and "{{ var('run_date')}}"
         {% endif %}
     ),
     data_versao_calc as (
@@ -35,7 +34,7 @@ with
             (
                 select min(data_infracao)
                 from infracao_date
-                where data_infracao >= date_add(periodo.data, interval 7 day)
+                where date(data_infracao) >= date_add(periodo.data, interval 7 day)
             ) as data_versao
         from periodo
     )

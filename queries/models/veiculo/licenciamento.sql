@@ -8,17 +8,15 @@
     )
 }}
 
-{% if execute and is_incremental() %}
-    {% set licenciamento_date = run_query(get_license_date()).columns[0].values()[0] %}
-{% endif %}
-
 with
     stu as (
-        select * except (data), date(data) as data
-        from {{ ref("licenciamento_stu_staging") }} as t
-        where date(data) >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}")
+        select l.* except (data), date(l.data) as data
+        from {{ ref("licenciamento_stu_staging") }} as l
+        left join {{ ref("licenciamento_data_versao_efetiva") }} dve
+        on l.data = dve.data_versao
+        where l.data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
         {% if is_incremental() %}
-            where date(data) between date_add("{{ var('start_date') }}", interval 5 day) and date_add("{{ var('end_date') }}", interval 5 day)
+            and dve.data between date("{{ var('run_date') }}") and date("{{ var('run_date') }}")
         {% endif %}
     ),
     -- Processo.Rio MTR-CAP-2025/01125 [Correção da alteração do tipo de veículo]
@@ -150,6 +148,11 @@ select
 from stu_ano_ultima_vistoria
 where data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
 union all
-select *
-from {{ ref("sppo_licenciamento_staging") }}
-where data < "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
+select l.*
+from {{ ref("sppo_licenciamento_staging") }} l
+left join {{ ref("licenciamento_data_versao_efetiva") }} dve
+on l.data = dve.data_versao
+where l.data < "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
+{% if is_incremental() %}
+    and dve.data between date("{{ var('run_date') }}") and date("{{ var('run_date') }}")
+{% endif %}

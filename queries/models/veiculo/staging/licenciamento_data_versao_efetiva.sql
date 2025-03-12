@@ -8,19 +8,23 @@
 
 with
     licenciamento as (
-        select distinct safe_cast(data as date) as data_licenciamento
+        select distinct data as data_licenciamento
         from {{ ref("licenciamento_stu_staging") }}
+        {% if is_incremental() %}
+            where
+                data
+                between "{{ var('run_date')}}"
+                and "{{ modules.datetime.date.fromisoformat(var('run_date')) + modules.datetime.timedelta(14) }}"
+        {% endif %}
     ),
     periodo as (
-        {% if is_incremental() %}select date("{{ var('run_date') }}") as data
-        {% else %}
-            select *
-            from
-                unnest(
-                    generate_date_array(
-                        date_sub(current_date(), interval 7 day), date '2022-03-21'
-                    )
-                ) as data
+        select data
+        from
+            unnest(
+                generate_date_array('2022-03-21', current_date("America/Sao_Paulo"))
+            ) as data
+        {% if is_incremental() %}
+            where data between "{{ var('run_date')}}" and "{{ var('run_date')}}"
         {% endif %}
     ),
     data_versao_calc as (

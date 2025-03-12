@@ -7,16 +7,14 @@
     )
 }}
 
-{%- if execute and is_incremental() %}
-    {% set infracao_date = run_query(get_violation_date()).columns[0].values()[0] %}
-{% endif -%}
-
 with
     infracao as (
-        select * except (data), safe_cast(data as date) as data
-        from {{ ref("infracao_staging") }} as t
+        select i.* except (data), safe_cast(i.data as date) as data
+        from {{ ref("infracao_staging") }} as i
+        left join {{ ref("infracao_data_versao_efetiva") }} dve
+        on i.data = dve.data_versao
         {% if is_incremental() %}
-            where date(data) = date("{{ infracao_date }}")
+            where dve.data between date("{{ var('run_date') }}") and date("{{ var('run_date') }}")
         {% endif %}
     )
 select
