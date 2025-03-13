@@ -68,10 +68,8 @@ def get_ordem_quality_check_end_datetime(
     Retorna o datetime final para fazer o teste de qualidade dos dados da ordem de pagamento
 
     Args:
-        env (str): prod ou dev
-        dataset_id (str): dataset_id no BigQuery,
-        table_id (str): table_id no BigQuery,
-        start_datetime (datetime): datetime inicial da execução
+        timestamp (datetime): Datetime do agendamento da run atual do Flow
+        start_datetime (datetime): Datetime inicial da execução
         end_datetime (str): Parâmetro do flow para definir o valor manualmente
         partitions (list): Parâmetro do flow para definir as partições consultadas manualmente
 
@@ -107,8 +105,8 @@ def get_ordem_pagamento_modified_partitions(
     Consulta as partições para realizar o teste de qualidade de dados da ordem de pagamento
 
     Args:
-        start_datetime (datetime): datetime inicial da execução
-        end_datetime (datetime): datetime final da execução
+        start_datetime (datetime): Datetime inicial da execução
+        end_datetime (datetime): Datetime final da execução
         partitions (list): Parâmetro do flow para definir as partições consultadas manualmente
 
     Returns
@@ -169,7 +167,7 @@ def set_redis_quality_check_datetime(
         env (str): prod ou dev
         dataset_id (str): dataset_id no BigQuery,
         table_id (str): table_id no BigQuery,
-        end_datetime (datetime): datetime final da execução
+        end_datetime (datetime): Datetime final da execução
     """
     if end_datetime is None:
         return
