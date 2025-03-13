@@ -29,7 +29,7 @@ def get_ordem_quality_check_start_datetime(
         return convert_timezone(datetime.fromisoformat(start_datetime))
 
     redis_key = f"{env}.{dataset_id}.{table_id}.data_quality_check"
-    client = get_redis_client(host="localhost")
+    client = get_redis_client()
     log(f"Consultando Redis. key = {redis_key}")
     content = client.get(redis_key)
     if content is None:
@@ -126,7 +126,7 @@ def set_redis_quality_check_datetime(
     value = end_datetime.isoformat()
     redis_key = f"{env}.{dataset_id}.{table_id}.data_quality_check"
     log(f"salvando timestamp {value} na key: {redis_key}")
-    redis_client = get_redis_client(host="localhost")
+    redis_client = get_redis_client()
     content = redis_client.get(redis_key)
     if not content:
         content = {"last_run_timestamp": value}
