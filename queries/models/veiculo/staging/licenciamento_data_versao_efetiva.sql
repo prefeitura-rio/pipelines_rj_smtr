@@ -13,8 +13,8 @@ with
         {% if is_incremental() %}
             where
                 date(data)
-                between "{{ var('run_date')}}"
-                and "{{ modules.datetime.date.fromisoformat(var('run_date')) + modules.datetime.timedelta(7) }}"
+                between "{{ var('start_date')}}"
+                and "{{ modules.datetime.date.fromisoformat(var('end_date')) + modules.datetime.timedelta(7) }}"
         {% endif %}
     ),
     periodo as (
@@ -24,7 +24,7 @@ with
                 generate_date_array('2022-03-21', current_date("America/Sao_Paulo"))
             ) as data
         {% if is_incremental() %}
-            where data between "{{ var('run_date')}}" and "{{ var('run_date')}}"
+            where data between "{{ var('start_date')}}" and "{{ var('end_date')}}"
         {% endif %}
     ),
     data_versao_calc as (
