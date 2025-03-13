@@ -19,9 +19,7 @@
                 data_versao_frequencies
             from {{ ref("subsidio_data_versao_efetiva") }}
             where
-                data between date_sub("{{ var('run_date') }}", interval 1 day) and date(
-                    "{{ var('run_date') }}"
-                )
+                data between date_sub("{{ var('run_date') }}", interval 1 day) and date("{{ var('run_date') }}") -- fmt: off
         ),
         -- 2. Puxa dados de distancia quadro no quadro horário
         quadro as (
@@ -234,10 +232,7 @@
             from {{ ref("subsidio_data_versao_efetiva") }}
             -- `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
             where
-                data
-                between date_sub("{{ var('run_date') }}", interval 2 day) and date_sub(
-                    "{{ var('run_date') }}", interval 1 day
-                )
+                data between date_sub("{{ var('run_date') }}", interval 1 day) and date("{{ var('run_date') }}") -- fmt: off
         ),
         ordem_servico_trips_shapes as (
             select *
