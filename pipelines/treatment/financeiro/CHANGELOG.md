@@ -4,4 +4,4 @@
 
 ### Adicionado
 
-- Cria flow de teste de qualidade dos dados de ordem de pagamento `ordem_pagamento_quality_check`
+- Cria flow de teste de qualidade dos dados de ordem de pagamento `ordem_pagamento_quality_check` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/474)
