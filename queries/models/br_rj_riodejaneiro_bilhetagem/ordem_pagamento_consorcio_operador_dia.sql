@@ -112,7 +112,6 @@ with
                 )
                 and o.timestamp_captura > datetime("{{var('date_range_start')}}")
                 and o.timestamp_captura <= datetime("{{var('date_range_end')}}")
-        {% else %} where date(o.data) < date("2024-11-13")
         {% endif %}
     ),
     ordem_pagamento_completa as (
