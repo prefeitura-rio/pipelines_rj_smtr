@@ -19,7 +19,9 @@
                 data_versao_frequencies
             from {{ ref("subsidio_data_versao_efetiva") }}
             where
-                data between date_sub("{{ var('run_date') }}", interval 1 day) and date("{{ var('run_date') }}") -- fmt: off
+                data between date_sub("{{ var('run_date') }}", interval 1 day) and date(
+                    "{{ var('run_date') }}"
+                )
         ),
         -- 2. Puxa dados de distancia quadro no quadro horário
         quadro as (
@@ -232,12 +234,16 @@
             from {{ ref("subsidio_data_versao_efetiva") }}
             -- `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
             where
-                data between date_sub("{{ var('run_date') }}", interval 2 day) and date_sub("{{ var('run_date') }}", interval 1 day) -- fmt: off
-        ), ordem_servico_trips_shapes as (
+                data
+                between date_sub("{{ var('run_date') }}", interval 2 day) and date_sub(
+                    "{{ var('run_date') }}", interval 1 day
+                )
+        ),
+        ordem_servico_trips_shapes as (
             select *
-            from  {{ ref('ordem_servico_trips_shapes_gtfs')}}
-             -- `rj-smtr.gtfs.ordem_servico_trips_shapes`
-             where feed_start_date in ("{{ feed_start_dates | join('", "') }}")
+            from {{ ref("ordem_servico_trips_shapes_gtfs") }}
+            -- `rj-smtr.gtfs.ordem_servico_trips_shapes`
+            where feed_start_date in ("{{ feed_start_dates | join('", "') }}")
         ),
         dia_atual as (
             select
@@ -261,8 +267,7 @@
                 shape_id_planejado,
                 sentido_shape,
                 id_tipo_trajeto,
-            from
-            ordem_servico_trips_shapes
+            from ordem_servico_trips_shapes
             where
                 tipo_os = "{{ tipo_oss[1] }}"
                 and feed_version = "{{ feed_versions[1] }}"
@@ -282,7 +287,9 @@
                 ts.consorcio,
                 ts.sentido,
                 ts.partidas_total_planejada,
-                coalesce(da.distancia_planejada, ts.distancia_planejada) as distancia_planejada,
+                coalesce(
+                    da.distancia_planejada, ts.distancia_planejada
+                ) as distancia_planejada,
                 ts.distancia_total_planejada,
                 coalesce(da.inicio_periodo, ts.inicio_periodo) as inicio_periodo,
                 coalesce(da.fim_periodo, ts.fim_periodo) as fim_periodo,
@@ -297,8 +304,7 @@
                 ts.start_pt,
                 ts.end_pt,
                 ts.id_tipo_trajeto,
-            from
-            ordem_servico_trips_shapes as ts
+            from ordem_servico_trips_shapes as ts
             left join
                 (
                     select distinct
@@ -328,8 +334,7 @@
                 trip_id_planejado,
                 trip_id,
                 shape_id,
-            from
-            ordem_servico_trips_shapes
+            from ordem_servico_trips_shapes
             where
                 tipo_os = "{{ tipo_oss[1] }}"
                 and feed_version = "{{ feed_versions[1] }}"
@@ -347,8 +352,7 @@
                 trip_id_planejado,
                 trip_id,
                 shape_id,
-            from
-            ordem_servico_trips_shapes
+            from ordem_servico_trips_shapes
             where
                 faixa_horaria_inicio = "24:00:00"
                 and tipo_os = "{{ tipo_oss[0] }}"
@@ -356,10 +360,10 @@
                 and feed_start_date = date("{{ feed_start_dates[0] }}")
                 and tipo_dia = "{{ tipo_dias[0] }}"
                 and servico not in (select distinct servico from trips_dia_atual)
-                ),
+        ),
         trips as (
-            select
-            distinct feed_version,
+            select distinct
+                feed_version,
                 feed_start_date,
                 tipo_os,
                 tipo_dia,
@@ -368,12 +372,14 @@
                 trip_id_planejado,
                 trip_id,
                 shape_id
-            from (select *
-            from trips_dia_atual
-            union all
-            select
-                *
-            from trips_dia_anterior)
+            from
+                (
+                    select *
+                    from trips_dia_atual
+                    union all
+                    select *
+                    from trips_dia_anterior
+                )
         ),
         combina_trips_shapes as (
             select
@@ -511,7 +517,7 @@
                     null
                 ) as fim_periodo,
                 if(
-                    d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"), -- fmt: off
+                    d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"),
                     datetime_add(
                         datetime(
                             d.data,
@@ -583,7 +589,7 @@
                     )
                 ) as faixa_horaria_inicio,
                 if(
-                    d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"), -- fmt: off
+                    d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"),
                     datetime_add(
                         datetime(
                             d.data,
@@ -679,16 +685,14 @@
                     shape_id
                 )
             where
-                data = date_sub("{{ var('run_date') }}", interval 1 day) -- fmt: off
+                data = date_sub("{{ var('run_date') }}", interval 1 day)
                 and faixa_horaria_inicio != "24:00:00"
         ),
         shapes as (
             select *
-            from
-            {{ ref("shapes_geom_gtfs") }}
+            from {{ ref("shapes_geom_gtfs") }}
             -- `rj-smtr.gtfs.shapes_geom`
-            where
-                feed_start_date in ("{{ feed_start_dates | join('", "') }}")
+            where feed_start_date in ("{{ feed_start_dates | join('", "') }}")
         ),
         dados_agregados as (
             select
