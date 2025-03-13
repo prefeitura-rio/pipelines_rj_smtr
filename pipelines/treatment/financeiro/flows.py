@@ -82,6 +82,7 @@ with Flow(
         webhook_key="alertas_bilhetagem",
         params=dbt_vars,
         raise_check_error=False,
+        additional_mentions=["devs_smtr"],
     )
 
     set_redis_quality_check_datetime(
