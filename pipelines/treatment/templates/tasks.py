@@ -434,16 +434,16 @@ def run_dbt_tests(
         model = dataset_id
         if table_id:
             model += f".{table_id}"
-
-    if model:
-        run_command += " --select "
-        if upstream:
-            run_command += "+"
-        run_command += model
-        if downstream:
-            run_command += "+"
-        if test_name:
-            model += f",test_name:{test_name}"
+    run_command += " --select "
+    if test_name:
+        run_command += test_name
+    else:
+        if model:
+            if upstream:
+                run_command += "+"
+            run_command += model
+            if downstream:
+                run_command += "+"
 
     if exclude:
         run_command += f" --exclude {exclude}"
@@ -485,7 +485,11 @@ def run_dbt_tests(
 
 @task(trigger=all_finished)
 def dbt_data_quality_checks(
-    dbt_logs: str, checks_list: dict, params: dict, webhook_key: str = "dataplex"
+    dbt_logs: str,
+    checks_list: dict,
+    params: dict,
+    webhook_key: str = "dataplex",
+    raise_check_error=True,
 ):
     """
     Extracts the results of DBT tests and sends a message with the information to Discord.
@@ -605,5 +609,5 @@ def dbt_data_quality_checks(
         log(f"Falha ao enviar mensagem para o Discord: {e}", level="error")
         raise
 
-    if not test_check:
+    if not test_check and raise_check_error:
         raise FAIL
