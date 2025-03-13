@@ -23,6 +23,7 @@ vars:
   start_date: "2022-01-01T01:00:00"
   end_date: "2022-01-01T01:00:00"
   run_date: "2022-01-01T01:00:00"
+  partitions: ""
 
   ### Version default variable (replaced on deploy) ###
   version: ""

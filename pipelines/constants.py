@@ -377,4 +377,8 @@ class constants(Enum):  # pylint: disable=c0103
             "user_id": "1056928259700445245",
             "type": "role",
         },
+        "devs_smtr": {
+            "user_id": "1118274986461888612",
+            "type": "role",
+        },
     }
