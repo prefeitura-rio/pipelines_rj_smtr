@@ -205,7 +205,7 @@ sources:
       - name: valor_km_tipo_viagem
 
   - name: planejamento_staging
-    database: rj-smtr
+    database: rj-smtr-staging
 
     tables:
       - name: tecnologia_servico
