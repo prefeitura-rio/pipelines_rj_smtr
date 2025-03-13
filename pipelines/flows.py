@@ -26,6 +26,7 @@ from pipelines.migration.veiculo.flows import *  # noqa
 from pipelines.serpro.flows import *  # noqa
 from pipelines.treatment.bilhetagem.flows import *  # noqa
 from pipelines.treatment.datario.flows import *  # noqa
+from pipelines.treatment.financeiro.flows import *  # noqa
 from pipelines.treatment.monitoramento.flows import *  # noqa
 from pipelines.treatment.planejamento.flows import *  # noqa
 from pipelines.treatment.validacao_dados_jae.flows import *  # noqa
