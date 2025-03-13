@@ -319,7 +319,7 @@ with Flow(
         partitions=partitions,
     )
 
-    url = create_api_url_onibus_gps(timestamp=timestamp)  # trigger coderabbit
+    url = create_api_url_onibus_gps(timestamp=timestamp)  # trigger coderabbit again
 
     # EXTRACT #
     raw_status = get_raw(url)
