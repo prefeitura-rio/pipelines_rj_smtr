@@ -458,6 +458,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "midia_gravacao_fisica_140": ["dt_gravacao"],
                 "retorno_geral": ["count(*)"],
                 "midia_jall": ["count(*)"],
+                "temp_retorno_midia": ["count(*)"],
             },
         },
         "processador_transacao_db": {
