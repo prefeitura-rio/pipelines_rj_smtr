@@ -119,7 +119,7 @@ def get_ordem_pagamento_modified_partitions(
         sql = """
         select
             parse_date('%Y%m%d', partition_id) as data_ordem
-        from rj-smtr-dev.rafael__br_rj_riodejaneiro_bilhetagem.INFORMATION_SCHEMA.PARTITIONS
+        from rj-smtr.br_rj_riodejaneiro_bilhetagem.INFORMATION_SCHEMA.PARTITIONS
         where
             table_name = 'ordem_pagamento_consorcio_operador_dia'
             and partition_id != '__NULL__'
