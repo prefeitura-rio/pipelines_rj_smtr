@@ -8,7 +8,7 @@
 with
     infracao_date as (
         -- verificar particionamento
-        select distinct data as data_infracao
+        select distinct date(data) as data_infracao
         from -- {{ ref("infracao_staging") }}
             `rj-smtr.veiculo_staging.infracao`
         {% if is_incremental() %}
@@ -34,7 +34,7 @@ with
             (
                 select min(data_infracao)
                 from infracao_date
-                where date(data_infracao) >= date_add(periodo.data, interval 7 day)
+                where data_infracao >= date_add(periodo.data, interval 7 day)
             ) as data_versao
         from periodo
     )

@@ -8,13 +8,13 @@
 
 with
     licenciamento as (
-        select distinct data as data_licenciamento
+        select distinct date(data) as data_licenciamento
         from {{ ref("licenciamento_stu_staging") }}
         {% if is_incremental() %}
             where
-                data
+                date(data)
                 between "{{ var('run_date')}}"
-                and "{{ modules.datetime.date.fromisoformat(var('run_date')) + modules.datetime.timedelta(14) }}"
+                and "{{ modules.datetime.date.fromisoformat(var('run_date')) + modules.datetime.timedelta(7) }}"
         {% endif %}
     ),
     periodo as (

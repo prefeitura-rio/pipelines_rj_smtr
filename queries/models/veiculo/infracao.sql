@@ -1,3 +1,4 @@
+-- depends_on: {{ ref('infracao_data_versao_efetiva') }}
 {{
     config(
         materialized="incremental",
@@ -7,14 +8,25 @@
     )
 }}
 
+{% if is_incremental() and execute %}
+    {% set infracao_dates = run_query(get_violation_date()).columns[0].values() %}
+{% endif %}
 with
-    infracao as (
-        select i.* except (data), safe_cast(i.data as date) as data
-        from {{ ref("infracao_staging") }} as i
-        left join {{ ref("infracao_data_versao_efetiva") }} dve
-        on i.data = dve.data_versao
+    {# infracao_staging as (
+    select *
+        from {{ ref("infracao_staging") }}
         {% if is_incremental() %}
-            where dve.data between date("{{ var('run_date') }}") and date("{{ var('run_date') }}")
+            where
+                date(data)
+                between "{{ var('run_date')}}"
+                and "{{ modules.datetime.date.fromisoformat(var('run_date')) + modules.datetime.timedelta(10) }}"
+        {% endif %}
+) #}
+    infracao as (
+        select * except (data), safe_cast(data as date) as data
+        from {{ ref("infracao_staging") }} as i
+        {% if is_incremental() %}
+            where date(data) between date("{{ infracao_dates[0] }}") and date("{{ infracao_dates[0] }}")
         {% endif %}
     )
 select

@@ -6,11 +6,27 @@
         incremental_strategy="insert_overwrite",
     )
 }}
+
+{#  #}
+{% if execute %}
+    {% set licenciamento_dates = run_query(get_license_date()).columns[0].values() %}
+    {% set infracao_date = run_query(get_violation_date()).columns[0].values() %}
+{% endif %}
 with
     licenciamento_data_versao as (
-        select * from {{ ref("licenciamento_data_versao_efetiva") }}
+        select *
+        from {{ ref("licenciamento_data_versao_efetiva") }}
+        {% if is_incremental() %}
+            where data between date("{{ var('run_date') }}") and date("{{ var('run_date') }}")
+        {% endif %}
     ),
-    infracao_data_versao as (select * from {{ ref("infracao_data_versao_efetiva") }}),
+    infracao_data_versao as (
+        select *
+        from {{ ref("infracao_data_versao_efetiva") }}
+        {% if is_incremental() %}
+            where data between date("{{ var('run_date') }}") and date("{{ var('run_date') }}")
+        {% endif %}
+    ),
     licenciamento as (
         select
             date(dve.data) as data,
@@ -52,7 +68,7 @@ with
         from {{ ref("sppo_licenciamento") }} l
         right join licenciamento_data_versao as dve on l.data = dve.data_versao
         {% if is_incremental() %}
-            where dve.data = date("{{ var('run_date') }}")
+            where dve.data between date("{{ var('run_date') }}") and date("{{ var('run_date') }}") and l.data between "{{ licenciamento_dates[0] }}" and "{{ licenciamento_dates[0] }}"
         {% endif %}
     ),
     gps as (
@@ -60,7 +76,7 @@ with
         from  -- {{ ref("gps_sppo") }}
             `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
         where
-            {% if is_incremental() %} data = date("{{ var('run_date') }}")
+            {% if is_incremental() %} data between date("{{ var('run_date') }}") and date("{{ var('run_date') }}")
             {% else %}  -- data >= "2023-01-16"
             {% endif %}
         group by 1, 2
@@ -74,7 +90,9 @@ with
             on i.data = dve.data_versao
             and data_infracao = date(dve.data)
         {% if is_incremental() %}
-            where data_infracao = date("{{ var('run_date') }}")
+            where
+                i.data between date("{{ licenciamento_dates[0] }}") and date("{{ licenciamento_dates[0] }}")
+                and data_infracao between date("{{ var('run_date') }}") and date("{{ var('run_date') }}")
         {% endif %}
     ),
     registros_agente_verao as (
@@ -83,7 +101,7 @@ with
         from  -- {{ ref("sppo_registro_agente_verao") }}
             `rj-smtr.veiculo.sppo_registro_agente_verao`
         right join infracao_data_versao dve using (data)
-        {% if is_incremental() %} where data = date("{{ var('run_date') }}") {% endif %}
+        {% if is_incremental() %} where data between date("{{ var('run_date') }}") and date("{{ var('run_date') }}") {% endif %}
     ),
     autuacao_ar_condicionado as (
         select data, placa, true as indicador_autuacao_ar_condicionado

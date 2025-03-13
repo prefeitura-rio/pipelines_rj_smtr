@@ -1,4 +1,5 @@
 -- depends_on: {{ ref('aux_sppo_licenciamento_vistoria_atualizada') }}
+-- depends_on: {{ ref('licenciamento_data_versao_efetiva') }}
 {{
     config(
         materialized="incremental",
@@ -7,16 +8,26 @@
         incremental_strategy="insert_overwrite",
     )
 }}
-
+{% if is_incremental() and execute %}
+    {% set licenciamento_dates = run_query(get_license_date()).columns[0].values() %}
+{% endif %}
 with
-    stu as (
-        select l.* except (data), date(l.data) as data
-        from {{ ref("licenciamento_stu_staging") }} as l
-        left join {{ ref("licenciamento_data_versao_efetiva") }} dve
-        on l.data = dve.data_versao
-        where l.data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
+{# licenciamento_staging as (
+    select *
+        from {{ ref("licenciamento_stu_staging") }}
         {% if is_incremental() %}
-            and dve.data between date("{{ var('run_date') }}") and date("{{ var('run_date') }}")
+            where
+                date(data)
+                between "{{ var('run_date')}}"
+                and "{{ modules.datetime.date.fromisoformat(var('run_date')) + modules.datetime.timedelta(14) }}"
+        {% endif %}
+), #}
+    stu as (
+        select * except (data), date(data) as data
+        from {{ ref("licenciamento_stu_staging") }} as l
+        where data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
+        {% if is_incremental() %}
+            and data between "{{ licenciamento_dates[0] }}" and "{{ licenciamento_dates[0] }}"
         {% endif %}
     ),
     -- Processo.Rio MTR-CAP-2025/01125 [Correção da alteração do tipo de veículo]
@@ -148,11 +159,19 @@ select
 from stu_ano_ultima_vistoria
 where data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
 union all
-select l.*
+{# with sppo_licenciamento_staging as (
+    select *
+        from {{ ref("sppo_licenciamento_staging") }}
+        {% if is_incremental() %}
+            where
+                date(data)
+                between "{{ var('run_date')}}"
+                and "{{ modules.datetime.date.fromisoformat(var('run_date')) + modules.datetime.timedelta(14) }}"
+        {% endif %}
+) #}
+select *
 from {{ ref("sppo_licenciamento_staging") }} l
-left join {{ ref("licenciamento_data_versao_efetiva") }} dve
-on l.data = dve.data_versao
-where l.data < "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
+where data < "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
 {% if is_incremental() %}
-    and dve.data between date("{{ var('run_date') }}") and date("{{ var('run_date') }}")
+    and data between "{{ licenciamento_dates[0] }}" and "{{ licenciamento_dates[0] }}"
 {% endif %}
