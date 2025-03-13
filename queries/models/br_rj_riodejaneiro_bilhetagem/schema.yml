@@ -380,28 +380,45 @@ models:
     columns:
       - name: data_ordem
         description: "Data da ordem de pagamento (partição)"
+        tests:
+          - dbt_expectations.expect_column_max_to_be_between:
+              min_value: "current_date('America/Sao_Paulo')"
+              strictly: false
+              where: "1=1"
+              name: dbt_expectations.expect_column_max_to_be_between__data_ordem__ordem_pagamento_consorcio_operador_dia
+
       - name: id_ordem_pagamento_consorcio_operador_dia
         description: "Identificador único do registro no banco de dados da Jaé"
         tests:
-          - not_null
+          - not_null:
+              where: "data_ordem in ({partitions})"
+              name: not_null__id_ordem_pagamento_consorcio_operador_dia__ordem_pagamento_consorcio_operador_dia
       - name: id_consorcio
         description: "Identificador do consórcio na tabela cadastro.consorcios"
         tests:
-          - not_null
+          - not_null:
+              where: "data_ordem in ({partitions})"
+              name: not_null__id_consorcio__ordem_pagamento_consorcio_operador_dia
       - name: consorcio
         description: "Nome do consórcio"
         tests:
-          - not_null
+          - not_null:
+              where: "data_ordem in ({partitions})"
+              name: not_null__consorcio__ordem_pagamento_consorcio_operador_dia
       - name: id_operadora
         description: "Identificador da operadora na tabela cadastro.operadoras"
         tests:
-          - not_null
+          - not_null:
+              where: "data_ordem in ({partitions})"
+              name: not_null__id_operadora__ordem_pagamento_consorcio_operador_dia
       - name: operadora
         description: "Nome da operadora de transporte (mascarado se for pessoa física)"
       - name: id_ordem_pagamento
         description: "Identificador da ordem pagamento no banco de dados da Jaé"
         tests:
-          - not_null
+          - not_null:
+              where: "data_ordem in ({partitions})"
+              name: not_null__id_ordem_pagamento__ordem_pagamento_consorcio_operador_dia
       - name: quantidade_transacao_debito
         description: "Quantidade de transações feitas na modalidade débito"
       - name: valor_debito
