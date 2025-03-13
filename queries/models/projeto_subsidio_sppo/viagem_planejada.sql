@@ -367,8 +367,8 @@
                 sentido,
                 trip_id_planejado,
                 trip_id,
-                shape_id 
-            from (select * 
+                shape_id
+            from (select *
             from trips_dia_atual
             union all
             select
