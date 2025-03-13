@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import time
 from datetime import datetime, timedelta
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 import basedosdados as bd
 import prefect
@@ -368,7 +368,9 @@ def run_data_quality_checks(
 
 @task(nout=3)
 def check_dbt_test_run(
-    date_range_start: str, date_range_end: str, run_time: str
+    date_range_start: str,
+    date_range_end: str,
+    run_time: str,
 ) -> tuple[bool, str, str]:
     """
     Compares the specified run time with the start date's time component.
@@ -434,16 +436,16 @@ def run_dbt_tests(
         model = dataset_id
         if table_id:
             model += f".{table_id}"
-
-    if model:
-        run_command += " --select "
-        if upstream:
-            run_command += "+"
-        run_command += model
-        if downstream:
-            run_command += "+"
-        if test_name:
-            model += f",test_name:{test_name}"
+    run_command += " --select "
+    if test_name:
+        run_command += test_name
+    else:
+        if model:
+            if upstream:
+                run_command += "+"
+            run_command += model
+            if downstream:
+                run_command += "+"
 
     if exclude:
         run_command += f" --exclude {exclude}"
@@ -485,15 +487,25 @@ def run_dbt_tests(
 
 @task(trigger=all_finished)
 def dbt_data_quality_checks(
-    dbt_logs: str, checks_list: dict, params: dict, webhook_key: str = "dataplex"
+    dbt_logs: str,
+    checks_list: dict,
+    params: dict,
+    webhook_key: str = "dataplex",
+    raise_check_error: bool = True,
+    additional_mentions: Optional[list] = None,
 ):
     """
-    Extracts the results of DBT tests and sends a message with the information to Discord.
+    Extrai os resultados dos testes do DBT e envia uma mensagem com as informações para o Discord.
 
     Args:
-        dbt_logs (str): Logs from DBT containing the test results.
-        checks_list (dict): Dictionary with the names of the tests and their descriptions.
-        date_range (dict): Dictionary representing a date range.
+        dbt_logs (str): Logs do DBT contendo os resultados dos testes.
+        checks_list (dict): Dicionário com os nomes dos testes e suas descrições.
+        params (dict): Variaveis de data usadas para filtrar os dados do teste no DBT
+        webhook_key (str): Webhook do canal do discord para enviar a notificação
+        raise_check_error (bool): Caso seja True, a task irá falhar se todos os testes
+            não sejam bem-sucedidos
+        additional_mentions (list): Lista de usuários adicionais a serem notificados no discord.
+            Serão notificados @dados + usuários presentes na lista
     """
     if isinstance(dbt_logs, list):
         dbt_logs = "\n".join(dbt_logs)
@@ -503,8 +515,11 @@ def dbt_data_quality_checks(
     checks_results = parse_dbt_test_output(dbt_logs)
 
     webhook_url = get_secret(secret_path=constants.WEBHOOKS_SECRET_PATH.value)[webhook_key]
-
-    dados_tag = f" - <@&{constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>\n"
+    additional_mentions = additional_mentions or []
+    mentions = additional_mentions + ["dados_smtr"]
+    mention_tags = "".join(
+        [f" - <@&{constants.OWNERS_DISCORD_MENTIONS.value[m]['user_id']}>\n" for m in mentions]
+    )
 
     test_check = all(test["result"] == "PASS" for test in checks_results.values())
 
@@ -597,7 +612,7 @@ def dbt_data_quality_checks(
     )
 
     if not test_check:
-        formatted_messages.append(dados_tag)
+        formatted_messages.append(mention_tags)
 
     try:
         format_send_discord_message(formatted_messages, webhook_url)
@@ -605,5 +620,5 @@ def dbt_data_quality_checks(
         log(f"Falha ao enviar mensagem para o Discord: {e}", level="error")
         raise
 
-    if not test_check:
+    if not test_check and raise_check_error:
         raise FAIL
