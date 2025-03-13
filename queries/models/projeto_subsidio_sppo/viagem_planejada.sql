@@ -229,11 +229,16 @@
         -- 1. Define datas do período planejado
         data_versao_efetiva as (
             select data, tipo_dia, subtipo_dia, feed_version, feed_start_date, tipo_os,
-            from
-                {{ ref("subsidio_data_versao_efetiva") }}
-                -- `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
+            from {{ ref("subsidio_data_versao_efetiva") }}
+            -- `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
             where
-                data between date_sub("{{ var('run_date') }}", interval 2 day) and date_sub("{{ var('run_date') }}", interval 1 day) -- fmt: off
+                data between date_sub("{{ var('run_date') }}", interval 1 day) and date("{{ var('run_date') }}") -- fmt: off
+        ),
+        ordem_servico_trips_shapes as (
+            select *
+            from {{ ref("ordem_servico_trips_shapes_gtfs") }}
+            -- `rj-smtr.gtfs.ordem_servico_trips_shapes`
+            where feed_start_date in ("{{ feed_start_dates | join('", "') }}")
         ),
         dia_atual as (
             select
@@ -257,9 +262,7 @@
                 shape_id_planejado,
                 sentido_shape,
                 id_tipo_trajeto,
-            from
-            {{ ref("ordem_servico_trips_shapes_gtfs") }}
-             -- `rj-smtr.gtfs.ordem_servico_trips_shapes`
+            from ordem_servico_trips_shapes
             where
                 tipo_os = "{{ tipo_oss[1] }}"
                 and feed_version = "{{ feed_versions[1] }}"
@@ -279,10 +282,12 @@
                 ts.consorcio,
                 ts.sentido,
                 ts.partidas_total_planejada,
-                da.distancia_planejada,
+                coalesce(
+                    da.distancia_planejada, ts.distancia_planejada
+                ) as distancia_planejada,
                 ts.distancia_total_planejada,
-                da.inicio_periodo,
-                da.fim_periodo,
+                coalesce(da.inicio_periodo, ts.inicio_periodo) as inicio_periodo,
+                coalesce(da.fim_periodo, ts.fim_periodo) as fim_periodo,
                 "00:00:00" as faixa_horaria_inicio,
                 "02:59:59" as faixa_horaria_fim,
                 ts.trip_id_planejado,
@@ -294,9 +299,7 @@
                 ts.start_pt,
                 ts.end_pt,
                 ts.id_tipo_trajeto,
-            from
-            {{ ref("ordem_servico_trips_shapes_gtfs") }} as ts
-            -- `rj-smtr.gtfs.ordem_servico_trips_shapes` as ts
+            from ordem_servico_trips_shapes as ts
             left join
                 (
                     select distinct
@@ -315,7 +318,7 @@
                 and ts.feed_start_date = date("{{ feed_start_dates[0] }}")
                 and ts.tipo_dia = "{{ tipo_dias[0] }}"
         ),
-        trips as (
+        trips_dia_atual as (
             select distinct
                 feed_version,
                 feed_start_date,
@@ -326,14 +329,52 @@
                 trip_id_planejado,
                 trip_id,
                 shape_id,
-            from
-            {{ ref("ordem_servico_trips_shapes_gtfs") }}
-            -- `rj-smtr.gtfs.ordem_servico_trips_shapes`
+            from ordem_servico_trips_shapes
             where
                 tipo_os = "{{ tipo_oss[1] }}"
                 and feed_version = "{{ feed_versions[1] }}"
                 and feed_start_date = date("{{ feed_start_dates[1] }}")
                 and tipo_dia = "{{ tipo_dias[1] }}"
+        ),
+        trips_dia_anterior as (
+            select distinct
+                "{{ feed_versions[1] }}" as feed_version,
+                date("{{ feed_start_dates[1] }}") as feed_start_date,
+                "{{ tipo_oss[1] }}" as tipo_os,
+                "{{ tipo_dias[1] }}" as tipo_dia,
+                servico,
+                sentido,
+                trip_id_planejado,
+                trip_id,
+                shape_id,
+            from ordem_servico_trips_shapes
+            where
+                faixa_horaria_inicio = "24:00:00"
+                and tipo_os = "{{ tipo_oss[0] }}"
+                and feed_version = "{{ feed_versions[0] }}"
+                and feed_start_date = date("{{ feed_start_dates[0] }}")
+                and tipo_dia = "{{ tipo_dias[0] }}"
+                and servico not in (select distinct servico from trips_dia_atual)
+        ),
+        trips as (
+            select distinct
+                feed_version,
+                feed_start_date,
+                tipo_os,
+                tipo_dia,
+                servico,
+                sentido,
+                trip_id_planejado,
+                trip_id,
+                shape_id
+            from
+                (
+                    select *
+                    from trips_dia_atual
+                    union all
+                    select *
+                    from trips_dia_anterior
+                )
         ),
         combina_trips_shapes as (
             select
@@ -471,7 +512,7 @@
                     null
                 ) as fim_periodo,
                 if(
-                    d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"), -- fmt: off
+                    d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"),
                     datetime_add(
                         datetime(
                             d.data,
@@ -543,7 +584,7 @@
                     )
                 ) as faixa_horaria_inicio,
                 if(
-                    d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"), -- fmt: off
+                    d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"),
                     datetime_add(
                         datetime(
                             d.data,
@@ -639,21 +680,14 @@
                     shape_id
                 )
             where
-                data = date_sub("{{ var('run_date') }}", interval 1 day) -- fmt: off
+                data = date_sub("{{ var('run_date') }}", interval 1 day)
                 and faixa_horaria_inicio != "24:00:00"
         ),
         shapes as (
             select *
-            from
-            {{ ref("shapes_geom_gtfs") }}
+            from {{ ref("shapes_geom_gtfs") }}
             -- `rj-smtr.gtfs.shapes_geom`
-            where
-                feed_start_date in (
-                    select feed_start_date
-                    from data_versao_efetiva
-                    where
-                        data between date_sub("{{ var('run_date') }}", interval 2 day) and date_sub("{{ var('run_date') }}", interval 1 day) -- fmt: off
-                )
+            where feed_start_date in ("{{ feed_start_dates | join('", "') }}")
         ),
         dados_agregados as (
             select
