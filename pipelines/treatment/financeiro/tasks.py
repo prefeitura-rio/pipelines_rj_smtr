@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Tasks de tratamento dos dados financeiros"""
 from datetime import date, datetime, timedelta
+from typing import Optional
 
 import basedosdados as bd
 from prefect import task
@@ -19,10 +20,25 @@ def get_ordem_quality_check_start_datetime(
     env: str,
     dataset_id: str,
     table_id: str,
-    start_datetime: str,
-    partitions: list,
-) -> datetime:
-    """ """
+    start_datetime: Optional[str],
+    partitions: Optional[list],
+) -> Optional[datetime]:
+    """
+    Consulta o Redis para pegar o datetime inicial para fazer o teste
+    de qualidade dos dados da ordem de pagamento
+
+    Args:
+        env (str): prod ou dev
+        dataset_id (str): dataset_id no BigQuery,
+        table_id (str): table_id no BigQuery,
+        start_datetime (str): Parâmetro do flow para definir o valor manualmente
+        partitions (list): Parâmetro do flow para definir as partições consultadas manualmente
+
+    returns:
+        Optional[datetime]: datetime salvo no redis, valor do
+        parâmetro start_datetime ou None caso os dois anteriores sejam nulos
+        ou se o parâmetro partitions não for nulo
+    """
     if partitions is not None:
         return
     if start_datetime is not None:
@@ -44,11 +60,25 @@ def get_ordem_quality_check_start_datetime(
 )
 def get_ordem_quality_check_end_datetime(
     timestamp: datetime,
-    start_datetime: datetime,
-    end_datetime: str,
-    partitions: list,
-) -> datetime:
-    """"""
+    start_datetime: Optional[datetime],
+    end_datetime: Optional[str],
+    partitions: Optional[list],
+) -> Optional[datetime]:
+    """
+    Retorna o datetime final para fazer o teste de qualidade dos dados da ordem de pagamento
+
+    Args:
+        env (str): prod ou dev
+        dataset_id (str): dataset_id no BigQuery,
+        table_id (str): table_id no BigQuery,
+        start_datetime (datetime): datetime inicial da execução
+        end_datetime (str): Parâmetro do flow para definir o valor manualmente
+        partitions (list): Parâmetro do flow para definir as partições consultadas manualmente
+
+    returns:
+        Optional[datetime]: datetime agendado da execução do flow, valor do
+        parâmetro end_datetime ou None se o parâmetro partitions não for nulo
+    """
     if partitions is not None:
         return
     if end_datetime is not None:
@@ -69,11 +99,22 @@ def get_ordem_quality_check_end_datetime(
     nout=2,
 )
 def get_ordem_pagamento_modified_partitions(
-    start_datetime: datetime,
-    end_datetime: datetime,
-    partitions: list,
-) -> str:
+    start_datetime: Optional[datetime],
+    end_datetime: Optional[datetime],
+    partitions: Optional[list],
+) -> tuple[dict, Optional[str]]:
+    """
+    Consulta as partições para realizar o teste de qualidade de dados da ordem de pagamento
 
+    Args:
+        start_datetime (datetime): datetime inicial da execução
+        end_datetime (datetime): datetime final da execução
+        partitions (list): Parâmetro do flow para definir as partições consultadas manualmente
+
+    Returns
+        dict: Variável do DBT para filtrar os testes
+        str: Nome do teste a ser executado, caso não existam partições modificadas
+    """
     if partitions is None:
         format_str = "%Y-%m-%d %H:%M:%S"
 
@@ -121,6 +162,15 @@ def set_redis_quality_check_datetime(
     table_id: str,
     end_datetime: datetime,
 ):
+    """
+    Define o valor no Redis para o end_datetime
+
+    Args:
+        env (str): prod ou dev
+        dataset_id (str): dataset_id no BigQuery,
+        table_id (str): table_id no BigQuery,
+        end_datetime (datetime): datetime final da execução
+    """
     if end_datetime is None:
         return
     value = end_datetime.isoformat()
