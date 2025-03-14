@@ -1,14 +1,29 @@
-{{
-    config(
-        materialized="incremental",
-        partition_by={
-            "field": "data",
-            "data_type": "date",
-            "granularity": "day",
-        },
-        incremental_strategy="insert_overwrite",
-    )
-}}
+{% if var("tipo_materializacao") == "monitoramento" %}
+    {{
+        config(
+            materialized="incremental",
+            partition_by={
+                "field": "data",
+                "data_type": "date",
+                "granularity": "day",
+            },
+            incremental_strategy="insert_overwrite",
+            schema="monitoramento_interno",
+        )
+    }}
+{% else %}
+    {{
+        config(
+            materialized="incremental",
+            partition_by={
+                "field": "data",
+                "data_type": "date",
+                "granularity": "day",
+            },
+            incremental_strategy="insert_overwrite",
+        )
+    }}
+{% endif %}
 
 {% set incremental_filter %}
     data between
@@ -16,8 +31,8 @@
         and date('{{ var("date_range_end") }}')
 {% endset %}
 
-{% set calendario = ref("calendario") %}
-{# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
+{# {% set calendario = ref("calendario") %} #}
+{% set calendario = "rj-smtr.planejamento.calendario" %}
 {% if execute %}
     {% if is_incremental() %}
         {% set gtfs_feeds_query %}
@@ -42,18 +57,38 @@ with
         {% endif %}
     ),
     gps_viagem as (
-        select
-            data,
-            gv.id_viagem,
-            gv.shape_id,
-            gv.geo_point_gps,
-            gv.servico_viagem,
-            gv.servico_gps,
-            c.feed_version,
-            c.feed_start_date
-        from {{ ref("gps_viagem") }} gv
-        join calendario c using (data)
-        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
+        {% if var("tipo_materializacao") == "monitoramento" %}
+            select
+                data,
+                gv.id_viagem,
+                gv.shape_id,
+                gv.posicao_veiculo_geo as geo_point_gps,
+                gv.servico_realizado as servico_viagem,
+                gv.servico_informado as servico_gps,
+                gv.timestamp_gps,
+                c.feed_version,
+                c.feed_start_date
+            from {{ ref("registros_status_viagem_inferida") }} gv
+            join calendario c using (data)
+            {# {% if is_incremental() %}  #}
+            where {{ incremental_filter }}
+        {# {% endif %} #}
+        {% else %}
+            select
+                data,
+                gv.id_viagem,
+                gv.shape_id,
+                gv.geo_point_gps,
+                gv.servico_viagem,
+                gv.servico_gps,
+                gv.timestamp_gps,
+                c.feed_version,
+                c.feed_start_date
+            from {{ ref("gps_viagem") }} gv
+            join calendario c using (data)
+            {% if is_incremental() %} where {{ incremental_filter }}
+            {% endif %}
+        {% endif %}
     ),
     segmento as (
         select
@@ -64,8 +99,8 @@ with
             id_segmento,
             buffer,
             indicador_segmento_desconsiderado
-        from {{ ref("segmento_shape") }}
-        {# from `rj-smtr.planejamento.segmento_shape` #}
+        {# from {{ ref("segmento_shape") }} #}
+        from `rj-smtr.planejamento.segmento_shape`
         {% if is_incremental() %}
             where feed_start_date in ({{ gtfs_feeds | join(", ") }})
         {% endif %}
@@ -92,26 +127,72 @@ with
         select id_viagem, g.shape_id, g.id_segmento, g.quantidade_gps,
         from gps_servico_segmento g
     ),
-    viagem as (
+    trips as (
         select
-            data,
-            v.id_viagem,
-            v.datetime_partida,
-            v.datetime_chegada,
-            v.modo,
-            v.id_veiculo,
-            v.trip_id,
-            v.route_id,
-            v.shape_id,
-            v.servico,
-            v.sentido,
-            c.service_ids,
-            c.tipo_dia,
-            c.feed_start_date,
-            c.feed_version
-        from {{ ref("viagem_informada_monitoramento") }} v
-        join calendario c using (data)
-        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
+            feed_start_date,
+            feed_version,
+            route_id,
+            trip_id,
+            shape_id
+        {# from {{ ref("trips_gtfs") }} #}
+        from `rj-smtr.gtfs.trips`
+        {% if is_incremental() %}
+            where feed_start_date in ({{ gtfs_feeds | join(", ") }})
+        {% endif %}
+    ),
+    viagem as (
+        {% if var("tipo_materializacao") == "monitoramento" %}
+            select
+                data,
+                v.id_viagem,
+                v.datetime_partida,
+                v.datetime_chegada,
+                "Ônibus SPPO" as modo,
+                v.id_veiculo,
+                v.trip_id,
+                t.route_id,
+                v.shape_id,
+                v.servico_realizado as servico,
+                v.sentido,
+                false as indicador_viagem_sobreposta,
+                c.service_ids,
+                c.tipo_dia,
+                c.feed_start_date,
+                c.feed_version
+            from {{ ref("viagem_inferida") }} v
+            join calendario c using (data)
+            left join
+                trips t
+                on t.feed_start_date = c.feed_start_date
+                and t.feed_version = c.feed_version
+                and t.shape_id = v.shape_id
+                and t.trip_id = v.trip_id
+            {# {% if is_incremental() %}  #}
+            where {{ incremental_filter }}
+        {# {% endif %} #}
+        {% else %}
+            select
+                data,
+                v.id_viagem,
+                v.datetime_partida,
+                v.datetime_chegada,
+                v.modo,
+                v.id_veiculo,
+                v.trip_id,
+                v.route_id,
+                v.shape_id,
+                v.servico,
+                v.sentido,
+                v.indicador_viagem_sobreposta,
+                c.service_ids,
+                c.tipo_dia,
+                c.feed_start_date,
+                c.feed_version
+            from {{ ref("viagem_informada_monitoramento") }} v
+            join calendario c using (data)
+            {% if is_incremental() %} where {{ incremental_filter }}
+            {% endif %}
+        {% endif %}
     ),
     viagem_segmento as (
         select
@@ -128,6 +209,7 @@ with
             s.indicador_segmento_desconsiderado,
             v.servico,
             v.sentido,
+            v.indicador_viagem_sobreposta,
             v.service_ids,
             v.tipo_dia,
             v.feed_version,
@@ -149,6 +231,7 @@ select
     v.servico,
     v.sentido,
     ifnull(g.quantidade_gps, 0) as quantidade_gps,
+    v.indicador_viagem_sobreposta,
     v.indicador_segmento_desconsiderado,
     s.indicador_servico_divergente,
     v.feed_version,
@@ -160,6 +243,8 @@ select
 from viagem_segmento v
 left join gps_segmento g using (id_viagem, shape_id, id_segmento)
 left join servico_divergente s using (id_viagem)
-{% if not is_incremental() %}
-    where v.data <= date_sub(current_date("America/Sao_Paulo"), interval 2 day)
-{% endif %}
+{# {% if not is_incremental() %} #}
+where
+    v.data <= date_sub(current_date("America/Sao_Paulo"), interval 2 day)
+    {# {% endif %} #}
+
