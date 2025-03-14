@@ -225,7 +225,7 @@ with
             coalesce(
                 vs.indicador_viagem_sobreposta, false
             ) as indicador_viagem_sobreposta
-        from viagem_validada v
+        from deduplicado v
         left join viagens_sobrepostas vs on v.id_viagem = vs.id_viagem
         join calendario c using (data)
         left join routes r using (route_id, feed_start_date, feed_version)
