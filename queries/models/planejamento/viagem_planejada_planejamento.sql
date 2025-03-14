@@ -96,7 +96,7 @@ with
         where td.trip_id not in (select trip_id from frequencies_tratada)
         group by 1, 2, 3
     ),
-    viagens as (
+    viagens_frequencies as (
         select
             tfd.*,
             datetime(partida, "America/Sao_Paulo") as datetime_partida,
@@ -110,6 +110,26 @@ with
                     interval headway_secs second
                 )
             ) as partida
+        left join trips_alternativas ta using (data, servico, direction_id)
+    ),
+    viagens_stop_times as (
+        select *
+        from {{ ref("stop_times_gtfs") }}
+        where
+            {% if is_incremental() %} feed_start_date in ({{ gtfs_feeds | join(", ") }})
+            {% else %} feed_start_date >= '{{ var("feed_inicial_viagem_planejada") }}'
+            {% endif %} and stop_sequence = 0
+    ),
+    viagens_trips_alternativas as (
+        select *
+        from
+            (
+                select *
+                from viagens_frequencies
+                union all
+                select *
+                from viagens_stop_times
+            )
         left join trips_alternativas ta using (data, servico, direction_id)
     ),
     viagem_filtrada as (
