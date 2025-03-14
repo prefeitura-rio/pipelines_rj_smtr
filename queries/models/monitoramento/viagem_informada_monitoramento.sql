@@ -12,10 +12,16 @@
   DATE(data) BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
 {% endset %}
 
-{% set staging_viagem_informada_rioonibus = ref("staging_viagem_informada_rioonibus") %}
-{% set staging_viagem_informada_brt = ref("staging_viagem_informada_brt") %}
-{% set calendario = ref("calendario") %}
-{# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
+{# {% set staging_viagem_informada_rioonibus = ref("staging_viagem_informada_rioonibus") %} #}
+{% set staging_viagem_informada_rioonibus = (
+    "rj-smtr.monitoramento_staging.viagem_informada_rioonibus"
+) %}
+{# {% set staging_viagem_informada_brt = ref("staging_viagem_informada_brt") %} #}
+{% set staging_viagem_informada_brt = (
+    "rj-smtr.monitoramento_staging.viagem_informada_brt"
+) %}
+{# {% set calendario = ref("calendario") %} #}
+{% set calendario = "rj-smtr.planejamento.calendario" %}
 {% if execute %}
     {% if is_incremental() %}
         {% set partitions_query %}
@@ -125,7 +131,14 @@ with
         {% if is_incremental() and partitions | length > 0 %}
             union all
 
-            select * except (modo, versao, datetime_ultima_atualizacao), 1 as priority
+            select
+                * except (
+                    modo,
+                    versao,
+                    indicador_viagem_sobreposta,
+                    datetime_ultima_atualizacao
+                ),
+                1 as priority
             from {{ this }}
             where data in ({{ partitions | join(", ") }})
         {% endif %}
@@ -143,6 +156,35 @@ with
             )
         where rn = 1
     ),
+    viagens_ordenadas as (
+        select
+            *,
+            row_number() over (
+                partition by data, id_veiculo
+                order by datetime_partida
+            ) as ordem_viagem_dia
+        from deduplicado
+    ),
+    viagens_sobrepostas as (
+        select
+            v1.data,
+            v1.id_viagem,
+            v1.id_veiculo,
+            v1.datetime_partida,
+            v1.datetime_chegada,
+            v1.ordem_viagem_dia,
+            case
+                when v2.id_viagem is not null then true else false
+            end as indicador_viagem_sobreposta
+        from viagens_ordenadas v1
+        left join
+            viagens_ordenadas v2
+            on v1.data = v2.data
+            and v1.id_veiculo = v2.id_veiculo
+            and v1.id_viagem != v2.id_viagem
+            and v1.datetime_partida < v2.datetime_chegada
+            and v1.datetime_chegada > v2.datetime_partida
+    ),
     calendario as (
         select *
         from {{ calendario }}
@@ -152,8 +194,8 @@ with
     ),
     routes as (
         select *
-        from {{ ref("routes_gtfs") }}
-        {# from `rj-smtr.gtfs.routes` #}
+        {# from {{ ref("routes_gtfs") }} #}
+        from `rj-smtr.gtfs.routes`
         {% if is_incremental() %}
             where feed_start_date in ({{ gtfs_feeds | join(", ") }})
         {% endif %}
@@ -180,8 +222,10 @@ with
             if(trim(v.sentido) = '', null, v.sentido) as sentido,
             if(trim(v.fonte_gps) = '', null, v.fonte_gps) as fonte_gps,
             v.datetime_processamento,
-            v.datetime_captura
-        from deduplicado v
+            v.datetime_captura,
+            coalesce(vs.indicador_viagem_sobreposta, false) as indicador_viagem_sobreposta
+        from viagem_validada v
+        left join viagens_sobrepostas vs on d.id_viagem = vo.id_viagem
         join calendario c using (data)
         left join routes r using (route_id, feed_start_date, feed_version)
     )
