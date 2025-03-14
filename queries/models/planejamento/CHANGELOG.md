@@ -1,5 +1,23 @@
 # Changelog - planejamento
 
+## [1.3.2] - 2025-03-10
+
+### Alterado
+
+- Ativa materialização do modelo `viagem_planejada_planejamento.sql` a partir de `2025-01-02` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/471)
+
+## [1.3.1] - 2025-01-27
+
+### Adicionado
+
+- Cria modelo `tecnologia_servico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+
+## [1.3.0] - 2024-12-30
+
+### Adicionado
+
+- Cria modelo `matriz_integracao.sql` com a matriz publicada pela SMTR (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/371)
+
 ## [1.2.0] - 2024-12-04
 
 ### Adicionado

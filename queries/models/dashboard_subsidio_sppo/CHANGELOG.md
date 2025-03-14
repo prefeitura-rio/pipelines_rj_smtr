@@ -1,6 +1,41 @@
 # Changelog - dashboard_subsidio_sppo
 
-## [7.0.6] - 2024-10-30
+## [7.1.2] - 2025-03-10
+
+### Adicionado
+
+- Adiciona ordenação de viagens por datetime_partida no modelo `viagens_remuneradas.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/470)
+
+## [7.1.1] - 2025-02-21
+
+### Alterado
+
+- Altera modelo `viagens_remuneradas` para não incrementar dados anteriores a `DATA_SUBSIDIO_V3A_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/447)
+
+## [7.1.0] - 2025-02-17
+
+### Corrigido
+
+- Corrige teste de `distancia_planejada` maior que zero do modelo `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/433)
+
+## [7.0.9] - 2025-01-28
+
+### Corrigido
+
+- Corrige case dentro da CTE subsidio_parametros no modelo `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/400)
+
+### Alterado
+
+- Altera lógica da coluna `valor_glosado_tecnologia` para converter o valor em NUMERIC no modelo `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/400)
+
+## [7.0.8] - 2025-01-27
+
+### Adicionado
+
+- Altera regras do modelo `viagens_remuneradas` para apuração por tecnologia conforme DECRETO RIO N° 55631/2025 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+- Adiciona valores atualizados das infrações no modelo `valor_tipo_penalidade` conforme MTR-MEM-2025/00005 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+
+## [7.0.7] - 2024-10-30
 
 ### Adicionado
 

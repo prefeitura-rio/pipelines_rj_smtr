@@ -2,7 +2,7 @@
 """
 Flows for gtfs
 
-DBT 2024-12-20
+DBT 2025-01-16
 """
 
 from prefect import Parameter, case, task
@@ -45,8 +45,7 @@ from pipelines.migration.tasks import (
     upload_raw_data_to_gcs,
     upload_staging_data_to_gcs,
 )
-
-# from pipelines.schedules import every_5_minutes
+from pipelines.schedules import every_5_minutes
 from pipelines.tasks import (
     check_fail,
     get_scheduled_timestamp,
@@ -238,7 +237,8 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             + " "
             + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,
             _vars=dbt_vars,
-            exclude="calendario aux_calendario_manual viagem_planejada_planejamento",
+            exclude="calendario aux_calendario_manual viagem_planejada_planejamento \
+matriz_integracao",
         ).set_upstream(task=wait_captura)
 
         run_dbt_failed = task_value_is_none(wait_run_dbt_model)
@@ -286,13 +286,17 @@ gtfs_captura_nova.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
 gtfs_captura_nova.run_config = KubernetesRun(
     image=constants.DOCKER_IMAGE.value,
     labels=[constants.RJ_SMTR_AGENT_LABEL.value],
+    cpu_limit="1000m",
+    memory_limit="4600Mi",
+    cpu_request="500m",
+    memory_request="1000Mi",
 )
 gtfs_captura_nova.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
     handler_skip_if_running,
 ]
-# gtfs_captura_nova.schedule = every_5_minutes
+gtfs_captura_nova.schedule = every_5_minutes
 
 
 # with Flow(

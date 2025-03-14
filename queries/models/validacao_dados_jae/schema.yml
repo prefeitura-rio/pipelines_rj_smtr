@@ -6,18 +6,44 @@ models:
     columns:
       - name: data
         description: "Data de processamento da integração (partição)"
+        data_type: date
       - name: id_integracao
         description: "Identificador único da integração"
+        data_type: string
       - name: modos
         description: "Sequência modos das transações presentes na integração (separado por ', ')"
+        data_type: string
       - name: indicador_fora_matriz
-        description: "Indica se a sequência de modos não aparece na tabela br_rj_riodejaneiro_bilhetagem.matriz_integracao"
+        description: "Indica se a sequência de modos não aparece na tabela planejamento.matriz_integracao"
+        data_type: boolean
       - name: indicador_tempo_integracao_invalido
-        description: "Indica se o tempo entre a primeira e a última transação da integração é maior que 3 horas"
+        description: "Indica se o tempo entre a primeira e a última transação da integração é maior que o tempo limite de integração"
+        data_type: boolean
       - name: indicador_intervalo_transacao_suspeito
         description: "Indica se existe algum intervalo entre transações menor que 5 minutos dentro da integração"
       - name: versao
         description: "{{ doc('versao') }}"
+        data_type: string
+      - name: indicador_rateio_invalido
+        description: Indica se o rateio não foi feito de acordo com os valores estipulados na matriz
+        data_type: boolean
+        quote: true
+      - name: rateio
+        description: String no formato JSON com os valores de rateio praticados na integração
+        data_type: string
+        quote: true
+      - name: rateio_matriz
+        description: String no formato JSON com os valores de rateio estipulados pela matriz
+        data_type: string
+        quote: true
+      - name: data_inicio_matriz
+        description: "{{ doc('data_inicio_matriz') }}"
+        data_type: date
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
   - name: transacao_invalida
     description: "Tabela para validação dos dados de transação da Jaé"
     columns:
@@ -96,20 +122,37 @@ models:
     description: "Tabela contendo integrações que deveriam ter ocorrido mas não estão listadas na base da Jaé"
     columns:
       - name: data
-        description: "Data da transação (partição)."
+        description: "Data da transação (partição)"
+        data_type: date
       - name: id_integracao
-        description: "Identificador único da integração (é igual ao id_transacao da primeira transação da integração)."
+        description: "Identificador único da integração (é igual ao id_transacao da primeira transação da integração)"
+        data_type: string
       - name: sequencia_integracao
         description: "Sequência da transação dentro da integração"
+        data_type: int64
       - name: datetime_transacao
-        description: "Data e hora da transação em GMT-3"
+        description: "Data e hora da transação [GMT-3]"
+        data_type: datetime
       - name: id_transacao
         description: "Identificador único da transação"
+        data_type: string
       - name: modo
-        description: "Tipo de transporte (Ônibus, Van, BRT)"
+        description: "{{ doc('modo') }}"
+        data_type: string
       - name: id_servico_jae
         description: "Identificador da linha no banco de dados da jaé (É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae)"
+        data_type: string
       - name: sentido
         description: "Sentido de operação do serviço (0 = ida, 1 = volta)"
+        data_type: string
       - name: versao
         description: "{{ doc('versao') }}"
+        data_type: string
+      - name: data_inicio_matriz
+        description: "{{ doc('data_inicio_matriz') }}"
+        data_type: date
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true

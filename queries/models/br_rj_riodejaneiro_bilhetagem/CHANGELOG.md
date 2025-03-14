@@ -1,5 +1,26 @@
 # Changelog - bilhetagem
 
+## [2.1.0] - 2025-02-17
+
+### Adicionado
+
+- Cria modelo `staging_linha_tarifa.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/435)
+
+## [2.0.3] - 2025-01-02
+
+### Corrigido
+
+- Altera incremental strategy do modelo `integracao.sql` para `insert_overwrite` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/375)
+
+## [2.0.2] - 2024-12-30
+
+### Removido
+- Move `matriz_integracao.sql` para o planejamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/371)
+
+
+### Alterado
+- Muda deduplicação de integração para considerar integrações diferentes que compartilham transações nos modelos `transacao.sql` e `integracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/371)
+
 ## [2.0.1] - 2024-12-12
 
 ### Alterado

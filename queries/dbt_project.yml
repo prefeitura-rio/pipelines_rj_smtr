@@ -23,6 +23,7 @@ vars:
   start_date: "2022-01-01T01:00:00"
   end_date: "2022-01-01T01:00:00"
   run_date: "2022-01-01T01:00:00"
+  partitions: ""
 
   ### Version default variable (replaced on deploy) ###
   version: ""
@@ -108,6 +109,8 @@ vars:
   subsidio_parametros: "`rj-smtr-staging.dashboard_subsidio_sppo_staging.subsidio_parametros`"
   shapes_version: "YYYY-MM-DD"
   frequencies_version: "YYYY-MM-DD"
+  tipo_materializacao: "subsidio"
+  data_inicio_trips_shapes: "2023-04-01"
   # Feature penalidade de autuação por inoperância do ar condicionado (DECRETO RIO 51940/2023)
   DATA_SUBSIDIO_V2_INICIO: "2023-01-16"
   # Feature penalidade de autuação por segurança e limpeza/equipamento (DECRETO RIO 52820/2023)
@@ -126,12 +129,19 @@ vars:
   DATA_SUBSIDIO_V8_INICIO: "2024-07-20"
   # Feature Apuração por faixa horária
   DATA_SUBSIDIO_V9_INICIO: "2024-08-16"
+  # Feature desconsideração de km não vistoriado e não licenciado
+  DATA_SUBSIDIO_V9A_INICIO: "2024-09-01"
   # Feature Apuração por novas faixas horárias (RESOLUÇÃO SMTR 3777/2024)
   DATA_SUBSIDIO_V10_INICIO: "2024-11-01"
   # Feature Apuração por novas faixas horárias (RESOLUÇÃO SMTR 3777/2024) - Feed (GTFS)
   DATA_SUBSIDIO_V11_INICIO: "2024-11-06"
   # Parâmetro 110 km/h + alterações de regras do modelo `viagem_transacao.sql`
   DATA_SUBSIDIO_V12_INICIO: "2024-11-16"
+  # Inclusão de colunas de tecnologia em sppo_veiculo_dia
+  DATA_SUBSIDIO_V13_INICIO: "2025-01-01"
+  # Feature Apuração por tecnologia e penalidade por faixa horária (DECRETO 55631/2025)
+  DATA_SUBSIDIO_V14_INICIO: "2025-01-05"
+  DATA_SUBSIDIO_V14A_INICIO: "2025-07-01"
 
   # Recursos #
   recurso_staging: "rj-smtr-staging.projeto_subsidio_sppo_staging.recurso"
@@ -148,7 +158,6 @@ vars:
   sppo_infracao_staging: "rj-smtr-staging.veiculo_staging.sppo_infracao"
   sppo_registro_agente_verao_staging: "rj-smtr-staging.veiculo_staging.sppo_registro_agente_verao"
   sppo_licenciamento_solicitacao_data_versao: "2023-02-06"
-  stu_data_versao: ""
   # Prazo para última vistoria realizada dentro do período válido
   sppo_licenciamento_validade_vistoria_ano: 1
   # Tolerância de vistoria para veículos novos
@@ -186,6 +195,7 @@ vars:
     "valor_tarifa": {"type": "FLOAT64", "select": true},
     "valor_transacao": {"type": "FLOAT64", "select": true},
     "veiculo_id": {"type": "ID", "select": false},
+    "id_ordem_rateio": {"type": "ID", "select": true},
   }
 
   ### Diretorios ###
@@ -207,11 +217,15 @@ vars:
   data_inicial_gps_validacao_viagem: "2024-10-11"
 
   ### Planejamento ###
-  feed_inicial_viagem_planejada: "2024-11-16"
+  feed_inicial_viagem_planejada: "2025-01-02"
 
 tests:
   rj_smtr:
-    where: "DATA BETWEEN DATE('__date_range_start__') AND DATE('__date_range_end__')"
+    where: "data between date('{date_range_start}') and date('{date_range_end}')"
+    dashboard_subsidio_sppo:
+      where: "data between date('{date_range_start}') and date('{date_range_end}') and data < date('{DATA_SUBSIDIO_V9_INICIO}')"
+    dashboard_subsidio_sppo_v2:
+      where: "data between date('{date_range_start}') and date('{date_range_end}') and data < date('{DATA_SUBSIDIO_V14_INICIO}')"
 
 models:
   +persist_docs:
@@ -375,3 +389,10 @@ models:
     datario:
       +materialized: view
       +schema: datario
+    dashboard_operacao_onibus:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: dashboard_operacao_onibus
+      staging:
+        +materialized: view
+        +schema: dashboard_operacao_onibus_staging

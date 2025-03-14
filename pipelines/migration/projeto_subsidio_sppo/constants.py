@@ -23,6 +23,7 @@ class constants(Enum):  # pylint: disable=c0103
     SUBSIDIO_SPPO_V2_DATASET_ID = "subsidio"
     # Feature Apuração por faixa horária
     DATA_SUBSIDIO_V9_INICIO = "2024-08-16"
+    DATA_SUBSIDIO_V14_INICIO = "2025-01-05"
 
     # SUBSÍDIO DASHBOARD
     # flake8: noqa: E501
@@ -706,6 +707,129 @@ class constants(Enum):  # pylint: disable=c0103
             },
             "Todas viagens processadas com feed atualizado do GTFS": {
                 "test": "check_viagem_completa",
+            },
+        },
+    }
+
+    SUBSIDIO_SPPO_PRE_CHECKS_LIST = {
+        "sppo_realocacao": {
+            "check_gps_capture__sppo_realocacao": {
+                "description": "Todos os dados de realocação foram capturados"
+            }
+        },
+        "sppo_registros": {
+            "check_gps_capture__sppo_registros": {
+                "description": "Todos os dados de GPS foram capturados"
+            }
+        },
+        "gps_sppo": {
+            "check_gps_treatment__gps_sppo": {
+                "description": "Todos os dados de GPS foram devidamente tratados"
+            },
+            "dbt_utils.unique_combination_of_columns__gps_sppo": {
+                "description": "Todos os registros são únicos"
+            },
+        },
+        "sppo_veiculo_dia": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.unique_combination_of_columns__data_id_veiculo__sppo_veiculo_dia": {
+                "description": "Todos os registros são únicos"
+            },
+            "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sppo_veiculo_dia": {
+                "description": "Todas as datas possuem dados"
+            },
+        },
+    }
+
+    SUBSIDIO_SPPO_POS_CHECKS_LIST = {
+        "sumario_faixa_servico_dia_pagamento": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.accepted_range__km_planejada_faixa__sumario_faixa_servico_dia_pagamento": {
+                "description": "Todos os valores da coluna `{column_name}` maiores que zero"
+            },
+            "dbt_utils.accepted_range": {
+                "description": "Todos os valores da coluna `{column_name}` maiores ou iguais a zero"
+            },
+            "dbt_utils.unique_combination_of_columns__sumario_faixa_servico_dia_pagamento": {
+                "description": "Todos os registros de `sumario_faixa_servico_dia_pagamento` são unicos"
+            },
+            "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_faixa_servico_dia_pagamento": {
+                "description": "Todas as datas possuem dados"
+            },
+            "check_km_planejada__sumario_faixa_servico_dia_pagamento": {
+                "description": "Todas as viagens possuem `km_planejada` correspondente à OS"
+            },
+            "teto_pagamento_valor_subsidio_pago__sumario_faixa_servico_dia_pagamento": {
+                "description": "Todos serviços abaixo do teto de pagamento de valor do subsídio"
+            },
+            "dbt_expectations.expect_table_aggregation_to_equal_other_table__sumario_faixa_servico_dia_pagamento": {
+                "description": "Todos serviços com valores de penalidade aceitos"
+            },
+            "sumario_servico_dia_tipo_soma_km__km_apurada_dia__sumario_faixa_servico_dia_pagamento": {
+                "description": "Todas as somas dos tipos de quilometragem são equivalentes à quilometragem total"
+            },
+            "expression_is_true__sumario_faixa_servico_dia_pagamento": {
+                "description": "Todas as somas de `valor_a_pagar` e `valor_penalidade` não nulas e maiores ou iguais a zero"
+            },
+        },
+        "viagens_remuneradas": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.accepted_range": {
+                "description": "Todos os valores da coluna `{column_name}` maiores ou iguais a zero"
+            },
+            "dbt_utils.unique_combination_of_columns__viagens_remuneradas": {
+                "description": "Todas as viagens são únicas"
+            },
+            "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__viagens_remuneradas": {
+                "description": "Todas as datas possuem dados"
+            },
+            "check_viagem_completa__viagens_remuneradas": {
+                "description": "Todas viagens processadas com feed atualizado do GTFS"
+            },
+        },
+        "sumario_servico_dia_pagamento": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.accepted_range": {
+                "description": "Todos os valores da coluna `{column_name}` maiores ou iguais a zero"
+            },
+            "dbt_utils.unique_combination_of_columns__sumario_servico_dia_pagamento": {
+                "description": "Todos os registros de `sumario_servico_dia_pagamento` são unicos"
+            },
+            "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_servico_dia_pagamento": {
+                "description": "Todas as datas possuem dados"
+            },
+            "check_km_planejada__sumario_servico_dia_pagamento": {
+                "description": "Todas as viagens possuem km_planejada correspondente a OS"
+            },
+            "teto_pagamento_valor_subsidio_pago__sumario_servico_dia_pagamento": {
+                "description": "Todos serviços abaixo do teto de pagamento de valor do subsídio"
+            },
+            "dbt_expectations.expect_table_aggregation_to_equal_other_table__sumario_servico_dia_pagamento": {
+                "description": "Todos serviços com valores de penalidade aceitos"
+            },
+            "sumario_servico_dia_tipo_soma_km__km_apurada_dia__sumario_servico_dia_pagamento": {
+                "description": "Todas as somas dos tipos de quilometragem são equivalentes à quilometragem total"
+            },
+            "expression_is_true__sumario_servico_dia_pagamento": {
+                "description": "Todas as somas de `valor_a_pagar` e `valor_penalidade` não nulos e maior ou igual a zero"
+            },
+        },
+        "sumario_servico_dia": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.accepted_range": {
+                "description": "Todos os valores da coluna `{column_name}` maiores ou iguais a zero"
+            },
+            "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart_sumario_servico_dia": {
+                "description": "Todas as datas possuem dados"
+            },
+            "teto_pagamento_valor_subsidio_pago__sumario_servico_dia": {
+                "description": "Todos serviços abaixo do teto de pagamento de valor do subsídio"
+            },
+            "dbt_utils.unique_combination_of_columns__sumario_servico_dia": {
+                "description": "Todos os registros de sumario_servico_dia são unicos"
+            },
+            "dbt_expectations.expect_table_aggregation_to_equal_other_table__sumario_servico_dia": {
+                "description": "Todos serviços com valores de penalidade aceitos"
             },
         },
     }

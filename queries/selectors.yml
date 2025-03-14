@@ -9,6 +9,10 @@ selectors:
           value: viagem_transacao
         - method: path
           value: models/dashboard_subsidio_sppo
+        - method: fqn
+          value: monitoramento_sumario_servico_dia_historico
+        - method: fqn
+          value: monitoramento_sumario_servico_dia_tipo_viagem_historico
 
   - name: apuracao_subsidio_v9
     description: Apuração com faixa horária
@@ -16,6 +20,12 @@ selectors:
       union:
         - method: path
           value: models/dashboard_subsidio_sppo_staging
+        - method: fqn
+          value: valor_km_tipo_viagem
+        - method: fqn
+          value: valor_tipo_penalidade
+        - method: fqn
+          value: tecnologia_servico
         - method: fqn
           value: viagem_transacao
         - method: fqn
@@ -56,6 +66,8 @@ selectors:
           value: aux_calendario_manual
         - method: fqn
           value: calendario
+        - method: fqn
+          value: viagem_planejada_planejamento
 
   - name: transacao_ordem
     description: Materialização da tabela auxiliar de relacionamento entre as ordens de pagamento e as transações
@@ -66,8 +78,40 @@ selectors:
         - method: fqn
           value: aux_transacao_id_ordem_pagamento
 
+  - name: transacao_valor_ordem
+    description: Materialização da tabela contendo os valores das transações em cada ordem de pagamento
+    definition:
+      method: fqn
+      value: transacao_valor_ordem
+
   - name: datario
     description: Materialização das views para o datario
     definition:
       method: fqn
       value: datario
+
+  - name: matriz_integracao_smtr
+    description: Materialização da matriz de integração da SMTR
+    definition:
+      method: fqn
+      value: matriz_integracao
+
+  - name: validacao_dados_jae
+    description: Materialização das tabelas de validação dos dados da Jaé
+    definition:
+      union:
+        - method: fqn
+          value: integracao_invalida
+        - method: fqn
+          value: integracao_nao_realizada
+
+  - name: monitoramento_subsidio
+    description: Materialização das tabelas utilizadas nos dashboards do subsidio
+    definition:
+      union:
+        - method: fqn
+          value: monitoramento_viagem_transacao
+        - method: fqn
+          value: monitoramento_sumario_servico_dia_historico
+        - method: fqn
+          value: monitoramento_sumario_servico_dia_tipo_viagem_historico

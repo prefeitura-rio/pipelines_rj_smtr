@@ -7,7 +7,7 @@ models:
       - name: data
         description: "data"
       - name: id_veiculo
-        description: "Número de ordem do veículo"
+        description: "{{ doc('id_veiculo') }}"
       - name: empresa
         description: "Nome da empresa operadora de ônibus"
       - name: numero_serie_validador

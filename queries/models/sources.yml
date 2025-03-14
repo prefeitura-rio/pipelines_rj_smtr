@@ -30,6 +30,7 @@ sources:
       - name: linha_consorcio
       - name: linha_consorcio_operadora_transporte
       - name: endereco
+      - name: linha_tarifa
 
 
   - name: br_rj_riodejaneiro_gtfs_staging
@@ -110,10 +111,10 @@ sources:
       - name: sppo_vistoria_tr_subtt_cglf_2024
       - name: sppo_vistoria_tr_subtt_cglf_pendentes_2024
       - name: sppo_registro_agente_verao
-      - name: sppo_infracao
       - name: sppo_licenciamento_solicitacao
       - name: sppo_licenciamento
-      - name: sppo_licenciamento_stu
+      - name: infracao
+      - name: licenciamento_stu
 
   - name: dashboard_subsidio_sppo_staging
     database: rj-smtr-staging
@@ -190,3 +191,21 @@ sources:
 
     tables:
       - name: viagem_informada
+
+  - name: source_smtr
+    database: rj-smtr-dev
+
+    tables:
+      - name: matriz_integracao
+
+  - name: subsidio_staging
+    database: rj-smtr
+
+    tables:
+      - name: valor_km_tipo_viagem
+
+  - name: planejamento_staging
+    database: rj-smtr
+
+    tables:
+      - name: tecnologia_servico

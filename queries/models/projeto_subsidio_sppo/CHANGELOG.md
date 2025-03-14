@@ -1,5 +1,52 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.2.0] - 2025-03-07
+
+### Adicionado
+
+- Altera os dias `2025-02-16`, `2025-02-22` e `2025-02-23` para tipo_dia `Verão` e `2025-02-28` para tipo_dia `Ponto Facultativo` no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/468)
+
+## [9.1.9] - 2025-02-25
+
+### Alterado
+- Torna filtro de partição obrigatório no modelo `registros_status_viagem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/448)
+
+## [9.1.8] - 2025-02-24
+
+### Adicionado
+
+- Altera os dias `2025-02-01`, `2025-02-02`, `2025-02-08`,  `2025-02-09` e `2025-02-15` para tipo_dia `Verão` no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/453)
+
+## [9.1.7] - 2025-02-05
+
+### Adicionado
+
+- Altera os dias `2025-01-18`, `2025-01-19`, `2025-01-20`,  `2025-01-25` e `2025-01-26` para tipo_dia `Verão` no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/416)
+
+## [9.1.6] - 2025-01-23
+
+### Adicionado
+
+- Altera os dias `2025-01-11` e `2025-01-12` para tipo_dia `Verão` no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/398)
+
+## [9.1.5] - 2025-01-08
+
+### Adicionado
+
+- Adicionado label `dashboard` ao modelo `viagem_completa.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/258)
+
+## [9.1.4] - 2025-01-06
+
+### Adicionado
+
+- Adicionadas datas com os tipo os `Fim de ano`, `Reveillon` e tipo dia `Ponto facultativo` no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/383)
+
+## [9.1.3] - 2025-01-03
+
+### Alterado
+
+- Alterado a data final no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/378)
+
 ## [9.1.2] - 2024-12-18
 
 ### Alterado

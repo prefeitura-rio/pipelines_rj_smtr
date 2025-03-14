@@ -36,6 +36,22 @@ with
                 then "Enem"
                 when data = date(2024, 11, 24)
                 then "Parada LGBTQI+"  -- Processo.Rio MTR-DES-2024/70057
+                when data between date(2024, 12, 07) and date(2024, 12, 08)
+                then "Extraordinária - Verão"  -- Processo.Rio MTR-DES-2024/72800
+                when data between date(2024, 12, 14) and date(2024, 12, 15)
+                then "Extraordinária - Verão"  -- Processo.Rio MTR-DES-2024/74396
+                when data = date(2024, 12, 23)
+                then "Fim de ano"  -- Processo.Rio MTR-DES-2024/75723
+                when data between date(2024, 12, 26) and date(2024, 12, 27)
+                then "Fim de ano"  -- Processo.Rio MTR-DES-2024/75723
+                when data = date(2024, 12, 30)
+                then "Fim de ano"  -- Processo.Rio MTR-DES-2024/75723
+                when data = date(2024, 12, 31)
+                then "Vespera de Reveillon"  -- Processo.Rio MTR-DES-2024/76453
+                when data = date(2025, 01, 01)
+                then "Reveillon"  -- Processo.Rio MTR-DES-2024/76453
+                when data between date(2025, 01, 02) and date(2025, 01, 03)
+                then "Fim de ano"  -- Processo.Rio MTR-DES-2024/77046
             end as tipo_os
         from
             unnest(

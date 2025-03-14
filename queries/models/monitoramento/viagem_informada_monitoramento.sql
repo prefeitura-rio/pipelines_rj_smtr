@@ -112,15 +112,7 @@ with
             route_id,
             shape_id,
             servico,
-            case
-                when sentido = 'I'
-                then 'Ida'
-                when sentido = 'V'
-                then 'Volta'
-                when sentido = 'C'
-                then 'Circular'
-                else sentido
-            end as sentido,
+            sentido,
             fonte_gps,
             datetime_processamento,
             datetime_captura
@@ -154,7 +146,9 @@ with
     calendario as (
         select *
         from {{ calendario }}
-        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
+        {% if is_incremental() %}
+            where data in ({{ partitions | join(", ") }})
+        {% endif %}
     ),
     routes as (
         select *
@@ -178,13 +172,13 @@ with
                 when r.route_type = '700'
                 then 'Ônibus SPPO'
             end as modo,
-            v.id_veiculo,
-            v.trip_id,
-            v.route_id,
-            v.shape_id,
-            v.servico,
-            v.sentido,
-            v.fonte_gps,
+            if(trim(v.id_veiculo) = '', null, v.id_veiculo) as id_veiculo,
+            if(trim(v.trip_id) = '', null, v.trip_id) as trip_id,
+            if(trim(v.route_id) = '', null, v.route_id) as route_id,
+            if(trim(v.shape_id) = '', null, v.shape_id) as shape_id,
+            if(trim(v.servico) = '', null, v.servico) as servico,
+            if(trim(v.sentido) = '', null, v.sentido) as sentido,
+            if(trim(v.fonte_gps) = '', null, v.fonte_gps) as fonte_gps,
             v.datetime_processamento,
             v.datetime_captura
         from deduplicado v

@@ -221,6 +221,14 @@ def run_subflow(
 
 
 @task(trigger=all_finished)
+def transform_task_state(results: Union[list, str]):
+    """
+    Transforms the task state to success and returns the results
+    """
+    return results
+
+
+@task(trigger=all_finished)
 def check_fail(results: Union[list, str]):
     """
     Checks if any task result indicates failure.

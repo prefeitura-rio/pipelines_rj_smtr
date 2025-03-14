@@ -51,11 +51,11 @@ models:
         data_type: string
         quote: true
       - name: datetime_processamento
-        description: Data e hora do processamento da viagem em GMT-3
+        description: Data e hora do processamento da viagem [GMT-3]
         data_type: datetime
         quote: true
       - name: datetime_captura
-        description: Data e hora da captura da integração em GMT-3
+        description: Data e hora da captura da integração [GMT-3]
         data_type: string
         quote: true
       - name: versao
@@ -74,19 +74,19 @@ models:
         data_type: date
         quote: true
       - name: id_viagem
-        description: "{{ doc('id_viagem') }}"
+        description: "Código único identificador da viagem"
         data_type: string
         quote: true
       - name: datetime_partida
-        description: "{{ doc('datetime_partida') }}"
+        description: "Horário de início da viagem"
         data_type: datetime
         quote: true
       - name: datetime_chegada
-        description: "{{ doc('datetime_chegada') }}"
+        description: "Horário de fim da viagem"
         data_type: datetime
         quote: true
       - name: modo
-        description: "{{ doc('modo') }}"
+        description: "Tipo de transporte (Ônibus, Van, BRT)"
         data_type: string
         quote: true
       - name: id_veiculo
@@ -106,11 +106,11 @@ models:
         data_type: string
         quote: true
       - name: servico
-        description: "{{ doc('servico') }}"
+        description: "Serviço realizado pelo veículo"
         data_type: string
         quote: true
       - name: sentido
-        description: "{{ doc('sentido') }}"
+        description: "Sentido da linha"
         data_type: string
         quote: true
       - name: quantidade_segmentos_verificados
@@ -142,15 +142,15 @@ models:
         data_type: float64
         quote: true
       - name: tipo_dia
-        description: "{{ doc('tipo_dia') }}"
+        description: "Dia da semana - categorias: Dia Útil, Sábado, Domingo"
         data_type: string
         quote: true
       - name: feed_version
-        description: "{{ doc('feed_version') }}"
+        description: "String que indica a versão atual do conjunto de dados GTFS"
         data_type: string
         quote: true
       - name: feed_start_date
-        description: "Data inicial do feed (versão)."
+        description: "Data inicial do feed (versão)"
         data_type: date
         quote: true
       - name: versao
@@ -160,4 +160,20 @@ models:
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
+        quote: true
+      - name: indicador_servico_planejado_gtfs
+        description: Indica se o serviço entava planejado para o tipo dia no GTFS
+        data_type: boolean
+        quote: true
+      - name: indicador_servico_planejado_os
+        description: Indica se o serviço estava planejado para a faixa horária na OS (apenas para SPPO)
+        data_type: boolean
+        quote: true
+      - name: indicador_servico_divergente
+        description: Indica se o serviço indicado nos dados de gps estava diferente do serviço informado na viagem
+        data_type: boolean
+        quote: true
+      - name: indicador_shape_invalido
+        description: Indica se o shape existe no GTFS no feed vigente durante a data da viagem
+        data_type: boolean
         quote: true

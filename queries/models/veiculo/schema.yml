@@ -1,20 +1,32 @@
 version: 2
 
 models:
-  - name: sppo_infracao
-    description: "Tabela histórica de todas as multas aplicadas aos modos de transporte no município do Rio de Janeiro, com qualquer situação.
-    Dados capturados diariamente de: https://www.data.rio/documents/multas-aplicadas-aos-modos-de-transporte-nos-%C3%BAltimos-cinco-anos"
+  - name: infracao
+    description: "Tabela histórica de todas as multas aplicadas aos modos de transporte no município do Rio de Janeiro, com qualquer situação"
+    tests:
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          name: dbt_expectations.expect_table_aggregation_to_equal_other_table__infracao
+          expression: count(distinct data)
+          compare_model: ref('infracao_staging')
+          compare_expression: count(distinct data)
+          group_by: [data]
+          compare_group_by: [Date(data)]
+          row_condition: "DATE(data) between DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_start')) + modules.datetime.timedelta(7) }}') AND DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(8) }}')"
+          compare_row_condition: "DATE(data) between DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_start')) + modules.datetime.timedelta(7) }}') AND DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(8) }}')"
+          where: "DATE(data) between DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_start')) + modules.datetime.timedelta(7) }}') AND DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(8) }}')"
     columns:
       - name: data
-        description: "Data da captura (partição)"
+        description: "{{ doc('data_captura') }} [partição]"
       - name: timestamp_captura
         description: "Timestamp de captura dos dados de infração"
       - name: modo
-        description: "ÔNIBUS – nesse arquivo só constam os ônibus"
+        description: "{{ doc('modo_onibus') }}"
       - name: permissao
-        description: "Número da permissão do ônibus"
+        description: "{{ doc('permissao') }}"
       - name: placa
-        description: "Placa do veículo"
+        description: "{{ doc('placa') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
       - name: id_auto_infracao
         description: "Identificador do auto de infração da multa aplicada"
       - name: data_infracao
@@ -34,118 +46,126 @@ models:
                       CANCELADA - Multa foi cancelada através de um Processo de Recurso"
       - name: data_pagamento
         description: "Data de pagamento"
-  - name: sppo_licenciamento
-    description: "Tabela histórica de dados cadastrais dos veículos que operam o sistema de ônibus (BRT e SPPO),
-                  considerando tanto os licenciados no Sistema de Transporte Urbano (STU) quanto as solicitações
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+  - name: licenciamento
+    description: "Tabela histórica de dados cadastrais dos veículos que operam o sistema de transporte rodoviário,
+                  considerando tanto os licenciados no Sistema de Transporte Urbano [STU] quanto as solicitações
                   válidas em andamento para ingresso no sistema"
     columns:
       - name: data
-        description: "Data da captura (partição)"
+        description: "{{ doc('data_captura') }} [partição]"
       - name: modo
-        description: "ÔNIBUS – nesse arquivo só constam os ônibus"
+        description: "{{ doc('modo') }}"
       - name: id_veiculo
-        description: "Número de ordem do veículo, identificação que é exibida na lateral do ônibus"
+        description: "{{ doc('id_veiculo') }}"
       - name: ano_fabricacao
-        description: "Ano de fabricação do veículo"
+        description: "{{ doc('ano_fabricacao') }} [chassi]"
       - name: carroceria
-        description: "Descrição do modelo da carroceria"
+        description: "{{ doc('carroceria') }}"
       - name: data_ultima_vistoria
-        description: "Data da última vistoria do veículo"
+        description: "{{ doc('data_ultima_vistoria') }}"
       - name: id_carroceria
-        description: "Código do modelo da carroceria"
+        description: "{{ doc('id_carroceria') }}"
       - name: id_chassi
-        description: "Código do modelo do chassi"
+        description: "{{ doc('id_chassi') }}"
       - name: id_fabricante_chassi
-        description: "Identificador do fabricante do chassi"
+        description: "{{ doc('id_fabricante_chassi') }}"
       - name: id_interno_carroceria
-        description: "Código interno do modelo de carroceria"
+        description: "{{ doc('id_interno_carroceria') }}"
       - name: id_planta
-        description: "Código da planta do veículo"
+        description: "{{ doc('id_planta') }}"
       - name: indicador_ar_condicionado
-        description: "Indicador se possui ar condicionado (Verdadeiro/Falso)"
+        description: "{{ doc('indicador_ar_condicionado') }}"
       - name: indicador_elevador
-        description: "Indicador se possui elevador (Verdadeiro/Falso)"
+        description: "{{ doc('indicador_elevador') }}"
       - name: indicador_usb
-        description: "Indicador se tem USB (Verdadeiro/Falso)"
+        description: "{{ doc('indicador_usb') }}"
       - name: indicador_wifi
-        description: "Indicador se tem Wi-fi (Verdadeiro/Falso)"
+        description: "{{ doc('indicador_wifi') }}"
       - name: nome_chassi
-        description: "Descrição do modelo do chassi"
+        description: "{{ doc('nome_chassi') }}"
       - name: permissao
-        description: "Número da permissão do ônibus"
+        description: "{{ doc('permissao') }}"
       - name: placa
-        description: "Placa do veículo"
+        description: "{{ doc('placa') }}"
       - name: quantidade_lotacao_pe
-        description: "Quantidade de passageiros em pé"
+        description: "{{ doc('quantidade_lotacao_pe') }}"
       - name: quantidade_lotacao_sentado
-        description: "Quantidade de passageiros sentados"
+        description: "{{ doc('quantidade_lotacao_sentado') }}"
       - name: tipo_combustivel
-        description: "Combustível utilizado"
+        description: "{{ doc('tipo_combustivel') }}"
       - name: tipo_veiculo
-        description: "Tipo de veículo"
+        description: "{{ doc('tipo_veiculo') }}"
+      - name: tecnologia
+        description: "{{ doc('tecnologia') }}"
       - name: status
-        description: "Licenciado - Veículo licenciado no Sistema de Transporte Urbano (STU)\n
-                      Válido - Veículo com solicitação válida para ingresso no Sistema de Transporte Urbano (STU)"
+        description: "{{ doc('status') }}"
       - name: ano_ultima_vistoria_atualizado
-        description: "Ano atualizado da última vistoria realizada pelo veículo"
+        description: "{{ doc('ano_ultima_vistoria_atualizado') }}"
       - name: data_inicio_vinculo
-        description: "Data de início do vínculo do veículo no STU"
+        description: "{{ doc('data_inicio_vinculo') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
   - name: sppo_licenciamento_solicitacao
-    description: "Tabela histórica de dados cadastrais das solicitações em andamento para ingresso no Sistema de Transporte Urbano (STU)"
+    description: "Tabela histórica de dados cadastrais das solicitações em andamento para ingresso no Sistema de Transporte Urbano [STU]"
     columns:
       - name: data
-        description: "Data da captura (partição)"
+        description: "{{ doc('data_captura') }} [partição]"
       - name: timestamp_captura
         description: "Timestamp de captura dos dados de licenciamento"
       - name: modo
-        description: "ÔNIBUS – nesse arquivo só constam os ônibus"
+        description: "{{ doc('modo_onibus') }}"
       - name: id_veiculo
-        description: "Número de ordem do veículo, identificação que é exibida na lateral do ônibus"
+        description: "{{ doc('id_veiculo') }}"
       - name: ano_fabricacao
-        description: "Ano de fabricação do veículo"
+        description: "{{ doc('ano_fabricacao') }}"
       - name: carroceria
-        description: "Descrição do modelo da carroceria"
+        description: "{{ doc('carroceria') }}"
       - name: data_ultima_vistoria
-        description: "Data da última vistoria do veículo"
+        description: "{{ doc('data_ultima_vistoria') }}"
       - name: id_carroceria
-        description: "Código do modelo da carroceria"
+        description: "{{ doc('id_carroceria') }}"
       - name: id_chassi
-        description: "Código do modelo do chassi"
+        description: "{{ doc('id_chassi') }}"
       - name: id_fabricante_chassi
-        description: "Identificador do fabricante do chassi"
+        description: "{{ doc('id_fabricante_chassi') }}"
       - name: id_interno_carroceria
-        description: "Código interno do modelo de carroceria"
+        description: "{{ doc('id_interno_carroceria') }}"
       - name: id_planta
-        description: "Código da planta do veículo"
+        description: "{{ doc('id_planta') }}"
       - name: indicador_ar_condicionado
-        description: "Indicador se possui ar condicionado (Verdadeiro/Falso)"
+        description: "{{ doc('indicador_ar_condicionado') }}"
       - name: indicador_elevador
-        description: "Indicador se possui elevador (Verdadeiro/Falso)"
+        description: "{{ doc('indicador_elevador') }}"
       - name: indicador_usb
-        description: "Indicador se tem USB (Verdadeiro/Falso)"
+        description: "{{ doc('indicador_usb') }}"
       - name: indicador_wifi
-        description: "Indicador se tem Wi-fi (Verdadeiro/Falso)"
+        description: "{{ doc('indicador_wifi') }}"
       - name: nome_chassi
-        description: "Descrição do modelo do chassi"
+        description: "{{ doc('nome_chassi') }}"
       - name: permissao
-        description: "Número da permissão do ônibus"
+        description: "{{ doc('permissao') }}"
       - name: placa
-        description: "Placa do veículo"
+        description: "{{ doc('placa') }}"
       - name: quantidade_lotacao_pe
-        description: "Quantidade de passageiros em pé"
+        description: "{{ doc('quantidade_lotacao_pe') }}"
       - name: quantidade_lotacao_sentado
-        description: "Quantidade de passageiros sentados"
+        description: "{{ doc('quantidade_lotacao_sentado') }}"
       - name: tipo_combustivel
-        description: "Combustível utilizado"
+        description: "{{ doc('tipo_combustivel') }}"
       - name: tipo_veiculo
-        description: "Tipo de veículo"
+        description: "{{ doc('tipo_veiculo') }}"
       - name: status
-        description: "Inválido - Veículo com solicitação inválida para ingresso no Sistema de Transporte Urbano (STU)\n
-                      Válido - Veículo com solicitação válida para ingresso no Sistema de Transporte Urbano (STU)"
+        description: "{{ doc('status') }}"
       - name: solicitacao
-        description: "Inclusão - Solicitação de ingresso de veículo no Sistema de Transporte Urbano (STU)\n
-                      Baixa - Solicitação de baixa de veículo já incluído no Sistema de Transporte Urbano (STU)\n
-                      Renumeração - Solicitação de alteração de número de ordem de veículo já incluído no Sistema de Transporte Urbano (STU)"
+        description: "Inclusão - Solicitação de ingresso de veículo no STU\n
+                      Baixa - Solicitação de baixa de veículo já incluído no STU\n
+                      Renumeração - Solicitação de alteração de número de ordem de veículo já incluído no STU"
   - name: sppo_veiculo_dia
     description: "Tabela resumo dos veículos que operaram no SPPO e seus respectivos indicadores"
     tests:
@@ -158,7 +178,9 @@ models:
       - name: data
         description: "Data de operação"
       - name: id_veiculo
-        description: "Número de ordem do veículo, identificação que é exibida na lateral do ônibus"
+        description: "{{ doc('id_veiculo') }}"
+      - name: placa
+        description: "{{ doc('placa') }}"
       - name: indicadores
         description: "Indicadores para caraterização do status do veículo"
       - name: indicadores.indicador_licenciado
@@ -188,8 +210,16 @@ models:
         tests:
           - not_null:
               name: not_null__status__sppo_veiculo_dia
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: data_licenciamento
+        description: "Data do arquivo de licenciamento utilizado"
+      - name: data_infracao
+        description: "Data do arquivo de infrações utilizado"
+      - name: tecnologia
+        description: "{{ doc('tecnologia') }}"
       - name: versao
-        description: "SHA do repositório no Github"
+        description: "{{ doc('versao') }}"
   - name: sppo_registro_agente_verao
     description: "Tabela com registros de Agentes de Verão para fins de cálculo de subsídio nos termos da RESOLUÇÃO SMTR Nº 3.682/2024"
     columns:
@@ -200,9 +230,9 @@ models:
       - name: id_registro
         description: "ID do registro (HASH SHA256)"
       - name: id_veiculo
-        description: "Número de ordem do veículo, identificação que é exibida na lateral do ônibus"
+        description: "{{ doc('id_veiculo') }}"
       - name: servico
-        description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, SN011, ...)"
+        description: "{{ doc('servico') }}"
       - name: link_foto
         description: "Link com a imagem interna do veículo"
       - name: validacao
@@ -210,4 +240,4 @@ models:
       - name: datetime_captura
         description: "Datetime de captura do registro pela pipeline"
       - name: versao
-        description: "SHA do repositório no Github"
+        description: "{{ doc('versao') }}"
