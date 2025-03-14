@@ -160,8 +160,7 @@ with
         select
             *,
             row_number() over (
-                partition by data, id_veiculo
-                order by datetime_partida
+                partition by data, id_veiculo order by datetime_partida
             ) as ordem_viagem_dia
         from deduplicado
     ),
@@ -223,9 +222,11 @@ with
             if(trim(v.fonte_gps) = '', null, v.fonte_gps) as fonte_gps,
             v.datetime_processamento,
             v.datetime_captura,
-            coalesce(vs.indicador_viagem_sobreposta, false) as indicador_viagem_sobreposta
+            coalesce(
+                vs.indicador_viagem_sobreposta, false
+            ) as indicador_viagem_sobreposta
         from viagem_validada v
-        left join viagens_sobrepostas vs on d.id_viagem = vo.id_viagem
+        left join viagens_sobrepostas vs on v.id_viagem = vs.id_viagem
         join calendario c using (data)
         left join routes r using (route_id, feed_start_date, feed_version)
     )
