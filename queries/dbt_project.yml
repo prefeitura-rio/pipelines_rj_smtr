@@ -23,6 +23,7 @@ vars:
   start_date: "2022-01-01T01:00:00"
   end_date: "2022-01-01T01:00:00"
   run_date: "2022-01-01T01:00:00"
+  partitions: ""
 
   ### Version default variable (replaced on deploy) ###
   version: ""
@@ -215,11 +216,15 @@ vars:
   data_inicial_gps_validacao_viagem: "2024-10-11"
 
   ### Planejamento ###
-  feed_inicial_viagem_planejada: "2024-11-16"
+  feed_inicial_viagem_planejada: "2025-01-02"
 
 tests:
   rj_smtr:
-    where: "DATA BETWEEN DATE('__date_range_start__') AND DATE('__date_range_end__')"
+    where: "data between date('{date_range_start}') and date('{date_range_end}')"
+    dashboard_subsidio_sppo:
+      where: "data between date('{date_range_start}') and date('{date_range_end}') and data < date('{DATA_SUBSIDIO_V9_INICIO}')"
+    dashboard_subsidio_sppo_v2:
+      where: "data between date('{date_range_start}') and date('{date_range_end}') and data < date('{DATA_SUBSIDIO_V14_INICIO}')"
 
 models:
   +persist_docs:

@@ -95,6 +95,7 @@ def get_table_data_backup_billingpay(
     password: str,
     database: str,
     filepath: str,
+    page_size: int,
 ) -> list[str]:
     """
     Captura dados de um Banco de Dados SQL fazendo paginação
@@ -110,7 +111,6 @@ def get_table_data_backup_billingpay(
     Returns:
         list[str]: Lista de arquivos salvos
     """
-    page_size = 200_000
     offset = 0
     base_query = f"{query} LIMIT {page_size}"
     query = f"{base_query} OFFSET 0"
