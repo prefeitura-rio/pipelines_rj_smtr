@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.2.1] - 2025-03-17
+
+### Alterado
+
+- Muda lógica do modelo `subsidio_data_versao_efetiva.sql` para pegar as excessões manuais da tabela `aux_calendario_manual` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/480)
+
 ## [9.2.0] - 2025-03-07
 
 ### Adicionado
