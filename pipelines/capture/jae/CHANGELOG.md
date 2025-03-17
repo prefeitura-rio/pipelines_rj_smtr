@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [1.3.2] - 2025-03-17
+
+### Alterado
+
+- Desativa schedule do flow `backup_billingpay_historico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/482)
+
 ## [1.3.1] - 2025-03-10
 
 ### Alterado
