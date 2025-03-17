@@ -51,6 +51,6 @@
     full join viagem_planejada p using (data, servico, faixa_horaria_inicio)
     full join os_faixa using (data, servico, faixa_horaria_inicio)
     where
-        km_planejada_faixa != distancia_total_planejada
-        or quilometragem != km_planejada_faixa
+        km_planejada_faixa is distinct from distancia_total_planejada
+        or quilometragem is distinct from km_planejada_faixa
 {%- endtest %}
