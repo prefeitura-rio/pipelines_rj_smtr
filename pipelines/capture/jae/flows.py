@@ -67,12 +67,13 @@ verificacao_ip.schedule = every_hour
 with Flow("jae: backup dados BillingPay") as backup_billingpay:
 
     database_name = Parameter(name="database_name")
+    end_datetime = Parameter(name="end_datetime", default=None)
 
     env = get_run_env()
 
     database_config = get_jae_db_config(database_name=database_name)
 
-    timestamp = get_scheduled_timestamp()
+    timestamp = get_scheduled_timestamp(timestamp=end_datetime)
 
     rename_flow_run_backup_billingpay(database_name=database_name, timestamp=timestamp)
 
