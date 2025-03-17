@@ -120,10 +120,7 @@ with
             td.data + st.arrival_time as datetime_partida
         from trips_dia td
         join {{ ref("aux_stop_times_horario_tratado") }} st
-        left join
-            frequencies_tratada f using (feed_start_date, feed_version, trip_id) using (
-                feed_start_date, feed_version, trip_id
-            )
+        left join frequencies_tratada f using (feed_start_date, feed_version, trip_id)
         where
             {% if is_incremental() %} feed_start_date in ({{ gtfs_feeds | join(", ") }})
             {% else %} feed_start_date >= '{{ var("feed_inicial_viagem_planejada") }}'
