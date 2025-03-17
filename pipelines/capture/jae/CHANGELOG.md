@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [1.4.0] - 2025-03-17
+
+### Adicionado
+
+- Adiciona parâmetro `end_datetime` no flow `backup_billingpay`
+
 ## [1.3.2] - 2025-03-17
 
 ### Alterado
