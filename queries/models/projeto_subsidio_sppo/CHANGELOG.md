@@ -1,6 +1,6 @@
 # Changelog - projeto_subsidio_sppo
 
-## [9.2.1] - 2025-03-07
+## [9.2.1] - 2025-03-17
 
 ### Alterado
 
