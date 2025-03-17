@@ -202,19 +202,19 @@ backup_billingpay_historico.state_handlers = [
     handler_initialize_sentry,
 ]
 
-backup_billingpay_historico.schedule = Schedule(
-    [
-        IntervalClock(
-            interval=timedelta(minutes=30),
-            start_date=datetime(
-                2021, 1, 1, 0, 0, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
-            ),
-            labels=[
-                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
-            ],
-            parameter_defaults={"database_name": db, "table_id": t},
-        )
-        for db, v in constants.BACKUP_JAE_BILLING_PAY_HISTORIC.value.items()
-        for t in v.keys()
-    ]
-)
+# backup_billingpay_historico.schedule = Schedule(
+#     [
+#         IntervalClock(
+#             interval=timedelta(minutes=30),
+#             start_date=datetime(
+#                 2021, 1, 1, 0, 0, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+#             ),
+#             labels=[
+#                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+#             ],
+#             parameter_defaults={"database_name": db, "table_id": t},
+#         )
+#         for db, v in constants.BACKUP_JAE_BILLING_PAY_HISTORIC.value.items()
+#         for t in v.keys()
+#     ]
+# )
