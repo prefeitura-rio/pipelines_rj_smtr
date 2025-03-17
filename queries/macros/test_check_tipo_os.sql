@@ -1,6 +1,6 @@
 {% test check_tipo_os(model) -%}
 -- mudar para dbt.expectations
-    WITH 
+    WITH
     viagem_planejada AS (
         SELECT distinct data, tipo_dia
         FROM {{ ref('viagem_planejada') }}
