@@ -397,4 +397,4 @@ models:
     dashboard_subsidio:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
-      +schema: dashboard_subsidio_sppo_v2
+      +schema: dashboard_subsidio

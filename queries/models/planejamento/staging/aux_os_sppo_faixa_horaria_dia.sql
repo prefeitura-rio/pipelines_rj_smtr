@@ -16,44 +16,16 @@ with
     os_tratamento_horario as (
         select
             *,
-            div(
-                cast(faixa_horaria_inicio_parts[0] as integer), 24
-            ) dia_soma_faixa_inicio,
-            div(cast(faixa_horaria_fim_parts[0] as integer), 24) dia_soma_faixa_fim,
-            concat(
-                lpad(
-                    cast(
-                        if(
-                            cast(faixa_horaria_inicio_parts[0] as integer) >= 24,
-                            cast(faixa_horaria_inicio_parts[0] as integer) - 24,
-                            cast(faixa_horaria_inicio_parts[0] as integer)
-                        ) as string
-                    ),
-                    2,
-                    '0'
-                ),
-                ":",
-                faixa_horaria_inicio_parts[1],
-                ":",
-                faixa_horaria_inicio_parts[2]
-            ) as faixa_horaria_tratada_inicio,
-            concat(
-                lpad(
-                    cast(
-                        if(
-                            cast(faixa_horaria_fim_parts[0] as integer) >= 24,
-                            cast(faixa_horaria_fim_parts[0] as integer) - 24,
-                            cast(faixa_horaria_fim_parts[0] as integer)
-                        ) as string
-                    ),
-                    2,
-                    '0'
-                ),
-                ":",
-                faixa_horaria_fim_parts[1],
-                ":",
-                faixa_horaria_fim_parts[2]
-            ) as faixa_horaria_tratada_fim
+            make_interval(
+                hour => cast(faixa_horaria_inicio_parts[0] as integer),
+                minute => cast(faixa_horaria_inicio_parts[1] as integer),
+                second => cast(faixa_horaria_inicio_parts[2] as integer)
+            ) as faixa_horario_intervalo_inicio,
+            make_interval(
+                hour => cast(faixa_horaria_fim_parts[0] as integer),
+                minute => cast(faixa_horaria_fim_parts[1] as integer),
+                second => cast(faixa_horaria_fim_parts[2] as integer)
+            ) as faixa_horario_intervalo_fim
         from os
     ),
     os_faixa_horaria_dia as (
@@ -68,24 +40,12 @@ with
             extensao_ida,
             extensao_volta,
             viagens_dia,
-            datetime(
-                concat(
-                    cast(
-                        date_add(c.data, interval o.dia_soma_faixa_inicio day) as string
-                    ),
-                    ' ',
-                    o.faixa_horaria_tratada_inicio
-                )
-            ) as faixa_horaria_inicio,
-            datetime(
-                concat(
-                    cast(date_add(c.data, interval o.dia_soma_faixa_fim day) as string),
-                    ' ',
-                    o.faixa_horaria_tratada_fim
-                )
-            ) as faixa_horaria_fim,
-            o.quilometragem,
-            o.partidas
+            c.data + o.faixa_horario_intervalo_inicio as faixa_horaria_inicio,
+            c.data + o.faixa_horario_intervalo_fim as faixa_horaria_fim,
+            partidas_ida,
+            partidas_volta,
+            quilometragem,
+            partidas
         from {{ ref("calendario") }} c
         {# from `rj-smtr.planejamento.calendario` c #}
         join
@@ -95,7 +55,33 @@ with
     ),
     faixas_agregadas as (
         select
-            * except (partidas, quilometragem),
+            * except (partidas_ida, partidas_volta, partidas, quilometragem),
+            case
+                when
+                    lag(faixa_horaria_inicio) over (
+                        partition by servico order by data, faixa_horaria_inicio
+                    )
+                    = faixa_horaria_inicio
+                then
+                    lag(partidas_ida) over (
+                        partition by servico order by data, faixa_horaria_inicio
+                    )
+                    + partidas_ida
+                else partidas_ida
+            end as partidas_ida,
+            case
+                when
+                    lag(faixa_horaria_inicio) over (
+                        partition by servico order by data, faixa_horaria_inicio
+                    )
+                    = faixa_horaria_inicio
+                then
+                    lag(partidas_volta) over (
+                        partition by servico order by data, faixa_horaria_inicio
+                    )
+                    + partidas_volta
+                else partidas_volta
+            end as partidas_volta,
             case
                 when
                     lag(faixa_horaria_inicio) over (
@@ -126,7 +112,43 @@ with
                 partition by servico, faixa_horaria_inicio order by data desc
             ) as rn
         from os_faixa_horaria_dia
+    ),
+    os_filtrada as (
+        select *
+        from faixas_agregadas
+        where rn = 1 and data = extract(date from faixa_horaria_inicio)
+    ),
+    os_por_sentido as (
+        select
+            data,
+            feed_version,
+            feed_start_date,
+            tipo_dia,
+            tipo_os,
+            servico,
+            consorcio,
+            sentido.codigo as sentido,
+            sentido.extensao as extensao,
+            sentido.partidas as partidas,
+            sentido.extensao * sentido.partidas as quilometragem,
+            faixa_horaria_inicio,
+            faixa_horaria_fim
+        from
+            os_filtrada,
+            unnest(
+                [
+                    struct(
+                        'I' as codigo,
+                        extensao_ida as extensao,
+                        partidas_ida as partidas
+                    ),
+                    struct(
+                        'V' as codigo,
+                        extensao_volta as extensao,
+                        partidas_volta as partidas
+                    )
+                ]
+            ) as sentido
     )
-select * except (rn)
-from faixas_agregadas
-where rn = 1 and data = extract(date from faixa_horaria_inicio)
+select *
+from os_por_sentido
