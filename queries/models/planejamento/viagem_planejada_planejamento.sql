@@ -20,7 +20,7 @@
 
 
 {% set calendario = ref("calendario") %}
-
+{# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
 {% if execute %}
     {% if is_incremental() %}
         {% set gtfs_feeds_query %}
@@ -83,7 +83,9 @@ with
         group by 1, 2, 3
     ),
     viagens_frequencies as (
-        select tfd.*, datetime(partida, "America/Sao_Paulo") as datetime_partida
+        select
+            tfd.* except (start_timestamp, end_timestamp, headway_secs),
+            datetime(partida, "America/Sao_Paulo") as datetime_partida
         from
             trips_frequences_dia tfd,
             unnest(
@@ -115,7 +117,7 @@ with
             td.indicador_possui_os,
             td.horario_inicio,
             td.horario_fim,
-            td.data + st.horario_partida as datetime_partida
+            td.data + st.arrival_time as datetime_partida
         from trips_dia td
         join {{ ref("aux_stop_times_horario_tratado") }} st
         left join
