@@ -119,7 +119,10 @@ with
             td.horario_fim,
             td.data + st.arrival_time as datetime_partida
         from trips_dia td
-        join {{ ref("aux_stop_times_horario_tratado") }} st
+        join
+            {{ ref("aux_stop_times_horario_tratado") }} st using (
+                feed_start_date, feed_version, trip_id
+            )
         left join frequencies_tratada f using (feed_start_date, feed_version, trip_id)
         where
             {% if is_incremental() %} feed_start_date in ({{ gtfs_feeds | join(", ") }})
@@ -146,6 +149,8 @@ with
             (distancia_total_planejada is null or distancia_total_planejada > 0)
             and (
                 not indicador_possui_os
+                or horario_inicio is null
+                or horario_fim is null
                 or datetime_partida between data + horario_inicio and data + horario_fim
             )
     ),
