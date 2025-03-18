@@ -10,24 +10,12 @@
 -- 1. Identifica registros pertencentes a viagens
 with
     registros_viagem as (
-        select
-            s.* except (versao_modelo),
-            datetime_partida,
-            datetime_chegada,
-            distancia_inicio_fim,
-            id_viagem
+        select s.* except (versao_modelo), datetime_partida, datetime_chegada, id_viagem
         from {{ ref("aux_monitoramento_registros_status_trajeto") }} s
         left join
             (
                 select
-                    id_veiculo,
-                    trip_id,
-                    servico_realizado,
-                    sentido_shape,
-                    id_viagem,
-                    datetime_partida,
-                    datetime_chegada,
-                    distancia_inicio_fim
+                    id_veiculo, trip_id, id_viagem, datetime_partida, datetime_chegada,
                 from {{ ref("viagem_inferida") }}
             ) v
             on s.id_veiculo = v.id_veiculo

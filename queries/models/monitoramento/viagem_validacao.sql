@@ -71,7 +71,7 @@ with
             )
             {# {% if is_incremental() %}  #}
             and {{ incremental_filter }}
-            {# {% endif %} #}
+        {# {% endif %} #}
         group by
             data,
             id_viagem,
@@ -142,53 +142,46 @@ with
         from indice i
         left join trips t using (feed_start_date, feed_version, route_id)
     ),
-    viagem_planejada as (
+    servico_planejado as (
         select *
-        {# from {{ ref("viagem_planejada") }} #}
-        from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
+        from {{ ref("servico_planejado") }}
         {# {% if is_incremental() %}  #}
         where {{ incremental_filter }}
-         {# {% endif %} #}
-        qualify
-            row_number() over (
-                partition by data, servico, sentido, faixa_horaria_inicio
-                order by distancia_planejada desc
-            )
-            = 1
+    {# {% endif %} #}
     ),
     servicos_planejados_os as (
         select
-            sp.*,
-            vp.distancia_planejada,
-            vp.id_tipo_trajeto,
-            vp.distancia_planejada*60/(datetime_diff(datetime_chegada, datetime_partida, minute) + 1) as velocidade_media,
+            spg.*,
+            sp.extensao as distancia_planejada,
+            sp.indicador_trajeto_alternativo,
+            -- fmt: off
+            sp.extensao*60/(datetime_diff(datetime_chegada, datetime_partida, minute) + 1) as velocidade_media,
+            -- fmt: on
             case
-                when
-                    vp.distancia_total_planejada is not null
-                    and vp.distancia_total_planejada > 0
+                when sp.quilometragem is not null and sp.quilometragem > 0
                 then true
                 when
-                    (
-                        vp.distancia_total_planejada is not null
-                        and vp.distancia_total_planejada <= 0
-                    )
-                    or (
-                        vp.distancia_total_planejada is null and sp.modo = "Ônibus SPPO"
-                    )
+                    (sp.quilometragem is not null and sp.quilometragem <= 0)
+                    or (sp.quilometragem is null and spg.modo = "Ônibus SPPO")
                 then false
             end as indicador_servico_planejado_os
-        from servicos_planejados_gtfs sp
+        from servicos_planejados_gtfs spg
         left join
-            viagem_planejada vp
-            on vp.servico = sp.servico
-            and vp.sentido = sp.sentido
-            and vp.data = sp.data
-            and sp.datetime_partida between faixa_horaria_inicio and faixa_horaria_fim
+            servico_planejado sp
+            on sp.servico = spg.servico
+            and sp.sentido = spg.sentido
+            and sp.data = spg.data
+            and spg.datetime_partida between faixa_horaria_inicio and faixa_horaria_fim
     ),
     viagens_velocidade_media as (
-        select *, velocidade_media >= {{ var("conformidade_velocidade_min") }} as indicador_acima_velocidade_max from servicos_planejados_os
+        select
+            *,
+            velocidade_media
+            >= {{ var("conformidade_velocidade_min") }}
+            as indicador_acima_velocidade_max
+        from servicos_planejados_os
     ),
-    filtro_desvio as (
+    viagens as (
         select
             data,
             id_viagem,
@@ -207,11 +200,14 @@ with
             quantidade_segmentos_validos,
             indice_validacao,
             indicador_viagem_sobreposta,
+            -- fmt: off
             indice_validacao >= {{ var("parametro_validacao") }} as indicador_trajeto_valido,
+            -- fmt: on
             indicador_servico_planejado_gtfs,
             indicador_servico_planejado_os,
             indicador_servico_divergente,
             indicador_shape_invalido,
+            indicador_trajeto_alternativo,
             indicador_acima_velocidade_max,
             (
                 shape_id is not null
@@ -230,33 +226,39 @@ with
             '{{ var("version") }}' as versao,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
         from viagens_velocidade_media
-        qualify
-            ROW_NUMBER() OVER(
-                PARTITION BY id_veiculo, datetime_partida, datetime_chegada
-                ORDER BY indice_validacao DESC, id_tipo_trajeto, distancia_planejada DESC
-            ) = 1
     ),
-    filtro_partida AS (
-        SELECT
-            *
-        FROM
-            filtro_desvio
+    filtro_desvio as (
+        select *
+        from viagens
         qualify
-            ROW_NUMBER() OVER(
-                PARTITION BY id_veiculo, datetime_partida
-                ORDER BY distancia_planejada DESC
-            ) = 1
+            row_number() over (
+                partition by id_veiculo, datetime_partida, datetime_chegada
+                order by
+                    indice_validacao desc,
+                    indicador_trajeto_alternativo,
+                    distancia_planejada desc
+            )
+            = 1
     ),
-    filtro_chegada AS (
-        SELECT
-            *
-        FROM
-            filtro_partida
+    filtro_partida as (
+        select *
+        from filtro_desvio
         qualify
-            ROW_NUMBER() OVER(
-                PARTITION BY id_veiculo, datetime_chegada
-                ORDER BY distancia_planejada DESC
-            ) = 1
+            row_number() over (
+                partition by id_veiculo, datetime_partida
+                order by distancia_planejada desc
+            )
+            = 1
+    ),
+    filtro_chegada as (
+        select *
+        from filtro_partida
+        qualify
+            row_number() over (
+                partition by id_veiculo, datetime_chegada
+                order by distancia_planejada desc
+            )
+            = 1
     )
 select
     data,
@@ -281,6 +283,7 @@ select
     indicador_servico_planejado_os,
     indicador_servico_divergente,
     indicador_shape_invalido,
+    indicador_trajeto_alternativo,
     indicador_acima_velocidade_max,
     indicador_viagem_valida,
     parametro_validacao,
@@ -289,4 +292,6 @@ select
     feed_start_date,
     versao,
     datetime_ultima_atualizacao
-from filtro_chegada
+{% if var("tipo_materializacao") == "monitoramento" %} from filtro_chegada
+{% else %} from viagens
+{% endif %}

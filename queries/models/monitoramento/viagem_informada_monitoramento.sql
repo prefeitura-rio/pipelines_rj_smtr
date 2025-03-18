@@ -156,14 +156,6 @@ with
             )
         where rn = 1
     ),
-    viagens_ordenadas as (
-        select
-            *,
-            row_number() over (
-                partition by data, id_veiculo order by datetime_partida
-            ) as ordem_viagem_dia
-        from deduplicado
-    ),
     viagens_sobrepostas as (
         select
             v1.data,
@@ -175,14 +167,16 @@ with
             case
                 when v2.id_viagem is not null then true else false
             end as indicador_viagem_sobreposta
-        from viagens_ordenadas v1
+        from deduplicado v1
         left join
-            viagens_ordenadas v2
-            on v1.data = v2.data
+            deduplicado v2
+            on (v1.data = v2.data or v1.data = date_add(v2.data, interval 1 day))
             and v1.id_veiculo = v2.id_veiculo
             and v1.id_viagem != v2.id_viagem
-            and v1.datetime_partida < v2.datetime_chegada
-            and v1.datetime_chegada > v2.datetime_partida
+            and (
+                v1.datetime_partida < v2.datetime_chegada
+                or v1.datetime_chegada > v2.datetime_partida
+            )
     ),
     calendario as (
         select *

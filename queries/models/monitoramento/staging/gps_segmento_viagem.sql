@@ -57,38 +57,24 @@ with
         {% endif %}
     ),
     gps_viagem as (
+        select
+            data,
+            gv.id_viagem,
+            gv.shape_id,
+            gv.geo_point_gps,
+            gv.servico_viagem,
+            gv.servico_gps,
+            gv.timestamp_gps,
+            c.feed_version,
+            c.feed_start_date
         {% if var("tipo_materializacao") == "monitoramento" %}
-            select
-                data,
-                gv.id_viagem,
-                gv.shape_id,
-                gv.posicao_veiculo_geo as geo_point_gps,
-                gv.servico_realizado as servico_viagem,
-                gv.servico_informado as servico_gps,
-                gv.timestamp_gps,
-                c.feed_version,
-                c.feed_start_date
             from {{ ref("registros_status_viagem_inferida") }} gv
-            join calendario c using (data)
-            {# {% if is_incremental() %}  #}
-            where {{ incremental_filter }}
-        {# {% endif %} #}
-        {% else %}
-            select
-                data,
-                gv.id_viagem,
-                gv.shape_id,
-                gv.geo_point_gps,
-                gv.servico_viagem,
-                gv.servico_gps,
-                gv.timestamp_gps,
-                c.feed_version,
-                c.feed_start_date
-            from {{ ref("gps_viagem") }} gv
-            join calendario c using (data)
-            {% if is_incremental() %} where {{ incremental_filter }}
-            {% endif %}
+        {% else %} from {{ ref("gps_viagem") }} gv
         {% endif %}
+        join calendario c using (data)
+        {# {% if is_incremental() %}  #}
+        where {{ incremental_filter }}
+    {# {% endif %} #}
     ),
     segmento as (
         select
@@ -128,12 +114,7 @@ with
         from gps_servico_segmento g
     ),
     trips as (
-        select
-            feed_start_date,
-            feed_version,
-            route_id,
-            trip_id,
-            shape_id
+        select feed_start_date, feed_version, route_id, trip_id, shape_id
         {# from {{ ref("trips_gtfs") }} #}
         from `rj-smtr.gtfs.trips`
         {% if is_incremental() %}

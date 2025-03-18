@@ -273,7 +273,7 @@ models:
         data_type: datetime
         quote: true
 
-  - name: viagem_validacao
+  - name: viagem_validacao_v2
     description: "Tabela que informa se a viagem informada está ou não válida de acordo com os parâmetros definidos"
     columns:
       - name: data
