@@ -159,6 +159,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "routes",
                 "fare_rules",
                 "estudante_12032025",
+                "temp_estudante_cpfduplicado_14032025",
             ],
             "filter": {
                 "ITEM_PEDIDO": ["DT_INCLUSAO"],
