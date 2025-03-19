@@ -17,7 +17,11 @@ from pipelines.capture.jae.utils import (
     get_table_data_backup_billingpay,
 )
 from pipelines.constants import constants as smtr_constants
-from pipelines.utils.database import create_database_url, test_database_connection
+from pipelines.utils.database import (
+    create_database_url,
+    list_accessible_tables,
+    test_database_connection,
+)
 from pipelines.utils.extractors.db import get_raw_db
 from pipelines.utils.fs import create_partition
 from pipelines.utils.gcp.bigquery import SourceTable
@@ -171,7 +175,7 @@ def get_table_info(
     else:
         table_names = [
             t
-            for t in inspector.get_table_names()
+            for t in list_accessible_tables(engine=engine)
             if t not in tables_config.get("exclude", [])
             and isinstance(tables_config.get("filter", {}).get(t, []), list)
         ]
@@ -300,6 +304,7 @@ def get_non_filtered_tables(
     result = []
     with engine.connect() as conn:
         for table in no_filter_tables:
+            log(table)
             df = pd.read_sql(f"select count(*) as ct from {table}", conn)
             df["table"] = table
             result.append(df)
