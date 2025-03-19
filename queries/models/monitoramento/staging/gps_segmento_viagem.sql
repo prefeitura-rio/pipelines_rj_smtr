@@ -8,7 +8,7 @@
                 "granularity": "day",
             },
             incremental_strategy="insert_overwrite",
-            schema="monitoramento_interno",
+            schema="monitoramento_interno_teste",
         )
     }}
 {% else %}
@@ -34,27 +34,27 @@
 {# {% set calendario = ref("calendario") %} #}
 {% set calendario = "rj-smtr.planejamento.calendario" %}
 {% if execute %}
-    {% if is_incremental() %}
-        {% set gtfs_feeds_query %}
+    {# {% if is_incremental() %} #}
+    {% set gtfs_feeds_query %}
             select distinct concat("'", feed_start_date, "'") as feed_start_date
             from {{ calendario }}
             where {{ incremental_filter }}
-        {% endset %}
+    {% endset %}
 
-        {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
-    {% endif %}
+    {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
+{# {% endif %} #}
 {% endif %}
 
 with
     calendario as (
         select *
         from {{ calendario }}
-        {% if is_incremental() %}
-            where
-                data between date("{{ var('date_range_start') }}") and date(
-                    "{{ var('date_range_end') }}"
-                )
-        {% endif %}
+        {# {% if is_incremental() %} #}
+        where
+            data between date("{{ var('date_range_start') }}") and date(
+                "{{ var('date_range_end') }}"
+            )
+    {# {% endif %} #}
     ),
     gps_viagem as (
         select
@@ -87,9 +87,9 @@ with
             indicador_segmento_desconsiderado
         {# from {{ ref("segmento_shape") }} #}
         from `rj-smtr.planejamento.segmento_shape`
-        {% if is_incremental() %}
-            where feed_start_date in ({{ gtfs_feeds | join(", ") }})
-        {% endif %}
+        {# {% if is_incremental() %} #}
+        where feed_start_date in ({{ gtfs_feeds | join(", ") }})
+    {# {% endif %} #}
     ),
     servico_divergente as (
         select
@@ -117,63 +117,36 @@ with
         select feed_start_date, feed_version, route_id, trip_id, shape_id
         {# from {{ ref("trips_gtfs") }} #}
         from `rj-smtr.gtfs.trips`
-        {% if is_incremental() %}
-            where feed_start_date in ({{ gtfs_feeds | join(", ") }})
-        {% endif %}
+        {# {% if is_incremental() %} #}
+        where feed_start_date in ({{ gtfs_feeds | join(", ") }})
+    {# {% endif %} #}
     ),
     viagem as (
+        select
+            data,
+            v.id_viagem,
+            v.datetime_partida,
+            v.datetime_chegada,
+            v.modo,
+            v.id_veiculo,
+            v.trip_id,
+            v.route_id,
+            v.shape_id,
+            v.servico,
+            v.sentido,
+            v.indicador_viagem_sobreposta,
+            c.service_ids,
+            c.tipo_dia,
+            c.feed_start_date,
+            c.feed_version
         {% if var("tipo_materializacao") == "monitoramento" %}
-            select
-                data,
-                v.id_viagem,
-                v.datetime_partida,
-                v.datetime_chegada,
-                "Ônibus SPPO" as modo,
-                v.id_veiculo,
-                v.trip_id,
-                t.route_id,
-                v.shape_id,
-                v.servico_realizado as servico,
-                v.sentido,
-                false as indicador_viagem_sobreposta,
-                c.service_ids,
-                c.tipo_dia,
-                c.feed_start_date,
-                c.feed_version
             from {{ ref("viagem_inferida") }} v
-            join calendario c using (data)
-            left join
-                trips t
-                on t.feed_start_date = c.feed_start_date
-                and t.feed_version = c.feed_version
-                and t.shape_id = v.shape_id
-                and t.trip_id = v.trip_id
-            {# {% if is_incremental() %}  #}
-            where {{ incremental_filter }}
-        {# {% endif %} #}
-        {% else %}
-            select
-                data,
-                v.id_viagem,
-                v.datetime_partida,
-                v.datetime_chegada,
-                v.modo,
-                v.id_veiculo,
-                v.trip_id,
-                v.route_id,
-                v.shape_id,
-                v.servico,
-                v.sentido,
-                v.indicador_viagem_sobreposta,
-                c.service_ids,
-                c.tipo_dia,
-                c.feed_start_date,
-                c.feed_version
-            from {{ ref("viagem_informada_monitoramento") }} v
-            join calendario c using (data)
-            {% if is_incremental() %} where {{ incremental_filter }}
-            {% endif %}
+        {% else %} from {{ ref("viagem_informada_monitoramento") }} v
         {% endif %}
+        join calendario c using (data)
+        {# {% if is_incremental() %}  #}
+        where {{ incremental_filter }}
+    {# {% endif %} #}
     ),
     viagem_segmento as (
         select

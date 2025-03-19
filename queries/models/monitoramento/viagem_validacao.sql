@@ -6,7 +6,7 @@
                 "data_type": "date",
                 "granularity": "day",
             },
-            schema="monitoramento_interno",
+            schema="monitoramento_interno_teste",
         )
     }}
 {% else %}
@@ -30,14 +30,14 @@
 {# {% set calendario = ref("calendario") %} #}
 {% set calendario = "rj-smtr.planejamento.calendario" %}
 {% if execute %}
-    {% if is_incremental() %}
-        {% set gtfs_feeds_query %}
+    {# {% if is_incremental() %} #}
+    {% set gtfs_feeds_query %}
             select distinct concat("'", feed_start_date, "'") as feed_start_date
             from {{ calendario }}
             where {{ incremental_filter }}
-        {% endset %}
-        {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
-    {% endif %}
+    {% endset %}
+    {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
+{# {% endif %} #}
 {% endif %}
 
 with
@@ -125,9 +125,9 @@ with
             array_agg(service_id) as service_ids,
         {# from {{ ref("trips_gtfs") }} #}
         from `rj-smtr.gtfs.trips`
-        {% if is_incremental() %}
-            where feed_start_date in ({{ gtfs_feeds | join(", ") }})
-        {% endif %}
+        {# {% if is_incremental() %} #}
+        where feed_start_date in ({{ gtfs_feeds | join(", ") }})
+        {# {% endif %} #}
         group by 1, 2, 3
     ),
     servicos_planejados_gtfs as (
@@ -144,6 +144,10 @@ with
     ),
     servico_planejado as (
         select *
+        {# ,
+            sum(quilometragem) over (
+                partition by data, servico, faixa_horaria_inicio
+            ) as distancia_total_planejada #}
         from {{ ref("servico_planejado") }}
         {# {% if is_incremental() %}  #}
         where {{ incremental_filter }}

@@ -163,7 +163,6 @@ with
             v1.id_veiculo,
             v1.datetime_partida,
             v1.datetime_chegada,
-            v1.ordem_viagem_dia,
             case
                 when v2.id_viagem is not null then true else false
             end as indicador_viagem_sobreposta
@@ -173,10 +172,8 @@ with
             on (v1.data = v2.data or v1.data = date_add(v2.data, interval 1 day))
             and v1.id_veiculo = v2.id_veiculo
             and v1.id_viagem != v2.id_viagem
-            and (
-                v1.datetime_partida < v2.datetime_chegada
-                or v1.datetime_chegada > v2.datetime_partida
-            )
+            and v1.datetime_partida < v2.datetime_chegada
+            and v1.datetime_chegada > v2.datetime_partida
     ),
     calendario as (
         select *

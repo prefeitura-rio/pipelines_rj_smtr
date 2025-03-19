@@ -14,14 +14,14 @@
 {# {% set calendario = ref("calendario") %} #}
 {% set calendario = "rj-smtr.planejamento.calendario" %}
 {% if execute %}
-    {% if is_incremental() %}
-        {% set gtfs_feeds_query %}
+    {# {% if is_incremental() %} #}
+    {% set gtfs_feeds_query %}
             select distinct concat("'", feed_start_date, "'") as feed_start_date
             from {{ calendario }}
             where {{ incremental_filter }}
-        {% endset %}
-        {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
-    {% endif %}
+    {% endset %}
+    {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
+{# {% endif %} #}
 {% endif %}
 
 -- 1. Seleciona sinais de GPS registrados no período
@@ -61,7 +61,7 @@ with
         from
             {# {{ ref("shapes_geom_gtfs") }} #}
             `rj-smtr.gtfs.shapes_geom`
-        where feed_start_date in ({{ gtfs_feeds | join("', '") }})
+        where feed_start_date in ({{ gtfs_feeds | join(", ") }})
     ),
     servico_planejado as (
         select *
@@ -89,17 +89,18 @@ with
             s.shape_id,
             s.sentido,
             s.trip_id,
+            s.route_id,
             s.start_pt,
             s.end_pt,
             s.extensao as distancia_planejada,
             ifnull(g.distancia, 0) as distancia,
             s.feed_start_date,
             case
-                when st_dwithin(g.posicao_veiculo_geo, start_pt, {{ var("buffer") }})
+                when st_dwithin(g.geo_point_gps, start_pt, {{ var("buffer") }})
                 then 'start'
-                when st_dwithin(g.posicao_veiculo_geo, end_pt, {{ var("buffer") }})
+                when st_dwithin(g.geo_point_gps, end_pt, {{ var("buffer") }})
                 then 'end'
-                when st_dwithin(g.posicao_veiculo_geo, shape, {{ var("buffer") }})
+                when st_dwithin(g.geo_point_gps, shape, {{ var("buffer") }})
                 then 'middle'
                 else 'out'
             end status_viagem
@@ -121,7 +122,7 @@ with
             ] as buffer_fim
         {# from {{ ref("segmento_shape") }} #}
         from `rj-smtr.planejamento.segmento_shape`
-        where feed_start_date in ({{ gtfs_feeds | join("', '") }})
+        where feed_start_date in ({{ gtfs_feeds | join(", ") }})
         group by shape_id, feed_start_date
     ),
     -- Adiciona o indicador de interseção com o primeiro e último segmento, meio
