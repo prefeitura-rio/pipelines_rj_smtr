@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from prefeitura_rio.pipelines_utils.logging import log
-from sqlalchemy import create_engine
+from sqlalchemy import Engine, create_engine, text
 from sqlalchemy.exc import OperationalError
 
 ENGINE_MAPPING = {
@@ -72,3 +72,41 @@ def test_database_connection(
     except OperationalError as e:
         log("Conexão falhou", level="warning")
         return False, str(e)
+
+
+def list_accessible_tables(
+    engine: Engine,
+) -> list[str]:
+    """
+    Retorna a lista de tabelas acessíveis para o usuário no banco de dados conectado.
+
+    Args:
+        engine (Engine): Objeto SQLAlchemy Engine representando a conexão com o banco de dados.
+
+    Returns:
+        list[str]: Lista com os nomes das tabelas acessíveis.
+    """
+    db_type = engine.dialect.name
+
+    if db_type == "postgresql":
+        query = text(
+            """
+            SELECT table_name FROM information_schema.tables
+            WHERE table_schema = 'public'
+            and table_type = 'BASE TABLE'
+        """
+        )
+    elif db_type == "mysql":
+        query = text(
+            """
+            SELECT table_name FROM information_schema.tables
+            WHERE table_schema = DATABASE()
+            and table_type = 'BASE TABLE'
+        """
+        )
+    else:
+        raise ValueError(f"Banco de dados {db_type} não suportado")
+
+    with engine.connect() as conn:
+        result = conn.execute(query)
+        return [row[0] for row in result]
