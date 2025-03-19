@@ -12,40 +12,14 @@ with
 
 select
     * except (start_time_parts, end_time_parts, start_time, end_time),
-    div(cast(start_time_parts[0] as integer), 24) days_to_add_start,
-    div(cast(end_time_parts[0] as integer), 24) days_to_add_end,
-    concat(
-        lpad(
-            cast(
-                if(
-                    cast(start_time_parts[0] as integer) >= 24,
-                    cast(start_time_parts[0] as integer) - 24,
-                    cast(start_time_parts[0] as integer)
-                ) as string
-            ),
-            2,
-            '0'
-        ),
-        ":",
-        start_time_parts[1],
-        ":",
-        start_time_parts[2]
+    make_interval(
+        hour => cast(start_time_parts[0] as integer),
+        minute => cast(start_time_parts[1] as integer),
+        second => cast(start_time_parts[2] as integer)
     ) as start_time,
-    concat(
-        lpad(
-            cast(
-                if(
-                    cast(end_time_parts[0] as integer) >= 24,
-                    cast(end_time_parts[0] as integer) - 24,
-                    cast(end_time_parts[0] as integer)
-                ) as string
-            ),
-            2,
-            '0'
-        ),
-        ":",
-        end_time_parts[1],
-        ":",
-        end_time_parts[2]
+    make_interval(
+        hour => cast(end_time_parts[0] as integer),
+        minute => cast(end_time_parts[1] as integer),
+        second => cast(end_time_parts[2] as integer)
     ) as end_time
 from frequencies
