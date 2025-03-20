@@ -236,8 +236,8 @@
         ),
         ordem_servico_trips_shapes as (
             select *
-            from -- {{ ref("ordem_servico_trips_shapes_gtfs") }}
-             `rj-smtr.gtfs.ordem_servico_trips_shapes`
+            from  {{ ref("ordem_servico_trips_shapes_gtfs") }}
+            -- `rj-smtr.gtfs.ordem_servico_trips_shapes`
             where feed_start_date in ("{{ feed_start_dates | join('", "') }}")
         ),
         dia_atual as (
@@ -296,10 +296,7 @@
                 coalesce(da.trip_id, ts.trip_id) as trip_id,
                 ts.shape_id,
                 ts.shape_id_planejado,
-                ts.shape,
                 ts.sentido_shape,
-                ts.start_pt,
-                ts.end_pt,
                 ts.id_tipo_trajeto,
             from ordem_servico_trips_shapes as ts
             left join
@@ -624,10 +621,16 @@
                 and faixa_horaria_inicio != "24:00:00"
         ),
         shapes as (
-            select *
-            from -- {{ ref("shapes_geom_gtfs") }}
-             `rj-smtr.gtfs.shapes_geom`
+            select shape_id, shape, start_pt, end_pt
+            from  {{ ref("shapes_geom_gtfs") }}
+            -- `rj-smtr.gtfs.shapes_geom`
             where feed_start_date in ("{{ feed_start_dates | join('", "') }}")
+            qualify
+            row_number() over (
+                partition by shape_id
+                order by feed_start_date desc
+            )
+            = 1
         ),
         dados_agregados as (
             select
@@ -678,11 +681,6 @@
         )
     select
         data,
-        {# make_interval(
-        hour => cast(arrival_time_parts[0] as integer),
-        minute => cast(arrival_time_parts[1] as integer),
-        second => cast(arrival_time_parts[2] as integer)
-        ) as arrival_time #}
         tipo_dia,
         servico,
         vista,
@@ -709,7 +707,7 @@
         feed_start_date,
         current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
     from dados_agregados
-    left join shapes as s using (feed_version, feed_start_date, shape_id)
+    left join shapes as s using (shape_id)
     {% if var("run_date") == "2024-05-05" %}
         -- Apuração "Madonna · The Celebration Tour in Rio"
         where and servico != "SE001"
