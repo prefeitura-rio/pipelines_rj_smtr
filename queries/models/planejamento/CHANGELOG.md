@@ -1,5 +1,10 @@
 # Changelog - planejamento
 
+## [1.3.3] - 2025-03-14
+
+### Adicionado
+
+- Adiciona novas datas no modelo `aux_calendario_manual.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/480)
 ## [1.3.2] - 2025-03-10
 
 ### Alterado

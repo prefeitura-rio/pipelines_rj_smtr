@@ -159,6 +159,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "routes",
                 "fare_rules",
                 "estudante_12032025",
+                "temp_estudante_cpfduplicado_14032025",
             ],
             "filter": {
                 "ITEM_PEDIDO": ["DT_INCLUSAO"],
@@ -242,6 +243,8 @@ class constants(Enum):  # pylint: disable=c0103
                 "transacao_faltante_23082023",
                 # sem permissão #
                 "temp_estudante_cpfduplicado_13032025",
+                "temp_estudante_cpfduplicado_14032025",
+                "temp_estudante_cpfduplicado_17032025",
             ],
             "filter": {
                 "confirmacao_envio_pms": ["data_confirmacao"],
@@ -311,6 +314,8 @@ class constants(Enum):  # pylint: disable=c0103
                 "estudante_universitario",
                 "estudante_sme_2025_2102",
                 "temp_estudante_cpfduplicado_13032025",
+                "temp_estudante_cpfduplicado_14032025",
+                "temp_estudante_cpfduplicado_17032025",
             ],
             "filter": {
                 "lancamento_conta_gratuidade": ["data_inclusao"],
@@ -431,6 +436,8 @@ class constants(Enum):  # pylint: disable=c0103
                 "jall_midia_nao_recebida",
                 "erros_504_criacao_dock",
                 "temp_estudante_cpfduplicado_13032025",
+                "temp_estudante_cpfduplicado_14032025",
+                "temp_estudante_cpfduplicado_17032025",
             ],
             "filter": {
                 "midia_evento": ["dt_inclusao"],

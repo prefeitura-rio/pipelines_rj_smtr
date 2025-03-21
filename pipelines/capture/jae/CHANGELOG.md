@@ -1,5 +1,17 @@
 # Changelog - source_jae
 
+## [1.4.1] - 2025-03-19
+
+### Alterado
+
+- Remove tabelas sem permissão automaticamente no backup da BillingPay (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/487)
+
+## [1.4.0] - 2025-03-17
+
+### Adicionado
+
+- Adiciona parâmetro `end_datetime` no flow `backup_billingpay`
+
 ## [1.3.2] - 2025-03-17
 
 ### Alterado
