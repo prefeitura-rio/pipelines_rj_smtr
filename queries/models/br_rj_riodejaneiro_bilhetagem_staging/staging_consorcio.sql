@@ -1,30 +1,33 @@
 {{
-  config(
-    alias='consorcio',
-  )
+    config(
+        alias="consorcio",
+    )
 }}
 
-WITH
-    consorcio AS (
-        SELECT
+with
+    consorcio as (
+        select
             data,
-            SAFE_CAST(CD_CONSORCIO AS STRING) AS cd_consorcio,
+            safe_cast(cd_consorcio as string) as cd_consorcio,
             timestamp_captura,
-            DATETIME(PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%S%Ez', SAFE_CAST(JSON_VALUE(content, '$.DT_INCLUSAO') AS STRING)), "America/Sao_Paulo") AS datetime_inclusao,
-            SAFE_CAST(JSON_VALUE(content, '$.NM_CONSORCIO') AS STRING) AS nm_consorcio
-        FROM
-            {{ source("br_rj_riodejaneiro_bilhetagem_staging", "consorcio") }}
+            datetime(
+                parse_timestamp(
+                    '%Y-%m-%dT%H:%M:%S%Ez',
+                    safe_cast(json_value(content, '$.DT_INCLUSAO') as string)
+                ),
+                "America/Sao_Paulo"
+            ) as datetime_inclusao,
+            safe_cast(json_value(content, '$.NM_CONSORCIO') as string) as nm_consorcio
+        from {{ source("source_jae", "consorcio") }}
     ),
-    consorcio_rn AS (
-        SELECT
+    consorcio_rn as (
+        select
             *,
-            ROW_NUMBER() OVER (PARTITION BY cd_consorcio ORDER BY timestamp_captura DESC) AS rn
-        FROM
-            consorcio
+            row_number() over (
+                partition by cd_consorcio order by timestamp_captura desc
+            ) as rn
+        from consorcio
     )
-SELECT
-  * EXCEPT(rn)
-FROM
-  consorcio_rn
-WHERE
-  rn = 1
+select * except (rn)
+from consorcio_rn
+where rn = 1

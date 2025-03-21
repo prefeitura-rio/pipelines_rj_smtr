@@ -3,6 +3,7 @@
 
 from datetime import datetime
 from types import NoneType
+from typing import Optional, Union
 
 from prefect import unmapped
 from prefect.run_configs import KubernetesRun
@@ -36,18 +37,20 @@ from pipelines.utils.prefect import TypedParameter
 
 def create_default_capture_flow(
     flow_name: str,
-    source: SourceTable,
+    source: Union[SourceTable, list[SourceTable]],
     create_extractor_task: FunctionTask,
     agent_label: str,
     recapture_days: int = 2,
     generate_schedule: bool = True,
+    recapture_schedule_cron: Optional[str] = None,
 ):  # pylint: disable=R0914, R0913
     """
     Cria um flow de captura
 
     Args:
         flow_name (str): O nome do flow
-        source (SourceTable): Objeto representando a fonte de dados que será capturada
+        source (Union[SourceTable, list[SourceTable]]): Objeto ou lista de objetos representando
+            a fonte de dados que será capturada
         create_extractor_task (FunctionTask):
             A task que prepara a função de extração
             Pode receber os argumentos:
@@ -59,12 +62,23 @@ def create_default_capture_flow(
             a serem recapturadas
         generate_schedule (bool): Se a função vai agendar o flow com base
             no parametro schedule_cron do source
+        recapture_schedule_cron (Optional[str]): Cron para agendar execuções de recaptura
 
     Returns:
         Flow: O flow de captura
     """
 
+    if isinstance(source, SourceTable):
+        source = [source]
+
+    source_map = {s.source_name: s for s in source}
     with Flow(flow_name) as capture_flow:
+
+        source_name = TypedParameter(
+            name="source_name",
+            accepted_types=str,
+            default=source[0].source_name,
+        )
 
         timestamp = TypedParameter(
             name="timestamp",
@@ -90,7 +104,11 @@ def create_default_capture_flow(
 
         env = get_run_env()
 
-        activated_source = set_env(env=env, source=source)
+        activated_source = set_env(
+            env=env,
+            source_name=source_name,
+            source_map=source_map,
+        )
 
         timestamps = get_capture_timestamps(
             source=activated_source,
@@ -100,7 +118,7 @@ def create_default_capture_flow(
         )
 
         rename_capture_flow(
-            flow_name=flow_name,
+            source_name=source_name,
             timestamp=timestamp,
             recapture=recapture,
         )
@@ -164,16 +182,34 @@ def create_default_capture_flow(
 
     if generate_schedule:
 
-        capture_flow.schedule = Schedule(
-            [
+        clocks = [
+            CronClock(
+                s.schedule_cron,
+                labels=[
+                    agent_label,
+                ],
+                start_date=datetime.now(tz=timezone(constants.TIMEZONE.value)),
+                parameter_defaults={"source_name": s.source_name},
+            )
+            for s in source
+        ]
+
+        if recapture_schedule_cron:
+            clocks += [
                 CronClock(
-                    source.schedule_cron,
+                    recapture_schedule_cron,
                     labels=[
                         agent_label,
                     ],
                     start_date=datetime.now(tz=timezone(constants.TIMEZONE.value)),
+                    parameter_defaults={
+                        "source_name": s.source_name,
+                        "recapture": True,
+                    },
                 )
+                for s in source
             ]
-        )
+
+        capture_flow.schedule = Schedule(clocks)
 
     return capture_flow
