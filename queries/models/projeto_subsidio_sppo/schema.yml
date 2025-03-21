@@ -29,6 +29,8 @@ models:
           - faixa_horaria_inicio
           - shape_id
           name: dbt_utils.unique_combination_of_columns__viagem_planejada
+      - check_km_planejada:
+          name: check_km_planejada__viagem_planejada
     columns:
       - name: data
         description: "Data"

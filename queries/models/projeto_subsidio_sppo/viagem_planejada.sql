@@ -19,7 +19,9 @@
                 data_versao_frequencies
             from {{ ref("subsidio_data_versao_efetiva") }}
             where
-                data between date_sub("{{ var('run_date') }}", interval 1 day) and date("{{ var('run_date') }}") -- fmt: off
+                data between date_sub("{{ var('run_date') }}", interval 1 day) and date(
+                    "{{ var('run_date') }}"
+                )
         ),
         -- 2. Puxa dados de distancia quadro no quadro horário
         quadro as (
@@ -232,12 +234,15 @@
             from {{ ref("subsidio_data_versao_efetiva") }}
             -- `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
             where
-                data between date_sub("{{ var('run_date') }}", interval 2 day) and date_sub("{{ var('run_date') }}", interval 1 day) -- fmt: off
+                data
+                between date_sub("{{ var('run_date') }}", interval 2 day) and date_sub(
+                    "{{ var('run_date') }}", interval 1 day
+                )
         ),
         ordem_servico_trips_shapes as (
             select *
-            from  {{ ref("ordem_servico_trips_shapes_gtfs") }}
-            -- `rj-smtr.gtfs.ordem_servico_trips_shapes`
+            from  -- {{ ref("ordem_servico_trips_shapes_gtfs") }}
+                `rj-smtr.gtfs.ordem_servico_trips_shapes`
             where feed_start_date in ("{{ feed_start_dates | join('", "') }}")
         ),
         dia_atual as (
@@ -292,7 +297,9 @@
                 coalesce(da.fim_periodo, ts.fim_periodo) as fim_periodo,
                 "00:00:00" as faixa_horaria_inicio,
                 "02:59:59" as faixa_horaria_fim,
-                coalesce(da.trip_id_planejado, ts.trip_id_planejado) as trip_id_planejado,
+                coalesce(
+                    da.trip_id_planejado, ts.trip_id_planejado
+                ) as trip_id_planejado,
                 coalesce(da.trip_id, ts.trip_id) as trip_id,
                 ts.shape_id,
                 ts.shape_id_planejado,
@@ -622,15 +629,12 @@
         ),
         shapes as (
             select shape_id, shape, start_pt, end_pt
-            from  {{ ref("shapes_geom_gtfs") }}
+            from {{ ref("shapes_geom_gtfs") }}
             -- `rj-smtr.gtfs.shapes_geom`
             where feed_start_date in ("{{ feed_start_dates | join('", "') }}")
             qualify
-            row_number() over (
-                partition by shape_id
-                order by feed_start_date desc
-            )
-            = 1
+                row_number() over (partition by shape_id order by feed_start_date desc)
+                = 1
         ),
         dados_agregados as (
             select
@@ -681,6 +685,11 @@
         )
     select
         data,
+        {# make_interval(
+        hour => cast(arrival_time_parts[0] as integer),
+        minute => cast(arrival_time_parts[1] as integer),
+        second => cast(arrival_time_parts[2] as integer)
+        ) as arrival_time #}
         tipo_dia,
         servico,
         vista,

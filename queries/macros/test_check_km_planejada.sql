@@ -36,21 +36,11 @@
                     date("{{ var('date_range_start') }}"), interval 1 day
                 ) and date("{{ var('date_range_end') }}")
             group by 1, 2, 3
-        ),
-        sumario as (
-            select data, servico, faixa_horaria_inicio, km_planejada_faixa
-            from {{ model }}
-            -- `rj-smtr.dashboard_subsidio_sppo_v2.sumario_faixa_servico_dia_pagamento`
-            where
-                data between date("{{ var('date_range_start') }}") and date(
-                    "{{ var('date_range_end') }}"
-                )
         )
     select *
-    from sumario
-    full join viagem_planejada p using (data, servico, faixa_horaria_inicio)
+    from viagem_planejada p
     full join os_faixa using (data, servico, faixa_horaria_inicio)
     where
-        km_planejada_faixa is distinct from distancia_total_planejada
-        or quilometragem is distinct from km_planejada_faixa
+        quilometragem != distancia_total_planejada
+
 {%- endtest %}

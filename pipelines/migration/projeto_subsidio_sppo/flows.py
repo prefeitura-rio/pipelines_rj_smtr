@@ -466,7 +466,8 @@ with Flow(
         dbt_vars = {"date_range_start": start_date, "date_range_end": end_date}
 
         SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt_tests(
-            dataset_id="sppo_registros sppo_realocacao check_gps_treatment__gps_sppo sppo_veiculo_dia",  # noqa
+            dataset_id="sppo_registros sppo_realocacao check_gps_treatment__gps_sppo sppo_veiculo_dia, viagem_planejada",  # noqa
+            exclude="dashboard_subsidio_sppo_v2",
             _vars=dbt_vars,
         )
 
