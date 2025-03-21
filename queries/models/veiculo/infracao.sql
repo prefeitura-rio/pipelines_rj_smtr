@@ -14,16 +14,6 @@
     {% set max_infracao_date = infracao_dates.columns[1].values()[0]%}
 {% endif %}
 with
-    {# infracao_staging as (
-    select *
-        from {{ ref("infracao_staging") }}
-        {% if is_incremental() %}
-            where
-                date(data)
-                between "{{ var('run_date')}}"
-                and "{{ modules.datetime.date.fromisoformat(var('run_date')) + modules.datetime.timedelta(10) }}"
-        {% endif %}
-) #}
     infracao as (
         select * except (data), safe_cast(data as date) as data
         from {{ ref("infracao_staging") }} as i

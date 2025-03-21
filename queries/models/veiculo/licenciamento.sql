@@ -14,16 +14,6 @@
     {% set max_licenciamento_date = licenciamento_dates.columns[1].values()[0] %}
 {% endif %}
 with
-{# licenciamento_staging as (
-    select *
-        from {{ ref("licenciamento_stu_staging") }}
-        {% if is_incremental() %}
-            where
-                date(data)
-                between "{{ var('run_date')}}"
-                and "{{ modules.datetime.date.fromisoformat(var('run_date')) + modules.datetime.timedelta(14) }}"
-        {% endif %}
-), #}
     stu as (
         select * except (data), date(data) as data
         from {{ ref("licenciamento_stu_staging") }} as l
@@ -161,16 +151,6 @@ select
 from stu_ano_ultima_vistoria
 where data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
 union all
-{# with sppo_licenciamento_staging as (
-    select *
-        from {{ ref("sppo_licenciamento_staging") }}
-        {% if is_incremental() %}
-            where
-                date(data)
-                between "{{ var('run_date')}}"
-                and "{{ modules.datetime.date.fromisoformat(var('run_date')) + modules.datetime.timedelta(14) }}"
-        {% endif %}
-) #}
 select *
 from {{ ref("sppo_licenciamento_staging") }} l
 where data < "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"

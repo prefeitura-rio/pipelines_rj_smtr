@@ -172,11 +172,20 @@ models:
           - data
           - id_veiculo
           name: dbt_utils.unique_combination_of_columns__data_id_veiculo__sppo_veiculo_dia
+      - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
+          date_col: data
+          row_condition: "1=1"
+          test_start_date: "{{ var('date_range_start') }}"
+          test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
+          name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sppo_veiculo_dia
     columns:
       - name: data
         description: "Data de operação"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
+        tests:
+          - not_null:
+              name: not_null__id_veiculo__sppo_veiculo_dia
       - name: placa
         description: "{{ doc('placa') }}"
       - name: indicadores

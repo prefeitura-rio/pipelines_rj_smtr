@@ -251,7 +251,7 @@ with Flow(
         dataset_id=smtr_constants.VEICULO_DATASET_ID.value,
         table_id=constants.SPPO_VEICULO_DIA_TABLE_ID.value,
         upstream=True,
-        exclude="+gps_sppo",
+        exclude="+gps_sppo +sppo_licenciamento_staging",
         _vars=_vars,
     )
 
@@ -261,7 +261,7 @@ with Flow(
     )[0]
 
     VEICULO_DATA_QUALITY_TEST = run_dbt_tests(
-        dataset_id=smtr_constants.VEICULO_DATASET_ID.value,
+        dataset_id="sppo_veiculo_dia",
         _vars=dbt_vars,
     ).set_upstream(WAIT_DBT_RUN)
 
