@@ -392,3 +392,9 @@ models:
       staging:
         +materialized: view
         +schema: dashboard_operacao_onibus_staging
+    monitoramento_interno:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: monitoramento_interno
+      staging:
+        +schema: monitoramento_interno_staging
