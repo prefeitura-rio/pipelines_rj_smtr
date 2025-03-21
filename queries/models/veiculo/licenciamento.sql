@@ -9,7 +9,7 @@
     )
 }}
 {% if is_incremental() and execute %}
-    {% set licenciamento_dates = run_query(get_license_date()) %}
+    {% set licenciamento_dates = run_query(get_license_dates()) %}
     {% set min_licenciamento_date = licenciamento_dates.columns[0].values()[0] %}
     {% set max_licenciamento_date = licenciamento_dates.columns[1].values()[0] %}
 {% endif %}

@@ -1,4 +1,4 @@
-{% macro get_license_date() %}
+{% macro get_license_dates() %}
     select
         min(date(data_versao)) as min_data,
         coalesce(max(date(data_versao)), min(date(data_versao))) as max_data

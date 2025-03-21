@@ -47,17 +47,17 @@ with
                         then date("2024-04-09")
                         else
                             (
-                                select min(date(data))
-                                from {{ ref("licenciamento_stu_staging") }}
+                                select min(data_licenciamento)
+                                from licenciamento
                                 where
-                                    date(data)
+                                    data_licenciamento
                                     >= date_add(date(periodo.data), interval 5 day)
                                     /* Admite apenas versões do STU igual ou após 2024-04-09 a
                          partir de abril/24 devido à falha de atualização na fonte
                          de dados (SIURB) */
                                     and (
                                         date(periodo.data) < "2024-04-01"
-                                        or date(data) >= '2024-04-09'
+                                        or data_licenciamento >= '2024-04-09'
                                     )
                             )
                     end

@@ -7,13 +7,12 @@
     )
 }}
 
-{#  #}
 {% if is_incremental() and execute %}
-    {% set licenciamento_dates = run_query(get_license_date()) %}
+    {% set licenciamento_dates = run_query(get_license_dates()) %}
     {% set min_licenciamento_date = licenciamento_dates.columns[0].values()[0] %}
     {% set max_licenciamento_date = licenciamento_dates.columns[1].values()[0] %}
 
-    {% set infracao_dates = run_query(get_violation_date()) %}
+    {% set infracao_dates = run_query(get_violation_dates()) %}
     {% set min_infracao_date = infracao_dates.columns[0].values()[0]%}
     {% set max_infracao_date = infracao_dates.columns[1].values()[0]%}
 {% endif %}
@@ -249,6 +248,7 @@ select
                 else null
             end
     end as status,
+    -- alterar para if
     case
         when data >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}")
         then tecnologia
