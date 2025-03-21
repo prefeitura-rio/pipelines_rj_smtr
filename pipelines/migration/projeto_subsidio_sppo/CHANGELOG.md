@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.1.3] - 2025-03-21
+
+### Adicionado
+
+- Adicionados os testes da modelo `viagem_planejada.sql` aos testes do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/479)
+
 ## [1.1.2] - 2025-02-17
 
 ### Corrigido

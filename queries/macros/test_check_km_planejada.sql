@@ -37,6 +37,7 @@
                 ) and date("{{ var('date_range_end') }}")
             group by 1, 2, 3
         ),
+        -- adicionar condição para viagem_planejada
         sumario as (
             select data, servico, faixa_horaria_inicio, km_planejada_faixa
             from {{ model }}
