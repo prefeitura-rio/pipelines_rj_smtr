@@ -1,4 +1,5 @@
 -- depends_on: {{ ref('aux_sppo_licenciamento_vistoria_atualizada') }}
+-- depends_on: {{ ref('licenciamento_data_versao_efetiva') }}
 {{
     config(
         materialized="incremental",
@@ -7,17 +8,18 @@
         incremental_strategy="insert_overwrite",
     )
 }}
-
-{% if execute and is_incremental() %}
-    {% set licenciamento_date = run_query(get_license_date()).columns[0].values()[0] %}
+{% if is_incremental() and execute %}
+    {% set licenciamento_dates = run_query(get_license_dates()) %}
+    {% set min_licenciamento_date = licenciamento_dates.columns[0].values()[0] %}
+    {% set max_licenciamento_date = licenciamento_dates.columns[1].values()[0] %}
 {% endif %}
-
 with
     stu as (
         select * except (data), date(data) as data
-        from {{ ref("licenciamento_stu_staging") }} as t
+        from {{ ref("licenciamento_stu_staging") }} as l
+        where data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
         {% if is_incremental() %}
-            where date(data) = date("{{ licenciamento_date }}")
+            and data between "{{ min_licenciamento_date }}" and "{{ max_licenciamento_date }}"
         {% endif %}
     ),
     -- Processo.Rio MTR-CAP-2025/01125 [Correção da alteração do tipo de veículo]
@@ -82,8 +84,8 @@ with
         select
             * except (timestamp_captura),
             extract(year from data_ultima_vistoria) as ano_ultima_vistoria,
-            row_number() over (partition by data, id_veiculo) rn
         from stu_tipo_veiculo
+        qualify row_number() over (partition by data, id_veiculo) = 1
     ),
     stu_ano_ultima_vistoria as (
         -- Temporariamente considerando os dados de vistoria enviados pela TR/SUBTT/CGLF
@@ -147,4 +149,11 @@ select
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     "{{ var('version') }}" as versao
 from stu_ano_ultima_vistoria
-where rn = 1
+where data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
+union all
+select *
+from {{ ref("sppo_licenciamento_staging") }} l
+where data < "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
+{% if is_incremental() %}
+    and data between "{{ min_licenciamento_date }}" and "{{ max_licenciamento_date }}"
+{% endif %}
