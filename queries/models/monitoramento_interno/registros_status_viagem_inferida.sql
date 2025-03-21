@@ -12,7 +12,7 @@ with
         left join
             (
                 select
-                    id_veiculo, trip_id, id_viagem, datetime_partida, datetime_chegada,
+                    id_veiculo, trip_id, id_viagem, datetime_partida, datetime_chegada
                 from {{ ref("viagem_inferida") }}
             ) v
             on s.id_veiculo = v.id_veiculo
