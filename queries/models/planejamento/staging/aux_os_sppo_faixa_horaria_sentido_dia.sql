@@ -10,9 +10,10 @@ with
             *,
             split(faixa_horaria_inicio, ":") as faixa_horaria_inicio_parts,
             split(faixa_horaria_fim, ":") as faixa_horaria_fim_parts
-        {# from {{ ref("ordem_servico_faixa_horaria") }} #}
-        {# from `rj-smtr.planejamento.ordem_servico_faixa_horaria` #}
-        from `rj-smtr-dev.botelho__planejamento.ordem_servico_faixa_horaria_teste`
+        from {{ ref("aux_ordem_servico_faixa_horaria") }}
+    {# from `rj-smtr.planejamento_staging.aux_ordem_servico_faixa_horaria` #}
+    {# from {{ ref("ordem_servico_faixa_horaria") }} #}
+    {# from `rj-smtr.planejamento.ordem_servico_faixa_horaria` #}
     ),
     os_tratamento_horario as (
         select
@@ -131,9 +132,7 @@ with
             sentido.codigo as sentido,
             sentido.extensao as extensao,
             sentido.partidas as partidas,
-            coalesce(
-                sentido.extensao * sentido.partidas / 1000, quilometragem
-            ) as quilometragem,
+            quilometragem,  -- TODO: alterar para sentido.extensao * sentido.partidas / 1000 quando subir novo modelo de OS
             faixa_horaria_inicio,
             faixa_horaria_fim
         from

@@ -1,9 +1,6 @@
 {{
     config(
-        materialized="incremental",
-        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-        unique_key=["timestamp_gps", "id_veiculo"],
-        incremental_strategy="insert_overwrite",
+        materialized="ephemeral",
     )
 }}
 

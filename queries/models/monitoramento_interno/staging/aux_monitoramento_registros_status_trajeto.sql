@@ -1,4 +1,3 @@
--- depends_on: {{ ref('subsidio_data_versao_efetiva') }}
 {{
     config(
         materialized="ephemeral",
@@ -64,15 +63,35 @@ with
         where feed_start_date in ({{ gtfs_feeds | join(", ") }})
     ),
     servico_planejado as (
-        select *
-        from {{ ref("servico_planejado") }}
+        select
+            data, feed_version, feed_start_date, servico, sentido, extensao, trip_info
+        from {{ ref("servico_planejado_faixa_horaria") }}
         {# {% if is_incremental() %}  #}
         where {{ incremental_filter }}
     {# {% endif %} #}
     ),
+    servico_planejado_unnested as (
+        select
+            sp.data,
+            sp.feed_version,
+            sp.feed_start_date,
+            sp.servico,
+            sp.sentido,
+            sp.extensao,
+            trip.trip_id,
+            trip.route_id,
+            trip.shape_id,
+        from servico_planejado sp, unnest(sp.trip_info) as trip
+        qualify
+            row_number() over (
+                partition by sp.data, trip.route_id, trip.shape_id
+                order by trip.primeiro_horario
+            )
+            = 1
+    ),
     servico_planejado_shapes as (
-        select sp.*, s.shape, s.start_pt, s.end_pt
-        from servico_planejado as sp
+        select spu.*, s.shape, s.start_pt, s.end_pt
+        from servico_planejado_unnested as spu
         left join shapes as s using (feed_version, feed_start_date, shape_id)
     ),
     -- 4. Classifica a posição do veículo em todos os shapes possíveis de
@@ -139,10 +158,8 @@ with
                     sv.status_viagem = 'end'
                     and st_intersects(sv.geo_point_gps, sf.buffer_fim)
                 then true
-                when sv.status_viagem = 'middle'
-                then true
                 else false
-            end as manter_registro,
+            end as indicador_intersecao_segmento,
         from status_viagem sv
         left join
             segmentos_filtrados sf
@@ -151,4 +168,3 @@ with
     )
 select *, '{{ var("version") }}' as versao_modelo
 from status_viagem_segmentos
-where manter_registro = true

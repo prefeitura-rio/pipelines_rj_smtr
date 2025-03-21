@@ -113,14 +113,6 @@ with
         select id_viagem, g.shape_id, g.id_segmento, g.quantidade_gps,
         from gps_servico_segmento g
     ),
-    trips as (
-        select feed_start_date, feed_version, route_id, trip_id, shape_id
-        {# from {{ ref("trips_gtfs") }} #}
-        from `rj-smtr.gtfs.trips`
-        {# {% if is_incremental() %} #}
-        where feed_start_date in ({{ gtfs_feeds | join(", ") }})
-    {# {% endif %} #}
-    ),
     viagem as (
         select
             data,
@@ -134,7 +126,6 @@ with
             v.shape_id,
             v.servico,
             v.sentido,
-            v.indicador_viagem_sobreposta,
             c.service_ids,
             c.tipo_dia,
             c.feed_start_date,
@@ -163,7 +154,6 @@ with
             s.indicador_segmento_desconsiderado,
             v.servico,
             v.sentido,
-            v.indicador_viagem_sobreposta,
             v.service_ids,
             v.tipo_dia,
             v.feed_version,
@@ -185,7 +175,6 @@ select
     v.servico,
     v.sentido,
     ifnull(g.quantidade_gps, 0) as quantidade_gps,
-    v.indicador_viagem_sobreposta,
     v.indicador_segmento_desconsiderado,
     s.indicador_servico_divergente,
     v.feed_version,

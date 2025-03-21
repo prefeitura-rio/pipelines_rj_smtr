@@ -131,14 +131,7 @@ with
         {% if is_incremental() and partitions | length > 0 %}
             union all
 
-            select
-                * except (
-                    modo,
-                    versao,
-                    indicador_viagem_sobreposta,
-                    datetime_ultima_atualizacao
-                ),
-                1 as priority
+            select * except (modo, versao, datetime_ultima_atualizacao), 1 as priority
             from {{ this }}
             where data in ({{ partitions | join(", ") }})
         {% endif %}
@@ -155,25 +148,6 @@ with
                 from complete_partitions
             )
         where rn = 1
-    ),
-    viagens_sobrepostas as (
-        select
-            v1.data,
-            v1.id_viagem,
-            v1.id_veiculo,
-            v1.datetime_partida,
-            v1.datetime_chegada,
-            case
-                when v2.id_viagem is not null then true else false
-            end as indicador_viagem_sobreposta
-        from deduplicado v1
-        left join
-            deduplicado v2
-            on (v1.data = v2.data or v1.data = date_add(v2.data, interval 1 day))
-            and v1.id_veiculo = v2.id_veiculo
-            and v1.id_viagem != v2.id_viagem
-            and v1.datetime_partida < v2.datetime_chegada
-            and v1.datetime_chegada > v2.datetime_partida
     ),
     calendario as (
         select *
@@ -212,12 +186,8 @@ with
             if(trim(v.sentido) = '', null, v.sentido) as sentido,
             if(trim(v.fonte_gps) = '', null, v.fonte_gps) as fonte_gps,
             v.datetime_processamento,
-            v.datetime_captura,
-            coalesce(
-                vs.indicador_viagem_sobreposta, false
-            ) as indicador_viagem_sobreposta
+            v.datetime_captura
         from deduplicado v
-        left join viagens_sobrepostas vs on v.id_viagem = vs.id_viagem
         join calendario c using (data)
         left join routes r using (route_id, feed_start_date, feed_version)
     )

@@ -43,7 +43,7 @@ with
                     )
             end as datetime_partida
         from {{ ref("aux_monitoramento_registros_status_trajeto") }}
-        where status_viagem in ('start', 'end')
+        where indicador_intersecao_segmento = true
     ),
     routes as (
         select *
@@ -54,7 +54,7 @@ with
     {# {% endif %} #}
     ),
     viagens as (
-        select distinct
+        select
             concat(
                 id_veiculo,
                 "-",
@@ -72,8 +72,6 @@ with
             servico_gps,
             servico,
             case
-                {# when v.fonte_gps = 'brt'
-        then 'BRT' #}
                 when r.route_type = '200'
                 then 'Ônibus Executivo'
                 when r.route_type = '700'
@@ -86,7 +84,8 @@ with
             distancia_planejada,
             datetime_partida,
             timestamp_gps as datetime_chegada,
-            '{{ var("version") }}' as versao_modelo
+            '{{ var("version") }}' as versao_modelo,
+            current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
         from aux_status
         left join routes r using (route_id, feed_start_date)
         where
@@ -99,26 +98,6 @@ with
                 order by timestamp_gps
             )
             = 1
-    ),
-    viagens_sobrepostas as (
-        select
-            v1.data,
-            v1.id_viagem,
-            v1.id_veiculo,
-            v1.datetime_partida,
-            v1.datetime_chegada,
-            case
-                when v2.id_viagem is not null then true else false
-            end as indicador_viagem_sobreposta
-        from viagens v1
-        left join
-            viagens v2
-            on (v1.data = v2.data or v1.data = date_add(v2.data, interval 1 day))
-            and v1.id_veiculo = v2.id_veiculo
-            and v1.id_viagem != v2.id_viagem
-            and v1.datetime_partida < v2.datetime_chegada
-            and v1.datetime_chegada > v2.datetime_partida
     )
-select v.*, vs.indicador_viagem_sobreposta
+select *
 from viagens v
-left join viagens_sobrepostas vs on v.id_viagem = vs.id_viagem
