@@ -59,11 +59,18 @@ models:
         tests:
           - not_null:
               name: not_null__sentido__viagem_planejada
+          - accepted_values:
+              values: ["I", "V", "C"]
+              name: accepted_values__sentido__viagem_planejada
       - name: partidas_total_planejada
         description: "{{ doc('partidas') }}"
         tests:
           - not_null:
               name: not_null__partidas_total_planejada__viagem_planejada
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: false
+              name: dbt_utils.accepted_range__partidas_total_planejada__viagem_planejada
       - name: distancia_planejada
         description: "Distância do shape [trajeto] planejado (km)"
         tests:

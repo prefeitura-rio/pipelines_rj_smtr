@@ -392,6 +392,7 @@
                 partidas_total_planejada,
                 distancia_planejada,
                 distancia_total_planejada,
+                -- utilizar make_interval para inicio e fim periodo
                 if(
                     inicio_periodo is not null
                     and array_length(split(inicio_periodo, ":")) = 3,
