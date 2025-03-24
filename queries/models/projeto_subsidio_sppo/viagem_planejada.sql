@@ -340,10 +340,12 @@
                 partidas_total_planejada,
                 distancia_planejada,
                 distancia_total_planejada,
-                inicio_periodo,
-                fim_periodo,
+                split(inicio_periodo, ":") as inicio_periodo_parts,
+                split(fim_periodo, ":") as fim_periodo_parts,
                 faixa_horaria_inicio,
+                split(faixa_horaria_inicio, ":") as faixa_horaria_inicio_parts,
                 faixa_horaria_fim,
+                split(faixa_horaria_fim, ":") as faixa_horaria_fim_parts,
                 trip_id_planejado,
                 trip_id,
                 shape_id,
@@ -365,10 +367,12 @@
                 partidas_total_planejada,
                 distancia_planejada,
                 distancia_total_planejada,
-                inicio_periodo,
-                fim_periodo,
+                split(inicio_periodo, ":") as inicio_periodo_parts,
+                split(fim_periodo, ":") as fim_periodo_parts,
                 faixa_horaria_inicio,
+                split(faixa_horaria_inicio, ":") as faixa_horaria_inicio_parts,
                 faixa_horaria_fim,
+                split(faixa_horaria_fim, ":") as faixa_horaria_fim_parts,
                 trip_id_planejado,
                 trip_id,
                 shape_id,
@@ -393,51 +397,51 @@
                 distancia_planejada,
                 distancia_total_planejada,
                 if(
-        inicio_periodo is not null
-        and array_length(split(inicio_periodo, ":")) = 3,
-        datetime(d.data) + make_interval(
-            hour => safe_cast(split(inicio_periodo, ":")[offset(0)] as int64),
-            minute => safe_cast(split(inicio_periodo, ":")[offset(1)] as int64),
-            second => safe_cast(split(inicio_periodo, ":")[offset(2)] as int64)
-        ),
-        null
-    ) as inicio_periodo,
-    if(
-        fim_periodo is not null
-        and array_length(split(fim_periodo, ":")) = 3,
-        datetime(d.data) + make_interval(
-            hour => safe_cast(split(fim_periodo, ":")[offset(0)] as int64),
-            minute => safe_cast(split(fim_periodo, ":")[offset(1)] as int64),
-            second => safe_cast(split(fim_periodo, ":")[offset(2)] as int64)
-        ),
-        null
-    ) as fim_periodo,
-    if(
-        d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"),
-        datetime(d.data) + make_interval(
-            hour => safe_cast(split(o.faixa_horaria_inicio, ":")[offset(0)] as int64),
-            minute => safe_cast(split(o.faixa_horaria_inicio, ":")[offset(1)] as int64),
-            second => safe_cast(split(o.faixa_horaria_inicio, ":")[offset(2)] as int64)
-        ),
-        datetime(d.data) + make_interval(
-            hour => 0,
-            minute => 0,
-            second => 0
-        )
-    ) as faixa_horaria_inicio,
-    if(
-        d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"),
-        datetime(d.data) + make_interval(
-            hour => safe_cast(split(o.faixa_horaria_fim, ":")[offset(0)] as int64),
-            minute => safe_cast(split(o.faixa_horaria_fim, ":")[offset(1)] as int64),
-            second => safe_cast(split(o.faixa_horaria_fim, ":")[offset(2)] as int64)
-        ),
-        datetime(d.data) + make_interval(
-            hour => 23,
-            minute => 59,
-            second => 59
-        )
-    ) as faixa_horaria_fim,
+                    inicio_periodo_parts is not null
+                    and array_length(inicio_periodo_parts) = 3,
+                    datetime(d.data) + make_interval(
+                        hour => safe_cast(inicio_periodo_parts[offset(0)] as int64),
+                        minute => safe_cast(inicio_periodo_parts[offset(1)] as int64),
+                        second => safe_cast(inicio_periodo_parts[offset(2)] as int64)
+                    ),
+                    null
+                ) as inicio_periodo,
+                if(
+                    fim_periodo_parts is not null
+                    and array_length(fim_periodo_parts) = 3,
+                    datetime(d.data) + make_interval(
+                        hour => safe_cast(fim_periodo_parts[offset(0)] as int64),
+                        minute => safe_cast(fim_periodo_parts[offset(1)] as int64),
+                        second => safe_cast(fim_periodo_parts[offset(2)] as int64)
+                    ),
+                    null
+                ) as fim_periodo,
+                if(
+                    d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"),
+                    datetime(d.data) + make_interval(
+                        hour => safe_cast(o.faixa_horaria_inicio_parts[offset(0)] as int64),
+                        minute => safe_cast(o.faixa_horaria_inicio_parts[offset(1)] as int64),
+                        second => safe_cast(o.faixa_horaria_inicio_parts[offset(2)] as int64)
+                    ),
+                    datetime(d.data) + make_interval(
+                        hour => 0,
+                        minute => 0,
+                        second => 0
+                    )
+                ) as faixa_horaria_inicio,
+                if(
+                    d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"),
+                    datetime(d.data) + make_interval(
+                        hour => safe_cast(o.faixa_horaria_fim_parts[offset(0)] as int64),
+                        minute => safe_cast(o.faixa_horaria_fim_parts[offset(1)] as int64),
+                        second => safe_cast(o.faixa_horaria_fim_parts[offset(2)] as int64)
+                    ),
+                    datetime(d.data) + make_interval(
+                        hour => 23,
+                        minute => 59,
+                        second => 59
+                    )
+                ) as faixa_horaria_fim,
                 trip_id_planejado,
                 trip_id,
                 shape_id,
