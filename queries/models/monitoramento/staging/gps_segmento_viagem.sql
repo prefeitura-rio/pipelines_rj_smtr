@@ -8,7 +8,7 @@
                 "granularity": "day",
             },
             incremental_strategy="insert_overwrite",
-            schema="monitoramento_interno_teste",
+            schema="monitoramento_interno",
         )
     }}
 {% else %}
@@ -31,30 +31,27 @@
         and date('{{ var("date_range_end") }}')
 {% endset %}
 
-{# {% set calendario = ref("calendario") %} #}
-{% set calendario = "rj-smtr.planejamento.calendario" %}
+{% set calendario = ref("calendario") %}
+{# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
 {% if execute %}
-    {# {% if is_incremental() %} #}
-    {% set gtfs_feeds_query %}
+    {% if is_incremental() or var("tipo_materializacao") == "monitoramento" %}
+        {% set gtfs_feeds_query %}
             select distinct concat("'", feed_start_date, "'") as feed_start_date
             from {{ calendario }}
             where {{ incremental_filter }}
-    {% endset %}
+        {% endset %}
 
-    {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
-{# {% endif %} #}
+        {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
+    {% endif %}
 {% endif %}
 
 with
     calendario as (
         select *
         from {{ calendario }}
-        {# {% if is_incremental() %} #}
-        where
-            data between date("{{ var('date_range_start') }}") and date(
-                "{{ var('date_range_end') }}"
-            )
-    {# {% endif %} #}
+        {% if is_incremental() or var("tipo_materializacao") == "monitoramento" %}
+            where {{ incremental_filter }}
+        {% endif %}
     ),
     gps_viagem as (
         select
@@ -72,9 +69,9 @@ with
         {% else %} from {{ ref("gps_viagem") }} gv
         {% endif %}
         join calendario c using (data)
-        {# {% if is_incremental() %}  #}
-        where {{ incremental_filter }}
-    {# {% endif %} #}
+        {% if is_incremental() or var("tipo_materializacao") == "monitoramento" %}
+            where {{ incremental_filter }}
+        {% endif %}
     ),
     segmento as (
         select
@@ -85,11 +82,11 @@ with
             id_segmento,
             buffer,
             indicador_segmento_desconsiderado
-        {# from {{ ref("segmento_shape") }} #}
-        from `rj-smtr.planejamento.segmento_shape`
-        {# {% if is_incremental() %} #}
-        where feed_start_date in ({{ gtfs_feeds | join(", ") }})
-    {# {% endif %} #}
+        from {{ ref("segmento_shape") }}
+        {# from `rj-smtr.planejamento.segmento_shape` #}
+        {% if is_incremental() or var("tipo_materializacao") == "monitoramento" %}
+            where feed_start_date in ({{ gtfs_feeds | join(", ") }})
+        {% endif %}
     ),
     servico_divergente as (
         select
@@ -135,9 +132,9 @@ with
         {% else %} from {{ ref("viagem_informada_monitoramento") }} v
         {% endif %}
         join calendario c using (data)
-        {# {% if is_incremental() %}  #}
-        where {{ incremental_filter }}
-    {# {% endif %} #}
+        {% if is_incremental() or var("tipo_materializacao") == "monitoramento" %}
+            where {{ incremental_filter }}
+        {% endif %}
     ),
     viagem_segmento as (
         select
@@ -186,8 +183,6 @@ select
 from viagem_segmento v
 left join gps_segmento g using (id_viagem, shape_id, id_segmento)
 left join servico_divergente s using (id_viagem)
-{# {% if not is_incremental() %} #}
-where
-    v.data <= date_sub(current_date("America/Sao_Paulo"), interval 2 day)
-    {# {% endif %} #}
-
+{% if not is_incremental() and var("tipo_materializacao") != "monitoramento" %}
+    where v.data <= date_sub(current_date("America/Sao_Paulo"), interval 2 day)
+{% endif %}

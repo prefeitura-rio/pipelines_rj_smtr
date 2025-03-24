@@ -14,8 +14,8 @@
         and date('{{ var("date_range_end") }}')
 {% endset %}
 
-{# {% set calendario = ref("calendario") %} #}
-{% set calendario = "rj-smtr.planejamento.calendario" %}
+{% set calendario = ref("calendario") %}
+{# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
 {% if execute %}
     {% set gtfs_feeds_query %}
             select distinct concat("'", feed_start_date, "'") as feed_start_date
@@ -48,8 +48,8 @@ with
             case
                 when evento is not null then true else false
             end as indicador_trajeto_alternativo
-        {# from {{ ref("viagem_planejada_planejamento") }} #}
-        from `rj-smtr.planejamento.viagem_planejada`
+        from {{ ref("viagem_planejada_planejamento") }}
+        {# from `rj-smtr.planejamento.viagem_planejada` #}
         where
             {{ incremental_filter }}
             and feed_start_date in ({{ gtfs_feeds | join(", ") }})
@@ -195,5 +195,7 @@ select
     faixa_horaria_fim,
     modo,
     trip_info,
-    trajetos_alternativos
+    trajetos_alternativos,
+    '{{ var("version") }}' as versao,
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
 from viagens_agrupadas

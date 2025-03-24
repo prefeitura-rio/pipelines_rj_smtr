@@ -13,17 +13,15 @@
         and date('{{ var("date_range_end") }}')
 {% endset %}
 
-{# {% set calendario = ref("calendario") %} #}
-{% set calendario = "rj-smtr.planejamento.calendario" %}
+{% set calendario = ref("calendario") %}
+{# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
 {% if execute %}
-    {# {% if is_incremental() %} #}
     {% set gtfs_feeds_query %}
-            select distinct concat("'", feed_start_date, "'") as feed_start_date
-            from {{ calendario }}
-            where {{ incremental_filter }}
+        select distinct concat("'", feed_start_date, "'") as feed_start_date
+        from {{ calendario }}
+        where {{ incremental_filter }}
     {% endset %}
     {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
-{# {% endif %} #}
 {% endif %}
 
 with
@@ -47,11 +45,9 @@ with
     ),
     routes as (
         select *
-        {# from {{ ref("routes_gtfs") }} #}
-        from `rj-smtr.gtfs.routes`
-        {# {% if is_incremental() %} #}
+        from {{ ref("routes_gtfs") }}
+        {# from `rj-smtr.gtfs.routes` #}
         where feed_start_date in ({{ gtfs_feeds | join(", ") }})
-    {# {% endif %} #}
     ),
     viagens as (
         select
@@ -84,7 +80,7 @@ with
             distancia_planejada,
             datetime_partida,
             timestamp_gps as datetime_chegada,
-            '{{ var("version") }}' as versao_modelo,
+            '{{ var("version") }}' as versao,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
         from aux_status
         left join routes r using (route_id, feed_start_date)

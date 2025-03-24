@@ -6,7 +6,7 @@
                 "data_type": "date",
                 "granularity": "day",
             },
-            schema="monitoramento_interno_teste",
+            schema="monitoramento_interno",
         )
     }}
 {% else %}
@@ -27,17 +27,17 @@
         and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
 {% endset %}
 
-{# {% set calendario = ref("calendario") %} #}
-{% set calendario = "rj-smtr.planejamento.calendario" %}
+{% set calendario = ref("calendario") %}
+{# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
 {% if execute %}
-    {# {% if is_incremental() %} #}
-    {% set gtfs_feeds_query %}
+    {% if is_incremental() or var("tipo_materializacao") == "monitoramento" %}
+        {% set gtfs_feeds_query %}
             select distinct concat("'", feed_start_date, "'") as feed_start_date
             from {{ calendario }}
             where {{ incremental_filter }}
-    {% endset %}
-    {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
-{# {% endif %} #}
+        {% endset %}
+        {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
+    {% endif %}
 {% endif %}
 
 with
@@ -68,9 +68,9 @@ with
                 not indicador_segmento_desconsiderado
                 or indicador_segmento_desconsiderado is null
             )
-            {# {% if is_incremental() %}  #}
-            and {{ incremental_filter }}
-        {# {% endif %} #}
+            {% if is_incremental() or var("tipo_materializacao") == "monitoramento" %}
+                and {{ incremental_filter }}
+            {% endif %}
         group by
             data,
             id_viagem,
@@ -120,11 +120,11 @@ with
             feed_version,
             route_id,
             array_agg(service_id) as service_ids,
-        {# from {{ ref("trips_gtfs") }} #}
-        from `rj-smtr.gtfs.trips`
-        {# {% if is_incremental() %} #}
-        where feed_start_date in ({{ gtfs_feeds | join(", ") }})
-        {# {% endif %} #}
+        from {{ ref("trips_gtfs") }}
+        {# from `rj-smtr.gtfs.trips` #}
+        {% if is_incremental() or var("tipo_materializacao") == "monitoramento" %}
+            where feed_start_date in ({{ gtfs_feeds | join(", ") }})
+        {% endif %}
         group by 1, 2, 3
     ),
     servicos_planejados_gtfs as (
@@ -151,9 +151,9 @@ with
             trip_info
         {# sum(quilometragem) over (partition by data, servico, faixa_horaria_inicio) as distancia_total_planejada #}
         from {{ ref("servico_planejado_faixa_horaria") }}
-        {# {% if is_incremental() %}  #}
-        where {{ incremental_filter }}
-    {# {% endif %} #}
+        {% if is_incremental() or var("tipo_materializacao") == "monitoramento" %}
+            where {{ incremental_filter }}
+        {% endif %}
     ),
     servico_planejado_unnested as (
         select
@@ -167,6 +167,7 @@ with
             trip.shape_id,
             trip.indicador_trajeto_alternativo
         from servico_planejado sp, unnest(sp.trip_info) as trip
+        where trip.shape_id is not null
     ),
     servicos_planejados_os as (
         select

@@ -20,6 +20,6 @@ with
             and s.timestamp_gps between v.datetime_partida and v.datetime_chegada
     )
 -- 2. Filtra apenas registros de viagens identificadas
-select *, '{{ var("version") }}' as versao_modelo
+select *
 from registros_viagem
 where id_viagem is not null

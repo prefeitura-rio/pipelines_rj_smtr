@@ -10,17 +10,15 @@
         and date('{{ var("date_range_end") }}')
 {% endset %}
 
-{# {% set calendario = ref("calendario") %} #}
-{% set calendario = "rj-smtr.planejamento.calendario" %}
+{% set calendario = ref("calendario") %}
+{# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
 {% if execute %}
-    {# {% if is_incremental() %} #}
     {% set gtfs_feeds_query %}
-            select distinct concat("'", feed_start_date, "'") as feed_start_date
-            from {{ calendario }}
-            where {{ incremental_filter }}
+        select distinct concat("'", feed_start_date, "'") as feed_start_date
+        from {{ calendario }}
+        where {{ incremental_filter }}
     {% endset %}
     {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
-{# {% endif %} #}
 {% endif %}
 
 -- 1. Seleciona sinais de GPS registrados no período
@@ -36,8 +34,8 @@ with
                 then date_sub(extract(date from timestamp_gps), interval 1 day)
                 else extract(date from timestamp_gps)
             end as data_operacao
-        from `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo` g
-        {# {{ ref("gps_sppo") }} g #}
+        from {{ ref("gps_sppo") }} g
+        {# from `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo` g #}
         where
             data between date('{{ var("date_range_start") }}') and date_add(
                 date('{{ var("date_range_end") }}'), interval 1 day
@@ -57,18 +55,15 @@ with
     -- 2. Busca os shapes em formato geográfico
     shapes as (
         select *
-        from
-            {# {{ ref("shapes_geom_gtfs") }} #}
-            `rj-smtr.gtfs.shapes_geom`
+        from {{ ref("shapes_geom_gtfs") }}
+        {# from `rj-smtr.gtfs.shapes_geom` #}
         where feed_start_date in ({{ gtfs_feeds | join(", ") }})
     ),
     servico_planejado as (
         select
             data, feed_version, feed_start_date, servico, sentido, extensao, trip_info
         from {{ ref("servico_planejado_faixa_horaria") }}
-        {# {% if is_incremental() %}  #}
         where {{ incremental_filter }}
-    {# {% endif %} #}
     ),
     servico_planejado_unnested as (
         select
@@ -140,8 +135,8 @@ with
             array_agg(buffer order by safe_cast(id_segmento as int64) desc limit 1)[
                 offset(0)
             ] as buffer_fim
-        {# from {{ ref("segmento_shape") }} #}
-        from `rj-smtr.planejamento.segmento_shape`
+        from {{ ref("segmento_shape") }}
+        {# from `rj-smtr.planejamento.segmento_shape` #}
         where feed_start_date in ({{ gtfs_feeds | join(", ") }})
         group by shape_id, feed_start_date
     ),
@@ -167,5 +162,5 @@ with
             on sv.shape_id = sf.shape_id
             and sv.feed_start_date = sf.feed_start_date
     )
-select *, '{{ var("version") }}' as versao_modelo
+select *
 from status_viagem_segmentos

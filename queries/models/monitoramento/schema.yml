@@ -157,6 +157,10 @@ models:
         description: "Indica se o shape existe no GTFS no feed vigente durante a data da viagem"
         data_type: boolean
         quote: true
+      - name: indicador_trajeto_alternativo
+        description: "Indica se o shape é um trajeto alternativo"
+        data_type: boolean
+        quote: true
       - name: indicador_acima_velocidade_max
         description: "Indica se a velocidade média da viagem está acima do limite estabelecido"
         data_type: boolean

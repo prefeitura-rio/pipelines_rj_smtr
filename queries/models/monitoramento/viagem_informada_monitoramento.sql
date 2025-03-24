@@ -12,16 +12,12 @@
   DATE(data) BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
 {% endset %}
 
-{# {% set staging_viagem_informada_rioonibus = ref("staging_viagem_informada_rioonibus") %} #}
-{% set staging_viagem_informada_rioonibus = (
-    "rj-smtr.monitoramento_staging.viagem_informada_rioonibus"
-) %}
-{# {% set staging_viagem_informada_brt = ref("staging_viagem_informada_brt") %} #}
-{% set staging_viagem_informada_brt = (
-    "rj-smtr.monitoramento_staging.viagem_informada_brt"
-) %}
-{# {% set calendario = ref("calendario") %} #}
-{% set calendario = "rj-smtr.planejamento.calendario" %}
+{% set staging_viagem_informada_rioonibus = ref("staging_viagem_informada_rioonibus") %}
+{# {% set staging_viagem_informada_rioonibus = ("rj-smtr.monitoramento_staging.viagem_informada_rioonibus") %} #}
+{% set staging_viagem_informada_brt = ref("staging_viagem_informada_brt") %}
+{# {% set staging_viagem_informada_brt = ("rj-smtr.monitoramento_staging.viagem_informada_brt") %} #}
+{% set calendario = ref("calendario") %}
+{# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
 {% if execute %}
     {% if is_incremental() %}
         {% set partitions_query %}
@@ -158,8 +154,8 @@ with
     ),
     routes as (
         select *
-        {# from {{ ref("routes_gtfs") }} #}
-        from `rj-smtr.gtfs.routes`
+        from {{ ref("routes_gtfs") }}
+        {# from `rj-smtr.gtfs.routes` #}
         {% if is_incremental() %}
             where feed_start_date in ({{ gtfs_feeds | join(", ") }})
         {% endif %}
