@@ -8,27 +8,37 @@
 }}
 
 {% if is_incremental() and execute %}
-    {% set licenciamento_dates = run_query(get_license_dates()) %}
+    {% set licenciamento_dates = run_query(
+        get_version_dates("licenciamento_data_versao_efetiva")
+    ) %}
     {% set min_licenciamento_date = licenciamento_dates.columns[0].values()[0] %}
     {% set max_licenciamento_date = licenciamento_dates.columns[1].values()[0] %}
 
-    {% set infracao_dates = run_query(get_violation_dates()) %}
-    {% set min_infracao_date = infracao_dates.columns[0].values()[0]%}
-    {% set max_infracao_date = infracao_dates.columns[1].values()[0]%}
+    {% set infracao_dates = run_query(
+        get_version_dates("infracao_data_versao_efetiva")
+    ) %}
+    {% set min_infracao_date = infracao_dates.columns[0].values()[0] %}
+    {% set max_infracao_date = infracao_dates.columns[1].values()[0] %}
 {% endif %}
 with
     licenciamento_data_versao as (
         select *
         from {{ ref("licenciamento_data_versao_efetiva") }}
         {% if is_incremental() %}
-            where data between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
+            where
+                data between date("{{ var('start_date') }}") and date(
+                    "{{ var('end_date') }}"
+                )
         {% endif %}
     ),
     infracao_data_versao as (
         select *
         from {{ ref("infracao_data_versao_efetiva") }}
         {% if is_incremental() %}
-            where data between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
+            where
+                data between date("{{ var('start_date') }}") and date(
+                    "{{ var('end_date') }}"
+                )
         {% endif %}
     ),
     licenciamento as (
@@ -72,40 +82,58 @@ with
         from {{ ref("sppo_licenciamento") }} l
         right join licenciamento_data_versao as dve on l.data = dve.data_versao
         {% if is_incremental() %}
-            where dve.data between date("{{ var('start_date') }}") and date("{{ var('end_date') }}") and l.data between "{{ min_licenciamento_date }}" and "{{ max_licenciamento_date }}"
+            where
+                dve.data between date("{{ var('start_date') }}") and date(
+                    "{{ var('end_date') }}"
+                )
+                and l.data
+                between "{{ min_licenciamento_date }}"
+                and "{{ max_licenciamento_date }}"
         {% endif %}
     ),
     gps as (
         select data, id_veiculo
-        from {{ ref("gps_sppo") }}
-            -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
+        from  -- {{ ref("gps_sppo") }}
+            `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
         where
-            {% if is_incremental() %} data between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
+            {% if is_incremental() %}
+                data between date("{{ var('start_date') }}") and date(
+                    "{{ var('end_date') }}"
+                )
             {% else %}  -- data >= "2023-01-16"
             {% endif %}
         group by 1, 2
     ),
     autuacoes as (
         select distinct data_infracao as data, placa, id_infracao
-        from  {{ ref("sppo_infracao") }} i
-            -- `rj-smtr.veiculo.sppo_infracao` i
+        from {{ ref("sppo_infracao") }} i
+        -- `rj-smtr.veiculo.sppo_infracao` i
         right join
             infracao_data_versao as dve
             on i.data = dve.data_versao
             and data_infracao = date(dve.data)
         {% if is_incremental() %}
             where
-                i.data between date("{{ min_infracao_date }}") and date("{{ max_infracao_date }}")
-                and data_infracao between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
+                i.data between date("{{ min_infracao_date }}") and date(
+                    "{{ max_infracao_date }}"
+                )
+                and data_infracao between date("{{ var('start_date') }}") and date(
+                    "{{ var('end_date') }}"
+                )
         {% endif %}
     ),
     registros_agente_verao as (
         select distinct
             data, id_veiculo, true as indicador_registro_agente_verao_ar_condicionado
-        from  {{ ref("sppo_registro_agente_verao") }}
-           -- `rj-smtr.veiculo.sppo_registro_agente_verao`
+        from {{ ref("sppo_registro_agente_verao") }}
+        -- `rj-smtr.veiculo.sppo_registro_agente_verao`
         right join infracao_data_versao dve using (data)
-        {% if is_incremental() %} where data between date("{{ var('start_date') }}") and date("{{ var('end_date') }}") {% endif %}
+        {% if is_incremental() %}
+            where
+                data between date("{{ var('start_date') }}") and date(
+                    "{{ var('end_date') }}"
+                )
+        {% endif %}
     ),
     autuacao_ar_condicionado as (
         select data, placa, true as indicador_autuacao_ar_condicionado
@@ -248,27 +276,29 @@ select
                 else null
             end
     end as status,
-    -- alterar para if
-    case
-        when data >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}")
-        then tecnologia
-        else safe_cast(null as string)
-    end as tecnologia,
-    case
-        when data >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}")
-        then placa
-        else safe_cast(null as string)
-    end as placa,
-    case
-        when data >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}")
-        then date(l.data_versao)
-        else safe_cast(null as date)
-    end as data_licenciamento,
-    case
-        when data >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}")
-        then date(i.data_versao)
-        else safe_cast(null as date)
-    end as data_infracao,
+    if(
+        data >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}"),
+        tecnologia,
+        safe_cast(null as string)
+    ) as tecnologia,
+
+    if(
+        data >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}"),
+        placa,
+        safe_cast(null as string)
+    ) as placa,
+
+    if(
+        data >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}"),
+        date(l.data_versao),
+        safe_cast(null as date)
+    ) as data_licenciamento,
+
+    if(
+        data >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}"),
+        date(i.data_versao),
+        safe_cast(null as date)
+    ) as data_infracao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     "{{ var('version') }}" as versao
 from gps_licenciamento_autuacao as gla
@@ -276,7 +306,7 @@ left join licenciamento_data_versao as l using (data)
 left join infracao_data_versao as i using (data)
 {% if not is_incremental() or var("start_date") < var("DATA_SUBSIDIO_V5_INICIO") %}
     left join
-         {{ ref("subsidio_parametros") }} as p
+        {{ ref("subsidio_parametros") }} as p
         -- `rj-smtr.dashboard_subsidio_sppo.subsidio_parametros` as p
         on gla.indicadores.indicador_licenciado = p.indicador_licenciado
         and gla.indicadores.indicador_ar_condicionado = p.indicador_ar_condicionado
@@ -292,4 +322,6 @@ left join infracao_data_versao as i using (data)
         and (data between p.data_inicio and p.data_fim)
         and data < date("{{ var('DATA_SUBSIDIO_V5_INICIO')}}")
 {% endif %}
-{% if is_incremental() %} where data between date("{{ var('start_date') }}") and date("{{ var('end_date') }}"){% endif %}
+{% if is_incremental() %}
+    where data between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
+{% endif %}

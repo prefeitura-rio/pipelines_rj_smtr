@@ -9,7 +9,9 @@
     )
 }}
 {% if is_incremental() and execute %}
-    {% set licenciamento_dates = run_query(get_license_dates()) %}
+    {% set licenciamento_dates = run_query(
+        get_version_dates("licenciamento_data_versao_efetiva")
+    ) %}
     {% set min_licenciamento_date = licenciamento_dates.columns[0].values()[0] %}
     {% set max_licenciamento_date = licenciamento_dates.columns[1].values()[0] %}
 {% endif %}
@@ -17,10 +19,13 @@ with
     stu as (
         select * except (data), date(data) as data
         from {{ ref("licenciamento_stu_staging") }} as l
-        where data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
-        {% if is_incremental() %}
-            and data between "{{ min_licenciamento_date }}" and "{{ max_licenciamento_date }}"
-        {% endif %}
+        where
+            data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
+            {% if is_incremental() %}
+                and data
+                between "{{ min_licenciamento_date }}"
+                and "{{ max_licenciamento_date }}"
+            {% endif %}
     ),
     -- Processo.Rio MTR-CAP-2025/01125 [Correção da alteração do tipo de veículo]
     stu_tipo_veiculo as (
@@ -137,7 +142,7 @@ select
         then "PADRON"
         when tipo_veiculo like "%ARTICULADO%"
         then "ARTICULADO"
-        else null
+        else safe_cast(null as string)
     end as tecnologia,
     quantidade_lotacao_pe,
     quantidade_lotacao_sentado,
@@ -150,10 +155,43 @@ select
     "{{ var('version') }}" as versao
 from stu_ano_ultima_vistoria
 where data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
-union all
-select *
-from {{ ref("sppo_licenciamento_staging") }} l
-where data < "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
-{% if is_incremental() %}
-    and data between "{{ min_licenciamento_date }}" and "{{ max_licenciamento_date }}"
+{% if not is_incremental() or var("start_date") < var("DATA_SUBSIDIO_V13_INICIO") %}
+    union all
+    select
+        data,
+        modo,
+        id_veiculo,
+        ano_fabricacao,
+        carroceria,
+        data_ultima_vistoria,
+        id_carroceria,
+        id_chassi,
+        id_fabricante_chassi,
+        id_interno_carroceria,
+        id_planta,
+        indicador_ar_condicionado,
+        indicador_elevador,
+        indicador_usb,
+        indicador_wifi,
+        nome_chassi,
+        permissao,
+        placa,
+        safe_cast(null as string) as tecnologia,
+        quantidade_lotacao_pe,
+        quantidade_lotacao_sentado,
+        tipo_combustivel,
+        tipo_veiculo,
+        status,
+        data_inicio_vinculo,
+        ano_ultima_vistoria_atualizado,
+        current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+        "{{ var('version') }}" as versao
+    -- from {{ ref("sppo_licenciamento_staging") }} l
+    from `rj-smtr.veiculo_staging.sppo_licenciamento` l
+    where
+        data < "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
+        {% if is_incremental() %}
+            and data
+            between "{{ min_licenciamento_date }}" and "{{ max_licenciamento_date }}"
+        {% endif %}
 {% endif %}

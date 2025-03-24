@@ -8,7 +8,7 @@
 }}
 
 {% if is_incremental() and execute %}
-    {% set infracao_dates = run_query(get_violation_dates()) %}
+    {% set infracao_dates = run_query(get_version_dates('infracao_data_versao_efetiva')) %}
     {% set min_infracao_date = infracao_dates.columns[0].values()[0]%}
     {% set max_infracao_date = infracao_dates.columns[1].values()[0]%}
 {% endif %}

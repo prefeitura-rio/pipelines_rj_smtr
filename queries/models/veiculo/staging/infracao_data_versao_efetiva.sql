@@ -7,7 +7,6 @@
 }}
 with
     infracao_date as (
-        -- verificar particionamento
         select distinct date(data) as data_infracao
         from  {{ ref("infracao_staging") }}
             -- `rj-smtr.veiculo_staging.infracao`
