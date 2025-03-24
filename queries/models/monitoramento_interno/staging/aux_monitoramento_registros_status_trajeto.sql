@@ -82,6 +82,7 @@ with
             trip.route_id,
             trip.shape_id,
         from servico_planejado sp, unnest(sp.trip_info) as trip
+        where trip.shape_id is not null
         qualify
             row_number() over (
                 partition by sp.data, trip.route_id, trip.shape_id
