@@ -241,8 +241,8 @@
         ),
         ordem_servico_trips_shapes as (
             select *
-            from  -- {{ ref("ordem_servico_trips_shapes_gtfs") }}
-                `rj-smtr.gtfs.ordem_servico_trips_shapes`
+            from  {{ ref("ordem_servico_trips_shapes_gtfs") }}
+                -- `rj-smtr.gtfs.ordem_servico_trips_shapes`
             where feed_start_date in ("{{ feed_start_dates | join('", "') }}")
         ),
         dia_atual as (
@@ -392,224 +392,52 @@
                 partidas_total_planejada,
                 distancia_planejada,
                 distancia_total_planejada,
-                -- utilizar make_interval para inicio e fim periodo
                 if(
-                    inicio_periodo is not null
-                    and array_length(split(inicio_periodo, ":")) = 3,
-                    datetime_add(
-                        datetime(
-                            d.data,
-                            parse_time(
-                                "%T",
-                                concat(
-                                    safe_cast(
-                                        mod(
-                                            safe_cast(
-                                                split(inicio_periodo, ":")[
-                                                    offset(0)
-                                                ] as int64
-                                            ),
-                                            24
-                                        ) as int64
-                                    ),
-                                    ":",
-                                    safe_cast(
-                                        split(inicio_periodo, ":")[offset(1)] as int64
-                                    ),
-                                    ":",
-                                    safe_cast(
-                                        split(inicio_periodo, ":")[offset(2)] as int64
-                                    )
-                                )
-                            )
-                        ),
-                        interval div(
-                            safe_cast(split(inicio_periodo, ":")[offset(0)] as int64),
-                            24
-                        ) day
-                    ),
-                    null
-                ) as inicio_periodo,
-                if(
-                    fim_periodo is not null
-                    and array_length(split(fim_periodo, ":")) = 3,
-                    datetime_add(
-                        datetime(
-                            d.data,
-                            parse_time(
-                                "%T",
-                                concat(
-                                    safe_cast(
-                                        mod(
-                                            safe_cast(
-                                                split(fim_periodo, ":")[
-                                                    offset(0)
-                                                ] as int64
-                                            ),
-                                            24
-                                        ) as int64
-                                    ),
-                                    ":",
-                                    safe_cast(
-                                        split(fim_periodo, ":")[offset(1)] as int64
-                                    ),
-                                    ":",
-                                    safe_cast(
-                                        split(fim_periodo, ":")[offset(2)] as int64
-                                    )
-                                )
-                            )
-                        ),
-                        interval div(
-                            safe_cast(split(fim_periodo, ":")[offset(0)] as int64), 24
-                        ) day
-                    ),
-                    null
-                ) as fim_periodo,
-                if(
-                    d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"),
-                    datetime_add(
-                        datetime(
-                            d.data,
-                            parse_time(
-                                "%T",
-                                concat(
-                                    safe_cast(
-                                        mod(
-                                            safe_cast(
-                                                split(o.faixa_horaria_inicio, ":")[
-                                                    offset(0)
-                                                ] as int64
-                                            ),
-                                            24
-                                        ) as int64
-                                    ),
-                                    ":",
-                                    safe_cast(
-                                        split(o.faixa_horaria_inicio, ":")[
-                                            offset(1)
-                                        ] as int64
-                                    ),
-                                    ":",
-                                    safe_cast(
-                                        split(o.faixa_horaria_inicio, ":")[
-                                            offset(2)
-                                        ] as int64
-                                    )
-                                )
-                            )
-                        ),
-                        interval div(
-                            safe_cast(
-                                split(o.faixa_horaria_inicio, ":")[offset(0)] as int64
-                            ),
-                            24
-                        ) day
-                    ),
-                    datetime_add(
-                        datetime(
-                            d.data,
-                            parse_time(
-                                "%T",
-                                concat(
-                                    safe_cast(
-                                        mod(
-                                            safe_cast(
-                                                split("00:00:00", ":")[
-                                                    offset(0)
-                                                ] as int64
-                                            ),
-                                            24
-                                        ) as int64
-                                    ),
-                                    ":",
-                                    safe_cast(
-                                        split("00:00:00", ":")[offset(1)] as int64
-                                    ),
-                                    ":",
-                                    safe_cast(
-                                        split("00:00:00", ":")[offset(2)] as int64
-                                    )
-                                )
-                            )
-                        ),
-                        interval div(
-                            safe_cast(split("00:00:00", ":")[offset(0)] as int64), 24
-                        ) day
-                    )
-                ) as faixa_horaria_inicio,
-                if(
-                    d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"),
-                    datetime_add(
-                        datetime(
-                            d.data,
-                            parse_time(
-                                "%T",
-                                concat(
-                                    safe_cast(
-                                        mod(
-                                            safe_cast(
-                                                split(o.faixa_horaria_fim, ":")[
-                                                    offset(0)
-                                                ] as int64
-                                            ),
-                                            24
-                                        ) as int64
-                                    ),
-                                    ":",
-                                    safe_cast(
-                                        split(o.faixa_horaria_fim, ":")[
-                                            offset(1)
-                                        ] as int64
-                                    ),
-                                    ":",
-                                    safe_cast(
-                                        split(o.faixa_horaria_fim, ":")[
-                                            offset(2)
-                                        ] as int64
-                                    )
-                                )
-                            )
-                        ),
-                        interval div(
-                            safe_cast(
-                                split(o.faixa_horaria_fim, ":")[offset(0)] as int64
-                            ),
-                            24
-                        ) day
-                    ),
-                    datetime_add(
-                        datetime(
-                            d.data,
-                            parse_time(
-                                "%T",
-                                concat(
-                                    safe_cast(
-                                        mod(
-                                            safe_cast(
-                                                split("23:59:59", ":")[
-                                                    offset(0)
-                                                ] as int64
-                                            ),
-                                            24
-                                        ) as int64
-                                    ),
-                                    ":",
-                                    safe_cast(
-                                        split("23:59:59", ":")[offset(1)] as int64
-                                    ),
-                                    ":",
-                                    safe_cast(
-                                        split("23:59:59", ":")[offset(2)] as int64
-                                    )
-                                )
-                            )
-                        ),
-                        interval div(
-                            safe_cast(split("23:59:59", ":")[offset(0)] as int64), 24
-                        ) day
-                    )
-                ) as faixa_horaria_fim,
+        inicio_periodo is not null
+        and array_length(split(inicio_periodo, ":")) = 3,
+        datetime(d.data) + make_interval(
+            hour => safe_cast(split(inicio_periodo, ":")[offset(0)] as int64),
+            minute => safe_cast(split(inicio_periodo, ":")[offset(1)] as int64),
+            second => safe_cast(split(inicio_periodo, ":")[offset(2)] as int64)
+        ),
+        null
+    ) as inicio_periodo,
+    if(
+        fim_periodo is not null
+        and array_length(split(fim_periodo, ":")) = 3,
+        datetime(d.data) + make_interval(
+            hour => safe_cast(split(fim_periodo, ":")[offset(0)] as int64),
+            minute => safe_cast(split(fim_periodo, ":")[offset(1)] as int64),
+            second => safe_cast(split(fim_periodo, ":")[offset(2)] as int64)
+        ),
+        null
+    ) as fim_periodo,
+    if(
+        d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"),
+        datetime(d.data) + make_interval(
+            hour => safe_cast(split(o.faixa_horaria_inicio, ":")[offset(0)] as int64),
+            minute => safe_cast(split(o.faixa_horaria_inicio, ":")[offset(1)] as int64),
+            second => safe_cast(split(o.faixa_horaria_inicio, ":")[offset(2)] as int64)
+        ),
+        datetime(d.data) + make_interval(
+            hour => 0,
+            minute => 0,
+            second => 0
+        )
+    ) as faixa_horaria_inicio,
+    if(
+        d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"),
+        datetime(d.data) + make_interval(
+            hour => safe_cast(split(o.faixa_horaria_fim, ":")[offset(0)] as int64),
+            minute => safe_cast(split(o.faixa_horaria_fim, ":")[offset(1)] as int64),
+            second => safe_cast(split(o.faixa_horaria_fim, ":")[offset(2)] as int64)
+        ),
+        datetime(d.data) + make_interval(
+            hour => 23,
+            minute => 59,
+            second => 59
+        )
+    ) as faixa_horaria_fim,
                 trip_id_planejado,
                 trip_id,
                 shape_id,
@@ -686,11 +514,6 @@
         )
     select
         data,
-        {# make_interval(
-        hour => cast(arrival_time_parts[0] as integer),
-        minute => cast(arrival_time_parts[1] as integer),
-        second => cast(arrival_time_parts[2] as integer)
-        ) as arrival_time #}
         tipo_dia,
         servico,
         vista,
