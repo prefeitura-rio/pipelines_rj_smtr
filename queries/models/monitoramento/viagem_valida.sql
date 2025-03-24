@@ -20,11 +20,6 @@ with
         from {{ ref("status_dia") }}
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
-    servico_planejado as (
-        select *
-        from {{ ref("servico_planejado") }}
-        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
-    ),
     viagem_valida as (
         select *
         {# from {{ ref("viagem_validacao") }} #}
@@ -44,16 +39,9 @@ select
     ve.status as tipo_viagem,
     vv.servico,
     vv.sentido,
-    case
-        when sentido in ("I", "C") then extensao_ida else extensao_volta
-    end as distancia_planejada,
-    sp.feed_start_date,
+    vv.distancia_planejada,
+    vv.feed_start_date,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
 from viagem_valida as vv
 left join veiculo as ve using (data, id_veiculo)
-left join
-    servico_planejado as sp
-    on sp.servico = vv.servico
-    and sp.data = vv.data
-    and vv.datetime_partida between faixa_horaria_inicio and faixa_horaria_fim
