@@ -1,5 +1,13 @@
 # Changelog - planejamento
 
+## [1.3.4] - 2025-03-25
+
+### Alterado
+- Altera modelo `tecnologia_servico` em razão da inclusão de vigência do tipo de tecnologia (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/493)
+
+### Adicionado
+- Cria modelos `staging_tecnologia_servico` e `tecnologia_prioridade` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/493)
+
 ## [1.3.3] - 2025-03-14
 
 ### Adicionado
