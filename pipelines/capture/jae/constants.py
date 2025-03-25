@@ -533,7 +533,7 @@ class constants(Enum):  # pylint: disable=c0103
             source_name=JAE_SOURCE_NAME,
             table_id=k,
             first_timestamp=datetime(2024, 12, 30, 0, 0, 0),
-            schedule_cron=create_hourly_cron(),
+            schedule_cron=create_daily_cron(hour=5),
             primary_keys=v["primary_keys"],
             pretreatment_reader_args=v.get("pretreatment_reader_args"),
             pretreat_funcs=v.get("pretreat_funcs"),
