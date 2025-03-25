@@ -8,7 +8,9 @@
 - Altera modelo `tecnologia_servico` em razão da inclusão de vigência do tipo de tecnologia (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/493)
 
 ### Adicionado
+
 - Cria modelos `staging_tecnologia_servico` e `tecnologia_prioridade` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/493)
+- Cria modelos: `aux_os_sppo_faixa_horaria_sentido_dia`, `aux_ordem_servico_faixa_horaria` [Temporário] e `servico_planejado_faixa_horaria` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/458)
 
 ## [1.3.3] - 2025-03-14
 
