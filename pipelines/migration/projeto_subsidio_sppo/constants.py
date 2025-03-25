@@ -744,7 +744,7 @@ class constants(Enum):  # pylint: disable=c0103
             "dbt_utils.accepted_range": {
                 "description": "Todos os valores da coluna `{column_name}` maiores ou iguais a zero"
             },
-            "dbt_utils.unique_combination_of_columns__data_id_veiculo": {
+            "dbt_utils.unique_combination_of_columns__viagem_planejada": {
                 "description": "Todos os registros são únicos"
             },
             "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart": {
