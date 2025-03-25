@@ -5,7 +5,7 @@
 
 ### Alterado
 
-- Altera o tipo_os e tipo_dia entre `2025-03-01` e `2025-03-05` no modelo `aux_calendario_manual.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Altera o tipo_os e tipo_dia entre `2025-03-01` e `2025-03-05` no modelo `aux_calendario_manual.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/495)
 
 
 ## [1.3.3] - 2025-03-14
