@@ -209,7 +209,6 @@ sources:
       - name: linha_consorcio
       - name: linha_consorcio_operadora_transporte
       - name: endereco
-      - name: transacao_ordem
       - name: produto
 
   - name: source_sonda
