@@ -739,6 +739,27 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todas as datas possuem dados"
             },
         },
+        "viagem_planejada": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.accepted_range": {
+                "description": "Todos os valores da coluna `{column_name}` maiores ou iguais a zero"
+            },
+            "dbt_utils.unique_combination_of_columns__viagem_planejada": {
+                "description": "Todos os registros são únicos"
+            },
+            "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart": {
+                "description": "Todas as datas possuem dados"
+            },
+            "accepted_values": {
+                "description": "Todos os valores da coluna `{column_name}` são aceitos"
+            },
+            "dbt_expectations.expect_table_aggregation_to_equal_other_table__viagem_planejada": {
+                "description": "Todos os dados de 'tipo_os' correspondem 1:1 entre as tabelas 'subsidio_data_versao_efetiva' e 'viagem_planejada'."  # noqa
+            },
+            "check_km_planejada": {
+                "description": "Todas as viagens possuem `km_planejada` correspondente à OS"
+            },
+        },
     }
 
     SUBSIDIO_SPPO_POS_CHECKS_LIST = {
