@@ -1,10 +1,16 @@
 # Changelog - projeto_subsidio_sppo
 
-## [9.2.2] - 2025-03-21
+## [9.2.3] - 2025-03-25
 
 ### Corrigido
 
 - Corrigida a associação de viagens a seu respectivos `trip_id`, `shape`, `start_pt` e `end_pt` no modelo `viagem_planejada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/479)
+
+## [9.2.2] - 2025-03-25
+
+### Alterado
+
+- Altera o tipo_os dos dia `2025-03-01` à `2025-03-04` para `verão`, do dia `2025-03-05` para `Atípico + verão` e o tipo_dia de `2025-03-03` e `2025-03-04`para `Domingo` no modelo `subsidio_data_verao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/492)
 
 ## [9.2.1] - 2025-03-17
 
