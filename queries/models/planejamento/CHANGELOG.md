@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.3.4] - 2025-03-25
+
+### Adicionado
+
+- Cria modelos: `aux_os_sppo_faixa_horaria_sentido_dia`, `aux_ordem_servico_faixa_horaria` [Temporário] e `servico_planejado_faixa_horaria` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/458)
+
 ## [1.3.3] - 2025-03-14
 
 ### Adicionado
