@@ -340,7 +340,9 @@
                 partidas_total_planejada,
                 distancia_planejada,
                 distancia_total_planejada,
+                inicio_periodo,
                 split(inicio_periodo, ":") as inicio_periodo_parts,
+                fim_periodo,
                 split(fim_periodo, ":") as fim_periodo_parts,
                 faixa_horaria_inicio,
                 split(faixa_horaria_inicio, ":") as faixa_horaria_inicio_parts,
@@ -367,7 +369,9 @@
                 partidas_total_planejada,
                 distancia_planejada,
                 distancia_total_planejada,
+                inicio_periodo,
                 split(inicio_periodo, ":") as inicio_periodo_parts,
+                fim_periodo,
                 split(fim_periodo, ":") as fim_periodo_parts,
                 faixa_horaria_inicio,
                 split(faixa_horaria_inicio, ":") as faixa_horaria_inicio_parts,
@@ -397,31 +401,31 @@
                 distancia_planejada,
                 distancia_total_planejada,
                 if(
-                    inicio_periodo_parts is not null
+                    inicio_periodo is not null
                     and array_length(inicio_periodo_parts) = 3,
                     datetime(d.data) + make_interval(
-                        hour => safe_cast(inicio_periodo_parts[offset(0)] as int64),
-                        minute => safe_cast(inicio_periodo_parts[offset(1)] as int64),
-                        second => safe_cast(inicio_periodo_parts[offset(2)] as int64)
+                        hour => safe_cast(inicio_periodo_parts[0] as int64),
+                        minute => safe_cast(inicio_periodo_parts[1] as int64),
+                        second => safe_cast(inicio_periodo_parts[2] as int64)
                     ),
                     null
                 ) as inicio_periodo,
                 if(
-                    fim_periodo_parts is not null
+                    fim_periodo is not null
                     and array_length(fim_periodo_parts) = 3,
                     datetime(d.data) + make_interval(
-                        hour => safe_cast(fim_periodo_parts[offset(0)] as int64),
-                        minute => safe_cast(fim_periodo_parts[offset(1)] as int64),
-                        second => safe_cast(fim_periodo_parts[offset(2)] as int64)
+                        hour => safe_cast(fim_periodo_parts[0] as int64),
+                        minute => safe_cast(fim_periodo_parts[1] as int64),
+                        second => safe_cast(fim_periodo_parts[2] as int64)
                     ),
                     null
                 ) as fim_periodo,
                 if(
                     d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"),
                     datetime(d.data) + make_interval(
-                        hour => safe_cast(o.faixa_horaria_inicio_parts[offset(0)] as int64),
-                        minute => safe_cast(o.faixa_horaria_inicio_parts[offset(1)] as int64),
-                        second => safe_cast(o.faixa_horaria_inicio_parts[offset(2)] as int64)
+                        hour => safe_cast(o.faixa_horaria_inicio_parts[0] as int64),
+                        minute => safe_cast(o.faixa_horaria_inicio_parts[1] as int64),
+                        second => safe_cast(o.faixa_horaria_inicio_parts[2] as int64)
                     ),
                     datetime(d.data) + make_interval(
                         hour => 0,
@@ -432,9 +436,9 @@
                 if(
                     d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"),
                     datetime(d.data) + make_interval(
-                        hour => safe_cast(o.faixa_horaria_fim_parts[offset(0)] as int64),
-                        minute => safe_cast(o.faixa_horaria_fim_parts[offset(1)] as int64),
-                        second => safe_cast(o.faixa_horaria_fim_parts[offset(2)] as int64)
+                        hour => safe_cast(o.faixa_horaria_fim_parts[0] as int64),
+                        minute => safe_cast(o.faixa_horaria_fim_parts[1] as int64),
+                        second => safe_cast(o.faixa_horaria_fim_parts[2] as int64)
                     ),
                     datetime(d.data) + make_interval(
                         hour => 23,
