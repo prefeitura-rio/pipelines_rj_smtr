@@ -24,7 +24,7 @@
 {% set incremental_filter %}
     data between
         date_sub(date('{{ var("date_range_start") }}'), interval 1 day)
-        and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
+        and date('{{ var("date_range_end") }}')
 {% endset %}
 
 {% set calendario = ref("calendario") %}
@@ -259,7 +259,9 @@ with
                 and not vm.indicador_shape_invalido
                 and vm.indice_validacao >= {{ var("parametro_validacao") }}
                 and vm.indicador_servico_planejado_gtfs
-                and not vs.indicador_viagem_sobreposta
+                {% if var("tipo_materializacao") != "monitoramento" %}
+                    and not vs.indicador_viagem_sobreposta
+                {% endif %}
                 and not vm.indicador_acima_velocidade_max
                 and ifnull(vm.indicador_servico_planejado_os, true)
             ) as indicador_viagem_valida,

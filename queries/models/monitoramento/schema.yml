@@ -150,7 +150,7 @@ models:
         data_type: boolean
         quote: true
       - name: indicador_servico_divergente
-        description: "Indica se o serviço indicado nos dados de gps estava diferente do serviço informado na viagem"
+        description: "{{ doc('indicador_servico_divergente') }}"
         data_type: boolean
         quote: true
       - name: indicador_shape_invalido
@@ -258,7 +258,7 @@ models:
         data_type: boolean
         quote: true
       - name: indicador_servico_divergente
-        description: "Indica se o serviço indicado nos dados de gps estava diferente do serviço informado na viagem"
+        description: "{{ doc('indicador_servico_divergente') }}"
         data_type: boolean
         quote: true
       - name: feed_version
@@ -270,7 +270,7 @@ models:
         data_type: date
         quote: true
       - name: service_ids
-        description: "Identificadores dos serviços disponíveis no GTFS"
+        description: Identifica um conjunto de datas em que o serviço está disponível para uma ou mais rotas no GTFS
         data_type: array
         quote: true
       - name: tipo_dia
