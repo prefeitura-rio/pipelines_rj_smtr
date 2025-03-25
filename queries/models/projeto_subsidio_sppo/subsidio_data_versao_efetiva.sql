@@ -577,8 +577,6 @@
                     then "Domingo"
                     when extract(dayofweek from data) = 7
                     then "Sabado"
-                    when data between date(2025, 03, 02) and date(2025, 03, 04)
-                    then "Domingo"  -- Carnaval - (Processo.Rio MTR-PRO-2025/03920)
                     else "Dia Útil"
                 end as tipo_dia,
                 case
@@ -644,10 +642,6 @@
                     then "Extraordinária - Verão"  -- Processo.Rio MTR-PRO-2025/03046
                     when data between date(2025, 02, 22) and date(2025, 02, 23)
                     then "Extraordinária - Verão"  -- Processo.Rio MTR-PRO-2025/03740
-                    when data between date(2025, 03, 01) and date(2025, 03, 04)
-                    then "Extraordinária - Verão"  -- Processo.Rio MTR-PRO-2025/03920
-                    when data = date(2025, 03, 05)
-                    then "Atípico + Verão"  -- Processo.Rio MTR-PRO-2025/03920
                     else "Regular"
                 end as tipo_os,
             from
