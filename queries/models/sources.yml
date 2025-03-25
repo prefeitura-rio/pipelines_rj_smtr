@@ -210,6 +210,7 @@ sources:
       - name: linha_consorcio_operadora_transporte
       - name: endereco
       - name: produto
+      - name: linha_tarifa
 
   - name: source_sonda
     database: rj-smtr-staging
