@@ -170,8 +170,12 @@ with
             end as indicador_penalidade_tecnologia
         from viagem_transacao as vt
         left join
-            tecnologias as t on vt.servico = t.servico,
-            vt.data between t.inicio_vigencia and t.fim_vigencia
+            tecnologias as t
+            on vt.servico = t.servico
+            and (
+                (vt.data between t.inicio_vigencia and t.fim_vigencia)
+                or (vt.data >= t.inicio_vigencia and t.fim_vigencia is null)
+            )
         left join prioridade_tecnologia as p on vt.tecnologia = p.tecnologia
         left join
             prioridade_tecnologia as p_maior

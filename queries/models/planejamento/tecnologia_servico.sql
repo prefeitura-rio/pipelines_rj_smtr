@@ -12,8 +12,12 @@ with
         from {{ ref("staging_tecnologia_servico") }}
     )
 select
-    parse_date('%d/%m/%Y', safe_cast(inicio_vigencia as string)) as inicio_vigencia,
-    parse_date('%d/%m/%Y', safe_cast(fim_vigencia as string)) as fim_vigencia,
+    parse_date(
+        '%d/%m/%Y', nullif(safe_cast(inicio_vigencia as string), "")
+    ) as inicio_vigencia,
+    parse_date(
+        '%d/%m/%Y', nullif(safe_cast(fim_vigencia as string), "")
+    ) as fim_vigencia,
     concat(ifnull(servico, ""), linha) as servico,
     modo,
     codigo_tecnologia,
