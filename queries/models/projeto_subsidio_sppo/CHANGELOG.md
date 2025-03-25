@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.2.3] - 2025-03-25
+
+### Corrigido
+
+- Corrigida a associação de viagens aos seus respectivos `trip_id`, `shape`, `start_pt` e `end_pt` no modelo `viagem_planejada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/479)
+
 ## [9.2.2] - 2025-03-25
 
 ### Alterado
