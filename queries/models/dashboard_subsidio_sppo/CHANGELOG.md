@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [7.1.3] - 2025-03-25
+
+### Alterado
+
+- Altera CTEs `tecnologias`, `prioridade_tecnologia` e `viagem_tecnologia` em razão da inclusão de vigência do tipo de tecnologia (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/493)
+
 ## [7.1.2] - 2025-03-10
 
 ### Adicionado
