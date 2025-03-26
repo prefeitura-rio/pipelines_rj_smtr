@@ -127,40 +127,15 @@ with
     ),
     tecnologias as (
         select
+            inicio_vigencia,
+            fim_vigencia,
             servico,
-            case
-                when substring(codigo_tecnologia, 4, 1) = "1"
-                then "PADRON"
-                when substring(codigo_tecnologia, 3, 1) = "1"
-                then "BASICO"
-                when substring(codigo_tecnologia, 2, 1) = "1"
-                then "MIDI"
-                when substring(codigo_tecnologia, 1, 1) = "1"
-                then "MINI"
-                else null
-            end as maior_tecnologia_permitida,
-            case
-                when substring(codigo_tecnologia, 1, 1) = "1"
-                then "MINI"
-                when substring(codigo_tecnologia, 2, 1) = "1"
-                then "MIDI"
-                when substring(codigo_tecnologia, 3, 1) = "1"
-                then "BASICO"
-                when substring(codigo_tecnologia, 4, 1) = "1"
-                then "PADRON"
-                else null
-            end as menor_tecnologia_permitida,
+            codigo_tecnologia,
+            maior_tecnologia_permitida,
+            menor_tecnologia_permitida
         from {{ ref("tecnologia_servico") }}
     ),
-    prioridade_tecnologia as (
-        select "MINI" as tecnologia, 1 as prioridade
-        union all
-        select "MIDI" as tecnologia, 2 as prioridade
-        union all
-        select "BASICO" as tecnologia, 3 as prioridade
-        union all
-        select "PADRON" as tecnologia, 4 as prioridade
-    ),
+    prioridade_tecnologia as (select * from {{ ref("tecnologia_prioridade") }}),
     -- Viagens com quantidades de transações
     viagem_transacao as (
         select *
@@ -194,7 +169,13 @@ with
                 when p.prioridade < p_menor.prioridade then true else false
             end as indicador_penalidade_tecnologia
         from viagem_transacao as vt
-        left join tecnologias as t on vt.servico = t.servico
+        left join
+            tecnologias as t
+            on vt.servico = t.servico
+            and (
+                (vt.data between t.inicio_vigencia and t.fim_vigencia)
+                or (vt.data >= t.inicio_vigencia and t.fim_vigencia is null)
+            )
         left join prioridade_tecnologia as p on vt.tecnologia = p.tecnologia
         left join
             prioridade_tecnologia as p_maior
