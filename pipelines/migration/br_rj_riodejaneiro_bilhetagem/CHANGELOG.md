@@ -1,5 +1,10 @@
 # Changelog - br_rj_riodejaneiro_bilhetagem
 
+## [1.5.1] - 2025-03-26
+
+### Removido
+- Remove schedules dos flows da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/489)
+
 ## [1.5.0] - 2025-02-17
 
 ### Adicionado

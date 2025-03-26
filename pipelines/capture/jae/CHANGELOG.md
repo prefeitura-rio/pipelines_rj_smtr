@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [2.0.0] - 2025-03-26
+
+### Adicionado
+
+- Migra flows de captura dos dados da jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/489)
+
 ## [1.4.1] - 2025-03-19
 
 ### Alterado
