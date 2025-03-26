@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [2.0.0] - 2025-03-26
+
+## Adicionado
+
+- Migra flows de tratamento da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/489)
+
 ## [1.1.0] - 2025-02-04
 
 ### Adicionado

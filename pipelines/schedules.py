@@ -40,6 +40,17 @@ def create_hourly_cron(minute: int = 0) -> str:
     return f"{minute} * * * *"
 
 
+def create_minute_cron(minute: int = 1) -> str:
+    """
+    Cria uma expressão cron de execução a cada X minutos
+    Args:
+        minute (int): A cada quantos minutos será executado
+    Returns:
+        str: expressão cron
+    """
+    return f"*/{minute} * * * *"
+
+
 def generate_interval_schedule(
     interval: timedelta, agent_label: str, params: dict = None
 ) -> Schedule:

@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [2.2.0] - 2025-03-26
+
+### Alterado
+
+- Altera sources das tabelas de staging para as tabelas migradas da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/489)
+
 ## [2.1.0] - 2025-02-17
 
 ### Adicionado
