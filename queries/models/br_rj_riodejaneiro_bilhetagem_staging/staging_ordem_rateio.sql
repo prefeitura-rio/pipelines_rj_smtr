@@ -151,7 +151,7 @@ with
                     content, '$.valor_rateio_compensacao_debito_total'
                 ) as numeric
             ) as valor_rateio_compensacao_debito_total
-        from {{ source("br_rj_riodejaneiro_bilhetagem_staging", "ordem_rateio") }}
+        from {{ source("source_jae", "ordem_rateio") }}
     )
 select * except (rn)
 from

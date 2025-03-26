@@ -49,7 +49,7 @@ with
         from
             {{
                 source(
-                    "br_rj_riodejaneiro_bilhetagem_staging",
+                    "source_jae",
                     "linha_tarifa",
                 )
             }}

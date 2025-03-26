@@ -12,9 +12,11 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
 )
 
+from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.constants import constants as smtr_constants
 from pipelines.schedules import every_day_hour_six_minute_fifty
 from pipelines.tasks import get_run_env, get_scheduled_timestamp
+from pipelines.treatment.cadastro.constants import constants as cadastro_constants
 from pipelines.treatment.financeiro.constants import constants
 from pipelines.treatment.financeiro.tasks import (
     get_ordem_pagamento_modified_partitions,
@@ -22,8 +24,19 @@ from pipelines.treatment.financeiro.tasks import (
     get_ordem_quality_check_start_datetime,
     set_redis_quality_check_datetime,
 )
+from pipelines.treatment.templates.flows import create_default_materialization_flow
 from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt_tests
 from pipelines.utils.prefect import TypedParameter
+
+FINANCEIRO_BILHETAGEM_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="financeiro_bilhetagem - materializacao",
+    selector=constants.FINANCEIRO_BILHETAGEM_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[
+        cadastro_constants.CADASTRO_SELECTOR.value,
+    ]
+    + jae_constants.ORDEM_PAGAMENTO_SOURCES.value,
+)
 
 with Flow(
     name="ordem_pagamento_consorcio_operador_dia - quality check"
@@ -103,3 +116,6 @@ ordem_pagamento_quality_check.state_handlers = [
     handler_initialize_sentry,
 ]
 ordem_pagamento_quality_check.schedule = every_day_hour_six_minute_fifty
+
+
+# ordem pagamento

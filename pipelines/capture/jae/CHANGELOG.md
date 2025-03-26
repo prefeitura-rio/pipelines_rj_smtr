@@ -1,5 +1,23 @@
 # Changelog - source_jae
 
+## [2.0.0] - 2025-03-26
+
+### Adicionado
+
+- Migra flows de captura dos dados da jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/489)
+
+## [1.4.1] - 2025-03-19
+
+### Alterado
+
+- Remove tabelas sem permissão automaticamente no backup da BillingPay (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/487)
+
+## [1.4.0] - 2025-03-17
+
+### Adicionado
+
+- Adiciona parâmetro `end_datetime` no flow `backup_billingpay`
+
 ## [1.3.2] - 2025-03-17
 
 ### Alterado

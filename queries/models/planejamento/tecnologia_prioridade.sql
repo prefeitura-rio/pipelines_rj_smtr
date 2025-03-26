@@ -1,3 +1,9 @@
+{{
+    config(
+        materialized="table",
+    )
+}}
+
 with
     prioridade_tecnologia as (
         select "MINI" as tecnologia, 1 as prioridade, "Ônibus SPPO" as modo

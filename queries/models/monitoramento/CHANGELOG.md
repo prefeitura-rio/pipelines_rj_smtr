@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.3.5] - 2025-03-25
+
+### Alterado
+
+- Alterado a lógica dos modelos `gps_segmento_viagem` e `viagem_validacao` para o monitoramento de viagens (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/458)
+
 ## [1.3.4] - 2025-02-27
 
 ### Corrigido

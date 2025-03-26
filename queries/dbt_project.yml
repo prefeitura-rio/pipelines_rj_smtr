@@ -398,3 +398,9 @@ models:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
       +schema: dashboard_subsidio
+    monitoramento_interno:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: monitoramento_interno
+      staging:
+        +schema: monitoramento_interno_staging

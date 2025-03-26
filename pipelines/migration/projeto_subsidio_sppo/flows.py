@@ -3,7 +3,7 @@
 """
 Flows for projeto_subsidio_sppo
 
-DBT: 2025-03-10
+DBT: 2025-03-26
 """
 
 from prefect import Parameter, case, task
@@ -212,7 +212,8 @@ with Flow(
         dbt_vars = {"date_range_start": start_date, "date_range_end": end_date}
 
         SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt_tests(
-            dataset_id="sppo_registros sppo_realocacao check_gps_treatment__gps_sppo sppo_veiculo_dia",  # noqa
+            dataset_id="sppo_registros sppo_realocacao check_gps_treatment__gps_sppo sppo_veiculo_dia, viagem_planejada",  # noqa
+            exclude="dashboard_subsidio_sppo_v2",
             _vars=dbt_vars,
         ).set_upstream(task=SPPO_VEICULO_DIA_RUN_WAIT)
 
@@ -465,7 +466,8 @@ with Flow(
         dbt_vars = {"date_range_start": start_date, "date_range_end": end_date}
 
         SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt_tests(
-            dataset_id="sppo_registros sppo_realocacao check_gps_treatment__gps_sppo sppo_veiculo_dia",  # noqa
+            dataset_id="sppo_registros sppo_realocacao check_gps_treatment__gps_sppo sppo_veiculo_dia, viagem_planejada",  # noqa
+            exclude="dashboard_subsidio_sppo_v2",
             _vars=dbt_vars,
         )
 

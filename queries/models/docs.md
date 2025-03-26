@@ -472,3 +472,11 @@ SPPO – nesta tabela consta apenas este modo
 {% docs linha %}
 Serviço de ônibus [linha] ou, se realocada, informada pela empresa operadora
 {% enddocs %}
+
+{% docs extensao %}
+Distância do shape [trajeto] planejado (km)
+{% enddocs %}
+
+{% docs indicador_servico_divergente %}
+Indica se o serviço indicado nos dados de GPS estava diferente do serviço informado na viagem
+{% enddocs %}

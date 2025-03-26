@@ -4,9 +4,21 @@
     )
 }}
 
-with tecnologia as (select * from {{ ref("staging_tecnologia_servico") }})
+with
+    tecnologia as (
+        select
+            * except (linha),
+            case when length(linha) < 3 then lpad(linha, 3, "0") else linha end as linha
+        from {{ ref("staging_tecnologia_servico") }}
+    )
 select
-    servico,
+    parse_date(
+        '%d/%m/%Y', nullif(safe_cast(inicio_vigencia as string), "")
+    ) as inicio_vigencia,
+    parse_date(
+        '%d/%m/%Y', nullif(safe_cast(fim_vigencia as string), "")
+    ) as fim_vigencia,
+    concat(ifnull(servico, ""), linha) as servico,
     modo,
     codigo_tecnologia,
     case
@@ -30,7 +42,5 @@ select
         when substring(codigo_tecnologia, 4, 1) = "1"
         then "PADRON"
         else null
-    end as menor_tecnologia_permitida,
-    data_inicio_vigencia,
-    data_fim_vigencia
+    end as menor_tecnologia_permitida
 from tecnologia
