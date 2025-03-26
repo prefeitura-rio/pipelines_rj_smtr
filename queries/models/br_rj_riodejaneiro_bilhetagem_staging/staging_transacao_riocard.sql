@@ -1,42 +1,65 @@
 {{
     config(
-        alias='transacao_riocard',
+        alias="transacao_riocard",
     )
 }}
 
-SELECT
+select
     data,
     hora,
     id,
-    DATETIME(PARSE_TIMESTAMP('%Y-%m-%d %H:%M:%S%Ez', timestamp_captura), "America/Sao_Paulo") AS timestamp_captura,
-    SAFE_CAST(JSON_VALUE(content, '$.assinatura') AS STRING) AS assinatura,
-    SAFE_CAST(JSON_VALUE(content, '$.cd_aplicacao') AS STRING) AS cd_aplicacao,
-    SAFE_CAST(JSON_VALUE(content, '$.cd_emissor') AS STRING) AS cd_emissor,
-    SAFE_CAST(JSON_VALUE(content, '$.cd_consorcio') AS STRING) AS cd_consorcio,
-    SAFE_CAST(JSON_VALUE(content, '$.cd_linha') AS STRING) AS cd_linha,
-    SAFE_CAST(JSON_VALUE(content, '$.cd_matriz_integracao') AS STRING) AS cd_matriz_integracao,
-    SAFE_CAST(JSON_VALUE(content, '$.cd_operadora') AS STRING) AS cd_operadora,
-    SAFE_CAST(JSON_VALUE(content, '$.cd_secao') AS STRING) AS cd_secao,
-    SAFE_CAST(JSON_VALUE(content, '$.cd_status_transacao') AS STRING) AS cd_status_transacao,
-    DATETIME(PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E6S%Ez', SAFE_CAST(JSON_VALUE(content, '$.data_processamento') AS STRING)), "America/Sao_Paulo") AS data_processamento,
-    DATETIME(PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E6S%Ez', SAFE_CAST(JSON_VALUE(content, '$.data_transacao') AS STRING)), "America/Sao_Paulo") AS data_transacao,
-    SAFE_CAST(JSON_VALUE(content, '$.id_cliente') AS STRING) AS id_cliente,
-    SAFE_CAST(JSON_VALUE(content, '$.id_produto') AS STRING) AS id_produto,
-    SAFE_CAST(JSON_VALUE(content, '$.id_servico') AS STRING) AS id_servico,
-    SAFE_CAST(JSON_VALUE(content, '$.id_tipo_midia') AS STRING) AS id_tipo_midia,
-    SAFE_CAST(JSON_VALUE(content, '$.latitude_trx') AS FLOAT64) AS latitude_trx,
-    SAFE_CAST(JSON_VALUE(content, '$.longitude_trx') AS FLOAT64) AS longitude_trx,
-    SAFE_CAST(JSON_VALUE(content, '$.nr_logico_midia_operador') AS STRING) AS nr_logico_midia_operador,
-    SAFE_CAST(JSON_VALUE(content, '$.numero_serie_validador') AS STRING) AS numero_serie_validador,
-    SAFE_CAST(JSON_VALUE(content, '$.pan_hash') AS STRING) AS pan_hash,
-    SAFE_CAST(JSON_VALUE(content, '$.posicao_validador') AS STRING) AS posicao_validador,
-    SAFE_CAST(JSON_VALUE(content, '$.sentido') AS STRING) AS sentido,
-    SAFE_CAST(JSON_VALUE(content, '$.tipo_integracao') AS STRING) AS tipo_integracao,
-    SAFE_CAST(JSON_VALUE(content, '$.tipo_transacao') AS STRING) AS tipo_transacao,
-    SAFE_CAST(JSON_VALUE(content, '$.uid_origem') AS STRING) AS uid_origem,
-    SAFE_CAST(JSON_VALUE(content, '$.valor_tarifa') AS NUMERIC) AS valor_tarifa,
-    SAFE_CAST(JSON_VALUE(content, '$.valor_transacao') AS NUMERIC) AS valor_transacao,
-    SAFE_CAST(JSON_VALUE(content, '$.veiculo_id') AS STRING) AS veiculo_id,
-    SAFE_CAST(JSON_VALUE(content, '$.vl_saldo') AS NUMERIC) AS vl_saldo
-FROM
-    {{ source("br_rj_riodejaneiro_bilhetagem_staging", "transacao_riocard") }}
+    datetime(
+        parse_timestamp('%Y-%m-%d %H:%M:%S%Ez', timestamp_captura), "America/Sao_Paulo"
+    ) as timestamp_captura,
+    safe_cast(json_value(content, '$.assinatura') as string) as assinatura,
+    safe_cast(json_value(content, '$.cd_aplicacao') as string) as cd_aplicacao,
+    safe_cast(json_value(content, '$.cd_emissor') as string) as cd_emissor,
+    safe_cast(json_value(content, '$.cd_consorcio') as string) as cd_consorcio,
+    safe_cast(json_value(content, '$.cd_linha') as string) as cd_linha,
+    safe_cast(
+        json_value(content, '$.cd_matriz_integracao') as string
+    ) as cd_matriz_integracao,
+    safe_cast(json_value(content, '$.cd_operadora') as string) as cd_operadora,
+    safe_cast(json_value(content, '$.cd_secao') as string) as cd_secao,
+    safe_cast(
+        json_value(content, '$.cd_status_transacao') as string
+    ) as cd_status_transacao,
+    datetime(
+        parse_timestamp(
+            '%Y-%m-%dT%H:%M:%E6S%Ez',
+            safe_cast(json_value(content, '$.data_processamento') as string)
+        ),
+        "America/Sao_Paulo"
+    ) as data_processamento,
+    datetime(
+        parse_timestamp(
+            '%Y-%m-%dT%H:%M:%E6S%Ez',
+            safe_cast(json_value(content, '$.data_transacao') as string)
+        ),
+        "America/Sao_Paulo"
+    ) as data_transacao,
+    safe_cast(json_value(content, '$.id_cliente') as string) as id_cliente,
+    safe_cast(json_value(content, '$.id_produto') as string) as id_produto,
+    safe_cast(json_value(content, '$.id_servico') as string) as id_servico,
+    safe_cast(json_value(content, '$.id_tipo_midia') as string) as id_tipo_midia,
+    safe_cast(json_value(content, '$.latitude_trx') as float64) as latitude_trx,
+    safe_cast(json_value(content, '$.longitude_trx') as float64) as longitude_trx,
+    safe_cast(
+        json_value(content, '$.nr_logico_midia_operador') as string
+    ) as nr_logico_midia_operador,
+    safe_cast(
+        json_value(content, '$.numero_serie_validador') as string
+    ) as numero_serie_validador,
+    safe_cast(json_value(content, '$.pan_hash') as string) as pan_hash,
+    safe_cast(
+        json_value(content, '$.posicao_validador') as string
+    ) as posicao_validador,
+    safe_cast(json_value(content, '$.sentido') as string) as sentido,
+    safe_cast(json_value(content, '$.tipo_integracao') as string) as tipo_integracao,
+    safe_cast(json_value(content, '$.tipo_transacao') as string) as tipo_transacao,
+    safe_cast(json_value(content, '$.uid_origem') as string) as uid_origem,
+    safe_cast(json_value(content, '$.valor_tarifa') as numeric) as valor_tarifa,
+    safe_cast(json_value(content, '$.valor_transacao') as numeric) as valor_transacao,
+    safe_cast(json_value(content, '$.veiculo_id') as string) as veiculo_id,
+    safe_cast(json_value(content, '$.vl_saldo') as numeric) as vl_saldo
+from {{ source("source_jae", "transacao_riocard") }}

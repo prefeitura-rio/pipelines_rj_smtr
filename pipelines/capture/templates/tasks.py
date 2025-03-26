@@ -31,26 +31,25 @@ from pipelines.utils.utils import create_timestamp_captura, data_info_str
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
-def set_env(env: str, source: SourceTable) -> SourceTable:
+def set_env(env: str, source_name: str, source_map: dict[str, SourceTable]) -> SourceTable:
     """
-    Cria um objeto de tabela para interagir com o BigQuery
-    Creates basedosdados Table object
+    Cria um objeto de tabela source para interagir com o BigQuery
 
     Args:
-        env (str): dev ou prod,
-        dataset_id (str): dataset_id no BigQuery,
-        table_id (str): table_id no BigQuery,
-        bucket_name (Union[None, str]): Nome do bucket com os dados da tabela no GCS,
-            se for None, usa o bucket padrão do ambiente
-        timestamp (datetime): timestamp gerado pela execução do flow,
-        partition_date_only (bool): True se o particionamento deve ser feito apenas por data
-            False se o particionamento deve ser feito por data e hora,
-        raw_filetype (str): Tipo do arquivo raw (json, csv...),
+        env (str): dev ou prod
+        source_name (str): Nome do Source que será capturado
+        source_map (dict[str, SourceTable]): Dicionário no formato
+            {"source_name": SourceTable(), ...}
 
     Returns:
-        BQTable: Objeto para manipular a tabela no BigQuery
+        SourceTable: Objeto para manipular a tabela source no BigQuery
     """
-    source = deepcopy(source)
+    if source_name not in source_map.keys():
+        raise ValueError(
+            f"source {source_name} não disponível no flow.\n sources: {source_map.keys()}"
+        )
+    source = deepcopy(source_map[source_name])
+
     return source.set_env(env=env)
 
 
@@ -58,15 +57,23 @@ def set_env(env: str, source: SourceTable) -> SourceTable:
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
-def rename_capture_flow(flow_name: str, timestamp: datetime, recapture: bool) -> bool:
+def rename_capture_flow(
+    source_name: str,
+    timestamp: datetime,
+    recapture: bool,
+) -> bool:
     """
     Renomeia a run atual do Flow de captura com o formato:
-    <flow_name>: <timestamp> - recaptura: <recapture>
+    <source_name>: <timestamp> - recaptura: <recapture>
 
+    Args:
+        env (str): dev ou prod
+        source_name (str): Nome do Source que será capturado
+        recaptura (bool): Se a execução é uma recaptura ou não
     Returns:
         bool: Se o flow foi renomeado
     """
-    name = f"{flow_name}: {timestamp.isoformat()} - recaptura: {recapture}"
+    name = f"{source_name}: {timestamp.isoformat()} - recaptura: {recapture}"
     return rename_current_flow_run(name=name)
 
 
