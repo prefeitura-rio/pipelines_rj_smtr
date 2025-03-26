@@ -495,7 +495,7 @@ class constants(Enum):  # pylint: disable=c0103
     GPS_VALIDADOR_SOURCE = SourceTable(
         source_name=JAE_SOURCE_NAME,
         table_id=GPS_VALIDADOR_TABLE_ID,
-        first_timestamp=datetime(2025, 3, 21, 0, 0, 0),
+        first_timestamp=datetime(2025, 3, 21, 14, 30, 0),
         schedule_cron=create_minute_cron(),
         primary_keys=["id"],
     )
