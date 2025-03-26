@@ -68,7 +68,7 @@ with
         from
             {{
                 source(
-                    "br_rj_riodejaneiro_bilhetagem_staging",
+                    "source_jae",
                     "ordem_pagamento_consorcio_operadora",
                 )
             }}
