@@ -1,18 +1,28 @@
 {{
-  config(
-    alias='gratuidade',
-  )
+    config(
+        alias="gratuidade",
+    )
 }}
 
-SELECT
+select
     data,
-    SAFE_CAST(id AS STRING) AS id,
-    DATETIME(PARSE_TIMESTAMP('%Y-%m-%d %H:%M:%S%Ez', timestamp_captura), "America/Sao_Paulo") AS timestamp_captura,
-    SAFE_CAST(JSON_VALUE(content, '$.cd_cliente') AS STRING) AS cd_cliente,
-    DATETIME(PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*S%Ez', SAFE_CAST(JSON_VALUE(content, '$.data_inclusao') AS STRING)), 'America/Sao_Paulo') AS data_inclusao,
-    SAFE_CAST(JSON_VALUE(content, '$.id_status_gratuidade') AS STRING) AS id_status_gratuidade,
-    SAFE_CAST(JSON_VALUE(content, '$.id_tipo_gratuidade') AS STRING) AS id_tipo_gratuidade,
-    SAFE_CAST(JSON_VALUE(content, '$.tipo_gratuidade') AS STRING) AS tipo_gratuidade
-FROM
-  {{ source('br_rj_riodejaneiro_bilhetagem_staging', 'gratuidade') }}
-
+    safe_cast(id as string) as id,
+    datetime(
+        parse_timestamp('%Y-%m-%d %H:%M:%S%Ez', timestamp_captura), "America/Sao_Paulo"
+    ) as timestamp_captura,
+    safe_cast(json_value(content, '$.cd_cliente') as string) as cd_cliente,
+    datetime(
+        parse_timestamp(
+            '%Y-%m-%dT%H:%M:%E*S%Ez',
+            safe_cast(json_value(content, '$.data_inclusao') as string)
+        ),
+        'America/Sao_Paulo'
+    ) as data_inclusao,
+    safe_cast(
+        json_value(content, '$.id_status_gratuidade') as string
+    ) as id_status_gratuidade,
+    safe_cast(
+        json_value(content, '$.id_tipo_gratuidade') as string
+    ) as id_tipo_gratuidade,
+    safe_cast(json_value(content, '$.tipo_gratuidade') as string) as tipo_gratuidade
+from {{ source("source_jae", "gratuidade") }}
