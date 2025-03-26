@@ -31,24 +31,24 @@ from pipelines.utils.utils import create_timestamp_captura, data_info_str
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
-def set_env(env: str, source_name: str, source_map: dict[str, SourceTable]) -> SourceTable:
+def set_env(env: str, table_id: str, source_map: dict[str, SourceTable]) -> SourceTable:
     """
     Cria um objeto de tabela source para interagir com o BigQuery
 
     Args:
         env (str): dev ou prod
-        source_name (str): Nome do Source que será capturado
+        table_id (str): Nome da tabela que será capturada
         source_map (dict[str, SourceTable]): Dicionário no formato
-            {"source_name": SourceTable(), ...}
+            {"table_id": SourceTable(), ...}
 
     Returns:
         SourceTable: Objeto para manipular a tabela source no BigQuery
     """
-    if source_name not in source_map.keys():
+    if table_id not in source_map.keys():
         raise ValueError(
-            f"source {source_name} não disponível no flow.\n sources: {source_map.keys()}"
+            f"source {table_id} não disponível no flow.\n sources: {source_map.keys()}"
         )
-    source = deepcopy(source_map[source_name])
+    source = deepcopy(source_map[table_id])
 
     return source.set_env(env=env)
 
@@ -58,22 +58,22 @@ def set_env(env: str, source_name: str, source_map: dict[str, SourceTable]) -> S
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
 def rename_capture_flow(
-    source_name: str,
+    table_id: str,
     timestamp: datetime,
     recapture: bool,
 ) -> bool:
     """
     Renomeia a run atual do Flow de captura com o formato:
-    <source_name>: <timestamp> - recaptura: <recapture>
+    <table_id>: <timestamp> - recaptura: <recapture>
 
     Args:
         env (str): dev ou prod
-        source_name (str): Nome do Source que será capturado
+        table_id (str): Nome da tabela que será capturada
         recaptura (bool): Se a execução é uma recaptura ou não
     Returns:
         bool: Se o flow foi renomeado
     """
-    name = f"{source_name}: {timestamp.isoformat()} - recaptura: {recapture}"
+    name = f"{table_id}: {timestamp.isoformat()} - recaptura: {recapture}"
     return rename_current_flow_run(name=name)
 
 

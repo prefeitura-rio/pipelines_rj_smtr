@@ -71,13 +71,13 @@ def create_default_capture_flow(
     if isinstance(source, SourceTable):
         source = [source]
 
-    source_map = {s.source_name: s for s in source}
+    source_map = {s.table_id: s for s in source}
     with Flow(flow_name) as capture_flow:
 
-        source_name = TypedParameter(
-            name="source_name",
+        table_id = TypedParameter(
+            name="table_id",
             accepted_types=str,
-            default=source[0].source_name,
+            default=source[0].table_id,
         )
 
         timestamp = TypedParameter(
@@ -106,7 +106,7 @@ def create_default_capture_flow(
 
         activated_source = set_env(
             env=env,
-            source_name=source_name,
+            table_id=table_id,
             source_map=source_map,
         )
 
@@ -118,7 +118,7 @@ def create_default_capture_flow(
         )
 
         rename_capture_flow(
-            source_name=source_name,
+            table_id=table_id,
             timestamp=timestamp,
             recapture=recapture,
         )
@@ -189,7 +189,7 @@ def create_default_capture_flow(
                     agent_label,
                 ],
                 start_date=datetime.now(tz=timezone(constants.TIMEZONE.value)),
-                parameter_defaults={"source_name": s.source_name},
+                parameter_defaults={"table_id": s.table_id},
             )
             for s in source
         ]
@@ -203,7 +203,7 @@ def create_default_capture_flow(
                     ],
                     start_date=datetime.now(tz=timezone(constants.TIMEZONE.value)),
                     parameter_defaults={
-                        "source_name": s.source_name,
+                        "table_id": s.table_id,
                         "recapture": True,
                     },
                 )
