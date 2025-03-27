@@ -91,31 +91,20 @@ with Flow(
         dataset_id=constants.SUBSIDIO_SPPO_DATASET_ID.value,
     )
 
-    _vars = get_join_dict(
-        dict_list=[{"date_range_start": date_range_start, "date_range_end": date_range_end}],
-        new_dict=dataset_sha,
-    )
-    _vars2 = get_join_dict(dict_list=run_dates, new_dict=dataset_sha)
+    _vars = get_join_dict(dict_list=run_dates, new_dict=dataset_sha)
 
-    RUN = run_dbt_model(
-        # dbt_client=dbt_client,
-        dataset_id="planejamento.staging",
-        table_id="aux_calendario_manual",
-        _vars=_vars,
-    )
-
-    RUN2 = run_dbt_model.map(
+    RUN = run_dbt_model.map(
         # dbt_client=unmapped(dbt_client),
         dataset_id=unmapped(constants.SUBSIDIO_SPPO_DATASET_ID.value),
         table_id=unmapped(constants.SUBSIDIO_SPPO_TABLE_ID.value),
         upstream=unmapped(True),
-        exclude=unmapped("+gps_sppo +ordem_servico_trips_shapes_gtfs +aux_calndario_manual"),
-        _vars=_vars2,
-    ).set_upstream(RUN)
+        exclude=unmapped("+gps_sppo +ordem_servico_trips_shapes_gtfs"),
+        _vars=_vars,
+    )
 
     with case(run_d0, True):
         date_d0 = get_posterior_date(1)
-        RUN_3 = run_dbt_model(
+        RUN_2 = run_dbt_model(
             dataset_id=constants.SUBSIDIO_SPPO_DATASET_ID.value,
             table_id="subsidio_data_versao_efetiva viagem_planejada",
             _vars={"run_date": date_d0, "version": dataset_sha},
