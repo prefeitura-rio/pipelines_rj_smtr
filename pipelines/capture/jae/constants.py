@@ -507,7 +507,6 @@ class constants(Enum):  # pylint: disable=c0103
         schedule_cron=create_daily_cron(hour=5),
         primary_keys=["id"],
         max_recaptures=2,
-        partition_date_only=True,
     )
 
     JAE_AUXILIAR_SOURCES = [
@@ -538,6 +537,7 @@ class constants(Enum):  # pylint: disable=c0103
             pretreatment_reader_args=v.get("pretreatment_reader_args"),
             pretreat_funcs=v.get("pretreat_funcs"),
             bucket_names=v.get("bucket_names"),
+            partition_date_only=v.get("partition_date_only", True),
             max_recaptures=v.get("max_recaptures", 60),
             raw_filetype=v.get("raw_filetype", "json"),
         )
