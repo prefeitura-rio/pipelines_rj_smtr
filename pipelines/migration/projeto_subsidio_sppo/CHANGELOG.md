@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.1.4] - 2025-03-27
+
+### Alterado
+
+- Alterado teste `test_check_gps_treatment.sql` para para desconsiderar duplicações assim como o modelo `sppo_aux_registros_filtrada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/500)
+
 ## [1.1.3] - 2025-03-21
 
 ### Adicionado
