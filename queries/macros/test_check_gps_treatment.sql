@@ -15,7 +15,7 @@
         ),
         gps as (
             select data, timestamp_gps, latitude, longitude
-            from `rj-smtr.br_rj_riodejaneiro_onibus_gps.sppo_registros`
+            from {{ ref('sppo_registros') }}
             where
                 data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
