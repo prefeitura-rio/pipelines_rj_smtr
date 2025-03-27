@@ -35,8 +35,8 @@ with
             faixa_horaria_inicio,
             faixa_horaria_fim,
             quilometragem as km_planejada
-        from {{ ref("servico_planejado") }}
-        -- from `rj-smtr.planejamento.servico_planejado`
+        from {{ ref("servico_planejado_faixa_horaria") }}
+        -- from `rj-smtr.planejamento.servico_planejado_faixa_horaria`
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')

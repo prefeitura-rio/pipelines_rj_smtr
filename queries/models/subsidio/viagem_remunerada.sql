@@ -18,12 +18,27 @@ with
         from {{ ref("viagem_transacao") }}
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
-    servico_planejado as (
-        select *
-        from {{ ref("servico_planejado") }}
+    servico_planejado_faixa_horaria as (
+        select
+            data,
+            servico,
+            faixa_horaria_inicio,
+            faixa_horaria_fim,
+            sum(partidas) over (
+                partition by data, servico, faixa_horaria_inicio
+            ) as partidas,
+            sum(quilometragem) over (
+                partition by data, servico, faixa_horaria_inicio
+            ) as km_planejada
+        from {{ ref("servico_planejado_faixa_horaria") }}
         where
             quilometragem > 0
             {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
+    ),
+    servico_planejado_faixa_horaria as (
+        select data, servico, viagens
+        from {{ ref("servico_planejado_dia") }}
+        where {{ incremental_filter }}
     ),
     subsidio_parametros as (
         select distinct
@@ -92,12 +107,9 @@ with
     servico_faixa_km_apuracao as (
         select
             s.data,
-            s.tipo_dia,
             s.faixa_horaria_inicio,
             s.faixa_horaria_fim,
-            s.consorcio,
             s.servico,
-            s.quilometragem as km_planejada,
             coalesce(
                 round(
                     100 * sum(
@@ -107,12 +119,12 @@ with
                             0
                         )
                     )
-                    / s.quilometragem,
+                    / s.km_planejada,
                     2
                 ),
                 0
             ) as pof
-        from servico_planejado as s
+        from servico_planejado_faixa_horaria as s
         left join
             viagem_tecnologia as v
             on s.data = v.data
@@ -196,48 +208,38 @@ select
         rn,
         datetime_partida,
         sentido,
-        viagens_dia,
+        viagens,
         partidas,
-        quilometragem,
-        tipo_dia,
-        consorcio,
+        km_planejada,
         faixa_horaria_inicio,
         faixa_horaria_fim,
-        extensao_ida,
-        extensao_volta,
-        feed_start_date,
-        feed_version,
-        tipo_os
     ),
     case
         when
             v.tipo_dia = "Dia Útil"
-            and viagens_dia < 10
-            and viagens_dia > 5
+            and viagens < 10
+            and viagens > 5
             and pof > 100
             and rn > (partidas + if(sentido = "C", 1, 2))
         then false
         when
             v.tipo_dia = "Dia Útil"
-            and viagens_dia >= 10
+            and viagens >= 10
             and pof > 110
             and rn > partidas * 1.1
         then false
         when
-            v.tipo_dia = "Dia Útil"
-            and viagens_dia <= 5
-            and pof > 200
-            and rn > partidas * 2
+            v.tipo_dia = "Dia Útil" and viagens <= 5 and pof > 200 and rn > partidas * 2
         then false
         when
             v.tipo_dia != "Dia Útil"
-            and viagens_dia < 5
+            and viagens < 5
             and pof > 100
             and rn > (partidas + if(sentido = "C", 1, 2))
         then false
         when
             v.tipo_dia != "Dia Útil"
-            and viagens_dia >= 5
+            and viagens >= 5
             and pof > 120
             and rn > partidas * 1.2
         then false
@@ -249,18 +251,27 @@ from
     (
         select
             v.*,
-            sp.* except (data, servico, modo),
+            spf.faixa_horaria_inicio,
+            spf.faixa_horaria_fim,
+            spf.partidas,
+            spf.km_planejada,
+            spd.viagens,
             row_number() over (
-                partition by v.data, v.servico, faixa_horaria_inicio, faixa_horaria_fim
+                partition by
+                    v.data, v.servico, spf.faixa_horaria_inicio, spf.faixa_horaria_fim
                 order by subsidio_km * distancia_planejada desc
             ) as rn
         from viagem_km_tipo as v
         left join
-            servico_planejado as sp
-            on sp.data = v.data
-            and sp.servico = v.servico
+            servico_planejado_faixa_horaria as spf
+            on spf.data = v.data
+            and spf.servico = v.servico
             and v.datetime_partida
-            between sp.faixa_horaria_inicio and sp.faixa_horaria_fim
+            between spf.faixa_horaria_inicio and spf.faixa_horaria_fim
+        left join
+            servico_planejado_dia as spd
+            on spd.data = v.data
+            and spd.servico = v.servico
     ) as v
 left join
     servico_faixa_km_apuracao as s
