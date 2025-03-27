@@ -24,7 +24,7 @@ with
                 then "Ponto Facultativo"  -- Ponto Facultativo - G20 - (Processo.Rio MTR-DES-2024/67477)
                 when data = date(2025, 02, 28)
                 then "Ponto Facultativo"  -- Ponto Facultativo - Sexta-feira de Carnaval - (Processo.Rio MTR-PRO-2025/03920)
-                when data between date(2025, 03, 02) and date(2025, 03, 04)
+                when data between date(2025, 03, 03) and date(2025, 03, 04)
                 then "Domingo"  -- Carnaval - (Processo.Rio MTR-PRO-2025/03920)
             end as tipo_dia,
             case
