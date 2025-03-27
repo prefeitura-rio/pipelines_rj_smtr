@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.1.5] - 2025-03-27
+
+### Corrigido
+
+- Corrigida a materialização do modelo `aux_calendario_manual.sql` no flow `viagens_sppo` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/500)
+
 ## [1.1.4] - 2025-03-27
 
 ### Alterado
