@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrigido o tipo_dia de `2025-03-02` no modelo `aux_calendario_manual.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Corrigido o tipo_dia de `2025-03-02` no modelo `aux_calendario_manual.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/501)
 
 ## [1.3.4] - 2025-03-25
 
