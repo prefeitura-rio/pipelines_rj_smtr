@@ -5,7 +5,7 @@ models:
     description: "Detalhes das viagens informadas pelas operadoras de ônibus"
     columns:
       - name: data
-        description: "Data da viagem (partição)"
+        description: "{{ doc('data_viagem') }} [partição]"
       - name: datetime_partida
         description: "Data e hora da partida da viagem [GMT-3]"
       - name: datetime_chegada
@@ -21,13 +21,13 @@ models:
       - name: route_id
         description: "Identificador de uma rota da tabela routes do GTFS"
       - name: shape_id
-        description: "Identificador de um shape da tabela shapes do GTFS"
+        description: "{{ doc('shape_id') }}"
       - name: servico
         description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...)"
       - name: sentido
         description: "Ida ou Volta"
       - name: id_viagem
-        description: "Identificador de um shape da tabela shapes do GTFS"
+        description: "{{ doc('shape_id') }}"
       - name: versao
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao

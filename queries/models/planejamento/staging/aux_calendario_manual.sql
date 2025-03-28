@@ -24,6 +24,8 @@ with
                 then "Ponto Facultativo"  -- Ponto Facultativo - G20 - (Processo.Rio MTR-DES-2024/67477)
                 when data = date(2025, 02, 28)
                 then "Ponto Facultativo"  -- Ponto Facultativo - Sexta-feira de Carnaval - (Processo.Rio MTR-PRO-2025/03920)
+                when data between date(2025, 03, 03) and date(2025, 03, 04)
+                then "Domingo"  -- Carnaval - (Processo.Rio MTR-PRO-2025/03920)
             end as tipo_dia,
             case
                 when data between date(2024, 09, 14) and date(2024, 09, 15)
@@ -68,6 +70,10 @@ with
                 then "Extraordinária - Verão"  -- Processo.Rio MTR-PRO-2025/03046
                 when data between date(2025, 02, 22) and date(2025, 02, 23)
                 then "Extraordinária - Verão"  -- Processo.Rio MTR-PRO-2025/03740
+                when data between date(2025, 03, 01) and date(2025, 03, 04)
+                then "Extraordinária - Verão"  -- Processo.Rio MTR-PRO-2025/03920
+                when data = date(2025, 03, 05)
+                then "Atípico + Verão"  -- Processo.Rio MTR-PRO-2025/03920
             end as tipo_os
         from
             unnest(

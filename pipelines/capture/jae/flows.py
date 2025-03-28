@@ -33,9 +33,63 @@ from pipelines.capture.jae.tasks import (
 )
 from pipelines.capture.templates.flows import create_default_capture_flow
 from pipelines.constants import constants as smtr_constants
-from pipelines.schedules import every_hour
+from pipelines.schedules import create_hourly_cron, every_hour
 from pipelines.tasks import get_run_env, get_scheduled_timestamp, log_discord
 from pipelines.utils.prefect import set_default_parameters
+
+# Capturas minuto a minuto
+
+CAPTURA_TRANSACAO = create_default_capture_flow(
+    flow_name="jae: transacao - captura",
+    source=constants.TRANSACAO_SOURCE.value,
+    create_extractor_task=create_jae_general_extractor,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    recapture_schedule_cron=create_hourly_cron(),
+)
+
+CAPTURA_TRANSACAO_RIOCARD = create_default_capture_flow(
+    flow_name="jae: transacao_riocard - captura",
+    source=constants.TRANSACAO_RIOCARD_SOURCE.value,
+    create_extractor_task=create_jae_general_extractor,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    recapture_schedule_cron=create_hourly_cron(),
+)
+
+CAPTURA_GPS_VALIDADOR = create_default_capture_flow(
+    flow_name="jae: gps_validador - captura",
+    source=constants.GPS_VALIDADOR_SOURCE.value,
+    create_extractor_task=create_jae_general_extractor,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    recapture_schedule_cron=create_hourly_cron(),
+)
+
+# Capturas por hora
+
+CAPTURA_AUXILIAR = create_default_capture_flow(
+    flow_name="jae: auxiliares - captura",
+    source=constants.JAE_AUXILIAR_SOURCES.value,
+    create_extractor_task=create_jae_general_extractor,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+)
+set_default_parameters(CAPTURA_AUXILIAR, {"recapture": True})
+
+# Capturas diárias
+
+CAPTURA_INTEGRACAO = create_default_capture_flow(
+    flow_name="jae: integracao - captura",
+    source=constants.INTEGRACAO_SOURCE.value,
+    create_extractor_task=create_jae_general_extractor,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+)
+set_default_parameters(CAPTURA_INTEGRACAO, {"recapture": True})
+
+CAPTURA_ORDEM_PAGAMENTO = create_default_capture_flow(
+    flow_name="jae: ordem_pagamento - captura",
+    source=constants.ORDEM_PAGAMENTO_SOURCES.value,
+    create_extractor_task=create_jae_general_extractor,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+)
+set_default_parameters(CAPTURA_ORDEM_PAGAMENTO, {"recapture": True})
 
 CAPTURA_TRANSACAO_ORDEM = create_default_capture_flow(
     flow_name="jae: transacao_ordem - captura",

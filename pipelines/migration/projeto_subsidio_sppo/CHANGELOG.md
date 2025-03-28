@@ -1,5 +1,23 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.1.5] - 2025-03-27
+
+### Corrigido
+
+- Corrigida a materialização do modelo `aux_calendario_manual.sql` no flow `viagens_sppo` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/500)
+
+## [1.1.4] - 2025-03-27
+
+### Alterado
+
+- Alterado teste `test_check_gps_treatment.sql` para desconsiderar duplicações assim como o modelo `sppo_aux_registros_filtrada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/500)
+
+## [1.1.3] - 2025-03-21
+
+### Adicionado
+
+- Adicionados os testes da modelo `viagem_planejada.sql` aos testes do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/479)
+
 ## [1.1.2] - 2025-02-17
 
 ### Corrigido

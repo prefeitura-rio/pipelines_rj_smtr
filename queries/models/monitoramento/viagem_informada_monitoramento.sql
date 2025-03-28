@@ -13,7 +13,9 @@
 {% endset %}
 
 {% set staging_viagem_informada_rioonibus = ref("staging_viagem_informada_rioonibus") %}
+{# {% set staging_viagem_informada_rioonibus = ("rj-smtr.monitoramento_staging.viagem_informada_rioonibus") %} #}
 {% set staging_viagem_informada_brt = ref("staging_viagem_informada_brt") %}
+{# {% set staging_viagem_informada_brt = ("rj-smtr.monitoramento_staging.viagem_informada_brt") %} #}
 {% set calendario = ref("calendario") %}
 {# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
 {% if execute %}
