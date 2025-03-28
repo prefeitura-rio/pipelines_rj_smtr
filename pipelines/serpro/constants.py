@@ -28,6 +28,7 @@ class constants(Enum):  # pylint: disable=c0103
                 PARSEDATE(SUBSTRING(auinf_dt_infracao, 1, 10), 'yyyy-MM-dd')
                 BETWEEN PARSEDATE('{start_date}', 'yyyy-MM-dd')
                 AND PARSEDATE('{end_date}', 'yyyy-MM-dd')
+                AND auinf_vei_tipo IN ('MOTOCICLETA', 'Motocicleta', 'MOTONETA', 'Motoneta')
         """,
         "primary_key": ["auinf_num_auto"],
         "pre_treatment_reader_args": {"dtype": "object"},
