@@ -74,6 +74,8 @@ with
                 then "Extraordinária - Verão"  -- Processo.Rio MTR-PRO-2025/03920
                 when data = date(2025, 03, 05)
                 then "Atípico + Verão"  -- Processo.Rio MTR-PRO-2025/03920
+                when data between date(2025, 03, 08) and date(2025, 03, 09)
+                then "Extraordinária - Verão"  -- Processo.Rio MTR-PRO-2025/04520
             end as tipo_os
         from
             unnest(

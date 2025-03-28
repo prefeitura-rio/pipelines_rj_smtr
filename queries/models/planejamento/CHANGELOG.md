@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.3.4] - 2025-03-25
+
+### Alterado
+
+- Altera o tipo_os de `2025-03-08` e `2025-03-08` no modelo `aux_calendario_manual.sql` para `Extraordinária - Verão` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/502)
+
 ## [1.3.5] - 2025-03-27
 
 ### Corrigido
