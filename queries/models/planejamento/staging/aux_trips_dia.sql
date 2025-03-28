@@ -50,7 +50,6 @@ select
     os.feed_start_date is not null as indicador_possui_os,
     os.horario_inicio,
     os.horario_fim,
-    os.dias_horario_fim
 from trips_dia td
 left join
     {{ ref("ordem_servico_trajeto_alternativo_gtfs") }} osa using (
