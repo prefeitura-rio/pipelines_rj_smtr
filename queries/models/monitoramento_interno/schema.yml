@@ -37,7 +37,7 @@ models:
         data_type: string
         quote: true
       - name: route_id
-        description: {{ doc('route_id') }}
+        description: "{{ doc('route_id') }}"
         data_type: string
         quote: true
       - name: shape_id
