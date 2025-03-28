@@ -1,5 +1,9 @@
 # Changelog - br_rj_riodejaneiro_onibus_gps
 
+## [1.0.3] - 2025-02-21
+
+### Alterado
+- Torna filtro de partição obrigatório no modelo `sppo_aux_registros_filtrada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/448)
 
 ## [1.0.2] - 2024-11-13
 

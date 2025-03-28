@@ -1,5 +1,28 @@
 # Changelog - veiculo
 
+## [2.0.4] - 2025-02-24
+
+### Alterado
+- Alterado o modelo `licenciamento.sql` para corrigir os dados modificados da coluna `tipo_veiculo` conforme Processo.Rio MTR-CAP-2025/01125 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/457)
+
+## [2.0.3] - 2025-02-06
+
+### Adicionado
+- Adicionados testes no modelo `infracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/401)
+
+## [2.0.2] - 2025-01-23
+
+### Alterado
+- Encerrada regra de transição com dados temporários da CGLF no modelo `licenciamento.sql` e reformatação deste (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/395)
+
+### Corrigido
+- Corrigidos os tipos das colunas `tecnologia`, `placa`, `data_licenciamento` e `data_infracao` na materialização antes de `2025-01-01` no modelo `sppo_veiculo_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/395)
+
+## [2.0.1] - 2025-01-21
+
+### Corrigido
+- Corrigido os sources dos modelos `infracao.sql` e `licenciamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/391)
+
 ## [2.0.0] - 2025-01-16
 
 ### Adicionado

@@ -1,5 +1,43 @@
 # Changelog - monitoramento
 
+## [1.3.5] - 2025-03-25
+
+### Alterado
+
+- Alterado a lógica dos modelos `gps_segmento_viagem` e `viagem_validacao` para o monitoramento de viagens (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/458)
+
+## [1.3.4] - 2025-02-27
+
+### Corrigido
+- Corrige os valores as colunas `valor_subsidio_pago` e `valor_penalidade` antes da apuração por faixa no modelo `monitoramento_servico_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/465)
+
+## [1.3.2] - 2025-02-21
+
+### Alterado
+- Torna filtro de partição obrigatório no modelo `gps_viagem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/448)
+
+## [1.3.1] - 2025-02-03
+
+### Corrigido
+
+- Transforma dados em branco em nulos no modelo `viagem_informada_monitoramento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/408)
+
+
+## [1.3.0] - 2025-01-22
+
+### Alterado
+
+- Adiciona as colunas `indicador_servico_planejado_gtfs`, `indicador_servico_planejado_os`, `indicador_servico_divergente` e `indicador_shape_invalido` no modelo `viagem_validacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/392)
+
+- Adiciona a coluna `indicador_servico_divergente` no modelo `gps_segmento_viagem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/392)
+
+- Remove tratamento de sentido no modelo `viagem_informada_monitoramento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/392)
+
+### Corrigido
+
+- Corrige trip_id inteiro nos modelos `staging_viagem_informada_rioonibus.sql` e `staging_viagem_informada_brt.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/392)
+
+- Corrige filtro incremental no modelo `viagem_informada_monitoramento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/392)
 
 ## [1.2.2] - 2025-01-08
 

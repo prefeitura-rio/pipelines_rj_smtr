@@ -13,6 +13,7 @@ select
     servico,
     id_validador,
     tipo_viagem,
+    tecnologia,
     distancia_planejada,
     quantidade_transacao,
     quantidade_transacao_riocard,
@@ -22,4 +23,4 @@ select
     datetime_partida,
     datetime_chegada,
     datetime_ultima_atualizacao
-from {{ref('viagem_transacao_aux')}}
+from {{ ref("viagem_transacao_aux") }}

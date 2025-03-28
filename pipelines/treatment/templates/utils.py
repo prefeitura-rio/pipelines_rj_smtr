@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import re
 from datetime import datetime, timedelta
 
@@ -235,7 +236,7 @@ def parse_dbt_test_output(dbt_logs: str) -> dict:
     results = {}
     result_pattern = r"\d+ of \d+ (PASS|FAIL|ERROR) (\d+ )?([\w._]+) .* \[(PASS|FAIL|ERROR) .*\]"
     fail_pattern = r"Failure in test ([\w._]+) .*\n.*\n.*\n.* compiled Code at (.*)\n"
-    error_pattern = r"Error in test ([\w._]+) \(.*schema.yaml\)\n  (.*)\n"
+    error_pattern = r"Error in test ([\w._]+) \(.*schema.yml\)\n  (.*)\n"
 
     root_path = get_root_path()
 
@@ -248,7 +249,9 @@ def parse_dbt_test_output(dbt_logs: str) -> dict:
         groups = match.groups()
         test_name = groups[0]
         file = groups[1]
-        filepath = f"{root_path}/queries/{file}"
+
+        filepath = os.path.join(root_path, "queries")
+        filepath = os.path.join(filepath, os.path.relpath(file, filepath))
 
         with open(filepath, "r") as arquivo:
             query = arquivo.read()

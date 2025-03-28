@@ -1,5 +1,12 @@
 # Changelog - subsidio
 
+## [2.0.2] - 2025-01-21
+
+# Adicionado
+
+- Adiciona o modelo `valor_km_tipo_viagem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+- Adiciona a coluna `tecnologia` nos modelos  `viagem_transacao.sql` e `viagem_transacao_aux.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/390)
+
 ## [2.0.1] - 2025-01-06
 
 # Corrigido

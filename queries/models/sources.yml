@@ -30,6 +30,7 @@ sources:
       - name: linha_consorcio
       - name: linha_consorcio_operadora_transporte
       - name: endereco
+      - name: linha_tarifa
 
 
   - name: br_rj_riodejaneiro_gtfs_staging
@@ -110,10 +111,10 @@ sources:
       - name: sppo_vistoria_tr_subtt_cglf_2024
       - name: sppo_vistoria_tr_subtt_cglf_pendentes_2024
       - name: sppo_registro_agente_verao
-      - name: sppo_infracao
       - name: sppo_licenciamento_solicitacao
       - name: sppo_licenciamento
-      - name: sppo_licenciamento_stu
+      - name: infracao
+      - name: licenciamento_stu
 
   - name: dashboard_subsidio_sppo_staging
     database: rj-smtr-staging
@@ -186,6 +187,32 @@ sources:
 
     tables:
       - name: transacao_ordem
+      - name: transacao
+      - name: transacao_riocard
+      - name: linha
+      - name: dicionario
+      - name: consorcio
+      - name: operadora_transporte
+      - name: ordem_pagamento
+      - name: ordem_ressarcimento
+      - name: conta_bancaria
+      - name: contato_pessoa_juridica
+      - name: cliente
+      - name: percentual_rateio_integracao
+      - name: integracao_transacao
+      - name: tipo_modal
+      - name: gps_validador
+      - name: gratuidade
+      - name: ordem_rateio
+      - name: servico_motorista
+      - name: linha_sem_ressarcimento
+      - name: ordem_pagamento_consorcio_operadora
+      - name: ordem_pagamento_consorcio
+      - name: linha_consorcio
+      - name: linha_consorcio_operadora_transporte
+      - name: endereco
+      - name: produto
+      - name: linha_tarifa
 
   - name: source_sonda
     database: rj-smtr-staging
@@ -198,3 +225,15 @@ sources:
 
     tables:
       - name: matriz_integracao
+
+  - name: subsidio_staging
+    database: rj-smtr
+
+    tables:
+      - name: valor_km_tipo_viagem
+
+  - name: planejamento_staging
+    database: rj-smtr
+
+    tables:
+      - name: tecnologia_servico
