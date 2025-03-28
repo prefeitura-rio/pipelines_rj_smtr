@@ -26,12 +26,12 @@ from pipelines.serpro.constants import constants
 from pipelines.serpro.tasks import get_db_object, get_raw_serpro
 from pipelines.serpro.utils import handler_setup_serpro
 
-with Flow("SMTR: SERPRO - Filtro") as serpro_captura:
+with Flow("SMTR: SERPRO - Filtro") as serpro_filtro:
     start_date = Parameter("start_date", default=get_previous_date.run(1))
     end_date = Parameter("end_date", default=get_previous_date.run(1))
 
     rename_flow_run = rename_current_flow_run_now_time(
-        prefix=serpro_captura.name + " ",
+        prefix=serpro_filtro.name + " ",
         now_time=get_now_time(),
     )
 
@@ -94,12 +94,12 @@ with Flow("SMTR: SERPRO - Filtro") as serpro_captura:
     #     upstream_tasks=[wait_captura_true],
     # )
 
-serpro_captura.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
-serpro_captura.run_config = KubernetesRun(
+serpro_filtro.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
+serpro_filtro.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE_FEDORA.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-serpro_captura.state_handlers = [
+serpro_filtro.state_handlers = [
     handler_setup_serpro,
     handler_inject_bd_credentials,
     handler_initialize_sentry,
