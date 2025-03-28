@@ -7,14 +7,14 @@ WITH
     date AS data_inicial_quinzena,
     DATE_ADD(date, INTERVAL 14 DAY) AS data_final_quinzena
   FROM
-    UNNEST(GENERATE_DATE_ARRAY('2022-06-01', '2023-12-31', INTERVAL 1 MONTH)) AS date ),
+    UNNEST(GENERATE_DATE_ARRAY('2024-01-01', '2024-08-15', INTERVAL 1 MONTH)) AS date ),
   q2 AS (
   SELECT
     FORMAT_DATE('%Y-%m-Q2', date) AS quinzena,
     DATE_ADD(date, INTERVAL 15 DAY) AS data_inicial_quinzena,
     LAST_DAY(date) AS data_final_quinzena
   FROM
-    UNNEST(GENERATE_DATE_ARRAY('2022-06-01', '2023-12-31', INTERVAL 1 MONTH)) AS date ),
+    UNNEST(GENERATE_DATE_ARRAY('2024-01-01', '2024-08-15', INTERVAL 1 MONTH)) AS date ),
   quinzenas AS (
   SELECT
     *
