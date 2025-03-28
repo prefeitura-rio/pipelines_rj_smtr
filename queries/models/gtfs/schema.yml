@@ -392,7 +392,7 @@ models:
       - name: partidas_ida
         description: "Quantidade de partidas no sentido ida."
       - name: partidas_volta
-        description: "Quantidade de partidas no sentido volta."
+        description: "{{ doc('partidas_volta') }}"
       - name: viagens_planejadas
         description: "Quantidade de viagens realizadas."
       - name: distancia_total_planejada

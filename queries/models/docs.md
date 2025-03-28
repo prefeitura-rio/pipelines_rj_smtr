@@ -636,3 +636,7 @@ Cobertura temporal
 {% docs cep_proprietario %}
 CEP do proprietário do veículo
 {% enddocs %}
+
+{% docs partidas_volta %}
+Quantidade de partidas no sentido volta
+{% enddocs %}
