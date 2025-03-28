@@ -7,7 +7,7 @@ models:
     description: "Agência de transporte público com serviços representados neste conjunto de dados"
     columns:
       - name: agency_id
-        description:  "Identifica uma marca de transporte público que geralmente é sinônimo de agência de transporte público."
+        description:  "Identifica uma marca de transporte público que geralmente é sinônimo de agência de transporte público"
       - name: agency_name
         description: "Nome completo da agência de transporte público"
       - name: agency_url
@@ -226,9 +226,9 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS"
       - name: shape_id
-        description: "Identificador de shape"
+        description: "{{ doc('shape_id') }}"
       - name: shape
-        description: "Shape em formato geográfico (usualmente LineString)"
+        description: "{{ doc('shape') }}"
       - name: shape_distance
         description: "Extensão do shape"
       - name: start_pt
@@ -236,7 +236,7 @@ models:
       - name: end_pt
         description: "Ponto final do shape em formato geográfico (Point)"
       - name: data_versao
-        description: "Data de referência do planejamento (versão)"
+        description: "{{ doc('data_versao') }}"
       - name: versao_modelo
         description: "{{ doc('versao') }}"
 
@@ -358,7 +358,7 @@ models:
       - name: block_id
         description: "Identifica o bloco ao qual pertence a viagem"
       - name: shape_id
-        description: "Identifica uma forma geoespacial que descreve o caminho de deslocamento do veículo para uma viagem"
+        description: "{{ doc('shape_id') }}"
       - name: wheelchair_accessible
         description: "Indica acessibilidade para cadeiras de rodas"
       - name: bikes_allowed
@@ -386,13 +386,13 @@ models:
       - name: horario_fim
         description: "Horário da última viagem"
       - name: extensao_ida
-        description: "Distância percorrida na ida"
+        description: "{{ doc('extensao_ida') }}"
       - name: extensao_volta
         description: "Distância percorrida na volta"
       - name: partidas_ida
         description: "Quantidade de partidas no sentido ida"
       - name: partidas_volta
-        description: "Quantidade de partidas no sentido volta"
+        description: "{{ doc('partidas_volta') }}"
       - name: viagens_planejadas
         description: "Quantidade de viagens realizadas"
       - name: distancia_total_planejada
@@ -518,15 +518,15 @@ models:
       - name: faixa_horaria_fim
         description: "{{ doc('faixa_horaria_fim') }}"
       - name: trip_id_planejado
-        description: "Código identificador de trip de referência no GTFS"
+        description: "{{ doc('trip_id_planejado') }}"
       - name: trip_id
         description: "Código identificador de trip de referência no GTFS com ajustes"
       - name: shape_id
-        description: "Código identificador de shape no GTFS"
+        description: "{{ doc('shape_id') }}"
       - name: shape_id_planejado
         description: "Código identificador de shape no GTFS com ajustes"
       - name: shape
-        description: "Shape em formato geográfico (usualmente LineString)"
+        description: "{{ doc('shape') }}"
       - name: sentido_shape
         description: "Sentido do shape - categorias: I (ida), V (volta)"
       - name: start_pt
