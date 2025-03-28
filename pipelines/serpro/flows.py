@@ -10,7 +10,7 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 )
 
 from pipelines.constants import constants as smtr_constants
-from pipelines.migration.tasks import (
+from pipelines.migration.tasks import (  # run_dbt_model,
     create_date_hour_partition,
     create_local_partition_path,
     get_current_timestamp,
@@ -18,7 +18,6 @@ from pipelines.migration.tasks import (
     get_previous_date,
     parse_timestamp_to_string,
     rename_current_flow_run_now_time,
-    run_dbt_model,
     transform_raw_to_nested_structure_chunked,
     upload_raw_data_to_gcs,
     upload_staging_data_to_gcs,
@@ -27,7 +26,7 @@ from pipelines.serpro.constants import constants
 from pipelines.serpro.tasks import get_db_object, get_raw_serpro
 from pipelines.serpro.utils import handler_setup_serpro
 
-with Flow("SMTR: SERPRO - Captura/Tratamento") as serpro_captura:
+with Flow("SMTR: SERPRO - Filtro") as serpro_captura:
     start_date = Parameter("start_date", default=get_previous_date.run(1))
     end_date = Parameter("end_date", default=get_previous_date.run(1))
 
@@ -87,13 +86,13 @@ with Flow("SMTR: SERPRO - Captura/Tratamento") as serpro_captura:
         bucket_name=constants.INFRACAO_PRIVATE_BUCKET.value,
     )
 
-    wait_run_dbt_model = run_dbt_model(
-        dataset_id=constants.AUTUACAO_MATERIALIZACAO_DATASET_ID.value,
-        table_id=constants.AUTUACAO_MATERIALIZACAO_TABLE_ID.value,
-        _vars=[{"date_range_start": start_date, "date_range_end": end_date}],
-        upstream=True,
-        upstream_tasks=[wait_captura_true],
-    )
+    # wait_run_dbt_model = run_dbt_model(
+    #     dataset_id=constants.AUTUACAO_MATERIALIZACAO_DATASET_ID.value,
+    #     table_id=constants.AUTUACAO_MATERIALIZACAO_TABLE_ID.value,
+    #     _vars=[{"date_range_start": start_date, "date_range_end": end_date}],
+    #     upstream=True,
+    #     upstream_tasks=[wait_captura_true],
+    # )
 
 serpro_captura.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 serpro_captura.run_config = KubernetesRun(
