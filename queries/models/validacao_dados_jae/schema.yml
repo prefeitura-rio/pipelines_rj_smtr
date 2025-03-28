@@ -125,7 +125,7 @@ models:
         description: "{{ doc('data_transacao') }} [partição]"
         data_type: date
       - name: id_integracao
-        description: "Identificador único da integração (é igual ao id_transacao da primeira transação da integração)."
+        description: "Identificador único da integração (é igual ao id_transacao da primeira transação da integração)"
         data_type: string
       - name: sequencia_integracao
         description: "Sequência da transação dentro da integração"

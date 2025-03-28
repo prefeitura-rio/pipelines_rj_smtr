@@ -15,7 +15,7 @@ models:
       - name: datetime_captura
         description: "Data e hora da captura da integração [GMT-3]"
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
       - name: trip_id
         description: "Identificador de uma viagem da tabela trips do GTFS"
       - name: route_id

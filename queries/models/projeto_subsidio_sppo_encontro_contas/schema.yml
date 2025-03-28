@@ -10,109 +10,104 @@ models:
       - name: consorcio
         description: "Consórcio"
       - name: km_subsidiada
-        description: "Quilometragem apurada e subsidiada via algoritmo [km]"
+        description: "Quilometragem apurada e subsidiada via algoritmo (km)"
       - name: receita_total_esperada
-        description: "Receita total esperada com base na quilometragem (IRK x km) [R$]"
+        description: "Receita total esperada com base na quilometragem [IRK x km] (R$)"
       - name: receita_tarifaria_esperada
-        description: "Receita tarifária esperada com base na quilometragem [R$]"
+        description: "Receita tarifária esperada com base na quilometragem (R$)"
       - name: subsidio_esperado
-        description: "Subsídio esperado com base na quilometragem [R$]"
+        description: "Subsídio esperado com base na quilometragem (R$)"
       - name: subsidio_glosado
-        description: "Subsídio glosado conforme os decretos e resoluções vigentes [R$]"
+        description: "Subsídio glosado conforme os decretos e resoluções vigentes (R$)"
       - name: receita_total_aferida
-        description: "Receita total aferida (receita tarifária + subsidio pago) [R$]"
+        description: "Receita total aferida [receita tarifária + subsidio pago] (R$)"
       - name: receita_tarifaria_aferida
-        description: "Receita tarifária aferida com base no RDO informado pelos consórcios [R$]"
+        description: "Receita tarifária aferida com base no RDO informado pelos consórcios (R$)"
       - name: subsidio_pago
-        description: "Subsídio pago [R$]"
+        description: "Subsídio pago (R$)"
       - name: saldo
-        description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado [R$]"
+        description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado (R$)"
   - name: balanco_consorcio_dia
-    description: "Balanço da receita aferida e esperada por consórcio e
-    dia para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
+    description: "Balanço da receita aferida e esperada por consórcio e dia para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
     columns:
       - name: data
         description: "{{ doc('data') }}"
       - name: consorcio
         description: "Consórcio"
       - name: km_subsidiada
-        description: "Quilometragem apurada e subsidiada via algoritmo [km]"
+        description: "Quilometragem apurada e subsidiada via algoritmo (km)"
       - name: receita_total_esperada
-        description: "Receita total esperada com base na quilometragem (IRK x km) [R$]"
+        description: "Receita total esperada com base na quilometragem [IRK x km] (R$)"
       - name: receita_tarifaria_esperada
-        description: "Receita tarifária esperada com base na quilometragem [R$]"
+        description: "Receita tarifária esperada com base na quilometragem (R$)"
       - name: subsidio_esperado
-        description: "Subsídio esperado com base na quilometragem [R$]"
+        description: "Subsídio esperado com base na quilometragem (R$)"
       - name: subsidio_glosado
-        description: "Subsídio glosado conforme os decretos e resoluções vigentes [R$]"
+        description: "Subsídio glosado conforme os decretos e resoluções vigentes (R$)"
       - name: receita_total_aferida
-        description: "Receita total aferida (receita tarifária + subsidio pago) [R$]"
+        description: "Receita total aferida [receita tarifária + subsidio pago] (R$)"
       - name: receita_tarifaria_aferida
-        description: "Receita tarifária aferida com base no RDO informado pelos consórcios [R$]"
+        description: "Receita tarifária aferida com base no RDO informado pelos consórcios (R$)"
       - name: subsidio_pago
-        description: "Subsídio pago [R$]"
+        description: "Subsídio pago (R$)"
       - name: saldo
-        description: "Saldo entre a receita esperada e aferida,
-        descontado o subsídio glosado [R$]"
+        description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado (R$)"
   - name: balanco_servico_ano
-    description: "Balanço da receita aferida e esperada por serviço e
-    ano para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
+    description: "Balanço da receita aferida e esperada por serviço e ano para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
     columns:
       - name: ano
         description: "Ano"
       - name: consorcio
         description: "Nome do consórcio"
       - name: servico
-        description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...)"
+        description: "{{ doc('id_veiculo') }}"
       - name: km_subsidiada
-        description: "Quilometragem apurada e subsidiada via algoritmo [km]"
+        description: "Quilometragem apurada e subsidiada via algoritmo (km)"
       - name: receita_total_esperada
-        description: "Receita total esperada com base na quilometragem (IRK x km) [R$]"
+        description: "Receita total esperada com base na quilometragem [IRK x km] (R$)"
       - name: receita_tarifaria_esperada
-        description: "Receita tarifária esperada com base na quilometragem [R$]"
+        description: "Receita tarifária esperada com base na quilometragem (R$)"
       - name: subsidio_esperado
-        description: "Subsídio esperado com base na quilometragem [R$]"
+        description: "Subsídio esperado com base na quilometragem (R$)"
       - name: subsidio_glosado
-        description: "Subsídio glosado conforme os decretos e resoluções vigentes [R$]"
+        description: "Subsídio glosado conforme os decretos e resoluções vigentes (R$)"
       - name: receita_total_aferida
-        description: "Receita total aferida (receita tarifária + subsidio pago) [R$]"
+        description: "Receita total aferida [receita tarifária + subsidio pago] (R$)"
       - name: receita_tarifaria_aferida
-        description: "Receita tarifária aferida com base no RDO informado pelos consórcios [R$]"
+        description: "Receita tarifária aferida com base no RDO informado pelos consórcios (R$)"
       - name: subsidio_pago
-        description: "Subsídio pago [R$]"
+        description: "Subsídio pago (R$)"
       - name: saldo
-        description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado [R$]"
+        description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado (R$)"
   - name: balanco_servico_dia
-    description: "Balanço da receita aferida e esperada por servico e
-    dia para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
+    description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
     columns:
       - name: data
         description: "{{ doc('data') }}"
       - name: consorcio
         description: "Nome do consórcio"
       - name: servico
-        description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...)"
+        description: "{{ doc('id_veiculo') }}"
       - name: km_subsidiada
-        description: "Quilometragem apurada e subsidiada via algoritmo [km]"
+        description: "Quilometragem apurada e subsidiada via algoritmo (km)"
       - name: receita_total_esperada
-        description: "Receita total esperada com base na quilometragem (IRK x km) [R$]"
+        description: "Receita total esperada com base na quilometragem [IRK x km] (R$)"
       - name: receita_tarifaria_esperada
-        description: "Receita tarifária esperada com base na quilometragem [R$]"
+        description: "Receita tarifária esperada com base na quilometragem (R$)"
       - name: subsidio_esperado
-        description: "Subsídio esperado com base na quilometragem [R$]"
+        description: "Subsídio esperado com base na quilometragem (R$)"
       - name: subsidio_glosado
-        description: "Subsídio glosado conforme os decretos e resoluções vigentes [R$]"
+        description: "Subsídio glosado conforme os decretos e resoluções vigentes (R$)"
       - name: receita_total_aferida
-        description: "Receita total aferida (receita tarifária + subsidio pago) [R$]"
+        description: "Receita total aferida [receita tarifária + subsidio pago] (R$)"
       - name: receita_tarifaria_aferida
-        description: "Receita tarifária aferida com base no RDO informado pelos consórcios [R$]"
+        description: "Receita tarifária aferida com base no RDO informado pelos consórcios (R$)"
       - name: subsidio_pago
-        description: "Subsídio pago [R$]"
+        description: "Subsídio pago (R$)"
       - name: saldo
-        description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado [R$]"
+        description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado (R$)"
   - name: balanco_servico_dia_pos_gt
-    description: "Balanço da receita aferida e esperada por servico e
-    dia para serviços-dia subsidiados após alterações do Grupo de Trabalho (Processo.Rio MTR-PRO-2024/06270). Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024 e 02/2024"
+    description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados após alterações do Grupo de Trabalho [Processo.Rio MTR-PRO-2024/06270]. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024 e 02/2024"
     columns:
       - name: data
         description: "{{ doc('data') }}"
@@ -121,26 +116,25 @@ models:
       - name: servico
         description: "Serviço"
       - name: km_subsidiada
-        description: "Quilometragem apurada e subsidiada via algoritmo [km]"
+        description: "Quilometragem apurada e subsidiada via algoritmo (km)"
       - name: receita_total_esperada
-        description: "Receita total esperada com base na quilometragem (IRK x km) [R$]"
+        description: "Receita total esperada com base na quilometragem [IRK x km] (R$)"
       - name: receita_tarifaria_esperada
-        description: "Receita tarifária esperada com base na quilometragem [R$]"
+        description: "Receita tarifária esperada com base na quilometragem (R$)"
       - name: subsidio_esperado
-        description: "Subsídio esperado com base na quilometragem [R$]"
+        description: "Subsídio esperado com base na quilometragem (R$)"
       - name: subsidio_glosado
-        description: "Subsídio glosado conforme os decretos e resoluções vigentes [R$]"
+        description: "Subsídio glosado conforme os decretos e resoluções vigentes (R$)"
       - name: receita_total_aferida
-        description: "Receita total aferida (receita tarifária + subsidio pago) [R$]"
+        description: "Receita total aferida [receita tarifária + subsidio pago] (R$)"
       - name: receita_tarifaria_aferida
-        description: "Receita tarifária aferida com base no RDO informado pelos consórcios [R$]"
+        description: "Receita tarifária aferida com base no RDO informado pelos consórcios (R$)"
       - name: subsidio_pago
-        description: "Subsídio pago [R$]"
+        description: "Subsídio pago (R$)"
       - name: saldo
-        description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado [R$]"
+        description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado (R$)"
   - name: balanco_servico_quinzena
-    description: "Balanço da receita aferida e esperada por serviço e
-    quinzena para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
+    description: "Balanço da receita aferida e esperada por serviço e quinzena para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
     columns:
       - name: quinzena
         description: "Quinzena"
@@ -151,31 +145,29 @@ models:
       - name: consorcio
         description: "Nome do consórcio"
       - name: servico
-        description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...)"
+        description: "{{ doc('id_veiculo') }}"
       - name: quantidade_dias_subsidiado
         description: "Quantidade de dias subsidiado"
       - name: km_subsidiada
-        description: "Quilometragem apurada e subsidiada via algoritmo [km]"
+        description: "Quilometragem apurada e subsidiada via algoritmo (km)"
       - name: receita_total_esperada
-        description: "Receita total esperada com base na quilometragem (IRK x km) [R$]"
+        description: "Receita total esperada com base na quilometragem [IRK x km] (R$)"
       - name: receita_tarifaria_esperada
-        description: "Receita tarifária esperada com base na quilometragem [R$]"
+        description: "Receita tarifária esperada com base na quilometragem (R$)"
       - name: subsidio_esperado
-        description: "Subsídio esperado com base na quilometragem [R$]"
+        description: "Subsídio esperado com base na quilometragem (R$)"
       - name: subsidio_glosado
-        description: "Subsídio glosado conforme os decretos e resoluções vigentes [R$]"
+        description: "Subsídio glosado conforme os decretos e resoluções vigentes (R$)"
       - name: receita_total_aferida
-        description: "Receita total aferida (receita tarifária + subsidio pago) [R$]"
+        description: "Receita total aferida [receita tarifária + subsidio pago] (R$)"
       - name: receita_tarifaria_aferida
-        description: "Receita tarifária aferida com base no RDO informado pelos consórcios [R$]"
+        description: "Receita tarifária aferida com base no RDO informado pelos consórcios (R$)"
       - name: subsidio_pago
-        description: "Subsídio pago [R$]"
+        description: "Subsídio pago (R$)"
       - name: saldo
-        description: "Saldo entre a receita esperada e aferida,
-        descontado o subsídio glosado [R$]"
+        description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado (R$)"
   - name: receita_tarifaria_servico_nao_identificado_quinzena
-    description: "Receita tarifária proveniente do RDO para serviços de ônibus
-    dos consórcios que não foram identificados nos planos operacionais dos respectivos dias."
+    description: "Receita tarifária proveniente do RDO para serviços de ônibus dos consórcios que não foram identificados nos planos operacionais dos respectivos dias"
     columns:
       - name: quinzena
         description: "Quinzena"
@@ -186,8 +178,7 @@ models:
       - name: consorcio_rdo
         description: "Consórcio informado no RDO"
       - name: servico_tratado_rdo
-        description: "Serviço tratado com base no campo linha do RDO,
-        utilizado para cruzamento com o plano operacional"
+        description: "Serviço tratado com base no campo linha do RDO, utilizado para cruzamento com o plano operacional"
       - name: linha_rdo
         description: "Linha conforme RDO"
       - name: tipo_servico_rdo
@@ -195,7 +186,6 @@ models:
       - name: ordem_servico_rdo
         description: "Ordem do serviço conforme o RDO"
       - name: quantidade_dias_rdo
-        description: "Quantidade de dias em que o serviço foi encontrado
-        no RDO na respectiva quinzena"
+        description: "Quantidade de dias em que o serviço foi encontrado no RDO na respectiva quinzena"
       - name: receita_tarifaria_aferida_rdo
         description: "Receita tarifária aferida com base no RDO"

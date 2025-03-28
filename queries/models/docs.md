@@ -83,7 +83,7 @@ Veículos com 'velocidade' abaixo da 'velocidade_limiar_parado', são considerad
 {% enddocs %}
 
 {% docs flag_trajeto_correto_hist %}
-Flag de verificação se, nos últimos 'intervalo_max_desvio_segundos', ao menos algum ponto de GPS encontra-se até o limite de 'tamanho_buffer_metros' do shape da linha [true]. Se não estiver, retorna false
+Flag de verificação se, nos últimos 'intervalo_max_desvio_segundos', ao menos algum ponto de GPS encontra-se até o limite de 'tamanho_buffer_metros' do shape da linha [Verdadeiro/Falso]
 {% enddocs %}
 
 {% docs flag_em_operacao %}
@@ -639,4 +639,12 @@ CEP do proprietário do veículo
 
 {% docs partidas_volta %}
 Quantidade de partidas no sentido volta
+{% enddocs %}
+
+{% docs extensao %}
+Distância do shape [trajeto] planejado (km)
+{% enddocs %}
+
+{% docs indicador_servico_divergente %}
+Indica se o serviço indicado nos dados de GPS estava diferente do serviço informado na viagem
 {% enddocs %}

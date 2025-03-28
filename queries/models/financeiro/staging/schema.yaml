@@ -2,26 +2,26 @@ version: 2
 
 models:
   - name: subsidio_faixa_servico_dia
-    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia e faixa horária."
+    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia e faixa horária"
     columns:
       - name: data
         description: "{{ doc('data_gps') }}"
       - name: tipo_dia
-        description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo."
+        description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: faixa_horaria_inicio
         description: "Horário inicial da faixa horária"
       - name: faixa_horaria_fim
         description: "{{ doc('faixa_horaria_fim') }}"
       - name: consorcio
-        description: "Consórcio que opera o serviço."
+        description: "Consórcio que opera o serviço"
       - name: servico
-        description: "Serviço realizado pelo veículo."
+        description: "Serviço realizado pelo veículo"
       - name: viagens_faixa
-        description: "Quantidade de viagens apuradas por faixa horária."
+        description: "Quantidade de viagens apuradas por faixa horária"
       - name: km_apurada_faixa
-        description: "Distância apurada para o serviço por faixa horária(km)."
+        description: "Distância apurada para o serviço por faixa horária (km)"
       - name: km_planejada_faixa
-        description: "Distância planejada para o serviço por faixa horária (km)."
+        description: "Distância planejada para o serviço por faixa horária (km)"
       - name: pof
         description: "{{ doc('pof') }}"
       - name: versao

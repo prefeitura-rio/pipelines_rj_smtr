@@ -22,6 +22,10 @@ with
                 then "Ponto Facultativo"  -- Ponto Facultativo - Dia do Servidor Público - (Processo.Rio MTR-DES-2024/64417)
                 when data between date(2024, 11, 18) and date(2024, 11, 19)
                 then "Ponto Facultativo"  -- Ponto Facultativo - G20 - (Processo.Rio MTR-DES-2024/67477)
+                when data = date(2025, 02, 28)
+                then "Ponto Facultativo"  -- Ponto Facultativo - Sexta-feira de Carnaval - (Processo.Rio MTR-PRO-2025/03920)
+                when data between date(2025, 03, 03) and date(2025, 03, 04)
+                then "Domingo"  -- Carnaval - (Processo.Rio MTR-PRO-2025/03920)
             end as tipo_dia,
             case
                 when data between date(2024, 09, 14) and date(2024, 09, 15)
@@ -52,6 +56,24 @@ with
                 then "Reveillon"  -- Processo.Rio MTR-DES-2024/76453
                 when data between date(2025, 01, 02) and date(2025, 01, 03)
                 then "Fim de ano"  -- Processo.Rio MTR-DES-2024/77046
+                when data between date(2025, 01, 11) and date(2025, 01, 12)
+                then "Extraordinária - Verão"  -- Processo.Rio MTR-DES-2025/00831
+                when data between date(2025, 01, 18) and date(2025, 01, 20)
+                then "Extraordinária - Verão"  -- Processo.Rio MTR-DES-2025/01760 e MTR-DES-2025/02195
+                when data between date(2025, 01, 25) and date(2025, 01, 26)
+                then "Extraordinária - Verão"  -- Processo.Rio MTR-DES-2025/01468
+                when data between date(2025, 02, 01) and date(2025, 02, 02)
+                then "Extraordinária - Verão"  -- Processo.Rio MTR-DES-2025/04515
+                when data between date(2025, 02, 08) and date(2025, 02, 09)
+                then "Extraordinária - Verão"  -- Processo.Rio MTR-PRO-2025/02376
+                when data between date(2025, 02, 15) and date(2025, 02, 16)
+                then "Extraordinária - Verão"  -- Processo.Rio MTR-PRO-2025/03046
+                when data between date(2025, 02, 22) and date(2025, 02, 23)
+                then "Extraordinária - Verão"  -- Processo.Rio MTR-PRO-2025/03740
+                when data between date(2025, 03, 01) and date(2025, 03, 04)
+                then "Extraordinária - Verão"  -- Processo.Rio MTR-PRO-2025/03920
+                when data = date(2025, 03, 05)
+                then "Atípico + Verão"  -- Processo.Rio MTR-PRO-2025/03920
             end as tipo_os
         from
             unnest(

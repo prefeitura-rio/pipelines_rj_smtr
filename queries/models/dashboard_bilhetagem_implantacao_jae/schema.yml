@@ -31,7 +31,7 @@ models:
       - name: percentual_registros_gps_georreferenciados
         description: "Percentual de sinais transmitidos pelo validador da Jaé  com latitude e longitude não nulos ou diferentes de zero"
       - name: percentual_transmissao_a_cada_min
-        description: "Percentual de minutos em que houve sinal de GPS recebido durante o tempo em que o validador da Jaé ficou ativo."
+        description: "Percentual de minutos em que houve sinal de GPS recebido durante o tempo em que o validador da Jaé ficou ativo"
   - name: gps_agregado_onibus
     description: "Tabela com registros de GPS dos ônibus utilizada no dashboard de acompanhamento da implantação dos validadores da Jaé (Contem apenas dados do dia atual)"
     columns:
@@ -62,7 +62,7 @@ models:
       - name: percentual_registros_gps_georreferenciados
         description: "Percentual de sinais transmitidos pelo validador da Jaé  com latitude e longitude não nulos ou diferentes de zero"
       - name: percentual_transmissao_a_cada_min
-        description: "Percentual de minutos em que houve sinal de GPS recebido durante o tempo em que o validador da Jaé ficou ativo."
+        description: "Percentual de minutos em que houve sinal de GPS recebido durante o tempo em que o validador da Jaé ficou ativo"
   - name: gps_agregado_van
     description: "Tabela com registros de GPS das Vans utilizada no dashboard de acompanhamento da implantação dos validadores da Jaé (Contem apenas dados do dia atual)"
     columns:
@@ -89,7 +89,7 @@ models:
       - name: percentual_registros_gps_georreferenciados
         description: "Percentual de sinais transmitidos pelo validador da Jaé  com latitude e longitude não nulos ou diferentes de zero"
       - name: percentual_transmissao_a_cada_min
-        description: "Percentual de minutos em que houve sinal de GPS recebido durante o tempo em que o validador da Jaé ficou ativo."
+        description: "Percentual de minutos em que houve sinal de GPS recebido durante o tempo em que o validador da Jaé ficou ativo"
   - name: gps_agregado_vlt
     description: "Tabela com registros agregados de GPS das VLTs utilizada no dashboard de acompanhamento da implantação dos validadores da Jaé (Contem apenas dados do dia atual)"
     columns:
@@ -120,4 +120,4 @@ models:
       - name: percentual_registros_gps_georreferenciados
         description: "Percentual de sinais transmitidos pelo validador da Jaé  com latitude e longitude não nulos ou diferentes de zero"
       - name: percentual_transmissao_a_cada_min
-        description: "Percentual de minutos em que houve sinal de GPS recebido durante o tempo em que o validador da Jaé ficou ativo."
+        description: "Percentual de minutos em que houve sinal de GPS recebido durante o tempo em que o validador da Jaé ficou ativo"

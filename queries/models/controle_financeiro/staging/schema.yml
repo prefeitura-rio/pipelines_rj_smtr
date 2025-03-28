@@ -41,7 +41,7 @@ models:
       - name: valorRealEfetivado
         description: "Valor real pago (R$)"
   - name: aux_retorno_ordem_pagamento
-    description: "Tabela auxiliar utilizada no tratamento da ordem de pagamento. É utilizada por ser particionada pela data da ordem."
+    description: "Tabela auxiliar utilizada no tratamento da ordem de pagamento. É utilizada por ser particionada pela data da ordem"
     columns:
       - name: data_ordem
         description: "Data da ordem de pagamento da Jaé (partição)"

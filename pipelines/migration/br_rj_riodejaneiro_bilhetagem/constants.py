@@ -409,26 +409,47 @@ class constants(Enum):  # pylint: disable=c0103
             "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
             "save_bucket_name": BILHETAGEM_PRIVATE_BUCKET,
         },
+        # {
+        #     "table_id": "servico_motorista",
+        #     "partition_date_only": True,
+        #     "extract_params": {
+        #         "database": "principal_db",
+        #         "query": """
+        #             SELECT
+        #                 *
+        #             FROM
+        #                 SERVICO_MOTORISTA
+        #             WHERE
+        #                 DT_ABERTURA BETWEEN '{start}'
+        #                 AND '{end}'
+        #                 OR DT_FECHAMENTO BETWEEN '{start}'
+        #                 AND '{end}'
+        #         """,
+        #     },
+        #     "primary_key": [
+        #         "NR_LOGICO_MIDIA",
+        #         "ID_SERVICO",
+        #     ],  # id column to nest data on
+        #     "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
+        # },
         {
-            "table_id": "servico_motorista",
+            "table_id": "linha_tarifa",
             "partition_date_only": True,
             "extract_params": {
-                "database": "principal_db",
+                "database": "tarifa_db",
                 "query": """
                     SELECT
                         *
                     FROM
-                        SERVICO_MOTORISTA
+                        linha_tarifa
                     WHERE
-                        DT_ABERTURA BETWEEN '{start}'
-                        AND '{end}'
-                        OR DT_FECHAMENTO BETWEEN '{start}'
+                        dt_inclusao BETWEEN '{start}'
                         AND '{end}'
                 """,
             },
             "primary_key": [
-                "NR_LOGICO_MIDIA",
-                "ID_SERVICO",
+                "cd_linha",
+                "nr_sequencia",
             ],  # id column to nest data on
             "interval_minutes": BILHETAGEM_TRATAMENTO_INTERVAL,
         },

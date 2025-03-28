@@ -42,6 +42,7 @@ with
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
             and (distancia_total_planejada > 0 or distancia_total_planejada is null)
             and (id_tipo_trajeto = 0 or id_tipo_trajeto is null)
+            and data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
     ),
     viagens_planejadas as (
         select
@@ -73,6 +74,7 @@ with
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
     ),
     viagem_planejada as (
         select
@@ -125,40 +127,15 @@ with
     ),
     tecnologias as (
         select
+            inicio_vigencia,
+            fim_vigencia,
             servico,
-            case
-                when substring(codigo_tecnologia, 4, 1) = "1"
-                then "PADRON"
-                when substring(codigo_tecnologia, 3, 1) = "1"
-                then "BASICO"
-                when substring(codigo_tecnologia, 2, 1) = "1"
-                then "MIDI"
-                when substring(codigo_tecnologia, 1, 1) = "1"
-                then "MINI"
-                else null
-            end as maior_tecnologia_permitida,
-            case
-                when substring(codigo_tecnologia, 1, 1) = "1"
-                then "MINI"
-                when substring(codigo_tecnologia, 2, 1) = "1"
-                then "MIDI"
-                when substring(codigo_tecnologia, 3, 1) = "1"
-                then "BASICO"
-                when substring(codigo_tecnologia, 4, 1) = "1"
-                then "PADRON"
-                else null
-            end as menor_tecnologia_permitida,
+            codigo_tecnologia,
+            maior_tecnologia_permitida,
+            menor_tecnologia_permitida
         from {{ ref("tecnologia_servico") }}
     ),
-    prioridade_tecnologia as (
-        select "MINI" as tecnologia, 1 as prioridade
-        union all
-        select "MIDI" as tecnologia, 2 as prioridade
-        union all
-        select "BASICO" as tecnologia, 3 as prioridade
-        union all
-        select "PADRON" as tecnologia, 4 as prioridade
-    ),
+    prioridade_tecnologia as (select * from {{ ref("tecnologia_prioridade") }}),
     -- Viagens com quantidades de transações
     viagem_transacao as (
         select *
@@ -167,6 +144,7 @@ with
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
     ),
     -- Viagens com tipo e valor de subsídio por km
     viagem_tecnologia as (
@@ -191,7 +169,13 @@ with
                 when p.prioridade < p_menor.prioridade then true else false
             end as indicador_penalidade_tecnologia
         from viagem_transacao as vt
-        left join tecnologias as t on vt.servico = t.servico
+        left join
+            tecnologias as t
+            on vt.servico = t.servico
+            and (
+                (vt.data between t.inicio_vigencia and t.fim_vigencia)
+                or (vt.data >= t.inicio_vigencia and t.fim_vigencia is null)
+            )
         left join prioridade_tecnologia as p on vt.tecnologia = p.tecnologia
         left join
             prioridade_tecnologia as p_maior
@@ -385,7 +369,7 @@ from
             p.* except (data, servico),
             row_number() over (
                 partition by v.data, v.servico, faixa_horaria_inicio, faixa_horaria_fim
-                order by subsidio_km * distancia_planejada desc
+                order by subsidio_km * distancia_planejada desc, datetime_partida asc
             ) as rn
         from viagem_km_tipo as v
         left join

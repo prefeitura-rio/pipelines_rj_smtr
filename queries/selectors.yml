@@ -66,6 +66,8 @@ selectors:
           value: aux_calendario_manual
         - method: fqn
           value: calendario
+        - method: fqn
+          value: viagem_planejada_planejamento
 
   - name: transacao_ordem
     description: Materialização da tabela auxiliar de relacionamento entre as ordens de pagamento e as transações
@@ -113,3 +115,117 @@ selectors:
           value: monitoramento_sumario_servico_dia_historico
         - method: fqn
           value: monitoramento_sumario_servico_dia_tipo_viagem_historico
+
+  - name: cadastro
+    description: Materialização das tabelas de cadastro
+    definition:
+      union:
+        - method: fqn
+          value: staging_linha
+        - method: fqn
+          value: staging_linha_sem_ressarcimento
+        - method: fqn
+          value: staging_linha_consorcio
+        - method: fqn
+          value: staging_linha_consorcio_operadora_transporte
+        - method: fqn
+          value: staging_operadora_empresa
+        - method: fqn
+          value: staging_cliente
+        - method: fqn
+          value: staging_endereco
+        - method: fqn
+          value: staging_operadora_pessoa_fisica
+        - method: fqn
+          value: aux_servicos_gtfs
+        - method: fqn
+          value: cadastro
+
+  - name: transacao
+    description: Materialização das tabelas de transação da bilhetagem
+    definition:
+      union:
+        - method: fqn
+          value: dicionario
+        - method: fqn
+          value: staging_gratuidade
+        - method: fqn
+          value: gratuidade_aux
+        - method: fqn
+          value: staging_transacao
+        - method: fqn
+          value: staging_transacao_riocard
+        - method: fqn
+          value: transacao
+        - method: fqn
+          value: transacao_riocard
+
+  - name: integracao
+    description: Materialização das tabelas de integracao da bilhetagem
+    definition:
+      union:
+        - method: fqn
+          value: staging_integracao_transacao
+        - method: fqn
+          value: integracao
+        - method: fqn
+          value: view_integracao
+
+  - name: gps_validador
+    description: Materialização das tabelas de gps do validados da Jaé
+    definition:
+      union:
+        - method: fqn
+          value: staging_gps_validador
+        - method: fqn
+          value: gps_validador_aux
+        - method: fqn
+          value: gps_validador
+        - method: fqn
+          value: gps_validador_van
+        - method: fqn
+          value: dashboard_bilhetagem_implantacao_jae
+
+  - name: financeiro_bilhetagem
+    description: Materialização das tabelas financeiras da bilhetagem
+    definition:
+      union:
+        - method: fqn
+          value: staging_ordem_pagamento_consorcio_operadora
+        - method: fqn
+          value: staging_ordem_pagamento_consorcio
+        - method: fqn
+          value: staging_ordem_pagamento
+        - method: fqn
+          value: staging_ordem_ressarcimento
+        - method: fqn
+          value: staging_ordem_rateio
+        - method: fqn
+          value: staging_arquivo_retorno
+        - method: fqn
+          value: aux_retorno_ordem_pagamento
+        - method: fqn
+          value: ordem_pagamento_servico_operador_dia
+        - method: fqn
+          value: ordem_pagamento_consorcio_operador_dia
+        - method: fqn
+          value: ordem_pagamento_consorcio_dia
+        - method: fqn
+          value: ordem_pagamento_dia
+
+  - name: passageiro_hora
+    description: Materialização das tabelas agregadas de transação
+    definition:
+      union:
+        - method: fqn
+          value: aux_h3_res9
+        - method: fqn
+          value: aux_passageiros_hora
+        - method: fqn
+          value: passageiros_hora
+        - method: fqn
+          value: passageiros_tile_hora
+        - method: fqn
+          value: view_passageiros_hora
+        - method: fqn
+          value: view_passageiros_tile_hora

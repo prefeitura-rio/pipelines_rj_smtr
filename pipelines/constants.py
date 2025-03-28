@@ -2,7 +2,7 @@
 """
 Valores constantes gerais para pipelines da rj-smtr
 
-DBT 2025-02-13
+DBT 2025-03-25
 """
 
 from enum import Enum
@@ -160,7 +160,7 @@ class constants(Enum):  # pylint: disable=c0103
         "databases": {
             "principal_db": {
                 "engine": "mysql",
-                "host": "10.5.114.227",
+                "host": "10.5.115.153",
             },
             "tarifa_db": {
                 "engine": "postgresql",
@@ -180,7 +180,7 @@ class constants(Enum):  # pylint: disable=c0103
             },
             "gratuidade_db": {
                 "engine": "postgresql",
-                "host": "10.5.12.107",
+                "host": "10.5.14.228",
             },
             "fiscalizacao_db": {
                 "engine": "postgresql",
@@ -375,6 +375,10 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "dados_smtr": {
             "user_id": "1056928259700445245",
+            "type": "role",
+        },
+        "devs_smtr": {
+            "user_id": "1118274986461888612",
             "type": "role",
         },
     }

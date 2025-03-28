@@ -1,5 +1,34 @@
 # Changelog - planejamento
 
+## [1.3.5] - 2025-03-27
+
+### Corrigido
+
+- Corrigido o tipo_dia de `2025-03-02` no modelo `aux_calendario_manual.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/501)
+
+## [1.3.4] - 2025-03-25
+
+### Alterado
+
+- Altera o tipo_os e tipo_dia entre `2025-03-01` e `2025-03-05` no modelo `aux_calendario_manual.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/495)
+- Altera modelo `tecnologia_servico` em razão da inclusão de vigência do tipo de tecnologia (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/493)
+
+### Adicionado
+
+- Cria modelos `staging_tecnologia_servico` e `tecnologia_prioridade` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/493)
+- Cria modelos: `aux_os_sppo_faixa_horaria_sentido_dia`, `aux_ordem_servico_faixa_horaria` [Temporário] e `servico_planejado_faixa_horaria` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/458)
+
+## [1.3.3] - 2025-03-14
+
+### Adicionado
+
+- Adiciona novas datas no modelo `aux_calendario_manual.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/480)
+## [1.3.2] - 2025-03-10
+
+### Alterado
+
+- Ativa materialização do modelo `viagem_planejada_planejamento.sql` a partir de `2025-01-02` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/471)
+
 ## [1.3.1] - 2025-01-27
 
 ### Adicionado
