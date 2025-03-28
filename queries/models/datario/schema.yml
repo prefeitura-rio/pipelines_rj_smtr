@@ -74,7 +74,7 @@ models:
     description: "Detalhes de todas as viagens completas identificadas"
     columns:
       - name: data
-        description: "Data da viagem"
+        description: "{{ doc('data_viagem') }}"
       - name: consorcio
         description: "Consórcio ao qual o serviço pertence"
       - name: tipo_dia
@@ -88,7 +88,7 @@ models:
       - name: servico
         description: "Serviço realizado pelo veículo (com base na identificação do trajeto)"
       - name: shape_id
-        description: "Código identificador do trajeto (shape) operado"
+        description: "{{ doc('shape_id') }}"
       - name: sentido
         description: "Sentido do trajeto identificado - categorias: I (ida), V (volta), C (circular)"
       - name: datetime_partida
@@ -102,7 +102,7 @@ models:
       - name: perc_conformidade_shape
         description: "Percentual de sinais emitidos dentro do shape (trajeto) ao longo da viagem"
       - name: perc_conformidade_registros
-        description: "Percentual de minutos da viagem com registro de sinal de GPS"
+        description: "{{ doc('perc_conformidade_registros') }}"
       - name: versao_modelo
         description: "{{ doc('versao') }}"
 

@@ -6,9 +6,9 @@ models:
     description: "Shapes em formatos geográficos dos serviços (Descontinuada a partir de 2024-04-01 [SUBSIDIO_V6])"
     columns:
       - name: shape_id
-        description: "Identificador de shape"
+        description: "{{ doc('shape_id') }}"
       - name: shape
-        description: "Shape em formato geográfico (usualmente LineString)"
+        description: "{{ doc('shape') }}"
       - name: shape_distance
         description: "Extensão do shape"
       - name: start_pt
@@ -16,7 +16,7 @@ models:
       - name: end_pt
         description: "Ponto final do shape em formato geográfico (Point)"
       - name: data_versao
-        description: "Data de referência do planejamento (versão)"
+        description: "{{ doc('data_versao') }}"
       - name: versao_modelo
         description: "{{ doc('versao') }}"
   - name: subsidio_trips_desaninhada
@@ -31,20 +31,20 @@ models:
       - name: trip_short_name
         description: "Texto voltado ao público usado para identificar a viagem aos passageiros, por exemplo, para identificar os números dos trens para viagens de trens suburbanos"
       - name: shape_id
-        description: "Identifica uma forma geoespacial que descreve o caminho de deslocamento do veículo para uma viagem"
+        description: "{{ doc('shape_id') }}"
       - name: wheelchair_accessible
         description: "Indica acessibilidade para cadeiras de rodas"
       - name: variacao_itinerario
         description: "Apenas Dia Útil (DU)"
       - name: data_versao
-        description: "Data de referência do planejamento (versão)"
+        description: "{{ doc('data_versao') }}"
       - name: versao_modelo
         description: "{{ doc('versao') }}"
   - name: subsidio_quadro_horario
     description: "Dados de planejamento operacional dos serviços (Descontinuada a partir de 2024-04-01 [SUBSIDIO_V6])"
     columns:
       - name: data_versao
-        description: "Data de referência do planejamento (versão)"
+        description: "{{ doc('data_versao') }}"
       - name: servico
         description: "Nome curto do serviço operada pelo veículo com variação de serviço (ex: 006, 010, ...)"
       - name: vista
@@ -60,7 +60,7 @@ models:
       - name: sentido
         description: "Sentido planejado - categorias: I (ida), V (volta), C (circular)"
       - name: trip_id
-        description: "Código identificador de trip de referência no GTFS"
+        description: "{{ doc('trip_id_planejado') }}"
       - name: tipo_dia
         description: "Dia da semana - categorias: Dia Útil, Sabado, Domingo e Ponto Facultativo"
       - name: distancia_total_planejada
