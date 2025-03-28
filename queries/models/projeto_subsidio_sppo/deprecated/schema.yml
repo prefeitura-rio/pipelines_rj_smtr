@@ -18,7 +18,7 @@ models:
       - name: data_versao
         description: "{{ doc('data_versao') }}"
       - name: versao_modelo
-        description: "{{ doc('versao_modelo') }}"
+        description: "{{ doc('versao') }}"
   - name: subsidio_trips_desaninhada
     description: "Viagens para cada serviço (Descontinuada a partir de 2024-04-01 [SUBSIDIO_V6])"
     columns:
@@ -39,7 +39,7 @@ models:
       - name: data_versao
         description: "{{ doc('data_versao') }}"
       - name: versao_modelo
-        description: "{{ doc('versao_modelo') }}"
+        description: "{{ doc('versao') }}"
   - name: subsidio_quadro_horario
     description: "Dados de planejamento operacional dos serviços (Descontinuada a partir de 2024-04-01 [SUBSIDIO_V6])"
     columns:
@@ -66,4 +66,4 @@ models:
       - name: distancia_total_planejada
         description: "Distância total planejada do serviço em km (junta ida+volta multiplicado pela quantidade de viagens)"
       - name: versao_modelo
-        description: "{{ doc('versao_modelo') }}"
+        description: "{{ doc('versao') }}"

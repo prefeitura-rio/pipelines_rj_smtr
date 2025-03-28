@@ -7,7 +7,7 @@ models:
     description: "Agência de transporte público com serviços representados neste conjunto de dados"
     columns:
       - name: agency_id
-        description:  "Identifica uma marca de transporte público que geralmente é sinônimo de agência de transporte público."
+        description:  "Identifica uma marca de transporte público que geralmente é sinônimo de agência de transporte público"
       - name: agency_name
         description: "Nome completo da agência de transporte público"
       - name: agency_url
@@ -23,7 +23,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS"
       - name: versao_modelo
-        description: "{{ doc('versao_modelo') }}"
+        description: "{{ doc('versao') }}"
 
   - name: calendar_gtfs
     description: "Datas de serviço especificadas usando uma programação semanal com datas de início e término"
@@ -60,7 +60,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS"
       - name: versao_modelo
-        description: "{{ doc('versao_modelo') }}"
+        description: "{{ doc('versao') }}"
 
   - name: calendar_dates_gtfs
     description: "Exceções para os serviços definidos no calendar.txt"
@@ -78,7 +78,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS"
       - name: versao_modelo
-        description: "{{ doc('versao_modelo') }}"
+        description: "{{ doc('versao') }}"
 
   - name: fare_attributes_gtfs
     description: "Informações sobre tarifas para rotas de uma agência de transporte público"
@@ -104,7 +104,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS"
       - name: versao_modelo
-        description: "{{ doc('versao_modelo') }}"
+        description: "{{ doc('versao') }}"
 
   - name: fare_rules_gtfs
     description: "Regras para aplicação de tarifas de itinerários"
@@ -126,7 +126,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS"
       - name: versao_modelo
-        description: "{{ doc('versao_modelo') }}"
+        description: "{{ doc('versao') }}"
 
   - name: feed_info_gtfs
     description: "Metadados do conjunto de dados, incluindo informações sobre editor, versão e expiração"
@@ -154,7 +154,7 @@ models:
       - name: feed_update_datetime
         description: "Data e hora da última atualização do feed"
       - name: versao_modelo
-        description: "{{ doc('versao_modelo') }}"
+        description: "{{ doc('versao') }}"
 
   - name: frequencies_gtfs
     description: "Intervalo (tempo entre viagens) para serviço baseado em intervalo ou uma representação compactada de serviço com horário fixo"
@@ -176,7 +176,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS"
       - name: versao_modelo
-        description: "{{ doc('versao_modelo') }}"
+        description: "{{ doc('versao') }}"
 
   - name: routes_gtfs
     description: "Rotas de trânsito. Uma rota é um grupo de viagens exibidas aos passageiros como um único serviço"
@@ -214,7 +214,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS"
       - name: versao_modelo
-        description: "{{ doc('versao_modelo') }}"
+        description: "{{ doc('versao') }}"
 
   - name: shapes_geom_gtfs
     description: "Shapes em formatos geográficos dos serviços"
@@ -238,7 +238,7 @@ models:
       - name: data_versao
         description: "{{ doc('data_versao') }}"
       - name: versao_modelo
-        description: "{{ doc('versao_modelo') }}"
+        description: "{{ doc('versao') }}"
 
   - name: shapes_gtfs
     description: "Regras para mapear caminhos de deslocamento de veículos, às vezes chamados de alinhamentos de rotas"
@@ -260,7 +260,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS"
       - name: versao_modelo
-        description: "{{ doc('versao_modelo') }}"
+        description: "{{ doc('versao') }}"
 
   - name: stops_gtfs
     description: "Paradas onde os veículos pegam ou deixam os passageiros [também define estações e entradas de estação]"
@@ -302,7 +302,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS"
       - name: versao_modelo
-        description: "{{ doc('versao_modelo') }}"
+        description: "{{ doc('versao') }}"
 
   - name: stop_times_gtfs
     description: "Horários em que um veículo chega e sai das paradas de cada viagem"
@@ -338,7 +338,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS"
       - name: versao_modelo
-        description: "{{ doc('versao_modelo') }}"
+        description: "{{ doc('versao') }}"
 
   - name: trips_gtfs
     description: "Viagens para cada rota"
@@ -370,7 +370,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS"
       - name: versao_modelo
-        description: "{{ doc('versao_modelo') }}"
+        description: "{{ doc('versao') }}"
 
   - name: ordem_servico_gtfs
     description: "Dados das linhas presentes no município"
@@ -406,7 +406,7 @@ models:
       - name: feed_version
         description: "String que indica a versão atual do conjunto de dados GTFS"
       - name: versao_modelo
-        description: "{{ doc('versao_modelo') }}"
+        description: "{{ doc('versao') }}"
       - name: tipo_os
         description: "Tipo de Ordem de Serviço (ex: 'Regular', 'Extraordinária - Verão')"
 
@@ -451,7 +451,7 @@ models:
       - name: fim_periodo
         description: "Horário final de funcionamento do trajeto alternativo"
       - name: versao_modelo
-        description: "{{ doc('versao_modelo') }}"
+        description: "{{ doc('versao') }}"
       - name: tipo_os
         description: "Tipo de Ordem de Serviço (ex: 'Regular', 'Extraordinária - Verão')"
   - name: ordem_servico_trips_shapes_gtfs

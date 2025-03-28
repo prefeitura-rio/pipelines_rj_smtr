@@ -17,7 +17,7 @@ models:
       - name: servico
         description: "Serviço realizado pelo veículo"
       - name: indicador_ar_condicionado
-        description: "{{ doc('indicador_ar_condicionado') }}."
+        description: "{{ doc('indicador_ar_condicionado') }}"
       - name: indicador_penalidade_judicial
         description: "{{ doc('indicador_penalidade_judicial') }}"
       - name: indicador_viagem_dentro_limite

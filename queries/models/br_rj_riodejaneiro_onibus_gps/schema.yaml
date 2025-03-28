@@ -144,7 +144,7 @@ models:
         #   - no_space:
         #       partition_column: data
       - name: tipo_parada
-        description: "[REVISAR]"
+        description: "{{ doc('tipo_parada') }}"
         # tests:
         #   - not_null:
         #       partition_column: data

@@ -47,7 +47,7 @@ models:
           somados para obter os valores finais
   - name: rdo40_registros
     description: View para os dados do Resumo Diário de Operação com a quantidade
-      total de passageiros.
+      total de passageiros
     columns:
       - name: data
         description: Data das transações

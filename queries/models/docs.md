@@ -125,7 +125,7 @@ Distância da última posição do GPS em relação à posição atual (m)
 {% enddocs %}
 
 {% docs versao %}
-Código de controle de versão do dado [SHA Github]
+Código de controle de versão [SHA do GitHub]
 {% enddocs %}
 
 {% docs id_validador %}
@@ -482,7 +482,7 @@ Data da transação
 {% enddocs %}
 
 {% docs data_viagem %}
-Data da transação
+Data da viagem
 {% enddocs %}
 
 {% docs data %}
@@ -623,10 +623,6 @@ Valor pago da autuação (R$)
 
 {% docs valor_total_glosado %}
 Valor total das viagens considerando o valor máximo por km, subtraído pelo valor efetivo por km (R$)
-{% enddocs %}
-
-{% docs versao_modelo %}
-Código de controle de versão [SHA do GitHub]
 {% enddocs %}
 
 {% docs cobertura_temporal %}

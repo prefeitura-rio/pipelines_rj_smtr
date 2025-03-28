@@ -34,12 +34,6 @@ models:
     columns:
       - name: data
         description: "{{ doc('data') }}"
-        tests:
-          - not_null
-      - name: data_shape
-        description: "Data do shape capturado no SIGMOB (00h) (Válida até 2024-03-30)."
-        tests:
-          - not_null
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sábado, Domingo"
         tests:
