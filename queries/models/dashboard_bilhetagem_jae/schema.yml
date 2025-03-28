@@ -5,7 +5,7 @@ models:
     description: "View criada para uso no painel de bilhetagem. Junta os dados da tabela br_rj_riodejaneiro_bilhetagem.passageiros_hora (exceto os do tipo RioCard) com a tabela cadastro.servicos"
     columns:
       - name: data
-        description: "Data da transação"
+        description: "{{ doc('data_transacao') }}"
       - name: hora
         description: "Hora da transação"
       - name: modo
@@ -40,7 +40,7 @@ models:
     description: "View criada para uso no painel de bilhetagem. Junta os dados da tabela br_rj_riodejaneiro_bilhetagem.passageiros_tile_hora com a tabela cadastro.servicos"
     columns:
       - name: data
-        description: "Data da transação"
+        description: "{{ doc('data_transacao') }}"
       - name: hora
         description: "Hora da transação"
       - name: modo
@@ -73,7 +73,7 @@ models:
     description: "Tabela de integrações realizadas entre modos do sistema de transporte municipal, contendo os valores da repartição tarifária [quando houver - dados em fase de teste]"
     columns:
       - name: data
-        description: "Data da transação (partição)"
+        description: "{{ doc('data_transacao') }} [partição]"
       - name: hora
         description: "Hora da transação"
       - name: id_integracao
