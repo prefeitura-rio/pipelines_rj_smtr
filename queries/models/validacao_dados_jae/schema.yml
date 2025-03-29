@@ -66,7 +66,7 @@ models:
       - name: id_operadora
         description: "Identificador da operadora na tabela cadastro.operadoras"
       - name: operadora
-        description: "Nome da operadora de transporte (mascarado se for pessoa física)"
+        description: "{{ doc('operadora') }}"
       - name: id_servico_jae
         description: "Identificador da linha no banco de dados da jaé (É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae)"
       - name: servico_jae
@@ -143,7 +143,7 @@ models:
         description: "Identificador da linha no banco de dados da jaé (É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae)"
         data_type: string
       - name: sentido
-        description: "Sentido de operação do serviço (0 = ida, 1 = volta)"
+        description: "{{ doc('sentido_bilhetagem') }}"
         data_type: string
       - name: versao
         description: "{{ doc('versao') }}"

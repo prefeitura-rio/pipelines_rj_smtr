@@ -9,7 +9,7 @@ models:
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: faixa_horaria_inicio
-        description: "Horário inicial da faixa horária"
+        description: "{{ doc('faixa_horaria_inicio') }}"
       - name: faixa_horaria_fim
         description: "{{ doc('faixa_horaria_fim') }}"
       - name: consorcio
@@ -29,7 +29,7 @@ models:
       - name: tecnologia_remunerada
         description: "{{ doc('tecnologia_remunerada') }}"
       - name: viagens_faixa
-        description: "Quantidade de viagens apuradas por faixa horária"
+        description: "{{ doc('viagens_faixa') }}"
       - name: km_apurada_faixa
         description: "Distância apurada para o serviço por faixa horária (km)"
       - name: km_subsidiada_faixa
@@ -64,9 +64,9 @@ models:
       - name: servico
         description: "Serviço realizado pelo veículo"
       - name: viagens_dia
-        description: "Quantidade de viagens apuradas por dia"
+        description: "{{ doc('viagens_dia') }}"
       - name: km_apurada_dia
-        description: "Distância apurada para o serviço por dia (km)"
+        description: "{{ doc('km_apurada') }}"
       - name: km_subsidiada_dia
         description: "Distância subsidiada para o serviço por dia (km)"
       - name: km_planejada_dia
@@ -84,7 +84,7 @@ models:
       - name: valor_judicial
         description: "Valor de glosa depositada em juízo (Autuação por ar inoperante, Veículo licenciado sem ar, Penalidade abaixo de 60% e Notificação dos Agentes de Verão)"
       - name: valor_penalidade
-        description: "Valor penalidade [negativa] (POF =< 60%)"
+        description: "{{ doc('valor_penalidade') }}"
       - name: versao
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
@@ -101,11 +101,11 @@ models:
       - name: servico
         description: "{{ doc('servico') }}"
       - name: faixa_horaria_inicio
-        description: "Horário inicial da faixa horária"
+        description: "{{ doc('faixa_horaria_inicio') }}"
       - name: faixa_horaria_fim
         description: "{{ doc('faixa_horaria_fim') }}"
       - name: valor_penalidade
-        description: "Valor penalidade [negativa] (POF =< 60%)"
+        description: "{{ doc('valor_penalidade') }}"
       - name: versao
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao

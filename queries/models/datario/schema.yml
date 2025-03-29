@@ -80,7 +80,7 @@ models:
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sábado, Domingo"
       - name: id_empresa
-        description: "Código identificador da empresa que opera o veículo"
+        description: "{{ doc('id_empresa') }}"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: id_viagem
@@ -90,17 +90,17 @@ models:
       - name: shape_id
         description: "{{ doc('shape_id') }}"
       - name: sentido
-        description: "Sentido do trajeto identificado - categorias: I (ida), V (volta), C (circular)"
+        description: "{{ doc('sentido') }}"
       - name: datetime_partida
         description: "Horário de início da viagem"
       - name: datetime_chegada
         description: "Horário de fim da viagem"
       - name: tempo_viagem
-        description: "Tempo aferido da viagem (em minutos)"
+        description: "{{ doc('tempo_viagem') }}"
       - name: distancia_planejada
-        description: "Distância do shape (trajeto) planejado"
+        description: "{{ doc('distancia_planejada') }}"
       - name: perc_conformidade_shape
-        description: "Percentual de sinais emitidos dentro do shape (trajeto) ao longo da viagem"
+        description: "{{ doc('perc_conformidade_shape') }}"
       - name: perc_conformidade_registros
         description: "{{ doc('perc_conformidade_registros') }}"
       - name: versao_modelo

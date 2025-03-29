@@ -302,7 +302,7 @@ models:
       - name: indicador_autuacao_ar_condicionado
         description: "Indicador se o veículo foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado"
       - name: indicador_autuacao_seguranca
-        description: "Indicador se o veículo foi autuado por infração relacionada à segurança do veículo"
+        description: "{{ doc('indicador_autuacao_seguranca') }}"
       - name: indicador_autuacao_limpeza
         description: "{{ doc('indicador_autuacao_limpeza') }}"
       - name: indicador_autuacao_equipamento
@@ -346,7 +346,7 @@ models:
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: id_empresa
-        description: "Código identificador da empresa que opera o veículo"
+        description: "{{ doc('id_empresa') }}"
       - name: servico_informado
         description: "Serviço informado pelo GPS do veículo"
       - name: servico_realizado
@@ -382,19 +382,19 @@ models:
       - name: tempo_viagem
         description: "Tempo aferido da viagem (minutos)"
       - name: distancia_planejada
-        description: "Distância do shape (trajeto) planejado (km)"
+        description: "{{ doc('distancia_planejada') }} (km)"
       - name: distancia_aferida
         description: "Distância aferida da viagem (distância euclidiana entre posições consecutivas do sinal de GPS)"
       - name: n_registros_start
         description: "Contagem de sinais de GPS emitidos no meio do trajeto"
       - name: n_registros_shape
-        description: "Contagem de sinais de GPS emitidos dentro do trajeto"
+        description: "{{ doc('n_registros_shape') }}"
       - name: n_registros_total
         description: "Contagem de sinais de GPS emitidos no tempo da viagem"
       - name: n_registros_minuto
-        description: "Contagem de minutos do trajeto com pelo menos 1 sinal de GPS emitido"
+        description: "{{ doc('n_registros_minuto') }}"
       - name: perc_conformidade_shape
-        description: "Percentual de sinais emitidos dentro do shape (trajeto) ao longo da viagem"
+        description: "{{ doc('perc_conformidade_shape') }}"
       - name: perc_conformidade_distancia
         description: "Razão da distância aferida pela distância teórica x 100"
       - name: perc_conformidade_registros
@@ -543,7 +543,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__viagens_autuado_limpezaequipamento__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_autuado_limpezaequipamento
-        description: "Quilometragem apurada de viagens de veículos autuados por limpeza ou equipamento"
+        description: "{{ doc('km_apurada_autuado_limpezaequipamento') }}"
         tests:
           - not_null:
               name: not_null__km_apurada_autuado_limpezaequipamento__sumario_servico_dia_tipo_sem_glosa

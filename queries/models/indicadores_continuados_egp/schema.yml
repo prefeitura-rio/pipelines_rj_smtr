@@ -7,7 +7,7 @@ models:
       - name: ano
         description: "Ano de apuração do indicador"
       - name: mes
-        description: "Mês de apuração do indicador"
+        description: "{{ doc('mes') }}"
       - name: modo
         description: "Modo de transporte (quando aplicável)"
       - name: nome_indicador
