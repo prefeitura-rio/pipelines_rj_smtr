@@ -741,10 +741,6 @@ Código identificador de shape no GTFS com ajustes
 Tempo aferido da viagem (minutos)
 {% enddocs %}
 
-{% docs tipo_os %}
-Tipo de Ordem de Serviço [ex: 'Regular', 'Extraordinária - Verão']
-{% enddocs %}
-
 {% docs trip_headsign %}
 Texto que aparece na sinalização identificando o destino da viagem aos passageiros
 {% enddocs %}
