@@ -33,7 +33,7 @@ models:
           name: check_km_planejada__viagem_planejada
     columns:
       - name: data
-        description: "Data"
+        description: "{{ doc('data') }}"
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sábado, Domingo"
         tests:
@@ -110,7 +110,7 @@ models:
           - not_null:
               name: not_null__faixa_horaria_fim__viagem_planejada
       - name: trip_id_planejado
-        description: "Código identificador de trip de referência no GTFS"
+        description: "{{ doc('trip_id_planejado') }}"
         tests:
           - not_null:
               name: not_null__trip_id_planejado__viagem_planejada
@@ -120,7 +120,7 @@ models:
           - not_null:
               name: not_null__trip_id__viagem_planejada
       - name: shape_id
-        description: "Código identificador de shape no GTFS"
+        description: "{{ doc('shape_id') }}"
         tests:
           - not_null:
               name: not_null__shape_id__viagem_planejada
@@ -183,7 +183,7 @@ models:
     description: "Tabela auxiliar de classificação dos registros de GPS no trajeto [shape], com base no serviço informado pelo veículo [atualizada diariamente, sem histórico]"
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS"
+        description: "{{ doc('data_gps') }}"
         tests:
           - not_null
       - name: id_veiculo
@@ -221,7 +221,7 @@ models:
       - name: shape_id_planejado
         description: "Código identificador de shape no GTFS com ajustes"
       - name: trip_id_planejado
-        description: "Código identificador de trip de referência no GTFS"
+        description: "{{ doc('trip_id_planejado') }}"
       - name: trip_id
         description: "Código identificador de trip de referência no GTFS com ajustes"
       - name: distancia_planejada
@@ -261,7 +261,7 @@ models:
     description: "Tabela auxiliar de identificação de início e fim de viagens [atualizada diariamente, sem histórico]"
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS"
+        description: "{{ doc('data_gps') }}"
         tests:
           - not_null
       - name: id_veiculo
@@ -283,7 +283,7 @@ models:
       - name: trip_id
         description: "Código identificador do itinerário operado"
       - name: shape_id
-        description: "Código identificador do shape [trajeto] do serviço"
+        description: "{{ doc('shape_id') }}"
         tests:
           - not_null
       - name: sentido_shape
@@ -324,12 +324,12 @@ models:
       - name: shape_id_planejado
         description: "Código identificador de shape no GTFS com ajustes"
       - name: trip_id_planejado
-        description: "Código identificador de trip de referência no GTFS"
+        description: "{{ doc('trip_id_planejado') }}"
   - name: aux_viagem_circular
     description: "Tabela auxiliar de tratamento de viagens circulares [atualizada diariamente, sem histórico]"
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS"
+        description: "{{ doc('data_gps') }}"
         tests:
           - not_null
       - name: id_veiculo
@@ -351,7 +351,7 @@ models:
       - name: trip_id
         description: "Código identificador de trip de referência no GTFS com ajustes"
       - name: shape_id
-        description: "Código identificador do shape [trajeto] do serviço"
+        description: "{{ doc('shape_id') }}"
         tests:
           - not_null
       - name: sentido_shape
@@ -392,12 +392,12 @@ models:
       - name: shape_id_planejado
         description: "Código identificador de shape no GTFS com ajustes"
       - name: trip_id_planejado
-        description: "Código identificador de trip de referência no GTFS"
+        description: "{{ doc('trip_id_planejado') }}"
   - name: registros_status_viagem
     description: "Registros de GPS clasificados por viagem"
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS"
+        description: "{{ doc('data_gps') }}"
         tests:
           - not_null
       - name: id_veiculo
@@ -478,13 +478,13 @@ models:
         tests:
           - not_null
       - name: shape_id
-        description: "Código identificador do shape [trajeto] do serviço"
+        description: "{{ doc('shape_id') }}"
       - name: trip_id
         description: "Código identificador de trip de referência no GTFS com ajustes"
       - name: shape_id_planejado
         description: "Código identificador de shape no GTFS com ajustes"
       - name: trip_id_planejado
-        description: "Código identificador de trip de referência no GTFS"
+        description: "{{ doc('trip_id_planejado') }}"
       - name: start_pt
         description: "Ponto inicial do shape em formato geográfico (Point)"
       - name: end_pt
@@ -555,7 +555,7 @@ models:
     description: "Tabela de cálculo da conformidade de viagens identificadas por GPS"
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS"
+        description: "{{ doc('data_gps') }}"
         tests:
           - not_null
       - name: id_veiculo
@@ -577,7 +577,7 @@ models:
       - name: trip_id
         description: "Código identificador do itinerário operado"
       - name: shape_id
-        description: "Código identificador do shape [trajeto] do serviço"
+        description: "{{ doc('shape_id') }}"
         tests:
           - not_null
       - name: sentido_shape
@@ -673,7 +673,7 @@ models:
           - not_null
           - greater_than_zero
       - name: perc_conformidade_registros
-        description: "Percentual de minutos da viagem com registro de sinal de GPS"
+        description: "{{ doc('perc_conformidade_registros') }}"
         tests:
           - not_null
           - greater_than_zero
@@ -689,7 +689,7 @@ models:
         tests:
           - not_null
       - name: data
-        description: "Data da viagem"
+        description: "{{ doc('data_viagem') }}"
         tests:
           - not_null
       - name: tipo_dia
@@ -723,7 +723,7 @@ models:
         tests:
           - not_null
       - name: shape_id
-        description: "Código identificador do trajeto [shape] operado"
+        description: "{{ doc('shape_id') }}"
         tests:
           - not_null
       - name: sentido
@@ -808,7 +808,7 @@ models:
           - not_null
           - greater_than_zero
       - name: perc_conformidade_registros
-        description: "Percentual de minutos da viagem com registro de sinal de GPS"
+        description: "{{ doc('perc_conformidade_registros') }}"
         tests:
           - not_null
           - greater_than_zero

@@ -25,7 +25,7 @@ models:
       - name: servico_jae
         description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação de BRT na Jaé"
       - name: descricao_servico_jae
-        description: "Nome longo da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou nome da estação de BRT na Jaé"
+        description: "{{ doc('descricao_servico_jae') }}"
       - name: id_validador
         description: "Número de série do validador"
       - name: id_transmissao_gps
@@ -70,7 +70,7 @@ models:
       - name: servico_jae
         description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação de BRT na Jaé"
       - name: descricao_servico_jae
-        description: "Nome longo da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou nome da estação de BRT na Jaé"
+        description: "{{ doc('descricao_servico_jae') }}"
       - name: id_validador
         description: "Número de série do validador"
       - name: id_transmissao_gps
@@ -101,7 +101,7 @@ models:
       - name: data_ordem
         description: "Data da ordem de pagamento (partição)"
       - name: id_consorcio
-        description: "Identificador do consórcio na tabela cadastro.consorcios"
+        description: "{{ doc('id_consorcio') }}"
       - name: consorcio
         description: "Nome do consórcio"
       - name: id_ordem_pagamento
@@ -111,7 +111,7 @@ models:
       - name: valor_debito
         description: "Valor total das transações feitas na modalidade débito (R$)"
       - name: quantidade_transacao_especie
-        description: "Quantidade de transações feitas em espécie"
+        description: "{{ doc('quantidade_transacao_especie') }}"
       - name: valor_especie
         description: "Valor total das transações feitas em espécie (R$)"
       - name: quantidade_transacao_gratuidade
@@ -159,7 +159,7 @@ models:
               where: "data_ordem in ({partitions})"
               name: not_null__id_ordem_pagamento_consorcio_operador_dia__ordem_pagamento_consorcio_operador_dia
       - name: id_consorcio
-        description: "Identificador do consórcio na tabela cadastro.consorcios"
+        description: "{{ doc('id_consorcio') }}"
         tests:
           - not_null:
               where: "data_ordem in ({partitions})"
@@ -189,7 +189,7 @@ models:
       - name: valor_debito
         description: "Valor total das transações feitas na modalidade débito (R$)"
       - name: quantidade_transacao_especie
-        description: "Quantidade de transações feitas em espécie"
+        description: "{{ doc('quantidade_transacao_especie') }}"
       - name: valor_especie
         description: "Valor total das transações feitas em espécie (R$)"
       - name: quantidade_transacao_gratuidade
@@ -244,7 +244,7 @@ models:
       - name: valor_debito
         description: "Valor total das transações feitas na modalidade débito (R$)"
       - name: quantidade_transacao_especie
-        description: "Quantidade de transações feitas em espécie"
+        description: "{{ doc('quantidade_transacao_especie') }}"
       - name: valor_especie
         description: "Valor total das transações feitas em espécie (R$)"
       - name: quantidade_transacao_gratuidade
@@ -279,7 +279,7 @@ models:
       - name: data_ordem
         description: "Data da ordem de pagamento (partição)"
       - name: id_consorcio
-        description: "Identificador do consórcio na tabela cadastro.consorcios"
+        description: "{{ doc('id_consorcio') }}"
       - name: consorcio
         description: "Nome do consórcio"
       - name: id_operadora
@@ -291,7 +291,7 @@ models:
       - name: servico_jae
         description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação de BRT na Jaé"
       - name: descricao_servico_jae
-        description: "Nome longo da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou nome da estação de BRT na Jaé"
+        description: "{{ doc('descricao_servico_jae') }}"
       # - name: servico
       #   description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação"
       - name: id_ordem_pagamento
@@ -303,7 +303,7 @@ models:
       - name: valor_debito
         description: "Valor total das transações feitas na modalidade débito (R$)"
       - name: quantidade_transacao_especie
-        description: "Quantidade de transações feitas em espécie"
+        description: "{{ doc('quantidade_transacao_especie') }}"
       - name: valor_especie
         description: "Valor total das transações feitas em espécie (R$)"
       - name: quantidade_transacao_gratuidade

@@ -259,7 +259,7 @@ models:
         data_type: date
         quote: true
       - name: data_transacao
-        description: Data da transação
+        description: "{{ doc('data_transacao') }}"
         data_type: date
         quote: true
       - name: id_transacao
