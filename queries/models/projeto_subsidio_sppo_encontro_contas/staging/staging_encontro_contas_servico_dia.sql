@@ -1,20 +1,25 @@
 /*
-Modelo cenário A
-    - Considera todos os pares data-serviço cujo POD (Percentual de Operação Diária) esteja acima de 80%
+- Modelo cenário A
+    - Considera todos os pares data-serviço cujo POD (Percentual de Operação Diária) esteja igual ou superior a 80%.
 
-Modelo cenário B
-    - Considera apenas os pares data-serviço cujo POD (Percentual de Operação Diária) esteja acima de 80%,
-      desconsiderando as faixas horárias com POF (Percentual de Operação por Faixa Horária) inferior a 80%.
-    - Justificativa Técnica:
-        - Na metodologia atualmente aplicada ao Encontro de Contas, ao se considerar todas as faixas horárias de um determinado par data-serviço,
-          é possível que o POD final fique abaixo de 80%, o que resulta na exclusão desse par do encontro — mesmo que parte da quilometragem tenha
-          sido efetivamente operada.
-        - Vantagens do Cenário B:
-            - Mitiga a perda de receita tarifária nos pares data-serviço com POD inferior a 80%;
-            - Garante maior equilíbrio entre o que foi efetivamente operado e o que é considerado no Encontro de Contas.
+- Modelo cenário B
+    - Considera apenas os pares data-serviço com POD ≥ 80%, desconsiderando as faixas horárias em que o POF (Percentual de Operação por Faixa Horária)
+      esteja abaixo de 80%.
 
-Conclusão
-    - Ambos cenários têm a mesma quantidade de pares data-serviço (129742), logo, não há diferença no resultado final.
+- Justificativa TécnicaS
+    - Na metodologia atualmente adotada no Encontro de Contas, ao considerar todas as faixas horárias de um par data-serviço, o POD agregado pode ficar
+      abaixo de 80%, levando à exclusão desse par — mesmo que parte da quilometragem tenha sido efetivamente operada.
+    - O Cenário B propõe uma abordagem mais refinada, ao eliminar apenas as faixas com POF inferior a 80%, mantendo no cálculo os trechos que atenderam
+      aos critérios de desempenho e subsídio.
+    - Vantagens do Cenário B:
+        - Reduz a perda de receita tarifária decorrente da exclusão de pares com POD médio inferior a 80%, mas com operação parcial válida;
+        - Promove maior alinhamento entre a operação efetivamente realizada e os critérios de elegibilidade para o Encontro de Contas;
+        - Aumenta a precisão da compensação ao considerar apenas as faixas que atendem aos critérios de subsídio.
+
+- Conclusão
+    - Ambos cenários têm a mesma quantidade de pares data-serviço (129742);
+    - No entanto, o Cenário B representa uma alternativa metodológica mais criteriosa e vantajosa do ponto de vista da gestão pública, ao evitar distorções
+      causadas por faixas horárias não elegíveis ao subsídio.
 */
 {# {% set subsidio_faixa_servico_dia_tipo_viagem = ref("subsidio_faixa_servico_dia_tipo_viagem") %} #}
 {# {% set viagem_planejada = ref("viagem_planejada") %} #}

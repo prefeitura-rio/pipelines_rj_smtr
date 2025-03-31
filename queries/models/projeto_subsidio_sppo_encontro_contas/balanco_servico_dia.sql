@@ -1,6 +1,6 @@
 {% if var("encontro_contas_modo") == "" %}
-    -- 0. Lista servicos e dias atípicos (pagos por recurso)
     with
+        -- 1. Lista os recursos
         recursos as (
             select
                 data,
@@ -14,6 +14,7 @@
             {# from `rj-smtr`.`br_rj_riodejaneiro_recursos`.`recursos_sppo_servico_dia_pago` #}
             group by 1, 2, 3, 4, 5
         ),
+        -- 2. Lista servicos e dias atípicos (pagos por recurso)
         servico_dia_atipico as (
             select distinct data, servico
             from recursos
@@ -40,9 +41,8 @@
                 )
                 and not incorporado_algoritmo
         ),
-
-        -- 1. Calcula a km subsidiada por servico e dia
-        sumario_dia as (  -- Km apurada por servico e dia
+        -- 3. Calcula a km subsidiada preliminar por servico e dia
+        sumario_dia as (
             select
                 data,
                 consorcio,
@@ -54,21 +54,98 @@
                 data between date("{{ var('start_date') }}") and date(
                     "{{ var('end_date') }}"
                 )
-                and valor_subsidio_pago > 0  -- No cenário B estão sendo consideradas apenas as faixas com POF >= 80%, logo, essa verificação aqui é desnecessária
+                and valor_subsidio_pago > 0
             group by 1, 2, 3
         ),
-        viagem_remunerada as (  -- Km subsidiada pos regra do teto de 120% por servico e dia
-            select data, servico, sum(distancia_planejada) as km_subsidiada
-            {# from {{ ref("viagens_remuneradas") }} #}
-            from `rj-smtr.dashboard_subsidio_sppo.viagens_remuneradas`
+        -- 4. Lista data, serviço e faixas horárias (2024-08-16 a 2025-01-04)
+        sumario_faixa_servico_dia_v1 as (
+            select
+                data,
+                tipo_dia,
+                faixa_horaria_inicio,
+                faixa_horaria_fim,
+                consorcio,
+                servico,
+                pof
+            {# from {{ ref("sumario_faixa_servico_dia") }} #}
+            from `rj-smtr.dashboard_subsidio_sppo_v2.sumario_faixa_servico_dia`
             where
-                data between date("{{ var('start_date') }}") and date(
+                data between date('{{ var("start_date") }}') and date(
+                    '{{ var("end_date") }}'
+                )
+                and data < date("{{ var('DATA_SUBSIDIO_V14_INICIO') }}")
+        ),
+        -- 5. Lista data, serviço e faixas horárias (2024-01-05 e após)
+        sumario_faixa_servico_dia_v2 as (
+            select
+                data,
+                tipo_dia,
+                faixa_horaria_inicio,
+                faixa_horaria_fim,
+                consorcio,
+                servico,
+                pof
+            {# from {{ ref("sumario_faixa_servico_dia_pagamento") }} #}
+            from
+                `rj-smtr.dashboard_subsidio_sppo_v2.sumario_faixa_servico_dia_pagamento`
+            where
+                data between date('{{ var("start_date") }}') and date(
+                    '{{ var("end_date") }}'
+                )
+                and data >= date("{{ var('DATA_SUBSIDIO_V14_INICIO') }}")
+        ),
+        -- 6. Lista todas as datas, serviços e faixas horárias
+        sumario_faixa_servico_dia as (
+            select *
+            from sumario_faixa_servico_dia_v1
+            union all
+            select *
+            from sumario_faixa_servico_dia_v2
+        ),
+        -- 7. Lista todas as viagens
+        viagem as (
+            select
+                data,
+                servico_realizado as servico,
+                id_veiculo,
+                id_viagem,
+                datetime_partida
+            {# from {{ ref("viagem_completa") }} #}
+            from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
+            where
+                data between date('{{ var("start_date") }}') and date(
+                    '{{ var("end_date") }}'
+                )
+        ),
+        -- 8. Calcula a km subsidiada por servico e dia (km subsidiada pós-regra do
+        -- teto de 110%/120%/200% por servico e dia)
+        viagem_remunerada as (
+            select vr.data, vr.servico, sum(vr.distancia_planejada) as km_subsidiada
+            {# from {{ ref("viagens_remuneradas") }} #}
+            from `rj-smtr.dashboard_subsidio_sppo.viagens_remuneradas` as vr
+            left join viagem as v using (data, servico, id_viagem)
+            left join
+                sumario_faixa_servico_dia as sfsd
+                on sfsd.data = vr.data
+                and sfsd.servico = vr.servico
+                and v.datetime_partida
+                between sfsd.faixa_horaria_inicio and sfsd.faixa_horaria_fim
+            where
+                vr.data between date("{{ var('start_date') }}") and date(
                     "{{ var('end_date') }}"
                 )
-                and indicador_viagem_dentro_limite = true  -- useless
+                and indicador_viagem_dentro_limite = true
                 and tipo_viagem not in ("Não licenciado", "Não vistoriado")
+                and (
+                    (
+                        vr.data >= date('{{ var("DATA_SUBSIDIO_V9_INICIO") }}')
+                        and pof >= 80  -- Desabilitar para o cenário A
+                    )
+                    or vr.data < date('{{ var("DATA_SUBSIDIO_V9_INICIO") }}')
+                )  -- Período anterior a 2024-08-16 não tem faixas horárias
             group by 1, 2
         ),
+        -- 9. Subsitui km subsidiada preliminar pela calculada por servico e dia
         km_subsidiada_dia as (
             select
                 sd.* except (km_subsidiada),
@@ -83,8 +160,7 @@
             from sumario_dia sd
             left join viagem_remunerada as vr using (data, servico)
         ),
-
-        -- 2. Filtra km subsidiada apenas em dias típicos (remove servicos e dias
+        -- 10. Filtra km subsidiada apenas em dias típicos (remove servicos e dias
         -- pagos por recurso)
         km_subsidiada_filtrada as (
             select ksd.*
@@ -108,8 +184,7 @@
                     '2023-02-22'
                 )
         ),
-
-        -- 3. Calcula a receita tarifaria por servico e dia
+        -- 11. Calcula a receita tarifária por servico e dia
         rdo as (
             select
                 data,
@@ -154,6 +229,7 @@
                 in ("Internorte", "Intersul", "Santa Cruz", "Transcarioca")
             group by 1, 2, 3
         ),
+        -- 12. Lista os parâmetros de subsídio
         parametros_raw as (
             select
                 data_inicio,
@@ -183,6 +259,7 @@
                 )
                 and subsidio_km > 0
         ),
+        -- 13. Trata os parâmetros de subsídio
         parametros_treated as (
             select distinct
                 data_inicio,
@@ -197,6 +274,7 @@
                 date_diff(data_fim, data_inicio, day) as dias
             from parametros_raw
         ),
+        -- 14. Lista os parâmetros de subsídio sem sobreposições temporais
         parametros as (
             select * except (dias)
             from parametros_treated as pt
