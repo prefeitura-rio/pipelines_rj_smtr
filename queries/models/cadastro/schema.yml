@@ -83,7 +83,7 @@ models:
       - name: id_consorcio
         description: "Identificador único do consórcio, podendo ser o código de permissionário ou código da Jaé"
       - name: consorcio
-        description: "Nome do consórcio"
+        description: "{{ doc('consorcio_nome') }}"
       - name: modo
         description: "Modo de transporte do consórcio"
       - name: id_processo
@@ -138,7 +138,7 @@ models:
         description: "Identificador único do consórcio, podendo ser o código de permissionário ou código da Jaé"
         data_type: string
       - name: consorcio
-        description: "Nome do consórcio"
+        description: "{{ doc('consorcio_nome') }}"
         data_type: string
       - name: id_operadora
         description: "Identificador único do operador, podendo ser o código de permissionário ou código da Jaé"

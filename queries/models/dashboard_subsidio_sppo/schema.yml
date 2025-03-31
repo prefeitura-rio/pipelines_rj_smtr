@@ -216,7 +216,7 @@ models:
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: consorcio
-        description: "Consórcio que opera o serviço"
+        description: "{{ doc('consorcio') }}"
       - name: servico
         description: "Serviço realizado pelo veículo"
       - name: viagens
@@ -291,7 +291,7 @@ models:
       - name: data_inicio
         description: "{{ doc('data_inicio_parametros') }}"
       - name: data_fim
-        description: "Data final do período de vigência dos demais atributos"
+        description: "{{ doc('data_fim') }}"
   - name: subsidio_parametros
     description: "Parâmetros de remuneração do subsídio dos serviços de ônibus [SPPO] por tipo de viagem [Descontinuada a partir de 2024-03-01]"
     columns:
@@ -320,7 +320,7 @@ models:
       - name: data_inicio
         description: "{{ doc('data_inicio_parametros') }}"
       - name: data_fim
-        description: "Data final do período de vigência dos demais atributos"
+        description: "{{ doc('data_fim') }}"
       - name: legislacao
         description: "Legislação que estabelece o valor e regras de remuneração"
       - name: ordem
@@ -435,7 +435,7 @@ models:
               strictly: true
               name: dbt_expectations.expect_column_values_to_be_between__data__sumario_servico_dia_tipo_sem_glosa
       - name: consorcio
-        description: "Consórcio que opera o serviço"
+        description: "{{ doc('consorcio') }}"
         tests:
           - not_null:
               name: not_null__consorcio__sumario_servico_dia_tipo_sem_glosa

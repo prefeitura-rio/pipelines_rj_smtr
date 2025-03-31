@@ -22,7 +22,7 @@ models:
       - name: faixa_horaria_fim
         description: "{{ doc('faixa_horaria_fim') }}"
       - name: consorcio
-        description: "Consórcio que opera o serviço"
+        description: "{{ doc('consorcio') }}"
       - name: servico
         description: "Serviço realizado pelo veículo"
       - name: viagens_faixa
