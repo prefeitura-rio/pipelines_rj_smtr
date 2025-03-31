@@ -146,13 +146,13 @@ selectors:
     definition:
       union:
         - method: fqn
-          value: dicionario
+          value: dicionario_bilhetagem
         - method: fqn
           value: staging_gratuidade
         - method: fqn
           value: staging_produto
         - method: fqn
-          value: gratuidade_aux
+          value: aux_gratuidade
         - method: fqn
           value: staging_transacao
         - method: fqn
