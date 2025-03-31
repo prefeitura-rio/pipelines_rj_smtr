@@ -49,9 +49,12 @@
                 servico,
                 sum(km_apurada) as km_subsidiada,
                 sum(valor_subsidio_pago) as subsidio_pago
-            {# from {{ ref("sumario_servico_dia_historico") }} #}
-            from `rj-smtr.monitoramento.sumario_servico_dia_historico`
-            where data between "2024-01-01" and "2024-08-15" and valor_subsidio_pago > 0
+            from {{ ref("staging_encontro_contas_sumario_servico_dia_historico") }}
+            where
+                data between date("{{ var('start_date') }}") and date(
+                    "{{ var('end_date') }}"
+                )
+                and valor_subsidio_pago > 0  -- No cenário B estão sendo consideradas apenas as faixas com POF >= 80%, logo, essa verificação aqui é desnecessária
             group by 1, 2, 3
         ),
         viagem_remunerada as (  -- Km subsidiada pos regra do teto de 120% por servico e dia
@@ -59,7 +62,9 @@
             {# from {{ ref("viagens_remuneradas") }} #}
             from `rj-smtr.dashboard_subsidio_sppo.viagens_remuneradas`
             where
-                data between "2024-01-01" and "2024-08-15"
+                data between date("{{ var('start_date') }}") and date(
+                    "{{ var('end_date') }}"
+                )
                 and indicador_viagem_dentro_limite = true  -- useless
                 and tipo_viagem not in ("Não licenciado", "Não vistoriado")
             group by 1, 2
@@ -128,7 +133,9 @@
             {# from {{ ref("rdo40_registros") }} #}
             from `rj-smtr`.`br_rj_riodejaneiro_rdo`.`rdo40_registros`
             where
-                data between "2024-01-01" and "2024-08-15"
+                data between date("{{ var('start_date') }}") and date(
+                    "{{ var('end_date') }}"
+                )
                 and data not in (
                     "2022-10-02",
                     "2022-10-30",
@@ -163,7 +170,18 @@
                 ) as desconto_subsidio_km
             from `rj-smtr.subsidio.valor_km_tipo_viagem`
             {# from {{ source("projeto_subsidio_sppo_encontro_contas", "parametros_km") }} #}
-            where data_inicio >= "2024-01-01" and data_fim <= "2025-01-04"
+            where
+                data_inicio >= (
+                    date_trunc(date("{{ var('start_date') }}"), year)
+                    - interval 1 year
+                    - interval 10 day
+                )
+                and data_fim <= (
+                    date_trunc(date("{{ var('end_date') }}"), year)
+                    + interval 1 year
+                    + interval 10 day
+                )
+                and subsidio_km > 0
         ),
         parametros_treated as (
             select distinct
@@ -175,13 +193,26 @@
                     then irk - subsidio_km  -- subsidio varia ao longo dos meses
                     else irk - (subsidio_km + desconto_subsidio_km)
                 end as irk_tarifa_publica,
-                (subsidio_km + desconto_subsidio_km) as subsidio_km
+                (subsidio_km + desconto_subsidio_km) as subsidio_km,
+                date_diff(data_fim, data_inicio, day) as dias
             from parametros_raw
         ),
         parametros as (
-            select *
-            from parametros_treated
-            qualify row_number() over (order by data_inicio) = 1
+            select * except (dias)
+            from parametros_treated as pt
+            qualify
+                row_number() over (
+                    partition by
+                        (
+                            select min(p2.data_inicio)
+                            from parametros_treated p2
+                            where
+                                p2.data_inicio < pt.data_fim
+                                and p2.data_fim > pt.data_inicio
+                        )
+                    order by dias desc
+                )
+                = 1  -- Remove sobreposições temporais, mantendo os maiores períodos
         )
     select
         *,

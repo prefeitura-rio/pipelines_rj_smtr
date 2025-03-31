@@ -7,7 +7,13 @@
 -- 0. Lista servicos e dias atípicos (pagos por recurso)
 with
     recursos as (
-        select data, id_recurso, tipo_recurso, servico, incorporado_algoritmo, sum(valor_pago) as valor_pago
+        select
+            data,
+            id_recurso,
+            tipo_recurso,
+            servico,
+            incorporado_algoritmo,
+            sum(valor_pago) as valor_pago
         from {{ ref("recursos_sppo_servico_dia_pago") }}
         -- `rj-smtr`.`br_rj_riodejaneiro_recursos`.`recursos_sppo_servico_dia_pago`
         group by 1, 2, 3, 4, 5
@@ -25,7 +31,8 @@ with
             -- produção, levantado pela TR/SUBTT/CMO)
             -- Desconsideram-se recursos do tipo "Viagem Individual" (não afeta
             -- serviço-dia)
-            and tipo_recurso not in ("Algoritmo", "Viagem Individual", "Encontro de contas")
+            and tipo_recurso
+            not in ("Algoritmo", "Viagem Individual", "Encontro de contas")
             -- Desconsideram-se recursos de reprocessamento que já constam em produção
             and not (
                 data between "2022-06-01" and "2022-06-30"
@@ -61,7 +68,8 @@ with
         {# from {{ ref("rdo40_registros") }} #}
         from `rj-smtr`.`br_rj_riodejaneiro_rdo`.`rdo40_registros`
         where
-            data between "2024-01-01" and "2024-08-15"
+            data
+            between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
             and data not in (
                 "2022-10-02",
                 "2022-10-30",
@@ -77,7 +85,10 @@ with
                 '2023-02-22'
             )
             and consorcio in ("Internorte", "Intersul", "Santa Cruz", "Transcarioca")
-            and (length(regexp_extract(linha, r"[0-9]+")) != 4 and regexp_extract(linha, r"[0-9]+") not like "2%")  -- Remove rodoviarios
+            and (
+                length(regexp_extract(linha, r"[0-9]+")) != 4
+                and regexp_extract(linha, r"[0-9]+") not like "2%"
+            )  -- Remove rodoviarios
         group by 1, 2, 3, 4, 5, 6
     ),
     -- Remove servicos nao subsidiados
@@ -88,9 +99,11 @@ with
             servico,
             sum(km_apurada) as km_subsidiada,
             sum(valor_subsidio_pago) as subsidio_pago
-        {# from {{ ref("sumario_servico_dia_historico") }} #}
-        from `rj-smtr.monitoramento.sumario_servico_dia_historico`
-        where data between "2024-01-01" and "2024-08-15" and valor_subsidio_pago = 0
+        from {{ ref("staging_encontro_contas_sumario_servico_dia_historico") }}
+        where
+            data
+            between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
+            and valor_subsidio_pago = 0
         group by 1, 2, 3
     ),
     rdo_filtrada as (

@@ -8,7 +8,11 @@ with
             date_add(date, interval 14 day) as data_final_quinzena
         from
             unnest(
-                generate_date_array('2024-01-01', '2024-08-15', interval 1 month)
+                generate_date_array(
+                    date("{{ var('start_date') }}"),
+                    date("{{ var('end_date') }}"),
+                    interval 1 month
+                )
             ) as date
     ),
     q2 as (
@@ -18,7 +22,11 @@ with
             last_day(date) as data_final_quinzena
         from
             unnest(
-                generate_date_array('2024-01-01', '2024-08-15', interval 1 month)
+                generate_date_array(
+                    date("{{ var('start_date') }}"),
+                    date("{{ var('end_date') }}"),
+                    interval 1 month
+                )
             ) as date
     ),
     quinzenas as (
