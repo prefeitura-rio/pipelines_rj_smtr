@@ -47,5 +47,5 @@ select
     id_ordem_pagamento_consorcio_dia,
     id_ordem_pagamento,
     versao,
-    datetime_ultima_atualizaca
+    datetime_ultima_atualizacao
 from {{ ref("transacao") }}
