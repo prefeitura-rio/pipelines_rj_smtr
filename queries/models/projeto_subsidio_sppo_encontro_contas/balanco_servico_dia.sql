@@ -139,7 +139,7 @@
                 and (
                     (
                         vr.data >= date('{{ var("DATA_SUBSIDIO_V9_INICIO") }}')
-                        and pof >= 80  -- Desabilitar para o cenário A
+                    {# and pof >= 80  -- Habilitar para o cenário C #}
                     )
                     or vr.data < date('{{ var("DATA_SUBSIDIO_V9_INICIO") }}')
                 )  -- Período anterior a 2024-08-16 não tem faixas horárias
@@ -151,7 +151,7 @@
                 sd.* except (km_subsidiada),
                 ifnull(
                     case
-                        when data >= "2023-09-16"
+                        when data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
                         then vr.km_subsidiada
                         else sd.km_subsidiada
                     end,
