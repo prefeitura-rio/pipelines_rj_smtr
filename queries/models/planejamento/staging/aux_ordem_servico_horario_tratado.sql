@@ -4,32 +4,29 @@ with
     ordem_servico as (
         select
             * except (horario_inicio, horario_fim),
-            parse_time("%H:%M:%S", lpad(horario_inicio, 8, '0')) as horario_inicio,
+            split(horario_inicio, ":") horario_inicio_parts,
             split(horario_fim, ":") horario_fim_parts
         {# from `rj-smtr.gtfs.ordem_servico` #}
         from {{ ref("ordem_servico_gtfs") }}
     )
 select
-    * except (horario_fim_parts),
-    div(cast(horario_fim_parts[0] as integer), 24) as dias_horario_fim,
-    parse_time(
-        "%H:%M:%S",
-        concat(
-            lpad(
-                cast(
-                    if(
-                        cast(horario_fim_parts[0] as integer) >= 24,
-                        cast(horario_fim_parts[0] as integer) - 24,
-                        cast(horario_fim_parts[0] as integer)
-                    ) as string
-                ),
-                2,
-                '0'
-            ),
-            ":",
-            horario_fim_parts[1],
-            ":",
-            horario_fim_parts[2]
-        )
-    ) as horario_fim,
+    * except (horario_fim_parts, horario_inicio_parts),
+    case
+        when array_length(horario_inicio_parts) = 3
+        then
+            make_interval(
+                hour => cast(horario_inicio_parts[0] as integer),
+                minute => cast(horario_inicio_parts[1] as integer),
+                second => cast(horario_inicio_parts[2] as integer)
+            )
+    end as horario_inicio,
+    case
+        when array_length(horario_fim_parts) = 3
+        then
+            make_interval(
+                hour => cast(horario_fim_parts[0] as integer),
+                minute => cast(horario_fim_parts[1] as integer),
+                second => cast(horario_fim_parts[2] as integer)
+            )
+    end as horario_fim
 from ordem_servico
