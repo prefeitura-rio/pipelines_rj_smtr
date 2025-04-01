@@ -1,5 +1,18 @@
 # Changelog - planejamento
 
+## [1.3.5] - 2025-04-01
+
+### Adicionado
+
+- Cria modelo `aux_stop_times_horario_tratado.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/481)
+- Adiciona viagens da stop_times no modelo `viagem_planejada_planejamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/481)
+
+### Alterado
+
+- Simplifica tratamento dos horários nos modelos `aux_frequencies_horario_tratado.sql` e `aux_ordem_servico_horario_tratado.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/481)
+- Adiciona tratamento de horários vazios no modelo `aux_ordem_servico_horario_tratado.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/481)
+- Modifica filtro para não permitir feeds antigos em incrementais no modelo `viagem_planejada_planejamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/481)
+
 ## [1.3.4] - 2025-03-25
 
 ### Alterado
