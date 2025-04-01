@@ -40,20 +40,21 @@ with
         select *
         from {{ ref("aux_trips_dia") }}
         where
+            feed_start_date >= '{{ var("feed_inicial_viagem_planejada") }}'
             {% if is_incremental() %}
-                feed_start_date in ({{ gtfs_feeds | join(", ") }})
+                and feed_start_date in ({{ gtfs_feeds | join(", ") }})
                 and data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
                 )
-            {% else %} feed_start_date >= '{{ var("feed_inicial_viagem_planejada") }}'
             {% endif %}
     ),
     frequencies_tratada as (
         select *
         from {{ ref("aux_frequencies_horario_tratado") }}
         where
-            {% if is_incremental() %} feed_start_date in ({{ gtfs_feeds | join(", ") }})
-            {% else %} feed_start_date >= '{{ var("feed_inicial_viagem_planejada") }}'
+            feed_start_date >= '{{ var("feed_inicial_viagem_planejada") }}'
+            {% if is_incremental() %}
+                and feed_start_date in ({{ gtfs_feeds | join(", ") }})
             {% endif %}
     ),
     trips_frequences_dia as (
@@ -125,9 +126,12 @@ with
             )
         left join frequencies_tratada f using (feed_start_date, feed_version, trip_id)
         where
-            {% if is_incremental() %} feed_start_date in ({{ gtfs_feeds | join(", ") }})
-            {% else %} feed_start_date >= '{{ var("feed_inicial_viagem_planejada") }}'
-            {% endif %} and st.stop_sequence = 0 and f.trip_id is null
+            feed_start_date >= '{{ var("feed_inicial_viagem_planejada") }}'
+            {% if is_incremental() %}
+                and feed_start_date in ({{ gtfs_feeds | join(", ") }})
+            {% endif %}
+            and st.stop_sequence = 0
+            and f.trip_id is null
     ),
     viagens_trips_alternativas as (
         select v.*, ta.trajetos_alternativos
@@ -159,8 +163,9 @@ with
         {# from `rj-smtr.planejamento.shapes_geom` #}
         from {{ ref("shapes_geom_planejamento") }}
         where
-            {% if is_incremental() %} feed_start_date in ({{ gtfs_feeds | join(", ") }})
-            {% else %} feed_start_date >= '{{ var("feed_inicial_viagem_planejada") }}'
+            feed_start_date >= '{{ var("feed_inicial_viagem_planejada") }}'
+            {% if is_incremental() %}
+                and feed_start_date in ({{ gtfs_feeds | join(", ") }})
             {% endif %}
             and round(st_y(start_pt), 4) = round(st_y(end_pt), 4)
             and round(st_x(start_pt), 4) = round(st_x(end_pt), 4)
