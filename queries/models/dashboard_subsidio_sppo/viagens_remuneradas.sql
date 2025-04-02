@@ -122,8 +122,8 @@ with
                     )
             end as subsidio_km_teto,
             indicador_penalidade_judicial
-        from {{ ref("valor_km_tipo_viagem") }}
-    -- from `rj-smtr.subsidio.valor_km_tipo_viagem`
+        from -- {{ ref("valor_km_tipo_viagem") }}
+     `rj-smtr.subsidio.valor_km_tipo_viagem`
     ),
     tecnologias as (
         select
