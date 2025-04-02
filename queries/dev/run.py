@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
+from datetime import datetime, timedelta
 from typing import Dict, List, Union
 
 from queries.dev.utils import run_dbt_model
-
-from datetime import datetime, timedelta
 
 
 def run_dbt_tests(
