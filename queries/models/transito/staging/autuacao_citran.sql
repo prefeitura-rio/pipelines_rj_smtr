@@ -1,8 +1,8 @@
 {{ config(materialized="view") }}
 
 
-select
-    date(data) as data,
+select distinct
+    parse_date('%d/%m/%Y', safe_cast(json_value(content, '$.Data') as string)) data,
     safe_cast(json_value(content, '$.Hora') as string) hora,
     -- fmt: off
     Cod__Detran as id_auto_infracao,

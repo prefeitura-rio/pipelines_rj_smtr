@@ -15,7 +15,7 @@ def setup_serpro(secret_path: str = "radar_serpro"):
     with open("setup.sh", "w") as f:
         f.write(data)
 
-    result = subprocess.run(["sh", "setup.sh"])
+    result = subprocess.run(["sh", "setup.sh"], capture_output=True, text=True)
 
     if result.returncode == 0:
         log("setup.sh executou corretamente")

@@ -323,5 +323,5 @@ select
     fonte,
     datetime_ultima_atualizacao
 from update_partition as u
-left join autuacao_ids as a using (id_auto_infracao)
+left join autuacao_ids as a using (data, id_auto_infracao)
 left join infracoes_renainf as i using (codigo_enquadramento)

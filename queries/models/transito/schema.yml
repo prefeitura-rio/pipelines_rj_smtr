@@ -212,7 +212,7 @@ models:
         description: "{{ doc('datetime_ultima_atualizacao') }}"
 
   - name: autuacao
-    description: "Tabela com dados de autuações [até abril/2023]"
+    description: "Tabela com dados de autuações"
     columns:
       - name: data
         description: "{{ doc('data_autuacao') }} [partição]"
