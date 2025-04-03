@@ -48,7 +48,8 @@ sumario_dia AS (  -- Km apurada por servico e dia
     sum(valor_subsidio_pago) as subsidio_pago
   FROM
     {# {{ ref("sumario_servico_dia_historico") }} #}
-    `rj-smtr.monitoramento.sumario_servico_dia_historico`
+    {# `rj-smtr.monitoramento.sumario_servico_dia_historico` #}
+    {{ ref("staging_encontro_contas_sumario_servico_dia_historico") }}
   WHERE
     DATA BETWEEN "{{ var('start_date') }}"
     AND "{{ var('end_date') }}"

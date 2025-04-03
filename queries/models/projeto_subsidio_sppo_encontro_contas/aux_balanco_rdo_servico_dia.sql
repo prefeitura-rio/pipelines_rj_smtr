@@ -1,7 +1,11 @@
 /*
 
-- Cenário D: exatamente como foi realizado no encontro de contas 2022-2023, adicionado os dias atípicos (pois ainda não estão 100% definidos)
-- Cenário E: removidos os dias em que não houve subsídio dos serviços e adicionado os dias atípicos (pois ainda não estão 100% definidos)
+- Cenário F: exatamente como foi realizado no encontro de contas 2022-2023, adicionado os dias atípicos (pois ainda não estão 100% definidos)
+- Cenário G: removidos os dias em que não houve subsídio dos serviços e
+             adicionado os dias atípicos (pois ainda não estão 100% definidos)
+- Cenário H: removidos os dias em que não houve subsídio dos serviços e
+             adicionado os dias atípicos (pois ainda não estão 100% definidos) e
+             adicionados os dias-serviço que foram subsidiados, mas não tem receita tarifária
 
 */
 
@@ -48,20 +52,23 @@ sumario_dia AS (
     sum(valor_subsidio_pago) as subsidio_pago
   FROM
     {# {{ ref("sumario_servico_dia_historico") }} #}
-    `rj-smtr.monitoramento.sumario_servico_dia_historico`
+    {# `rj-smtr.monitoramento.sumario_servico_dia_historico` #}
+    {{ ref("staging_encontro_contas_sumario_servico_dia_historico") }}
   WHERE
     DATA BETWEEN "{{ var('start_date') }}"
     AND "{{ var('end_date') }}"
-    {# and valor_subsidio_pago = 0 -- Desabilitar para Cenário E #}
+    {# and valor_subsidio_pago = 0 -- Desabilitar para Cenário G #}
   GROUP BY
     1,
     2,
     3),
 rdo_filtrada as (
     select rdo.* from rdo
-    left join sumario_dia sd
+    {# left join sumario_dia sd #}
+    full join sumario_dia sd -- Cenário H
     using (data, servico)
-    where sd.servico is null
+    {# where sd.servico is null #}
+    where sd.servico is distinct from rdo.servico -- Cenário H
 )
 SELECT
   bsd.data,
