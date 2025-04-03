@@ -27,9 +27,7 @@ WITH
   -- 2. Trata a tabela em staging
   treated_recurso AS (
   SELECT
-    * EXCEPT(DATA,
-      valor_pago,
-      tipo_dia),
+    * EXCEPT(DATA, valor_pago, tipo_dia, incorporado_algoritmo, pagamento_media),
     PARSE_DATE("%d/%m/%Y", DATA) AS DATA,
     SAFE_CAST(REGEXP_REPLACE(REGEXP_REPLACE(REGEXP_REPLACE(valor_pago, r"\.", ""), r",", "."), r"[^\d\.-]", "") AS FLOAT64) AS valor_pago,
     CASE
@@ -37,7 +35,13 @@ WITH
     ELSE
     tipo_dia
   END
-    AS tipo_dia
+    AS tipo_dia,
+  case
+      when trim(incorporado_algoritmo) = "Sim" then true else false
+  end as incorporado_algoritmo,
+  case
+      when trim(pagamento_media) = "Sim" then true else false
+  end as pagamento_media,
   FROM
     {{ source("br_rj_riodejaneiro_recursos_staging", "recursos_sppo_servico_dia_pago") }}
   WHERE
@@ -51,7 +55,10 @@ SELECT
   quinzena_pagamento,
   consorcio,
   servico,
-  valor_pago
+  valor_pago,
+  incorporado_algoritmo,
+  pagamento_media,
+  motivo
 FROM
   treated_recurso AS t
 LEFT JOIN
