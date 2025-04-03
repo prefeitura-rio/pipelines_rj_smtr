@@ -43,4 +43,4 @@ select
     safe_cast(json_value(content, '$.NotifPen') as string) recurso_penalidade_multa,
     safe_cast(json_value(content, '$.ProcRI') as string) processo_troca_real_infrator,
 
-from {{ source("infracao_staging", "autuacoes_citran") }}
+from {{ source("autuacao_staging", "autuacao_citran") }}

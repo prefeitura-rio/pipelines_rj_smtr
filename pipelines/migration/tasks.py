@@ -1199,6 +1199,7 @@ def upload_staging_data_to_gcs(
     previous_error: str = None,
     recapture: bool = False,
     bucket_name: str = None,
+    mode: str = "staging",
 ) -> Union[str, None]:
     """
     Upload staging data to GCS.
@@ -1213,6 +1214,7 @@ def upload_staging_data_to_gcs(
         previous_error (str, Optional): Previous error on recaptures.
         recapture: (bool, Optional): Flag that indicates if the run is recapture or not.
         bucket_name (str, Optional): The bucket name to save the data.
+        mode (str, Optional): Folder mode to save data (staging, source). Defaults to "staging".
 
     Returns:
         Union[str, None]: if there is an error returns it traceback, otherwise returns None
@@ -1227,6 +1229,7 @@ def upload_staging_data_to_gcs(
                 path=staging_filepath,
                 partitions=partitions,
                 bucket_name=bucket_name,
+                mode=mode,
             )
         except Exception:
             error = traceback.format_exc()
@@ -1237,7 +1240,7 @@ def upload_staging_data_to_gcs(
         parent_table_id=table_id,
         error=error,
         timestamp=timestamp,
-        mode="staging",
+        mode=mode,
         previous_error=previous_error,
         recapture=recapture,
         bucket_name=bucket_name,

@@ -36,7 +36,7 @@ with
         select
             concat(codigo_infracao, desdobramento) as codigo_enquadramento,
             descricao_infracao as tipificacao_resumida
-        from {{ source("infracao_staging", "infracoes_renainf") }}
+        from {{ source("autuacao_staging", "infracoes_renainf") }}
     ),
     autuacao_ids as (
         select data, id_autuacao, id_auto_infracao, fonte

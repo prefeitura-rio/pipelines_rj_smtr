@@ -198,4 +198,4 @@ select
     safe_cast(
         json_value(content, '$.auinf_veiculo_adesao_sne_indicador') as string
     ) as status_sne
-from {{ source("infracao_staging", "autuacoes_serpro") }}
+from {{ source("source_serpro", "autuacao_serpro") }}

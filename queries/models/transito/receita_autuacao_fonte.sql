@@ -41,8 +41,7 @@ with
             ) as valor_arrecadacao,
             fonte
         from
-            `rj-smtr-staging.transito_staging.receita_autuacao_fonte`  -- Trocar por source e verificar transito_staging
-            unpivot (
+            {{ source("autuacao_staging", "receita_autuacao_fonte") }} unpivot (
                 valor_arrecadacao for mes in (
                     `Janeiro`,
                     `Fevereiro`,

@@ -143,6 +143,7 @@ def create_or_append_table(
     path: str,
     partitions: str = None,
     bucket_name: str = None,
+    mode: str = "staging",
 ):
     """Conditionally create table or append data to its relative GCS folder.
 
@@ -152,6 +153,7 @@ def create_or_append_table(
         path (str): Path to .csv data file
         partitions (str): partition string.
         bucket_name (str, Optional): The bucket name to save the data.
+        mode (str, Optional): Folder mode to save data (staging, raw, source). Defaults to "staging".
     """
     table_arguments = {"table_id": table_id, "dataset_id": dataset_id}
     if bucket_name is not None:
@@ -171,7 +173,7 @@ def create_or_append_table(
         append_func = partial(
             Storage(dataset_id=dataset_id, table_id=table_id, bucket_name=bucket_name).upload,
             path=path,
-            mode="staging",
+            mode=mode,
             if_exists="replace",
             partitions=partitions,
         )
@@ -192,14 +194,14 @@ def create_or_append_table(
             partitions=partitions,
         )
 
-    if not tb_obj.table_exists("staging"):
-        log("Table does not exist in STAGING, creating table...")
+    if not tb_obj.table_exists(mode):
+        log(f"Table does not exist in {mode.upper()}, creating table...")
         create_func()
-        log("Table created in STAGING")
+        log(f"Table created in {mode.upper()}")
     else:
-        log("Table already exists in STAGING, appending to it...")
+        log(f"Table already exists in {mode.upper()}, appending to it...")
         append_func()
-        log("Appended to table on STAGING successfully.")
+        log(f"Appended to table on {mode.upper()} successfully.")
 
 
 def generate_df_and_save(data: dict, fname: Path):
