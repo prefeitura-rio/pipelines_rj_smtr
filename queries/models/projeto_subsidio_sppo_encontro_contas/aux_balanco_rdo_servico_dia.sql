@@ -1,3 +1,11 @@
+/*
+
+- Cenário D: exatamente como foi realizado no encontro de contas 2022-2023, adicionado os dias atípicos (pois ainda não estão 100% definidos)
+- Cenário E: removidos os dias em que não houve subsídio dos serviços e adicionado os dias atípicos (pois ainda não estão 100% definidos)
+
+*/
+
+
 {{
     config(
         materialized="ephemeral",
@@ -44,7 +52,7 @@ sumario_dia AS (
   WHERE
     DATA BETWEEN "{{ var('start_date') }}"
     AND "{{ var('end_date') }}"
-    and valor_subsidio_pago = 0
+    {# and valor_subsidio_pago = 0 -- Desabilitar para Cenário E #}
   GROUP BY
     1,
     2,
