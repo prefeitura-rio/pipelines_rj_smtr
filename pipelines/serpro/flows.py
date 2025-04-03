@@ -2,7 +2,6 @@
 from prefect import Parameter
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
-from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
@@ -40,13 +39,13 @@ with Flow("SMTR: SERPRO - Captura/Tratamento") as serpro_captura:
 
     partitions = create_date_hour_partition(
         timestamp,
-        partition_date_only=unmapped(True),
+        partition_date_only=True,
     )
 
     filenames = parse_timestamp_to_string(timestamp)
 
     local_filepaths = create_local_partition_path(
-        dataset_id=constants.INFRACAO_DATASET_ID.value,
+        dataset_id=constants.AUTUACAO_DATASET_ID.value,
         table_id=constants.AUTUACAO_SERPRO_TABLE_ID.value,
         partitions=partitions,
         filename=filenames,
@@ -69,7 +68,7 @@ with Flow("SMTR: SERPRO - Captura/Tratamento") as serpro_captura:
     )
 
     errors = upload_raw_data_to_gcs(
-        dataset_id=constants.INFRACAO_DATASET_ID.value,
+        dataset_id=constants.AUTUACAO_DATASET_ID.value,
         table_id=constants.AUTUACAO_SERPRO_TABLE_ID.value,
         raw_filepath=raw_filepaths,
         partitions=partitions,
@@ -78,7 +77,7 @@ with Flow("SMTR: SERPRO - Captura/Tratamento") as serpro_captura:
     )
 
     wait_captura_true = upload_staging_data_to_gcs(
-        dataset_id=constants.INFRACAO_DATASET_ID.value,
+        dataset_id=constants.AUTUACAO_DATASET_ID.value,
         table_id=constants.AUTUACAO_SERPRO_TABLE_ID.value,
         staging_filepath=treated_filepaths,
         partitions=partitions,

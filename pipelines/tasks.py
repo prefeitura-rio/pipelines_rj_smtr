@@ -221,7 +221,7 @@ def run_subflow(
 
 
 @task
-def get_timestamp_range(start_date: str = None, end_date: str = None) -> List[str]:
+def get_timestamp_range(start_date: str = None, end_date: str = None) -> List[datetime]:
     """
     Generates a list of all days between two given dates (inclusive).
 
@@ -230,12 +230,19 @@ def get_timestamp_range(start_date: str = None, end_date: str = None) -> List[st
         end_date (str): The end date as a string in the format 'YYYY-MM-DD'.
     """
 
-    start_date_dt = datetime.strptime(start_date, "%Y-%m-%d")
-    end_date_dt = datetime.strptime(end_date, "%Y-%m-%d")
-
-    timestamps = []
     if start_date is None or end_date is None:
         return None
+
+    try:
+        start_date_dt = datetime.strptime(start_date, "%Y-%m-%d")
+        end_date_dt = datetime.strptime(end_date, "%Y-%m-%d")
+    except ValueError:
+        return None
+
+    if start_date_dt > end_date_dt:
+        return None
+
+    timestamps = []
 
     while start_date_dt <= end_date_dt:
         timestamps.append(start_date_dt)

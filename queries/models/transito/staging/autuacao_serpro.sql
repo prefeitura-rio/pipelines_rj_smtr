@@ -2,6 +2,7 @@
 
 
 select
+    date(data) as data,
     date(
         parse_timestamp(
             '%Y-%m-%d %H:%M:%S',
@@ -12,7 +13,7 @@ select
             )
         ),
         'America/Sao_Paulo'
-    ) as data,
+    ) as data_autuacao,
     auinf_num_auto as id_auto_infracao,
     safe_cast(
         json_value(content, '$.auinf_origem_desc') as string

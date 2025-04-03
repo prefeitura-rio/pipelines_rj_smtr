@@ -1,8 +1,11 @@
 {{ config(materialized="view") }}
 
 
-select distinct
-    parse_date('%d/%m/%Y', safe_cast(json_value(content, '$.Data') as string)) data,
+select
+    date(data) as data,
+    parse_date(
+        '%d/%m/%Y', safe_cast(json_value(content, '$.Data') as string)
+    ) data_autuacao,
     safe_cast(json_value(content, '$.Hora') as string) hora,
     -- fmt: off
     Cod__Detran as id_auto_infracao,
@@ -40,4 +43,4 @@ select distinct
     safe_cast(json_value(content, '$.NotifPen') as string) recurso_penalidade_multa,
     safe_cast(json_value(content, '$.ProcRI') as string) processo_troca_real_infrator,
 
-from {{ source("infracao_staging", "autuacoes_citran") }} as t
+from {{ source("infracao_staging", "autuacoes_citran") }}

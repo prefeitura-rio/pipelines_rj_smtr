@@ -7,6 +7,30 @@
     )
 }}
 
+{% set incremental_filter %}
+    date(data)
+    between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
+{% endset %}
+
+{% if execute %}
+    {% if is_incremental() %}
+        {% set partitions_query %}
+            select distinct concat("'", date(data_autuacao), "'") as partition_date
+            from
+                (
+                    select distinct data_autuacao
+                    from {{ ref("autuacao_citran") }}
+                    where {{ incremental_filter }}
+                    union all
+                    select distinct data_autuacao
+                    from {{ ref("autuacao_serpro") }}
+                    where {{ incremental_filter }}
+                )
+        {% endset %}
+        {% set partitions = run_query(partitions_query).columns[0].values() %}
+    {% endif %}
+{% endif %}
+
 with
     infracoes_renainf as (
         select
@@ -15,18 +39,13 @@ with
         from {{ source("infracao_staging", "infracoes_renainf") }}
     ),
     autuacao_ids as (
-        select data, id_autuacao, id_auto_infracao
+        select data, id_autuacao, id_auto_infracao, fonte
         from {{ ref("aux_autuacao_id") }}
-        {% if is_incremental() %}
-            where
-                data between date("{{var('date_range_start')}}") and date(
-                    "{{var('date_range_end')}}"
-                )
-        {% endif %}
+        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
     citran as (
-        select distinct
-            data,
+        select
+            data_autuacao as data,
             id_auto_infracao,
             datetime(concat(data, ' ', hora, ':00')) as datetime_autuacao,
             data_limite_defesa_previa,
@@ -112,16 +131,11 @@ with
             "CITRAN" as fonte,
             datetime("2023-08-26") as datetime_ultima_atualizacao
         from {{ ref("autuacao_citran") }}
-        {% if is_incremental() %}
-            where
-                data between date("{{var('date_range_start')}}") and date(
-                    "{{var('date_range_end')}}"
-                )
-        {% endif %}
+        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
     serpro as (
-        select distinct
-            data,
+        select
+            data_autuacao as data,
             id_auto_infracao,
             datetime_autuacao,
             data_limite_defesa_previa,
@@ -181,103 +195,27 @@ with
             "SERPRO" as fonte,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
         from {{ ref("autuacao_serpro") }}
-        {% if is_incremental() %}
-            where
-                data between date("{{var('date_range_start')}}") and date(
-                    "{{var('date_range_end')}}"
-                )
-        {% endif %}
+        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
     autuacao as (
-        select
-            data,
-            id_auto_infracao,
-            datetime_autuacao,
-            data_limite_defesa_previa,
-            data_limite_recurso,
-            descricao_situacao_autuacao,
-            status_infracao,
-            codigo_enquadramento,
-            pontuacao,
-            gravidade,
-            amparo_legal,
-            tipo_veiculo,
-            descricao_veiculo,
-            placa_veiculo,
-            ano_fabricacao_veiculo,
-            ano_modelo_veiculo,
-            cor_veiculo,
-            especie_veiculo,
-            uf_infrator,
-            uf_principal_condutor,
-            uf_proprietario,
-            cep_proprietario,
-            valor_infracao,
-            valor_pago,
-            data_pagamento,
-            id_autuador,
-            descricao_autuador,
-            id_municipio_autuacao,
-            descricao_municipio,
-            uf_autuacao,
-            cep_autuacao,
-            tile_autuacao,
-            processo_defesa_autuacao,
-            recurso_penalidade_multa,
-            processo_troca_real_infrator,
-            status_sne,
-            fonte,
-            datetime_ultima_atualizacao
+        select *
         from citran
         union all
-        select
-            data,
-            id_auto_infracao,
-            datetime_autuacao,
-            data_limite_defesa_previa,
-            data_limite_recurso,
-            descricao_situacao_autuacao,
-            status_infracao,
-            codigo_enquadramento,
-            pontuacao,
-            gravidade,
-            amparo_legal,
-            tipo_veiculo,
-            descricao_veiculo,
-            placa_veiculo,
-            ano_fabricacao_veiculo,
-            ano_modelo_veiculo,
-            cor_veiculo,
-            especie_veiculo,
-            uf_infrator,
-            uf_principal_condutor,
-            uf_proprietario,
-            cep_proprietario,
-            valor_infracao,
-            valor_pago,
-            data_pagamento,
-            id_autuador,
-            descricao_autuador,
-            id_municipio_autuacao,
-            descricao_municipio,
-            uf_autuacao,
-            cep_autuacao,
-            tile_autuacao,
-            processo_defesa_autuacao,
-            recurso_penalidade_multa,
-            processo_troca_real_infrator,
-            status_sne,
-            fonte,
-            datetime_ultima_atualizacao
+        select *
         from serpro
     ),
     update_partition as (
         select a.*
         from autuacao a
         {% if is_incremental() %}
-            left join {{ this }} as t using (id_auto_infracao)
+            left join
+                {{ this }} as t
+                on a.id_auto_infracao = t.id_auto_infracao
+                and a.fonte = t.fonte
+                and t.data in ({{ partitions | join(", ") }})
             where
-                a.status_infracao != t.status_infracao
+                t.id_auto_infracao is null
+                or a.status_infracao != t.status_infracao
                 or a.data_pagamento != t.data_pagamento
         {% endif %}
     )
@@ -323,5 +261,5 @@ select
     fonte,
     datetime_ultima_atualizacao
 from update_partition as u
-left join autuacao_ids as a using (data, id_auto_infracao)
+left join autuacao_ids as a using (data, id_auto_infracao, fonte)
 left join infracoes_renainf as i using (codigo_enquadramento)
