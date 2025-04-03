@@ -1596,6 +1596,7 @@ def transform_raw_to_nested_structure_chunked(
     chunksize: int,
     primary_key: list = None,
     reader_args: dict = None,
+    mode: str = "staging",
 ) -> tuple[str, str]:
     """
     Task to transform raw data to nested structure
@@ -1649,6 +1650,7 @@ def transform_raw_to_nested_structure_chunked(
                             error=error,
                             filepath=filepath,
                             args={"header": True, "mode": "w"},
+                            mode=mode,
                         )
                     else:
                         filepath = save_treated_local_func(
@@ -1657,6 +1659,7 @@ def transform_raw_to_nested_structure_chunked(
                             filepath=filepath,
                             log_param=False,
                             args={"header": False, "mode": "a"},
+                            mode=mode,
                         )
                     index += 1
 

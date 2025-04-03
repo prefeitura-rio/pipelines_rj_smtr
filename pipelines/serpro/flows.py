@@ -64,6 +64,7 @@ with Flow("SMTR: SERPRO - Captura/Tratamento") as serpro_captura:
         reader_args=constants.SERPRO_CAPTURE_PARAMS.value["pre_treatment_reader_args"],
         error=None,
         chunksize=50000,
+        mode="source",
     )
 
     errors = upload_raw_data_to_gcs(
