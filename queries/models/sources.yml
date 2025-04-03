@@ -241,4 +241,4 @@ sources:
     database: rj-smtr-staging
 
     tables:
-      - name: autuacao_serpro
+      - name: autuacao

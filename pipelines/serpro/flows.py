@@ -44,8 +44,8 @@ with Flow("SMTR: SERPRO - Captura/Tratamento") as serpro_captura:
     filenames = parse_timestamp_to_string(timestamp)
 
     local_filepaths = create_local_partition_path(
-        dataset_id=constants.AUTUACAO_DATASET_ID.value,
-        table_id=constants.AUTUACAO_SERPRO_TABLE_ID.value,
+        dataset_id=constants.SERPRO_SOURCE_NAME.value,
+        table_id=constants.AUTUACAO_TABLE_ID.value,
         partitions=partitions,
         filename=filenames,
     )
@@ -68,8 +68,8 @@ with Flow("SMTR: SERPRO - Captura/Tratamento") as serpro_captura:
     )
 
     errors = upload_raw_data_to_gcs(
-        dataset_id=constants.AUTUACAO_DATASET_ID.value,
-        table_id=constants.AUTUACAO_SERPRO_TABLE_ID.value,
+        dataset_id=constants.SERPRO_SOURCE_NAME.value,
+        table_id=constants.AUTUACAO_TABLE_ID.value,
         raw_filepath=raw_filepaths,
         partitions=partitions,
         error=None,
@@ -78,7 +78,7 @@ with Flow("SMTR: SERPRO - Captura/Tratamento") as serpro_captura:
 
     wait_captura_true = upload_staging_data_to_gcs(
         dataset_id=constants.SERPRO_SOURCE_NAME.value,
-        table_id=constants.AUTUACAO_SERPRO_TABLE_ID.value,
+        table_id=constants.AUTUACAO_TABLE_ID.value,
         staging_filepath=treated_filepaths,
         partitions=partitions,
         timestamp=timestamp,
