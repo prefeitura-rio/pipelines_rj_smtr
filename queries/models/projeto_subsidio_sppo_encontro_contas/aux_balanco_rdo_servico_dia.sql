@@ -73,7 +73,8 @@ rdo_filtrada as (
     full join sumario_dia sd -- Cenário E1
     using (data, servico)
     {# where sd.servico is null #}
-    where (sd.servico is distinct from rdo.servico) or rdo.receita_tarifaria_aferida = 0 -- Cenário E1
+    where sd.servico is distinct from rdo.servico -- Cenário E1
+
 )
 SELECT
   bsd.data,
