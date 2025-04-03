@@ -2,6 +2,9 @@
 
 - Cenário D: exatamente como foi realizado no encontro de contas 2022-2023, adicionado os dias atípicos (pois ainda não estão 100% definidos)
 - Cenário E: removidos os dias em que não houve subsídio dos serviços e adicionado os dias atípicos (pois ainda não estão 100% definidos)
+- Cenário E1: removidos os dias em que não houve subsídio dos serviços e
+              adicionado os dias atípicos (pois ainda não estão 100% definidos) e
+              adicionados os dias-serviço que foram subsidiados, mas não tem receita tarifária
 
 */
 
@@ -14,7 +17,7 @@
 
 WITH
 -- 1. Calcula a receita tarifaria por servico e dia
-rdo AS (
+rdo_raw AS (
   SELECT
     data,
     consorcio,
@@ -38,6 +41,13 @@ rdo AS (
     and (length(linha) != 4 and linha not like "2%") --  Remove rodoviarios
   group by 1,2,3,4,5,6
 ),
+rdo AS (
+  SELECT
+    *
+  from
+    rdo_raw
+  where
+  receita_tarifaria_aferida != 0),
 -- Remove servicos nao subsidiados
 sumario_dia AS (
   SELECT
@@ -59,9 +69,11 @@ sumario_dia AS (
     3),
 rdo_filtrada as (
     select rdo.* from rdo
-    left join sumario_dia sd
+    {# left join sumario_dia sd #}
+    full join sumario_dia sd -- Cenário E1
     using (data, servico)
-    where sd.servico is null
+    {# where sd.servico is null #}
+    where (sd.servico is distinct from rdo.servico) or rdo.receita_tarifaria_aferida = 0 -- Cenário E1
 )
 SELECT
   bsd.data,
