@@ -6,8 +6,8 @@ from typing import Union
 
 from prefect import task
 
+from pipelines.capture.serpro.constants import constants
 from pipelines.constants import constants as smtr_constants
-from pipelines.serpro.constants import constants
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.jdbc import JDBC
 from pipelines.utils.utils import log
@@ -44,17 +44,19 @@ def create_serpro_extractor(
         last_day = next_month - timedelta(days=1)
         end_date = last_day.date().strftime("%Y-%m-%d")
 
-        log(f"Extraction range: start_date={start_date}, end_date={end_date}")
-
         jdbc = JDBC(db_params_secret_path="radar_serpro", environment="dev")
 
         query = constants.SERPRO_CAPTURE_PARAMS.value["query"].format(
             start_date=start_date, end_date=end_date
         )
 
-        jdbc.execute_query(query)
-        columns = jdbc.get_columns()
-
+        try:
+            jdbc.execute_query(query)
+            columns = jdbc.get_columns()
+        except Exception as e:
+            log(f"Erro ao executar query ou obter colunas: {str(e)}")
+            raise
+            
         output = io.StringIO()
         csv_writer = csv.writer(output)
 
@@ -68,11 +70,10 @@ def create_serpro_extractor(
             if not rows:
                 break
 
-            for row in rows:
-                csv_writer.writerow(row)
-                total_rows += 1
+            csv_writer.writerows(rows)
+            total_rows += len(rows)
 
-        log(f"Extracted {total_rows} records from SERPRO")
+        log(f"Total de registros encontrados: {total_rows}")
 
         return output.getvalue()
 

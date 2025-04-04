@@ -254,11 +254,33 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "gratuidade": {
             "query": """
+                with cte_laudo_pdc AS (
+                    SELECT
+                        cd_cliente,
+                        data_inclusao AS data_inicio_validade,
+                        LEAD(data_inclusao) OVER(
+                            PARTITION BY cd_cliente ORDER BY data_inclusao
+                        ) AS data_fim_validade,
+                        deficiencia_permanente
+                    FROM laudo_pcd
+                ),
+                cte_estudante AS (
+                    SELECT
+                        cd_cliente,
+                        data_inclusao AS data_inicio_validade,
+                        LEAD(data_inclusao) OVER(
+                            PARTITION BY cd_cliente ORDER BY data_inclusao
+                        ) AS data_fim_validade,
+                        codigo_escola
+                    FROM estudante
+                )
                 SELECT
                     g.*,
                     t.descricao AS tipo_gratuidade,
+                    lp.data_inicio_validade,
+                    lp.data_fim_validade,
                     lp.deficiencia_permanente,
-                    re.descricao as rede_ensino
+                    re.descricao AS rede_ensino
                 FROM
                     gratuidade g
                 LEFT JOIN
@@ -266,20 +288,26 @@ class constants(Enum):  # pylint: disable=c0103
                 ON
                     g.id_tipo_gratuidade = t.id
                 LEFT JOIN
-                    laudo_pcd lp
-                USING(cd_cliente)
+                    cte_laudo_pdc lp
+                ON
+                    g.cd_cliente = lp.cd_cliente
+                    AND g.data_inclusao >= lp.data_inicio_validade
+                    AND (g.data_inclusao < lp.data_fim_validade OR lp.data_fim_validade IS NULL)
                 LEFT JOIN
-                    estudante e
-                USING(cd_cliente)
+                    cte_estudante e
+                ON
+                    g.cd_cliente = e.cd_cliente
+                    AND g.data_inclusao >= e.data_inicio_validade
+                    AND (g.data_inclusao < e.data_fim_validade OR e.data_fim_validade IS NULL)
                 LEFT JOIN
                     escola ec
                 USING(codigo_escola)
                 LEFT JOIN
                     rede_ensino re
                 ON ec.id_rede_ensino = re.id
-                WHERE
+                /*WHERE
                     g.data_inclusao BETWEEN '{start}'
-                    AND '{end}'
+                    AND '{end}'*/
             """,
             "database": "gratuidade_db",
             "primary_keys": ["id"],
