@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import csv
+import io
 from datetime import datetime, timedelta
 
 from prefect import task
@@ -40,6 +42,8 @@ def create_serpro_extractor(
         last_day = next_month - timedelta(days=1)
         end_date = last_day.date().strftime("%Y-%m-%d")
 
+        log(f"Extraction range: start_date={start_date}, end_date={end_date}")
+
         jdbc = JDBC(db_params_secret_path="radar_serpro", environment="dev")
 
         query = constants.SERPRO_CAPTURE_PARAMS.value["query"].format(
@@ -49,18 +53,25 @@ def create_serpro_extractor(
         jdbc.execute_query(query)
         columns = jdbc.get_columns()
 
-        result = []
+        output = io.StringIO()
+        csv_writer = csv.writer(output)
+
+        csv_writer.writerow(columns)
+
         batch_size = 100000
+        total_rows = 0
 
         while True:
             rows = jdbc.fetch_batch(batch_size=batch_size)
             if not rows:
                 break
+
             for row in rows:
-                result.append(dict(zip(columns, row)))
+                csv_writer.writerow(row)
+                total_rows += 1
 
-        log(f"Extracted {len(result)} records from SERPRO")
+        log(f"Extracted {total_rows} records from SERPRO")
 
-        return result
+        return output.getvalue()
 
     return extract_data
