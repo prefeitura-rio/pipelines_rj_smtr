@@ -56,7 +56,7 @@ def create_serpro_extractor(
         except Exception as e:
             log(f"Erro ao executar query ou obter colunas: {str(e)}")
             raise
-            
+
         output = io.StringIO()
         csv_writer = csv.writer(output)
 
