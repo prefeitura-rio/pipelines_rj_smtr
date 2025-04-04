@@ -51,19 +51,15 @@ def create_serpro_extractor(
                 start_date=start_date, end_date=end_date
             )
 
-            try:
-                jdbc.execute_query(query)
-                columns = jdbc.get_columns()
-            except Exception as e:
-                log(f"Erro ao executar query ou obter colunas: {str(e)}")
-                raise
+            jdbc.execute_query(query)
+            columns = jdbc.get_columns()
 
             temp_file = tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".csv")
             csv_writer = csv.writer(temp_file)
 
             csv_writer.writerow(columns)
 
-            batch_size = 100000
+            batch_size = 50000
             total_rows = 0
 
             while True:
@@ -85,5 +81,7 @@ def create_serpro_extractor(
         except Exception as e:
             log(f"Erro ao extrair dados do SERPRO: {str(e)}", level="error")
             raise
+        finally:
+            jdbc.close()
 
     return extract_data
