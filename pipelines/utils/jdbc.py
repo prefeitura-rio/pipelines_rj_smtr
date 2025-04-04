@@ -67,4 +67,13 @@ class JDBC:
         """
         Fetches all rows from the JDBC database.
         """
-        return [list(item) for item in self._cursor.fetchall()]
+        # return [list(item) for item in self._cursor.fetchall()]
+
+    def close(self) -> None:
+        """
+        Closes the cursor and the JDBC connection.
+        """
+        if self._cursor:
+            self._cursor.close()
+        if self._connection:
+            self._connection.close()
