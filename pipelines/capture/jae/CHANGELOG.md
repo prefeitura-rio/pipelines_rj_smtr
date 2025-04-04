@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [2.0.1] - 2025-04-04
+
+### Corrigido
+
+- Ajusta query de captura de gratuidades para evitar duplicação
+
 ## [2.0.0] - 2025-03-26
 
 ### Adicionado
