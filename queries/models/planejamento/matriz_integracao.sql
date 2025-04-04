@@ -2,110 +2,159 @@
     config(
         materialized="table",
         partition_by={
-            "field": "data_inicio_matriz",
+            "field": "data_inicio",
             "data_type": "date",
             "granularity": "day",
         },
     )
 }}
 
+
 with
-    matriz_staging as (
-        select
-            date(data_versao_matriz) as data_versao_matriz,
-            id_tipo_integracao,
-            primeira_perna,
-            cast(
-                if(
-                    trim(porcentagem_primeira_perna) = '',
-                    null,
-                    porcentagem_primeira_perna
-                ) as numeric
-            )
-            / 100 as porcentagem_primeira_perna,
-            segunda_perna,
-            cast(
-                if(
-                    trim(porcentagem_segunda_perna) = '',
-                    null,
-                    porcentagem_segunda_perna
-                ) as numeric
-            )
-            / 100 as porcentagem_segunda_perna,
-            terceira_perna,
-            cast(
-                if(
-                    trim(porcentagem_terceira_perna) = '',
-                    null,
-                    porcentagem_terceira_perna
-                ) as numeric
-            )
-            / 100 as porcentagem_terceira_perna,
-            cast(tempo_integracao_minutos as float64) as tempo_integracao_minutos
-        from {{ source("source_smtr", "matriz_integracao") }}
-    ),
-    data_versao as (
-        select distinct data_versao_matriz as data_inicio_matriz from matriz_staging
-    ),
-    data_fim as (
-        select
-            data_inicio_matriz,
-            date_sub(
-                lead(data_inicio_matriz) over (order by data_inicio_matriz),
-                interval 1 day
-            ) as data_fim_matriz
-        from data_versao
-    ),
-    matriz as (
-        select
-            mi.data_versao_matriz as data_inicio_matriz,
-            mi.id_tipo_integracao as id_matriz_integracao,
-            p.sequencia_integracao,
-            if(trim(p.modo) = '', null, p.modo) as modo,
-            p.percentual_rateio,
-            case
-                when mi.terceira_perna is not null and trim(mi.terceira_perna) != ''
-                then [mi.primeira_perna, mi.segunda_perna, mi.terceira_perna]
-                else [mi.primeira_perna, mi.segunda_perna]
-            end as sequencia_completa_modo,
-            case
-                when mi.porcentagem_terceira_perna is not null
-                then
-                    [
-                        mi.porcentagem_primeira_perna,
-                        mi.porcentagem_segunda_perna,
-                        mi.porcentagem_terceira_perna
-                    ]
-                else [mi.porcentagem_primeira_perna, mi.porcentagem_segunda_perna]
-            end as sequencia_completa_rateio,
-            mi.tempo_integracao_minutos
+    servicos as (
+        select * except (rn)
         from
-            matriz_staging mi,
-            unnest(
-                [
-                    struct(
-                        primeira_perna as modo,
-                        porcentagem_primeira_perna as percentual_rateio,
-                        1 as sequencia_integracao
-                    ),
-                    struct(
-                        segunda_perna as modo,
-                        porcentagem_segunda_perna as percentual_rateio,
-                        2 as sequencia_integracao
-                    ),
-                    struct(
-                        terceira_perna as modo,
-                        porcentagem_terceira_perna as percentual_rateio,
-                        3 as sequencia_integracao
-                    )
-                ]
-            ) p
+            (
+                select
+                    *,
+                    row_number() over (
+                        partition by id_servico_jae order by data_inicio_vigencia
+                    ) as rn
+                {# from {{ ref("servicos") }} #}
+                from `rj-smtr.cadastro.servicos`
+            )
+        where rn = 1
+    ),
+    transferencias as (
+        select
+            date(trim(data_inicio)) as data_inicio,
+            date(if(trim(data_fim) = '', null, trim(data_fim))) as data_fim,
+            modo_origem,
+            if(
+                trim(id_servico_jae_origem) = '', null, trim(id_servico_jae_origem)
+            ) as id_servico_jae_origem,
+            if(
+                trim(id_servico_gtfs_origem) = '', null, trim(id_servico_gtfs_origem)
+            ) as id_servico_gtfs_origem,
+            if(
+                trim(tabela_gtfs_origem) = '', null, trim(tabela_gtfs_origem)
+            ) as tabela_gtfs_origem,
+            cast(null as string) as integracao_origem,
+            modo_destino,
+            if(
+                trim(id_servico_jae_destino) = '', null, trim(id_servico_jae_destino)
+            ) as id_servico_jae_destino,
+            if(
+                trim(id_servico_gtfs_destino) = '', null, trim(id_servico_gtfs_destino)
+            ) as id_servico_gtfs_destino,
+            if(
+                trim(tabela_gtfs_destino) = '', null, trim(tabela_gtfs_destino)
+            ) as tabela_gtfs_destino,
+            cast(tempo_integracao_minutos as float64) as tempo_integracao_minutos,
+            cast(0 as numeric) as valor_transacao,
+            'Transferência' as tipo_integracao,
+            true as indicador_integracao
+        from {{ source("source_smtr", "matriz_transferencia") }}
+    ),
+    excecoes as (
+        select
+            date(trim(data_inicio)) as data_inicio,
+            date(if(trim(data_fim) = '', null, trim(data_fim))) as data_fim,
+            modo_origem,
+            if(
+                trim(id_servico_jae_origem) = '', null, trim(id_servico_jae_origem)
+            ) as id_servico_jae_origem,
+            if(
+                trim(id_servico_gtfs_origem) = '', null, trim(id_servico_gtfs_origem)
+            ) as id_servico_gtfs_origem,
+            if(
+                trim(tabela_gtfs_origem) = '', null, trim(tabela_gtfs_origem)
+            ) as tabela_gtfs_origem,
+            if(
+                trim(integracao_origem) = '', null, trim(integracao_origem)
+            ) as integracao_origem,
+            modo_destino,
+            if(
+                trim(id_servico_jae_destino) = '', null, trim(id_servico_jae_destino)
+            ) as id_servico_jae_destino,
+            if(
+                trim(id_servico_gtfs_destino) = '', null, trim(id_servico_gtfs_destino)
+            ) as id_servico_gtfs_destino,
+            if(
+                trim(tabela_gtfs_destino) = '', null, trim(tabela_gtfs_destino)
+            ) as tabela_gtfs_destino,
+            cast(tempo_integracao_minutos as float64) as tempo_integracao_minutos,
+            cast(valor_transacao as numeric) as valor_transacao,
+            tipo_integracao,
+            cast(indicador_integracao as bool) as indicador_integracao
+        from {{ source("source_smtr", "matriz_integracao_excecao") }}
+    ),
+    integracoes_regulares as (
+        select
+            data_inicio,
+            data_fim,
+            modo_origem,
+            id_servico_jae_origem,
+            id_servico_gtfs_origem,
+            tabela_gtfs_origem,
+            integracao_origem,
+            modo_destino,
+            id_servico_jae_destino,
+            id_servico_gtfs_destino,
+            tabela_gtfs_destino,
+            tempo_integracao_minutos,
+            valor_transacao,
+            tipo_integracao,
+            indicador_integracao
+        from {{ ref("aux_matriz_integracao_modo") }}
+    ),
+    matriz_completa as (
+        select *
+        from integracoes_regulares
+
+        union distinct
+
+        select *
+        from transferencias
+
+        union distinct
+
+        select *
+        from excecoes
     )
 select
-    data_inicio_matriz,
-    d.data_fim_matriz,
-    m.* except (data_inicio_matriz),
+    m.data_inicio,
+    m.data_fim,
+    m.modo_origem,
+    m.id_servico_jae_origem,
+    m.id_servico_gtfs_origem,
+    m.tabela_gtfs_origem,
+    so.servico as servico_origem,
+    so.descricao_servico as descricao_servico_origem,
+    m.integracao_origem,
+    m.modo_destino,
+    m.id_servico_jae_destino,
+    m.id_servico_gtfs_destino,
+    m.tabela_gtfs_destino,
+    sd.servico as servico_destino,
+    sd.descricao_servico as descricao_servico_destino,
+    m.tempo_integracao_minutos,
+    m.valor_transacao,
+    m.tipo_integracao,
+    m.indicador_integracao,
     '{{ var("version") }}' as versao
-from matriz m
-join data_fim d using (data_inicio_matriz)
-where modo is not null
+from matriz_completa m
+left join
+    servicos so
+    on (m.id_servico_jae_origem = so.id_servico_jae)
+    or (
+        m.id_servico_gtfs_origem = so.id_servico_gtfs
+        and m.id_servico_jae_origem is null
+    )
+left join
+    servicos sd
+    on (m.id_servico_jae_destino = sd.id_servico_jae)
+    or (
+        m.id_servico_gtfs_destino = sd.id_servico_gtfs
+        and m.id_servico_jae_destino is null
+    )
