@@ -50,9 +50,12 @@ def create_serpro_extractor(
             start_date=start_date, end_date=end_date
         )
 
-        jdbc.execute_query(query)
-        columns = jdbc.get_columns()
-
+        try:
+            jdbc.execute_query(query)
+            columns = jdbc.get_columns()
+        except Exception as e:
+            log(f"Erro ao executar query ou obter colunas: {str(e)}")
+            raise
         output = io.StringIO()
         csv_writer = csv.writer(output)
 
