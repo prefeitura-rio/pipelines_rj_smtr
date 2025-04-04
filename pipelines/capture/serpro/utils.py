@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-# import os
 import subprocess
+from datetime import datetime, timedelta
+from typing import List
 
 from prefect.engine.state import State
+from prefect.schedules import Schedule
+from prefect.schedules.clocks import DatesClock
 
 from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import log
@@ -32,3 +35,57 @@ def handler_setup_serpro(obj, old_state: State, new_state: State) -> State:
     if new_state.is_running():
         setup_serpro()
     return new_state
+
+
+def create_monthly_dates(start_date: datetime, end_date: datetime) -> List[datetime]:
+    """
+    Cria uma lista de datas no primeiro dia de cada mês, do start_date até o end_date.
+
+    Args:
+        start_date: Data inicial (será ajustada para o primeiro dia do mês)
+        end_date: Data final (será ajustada para o primeiro dia do mês)
+
+    Returns:
+        List[datetime]: Lista com o primeiro dia de cada mês no intervalo
+    """
+    current = datetime(start_date.year, start_date.month, 1)
+    dates = []
+
+    while current <= end_date:
+        dates.append(current)
+        if current.month == 12:
+            current = datetime(current.year + 1, 1, 1)
+        else:
+            current = datetime(current.year, current.month + 1, 1)
+
+    return dates
+
+
+def create_serpro_schedule() -> Schedule:
+    """
+    Cria um schedule sequencial que executa uma única vez para cada mês,
+    com execuções consecutivas espaçadas por 30 minutos.
+
+    Returns:
+        Schedule: O schedule configurado para o flow
+    """
+    start_date = datetime(2023, 5, 1)
+    end_date = datetime(2025, 3, 31)
+
+    monthly_timestamps = create_monthly_dates(start_date, end_date)
+
+    execution_dates = []
+    base_time = datetime.now() + timedelta(minutes=5)
+
+    for i, timestamp in enumerate(monthly_timestamps):
+        execution_date = base_time + timedelta(minutes=30 * i)
+        execution_dates.append(execution_date)
+
+        log(f"Mês: {timestamp.strftime('%Y-%m')} será executado em: {execution_date}")
+
+    clocks = []
+    for exec_date, timestamp in zip(execution_dates, monthly_timestamps):
+        clock = DatesClock(dates=[exec_date], parameter_defaults={"timestamp": timestamp})
+        clocks.append(clock)
+
+    return Schedule(clocks=clocks)
