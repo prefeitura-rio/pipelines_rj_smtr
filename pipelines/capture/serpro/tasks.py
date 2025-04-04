@@ -69,9 +69,8 @@ def create_serpro_extractor(
             if not rows:
                 break
 
-            for row in rows:
-                csv_writer.writerow(row)
-                total_rows += 1
+            csv_writer.writerows(rows)
+            total_rows += len(rows)
 
         log(f"Total de registros encontrados: {total_rows}")
 

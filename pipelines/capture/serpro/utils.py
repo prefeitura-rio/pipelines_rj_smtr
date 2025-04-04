@@ -6,7 +6,9 @@ from typing import List
 from prefect.engine.state import State
 from prefect.schedules import Schedule
 from prefect.schedules.clocks import DatesClock
+from pytz import timezone
 
+from pipelines.constants import constants
 from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import log
 
@@ -75,13 +77,11 @@ def create_serpro_schedule() -> Schedule:
     monthly_timestamps = create_monthly_dates(start_date, end_date)
 
     execution_dates = []
-    base_time = datetime.now() + timedelta(minutes=5)
+    base_time = datetime.now(tz=timezone(constants.TIMEZONE.value)) + timedelta(minutes=5)
 
     for i, timestamp in enumerate(monthly_timestamps):
         execution_date = base_time + timedelta(minutes=30 * i)
         execution_dates.append(execution_date)
-
-        log(f"Mês: {timestamp.strftime('%Y-%m')} será executado em: {execution_date}")
 
     clocks = []
     for exec_date, timestamp in zip(execution_dates, monthly_timestamps):
