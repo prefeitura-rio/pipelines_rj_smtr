@@ -1,5 +1,12 @@
 # Changelog - bilhetagem
 
+## [2.2.1] - 2025-04-04
+
+### Corrigido
+
+- Faz tratamento do id_cliente no modelo `staging_transacao.sql`
+- Cria possibilidade da mesma gratuidade ser atribuida a clientes diferentes no modelo `gratuidade_aux`
+
 ## [2.2.0] - 2025-03-26
 
 ### Alterado
