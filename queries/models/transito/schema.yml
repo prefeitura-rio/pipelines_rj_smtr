@@ -19,7 +19,7 @@ models:
       - name: status_infracao
         description: "{{ doc('status_infracao') }}"
       - name: codigo_enquadramento
-        description: "Código da autuação"
+        description: "{{ doc('codigo_enquadramento') }}"
       - name: tipificacao_resumida
         description: "{{ doc('tipificacao_resumida') }}"
       - name: pontuacao
@@ -27,7 +27,7 @@ models:
       - name: tipo_veiculo
         description: "{{ doc('tipo_veiculo') }}"
       - name: descricao_veiculo
-        description: "Marca/modelo do veículo"
+        description: "{{ doc('descricao_veiculo') }}"
       - name: especie_veiculo
         description: "Espécie do veículo"
       - name: uf_proprietario
@@ -81,7 +81,7 @@ models:
       - name: status_infracao
         description: "{{ doc('status_infracao') }}"
       - name: codigo_enquadramento
-        description: "Código da autuação"
+        description: "{{ doc('codigo_enquadramento') }}"
       - name: tipificacao_resumida
         description: "{{ doc('tipificacao_resumida') }}"
       - name: pontuacao
@@ -93,7 +93,7 @@ models:
       - name: tipo_veiculo
         description: "{{ doc('tipo_veiculo') }}"
       - name: descricao_veiculo
-        description: "Marca/modelo do veículo"
+        description: "{{ doc('descricao_veiculo') }}"
       - name: placa_veiculo
         description: "{{ doc('placa') }}"
         policy_tags:

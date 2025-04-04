@@ -9,7 +9,7 @@ models:
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: faixa_horaria_inicio
-        description: "Horário inicial da faixa horária"
+        description: "{{ doc('faixa_horaria_inicio') }}"
       - name: faixa_horaria_fim
         description: "{{ doc('faixa_horaria_fim') }}"
       - name: consorcio
@@ -17,11 +17,11 @@ models:
       - name: servico
         description: "Serviço realizado pelo veículo"
       - name: viagens_faixa
-        description: "Quantidade de viagens apuradas por faixa horária"
+        description: "{{ doc('viagens_faixa') }}"
       - name: km_apurada_faixa
         description: "Distância apurada para o serviço por faixa horária (km)"
       - name: km_planejada_faixa
-        description: "Distância planejada para o serviço por faixa horária (km)"
+        description: "{{ doc('km_planejada_faixa') }}"
       - name: pof
         description: "{{ doc('pof') }}"
       - name: versao

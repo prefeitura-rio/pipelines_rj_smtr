@@ -7,7 +7,7 @@ models:
       - name: servico
         description: "Nome curto da linha operada com variação de serviço (ex: 010, 011SN, ...)"
       - name: id_validador
-        description: "Número de série do validador da Jaé"
+        description: "{{ doc('id_validador') }} da Jaé"
       - name: latitude
         description: "Parte da coordenada geográfica (eixo y) em graus decimais (EPSG:4326 - WGS84)"
       - name: longitude
@@ -36,9 +36,9 @@ models:
     description: "Tabela com registros de GPS dos ônibus utilizada no dashboard de acompanhamento da implantação dos validadores da Jaé (Contem apenas dados do dia atual)"
     columns:
       - name: operadora
-        description: "Nome da operadora de transporte (mascarado se for pessoa física)"
+        description: "{{ doc('operadora') }}"
       - name: id_validador
-        description: "Número de série do validador da Jaé"
+        description: "{{ doc('id_validador') }} da Jaé"
       - name: latitude
         description: "Parte da coordenada geográfica (eixo y) em graus decimais (EPSG:4326 - WGS84)"
       - name: longitude
@@ -69,7 +69,7 @@ models:
       - name: id_operadora
         description: "Identificador da operadora na tabela cadastro.operadoras"
       - name: id_validador
-        description: "Número de série do validador"
+        description: "{{ doc('id_validador') }}"
       - name: data
         description: "{{ doc('data_captura') }}"
       - name: estado_equipamento
@@ -96,7 +96,7 @@ models:
       - name: servico
         description: "Nome curto da linha operada com variação de serviço (ex: 010, 011SN, ...)"
       - name: id_validador
-        description: "Número de série do validador"
+        description: "{{ doc('id_validador') }}"
       - name: latitude
         description: "Parte da coordenada geográfica (eixo y) em graus decimais (EPSG:4326 - WGS84)"
       - name: longitude

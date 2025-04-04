@@ -39,7 +39,7 @@ models:
         #   - no_space:
         #       partition_column: data
       - name: timestamp_gps
-        description: "Timestamp de emissão do sinal de GPS"
+        description: "{{ doc('timestamp_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -91,7 +91,7 @@ models:
         description: "{{ doc('data_captura') }} [partição]"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela) / Tabela ephemeral
       - name: timestamp_gps
-        description: "Timestamp de emissão do sinal de GPS"
+        description: "{{ doc('timestamp_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -132,7 +132,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: timestamp_gps
-        description: "Timestamp de emissão do sinal de GPS"
+        description: "{{ doc('timestamp_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -163,12 +163,12 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: timestamp_gps
-        description: "Timestamp de emissão do sinal de GPS"
+        description: "{{ doc('timestamp_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
       - name: servico_gps
-        description: "Linha de ônibus (serviço) informado pelo GPS"
+        description: "{{ doc('servico_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -197,7 +197,7 @@ models:
     description: "Tabela com estimativa das velocidades dos veículos nos últimos 10 minutos"
     columns:
       - name: timestamp_gps
-        description: "Timestamp de emissão do sinal de GPS"
+        description: "{{ doc('timestamp_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -215,7 +215,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: distancia
-        description: "Distância da última posição do GPS em relação à posição atual (m)"
+        description: "{{ doc('distancia_gps') }}"
         # tests:
         #   - not_negative:
         #       partition_column: data
@@ -256,7 +256,7 @@ models:
         #   - no_space:
         #       partition_column: data
       - name: datetime_entrada
-        description: "Datetime de entrada do veículo na linha realocada"
+        description: "{{ doc('datetime_entrada') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -301,7 +301,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: timestamp_gps
-        description: "Timestamp de emissão do sinal de GPS"
+        description: "{{ doc('timestamp_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
