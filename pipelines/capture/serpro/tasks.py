@@ -59,7 +59,7 @@ def create_serpro_extractor(
 
             csv_writer.writerow(columns)
 
-            batch_size = 100000
+            batch_size = 50000
             total_rows = 0
 
             while True:

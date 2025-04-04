@@ -67,7 +67,7 @@ class JDBC:
         """
         Fetches all rows from the JDBC database.
         """
-        # return [list(item) for item in self._cursor.fetchall()]
+        return [list(item) for item in self._cursor.fetchall()]
 
     def close(self) -> None:
         """
