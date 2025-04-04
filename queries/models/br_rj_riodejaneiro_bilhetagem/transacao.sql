@@ -111,8 +111,8 @@ with
     ),
     integracao as (
         select id_transacao, valor_rateio, datetime_processamento_integracao
-        {# from {{ ref("integracao") }} #}
-        from `rj-smtr.br_rj_riodejaneiro_bilhetagem.integracao`
+        from {{ ref("integracao") }}
+        -- `rj-smtr.br_rj_riodejaneiro_bilhetagem.integracao`
         {% if is_incremental() %}
             where
                 {% if transacao_partition_list | length > 0 %}
@@ -129,8 +129,7 @@ with
     ),
     transacao_ordem as (
         select *
-        {# from {{ ref("aux_transacao_id_ordem_pagamento") }} #}
-        from `rj-smtr.bilhetagem_staging.aux_transacao_id_ordem_pagamento`
+        from {{ ref("aux_transacao_id_ordem_pagamento") }}
         {% if is_incremental() %}
             where
                 {% if transacao_partition_list | length > 0 %}
@@ -180,16 +179,18 @@ with
             valor_transacao
         from transacao as t
         left join
-            {# {{ source("cadastro", "modos") }} m #}
-            `rj-smtr.cadastro.modos` m
+            {{ source("cadastro", "modos") }} m
+            -- `rj-smtr.cadastro.modos` m
             on t.id_tipo_modal = m.id_modo
             and m.fonte = "jae"
         left join
-            {# {{ ref("operadoras") }} do #}
-            `rj-smtr.cadastro.operadoras` do on t.cd_operadora = do.id_operadora_jae
+            {{ ref("operadoras") }} do
+            -- `rj-smtr.cadastro.operadoras` do
+            on t.cd_operadora = do.id_operadora_jae
         left join
-            {# {{ ref("consorcios") }} dc #}
-            `rj-smtr.cadastro.consorcios` dc on t.cd_consorcio = dc.id_consorcio_jae
+            {{ ref("consorcios") }} dc
+            -- `rj-smtr.cadastro.consorcios` dc
+            on t.cd_consorcio = dc.id_consorcio_jae
         left join {{ ref("staging_linha") }} l on t.cd_linha = l.cd_linha
         -- LEFT JOIN
         -- {{ ref("servicos") }} AS s
@@ -351,11 +352,7 @@ with
                     i.id_transacao is not null
                     or o.id_transacao is not null
                     or date(t.datetime_processamento)
-                    {# < (select max(data_ordem) from {{ ref("ordem_pagamento_dia") }}) #}
-                    < (
-                        select max(data_ordem)
-                        from `rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_dia`
-                    )
+                    < (select max(data_ordem) from {{ ref("ordem_pagamento_dia") }})
                 then coalesce(i.valor_rateio, t.valor_transacao) * 0.96
             end as valor_pagamento,
             o.data_ordem,
