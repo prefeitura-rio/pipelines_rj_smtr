@@ -1,46 +1,24 @@
+/*
+
+- Cenário F: exatamente como foi realizado no encontro de contas 2022-2023, adicionado os dias atípicos (pois ainda não estão 100% definidos)
+- Cenário G: removidos os dias em que não houve subsídio dos serviços e
+             adicionado os dias atípicos (pois ainda não estão 100% definidos)
+- Cenário H: removidos os dias em que não houve subsídio dos serviços e
+             adicionado os dias atípicos (pois ainda não estão 100% definidos) e
+             adicionados os dias-serviço que foram subsidiados, mas não tem receita tarifária
+
+*/
+
+
 {{
     config(
         materialized="ephemeral",
     )
 }}
 
--- 0. Lista servicos e dias atípicos (pagos por recurso)
 WITH
-  recursos AS (
-  SELECT
-    data,
-    id_recurso,
-    tipo_recurso,
-    servico,
-    SUM(valor_pago) AS valor_pago
-  FROM
-    {{ ref("recursos_sppo_servico_dia_pago") }}
-    -- `rj-smtr`.`br_rj_riodejaneiro_recursos`.`recursos_sppo_servico_dia_pago`
-  GROUP BY
-    1,
-    2,
-    3,
-    4),
-servico_dia_atipico as (
-SELECT
-  DISTINCT data, servico
-FROM
-  recursos
-WHERE
-  -- Quando o valor do recurso pago for R$ 0, desconsidera-se o recurso, pois:
-    -- Recurso pode ter sido cancelado (pago e depois revertido)
-    -- Problema reporto não gerou impacto na operação (quando aparece apenas 1 vez)
-  valor_pago != 0
-  -- Desconsideram-se recursos do tipo "Algoritmo" (igual a apuração em produção, levantado pela TR/SUBTT/CMO)
-  -- Desconsideram-se recursos do tipo "Viagem Individual" (não afeta serviço-dia)
-  AND tipo_recurso NOT IN ("Algoritmo", "Viagem Individual")
-  -- Desconsideram-se recursos de reprocessamento que já constam em produção
-  AND NOT (data BETWEEN "2022-06-01" AND "2022-06-30"
-            AND tipo_recurso = "Reprocessamento")
-),
-
--- 3. Calcula a receita tarifaria por servico e dia
-rdo AS (
+-- 1. Calcula a receita tarifaria por servico e dia
+rdo_raw AS (
   SELECT
     data,
     consorcio,
@@ -55,15 +33,22 @@ rdo AS (
     ordem_servico,
     round(SUM(receita_buc) + SUM(receita_buc_supervia) + SUM(receita_cartoes_perna_unica_e_demais) + SUM(receita_especie), 0) AS receita_tarifaria_aferida
   FROM
-    {{ ref("rdo40_registros") }}
-    -- `rj-smtr`.`br_rj_riodejaneiro_rdo`.`rdo40_registros`
+    {# {{ ref("rdo40_registros") }} #}
+    `rj-smtr`.`br_rj_riodejaneiro_rdo`.`rdo40_registros`
   WHERE
-    DATA BETWEEN "2022-06-01" AND "2023-12-31"
-    AND DATA NOT IN ("2022-10-02", "2022-10-30", '2023-02-07', '2023-02-08', '2023-02-10', '2023-02-13', '2023-02-17', '2023-02-18', '2023-02-19', '2023-02-20', '2023-02-21', '2023-02-22')
+    DATA BETWEEN "{{ var('start_date') }}" AND "{{ var('end_date') }}"
+    {# AND DATA NOT IN ("2022-10-02", "2022-10-30", '2023-02-07', '2023-02-08', '2023-02-10', '2023-02-13', '2023-02-17', '2023-02-18', '2023-02-19', '2023-02-20', '2023-02-21', '2023-02-22') #}
     and consorcio in ("Internorte", "Intersul", "Santa Cruz", "Transcarioca")
-    and (length(linha) != 4 and linha not like "2%") --  Remove rodoviarios
+    and (length(IFNULL(REGEXP_EXTRACT(linha, r"[0-9]+"), "")) != 4 and IFNULL(REGEXP_EXTRACT(linha, r"[0-9]+"), "") not like "2%") --  Remove rodoviarios
   group by 1,2,3,4,5,6
 ),
+rdo AS (
+  SELECT
+    *
+  from
+    rdo_raw
+  where
+  receita_tarifaria_aferida != 0),
 -- Remove servicos nao subsidiados
 sumario_dia AS (
   SELECT
@@ -73,27 +58,24 @@ sumario_dia AS (
     SUM(km_apurada) AS km_subsidiada,
     sum(valor_subsidio_pago) as subsidio_pago
   FROM
-    {{ ref("sumario_servico_dia_historico") }}
-    -- `rj-smtr.dashboard_subsidio_sppo.sumario_servico_dia_historico`
+    {# {{ ref("sumario_servico_dia_historico") }} #}
+    {# `rj-smtr.monitoramento.sumario_servico_dia_historico` #}
+    {{ ref("staging_encontro_contas_sumario_servico_dia_historico") }}
   WHERE
-    DATA BETWEEN "2022-06-01"
-    AND "2023-12-31"
-    and valor_subsidio_pago = 0
+    DATA BETWEEN "{{ var('start_date') }}"
+    AND "{{ var('end_date') }}"
+    {# and valor_subsidio_pago = 0 -- Desabilitar para Cenário G #}
   GROUP BY
     1,
     2,
     3),
 rdo_filtrada as (
-    select rdo.* from
-    (
-      select * from rdo
-      left join servico_dia_atipico sda
-      using (data, servico)
-      where sda.data is null
-    ) rdo
-    left join sumario_dia sd
+    select rdo.* from rdo
+    {# left join sumario_dia sd #}
+    full join sumario_dia sd -- Cenário H
     using (data, servico)
-    where sd.servico is null
+    {# where sd.servico is null #}
+    where sd.servico is distinct from rdo.servico -- Cenário H
 )
 SELECT
   bsd.data,
