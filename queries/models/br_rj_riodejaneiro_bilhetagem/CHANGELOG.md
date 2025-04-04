@@ -1,5 +1,12 @@
 # Changelog - bilhetagem
 
+## [2.2.1] - 2025-04-04
+
+### Corrigido
+
+- Faz tratamento do id_cliente no modelo `staging_transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/517)
+- Cria possibilidade da mesma gratuidade ser atribuida a clientes diferentes no modelo `gratuidade_aux` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/517)
+
 ## [2.2.0] - 2025-03-26
 
 ### Alterado
