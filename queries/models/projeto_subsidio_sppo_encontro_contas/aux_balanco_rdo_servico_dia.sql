@@ -5,7 +5,7 @@
 - Cenário E1: removidos os dias em que não houve subsídio dos serviços e
               adicionado os dias atípicos (pois ainda não estão 100% definidos) e
               adicionados os dias-serviço que foram subsidiados, mas não tem receita tarifária
-
+- Cenário E2: cenário E1 com correções
 */
 
 
@@ -38,7 +38,7 @@ rdo_raw AS (
     DATA BETWEEN "{{ var('start_date') }}" AND "{{ var('end_date') }}"
     {# AND DATA NOT IN ("2022-10-02", "2022-10-30", '2023-02-07', '2023-02-08', '2023-02-10', '2023-02-13', '2023-02-17', '2023-02-18', '2023-02-19', '2023-02-20', '2023-02-21', '2023-02-22') #}
     and consorcio in ("Internorte", "Intersul", "Santa Cruz", "Transcarioca")
-    and (length(linha) != 4 and linha not like "2%") --  Remove rodoviarios
+    and (length(IFNULL(REGEXP_EXTRACT(linha, r"[0-9]+"), "")) != 4 and IFNULL(REGEXP_EXTRACT(linha, r"[0-9]+"), "") not like "2%") --  Remove rodoviarios
   group by 1,2,3,4,5,6
 ),
 rdo AS (
