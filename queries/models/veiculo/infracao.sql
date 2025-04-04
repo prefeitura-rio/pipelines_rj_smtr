@@ -1,44 +1,32 @@
-
+-- depends_on: {{ ref('infracao_data_versao_efetiva') }}
 {{
-  config(
-    materialized='incremental',
-    partition_by={
-      "field":"data",
-      "data_type": "date",
-      "granularity":"day"
-    },
-    unique_key=['data', 'id_auto_infracao'],
-    incremental_strategy='insert_overwrite'
-  )
+    config(
+        materialized="incremental",
+        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+        incremental_strategy="insert_overwrite",
+    )
 }}
 
-{%- if execute and is_incremental() %}
-  {% set infracao_date = run_query(get_violation_date()).columns[0].values()[0] %}
-{% endif -%}
-
-WITH infracao AS (
-  SELECT
-    * EXCEPT(data),
-    SAFE_CAST(data AS DATE) AS data
-  FROM
-    {{ ref("infracao_staging") }} as t
-  {% if is_incremental() %}
-    WHERE
-      DATE(data) = DATE("{{ infracao_date }}")
-  {% endif %}
-),
-infracao_rn AS (
-  SELECT
+{% if is_incremental() and execute %}
+    {% set infracao_dates = run_query(get_version_dates('infracao_data_versao_efetiva')) %}
+    {% set min_infracao_date = infracao_dates.columns[0].values()[0]%}
+    {% set max_infracao_date = infracao_dates.columns[1].values()[0]%}
+{% endif %}
+with
+    infracao as (
+        select * except (data), date(data) as data
+        from {{ ref("infracao_staging") }} as i
+        {% if is_incremental() %}
+            where date(data) between date("{{ min_infracao_date }}") and date("{{ max_infracao_date }}")
+        {% endif %}
+    )
+select
     *,
-    ROW_NUMBER() OVER (PARTITION BY data, id_auto_infracao ORDER BY timestamp_captura DESC) rn
-  FROM
-    infracao
-)
-SELECT
-  * EXCEPT(rn),
-  CURRENT_DATETIME("America/Sao_Paulo") AS datetime_ultima_atualizacao,
-  "{{ var("version") }}" AS versao
-FROM
-  infracao_rn
-WHERE
-  rn = 1
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+    "{{ var('version') }}" as versao
+from infracao
+qualify
+    row_number() over (
+        partition by data, id_auto_infracao order by timestamp_captura desc
+    )
+    = 1
