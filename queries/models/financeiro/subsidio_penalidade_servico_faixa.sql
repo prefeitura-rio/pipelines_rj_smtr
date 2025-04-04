@@ -50,8 +50,8 @@ with
             perc_km_inferior,
             perc_km_superior,
             ifnull(- valor, 0) as valor_penalidade
-        from {{ ref("valor_tipo_penalidade") }}
-    -- from `rj-smtr.dashboard_subsidio_sppo.valor_tipo_penalidade`
+        from -- {{ ref("valor_tipo_penalidade") }}
+    `rj-smtr.dashboard_subsidio_sppo.valor_tipo_penalidade`
     )
 select
     s.data,

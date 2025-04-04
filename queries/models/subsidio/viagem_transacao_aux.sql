@@ -7,8 +7,8 @@ with
     -- 1. Transações Jaé
     transacao as (
         select id_veiculo, datetime_transacao
-        from {{ ref("transacao") }}
-        -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
+        -- from {{ ref("transacao") }}
+        from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
@@ -19,8 +19,8 @@ with
     -- 2. Transações RioCard
     transacao_riocard as (
         select id_veiculo, datetime_transacao
-        from {{ ref("transacao_riocard") }}
-        -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard`
+        -- from {{ ref("transacao_riocard") }}
+        from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard`
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
@@ -38,8 +38,8 @@ with
             estado_equipamento,
             latitude,
             longitude
-        from {{ ref("gps_validador") }}
-        -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador`
+        -- from {{ ref("gps_validador") }}
+        from `rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador`
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day

@@ -16,7 +16,8 @@
             else
                 (
                     select min(date(data))
-                    from {{ ref("licenciamento_stu_staging") }}
+                    {# from {{ ref("licenciamento_stu_staging") }} #}
+                    from rj-smtr.veiculo_staging.licenciamento_stu
                     where
                         date(data)
                         >= date_add(date("{{ var('run_date') }}"), interval 5 day)

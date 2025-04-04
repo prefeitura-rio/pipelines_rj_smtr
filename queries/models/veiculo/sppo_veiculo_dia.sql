@@ -1,6 +1,6 @@
--- depends_on: {{ ref('licenciamento_stu_staging') }}
+{# -- depends_on: {{ ref('licenciamento_stu_staging') }}
 -- depends_on: {{ ref("infracao") }}
--- depends_on: {{ ref("infracao_staging") }}
+-- depends_on: {{ ref("infracao_staging") }} #}
 {{
     config(
         materialized="incremental",
@@ -62,23 +62,25 @@ with
     ),
     gps as (
         select distinct data, id_veiculo
-        from {{ ref("gps_sppo") }}
-           -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
+        {# from {{ ref("gps_sppo") }} #}
+        from `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
         where data = date("{{ var('run_date') }}")
     ),
     autuacoes as (
         select distinct data_infracao as data, placa, id_infracao
         from {{ ref("sppo_infracao") }}
-        -- `rj-smtr.veiculo.sppo_infracao`
         where
+        {%- if execute %}
+            {% set infracao_date = run_query("SELECT MIN(data) FROM rj-smtr.veiculo.infracao WHERE data >= DATE_ADD(DATE('2024-10-15'), INTERVAL 7 DAY)").columns[0].values()[0] %}
+        {% endif -%}
             data = date("{{ infracao_date }}")
             and data_infracao = date("{{ var('run_date') }}")
     ),
     registros_agente_verao as (
         select distinct
             data, id_veiculo, true as indicador_registro_agente_verao_ar_condicionado
-        from {{ ref("sppo_registro_agente_verao") }}
-        -- `rj-smtr.veiculo.sppo_registro_agente_verao`
+        {# from {{ ref("sppo_registro_agente_verao") }} #}
+        from `rj-smtr.veiculo.sppo_registro_agente_verao`
         where data = date("{{ var('run_date') }}")
     ),
     autuacao_ar_condicionado as (
@@ -261,8 +263,8 @@ with
         "{{ var('version') }}" as versao
     from gps_licenciamento_autuacao as gla
     left join
-        {{ ref("subsidio_parametros") }} as p
-        -- `rj-smtr.dashboard_subsidio_sppo.subsidio_parametros` AS p
+        {# {{ ref("subsidio_parametros") }} as p #}
+         `rj-smtr.dashboard_subsidio_sppo.subsidio_parametros` AS p
         on gla.indicadores.indicador_licenciado = p.indicador_licenciado
         and gla.indicadores.indicador_ar_condicionado = p.indicador_ar_condicionado
         and gla.indicadores.indicador_autuacao_ar_condicionado

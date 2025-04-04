@@ -36,8 +36,8 @@ with
             max(subsidio_km) over (
                 partition by data_inicio, data_fim
             ) as subsidio_km_teto
-        from {{ ref("valor_km_tipo_viagem") }}
-    -- from `rj-smtr.subsidio.valor_km_tipo_viagem`
+    --    from {{ ref("valor_km_tipo_viagem") }}
+     from `rj-smtr.subsidio.valor_km_tipo_viagem`
     ),
     penalidade as (
         select
