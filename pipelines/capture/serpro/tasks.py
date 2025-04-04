@@ -18,7 +18,7 @@ from pipelines.utils.utils import log
 )
 def create_serpro_extractor(
     source: SourceTable,  # pylint: disable=W0613
-    timestamp: datetime,
+    timestamp_str: str,
 ):
     """
     Cria uma função para extrair dados do SERPRO
@@ -32,6 +32,7 @@ def create_serpro_extractor(
     """
 
     def extract_data():
+        timestamp = datetime.fromisoformat(timestamp_str)
         start_date = timestamp.date().strftime("%Y-%m-%d")
 
         if timestamp.month == 12:

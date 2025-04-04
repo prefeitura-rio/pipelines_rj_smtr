@@ -85,7 +85,8 @@ def create_serpro_schedule() -> Schedule:
 
     clocks = []
     for exec_date, timestamp in zip(execution_dates, monthly_timestamps):
-        clock = DatesClock(dates=[exec_date], parameter_defaults={"timestamp": timestamp})
+        timestamp_str = timestamp.isoformat()
+        clock = DatesClock(dates=[exec_date], parameter_defaults={"timestamp_str": timestamp_str})
         clocks.append(clock)
 
     return Schedule(clocks=clocks)
