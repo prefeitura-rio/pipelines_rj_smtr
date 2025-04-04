@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 from prefect.run_configs import KubernetesRun
+from prefeitura_rio.pipelines_utils.state_handlers import (
+    handler_initialize_sentry,
+    handler_inject_bd_credentials,
+)
 
 from pipelines.capture.serpro.constants import constants
 from pipelines.capture.serpro.tasks import create_serpro_extractor
@@ -19,4 +23,8 @@ CAPTURA_SERPRO.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE_FEDORA.value,
     labels=[smtr_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
 )
-CAPTURA_SERPRO.state_handlers = [handler_setup_serpro]
+CAPTURA_SERPRO.state_handlers = [
+    handler_setup_serpro,
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+]
