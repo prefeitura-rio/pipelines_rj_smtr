@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import csv
-import io
+import os
+import tempfile
 from datetime import datetime, timedelta
 from typing import Union
 
@@ -45,35 +46,42 @@ def create_serpro_extractor(
         end_date = last_day.date().strftime("%Y-%m-%d")
 
         jdbc = JDBC(db_params_secret_path="radar_serpro", environment="dev")
-
-        query = constants.SERPRO_CAPTURE_PARAMS.value["query"].format(
-            start_date=start_date, end_date=end_date
-        )
-
         try:
+            query = constants.SERPRO_CAPTURE_PARAMS.value["query"].format(
+                start_date=start_date, end_date=end_date
+            )
+
             jdbc.execute_query(query)
             columns = jdbc.get_columns()
+
+            temp_file = tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".csv")
+            csv_writer = csv.writer(temp_file)
+
+            csv_writer.writerow(columns)
+
+            batch_size = 50000
+            total_rows = 0
+
+            while True:
+                rows = jdbc.fetch_batch(batch_size=batch_size)
+                if not rows:
+                    break
+
+                for row in rows:
+                    csv_writer.writerow(row)
+                    total_rows += 1
+
+            log(f"Total de registros encontrados: {total_rows}")
+
+            with open(temp_file.name, "r") as f:
+                result = f.read()
+
+            os.unlink(temp_file.name)
+            return result
         except Exception as e:
-            log(f"Erro ao executar query ou obter colunas: {str(e)}")
+            log(f"Erro ao extrair dados do SERPRO: {str(e)}", level="error")
             raise
-        output = io.StringIO()
-        csv_writer = csv.writer(output)
-
-        csv_writer.writerow(columns)
-
-        batch_size = 100000
-        total_rows = 0
-
-        while True:
-            rows = jdbc.fetch_batch(batch_size=batch_size)
-            if not rows:
-                break
-
-            csv_writer.writerows(rows)
-            total_rows += len(rows)
-
-        log(f"Total de registros encontrados: {total_rows}")
-
-        return output.getvalue()
+        finally:
+            jdbc.close()
 
     return extract_data
