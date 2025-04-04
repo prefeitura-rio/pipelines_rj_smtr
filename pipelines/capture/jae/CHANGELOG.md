@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Ajusta query de captura de gratuidades para evitar duplicação
+- Ajusta query de captura de gratuidades para evitar duplicação (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/517)
 
 ## [2.0.0] - 2025-03-26
 
