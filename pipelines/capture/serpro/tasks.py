@@ -2,6 +2,7 @@
 import csv
 import io
 from datetime import datetime, timedelta
+from typing import Union
 
 from prefect import task
 
@@ -17,8 +18,7 @@ from pipelines.utils.utils import log
     retry_delay=timedelta(seconds=smtr_constants.RETRY_DELAY.value),
 )
 def create_serpro_extractor(
-    source: SourceTable,  # pylint: disable=W0613
-    timestamp_str: str,
+    source: SourceTable, timestamp: Union[str, datetime]  # pylint: disable=W0613
 ):
     """
     Cria uma função para extrair dados do SERPRO
@@ -32,13 +32,14 @@ def create_serpro_extractor(
     """
 
     def extract_data():
-        timestamp = datetime.fromisoformat(timestamp_str)
-        start_date = timestamp.date().strftime("%Y-%m-%d")
+        ts = datetime.fromisoformat(timestamp) if isinstance(timestamp, str) else timestamp
 
-        if timestamp.month == 12:
-            next_month = timestamp.replace(year=timestamp.year + 1, month=1, day=1)
+        start_date = ts.date().strftime("%Y-%m-%d")
+
+        if ts.month == 12:
+            next_month = ts.replace(year=ts.year + 1, month=1, day=1)
         else:
-            next_month = timestamp.replace(month=timestamp.month + 1, day=1)
+            next_month = ts.replace(month=ts.month + 1, day=1)
 
         last_day = next_month - timedelta(days=1)
         end_date = last_day.date().strftime("%Y-%m-%d")
