@@ -6,7 +6,7 @@ Constant values for rj_smtr serpro
 from datetime import datetime
 from enum import Enum
 
-from pipelines.schedules import create_hourly_cron
+from pipelines.schedules import create_minute_cron
 from pipelines.utils.gcp.bigquery import SourceTable
 
 
@@ -30,9 +30,8 @@ class constants(Enum):  # pylint: disable=c0103
             FROM
                 dbpro_radar_view_SMTR_VBL.tb_infracao_view
             WHERE
-                PARSEDATE(SUBSTRING(auinf_dt_infracao, 1, 10), 'yyyy-MM-dd')
-                BETWEEN PARSEDATE('{start_date}', 'yyyy-MM-dd')
-                AND PARSEDATE('{end_date}', 'yyyy-MM-dd')
+                PARSEDATE(data_atualizacao_dl, 'yyyy-MM-dd') =
+                PARSEDATE('{update_date}', 'yyyy-MM-dd')
         """,
         "primary_key": ["auinf_num_auto"],
         "save_bucket_names": SERPRO_PRIVATE_BUCKET_NAMES,
@@ -43,7 +42,7 @@ class constants(Enum):  # pylint: disable=c0103
         source_name=SERPRO_SOURCE_NAME,
         table_id=AUTUACAO_TABLE_ID,
         first_timestamp=datetime(2025, 3, 29, 0, 0, 0),
-        schedule_cron=create_hourly_cron(),
+        schedule_cron=create_minute_cron(minute=30),
         partition_date_only=True,
         primary_keys=SERPRO_CAPTURE_PARAMS["primary_key"],
         pretreatment_reader_args=SERPRO_CAPTURE_PARAMS["pre_treatment_reader_args"],

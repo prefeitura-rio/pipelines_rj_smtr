@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+import csv
+import os
 import subprocess
+import tempfile
 from datetime import datetime, timedelta
 from typing import List
 
@@ -8,7 +11,9 @@ from prefect.schedules import Schedule
 from prefect.schedules.clocks import DatesClock
 from pytz import timezone
 
+from pipelines.capture.serpro.constants import constants as serpro_constants
 from pipelines.constants import constants
+from pipelines.utils.jdbc import JDBC
 from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import log
 
@@ -90,3 +95,59 @@ def create_serpro_schedule() -> Schedule:
         clocks.append(clock)
 
     return Schedule(clocks=clocks)
+
+
+def extract_serpro_data(timestamp):
+    """
+    Extrai dados do SERPRO
+
+    Args:
+        timestamp (datetime ou str): Timestamp da execução
+
+    Returns:
+        str: Dados extraídos em formato CSV
+    """
+    ts = datetime.fromisoformat(timestamp) if isinstance(timestamp, str) else timestamp
+
+    update_date = ts.date().strftime("%Y-%m-%d")
+
+    try:
+        jdbc = JDBC(db_params_secret_path="radar_serpro", environment="dev")
+
+        query = serpro_constants.SERPRO_CAPTURE_PARAMS.value["query"].format(
+            update_date=update_date
+        )
+
+        jdbc.execute_query(query)
+        columns = jdbc.get_columns()
+
+        with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".csv") as temp_file:
+            csv_writer = csv.writer(temp_file)
+
+            csv_writer.writerow(columns)
+
+            batch_size = 50000
+            total_rows = 0
+
+            while True:
+                rows = jdbc.fetch_batch(batch_size=batch_size)
+                if not rows:
+                    break
+
+                csv_writer.writerows(rows)
+                total_rows += len(rows)
+
+            temp_file_name = temp_file.name
+
+            log(f"Total de registros encontrados: {total_rows}")
+
+            with open(temp_file_name, "r") as f:
+                result = f.read()
+
+            os.unlink(temp_file_name)
+            return result
+    except Exception as e:
+        log(f"Erro ao extrair dados do SERPRO: {str(e)}", level="error")
+        raise
+    finally:
+        jdbc.close()
