@@ -305,9 +305,9 @@ class constants(Enum):  # pylint: disable=c0103
                 LEFT JOIN
                     rede_ensino re
                 ON ec.id_rede_ensino = re.id
-                WHERE
+                /*WHERE
                     g.data_inclusao BETWEEN '{start}'
-                    AND '{end}'
+                    AND '{end}'*/
             """,
             "database": "gratuidade_db",
             "primary_keys": ["id"],
