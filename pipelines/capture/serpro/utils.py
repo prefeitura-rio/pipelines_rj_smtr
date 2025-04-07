@@ -76,7 +76,7 @@ def create_serpro_schedule() -> Schedule:
     Returns:
         Schedule: O schedule configurado para o flow
     """
-    start_date = datetime(2023, 5, 1)
+    start_date = datetime(2023, 8, 1)
     end_date = datetime(2025, 3, 31)
 
     monthly_timestamps = create_monthly_dates(start_date, end_date)

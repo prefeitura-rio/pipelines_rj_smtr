@@ -37,6 +37,7 @@ class constants(Enum):  # pylint: disable=c0103
         "save_bucket_names": SERPRO_PRIVATE_BUCKET_NAMES,
         "pre_treatment_reader_args": {"dtype": "object"},
     }
+    # alterar where
 
     AUTUACAO_SOURCE = SourceTable(
         source_name=SERPRO_SOURCE_NAME,

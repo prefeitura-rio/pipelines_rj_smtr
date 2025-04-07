@@ -27,5 +27,5 @@ def create_serpro_extractor(
     Returns:
         Callable: Função para extração dos dados
     """
-
+    
     return partial(extract_serpro_data, timestamp=timestamp)
