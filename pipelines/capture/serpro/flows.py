@@ -30,5 +30,3 @@ CAPTURA_SERPRO.state_handlers = [
 ]
 
 CAPTURA_SERPRO.schedule = create_serpro_schedule()
-
-# triger CD
