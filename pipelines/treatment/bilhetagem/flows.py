@@ -69,5 +69,3 @@ TRANSACAO_VALOR_ORDEM_MATERIALIZACAO = create_default_materialization_flow(
     ],
     generate_schedule=False,
 )
-
-# gps validador (?)
