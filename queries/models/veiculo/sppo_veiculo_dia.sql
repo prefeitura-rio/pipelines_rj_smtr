@@ -70,9 +70,9 @@ with
         select distinct data_infracao as data, placa, id_infracao
         from {{ ref("sppo_infracao") }}
         where
-        {%- if execute %}
+        {# {% if execute %}
             {% set infracao_date = run_query("SELECT MIN(data) FROM rj-smtr.veiculo.infracao WHERE data >= DATE_ADD(DATE('2024-10-15'), INTERVAL 7 DAY)").columns[0].values()[0] %}
-        {% endif -%}
+        {% endif %} #}
             data = date("{{ infracao_date }}")
             and data_infracao = date("{{ var('run_date') }}")
     ),
