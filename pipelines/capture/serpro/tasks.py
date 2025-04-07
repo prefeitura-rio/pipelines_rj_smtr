@@ -55,9 +55,9 @@ def create_serpro_extractor(
             current_date = start_date
             partition_size = timedelta(days=5)
 
-            jdbc = JDBC(db_params_secret_path="radar_serpro", environment="dev")
-
             try:
+                jdbc = JDBC(db_params_secret_path="radar_serpro", environment="dev")
+
                 while current_date <= end_date:
                     partition_end = min(current_date + partition_size, end_date)
 
@@ -88,6 +88,10 @@ def create_serpro_extractor(
                 log(f"Total de registros encontrados: {total_rows}")
 
                 temp_file_name = temp_file.name
+
+            except Exception as e:
+                log(f"Erro ao extrair dados do SERPRO: {str(e)}", level="error")
+                raise
             finally:
                 jdbc.close()
 
