@@ -307,7 +307,7 @@ class constants(Enum):  # pylint: disable=c0103
                 ON ec.id_rede_ensino = re.id
                 WHERE
                     g.data_inclusao BETWEEN '{start}'
-                    AND '{end}';
+                    AND '{end}'
             """,
             "database": "gratuidade_db",
             "primary_keys": ["id"],
