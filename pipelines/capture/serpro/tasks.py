@@ -32,7 +32,7 @@ def create_serpro_extractor(
         Callable: Função para extração dos dados
     """
 
-    def extract_data(timestamp):
+    def extract_data():
         """
         Extrai dados do SERPRO
         """
