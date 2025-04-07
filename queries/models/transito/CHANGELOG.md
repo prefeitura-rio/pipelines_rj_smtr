@@ -1,4 +1,15 @@
-# Changelog - infracao
+# Changelog - transito
+
+## [1.0.3] - 2025-04-08
+
+## Adicionado
+
+- Adicionada a view `autuacao_serpro` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/526)
+- Adicionada a tabela `aux_autuacao_id` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/526)
+
+## Alterado
+
+- Alterado a tabela `autuacao` incluindo join da view `autuacao_serpro` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/526)
 
 ## [1.0.2] - 2024-09-06
 
