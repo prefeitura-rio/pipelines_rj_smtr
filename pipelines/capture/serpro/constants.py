@@ -16,6 +16,8 @@ class constants(Enum):  # pylint: disable=c0103
     """
 
     AUTUACAO_TABLE_ID = "autuacao"
+    AUTUACAO_MATERIALIZACAO_DATASET_ID = "transito"
+    AUTUACAO_MATERIALIZACAO_TABLE_ID = "autuacao"
     SERPRO_SOURCE_NAME = "serpro"
 
     SERPRO_PRIVATE_BUCKET_NAMES = {

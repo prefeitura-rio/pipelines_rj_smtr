@@ -1,16 +1,22 @@
 # Changelog - pipelines
 
-## [1.0.3] - 2025-03-10
+## [1.0.4] - 2025-03-10
 
 ### Alterado
 
 - Altera IP dos bancos principal_db e gratuidade_db da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/472)
 
-## [1.0.2] - 2025-01-11
+## [1.0.3] - 2025-01-11
 
 ### Adicionado
 
 - Adiciona task `transform_task_state` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/423)
+
+## [1.0.2] - 2025-01-10
+
+### Adicionado
+
+- Adiciona task `get_timestamp_range` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/255)
 
 ## [1.0.1] - 2024-12-13
 
