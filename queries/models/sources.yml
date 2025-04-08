@@ -220,10 +220,12 @@ sources:
       - name: viagem_informada
 
   - name: source_smtr
-    database: rj-smtr-dev
+    database: rj-smtr-staging
 
     tables:
-      - name: matriz_integracao
+      - name: matriz_reparticao_tarifaria
+      - name: matriz_transferencia
+      - name: matriz_integracao_excecao
 
   - name: subsidio_staging
     database: rj-smtr
