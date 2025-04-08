@@ -1,14 +1,14 @@
 # Changelog - veiculo
 
-## [2.0.5] - 2025-03-21
+## [2.0.5] - 2025-04-08
 
-### Corrigido
-- Corrigida a coluna placa no modelo `infracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/434)
+### Adicionado
+- Adicionados os modelos `infracao_data_versao_efetiva.sql` e `licenciamento_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/434)
 
 ### Alterado
-- Removida a da coluna status e adicionados os dados do modelo `sppo_licenciamento_solicitacao` entre `2022-03-21` e `2023-03-09` no modelo `licenciamento.sql`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/434)
-- Refatorada a query final no modelo `sppo_veiculo_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/434)
 - Refatorados os modelos `licenciamento.sql`, `infracao.sql` e `sppo_veiculo_dia.sql` para materializar períodos inteiros de uma vez (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/434)
+
+- Substituídas as macros `get_license_date.sql` e `get_violation_date.sql` por `get_version_dates.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/434)
 
 ## [2.0.4] - 2025-02-24
 
@@ -62,7 +62,7 @@
 
 ### Adicionado
 
-- Criada macro `get_license_dates.sql` para retornar relacionamento entre `run_date` e data de licenciamento dos modelos `sppo_licenciamento_stu_staging.sql`, `sppo_licenciamento.sql` e `sppo_veiculo_dia.sql`. Nesta macro, serão admitidas apenas versões do STU igual ou após 2024-04-09 a partir de abril/24 devido à falha de atualização na fonte da dados (SIURB) (https://github.com/prefeitura-rio/queries-rj-smtr/pull/280)
+- Criada macro `get_license_date.sql` para retornar relacionamento entre `run_date` e data de licenciamento dos modelos `sppo_licenciamento_stu_staging.sql`, `sppo_licenciamento.sql` e `sppo_veiculo_dia.sql`. Nesta macro, serão admitidas apenas versões do STU igual ou após 2024-04-09 a partir de abril/24 devido à falha de atualização na fonte da dados (SIURB) (https://github.com/prefeitura-rio/queries-rj-smtr/pull/280)
 
 ### Corrigido
 
