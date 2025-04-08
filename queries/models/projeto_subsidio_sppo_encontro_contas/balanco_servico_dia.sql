@@ -53,7 +53,7 @@ sumario_dia AS (  -- Km apurada por servico e dia
   WHERE
     DATA BETWEEN "{{ var('start_date') }}"
     AND "{{ var('end_date') }}"
-    and valor_subsidio_pago > 0
+    and perc_km_planejada >= 80
   GROUP BY
     1,
     2,
@@ -106,7 +106,7 @@ rdo AS (
     CASE
       WHEN LENGTH(linha) < 3 THEN LPAD(linha, 3, "0")
     ELSE
-    CONCAT( IFNULL(REGEXP_EXTRACT(linha, r"[B-Z]+"), ""), IFNULL(REGEXP_EXTRACT(linha, r"[0-9]+"), "") )
+    CONCAT( IFNULL(REGEXP_EXTRACT(linha, r"[A-Z]+"), ""), IFNULL(REGEXP_EXTRACT(linha, r"[0-9]+"), "") )
   END
     AS servico,
     round(SUM(receita_buc) + SUM(receita_buc_supervia) + SUM(receita_cartoes_perna_unica_e_demais) + SUM(receita_especie), 0) AS receita_tarifaria_aferida
@@ -167,17 +167,18 @@ QUALIFY
   )
   select
     *,
-    ifnull(receita_total_aferida, 0) - ifnull(receita_total_esperada - subsidio_glosado, 0) as saldo
+    ifnull(receita_tarifaria_aferida, 0) - ifnull(receita_tarifaria_esperada, 0) as saldo
   from (
     select
       ks.* except(subsidio_pago),
-      ks.km_subsidiada * par.irk as receita_total_esperada,
+      {# ks.km_subsidiada * par.irk as receita_total_esperada, #}
       ks.km_subsidiada * par.irk_tarifa_publica as receita_tarifaria_esperada,
-      ks.km_subsidiada * par.subsidio_km as subsidio_esperado,
-      case when data >= "2023-01-01" then (ks.km_subsidiada * par.subsidio_km - subsidio_pago) else 0 end as subsidio_glosado,
-      ifnull(rdo.receita_tarifaria_aferida, 0) + ifnull(ks.subsidio_pago, 0) as receita_total_aferida,
+      {# ks.km_subsidiada * par.subsidio_km as subsidio_esperado, #}
+      {# case when data >= "2023-01-01" then (ks.km_subsidiada * par.subsidio_km - subsidio_pago) else 0 end as subsidio_glosado, #}
+      {# ifnull(rdo.receita_tarifaria_aferida, 0) + ifnull(ks.subsidio_pago, 0) as receita_total_aferida, #}
+      {# ifnull(rdo.receita_tarifaria_aferida, 0) + ifnull(ks.subsidio_pago, 0) as receita_total_aferida, #}
       rdo.receita_tarifaria_aferida,
-      ks.subsidio_pago
+      {# ks.subsidio_pago #}
     from
       km_subsidiada_filtrada ks
     left join

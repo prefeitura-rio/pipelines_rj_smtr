@@ -6,6 +6,9 @@
 - Cenário H: removidos os dias em que não houve subsídio dos serviços e
              adicionado os dias atípicos (pois ainda não estão 100% definidos) e
              adicionados os dias-serviço que foram subsidiados, mas não tem receita tarifária
+- Cenário H1: cenário H com correções
+- Cenário I: cenário H com correções + apenas tarifário
+- Cenário J: cenário I com correções dos veículos rodoviários
 
 */
 
@@ -25,7 +28,7 @@ rdo_raw AS (
     CASE
       WHEN LENGTH(linha) < 3 THEN LPAD(linha, 3, "0")
     ELSE
-    CONCAT( IFNULL(REGEXP_EXTRACT(linha, r"[B-Z]+"), ""), IFNULL(REGEXP_EXTRACT(linha, r"[0-9]+"), "") )
+    CONCAT( IFNULL(REGEXP_EXTRACT(linha, r"[A-Z]+"), ""), IFNULL(REGEXP_EXTRACT(linha, r"[0-9]+"), "") )
   END
     AS servico,
     linha,
@@ -70,12 +73,12 @@ sumario_dia AS (
     2,
     3),
 rdo_filtrada as (
-    select rdo.* from rdo
+    select data, rdo.consorcio, servico, linha, tipo_servico, ordem_servico, receita_tarifaria_aferida from rdo
     {# left join sumario_dia sd #}
-    full join sumario_dia sd -- Cenário H
+    full join sumario_dia sd -- Cenário E1/E2
     using (data, servico)
     {# where sd.servico is null #}
-    where sd.servico is distinct from rdo.servico -- Cenário H
+    where ((subsidio_pago > 0 and receita_tarifaria_aferida is null) or (receita_tarifaria_aferida is not null and subsidio_pago is null)) -- Cenário H/H1
 )
 SELECT
   bsd.data,
