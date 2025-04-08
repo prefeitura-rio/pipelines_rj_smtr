@@ -125,6 +125,9 @@ with
 select
     m.data_inicio,
     m.data_fim,
+    concat(
+        coalesce(m.integracao_origem, m.modo_origem), '-', m.modo_destino
+    ) as integracao,
     m.modo_origem,
     m.id_servico_jae_origem,
     m.id_servico_gtfs_origem,
