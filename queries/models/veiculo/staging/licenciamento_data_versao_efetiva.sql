@@ -21,6 +21,7 @@ with
         select data
         from
             unnest(
+                -- Primeira data de captura de licenciamento
                 generate_date_array('2022-03-21', current_date("America/Sao_Paulo"))
             ) as data
         {% if is_incremental() %}
