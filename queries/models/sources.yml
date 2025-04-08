@@ -104,6 +104,13 @@ sources:
     tables:
       - name: parametros_km
 
+  - name: veiculo_staging_rj-smtr
+    database: rj-smtr
+    schema: veiculo_staging
+
+    tables:
+      - name: sppo_licenciamento
+
   - name: veiculo_staging
     database: rj-smtr-staging
 
