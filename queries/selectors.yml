@@ -25,6 +25,8 @@ selectors:
         - method: fqn
           value: valor_tipo_penalidade
         - method: fqn
+          value: staging_tecnologia_servico
+        - method: fqn
           value: tecnologia_servico
         - method: fqn
           value: viagem_transacao
