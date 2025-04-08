@@ -4,7 +4,7 @@
     )
 }}
 
-select
+select distinct
     safe_cast(inicio_vigencia as string) as inicio_vigencia,
     safe_cast(fim_vigencia as string) as fim_vigencia,
     safe_cast(linha as string) as servico,
