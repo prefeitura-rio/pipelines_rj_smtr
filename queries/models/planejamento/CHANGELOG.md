@@ -9,6 +9,7 @@
 ### Alterado
 
 - Altera modelo `matriz_integracao.sql` para a nova arquitetura da matriz (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/524)
+- Altera modelos `staging_tecnologia_servico` e `tecnologia_prioridade` para padrão antigo da planilha de controle (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/530)
 
 ## [1.3.5] - 2025-04-01
 
