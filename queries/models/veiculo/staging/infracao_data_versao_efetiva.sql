@@ -14,7 +14,7 @@ with
             where
                 data
                 between "{{ var('start_date')}}"
-                and "{{ modules.datetime.date.fromisoformat(var('end_date')) + modules.datetime.timedelta(14) }}"
+                and "{{ modules.datetime.datetime.fromisoformat(var('end_date')) + modules.datetime.timedelta(14) }}"
         {% endif %}
     ),
     periodo as (
