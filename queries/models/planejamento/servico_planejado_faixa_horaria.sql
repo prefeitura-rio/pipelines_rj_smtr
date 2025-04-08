@@ -69,7 +69,7 @@ with
             o.quilometragem,
             o.faixa_horaria_inicio,
             o.faixa_horaria_fim,
-            v.modo,
+            coalesce(v.modo, max(v.modo) over (partition by o.servico)) as modo,
             v.trip_id,
             v.route_id,
             v.shape_id,
