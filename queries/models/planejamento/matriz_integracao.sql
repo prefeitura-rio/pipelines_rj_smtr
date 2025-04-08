@@ -20,8 +20,8 @@ with
                     row_number() over (
                         partition by id_servico_jae order by data_inicio_vigencia
                     ) as rn
-                {# from {{ ref("servicos") }} #}
-                from `rj-smtr.cadastro.servicos`
+                from {{ ref("servicos") }}
+            {# from `rj-smtr.cadastro.servicos` #}
             )
         where rn = 1
     ),
