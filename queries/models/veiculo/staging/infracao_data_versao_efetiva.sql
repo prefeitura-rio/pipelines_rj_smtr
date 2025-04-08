@@ -21,7 +21,7 @@ with
         select *
         from
             unnest(
-                -- Primeira data de captura de infração 
+                -- Primeira data de captura de infração
                 generate_date_array('2023-02-10', current_date("America/Sao_Paulo"))
             ) as data
         {% if is_incremental() %}
