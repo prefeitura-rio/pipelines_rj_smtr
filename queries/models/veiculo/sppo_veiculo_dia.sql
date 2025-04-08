@@ -93,8 +93,8 @@ with
     ),
     gps as (
         select data, id_veiculo
-        from  -- {{ ref("gps_sppo") }}
-            `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
+        from {{ ref("gps_sppo") }}
+        -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
         where
             {% if is_incremental() %}
                 data between date("{{ var('start_date') }}") and date(

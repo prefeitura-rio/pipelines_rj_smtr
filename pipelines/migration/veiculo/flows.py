@@ -3,7 +3,7 @@
 """
 Flows for veiculos
 
-DBT: 2025-02-24
+DBT: 2025-04-08
 """
 
 from copy import deepcopy
@@ -225,7 +225,6 @@ with Flow(
     start_date = Parameter("start_date", default=get_previous_date.run(1))
     end_date = Parameter("end_date", default=get_previous_date.run(1))
 
-    # run_dates = get_run_dates(start_date, end_date)
     DATE_RANGE = [{"start_date": start_date, "end_date": end_date}]
 
     # Rename flow run #
@@ -251,7 +250,7 @@ with Flow(
         dataset_id=smtr_constants.VEICULO_DATASET_ID.value,
         table_id=constants.SPPO_VEICULO_DIA_TABLE_ID.value,
         upstream=True,
-        exclude="+gps_sppo +sppo_licenciamento_staging",
+        exclude="+gps_sppo",
         _vars=_vars,
     )
 
@@ -261,7 +260,7 @@ with Flow(
     )[0]
 
     VEICULO_DATA_QUALITY_TEST = run_dbt_tests(
-        dataset_id="sppo_veiculo_dia",
+        dataset_id=smtr_constants.VEICULO_DATASET_ID.value,
         _vars=dbt_vars,
     ).set_upstream(WAIT_DBT_RUN)
 

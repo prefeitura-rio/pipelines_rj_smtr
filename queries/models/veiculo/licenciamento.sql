@@ -186,8 +186,7 @@ where data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
         ano_ultima_vistoria_atualizado,
         current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
         "{{ var('version') }}" as versao
-    -- from {{ ref("sppo_licenciamento_staging") }} l
-    from `rj-smtr.veiculo_staging.sppo_licenciamento` l
+    from {{ source("veiculo_staging_rj-smtr", "sppo_licenciamento") }} l
     where
         data < "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
         {% if is_incremental() %}
