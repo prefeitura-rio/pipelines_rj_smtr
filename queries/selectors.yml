@@ -95,8 +95,11 @@ selectors:
   - name: matriz_integracao_smtr
     description: Materialização da matriz de integração da SMTR
     definition:
-      method: fqn
-      value: matriz_integracao
+      union:
+        - method: fqn
+          value: matriz_reparticao_tarifaria
+        - method: fqn
+          value: matriz_integracao
 
   - name: validacao_dados_jae
     description: Materialização das tabelas de validação dos dados da Jaé
