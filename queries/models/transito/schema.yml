@@ -63,7 +63,7 @@ models:
     description: "Tabela com dados de autuações fornecidos pelo sistema SERPRO"
     columns:
       - name: data
-        description: "Data da autuação (Coluna de particionamento)"
+        description: "Data da autuação [Coluna de particionamento]"
       - name: id_auto_infracao
         description: "Código do auto de infração"
       - name: origem_auto_infracao
@@ -141,11 +141,11 @@ models:
       - name: cnh_infrator
         description: "CNH do infrator"
       - name: uf_infrator
-        description: "Estado do condutor infrator (em caso de indicação de real condutor infrator)"
+        description: "Estado do condutor infrator [em caso de indicação de real condutor infrator]"
       - name: valor_infracao
-        description: "Valor monetário da autuação (100%) [R$]"
+        description: "Valor monetário da autuação [100%] (R$)"
       - name: valor_pago
-        description: "Valor pago da autuação [R$]"
+        description: "Valor pago da autuação (R$)"
       - name: data_pagamento
         description: "Data do pagamento"
       - name: codigo_banco
@@ -153,7 +153,7 @@ models:
       - name: nome_banco
         description: "Nome do banco"
       - name: status_pagamento
-        description: "Status do pagamento. (pago, pago a mais, pago a menos, pago em duplicidade, nao identificado, desvinculado, em aberto)"
+        description: "Status do pagamento. [pago, pago a mais, pago a menos, pago em duplicidade, nao identificado, desvinculado, em aberto]"
       - name: codigo_auto_infracao_renainf
         description: "Código do auto de infração no sistema renainf"
       - name: id_autuador
@@ -201,7 +201,7 @@ models:
     description: "Tabela auxiliar para gerar identificador único da autuação"
     columns:
       - name: data
-        description: "Data da autuação (Coluna de particionamento)"
+        description: "Data da autuação [Coluna de particionamento]"
       - name: id_autuacao
         description: "Identificador único da autuação"
       - name: id_auto_infracao
@@ -315,3 +315,16 @@ models:
         description:	"Mes da arrecadação"
       - name: valor_arrecadacao
         description:	"Valor arrecadado para o mes"
+
+  - name: receita_autuacao_fonte
+    columns:
+      - name: data
+        description:	"coluna de particao"
+      - name: ano
+        description:	"Ano da arrecadação"
+      - name: mes
+        description:	"Mes da arrecadação"
+      - name: valor_arrecadacao
+        description:	"Valor arrecadado para o mes"
+      - name: fonte
+        description:	"Origem dos dados"
