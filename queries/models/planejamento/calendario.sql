@@ -55,7 +55,7 @@ with
                     {% if is_incremental() %}
                         date("{{ var('date_range_start') }}"),
                         date("{{ var('date_range_end') }}")
-                    {% else %}date("2024-10-12"), current_date("America/Sao_Paulo")
+                    {% else %}date("2024-10-01"), current_date("America/Sao_Paulo")
                     {% endif %}
                 )
             ) as data
