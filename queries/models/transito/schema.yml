@@ -308,7 +308,7 @@ models:
   - name: receita_autuacao
     columns:
       - name: data
-        description:	"coluna de particao"
+        description:	"coluna de partição"
       - name: ano
         description:	"Ano da arrecadação"
       - name: mes
@@ -319,7 +319,7 @@ models:
   - name: receita_autuacao_fonte
     columns:
       - name: data
-        description:	"coluna de particao"
+        description:	"coluna de partição"
       - name: ano
         description:	"Ano da arrecadação"
       - name: mes
