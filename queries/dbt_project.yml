@@ -24,6 +24,7 @@ vars:
   end_date: "2022-01-01T01:00:00"
   run_date: "2022-01-01T01:00:00"
   partitions: ""
+  flow_name: ""
 
   ### Version default variable (replaced on deploy) ###
   version: ""
@@ -217,6 +218,9 @@ vars:
 
   ### Planejamento ###
   feed_inicial_viagem_planejada: "2025-01-02"
+
+query-comment: "{{ query_comment() }}"
+
 
 tests:
   rj_smtr:
