@@ -2,7 +2,7 @@
     config(
         materialized="incremental",
         partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-        unique_key=["id_autuacao", "status_infracao", "data_pagamento"],
+        unique_key=["id_autuacao"],
         incremental_strategy="insert_overwrite",
     )
 }}
@@ -204,62 +204,66 @@ with
         select *
         from serpro
     ),
-    update_partition as (
-        select a.*
-        from autuacao a
-        {% if is_incremental() %}
-            left join
-                {{ this }} as t
-                on a.id_auto_infracao = t.id_auto_infracao
-                and a.fonte = t.fonte
-                and t.data in ({{ partitions | join(", ") }})
-            where
-                t.id_auto_infracao is null
-                or a.status_infracao != t.status_infracao
-                or a.data_pagamento != t.data_pagamento
+    complete_partitions as (
+        select *
+        from autuacao
+        {% if is_incremental() and partitions | length > 0 %}
+            union all
+            select *
+            from {{ this }}
+            where data in ({{ partitions | join(", ") }})
         {% endif %}
+    ),
+    final as (
+        select
+            c.data,
+            a.id_autuacao,
+            c.id_auto_infracao,
+            c.datetime_autuacao,
+            c.data_limite_defesa_previa,
+            c.data_limite_recurso,
+            c.descricao_situacao_autuacao,
+            c.status_infracao,
+            c.codigo_enquadramento,
+            i.tipificacao_resumida,
+            c.pontuacao,
+            c.gravidade,
+            c.amparo_legal,
+            c.tipo_veiculo,
+            c.descricao_veiculo,
+            c.placa_veiculo,
+            c.ano_fabricacao_veiculo,
+            c.ano_modelo_veiculo,
+            c.cor_veiculo,
+            c.especie_veiculo,
+            c.uf_infrator,
+            c.uf_principal_condutor,
+            c.uf_proprietario,
+            c.cep_proprietario,
+            c.valor_infracao,
+            c.valor_pago,
+            c.data_pagamento,
+            c.id_autuador,
+            c.descricao_autuador,
+            c.id_municipio_autuacao,
+            c.descricao_municipio,
+            c.uf_autuacao,
+            c.cep_autuacao,
+            c.tile_autuacao,
+            c.processo_defesa_autuacao,
+            c.recurso_penalidade_multa,
+            c.processo_troca_real_infrator,
+            c.status_sne,
+            c.fonte,
+            c.datetime_ultima_atualizacao
+        from complete_partitions as c
+        left join autuacao_ids as a using (data, id_auto_infracao, fonte)
+        left join infracoes_renainf as i using (codigo_enquadramento)
+        qualify
+            row_number() over (
+                partition by a.id_autuacao order by c.datetime_ultima_atualizacao desc
+            )
+            = 1
     )
-select
-    u.data,
-    a.id_autuacao,
-    u.id_auto_infracao,
-    datetime_autuacao,
-    data_limite_defesa_previa,
-    data_limite_recurso,
-    descricao_situacao_autuacao,
-    status_infracao,
-    codigo_enquadramento,
-    i.tipificacao_resumida,
-    pontuacao,
-    gravidade,
-    amparo_legal,
-    tipo_veiculo,
-    descricao_veiculo,
-    placa_veiculo,
-    ano_fabricacao_veiculo,
-    ano_modelo_veiculo,
-    cor_veiculo,
-    especie_veiculo,
-    uf_infrator,
-    uf_principal_condutor,
-    uf_proprietario,
-    cep_proprietario,
-    valor_infracao,
-    valor_pago,
-    data_pagamento,
-    id_autuador,
-    descricao_autuador,
-    id_municipio_autuacao,
-    descricao_municipio,
-    uf_autuacao,
-    cep_autuacao,
-    tile_autuacao,
-    processo_defesa_autuacao,
-    recurso_penalidade_multa,
-    processo_troca_real_infrator,
-    status_sne,
-    fonte,
-    datetime_ultima_atualizacao
-from update_partition as u
-left join autuacao_ids as a using (data, id_auto_infracao, fonte)
-left join infracoes_renainf as i using (codigo_enquadramento)
+select *
+from final
