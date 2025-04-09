@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de trânsito
 
-DBT 2025-04-08
+DBT 2025-04-09
 """
 
 from pipelines.constants import constants as smtr_constants
@@ -13,4 +13,5 @@ TRANSITO_AUTUACAO_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="autuacao - materializacao",
     selector=constants.TRANSITO_AUTUACAO_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    generate_schedule=False,
 )

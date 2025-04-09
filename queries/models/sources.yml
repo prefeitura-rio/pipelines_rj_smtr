@@ -229,7 +229,7 @@ sources:
     tables:
       - name: tecnologia_servico
 
-  - name: autuacao_staging
+  - name: transito_staging
     database: rj-smtr-staging
 
     tables:

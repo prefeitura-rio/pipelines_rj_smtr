@@ -1,6 +1,6 @@
 # Changelog - treatment
 
-## [1.0.0] - 2025-04-08
+## [1.0.0] - 2025-04-09
 
 ### Adicionado
 

@@ -35,15 +35,11 @@ with
     source as (
         select distinct data_autuacao as data, id_auto_infracao, "CITRAN" as fonte
         from {{ ref("autuacao_citran") }}
-        {# {% if is_incremental() %}  #}
-        where {{ incremental_filter }}
-        {# {% endif %} #}
+        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
         union all
         select distinct data_autuacao as data, id_auto_infracao, "SERPRO" as fonte
         from {{ ref("autuacao_serpro") }}
-        {# {% if is_incremental() %}  #}
-        where {{ incremental_filter }}
-    {# {% endif %} #}
+        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
     new_data as (
         select s.*

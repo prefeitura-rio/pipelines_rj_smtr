@@ -1,6 +1,6 @@
 # Changelog - transito
 
-## [1.0.3] - 2025-04-08
+## [1.0.3] - 2025-04-09
 
 ## Adicionado
 

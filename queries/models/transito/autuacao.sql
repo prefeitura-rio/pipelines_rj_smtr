@@ -36,7 +36,7 @@ with
         select
             concat(codigo_infracao, desdobramento) as codigo_enquadramento,
             descricao_infracao as tipificacao_resumida
-        from {{ source("autuacao_staging", "infracoes_renainf") }}
+        from {{ source("transito_staging", "infracoes_renainf") }}
     ),
     autuacao_ids as (
         select data, id_autuacao, id_auto_infracao, fonte
@@ -129,7 +129,7 @@ with
             ) as processo_troca_real_infrator,
             false as status_sne,
             "CITRAN" as fonte,
-            datetime("2023-08-26") as datetime_ultima_atualizacao
+            current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
         from {{ ref("autuacao_citran") }}
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),

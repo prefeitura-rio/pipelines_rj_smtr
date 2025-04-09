@@ -41,7 +41,7 @@ with
             ) as valor_arrecadacao,
             fonte
         from
-            {{ source("autuacao_staging", "receita_autuacao_fonte") }} unpivot (
+            {{ source("transito_staging", "receita_autuacao_fonte") }} unpivot (
                 valor_arrecadacao for mes in (
                     `Janeiro`,
                     `Fevereiro`,

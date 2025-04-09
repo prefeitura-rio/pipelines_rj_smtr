@@ -1,7 +1,7 @@
 {{ config(materialized="view") }}
 
 
-select
+select distinct
     date(data) as data,
     parse_date(
         '%d/%m/%Y', safe_cast(json_value(content, '$.Data') as string)
@@ -42,5 +42,4 @@ select
     safe_cast(json_value(content, '$.ProAutu') as string) processo_defesa_autuacao,
     safe_cast(json_value(content, '$.NotifPen') as string) recurso_penalidade_multa,
     safe_cast(json_value(content, '$.ProcRI') as string) processo_troca_real_infrator,
-
-from {{ source("autuacao_staging", "autuacao_citran") }}
+from {{ source("transito_staging", "autuacao_citran") }}
