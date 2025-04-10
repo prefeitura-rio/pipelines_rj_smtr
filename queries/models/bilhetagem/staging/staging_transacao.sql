@@ -41,7 +41,9 @@ select
     replace(
         safe_cast(json_value(content, '$.id_cliente') as string), ".0", ""
     ) as id_cliente,
-    safe_cast(json_value(content, '$.id_produto') as string) as id_produto,
+    replace(
+        safe_cast(json_value(content, '$.id_produto') as string), ".0", ""
+    ) as as id_produto,
     safe_cast(json_value(content, '$.id_servico') as string) as id_servico,
     safe_cast(json_value(content, '$.id_tipo_midia') as string) as id_tipo_midia,
     safe_cast(json_value(content, '$.is_abt') as bool) as is_abt,
