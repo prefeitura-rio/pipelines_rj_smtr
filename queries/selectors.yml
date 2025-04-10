@@ -240,3 +240,16 @@ selectors:
           value: view_passageiro_hora
         - method: fqn
           value: view_passageiro_tile_hora
+
+  - name: transito_autuacao
+    description: Materialização das tabelas de autuação de trânsito
+    definition:
+      union:
+        - method: fqn
+          value: autuacao_citran
+        - method: fqn
+          value: autuacao_serpro
+        - method: fqn
+          value: aux_autuacao_id
+        - method: fqn
+          value: autuacao
