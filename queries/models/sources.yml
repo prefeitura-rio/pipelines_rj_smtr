@@ -103,6 +103,13 @@ sources:
     tables:
       - name: parametros_km
 
+  - name: veiculo_staging_rj-smtr
+    database: rj-smtr
+    schema: veiculo_staging
+
+    tables:
+      - name: sppo_licenciamento
+
   - name: veiculo_staging
     database: rj-smtr-staging
 
@@ -219,10 +226,12 @@ sources:
       - name: viagem_informada
 
   - name: source_smtr
-    database: rj-smtr-dev
+    database: rj-smtr-staging
 
     tables:
-      - name: matriz_integracao
+      - name: matriz_reparticao_tarifaria
+      - name: matriz_transferencia
+      - name: matriz_integracao_excecao
 
   - name: subsidio_staging
     database: rj-smtr
@@ -231,7 +240,7 @@ sources:
       - name: valor_km_tipo_viagem
 
   - name: planejamento_staging
-    database: rj-smtr
+    database: rj-smtr-staging
 
     tables:
       - name: tecnologia_servico

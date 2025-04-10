@@ -43,4 +43,5 @@ VALIDACAO_DADOS_JAE_MATERIALIZACAO = create_default_materialization_flow(
             "schedule_cron": create_hourly_cron(),
         },
     ],
+    generate_schedule=False,
 )
