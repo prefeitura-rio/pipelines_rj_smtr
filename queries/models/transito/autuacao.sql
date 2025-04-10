@@ -107,7 +107,7 @@ with
             "6001" as id_municipio_autuacao,
             "RIO DE JANEIRO" as descricao_municipio,
             "RJ" as uf_autuacao,
-            endereco_autuacao as cep_autuacao,
+            endereco_autuacao,
             null as tile_autuacao,
             if(
                 processo_defesa_autuacao != "00000000"
@@ -186,7 +186,7 @@ with
                 when logradouro_rodovia_autuacao is not null
                 then logradouro_rodovia_autuacao
                 else null
-            end as cep_autuacao,
+            end as endereco_autuacao,
             null as tile_autuacao,
             processo_defesa_autuacao,
             recurso_penalidade_multa,
@@ -248,7 +248,7 @@ with
             c.id_municipio_autuacao,
             c.descricao_municipio,
             c.uf_autuacao,
-            c.cep_autuacao,
+            c.endereco_autuacao,
             c.tile_autuacao,
             c.processo_defesa_autuacao,
             c.recurso_penalidade_multa,
