@@ -62,7 +62,7 @@ with
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
     tipo_transacao as (
-        select chave as id_tipo_transacao, valor as tipo_transacao,
+        select chave as id_tipo_transacao, valor as tipo_transacao
         from {{ ref("dicionario_bilhetagem") }}
         {# from `rj-smtr.br_rj_riodejaneiro_bilhetagem.dicionario` #}
         where id_tabela = "transacao" and coluna = "id_tipo_transacao"
@@ -415,7 +415,7 @@ select
                             {% if c == "geo_point_transacao" %}
                                 ifnull(st_astext(a.geo_point_transacao), 'n/a')
                             {% elif c == "hash_cliente" %}
-                                ifnull(to_base64(t.hash_cliente), 'n/a')
+                                ifnull(to_base64(a.hash_cliente), 'n/a')
                             {% else %}ifnull(cast(a.{{ c }} as string), 'n/a')
                             {% endif %}
 
