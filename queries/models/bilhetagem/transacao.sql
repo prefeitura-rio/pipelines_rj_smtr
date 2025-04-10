@@ -257,6 +257,8 @@ with
                 then "Integração"
                 when t.tipo_transacao_jae in ("Débito", "Débito EMV", "Botoeira")
                 then "Integral"
+                when t.tipo_transacao_jae = "Transferência EMV"
+                then "Transferência"
                 else t.tipo_transacao_jae
             end as tipo_transacao_atualizado,
             case
