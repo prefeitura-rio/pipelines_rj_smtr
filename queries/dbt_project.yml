@@ -216,7 +216,7 @@ vars:
   data_inicial_gps_validacao_viagem: "2024-10-11"
 
   ### Planejamento ###
-  feed_inicial_viagem_planejada: "2025-01-02"
+  feed_inicial_viagem_planejada: "2024-09-29"
 
 tests:
   rj_smtr:
