@@ -225,4 +225,4 @@ from
             ) as rn
         from viagem_planejada_id
     )
-where rn = 1
+where rn = 1 and data is not null
