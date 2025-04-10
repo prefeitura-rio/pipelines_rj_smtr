@@ -43,7 +43,7 @@ select
     ) as id_cliente,
     replace(
         safe_cast(json_value(content, '$.id_produto') as string), ".0", ""
-    ) as as id_produto,
+    ) as id_produto,
     safe_cast(json_value(content, '$.id_servico') as string) as id_servico,
     safe_cast(json_value(content, '$.id_tipo_midia') as string) as id_tipo_midia,
     safe_cast(json_value(content, '$.is_abt') as bool) as is_abt,
