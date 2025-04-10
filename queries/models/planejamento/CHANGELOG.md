@@ -1,5 +1,12 @@
 # Changelog - planejamento
 
+## [1.4.1] - 2025-04-10
+
+### Corrigido
+
+- Corrige query para filtrar feeds no modelo `calendario.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/536)
+- Remove datas nulas no modelo `viagem_planejada_planejamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/536)
+
 ## [1.4.0] - 2025-04-08
 
 ### Adicionado

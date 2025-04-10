@@ -21,7 +21,7 @@
             from {{ gtfs_feed_info }}
             where
                 feed_start_date <= date("{{ var('date_range_end') }}")
-                and (feed_end_date IS NULL OR feed_end_date >= date("{{ var('date_range_end') }}"))
+                and (feed_end_date IS NULL OR feed_end_date >= date("{{ var('date_range_start') }}"))
 
             union distinct
 
