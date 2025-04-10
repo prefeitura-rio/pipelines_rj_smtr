@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de trânsito
 
-DBT 2025-04-09
+DBT 2025-04-10
 """
 
 from pipelines.constants import constants as smtr_constants
