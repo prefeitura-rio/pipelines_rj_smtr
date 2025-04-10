@@ -1,5 +1,35 @@
 # Changelog - planejamento
 
+## [1.4.0] - 2025-04-08
+
+### Adicionado
+
+- Cria modelos `aux_matriz_integracao_modo.sql` e `matriz_reparticao_tarifaria.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/524)
+
+### Alterado
+
+- Altera modelo `matriz_integracao.sql` para a nova arquitetura da matriz (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/524)
+- Altera modelos `staging_tecnologia_servico` e `tecnologia_prioridade` para padrão antigo da planilha de controle (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/530)
+
+## [1.3.5] - 2025-04-01
+
+### Adicionado
+
+- Cria modelo `aux_stop_times_horario_tratado.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/481)
+- Adiciona viagens da stop_times no modelo `viagem_planejada_planejamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/481)
+
+### Alterado
+
+- Simplifica tratamento dos horários nos modelos `aux_frequencies_horario_tratado.sql` e `aux_ordem_servico_horario_tratado.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/481)
+- Adiciona tratamento de horários vazios no modelo `aux_ordem_servico_horario_tratado.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/481)
+- Modifica filtro para não permitir feeds antigos em incrementais no modelo `viagem_planejada_planejamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/481)
+
+## [1.3.4] - 2025-03-25
+
+### Alterado
+
+- Altera o tipo_os de `2025-03-08` e `2025-03-08` no modelo `aux_calendario_manual.sql` para `Extraordinária - Verão` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/502)
+
 ## [1.3.5] - 2025-03-27
 
 ### Corrigido
