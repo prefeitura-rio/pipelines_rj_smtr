@@ -153,14 +153,8 @@ with
             {{ source("cadastro", "modos") }} m
             on t.id_tipo_modal = m.id_modo
             and m.fonte = "jae"
-        left join
-            {{ ref("operadoras") }} do
-            -- `rj-smtr.cadastro.operadoras` do
-            on t.cd_operadora = do.id_operadora_jae
-        left join
-            {{ ref("consorcios") }} dc
-            -- `rj-smtr.cadastro.consorcios` dc
-            on t.cd_consorcio = dc.id_consorcio_jae
+        left join {{ ref("operadoras") }} do on t.cd_operadora = do.id_operadora_jae
+        left join {{ ref("consorcios") }} dc on t.cd_consorcio = dc.id_consorcio_jae
         left join {{ ref("staging_linha") }} l on t.cd_linha = l.cd_linha
         left join {{ ref("staging_produto") }} p on t.id_produto = p.cd_produto
         left join tipo_transacao tt on tt.id_tipo_transacao = t.tipo_transacao
@@ -255,7 +249,10 @@ with
                     t.tipo_transacao_jae in ("Integração", "Integração EMV")
                     or i.id_transacao is not null
                 then "Integração"
-                when t.tipo_transacao_jae in ("Débito", "Débito EMV", "Botoeira")
+                when
+                    t.tipo_transacao_jae in (
+                        "Débito", "Débito EMV", "Débito EMV emissor externo", "Botoeira"
+                    )
                 then "Integral"
                 when t.tipo_transacao_jae = "Transferência EMV"
                 then "Transferência"
@@ -296,7 +293,9 @@ with
                 then "VT"
                 when t.produto_jae = "Avulso"
                 then "Cartão Avulso"
-                when t.tipo_transacao_jae like "% EMV"
+                when
+                    t.tipo_transacao_jae like "% EMV %"
+                    or t.tipo_transacao_jae like "% EMV"
                 then "Visa Internacional"
                 when t.tipo_transacao_jae = "Botoeira"
                 then "Dinheiro (Botoeira)"
