@@ -2,7 +2,7 @@
     config(
         materialized="table",
         incremental_strategy="merge",
-        unique_key="id_gratuidade",
+        unique_key="id_cliente_gratuidade",
         partition_by={
             "field": "id_cliente",
             "data_type": "int64",
@@ -40,7 +40,8 @@ with
                 select
                     *,
                     row_number() over (
-                        partition by id_gratuidade order by timestamp_captura desc
+                        partition by id_gratuidade, id_cliente
+                        order by timestamp_captura desc
                     ) as rn
                 from gratuidade_complete_partitions
             )
@@ -49,6 +50,7 @@ with
 select
     id_cliente,
     id_gratuidade,
+    concat(id_cliente, '_', id_gratuidade) as id_cliente_gratuidade,
     tipo_gratuidade,
     deficiencia_permanente,
     rede_ensino,
