@@ -208,6 +208,8 @@ with
         from transacao_nova
 
         {% if is_incremental() %}
+            union all
+
             select
                 data,
                 hora,
