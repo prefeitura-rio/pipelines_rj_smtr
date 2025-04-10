@@ -248,7 +248,7 @@ with
             c.id_municipio_autuacao,
             c.descricao_municipio,
             c.uf_autuacao,
-            c.cep_autuacao,
+            c.endereco_autuacao,
             c.tile_autuacao,
             c.processo_defesa_autuacao,
             c.recurso_penalidade_multa,
