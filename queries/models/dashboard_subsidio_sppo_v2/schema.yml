@@ -122,7 +122,7 @@ models:
       - name: faixa_horaria_fim
         description: "{{ doc('faixa_horaria_fim') }}"
       - name: consorcio
-        description: "Consórcio que opera o serviço"
+        description: "{{ doc('consorcio') }}"
         tests:
           - not_null:
               name: not_null__consorcio__sumario_faixa_servico_dia_pagamento
@@ -299,7 +299,7 @@ models:
           - not_null:
               name: not_null__tipo_dia__sumario_servico_dia_pagamento
       - name: consorcio
-        description: "Consórcio que opera o serviço"
+        description: "{{ doc('consorcio') }}"
         tests:
           - not_null:
               name: not_null__consorcio__sumario_servico_dia_pagamento

@@ -14,7 +14,7 @@ models:
       - name: sentido
         description: Sentido do ônibus
       - name: consorcio
-        description: Nome do consórcio
+        description: "{{ doc('consorcio_nome') }}"
       - name: datetime_partida
         description: "Datetime da partida da viagem"
       - name: datetime_chegada
@@ -48,7 +48,7 @@ models:
         - name: sentido
           description: Sentido do ônibus
         - name: consorcio
-          description: Nome do consórcio
+          description: "{{ doc('consorcio_nome') }}"
         - name: numero_relatorio_cimu
           description: Número do relatório CIMU
         - name: data_viagem
