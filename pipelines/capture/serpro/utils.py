@@ -98,6 +98,73 @@ def create_serpro_schedule() -> Schedule:
     return Schedule(clocks=clocks)
 
 
+def connect_and_execute(update_date, max_retries=3, retry_delay=15):
+    """
+    Estabelece conexão com o banco do SERPRO, testa a conexão e executa a query,
+    com tentativas automáticas em caso de falha.
+
+    Args:
+        update_date (str): Data formatada (YYYY-MM-DD) usada para parametrizar a query.
+        max_retries (int): Número máximo de tentativas em caso de falha.
+        retry_delay (int): Tempo base (em segundos) para espera entre tentativas.
+
+    Returns:
+        JDBC: Instância da conexão JDBC com a query já executada.
+
+    Raises:
+        RuntimeError: Se todas as tentativas de conexão ou execução falharem.
+    """
+
+    jdbc = None
+    for attempt in range(max_retries):
+        try:
+            if jdbc:
+                jdbc.close()
+            log(f"Tentativa {attempt+1}/{max_retries} de conectar ao SERPRO")
+            jdbc = JDBC(db_params_secret_path="radar_serpro", environment="dev")
+            success, error = jdbc.test_connection()
+            if not success:
+                raise ConnectionError(error)
+            query = serpro_constants.SERPRO_CAPTURE_PARAMS.value["query"].format(
+                update_date=update_date
+            )
+            jdbc.execute_query(query)
+            log(f"Query executada com sucesso na tentativa {attempt+1}")
+            return jdbc
+        except Exception as e:
+            log(f"Erro na tentativa {attempt+1}: {str(e)}", level="warning")
+            if attempt < max_retries - 1:
+                time.sleep(retry_delay * (2**attempt))
+    raise RuntimeError("Falha ao conectar/executar query após múltiplas tentativas.")
+
+
+def query_result_to_csv(jdbc, batch_size=50000):
+    """
+    Extrai os resultados da query executada via JDBC e escreve em um arquivo CSV temporário.
+
+    Args:
+        jdbc (JDBC): Instância com conexão ativa e query já executada.
+        batch_size (int): Número de registros por lote na leitura dos dados.
+
+    Returns:
+        str: Caminho para o arquivo CSV temporário gerado.
+    """
+
+    columns = jdbc.get_columns()
+    with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".csv") as temp_file:
+        writer = csv.writer(temp_file)
+        writer.writerow(columns)
+        total_rows = 0
+        while True:
+            rows = jdbc.fetch_batch(batch_size)
+            if not rows:
+                break
+            writer.writerows(rows)
+            total_rows += len(rows)
+        log(f"Total de registros encontrados: {total_rows}")
+        return temp_file.name
+
+
 def extract_serpro_data(timestamp):
     """
     Extrai dados do SERPRO
@@ -109,69 +176,19 @@ def extract_serpro_data(timestamp):
         str: Dados extraídos em formato CSV
     """
     ts = datetime.fromisoformat(timestamp) if isinstance(timestamp, str) else timestamp
-
     update_date = ts.date().strftime("%Y-%m-%d")
+    jdbc = None
 
     try:
-        jdbc = JDBC(db_params_secret_path="radar_serpro", environment="dev")
+        jdbc = connect_and_execute(update_date)
+        temp_file_path = query_result_to_csv(jdbc)
 
-        max_retries = 3
-        retry_delay = 15
+        with open(temp_file_path, "r") as f:
+            result = f.read()
 
-        for attempt in range(max_retries):
-            connection_success, error_message = jdbc.test_connection()
-            if connection_success:
-                log(f"Conexão com SERPRO estabelecida na tentativa {attempt+1}/{max_retries}")
-                break
+        os.unlink(temp_file_path)
+        return result
 
-            log(
-                f"Tentativa {attempt+1}/{max_retries} de conexão com SERPRO falhou. Erro: {error_message}",  # noqa
-                level="warning",
-            )
-
-            if attempt < max_retries - 1:
-                delay = retry_delay * (2**attempt)
-                log(f"Aguardando {delay} segundos antes da próxima tentativa...")
-                time.sleep(delay)
-        else:
-            raise RuntimeError(
-                f"Falha ao conectar com o banco SERPRO após {max_retries} tentativas."
-            )
-
-        query = serpro_constants.SERPRO_CAPTURE_PARAMS.value["query"].format(
-            update_date=update_date
-        )
-
-        jdbc.execute_query(query)
-        columns = jdbc.get_columns()
-
-        with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".csv") as temp_file:
-            csv_writer = csv.writer(temp_file)
-
-            csv_writer.writerow(columns)
-
-            batch_size = 50000
-            total_rows = 0
-
-            while True:
-                rows = jdbc.fetch_batch(batch_size=batch_size)
-                if not rows:
-                    break
-
-                csv_writer.writerows(rows)
-                total_rows += len(rows)
-
-            temp_file_name = temp_file.name
-
-            log(f"Total de registros encontrados: {total_rows}")
-
-            with open(temp_file_name, "r") as f:
-                result = f.read()
-
-            os.unlink(temp_file_name)
-            return result
-    except Exception as e:
-        log(f"Erro ao extrair dados do SERPRO: {str(e)}", level="error")
-        raise
     finally:
-        jdbc.close()
+        if jdbc:
+            jdbc.close()

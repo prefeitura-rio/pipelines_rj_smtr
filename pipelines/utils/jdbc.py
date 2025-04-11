@@ -47,14 +47,13 @@ class JDBC:
                 - error_message (str | None): Error message in case of failure, None if successful
         """
         try:
-            log("Testando conexão com o banco de dados SERPRO")
-            temp_connection = self.connect()
-            if temp_connection:
-                temp_connection.close()
-                log("Conexão com SERPRO bem-sucedida!")
-                return True, None
+            log("Testando conexão atual com o banco de dados SERPRO")
+            self._cursor.execute("SELECT 1")
+            self._cursor.fetchone()
+            log("Conexão atual com SERPRO está operacional")
+            return True, None
         except Exception as e:
-            log(f"Conexão com SERPRO falhou: {str(e)}", level="warning")
+            log(f"Conexão atual com SERPRO não está operacional: {str(e)}", level="warning")
             return False, str(e)
 
     def get_cursor(self):
