@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de bilhetagem
 
-DBT: 2024-11-27 2
+DBT: 2025-04-04
 """
 
 from pipelines.capture.jae.constants import constants as jae_constants
@@ -69,5 +69,3 @@ TRANSACAO_VALOR_ORDEM_MATERIALIZACAO = create_default_materialization_flow(
     ],
     generate_schedule=False,
 )
-
-# gps validador (?)
