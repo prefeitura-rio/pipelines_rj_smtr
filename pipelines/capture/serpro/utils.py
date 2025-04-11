@@ -3,6 +3,7 @@ import csv
 import os
 import subprocess
 import tempfile
+import time
 from datetime import datetime, timedelta
 from typing import List
 
@@ -113,6 +114,29 @@ def extract_serpro_data(timestamp):
 
     try:
         jdbc = JDBC(db_params_secret_path="radar_serpro", environment="dev")
+
+        max_retries = 3
+        retry_delay = 15
+
+        for attempt in range(max_retries):
+            connection_success, error_message = jdbc.test_connection()
+            if connection_success:
+                log(f"Conexão com SERPRO estabelecida na tentativa {attempt+1}/{max_retries}")
+                break
+
+            log(
+                f"Tentativa {attempt+1}/{max_retries} de conexão com SERPRO falhou. Erro: {error_message}",  # noqa
+                level="warning",
+            )
+
+            if attempt < max_retries - 1:
+                delay = retry_delay * (2**attempt)
+                log(f"Aguardando {delay} segundos antes da próxima tentativa...")
+                time.sleep(delay)
+        else:
+            raise RuntimeError(
+                f"Falha ao conectar com o banco SERPRO após {max_retries} tentativas."
+            )
 
         query = serpro_constants.SERPRO_CAPTURE_PARAMS.value["query"].format(
             update_date=update_date
