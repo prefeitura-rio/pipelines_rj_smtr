@@ -739,6 +739,11 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todas as datas possuem dados"
             },
         },
+        "tecnologia_servico": {
+            "dbt_utils.unique_combination_of_columns__tecnologia_servico": {
+                "description": "Todos os registros são únicos"
+            },
+        },
         "viagem_planejada": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
             "dbt_utils.accepted_range": {
@@ -755,6 +760,9 @@ class constants(Enum):  # pylint: disable=c0103
             },
             "dbt_expectations.expect_table_aggregation_to_equal_other_table__viagem_planejada": {
                 "description": "Todos os dados de 'tipo_os' correspondem 1:1 entre as tabelas 'subsidio_data_versao_efetiva' e 'viagem_planejada'."  # noqa
+            },
+            "dbt_utils.relationships_where__servico__viagem_planejada": {
+                "description": "Todos os serviços planejados possuem tecnologia permitida."  # noqa
             },
             "check_km_planejada": {
                 "description": "Todas as viagens possuem `km_planejada` correspondente à OS"
