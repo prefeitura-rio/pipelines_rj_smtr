@@ -2,7 +2,7 @@
 
     {{
         config(
-            target_schema="transito",
+            target_schema="transito_staging",
             unique_key="id_autuacao",
             strategy="timestamp",
             updated_at="datetime_ultima_atualizacao",
