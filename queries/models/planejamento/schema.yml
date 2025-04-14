@@ -124,7 +124,7 @@ models:
         data_type: string
         quote: true
       - name: shape
-        description: Shape em formato geográfico (usualmente LineString).
+        description: "{{ doc('shape') }}"
         data_type: geography
         quote: true
       - name: wkt_shape
@@ -147,7 +147,7 @@ models:
     description: Tabela contendo as viagens planejadas para o dia com base no GTFS
     columns:
       - name: data
-        description: Data da viagem (partição)
+        description: "{{ doc('data_viagem') }} [partição]"
         data_type: date
         quote: true
       - name: id_viagem
@@ -234,7 +234,7 @@ models:
     description: Tabela calendário
     columns:
       - name: data
-        description: Data
+        description: "{{ doc('data') }}"
         data_type: date
         quote: true
       - name: tipo_dia
@@ -270,46 +270,87 @@ models:
         data_type: datetime
         quote: true
   - name: matriz_integracao
-    description: "Matriz de repartição tarifária de integrações válidas no sistema de transporte municipal"
+    description: "Matriz de integração no sistema de transporte municipal"
     columns:
-      - name: id_matriz_integracao
-        description: "Identificador único da integração"
-        data_type: string
-      - name: sequencia_integracao
-        description: "Sequencia da transação dentro da integração"
-        data_type: int64
-      - name: modo
-        description: "{{ doc('modo') }}"
-        data_type: string
-      - name: percentual_rateio
-        description: "Percentual de rateio do valor total para a operadora"
-        data_type: numeric
-      - name: data_inicio_validade
-        description: "Data de início da validade da matriz"
-      - name: data_fim_validade
-        description: "Data de fim da validade da matriz"
-      - name: versao
-        description: "{{ doc('versao') }}"
-        data_type: string
-      - name: data_inicio_matriz
-        description: "{{ doc('data_inicio_matriz') }}"
-        data_type: date
-        quote: true
-      - name: data_fim_matriz
-        description: Data de fim da versão da matriz de integração
-        data_type: date
-        quote: true
-      - name: sequencia_completa_modo
-        description: Lista com o conjunto de modos da integração completa
-        data_type: string
-        quote: true
-      - name: sequencia_completa_rateio
-        description: Lista com o conjunto de valores de rateio da integração completa
-        data_type: numeric
-        quote: true
       - name: tempo_integracao_minutos
         description: Tempo máximo entre a primeira e a última perna para a integração ser realizada
         data_type: float64
+        quote: true
+      - name: data_inicio
+        description: Data de início da validade da integração [partição]
+        data_type: date
+        quote: true
+      - name: data_fim
+        description: Data de fim da validade da integração
+        data_type: date
+        quote: true
+      - name: integracao
+        description: String representando a integração (sequência modos da integração separados por "-"). Pode ser usada como chave para relacionar com a tabela rj-smtr.planejamento.matriz_reparticao_tarifaria
+        data_type: string
+        quote: true
+      - name: modo_origem
+        description: Modo da perna de origem
+        data_type: string
+        quote: true
+      - name: id_servico_jae_origem
+        description: Identificador único do serviço da perna de origem no banco de dados da Jaé
+        data_type: string
+        quote: true
+      - name: id_servico_gtfs_origem
+        description: Identificador único do serviço da perna de origem no GTFS
+        data_type: string
+        quote: true
+      - name: tabela_gtfs_origem
+        description: Tabela do GTFS de onde foram coletadas as informações do serviço da perna de origem (stops ou routes)
+        data_type: string
+        quote: true
+      - name: servico_origem
+        description: "Nome consolidado do serviço da perna de origem. Para linhas, é o nome curto da linha (ex: 010, 011SN). E para estações, é o stop_code do GTFS ou o código interno da estação no banco de dados da Jaé"
+        data_type: string
+        quote: true
+      - name: descricao_servico_origem
+        description: Nome completo consolidado do serviço da perna de origem. Para linhas é, primariamente o route_long_name da tabela routes do GTFS. Para estações é primariamente a coluna stop_name da tabela stops do GTFS. (Caso o registro não exista no GTFS, busca o nome do serviço na base de dados da Jaé)
+        data_type: string
+        quote: true
+      - name: integracao_origem
+        description: Sequência de modos separados por "-" (caso a integração tenha mais de 2 pernas)
+        data_type: string
+        quote: true
+      - name: modo_destino
+        description: Modo da perna de destino
+        data_type: string
+        quote: true
+      - name: id_servico_jae_destino
+        description: Identificador único do serviço da perna de destino no banco de dados da Jaé
+        data_type: string
+        quote: true
+      - name: id_servico_gtfs_destino
+        description: Identificador único do serviço da perna de destino no GTFS
+        data_type: string
+        quote: true
+      - name: tabela_gtfs_destino
+        description: Tabela do GTFS de onde foram coletadas as informações do serviço da perna de destino (stops ou routes)
+        data_type: string
+        quote: true
+      - name: servico_destino
+        description: "Nome consolidado do serviço da perna de destino. Para linhas, é o nome curto da linha (ex: 010, 011SN). E para estações, é o stop_code do GTFS ou o código interno da estação no banco de dados da Jaé"
+        data_type: string
+        quote: true
+      - name: descricao_servico_destino
+        description: Nome completo consolidado do serviço da perna de origem. Para linhas é, primariamente o route_long_name da tabela routes do GTFS. Para estações é primariamente a coluna stop_name da tabela stops do GTFS. (Caso o registro não exista no GTFS, busca o nome do serviço na base de dados da Jaé)
+        data_type: string
+        quote: true
+      - name: valor_transacao
+        description: Valor que deve ser cobrado pela transação na perna de destino
+        data_type: numeric
+        quote: true
+      - name: tipo_integracao
+        description: Integração ou Transferência
+        data_type: string
+        quote: true
+      - name: indicador_integracao
+        description: Se deve ocorrer a integração ou não para a combinação de origem e destino
+        data_type: boolean
         quote: true
   - name: tecnologia_servico
     description: "Tabela auxiliar de tecnologias permitidas por serviço"
@@ -394,4 +435,35 @@ models:
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
+        quote: true
+  - name: matriz_reparticao_tarifaria
+    description: Matriz de repartição tarifária de integrações válidas no sistema de transporte municipal
+    columns:
+      - name: data_inicio_matriz
+        description: Data de início da versão da matriz de integração [partição]
+        data_type: date
+        quote: true
+      - name: data_fim_matriz
+        description: Data de fim da versão da matriz de integração
+        data_type: date
+        quote: true
+      - name: integracao
+        description: String representando a integração (sequência modos da integração separados por "-")
+        data_type: string
+        quote: true
+      - name: sequencia_modo
+        description: Array contendo a sequência de modos da integração
+        data_type: string
+        quote: true
+      - name: sequencia_rateio
+        description: Array contendo os percentuais de rateio para cada perna da integração
+        data_type: numeric
+        quote: true
+      - name: tempo_integracao_minutos
+        description: Tempo máximo entre a primeira e a última perna para a integração ser realizada
+        data_type: float64
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
         quote: true

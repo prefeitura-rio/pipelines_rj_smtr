@@ -4,7 +4,7 @@ models:
     description: Tabela materializada para acesso geral aos dados do RHO SPPO
     columns:
       - name: data_transacao
-        description: Data da transação (partição)
+        description: "{{ doc('data_transacao') }} [partição]"
       - name: hora_transacao
         description: "{{ doc('hora_transacao') }}"
       - name: data_processamento
@@ -20,7 +20,7 @@ models:
       - name: quantidade_transacao_cartao
         description: Quantidade de transações feitas com o cartão
       - name: quantidade_transacao_especie
-        description: Quantidade de transações feitas em espécie
+        description: "{{ doc('quantidade_transacao_especie') }}"
       - name: quantidade_transacao_gratuidade
         description: Quantidade de gratuidades
       - name: registro_processado
@@ -31,7 +31,7 @@ models:
     description: Tabela materializada para acesso geral aos dados do RHO STPL
     columns:
       - name: data_transacao
-        description: Data da transação (partição)
+        description: "{{ doc('data_transacao') }} [partição]"
       - name: hora_transacao
         description: "{{ doc('hora_transacao') }}"
       - name: servico_riocard
@@ -47,7 +47,7 @@ models:
           somados para obter os valores finais
   - name: rdo40_registros
     description: View para os dados do Resumo Diário de Operação com a quantidade
-      total de passageiros.
+      total de passageiros
     columns:
       - name: data
         description: Data das transações
@@ -58,7 +58,7 @@ models:
       - name: dia
         description: Dia das transações
       - name: id_consorcio
-        description: Identificador do consórcio na tabela cadastro.consorcios
+        description: "{{ doc('id_consorcio') }}"
       - name: consorcio
         description: "{{ doc('consorcio') }}"
       - name: servico
@@ -126,7 +126,7 @@ models:
   - name: rdo_registros_stpl
     columns:
       - name: data_transacao
-        description: Data da transação (partição)
+        description: "{{ doc('data_transacao') }} [partição]"
         data_type: date
         quote: true
       - name: data_arquivo_rdo
@@ -279,7 +279,7 @@ models:
       - name: quantidade_transacao_especie
         data_type: int64
         quote: true
-        description: Quantidade de transações feitas em espécie
+        description: "{{ doc('quantidade_transacao_especie') }}"
       - name: valor_especie
         data_type: numeric
         quote: true

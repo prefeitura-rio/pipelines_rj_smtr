@@ -48,7 +48,7 @@ models:
     description: "Tabela para validação dos dados de transação da Jaé"
     columns:
       - name: data
-        description: "Data da transação (partição)"
+        description: "{{ doc('data_transacao') }} [partição]"
       - name: hora
         description: "{{ doc('hora_transacao') }}"
       - name: datetime_transacao
@@ -60,7 +60,7 @@ models:
       - name: modo
         description: "{{ doc('modo') }}"
       - name: id_consorcio
-        description: "Identificador do consórcio na tabela cadastro.consorcios"
+        description: "{{ doc('id_consorcio') }}"
       - name: consorcio
         description: "Nome do consórcio"
       - name: id_operadora
@@ -72,13 +72,13 @@ models:
       - name: servico_jae
         description: "{{ doc('servico_variacao') }} ou código da estação de BRT na Jaé"
       - name: descricao_servico_jae
-        description: "Nome longo da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou nome da estação de BRT na Jaé"
+        description: "{{ doc('descricao_servico_jae') }}"
       # - name: servico
       #   description: "{{ doc('servico_variacao') }} ou código da estação no caso de BRT"
       - name: id_transacao
         description: "Identificador único da transação"
       - name: longitude
-        description: "Longitude da transação (WGS84)"
+        description: "{{ doc('longitude_transacao') }}"
       - name: latitude
         description: "Latitude da transação (WGS84)"
       - name: longitude_servico
@@ -122,7 +122,7 @@ models:
     description: "Tabela contendo integrações que deveriam ter ocorrido mas não estão listadas na base da Jaé"
     columns:
       - name: data
-        description: "Data da transação (partição)"
+        description: "{{ doc('data_transacao') }} [partição]"
         data_type: date
       - name: id_integracao
         description: "{{ doc('id_integracao') }} (é igual ao id_transacao da primeira transação da integração)"

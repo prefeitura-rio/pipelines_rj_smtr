@@ -15,7 +15,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: longitude
-        description: "Parte da coordenada geográfica (eixo x) em graus decimais (EPSG:4326 - WGS84)"
+        description: "{{ doc('longitude_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -49,7 +49,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: data
-        description: "Data do 'timestamp_captura'"
+        description: "{{ doc('data_captura') }}"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
       - name: hora
         description: "{{ doc('hora_timestamp_captura') }}"
@@ -88,7 +88,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: data
-        description: "Data de partição, conforme 'timestamp_captura' da tabela 'sppo_registros'"
+        description: "{{ doc('data_captura') }} [partição]"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela) / Tabela ephemeral
       - name: timestamp_gps
         description: "Timestamp de emissão do sinal de GPS"
@@ -112,7 +112,7 @@ models:
         #       values: [true, false]
         #       quote: false
       - name: flag_linha_existe_sigmob
-        description: "Flag de verificação se a linha informada existe no SIGMOB"
+        description: "{{ doc('flag_linha_existe_sigmob') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -124,7 +124,7 @@ models:
     description: "Tabela para identificação de veículos parados em terminais ou garagens conhecidas"
     columns:
       - name: data
-        description: "Data de partição, conforme 'timestamp_captura' da tabela 'sppo_registros'"
+        description: "{{ doc('data_captura') }} [partição]"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela) / Tabela ephemeral
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
@@ -144,7 +144,7 @@ models:
         #   - no_space:
         #       partition_column: data
       - name: tipo_parada
-        description: "[REVISAR]"
+        description: "{{ doc('tipo_parada') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -182,12 +182,12 @@ models:
         #   - no_space:
         #       partition_column: data
       - name: datetime_realocacao
-        description: "Datetime_realocacao que o registro da realocação foi informado pela empresa operadora"
+        description: "{{ doc('datetime_realocacao') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
       - name: data
-        description: "Data de partição, conforme 'timestamp_captura' da tabela 'sppo_registros'"
+        description: "{{ doc('data_captura') }} [partição]"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
       - name: hora
         description: "{{ doc('hora_particao_gps') }}"
@@ -202,7 +202,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: data
-        description: "Data de partição, conforme 'timestamp_captura' da tabela 'sppo_registros'"
+        description: "{{ doc('data_captura') }} [partição]"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela) / Tabela ephemeral
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
@@ -276,7 +276,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: data
-        description: "Data do 'timestamp_captura'"
+        description: "{{ doc('data_captura') }}"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
       - name: hora
         description: "{{ doc('hora_timestamp_captura') }}"
@@ -296,7 +296,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: longitude
-        description: "Parte da coordenada geográfica (eixo x) em graus decimais (EPSG:4326 - WGS84)"
+        description: "{{ doc('longitude_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -325,7 +325,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: data
-        description: "Data do 'timestamp_captura'"
+        description: "{{ doc('data_captura') }}"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
       - name: hora
         description: "{{ doc('hora_timestamp_captura') }}"

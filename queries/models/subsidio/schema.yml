@@ -5,7 +5,7 @@ models:
     description: "Tabela com quantidade de transações por viagem"
     columns:
       - name: data
-        description: "Data da viagem"
+        description: "{{ doc('data_viagem') }}"
       - name: id_viagem
         description: "{{ doc('id_viagem') }}"
       - name: id_veiculo
@@ -45,7 +45,7 @@ models:
       - name: irk
         description: "{{ doc('irk') }}"
       - name: data_inicio
-        description: "Data inicial do período de vigência dos demais atributos"
+        description: "{{ doc('data_inicio_parametros') }}"
       - name: data_fim
         description: "Data final do período de vigência dos demais atributos"
       - name: indicador_penalidade_judicial

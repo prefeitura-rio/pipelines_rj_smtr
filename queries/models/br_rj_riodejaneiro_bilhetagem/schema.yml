@@ -5,7 +5,7 @@ models:
     description: "Tabela com informações da Jaé sobre as transações realizadas no sistema de transporte municipal"
     columns:
       - name: data
-        description: "Data da transação (partição)"
+        description: "{{ doc('data_transacao') }} [partição]"
       - name: hora
         description: "Hora da transação"
       - name: datetime_transacao
@@ -17,7 +17,7 @@ models:
       - name: modo
         description: "Tipo de transporte (Ônibus, Van, BRT)"
       - name: id_consorcio
-        description: "Identificador do consórcio na tabela cadastro.consorcios"
+        description: "{{ doc('id_consorcio') }}"
       - name: consorcio
         description: "Nome do consórcio"
       - name: id_operadora
@@ -29,7 +29,7 @@ models:
       - name: servico_jae
         description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação de BRT na Jaé"
       - name: descricao_servico_jae
-        description: "Nome longo da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou nome da estação de BRT na Jaé"
+        description: "{{ doc('descricao_servico_jae') }}"
       - name: sentido
         description: "Sentido de operação do serviço (0 = ida, 1 = volta)"
       - name: id_veiculo
@@ -61,7 +61,7 @@ models:
       - name: latitude
         description: "Latitude da transação (WGS84)"
       - name: longitude
-        description: "Longitude da transação (WGS84)"
+        description: "{{ doc('longitude_transacao') }}"
       - name: geo_point_transacao
         description: "Ponto geográfico do local da transação"
       - name: tile_id
@@ -92,7 +92,7 @@ models:
     description: "Tabela de integrações realizadas entre modos do sistema de transporte municipal, contendo os valores da repartição tarifária [quando houver - dados em fase de teste]"
     columns:
       - name: data
-        description: "Data da transação (partição)"
+        description: "{{ doc('data_transacao') }} [partição]"
       - name: hora
         description: "Hora da transação"
       - name: datetime_processamento_integracao
@@ -112,7 +112,7 @@ models:
       - name: modo
         description: "Tipo de transporte (Ônibus, Van, BRT)"
       - name: id_consorcio
-        description: "Identificador do consórcio na tabela cadastro.consorcios"
+        description: "{{ doc('id_consorcio') }}"
       - name: consorcio
         description: "Nome do consórcio"
       - name: id_operadora
@@ -126,13 +126,13 @@ models:
       - name: servico_jae
         description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação de BRT na Jaé"
       - name: descricao_servico_jae
-        description: "Nome longo da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou nome da estação de BRT na Jaé"
+        description: "{{ doc('descricao_servico_jae') }}"
       - name: id_transacao
         description: "Identificador único da transação"
       - name: sentido
         description: "Sentido de operação do serviço (0 = ida, 1 = volta)"
       - name: percentual_rateio
-        description: "Percentual de rateio do valor total para a operadora"
+        description: "{{ doc('percentual_rateio') }}"
       - name: valor_rateio_compensacao
         description: "Valor a ser compensado pela ou à operadora (R$)"
       - name: valor_rateio
@@ -179,7 +179,7 @@ models:
       - name: servico_jae
         description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação de BRT na Jaé"
       - name: descricao_servico_jae
-        description: "Nome longo da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou nome da estação de BRT na Jaé"
+        description: "{{ doc('descricao_servico_jae') }}"
       - name: id_validador
         description: "Número de série do validador"
       - name: id_transmissao_gps
@@ -224,7 +224,7 @@ models:
       - name: servico_jae
         description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação de BRT na Jaé"
       - name: descricao_servico_jae
-        description: "Nome longo da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou nome da estação de BRT na Jaé"
+        description: "{{ doc('descricao_servico_jae') }}"
       - name: id_validador
         description: "Número de série do validador"
       - name: id_transmissao_gps
@@ -253,7 +253,7 @@ models:
     description: "Tabela de contagem do número de passageiros por hora. Agrega valores da tabela de transações por: data, hora, modo, consorcio, operadora, servico, sentido e tipo_transacao"
     columns:
       - name: data
-        description: "Data da transação"
+        description: "{{ doc('data_transacao') }}"
       - name: hora
         description: "Hora da transação"
       - name: modo
@@ -267,7 +267,7 @@ models:
       - name: servico_jae
         description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação de BRT na Jaé"
       - name: descricao_servico_jae
-        description: "Nome longo da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou nome da estação de BRT na Jaé"
+        description: "{{ doc('descricao_servico_jae') }}"
       - name: sentido
         description: "Sentido de operação do serviço (0 = ida, 1 = volta)"
       - name: tipo_transacao_smtr
@@ -286,7 +286,7 @@ models:
     description: "Tabela de contagem do número de passageiros por hora. Agrega valores das tabelas transacao e transacao_riocard por: data, hora, modo, consorcio, operadora, servico, sentido, tipo_transacao e tile_id"
     columns:
       - name: data
-        description: "Data da transação"
+        description: "{{ doc('data_transacao') }}"
       - name: hora
         description: "Hora da transação"
       - name: modo
@@ -300,7 +300,7 @@ models:
       - name: servico_jae
         description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação de BRT na Jaé"
       - name: descricao_servico_jae
-        description: "Nome longo da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou nome da estação de BRT na Jaé"
+        description: "{{ doc('descricao_servico_jae') }}"
       - name: sentido
         description: "Sentido de operação do serviço (0 = ida, 1 = volta)"
       - name: tipo_transacao_smtr
@@ -323,7 +323,7 @@ models:
       - name: chave
         description: "Chave"
       - name: cobertura_temporal
-        description: "Cobertura temporal"
+        description: "{{ doc('cobertura_temporal') }}"
       - name: id_tabela
         description: "Nome da tabela"
       - name: coluna
@@ -336,7 +336,7 @@ models:
       - name: data_ordem
         description: "{{ doc('data_ordem') }} (partição)"
       - name: id_consorcio
-        description: "Identificador do consórcio na tabela cadastro.consorcios"
+        description: "{{ doc('id_consorcio') }}"
       - name: consorcio
         description: "Nome do consórcio"
       - name: id_ordem_pagamento
@@ -346,7 +346,7 @@ models:
       - name: valor_debito
         description: "Valor total das transações feitas na modalidade débito (R$)"
       - name: quantidade_transacao_especie
-        description: "Quantidade de transações feitas em espécie"
+        description: "{{ doc('quantidade_transacao_especie') }}"
       - name: valor_especie
         description: "Valor total das transações feitas em espécie (R$)"
       - name: quantidade_transacao_gratuidade
@@ -394,7 +394,7 @@ models:
               where: "data_ordem in ({partitions})"
               name: not_null__id_ordem_pagamento_consorcio_operador_dia__ordem_pagamento_consorcio_operador_dia
       - name: id_consorcio
-        description: "Identificador do consórcio na tabela cadastro.consorcios"
+        description: "{{ doc('id_consorcio') }}"
         tests:
           - not_null:
               where: "data_ordem in ({partitions})"
@@ -424,7 +424,7 @@ models:
       - name: valor_debito
         description: "Valor total das transações feitas na modalidade débito (R$)"
       - name: quantidade_transacao_especie
-        description: "Quantidade de transações feitas em espécie"
+        description: "{{ doc('quantidade_transacao_especie') }}"
       - name: valor_especie
         description: "Valor total das transações feitas em espécie (R$)"
       - name: quantidade_transacao_gratuidade
@@ -479,7 +479,7 @@ models:
       - name: valor_debito
         description: "Valor total das transações feitas na modalidade débito (R$)"
       - name: quantidade_transacao_especie
-        description: "Quantidade de transações feitas em espécie"
+        description: "{{ doc('quantidade_transacao_especie') }}"
       - name: valor_especie
         description: "Valor total das transações feitas em espécie (R$)"
       - name: quantidade_transacao_gratuidade
@@ -514,7 +514,7 @@ models:
       - name: data_ordem
         description: "{{ doc('data_ordem') }} (partição)"
       - name: id_consorcio
-        description: "Identificador do consórcio na tabela cadastro.consorcios"
+        description: "{{ doc('id_consorcio') }}"
       - name: consorcio
         description: "Nome do consórcio"
       - name: id_operadora
@@ -526,7 +526,7 @@ models:
       - name: servico_jae
         description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação de BRT na Jaé"
       - name: descricao_servico_jae
-        description: "Nome longo da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou nome da estação de BRT na Jaé"
+        description: "{{ doc('descricao_servico_jae') }}"
       # - name: servico
       #   description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação"
       - name: id_ordem_pagamento
@@ -538,7 +538,7 @@ models:
       - name: valor_debito
         description: "Valor total das transações feitas na modalidade débito (R$)"
       - name: quantidade_transacao_especie
-        description: "Quantidade de transações feitas em espécie"
+        description: "{{ doc('quantidade_transacao_especie') }}"
       - name: valor_especie
         description: "Valor total das transações feitas em espécie (R$)"
       - name: quantidade_transacao_gratuidade
@@ -575,7 +575,7 @@ models:
     description: "Tabela com as transações feitas com RioCard que foram registradas pelo validador da Jaé"
     columns:
       - name: data
-        description: "Data da transação (partição)"
+        description: "{{ doc('data_transacao') }} [partição]"
       - name: hora
         description: "Hora da transação"
       - name: datetime_transacao
@@ -587,7 +587,7 @@ models:
       - name: modo
         description: "Tipo de transporte (Ônibus, Van, BRT)"
       - name: id_consorcio
-        description: "Identificador do consórcio na tabela cadastro.consorcios"
+        description: "{{ doc('id_consorcio') }}"
       - name: consorcio
         description: "Nome do consórcio"
       - name: id_operadora
@@ -601,7 +601,7 @@ models:
       - name: servico_jae
         description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação de BRT na Jaé"
       - name: descricao_servico_jae
-        description: "Nome longo da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou nome da estação de BRT na Jaé"
+        description: "{{ doc('descricao_servico_jae') }}"
       - name: sentido
         description: "Sentido de operação do serviço (0 = ida, 1 = volta)"
       - name: id_veiculo
@@ -613,7 +613,7 @@ models:
       - name: latitude
         description: "Latitude da transação (WGS84)"
       - name: longitude
-        description: "Longitude da transação (WGS84)"
+        description: "{{ doc('longitude_transacao') }}"
       - name: geo_point_transacao
         description: "Ponto geográfico do local da transação"
       - name: valor_transacao

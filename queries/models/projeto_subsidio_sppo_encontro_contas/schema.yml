@@ -31,7 +31,7 @@ models:
     description: "Balanço da receita aferida e esperada por consórcio e dia para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
     columns:
       - name: data
-        description: "Data"
+        description: "{{ doc('data') }}"
       - name: consorcio
         description: "Consórcio"
       - name: km_subsidiada
@@ -83,7 +83,7 @@ models:
     description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
     columns:
       - name: data
-        description: "Data"
+        description: "{{ doc('data') }}"
       - name: consorcio
         description: "Nome do consórcio"
       - name: servico
@@ -110,7 +110,7 @@ models:
     description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados após alterações do Grupo de Trabalho [Processo.Rio MTR-PRO-2024/06270]. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024 e 02/2024"
     columns:
       - name: data
-        description: "Data"
+        description: "{{ doc('data') }}"
       - name: consorcio
         description: "Consórcio"
       - name: servico

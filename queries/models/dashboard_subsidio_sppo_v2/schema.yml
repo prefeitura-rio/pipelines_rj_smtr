@@ -8,7 +8,7 @@ models:
           name: check_km_planejada__sumario_faixa_servico_dia
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS"
+        description: "{{ doc('data_gps') }}"
         tests:
           - dbt_expectations.expect_column_values_to_be_between:
               min_value: "'2024-08-15'"
@@ -20,7 +20,7 @@ models:
       - name: faixa_horaria_inicio
         description: "Horário inicial da faixa horária"
       - name: faixa_horaria_fim
-        description: "Horário final da faixa horária"
+        description: "{{ doc('faixa_horaria_fim') }}"
       - name: consorcio
         description: "Consórcio que opera o serviço"
       - name: servico
@@ -36,17 +36,17 @@ models:
       - name: pof
         description: "{{ doc('pof') }}"
       - name: km_apurada_registrado_com_ar_inoperante
-        description: "Distância apurada de viagens realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste (km)"
+        description: "{{ doc('km_apurada_registrado_com_ar_inoperante') }}"
       - name: km_apurada_n_licenciado
-        description: "Quilometragem apurada de viagens de veículos não licenciados"
+        description: "{{ doc('km_apurada_n_licenciado') }}"
       - name: km_apurada_autuado_ar_inoperante
-        description: "Quilometragem apurada de viagens de veículos autuados por ar inoperante"
+        description: "{{ doc('km_apurada_autuado_ar_inoperante') }}"
       - name: km_apurada_autuado_seguranca
         description: "{{ doc('km_apurada_autuado_seguranca') }}"
       - name: km_apurada_autuado_limpezaequipamento
         description: "Quilometragem apurada de viagens de veículos autuados por limpeza ou equipamento"
       - name: km_apurada_licenciado_sem_ar_n_autuado
-        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados"
+        description: "{{ doc('km_apurada_licenciado_sem_ar_n_autuado') }}"
       - name: km_apurada_licenciado_com_ar_n_autuado
         description: "Quilometragem apurada de viagens de veículos com ar e não autuados"
       - name: km_apurada_n_vistoriado
@@ -56,7 +56,7 @@ models:
       - name: valor_apurado
         description: "Valor da distância apurada multiplicada pelo subsídio por quilômetro (sem glosa). É zerado quando POF < 80%"
       - name: valor_acima_limite
-        description: "Valor apurado das viagens que não foram remuneradas (por estar acima do teto de 120% / 200%)"
+        description: "{{ doc('valor_acima_limite') }}"
       - name: valor_total_sem_glosa
         description: "{{ doc('valor_total_sem_glosa') }}"
       - name: valor_judicial
@@ -106,7 +106,7 @@ models:
           where: "data between date('{date_range_start}') and date('{date_range_end}')"
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS"
+        description: "{{ doc('data_gps') }}"
         tests:
           - not_null:
               name: not_null__data__sumario_faixa_servico_dia_pagamento
@@ -120,7 +120,7 @@ models:
       - name: faixa_horaria_inicio
         description: "Horário inicial da faixa horária"
       - name: faixa_horaria_fim
-        description: "Horário final da faixa horária"
+        description: "{{ doc('faixa_horaria_fim') }}"
       - name: consorcio
         description: "Consórcio que opera o serviço"
         tests:
@@ -188,11 +188,11 @@ models:
               name: dbt_utils.accepted_range__pof__sumario_faixa_servico_dia_pagamento
               where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: km_apurada_registrado_com_ar_inoperante
-        description: "Distância apurada de viagens realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste (km)"
+        description: "{{ doc('km_apurada_registrado_com_ar_inoperante') }}"
       - name: km_apurada_n_licenciado
-        description: "Quilometragem apurada de viagens de veículos não licenciados"
+        description: "{{ doc('km_apurada_n_licenciado') }}"
       - name: km_apurada_autuado_ar_inoperante
-        description: "Quilometragem apurada de viagens de veículos autuados por ar inoperante"
+        description: "{{ doc('km_apurada_autuado_ar_inoperante') }}"
       - name: km_apurada_autuado_seguranca
         description: "{{ doc('km_apurada_autuado_seguranca') }}"
       - name: km_apurada_autuado_limpezaequipamento
@@ -222,7 +222,7 @@ models:
       - name: km_apurada_total_licenciado_com_ar_n_autuado
         description: "Quilometragem total apurada de viagens de veículos com ar e não autuados"
       - name: valor_a_pagar
-        description: "Valor efetivo de pagamento (valor_total_apurado - valor_acima_limite - valor_glosado)"
+        description: "{{ doc('valor_a_pagar') }}"
         tests:
           - not_null:
               name: not_null__valor_a_pagar__sumario_faixa_servico_dia_pagamento
@@ -230,9 +230,9 @@ models:
       - name: valor_glosado_tecnologia
         description: "{{ doc('valor_glosado_tecnologia') }}"
       - name: valor_total_glosado
-        description: "{{ doc('valor_glosado') }}"
+        description: "{{ doc('valor_total_glosado') }}"
       - name: valor_acima_limite
-        description: "Valor apurado das viagens que não foram remuneradas (por estar acima do teto de 120% / 200%)"
+        description: "{{ doc('valor_acima_limite') }}"
       - name: valor_total_sem_glosa
         description: "{{ doc('valor_total_sem_glosa') }}"
       - name: valor_judicial
@@ -284,7 +284,7 @@ models:
           where: "1=1"
     columns:
       - name: data
-        description: "Data de emissão do sinal de GPS"
+        description: "{{ doc('data_gps') }}"
         tests:
           - not_null:
               name: not_null__data__sumario_servico_dia_pagamento
@@ -353,17 +353,17 @@ models:
       - name: desvp_pof
         description: "Desvio padrão do indicador percentual de operação por faixa horária"
       - name: km_apurada_registrado_com_ar_inoperante
-        description: "Distância apurada de viagens realizadas por veículo licenciado com ar condicionado e registrado por agente de verão (RESOLUÇÃO SMTR Nº 3.682/2024) em razão de inoperância ou mau funcionamento deste (km)"
+        description: "{{ doc('km_apurada_registrado_com_ar_inoperante') }}"
       - name: km_apurada_n_licenciado
-        description: "Quilometragem apurada de viagens de veículos não licenciados"
+        description: "{{ doc('km_apurada_n_licenciado') }}"
       - name: km_apurada_autuado_ar_inoperante
-        description: "Quilometragem apurada de viagens de veículos autuados por ar inoperante"
+        description: "{{ doc('km_apurada_autuado_ar_inoperante') }}"
       - name: km_apurada_autuado_seguranca
         description: "{{ doc('km_apurada_autuado_seguranca') }}"
       - name: km_apurada_autuado_limpezaequipamento
         description: "Quilometragem apurada de viagens de veículos autuados por limpeza ou equipamento"
       - name: km_apurada_licenciado_sem_ar_n_autuado
-        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados"
+        description: "{{ doc('km_apurada_licenciado_sem_ar_n_autuado') }}"
       - name: km_apurada_licenciado_com_ar_n_autuado
         description: "Quilometragem apurada de viagens de veículos com ar e não autuados"
       - name: km_apurada_n_vistoriado
@@ -371,14 +371,14 @@ models:
       - name: km_apurada_sem_transacao
         description: "Distância apurada de viagens realizadas sem passageiro registrado"
       - name: valor_a_pagar
-        description: "Valor efetivo de pagamento (valor_total_apurado - valor_acima_limite - valor_glosado)"
+        description: "{{ doc('valor_a_pagar') }}"
         tests:
           - not_null:
               name: not_null__valor_a_pagar__sumario_servico_dia_pagamento
       - name: valor_glosado
         description: "{{ doc('valor_glosado') }}"
       - name: valor_acima_limite
-        description: "Valor apurado das viagens que não foram remuneradas (por estar acima do teto de 120% / 200%)"
+        description: "{{ doc('valor_acima_limite') }}"
       - name: valor_total_sem_glosa
         description: "{{ doc('valor_total_sem_glosa') }}"
       - name: valor_total_apurado

@@ -28,9 +28,9 @@ models:
       - name: servico
         description: "{{ doc('servico') }}"
       - name: id_auto_infracao
-        description: "Identificador do auto de infração da multa aplicada"
+        description: "{{ doc('id_auto_infracao') }}"
       - name: data_infracao
-        description: "Data da infração"
+        description: "{{ doc('data_infracao') }}"
       - name: valor
         description: "Valor devido (R$)"
       - name: id_infracao
@@ -101,8 +101,6 @@ models:
         description: "{{ doc('tipo_veiculo') }}"
       - name: tecnologia
         description: "{{ doc('tecnologia') }}"
-      - name: status
-        description: "{{ doc('status') }}"
       - name: ano_ultima_vistoria_atualizado
         description: "{{ doc('ano_ultima_vistoria_atualizado') }}"
       - name: data_inicio_vinculo
@@ -174,25 +172,34 @@ models:
           - data
           - id_veiculo
           name: dbt_utils.unique_combination_of_columns__data_id_veiculo__sppo_veiculo_dia
+      - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
+          date_col: data
+          row_condition: "1=1"
+          test_start_date: "{{ var('date_range_start') }}"
+          test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
+          name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sppo_veiculo_dia
     columns:
       - name: data
         description: "Data de operação"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
+        tests:
+          - not_null:
+              name: not_null__id_veiculo__sppo_veiculo_dia
       - name: placa
         description: "{{ doc('placa') }}"
       - name: indicadores
         description: "Indicadores para caraterização do status do veículo"
       - name: indicadores.indicador_licenciado
-        description: "Indicador se o veículo encontra-se licenciado"
+        description: "{{ doc('indicador_licenciado') }}"
       - name: indicadores.indicador_ar_condicionado
-        description: "Indicador se o veículo foi licenciado com ar condicionado"
+        description: "{{ doc('indicador_ar_condicionado') }}"
       - name: indicadores.indicador_autuacao_ar_condicionado
         description: "{{  doc('indicador_autuacao_ar_condicionado') }}"
       - name: indicadores.indicador_autuacao_seguranca
         description: "Indicador se o veículo foi autuado por infração relacionada à segurança do veículo"
       - name: indicadores.indicador_autuacao_limpeza
-        description: "Indicador se o veículo foi autuado por infração relacionada à limpeza do veículo"
+        description: "{{ doc('indicador_autuacao_limpeza') }}"
       - name: indicadores.indicador_autuacao_equipamento
         description: "Indicador se o veículo foi autuado por infração relacionada à inoperância ou mau funcionamento de equipamentos do veículo"
       - name: indicadores.indicador_sensor_temperatura
@@ -224,19 +231,19 @@ models:
     description: "Tabela com registros de Agentes de Verão para fins de cálculo de subsídio nos termos da RESOLUÇÃO SMTR Nº 3.682/2024"
     columns:
       - name: data
-        description: "Data de registro pelo agente público"
+        description: "{{ doc('data_agente') }}"
       - name: datetime_registro
         description: "Datetime de registro pelo agente público"
       - name: id_registro
-        description: "ID do registro (HASH SHA256)"
+        description: "{{ doc('id_registro') }}"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: servico
         description: "{{ doc('servico') }}"
       - name: link_foto
-        description: "Link com a imagem interna do veículo"
+        description: "{{ doc('link_foto') }}"
       - name: validacao
-        description: "Coluna de validação do registro enviado pelo agente público (apenas TRUE nesta tabela)"
+        description: "{{ doc('validacao') }}"
       - name: datetime_captura
         description: "Datetime de captura do registro pela pipeline"
       - name: versao

@@ -25,6 +25,8 @@ selectors:
         - method: fqn
           value: valor_tipo_penalidade
         - method: fqn
+          value: staging_tecnologia_servico
+        - method: fqn
           value: tecnologia_servico
         - method: fqn
           value: viagem_transacao
@@ -93,8 +95,11 @@ selectors:
   - name: matriz_integracao_smtr
     description: Materialização da matriz de integração da SMTR
     definition:
-      method: fqn
-      value: matriz_integracao
+      union:
+        - method: fqn
+          value: matriz_reparticao_tarifaria
+        - method: fqn
+          value: matriz_integracao
 
   - name: validacao_dados_jae
     description: Materialização das tabelas de validação dos dados da Jaé
@@ -229,3 +234,16 @@ selectors:
           value: view_passageiros_hora
         - method: fqn
           value: view_passageiros_tile_hora
+
+  - name: transito_autuacao
+    description: Materialização das tabelas de autuação de trânsito
+    definition:
+      union:
+        - method: fqn
+          value: autuacao_citran
+        - method: fqn
+          value: autuacao_serpro
+        - method: fqn
+          value: aux_autuacao_id
+        - method: fqn
+          value: autuacao

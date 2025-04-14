@@ -11,9 +11,9 @@ models:
       - name: latitude
         description: "{{ doc('latitude_gps') }}"
       - name: longitude
-        description: "Parte da coordenada geográfica (eixo x) em graus decimais (EPSG:4326 - WGS84)"
+        description: "{{ doc('longitude_gps') }}"
       - name: data
-        description: "Data do 'timestamp_captura'"
+        description: "{{ doc('data_captura') }}"
       - name: estado_equipamento
         description: Estado do validador da Jaé (ABERTO ou FECHADO)
       - name: primeiro_datetime_gps
@@ -42,9 +42,9 @@ models:
       - name: latitude
         description: "{{ doc('latitude_gps') }}"
       - name: longitude
-        description: "Parte da coordenada geográfica (eixo x) em graus decimais (EPSG:4326 - WGS84)"
+        description: "{{ doc('longitude_gps') }}"
       - name: data
-        description: "Data do 'timestamp_captura'"
+        description: "{{ doc('data_captura') }}"
       - name: estado_equipamento
         description: Estado do validador da Jaé (ABERTO ou FECHADO)
       - name: primeiro_datetime_gps
@@ -71,7 +71,7 @@ models:
       - name: id_validador
         description: "Número de série do validador"
       - name: data
-        description: "Data do 'timestamp_captura'"
+        description: "{{ doc('data_captura') }}"
       - name: estado_equipamento
         description: Estado do validador da Jaé (ABERTO ou FECHADO)
       - name: primeiro_datetime_gps
@@ -100,9 +100,9 @@ models:
       - name: latitude
         description: "{{ doc('latitude_gps') }}"
       - name: longitude
-        description: "Parte da coordenada geográfica (eixo x) em graus decimais (EPSG:4326 - WGS84)"
+        description: "{{ doc('longitude_gps') }}"
       - name: data
-        description: "Data do 'timestamp_captura'"
+        description: "{{ doc('data_captura') }}"
       - name: estado_equipamento
         description: Estado do validador da Jaé (ABERTO ou FECHADO)
       - name: primeiro_datetime_gps

@@ -127,9 +127,9 @@ models:
       - name: placa
         description: "{{ doc('placa') }}"
       - name: id_auto_infracao
-        description: "Identificador do auto de infração da multa aplicada"
+        description: "{{ doc('id_auto_infracao') }}"
       - name: data_infracao
-        description: "Data da infração"
+        description: "{{ doc('data_infracao') }}"
       - name: valor
         description: "Valor devido (R$)"
       - name: id_infracao
@@ -204,19 +204,19 @@ models:
     description: "View com registros de Agentes de Verão para fins de cálculo de subsídio nos termos da RESOLUÇÃO SMTR Nº 3.682/2024"
     columns:
       - name: data
-        description: "Data de registro pelo agente público"
+        description: "{{ doc('data_agente') }}"
       - name: datetime_registro
         description: "Datetime de registro pelo agente público"
       - name: id_registro
-        description: "ID do registro (HASH SHA256)"
+        description: "{{ doc('id_registro') }}"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: servico
         description: "{{ doc('servico') }}"
       - name: link_foto
-        description: "Link com a imagem interna do veículo"
+        description: "{{ doc('link_foto') }}"
       - name: validacao
-        description: "Coluna de validação do registro enviado pelo agente público (apenas TRUE nesta tabela)"
+        description: "{{ doc('validacao') }}"
       - name: datetime_captura
         description: "Datetime de captura do registro pela pipeline"
       - name: versao

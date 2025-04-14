@@ -11,7 +11,7 @@ models:
       - name: datetime_captura
         description: "Data e hora de captura [GMT-3]"
       - name: id_consorcio
-        description: "Identificador do consórcio na tabela cadastro.consorcios"
+        description: "{{ doc('id_consorcio') }}"
       - name: id_operadora
         description: "Identificador da operadora na tabela cadastro.operadoras"
       - name: modo
