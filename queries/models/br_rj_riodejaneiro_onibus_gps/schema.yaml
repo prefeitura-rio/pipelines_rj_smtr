@@ -10,7 +10,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: latitude
-        description: "Parte da coordenada geográfica (eixo y) em graus decimais (EPSG:4326 - WGS84)"
+        description: "{{ doc('latitude_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -20,12 +20,12 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: posicao_veiculo_geo
-        description: "Coordenada geográfica (POINT) com a posição que o veículo se encontra, conforme 'longitude' e 'latitude' informadas pelo GPS (EPSG:4326 - WGS84)"
+        description: "{{ doc('posicao_veiculo_geo') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
       - name: velocidade
-        description: "Velocidade instantânea do veículo, conforme informado pelo GPS (km/h)"
+        description: "{{ doc('velocidade_instantanea') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -52,7 +52,7 @@ models:
         description: "Data do 'timestamp_captura'"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
       - name: hora
-        description: "Hora do 'timestamp_captura'"
+        description: "{{ doc('hora_timestamp_captura') }}"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
       - name: versao
         description: "SHA da branch no Github"
@@ -175,7 +175,7 @@ models:
         #   - no_space:
         #       partition_column: data
       - name: servico_realocado
-        description: "Linha de ônibus (serviço) realocada informada pela empresa operadora"
+        description: "{{ doc('servico_realocacao') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -190,7 +190,7 @@ models:
         description: "Data de partição, conforme 'timestamp_captura' da tabela 'sppo_registros'"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
       - name: hora
-        description: "Hora de partição, conforme 'timestamp_captura' da tabela 'sppo_registros'"
+        description: "{{ doc('hora_particao_gps') }}"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
 
   - name: sppo_aux_registros_velocidade
@@ -249,12 +249,12 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: datetime_operacao
-        description: "Datetime que o registro da realocação foi informado pela empresa operadora"
+        description: "{{ doc('datetime_operacao') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
       - name: servico
-        description: "Linha de ônibus (serviço) realocada informada pela empresa operadora"
+        description: "{{ doc('servico_realocacao') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -266,7 +266,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: datetime_saida
-        description: "Datetime de saída do veículo na linha realocada"
+        description: "{{ doc('datetime_saida') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -284,7 +284,7 @@ models:
         description: "Data do 'timestamp_captura'"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
       - name: hora
-        description: "Hora do 'timestamp_captura'"
+        description: "{{ doc('hora_timestamp_captura') }}"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
 
   - name: sppo_registros
@@ -301,7 +301,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: latitude
-        description: "Parte da coordenada geográfica (eixo y) em graus decimais (EPSG:4326 - WGS84)"
+        description: "{{ doc('latitude_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -316,7 +316,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: velocidade
-        description: "Velocidade instantânea do veículo, conforme informado pelo GPS (km/h)"
+        description: "{{ doc('velocidade_instantanea') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -338,5 +338,5 @@ models:
         description: "Data do 'timestamp_captura'"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
       - name: hora
-        description: "Hora do 'timestamp_captura'"
+        description: "{{ doc('hora_timestamp_captura') }}"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)

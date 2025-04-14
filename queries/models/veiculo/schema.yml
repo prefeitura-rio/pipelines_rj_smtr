@@ -188,7 +188,7 @@ models:
       - name: indicadores.indicador_ar_condicionado
         description: "Indicador se o veículo foi licenciado com ar condicionado"
       - name: indicadores.indicador_autuacao_ar_condicionado
-        description: "Indicador se o veículo foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado"
+        description: "{{  doc('indicador_autuacao_ar_condicionado') }}"
       - name: indicadores.indicador_autuacao_seguranca
         description: "Indicador se o veículo foi autuado por infração relacionada à segurança do veículo"
       - name: indicadores.indicador_autuacao_limpeza
@@ -196,7 +196,7 @@ models:
       - name: indicadores.indicador_autuacao_equipamento
         description: "Indicador se o veículo foi autuado por infração relacionada à inoperância ou mau funcionamento de equipamentos do veículo"
       - name: indicadores.indicador_sensor_temperatura
-        description: "Indicador se o sensor de temperatura do veículo não estava em funcionamento conforme especificação da SMTR"
+        description: "{{  doc('indicador_sensor_temperatura') }}"
       - name: indicadores.indicador_validador_sbd
         description: "Indicador se o veículo se encontra com o novo validador do Sistema de Bilhetagem Digital (SBD) instalado"
       - name: status

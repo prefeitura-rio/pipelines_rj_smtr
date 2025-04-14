@@ -84,15 +84,15 @@ models:
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: id_viagem
-        description: "Código identificador da viagem (ex: id_veiculo + servico + sentido + shape_id + datetime_partida)"
+        description: "{{ doc('id_viagem') }}"
       - name: servico
-        description: "Serviço realizado pelo veículo (com base na identificação do trajeto)"
+        description: "{{ doc('servico') }} [com base na identificação do trajeto]"
       - name: shape_id
         description: "Código identificador do trajeto (shape) operado"
       - name: sentido
         description: "Sentido do trajeto identificado - categorias: I (ida), V (volta), C (circular)"
       - name: datetime_partida
-        description: "Horário de início da viagem"
+        description: "{{ doc('datetime_partida') }}"
       - name: datetime_chegada
         description: "Horário de fim da viagem"
       - name: tempo_viagem

@@ -53,7 +53,7 @@ models:
         data_type: date
         quote: true
       - name: feed_end_date
-        description: Data final do feed (versão).
+        description: "{{ doc('feed_end_date') }}"
         data_type: date
         quote: true
       - name: shape_id
@@ -116,7 +116,7 @@ models:
         data_type: date
         quote: true
       - name: feed_end_date
-        description: Data final do feed (versão).
+        description: "{{ doc('feed_end_date') }}"
         data_type: date
         quote: true
       - name: shape_id
@@ -279,7 +279,7 @@ models:
         description: "Sequencia da transação dentro da integração"
         data_type: int64
       - name: modo
-        description: "Tipo de transporte (Ônibus, Van, BRT)"
+        description: "{{ doc('modo') }}"
         data_type: string
       - name: percentual_rateio
         description: "Percentual de rateio do valor total para a operadora"

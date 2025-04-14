@@ -15,7 +15,7 @@ models:
       - name: id_operadora
         description: "Identificador da operadora na tabela cadastro.operadoras"
       - name: modo
-        description: "Tipo de transporte (Ônibus, Van, BRT)"
+        description: "{{ doc('modo') }}"
       - name: favorecido
         description: "Nome do favorecido do pagamento"
       - name: data_ordem

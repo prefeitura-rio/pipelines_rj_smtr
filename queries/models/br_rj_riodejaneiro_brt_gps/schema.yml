@@ -11,9 +11,9 @@ models:
       - name: longitude
         description: "{{ doc('longitude_gps') }}"
       - name: posicao_veiculo_geo
-        description: "Coordenada geográfica (POINT) com a posição que o veículo se encontra, conforme 'longitude' e 'latitude' informadas pelo GPS (EPSG:4326 - WGS84)"
+        description: "{{ doc('posicao_veiculo_geo') }}"
       - name: velocidade
-        description: "Velocidade instantânea do veículo, conforme informado pelo GPS (km/h)"
+        description: "{{ doc('velocidade_instantanea') }}"
       - name: servico
         description: "{{ doc('servico') }}"
       - name: timestamp_gps
@@ -23,7 +23,7 @@ models:
       - name: data
         description: "Data do 'timestamp_captura'"
       - name: hora
-        description: "Hora do 'timestamp_captura'"
+        description: "{{ doc('hora_timestamp_captura') }}"
       - name: versao
         description: "{{ doc('versao') }}"
   - name: brt_registros
@@ -40,14 +40,14 @@ models:
       - name: data
         description: "Data do 'timestamp_captura'"
       - name: hora
-        description: "Hora do 'timestamp_captura'"
+        description: "{{ doc('hora_timestamp_captura') }}"
   - name: brt_registros_desaninhada
     description: "View para os dados capturados em staging com os valores da coluna content desaninhados"
     columns:
       - name: data
         description: "Data do 'timestamp_captura'"
       - name: hora
-        description: "Hora do 'timestamp_captura'"
+        description: "{{ doc('hora_timestamp_captura') }}"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: timestamp_gps
@@ -63,7 +63,7 @@ models:
       - name: sentido
         description: "{{ doc('sentido') }}"
       - name: velocidade
-        description: "Velocidade instantânea do veículo, conforme informado pelo GPS (km/h)"
+        description: "{{ doc('velocidade_instantanea') }}"
   - name: registros_historico
     description: "View para os dados históricos capturados em staging com tratamento básico e conversão de valores"
     columns:
@@ -80,7 +80,7 @@ models:
       - name: timestamp_gps
         description: "{{ doc('timestamp_gps') }}"
       - name: velocidade
-        description: "Velocidade instantânea do veículo, conforme informado pelo GPS (km/h)"
+        description: "{{ doc('velocidade_instantanea') }}"
       - name: id_migracao_trajeto
         description: ""
       - name: sentido
@@ -92,4 +92,4 @@ models:
       - name: data
         description: "Data do 'timestamp_captura'"
       - name: hora
-        description: "Hora do 'timestamp_captura'"
+        description: "{{ doc('hora_gps') }}"

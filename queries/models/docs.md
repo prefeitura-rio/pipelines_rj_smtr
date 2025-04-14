@@ -27,11 +27,11 @@ Classificação do tipo de viagem.
 {% enddocs %}
 
 {% docs servico %}
-Serviço realizado pelo veículo.
+Serviço realizado pelo veículo
 {% enddocs %}
 
 {% docs id_viagem %}
-Código único identificador da viagem.
+Código único identificador da viagem
 {% enddocs %}
 
 {% docs project_id %}
@@ -201,7 +201,11 @@ Fim do período de operação planejado
 {% enddocs %}
 
 {% docs feed_version %}
-String que indica a versão atual do conjunto de dados GTFS.
+String que indica a versão atual do conjunto de dados GTFS
+{% enddocs %}
+
+{% docs feed_end_date %}
+Data final do feed (versão)
 {% enddocs %}
 
 {% docs tipo_servico %}
@@ -479,4 +483,112 @@ Distância do shape [trajeto] planejado (km)
 
 {% docs indicador_servico_divergente %}
 Indica se o serviço indicado nos dados de GPS estava diferente do serviço informado na viagem
+{% enddocs %}
+
+{% docs ano %}
+Ano
+{% enddocs %}
+
+{% docs ano_indicador %}
+Ano de apuração do indicador
+{% enddocs %}
+
+{% docs hora_transacao %}
+Hora da transação
+{% enddocs %}
+
+{% docs data_ordem %}
+Data da ordem de pagamento
+{% enddocs %}
+
+{% docs datetime_operacao %}
+Datetime que o registro da realocação foi informado pela empresa operadora
+{% enddocs %}
+
+{% docs datetime_saida %}
+Datetime de saída do veículo na linha realocada
+{% enddocs %}
+
+{% docs distancia_total_planejada %}
+Distância total planejada do serviço [ida + volta] (km)
+{% enddocs %}
+
+{% docs hora_particao_gps %}
+Hora de partição, conforme 'timestamp_captura' da tabela 'sppo_registros'
+{% enddocs %}
+
+{% docs hora_timestamp_captura %}
+Hora do 'timestamp_captura'
+{% enddocs %}
+
+{% docs id_integracao %}
+Identificador único da integração
+{% enddocs %}
+
+{% docs indicador_autuacao_ar_condicionado %}
+Indicador se o veículo foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado
+{% enddocs %}
+
+{% docs indicador_sensor_temperatura %}
+Indicador se o sensor de temperatura do veículo não estava em funcionamento conforme especificação da SMTR
+{% enddocs %}
+
+{% docs irk %}
+Índice de Remuneração por km (R$/km)
+{% enddocs %}
+
+{% docs km_apurada_autuado_seguranca %}
+Quilometragem apurada de viagens de veículos autuados por segurança
+{% enddocs %}
+
+{% docs km_planejada_dia %}
+Distância planejada para o serviço por dia (km)
+{% enddocs %}
+
+{% docs legislacao %}
+Legislação que estabelece o valor e regras de remuneração
+{% enddocs %}
+
+{% docs n_registros_total %}
+Contagem de sinais de GPS emitidos no tempo da viagem
+{% enddocs %}
+
+{% docs pontuacao %}
+Quantidade de pontos da autuação
+{% enddocs %}
+
+{% docs posicao_veiculo_geo %}
+Quantidade de pontos da autuação
+{% enddocs %}
+
+{% docs servico_realocacao %}
+Linha de ônibus (serviço) realocada informada pela empresa operadora
+{% enddocs %}
+
+{% docs servico_variacao %}
+Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...)
+{% enddocs %}
+
+{% docs situacao_atual %}
+Descrição da situação da autuação
+{% enddocs %}
+
+{% docs start_pt %}
+Ponto inicial do shape em formato geográfico (Point)
+{% enddocs %}
+
+{% docs trip_short_name %}
+Texto voltado ao público usado para identificar a viagem aos passageiros, por exemplo, para identificar os números dos trens para viagens de trens suburbanos
+{% enddocs %}
+
+{% docs valor_glosado %}
+Valor total das viagens considerando o valor máximo por km, subtraído pelo valor efetivo por km
+{% enddocs %}
+
+{% docs valor_judicial %}
+Valor de glosa depositada em juízo [Autuação por ar inoperante, Veículo licenciado sem ar, Penalidade abaixo de 60% e Notificação dos Agentes de Verão]
+{% enddocs %}
+
+{% docs valor_total_sem_glosa %}
+Valor total das viagens considerando o valor máximo por km
 {% enddocs %}

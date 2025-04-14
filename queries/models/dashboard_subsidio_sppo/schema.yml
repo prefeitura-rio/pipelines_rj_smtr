@@ -51,7 +51,7 @@ models:
           - not_null:
               name: not_null__consorcio__sumario_servico_dia
       - name: servico
-        description: "Serviço realizado pelo veículo"
+        description: "{{ doc('servico') }}"
         tests:
           - not_null:
               name: not_null__servico__sumario_servico_dia
@@ -120,7 +120,7 @@ models:
       - name: consorcio
         description: "Consórcio que opera o serviço"
       - name: servico
-        description: "Serviço realizado pelo veículo"
+        description: "{{ doc('servico') }}"
       - name: vista
         description: "Itinerário da linha (ex: Bananal ↔ Saens Peña)"
       - name: viagens
@@ -157,7 +157,7 @@ models:
       - name: consorcio
         description: "Consórcio que opera o serviço"
       - name: servico
-        description: "Serviço realizado pelo veículo"
+        description: "{{ doc('servico') }}"
       - name: tipo_viagem
         description: "Tipo de viagem"
       - name: viagens
@@ -183,7 +183,7 @@ models:
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: servico
-        description: "Serviço realizado pelo veículo"
+        description: "{{ doc('servico') }}"
       - name: viagens_planejadas
         description: "Quantidade de viagens planejadas"
       - name: viagens_subsidio
@@ -218,7 +218,7 @@ models:
       - name: consorcio
         description: "Consórcio que opera o serviço"
       - name: servico
-        description: "Serviço realizado pelo veículo"
+        description: "{{ doc('servico') }}"
       - name: viagens
         description: "Quantidade de viagens apuradas"
       - name: km_apurada
@@ -300,7 +300,7 @@ models:
       - name: indicador_ar_condicionado
         description: "Indicador se o veículo foi licenciado com ar condicionado"
       - name: indicador_autuacao_ar_condicionado
-        description: "Indicador se o veículo foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado"
+        description: "{{  doc('indicador_autuacao_ar_condicionado') }}"
       - name: indicador_autuacao_seguranca
         description: "Indicador se o veículo foi autuado por infração relacionada à segurança do veículo"
       - name: indicador_autuacao_limpeza
@@ -308,7 +308,7 @@ models:
       - name: indicador_autuacao_equipamento
         description: "Indicador se o veículo foi autuado por infração relacionada à inoperância ou mau funcionamento de equipamentos do veículo"
       - name: indicador_sensor_temperatura
-        description: "Indicador se o sensor de temperatura do veículo não estava em funcionamento conforme especificação da SMTR"
+        description: "{{ doc('indicador_sensor_temperatura') }}"
       - name: indicador_validador_sbd
         description: "Indicador se o veículo se encontra com o novo validador do Sistema de Bilhetagem Digital (SBD) instalado"
       - name: status
@@ -316,13 +316,13 @@ models:
       - name: subsidio_km
         description: "Valor de subsídio de remuneração (R$/km)"
       - name: irk
-        description: "Índice de Remuneração por km (R$/km)"
+        description: "{{ doc('irk') }}"
       - name: data_inicio
         description: "Data inicial do período de vigência dos demais atributos"
       - name: data_fim
         description: "Data final do período de vigência dos demais atributos"
       - name: legislacao
-        description: "Legislação que estabelece o valor e regras de remuneração"
+        description: "{{ doc('legislacao') }}"
       - name: ordem
         description: "Ordem de prioridade de aplicação dos valores de remuneração"
       - name: indicador_registro_agente_verao_ar_condicionado
@@ -350,7 +350,7 @@ models:
       - name: servico_informado
         description: "Serviço informado pelo GPS do veículo"
       - name: servico_realizado
-        description: "Serviço realizado pelo veículo (com base na identificação do trajeto)"
+        description: "{{ doc('servico') }} [com base na identificação do trajeto]"
       - name: vista
         description: "Itinerário da linha (ex: Bananal ↔ Saens Peña)"
       - name: trip_id
@@ -364,7 +364,7 @@ models:
         description: "Código identificador da viagem
         (id_veiculo + servico_realizado + sentido + shape_id_planejado + datetime_partida)"
       - name: datetime_partida
-        description: "Horário de início da viagem"
+        description: "{{ doc('datetime_partida') }}"
       - name: datetime_chegada
         description: "Horário de fim da viagem"
       - name: tipo_viagem
@@ -372,9 +372,9 @@ models:
                       - Completa linha correta\n
                       - Completa linha incorreta"
       - name: inicio_periodo
-        description: "Início do período de operação planejado"
+        description: "{{ doc('inicio_periodo') }}"
       - name: fim_periodo
-        description: "Fim do período de operação planejado"
+        description: "{{ doc('fim_periodo') }}"
       - name: viagens_planejadas
         description: "Viagens planejadas no período"
       - name: tempo_planejado
@@ -390,7 +390,7 @@ models:
       - name: n_registros_shape
         description: "Contagem de sinais de GPS emitidos dentro do trajeto"
       - name: n_registros_total
-        description: "Contagem de sinais de GPS emitidos no tempo da viagem"
+        description: "{{ doc('n_registros_total') }}"
       - name: n_registros_minuto
         description: "Contagem de minutos do trajeto com pelo menos 1 sinal de GPS emitido"
       - name: perc_conformidade_shape
@@ -445,7 +445,7 @@ models:
           - not_null:
               name: not_null__tipo_dia__sumario_servico_dia_tipo_sem_glosa
       - name: servico
-        description: "Serviço realizado pelo veículo"
+        description: "{{ doc('servico') }}"
         tests:
           - not_null:
               name: not_null__servico__sumario_servico_dia_tipo_sem_glosa
@@ -527,7 +527,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__viagens_autuado_seguranca__sumario_servico_dia_tipo_sem_glosa
       - name: km_apurada_autuado_seguranca
-        description: "Quilometragem apurada de viagens de veículos autuados por segurança"
+        description: "{{ doc('km_apurada_autuado_seguranca') }}"
         tests:
           - not_null:
               name: not_null__km_apurada_autuado_seguranca__sumario_servico_dia_tipo_sem_glosa
@@ -640,7 +640,7 @@ models:
               name: not_null__data__viagens_remuneradas
               where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: servico
-        description: "Serviço realizado pelo veículo"
+        description: "{{ doc('servico') }}"
         tests:
           - not_null:
               name: not_null__servico__viagens_remuneradas

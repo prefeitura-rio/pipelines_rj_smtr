@@ -23,11 +23,11 @@ models:
       - name: shape_id
         description: "Identificador de um shape da tabela shapes do GTFS"
       - name: servico
-        description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...)"
+        description: "{{ doc('servico_variacao') }}"
       - name: sentido
         description: "Ida ou Volta"
       - name: id_viagem
-        description: "Identificador de um shape da tabela shapes do GTFS"
+        description: "{{ doc('id_viagem') }}"
       - name: versao
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao

@@ -7,7 +7,7 @@ models:
       - name: data
         description: "Data de referência para partição"
       - name: ano
-        description: "Ano de apuração do indicador"
+        description: "{{ doc('ano_indicador') }}"
       - name: mes
         description: "Mês de apuração do indicador"
       - name: modo
@@ -24,7 +24,7 @@ models:
   #     - name: data
   #       description: "Data de referência para apuração (partição)"
   #     - name: ano
-  #       description: "Ano de apuração do indicador"
+  #       description: "{{ doc('ano_indicador') }}"
   #     - name: mes
   #       description: "Mês de apuração do indicador"
   #     - name: modo
@@ -41,7 +41,7 @@ models:
       - name: data
         description: "Data de referência para partição"
       - name: ano
-        description: "Ano de apuração do indicador"
+        description: "{{ doc('ano_indicador') }}"
       - name: mes
         description: "Mês de apuração do indicador"
       - name: modo
@@ -58,7 +58,7 @@ models:
       - name: data
         description: "Data de referência para partição"
       - name: ano
-        description: "Ano de apuração do indicador"
+        description: "{{ doc('ano_indicador') }}"
       - name: mes
         description: "Mês de apuração do indicador"
       - name: modo
@@ -75,7 +75,7 @@ models:
       - name: data
         description: "Data de referência para partição"
       - name: ano
-        description: "Ano de apuração do indicador"
+        description: "{{ doc('ano_indicador') }}"
       - name: mes
         description: "Mês de apuração do indicador"
       - name: modo

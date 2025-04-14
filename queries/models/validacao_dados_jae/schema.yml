@@ -8,7 +8,7 @@ models:
         description: "Data de processamento da integração (partição)"
         data_type: date
       - name: id_integracao
-        description: "Identificador único da integração"
+        description: "{{ doc('id_integracao') }}"
         data_type: string
       - name: modos
         description: "Sequência modos das transações presentes na integração (separado por ', ')"
@@ -50,7 +50,7 @@ models:
       - name: data
         description: "Data da transação (partição)"
       - name: hora
-        description: "Hora da transação"
+        description: "{{ doc('hora_transacao') }}"
       - name: datetime_transacao
         description: "Data e hora da transação"
       - name: datetime_processamento
@@ -58,7 +58,7 @@ models:
       - name: datetime_captura
         description: "Data e hora de captura dos dados da transação"
       - name: modo
-        description: "Tipo de transporte (Ônibus, Van, BRT)"
+        description: "{{ doc('modo') }}"
       - name: id_consorcio
         description: "Identificador do consórcio na tabela cadastro.consorcios"
       - name: consorcio
@@ -70,11 +70,11 @@ models:
       - name: id_servico_jae
         description: "Identificador da linha no banco de dados da jaé (É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae)"
       - name: servico_jae
-        description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação de BRT na Jaé"
+        description: "{{ doc('servico_variacao') }} ou código da estação de BRT na Jaé"
       - name: descricao_servico_jae
         description: "Nome longo da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou nome da estação de BRT na Jaé"
       # - name: servico
-      #   description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação no caso de BRT"
+      #   description: "{{ doc('servico_variacao') }} ou código da estação no caso de BRT"
       - name: id_transacao
         description: "Identificador único da transação"
       - name: longitude
@@ -103,7 +103,7 @@ models:
     description: "Tabela para validação dos dados da ordem de pagamento da Jaé"
     columns:
       - name: data_ordem
-        description: "Data da ordem de pagamento (partição)"
+        description: "{{ doc('data_ordem') }} (partição)"
       - name: id_ordem_pagamento
         description: "Identificador único da ordem de pagamento"
       - name: indicador_captura_invalida
@@ -125,7 +125,7 @@ models:
         description: "Data da transação (partição)"
         data_type: date
       - name: id_integracao
-        description: "Identificador único da integração (é igual ao id_transacao da primeira transação da integração)"
+        description: "{{ doc('id_integracao') }} (é igual ao id_transacao da primeira transação da integração)"
         data_type: string
       - name: sequencia_integracao
         description: "Sequência da transação dentro da integração"

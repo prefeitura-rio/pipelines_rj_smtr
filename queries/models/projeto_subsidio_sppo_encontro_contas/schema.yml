@@ -6,7 +6,7 @@ models:
     ano para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
     columns:
       - name: ano
-        description: "Ano"
+        description: "{{ doc('ano') }}"
       - name: consorcio
         description: "Consórcio"
       - name: km_subsidiada
@@ -56,7 +56,7 @@ models:
     description: "Balanço da receita aferida e esperada por serviço e ano para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
     columns:
       - name: ano
-        description: "Ano"
+        description: "{{ doc('ano') }}"
       - name: consorcio
         description: "Nome do consórcio"
       - name: servico

@@ -77,7 +77,7 @@ models:
       - name: valor_pagamento
         description: "Valor valor a ser pago pela transação (R$). Valores nulos indicam que o valor de pagamento para a transação ainda não foi calculado"
       - name: data_ordem
-        description: "Data da ordem de pagamento da transação"
+        description: "{{ doc('data_ordem') }} da transação"
       - name: id_ordem_pagamento_servico_operador_dia
         description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_servico_operador_dia"
       - name: id_ordem_pagamento_consorcio_operador_dia
@@ -146,7 +146,7 @@ models:
       - name: id_ordem_rateio
         description: "Identificador único da ordem de rateio da transação"
       - name: data_ordem
-        description: "Data da ordem de pagamento da transação"
+        description: "{{ doc('data_ordem') }} da transação"
       - name: id_ordem_pagamento_consorcio_operador_dia
         description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_operador_dia"
       - name: id_ordem_pagamento_consorcio_dia
@@ -334,7 +334,7 @@ models:
     description: "Tabela com os valores totais de pagamento da Jaé agregados por consorcio e dia"
     columns:
       - name: data_ordem
-        description: "Data da ordem de pagamento (partição)"
+        description: "{{ doc('data_ordem') }} (partição)"
       - name: id_consorcio
         description: "Identificador do consórcio na tabela cadastro.consorcios"
       - name: consorcio
@@ -379,7 +379,7 @@ models:
     description: "Tabela com os valores totais de pagamento da Jaé agregados por consorcio, operador e dia"
     columns:
       - name: data_ordem
-        description: "Data da ordem de pagamento (partição)"
+        description: "{{ doc('data_ordem') }} (partição)"
         tests:
           - dbt_expectations.expect_column_max_to_be_between:
               min_value: "current_date('America/Sao_Paulo')"
@@ -469,7 +469,7 @@ models:
     description: "Tabela com os valores totais de pagamento da Jaé agregados por dia"
     columns:
       - name: data_ordem
-        description: "Data da ordem de pagamento (partição)"
+        description: "{{ doc('data_ordem') }} (partição)"
       - name: data_pagamento
         description: "Data de pagamento"
       - name: id_ordem_pagamento
@@ -512,7 +512,7 @@ models:
     descriptions: "Tabela com os valores totais de pagamento da Jaé agregados por serviço, operador e dia"
     columns:
       - name: data_ordem
-        description: "Data da ordem de pagamento (partição)"
+        description: "{{ doc('data_ordem') }} (partição)"
       - name: id_consorcio
         description: "Identificador do consórcio na tabela cadastro.consorcios"
       - name: consorcio

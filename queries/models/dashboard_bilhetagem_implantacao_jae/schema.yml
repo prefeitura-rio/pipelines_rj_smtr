@@ -9,7 +9,7 @@ models:
       - name: id_validador
         description: "Número de série do validador da Jaé"
       - name: latitude
-        description: "Parte da coordenada geográfica (eixo y) em graus decimais (EPSG:4326 - WGS84)"
+        description: "{{ doc('latitude_gps') }}"
       - name: longitude
         description: "Parte da coordenada geográfica (eixo x) em graus decimais (EPSG:4326 - WGS84)"
       - name: data
@@ -40,7 +40,7 @@ models:
       - name: id_validador
         description: "Número de série do validador da Jaé"
       - name: latitude
-        description: "Parte da coordenada geográfica (eixo y) em graus decimais (EPSG:4326 - WGS84)"
+        description: "{{ doc('latitude_gps') }}"
       - name: longitude
         description: "Parte da coordenada geográfica (eixo x) em graus decimais (EPSG:4326 - WGS84)"
       - name: data
@@ -98,7 +98,7 @@ models:
       - name: id_validador
         description: "Número de série do validador"
       - name: latitude
-        description: "Parte da coordenada geográfica (eixo y) em graus decimais (EPSG:4326 - WGS84)"
+        description: "{{ doc('latitude_gps') }}"
       - name: longitude
         description: "Parte da coordenada geográfica (eixo x) em graus decimais (EPSG:4326 - WGS84)"
       - name: data
