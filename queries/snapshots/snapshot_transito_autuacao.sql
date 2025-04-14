@@ -1,4 +1,4 @@
-{% snapshot autuacao_historico %}
+{% snapshot snapshot_transito_autuacao %}
 
     {{
         config(
