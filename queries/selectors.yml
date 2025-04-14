@@ -250,6 +250,5 @@ selectors:
 
   - name: snapshot_transito
     definition:
-      union:
-        - method: fqn
-          value: snapshot_transito_autuacao
+      method: fqn
+      value: snapshot_transito_autuacao
