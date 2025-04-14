@@ -3,6 +3,7 @@
 from datetime import datetime
 from types import NoneType
 
+from prefect import case
 from prefect.run_configs import KubernetesRun
 from prefect.schedules import Schedule
 from prefect.schedules.clocks import CronClock
@@ -23,6 +24,7 @@ from pipelines.treatment.templates.tasks import (
     get_repo_version,
     rename_materialization_flow,
     run_dbt_selector,
+    run_dbt_snapshot,
     save_materialization_datetime_redis,
     wait_data_sources,
 )
@@ -36,6 +38,8 @@ def create_default_materialization_flow(
     agent_label: str,
     wait: list = None,
     generate_schedule: bool = True,
+    run_snapshot: bool = False,
+    snapshot_selector: DBTSelector = None,
 ) -> Flow:
     """
     Cria um flow de materialização
@@ -47,6 +51,9 @@ def create_default_materialization_flow(
         wait (list): Lista de DBTSelectors e/ou SourceTables para verificar a completude dos dados
         generate_schedule (bool): Se a função vai agendar o flow com base
             no parametro schedule_cron do selector
+        run_snapshot (bool): Se o flow deve executar um snapshot após a materialização
+        snapshot_selector (DBTSelector): Objeto que representa o selector do DBT para snapshot.
+            Se não for fornecido e run_snapshot for True, usa o mesmo selector da materialização.
 
         Returns:
             Flow: Flow de materialização
@@ -128,8 +135,20 @@ def create_default_materialization_flow(
             upstream_tasks=[complete_sources],
         )
 
+        with case(run_snapshot, True):
+            dbt_snapshot = run_dbt_snapshot(
+                selector_name=snapshot_selector.name,
+                flags=flags,
+                _vars=dbt_run_vars,
+                upstream_tasks=[dbt_run],
+            )
+            wait_dbt = dbt_snapshot
+
+        with case(run_snapshot, False):
+            wait_dbt = dbt_run
+
         save_materialization_datetime_redis(
-            env=env, selector=selector, value=datetime_end, upstream_tasks=[dbt_run]
+            env=env, selector=selector, value=datetime_end, upstream_tasks=[wait_dbt]
         )
 
     default_materialization_flow.storage = GCS(constants.GCS_FLOWS_BUCKET.value)

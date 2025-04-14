@@ -20,3 +20,8 @@ class constants(Enum):  # pylint: disable=c0103
         schedule_cron=create_minute_cron(minute=30),
         initial_datetime=datetime(2025, 3, 29, 0, 30, 0),
     )
+
+    SNAPSHOT_TRANSITO_SELECTOR = DBTSelector(
+        name="snapshot_transito",
+        initial_datetime=datetime(2025, 3, 29, 0, 30, 0),
+    )

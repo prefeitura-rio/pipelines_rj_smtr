@@ -14,4 +14,6 @@ TRANSITO_AUTUACAO_MATERIALIZACAO = create_default_materialization_flow(
     selector=constants.TRANSITO_AUTUACAO_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     generate_schedule=False,
+    run_snapshot=True,
+    snapshot_selector=constants.SNAPSHOT_TRANSITO_SELECTOR.value,
 )
