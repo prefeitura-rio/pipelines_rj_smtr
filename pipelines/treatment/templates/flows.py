@@ -53,7 +53,7 @@ def create_default_materialization_flow(
             no parametro schedule_cron do selector
         run_snapshot (bool): Se o flow deve executar um snapshot após a materialização
         snapshot_selector (DBTSelector): Objeto que representa o selector do DBT para snapshot.
-            Se não for fornecido e run_snapshot for True, usa o mesmo selector da materialização.
+            Deve ser fornecido se run_snapshot for True.
 
         Returns:
             Flow: Flow de materialização
