@@ -35,7 +35,8 @@ with
     infracoes_renainf as (
         select
             concat(codigo_infracao, desdobramento) as codigo_enquadramento,
-            descricao_infracao as tipificacao_resumida
+            descricao_infracao as tipificacao_resumida,
+            amparo_legal
         from {{ source("transito_staging", "infracoes_renainf") }}
     ),
     autuacao_ids as (
@@ -63,7 +64,6 @@ with
                 then 'Gravíssima'
                 else initcap(regexp_replace(pontuacao, r'\d+', ''))
             end as gravidade,
-            safe_cast(null as string) as amparo_legal,
             initcap(tipo_veiculo) as tipo_veiculo,
             if(descricao_veiculo != "", descricao_veiculo, null) as descricao_veiculo,
             safe_cast(null as string) as placa_veiculo,
@@ -145,7 +145,6 @@ with
             concat(codigo_enquadramento, codigo_desdobramento) as codigo_enquadramento,
             substr(pontuacao, 1, 1) as pontuacao,
             gravidade,
-            amparo_legal,
             initcap(tipo_veiculo) as tipo_veiculo,
             if(descricao_veiculo != "", descricao_veiculo, null) as descricao_veiculo,
             placa_veiculo,
@@ -209,7 +208,7 @@ with
         from autuacao
         {% if is_incremental() and partitions | length > 0 %}
             union all
-            select *
+            select * except (id_autuacao, tipificacao_resumida, amparo_legal)
             from {{ this }}
             where data in ({{ partitions | join(", ") }})
         {% endif %}
@@ -228,7 +227,7 @@ with
             i.tipificacao_resumida,
             c.pontuacao,
             c.gravidade,
-            c.amparo_legal,
+            i.amparo_legal,
             c.tipo_veiculo,
             c.descricao_veiculo,
             c.placa_veiculo,
