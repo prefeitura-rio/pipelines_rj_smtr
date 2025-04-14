@@ -75,7 +75,7 @@ models:
       - name: data_limite_recurso
         description: "Data limite para recurso em primeira instância"
       - name: descricao_situacao_autuacao
-        description: "{{ doc('situacao_atual') }}"
+        description: "{{ doc('descricao_situacao_autuacao') }}"
       - name: status_infracao
         description: "Descrição do status da infração"
       - name: codigo_enquadramento

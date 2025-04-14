@@ -230,7 +230,7 @@ models:
       - name: valor_glosado_tecnologia
         description: "{{ doc('valor_glosado_tecnologia') }}"
       - name: valor_total_glosado
-        description: "{{ doc('valor_total_glosado') }}"
+        description: "{{ doc('valor_glosado') }}"
       - name: valor_acima_limite
         description: "{{ doc('valor_acima_limite') }}"
       - name: valor_total_sem_glosa

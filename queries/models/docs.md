@@ -625,10 +625,6 @@ Valor apurado das viagens que não foram remuneradas por estar acima do teto de 
 Valor pago da autuação (R$)
 {% enddocs %}
 
-{% docs valor_total_glosado %}
-Valor total das viagens considerando o valor máximo por km, subtraído pelo valor efetivo por km (R$)
-{% enddocs %}
-
 {% docs cobertura_temporal %}
 Cobertura temporal
 {% enddocs %}
@@ -733,10 +729,6 @@ Linha de ônibus (serviço) realocada informada pela empresa operadora
 Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...)
 {% enddocs %}
 
-{% docs situacao_atual %}
-Descrição da situação da autuação
-{% enddocs %}
-
 {% docs start_pt %}
 Ponto inicial do shape em formato geográfico (Point)
 {% enddocs %}
@@ -746,7 +738,7 @@ Texto voltado ao público usado para identificar a viagem aos passageiros, por e
 {% enddocs %}
 
 {% docs valor_glosado %}
-Valor total das viagens considerando o valor máximo por km, subtraído pelo valor efetivo por km
+Valor total das viagens considerando o valor máximo por km, subtraído pelo valor efetivo por km (R$)
 {% enddocs %}
 
 {% docs valor_judicial %}
