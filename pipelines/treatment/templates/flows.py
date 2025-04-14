@@ -35,11 +35,11 @@ from pipelines.utils.prefect import TypedParameter
 def create_default_materialization_flow(
     flow_name: str,
     selector: DBTSelector,
+    snapshot_selector: DBTSelector,
     agent_label: str,
     wait: list = None,
     generate_schedule: bool = True,
     run_snapshot: bool = False,
-    snapshot_selector: DBTSelector = None,
 ) -> Flow:
     """
     Cria um flow de materialização
