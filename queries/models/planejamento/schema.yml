@@ -377,7 +377,7 @@ models:
       - name: servico
         description: "{{ doc('servico') }}"
         data_type: string
-      - name: servico
+      - name: modo
         description: "{{ doc('modo') }}"
         data_type: string
       - name: codigo_tecnologia
