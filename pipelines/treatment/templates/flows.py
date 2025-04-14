@@ -3,7 +3,6 @@
 from datetime import datetime
 from types import NoneType
 
-from prefect import case
 from prefect.run_configs import KubernetesRun
 from prefect.schedules import Schedule
 from prefect.schedules.clocks import CronClock
@@ -35,11 +34,11 @@ from pipelines.utils.prefect import TypedParameter
 def create_default_materialization_flow(
     flow_name: str,
     selector: DBTSelector,
-    snapshot_selector: DBTSelector,
     agent_label: str,
     wait: list = None,
     generate_schedule: bool = True,
     run_snapshot: bool = False,
+    snapshot_selector: DBTSelector = None,
 ) -> Flow:
     """
     Cria um flow de materialização
@@ -135,7 +134,7 @@ def create_default_materialization_flow(
             upstream_tasks=[complete_sources],
         )
 
-        with case(run_snapshot, True):
+        if run_snapshot:
             dbt_snapshot = run_dbt_snapshot(
                 selector_name=snapshot_selector.name,
                 flags=flags,
@@ -143,8 +142,7 @@ def create_default_materialization_flow(
                 upstream_tasks=[dbt_run],
             )
             wait_dbt = dbt_snapshot
-
-        with case(run_snapshot, False):
+        else:
             wait_dbt = dbt_run
 
         save_materialization_datetime_redis(
