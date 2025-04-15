@@ -219,7 +219,10 @@ vars:
   ### Planejamento ###
   feed_inicial_viagem_planejada: "2025-01-02"
 
-query-comment: "{{ query_comment() }}"
+  ### Infraestrutura ###
+  data_inicial_logs_bigquery: "2024-09-30"
+
+query-comment: "{{ query_comment(node) }}"
 
 
 tests:
