@@ -32,7 +32,7 @@ with
                 / pow(1024, 4)
             ) as tib_processado
 
-        from {{ source("bq_logs_prod", "cloudaudit_googleapis_com_data_access_") }}
+        from {{ source("bq_logs_prod", "cloudaudit_googleapis_com_data_access_*") }}
         where
             {% if is_incremental() %}
                 parse_date('%Y%m%d', _table_suffix) between date_sub(
