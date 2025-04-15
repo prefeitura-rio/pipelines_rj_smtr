@@ -7,6 +7,7 @@
             strategy="timestamp",
             updated_at="datetime_ultima_atualizacao",
             invalidate_hard_deletes=True,
+            partition_by={"field": "data", "data_type": "date", "granularity": "day"},
         )
     }}
 
