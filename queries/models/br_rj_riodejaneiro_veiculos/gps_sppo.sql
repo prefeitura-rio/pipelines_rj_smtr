@@ -4,7 +4,7 @@
     )
 }}
 select * from `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
- where 
+ where
  data between date("{{ var('start_date') }}") and date(
                     "{{ var('end_date') }}"
                 )
