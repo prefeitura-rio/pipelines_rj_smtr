@@ -250,3 +250,24 @@ sources:
 
     tables:
       - name: gcp_billing_export_resource_v1_010693_B1EC8D_C0D4DF
+
+  - name: bq_logs_prod
+    database: rj-smtr
+    schema: bq_logs
+
+    tables:
+      - name: cloudaudit_googleapis_com_data_access_*
+
+  - name: bq_logs_dev
+    database: rj-smtr-dev
+    schema: bq_logs
+
+    tables:
+      - name: cloudaudit_googleapis_com_data_access
+
+  - name: bq_logs_staging
+    database: rj-smtr-staging
+    schema: bq_logs
+
+    tables:
+      - name: cloudaudit_googleapis_com_data_access
