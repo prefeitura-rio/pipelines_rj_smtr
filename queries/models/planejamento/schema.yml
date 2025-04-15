@@ -371,6 +371,9 @@ models:
       - name: inicio_vigencia
         description: "Data de inicio da vigência"
         data_type: date
+        tests:
+          - not_null:
+              name: not_null__inicio_vigencia__tecnologia_servico
       - name: fim_vigencia
         description: "Data de fim da vigência"
         data_type: date
@@ -383,6 +386,9 @@ models:
       - name: codigo_tecnologia
         description: "Código binário onde cada caractere representa uma tecnologia"
         data_type: string
+        tests:
+          - not_null:
+              name: not_null__codigo_tecnologia__tecnologia_servico
       - name: maior_tecnologia_permitida
         description: "Maior tipo de tecnologia permitida para o veículo"
         data_type: string

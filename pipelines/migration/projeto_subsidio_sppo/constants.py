@@ -740,6 +740,7 @@ class constants(Enum):  # pylint: disable=c0103
             },
         },
         "tecnologia_servico": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
             "dbt_utils.unique_combination_of_columns__tecnologia_servico": {
                 "description": "Todos os registros são únicos"
             },
