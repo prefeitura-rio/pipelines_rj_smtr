@@ -10,6 +10,7 @@ from pipelines.capture.serpro.tasks import create_serpro_extractor
 from pipelines.capture.serpro.utils import handler_setup_serpro
 from pipelines.capture.templates.flows import create_default_capture_flow
 from pipelines.constants import constants as smtr_constants
+from pipelines.utils.prefect import set_default_parameters
 
 CAPTURA_SERPRO = create_default_capture_flow(
     flow_name="SMTR: SERPRO - Captura",
@@ -17,6 +18,7 @@ CAPTURA_SERPRO = create_default_capture_flow(
     create_extractor_task=create_serpro_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
 )
+set_default_parameters(CAPTURA_SERPRO, {"recapture": True})
 
 CAPTURA_SERPRO.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE_FEDORA.value,

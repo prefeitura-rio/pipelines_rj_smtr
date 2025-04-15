@@ -3,7 +3,6 @@ import csv
 import os
 import subprocess
 import tempfile
-import time
 from datetime import datetime, timedelta
 from typing import List
 
@@ -98,44 +97,35 @@ def create_serpro_schedule() -> Schedule:
     return Schedule(clocks=clocks)
 
 
-def connect_and_execute(update_date, max_retries=3, retry_delay=15):
+def connect_and_execute(update_date):
     """
-    Estabelece conexão com o banco do SERPRO, testa a conexão e executa a query,
-    com tentativas automáticas em caso de falha.
+    Estabelece conexão com o banco do SERPRO, testa a conexão e executa a query.
 
     Args:
         update_date (str): Data formatada (YYYY-MM-DD) usada para parametrizar a query.
-        max_retries (int): Número máximo de tentativas em caso de falha.
-        retry_delay (int): Tempo base (em segundos) para espera entre tentativas.
 
     Returns:
         JDBC: Instância da conexão JDBC com a query já executada.
 
     Raises:
-        RuntimeError: Se todas as tentativas de conexão ou execução falharem.
+        RuntimeError: Se ocorrer erro na conexão ou execução da query.
     """
 
-    jdbc = None
-    for attempt in range(max_retries):
-        try:
-            if jdbc:
-                jdbc.close()
-            log(f"Tentativa {attempt+1}/{max_retries} de conectar ao SERPRO")
-            jdbc = JDBC(db_params_secret_path="radar_serpro", environment="dev")
-            success, error = jdbc.test_connection()
-            if not success:
-                raise ConnectionError(error)
-            query = serpro_constants.SERPRO_CAPTURE_PARAMS.value["query"].format(
-                update_date=update_date
-            )
-            jdbc.execute_query(query)
-            log(f"Query executada com sucesso na tentativa {attempt+1}")
-            return jdbc
-        except Exception as e:
-            log(f"Erro na tentativa {attempt+1}: {str(e)}", level="warning")
-            if attempt < max_retries - 1:
-                time.sleep(retry_delay * (2**attempt))
-    raise RuntimeError("Falha ao conectar/executar query após múltiplas tentativas.")
+    try:
+        log("Conectando ao SERPRO...")
+        jdbc = JDBC(db_params_secret_path="radar_serpro", environment="dev")
+        success, error = jdbc.test_connection()
+        if not success:
+            raise ConnectionError(error)
+        query = serpro_constants.SERPRO_CAPTURE_PARAMS.value["query"].format(
+            update_date=update_date
+        )
+        jdbc.execute_query(query)
+        log("Query executada com sucesso.")
+        return jdbc
+    except Exception as e:
+        log(f"Erro ao conectar/executar query: {str(e)}", level="warning")
+        raise RuntimeError("Falha ao conectar ou executar query.")
 
 
 def query_result_to_csv(jdbc, batch_size=50000):
