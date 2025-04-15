@@ -394,9 +394,17 @@ models:
       - name: maior_tecnologia_permitida
         description: "Maior tipo de tecnologia permitida para o veículo"
         data_type: string
+        tests:
+          - not_null:
+              name: not_null__maior_tecnologia_permitida__tecnologia_servico
+              where: "1=1"
       - name: menor_tecnologia_permitida
         description: "Menor tipo de tecnologia permitida para o veículo"
         data_type: string
+        tests:
+          - not_null:
+              name: not_null__menor_tecnologia_permitida__tecnologia_servico
+              where: "1=1"
   - name: servico_planejado_faixa_horaria
     description: "Serviços planejados por data, faixa horária e sentido com informações de viagens"
     columns:

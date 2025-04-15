@@ -6,11 +6,11 @@
 
 with tecnologia as (select * from {{ ref("staging_tecnologia_servico") }})
 select
-    parse_date('%d/%m/%Y', nullif(inicio_vigencia, "")) as inicio_vigencia,
-    parse_date('%d/%m/%Y', nullif(fim_vigencia, "")) as fim_vigencia,
+    parse_date('%d/%m/%Y', inicio_vigencia) as inicio_vigencia,
+    parse_date('%d/%m/%Y', fim_vigencia) as fim_vigencia,
     servico,
     modo,
-    nullif(codigo_tecnologia, "") as codigo_tecnologia,
+    codigo_tecnologia,
     case
         when substring(codigo_tecnologia, 4, 1) = "1"
         then "PADRON"

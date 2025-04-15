@@ -33,6 +33,7 @@ class constants(Enum):  # pylint: disable=c0103
     SUBSIDIO_SPPO_DASHBOARD_TABLE_ID = "sumario_servico_dia"
     SUBSIDIO_SPPO_DASHBOARD_SUMARIO_TABLE_ID = "sumario_servico_dia_tipo"
     SUBSIDIO_SPPO_DASHBOARD_SUMARIO_TABLE_ID_V2 = "sumario_servico_dia_pagamento"
+    SUBSIDIO_SPPO_PRE_TEST = "sppo_registros sppo_realocacao check_gps_treatment__gps_sppo sppo_veiculo_dia tecnologia_servico viagem_planejada"  # noqa
     SUBSIDIO_SPPO_DATA_CHECKS_PARAMS = {
         "check_trips_processing": {
             "query": """SELECT
