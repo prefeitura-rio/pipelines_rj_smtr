@@ -33,8 +33,7 @@ with
             periodo.data,
             case
                 when periodo.data between "2024-08-16" and "2024-10-15"
-                then
-                then date("2024-10-22") as data_infracao
+                then date("2024-10-22")
                 else
                     (
                         select min(data_infracao)

@@ -92,28 +92,20 @@ def run_dbt_tests(
 
 # ## Materialização de sppo_veiculo_dia  ##
 
-# data_inicial = datetime.strptime("2024-08-16", "%Y-%m-%d")
-# data_final = datetime.strptime("2024-10-15", "%Y-%m-%d")
-
-# data_atual = data_inicial
-# while data_atual <= data_final:
-#     run_dbt_model(
-#         dataset_id="veiculo",
-#         table_id="sppo_veiculo_dia",
-#         exclude="+gps_sppo",
-#         _vars={"run_date": data_atual.strftime("%Y-%m-%d")},
-#         flags="--target hmg",
-#     )
-#     print(data_atual.strftime("%Y-%m-%d"))
-#     data_atual += timedelta(days=1)
-
-
-# run_dbt_tests(  # ok
-#     dataset_id="veiculo",
-#     table_id="sppo_veiculo_dia",
-#     _vars={"date_range_start": "2024-08-16 00:00:00", "date_range_end": "2024-10-15 00:00:00"},
-#     flags="--target hmg",
-# )
+run_dbt_model(  # ok
+    dataset_id="veiculo",
+    table_id="sppo_veiculo_dia",
+    upstream=True,
+    exclude="+gps_sppo",
+    _vars={"start_date": "2024-08-16", "end_date": "2024-10-22"},
+    flags="--target hmg",
+)
+run_dbt_tests(  # ok
+    dataset_id="veiculo",
+    table_id="sppo_veiculo_dia",
+    _vars={"date_range_start": "2024-08-16 00:00:00", "date_range_end": "2024-08-16 00:00:00"},
+    flags="--target hmg",
+)
 
 
 # ## Materialização de viagens em D+1 ##
@@ -141,19 +133,19 @@ def run_dbt_tests(
 #     flags="--target hmg",
 # )
 
-# ## Apuração do Subsídio ##
+# # ## Apuração do Subsídio ##
 
 # run_dbt_model(
-#     dataset_id="planejamento",
+#     dataset_id="planejamento.staging",
 #     table_id="aux_calendario_manual",
 #     _vars={"date_range_start": "2024-08-16", "date_range_end": "2024-10-15"},
 #     flags="--target hmg",
 # )
 
-# run_command = """dbt run --selector apuracao_subsidio_v9 --vars "{'start_date': '2024-08-15', 'end_date': '2024-10-15'}" -x --profiles-dir ./dev --target hmg"""
-# project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-# os.chdir(project_dir)
-# os.system(run_command)
+run_command = """dbt run --selector apuracao_subsidio_v9 --vars "{'start_date': '2024-08-15', 'end_date': '2024-10-15'}" -x --profiles-dir ./dev --target hmg"""
+project_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+os.chdir(project_dir)
+os.system(run_command)
 
 run_dbt_tests(  # ok
     dataset_id="dashboard_subsidio_sppo",
@@ -162,8 +154,8 @@ run_dbt_tests(  # ok
     flags="--target hmg",
 )
 
-# run_dbt_tests(  # ok
-#     dataset_id="dashboard_subsidio_sppo_v2",
-#     _vars={"date_range_start": "2024-08-16 00:00:00", "date_range_end": "2024-10-15 00:00:00"},
-#     flags="--target hmg",
-# )
+run_dbt_tests(  # ok
+    dataset_id="dashboard_subsidio_sppo_v2",
+    _vars={"date_range_start": "2024-08-16 00:00:00", "date_range_end": "2024-10-15 00:00:00"},
+    flags="--target hmg",
+)

@@ -15,12 +15,12 @@
 
 with
     os as (
-        {# select * from {{ ref("ordem_servico_gtfs") }} #}
-    from `rj-smtr.gtfs.ordem_servico`
+        select * from {{ ref("ordem_servico_gtfs") }}
+    {# from `rj-smtr.gtfs.ordem_servico` #}
     ),
     faixa as (
-        {# select * from {{ ref("ordem_servico_faixa_horaria") }} #}
-    from `rj-smtr.planejamento.ordem_servico_faixa_horaria`
+        select * from {{ ref("ordem_servico_faixa_horaria") }}
+    {# from `rj-smtr.planejamento.ordem_servico_faixa_horaria` #}
     )
 select
     f.feed_version,
