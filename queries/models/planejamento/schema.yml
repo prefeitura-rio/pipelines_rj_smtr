@@ -374,6 +374,7 @@ models:
         tests:
           - not_null:
               name: not_null__inicio_vigencia__tecnologia_servico
+              where: "1=1"
       - name: fim_vigencia
         description: "Data de fim da vigência"
         data_type: date
@@ -389,6 +390,7 @@ models:
         tests:
           - not_null:
               name: not_null__codigo_tecnologia__tecnologia_servico
+              where: "1=1"
       - name: maior_tecnologia_permitida
         description: "Maior tipo de tecnologia permitida para o veículo"
         data_type: string
