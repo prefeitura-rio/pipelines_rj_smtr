@@ -4,7 +4,7 @@
 
 ## Adicionado
 
-- Adicionada a view `autuacao_historico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/535)
+- Adicionada a view `autuacao_historico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/547)
 
 ## [1.0.3] - 2025-04-09
 

@@ -4,4 +4,4 @@
 
 ### Adicionado
 
-- Cria o snapshot `snapshot_transito_autuacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/535)
+- Cria snapshot `snapshot_transito_autuacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/547)
