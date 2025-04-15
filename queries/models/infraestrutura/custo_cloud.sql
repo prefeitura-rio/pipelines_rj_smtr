@@ -41,11 +41,11 @@ select
     service.description as tipo_servico,
     sku.description as sku,
     project.name as projeto,
-    cost as custo_real,
-    currency_conversion_rate as taxa_conversao_para_real,
+    cost as custo,
+    currency_conversion_rate as taxa_conversao_real,
     usage.amount as quantidade_uso,
     usage.unit as unidade_uso,
-    usage.amount_in_pricing_units as uso_quantidade_em_unidades_preco,
-    usage.pricing_unit as unidade_de_preco_de_uso,
+    usage.amount_in_pricing_units as quantidade_unidade_preco,
+    usage.pricing_unit as unidade_preco,
 from billing
 where usage_start_time >= "2024-10-01"
