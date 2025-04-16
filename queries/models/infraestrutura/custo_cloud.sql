@@ -7,7 +7,7 @@
 }}
 
 {% set incremental_filter %}
-  date(_PARTITIONTIME) between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
+  date(_PARTITIONTIME, "America/Sao_Paulo") between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
 {% endset %}
 
 {% set billing_staging = source(
@@ -19,7 +19,7 @@
     {% if is_incremental() %}
         {% set partitions_query %}
             select distinct concat("'", date(usage_start_time), "'") as data
-            from {{ billing_staging }},
+            from {{ billing_staging }}
             where
                 {{ incremental_filter }}
 
@@ -32,20 +32,35 @@
 
 with
     billing as (
-        select *
+        select *, date(_partitiontime, "America/Sao_Paulo") as data_particao
         from {{ billing_staging }}
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
+    ),
+    novos_dados as (
+        select
+            date(usage_start_time, "America/Sao_Paulo") as data,
+            service.description as tipo_servico,
+            sku.description as sku,
+            project.name as projeto,
+            cost as custo,
+            currency_conversion_rate as taxa_conversao_real,
+            usage.amount as quantidade_uso,
+            usage.unit as unidade_uso,
+            usage.amount_in_pricing_units as quantidade_unidade_preco,
+            usage.pricing_unit as unidade_preco,
+            data_particao,
+            '{{ var("version") }}' as versao,
+            current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
+        from billing
+        where usage_start_time >= '{{ var("data_inicial_custo_cloud") }}'
     )
-select
-    date(usage_start_time) as data,
-    service.description as tipo_servico,
-    sku.description as sku,
-    project.name as projeto,
-    cost as custo,
-    currency_conversion_rate as taxa_conversao_real,
-    usage.amount as quantidade_uso,
-    usage.unit as unidade_uso,
-    usage.amount_in_pricing_units as quantidade_unidade_preco,
-    usage.pricing_unit as unidade_preco,
-from billing
-where usage_start_time >= "2024-10-01"
+select *
+from novos_dados
+{% if is_incremental() and partitions | length > 0 %}
+    union all
+    select *
+    from {{ this }}
+    where
+        data in ({{ partitions | join(", ") }})
+        and data_particao not in (select distinct data_particao from novos_dados)
+{% endif %}

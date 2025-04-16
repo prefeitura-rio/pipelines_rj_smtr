@@ -8,7 +8,7 @@
 with
     prod as (
         select
-            date(timestamp, "America/Sao_Paulo") as data,
+            date(timestamp, 'America/Sao_Paulo') as data,
             resource.labels.project_id as projeto,
             protopayload_auditlog.authenticationinfo.principalemail as usuario,
             protopayload_auditlog.methodname as metodo,
@@ -30,29 +30,29 @@ with
             (
                 protopayload_auditlog.servicedata_v1_bigquery.jobcompletedevent.job.jobstatistics.totalbilledbytes
                 / pow(1024, 4)
-            ) as tib_processado
+            ) as tib_processados
 
         from {{ source("bq_logs_prod", "cloudaudit_googleapis_com_data_access_*") }}
         where
             {% if is_incremental() %}
                 parse_date('%Y%m%d', _table_suffix) between date_sub(
-                    date("{{var('date_range_start')}}"), interval 1 day
-                ) and date("{{var('date_range_end')}}")
+                    date('{{ var("date_range_start") }}'), interval 1 day
+                ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
                 and date(
                     timestamp,
-                    "America/Sao_Paulo"
-                ) between date("{{var('date_range_start')}}") and date(
-                    "{{var('date_range_end')}}"
+                    'America/Sao_Paulo'
+                ) between date('{{ var("date_range_start") }}') and date(
+                    '{{ var("date_range_end") }}'
                 )
                 and
             {% endif %}
             parse_date('%Y%m%d', _table_suffix)
             >= date('{{ var("data_inicial_logs_bigquery") }}')
-            and date(timestamp, "America/Sao_Paulo") >= "2024-10-01"
+            and date(timestamp, 'America/Sao_Paulo') >= "2024-10-01"
     ),
     dev as (
         select
-            date(timestamp, "America/Sao_Paulo") as data,
+            date(timestamp, 'America/Sao_Paulo') as data,
             resource.labels.project_id as projeto,
             protopayload_auditlog.authenticationinfo.principalemail as usuario,
             protopayload_auditlog.methodname as metodo,
@@ -74,28 +74,28 @@ with
             (
                 protopayload_auditlog.servicedata_v1_bigquery.jobcompletedevent.job.jobstatistics.totalbilledbytes
                 / pow(1024, 4)
-            ) as tib_processado
+            ) as tib_processados
 
         from {{ source("bq_logs_dev", "cloudaudit_googleapis_com_data_access") }}
         where
             {% if is_incremental() %}
                 date(timestamp, 'America/Sao_Paulo') between date_sub(
-                    date("{{var('date_range_start')}}"), interval 1 day
-                ) and date("{{var('date_range_end')}}")
+                    date('{{ var("date_range_start") }}'), interval 1 day
+                ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
                 and date(
                     timestamp,
-                    "America/Sao_Paulo"
-                ) between date("{{var('date_range_start')}}") and date(
-                    "{{var('date_range_end')}}"
+                    'America/Sao_Paulo'
+                ) between date('{{ var("date_range_start") }}') and date(
+                    '{{ var("date_range_end") }}'
                 )
                 and
             {% endif %}
-            and date(timestamp, "America/Sao_Paulo")
+            date(timestamp, 'America/Sao_Paulo')
             >= date('{{ var("data_inicial_logs_bigquery") }}')
     ),
     staging as (
         select
-            date(timestamp, "America/Sao_Paulo") as data,
+            date(timestamp, 'America/Sao_Paulo') as data,
             resource.labels.project_id as projeto,
             protopayload_auditlog.authenticationinfo.principalemail as usuario,
             protopayload_auditlog.methodname as metodo,
@@ -117,23 +117,23 @@ with
             (
                 protopayload_auditlog.servicedata_v1_bigquery.jobcompletedevent.job.jobstatistics.totalbilledbytes
                 / pow(1024, 4)
-            ) as tib_processado
+            ) as tib_processados
 
         from {{ source("bq_logs_staging", "cloudaudit_googleapis_com_data_access") }}
         where
             {% if is_incremental() %}
                 date(timestamp, 'America/Sao_Paulo') between date_sub(
-                    date("{{var('date_range_start')}}"), interval 1 day
-                ) and date("{{var('date_range_end')}}")
+                    date('{{ var("date_range_start") }}'), interval 1 day
+                ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
                 and date(
                     timestamp,
-                    "America/Sao_Paulo"
-                ) between date("{{var('date_range_start')}}") and date(
-                    "{{var('date_range_end')}}"
+                    'America/Sao_Paulo'
+                ) between date('{{ var("date_range_start") }}') and date(
+                    '{{ var("date_range_end") }}'
                 )
                 and
             {% endif %}
-            and date(timestamp, "America/Sao_Paulo")
+            date(timestamp, 'America/Sao_Paulo')
             >= date('{{ var("data_inicial_logs_bigquery") }}')
     ),
     union_projetos as (
@@ -160,10 +160,15 @@ select
     coalesce(nome_flow, nome_dashboard) as processo_execucao,
     case
         when nome_flow is not null
-        then "Flow"
+        then 'Flow'
         when nome_dashboard is not null
-        then "Dashboard" bytes_processados, bytes_faturados, tib_processado
-        else "Outro"
-    end as tipo_processo_execucao
+        then 'Dashboard'
+        else 'Outro'
+    end as tipo_processo_execucao,
+    bytes_processados,
+    bytes_faturados,
+    tib_processados,
+    '{{ var("version") }}' as versao,
+    current_datetime('America/Sao_Paulo') as datetime_ultima_atualizacao
 from union_projetos
 where usuario is not null and bytes_faturados > 0
