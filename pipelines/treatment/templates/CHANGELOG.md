@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona task `run_dbt_snapshot` e parâmetros `run_snapshot` e `snapshot_selector` no flow de materialização (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/547)
+- Cria task `run_dbt` que permite executar `models`, `snapshots` e `tests`, e adiciona parâmetro `snapshot_selector` no flow de materialização (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/547)
 
 ## [1.1.0] - 2025-03-13
 

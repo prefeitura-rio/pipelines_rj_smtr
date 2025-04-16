@@ -290,56 +290,6 @@ def run_dbt_selector(
 
 
 @task
-def run_dbt_snapshot(
-    selector_name: str,
-    flags: str = None,
-    _vars: dict | list[dict] = None,
-):
-    """
-    Runs a DBT snapshot.
-
-    Args:
-        selector_name (str): The name of the DBT selector to run.
-        flags (str, optional): Flags to pass to the dbt run command.
-        _vars (Union[dict, list[dict]], optional): Variables to pass to dbt. Defaults to None.
-    """
-    # Build the dbt command
-    run_command = f"dbt snapshot --selector {selector_name}"
-
-    if _vars:
-        if isinstance(_vars, list):
-            vars_dict = {}
-            for elem in _vars:
-                vars_dict.update(elem)
-            vars_str = f'"{vars_dict}"'
-            run_command += f" --vars {vars_str}"
-        else:
-            vars_str = f'"{_vars}"'
-            run_command += f" --vars {vars_str}"
-
-    if flags:
-        run_command += f" {flags}"
-
-    root_path = get_root_path()
-    queries_dir = str(root_path / "queries")
-
-    if flow_is_running_local():
-        run_command += f' --profiles-dir "{queries_dir}/dev"'
-
-    log(f"Running dbt with command: {run_command}")
-    dbt_task = DbtShellTask(
-        profiles_dir=queries_dir,
-        helper_script=f'cd "{queries_dir}"',
-        log_stderr=True,
-        return_all=True,
-        command=run_command,
-    )
-    dbt_logs = dbt_task.run()
-
-    log("\n".join(dbt_logs))
-
-
-@task
 def save_materialization_datetime_redis(env: str, selector: DBTSelector, value: datetime):
     """
     Salva o datetime de materialização do Redis
