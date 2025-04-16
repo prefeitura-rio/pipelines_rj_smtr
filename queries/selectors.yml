@@ -234,3 +234,12 @@ selectors:
           value: view_passageiros_hora
         - method: fqn
           value: view_passageiros_tile_hora
+
+  - name: infraestrutura
+    description: Materialização das tabelas com informações sobre a infraestrutura de nuvem
+    definition:
+      union:
+        - method: fqn
+          value: custo_cloud
+        - method: fqn
+          value: log_bigquery
