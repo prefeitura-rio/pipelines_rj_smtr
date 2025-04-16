@@ -48,7 +48,8 @@ with
             {% endif %}
             parse_date('%Y%m%d', _table_suffix)
             >= date('{{ var("data_inicial_logs_bigquery") }}')
-            and date(timestamp, 'America/Sao_Paulo') >= "2024-10-01"
+            and date(timestamp, 'America/Sao_Paulo')
+            >= date('{{ var("data_inicial_logs_bigquery") }}')
     ),
     dev as (
         select
