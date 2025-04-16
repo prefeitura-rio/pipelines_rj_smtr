@@ -23,5 +23,4 @@ class constants(Enum):  # pylint: disable=c0103
 
     SNAPSHOT_TRANSITO_SELECTOR = DBTSelector(
         name="snapshot_transito",
-        initial_datetime=datetime(2025, 3, 29, 0, 30, 0),
     )

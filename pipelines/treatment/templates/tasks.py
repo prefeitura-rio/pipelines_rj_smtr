@@ -74,7 +74,7 @@ def get_datetime_start(
     env: str,
     selector: DBTSelector,
     datetime_start: Union[str, datetime, None],
-) -> datetime:
+) -> Optional[datetime]:
     """
     Task que retorna o datetime de inicio da materialização
 
@@ -84,13 +84,16 @@ def get_datetime_start(
         datetime_start (Union[str, datetime, None]): Força um valor no datetime_start
 
     Returns:
-        datetime: datetime de inicio da materialização
+        Optional[datetime]: datetime de inicio da materialização
     """
     if datetime_start is not None:
         if isinstance(datetime_start, str):
             datetime_start = datetime.fromisoformat(datetime_start)
     else:
         datetime_start = selector.get_last_materialized_datetime(env=env)
+
+    if datetime_start is None:
+        return None
 
     return convert_timezone(timestamp=datetime_start)
 
@@ -672,3 +675,107 @@ def dbt_data_quality_checks(
 
     if not test_check and raise_check_error:
         raise FAIL
+
+
+@task
+def run_dbt(
+    resource: str,
+    selector_name: str = None,
+    dataset_id: str = None,
+    table_id: str = None,
+    model: str = None,
+    upstream: bool = None,
+    downstream: bool = None,
+    test_name: str = None,
+    exclude: str = None,
+    flags: str = None,
+    _vars: dict | list[dict] = None,
+) -> str:
+    """
+    Generic task to run different DBT resources (run, snapshot, test).
+
+    Args:
+        resource (str): The DBT resource type to run ('selector', 'snapshot', or 'test').
+        selector_name (str, optional): The name of the selector or snapshot to run.
+        dataset_id (str, optional): Dataset ID of the dbt model. Used for test resource.
+        table_id (str, optional): Table ID of the dbt model. Used for test resource.
+        model (str, optional): Specific model to be tested. Used for test resource.
+        upstream (bool, optional): If True, includes upstream models. Used for test resource.
+        downstream (bool, optional): If True, includes downstream models. Used for test resource.
+        test_name (str, optional): The name of the test to be executed. Used for test resource.
+        exclude (str, optional): Models to be excluded from the execution. Used for test resource.
+        flags (str, optional): Flags to pass to the dbt command.
+        _vars (Union[dict, list[dict]], optional): Variables to pass to dbt.
+
+    Returns:
+        str: Output logs from the DBT command execution.
+    """
+
+    resource_mapping = {"selector": "run", "snapshot": "snapshot", "test": "test"}
+
+    if resource not in resource_mapping:
+        raise ValueError(
+            f"Invalid resource: {resource}. Must be one of {list(resource_mapping.keys())}"
+        )
+
+    dbt_command = resource_mapping[resource]
+
+    run_command = f"dbt {dbt_command}"
+
+    if resource in ["selector", "snapshot"]:
+        if not selector_name:
+            raise ValueError(f"selector_name is required for resource type: {resource}")
+        run_command += f" --selector {selector_name}"
+    elif resource == "test":
+        run_command += " --select "
+
+        if test_name:
+            run_command += test_name
+        else:
+            if not model and dataset_id:
+                model = dataset_id
+                if table_id:
+                    model += f".{table_id}"
+
+            if model:
+                if upstream:
+                    run_command += "+"
+                run_command += model
+                if downstream:
+                    run_command += "+"
+
+    if exclude and resource == "test":
+        run_command += f" --exclude {exclude}"
+
+    if _vars:
+        if isinstance(_vars, list):
+            vars_dict = {}
+            for elem in _vars:
+                vars_dict.update(elem)
+            vars_str = f'"{vars_dict}"'
+            run_command += f" --vars {vars_str}"
+        else:
+            vars_str = f'"{_vars}"'
+            run_command += f" --vars {vars_str}"
+
+    if flags:
+        run_command += f" {flags}"
+
+    root_path = get_root_path()
+    queries_dir = str(root_path / "queries")
+
+    if flow_is_running_local():
+        run_command += f' --profiles-dir "{queries_dir}/dev"'
+
+    log(f"Running dbt with command: {run_command}")
+    dbt_task = DbtShellTask(
+        profiles_dir=queries_dir,
+        helper_script=f'cd "{queries_dir}"',
+        log_stderr=True,
+        return_all=True,
+        command=run_command,
+    )
+    dbt_logs = dbt_task.run()
+
+    log("\n".join(dbt_logs))
+    return "\n".join(dbt_logs)
