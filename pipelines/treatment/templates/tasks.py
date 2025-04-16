@@ -64,8 +64,12 @@ def rename_materialization_flow(
     Returns:
         bool: Se o flow foi renomeado
     """
-    name = f"[{timestamp.astimezone(tz=timezone(constants.TIMEZONE.value))}] \
-{selector.name}: from {datetime_start} to {datetime_end}"
+    timestamp_str = timestamp.astimezone(tz=timezone(constants.TIMEZONE.value))
+
+    if datetime_start is None:
+        name = f"[{timestamp_str}] {selector.name}"
+    else:
+        name = f"[{timestamp_str}] {selector.name}: from {datetime_start} to {datetime_end}"
     return rename_current_flow_run(name=name)
 
 
