@@ -168,13 +168,6 @@ sources:
     tables:
       - name: viagem_informada
 
-  - name: infracao_staging
-    database: rj-smtr-staging
-
-    tables:
-      - name: autuacoes_citran
-      - name: receita_autuacao
-
   - name: dados_mestres
     database: datario
 
@@ -271,3 +264,17 @@ sources:
 
     tables:
       - name: cloudaudit_googleapis_com_data_access
+
+  - name: transito_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: autuacao_citran
+      - name: receita_autuacao_fonte
+      - name: infracoes_renainf
+
+  - name: source_serpro
+    database: rj-smtr-staging
+
+    tables:
+      - name: autuacao

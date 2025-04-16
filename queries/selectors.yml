@@ -243,3 +243,16 @@ selectors:
           value: custo_cloud
         - method: fqn
           value: log_bigquery
+
+  - name: transito_autuacao
+    description: Materialização das tabelas de autuação de trânsito
+    definition:
+      union:
+        - method: fqn
+          value: autuacao_citran
+        - method: fqn
+          value: autuacao_serpro
+        - method: fqn
+          value: aux_autuacao_id
+        - method: fqn
+          value: autuacao
