@@ -47,7 +47,7 @@ models:
       - name: data_inicio
         description: "{{ doc('data_inicio_parametros') }}"
       - name: data_fim
-        description: "Data final do período de vigência dos demais atributos"
+        description: "{{ doc('data_fim') }}"
       - name: indicador_penalidade_judicial
         description: "{{ doc('indicador_penalidade_judicial') }}"
       - name: legislacao

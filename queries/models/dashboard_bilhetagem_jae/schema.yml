@@ -11,7 +11,7 @@ models:
       - name: modo
         description: "Tipo de transporte (Ônibus, Van, BRT)"
       - name: consorcio
-        description: "Nome do consórcio"
+        description: "{{ doc('consorcio_nome') }}"
       - name: operadora
         description: "Nome da operadora de transporte (mascarado se for pessoa física)"
       - name: id_servico_jae
@@ -46,7 +46,7 @@ models:
       - name: modo
         description: "Tipo de transporte (Ônibus, Van, BRT)"
       - name: consorcio
-        description: "Nome do consórcio"
+        description: "{{ doc('consorcio_nome') }}"
       - name: operadora
         description: "Nome da operadora de transporte (mascarado se for pessoa física)"
       - name: id_servico_jae

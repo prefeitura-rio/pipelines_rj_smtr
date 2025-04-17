@@ -62,7 +62,7 @@ models:
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
       - name: consorcio
-        description: "Nome do consórcio"
+        description: "{{ doc('consorcio_nome') }}"
       - name: id_operadora
         description: "Identificador da operadora na tabela cadastro.operadoras"
       - name: operadora

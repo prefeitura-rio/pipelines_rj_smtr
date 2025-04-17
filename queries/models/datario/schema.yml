@@ -76,7 +76,7 @@ models:
       - name: data
         description: "{{ doc('data_viagem') }}"
       - name: consorcio
-        description: "Consórcio ao qual o serviço pertence"
+        description: "{{ doc('consorcio') }}"
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sábado, Domingo"
       - name: id_empresa

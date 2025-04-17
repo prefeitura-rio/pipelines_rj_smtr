@@ -19,7 +19,7 @@ models:
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
       - name: consorcio
-        description: "Nome do consórcio"
+        description: "{{ doc('consorcio_nome') }}"
       - name: id_operadora
         description: "Identificador da operadora na tabela cadastro.operadoras"
       - name: operadora
@@ -114,7 +114,7 @@ models:
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
       - name: consorcio
-        description: "Nome do consórcio"
+        description: "{{ doc('consorcio_nome') }}"
       - name: id_operadora
         description: "Identificador da operadora na tabela cadastro.operadoras"
       - name: operadora
@@ -259,7 +259,7 @@ models:
       - name: modo
         description: "Tipo de transporte (Ônibus, Van, BRT)"
       - name: consorcio
-        description: "Nome do consórcio"
+        description: "{{ doc('consorcio_nome') }}"
       - name: operadora
         description: "Nome da operadora de transporte (mascarado se for pessoa física)"
       - name: id_servico_jae
@@ -292,7 +292,7 @@ models:
       - name: modo
         description: "Tipo de transporte (Ônibus, Van, BRT)"
       - name: consorcio
-        description: "Nome do consórcio"
+        description: "{{ doc('consorcio_nome') }}"
       - name: operadora
         description: "Nome da operadora de transporte (mascarado se for pessoa física)"
       - name: id_servico_jae
@@ -338,7 +338,7 @@ models:
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
       - name: consorcio
-        description: "Nome do consórcio"
+        description: "{{ doc('consorcio_nome') }}"
       - name: id_ordem_pagamento
         description: "Identificador da ordem pagamento no banco de dados da Jaé"
       - name: quantidade_transacao_debito
@@ -400,7 +400,7 @@ models:
               where: "data_ordem in ({partitions})"
               name: not_null__id_consorcio__ordem_pagamento_consorcio_operador_dia
       - name: consorcio
-        description: "Nome do consórcio"
+        description: "{{ doc('consorcio_nome') }}"
         tests:
           - not_null:
               where: "data_ordem in ({partitions})"
@@ -516,7 +516,7 @@ models:
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
       - name: consorcio
-        description: "Nome do consórcio"
+        description: "{{ doc('consorcio_nome') }}"
       - name: id_operadora
         description: "Identificador da operadora na tabela cadastro.operadoras"
       - name: operadora
@@ -589,7 +589,7 @@ models:
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
       - name: consorcio
-        description: "Nome do consórcio"
+        description: "{{ doc('consorcio_nome') }}"
       - name: id_operadora
         description: "Identificador da operadora na tabela cadastro.operadoras"
       - name: operadora

@@ -2,6 +2,10 @@
 Consórcio ao qual o serviço pertence
 {% enddocs %}
 
+{% docs consorcio_nome %}
+Nome do consórcio
+{% enddocs %}
+
 {% docs id_veiculo %}
 Código identificador do veículo [número de ordem]
 {% enddocs %}
@@ -643,4 +647,8 @@ Distância do shape [trajeto] planejado (km)
 
 {% docs indicador_servico_divergente %}
 Indica se o serviço indicado nos dados de GPS estava diferente do serviço informado na viagem
+{% enddocs %}
+
+{% docs data_fim %}
+Data final do período de vigência dos demais atributos
 {% enddocs %}

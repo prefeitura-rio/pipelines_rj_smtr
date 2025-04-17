@@ -35,10 +35,13 @@
                 data between date_sub(
                     date("{{ var('date_range_start') }}"), interval 1 day
                 ) and date("{{ var('date_range_end') }}")
+                and partidas > 0
+                and quilometragem > 0
             group by 1, 2, 3
         )
-        {% if 'viagem_planejada' not in model %}
-            , sumario as (
+        {% if "viagem_planejada" not in model %}
+            ,
+            sumario as (
                 select data, servico, faixa_horaria_inicio, km_planejada_faixa
                 from {{ model }}
                 -- `rj-smtr.dashboard_subsidio_sppo_v2.sumario_faixa_servico_dia_pagamento`
@@ -51,12 +54,15 @@
     select *
     from viagem_planejada p
     full join os_faixa using (data, servico, faixa_horaria_inicio)
-    {% if 'viagem_planejada' not in model %}
+    {% if "viagem_planejada" not in model %}
         full join sumario using (data, servico, faixa_horaria_inicio)
     {% endif %}
     where
-        quilometragem != distancia_total_planejada
-        {% if 'viagem_planejada' not in model %}
-            or distancia_total_planejada != km_planejada_faixa
+        data between date("{{ var('date_range_start') }}") and date(
+            "{{ var('date_range_end') }}"
+        )
+        quilometragem is distinct from distancia_total_planejada
+        {% if "viagem_planejada" not in model %}
+            or distancia_total_planejada is distinct from km_planejada_faixa
         {% endif %}
 {%- endtest %}
