@@ -5,6 +5,7 @@
         incremental_strategy="insert_overwrite",
     )
 }}
+
 with
     prod as (
         select
@@ -153,23 +154,29 @@ with
     )
 select
     data,
-    projeto,
-    usuario,
-    metodo,
-    id_job,
-    query,
-    coalesce(nome_flow, nome_dashboard) as processo_execucao,
+    u.projeto,
+    u.usuario,
+    u.metodo,
+    u.id_job,
+    u.query,
+    coalesce(u.nome_flow, u.nome_dashboard) as processo_execucao,
     case
-        when nome_flow is not null
+        when u.nome_flow is not null
         then 'Flow'
-        when nome_dashboard is not null
+        when u.nome_dashboard is not null
         then 'Dashboard'
         else 'Outro'
     end as tipo_processo_execucao,
-    bytes_processados,
-    bytes_faturados,
-    tib_processados,
+    u.bytes_processados,
+    u.bytes_faturados,
+    u.tib_processados,
+    u.tib_processados * p.valor_tib_real as custo_real,
+    p.valor_tib_real,
+    p.valor_tib_dolar,
+    p.taxa_conversao_real,
+    p.origem as origem_valor,
     '{{ var("version") }}' as versao,
     current_datetime('America/Sao_Paulo') as datetime_ultima_atualizacao
-from union_projetos
+from union_projetos u
+left join {{ ref("aux_preco_bigquery") }} p using (data)
 where usuario is not null and bytes_faturados > 0

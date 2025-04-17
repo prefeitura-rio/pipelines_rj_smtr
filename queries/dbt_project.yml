@@ -222,6 +222,7 @@ vars:
   ### Infraestrutura ###
   data_inicial_logs_bigquery: "2024-09-30"
   data_inicial_custo_cloud: "2024-10-01"
+  data_final_valor_bq_manual: "2025-03-21"
 
 query-comment: "{{ query_comment(node) }}"
 
@@ -410,4 +411,6 @@ models:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
       +schema: infraestrutura
+      staging:
+        +schema: infraestrutura_staging
 
