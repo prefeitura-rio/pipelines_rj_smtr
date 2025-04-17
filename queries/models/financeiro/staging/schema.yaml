@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: subsidio_faixa_servico_dia
-    description: "Sumário do subsídio dos serviços de ônibus (SPPO) por dia e faixa horária"
+    description: "Sumário do subsídio dos serviços de ônibus [SPPO] por dia e faixa horária"
     columns:
       - name: data
         description: "{{ doc('data_gps') }}"

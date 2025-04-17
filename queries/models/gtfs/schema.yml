@@ -157,10 +157,10 @@ models:
         description: "{{ doc('versao') }}"
 
   - name: frequencies_gtfs
-    description: "Intervalo (tempo entre viagens) para serviço baseado em intervalo ou uma representação compactada de serviço com horário fixo"
+    description: "Intervalo [tempo entre viagens] para serviço baseado em intervalo ou uma representação compactada de serviço com horário fixo"
     columns:
       - name: trip_id
-        description: "{{ doc('trip_id') }} à qual se aplica o intervalo de serviço especificado"
+        description: "{{ doc('trip_id') }}"
       - name: start_time
         description: "Hora em que o primeiro veículo sai da primeira parada da viagem com o intervalo especificado"
       - name: end_time
@@ -411,7 +411,7 @@ models:
         description: "{{ doc('tipo_os') }}"
 
   - name: ordem_servico_trajeto_alternativo_gtfs
-    description: "Anexo da Ordem de Serviço (OS) com trajetos alternativos de serviços"
+    description: "Anexo da Ordem de Serviço [OS] com trajetos alternativos de serviços"
     tests:
       - dbt_expectations.expect_table_aggregation_to_equal_other_table:
           name: dbt_expectations.expect_table_aggregation_to_equal_other_table__ordem_servico_trajeto_alternativo_gtfs
@@ -455,7 +455,7 @@ models:
       - name: tipo_os
         description: "{{ doc('tipo_os') }}"
   - name: ordem_servico_trips_shapes_gtfs
-    description: "Junção da Ordem de Serviço (OS) com trips e shapes dos serviços"
+    description: "Junção da Ordem de Serviço [OS] com trips e shapes dos serviços"
     tests:
       - dbt_expectations.expect_table_aggregation_to_equal_other_table:
           name: dbt_expectations.expect_table_aggregation_to_equal_other_table__ordem_servico_trips_shapes_gtfs

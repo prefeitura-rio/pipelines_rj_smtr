@@ -3,7 +3,7 @@ version: 2
 
 models:
   - name: subsidio_shapes_geom
-    description: "Shapes em formatos geográficos dos serviços (Descontinuada a partir de 2024-04-01 [SUBSIDIO_V6])"
+    description: "Shapes em formatos geográficos dos serviços [Descontinuada a partir de 2024-04-01]"
     columns:
       - name: shape_id
         description: "{{ doc('shape_id') }}"
@@ -20,7 +20,7 @@ models:
       - name: versao_modelo
         description: "{{ doc('versao') }}"
   - name: subsidio_trips_desaninhada
-    description: "Viagens para cada serviço (Descontinuada a partir de 2024-04-01 [SUBSIDIO_V6])"
+    description: "Viagens para cada serviço [Descontinuada a partir de 2024-04-01]"
     columns:
       - name: trip_id
         description: "{{ doc('trip_id') }}"
@@ -41,7 +41,7 @@ models:
       - name: versao_modelo
         description: "{{ doc('versao') }}"
   - name: subsidio_quadro_horario
-    description: "Dados de planejamento operacional dos serviços (Descontinuada a partir de 2024-04-01 [SUBSIDIO_V6])"
+    description: "Dados de planejamento operacional dos serviços [Descontinuada a partir de 2024-04-01]"
     columns:
       - name: data_versao
         description: "{{ doc('data_versao') }}"

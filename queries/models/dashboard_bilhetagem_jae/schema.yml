@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: view_passageiros_hora
-    description: "View criada para uso no painel de bilhetagem. Junta os dados da tabela br_rj_riodejaneiro_bilhetagem.passageiros_hora (exceto os do tipo RioCard) com a tabela cadastro.servicos"
+    description: "View criada para uso no painel de bilhetagem. Junta os dados da tabela br_rj_riodejaneiro_bilhetagem.passageiros_hora [exceto os do tipo RioCard] com a tabela cadastro.servicos"
     columns:
       - name: data
         description: "{{ doc('data_transacao') }}"
