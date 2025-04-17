@@ -44,6 +44,11 @@ models:
         tests:
           - not_null:
               name: not_null__servico__viagem_planejada
+          - dbt_utils.relationships_where:
+              name: dbt_utils.relationships_where__servico__viagem_planejada
+              to: ref('tecnologia_servico')
+              field: servico
+              to_condition: "inicio_vigencia <= date('{{ var('date_range_end') }}') and (fim_vigencia is null OR fim_vigencia >= date('{{ var('date_range_start') }}')) and not regexp_contains(servico, r'^([A-Z]*[0-9]{4})$')"
       - name: vista
         description: "Itinerário do serviço [ex: Bananal ↔ Saens Peña]"
         tests:
