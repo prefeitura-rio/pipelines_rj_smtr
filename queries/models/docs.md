@@ -750,11 +750,11 @@ Valor devido (R$)
 {% enddocs %}
 
 {% docs valor_apurado %}
-Valor da distância apurada multiplicada pelo subsídio por quilômetro (sem glosa). É zerado quando POF < 80%
+Valor da distância apurada multiplicada pelo subsídio por quilômetro [sem glosa]. É zerado quando POF < 80%
 {% enddocs %}
 
 {% docs valor_penalidade %}
-Valor penalidade [negativa] (POF =< 60%)
+Valor penalidade [negativa] [POF =< 60%]
 {% enddocs %}
 
 {% docs viagens_dia %}
