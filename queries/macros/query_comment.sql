@@ -9,7 +9,6 @@
     ) -%}
     {%- if node is not none -%}
         {%- do comment_dict.update(
-            file=node.original_file_path,
             node_id=node.unique_id,
             node_name=node.name,
             resource_type=node.resource_type,
