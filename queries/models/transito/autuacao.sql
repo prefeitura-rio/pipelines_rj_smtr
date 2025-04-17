@@ -58,9 +58,17 @@ with
                 substr(regexp_extract(pontuacao, r'\d+'), 2) as string
             ) as pontuacao,
             case
-                when initcap(regexp_replace(pontuacao, r'\d+', '')) = 'Media'
+                when pontuacao = "03"
+                then 'Leve'
+                when
+                    initcap(regexp_replace(pontuacao, r'\d+', '')) = 'Media'
+                    or pontuacao = "04"
                 then 'Média'
-                when initcap(regexp_replace(pontuacao, r'\d+', '')) = 'Gravissima'
+                when pontuacao = "05"
+                then 'Grave'
+                when
+                    initcap(regexp_replace(pontuacao, r'\d+', '')) = 'Gravissima'
+                    or pontuacao = "07"
                 then 'Gravíssima'
                 else initcap(regexp_replace(pontuacao, r'\d+', ''))
             end as gravidade,
