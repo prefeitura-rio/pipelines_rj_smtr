@@ -18,7 +18,7 @@ models:
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sabado, Domingo"
       - name: faixa_horaria_inicio
-        description: "Horário inicial da faixa horária"
+        description: "{{ doc('faixa_horaria_inicio') }}"
       - name: faixa_horaria_fim
         description: "{{ doc('faixa_horaria_fim') }}"
       - name: consorcio
@@ -26,13 +26,13 @@ models:
       - name: servico
         description: "Serviço realizado pelo veículo"
       - name: viagens_faixa
-        description: "Quantidade de viagens apuradas por faixa horária"
+        description: "{{ doc('viagens_faixa') }}"
       - name: km_apurada_faixa
         description: "Distância apurada para o serviço por faixa horária (km)"
       - name: km_subsidiada_faixa
         description: "Distância subsidiada para o serviço por faixa horária (km)"
       - name: km_planejada_faixa
-        description: "Distância planejada para o serviço por faixa horária (km)"
+        description: "{{ doc('km_planejada_faixa') }}"
       - name: pof
         description: "{{ doc('pof') }}"
       - name: km_apurada_registrado_com_ar_inoperante
@@ -44,7 +44,7 @@ models:
       - name: km_apurada_autuado_seguranca
         description: "Quilometragem apurada de viagens de veículos autuados por segurança"
       - name: km_apurada_autuado_limpezaequipamento
-        description: "Quilometragem apurada de viagens de veículos autuados por limpeza ou equipamento"
+        description: "{{ doc('km_apurada_autuado_limpezaequipamento') }}"
       - name: km_apurada_licenciado_sem_ar_n_autuado
         description: "{{ doc('km_apurada_licenciado_sem_ar_n_autuado') }}"
       - name: km_apurada_licenciado_com_ar_n_autuado
@@ -54,7 +54,7 @@ models:
       - name: km_apurada_sem_transacao
         description: "Distância apurada de viagens realizadas sem passageiro registrado"
       - name: valor_apurado
-        description: "Valor da distância apurada multiplicada pelo subsídio por quilômetro (sem glosa). É zerado quando POF < 80%"
+        description: "{{ doc('valor_apurado') }}"
       - name: valor_acima_limite
         description: "{{ doc('valor_acima_limite') }}"
       - name: valor_total_sem_glosa
@@ -118,7 +118,7 @@ models:
               name: not_null__tipo_dia__sumario_faixa_servico_dia_pagamento
               where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: faixa_horaria_inicio
-        description: "Horário inicial da faixa horária"
+        description: "{{ doc('faixa_horaria_inicio') }}"
       - name: faixa_horaria_fim
         description: "{{ doc('faixa_horaria_fim') }}"
       - name: consorcio
@@ -134,7 +134,7 @@ models:
               name: not_null__servico__sumario_faixa_servico_dia_pagamento
               where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: viagens_faixa
-        description: "Quantidade de viagens apuradas por faixa horária"
+        description: "{{ doc('viagens_faixa') }}"
         tests:
           - not_null:
               name: not_null__viagens_faixa__sumario_faixa_servico_dia_pagamento
@@ -167,7 +167,7 @@ models:
               name: dbt_utils.accepted_range__km_subsidiada_faixa__sumario_faixa_servico_dia_pagamento
               where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: km_planejada_faixa
-        description: "Distância planejada para o serviço por faixa horária (km)"
+        description: "{{ doc('km_planejada_faixa') }}"
         tests:
           - not_null:
               name: not_null__km_planejada_faixa__sumario_faixa_servico_dia_pagamento
@@ -196,7 +196,7 @@ models:
       - name: km_apurada_autuado_seguranca
         description: "Quilometragem apurada de viagens de veículos autuados por segurança"
       - name: km_apurada_autuado_limpezaequipamento
-        description: "Quilometragem apurada de viagens de veículos autuados por limpeza ou equipamento"
+        description: "{{ doc('km_apurada_autuado_limpezaequipamento') }}"
       - name: km_apurada_n_vistoriado
         description: "Distância apurada de viagens realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria (km)"
       - name: km_apurada_sem_transacao
@@ -242,7 +242,7 @@ models:
       - name: valor_judicial
         description: "Valor de glosa depositada em juízo (Autuação por ar inoperante, Veículo licenciado sem ar, Penalidade abaixo de 60% e Notificação dos Agentes de Verão)"
       - name: valor_penalidade
-        description: "Valor penalidade [negativa] (POF =< 60%)"
+        description: "{{ doc('valor_penalidade') }}"
         tests:
           - not_null:
               name: not_null__valor_penalidade__sumario_faixa_servico_dia_pagamento
@@ -309,7 +309,7 @@ models:
           - not_null:
               name: not_null__servico__sumario_servico_dia_pagamento
       - name: viagens_dia
-        description: "Quantidade de viagens apuradas por dia"
+        description: "{{ doc('viagens_dia') }}"
         tests:
           - not_null:
               name: not_null__viagens_dia__sumario_servico_dia_pagamento
@@ -317,7 +317,7 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__viagens_dia__sumario_servico_dia_pagamento
       - name: km_apurada_dia
-        description: "Distância apurada para o serviço por dia (km)"
+        description: "{{ doc('km_apurada') }}"
         tests:
           - not_null:
               name: not_null__km_apurada_dia__sumario_servico_dia_pagamento
@@ -361,7 +361,7 @@ models:
       - name: km_apurada_autuado_seguranca
         description: "Quilometragem apurada de viagens de veículos autuados por segurança"
       - name: km_apurada_autuado_limpezaequipamento
-        description: "Quilometragem apurada de viagens de veículos autuados por limpeza ou equipamento"
+        description: "{{ doc('km_apurada_autuado_limpezaequipamento') }}"
       - name: km_apurada_licenciado_sem_ar_n_autuado
         description: "{{ doc('km_apurada_licenciado_sem_ar_n_autuado') }}"
       - name: km_apurada_licenciado_com_ar_n_autuado
@@ -386,7 +386,7 @@ models:
       - name: valor_judicial
         description: "Valor de glosa depositada em juízo (Autuação por ar inoperante, Veículo licenciado sem ar, Penalidade abaixo de 60% e Notificação dos Agentes de Verão)"
       - name: valor_penalidade
-        description: "Valor penalidade [negativa] (POF =< 60%)"
+        description: "{{ doc('valor_penalidade') }}"
         tests:
           - not_null:
               name: not_null__valor_penalidade__sumario_servico_dia_pagamento
