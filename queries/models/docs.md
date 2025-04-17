@@ -754,9 +754,8 @@ Valor da distância apurada multiplicada pelo subsídio por quilômetro [sem glo
 {% enddocs %}
 
 {% docs valor_penalidade %}
-Valor penalidade [negativa] [POF =< 60%]
+Valor penalidade [negativa] [POF <= 60%]
 {% enddocs %}
-
 {% docs viagens_dia %}
 Quantidade de viagens apuradas por dia
 {% enddocs %}
