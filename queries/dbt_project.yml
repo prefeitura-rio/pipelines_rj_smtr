@@ -406,3 +406,8 @@ models:
       +schema: monitoramento_interno
       staging:
         +schema: monitoramento_interno_staging
+    infraestrutura:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: infraestrutura
+
