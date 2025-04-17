@@ -21,9 +21,17 @@ with
             cast(cast(cd_cliente as float64) as int64) as id_cliente,
             id as id_gratuidade,
             tipo_gratuidade,
+            deficiencia_permanente,
+            rede_ensino,
             data_inclusao as data_inicio_validade,
             timestamp_captura
         from {{ staging_gratuidade }}
+        {% if is_incremental() %}
+            where
+                data between date('{{var("date_range_start")}}') and date(
+                    '{{var("date_range_end")}}'
+                )
+        {% endif %}
     ),
     gratuidade_deduplicada as (
         select * except (rn)
@@ -40,10 +48,12 @@ with
         where rn = 1
     )
 select
-    concat(id_cliente, '_', id_gratuidade) as id_cliente_gratuidade,
     id_cliente,
     id_gratuidade,
+    concat(id_cliente, '_', id_gratuidade) as id_cliente_gratuidade,
     tipo_gratuidade,
+    deficiencia_permanente,
+    rede_ensino,
     data_inicio_validade,
     lead(data_inicio_validade) over (
         partition by id_cliente order by data_inicio_validade
