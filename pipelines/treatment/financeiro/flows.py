@@ -25,7 +25,7 @@ from pipelines.treatment.financeiro.tasks import (
     set_redis_quality_check_datetime,
 )
 from pipelines.treatment.templates.flows import create_default_materialization_flow
-from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt_tests
+from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt
 from pipelines.utils.prefect import TypedParameter
 
 FINANCEIRO_BILHETAGEM_MATERIALIZACAO = create_default_materialization_flow(
@@ -82,7 +82,8 @@ with Flow(
         partitions=partitions,
     )
 
-    test_result = run_dbt_tests(
+    test_result = run_dbt(
+        resource="test",
         dataset_id=DATASET_ID,
         table_id=TABLE_ID,
         test_name=test_name,

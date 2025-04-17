@@ -2,6 +2,7 @@
 import os
 import re
 from datetime import datetime, timedelta
+from typing import Optional
 
 from google.cloud.dataplex_v1 import DataScanJob
 from prefeitura_rio.pipelines_utils.io import get_root_path
@@ -40,7 +41,7 @@ class DBTSelector:
     def __init__(
         self,
         name: str,
-        initial_datetime: datetime,
+        initial_datetime: datetime = None,
         schedule_cron: str = None,
         incremental_delay_hours: int = 0,
     ):
@@ -52,7 +53,7 @@ class DBTSelector:
     def __getitem__(self, key):
         return self.__dict__[key]
 
-    def get_last_materialized_datetime(self, env: str) -> datetime:
+    def get_last_materialized_datetime(self, env: str) -> Optional[datetime]:
         """
         Pega o último datetime materializado no Redis
 
@@ -65,14 +66,15 @@ class DBTSelector:
         redis_key = f"{env}.selector_{self.name}"
         redis_client = get_redis_client()
         content = redis_client.get(redis_key)
-        last_datetime = (
-            self.initial_datetime
-            if content is None
-            else datetime.strptime(
+        if content is None:
+            if self.initial_datetime is None:
+                return None
+            last_datetime = self.initial_datetime
+        else:
+            last_datetime = datetime.strptime(
                 content[constants.REDIS_LAST_MATERIALIZATION_TS_KEY.value],
                 constants.MATERIALIZATION_LAST_RUN_PATTERN.value,
             )
-        )
 
         return convert_timezone(timestamp=last_datetime)
 

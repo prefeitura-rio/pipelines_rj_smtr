@@ -31,20 +31,12 @@ select distinct
     ) as datetime_autuacao,
     if(
         json_value(content, '$.auinf_dt_limite_defesa_previa') != '',
-        safe_cast(
-            parse_date(
-                '%Y-%m-%d', json_value(content, '$.auinf_dt_limite_defesa_previa')
-            ) as string
-        ),
+        parse_date('%Y-%m-%d', json_value(content, '$.auinf_dt_limite_defesa_previa')),
         null
     ) as data_limite_defesa_previa,
     if(
         json_value(content, '$.auinf_dt_limite_recurso') != '',
-        safe_cast(
-            parse_date(
-                '%Y-%m-%d', json_value(content, '$.auinf_dt_limite_recurso')
-            ) as string
-        ),
+        parse_date('%Y-%m-%d', json_value(content, '$.auinf_dt_limite_recurso')),
         null
     ) as data_limite_recurso,
     safe_cast(
