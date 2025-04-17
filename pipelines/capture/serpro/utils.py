@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+import csv
+import os
 import subprocess
+import tempfile
 from datetime import datetime, timedelta
 from typing import List
 
@@ -8,7 +11,9 @@ from prefect.schedules import Schedule
 from prefect.schedules.clocks import DatesClock
 from pytz import timezone
 
+from pipelines.capture.serpro.constants import constants as serpro_constants
 from pipelines.constants import constants
+from pipelines.utils.jdbc import JDBC
 from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import log
 
@@ -90,3 +95,90 @@ def create_serpro_schedule() -> Schedule:
         clocks.append(clock)
 
     return Schedule(clocks=clocks)
+
+
+def connect_and_execute(update_date):
+    """
+    Estabelece conexão com o banco do SERPRO, testa a conexão e executa a query.
+
+    Args:
+        update_date (str): Data formatada (YYYY-MM-DD) usada para parametrizar a query.
+
+    Returns:
+        JDBC: Instância da conexão JDBC com a query já executada.
+
+    Raises:
+        RuntimeError: Se ocorrer erro na conexão ou execução da query.
+    """
+
+    try:
+        log("Conectando ao SERPRO...")
+        jdbc = JDBC(db_params_secret_path="radar_serpro", environment="dev")
+        success, error = jdbc.test_connection()
+        if not success:
+            raise ConnectionError(error)
+        query = serpro_constants.SERPRO_CAPTURE_PARAMS.value["query"].format(
+            update_date=update_date
+        )
+        jdbc.execute_query(query)
+        log("Query executada com sucesso.")
+        return jdbc
+    except Exception as e:
+        log(f"Erro ao conectar/executar query: {str(e)}", level="warning")
+        raise RuntimeError("Falha ao conectar ou executar query.")
+
+
+def query_result_to_csv(jdbc, batch_size=50000):
+    """
+    Extrai os resultados da query executada via JDBC e escreve em um arquivo CSV temporário.
+
+    Args:
+        jdbc (JDBC): Instância com conexão ativa e query já executada.
+        batch_size (int): Número de registros por lote na leitura dos dados.
+
+    Returns:
+        str: Caminho para o arquivo CSV temporário gerado.
+    """
+
+    columns = jdbc.get_columns()
+    with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".csv") as temp_file:
+        writer = csv.writer(temp_file)
+        writer.writerow(columns)
+        total_rows = 0
+        while True:
+            rows = jdbc.fetch_batch(batch_size)
+            if not rows:
+                break
+            writer.writerows(rows)
+            total_rows += len(rows)
+        log(f"Total de registros encontrados: {total_rows}")
+        return temp_file.name
+
+
+def extract_serpro_data(timestamp):
+    """
+    Extrai dados do SERPRO
+
+    Args:
+        timestamp (datetime ou str): Timestamp da execução
+
+    Returns:
+        str: Dados extraídos em formato CSV
+    """
+    ts = datetime.fromisoformat(timestamp) if isinstance(timestamp, str) else timestamp
+    update_date = ts.date().strftime("%Y-%m-%d")
+    jdbc = None
+
+    try:
+        jdbc = connect_and_execute(update_date)
+        temp_file_path = query_result_to_csv(jdbc)
+
+        with open(temp_file_path, "r") as f:
+            result = f.read()
+
+        os.unlink(temp_file_path)
+        return result
+
+    finally:
+        if jdbc:
+            jdbc.close()
