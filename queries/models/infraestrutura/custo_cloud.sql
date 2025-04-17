@@ -32,7 +32,7 @@
 
 with
     billing as (
-        select *, date(_partitiontime, "America/Sao_Paulo") as data_particao
+        select *, date(_partitiontime, "America/Sao_Paulo") as data_particao_fonte
         from {{ billing_staging }}
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
@@ -48,7 +48,7 @@ with
             usage.unit as unidade_uso,
             usage.amount_in_pricing_units as quantidade_unidade_preco,
             usage.pricing_unit as unidade_preco,
-            data_particao,
+            data_particao_fonte,
             '{{ var("version") }}' as versao,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
         from billing
