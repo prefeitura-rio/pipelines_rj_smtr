@@ -242,7 +242,10 @@ selectors:
         - method: fqn
           value: custo_cloud
         - method: fqn
+          value: aux_preco_bigquery
+        - method: fqn
           value: log_bigquery
+
 
   - name: transito_autuacao
     description: Materialização das tabelas de autuação de trânsito
