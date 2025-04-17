@@ -16,4 +16,5 @@ WORKDIR /dbt
 COPY . .
 
 # Generate and serve docs
+EXPOSE 3000
 CMD ["dbt", "docs", "serve", "--profiles-dir", ".", "--port", "3000"]
