@@ -15,7 +15,7 @@ models:
       - name: consorcio
         description: "Consórcio que opera o serviço"
       - name: servico
-        description: "Serviço realizado pelo veículo"
+        description: "{{ doc('servico') }}"
       - name: viagens_faixa
         description: "Quantidade de viagens apuradas por faixa horária"
       - name: km_apurada_faixa

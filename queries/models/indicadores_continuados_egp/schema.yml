@@ -5,7 +5,7 @@ models:
     description: "Indicadores mensais vinculados ao Escritório de Gerenciamento de Projetos e de Metas (EGP-Rio)"
     columns:
       - name: ano
-        description: "Ano de apuração do indicador"
+        description: "{{ doc('ano_indicador') }}"
       - name: mes
         description: "Mês de apuração do indicador"
       - name: modo
@@ -24,7 +24,7 @@ models:
       - name: modo
         description: "Modo de transporte (quando aplicável)"
       - name: ano
-        description: "Ano de apuração do indicador"
+        description: "{{ doc('ano_indicador') }}"
       - name: Janeiro
         description: "Valor apurado do indicador no mês de janeiro"
       - name: Fevereiro

@@ -53,7 +53,7 @@ models:
         data_type: date
         quote: true
       - name: feed_end_date
-        description: Data final do feed (versão).
+        description: "{{ doc('feed_end_date') }}"
         data_type: date
         quote: true
       - name: shape_id
@@ -116,7 +116,7 @@ models:
         data_type: date
         quote: true
       - name: feed_end_date
-        description: Data final do feed (versão).
+        description: "{{ doc('feed_end_date') }}"
         data_type: date
         quote: true
       - name: shape_id
