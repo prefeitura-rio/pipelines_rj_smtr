@@ -110,12 +110,12 @@ models:
           - not_null:
               name: not_null__faixa_horaria_fim__viagem_planejada
       - name: trip_id_planejado
-        description: "{{ doc('trip_id_planejado') }}"
+        description: "{{ doc('trip_id') }}"
         tests:
           - not_null:
               name: not_null__trip_id_planejado__viagem_planejada
       - name: trip_id
-        description: "Código identificador de trip de referência no GTFS com ajustes"
+        description: "{{ doc('trip_id') }} com ajustes"
         tests:
           - not_null:
               name: not_null__trip_id__viagem_planejada
@@ -125,7 +125,7 @@ models:
           - not_null:
               name: not_null__shape_id__viagem_planejada
       - name: shape_id_planejado
-        description: "Código identificador de shape no GTFS com ajustes"
+        description: "{{ doc('shape_id_planejado') }}"
         tests:
           - not_null:
               name: not_null__shape_id_planejado__viagem_planejada
@@ -150,7 +150,7 @@ models:
           - not_null:
               name: not_null__start_pt__viagem_planejada
       - name: end_pt
-        description: "Ponto final do shape em formato geográfico (Point)"
+        description: "{{ doc('end_pt') }}"
         tests:
           - not_null:
               name: not_null__end_pt__viagem_planejada
@@ -191,15 +191,15 @@ models:
         tests:
           - not_null
       - name: id_empresa
-        description: "Código identificador da empresa que opera o veículo"
+        description: "{{ doc('id_empresa') }}"
         # tests:
           # - not_null
       - name: timestamp_gps
-        description: "Timestamp de emissão do sinal de GPS"
+        description: "{{ doc('timestamp_gps') }}"
         tests:
           - not_null
       - name: timestamp_minuto_gps
-        description: "Timestamp de emissão do sinal de GPS truncado em minutos [para fins de comparação com minutos da viagem]"
+        description: "{{ doc('timestamp_gps') }} truncado em minutos [para fins de comparação com minutos da viagem]"
         tests:
           - not_null
       - name: posicao_veiculo_geo
@@ -219,11 +219,11 @@ models:
         tests:
           - not_null
       - name: shape_id_planejado
-        description: "Código identificador de shape no GTFS com ajustes"
+        description: "{{ doc('shape_id_planejado') }}"
       - name: trip_id_planejado
-        description: "{{ doc('trip_id_planejado') }}"
+        description: "{{ doc('trip_id') }}"
       - name: trip_id
-        description: "Código identificador de trip de referência no GTFS com ajustes"
+        description: "{{ doc('trip_id') }} com ajustes"
       - name: distancia_planejada
         description: "Distância do shape [trajeto] planejado"
         tests:
@@ -250,7 +250,7 @@ models:
       - name: start_pt
         description: "Ponto inicial do shape em formato geográfico (Point)"
       - name: end_pt
-        description: "Ponto final do shape em formato geográfico (Point)"
+        description: "{{ doc('end_pt') }}"
       - name: sentido
         description: "Sentido do trajeto identificado [categorias: I - Ida, V - Volta, C - Circular]"
         tests:
@@ -269,7 +269,7 @@ models:
         tests:
           - not_null
       - name: id_empresa
-        description: "Código identificador da empresa que opera o veículo"
+        description: "{{ doc('id_empresa') }}"
         # tests:
           # - not_null
       - name: servico_informado
@@ -322,9 +322,9 @@ models:
         tests:
           - not_null
       - name: shape_id_planejado
-        description: "Código identificador de shape no GTFS com ajustes"
+        description: "{{ doc('shape_id_planejado') }}"
       - name: trip_id_planejado
-        description: "{{ doc('trip_id_planejado') }}"
+        description: "{{ doc('trip_id') }}"
   - name: aux_viagem_circular
     description: "Tabela auxiliar de tratamento de viagens circulares [atualizada diariamente, sem histórico]"
     columns:
@@ -337,7 +337,7 @@ models:
         tests:
           - not_null
       - name: id_empresa
-        description: "Código identificador da empresa que opera o veículo"
+        description: "{{ doc('id_empresa') }}"
         # tests:
           # - not_null
       - name: servico_informado
@@ -349,7 +349,7 @@ models:
         # tests:
           # - not_null
       - name: trip_id
-        description: "Código identificador de trip de referência no GTFS com ajustes"
+        description: "{{ doc('trip_id') }} com ajustes"
       - name: shape_id
         description: "{{ doc('shape_id') }}"
         tests:
@@ -390,9 +390,9 @@ models:
         tests:
           - not_null
       - name: shape_id_planejado
-        description: "Código identificador de shape no GTFS com ajustes"
+        description: "{{ doc('shape_id_planejado') }}"
       - name: trip_id_planejado
-        description: "{{ doc('trip_id_planejado') }}"
+        description: "{{ doc('trip_id') }}"
   - name: registros_status_viagem
     description: "Registros de GPS clasificados por viagem"
     columns:
@@ -405,15 +405,15 @@ models:
         tests:
           - not_null
       - name: id_empresa
-        description: "Código identificador da empresa que opera o veículo"
+        description: "{{ doc('id_empresa') }}"
         tests:
           - not_null
       - name: timestamp_gps
-        description: "Timestamp de emissão do sinal de GPS"
+        description: "{{ doc('timestamp_gps') }}"
         tests:
           - not_null
       - name: timestamp_minuto_gps
-        description: "Timestamp de emissão do sinal de GPS truncado em minutos [para fins de comparação com minutos da viagem]"
+        description: "{{ doc('timestamp_gps') }} truncado em minutos [para fins de comparação com minutos da viagem]"
         tests:
           - not_null
       - name: posicao_veiculo_geo
@@ -480,15 +480,15 @@ models:
       - name: shape_id
         description: "{{ doc('shape_id') }}"
       - name: trip_id
-        description: "Código identificador de trip de referência no GTFS com ajustes"
+        description: "{{ doc('trip_id') }} com ajustes"
       - name: shape_id_planejado
-        description: "Código identificador de shape no GTFS com ajustes"
+        description: "{{ doc('shape_id_planejado') }}"
       - name: trip_id_planejado
-        description: "{{ doc('trip_id_planejado') }}"
+        description: "{{ doc('trip_id') }}"
       - name: start_pt
         description: "Ponto inicial do shape em formato geográfico (Point)"
       - name: end_pt
-        description: "Ponto final do shape em formato geográfico (Point)"
+        description: "{{ doc('end_pt') }}"
   - name: aux_viagem_registros
     description: "Tabela auxiliar de cálculo da distância e total de registros de GPS das viagens identificadas [atualizada diariamente, sem histórico]"
     columns:
@@ -538,7 +538,7 @@ models:
           - not_null
           - greater_than_zero
       - name: n_registros_minuto
-        description: "Contagem de minutos do trajeto com pelo menos 1 sinal de GPS emitido"
+        description: "{{ doc('n_registros_minuto') }}"
         tests:
           - not_null
           - greater_than_zero
@@ -563,7 +563,7 @@ models:
         tests:
           - not_null
       - name: id_empresa
-        description: "Código identificador da empresa que opera o veículo"
+        description: "{{ doc('id_empresa') }}"
         # tests:
           # - not_null
       - name: servico_informado
@@ -656,7 +656,7 @@ models:
           - not_null
           - greater_than_zero
       - name: n_registros_minuto
-        description: "Contagem de minutos do trajeto com pelo menos 1 sinal de GPS emitido"
+        description: "{{ doc('n_registros_minuto') }}"
         tests:
           - not_null
           - greater_than_zero
@@ -703,7 +703,7 @@ models:
         tests:
           - not_null
       - name: id_empresa
-        description: "Código identificador da empresa que opera o veículo"
+        description: "{{ doc('id_empresa') }}"
         # tests:
           # - not_null
       - name: servico_informado
@@ -715,7 +715,7 @@ models:
         tests:
           - not_null
       - name: vista
-        description: "Texto que aparece na sinalização identificando o destino da viagem aos passageiros"
+        description: "{{ doc('trip_headsign') }}"
         tests:
           - not_null
       - name: trip_id
@@ -781,7 +781,7 @@ models:
           - not_null
           - greater_than_zero
       - name: n_registros_shape
-        description: "Contagem de sinais de GPS emitidos dentro do trajeto"
+        description: "{{ doc('n_registros_shape') }}"
         tests:
           - not_null
           - greater_than_zero
@@ -791,7 +791,7 @@ models:
           - not_null
           - greater_than_zero
       - name: n_registros_minuto
-        description: "Contagem de minutos do trajeto com pelo menos 1 sinal de GPS emitido"
+        description: "{{ doc('n_registros_minuto') }}"
         tests:
           - not_null
           - greater_than_zero
