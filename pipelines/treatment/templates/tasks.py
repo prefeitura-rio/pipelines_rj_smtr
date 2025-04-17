@@ -257,13 +257,16 @@ def run_dbt_selector(
         if isinstance(_vars, list):
             vars_dict = {}
             for elem in _vars:
+                elem["flow_name"] = prefect.context.flow_name
                 vars_dict.update(elem)
             vars_str = f'"{vars_dict}"'
             run_command += f" --vars {vars_str}"
         else:
+            _vars["flow_name"] = prefect.context.flow_name
             vars_str = f'"{_vars}"'
             run_command += f" --vars {vars_str}"
-
+    else:
+        _vars = {"flow_name": prefect.context.flow_name}
     if flags:
         run_command += f" {flags}"
 
@@ -454,12 +457,16 @@ def run_dbt_tests(
         if isinstance(_vars, list):
             vars_dict = {}
             for elem in _vars:
+                elem["flow_name"] = prefect.context.flow_name
                 vars_dict.update(elem)
             vars_str = f'"{vars_dict}"'
             run_command += f" --vars {vars_str}"
         else:
+            _vars["flow_name"] = prefect.context.flow_name
             vars_str = f'"{_vars}"'
             run_command += f" --vars {vars_str}"
+    else:
+        _vars = {"flow_name": prefect.context.flow_name}
 
     if flags:
         run_command += f" {flags}"
