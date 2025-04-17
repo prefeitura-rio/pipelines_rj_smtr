@@ -618,6 +618,9 @@ class constants(Enum):  # pylint: disable=c0103
                 "fare_rules",
                 "estudante_12032025",
                 "temp_estudante_cpfduplicado_14032025",
+                "estudante_11042025",
+                "estudante_01042025",
+                "temp_estudante_cpfduplicado_11042025",
             ],
             "filter": {
                 "ITEM_PEDIDO": ["DT_INCLUSAO"],
@@ -778,6 +781,10 @@ class constants(Enum):  # pylint: disable=c0103
                 "temp_estudante_cpfduplicado_13032025",
                 "temp_estudante_cpfduplicado_14032025",
                 "temp_estudante_cpfduplicado_17032025",
+                "estudante_sme_21012025",
+                "estudante_sme_21022025",
+                "temp_estudante_acerto_20032025",
+                "estudante_universitario_24012025",
             ],
             "filter": {
                 "lancamento_conta_gratuidade": ["data_inclusao"],
