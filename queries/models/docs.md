@@ -601,7 +601,7 @@ Descrição do status da infração
 Descrição da autuação
 {% enddocs %}
 
-{% docs trip_id_planejado %}
+{% docs trip_id %}
 Código identificador de trip de referência no GTFS
 {% enddocs %}
 
@@ -647,4 +647,123 @@ Indica se o serviço indicado nos dados de GPS estava diferente do serviço info
 
 {% docs taxa_conversao_real %}
 Taxa da conversão de Dólar para Real
+{% enddocs %}
+
+{% docs chave %}
+Chave
+{% enddocs %}
+
+{% docs codigo_enquadramento %}
+Código da autuação
+{% enddocs %}
+
+{% docs datetime_captura %}
+Datetime de captura do registro pela pipeline
+{% enddocs %}
+
+{% docs datetime_entrada %}
+Datetime de entrada do veículo na linha realocada
+{% enddocs %}
+
+{% docs datetime_registro %}
+Datetime de registro pelo agente público
+{% enddocs %}
+
+{% docs descricao_veiculo %}
+Marca/modelo do veículo
+{% enddocs %}
+
+{% docs end_pt %}
+Ponto final do shape em formato geográfico [Point]
+{% enddocs %}
+
+{% docs extensao_volta %}
+Distância percorrida na volta
+{% enddocs %}
+
+{% docs id_empresa %}
+Código identificador da empresa que opera o veículo
+{% enddocs %}
+
+{% docs id_infracao %}
+Código da infração
+{% enddocs %}
+
+{% docs indicador_autuacao_seguranca %}
+Indicador se o veículo foi autuado por infração relacionada à segurança do veículo
+{% enddocs %}
+
+{% docs km_apurada %}
+Distância apurada para o serviço por dia (km)
+{% enddocs %}
+
+{% docs km_apurada_autuado_limpezaequipamento %}
+Quilometragem apurada de viagens de veículos autuados por limpeza ou equipamento
+{% enddocs %}
+
+{% docs km_planejada_faixa %}
+Distância planejada para o serviço por faixa horária (km)
+{% enddocs %}
+
+{% docs mes %}
+Mês de apuração do indicador
+{% enddocs %}
+
+{% docs n_registros_minuto %}
+Contagem de minutos do trajeto com pelo menos 1 sinal de GPS emitido
+{% enddocs %}
+
+{% docs n_registros_shape %}
+Contagem de sinais de GPS emitidos dentro do trajeto
+{% enddocs %}
+
+{% docs operadora %}
+Nome da operadora de transporte [mascarado se for pessoa física]
+{% enddocs %}
+
+{% docs perc_conformidade_shape %}
+Percentual de sinais emitidos dentro do shape [trajeto] ao longo da viagem
+{% enddocs %}
+
+{% docs route_id %}
+Identificador de uma rota da tabela routes do GTFS
+{% enddocs %}
+
+{% docs sentido_bilhetagem %}
+Sentido de operação do serviço [0 = ida, 1 = volta]
+{% enddocs %}
+
+{% docs servico_gps %}
+Linha de ônibus [serviço] informado pelo GPS
+{% enddocs %}
+
+{% docs shape_id_planejado %}
+Código identificador de shape no GTFS com ajustes
+{% enddocs %}
+
+{% docs tempo_viagem %}
+Tempo aferido da viagem (minutos)
+{% enddocs %}
+
+{% docs trip_headsign %}
+Texto que aparece na sinalização identificando o destino da viagem aos passageiros
+{% enddocs %}
+
+{% docs valor %}
+Valor devido (R$)
+{% enddocs %}
+
+{% docs valor_apurado %}
+Valor da distância apurada multiplicada pelo subsídio por quilômetro [sem glosa]. É zerado quando POF < 80%
+{% enddocs %}
+
+{% docs valor_penalidade %}
+Valor penalidade [negativa] [POF <= 60%]
+{% enddocs %}
+{% docs viagens_dia %}
+Quantidade de viagens apuradas por dia
+{% enddocs %}
+
+{% docs viagens_faixa %}
+Quantidade de viagens apuradas por faixa horária
 {% enddocs %}
