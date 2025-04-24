@@ -54,30 +54,40 @@ with
             ) as data
     ),
     valores_union as (
-        select *
-        from valores_fixos_anteriores
-        union all
-        select *
-        from valores_reais
+        select *, max(data) over () as ultima_data
+        from
+            (
+                select *
+                from valores_fixos_anteriores
+                union all
+                select *
+                from valores_reais
+            )
     ),
     data_preenchida as (
         select * except (priority)
         from
             (
-                select *, 0 as priority
+                select * except (ultima_data), 0 as priority
                 from valores_union
 
                 union all
 
                 select
-                    {% if is_incremental() %} date('{{ var("date_range_end") }}')
-                    {% else %} current_date('America/Sao_Paulo')
-                    {% endif %} as data,
-                    * except (data, origem),
+                    data_faltante as data,
+                    * except (data, ultima_data, data_faltante, origem),
                     'Preenchido' as origem,
                     1 as priority
-                from valores_union
-                qualify data = max(data) over ()
+                from
+                    valores_union,
+                    unnest(
+                        generate_date_array(
+                            date_add(ultima_data, interval 1 day),
+                            current_date('America/Sao_Paulo'),
+                            interval 1 day
+                        )
+                    ) as data_faltante
+                where data = ultima_data
             )
         qualify row_number() over (partition by data order by priority) = 1
     )
