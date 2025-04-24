@@ -17,9 +17,9 @@ models:
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: trip_id
-        description: "Identificador de uma viagem da tabela trips do GTFS"
+        description: "{{ doc('trip_id') }}"
       - name: route_id
-        description: "Identificador de uma rota da tabela routes do GTFS"
+        description: "{{ doc('route_id') }}"
       - name: shape_id
         description: "{{ doc('shape_id') }}"
       - name: servico

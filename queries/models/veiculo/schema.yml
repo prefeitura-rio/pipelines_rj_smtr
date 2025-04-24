@@ -32,9 +32,9 @@ models:
       - name: data_infracao
         description: "{{ doc('data_infracao') }}"
       - name: valor
-        description: "Valor devido (R$)"
+        description: "{{ doc('valor') }}"
       - name: id_infracao
-        description: "Código da infração"
+        description: "{{ doc('id_infracao') }}"
       - name: infracao
         description: "Descrição da infração"
       - name: status
@@ -101,8 +101,6 @@ models:
         description: "{{ doc('tipo_veiculo') }}"
       - name: tecnologia
         description: "{{ doc('tecnologia') }}"
-      - name: status
-        description: "{{ doc('status') }}"
       - name: ano_ultima_vistoria_atualizado
         description: "{{ doc('ano_ultima_vistoria_atualizado') }}"
       - name: data_inicio_vinculo
@@ -174,11 +172,20 @@ models:
           - data
           - id_veiculo
           name: dbt_utils.unique_combination_of_columns__data_id_veiculo__sppo_veiculo_dia
+      - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
+          date_col: data
+          row_condition: "1=1"
+          test_start_date: "{{ var('date_range_start') }}"
+          test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
+          name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sppo_veiculo_dia
     columns:
       - name: data
         description: "Data de operação"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
+        tests:
+          - not_null:
+              name: not_null__id_veiculo__sppo_veiculo_dia
       - name: placa
         description: "{{ doc('placa') }}"
       - name: indicadores
@@ -190,7 +197,7 @@ models:
       - name: indicadores.indicador_autuacao_ar_condicionado
         description: "Indicador se o veículo foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado"
       - name: indicadores.indicador_autuacao_seguranca
-        description: "Indicador se o veículo foi autuado por infração relacionada à segurança do veículo"
+        description: "{{ doc('indicador_autuacao_seguranca') }}"
       - name: indicadores.indicador_autuacao_limpeza
         description: "{{ doc('indicador_autuacao_limpeza') }}"
       - name: indicadores.indicador_autuacao_equipamento
@@ -226,7 +233,7 @@ models:
       - name: data
         description: "{{ doc('data_agente') }}"
       - name: datetime_registro
-        description: "Datetime de registro pelo agente público"
+        description: "{{ doc('datetime_registro') }}"
       - name: id_registro
         description: "{{ doc('id_registro') }}"
       - name: id_veiculo
@@ -238,6 +245,6 @@ models:
       - name: validacao
         description: "{{ doc('validacao') }}"
       - name: datetime_captura
-        description: "Datetime de captura do registro pela pipeline"
+        description: "{{ doc('datetime_captura') }}"
       - name: versao
         description: "{{ doc('versao') }}"

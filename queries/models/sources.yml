@@ -103,6 +103,13 @@ sources:
     tables:
       - name: parametros_km
 
+  - name: veiculo_staging_rj-smtr
+    database: rj-smtr
+    schema: veiculo_staging
+
+    tables:
+      - name: sppo_licenciamento
+
   - name: veiculo_staging
     database: rj-smtr-staging
 
@@ -160,13 +167,6 @@ sources:
 
     tables:
       - name: viagem_informada
-
-  - name: infracao_staging
-    database: rj-smtr-staging
-
-    tables:
-      - name: autuacoes_citran
-      - name: receita_autuacao
 
   - name: dados_mestres
     database: datario
@@ -237,3 +237,17 @@ sources:
 
     tables:
       - name: tecnologia_servico
+
+  - name: transito_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: autuacao_citran
+      - name: receita_autuacao_fonte
+      - name: infracoes_renainf
+
+  - name: source_serpro
+    database: rj-smtr-staging
+
+    tables:
+      - name: autuacao

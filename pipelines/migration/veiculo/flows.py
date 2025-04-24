@@ -3,7 +3,7 @@
 """
 Flows for veiculos
 
-DBT: 2025-02-24
+DBT: 2025-04-08
 """
 
 from copy import deepcopy
@@ -225,12 +225,12 @@ with Flow(
     start_date = Parameter("start_date", default=get_previous_date.run(1))
     end_date = Parameter("end_date", default=get_previous_date.run(1))
 
-    run_dates = get_run_dates(start_date, end_date)
+    DATE_RANGE = [{"start_date": start_date, "end_date": end_date}]
 
     # Rename flow run #
     rename_flow_run = rename_current_flow_run_now_time(
         prefix=sppo_veiculo_dia.name + ": ",
-        now_time=run_dates,
+        now_time=DATE_RANGE,
     )
 
     # Set dbt client #
@@ -243,14 +243,14 @@ with Flow(
         dataset_id=smtr_constants.VEICULO_DATASET_ID.value,
     )
 
-    _vars = get_join_dict(dict_list=run_dates, new_dict=dataset_sha)
+    _vars = get_join_dict(dict_list=DATE_RANGE, new_dict=dataset_sha)
 
     # 2. TREAT #
-    WAIT_DBT_RUN = run_dbt_model.map(
-        dataset_id=unmapped(smtr_constants.VEICULO_DATASET_ID.value),
-        table_id=unmapped(constants.SPPO_VEICULO_DIA_TABLE_ID.value),
-        upstream=unmapped(True),
-        exclude=unmapped("+gps_sppo"),
+    WAIT_DBT_RUN = run_dbt_model(
+        dataset_id=smtr_constants.VEICULO_DATASET_ID.value,
+        table_id=constants.SPPO_VEICULO_DIA_TABLE_ID.value,
+        upstream=True,
+        exclude="+gps_sppo",
         _vars=_vars,
     )
 
