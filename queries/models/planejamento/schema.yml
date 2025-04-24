@@ -187,7 +187,7 @@ models:
               name: dbt_utils.relationships_where__servico__viagem_planejada_planejamento
               to: ref('tecnologia_servico')
               field: servico
-              to_condition: "inicio_vigencia <= date('{{ var('date_range_end') }}') and (fim_vigencia is null OR fim_vigencia >= date('{{ var('date_range_start') }}')) and not regexp_contains(servico, r'^([A-Z]*[0-9]{4})$')"
+              to_condition: "inicio_vigencia <= date('{{ var('date_range_end') }}') and (fim_vigencia is null OR fim_vigencia >= date('{{ var('date_range_start') }}'))"
       - name: sentido
         description: "{{ doc('sentido') }}"
         data_type: string
