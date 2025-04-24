@@ -47,7 +47,7 @@ from prefeitura_rio.pipelines_utils.io import get_root_path
 def rename_materialization_flow(
     selector: DBTSelector,
     timestamp: datetime,
-    datetime_start: datetime,
+    datetime_start: Union[datetime, None],
     datetime_end: datetime,
 ) -> bool:
     """
@@ -58,7 +58,7 @@ def rename_materialization_flow(
         dataset_id (str): dataset_id no DBT
         table_id (str): table_id no DBT
         timestamp (datetime): timestamp de execução do Flow
-        datetime_start (datetime): Partição inicial da materialização
+        datetime_start (Union[datetime, None]): Partição inicial da materialização
         datetime_end (datetime): Partição final da materialização
 
     Returns:
