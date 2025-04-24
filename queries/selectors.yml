@@ -247,3 +247,8 @@ selectors:
           value: aux_autuacao_id
         - method: fqn
           value: autuacao
+
+  - name: snapshot_transito
+    definition:
+      method: fqn
+      value: snapshot_transito_autuacao
