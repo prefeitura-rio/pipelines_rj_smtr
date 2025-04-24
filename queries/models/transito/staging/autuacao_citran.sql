@@ -12,20 +12,25 @@ select distinct
     -- fmt: on
     if(
         json_value(content, '$.DtLimDP') != '',
-        safe_cast(parse_date('%d/%m/%Y', json_value(content, '$.DtLimDP')) as string),
+        parse_date('%d/%m/%Y', json_value(content, '$.DtLimDP')),
         null
-    ) data_limite_defesa_previa,
+
+    ) as data_limite_defesa_previa,
     if(
         json_value(content, '$.DtLimR') != '',
-        safe_cast(parse_date('%d/%m/%Y', json_value(content, '$.DtLimR')) as string),
+        parse_date('%d/%m/%Y', json_value(content, '$.DtLimR')),
         null
-    ) data_limite_recurso,
+    ) as data_limite_recurso,
     safe_cast(json_value(content, '$.Situacao Atual') as string) situacao_atual,
     safe_cast(json_value(content, '$."St. Infracao"') as string) status_infracao,
     safe_cast(json_value(content, '$.Multa') as string) codigo_enquadramento,
     safe_cast(json_value(content, '$.DsInf') as string) tipificacao_resumida,
     safe_cast(json_value(content, '$.Po') as string) pontuacao,
-    safe_cast(json_value(content, '$.Tipo') as string) tipo_veiculo,
+    if(
+        json_value(content, '$.Tipo') != '',
+        safe_cast(json_value(content, '$.Tipo') as string),
+        null
+    ) as tipo_veiculo,
     safe_cast(json_value(content, '$.Marca') as string) descricao_veiculo,
     safe_cast(json_value(content, '$.Esp') as string) especie_veiculo,
     safe_cast(json_value(content, '$.CDUF') as string) uf_proprietario,
