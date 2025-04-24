@@ -665,7 +665,7 @@ def run_dbt(
         str: Output logs from the DBT command execution.
     """
 
-    resource_mapping = {"selector": "run", "snapshot": "snapshot", "test": "test"}
+    resource_mapping = {"model": "run", "snapshot": "snapshot", "test": "test"}
 
     if resource not in resource_mapping:
         raise ValueError(
@@ -676,7 +676,7 @@ def run_dbt(
 
     run_command = f"dbt {dbt_command}"
 
-    if resource in ["selector", "snapshot"]:
+    if resource in ["model", "snapshot"]:
         if not selector_name:
             raise ValueError(f"selector_name is required for resource type: {resource}")
         run_command += f" --selector {selector_name}"
@@ -698,7 +698,7 @@ def run_dbt(
                 if downstream:
                     run_command += "+"
 
-    if exclude and resource == "test":
+    if exclude:
         run_command += f" --exclude {exclude}"
 
     if _vars:

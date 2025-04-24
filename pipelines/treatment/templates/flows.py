@@ -124,7 +124,7 @@ def create_default_materialization_flow(
         )
 
         dbt_run = run_dbt(
-            resource="selector",
+            resource="model",
             selector_name=selector.name,
             flags=flags,
             _vars=dbt_run_vars,
