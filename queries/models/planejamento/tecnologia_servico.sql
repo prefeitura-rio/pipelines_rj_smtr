@@ -4,7 +4,15 @@
     )
 }}
 
-with tecnologia as (select * from {{ ref("staging_tecnologia_servico") }})
+with
+    tecnologia as (
+        select *
+        from {{ ref("staging_tecnologia_servico") }}
+        where
+            codigo_tecnologia != "0000"
+            and codigo_tecnologia is not null
+            and regexp_contains(codigo_tecnologia, r'^([[0-1]{4})$')
+    )
 select
     parse_date('%d/%m/%Y', inicio_vigencia) as inicio_vigencia,
     parse_date('%d/%m/%Y', fim_vigencia) as fim_vigencia,
