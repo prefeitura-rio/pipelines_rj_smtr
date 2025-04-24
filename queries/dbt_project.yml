@@ -235,6 +235,11 @@ tests:
     dashboard_subsidio_sppo_v2:
       where: "data between date('{date_range_start}') and date('{date_range_end}') and data < date('{DATA_SUBSIDIO_V14_INICIO}')"
 
+snapshots:
+  +persist_docs:
+    relation: true
+    columns: true
+
 models:
   +persist_docs:
     relation: true
