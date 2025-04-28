@@ -1,5 +1,10 @@
 # Changelog - source_jae
 
+## [2.0.3] - 2025-04-28
+
+### Alterado
+- Altera politica de retry da get_raw (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/555)
+
 ## [2.0.2] - 2025-04-25
 
 ### Alterado

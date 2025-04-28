@@ -1,5 +1,10 @@
 # Changelog - capture
 
+## [1.1.1] - 2025-04-28
+
+### Adicionado
+- Adiciona parâmetro para ajustar quantidade de retries na task `get_raw` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/555)
+
 ## [1.1.0] - 2025-03-26
 
 ### Alterado
