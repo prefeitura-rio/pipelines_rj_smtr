@@ -45,6 +45,7 @@ CAPTURA_TRANSACAO = create_default_capture_flow(
     create_extractor_task=create_jae_general_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     recapture_schedule_cron=create_hourly_cron(),
+    get_raw_max_retries=0,
 )
 
 CAPTURA_TRANSACAO_RIOCARD = create_default_capture_flow(
@@ -53,6 +54,7 @@ CAPTURA_TRANSACAO_RIOCARD = create_default_capture_flow(
     create_extractor_task=create_jae_general_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     recapture_schedule_cron=create_hourly_cron(),
+    get_raw_max_retries=0,
 )
 
 CAPTURA_GPS_VALIDADOR = create_default_capture_flow(
@@ -61,6 +63,7 @@ CAPTURA_GPS_VALIDADOR = create_default_capture_flow(
     create_extractor_task=create_jae_general_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     recapture_schedule_cron=create_hourly_cron(),
+    get_raw_max_retries=0,
 )
 
 # Capturas por hora
@@ -70,6 +73,7 @@ CAPTURA_AUXILIAR = create_default_capture_flow(
     source=constants.JAE_AUXILIAR_SOURCES.value,
     create_extractor_task=create_jae_general_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    get_raw_max_retries=0,
 )
 set_default_parameters(CAPTURA_AUXILIAR, {"recapture": True})
 
@@ -80,6 +84,7 @@ CAPTURA_INTEGRACAO = create_default_capture_flow(
     source=constants.INTEGRACAO_SOURCE.value,
     create_extractor_task=create_jae_general_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    get_raw_max_retries=0,
 )
 set_default_parameters(CAPTURA_INTEGRACAO, {"recapture": True})
 
@@ -88,6 +93,7 @@ CAPTURA_ORDEM_PAGAMENTO = create_default_capture_flow(
     source=constants.ORDEM_PAGAMENTO_SOURCES.value,
     create_extractor_task=create_jae_general_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    get_raw_max_retries=0,
 )
 set_default_parameters(CAPTURA_ORDEM_PAGAMENTO, {"recapture": True})
 
@@ -96,6 +102,7 @@ CAPTURA_TRANSACAO_ORDEM = create_default_capture_flow(
     source=constants.TRANSACAO_ORDEM_SOURCE.value,
     create_extractor_task=create_jae_general_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    get_raw_max_retries=0,
 )
 set_default_parameters(CAPTURA_TRANSACAO_ORDEM, {"recapture": True})
 
