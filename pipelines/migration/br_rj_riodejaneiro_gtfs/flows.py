@@ -238,7 +238,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,
             _vars=dbt_vars,
             exclude="calendario aux_calendario_manual viagem_planejada_planejamento \
-                     matriz_integracao tecnologia_servico",
+                     matriz_integracao tecnologia_servico aux_ordem_servico_faixa_horaria",
         ).set_upstream(task=wait_captura)
 
         run_dbt_failed = task_value_is_none(wait_run_dbt_model)
