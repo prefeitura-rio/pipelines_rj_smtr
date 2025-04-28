@@ -35,7 +35,7 @@ with
             quilometragem > 0
             {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
     ),
-    servico_planejado_faixa_horaria as (
+    servico_planejado_dia as (
         select data, servico, viagens
         from {{ ref("servico_planejado_dia") }}
         where {{ incremental_filter }}
