@@ -7,6 +7,13 @@
     )
 }}
 
+{% set incremental_filter %}
+    data between
+        date('{{ var("date_range_start") }}')
+        and date('{{ var("date_range_end") }}')
+        and modo = "Ônibus SPPO"
+{% endset %}
+
 with
     subsidio_faixa as (
         select
@@ -22,9 +29,7 @@ with
             pof
         from {{ ref("subsidio_faixa_servico_dia") }}
         -- from `rj-smtr.financeiro_staging.subsidio_faixa_servico_dia`
-        where
-            data
-            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+        where {{ incremental_filter }}
     ),
     penalidade as (
         select
@@ -36,9 +41,7 @@ with
             valor_penalidade
         from {{ ref("subsidio_penalidade_servico_faixa") }}
         -- from `rj-smtr.financeiro.subsidio_penalidade_servico_faixa`
-        where
-            data
-            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+        where {{ incremental_filter }}
     ),
     subsidio_parametros as (
         select distinct
@@ -62,6 +65,13 @@ with
             end as subsidio_km_teto
         from {{ ref("valor_km_tipo_viagem") }}
     -- from `rj-smtr.subsidio.valor_km_tipo_viagem`
+    -- TODO: where modo = "Ônibus SPPO"
+    ),
+    subsidio_faixa_servico_dia_tipo_viagem as (
+        select *
+        from {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
+        -- from `rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem`
+        where {{ incremental_filter }}
     ),
     subsidio_faixa_agg as (
         select
@@ -105,8 +115,7 @@ with
                     )
             end as valor_judicial,
             p.valor_penalidade
-        from {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }} as s
-        -- from `rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem` as s
+        from subsidio_faixa_servico_dia_tipo_viagem as s
         left join
             penalidade as p using (
                 data, tipo_dia, faixa_horaria_inicio, faixa_horaria_fim, servico
@@ -128,9 +137,6 @@ with
                     and sp.tecnologia is null
                 )
             )
-        where
-            data
-            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
         group by
             data,
             tipo_dia,
@@ -162,12 +168,7 @@ with
                         else tipo_viagem
                     end as tipo_viagem_tecnologia,
                     km_apurada_faixa
-                from {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
-                -- from `rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem`
-                where
-                    data between date('{{ var("start_date") }}') and date(
-                        '{{ var("end_date") }}'
-                    )
+                from subsidio_faixa_servico_dia_tipo_viagem
             ) pivot (
                 sum(km_apurada_faixa) as km_apurada for tipo_viagem_tecnologia in (
                     "Registrado com ar inoperante" as registrado_com_ar_inoperante,
