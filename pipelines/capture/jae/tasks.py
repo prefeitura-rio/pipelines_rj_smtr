@@ -60,6 +60,7 @@ def create_jae_general_extractor(source: SourceTable, timestamp: datetime):
         user=credentials["user"],
         password=credentials["password"],
         database=database_name,
+        max_retries=3,
     )
 
 
