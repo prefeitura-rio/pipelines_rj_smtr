@@ -47,7 +47,7 @@ from prefeitura_rio.pipelines_utils.io import get_root_path
 def rename_materialization_flow(
     selector: DBTSelector,
     timestamp: datetime,
-    datetime_start: datetime,
+    datetime_start: Union[datetime, None],
     datetime_end: datetime,
 ) -> bool:
     """
@@ -58,14 +58,18 @@ def rename_materialization_flow(
         dataset_id (str): dataset_id no DBT
         table_id (str): table_id no DBT
         timestamp (datetime): timestamp de execução do Flow
-        datetime_start (datetime): Partição inicial da materialização
+        datetime_start (Union[datetime, None]): Partição inicial da materialização
         datetime_end (datetime): Partição final da materialização
 
     Returns:
         bool: Se o flow foi renomeado
     """
-    name = f"[{timestamp.astimezone(tz=timezone(constants.TIMEZONE.value))}] \
-{selector.name}: from {datetime_start} to {datetime_end}"
+    timestamp_str = timestamp.astimezone(tz=timezone(constants.TIMEZONE.value))
+
+    if datetime_start is None:
+        name = f"[{timestamp_str}] {selector.name}"
+    else:
+        name = f"[{timestamp_str}] {selector.name}: from {datetime_start} to {datetime_end}"
     return rename_current_flow_run(name=name)
 
 
@@ -74,7 +78,7 @@ def get_datetime_start(
     env: str,
     selector: DBTSelector,
     datetime_start: Union[str, datetime, None],
-) -> datetime:
+) -> Optional[datetime]:
     """
     Task que retorna o datetime de inicio da materialização
 
@@ -84,13 +88,16 @@ def get_datetime_start(
         datetime_start (Union[str, datetime, None]): Força um valor no datetime_start
 
     Returns:
-        datetime: datetime de inicio da materialização
+        Optional[datetime]: datetime de inicio da materialização
     """
     if datetime_start is not None:
         if isinstance(datetime_start, str):
             datetime_start = datetime.fromisoformat(datetime_start)
     else:
         datetime_start = selector.get_last_materialized_datetime(env=env)
+
+    if datetime_start is None:
+        return None
 
     return convert_timezone(timestamp=datetime_start)
 

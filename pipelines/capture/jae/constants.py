@@ -24,7 +24,7 @@ class constants(Enum):  # pylint: disable=c0103
     JAE_DATABASE_SETTINGS = {
         "principal_db": {
             "engine": "mysql",
-            "host": "10.5.115.153",
+            "host": "10.5.115.77",
         },
         "tarifa_db": {
             "engine": "postgresql",
@@ -32,11 +32,11 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "transacao_db": {
             "engine": "postgresql",
-            "host": "10.5.115.1",
+            "host": "10.5.114.95",
         },
         "tracking_db": {
             "engine": "postgresql",
-            "host": "10.5.12.67",
+            "host": "10.5.14.74",
         },
         "ressarcimento_db": {
             "engine": "postgresql",
@@ -44,7 +44,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "gratuidade_db": {
             "engine": "postgresql",
-            "host": "10.5.14.228",
+            "host": "10.5.14.15",
         },
         "fiscalizacao_db": {
             "engine": "postgresql",
@@ -52,7 +52,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "atm_gateway_db": {
             "engine": "postgresql",
-            "host": "10.5.12.45",
+            "host": "10.5.14.147",
         },
         "device_db": {
             "engine": "postgresql",
@@ -64,15 +64,15 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "financeiro_db": {
             "engine": "postgresql",
-            "host": "10.5.12.203",
+            "host": "10.5.13.180",
         },
         "midia_db": {
             "engine": "postgresql",
-            "host": "10.5.12.62",
+            "host": "10.5.13.118",
         },
         "processador_transacao_db": {
             "engine": "postgresql",
-            "host": "10.5.12.185",
+            "host": "10.5.12.145",
         },
         "atendimento_db": {
             "engine": "postgresql",
@@ -80,7 +80,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "gateway_pagamento_db": {
             "engine": "postgresql",
-            "host": "10.5.113.179",
+            "host": "10.5.113.21",
         },
         # "iam_db": {
         #     "engine": "mysql",
@@ -88,7 +88,7 @@ class constants(Enum):  # pylint: disable=c0103
         # },
         "vendas_db": {
             "engine": "postgresql",
-            "host": "10.5.113.30",
+            "host": "10.5.112.98",
         },
     }
 
