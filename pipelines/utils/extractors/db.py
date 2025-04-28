@@ -65,6 +65,7 @@ def get_raw_db_paginated(
     password: str,
     database: str,
     page_size: int,
+    max_retries: int = 10,
 ) -> list[str]:
     """
     Captura dados de um Banco de Dados SQL fazendo paginação
@@ -77,6 +78,7 @@ def get_raw_db_paginated(
         password (str): A senha do usuário
         database (str): O nome da base (schema)
         page_size (int): Número máximo de registros em uma página
+        max_retries (int): Quantidades de retries para efetuar a query
     Returns:
         list[str]: Dados em formato JSON
     """
@@ -94,6 +96,7 @@ def get_raw_db_paginated(
             user=user,
             password=password,
             database=database,
+            max_retries=max_retries,
         )
         data += page_data
         page_data_len = len(page_data)
