@@ -14,6 +14,7 @@ def get_raw_db(
     user: str,
     password: str,
     database: str,
+    max_retries: int = 10,
 ) -> list[str]:
     """
     Captura dados de um Banco de Dados SQL
@@ -25,6 +26,7 @@ def get_raw_db(
         user (str): O usuário para se conectar
         password (str): A senha do usuário
         database (str): O nome da base (schema)
+        max_retries (int): Quantidades de retries para efetuar a query
 
     Returns:
         list[str]: Dados em formato JSON
@@ -38,7 +40,6 @@ def get_raw_db(
         database=database,
     )
     connection = create_engine(url)
-    max_retries = 10
     for retry in range(1, max_retries + 1):
         try:
             log(f"[ATTEMPT {retry}/{max_retries}]: {query}")
