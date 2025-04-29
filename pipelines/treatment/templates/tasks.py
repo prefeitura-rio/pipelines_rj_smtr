@@ -665,7 +665,12 @@ def run_dbt(
         str: Output logs from the DBT command execution.
     """
 
-    resource_mapping = {"model": "run", "snapshot": "snapshot", "test": "test"}
+    resource_mapping = {
+        "model": "run",
+        "snapshot": "snapshot",
+        "test": "test",
+        "source freshness": "source freshness",
+    }
 
     if resource not in resource_mapping:
         raise ValueError(
