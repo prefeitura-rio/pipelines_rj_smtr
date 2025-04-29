@@ -15,6 +15,7 @@ from pipelines.control.tasks import (
     set_redis_keys,
     source_freshness_notify_discord,
 )
+from pipelines.schedules import every_hour
 from pipelines.treatment.templates.tasks import run_dbt
 
 with Flow("redis: alterar valor de key") as flow_set_key_redis:
@@ -52,3 +53,4 @@ flow_source_freshness.run_config = KubernetesRun(
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 flow_source_freshness.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
+flow_source_freshness.schedule = every_hour
