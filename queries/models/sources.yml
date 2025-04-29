@@ -186,7 +186,19 @@ sources:
     tables:
       - name: transacao_ordem
       - name: transacao
+        freshness:
+          warn_after:
+            count: 1
+            period: hour
+          filter: data between date(datetime_sub(current_datetime('America/Sao_Paulo'), interval 1 hour)) and current_date('America/Sao_Paulo') and hora between extract(hour from datetime_sub(current_datetime('America/Sao_Paulo'), interval 1 hour)) and extract(hour from current_datetime('America/Sao_Paulo'))
+        loaded_at_field: "parse_timestamp('%Y-%m-%dT%H:%M:%E6S%Ez', safe_cast(json_value(content, '$.data_transacao') as string))"
       - name: transacao_riocard
+        freshness:
+          warn_after:
+            count: 1
+            period: hour
+          filter: data between date(datetime_sub(current_datetime('America/Sao_Paulo'), interval 1 hour)) and current_date('America/Sao_Paulo') and hora between extract(hour from datetime_sub(current_datetime('America/Sao_Paulo'), interval 1 hour)) and extract(hour from current_datetime('America/Sao_Paulo'))
+        loaded_at_field: "parse_timestamp('%Y-%m-%dT%H:%M:%E6S%Ez', safe_cast(json_value(content, '$.data_transacao') as string))"
       - name: linha
       - name: dicionario
       - name: consorcio
@@ -200,6 +212,12 @@ sources:
       - name: integracao_transacao
       - name: tipo_modal
       - name: gps_validador
+        freshness:
+          warn_after:
+            count: 1
+            period: hour
+          filter: data between date(datetime_sub(current_datetime('America/Sao_Paulo'), interval 1 hour)) and current_date('America/Sao_Paulo') and hora between extract(hour from datetime_sub(current_datetime('America/Sao_Paulo'), interval 1 hour)) and extract(hour from current_datetime('America/Sao_Paulo'))
+        loaded_at_field: "parse_timestamp('%Y-%m-%dT%H:%M:%E*S%Ez', safe_cast(json_value(content, '$.data_tracking') as string))"
       - name: gratuidade
       - name: ordem_rateio
       - name: servico_motorista
