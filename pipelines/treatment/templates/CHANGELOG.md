@@ -2,6 +2,8 @@
 
 ## [1.1.2] - 2025-04-29
 
+### Adicionado
+
 - Adiciona comando `source freshness` da task `run_dbt` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/554)
 
 ## [1.1.1] - 2025-04-14
