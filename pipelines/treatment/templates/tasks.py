@@ -631,7 +631,7 @@ def dbt_data_quality_checks(
         raise FAIL
 
 
-# @task
+@task
 def run_dbt(
     resource: str,
     selector_name: str = None,
