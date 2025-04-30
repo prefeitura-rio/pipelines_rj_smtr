@@ -5,6 +5,7 @@
             "data_type": "date",
             "granularity": "day",
         },
+        alias="ordem_servico_faixa_horaria_teste",
     )
 }}
 
@@ -61,6 +62,9 @@ with
                 safe_cast(
                     json_value(content, "$.viagens_{{ dia|lower }}") as string
                 ) as {{ "viagens_" ~ dia | lower }},
+                safe_cast(
+                    json_value(content, "$.km_{{ dia|lower }}") as string
+                ) as {{ "km_" ~ dia | lower }},
                 {% for intervalo in intervalos %}
                     {% if intervalo.inicio != "24" %}
                         safe_cast(
@@ -184,7 +188,10 @@ with
                 case
                     when column_name like '%viagens_%' then safe_cast(value as float64)
                 end
-            ) as viagens_dia
+            ) as viagens_dia,
+            max(
+                case when column_name like '%km_%' then safe_cast(value as float64) end
+            ) as quilometragem_dia
         from
             dados unpivot include nulls(
                 value for column_name in (
@@ -193,7 +200,8 @@ with
                         horario_fim_{{ dia | lower }},
                         partidas_ida_{{ dia | lower }},
                         partidas_volta_{{ dia | lower }},
-                        viagens_{{ dia | lower }}
+                        viagens_{{ dia | lower }},
+                        km_{{ dia | lower }}
                         {% if not loop.last %},{% endif %}
                     {% endfor %}
                 )
