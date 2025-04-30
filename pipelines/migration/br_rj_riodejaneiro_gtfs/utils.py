@@ -445,6 +445,8 @@ def processa_ordem_servico_faixa_horaria(
         "Extensão de Volta": "extensao_volta",
         "Horário Inicial Dias Úteis": "horario_inicio_dias_uteis",
         "Horário Fim Dias Úteis": "horario_fim_dias_uteis",
+        "Horário Inicial - Dias Úteis": "horario_inicio_dias_uteis",
+        "Horário Fim - Dias Úteis": "horario_fim_dias_uteis",
         "Partidas Ida - Dias Úteis": "partidas_ida_dias_uteis",
         "Partidas Volta - Dias Úteis": "partidas_volta_dias_uteis",
         "Viagens - Dias Úteis": "viagens_dias_uteis",
@@ -452,6 +454,8 @@ def processa_ordem_servico_faixa_horaria(
         "KM - Dias Úteis": "km_dias_uteis",
         "Horário Inicial Sábado": "horario_inicio_sabado",
         "Horário Fim Sábado": "horario_fim_sabado",
+        "Horário Inicial - Sábado": "horario_inicio_sabado",
+        "Horário Fim - Sábado": "horario_fim_sabado",
         "Partidas Ida - Sábado": "partidas_ida_sabado",
         "Partidas Volta - Sábado": "partidas_volta_sabado",
         "Viagens - Sábado": "viagens_sabado",
@@ -459,6 +463,8 @@ def processa_ordem_servico_faixa_horaria(
         "KM - Sábado": "km_sabado",
         "Horário Inicial Domingo": "horario_inicio_domingo",
         "Horário Fim Domingo": "horario_fim_domingo",
+        "Horário Inicial - Domingo": "horario_inicio_domingo",
+        "Horário Fim - Domingo": "horario_fim_domingo",
         "Partidas Ida - Domingo": "partidas_ida_domingo",
         "Partidas Volta - Domingo": "partidas_volta_domingo",
         "Viagens - Domingo": "viagens_domingo",
@@ -466,17 +472,23 @@ def processa_ordem_servico_faixa_horaria(
         "KM - Domingo": "km_domingo",
         "Horário Inicial Ponto Facultativo": "horario_inicio_ponto_facultativo",
         "Horário Fim Ponto Facultativo": "horario_fim_ponto_facultativo",
+        "Horário Inicial - Ponto Facultativo": "horario_inicio_ponto_facultativo",
+        "Horário Fim - Ponto Facultativo": "horario_fim_ponto_facultativo",
         "Partidas Ida - Ponto Facultativo": "partidas_ida_ponto_facultativo",
         "Partidas Volta - Ponto Facultativo": "partidas_volta_ponto_facultativo",
         "Viagens - Ponto Facultativo": "viagens_ponto_facultativo",
         "Quilometragem - Ponto Facultativo": "km_ponto_facultativo",
-        "KM Ponto - Facultativo": "km_ponto_facultativo",
+        "KM - Ponto Facultativo": "km_ponto_facultativo",
         "tipo_os": "tipo_os",
     }
 
     metricas = ["Partidas", "Partidas Ida", "Partidas Volta", "Quilometragem", "KM"]
     dias = ["Dias Úteis", "Sábado", "Domingo", "Ponto Facultativo"]
-    formatos = ["{metrica} entre {intervalo} — {dia}", "{metrica} entre {intervalo} ({dia})"]
+    formatos = [
+        "{metrica} entre {intervalo} — {dia}",
+        "{metrica} entre {intervalo} - {dia}",
+        "{metrica} entre {intervalo} ({dia})",
+    ]
 
     if data_versao_gtfs >= "2024-11-06":
         intervalos = [
@@ -505,11 +517,10 @@ def processa_ordem_servico_faixa_horaria(
                 "quilometragem"
                 if metrica in ["Quilometragem", "KM"]
                 else (
-                    "partidas_ida"
-                    if metrica == "Partidas Ida"
-                    else "partidas_volta"
-                    if metrica == "Partidas Volta"
-                    else "partidas"
+                    "partidas"
+                    if metrica == "Partidas"
+                    and data_versao_gtfs < constants.DATA_GTFS_V2_INICIO.value
+                    else ("partidas_ida" if metrica == "Partidas Ida" else "partidas_volta")
                 )
             )
             + f"_entre_{intervalo.replace(' ', '_').replace('(', '').replace(')', '').replace('-', '_')}_{dia.lower().replace(' ', '_')}"  # noqa
@@ -533,7 +544,7 @@ def processa_ordem_servico_faixa_horaria(
         tipo_os = re.search(r"\((.*?)\)", sheet_name).group(1)
 
         df = pd.read_excel(file_bytes, sheet_name=sheet_name, dtype=object)
-        log(f"Os info: {df.head()}")
+
         df.columns = (
             df.columns.str.replace("\n", " ").str.strip().str.replace(r"\s+", " ", regex=True)
         )
