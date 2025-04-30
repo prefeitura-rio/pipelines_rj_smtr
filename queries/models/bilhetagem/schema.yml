@@ -7,7 +7,7 @@ models:
         data_type: date
         quote: true
       - name: data_transacao
-        description: Data da transação
+        description: "{{ doc('data_transacao') }}"
         data_type: date
         quote: true
       - name: id_transacao
@@ -15,7 +15,7 @@ models:
         data_type: string
         quote: true
       - name: modo
-        description: "{{ doc('modo' ) }}"
+        description: "{{ doc('modo') }}"
         data_type: string
         quote: true
       - name: consorcio

@@ -1,5 +1,10 @@
 # Changelog - veiculo
 
+## [1.1.5] - 2025-03-21
+
+### Alterado
+- Alterado o flow de materialização de veículo para períodos inteiros de uma vez (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/434)
+
 ## [1.1.4] - 2025-02-10
 
 ### Adicionado

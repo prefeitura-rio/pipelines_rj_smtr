@@ -1,6 +1,6 @@
 # Changelog - pipelines
 
-## [1.0.3] - 2025-02-12
+## [1.0.4] - 2025-04-30
 
 ### Adicionado
 
@@ -8,7 +8,13 @@
 
 - Adiciona constante `DATA_GTFS_V2_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/418)
 
-## [1.0.2] - 2025-02-11
+## [1.0.3] - 2025-03-10
+
+### Alterado
+
+- Altera IP dos bancos principal_db e gratuidade_db da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/472)
+
+## [1.0.2] - 2025-01-11
 
 ### Adicionado
 

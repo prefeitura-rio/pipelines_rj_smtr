@@ -1,14 +1,29 @@
-{{
-    config(
-        materialized="incremental",
-        partition_by={
-            "field": "data",
-            "data_type": "date",
-            "granularity": "day",
-        },
-        incremental_strategy="insert_overwrite",
-    )
-}}
+{% if var("tipo_materializacao") == "monitoramento" %}
+    {{
+        config(
+            materialized="incremental",
+            partition_by={
+                "field": "data",
+                "data_type": "date",
+                "granularity": "day",
+            },
+            incremental_strategy="insert_overwrite",
+            schema="monitoramento_interno",
+        )
+    }}
+{% else %}
+    {{
+        config(
+            materialized="incremental",
+            partition_by={
+                "field": "data",
+                "data_type": "date",
+                "granularity": "day",
+            },
+            incremental_strategy="insert_overwrite",
+        )
+    }}
+{% endif %}
 
 {% set incremental_filter %}
     data between
@@ -19,7 +34,7 @@
 {% set calendario = ref("calendario") %}
 {# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
 {% if execute %}
-    {% if is_incremental() %}
+    {% if is_incremental() or var("tipo_materializacao") == "monitoramento" %}
         {% set gtfs_feeds_query %}
             select distinct concat("'", feed_start_date, "'") as feed_start_date
             from {{ calendario }}
@@ -34,11 +49,8 @@ with
     calendario as (
         select *
         from {{ calendario }}
-        {% if is_incremental() %}
-            where
-                data between date("{{ var('date_range_start') }}") and date(
-                    "{{ var('date_range_end') }}"
-                )
+        {% if is_incremental() or var("tipo_materializacao") == "monitoramento" %}
+            where {{ incremental_filter }}
         {% endif %}
     ),
     gps_viagem as (
@@ -49,11 +61,17 @@ with
             gv.geo_point_gps,
             gv.servico_viagem,
             gv.servico_gps,
+            gv.timestamp_gps,
             c.feed_version,
             c.feed_start_date
-        from {{ ref("gps_viagem") }} gv
+        {% if var("tipo_materializacao") == "monitoramento" %}
+            from {{ ref("registros_status_viagem_inferida") }} gv
+        {% else %} from {{ ref("gps_viagem") }} gv
+        {% endif %}
         join calendario c using (data)
-        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
+        {% if is_incremental() or var("tipo_materializacao") == "monitoramento" %}
+            where {{ incremental_filter }}
+        {% endif %}
     ),
     segmento as (
         select
@@ -66,7 +84,7 @@ with
             indicador_segmento_desconsiderado
         from {{ ref("segmento_shape") }}
         {# from `rj-smtr.planejamento.segmento_shape` #}
-        {% if is_incremental() %}
+        {% if is_incremental() or var("tipo_materializacao") == "monitoramento" %}
             where feed_start_date in ({{ gtfs_feeds | join(", ") }})
         {% endif %}
     ),
@@ -109,9 +127,14 @@ with
             c.tipo_dia,
             c.feed_start_date,
             c.feed_version
-        from {{ ref("viagem_informada_monitoramento") }} v
+        {% if var("tipo_materializacao") == "monitoramento" %}
+            from {{ ref("viagem_inferida") }} v
+        {% else %} from {{ ref("viagem_informada_monitoramento") }} v
+        {% endif %}
         join calendario c using (data)
-        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
+        {% if is_incremental() or var("tipo_materializacao") == "monitoramento" %}
+            where {{ incremental_filter }}
+        {% endif %}
     ),
     viagem_segmento as (
         select
@@ -160,6 +183,6 @@ select
 from viagem_segmento v
 left join gps_segmento g using (id_viagem, shape_id, id_segmento)
 left join servico_divergente s using (id_viagem)
-{% if not is_incremental() %}
+{% if not is_incremental() and var("tipo_materializacao") != "monitoramento" %}
     where v.data <= date_sub(current_date("America/Sao_Paulo"), interval 2 day)
 {% endif %}

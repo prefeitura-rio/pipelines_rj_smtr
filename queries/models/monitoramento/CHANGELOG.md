@@ -1,5 +1,21 @@
 # Changelog - monitoramento
 
+## [1.3.5] - 2025-03-25
+
+### Alterado
+
+- Alterado a lógica dos modelos `gps_segmento_viagem` e `viagem_validacao` para o monitoramento de viagens (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/458)
+
+## [1.3.4] - 2025-02-27
+
+### Corrigido
+- Corrige os valores as colunas `valor_subsidio_pago` e `valor_penalidade` antes da apuração por faixa no modelo `monitoramento_servico_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/465)
+
+## [1.3.2] - 2025-02-21
+
+### Alterado
+- Torna filtro de partição obrigatório no modelo `gps_viagem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/448)
+
 ## [1.3.1] - 2025-02-03
 
 ### Corrigido

@@ -2,7 +2,7 @@
 """
 Flows for gtfs
 
-DBT 2025-01-16
+DBT 2025-03-25
 """
 
 from prefect import Parameter, case, task
@@ -253,7 +253,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,
             _vars=dbt_vars,
             exclude="calendario aux_calendario_manual viagem_planejada_planejamento \
-matriz_integracao",
+                     matriz_integracao tecnologia_servico",
         ).set_upstream(task=wait_captura)
 
         run_dbt_failed = task_value_is_none(wait_run_dbt_model)

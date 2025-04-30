@@ -30,6 +30,7 @@ sources:
       - name: linha_consorcio
       - name: linha_consorcio_operadora_transporte
       - name: endereco
+      - name: linha_tarifa
 
 
   - name: br_rj_riodejaneiro_gtfs_staging
@@ -102,6 +103,13 @@ sources:
     tables:
       - name: parametros_km
 
+  - name: veiculo_staging_rj-smtr
+    database: rj-smtr
+    schema: veiculo_staging
+
+    tables:
+      - name: sppo_licenciamento
+
   - name: veiculo_staging
     database: rj-smtr-staging
 
@@ -160,13 +168,6 @@ sources:
     tables:
       - name: viagem_informada
 
-  - name: infracao_staging
-    database: rj-smtr-staging
-
-    tables:
-      - name: autuacoes_citran
-      - name: receita_autuacao
-
   - name: dados_mestres
     database: datario
 
@@ -184,6 +185,92 @@ sources:
 
     tables:
       - name: transacao_ordem
+      - name: transacao
+        freshness:
+          warn_after:
+            count: 1
+            period: hour
+          filter: |
+            {% set end = modules.datetime.datetime.now(
+                modules.pytz.timezone("America/Sao_Paulo")
+            ) %}
+            {% set start = end - modules.datetime.timedelta(hours=1) %}
+
+            {% set days = (end.date() - start.date()).days %}
+
+            {% if days == 0 %}
+                data = date("{{ start }}") and hora between {{ start.hour }} and {{ end.hour }}
+
+            {% elif days == 1 %}
+                (data = date("{{ start }}") and hora >= {{ start.hour }})
+                or (data = date("{{ end }}") and hora <= {{ end.hour }})
+            {% endif %}
+        loaded_at_field: "parse_timestamp('%Y-%m-%dT%H:%M:%E6S%Ez', safe_cast(json_value(content, '$.data_transacao') as string))"
+      - name: transacao_riocard
+        freshness:
+          warn_after:
+            count: 1
+            period: hour
+          filter: |
+            {% set end = modules.datetime.datetime.now(
+                modules.pytz.timezone("America/Sao_Paulo")
+            ) %}
+            {% set start = end - modules.datetime.timedelta(hours=1) %}
+
+            {% set days = (end.date() - start.date()).days %}
+
+            {% if days == 0 %}
+                data = date("{{ start }}") and hora between {{ start.hour }} and {{ end.hour }}
+
+            {% elif days == 1 %}
+                (data = date("{{ start }}") and hora >= {{ start.hour }})
+                or (data = date("{{ end }}") and hora <= {{ end.hour }})
+            {% endif %}
+        loaded_at_field: "parse_timestamp('%Y-%m-%dT%H:%M:%E6S%Ez', safe_cast(json_value(content, '$.data_transacao') as string))"
+      - name: linha
+      - name: dicionario
+      - name: consorcio
+      - name: operadora_transporte
+      - name: ordem_pagamento
+      - name: ordem_ressarcimento
+      - name: conta_bancaria
+      - name: contato_pessoa_juridica
+      - name: cliente
+      - name: percentual_rateio_integracao
+      - name: integracao_transacao
+      - name: tipo_modal
+      - name: gps_validador
+        freshness:
+          warn_after:
+            count: 1
+            period: hour
+          filter: |
+            {% set end = modules.datetime.datetime.now(
+                modules.pytz.timezone("America/Sao_Paulo")
+            ) %}
+            {% set start = end - modules.datetime.timedelta(hours=1) %}
+
+            {% set days = (end.date() - start.date()).days %}
+
+            {% if days == 0 %}
+                data = date("{{ start }}") and hora between {{ start.hour }} and {{ end.hour }}
+
+            {% elif days == 1 %}
+                (data = date("{{ start }}") and hora >= {{ start.hour }})
+                or (data = date("{{ end }}") and hora <= {{ end.hour }})
+            {% endif %}
+        loaded_at_field: "parse_timestamp('%Y-%m-%dT%H:%M:%E*S%Ez', safe_cast(json_value(content, '$.data_tracking') as string))"
+      - name: gratuidade
+      - name: ordem_rateio
+      - name: servico_motorista
+      - name: linha_sem_ressarcimento
+      - name: ordem_pagamento_consorcio_operadora
+      - name: ordem_pagamento_consorcio
+      - name: linha_consorcio
+      - name: linha_consorcio_operadora_transporte
+      - name: endereco
+      - name: produto
+      - name: linha_tarifa
 
   - name: source_sonda
     database: rj-smtr-staging
@@ -192,10 +279,12 @@ sources:
       - name: viagem_informada
 
   - name: source_smtr
-    database: rj-smtr-dev
+    database: rj-smtr-staging
 
     tables:
-      - name: matriz_integracao
+      - name: matriz_reparticao_tarifaria
+      - name: matriz_transferencia
+      - name: matriz_integracao_excecao
 
   - name: subsidio_staging
     database: rj-smtr
@@ -204,10 +293,24 @@ sources:
       - name: valor_km_tipo_viagem
 
   - name: planejamento_staging
-    database: rj-smtr
+    database: rj-smtr-staging
 
     tables:
       - name: tecnologia_servico
+
+  - name: transito_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: autuacao_citran
+      - name: receita_autuacao_fonte
+      - name: infracoes_renainf
+
+  - name: source_serpro
+    database: rj-smtr-staging
+
+    tables:
+      - name: autuacao
 
   - name: gtfs
     database: rj-smtr

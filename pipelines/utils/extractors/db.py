@@ -14,6 +14,7 @@ def get_raw_db(
     user: str,
     password: str,
     database: str,
+    max_retries: int = 10,
 ) -> list[str]:
     """
     Captura dados de um Banco de Dados SQL
@@ -25,6 +26,7 @@ def get_raw_db(
         user (str): O usuário para se conectar
         password (str): A senha do usuário
         database (str): O nome da base (schema)
+        max_retries (int): Quantidades de retries para efetuar a query
 
     Returns:
         list[str]: Dados em formato JSON
@@ -38,7 +40,6 @@ def get_raw_db(
         database=database,
     )
     connection = create_engine(url)
-    max_retries = 10
     for retry in range(1, max_retries + 1):
         try:
             log(f"[ATTEMPT {retry}/{max_retries}]: {query}")
@@ -64,6 +65,7 @@ def get_raw_db_paginated(
     password: str,
     database: str,
     page_size: int,
+    max_retries: int = 10,
 ) -> list[str]:
     """
     Captura dados de um Banco de Dados SQL fazendo paginação
@@ -76,6 +78,7 @@ def get_raw_db_paginated(
         password (str): A senha do usuário
         database (str): O nome da base (schema)
         page_size (int): Número máximo de registros em uma página
+        max_retries (int): Quantidades de retries para efetuar a query
     Returns:
         list[str]: Dados em formato JSON
     """
@@ -93,6 +96,7 @@ def get_raw_db_paginated(
             user=user,
             password=password,
             database=database,
+            max_retries=max_retries,
         )
         data += page_data
         page_data_len = len(page_data)
@@ -103,6 +107,7 @@ def get_raw_db_paginated(
             Current page returned {page_data_len} rows"""
         )
         current_page += 1
+        offset = current_page * page_size
         query = f"{base_query} OFFSET {offset}"
 
     return data

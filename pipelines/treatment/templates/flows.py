@@ -22,7 +22,7 @@ from pipelines.treatment.templates.tasks import (
     get_datetime_start,
     get_repo_version,
     rename_materialization_flow,
-    run_dbt_selector,
+    run_dbt,
     save_materialization_datetime_redis,
     wait_data_sources,
 )
@@ -36,6 +36,7 @@ def create_default_materialization_flow(
     agent_label: str,
     wait: list = None,
     generate_schedule: bool = True,
+    snapshot_selector: DBTSelector = None,
 ) -> Flow:
     """
     Cria um flow de materialização
@@ -47,6 +48,7 @@ def create_default_materialization_flow(
         wait (list): Lista de DBTSelectors e/ou SourceTables para verificar a completude dos dados
         generate_schedule (bool): Se a função vai agendar o flow com base
             no parametro schedule_cron do selector
+        snapshot_selector (DBTSelector): Objeto que representa o selector do DBT para snapshot.
 
         Returns:
             Flow: Flow de materialização
@@ -121,15 +123,28 @@ def create_default_materialization_flow(
             repo_version=repo_version,
         )
 
-        dbt_run = run_dbt_selector(
+        dbt_run = run_dbt(
+            resource="model",
             selector_name=selector.name,
             flags=flags,
             _vars=dbt_run_vars,
             upstream_tasks=[complete_sources],
         )
 
+        if snapshot_selector:
+            dbt_snapshot = run_dbt(
+                resource="snapshot",
+                selector_name=snapshot_selector.name,
+                flags=flags,
+                _vars=dbt_run_vars,
+                upstream_tasks=[dbt_run],
+            )
+            wait_dbt = dbt_snapshot
+        else:
+            wait_dbt = dbt_run
+
         save_materialization_datetime_redis(
-            env=env, selector=selector, value=datetime_end, upstream_tasks=[dbt_run]
+            env=env, selector=selector, value=datetime_end, upstream_tasks=[wait_dbt]
         )
 
     default_materialization_flow.storage = GCS(constants.GCS_FLOWS_BUCKET.value)

@@ -2,10 +2,10 @@ version: 2
 
 models:
   - name: ordem_servico_diaria
-    description: "Dados diários das linhas presentes no município."
+    description: "Dados diários das linhas presentes no município"
     columns:
       - name: DATA
-        description: "Data da ordem de serviço."
+        description: "Data da ordem de serviço"
       - name: tipo_dia
         description: "{{ doc('tipo_dia') }}"
       - name: servico

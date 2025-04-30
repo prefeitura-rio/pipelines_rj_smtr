@@ -1,0 +1,13 @@
+# Changelog - financeiro
+
+## [2.0.0] - 2025-03-26
+
+## Adicionado
+
+- Migra flows de tratamento da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/489)
+
+## [1.0.0] - 2025-03-13
+
+### Adicionado
+
+- Cria flow de teste de qualidade dos dados de ordem de pagamento `ordem_pagamento_quality_check` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/474)

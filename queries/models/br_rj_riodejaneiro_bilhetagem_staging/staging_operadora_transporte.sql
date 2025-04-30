@@ -1,34 +1,43 @@
 {{
-  config(
-    alias='operadora_transporte',
-  )
+    config(
+        alias="operadora_transporte",
+    )
 }}
 
-WITH
-    operadora_transporte AS (
-        SELECT
+with
+    operadora_transporte as (
+        select
             data,
-            SAFE_CAST(CD_OPERADORA_TRANSPORTE AS STRING) AS cd_operadora_transporte,
+            safe_cast(cd_operadora_transporte as string) as cd_operadora_transporte,
             timestamp_captura,
-            DATETIME(PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%S%Ez', SAFE_CAST(JSON_VALUE(content, '$.DT_INCLUSAO') AS STRING)), "America/Sao_Paulo") AS datetime_inclusao,
-            SAFE_CAST(JSON_VALUE(content, '$.CD_CLIENTE') AS STRING) AS cd_cliente,
-            SAFE_CAST(JSON_VALUE(content, '$.CD_TIPO_CLIENTE') AS STRING) AS cd_tipo_cliente,
-            SAFE_CAST(JSON_VALUE(content, '$.CD_TIPO_MODAL') AS STRING) AS cd_tipo_modal,
-            SAFE_CAST(JSON_VALUE(content, '$.IN_SITUACAO_ATIVIDADE') AS STRING) AS in_situacao_atividade,
-            SAFE_CAST(JSON_VALUE(content, '$.DS_TIPO_MODAL') AS STRING) AS ds_tipo_modal
-        FROM
-            {{ source("br_rj_riodejaneiro_bilhetagem_staging", "operadora_transporte") }}
+            datetime(
+                parse_timestamp(
+                    '%Y-%m-%dT%H:%M:%S%Ez',
+                    safe_cast(json_value(content, '$.DT_INCLUSAO') as string)
+                ),
+                "America/Sao_Paulo"
+            ) as datetime_inclusao,
+            safe_cast(json_value(content, '$.CD_CLIENTE') as string) as cd_cliente,
+            safe_cast(
+                json_value(content, '$.CD_TIPO_CLIENTE') as string
+            ) as cd_tipo_cliente,
+            safe_cast(
+                json_value(content, '$.CD_TIPO_MODAL') as string
+            ) as cd_tipo_modal,
+            safe_cast(
+                json_value(content, '$.IN_SITUACAO_ATIVIDADE') as string
+            ) as in_situacao_atividade,
+            safe_cast(json_value(content, '$.DS_TIPO_MODAL') as string) as ds_tipo_modal
+        from {{ source("source_jae", "operadora_transporte") }}
     ),
-    operadora_transporte_rn AS (
-        SELECT
+    operadora_transporte_rn as (
+        select
             *,
-            ROW_NUMBER() OVER (PARTITION BY cd_operadora_transporte ORDER BY timestamp_captura DESC) AS rn
-        FROM
-            operadora_transporte
+            row_number() over (
+                partition by cd_operadora_transporte order by timestamp_captura desc
+            ) as rn
+        from operadora_transporte
     )
-SELECT
-  * EXCEPT(rn)
-FROM
-  operadora_transporte_rn
-WHERE
-  rn = 1
+select * except (rn)
+from operadora_transporte_rn
+where rn = 1

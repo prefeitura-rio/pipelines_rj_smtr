@@ -1,5 +1,28 @@
 # Changelog - treatment
 
+## [1.1.2] - 2025-04-29
+
+### Adicionado
+
+- Adiciona comando `source freshness` da task `run_dbt` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/554)
+
+## [1.1.1] - 2025-04-14
+
+### Adicionado
+
+- Cria task `run_dbt` que permite executar `models`, `snapshots` e `tests`, e adiciona parâmetro `snapshot_selector` no flow de materialização (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/547)
+
+## [1.1.0] - 2025-03-13
+
+### Adicionado
+
+- Adiciona parametros `raise_check_error` e `additional_mentions` na task `dbt_data_quality_checks` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/474)
+
+### Corrigido
+
+- Altera lógica de construção do path na função `parse_dbt_test_output` para funcionar em qualquer sistema (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/474)
+- Corrige select do teste DBT pelo nome na task `check_dbt_test_run` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/474)
+
 ## [1.0.4] - 2024-12-17
 
 ### Adicionado

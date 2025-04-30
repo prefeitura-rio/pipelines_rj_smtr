@@ -14,15 +14,21 @@ from pipelines.capture.jae.constants import constants
 from pipelines.capture.jae.utils import (
     create_billingpay_backup_filepath,
     get_redis_last_backup,
+    get_table_data_backup_billingpay,
 )
 from pipelines.constants import constants as smtr_constants
-from pipelines.utils.database import create_database_url, test_database_connection
+from pipelines.utils.database import (
+    create_database_url,
+    list_accessible_tables,
+    test_database_connection,
+)
 from pipelines.utils.extractors.db import get_raw_db
-from pipelines.utils.fs import create_partition, save_local_file
+from pipelines.utils.fs import create_partition
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.gcp.storage import Storage
 from pipelines.utils.prefect import rename_current_flow_run
 from pipelines.utils.secret import get_secret
+from pipelines.utils.utils import convert_timezone
 
 
 @task(
@@ -54,6 +60,7 @@ def create_jae_general_extractor(source: SourceTable, timestamp: datetime):
         user=credentials["user"],
         password=credentials["password"],
         database=database_name,
+        max_retries=3,
     )
 
 
@@ -140,6 +147,7 @@ def get_table_info(
     database_name: str,
     database_config: dict,
     timestamp: datetime,
+    table_id: str = None,
 ) -> list[dict[str, str]]:
     """
     Busca as informações de todas as tabelas disponíveis em um banco de dados
@@ -163,12 +171,18 @@ def get_table_info(
     inspector = inspect(engine)
     tables_config = constants.BACKUP_JAE_BILLING_PAY.value[database_name]
     partition = create_partition(timestamp=timestamp, partition_date_only=True)
-    table_names = [
-        t
-        for t in inspector.get_table_names()
-        if t not in tables_config["exclude"]
-        and isinstance(tables_config["filter"].get(t, []), list)
-    ]
+    if table_id is not None:
+        table_names = [table_id]
+    else:
+        table_names = [
+            t
+            for t in list_accessible_tables(engine=engine)
+            if t not in tables_config.get("exclude", [])
+            and isinstance(tables_config.get("filter", {}).get(t, []), list)
+        ]
+
+    custom_select = tables_config.get("custom_select", {})
+    filtered_tables = tables_config.get("filter", [])
     result = [
         {
             "table_name": t,
@@ -180,22 +194,57 @@ def get_table_info(
                 timestamp=timestamp,
             ),
             "partition": partition,
+            "custom_select": custom_select.get(t),
         }
         for t in table_names
-        if t not in tables_config["filter"]
+        if t not in filtered_tables
     ]
 
-    for table in [t for t in table_names if t in tables_config["filter"]]:
+    for table in [t for t in table_names if t in filtered_tables]:
 
-        filter_columns = tables_config["filter"][table]
+        filter_columns = filtered_tables[table]
 
-        if len(filter_columns) > 1 or isinstance(
-            [
-                c["type"]
-                for c in inspector.get_columns(table_name=table)
-                if c["name"] in filter_columns
-            ][0],
-            (TIMESTAMP, DATE, DATETIME),
+        if filter_columns[0] == "count(*)":
+            with engine.connect() as conn:
+                current_count = pd.read_sql(f"select count(*) as ct from {table}", conn).to_dict(
+                    orient="records"
+                )[0]["ct"]
+                last_count = get_redis_last_backup(
+                    env=env,
+                    table_name=table,
+                    database_name=database_name,
+                    incremental_type="integer",
+                )
+
+                if current_count != last_count:
+                    result.append(
+                        {
+                            "table_name": table,
+                            "incremental_type": "count",
+                            "filepath": create_billingpay_backup_filepath(
+                                table_name=table,
+                                database_name=database_name,
+                                partition=partition,
+                                timestamp=timestamp,
+                            ),
+                            "partition": partition,
+                            "custom_select": custom_select.get(table),
+                            "redis_save_value": current_count,
+                        }
+                    )
+            continue
+
+        if (
+            len(filter_columns) > 1
+            or table in custom_select.keys()
+            or isinstance(
+                [
+                    c["type"]
+                    for c in inspector.get_columns(table_name=table)
+                    if c["name"] in filter_columns
+                ][0],
+                (TIMESTAMP, DATE, DATETIME),
+            )
         ):
             incremental_type = "datetime"
         else:
@@ -218,6 +267,7 @@ def get_table_info(
                     incremental_type=incremental_type,
                 ),
                 "partition": partition,
+                "custom_select": custom_select.get(table),
             }
         )
 
@@ -243,13 +293,19 @@ def get_non_filtered_tables(
         list[dict]: Dicionário com as tabelas com mais de 5000 registros
     """
     tables_config = constants.BACKUP_JAE_BILLING_PAY.value[database_name]
+    no_filter_tables = [
+        t["table_name"]
+        for t in table_info
+        if t["table_name"] not in tables_config.get("filter", [])
+    ]
+    if len(no_filter_tables) == 0:
+        return False, []
     database_url = create_database_url(**database_config)
     engine = create_engine(database_url)
     result = []
     with engine.connect() as conn:
-        for table in [
-            t["table_name"] for t in table_info if t["table_name"] not in tables_config["filter"]
-        ]:
+        for table in no_filter_tables:
+            log(table)
             df = pd.read_sql(f"select count(*) as ct from {table}", conn)
             df["table"] = table
             result.append(df)
@@ -301,13 +357,28 @@ def get_raw_backup_billingpay(
     Returns:
         list[dict[str, str]]: Lista com as informações das tabelas atualizada
     """
-    timestamp_str = timestamp.astimezone(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S")
+
     new_table_info = []
     for table in table_info:
         table_name = table["table_name"]
-        sql = f"SELECT * FROM {table_name}"
+        if table["custom_select"] is not None:
+            sql = table["custom_select"]
+        else:
+            sql = f"SELECT * FROM {table_name}"
+
+        if "{filter}" not in sql:
+            sql += " WHERE {filter}"
+
         where = "1=1"
         if table["incremental_type"] == "datetime":
+            timestamp_str = (
+                table.get(
+                    "last_value",
+                    timestamp,
+                )
+                .astimezone(tz=timezone("UTC"))
+                .strftime("%Y-%m-%d %H:%M:%S")
+            )
             last_capture_str = (
                 table["last_capture"].astimezone(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S")
             )
@@ -328,12 +399,18 @@ def get_raw_backup_billingpay(
                 **database_config,
             )[0]["max_id"]
             where = f"{id_column} BETWEEN {table['last_capture']} AND {max_id}"
-            table["max_id"] = max_id
+            table["redis_save_value"] = max_id
+        sql = sql.format(filter=where)
 
-        sql += f" WHERE {where}"
-
-        data = get_raw_db(query=sql, **database_config)
-        save_local_file(filepath=table["filepath"], filetype="json", data=data)
+        filepath = get_table_data_backup_billingpay(
+            query=sql,
+            filepath=table["filepath"],
+            page_size=constants.BACKUP_JAE_BILLING_PAY.value[database_config["database"]]
+            .get("page_size", {})
+            .get(table_name, 200_000),
+            **database_config,
+        )
+        table["filepath"] = filepath
         new_table_info.append(table)
     return new_table_info
 
@@ -351,11 +428,12 @@ def upload_backup_billingpay(env: str, table_info: dict[str, str], database_name
     Retuns:
         dict: Dicionário com informações da tabela
     """
-    Storage(env=env, dataset_id=database_name, table_id=table_info["table_name"],).upload_file(
-        mode=constants.BACKUP_BILLING_PAY_FOLDER.value,
-        filepath=table_info["filepath"],
-        partition=table_info["partition"],
-    )
+    for filepath in table_info["filepath"]:
+        Storage(env=env, dataset_id=database_name, table_id=table_info["table_name"]).upload_file(
+            mode=constants.BACKUP_BILLING_PAY_FOLDER.value,
+            filepath=filepath,
+            partition=table_info["partition"],
+        )
 
     return table_info
 
@@ -384,15 +462,153 @@ def set_redis_backup_billingpay(
     if table_info["incremental_type"] == "datetime":
         save_value = timestamp.strftime(smtr_constants.MATERIALIZATION_LAST_RUN_PATTERN.value)
     else:
-        save_value = table_info["max_id"]
+        save_value = table_info["redis_save_value"]
 
     if not content:
         log(f"Saving value: {save_value} on key {redis_key}")
         content = {constants.BACKUP_BILLING_LAST_VALUE_REDIS_KEY.value: save_value}
         redis_client.set(redis_key, content)
-    elif content[constants.BACKUP_BILLING_LAST_VALUE_REDIS_KEY.value] < save_value:
+    elif (
+        content[constants.BACKUP_BILLING_LAST_VALUE_REDIS_KEY.value] < save_value
+        or table_info["incremental_type"] == "count"
+    ):
         log(f"Saving value: {save_value} on key {redis_key}")
         content[constants.BACKUP_BILLING_LAST_VALUE_REDIS_KEY.value] = save_value
         redis_client.set(redis_key, content)
+    else:
+        log(f"[{redis_key}] {save_value} é menor que o valor salvo no Redis")
+
+
+@task
+def get_timestamps_historic_table(
+    env: str,
+    database_name: str,
+    table_info: list[dict],
+) -> list[dict]:
+    """
+    Consulta no Redis os ultimos timestamps capturados das tabelas
+
+    Args:
+        env (str): prod ou dev
+        database_name (str): Nome do banco de dados
+        table_info (list[dict[str, str]]): Dicionário com as informações da tabela
+
+    Returns:
+        list[dict]: table_info atualizado
+    """
+    redis_client = get_redis_client()
+    capture_tables = constants.BACKUP_JAE_BILLING_PAY_HISTORIC.value[database_name]
+    for table in table_info:
+        redis_key = (
+            f"{env}.backup_jae_billingpay_historic_capture.{database_name}.{table['table_name']}"
+        )
+        content = redis_client.get(redis_key)
+
+        if content is None:
+            table["timestamp"] = convert_timezone(capture_tables[table["table_name"]]["start"])
+        else:
+            table["timestamp"] = convert_timezone(datetime.fromisoformat(content))
+
+        table["partition"] = create_partition(
+            timestamp=table["timestamp"], partition_date_only=True
+        )
+        table["filepath"] = create_billingpay_backup_filepath(
+            table_name=table["table_name"],
+            database_name=database_name,
+            partition=table["partition"],
+            timestamp=table["timestamp"],
+        )
+
+        table["last_capture"] = table["timestamp"]
+
+    return table_info
+
+
+@task
+def get_end_value_historic_table(
+    table_info: list[dict], database_name: str, database_config: dict
+) -> list[dict]:
+    """
+    Atualiza as informações da tabela com o timestamp e o ultimo valor para capturar o histórico
+    das tabelas grandes
+
+    Args:
+        table_info (list[dict[str, str]]): Dicionário com as informações da tabela
+        database_name (str): Nome do banco de dados
+
+    Returns:
+        list[dict]: table_info atualizado
+    """
+    result = []
+    for table in table_info:
+        table_name = table["table_name"]
+        table_end = convert_timezone(
+            constants.BACKUP_JAE_BILLING_PAY_HISTORIC.value[database_name][table_name]["end"]
+        )
+        if table["timestamp"] == table_end:
+            continue
+        filter_columns = constants.BACKUP_JAE_BILLING_PAY.value[database_config["database"]][
+            "filter"
+        ][table_name]
+
+        if len(filter_columns) == 1:
+            if table["custom_select"] is not None:
+                sql = table["custom_select"]
+            else:
+                sql = f"SELECT * FROM {table['table_name']}"
+
+            if "{filter}" not in sql:
+                sql += " WHERE {filter}"
+
+            last_capture_str = (
+                table["last_capture"].astimezone(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S")
+            )
+
+            where = f"{filter_columns[0]} >= '{last_capture_str}'"
+
+            sql = sql.format(filter=where)
+            max_dt = get_raw_db(
+                f"select max({filter_columns[0]}) as max_dt FROM ({sql} limit 2000000) a",
+                **database_config,
+            )[0]["max_dt"]
+            max_dt = min(
+                convert_timezone(max_dt.tz_localize("UTC").to_pydatetime()),
+                table["timestamp"] + timedelta(days=1),
+            )
+        else:
+            max_dt = table["timestamp"] + timedelta(days=1)
+
+        table["last_value"] = min(max_dt, table_end)
+
+        result.append(table)
+    return result
+
+
+@task
+def set_redis_historic_table(
+    env: str,
+    table_info: dict,
+    database_name: str,
+):
+    """
+    Atualiza o Redis com os novos dados capturados
+
+    Args:
+        env (str): prod ou dev
+        table_info (list[dict[str, str]]): Dicionário com as informações da tabela
+        database_name (str): Nome do banco de dados
+    """
+    redis_key = (
+        f"{env}.backup_jae_billingpay_historic_capture.{database_name}.{table_info['table_name']}"
+    )
+    redis_client = get_redis_client()
+    content = redis_client.get(redis_key)
+    save_value = table_info["last_value"].isoformat()
+    if not content:
+        log(f"Saving value: {save_value} on key {redis_key}")
+        redis_client.set(redis_key, save_value)
+    elif save_value > content:
+        log(f"Saving value: {save_value} on key {redis_key}")
+        redis_client.set(redis_key, save_value)
     else:
         log(f"[{redis_key}] {save_value} é menor que o valor salvo no Redis")

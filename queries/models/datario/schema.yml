@@ -2,10 +2,10 @@ version: 2
 
 models:
   - name: gps_brt_datario
-    description: "Dados tratados de registros de GPS do BRT."
+    description: "Dados tratados de registros de GPS do BRT"
     columns:
       - name: modo
-        description: "BRT – nesse arquivo só consta esse modo"
+        description: "{{ doc('modo_brt') }}"
       - name: timestamp_gps
         description: "{{ doc('timestamp_gps') }}"
       - name: data
@@ -36,10 +36,10 @@ models:
         description: "{{ doc('versao') }}"
 
   - name: gps_onibus_datario
-    description: "Dados tratados de registros de GPS dos Ônibus."
+    description: "Dados tratados de registros de GPS dos Ônibus"
     columns:
       - name: modo
-        description: "BRT – nesse arquivo só consta esse modo"
+        description: "{{ doc('modo_sppo') }}"
       - name: timestamp_gps
         description: "{{ doc('timestamp_gps') }}"
       - name: data
@@ -71,37 +71,99 @@ models:
       - name: versao
         description: "{{ doc('versao') }}"
   - name: viagem_onibus_datario
-    description: "Detalhes de todas as viagens completas identificadas."
+    description: "Detalhes de todas as viagens completas identificadas"
     columns:
       - name: data
-        description: "Data da viagem"
+        description: "{{ doc('data_viagem') }}"
       - name: consorcio
         description: "Consórcio ao qual o serviço pertence"
       - name: tipo_dia
         description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sábado, Domingo"
       - name: id_empresa
-        description: "Código identificador da empresa que opera o veículo"
+        description: "{{ doc('id_empresa') }}"
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
       - name: id_viagem
         description: "Código identificador da viagem (ex: id_veiculo + servico + sentido + shape_id + datetime_partida)"
       - name: servico
         description: "Serviço realizado pelo veículo (com base na identificação do trajeto)"
       - name: shape_id
-        description: "Código identificador do trajeto (shape) operado"
+        description: "{{ doc('shape_id') }}"
       - name: sentido
-        description: "Sentido do trajeto identificado - categorias: I (ida), V (volta), C (circular)"
+        description: "{{ doc('sentido') }}"
       - name: datetime_partida
         description: "Horário de início da viagem"
       - name: datetime_chegada
         description: "Horário de fim da viagem"
       - name: tempo_viagem
-        description: "Tempo aferido da viagem (em minutos)"
+        description: "{{ doc('tempo_viagem') }}"
       - name: distancia_planejada
-        description: "Distância do shape (trajeto) planejado"
+        description: "{{ doc('distancia_planejada') }}"
       - name: perc_conformidade_shape
-        description: "Percentual de sinais emitidos dentro do shape (trajeto) ao longo da viagem"
+        description: "{{ doc('perc_conformidade_shape') }}"
       - name: perc_conformidade_registros
-        description: "Percentual de minutos da viagem com registro de sinal de GPS"
+        description: "{{ doc('perc_conformidade_registros') }}"
       - name: versao_modelo
-        description: "Versão da metodologia de cálculo da respectiva linha na tabela"
+        description: "{{ doc('versao') }}"
+
+  - name: licenciamento_veiculo_datario
+    description: "Tabela histórica de dados cadastrais dos veículos que operam o sistema de transporte rodoviário,
+                  considerando tanto os licenciados no Sistema de Transporte Urbano [STU] quanto as solicitações
+                  válidas em andamento para ingresso no sistema"
+    columns:
+      - name: data
+        description: "{{ doc('data_captura') }} [partição]"
+      - name: modo
+        description: "{{ doc('modo') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: ano_fabricacao
+        description: "{{ doc('ano_fabricacao') }}"
+      - name: carroceria
+        description: "{{ doc('carroceria') }}"
+      - name: data_ultima_vistoria
+        description: "{{ doc('data_ultima_vistoria') }}"
+      - name: id_carroceria
+        description: "{{ doc('id_carroceria') }}"
+      - name: id_chassi
+        description: "{{ doc('id_chassi') }}"
+      - name: id_fabricante_chassi
+        description: "{{ doc('id_fabricante_chassi') }}"
+      - name: id_interno_carroceria
+        description: "{{ doc('id_interno_carroceria') }}"
+      - name: id_planta
+        description: "{{ doc('id_planta') }}"
+      - name: indicador_ar_condicionado
+        description: "{{ doc('indicador_ar_condicionado') }}"
+      - name: indicador_elevador
+        description: "{{ doc('indicador_elevador') }}"
+      - name: indicador_usb
+        description: "{{ doc('indicador_usb') }}"
+      - name: indicador_wifi
+        description: "{{ doc('indicador_wifi') }}"
+      - name: nome_chassi
+        description: "{{ doc('nome_chassi') }}"
+      - name: permissao
+        description: "{{ doc('permissao') }}"
+      - name: placa
+        description: "{{ doc('placa') }}"
+      - name: quantidade_lotacao_pe
+        description: "{{ doc('quantidade_lotacao_pe') }}"
+      - name: quantidade_lotacao_sentado
+        description: "{{ doc('quantidade_lotacao_sentado') }}"
+      - name: tipo_combustivel
+        description: "{{ doc('tipo_combustivel') }}"
+      - name: tipo_veiculo
+        description: "{{ doc('tipo_veiculo') }}"
+      - name: tecnologia
+        description: "{{ doc('tecnologia') }}"
+      - name: status
+        description: "{{ doc('status') }}"
+      - name: ano_ultima_vistoria_atualizado
+        description: "{{ doc('ano_ultima_vistoria_atualizado') }}"
+      - name: data_inicio_vinculo
+        description: "{{ doc('data_inicio_vinculo') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"

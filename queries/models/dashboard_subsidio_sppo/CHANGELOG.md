@@ -1,12 +1,36 @@
 # Changelog - dashboard_subsidio_sppo
 
-## [7.1.0] - 2025-02-12
+## [7.1.4] - 2025-04-30
 
 ### Alterado
 
 - Refatora `viagens_remuneradas` para remover dependência do `ordem_servico_gtfs` (desativado) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/418)
 
 - Desativa `sumario_servico_dia_historico` para datas superiores ou iguais a `DATA_SUBSIDIO_V9_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/418)
+
+## [7.1.3] - 2025-03-25
+
+### Alterado
+
+- Altera CTEs `tecnologias`, `prioridade_tecnologia` e `viagem_tecnologia` em razão da inclusão de vigência do tipo de tecnologia (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/493)
+
+## [7.1.2] - 2025-03-10
+
+### Adicionado
+
+- Adiciona ordenação de viagens por datetime_partida no modelo `viagens_remuneradas.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/470)
+
+## [7.1.1] - 2025-02-21
+
+### Alterado
+
+- Altera modelo `viagens_remuneradas` para não incrementar dados anteriores a `DATA_SUBSIDIO_V3A_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/447)
+
+## [7.1.0] - 2025-02-17
+
+### Corrigido
+
+- Corrige teste de `distancia_planejada` maior que zero do modelo `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/433)
 
 ## [7.0.9] - 2025-01-28
 

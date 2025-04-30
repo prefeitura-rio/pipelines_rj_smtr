@@ -1,6 +1,21 @@
 # Changelog - veiculo
 
-## [1.1.3] - 2025-02-06
+## [2.0.5] - 2025-04-08
+
+### Adicionado
+- Adicionados os modelos `infracao_data_versao_efetiva.sql` e `licenciamento_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/434)
+
+### Alterado
+- Refatorados os modelos `licenciamento.sql`, `infracao.sql` e `sppo_veiculo_dia.sql` para materializar períodos inteiros de uma vez (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/434)
+
+- Substituídas as macros `get_license_date.sql` e `get_violation_date.sql` por `get_version_dates.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/434)
+
+## [2.0.4] - 2025-02-24
+
+### Alterado
+- Alterado o modelo `licenciamento.sql` para corrigir os dados modificados da coluna `tipo_veiculo` conforme Processo.Rio MTR-CAP-2025/01125 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/457)
+
+## [2.0.3] - 2025-02-06
 
 ### Adicionado
 - Adicionados testes no modelo `infracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/401)

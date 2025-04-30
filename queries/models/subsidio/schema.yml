@@ -2,10 +2,10 @@ version: 2
 
 models:
   - name: viagem_transacao
-    description: "Tabela com quantidade de transações por viagem."
+    description: "Tabela com quantidade de transações por viagem"
     columns:
       - name: data
-        description: "Data da viagem."
+        description: "{{ doc('data_viagem') }}"
       - name: id_viagem
         description: "{{ doc('id_viagem') }}"
       - name: id_veiculo
@@ -19,13 +19,13 @@ models:
       - name: distancia_planejada
         description: "{{ doc('distancia_planejada') }}"
       - name: quantidade_transacao
-        description: "Quantidade de transações da Jaé registradas entre datetime_partida_bilhetagem e datetime_chegada."
+        description: "Quantidade de transações da Jaé registradas entre datetime_partida_bilhetagem e datetime_chegada"
       - name: quantidade_transacao_riocard
-        description: "Quantidade de transações da RioCard registradas entre datetime_partida_bilhetagem e datetime_chegada."
+        description: "Quantidade de transações da RioCard registradas entre datetime_partida_bilhetagem e datetime_chegada"
       - name: indicador_estado_equipamento_aberto
-        description: "Indicador se todos os registros de GPS foram transmitidos com o estado ABERTO entre datetime_partida e datetime_chegada."
+        description: "Indicador se todos os registros de GPS foram transmitidos com o estado ABERTO entre datetime_partida e datetime_chegada"
       - name: datetime_partida_bilhetagem
-        description: "Horário de início da viagem para contagem das transações, considerando uma tolerância de até 30 minutos do ínicio da viagem, limitada pelo encerramento da viagem anterior realizada pelo mesmo veículo, com adição de 1 segundo."
+        description: "Horário de início da viagem para contagem das transações, considerando uma tolerância de até 30 minutos do ínicio da viagem, limitada pelo encerramento da viagem anterior realizada pelo mesmo veículo, com adição de 1 segundo"
       - name: datetime_partida
         description: "{{ doc('datetime_partida') }}"
       - name: datetime_chegada
@@ -45,7 +45,7 @@ models:
       - name: irk
         description: "Índice de Remuneração por km (R$/km)"
       - name: data_inicio
-        description: "Data inicial do período de vigência dos demais atributos"
+        description: "{{ doc('data_inicio_parametros') }}"
       - name: data_fim
         description: "Data final do período de vigência dos demais atributos"
       - name: indicador_penalidade_judicial

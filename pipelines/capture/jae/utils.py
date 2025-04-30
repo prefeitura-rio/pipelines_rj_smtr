@@ -8,7 +8,8 @@ from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
 from pipelines.capture.jae.constants import constants
 from pipelines.constants import constants as smtr_constants
-from pipelines.utils.fs import get_data_folder_path
+from pipelines.utils.extractors.db import get_raw_db
+from pipelines.utils.fs import get_data_folder_path, save_local_file
 from pipelines.utils.utils import convert_timezone
 
 
@@ -36,7 +37,7 @@ def create_billingpay_backup_filepath(
         database_name,
         table_name,
         partition,
-        f"{timestamp.strftime(smtr_constants.FILENAME_PATTERN.value)}.json",
+        f"{timestamp.strftime(smtr_constants.FILENAME_PATTERN.value)}_{{n}}.json",
     )
 
 
@@ -84,3 +85,59 @@ def get_redis_last_backup(
         return last_id
 
     raise ValueError(f"Tipo {incremental_type} não encontrado.")
+
+
+def get_table_data_backup_billingpay(
+    query: str,
+    engine: str,
+    host: str,
+    user: str,
+    password: str,
+    database: str,
+    filepath: str,
+    page_size: int,
+) -> list[str]:
+    """
+    Captura dados de um Banco de Dados SQL fazendo paginação
+
+    Args:
+        query (str): o SELECT para ser executado
+        engine (str): O banco de dados (postgresql ou mysql)
+        host (str): O host do banco de dados
+        user (str): O usuário para se conectar
+        password (str): A senha do usuário
+        database (str): O nome da base (schema)
+        filepath (str): Modelo para criar o caminho para salvar os dados
+    Returns:
+        list[str]: Lista de arquivos salvos
+    """
+    offset = 0
+    base_query = f"{query} LIMIT {page_size}"
+    query = f"{base_query} OFFSET 0"
+    page_data_len = page_size
+    current_page = 0
+    filepaths = []
+    while page_data_len == page_size:
+        data = get_raw_db(
+            query=query,
+            engine=engine,
+            host=host,
+            user=user,
+            password=password,
+            database=database,
+        )
+        save_filepath = filepath.format(n=current_page)
+        save_local_file(filepath=save_filepath, filetype="json", data=data)
+        filepaths.append(save_filepath)
+        page_data_len = len(data)
+        log(
+            f"""
+            Page size: {page_size}
+            Current page: {current_page}
+            Current page returned {page_data_len} rows"""
+        )
+        current_page += 1
+        offset = current_page * page_size
+        query = f"{base_query} OFFSET {offset}"
+
+    return filepaths

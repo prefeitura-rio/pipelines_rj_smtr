@@ -3,7 +3,7 @@ models:
     description: "Detalhes das viagens informadas pelas operadoras de ônibus"
     columns:
       - name: data
-        description: Data da viagem (partição)
+        description: "{{ doc('data_viagem') }} [partição]"
         data_type: date
         quote: true
       - name: id_viagem
@@ -27,11 +27,11 @@ models:
         data_type: string
         quote: true
       - name: trip_id
-        description: Identificador de uma viagem da tabela trips do GTFS
+        description: "{{ doc('trip_id') }}"
         data_type: int64
         quote: true
       - name: route_id
-        description: Identificador de uma rota da tabela routes do GTFS
+        description: "{{ doc('route_id') }}"
         data_type: string
         quote: true
       - name: shape_id
@@ -51,11 +51,11 @@ models:
         data_type: string
         quote: true
       - name: datetime_processamento
-        description: Data e hora do processamento da viagem em GMT-3
+        description: Data e hora do processamento da viagem [GMT-3]
         data_type: datetime
         quote: true
       - name: datetime_captura
-        description: Data e hora da captura da integração em GMT-3
+        description: Data e hora da captura da integração [GMT-3]
         data_type: string
         quote: true
       - name: versao
@@ -67,113 +67,221 @@ models:
         data_type: datetime
         quote: true
   - name: viagem_validacao
-    description: Tabela que informa se a viagem informada está ou não válida de acordo com os parâmetros definidos.
+    description: "Tabela que informa se a viagem informada está ou não válida de acordo com os parâmetros definidos"
     columns:
       - name: data
-        description: Data da viagem (partição).
+        description: "{{ doc('data_viagem') }} [partição]"
         data_type: date
         quote: true
       - name: id_viagem
-        description: "Código único identificador da viagem."
+        description: "{{ doc('id_viagem') }}"
         data_type: string
         quote: true
       - name: datetime_partida
-        description: "Horário de início da viagem."
+        description: "{{ doc('datetime_partida') }}"
         data_type: datetime
         quote: true
       - name: datetime_chegada
-        description: "Horário de fim da viagem."
+        description: "{{ doc('datetime_chegada') }}"
         data_type: datetime
         quote: true
       - name: modo
-        description: "Tipo de transporte (Ônibus, Van, BRT)"
+        description: "{{ doc('modo') }}"
         data_type: string
         quote: true
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)."
+        description: "{{ doc('id_veiculo') }}"
         data_type: string
         quote: true
       - name: trip_id
-        description: Identificador de uma viagem da tabela trips do GTFS.
+        description: "{{ doc('trip_id') }}"
         data_type: int64
         quote: true
       - name: route_id
-        description: Identificador de uma rota da tabela routes do GTFS.
+        description: "{{ doc('route_id') }}"
         data_type: string
         quote: true
       - name: shape_id
-        description: Identificador de um shape da tabela shapes do GTFS.
+        description: "Identificador de um shape da tabela shapes do GTFS"
         data_type: string
         quote: true
       - name: servico
-        description: "Serviço realizado pelo veículo."
+        description: "{{ doc('servico') }}"
         data_type: string
         quote: true
       - name: sentido
-        description: "Sentido da linha"
+        description: "{{ doc('sentido') }}"
         data_type: string
         quote: true
+      - name: distancia_planejada
+        description: "{{ doc('distancia_planejada') }}"
+        data_type: float64
+        quote: true
+      - name: velocidade_media
+        description: "Velocidade média da viagem (km/h)"
+        data_type: float64
+        quote: true
       - name: quantidade_segmentos_verificados
-        description: Quantidade de segmentos considerados no validação.
+        description: "Quantidade de segmentos considerados na validação"
         data_type: int64
         quote: true
       - name: quantidade_segmentos_validos
-        description: Quantidade de segmentos com pelo menos um sinal de gps.
+        description: "Quantidade de segmentos com pelo menos um sinal de GPS"
         data_type: int64
         quote: true
       - name: indice_validacao
-        description: quantidade_segmentos_validos dividido por quantidade_segmentos_verificados.
+        description: "Quantidade_segmentos_validos dividido por quantidade_segmentos_verificados"
         data_type: float64
+        quote: true
+      - name: indicador_viagem_sobreposta
+        description: "Indica se a viagem se sobrepõe a outra viagem do mesmo veículo"
+        data_type: boolean
         quote: true
       - name: indicador_trajeto_valido
-        description: Indica se o veículo cumpriu o trajeto (indice_validacao >= parametro_validacao).
+        description: "Indica se o veículo cumpriu o trajeto [indice_validacao >= parametro_validacao]"
         data_type: boolean
-        quote: true
-      - name: indicador_servico_planejado
-        description: Indica se o serviço estava planejado para o tipo dia.
-        data_type: boolean
-        quote: true
-      - name: indicador_viagem_valida
-        description: Indica se a viagem está válida ou não.
-        data_type: boolean
-        quote: true
-      - name: parametro_validacao
-        description: Valor mínimo do indice_validacao para que a viagem seja validada.
-        data_type: float64
-        quote: true
-      - name: tipo_dia
-        description: "Dia da semana - categorias: Dia Útil, Sábado, Domingo"
-        data_type: string
-        quote: true
-      - name: feed_version
-        description: "String que indica a versão atual do conjunto de dados GTFS."
-        data_type: string
-        quote: true
-      - name: feed_start_date
-        description: "Data inicial do feed (versão)."
-        data_type: date
-        quote: true
-      - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
-        data_type: string
-        quote: true
-      - name: datetime_ultima_atualizacao
-        description: "Última atualização (GMT-3)."
-        data_type: datetime
         quote: true
       - name: indicador_servico_planejado_gtfs
-        description: Indica se o serviço entava planejado para o tipo dia no GTFS
+        description: "Indica se o serviço estava planejado para o tipo dia no GTFS"
         data_type: boolean
         quote: true
       - name: indicador_servico_planejado_os
-        description: Indica se o serviço estava planejado para a faixa horária na OS (apenas para SPPO)
+        description: "Indica se o serviço estava planejado para a faixa horária na OS [apenas para SPPO]"
         data_type: boolean
         quote: true
       - name: indicador_servico_divergente
-        description: Indica se o serviço indicado nos dados de gps estava diferente do serviço informado na viagem
+        description: "{{ doc('indicador_servico_divergente') }}"
         data_type: boolean
         quote: true
       - name: indicador_shape_invalido
-        description: Indica se o shape existe no GTFS no feed vigente durante a data da viagem
+        description: "Indica se o shape existe no GTFS no feed vigente durante a data da viagem"
         data_type: boolean
+        quote: true
+      - name: indicador_trajeto_alternativo
+        description: "Indica se o shape é um trajeto alternativo"
+        data_type: boolean
+        quote: true
+      - name: indicador_acima_velocidade_max
+        description: "Indica se a velocidade média da viagem está acima do limite estabelecido"
+        data_type: boolean
+        quote: true
+      - name: indicador_viagem_valida
+        description: "Indica se a viagem está válida conforme critérios definidos"
+        data_type: boolean
+        quote: true
+      - name: parametro_validacao
+        description: "Valor mínimo do indice_validacao para que a viagem seja validada"
+        data_type: float64
+        quote: true
+      - name: tipo_dia
+        description: "{{ doc('tipo_dia') }}"
+        data_type: string
+        quote: true
+      - name: feed_version
+        description: "{{ doc('feed_version') }}"
+        data_type: string
+        quote: true
+      - name: feed_start_date
+        description: "{{ doc('feed_start_date') }}"
+        data_type: date
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+
+  - name: gps_segmento_viagem
+    description: "Segmentos de viagem associados a sinais de GPS"
+    columns:
+      - name: data
+        description: "Data da viagem [partição]"
+        data_type: date
+        quote: true
+      - name: id_viagem
+        description: "{{ doc('id_viagem') }}"
+        data_type: string
+        quote: true
+      - name: datetime_partida
+        description: "{{ doc('datetime_partida') }}"
+        data_type: datetime
+        quote: true
+      - name: datetime_chegada
+        description: "{{ doc('datetime_chegada') }}"
+        data_type: datetime
+        quote: true
+      - name: modo
+        description: "{{ doc('modo') }}"
+        data_type: string
+        quote: true
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+        data_type: string
+        quote: true
+      - name: trip_id
+        description: "{{ doc('trip_id') }}"
+        data_type: int64
+        quote: true
+      - name: route_id
+        description: "{{ doc('route_id') }}"
+        data_type: string
+        quote: true
+      - name: shape_id
+        description: "Identificador de um shape da tabela shapes do GTFS"
+        data_type: string
+        quote: true
+      - name: id_segmento
+        description: "Identificador do segmento do shape"
+        data_type: string
+        quote: true
+      - name: servico
+        description: "{{ doc('servico') }}"
+        data_type: string
+        quote: true
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+        data_type: string
+        quote: true
+      - name: quantidade_gps
+        description: "Quantidade de sinais GPS detectados no segmento"
+        data_type: int64
+        quote: true
+      - name: indicador_viagem_sobreposta
+        description: "Indica se a viagem se sobrepõe a outra viagem do mesmo veículo"
+        data_type: boolean
+        quote: true
+      - name: indicador_segmento_desconsiderado
+        description: "Indica se o segmento deve ser desconsiderado na validação"
+        data_type: boolean
+        quote: true
+      - name: indicador_servico_divergente
+        description: "{{ doc('indicador_servico_divergente') }}"
+        data_type: boolean
+        quote: true
+      - name: feed_version
+        description: "{{ doc('feed_version') }}"
+        data_type: string
+        quote: true
+      - name: feed_start_date
+        description: "{{ doc('feed_start_date') }}"
+        data_type: date
+        quote: true
+      - name: service_ids
+        description: Identifica um conjunto de datas em que o serviço está disponível para uma ou mais rotas no GTFS
+        data_type: array
+        quote: true
+      - name: tipo_dia
+        description: "{{ doc('tipo_dia') }}"
+        data_type: string
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
         quote: true
