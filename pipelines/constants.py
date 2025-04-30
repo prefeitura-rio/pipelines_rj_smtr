@@ -211,7 +211,7 @@ class constants(Enum):  # pylint: disable=c0103
     }
 
     # GTFS
-    DATA_GTFS_V2_INICIO = "2024-12-30"  # TROCAR DATA
+    DATA_GTFS_V2_INICIO = "2025-05-01"
     GTFS_CONTROLE_OS_URL = "https://docs.google.com/spreadsheets/d/\
 1Jn7fmaDOhuHMdMqHo5SGWHCRuerXNWJRmhRjnHxJ9O4\
 /pub?gid=0&single=true&output=csv"
