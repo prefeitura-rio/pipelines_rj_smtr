@@ -48,7 +48,7 @@ jobs:
         with:
           filters: |
             docker_fedora:
-              - "pipelines/serpro/*"
+              - "pipelines/capture/serpro/*"
               - "pyproject.toml"
               - "Dockerfile-fedora"
 
