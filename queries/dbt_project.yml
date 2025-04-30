@@ -92,7 +92,7 @@ vars:
 
   ## GTFS
   data_versao_gtfs: "2024-12-31" # fixada última data disponível
-  DATA_GTFS_V2_INICIO: "2025-05-01"
+  DATA_GTFS_V2_INICIO: "2025-04-30"
 
   ### Subsídio SPPO (Ônibus) ###
   buffer: 500 # distância em metros para buffer
