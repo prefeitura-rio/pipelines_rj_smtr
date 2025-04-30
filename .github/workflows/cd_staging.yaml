@@ -44,14 +44,6 @@ jobs:
           poetry config virtualenvs.create false
           poetry install --with dev --with ci
 
-      - name: Update image tag in constants
-        run: |-
-          python .github/workflows/scripts/replace_docker_tag.py debian ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }} ${{ github.sha }}
-
-      - name: Update image tag in constants
-        run: |-
-          python .github/workflows/scripts/replace_docker_tag.py fedora gcr.io/rj-smtr/pipelines-fedora ${{ github.sha }}
-
       - name: Get changed filepaths
         uses: dorny/paths-filter@v2
         id: filter
@@ -61,6 +53,15 @@ jobs:
               - "pipelines/serpro/*"
               - "pyproject.toml"
               - "Dockerfile-fedora"
+
+      - name: Update image tag in constants
+        run: |-
+          python .github/workflows/scripts/replace_docker_tag.py debian ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }} ${{ github.sha }}
+
+      - name: Update fedora image tag in constants
+        if: steps.filter.outputs.docker_fedora == 'true'
+        run: |-
+          python .github/workflows/scripts/replace_docker_tag.py fedora gcr.io/rj-smtr/pipelines-fedora ${{ github.sha }}
 
       - name: Get changed files for code tree analysis
         id: files

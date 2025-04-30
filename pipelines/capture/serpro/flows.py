@@ -29,3 +29,5 @@ CAPTURA_SERPRO.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
 ]
+
+# trigger CD
