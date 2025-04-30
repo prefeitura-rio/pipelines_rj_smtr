@@ -60,6 +60,7 @@ def get_scheduled_timestamp(timestamp: str = None) -> datetime:
     Returns:
         datetime: A data e hora do agendamento
     """
+    raise Exception("teste")
     if timestamp is not None:
         timestamp = datetime.fromisoformat(timestamp)
     else:
