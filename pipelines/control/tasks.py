@@ -55,8 +55,8 @@ def source_freshness_notify_discord(failed_sources: list[str]):
         failed_sources (list[str]): Lista com os nomes das fontes desatualizadas
     """
     webhook_url = get_secret(secret_path=constants.WEBHOOKS_SECRET_PATH.value)["dataplex"]
-    metions_tag = f" - <@&{constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>\n\n"
-    formatted_messages = [f":red_circle: **Sources desatualizados** {metions_tag}"]
+    mentions_tag = f" - <@&{constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>\n\n"
+    formatted_messages = [f":red_circle: **Sources desatualizados** {mentions_tag }"]
 
     for source in failed_sources:
         formatted_messages.append(f":warning: {source}\n")
