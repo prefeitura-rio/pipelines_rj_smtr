@@ -37,6 +37,10 @@ INTEGRACAO_MATERIALIZACAO = create_default_materialization_flow(
     ],
 )
 
+INTEGRACAO_MATERIALIZACAO.state_handlers.append(
+    handler_notify_failure(webhook="alertas_bilhetagem")
+)
+
 PASSAGEIRO_HORA_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="passageiro_hora - materializacao",
     selector=constants.PASSAGEIRO_HORA_SELECTOR.value,
@@ -54,11 +58,19 @@ GPS_VALIDADOR_MATERIALIZACAO = create_default_materialization_flow(
     ],
 )
 
+GPS_VALIDADOR_MATERIALIZACAO.state_handlers.append(
+    handler_notify_failure(webhook="alertas_bilhetagem")
+)
+
 TRANSACAO_ORDEM_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="transacao_ordem - materializacao",
     selector=constants.TRANSACAO_ORDEM_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[financeiro_constants.FINANCEIRO_BILHETAGEM_SELECTOR.value],
+)
+
+TRANSACAO_ORDEM_MATERIALIZACAO.state_handlers.append(
+    handler_notify_failure(webhook="alertas_bilhetagem")
 )
 
 TRANSACAO_VALOR_ORDEM_MATERIALIZACAO = create_default_materialization_flow(
