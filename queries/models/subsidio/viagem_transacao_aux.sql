@@ -7,8 +7,8 @@ with
     -- 1. Transações Jaé
     transacao as (
         select id_veiculo, datetime_transacao
-        from {{ ref("transacao") }}
-        -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
+        {# from {{ ref("transacao") }} #}
+        from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
@@ -19,8 +19,8 @@ with
     -- 2. Transações RioCard
     transacao_riocard as (
         select id_veiculo, datetime_transacao
-        from {{ ref("transacao_riocard") }}
-        -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard`
+        {# from {{ ref("transacao_riocard") }} #}
+        from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard`
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
@@ -38,8 +38,8 @@ with
             estado_equipamento,
             latitude,
             longitude
-        from {{ ref("gps_validador") }}
-        -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador`
+        {# from {{ ref("gps_validador") }} #}
+        from `rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador`
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
@@ -65,14 +65,14 @@ with
             "Ônibus SPPO" as modo,
             distancia_planejada,
             sentido
-        from {{ ref("viagem_completa") }}
-        -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
+        {# from {{ ref("viagem_completa") }} #}
+        from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         where
             data
             between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
                 "{{ var('end_date') }}"
             )
-            and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
+    {# and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
         union all
         select
             data,
@@ -91,25 +91,16 @@ with
             between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
                 "{{ var('end_date') }}"
             )
-            and data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
+            and data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}") #}
     ),
     -- 5. Status dos veículos
     veiculos as (
         select data, id_veiculo, "Ônibus SPPO" as modo, status, tecnologia
-        from {{ ref("sppo_veiculo_dia") }}
-        -- from `rj-smtr.veiculo.sppo_veiculo_dia`
+        {# from {{ ref("sppo_veiculo_dia") }} #}
+        from `rj-smtr.veiculo.sppo_veiculo_dia`
         where
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
-            and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
-        union all
-        select data, id_veiculo, modo, status, tecnologia
-        from {{ ref("status_dia") }}
-        -- from `rj-smtr.veiculo.status_dia`
-        where
-            data
-            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
-            and data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
     ),
     -- 6. Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
     -- limitada pela viagem anterior

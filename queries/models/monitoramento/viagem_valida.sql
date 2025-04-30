@@ -17,7 +17,7 @@
 with
     veiculo as (
         select *
-        from {{ ref("status_dia") }}
+        from {{ ref("sppo_veiculo_dia") }}
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
     viagem_valida as (

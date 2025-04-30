@@ -14,8 +14,8 @@
         and date('{{ var("date_range_end") }}')
 {% endset %}
 
-{% set calendario = ref("calendario") %}
-{# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
+{# {% set calendario = ref("calendario") %} #}
+{% set calendario = "rj-smtr.planejamento.calendario" %}
 {% if execute %}
     {% set gtfs_feeds_query %}
             select distinct concat("'", feed_start_date, "'") as feed_start_date
@@ -48,8 +48,8 @@ with
             case
                 when evento is not null then true else false
             end as indicador_trajeto_alternativo
-        from {{ ref("viagem_planejada_planejamento") }}
-        {# from `rj-smtr.planejamento.viagem_planejada` #}
+        {# from {{ ref("viagem_planejada_planejamento") }} #}
+        from `rj-smtr.planejamento.viagem_planejada`
         where
             {{ incremental_filter }}
             and feed_start_date in ({{ gtfs_feeds | join(", ") }})
@@ -69,7 +69,24 @@ with
             o.quilometragem,
             o.faixa_horaria_inicio,
             o.faixa_horaria_fim,
-            coalesce(v.modo, max(v.modo) over (partition by o.servico)) as modo,
+            case
+                when
+                    coalesce(
+                        v.modo,
+                        first_value(v.modo ignore nulls) over (
+                            partition by o.servico order by v.modo desc
+                        )
+                    )
+                    = 'Ônibus'
+                then 'Ônibus SPPO'
+                else
+                    coalesce(
+                        v.modo,
+                        first_value(v.modo ignore nulls) over (
+                            partition by o.servico order by v.modo desc
+                        )
+                    )
+            end as modo,
             v.trip_id,
             v.route_id,
             v.shape_id,

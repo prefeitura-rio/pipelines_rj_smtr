@@ -18,8 +18,8 @@ with
             faixa_horaria_inicio,
             faixa_horaria_fim,
             distancia_total_planejada as km_planejada
-        from {{ ref("viagem_planejada") }}
-        -- from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
+        {# from {{ ref("viagem_planejada") }} #}
+        from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')

@@ -39,7 +39,7 @@ with
         from {{ ref("servico_planejado_faixa_horaria") }}
         where {{ incremental_filter }}
     ),
-    servico_plajenejado_agg as (
+    servico_planejado_agg as (
         select
             data,
             feed_version,
@@ -47,12 +47,12 @@ with
             tipo_dia,
             tipo_os,
             servico,
-            sum(quilometragem) / 2 as quilometragem,  -- TODO: sum(quilometragem) as quilometragem),
+            sum(quilometragem) / 2 as quilometragem,  -- TODO: sum(quilometragem) as quilometragem,
         from servico_planejado_faixa_horaria
         group by data, feed_version, feed_start_date, tipo_dia, tipo_os, servico
     ),
     os_dia as (
-        select
+        select distinct
             c.data,
             o.feed_version,
             o.feed_start_date,
@@ -86,8 +86,8 @@ with
             s.quilometragem,
             viagens_dia,
             "Ônibus SPPO" as modo
-        from os_dia
-        left join servico_plajenejado_agg s using (data, servico)
+        from os_dia o
+        left join servico_planejado_agg s using (data, servico)
     )
 select *
 from final

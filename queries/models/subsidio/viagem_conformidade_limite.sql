@@ -21,22 +21,20 @@ with
     servico_planejado_faixa_horaria as (
         select
             data,
+            tipo_dia,
             servico,
             faixa_horaria_inicio,
             faixa_horaria_fim,
-            sum(partidas) over (
-                partition by data, servico, faixa_horaria_inicio
-            ) as partidas,
-            sum(quilometragem) over (
-                partition by data, servico, faixa_horaria_inicio
-            ) as km_planejada
+            sum(partidas) as partidas,
+            sum(quilometragem) / 2 as km_planejada  -- TODO: sum(quilometragem) as km_planejada
         from {{ ref("servico_planejado_faixa_horaria") }}
         where
             quilometragem > 0
             {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
+        group by 1, 2, 3, 4, 5
     ),
     servico_planejado_dia as (
-        select data, servico, viagens
+        select data, servico, viagens_dia as viagens
         from {{ ref("servico_planejado_dia") }}
         where {{ incremental_filter }}
     ),
@@ -61,8 +59,8 @@ with
                     )
             end as subsidio_km_teto,
             indicador_penalidade_judicial
-        from {{ ref("valor_km_tipo_viagem") }}
-    {# from `rj-smtr.subsidio.valor_km_tipo_viagem` #}
+        {# from {{ ref("valor_km_tipo_viagem") }} #}
+        from `rj-smtr.subsidio.valor_km_tipo_viagem`
     ),
     viagem_tecnologia as (
         select distinct
@@ -84,13 +82,17 @@ with
             v.modo,
             v.datetime_partida,
             v.distancia_planejada,
-            {# v.feed_start_date #}
             case
                 when p.prioridade < p_menor.prioridade then true else false
             end as indicador_penalidade_tecnologia
         from viagens as v
-        left join {{ ref("tecnologia_servico") }} as t on v.servico = t.servico
-        {# and v.feed_start_date = t.feed_start_date #}
+        left join
+            {{ ref("tecnologia_servico") }} as t
+            on v.servico = t.servico
+            and (
+                (v.data between t.inicio_vigencia and t.fim_vigencia)
+                or (v.data >= t.inicio_vigencia and t.fim_vigencia is null)
+            )
         left join
             {{ ref("tecnologia_prioridade") }} as p
             on v.tecnologia = p.tecnologia
@@ -107,9 +109,11 @@ with
     servico_faixa_km_apuracao as (
         select
             s.data,
+            s.tipo_dia,
             s.faixa_horaria_inicio,
             s.faixa_horaria_fim,
             s.servico,
+            s.km_planejada,
             coalesce(
                 round(
                     100 * sum(
@@ -131,7 +135,7 @@ with
             and s.servico = v.servico
             and v.datetime_partida
             between s.faixa_horaria_inicio and s.faixa_horaria_fim
-        group by 1, 2, 3, 4, 5, 6, 7
+        group by 1, 2, 3, 4, 5, 6
     ),
     viagem_km_tipo as (
         select distinct
@@ -210,9 +214,10 @@ select
         sentido,
         viagens,
         partidas,
+        tipo_dia,
         km_planejada,
         faixa_horaria_inicio,
-        faixa_horaria_fim,
+        faixa_horaria_fim
     ),
     case
         when
@@ -251,6 +256,7 @@ from
     (
         select
             v.*,
+            spf.tipo_dia,
             spf.faixa_horaria_inicio,
             spf.faixa_horaria_fim,
             spf.partidas,
