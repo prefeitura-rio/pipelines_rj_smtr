@@ -11,6 +11,7 @@ from pipelines.treatment.bilhetagem.constants import constants
 from pipelines.treatment.cadastro.constants import constants as cadastro_constants
 from pipelines.treatment.financeiro.constants import constants as financeiro_constants
 from pipelines.treatment.templates.flows import create_default_materialization_flow
+from pipelines.utils.prefect import handler_notify_failure
 
 TRANSACAO_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="transacao - materializacao",
@@ -23,6 +24,8 @@ TRANSACAO_MATERIALIZACAO = create_default_materialization_flow(
     ]
     + [s for s in jae_constants.JAE_AUXILIAR_SOURCES.value if s.table_id in ["gratuidade"]],
 )
+
+TRANSACAO_MATERIALIZACAO.state_handlers.append(handler_notify_failure(webhook="alertas_bilhetagem"))
 
 INTEGRACAO_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="integracao - materializacao",
