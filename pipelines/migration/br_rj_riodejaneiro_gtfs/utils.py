@@ -533,7 +533,7 @@ def processa_ordem_servico_faixa_horaria(
         tipo_os = re.search(r"\((.*?)\)", sheet_name).group(1)
 
         df = pd.read_excel(file_bytes, sheet_name=sheet_name, dtype=object)
-
+        log(f"Os info: {df.head()}")
         df.columns = (
             df.columns.str.replace("\n", " ").str.strip().str.replace(r"\s+", " ", regex=True)
         )

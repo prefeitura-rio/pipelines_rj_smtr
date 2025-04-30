@@ -47,10 +47,9 @@ from pipelines.migration.tasks import (
     upload_staging_data_to_gcs,
 )
 from pipelines.schedules import every_5_minutes
-from pipelines.tasks import (
+from pipelines.tasks import (  # log_discord,
     check_fail,
     get_scheduled_timestamp,
-    log_discord,
     parse_timestamp_to_string,
     remove_key_from_dict,
     task_value_is_none,
@@ -144,7 +143,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 timestamp=data_versao_gtfs_task, pattern="%Y-%m-%d"
             )
 
-            log_discord("Captura do GTFS " + data_versao_gtfs_str + " iniciada", "gtfs")
+            # log_discord("Captura do GTFS " + data_versao_gtfs_str + " iniciada", "gtfs")
 
             partition = create_date_hour_partition(
                 timestamp=data_versao_gtfs_task,
@@ -218,10 +217,10 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
             upload_failed = check_fail(wait_captura_true)
 
-            with case(upload_failed, True):
-                log_discord(
-                    "Falha na subida dos dados do GTFS " + data_versao_gtfs_str, "gtfs", True
-                )
+            # with case(upload_failed, True):
+            #     log_discord(
+            #         "Falha na subida dos dados do GTFS " + data_versao_gtfs_str, "gtfs", True
+            #     )
 
     with case(materialize_only, True):
         wait_captura_false = task()
@@ -258,16 +257,16 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
         run_dbt_failed = task_value_is_none(wait_run_dbt_model)
 
-        with case(run_dbt_failed, False):
-            log_discord(
-                "Falha na materialização dos dados do GTFS " + data_versao_gtfs, "gtfs", True
-            )
+        # with case(run_dbt_failed, False):
+        #     log_discord(
+        #         "Falha na materialização dos dados do GTFS " + data_versao_gtfs, "gtfs", True
+        #     )
 
-        with case(run_dbt_failed, True):
-            log_discord(
-                "Captura e materialização do GTFS " + data_versao_gtfs + " finalizada com sucesso!",
-                "gtfs",
-            )
+        # with case(run_dbt_failed, True):
+        #     log_discord(
+        #         "Capturaematerialização do GTFS"+data_versao_gtfs+"finalizada com sucesso!",
+        #         "gtfs",
+        #     )
 
         wait_materialize_true = update_last_captured_os(
             dataset_id=constants.GTFS_DATASET_ID.value,
