@@ -206,6 +206,8 @@ def processa_ordem_servico(
     """
 
     sheets = [(i, name) for i, name in enumerate(sheetnames) if "ANEXO I " in name]
+    if not sheets:
+        raise ValueError("Nenhuma aba 'ANEXO I' encontrada no arquivo.")
     sheets_data = []
 
     columns = {
@@ -243,7 +245,11 @@ def processa_ordem_servico(
 
     for sheet_index, sheet_name in sheets:
         log(f"########## {sheet_name} ##########")
-        tipo_os = re.search(r"\((.*?)\)", sheet_name).group(1)
+
+        match = re.search(r"\((.*?)\)", sheet_name)
+        if not match:
+            raise ValueError(f"Não foi possível extrair tipo_os do nome da aba: {sheet_name}")
+        tipo_os = match.group(1)
 
         quadro = pd.read_excel(file_bytes, sheet_name=sheet_name, dtype=object)
 
@@ -423,8 +429,12 @@ def processa_ordem_servico_faixa_horaria(
 ):
     if data_versao_gtfs >= constants.DATA_GTFS_V2_INICIO.value:
         sheets = [(i, name) for i, name in enumerate(sheetnames) if "ANEXO I " in name]
+        if not sheets:
+            raise ValueError("Nenhuma aba 'ANEXO I' encontrada no arquivo.")
     else:
         sheets = [(i, name) for i, name in enumerate(sheetnames) if "ANEXO III " in name]
+        if not sheets:
+            raise ValueError("Nenhuma aba 'ANEXO III' encontrada no arquivo.")
     sheets_data = []
 
     columns = {

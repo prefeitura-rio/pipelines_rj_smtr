@@ -248,7 +248,7 @@ with
                         when
                             column_name
                             like '%{{ intervalo.inicio }}h_e_{{ intervalo.fim }}h%'
-                        then '{{ ' % 02d '|format(intervalo.fim|int - 1) }}:59:59'
+                        then '{{ "%02d"|format(intervalo.fim|int - 1) }}:59:59'
                     {% else %}
                         when
                             column_name
