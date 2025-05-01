@@ -1,6 +1,6 @@
 # Changelog - dashboard_operacao_onibus
 
-## [1.0.1] - 2025-02-12
+## [1.0.1] - 2025-04-30
 
 ### Alterado
 
