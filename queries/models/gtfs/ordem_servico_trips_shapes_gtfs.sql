@@ -177,7 +177,7 @@ select
     tipo_os,
     tipo_dia,
     servico,
-    vista,
+    o.vista,
     o.consorcio,
     sentido,
     case

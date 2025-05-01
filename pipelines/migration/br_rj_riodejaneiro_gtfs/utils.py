@@ -455,8 +455,8 @@ def processa_ordem_servico_faixa_horaria(
         "Partidas Ida - Dias Úteis": "partidas_ida_dias_uteis",
         "Partidas Volta - Dias Úteis": "partidas_volta_dias_uteis",
         "Viagens - Dias Úteis": "viagens_dias_uteis",
-        "Quilometragem - Dias Úteis": "km_dias_uteis",
-        "KM - Dias Úteis": "km_dias_uteis",
+        "Quilometragem - Dias Úteis": "quilometragem_dias_uteis",
+        "KM - Dias Úteis": "quilometragem_dias_uteis",
         "Horário Inicial Sábado": "horario_inicio_sabado",
         "Horário Fim Sábado": "horario_fim_sabado",
         "Horário Inicial - Sábado": "horario_inicio_sabado",
@@ -464,8 +464,8 @@ def processa_ordem_servico_faixa_horaria(
         "Partidas Ida - Sábado": "partidas_ida_sabado",
         "Partidas Volta - Sábado": "partidas_volta_sabado",
         "Viagens - Sábado": "viagens_sabado",
-        "Quilometragem - Sábado": "km_sabado",
-        "KM - Sábado": "km_sabado",
+        "Quilometragem - Sábado": "quilometragem_sabado",
+        "KM - Sábado": "quilometragem_sabado",
         "Horário Inicial Domingo": "horario_inicio_domingo",
         "Horário Fim Domingo": "horario_fim_domingo",
         "Horário Inicial - Domingo": "horario_inicio_domingo",
@@ -473,8 +473,8 @@ def processa_ordem_servico_faixa_horaria(
         "Partidas Ida - Domingo": "partidas_ida_domingo",
         "Partidas Volta - Domingo": "partidas_volta_domingo",
         "Viagens - Domingo": "viagens_domingo",
-        "Quilometragem - Domingo": "km_domingo",
-        "KM - Domingo": "km_domingo",
+        "Quilometragem - Domingo": "quilometragem_domingo",
+        "KM - Domingo": "quilometragem_domingo",
         "Horário Inicial Ponto Facultativo": "horario_inicio_ponto_facultativo",
         "Horário Fim Ponto Facultativo": "horario_fim_ponto_facultativo",
         "Horário Inicial - Ponto Facultativo": "horario_inicio_ponto_facultativo",
@@ -482,8 +482,8 @@ def processa_ordem_servico_faixa_horaria(
         "Partidas Ida - Ponto Facultativo": "partidas_ida_ponto_facultativo",
         "Partidas Volta - Ponto Facultativo": "partidas_volta_ponto_facultativo",
         "Viagens - Ponto Facultativo": "viagens_ponto_facultativo",
-        "Quilometragem - Ponto Facultativo": "km_ponto_facultativo",
-        "KM - Ponto Facultativo": "km_ponto_facultativo",
+        "Quilometragem - Ponto Facultativo": "quilometragem_ponto_facultativo",
+        "KM - Ponto Facultativo": "quilometragem_ponto_facultativo",
         "tipo_os": "tipo_os",
     }
 
@@ -562,7 +562,7 @@ def processa_ordem_servico_faixa_horaria(
         for col in df.columns:
             if "quilometragem" in col or "viagens" in col or "partidas" in col:
                 df[col] = df[col].astype(str).replace("—", 0)
-            if "quilometragem" in col:
+            if "quilometragem" in col or "viagens" in col:
                 df[col] = df[col].astype(str).apply(convert_to_float).astype(float)
             if "extensao" in col:
                 df[col] = df[col].apply(pd.to_numeric)
