@@ -340,6 +340,8 @@ def processa_ordem_servico_trajeto_alternativo(
     """
 
     sheets = [(i, name) for i, name in enumerate(sheetnames) if "ANEXO II " in name]
+    if not sheets:
+        raise ValueError("Nenhuma aba 'ANEXO II' encontrada no arquivo.")
     sheets_data = []
 
     alt_columns = {
@@ -360,7 +362,10 @@ def processa_ordem_servico_trajeto_alternativo(
 
     for sheet_index, sheet_name in sheets:
         log(f"########## {sheet_name} ##########")
-        tipo_os = re.search(r"\((.*?)\)", sheet_name).group(1)
+        match = re.search(r"\((.*?)\)", sheet_name)
+        if not match:
+            raise ValueError(f"Não foi possível extrair tipo_os do nome da aba: {sheet_name}")
+        tipo_os = match.group(1)
 
         df = pd.read_excel(file_bytes, sheet_name=sheet_name, dtype=object)
 
@@ -541,7 +546,10 @@ def processa_ordem_servico_faixa_horaria(
 
     for sheet_index, sheet_name in sheets:
         log(f"########## {sheet_name} ##########")
-        tipo_os = re.search(r"\((.*?)\)", sheet_name).group(1)
+        match = re.search(r"\((.*?)\)", sheet_name)
+        if not match:
+            raise ValueError(f"Não foi possível extrair tipo_os do nome da aba: {sheet_name}")
+        tipo_os = match.group(1)
 
         df = pd.read_excel(file_bytes, sheet_name=sheet_name, dtype=object)
 
