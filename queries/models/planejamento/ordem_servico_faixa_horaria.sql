@@ -5,7 +5,6 @@
             "data_type": "date",
             "granularity": "day",
         },
-        alias="ordem_servico_faixa_horaria_teste",
     )
 }}
 
