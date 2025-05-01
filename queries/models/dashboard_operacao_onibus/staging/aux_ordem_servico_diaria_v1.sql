@@ -12,12 +12,13 @@ with
                 ),
                 last_day(feed_start_date, month)
             ) as data_fim
-        from (select distinct feed_start_date from {{ ref("ordem_servico_gtfs") }})
+        from
+            (select distinct feed_start_date from {{ ref("aux_ordem_servico_diaria") }})
     ),
     ordem_servico_pivot as (
         select *
         from
-            {{ ref("ordem_servico_gtfs") }} pivot (
+            {{ ref("aux_ordem_servico_diaria") }} pivot (
                 max(partidas_ida) as partidas_ida,
                 max(partidas_volta) as partidas_volta,
                 max(viagens_planejadas) as viagens_planejadas,
