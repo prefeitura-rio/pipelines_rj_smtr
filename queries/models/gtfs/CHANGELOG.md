@@ -1,5 +1,13 @@
 # Changelog - gtfs
 
+## [1.2.2] - 2025-04-30
+
+### Alterado
+
+- Desativa `ordem_servico_gtfs` em razão do novo modelo de OS (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/418)
+
+- Refatora `ordem_servico_trips_shapes_gtfs` e `ordem_servico_sentido_atualizado_aux_gtfs` para remover dependência do `ordem_servico_gtfs` (desativado) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/418)
+
 ## [1.2.1] - 2025-01-16
 
 ### Alterado
