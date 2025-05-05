@@ -195,15 +195,14 @@ sources:
                 modules.pytz.timezone("America/Sao_Paulo")
             ) %}
             {% set start = end - modules.datetime.timedelta(hours=1) %}
-
             {% set days = (end.date() - start.date()).days %}
 
             {% if days == 0 %}
-                data = date("{{ start }}") and hora between {{ start.hour }} and {{ end.hour }}
+                data = date("{{ start.date() }}") and hora between {{ start.hour }} and {{ end.hour }}
 
             {% elif days == 1 %}
-                (data = date("{{ start }}") and hora >= {{ start.hour }})
-                or (data = date("{{ end }}") and hora <= {{ end.hour }})
+                (data = date("{{ start.date() }}") and hora >= {{ start.hour }})
+                or (data = date("{{ end.date() }}") and hora <= {{ end.hour }})
             {% endif %}
         loaded_at_field: "parse_timestamp('%Y-%m-%dT%H:%M:%E6S%Ez', safe_cast(json_value(content, '$.data_transacao') as string))"
       - name: transacao_riocard
@@ -220,11 +219,11 @@ sources:
             {% set days = (end.date() - start.date()).days %}
 
             {% if days == 0 %}
-                data = date("{{ start }}") and hora between {{ start.hour }} and {{ end.hour }}
+                data = date("{{ start.date() }}") and hora between {{ start.hour }} and {{ end.hour }}
 
             {% elif days == 1 %}
-                (data = date("{{ start }}") and hora >= {{ start.hour }})
-                or (data = date("{{ end }}") and hora <= {{ end.hour }})
+                (data = date("{{ start.date() }}") and hora >= {{ start.hour }})
+                or (data = date("{{ end.date() }}") and hora <= {{ end.hour }})
             {% endif %}
         loaded_at_field: "parse_timestamp('%Y-%m-%dT%H:%M:%E6S%Ez', safe_cast(json_value(content, '$.data_transacao') as string))"
       - name: linha
@@ -253,11 +252,11 @@ sources:
             {% set days = (end.date() - start.date()).days %}
 
             {% if days == 0 %}
-                data = date("{{ start }}") and hora between {{ start.hour }} and {{ end.hour }}
+                data = date("{{ start.date() }}") and hora between {{ start.hour }} and {{ end.hour }}
 
             {% elif days == 1 %}
-                (data = date("{{ start }}") and hora >= {{ start.hour }})
-                or (data = date("{{ end }}") and hora <= {{ end.hour }})
+                (data = date("{{ start.date() }}") and hora >= {{ start.hour }})
+                or (data = date("{{ end.date() }}") and hora <= {{ end.hour }})
             {% endif %}
         loaded_at_field: "parse_timestamp('%Y-%m-%dT%H:%M:%E*S%Ez', safe_cast(json_value(content, '$.data_tracking') as string))"
       - name: gratuidade
