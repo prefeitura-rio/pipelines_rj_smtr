@@ -1,5 +1,15 @@
 # Changelog - bilhetagem
 
+## [2.0.1] - 2025-05-05
+
+## Adicionado
+
+- Adiciona `handler_notify_failure` nos flows (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/559):
+  - `TRANSACAO_MATERIALIZACAO`
+  - `INTEGRACAO_MATERIALIZACAO`
+  - `GPS_VALIDADOR_MATERIALIZACAO`
+  - `TRANSACAO_ORDEM_MATERIALIZACAO`
+
 ## [2.0.0] - 2025-03-26
 
 ## Adicionado
