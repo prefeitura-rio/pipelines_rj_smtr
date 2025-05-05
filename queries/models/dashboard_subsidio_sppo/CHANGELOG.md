@@ -1,5 +1,13 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [7.1.4] - 2025-04-30
+
+### Alterado
+
+- Refatora `viagens_remuneradas` para remover dependência do `ordem_servico_gtfs` (desativado) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/418)
+
+- Desativa `sumario_servico_dia_historico` para datas superiores ou iguais a `DATA_SUBSIDIO_V9_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/418)
+
 ## [7.1.3] - 2025-03-25
 
 ### Alterado

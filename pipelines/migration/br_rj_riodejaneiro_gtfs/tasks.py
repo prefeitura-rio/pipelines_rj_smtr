@@ -222,8 +222,14 @@ def get_raw_gtfs_files(
     sheetnames = [name for name in sheetnames if "ANEXO" in name]
     log(f"tabs encontradas na planilha Controle OS: {sheetnames}")
 
+    data_novo_modelo = datetime.strptime(constants.DATA_GTFS_V2_INICIO.value, "%Y-%m-%d").date()
+    data_versao = datetime.strptime(data_versao_gtfs, "%Y-%m-%d").date()
+    dict_gtfs = constants.GTFS_TABLE_CAPTURE_PARAMS.value
+    if data_versao >= data_novo_modelo:
+        dict_gtfs.pop("ordem_servico", None)
+
     with zipfile.ZipFile(file_bytes_gtfs, "r") as zipped_file:
-        for filename in list(constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys()):
+        for filename in list(dict_gtfs.keys()):
             if filename == "ordem_servico":
                 processa_ordem_servico(
                     sheetnames=sheetnames,
@@ -263,4 +269,4 @@ def get_raw_gtfs_files(
 
                 raw_filepaths.append(raw_file_path)
 
-    return raw_filepaths, list(constants.GTFS_TABLE_CAPTURE_PARAMS.value.values())
+    return raw_filepaths, list(dict_gtfs.values())
