@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      # - ".github/workflows/cd.yaml"
+      - ".github/workflows/cd.yaml"
       - "pipelines/capture/serpro/*"
       - ".github/workflows/build_fedora_docker.yaml"
       - "pyproject.toml"
@@ -14,7 +14,7 @@ on:
     branches:
       - main
     paths:
-      # - ".github/workflows/cd_staging.yaml"
+      - ".github/workflows/cd_staging.yaml"
       - "pipelines/capture/serpro/*"
       - ".github/workflows/build_fedora_docker.yaml"
       - "pyproject.toml"

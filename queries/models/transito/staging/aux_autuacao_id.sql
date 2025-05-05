@@ -51,7 +51,7 @@ with
                 and s.id_auto_infracao = t.id_auto_infracao
                 and s.fonte = t.fonte
             where
-                t.id_auto_infracao is null and t.data in ({{ partitions | join(", ") }})
+                t.id_auto_infracao is null and s.data in ({{ partitions | join(", ") }})
         {% endif %}
     ),
     hash_id as (

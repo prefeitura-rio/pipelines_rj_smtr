@@ -17,7 +17,7 @@ models:
       - name: id_operadora
         description: "Identificador da operadora na tabela cadastro.operadoras"
       - name: operadora
-        description: "Nome da operadora de transporte (mascarado se for pessoa física)"
+        description: "{{ doc('operadora') }}"
       # - name: servico
       #   description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...) ou código da estação"
       - name: id_servico_jae
@@ -27,7 +27,7 @@ models:
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
       - name: id_validador
-        description: "Número de série do validador"
+        description: "{{ doc('id_validador') }}"
       - name: id_transmissao_gps
         description: "Identificador único da tabela de GPS dos validadores"
       - name: latitude
@@ -37,7 +37,7 @@ models:
       - name: id_veiculo
         description: "[EM DESENVOLVIMENTO] Código identificador do veículo (número de ordem)"
       - name: sentido
-        description: "Sentido da linha"
+        description: "{{ doc('sentido') }}"
       - name: estado_equipamento
         description: "Validador aberto ou fechado no momento da transmissão"
       - name: temperatura
@@ -62,7 +62,7 @@ models:
       - name: id_operadora
         description: "Identificador da operadora na tabela cadastro.operadoras"
       - name: operadora
-        description: "Nome da operadora de transporte (mascarado se for pessoa física)"
+        description: "{{ doc('operadora') }}"
       # - name: servico
       #   description: "Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...)"
       - name: id_servico_jae
@@ -72,7 +72,7 @@ models:
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
       - name: id_validador
-        description: "Número de série do validador"
+        description: "{{ doc('id_validador') }}"
       - name: id_transmissao_gps
         description: "Identificador único da tabela de GPS dos validadores"
       - name: latitude
@@ -86,7 +86,7 @@ models:
       - name: id_veiculo
         description: "[EM DESENVOLVIMENTO] Código identificador do veículo (número de ordem)"
       - name: sentido
-        description: "Sentido da linha"
+        description: "{{ doc('sentido') }}"
       - name: estado_equipamento
         description: "Validador aberto ou fechado no momento da transmissão"
       - name: temperatura
@@ -177,7 +177,7 @@ models:
               where: "data_ordem in ({partitions})"
               name: not_null__id_operadora__ordem_pagamento_consorcio_operador_dia
       - name: operadora
-        description: "Nome da operadora de transporte (mascarado se for pessoa física)"
+        description: "{{ doc('operadora') }}"
       - name: id_ordem_pagamento
         description: "Identificador da ordem pagamento no banco de dados da Jaé"
         tests:
@@ -285,7 +285,7 @@ models:
       - name: id_operadora
         description: "Identificador da operadora na tabela cadastro.operadoras"
       - name: operadora
-        description: "Nome da operadora de transporte (mascarado se for pessoa física)"
+        description: "{{ doc('operadora') }}"
       - name: id_servico_jae
         description: "Identificador da linha no banco de dados da jaé (É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae)"
       - name: servico_jae
