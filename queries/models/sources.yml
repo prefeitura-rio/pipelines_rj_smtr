@@ -195,6 +195,7 @@ sources:
                 modules.pytz.timezone("America/Sao_Paulo")
             ) %}
             {% set start = end - modules.datetime.timedelta(hours=1) %}
+
             {% set days = (end.date() - start.date()).days %}
 
             {% if days == 0 %}
@@ -310,3 +311,9 @@ sources:
 
     tables:
       - name: autuacao
+
+  - name: gtfs
+    database: rj-smtr
+
+    tables:
+      - name: ordem_servico

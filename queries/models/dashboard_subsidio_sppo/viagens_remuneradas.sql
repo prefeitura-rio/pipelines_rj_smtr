@@ -53,8 +53,7 @@ with
             partidas_ida,
             partidas_volta,
             tipo_os,
-        from {{ ref("ordem_servico_gtfs") }}
-        -- from `rj-smtr.gtfs.ordem_servico`
+        from {{ ref("aux_ordem_servico_diaria") }}
         where feed_start_date in ('{{ feed_start_dates|join("', '") }}')
     ),
     data_versao_efetiva as (
