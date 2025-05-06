@@ -524,7 +524,7 @@ def dbt_data_quality_checks(
     if isinstance(dbt_logs, list):
         dbt_logs = "\n".join(dbt_logs)
     elif not isinstance(dbt_logs, str):
-        return
+        raise FAIL
 
     checks_results = parse_dbt_test_output(dbt_logs)
 
