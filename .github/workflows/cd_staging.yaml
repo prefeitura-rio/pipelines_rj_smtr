@@ -50,7 +50,6 @@ jobs:
         with:
           branch: "main"
           workflow: "Build Fedora Image"
-          verify: true
 
       - name: Get changed filepaths
         uses: dorny/paths-filter@v2
