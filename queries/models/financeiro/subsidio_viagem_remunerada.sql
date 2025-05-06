@@ -45,6 +45,7 @@ with
             subsidio_km,
             subsidio_km_teto,
             valor_glosado_tecnologia,
+            indicador_penalidade_tecnologia
             indicador_penalidade_judicial,
             indicador_viagem_dentro_limite
         {# from {{ ref("viagens_remuneradas") }} #}
@@ -65,6 +66,7 @@ with
             subsidio_km,
             subsidio_km_teto,
             valor_glosado_tecnologia,
+            indicador_penalidade_tecnologia
             indicador_penalidade_judicial,
             indicador_viagem_dentro_limite
         from {{ ref("viagem_conformidade_limite") }}
@@ -138,6 +140,7 @@ with
             safe_cast(s.subsidio_km_teto as numeric) as subsidio_km_teto,
             coalesce(s.valor_glosado_tecnologia, 0) as valor_glosado_tecnologia,
             s.indicador_viagem_dentro_limite,
+            s.indicador_penalidade_tecnologia,
             case
                 when sfd.pof < 60 then true else s.indicador_penalidade_judicial
             end as indicador_penalidade_judicial,
@@ -168,6 +171,7 @@ select
     datetime_partida,
     indicador_ar_condicionado,
     indicador_penalidade_judicial,
+    indicador_penalidade_tecnologia,
     indicador_viagem_dentro_limite,
     tipo_viagem,
     tecnologia_apurada,
