@@ -673,10 +673,6 @@ Meio de pagamento utilizado no padrão utilizado na SMTR (Cartão, QRCode ou Din
 Meio de pagamento conforme os dados originais da Jaé
 {% enddocs %}
 
-{% docs operadora %}
-Nome da operadora de transporte (mascarado se for pessoa física)
-{% enddocs %}
-
 {% docs chave %}
 Chave
 {% enddocs %}
