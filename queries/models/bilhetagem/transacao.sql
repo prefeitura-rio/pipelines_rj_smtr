@@ -169,8 +169,8 @@ with
             select *
             from {{ this }}
             where
-                {% if transacao_partition_list | length > 0 %}
-                    data in ({{ transacao_partition_list | join(", ") }})
+                {% if transacao_partitions | length > 0 %}
+                    data in ({{ transacao_partitions | join(", ") }})
                 {% else %} data = "2000-01-01"
                 {% endif %}
         ),
@@ -316,6 +316,8 @@ with
                 then "Pagante"
                 when g.tipo_gratuidade = "Sênior"
                 then "Idoso"
+                when g.tipo_gratuidade = "Estudante" and g.rede_ensino = "Universidade"
+                then "Estudante Passe Livre"
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino is not null
                 then concat("Estudante ", split(g.rede_ensino, " - ")[0])
                 when g.tipo_gratuidade = "Estudante"
