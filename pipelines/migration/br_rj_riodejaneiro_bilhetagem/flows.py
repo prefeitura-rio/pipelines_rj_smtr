@@ -2,7 +2,7 @@
 """
 Flows for br_rj_riodejaneiro_bilhetagem
 
-DBT: 2024-10-09
+DBT: 2025-02-17
 """
 
 from copy import deepcopy
@@ -33,13 +33,13 @@ from pipelines.migration.tasks import (
     rename_current_flow_run_now_time,
 )
 from pipelines.migration.utils import set_default_parameters
-from pipelines.schedules import (
-    every_5_minutes,
-    every_day_hour_five,
-    every_day_hour_seven,
-    every_hour,
-    every_minute,
-)
+
+# from pipelines.schedules import (  # every_day_hour_seven,
+#     every_5_minutes,
+#     every_day_hour_five,
+#     every_hour,
+#     every_minute,
+# )
 from pipelines.treatment.templates.tasks import run_data_quality_checks
 from pipelines.utils.dataplex import DataQualityCheckArgs
 from pipelines.utils.prefect import handler_skip_if_running_tolerant
@@ -63,7 +63,7 @@ bilhetagem_transacao_captura.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
 ]
-bilhetagem_transacao_captura.schedule = every_minute
+# bilhetagem_transacao_captura.schedule = every_minute
 
 
 bilhetagem_transacao_riocard_captura = deepcopy(default_capture_flow)
@@ -83,7 +83,7 @@ bilhetagem_transacao_riocard_captura.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
 ]
-bilhetagem_transacao_riocard_captura.schedule = every_minute
+# bilhetagem_transacao_riocard_captura.schedule = every_minute
 
 # BILHETAGEM FISCALIZAÇÃO - CAPTURA A CADA 5 MINUTOS #
 
@@ -104,7 +104,7 @@ bilhetagem_fiscalizacao_captura.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
 ]
-bilhetagem_fiscalizacao_captura.schedule = every_5_minutes
+# bilhetagem_fiscalizacao_captura.schedule = every_5_minutes
 
 # BILHETAGEM INTEGRAÇÃO - CAPTURA A CADA MINUTO #
 
@@ -149,7 +149,7 @@ bilhetagem_tracking_captura.state_handlers = [
 ]
 
 
-bilhetagem_tracking_captura.schedule = every_5_minutes
+# bilhetagem_tracking_captura.schedule = every_5_minutes
 
 # BILHETAGEM RESSARCIMENTO - SUBFLOW PARA RODAR DIARIAMENTE #
 
@@ -241,7 +241,7 @@ bilhetagem_materializacao_dashboard_controle_vinculo = set_default_parameters(
     default_parameters=constants.BILHETAGEM_MATERIALIZACAO_DASHBOARD_CONTROLE_VINCULO_PARAMS.value,
 )
 
-bilhetagem_materializacao_dashboard_controle_vinculo.schedule = every_day_hour_five
+# bilhetagem_materializacao_dashboard_controle_vinculo.schedule = every_day_hour_five
 
 # Ordem Pagamento
 
@@ -354,7 +354,7 @@ bilhetagem_validacao_jae.state_handlers = [
     handler_skip_if_running,
 ]
 
-bilhetagem_validacao_jae.schedule = every_day_hour_seven
+# bilhetagem_validacao_jae.schedule = every_day_hour_seven
 
 
 # RECAPTURA #
@@ -570,7 +570,7 @@ bilhetagem_transacao_tratamento.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-bilhetagem_transacao_tratamento.schedule = every_hour
+# bilhetagem_transacao_tratamento.schedule = every_hour
 bilhetagem_transacao_tratamento.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
@@ -743,4 +743,4 @@ bilhetagem_ordem_pagamento_captura_tratamento.state_handlers = [
     handler_initialize_sentry,
 ]
 
-bilhetagem_ordem_pagamento_captura_tratamento.schedule = every_day_hour_five
+# bilhetagem_ordem_pagamento_captura_tratamento.schedule = every_day_hour_five

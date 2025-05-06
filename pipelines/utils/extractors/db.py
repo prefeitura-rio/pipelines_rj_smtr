@@ -4,6 +4,8 @@ import pandas as pd
 from prefeitura_rio.pipelines_utils.logging import log
 from sqlalchemy import create_engine
 
+from pipelines.utils.database import create_database_url
+
 
 def get_raw_db(
     query: str,
@@ -12,6 +14,7 @@ def get_raw_db(
     user: str,
     password: str,
     database: str,
+    max_retries: int = 10,
 ) -> list[str]:
     """
     Captura dados de um Banco de Dados SQL
@@ -23,24 +26,25 @@ def get_raw_db(
         user (str): O usuário para se conectar
         password (str): A senha do usuário
         database (str): O nome da base (schema)
+        max_retries (int): Quantidades de retries para efetuar a query
 
     Returns:
         list[str]: Dados em formato JSON
     """
-    engine_mapping = {
-        "mysql": {"driver": "pymysql", "port": "3306"},
-        "postgresql": {"driver": "psycopg2", "port": "5432"},
-    }
 
-    engine_details = engine_mapping[engine]
-    driver = engine_details["driver"]
-    port = engine_details["port"]
-    connection = create_engine(f"{engine}+{driver}://{user}:{password}@{host}:{port}/{database}")
-    max_retries = 10
+    url = create_database_url(
+        engine=engine,
+        host=host,
+        user=user,
+        password=password,
+        database=database,
+    )
+    connection = create_engine(url)
     for retry in range(1, max_retries + 1):
         try:
             log(f"[ATTEMPT {retry}/{max_retries}]: {query}")
-            data = pd.read_sql(sql=query, con=connection).to_dict(orient="records")
+            data = pd.read_sql(sql=query, con=connection)
+            data = data.to_dict(orient="records")
             for d in data:
                 for k, v in d.items():
                     if pd.isna(v):
@@ -50,7 +54,7 @@ def get_raw_db(
             if retry == max_retries:
                 raise err
 
-        return data
+    return data
 
 
 def get_raw_db_paginated(
@@ -61,6 +65,7 @@ def get_raw_db_paginated(
     password: str,
     database: str,
     page_size: int,
+    max_retries: int = 10,
 ) -> list[str]:
     """
     Captura dados de um Banco de Dados SQL fazendo paginação
@@ -73,6 +78,7 @@ def get_raw_db_paginated(
         password (str): A senha do usuário
         database (str): O nome da base (schema)
         page_size (int): Número máximo de registros em uma página
+        max_retries (int): Quantidades de retries para efetuar a query
     Returns:
         list[str]: Dados em formato JSON
     """
@@ -90,6 +96,7 @@ def get_raw_db_paginated(
             user=user,
             password=password,
             database=database,
+            max_retries=max_retries,
         )
         data += page_data
         page_data_len = len(page_data)
@@ -100,6 +107,7 @@ def get_raw_db_paginated(
             Current page returned {page_data_len} rows"""
         )
         current_page += 1
+        offset = current_page * page_size
         query = f"{base_query} OFFSET {offset}"
 
     return data

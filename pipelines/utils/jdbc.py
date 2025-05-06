@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from typing import List
+from typing import List, Tuple
 
 import jaydebeapi as jdb
 
 from pipelines.utils.secret import get_secret
+from pipelines.utils.utils import log
 
 
 class JDBC:
@@ -35,6 +36,25 @@ class JDBC:
             jars=rf"{data['jars']}",
             driver_args=[data["user"], data["password"]],
         )
+
+    def test_connection(self) -> Tuple[bool, str | None]:
+        """
+        Tests the connection to the SERPRO database.
+
+        Returns:
+            tuple: (success, error_message)
+                - success (bool): True if the connection was successful, False otherwise
+                - error_message (str | None): Error message in case of failure, None if successful
+        """
+        try:
+            log("Testando conexão atual com o banco de dados SERPRO")
+            self._cursor.execute("SELECT 1")
+            self._cursor.fetchone()
+            log("Conexão atual com SERPRO está operacional")
+            return True, None
+        except Exception as e:
+            log(f"Conexão atual com SERPRO não está operacional: {str(e)}", level="warning")
+            return False, str(e)
 
     def get_cursor(self):
         """
@@ -68,3 +88,12 @@ class JDBC:
         Fetches all rows from the JDBC database.
         """
         return [list(item) for item in self._cursor.fetchall()]
+
+    def close(self) -> None:
+        """
+        Closes the cursor and the JDBC connection.
+        """
+        if self._cursor:
+            self._cursor.close()
+        if self._connection:
+            self._connection.close()

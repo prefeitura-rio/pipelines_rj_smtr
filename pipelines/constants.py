@@ -2,7 +2,7 @@
 """
 Valores constantes gerais para pipelines da rj-smtr
 
-DBT 2024-11-11
+DBT 2025-04-17
 """
 
 from enum import Enum
@@ -160,7 +160,7 @@ class constants(Enum):  # pylint: disable=c0103
         "databases": {
             "principal_db": {
                 "engine": "mysql",
-                "host": "10.5.114.227",
+                "host": "10.5.115.153",
             },
             "tarifa_db": {
                 "engine": "postgresql",
@@ -172,7 +172,7 @@ class constants(Enum):  # pylint: disable=c0103
             },
             "tracking_db": {
                 "engine": "postgresql",
-                "host": "10.5.15.25",
+                "host": "10.5.12.67",
             },
             "ressarcimento_db": {
                 "engine": "postgresql",
@@ -180,7 +180,7 @@ class constants(Enum):  # pylint: disable=c0103
             },
             "gratuidade_db": {
                 "engine": "postgresql",
-                "host": "10.5.12.107",
+                "host": "10.5.14.228",
             },
             "fiscalizacao_db": {
                 "engine": "postgresql",
@@ -203,14 +203,15 @@ class constants(Enum):  # pylint: disable=c0103
                 WHERE
                     id > {last_id} AND id <= {max_id}
             """,
-            "page_size": 1000,
-            "max_pages": 70,
+            "page_size": 35000,
+            "max_pages": 2,
         },
         "primary_key": ["id"],
         "interval_minutes": 5,
     }
 
     # GTFS
+    DATA_GTFS_V2_INICIO = "2025-04-30"
     GTFS_CONTROLE_OS_URL = "https://docs.google.com/spreadsheets/d/\
 1Jn7fmaDOhuHMdMqHo5SGWHCRuerXNWJRmhRjnHxJ9O4\
 /pub?gid=0&single=true&output=csv"
@@ -375,6 +376,10 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "dados_smtr": {
             "user_id": "1056928259700445245",
+            "type": "role",
+        },
+        "devs_smtr": {
+            "user_id": "1118274986461888612",
             "type": "role",
         },
     }

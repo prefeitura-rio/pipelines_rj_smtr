@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+import os
 import re
 from datetime import datetime, timedelta
+from typing import Optional
 
 from google.cloud.dataplex_v1 import DataScanJob
+from prefeitura_rio.pipelines_utils.io import get_root_path
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
@@ -38,8 +41,8 @@ class DBTSelector:
     def __init__(
         self,
         name: str,
-        schedule_cron: str,
-        initial_datetime: datetime,
+        initial_datetime: datetime = None,
+        schedule_cron: str = None,
         incremental_delay_hours: int = 0,
     ):
         self.name = name
@@ -50,7 +53,7 @@ class DBTSelector:
     def __getitem__(self, key):
         return self.__dict__[key]
 
-    def get_last_materialized_datetime(self, env: str) -> datetime:
+    def get_last_materialized_datetime(self, env: str) -> Optional[datetime]:
         """
         Pega o último datetime materializado no Redis
 
@@ -63,16 +66,17 @@ class DBTSelector:
         redis_key = f"{env}.selector_{self.name}"
         redis_client = get_redis_client()
         content = redis_client.get(redis_key)
-        last_datetime = (
-            self.initial_datetime
-            if content is None
-            else datetime.strptime(
+        if content is None:
+            if self.initial_datetime is None:
+                return None
+            last_datetime = self.initial_datetime
+        else:
+            last_datetime = datetime.strptime(
                 content[constants.REDIS_LAST_MATERIALIZATION_TS_KEY.value],
                 constants.MATERIALIZATION_LAST_RUN_PATTERN.value,
             )
-        )
 
-        return last_datetime
+        return convert_timezone(timestamp=last_datetime)
 
     def get_datetime_end(self, timestamp: datetime) -> datetime:
         """
@@ -97,8 +101,12 @@ class DBTSelector:
         Returns:
             bool: se está atualizado ou não
         """
+        if self.schedule_cron is None:
+            raise ValueError("O selector não possui agendamento")
         last_materialization = self.get_last_materialized_datetime(env=env)
+
         last_schedule = cron_get_last_date(cron_expr=self.schedule_cron, timestamp=timestamp)
+
         return last_materialization >= last_schedule - timedelta(hours=self.incremental_delay_hours)
 
     def get_next_schedule_datetime(self, timestamp: datetime) -> datetime:
@@ -112,6 +120,8 @@ class DBTSelector:
         Returns:
             datetime: próximo datetime do cron
         """
+        if self.schedule_cron is None:
+            raise ValueError("O selector não possui agendamento")
         return cron_get_next_date(cron_expr=self.schedule_cron, timestamp=timestamp)
 
     def set_redis_materialized_datetime(self, env: str, timestamp: datetime):
@@ -226,9 +236,11 @@ def parse_dbt_test_output(dbt_logs: str) -> dict:
     dbt_logs = re.sub(r"\x1B[@-_][0-?]*[ -/]*[@-~]", "", dbt_logs)
 
     results = {}
-    result_pattern = r"\d+ of \d+ (PASS|FAIL|ERROR) (\d+ )?([\w_]+) .* \[(PASS|FAIL|ERROR) .*\]"
-    fail_pattern = r"Failure in test ([\w_]+) .*\n.*\n.*\n.* compiled Code at (.*)\n"
-    error_pattern = r"Error in test ([\w_]+) \(.*schema.yaml\)\n  (.*)\n"
+    result_pattern = r"\d+ of \d+ (PASS|FAIL|ERROR) (\d+ )?([\w._]+) .* \[(PASS|FAIL|ERROR) .*\]"
+    fail_pattern = r"Failure in test ([\w._]+) .*\n.*\n.*\n.* compiled Code at (.*)\n"
+    error_pattern = r"Error in test ([\w._]+) \(.*schema.yml\)\n  (.*)\n"
+
+    root_path = get_root_path()
 
     for match in re.finditer(result_pattern, dbt_logs):
         groups = match.groups()
@@ -240,7 +252,10 @@ def parse_dbt_test_output(dbt_logs: str) -> dict:
         test_name = groups[0]
         file = groups[1]
 
-        with open(file, "r") as arquivo:
+        filepath = os.path.join(root_path, "queries")
+        filepath = os.path.join(filepath, os.path.relpath(file, filepath))
+
+        with open(filepath, "r") as arquivo:
             query = arquivo.read()
 
         query = re.sub(r"\n+", "\n", query)

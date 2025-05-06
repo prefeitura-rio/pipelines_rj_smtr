@@ -1,5 +1,29 @@
 # Changelog - gtfs
 
+## [1.2.2] - 2025-04-30
+
+### Alterado
+
+- Desativa `ordem_servico_gtfs` em razão do novo modelo de OS (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/418)
+
+- Refatora `ordem_servico_trips_shapes_gtfs` e `ordem_servico_sentido_atualizado_aux_gtfs` para remover dependência do `ordem_servico_gtfs` (desativado) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/418)
+
+## [1.2.1] - 2025-01-16
+
+### Alterado
+
+- Move modelos `ordem_servico_diaria.sql` e `servicos_sentido.sql` para o dataset `dashboard_operacao_onibus` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/389)
+
+### Removido
+
+- Modelo `ordem_servico_viagens_planejadas.sql` deletado
+
+## [1.2.0] - 2024-12-04
+
+### Alterado
+
+- Inserido ajuste para o tipo_os `Enem` com feed_start_date `2024-09-29` e `2024-11-06` para considerar o planejamento do GTFS de sábado no domingo. Afetado o modelo `ordem_servico_trips_shapes_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/354)
+
 ## [1.1.9] - 2024-09-10
 
 ### Alterado

@@ -2,10 +2,10 @@ version: 2
 
 models:
   - name: view_passageiros_hora
-    description: "View criada para uso no painel de bilhetagem. Junta os dados da tabela br_rj_riodejaneiro_bilhetagem.passageiros_hora (exceto os do tipo RioCard) com a tabela cadastro.servicos"
+    description: "View criada para uso no painel de bilhetagem. Junta os dados da tabela br_rj_riodejaneiro_bilhetagem.passageiros_hora [exceto os do tipo RioCard] com a tabela cadastro.servicos"
     columns:
       - name: data
-        description: "Data da transação"
+        description: "{{ doc('data_transacao') }}"
       - name: hora
         description: "Hora da transação"
       - name: modo
@@ -13,7 +13,7 @@ models:
       - name: consorcio
         description: "Nome do consórcio"
       - name: operadora
-        description: "Nome da operadora de transporte (mascarado se for pessoa física)"
+        description: "{{ doc('operadora') }}"
       - name: id_servico_jae
         description: "Identificador da linha no banco de dados da jaé (É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae)"
       - name: servico
@@ -27,7 +27,7 @@ models:
       - name: longitude_servico
         description: "Longitude do stop no GTFS (apenas para modo BRT)"
       - name: sentido
-        description: "Sentido de operação do serviço (0 = ida, 1 = volta)"
+        description: "{{ doc('sentido_bilhetagem') }}"
       - name: tipo_transacao_smtr
         description: "Tipo de transação realizada no padrão usado pela SMTR (Tarifa Cheia, Integração e Gratuidade)"
       - name: tipo_transacao_detalhe_smtr
@@ -35,12 +35,12 @@ models:
       - name: quantidade_passageiros
         description: "Quantidade de transações que aconteceram em determinada data e hora"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: view_passageiros_tile_hora
     description: "View criada para uso no painel de bilhetagem. Junta os dados da tabela br_rj_riodejaneiro_bilhetagem.passageiros_tile_hora com a tabela cadastro.servicos"
     columns:
       - name: data
-        description: "Data da transação"
+        description: "{{ doc('data_transacao') }}"
       - name: hora
         description: "Hora da transação"
       - name: modo
@@ -48,7 +48,7 @@ models:
       - name: consorcio
         description: "Nome do consórcio"
       - name: operadora
-        description: "Nome da operadora de transporte (mascarado se for pessoa física)"
+        description: "{{ doc('operadora') }}"
       - name: id_servico_jae
         description: "Identificador da linha no banco de dados da jaé (É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae)"
       - name: servico
@@ -58,7 +58,7 @@ models:
       - name: nome_completo_servico
         description: "Concatenação das colunas servico e descricao_servico, separadas por ' - '"
       - name: sentido
-        description: "Sentido de operação do serviço (0 = ida, 1 = volta)"
+        description: "{{ doc('sentido_bilhetagem') }}"
       - name: tipo_transacao_smtr
         description: "Tipo de transação realizada no padrão usado pela SMTR (Tarifa Cheia, Integração e Gratuidade)"
       - name: tipo_transacao_detalhe_smtr
@@ -68,12 +68,12 @@ models:
       - name: quantidade_passageiros
         description: "Quantidade de transações que aconteceram em determinada data e hora"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: view_integracao
-    description: "Tabela de integrações realizadas entre modos do sistema de transporte municipal, contendo os valores da repartição tarifária (quando houver). [Dados em fase de teste]"
+    description: "Tabela de integrações realizadas entre modos do sistema de transporte municipal, contendo os valores da repartição tarifária [quando houver - dados em fase de teste]"
     columns:
       - name: data
-        description: "Data da transação (partição)"
+        description: "{{ doc('data_transacao') }} [partição]"
       - name: hora
         description: "Hora da transação"
       - name: id_integracao
@@ -105,4 +105,4 @@ models:
       - name: tempo_integracao_minutos
         description: "Tempo em minutos entre a trasação atual e a próxima transação da integração"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"

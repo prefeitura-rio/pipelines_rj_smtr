@@ -31,26 +31,25 @@ from pipelines.utils.utils import create_timestamp_captura, data_info_str
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
-def set_env(env: str, source: SourceTable) -> SourceTable:
+def set_env(env: str, table_id: str, source_map: dict[str, SourceTable]) -> SourceTable:
     """
-    Cria um objeto de tabela para interagir com o BigQuery
-    Creates basedosdados Table object
+    Cria um objeto de tabela source para interagir com o BigQuery
 
     Args:
-        env (str): dev ou prod,
-        dataset_id (str): dataset_id no BigQuery,
-        table_id (str): table_id no BigQuery,
-        bucket_name (Union[None, str]): Nome do bucket com os dados da tabela no GCS,
-            se for None, usa o bucket padrão do ambiente
-        timestamp (datetime): timestamp gerado pela execução do flow,
-        partition_date_only (bool): True se o particionamento deve ser feito apenas por data
-            False se o particionamento deve ser feito por data e hora,
-        raw_filetype (str): Tipo do arquivo raw (json, csv...),
+        env (str): dev ou prod
+        table_id (str): Nome da tabela que será capturada
+        source_map (dict[str, SourceTable]): Dicionário no formato
+            {"table_id": SourceTable(), ...}
 
     Returns:
-        BQTable: Objeto para manipular a tabela no BigQuery
+        SourceTable: Objeto para manipular a tabela source no BigQuery
     """
-    source = deepcopy(source)
+    if table_id not in source_map.keys():
+        raise ValueError(
+            f"source {table_id} não disponível no flow.\n sources: {source_map.keys()}"
+        )
+    source = deepcopy(source_map[table_id])
+
     return source.set_env(env=env)
 
 
@@ -58,15 +57,23 @@ def set_env(env: str, source: SourceTable) -> SourceTable:
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
-def rename_capture_flow(flow_name: str, timestamp: datetime, recapture: bool) -> bool:
+def rename_capture_flow(
+    table_id: str,
+    timestamp: datetime,
+    recapture: bool,
+) -> bool:
     """
     Renomeia a run atual do Flow de captura com o formato:
-    <flow_name>: <timestamp> - recaptura: <recapture>
+    <table_id>: <timestamp> - recaptura: <recapture>
 
+    Args:
+        env (str): dev ou prod
+        table_id (str): Nome da tabela que será capturada
+        recaptura (bool): Se a execução é uma recaptura ou não
     Returns:
         bool: Se o flow foi renomeado
     """
-    name = f"{flow_name}: {timestamp.isoformat()} - recaptura: {recapture}"
+    name = f"{table_id}: {timestamp.isoformat()} - recaptura: {recapture}"
     return rename_current_flow_run(name=name)
 
 
@@ -225,7 +232,7 @@ def upload_source_data_to_gcs(source: SourceTable, partition: str, filepaths: di
     if not source.exists():
         log("Staging Table does not exist, creating table...")
         source.append(source_filepath=filepaths["source"], partition=partition)
-        source.create()
+        source.create(sample_filepath=filepaths["source"])
     else:
         log("Staging Table already exists, appending to it...")
         source.append(source_filepath=filepaths["source"], partition=partition)
@@ -275,7 +282,8 @@ def transform_raw_to_nested_structure(
         for step in pretreat_funcs:
             data = step(data=data, timestamp=timestamp, primary_keys=primary_keys)
 
-        data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
+        if len(primary_keys) < len(data.columns):
+            data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
 
         timestamp = create_timestamp_captura(timestamp=timestamp)
         data["timestamp_captura"] = timestamp

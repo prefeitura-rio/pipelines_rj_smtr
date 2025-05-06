@@ -5,16 +5,18 @@ on:
     branches:
       - main
     paths:
-      # - ".github/workflows/cd.yaml"
-      - "pipelines/serpro/*"
+      - ".github/workflows/cd.yaml"
+      - "pipelines/capture/serpro/*"
+      - ".github/workflows/build_fedora_docker.yaml"
       - "pyproject.toml"
       - "Dockerfile-fedora"
   pull_request:
     branches:
       - main
     paths:
-      # - ".github/workflows/cd_staging.yaml"
-      - "pipelines/serpro/*"
+      - ".github/workflows/cd_staging.yaml"
+      - "pipelines/capture/serpro/*"
+      - ".github/workflows/build_fedora_docker.yaml"
       - "pyproject.toml"
       - "Dockerfile-fedora"
 env:

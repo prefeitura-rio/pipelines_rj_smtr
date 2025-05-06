@@ -5,7 +5,7 @@ models:
     description: "Tabela com filtragem e tratamento básico de registros de GPS"
     columns:
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -15,7 +15,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: longitude
-        description: "Parte da coordenada geográfica (eixo x) em graus decimais (EPSG:4326 - WGS84)"
+        description: "{{ doc('longitude_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -25,21 +25,21 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: velocidade
-        description: "Velocidade instantânea do veículo, conforme informado pelo GPS (km/h)"
+        description: "{{ doc('velocidade_instantanea') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
         #   - not_negative:
         #       partition_column: data
       - name: linha
-        description: "Linha de ônibus (serviço) ou, se realocada, informada pela empresa operadora"
+        description: "{{ doc('linha') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
         #   - no_space:
         #       partition_column: data
       - name: timestamp_gps
-        description: "Timestamp de emissão do sinal de GPS"
+        description: "{{ doc('timestamp_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -49,7 +49,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: data
-        description: "Data do 'timestamp_captura'"
+        description: "{{ doc('data_captura') }}"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
       - name: hora
         description: "Hora do 'timestamp_captura'"
@@ -64,7 +64,7 @@ models:
     description: "Tabela para verificação se o veículo está dentro do trajeto correto"
     columns:
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -88,15 +88,15 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: data
-        description: "Data de partição, conforme 'timestamp_captura' da tabela 'sppo_registros'"
+        description: "{{ doc('data_captura') }} [partição]"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela) / Tabela ephemeral
       - name: timestamp_gps
-        description: "Timestamp de emissão do sinal de GPS"
+        description: "{{ doc('timestamp_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
       - name: flag_trajeto_correto
-        description: "Flag de verificação se o ponto de GPS encontra-se até o limite de 'tamanho_buffer_metros' do shape da linha (true). Se não estiver, retorna false."
+        description: "Flag de verificação se o ponto de GPS encontra-se até o limite de 'tamanho_buffer_metros' do shape da linha [Verdadeiro/Falso]"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -104,7 +104,7 @@ models:
         #       values: [true, false]
         #       quote: false
       - name: flag_trajeto_correto_hist
-        description: "Flag de verificação se, nos últimos 'intervalo_max_desvio_segundos', ao menos algum ponto de GPS encontra-se até o limite de 'tamanho_buffer_metros' do shape da linha (true). Se não estiver, retorna false."
+        description: "{{ doc('flag_trajeto_correto_hist') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -112,7 +112,7 @@ models:
         #       values: [true, false]
         #       quote: false
       - name: flag_linha_existe_sigmob
-        description: "Flag de verificação se a linha informada existe no SIGMOB"
+        description: "{{ doc('flag_linha_existe_sigmob') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -121,18 +121,18 @@ models:
         #       quote: false
 
   - name: sppo_aux_registros_parada
-    description: "Tabela para identificação de veículos parados em terminais ou garagens conhecidas."
+    description: "Tabela para identificação de veículos parados em terminais ou garagens conhecidas"
     columns:
       - name: data
-        description: "Data de partição, conforme 'timestamp_captura' da tabela 'sppo_registros'"
+        description: "{{ doc('data_captura') }} [partição]"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela) / Tabela ephemeral
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
       - name: timestamp_gps
-        description: "Timestamp de emissão do sinal de GPS"
+        description: "{{ doc('timestamp_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -144,31 +144,31 @@ models:
         #   - no_space:
         #       partition_column: data
       - name: tipo_parada
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('tipo_parada') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
 
   - name: sppo_aux_registros_realocacao
-    description: "Tabela com realocações de linha válidas."
+    description: "Tabela com realocações de linha válidas"
     columns:
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
       - name: timestamp_gps
-        description: "Timestamp de emissão do sinal de GPS"
+        description: "{{ doc('timestamp_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
       - name: servico_gps
-        description: "Linha de ônibus (serviço) informado pelo GPS"
+        description: "{{ doc('servico_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -182,12 +182,12 @@ models:
         #   - no_space:
         #       partition_column: data
       - name: datetime_realocacao
-        description: "Datetime_realocacao que o registro da realocação foi informado pela empresa operadora"
+        description: "{{ doc('datetime_realocacao') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
       - name: data
-        description: "Data de partição, conforme 'timestamp_captura' da tabela 'sppo_registros'"
+        description: "{{ doc('data_captura') }} [partição]"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
       - name: hora
         description: "Hora de partição, conforme 'timestamp_captura' da tabela 'sppo_registros'"
@@ -197,15 +197,15 @@ models:
     description: "Tabela com estimativa das velocidades dos veículos nos últimos 10 minutos"
     columns:
       - name: timestamp_gps
-        description: "Timestamp de emissão do sinal de GPS"
+        description: "{{ doc('timestamp_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
       - name: data
-        description: "Data de partição, conforme 'timestamp_captura' da tabela 'sppo_registros'"
+        description: "{{ doc('data_captura') }} [partição]"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela) / Tabela ephemeral
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -215,7 +215,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: distancia
-        description: "Distância da última posição do GPS em relação à posição atual (m)"
+        description: "{{ doc('distancia_gps') }}"
         # tests:
         #   - not_negative:
         #       partition_column: data
@@ -236,10 +236,15 @@ models:
         #       quote: false
 
   - name: sppo_realocacao
-    description: "Tabela com todas as realocações de linha informadas."
+    description: "Tabela com todas as realocações de linha informadas"
+    tests:
+      - check_gps_capture:
+          table_id: realocacao
+          interval: 10
+          name: check_gps_capture__sppo_realocacao
     columns:
       - name: id_veiculo
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -256,7 +261,7 @@ models:
         #   - no_space:
         #       partition_column: data
       - name: datetime_entrada
-        description: "Datetime de entrada do veículo na linha realocada"
+        description: "{{ doc('datetime_entrada') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -276,17 +281,22 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: data
-        description: "Data do 'timestamp_captura'"
+        description: "{{ doc('data_captura') }}"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
       - name: hora
         description: "Hora do 'timestamp_captura'"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
 
   - name: sppo_registros
-    description: "Tabela com todos os registros de GPS."
+    description: "Tabela com todos os registros de GPS"
+    tests:
+      - check_gps_capture:
+          table_id: registros
+          interval: 1
+          name: check_gps_capture__sppo_registros
     columns:
       - name: ordem
-        description: "Código identificador do veículo (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -296,17 +306,17 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: longitude
-        description: "Parte da coordenada geográfica (eixo x) em graus decimais (EPSG:4326 - WGS84)"
+        description: "{{ doc('longitude_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
       - name: timestamp_gps
-        description: "Timestamp de emissão do sinal de GPS"
+        description: "{{ doc('timestamp_gps') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
       - name: velocidade
-        description: "Velocidade instantânea do veículo, conforme informado pelo GPS (km/h)"
+        description: "{{ doc('velocidade_instantanea') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -325,7 +335,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: data
-        description: "Data do 'timestamp_captura'"
+        description: "{{ doc('data_captura') }}"
         # Sem testes em razão de ser coluna de particionamento (seria necessário consultar toda a tabela)
       - name: hora
         description: "Hora do 'timestamp_captura'"

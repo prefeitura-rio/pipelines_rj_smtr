@@ -9,9 +9,9 @@ models:
       - name: datetime_pagamento
         description: "Data e hora do pagamento"
       - name: datetime_captura
-        description: "Data e hora de captura em GMT-3"
+        description: "Data e hora de captura [GMT-3]"
       - name: id_consorcio
-        description: "Identificador do consórcio na tabela cadastro.consorcios"
+        description: "{{ doc('id_consorcio') }}"
       - name: id_operadora
         description: "Identificador da operadora na tabela cadastro.operadoras"
       - name: modo
@@ -29,4 +29,4 @@ models:
       - name: indicador_pagamento_realizado
         description: "Indica se o pagamento foi realizado ou não"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"

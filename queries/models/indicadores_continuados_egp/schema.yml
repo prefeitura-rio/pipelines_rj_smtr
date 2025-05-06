@@ -2,12 +2,12 @@ version: 2
 
 models:
   - name: indicadores_mes
-    description: "Indicadores mensais vinculados ao Escritório de Gerenciamento de Projetos e de Metas (EGP-Rio)"
+    description: "Indicadores mensais vinculados ao Escritório de Gerenciamento de Projetos e de Metas [EGP-Rio]"
     columns:
       - name: ano
         description: "Ano de apuração do indicador"
       - name: mes
-        description: "Mês de apuração do indicador"
+        description: "{{ doc('mes') }}"
       - name: modo
         description: "Modo de transporte (quando aplicável)"
       - name: nome_indicador
@@ -17,7 +17,7 @@ models:
       - name: data_ultima_atualizacao
         description: "Data da última atualização do indicador"
   - name: indicadores_mes_pivot
-    description: "Indicadores mensais vinculados ao Escritório de Gerenciamento de Projetos e de Metas (EGP-Rio) pivotados por mês"
+    description: "Indicadores mensais vinculados ao Escritório de Gerenciamento de Projetos e de Metas [EGP-Rio] pivotados por mês"
     columns:
       - name: indicador
         description: "Nome do indicador"

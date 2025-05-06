@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """Functions to pretreat data"""
-import json
 
 import pandas as pd
 from prefeitura_rio.pipelines_utils.logging import log
@@ -20,9 +19,7 @@ def transform_to_nested_structure(data: pd.DataFrame, primary_keys: list) -> pd.
     """
     content_columns = [c for c in data.columns if c not in primary_keys]
     data["content"] = data.apply(
-        lambda row: json.dumps(
-            row[content_columns].to_dict(),
-        ),
+        lambda row: row[[c for c in content_columns]].to_json(),
         axis=1,
     )
     return data[primary_keys + ["content"]]
