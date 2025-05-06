@@ -281,6 +281,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             + " "
             + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,
             _vars=dbt_vars,
+            exclude="tecnologia_servico",
         ).set_upstream(task=wait_run_dbt_model)
 
         gtfs_data_quality_results = dbt_data_quality_checks(
