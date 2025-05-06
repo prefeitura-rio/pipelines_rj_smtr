@@ -3,7 +3,7 @@
         materialized="incremental",
         partition_by={"field": "data", "data_type": "date", "granularity": "day"},
         tags=["geolocalizacao"],
-        alias=this.name ~ var("modo_gps") ~ var("fonte_gps"),
+        alias=this.name ~ "_" ~ var("modo_gps") ~ "_" ~ var("fonte_gps"),
     )
 }}
 
@@ -41,7 +41,7 @@ with
     ),
     paradas as (
         -- 3. paradas
-        select id_veiculo, datetime_gps, servico, tipo_parada,
+        select id_veiculo, datetime_gps, servico, tipo_parada
         from {{ ref("aux_gps_parada") }}
     ),
     indicadores as (
@@ -82,15 +82,9 @@ select
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
 from registros r
 
-join
-    indicadores i
-using(id_veiculo, datetime_gps, servico)
-join
-    velocidades v
-using(id_veiculo, datetime_gps, servico)
-join
-    paradas p
-using(id_veiculo, datetime_gps, servico)
+join indicadores i using (id_veiculo, datetime_gps, servico)
+join velocidades v using (id_veiculo, datetime_gps, servico)
+join paradas p using (id_veiculo, datetime_gps, servico)
 {% if is_incremental() -%}
     where
         date(r.datetime_gps) between date("{{var('date_range_start')}}") and date(

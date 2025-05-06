@@ -1,11 +1,11 @@
 {% if var("fifteen_minutes") == "_15_minutos" %}
-    {{ config(materialized="ephemeral", alias=this.name ~ var("fonte_gps")) }}  -- verificar isso
+    {{ config(materialized="ephemeral", alias=this.name ~ "_" ~ var("fonte_gps")) }}  -- verificar isso
 {% else %}
     {{
         config(
             materialized="incremental",
             partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-            alias=this.name ~ var("fonte_gps"),
+            alias=this.name ~ "_" ~ var("fonte_gps"),
         )
     }}
 {% endif %}
@@ -18,7 +18,7 @@ with
             case
                 when datetime_saida is null then datetime_operacao else datetime_saida
             end as datetime_saida,
-        from {{ ref("aux_realocacao" ~ var("fonte_gps")) }}
+        from {{ ref("aux_realocacao") }}
         where
             -- Realocação deve acontecer após o registro de GPS e até 1 hora depois
             datetime_diff(datetime_operacao, datetime_entrada, minute) between 0 and 60
@@ -32,8 +32,8 @@ with
     ),
     -- 2. Altera registros de GPS com servicos realocados
     gps as (
-        select id_veiculo, datetime_gps, servico, data,
-        from {{ ref("aux_gps" ~ var("fonte_gps")) }}
+        select id_veiculo, datetime_gps, servico, data
+        from {{ ref("aux_gps") }}
         where
             data between date("{{var('date_range_start')}}") and date(
                 "{{var('date_range_end')}}"

@@ -1,5 +1,11 @@
 {{ config(materialized="ephemeral") }}
 
+{% set incremental_filter %}
+    data between
+        date('{{ var("date_range_start") }}')
+        and date('{{ var("date_range_end") }}')
+{% endset %}
+
 with
     registros as (
         select
@@ -13,9 +19,7 @@ with
         from {{ ref("aux_gps_filtrada") }} r
         {% if not flags.FULL_REFRESH -%}
             where
-                data between date("{{var('date_range_start')}}") and date(
-                    "{{var('date_range_end')}}"
-                )
+                {{ incremental_filter }}
                 and datetime_gps > "{{var('date_range_start')}}"
                 and datetime_gps <= "{{var('date_range_end')}}"
         {%- endif -%}
@@ -57,19 +61,15 @@ with
         left join
             (
                 select *
-                -- from {{ ref("viagem_planejada") }} --viagem_planejada_planejamento
-                from `rj-smtr-dev`.`rafael__planejamento`.`viagem_planejada`
+                -- from {{ ref("viagem_planejada_planejamento") }}
+                from `rj-smtr`.`planejamento`.`viagem_planejada`
                 left join
                     -- {{ ref("shapes_geom_gtfs") }} using (
                     `rj-smtr`.`gtfs`.`shapes_geom` using (
                         feed_version, feed_start_date, shape_id
                     )
-                where
-                    data between date("{{var('date_range_start')}}") and date(
-                        "{{var('date_range_end')}}"
-                    )
-            ) s
-            using (servico, data)
+                where {{ incremental_filter }}
+            ) s using (servico, data)
     )
 -- 3. Agregação com LOGICAL_OR para evitar duplicação de registros
 select

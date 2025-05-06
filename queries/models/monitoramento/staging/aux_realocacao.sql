@@ -1,4 +1,4 @@
-{{ config(alias=this.name ~ var("fonte_gps")) }}
+{{ config(alias=this.name ~ "_" ~ var("fonte_gps")) }}
 
 select
     data,
@@ -22,4 +22,10 @@ select
     safe_cast(
         datetime(timestamp(timestamp_captura), "America/Sao_Paulo") as datetime
     ) as datetime_captura,
-from {{ source('br_rj_riodejaneiro_onibus_gps_' ~ var("fonte_gps") ~ '_staging', "realocacao") }}
+from
+    {{
+        source(
+            "br_rj_riodejaneiro_onibus_gps_" ~ var("fonte_gps") ~ "_staging",
+            "realocacao",
+        )
+    }}

@@ -1,17 +1,20 @@
 {{ config(materialized="ephemeral") }}
 
+{% set incremental_filter %}
+    data between
+        date('{{ var("date_range_start") }}')
+        and date('{{ var("date_range_end") }}')
+{% endset %}
+
+{# {% set calendario = ref("calendario") %} #}
+{% set calendario = "rj-smtr.planejamento.calendario" %}
 {% if execute %}
-    {% set feed_start_date = (
-        run_query(
-            "SELECT DISTINCT feed_start_date FROM rj-smtr-dev.rafael__planejamento.calendario WHERE data BETWEEN DATE('"
-            ~ var("date_range_start")
-            ~ "') AND DATE('"
-            ~ var("date_range_end")
-            ~ "')"
-        )
-        .columns[0]
-        .values()[0]
-    ) %}
+    {% set gtfs_feeds_query %}
+        select distinct concat("'", feed_start_date, "'") as feed_start_date
+        from {{ calendario }}
+        where {{ incremental_filter }}
+    {% endset %}
+    {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
 {% endif %}
 
 with
@@ -23,7 +26,7 @@ with
             'terminal' as tipo_parada
         -- from {{ ref("stops_gtfs") }}
         from `rj-smtr`.`gtfs`.`stops`
-        where location_type = "1" and feed_start_date = date("{{ feed_start_date }}")
+        where location_type = "1" and feed_start_date in ({{ gtfs_feeds | join(", ") }})
     ),
     garagens as (
         -- 1. Selecionamos as garagens, , criando uma geometria de ponto para cada.
@@ -41,15 +44,14 @@ with
             pickup_type is null
             and drop_off_type is null
             and stop_name like "%Garagem%"
-            and feed_start_date = date("{{ feed_start_date }}")
+            and feed_start_date in ({{ gtfs_feeds | join(", ") }})
     ),
     pontos_parada as (
         -- Unimos terminais e garagens para obter todos os pontos de parada
         select *
         from terminais
         union all
-        select  st_geogfromtext(ponto_parada) as ponto_parada,
-                * except(ponto_parada)
+        select st_geogfromtext(ponto_parada) as ponto_parada, * except (ponto_parada)
         from garagens
     ),
     distancia as (
@@ -74,9 +76,7 @@ with
                 from {{ ref("aux_gps_filtrada") }}
                 {% if not flags.FULL_REFRESH %}
                     where
-                        data between date("{{var('date_range_start')}}") and date(
-                            "{{var('date_range_end')}}"
-                        )
+                        {{ incremental_filter }}
                         and datetime_gps > "{{var('date_range_start')}}"
                         and datetime_gps <= "{{var('date_range_end')}}"
                 {% endif %}

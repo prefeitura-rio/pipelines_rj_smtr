@@ -78,5 +78,5 @@ select
         when velocidade_media < {{ var("velocidade_limiar_parado") }}
         then false
         else true
-    end indicador_em_movimento,
+    end indicador_em_movimento
 from medias

@@ -2,13 +2,12 @@
 
 with
     box as (
-        /* 1. Geometria de caixa que contém a área do município de Rio de Janeiro.*/
+        /* Geometria de caixa que contém a área do município de Rio de Janeiro.*/
         select * from {{ var("limites_caixa") }}
     ),
     gps as (
-        /* 2. Filtra registros antigos. Remove registros que tem diferença maior que 1 minuto entre o timestamp_captura e datetime_gps.*/
         select *, st_geogpoint(longitude, latitude) posicao_veiculo_geo
-        from {{ ref("aux_gps" ~ var("fonte_gps")) }}
+        from {{ ref("aux_gps") }}
         where
             data between date("{{var('date_range_start')}}") and date(
                 "{{var('date_range_end')}}"
@@ -21,12 +20,9 @@ with
     realocacao as (
         select g.* except (servico), coalesce(r.servico_realocado, g.servico) as servico
         from gps g
-        left join
-            {{ ref("aux_gps_realocacao" ~ var("fonte_gps")) }} r
-            using(id_veiculo, datetime_gps)
+        left join {{ ref("aux_gps_realocacao") }} r using (id_veiculo, datetime_gps)
     ),
     filtrada as (
-        /* 1,2, e 3. Muda o nome de variáveis para o padrão do projeto.*/
         select
             data,
             datetime_gps,
