@@ -48,7 +48,7 @@ jobs:
         uses: SamhammerAG/last-successful-build-action@v4
         id: last-fedora-build
         with:
-          branch: "staging/*"
+          branch: "main"
           workflow: "Build Fedora Image"
 
       - name: Get changed filepaths
