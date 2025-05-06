@@ -1,5 +1,10 @@
 # Changelog - gtfs
 
+## [1.2.3] - 2025-05-06
+
+### Corrigido
+- Remove testes de tecnologia (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/565)
+
 ## [1.2.2] - 2025-04-30
 
 ### Alterado
