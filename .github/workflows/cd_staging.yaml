@@ -44,6 +44,14 @@ jobs:
           poetry config virtualenvs.create false
           poetry install --with dev --with ci
 
+      - name: Find matching workflow
+        uses: SamhammerAG/last-successful-build-action@v4
+        id: last-fedora-build
+        with:
+          branch: "main"
+          workflow: "Build Fedora Image"
+          verify: true
+
       - name: Get changed filepaths
         uses: dorny/paths-filter@v2
         id: filter
@@ -62,6 +70,11 @@ jobs:
         if: steps.filter.outputs.docker_fedora == 'true'
         run: |-
           python .github/workflows/scripts/replace_docker_tag.py fedora gcr.io/rj-smtr/pipelines-fedora ${{ github.sha }}
+
+      - name: Add last fedora tag if no changes
+        if: steps.filter.outputs.docker_fedora == 'false'
+        run: |-
+          python .github/workflows/scripts/replace_docker_tag.py fedora gcr.io/rj-smtr/pipelines-fedora ${{ steps.last-fedora-build.outputs.sha }}
 
       - name: Get changed files for code tree analysis
         id: files
