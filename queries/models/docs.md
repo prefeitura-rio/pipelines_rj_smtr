@@ -58,6 +58,18 @@ Tipo de dado da coluna
 Descrição da coluna
 {% enddocs %}
 
+{% docs data_captura %}
+Data do 'timestamp_captura'
+{% enddocs %}
+
+{% docs hora_captura %}
+Hora do 'timestamp_captura'
+{% enddocs %}
+
+{% docs placa %}
+Placa do veículo
+{% enddocs %}
+
 {% docs timestamp_gps %}
 Timestamp de emissão do sinal de GPS
 {% enddocs %}
