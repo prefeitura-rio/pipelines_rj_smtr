@@ -1,32 +1,25 @@
 {% if var("encontro_contas_modo") == "" %}
 {{ config(alias=this.name ~ var('encontro_contas_modo')) }}
 WITH
-  q1 AS (
+  datas AS (
   SELECT
-    FORMAT_DATE('%Y-%m-Q1', date) AS quinzena,
-    date AS data_inicial_quinzena,
-    DATE_ADD(date, INTERVAL 14 DAY) AS data_final_quinzena
+    DATA,
+    CASE
+      WHEN EXTRACT(DAY FROM DATA) <= 15 THEN FORMAT_DATE('%Y-%m-Q1', DATA)
+      ELSE FORMAT_DATE('%Y-%m-Q2', DATA)
+  END
+    AS quinzena,
   FROM
-    UNNEST(GENERATE_DATE_ARRAY('2022-06-01', '2023-12-31', INTERVAL 1 MONTH)) AS date ),
-  q2 AS (
-  SELECT
-    FORMAT_DATE('%Y-%m-Q2', date) AS quinzena,
-    DATE_ADD(date, INTERVAL 15 DAY) AS data_inicial_quinzena,
-    LAST_DAY(date) AS data_final_quinzena
-  FROM
-    UNNEST(GENERATE_DATE_ARRAY('2022-06-01', '2023-12-31', INTERVAL 1 MONTH)) AS date ),
+    UNNEST(GENERATE_DATE_ARRAY(DATE("{{ var('start_date') }}"), DATE("{{ var('end_date') }}"), INTERVAL 1 DAY)) AS DATA ),
   quinzenas AS (
   SELECT
-    *
+    quinzena,
+    MIN(DATA) AS data_inicial_quinzena,
+    MAX(DATA) AS data_final_quinzena
   FROM
-    q1
-  UNION ALL
-  SELECT
-    *
-  FROM
-    q2
-  ORDER BY
-    data_inicial_quinzena )
+    datas
+  GROUP BY
+    quinzena )
 SELECT
   quinzena,
   data_inicial_quinzena,
