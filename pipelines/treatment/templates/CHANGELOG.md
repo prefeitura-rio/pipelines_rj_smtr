@@ -1,5 +1,11 @@
 # Changelog - treatment
 
+## [1.1.3] - 2025-05-06
+
+### Adicionado
+
+- Adiciona raise `FAIL` na task `dbt_data_quality_checks` se a task `run_dbt_tests` falhar (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/565)
+
 ## [1.1.2] - 2025-04-29
 
 ### Adicionado
