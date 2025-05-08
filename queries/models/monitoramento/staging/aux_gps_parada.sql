@@ -19,7 +19,6 @@
 
 with
     terminais as (
-        -- 1. Selecionamos terminais, criando uma geometria de ponto para cada.
         select
             st_geogpoint(stop_lon, stop_lat) as ponto_parada,
             stop_name as nome_parada,
@@ -29,73 +28,81 @@ with
         where location_type = "1" and feed_start_date in ({{ gtfs_feeds | join(", ") }})
     ),
     garagens as (
-        -- 1. Selecionamos as garagens, , criando uma geometria de ponto para cada.
-        select distinct
-            st_astext(st_geogpoint(stop_lon, stop_lat)) as ponto_parada,
-            stop_name as nome_parada,
-            'garagens' as tipo_parada
-        -- from {{ ref("stops_gtfs") }}
-        from `rj-smtr`.`gtfs`.`stops`
-        left join
-            -- {{ ref("stop_times_gtfs") }} using (feed_version, feed_start_date,
-            -- stop_id)
-            `rj-smtr`.`gtfs`.`stop_times` using (feed_version, feed_start_date, stop_id)
-        where
-            pickup_type is null
-            and drop_off_type is null
-            and stop_name like "%Garagem%"
-            and feed_start_date in ({{ gtfs_feeds | join(", ") }})
-    ),
-    pontos_parada as (
-        -- Unimos terminais e garagens para obter todos os pontos de parada
-        select *
-        from terminais
-        union all
-        select st_geogfromtext(ponto_parada) as ponto_parada, * except (ponto_parada)
-        from garagens
-    ),
-    distancia as (
-        -- 2. Calculamos as distâncias e definimos nrow
         select
-            id_veiculo,
-            datetime_gps,
-            data,
-            servico,
-            posicao_veiculo_geo,
-            nome_parada,
-            tipo_parada,
-            round(st_distance(posicao_veiculo_geo, ponto_parada), 1) distancia_parada,
+            * except (geometry_wkt, operador),
+            st_geogfromtext(geometry_wkt, make_valid => true) as geometry,
+            operador as nome_parada,
+            'garagem' as tipo_parada
+        from {{ ref("staging_garagens") }}
+        where {{ incremental_filter }}
+    ),
+    posicoes_veiculos as (
+        select id_veiculo, datetime_gps, data, servico, posicao_veiculo_geo
+        from {{ ref("aux_gps_filtrada") }}
+        {% if not flags.FULL_REFRESH %}
+            where
+                {{ incremental_filter }}
+                and datetime_gps > "{{var('date_range_start')}}"
+                and datetime_gps <= "{{var('date_range_end')}}"
+        {% endif %}
+    ),
+    veiculos_em_garagens as (
+        select
+            v.id_veiculo,
+            v.datetime_gps,
+            v.data,
+            v.servico,
+            v.posicao_veiculo_geo,
+            g.nome_parada,
+            g.tipo_parada
+        from posicoes_veiculos v
+        join garagens g on st_intersects(v.posicao_veiculo_geo, g.geometry)
+    ),
+    terminais_proximos as (
+        select
+            v.id_veiculo,
+            v.datetime_gps,
+            v.data,
+            v.servico,
+            v.posicao_veiculo_geo,
+            t.nome_parada,
+            t.tipo_parada,
+            round(
+                st_distance(v.posicao_veiculo_geo, t.ponto_parada), 1
+            ) as distancia_parada,
+            case
+                when
+                    round(st_distance(v.posicao_veiculo_geo, t.ponto_parada), 1)
+                    < {{ var("distancia_limiar_parada") }}
+                then t.tipo_parada
+                else null
+            end as status_terminal
+        from posicoes_veiculos v
+        cross join terminais t
+        qualify
             row_number() over (
-                partition by datetime_gps, id_veiculo, servico
-                order by st_distance(posicao_veiculo_geo, ponto_parada)
-            ) nrow
-        from pontos_parada p
-        join
-            (
-                select id_veiculo, datetime_gps, data, servico, posicao_veiculo_geo
-                from {{ ref("aux_gps_filtrada") }}
-                {% if not flags.FULL_REFRESH %}
-                    where
-                        {{ incremental_filter }}
-                        and datetime_gps > "{{var('date_range_start')}}"
-                        and datetime_gps <= "{{var('date_range_end')}}"
-                {% endif %}
-            ) r
-            on 1 = 1
+                partition by v.datetime_gps, v.id_veiculo, v.servico
+                order by st_distance(v.posicao_veiculo_geo, t.ponto_parada)
+            )
+            = 1
+    ),
+    resultados_combinados as (
+        select
+            v.id_veiculo,
+            v.datetime_gps,
+            v.data,
+            v.servico,
+            coalesce(g.tipo_parada, t.status_terminal) as tipo_parada,
+            coalesce(g.nome_parada, t.nome_parada) as nome_parada
+        from posicoes_veiculos v
+        left join
+            veiculos_em_garagens g
+            on v.id_veiculo = g.id_veiculo
+            and v.datetime_gps = g.datetime_gps
+        left join
+            terminais_proximos t
+            on v.id_veiculo = t.id_veiculo
+            and v.datetime_gps = t.datetime_gps
     )
-select
-    data,
-    datetime_gps,
-    id_veiculo,
-    servico,
-    /*
-  3. e 4. Identificamos o status do veículo como 'terminal', 'garagem' (para os veículos parados) ou
-  null (para os veículos mais distantes de uma parada que o limiar definido)
-  */
-    case
-        when distancia_parada < {{ var("distancia_limiar_parada") }}
-        then tipo_parada
-        else null
-    end tipo_parada,
-from distancia
-where nrow = 1
+select data, datetime_gps, id_veiculo, servico, tipo_parada, nome_parada
+from resultados_combinados
