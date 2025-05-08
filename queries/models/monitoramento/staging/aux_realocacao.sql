@@ -25,7 +25,11 @@ select
 from
     {{
         source(
-            "br_rj_riodejaneiro_onibus_gps_" ~ var("fonte_gps") ~ "_staging",
+            "br_rj_riodejaneiro_"
+            ~ var("modo_gps")
+            ~ "_gps_"
+            ~ var("fonte_gps")
+            ~ "_staging",
             "realocacao",
         )
     }}

@@ -1,5 +1,4 @@
-{% if var("fifteen_minutes") == "_15_minutos" %}
-    {{ config(materialized="ephemeral", alias=this.name ~ "_" ~ var("fonte_gps")) }}  -- verificar isso
+{% if var("fifteen_minutes") == "_15_minutos" %} {{ config(materialized="ephemeral") }}  -- verificar isso
 {% else %}
     {{
         config(
