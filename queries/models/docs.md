@@ -649,6 +649,30 @@ Distância do shape [trajeto] planejado (km)
 Indica se o serviço indicado nos dados de GPS estava diferente do serviço informado na viagem
 {% enddocs %}
 
+{% docs cadastro_cliente %}
+Situação do cadastro do cliente na Jaé (cadastrado ou não cadastrado)
+{% enddocs %}
+
+{% docs produto %}
+Produto utilizado para efetuar o pagamento no padrão utilizado na SMTR (Conta Gratuidade, Carteira, VT, Dinheiro, Cartão Avulso ou Visa Internacional)
+{% enddocs %}
+
+{% docs produto_jae %}
+Produto utilizado para efetuar o pagamento conforme os dados originais da Jaé
+{% enddocs %}
+
+{% docs tipo_usuario %}
+Tipo do usuário que efetuou a transação (ex.: Estudante Municipal, Idoso, Pagante)
+{% enddocs %}
+
+{% docs meio_pagamento %}
+Meio de pagamento utilizado no padrão utilizado na SMTR (Cartão, QRCode ou Dinheiro)
+{% enddocs %}
+
+{% docs meio_pagamento_jae %}
+Meio de pagamento conforme os dados originais da Jaé
+{% enddocs %}
+
 {% docs chave %}
 Chave
 {% enddocs %}
@@ -760,6 +784,7 @@ Valor da distância apurada multiplicada pelo subsídio por quilômetro [sem glo
 {% docs valor_penalidade %}
 Valor penalidade [negativa] [POF <= 60%]
 {% enddocs %}
+
 {% docs viagens_dia %}
 Quantidade de viagens apuradas por dia
 {% enddocs %}
@@ -767,3 +792,4 @@ Quantidade de viagens apuradas por dia
 {% docs viagens_faixa %}
 Quantidade de viagens apuradas por faixa horária
 {% enddocs %}
+
