@@ -317,3 +317,9 @@ sources:
 
     tables:
       - name: ordem_servico
+
+  - name: monitoramento_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: garagens

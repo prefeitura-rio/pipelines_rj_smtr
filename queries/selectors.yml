@@ -252,3 +252,18 @@ selectors:
     definition:
       method: fqn
       value: snapshot_transito_autuacao
+
+  - name: gps
+    description: Materialização das tabelas de gps
+    definition:
+      union:
+        - method: fqn
+          value: aux_gps
+        - method: fqn
+          value: aux_gps_realocacao
+        - method: fqn
+          value: aux_realocacao
+        - method: fqn
+          value: staging_garagens
+        - method: fqn
+          value: gps
