@@ -10,6 +10,7 @@ from prefect import Parameter, case, task
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.tasks.control_flow import merge
+from prefect.tasks.core.constants import Constant
 from prefect.tasks.core.operators import GreaterThanOrEqual
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefect.utilities.edges import unmapped
@@ -44,6 +45,7 @@ from pipelines.schedules import every_day_hour_five, every_day_hour_seven_minute
 from pipelines.tasks import check_fail, transform_task_state
 from pipelines.treatment.templates.tasks import (
     dbt_data_quality_checks,
+    run_dbt,
     run_dbt_selector,
     run_dbt_tests,
 )
@@ -104,11 +106,22 @@ with Flow(
 
     with case(run_d0, True):
         date_d0 = get_posterior_date(1)
-        RUN_2 = run_dbt_model(
+        RUN_2_TRUE = run_dbt_model(
             dataset_id=constants.SUBSIDIO_SPPO_DATASET_ID.value,
             table_id="subsidio_data_versao_efetiva viagem_planejada",
             _vars={"run_date": date_d0, "version": dataset_sha},
         )
+    with case(run_d0, False):
+        RUN_2_FALSE = Constant(value=None, name="RUN_2_FALSE")
+
+    RUN_2 = merge(RUN_2_TRUE, RUN_2_FALSE)
+
+    RUN_SNAPSHOTS = run_dbt(
+        resource="snapshot",
+        selector_name="snapshot_viagem",
+        upstream_tasks=[RUN_2],
+    )
+
 
 viagens_sppo.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 viagens_sppo.run_config = KubernetesRun(
@@ -271,7 +284,7 @@ with Flow(
                     upstream_tasks=[SUBSIDIO_SPPO_DATA_QUALITY_POS],
                 )[0]
 
-                SUBSIDIO_SPPO_APURACAO_RUN_2 = run_dbt_selector(
+                SUBSIDIO_SPPO_APURACAO_V9_RUN_TRUE = run_dbt_selector(
                     selector_name="apuracao_subsidio_v9",
                     _vars=dbt_vars_2,
                     upstream_tasks=[dbt_vars_2],
@@ -279,7 +292,7 @@ with Flow(
                 dbt_vars_3 = get_join_dict(
                     dict_list=[dbt_vars_2],
                     new_dict={"tipo_materializacao": "monitoramento"},
-                    upstream_tasks=[SUBSIDIO_SPPO_APURACAO_RUN_2],
+                    upstream_tasks=[SUBSIDIO_SPPO_APURACAO_V9_RUN_TRUE],
                 )[0]
 
                 SUBSIDIO_SPPO_APURACAO_RUN_3 = run_dbt_selector(
@@ -295,7 +308,7 @@ with Flow(
                         "date_range_start": date_intervals["second_range"]["start_date"],
                         "date_range_end": date_intervals["second_range"]["end_date"],
                     },
-                ).set_upstream(task=SUBSIDIO_SPPO_APURACAO_RUN_2)
+                ).set_upstream(task=SUBSIDIO_SPPO_APURACAO_V9_RUN_TRUE)
 
                 DATA_QUALITY_POS_2 = dbt_data_quality_checks(
                     dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_POS_2,
@@ -332,7 +345,7 @@ with Flow(
                     )
 
                 with case(data_maior_ou_igual_v9, True):
-                    SUBSIDIO_SPPO_APURACAO_RUN = run_dbt_selector(
+                    SUBSIDIO_SPPO_APURACAO_V9_RUN_FALSE = run_dbt_selector(
                         selector_name="apuracao_subsidio_v9",
                         _vars=_vars,
                     )
@@ -431,6 +444,15 @@ with Flow(
                             webhook_key="subsidio_data_check",
                             params=dbt_vars,
                         )
+            RUN_APURACAO_V9 = merge(
+                SUBSIDIO_SPPO_APURACAO_V9_RUN_TRUE, SUBSIDIO_SPPO_APURACAO_V9_RUN_FALSE
+            )
+
+            RUN_SNAPSHOTS = run_dbt(
+                resource="snapshot",
+                selector_name="snapshot_subsidio",
+                upstream_tasks=[RUN_APURACAO_V9],
+            )
 
             # TODO: test upstream_tasks=[SUBSIDIO_SPPO_DASHBOARD_RUN]
             # 6. PUBLISH #

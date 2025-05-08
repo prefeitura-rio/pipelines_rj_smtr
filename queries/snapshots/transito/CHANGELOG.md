@@ -1,4 +1,4 @@
-# Changelog - snapshots
+# Changelog - snapshots/transito
 
 ## [1.0.0] - 2025-04-14
 
