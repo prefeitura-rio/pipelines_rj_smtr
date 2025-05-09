@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrigido o modelo `sumario_faixa_servico_dia_pagamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Corrigido o modelo `sumario_faixa_servico_dia_pagamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/572)
 
 ## [1.0.6] - 2025-02-17
 

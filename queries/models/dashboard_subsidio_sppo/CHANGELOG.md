@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Alterado o modelo `viagens_remuneradas.sql` para inclusão das novas regras de apuração  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Alterado o modelo `viagens_remuneradas.sql` para inclusão das novas regras de apuração  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/572)
 
 ## [7.1.4] - 2025-04-30
 
