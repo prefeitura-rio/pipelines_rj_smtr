@@ -37,7 +37,7 @@ def create_gps_extractor(
 
     headers = get_secret(constants.CITTATI_SECRET_PATH.value)
     key = list(headers)[0]
-    url = f"{url}{key}={headers[key]}"
+    url = f"{url}guidIdentificacao={headers[key]}"
     url += f"&dataInicial={date_range['date_range_start']}&dataFinal={date_range['date_range_end']}"
 
     return partial(get_raw_api, url=url)

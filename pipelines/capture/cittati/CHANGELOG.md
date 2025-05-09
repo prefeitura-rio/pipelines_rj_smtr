@@ -4,4 +4,4 @@
 
 ### Adicionado
 
-- Cria flow de captura dos dados de GPS da Cittati (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Cria flow de captura dos dados de GPS da Cittati (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/571)
