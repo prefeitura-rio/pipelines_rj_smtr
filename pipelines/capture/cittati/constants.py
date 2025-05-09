@@ -25,6 +25,7 @@ class constants(Enum):  # pylint: disable=c0103
         table_id=CITTATI_REGISTROS_TABLE_ID,
         first_timestamp=datetime(2025, 5, 9, 0, 0, 0),
         schedule_cron=create_minute_cron(),
+        primary_keys=["id_veiculo", "datetime"],
     )
 
     CITTATI_REALOCACAO_TABLE_ID = "realocacao"
@@ -33,4 +34,5 @@ class constants(Enum):  # pylint: disable=c0103
         table_id=CITTATI_REALOCACAO_TABLE_ID,
         first_timestamp=datetime(2025, 5, 9, 0, 0, 0),
         schedule_cron=create_minute_cron(minute=10),
+        primary_keys=["id_veiculo", "datetime_processamento"],
     )
