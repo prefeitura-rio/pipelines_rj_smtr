@@ -4,7 +4,6 @@ from datetime import timedelta
 
 import pandas as pd
 
-from pipelines.capture.cittati.constants import constants
 from pipelines.constants import constants as smtr_constants
 from pipelines.utils.utils import log
 
@@ -41,7 +40,7 @@ def pretreat_cittati_registros(data: pd.DataFrame) -> pd.DataFrame:
         log(f"Shape before filtering: {data.shape}")
 
         filter_col = "datetime_envio"
-        time_delay = constants.CITTATI_CAPTURE_DELAY.value
+        time_delay = 60
 
         mask = (data[filter_col] - data["datetime"]).apply(
             lambda x: timedelta(seconds=-20) <= x <= timedelta(minutes=time_delay)
