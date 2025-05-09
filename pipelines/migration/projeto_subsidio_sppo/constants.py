@@ -818,6 +818,12 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todas viagens processadas com feed atualizado do GTFS"
             },
         },
+        "valor_km_tipo_viagem": {
+            "date_overlap_tipo_viagem": {
+                "description": "Todos os períodos de vigência não se sobrepõem"
+            },
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+        },
         "sumario_servico_dia_pagamento": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
             "dbt_utils.accepted_range": {

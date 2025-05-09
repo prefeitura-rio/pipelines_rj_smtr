@@ -3,7 +3,7 @@
 """
 Flows for projeto_subsidio_sppo
 
-DBT: 2025-04-08
+DBT: 2025-05-09
 """
 
 from prefect import Parameter, case, task
@@ -290,7 +290,7 @@ with Flow(
 
                 # POST-DATA QUALITY CHECK #
                 SUBSIDIO_SPPO_DATA_QUALITY_POS_2 = run_dbt_tests(
-                    dataset_id="viagens_remuneradas sumario_servico_dia_pagamento",
+                    dataset_id="viagens_remuneradas sumario_servico_dia_pagamento valor_km_tipo_viagem",  # noqa
                     _vars={
                         "date_range_start": date_intervals["second_range"]["start_date"],
                         "date_range_end": date_intervals["second_range"]["end_date"],
@@ -363,7 +363,7 @@ with Flow(
                         )
 
                         SUBSIDIO_SPPO_DATA_QUALITY_POS = run_dbt_tests(
-                            dataset_id="viagens_remuneradas sumario_servico_dia_pagamento",  # noqa
+                            dataset_id="viagens_remuneradas sumario_servico_dia_pagamento valor_km_tipo_viagem",  # noqa
                             _vars={
                                 "date_range_start": date_intervals["first_range"]["start_date"],
                                 "date_range_end": date_intervals["first_range"]["end_date"],
@@ -381,7 +381,7 @@ with Flow(
                         )
 
                         SUBSIDIO_SPPO_DATA_QUALITY_POS_2 = run_dbt_tests(
-                            dataset_id="viagens_remuneradas sumario_faixa_servico_dia_pagamento",  # noqa
+                            dataset_id="viagens_remuneradas sumario_faixa_servico_dia_pagamento valor_km_tipo_viagem",  # noqa
                             _vars={
                                 "date_range_start": date_intervals["second_range"]["start_date"],
                                 "date_range_end": date_intervals["second_range"]["end_date"],
@@ -403,7 +403,7 @@ with Flow(
                         )
                         with case(data_maior_ou_igual_v14, False):
                             SUBSIDIO_SPPO_DATA_QUALITY_POS_V9 = run_dbt_tests(
-                                dataset_id="viagens_remuneradas sumario_servico_dia_pagamento",  # noqa
+                                dataset_id="viagens_remuneradas sumario_servico_dia_pagamento valor_km_tipo_viagem",  # noqa
                                 _vars=dbt_vars,
                             ).set_upstream(task=SUBSIDIO_SPPO_APURACAO_RUN)
 
@@ -413,7 +413,7 @@ with Flow(
 
                         with case(data_maior_ou_igual_v14, True):
                             SUBSIDIO_SPPO_DATA_QUALITY_POS_V14 = run_dbt_tests(
-                                dataset_id="viagens_remuneradas sumario_faixa_servico_dia_pagamento",  # noqa
+                                dataset_id="viagens_remuneradas sumario_faixa_servico_dia_pagamento valor_km_tipo_viagem",  # noqa
                                 _vars=dbt_vars,
                             ).set_upstream(task=SUBSIDIO_SPPO_APURACAO_RUN)
 
