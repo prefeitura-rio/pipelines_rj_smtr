@@ -253,7 +253,8 @@ with
             on vt.data between sp.data_inicio and sp.data_fim
             and vt.tipo_viagem = sp.status
             and (
-                (
+                vt.data >= date('{{ var("DATA_SUBSIDIO_V14A_INICIO") }}')
+                or (
                     vt.data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
                     and (
                         vt.tecnologia_remunerada = sp.tecnologia
@@ -270,7 +271,10 @@ with
             on vt.data between ta.data_inicio and ta.data_fim
             and vt.tipo_viagem = ta.status
             and (
-                vt.data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
+                vt.data
+                between date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}') and date_sub(
+                    '{{ var("DATA_SUBSIDIO_V14A_INICIO") }}', interval 1 day
+                )
                 and (
                     vt.tecnologia_apurada = ta.tecnologia
                     or (vt.tecnologia_apurada is null and ta.tecnologia is null)
@@ -300,6 +304,48 @@ select
         indicador_circular
     ),
     case
+        when
+            v.data >= date('{{ var("DATA_SUBSIDIO_V14A_INICIO") }}')
+            and v.tipo_dia in ("Sabado", "Domingo")
+            and viagens_planejadas >= 5
+            and pof > 120
+            and rn > viagens_planejadas_ida_volta * 1.2
+        then false
+        when
+            v.data >= date('{{ var("DATA_SUBSIDIO_V14A_INICIO") }}')
+            and v.tipo_dia in ("Sabado", "Domingo")
+            and viagens_planejadas < 5
+            and pof > 120
+            and rn > (viagens_planejadas_ida_volta + if(indicador_circular, 1, 2))
+        then false
+        when
+            v.data >= date('{{ var("DATA_SUBSIDIO_V14A_INICIO") }}')
+            and v.tipo_dia = "Ponto Facultativo"
+            and viagens_planejadas >= 2
+            and pof > 150
+            and rn > viagens_planejadas_ida_volta * 1.5
+        then false
+        when
+            v.data >= date('{{ var("DATA_SUBSIDIO_V14A_INICIO") }}')
+            and v.tipo_dia = "Ponto Facultativo"
+            and viagens_planejadas < 2
+            and pof > 150
+            and rn > (viagens_planejadas_ida_volta + if(indicador_circular, 1, 2))
+        then false
+        when
+            v.data >= date('{{ var("DATA_SUBSIDIO_V14A_INICIO") }}')
+            and v.tipo_dia = "Dia Útil"
+            and viagens_planejadas >= 10
+            and pof > 110
+            and rn > viagens_planejadas_ida_volta * 1.1
+        then false
+        when
+            v.data >= date('{{ var("DATA_SUBSIDIO_V14A_INICIO") }}')
+            and v.tipo_dia = "Dia Útil"
+            and viagens_planejadas < 10
+            and pof > 110
+            and rn > (viagens_planejadas_ida_volta + if(indicador_circular, 1, 2))
+        then false
         when
             v.data >= date('{{ var("DATA_SUBSIDIO_V10_INICIO") }}')
             and v.tipo_dia = "Dia Útil"

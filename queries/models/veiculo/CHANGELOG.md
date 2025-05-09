@@ -1,5 +1,10 @@
 # Changelog - veiculo
 
+## [2.0.6] - 2025-05-09
+
+### Alterado
+- Alterado o modelo `sppo_veiculo_dia.sql` para remover os status `Autuado por segurança` e `Autuado por limpeza/equipamento` a partir e 2025-04-01 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/572)
+
 ## [2.0.5] - 2025-04-08
 
 ### Adicionado
