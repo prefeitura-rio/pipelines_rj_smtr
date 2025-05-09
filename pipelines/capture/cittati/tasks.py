@@ -25,8 +25,8 @@ def create_gps_extractor(
     if source.table_id == constants.CITTATI_REGISTROS_TABLE_ID.value:
         url = f"{constants.CITTATI_BASE_URL.value}/EnvioRastreamentos?"
         date_range = {
-            "start": (timestamp - timedelta(minutes=6)).strftime("%Y-%m-%d %H:%M:%S"),
-            "end": (timestamp - timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S"),
+            "date_range_start": (timestamp - timedelta(minutes=6)).strftime("%Y-%m-%d %H:%M:%S"),
+            "date_range_end": (timestamp - timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S"),
         }
     else:
         url = f"{constants.CITTATI_BASE_URL.value}/EnvioViagensRetroativasSMTR?"
