@@ -35,10 +35,18 @@ def pretreat_cittati_registros(
                 log(f"Before converting, {col} is: \n{data[col].head()}")
 
                 if pd.api.types.is_datetime64_dtype(data[col]):
-                    data[col] = data[col].dt.tz_localize(None).dt.tz_localize(timezone)
+                    data[col] = (
+                        data[col]
+                        .dt.tz_localize(None)
+                        .dt.tz_localize(timezone)
+                        .strftime("%Y-%m-%d %H:%M:%S%z")
+                    )
                 else:
                     data[col] = (
-                        pd.to_datetime(data[col]).dt.tz_localize(None).dt.tz_localize(timezone)
+                        pd.to_datetime(data[col])
+                        .dt.tz_localize(None)
+                        .dt.tz_localize(timezone)
+                        .strftime("%Y-%m-%d %H:%M:%S%z")
                     )
 
                 log(f"After converting the timezone, {col} is: \n{data[col].head()}")
@@ -48,7 +56,9 @@ def pretreat_cittati_registros(
         filter_col = "datetime_envio"
         time_delay = 60
 
-        mask = (data[filter_col] - data["datetime"]).apply(
+        temp_dt_envio = pd.to_datetime(data[filter_col])
+        temp_dt = pd.to_datetime(data["datetime"])
+        mask = (temp_dt_envio - temp_dt).apply(
             lambda x: timedelta(seconds=-20) <= x <= timedelta(minutes=time_delay)
         )
 
@@ -119,10 +129,18 @@ def pretreat_cittati_realocacao(
                 log(f"Before converting, {col} is: \n{data[col].head()}")
 
                 if pd.api.types.is_datetime64_dtype(data[col]):
-                    data[col] = data[col].dt.tz_localize(None).dt.tz_localize(timezone)
+                    data[col] = (
+                        data[col]
+                        .dt.tz_localize(None)
+                        .dt.tz_localize(timezone)
+                        .strftime("%Y-%m-%d %H:%M:%S%z")
+                    )
                 else:
                     data[col] = (
-                        pd.to_datetime(data[col]).dt.tz_localize(None).dt.tz_localize(timezone)
+                        pd.to_datetime(data[col])
+                        .dt.tz_localize(None)
+                        .dt.tz_localize(timezone)
+                        .strftime("%Y-%m-%d %H:%M:%S%z")
                     )
 
                 if data[col].isna().sum() > 0:
