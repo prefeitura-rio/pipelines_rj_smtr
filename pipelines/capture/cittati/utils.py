@@ -28,17 +28,16 @@ def pretreat_cittati_registros(
     timezone = smtr_constants.TIMEZONE.value
 
     try:
-        timestamp_cols = ["datetime", "datetime_envio", "datetime_servidor"]
+        dt_cols = ["datetime", "datetime_envio", "datetime_servidor"]
 
-        for col in timestamp_cols:
+        for col in dt_cols:
             if col in data.columns:
                 log(f"Before converting, {col} is: \n{data[col].head()}")
 
-                data[col] = (
-                    pd.to_datetime(data[col].astype(float), unit="ms")
-                    .dt.tz_localize(tz="UTC")
-                    .dt.tz_convert(timezone)
-                )
+                if pd.api.types.is_datetime64_dtype(data[col]):
+                    data[col] = data[col].dt.tz_convert(timezone)
+                else:
+                    data[col] = pd.to_datetime(data[col]).dt.tz_convert(timezone)
 
                 log(f"After converting the timezone, {col} is: \n{data[col].head()}")
 
@@ -103,6 +102,8 @@ def pretreat_cittati_realocacao(
         pd.DataFrame: Treated dataframe
     """
 
+    timezone = smtr_constants.TIMEZONE.value
+
     try:
         dt_cols = [
             "datetime_entrada",
@@ -113,26 +114,18 @@ def pretreat_cittati_realocacao(
 
         for col in dt_cols:
             if col in data.columns:
-                log(f"Converting column {col}")
-                log(f"Data received to treat: \n{data[col]}")
+                log(f"Before converting, {col} is: \n{data[col].head()}")
 
-                temp_time_col_sec = pd.to_datetime(
-                    data[col], format="%Y-%m-%dT%H:%M:%S", errors="coerce"
-                ).dt.tz_localize(tz=smtr_constants.TIMEZONE.value)
-
-                temp_time_col_msec = pd.to_datetime(
-                    data[col], format="%Y-%m-%dT%H:%M:%S.%f", errors="coerce"
-                ).dt.tz_localize(tz=smtr_constants.TIMEZONE.value)
-
-                data[col] = temp_time_col_sec.fillna(temp_time_col_msec).dt.strftime(
-                    "%Y-%m-%d %H:%M:%S%z"
-                )
+                if pd.api.types.is_datetime64_dtype(data[col]):
+                    data[col] = data[col].dt.tz_convert(timezone)
+                else:
+                    data[col] = pd.to_datetime(data[col]).dt.tz_convert(timezone)
 
                 if data[col].isna().sum() > 0:
                     error = ValueError("After treating, there is null values!")
                     log(f"[CATCHED] Task failed with error: \n{error}", level="error")
 
-                log(f"Treated data: \n{data[col]}")
+                log(f"After converting the timezone, {col} is: \n{data[col].head()}")
 
         if "datetime_saida" in data.columns:
             data.loc[data.datetime_saida == "1971-01-01 00:00:00-0300", "datetime_saida"] = ""
