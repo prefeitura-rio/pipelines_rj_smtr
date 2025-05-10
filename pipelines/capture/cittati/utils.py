@@ -35,9 +35,11 @@ def pretreat_cittati_registros(
                 log(f"Before converting, {col} is: \n{data[col].head()}")
 
                 if pd.api.types.is_datetime64_dtype(data[col]):
-                    data[col] = data[col].dt.tz_convert(timezone)
+                    data[col] = data[col].dt.tz_localize(None).dt.tz_localize(timezone)
                 else:
-                    data[col] = pd.to_datetime(data[col]).dt.tz_convert(timezone)
+                    data[col] = (
+                        pd.to_datetime(data[col]).dt.tz_localize(None).dt.tz_localize(timezone)
+                    )
 
                 log(f"After converting the timezone, {col} is: \n{data[col].head()}")
 
@@ -117,9 +119,11 @@ def pretreat_cittati_realocacao(
                 log(f"Before converting, {col} is: \n{data[col].head()}")
 
                 if pd.api.types.is_datetime64_dtype(data[col]):
-                    data[col] = data[col].dt.tz_convert(timezone)
+                    data[col] = data[col].dt.tz_localize(None).dt.tz_localize(timezone)
                 else:
-                    data[col] = pd.to_datetime(data[col]).dt.tz_convert(timezone)
+                    data[col] = (
+                        pd.to_datetime(data[col]).dt.tz_localize(None).dt.tz_localize(timezone)
+                    )
 
                 if data[col].isna().sum() > 0:
                     error = ValueError("After treating, there is null values!")
