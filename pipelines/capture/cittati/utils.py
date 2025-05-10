@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import traceback
-from datetime import timedelta
+from datetime import datetime, timedelta
+from typing import List
 
 import pandas as pd
 
@@ -8,7 +9,11 @@ from pipelines.constants import constants as smtr_constants
 from pipelines.utils.utils import log
 
 
-def pretreat_cittati_registros(data: pd.DataFrame) -> pd.DataFrame:
+def pretreat_cittati_registros(
+    data: pd.DataFrame,
+    timestamp: datetime,  # pylint: disable=W0613
+    primary_keys: List[str],  # pylint: disable=W0613
+) -> pd.DataFrame:
     """
     Basic data treatment for bus gps data. Converts unix time to datetime,
     and apply filtering to stale data that may populate the API response.
@@ -82,7 +87,11 @@ def pretreat_cittati_registros(data: pd.DataFrame) -> pd.DataFrame:
         return pd.DataFrame()
 
 
-def pretreat_cittati_realocacao(data: pd.DataFrame) -> pd.DataFrame:
+def pretreat_cittati_realocacao(
+    data: pd.DataFrame,
+    timestamp: datetime,  # pylint: disable=W0613
+    primary_keys: List[str],  # pylint: disable=W0613
+) -> pd.DataFrame:
     """
     Basic data treatment for bus gps relocation data. Converts unix time to datetime,
     and apply filtering to stale data that may populate the API response.
