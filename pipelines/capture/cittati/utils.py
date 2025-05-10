@@ -39,14 +39,14 @@ def pretreat_cittati_registros(
                         data[col]
                         .dt.tz_localize(None)
                         .dt.tz_localize(timezone)
-                        .strftime("%Y-%m-%d %H:%M:%S%z")
+                        .dt.strftime("%Y-%m-%d %H:%M:%S%z")
                     )
                 else:
                     data[col] = (
                         pd.to_datetime(data[col])
                         .dt.tz_localize(None)
                         .dt.tz_localize(timezone)
-                        .strftime("%Y-%m-%d %H:%M:%S%z")
+                        .dt.strftime("%Y-%m-%d %H:%M:%S%z")
                     )
 
                 log(f"After converting the timezone, {col} is: \n{data[col].head()}")
@@ -133,14 +133,14 @@ def pretreat_cittati_realocacao(
                         data[col]
                         .dt.tz_localize(None)
                         .dt.tz_localize(timezone)
-                        .strftime("%Y-%m-%d %H:%M:%S%z")
+                        .dt.strftime("%Y-%m-%d %H:%M:%S%z")
                     )
                 else:
                     data[col] = (
                         pd.to_datetime(data[col])
                         .dt.tz_localize(None)
                         .dt.tz_localize(timezone)
-                        .strftime("%Y-%m-%d %H:%M:%S%z")
+                        .dt.strftime("%Y-%m-%d %H:%M:%S%z")
                     )
 
                 if data[col].isna().sum() > 0:
