@@ -303,7 +303,7 @@ with Flow(
 
                 # POST-DATA QUALITY CHECK #
                 DATA_QUALITY_POS_SECOND_RANGE = run_dbt_tests(
-                    dataset_id="viagens_remuneradas sumario_servico_dia_pagamento valor_km_tipo_viagem",
+                    dataset_id=constants.SUBSIDIO_SPPO_POS_CHECKS_DATASET_ID.value,
                     _vars={
                         "date_range_start": date_intervals["second_range"]["start_date"],
                         "date_range_end": date_intervals["second_range"]["end_date"],
@@ -376,7 +376,7 @@ with Flow(
                         )
 
                         DATA_QUALITY_POS_V9_FIRST_RANGE = run_dbt_tests(
-                            dataset_id="viagens_remuneradas sumario_servico_dia_pagamento valor_km_tipo_viagem",  # noqa
+                            dataset_id=constants.SUBSIDIO_SPPO_POS_CHECKS_DATASET_ID.value,  # noqa
                             _vars={
                                 "date_range_start": date_intervals["first_range"]["start_date"],
                                 "date_range_end": date_intervals["first_range"]["end_date"],
@@ -416,7 +416,7 @@ with Flow(
                         )
                         with case(data_maior_ou_igual_v14, False):
                             DATA_QUALITY_POS_BEFORE_V14 = run_dbt_tests(
-                                dataset_id="viagens_remuneradas sumario_servico_dia_pagamento valor_km_tipo_viagem",  # noqa
+                                dataset_id=constants.SUBSIDIO_SPPO_POS_CHECKS_DATASET_ID.value,  # noqa
                                 _vars=dbt_vars,
                             ).set_upstream(task=APURACAO_V9_RUN)
 
