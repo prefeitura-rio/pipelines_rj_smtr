@@ -28,7 +28,7 @@ class constants(Enum):  # pylint: disable=c0103
         table_id=CONECTA_REGISTROS_TABLE_ID,
         first_timestamp=datetime(2025, 5, 9, 0, 0, 0),
         schedule_cron=create_minute_cron(),
-        primary_keys=["id_veiculo", "datetime"],
+        primary_keys=["id_veiculo", "datetime_servidor"],
         pretreat_funcs=[pretreat_gps_registros],
     )
 
