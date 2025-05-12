@@ -11,7 +11,6 @@ CAPTURA_REGISTROS_ZIRIX = create_default_capture_flow(
     source=constants.ZIRIX_REGISTROS_SOURCE.value,
     create_extractor_task=create_gps_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
-    generate_schedule=False,
     recapture_schedule_cron=create_hourly_cron(),
 )
 
@@ -20,6 +19,5 @@ CAPTURA_REALOCACAO_ZIRIX = create_default_capture_flow(
     source=constants.ZIRIX_REALOCACAO_SOURCE.value,
     create_extractor_task=create_gps_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
-    generate_schedule=False,
     recapture_schedule_cron=create_hourly_cron(),
 )
