@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.4.3] - 2025-05-12
+
+### Adicionado
+
+- Adiciona os dias `2025-04-18` como Feriado e `2025-04-22` como  Ponto Facultativo no modelo `aux_calendario_manual` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/573)
+
 ## [1.4.2] - 2025-04-30
 
 ### Adicionado
