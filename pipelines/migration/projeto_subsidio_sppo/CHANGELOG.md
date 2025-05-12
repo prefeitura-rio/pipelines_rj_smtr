@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona excução de snapshots nos flows `viagens_sppo` e `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/570)
+- Adiciona execução de snapshots nos flows `viagens_sppo` e `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/570)
 
 ## [1.1.5] - 2025-03-27
 

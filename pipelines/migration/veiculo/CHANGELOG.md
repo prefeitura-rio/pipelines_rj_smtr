@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona excução de snapshots no flow `sppo_veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/570)
+- Adiciona execução de snapshots no flow `sppo_veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/570)
 
 ## [1.1.5] - 2025-03-21
 
