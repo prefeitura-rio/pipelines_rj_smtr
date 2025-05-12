@@ -20,7 +20,7 @@
     {% if execute and table_exists %}
         {% set modified_partitions_query %}
             select concat("'", parse_date("%Y%m%d", partition_id), "'") as data_particao
-            from `rj-smtr.{{ viagem_completa.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+            from `{{ viagem_completa.database }}.{{ viagem_completa.schema }}.INFORMATION_SCHEMA.PARTITIONS`
             where
                 table_name = "{{ viagem_completa.identifier }}"
                 and partition_id != "__NULL__"
