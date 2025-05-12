@@ -47,6 +47,10 @@
             {% else %} data = "2000-01-01"
             {% endif %}
     {% endif %}
-    qualify row_number() over (partition by id_viagem) = 1
+    qualify
+        row_number() over (
+            partition by id_viagem order by datetime_ultima_atualizacao desc
+        )
+        = 1
 
 {% endsnapshot %}
