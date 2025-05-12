@@ -15,7 +15,7 @@
 
 with
     os as (
-        select * from {{ ref("ordem_servico_gtfs") }}
+        select * from {{ ref("aux_ordem_servico_diaria") }}
     {# from `rj-smtr.gtfs.ordem_servico` #}
     ),
     faixa as (
