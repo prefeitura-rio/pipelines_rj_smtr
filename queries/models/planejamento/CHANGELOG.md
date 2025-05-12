@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona os dias `18/04/2025` como Feriado e `22/04/2025` como  Ponto Facultativo no modelo `aux_ordem_servico_diaria` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/573)
+- Adiciona os dias `18/04/2025` como Feriado e `22/04/2025` como  Ponto Facultativo no modelo `aux_calendario_manual` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/573)
 
 ## [1.4.2] - 2025-04-30
 
