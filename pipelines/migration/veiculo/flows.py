@@ -48,7 +48,11 @@ from pipelines.migration.veiculo.tasks import (
     pre_treatment_sppo_licenciamento,
 )
 from pipelines.schedules import every_day_hour_seven, every_day_hour_six_minute_fifty
-from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt_tests
+from pipelines.treatment.templates.tasks import (
+    dbt_data_quality_checks,
+    run_dbt,
+    run_dbt_tests,
+)
 
 # Flows #
 
@@ -252,6 +256,12 @@ with Flow(
         upstream=True,
         exclude="+gps_sppo",
         _vars=_vars,
+    )
+
+    RUN_SNAPSHOTS = run_dbt(
+        resource="snapshot",
+        selector_name="snapshot_veiculo",
+        upstream_tasks=[WAIT_DBT_RUN],
     )
 
     dbt_vars = get_join_dict(
