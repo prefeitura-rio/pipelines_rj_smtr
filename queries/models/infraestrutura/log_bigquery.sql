@@ -20,7 +20,7 @@ with
             ) as nome_flow,
             regexp_extract(
                 protopayload_auditlog.servicedata_v1_bigquery.jobcompletedevent.job.jobconfiguration.query.query,
-                r'"dashboard_name"\s*:\s*"([^"]+)"'
+                r'"dashboard_code"\s*:\s*"([^"]+)"'
             ) as nome_dashboard,
             protopayload_auditlog.servicedata_v1_bigquery.jobcompletedevent.job.jobconfiguration.query.query
             as query,
@@ -65,7 +65,7 @@ with
             ) as nome_flow,
             regexp_extract(
                 protopayload_auditlog.servicedata_v1_bigquery.jobcompletedevent.job.jobconfiguration.query.query,
-                r'"dashboard_name"\s*:\s*"([^"]+)"'
+                r'"dashboard_code"\s*:\s*"([^"]+)"'
             ) as nome_dashboard,
             protopayload_auditlog.servicedata_v1_bigquery.jobcompletedevent.job.jobconfiguration.query.query
             as query,
@@ -108,7 +108,7 @@ with
             ) as nome_flow,
             regexp_extract(
                 protopayload_auditlog.servicedata_v1_bigquery.jobcompletedevent.job.jobconfiguration.query.query,
-                r'"dashboard_name"\s*:\s*"([^"]+)"'
+                r'"dashboard_code"\s*:\s*"([^"]+)"'
             ) as nome_dashboard,
             protopayload_auditlog.servicedata_v1_bigquery.jobcompletedevent.job.jobconfiguration.query.query
             as query,
