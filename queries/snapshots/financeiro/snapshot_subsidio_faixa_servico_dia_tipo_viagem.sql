@@ -3,7 +3,7 @@
     {{
         config(
             target_schema="financeiro_staging",
-            unique_key="concat(data, '-', faixa_horaria_inicio, '-', servico, '-', tipo_viagem, '-', ifnull(cast(indicador_viagem_dentro_limite as string), ''), '-', ifnull(tecnologia_apurada, ''), ifnull(cast(indicador_ar_condicionado as string), ''), ifnull(cast(indicador_penalidade_judicial as string), ''))",
+            unique_key="concat(data, '-', faixa_horaria_inicio, '-', servico, '-', tipo_viagem, '-', ifnull(cast(indicador_viagem_dentro_limite as string), ''), '-', ifnull(tecnologia_apurada, ''), '-', ifnull(cast(indicador_ar_condicionado as string), ''), '-', ifnull(cast(indicador_penalidade_judicial as string), ''))",
             strategy="timestamp",
             updated_at="timestamp_ultima_atualizacao",
             invalidate_hard_deletes=True,
