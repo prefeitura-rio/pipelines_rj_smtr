@@ -309,42 +309,45 @@ select
             and v.tipo_dia in ("Sabado", "Domingo")
             and viagens_planejadas >= 5
             and pof > 120
-            and rn > viagens_planejadas_ida_volta * 1.2
+            and rn_pos_v15 > viagens_planejadas_ida_volta * 1.2
         then false
         when
             v.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
             and v.tipo_dia in ("Sabado", "Domingo")
             and viagens_planejadas < 5
             and pof > 120
-            and rn > (viagens_planejadas_ida_volta + if(indicador_circular, 1, 2))
+            and rn_pos_v15
+            > (viagens_planejadas_ida_volta + if(indicador_circular, 1, 2))
         then false
         when
             v.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
             and v.tipo_dia = "Ponto Facultativo"
             and viagens_planejadas >= 2
             and pof > 150
-            and rn > viagens_planejadas_ida_volta * 1.5
+            and rn_pos_v15 > viagens_planejadas_ida_volta * 1.5
         then false
         when
             v.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
             and v.tipo_dia = "Ponto Facultativo"
             and viagens_planejadas < 2
             and pof > 150
-            and rn > (viagens_planejadas_ida_volta + if(indicador_circular, 1, 2))
+            and rn_pos_v15
+            > (viagens_planejadas_ida_volta + if(indicador_circular, 1, 2))
         then false
         when
             v.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
             and v.tipo_dia = "Dia Útil"
             and viagens_planejadas >= 10
             and pof > 110
-            and rn > viagens_planejadas_ida_volta * 1.1
+            and rn_pos_v15 > viagens_planejadas_ida_volta * 1.1
         then false
         when
             v.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
             and v.tipo_dia = "Dia Útil"
             and viagens_planejadas < 10
             and pof > 110
-            and rn > (viagens_planejadas_ida_volta + if(indicador_circular, 1, 2))
+            and rn_pos_v15
+            > (viagens_planejadas_ida_volta + if(indicador_circular, 1, 2))
         then false
         when
             v.data >= date('{{ var("DATA_SUBSIDIO_V10_INICIO") }}')
@@ -415,7 +418,11 @@ from
             row_number() over (
                 partition by v.data, v.servico, faixa_horaria_inicio, faixa_horaria_fim
                 order by subsidio_km * distancia_planejada desc, datetime_partida asc
-            ) as rn
+            ) as rn,
+            row_number() over (
+                partition by v.data, v.servico, faixa_horaria_inicio, faixa_horaria_fim
+                order by subsidio_km * distancia_planejada, datetime_partida
+            ) as rn_pos_v15
         from viagem_km_tipo as v
         left join
             viagem_planejada as p
