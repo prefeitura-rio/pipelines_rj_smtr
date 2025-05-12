@@ -21,6 +21,7 @@ class constants(Enum):  # pylint: disable=c0103
     CITTATI_BASE_URL = "https://servicos.cittati.com.br/WSIntegracaoCittati/SMTR/v2"
     CITTATI_CAPTURE_DELAY = 60
 
+    CITTATI_REGISTROS_ENDPOINT = "EnvioRastreamentos"
     CITTATI_REGISTROS_TABLE_ID = "registros"
     CITTATI_REGISTROS_SOURCE = SourceTable(
         source_name=CITTATI_SOURCE_NAME,
@@ -31,6 +32,7 @@ class constants(Enum):  # pylint: disable=c0103
         pretreat_funcs=[pretreat_gps_registros],
     )
 
+    CITTATI_REALOCACAO_ENDPOINT = "EnvioViagensRetroativasSMTR"
     CITTATI_REALOCACAO_TABLE_ID = "realocacao"
     CITTATI_REALOCACAO_SOURCE = SourceTable(
         source_name=CITTATI_SOURCE_NAME,

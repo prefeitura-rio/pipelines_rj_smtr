@@ -7,9 +7,8 @@ from prefect import task
 
 from pipelines.capture.conecta.constants import constants
 from pipelines.constants import constants as smtr_constants
-from pipelines.utils.extractors.api import get_raw_api
+from pipelines.utils.extractors.gps import create_generic_gps_extractor
 from pipelines.utils.gcp.bigquery import SourceTable
-from pipelines.utils.secret import get_secret
 
 
 @task(
@@ -22,22 +21,13 @@ def create_gps_extractor(
 ):
     """Cria a extração de dados de GPS na api da CONECTA"""
 
-    if source.table_id == constants.CONECTA_REGISTROS_TABLE_ID.value:
-        url = f"{constants.CONECTA_BASE_URL.value}/envioSMTR?"
-        date_range = {
-            "date_range_start": (timestamp - timedelta(minutes=6)).strftime("%Y-%m-%d %H:%M:%S"),
-            "date_range_end": (timestamp - timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S"),
-        }
-    else:
-        url = f"{constants.CONECTA_BASE_URL.value}/EnvioRealocacoesSMTR?"
-        date_range = {
-            "date_range_start": (timestamp - timedelta(minutes=10)).strftime("%Y-%m-%d %H:%M:%S"),
-            "date_range_end": timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-        }
-
-    headers = get_secret(constants.CONECTA_SECRET_PATH.value)
-    key = list(headers)[0]
-    url = f"{url}guidIdentificacao={headers[key]}"
-    url += f"&dataInicial={date_range['date_range_start']}&dataFinal={date_range['date_range_end']}"
-
-    return partial(get_raw_api, url=url)
+    return partial(
+        create_generic_gps_extractor,
+        source=source,
+        timestamp=timestamp,
+        base_url=constants.CONECTA_BASE_URL.value,
+        registros_endpoint=constants.CONECTA_REGISTROS_ENDPOINT.value,
+        realocacao_endpoint=constants.CONECTA_REALOCACAO_ENDPOINT.value,
+        secret_path=constants.CONECTA_SECRET_PATH.value,
+        registros_table_id=constants.CONECTA_REGISTROS_TABLE_ID.value,
+    )

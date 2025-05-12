@@ -18,9 +18,10 @@ class constants(Enum):  # pylint: disable=c0103
 
     CONECTA_SOURCE_NAME = "conecta"
     CONECTA_SECRET_PATH = "conecta_api"
-    CONECTA_BASE_URL = " https://ccomobility.com.br/webservices/binder/wsconecta"
+    CONECTA_BASE_URL = "https://ccomobility.com.br/webservices/binder/wsconecta"
     CONECTA_CAPTURE_DELAY = 60
 
+    CONECTA_REGISTROS_ENDPOINT = "envioSMTR"
     CONECTA_REGISTROS_TABLE_ID = "registros"
     CONECTA_REGISTROS_SOURCE = SourceTable(
         source_name=CONECTA_SOURCE_NAME,
@@ -31,6 +32,7 @@ class constants(Enum):  # pylint: disable=c0103
         pretreat_funcs=[pretreat_gps_registros],
     )
 
+    CONECTA_REALOCACAO_ENDPOINT = "EnvioRealocacoesSMTR"
     CONECTA_REALOCACAO_TABLE_ID = "realocacao"
     CONECTA_REALOCACAO_SOURCE = SourceTable(
         source_name=CONECTA_SOURCE_NAME,
