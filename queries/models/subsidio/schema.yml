@@ -36,9 +36,9 @@ models:
   - name: valor_km_tipo_viagem
     description: "Tabela de referência do valor do subsídio por tipo de viagem e tecnologia"
     tests:
-        - date_overlap_tipo_viagem:
-            name: date_overlap_tipo_viagem__valor_km_tipo_viagem
-            where: 1=1
+      - date_overlap_tipo_viagem:
+          name: date_overlap_tipo_viagem__valor_km_tipo_viagem
+          where: 1=1
     columns:
       - name: status
         description: "{{ doc('tipo_viagem_status') }}"
@@ -56,7 +56,7 @@ models:
         description: "Índice de Remuneração por km (R$/km)"
         tests:
           - not_null:
-              name: not_null__data_inicio__valor_km_tipo_viagem
+              name: not_null__irk__valor_km_tipo_viagem
       - name: data_inicio
         description: "{{ doc('data_inicio_parametros') }}"
         tests:

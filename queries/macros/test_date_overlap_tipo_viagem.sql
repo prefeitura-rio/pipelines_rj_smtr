@@ -1,6 +1,6 @@
 {% test date_overlap_tipo_viagem(model) -%}
     with
-        base as (select distinct status, data_inicio, data_fim, from {{ model }}),
+        base as (select distinct status, data_inicio, data_fim from {{ model }}),
         overlaps as (
             select
                 a.status,

@@ -141,7 +141,10 @@ vars:
   DATA_SUBSIDIO_V13_INICIO: "2025-01-01"
   # Feature Apuração por tecnologia e penalidade por faixa horária (DECRETO 55631/2025)
   DATA_SUBSIDIO_V14_INICIO: "2025-01-05"
-  DATA_SUBSIDIO_V14A_INICIO: "2025-04-01"
+  # ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629)
+  DATA_SUBSIDIO_V15_INICIO: "2025-04-01"
+  # Feature Não pagamento de tecnologia inferior à mínima permitida [ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629)]
+  DATA_SUBSIDIO_V15A_INICIO: "2025-07-01"
 
   # Recursos #
   recurso_staging: "rj-smtr-staging.projeto_subsidio_sppo_staging.recurso"

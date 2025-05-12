@@ -113,7 +113,7 @@ with
             on s.data between sp.data_inicio and sp.data_fim
             and s.tipo_viagem = sp.status
             and (
-                s.data >= date('{{ var("DATA_SUBSIDIO_V14A_INICIO") }}')
+                s.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
                 or (
                     s.data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
                     and (

@@ -263,7 +263,7 @@ select
                     and indicadores.indicador_registro_agente_verao_ar_condicionado
                     is true
                 then "Registrado com ar inoperante"
-                when data < date('{{ var("DATA_SUBSIDIO_V14A_INICIO") }}')
+                when data < date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
                 then
                     case
                         when indicadores.indicador_autuacao_seguranca is true
