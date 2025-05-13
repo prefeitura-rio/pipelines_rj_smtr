@@ -35,17 +35,33 @@ models:
 
   - name: valor_km_tipo_viagem
     description: "Tabela de referência do valor do subsídio por tipo de viagem e tecnologia"
+    tests:
+      - date_overlap_tipo_viagem:
+          name: date_overlap_tipo_viagem__valor_km_tipo_viagem
+          where: 1=1
     columns:
       - name: status
         description: "{{ doc('tipo_viagem_status') }}"
+        tests:
+          - not_null:
+              name: not_null__status__valor_km_tipo_viagem
       - name: tecnologia
         description: "{{ doc('tecnologia') }}"
       - name: subsidio_km
         description: "Valor de subsídio de remuneração (R$/km)"
+        tests:
+          - not_null:
+              name: not_null__subsidio_km__valor_km_tipo_viagem
       - name: irk
         description: "Índice de Remuneração por km (R$/km)"
+        tests:
+          - not_null:
+              name: not_null__irk__valor_km_tipo_viagem
       - name: data_inicio
         description: "{{ doc('data_inicio_parametros') }}"
+        tests:
+          - not_null:
+              name: not_null__data_inicio__valor_km_tipo_viagem
       - name: data_fim
         description: "Data final do período de vigência dos demais atributos"
       - name: indicador_penalidade_judicial
