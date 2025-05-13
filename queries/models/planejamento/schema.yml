@@ -418,7 +418,7 @@ models:
         data_type: string
         tests:
           - not_null_for_planned_services:
-              name: not_null__maior_tecnologia_permitida__tecnologia_servico 
+              name: not_null__maior_tecnologia_permitida__tecnologia_servico
               where: "inicio_vigencia <= date('{{ var('date_range_end') }}') and (fim_vigencia is null OR fim_vigencia >= date('{{ var('date_range_start') }}'))"
       - name: menor_tecnologia_permitida
         description: "Menor tipo de tecnologia permitida para o veículo"
