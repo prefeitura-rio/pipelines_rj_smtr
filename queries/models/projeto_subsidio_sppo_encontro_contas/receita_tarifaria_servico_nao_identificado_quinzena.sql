@@ -1,4 +1,4 @@
-{% if var("encontro_contas_modo") == "" %}
+{% if var("encontro_contas_modo") == "" and var("start_date") < var("DATA_SUBSIDIO_V9_INICIO") %}
 {{ config(alias=this.name ~ var('encontro_contas_modo')) }}
 WITH
   q1 AS (
