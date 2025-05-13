@@ -263,12 +263,16 @@ select
                     and indicadores.indicador_registro_agente_verao_ar_condicionado
                     is true
                 then "Registrado com ar inoperante"
-                when indicadores.indicador_autuacao_seguranca is true
-                then "Autuado por segurança"
-                when
-                    indicadores.indicador_autuacao_limpeza is true
-                    and indicadores.indicador_autuacao_equipamento is true
-                then "Autuado por limpeza/equipamento"
+                when data < date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
+                then
+                    case
+                        when indicadores.indicador_autuacao_seguranca is true
+                        then "Autuado por segurança"
+                        when
+                            indicadores.indicador_autuacao_limpeza is true
+                            and indicadores.indicador_autuacao_equipamento is true
+                        then "Autuado por limpeza/equipamento"
+                    end
                 when indicadores.indicador_ar_condicionado is false
                 then "Licenciado sem ar e não autuado"
                 when indicadores.indicador_ar_condicionado is true
