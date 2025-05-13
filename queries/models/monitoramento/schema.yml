@@ -285,3 +285,63 @@ models:
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
         quote: true
+
+  - name: gps
+    description: "Tabela com os dados tratados de registros de GPS da API {{ var('fonte_gps') }}, incluindo velocidade estimada, estado de movimento, parada em terminal ou garagem e interseção com o traçado da linha informada"
+    columns:
+      - name: data
+        description: "{{ doc('data_gps') }}"
+      - name: hora
+        description: "{{ doc('hora_gps') }}"
+      - name: datetime_gps
+        description: "{{ doc('timestamp_gps') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: latitude
+        description: "{{ doc('latitude_gps') }}"
+      - name: longitude
+        description: "{{ doc('longitude_gps') }}"
+      - name: status
+        description: "{{ doc('status_veiculo_gps') }}"
+      - name: velocidade_instantanea
+        description: "{{ doc('velocidade_instantanea') }}"
+      - name: velocidade_estimada_10_min
+        description: "{{ doc('velocidade_estimada_10_min') }}"
+      - name: distancia
+        description: "{{ doc('distancia_gps') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+
+  - name: gps_15_minutos
+    description: "Tabela com os dados tratados de registros de GPS da API {{ var('fonte_gps') }}, incluindo velocidade estimada, estado de movimento, parada em terminal ou garagem e interseção com o traçado da linha informada"
+    columns:
+      - name: data
+        description: "{{ doc('data_gps') }}"
+      - name: hora
+        description: "{{ doc('hora_gps') }}"
+      - name: datetime_gps
+        description: "{{ doc('timestamp_gps') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: latitude
+        description: "{{ doc('latitude_gps') }}"
+      - name: longitude
+        description: "{{ doc('longitude_gps') }}"
+      - name: status
+        description: "{{ doc('status_veiculo_gps') }}"
+      - name: velocidade_instantanea
+        description: "{{ doc('velocidade_instantanea') }}"
+      - name: velocidade_estimada_10_min
+        description: "{{ doc('velocidade_estimada_10_min') }}"
+      - name: distancia
+        description: "{{ doc('distancia_gps') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"

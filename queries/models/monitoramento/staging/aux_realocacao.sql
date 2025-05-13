@@ -2,6 +2,7 @@
 
 select
     data,
+    safe_cast(hora as int64) hora,
     safe_cast(
         datetime(
             timestamp(safe_cast(json_value(content, '$.datetime_operacao') as string)),

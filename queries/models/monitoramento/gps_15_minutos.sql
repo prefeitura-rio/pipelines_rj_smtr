@@ -53,6 +53,7 @@ with
 -- 5. Junção final
 select
     date(r.datetime_gps) data,
+    extract(time from r.datetime_gps) hora,
     r.datetime_gps,
     r.id_veiculo,
     r.servico,
@@ -82,7 +83,6 @@ select
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
 from registros r
-
 join indicadores i using (id_veiculo, datetime_gps, servico)
 join velocidades v using (id_veiculo, datetime_gps, servico)
 join paradas p using (id_veiculo, datetime_gps, servico)

@@ -43,6 +43,7 @@ with
     combinacao as (
         select
             g.data,
+            g.hora,
             g.datetime_gps,
             r.id_veiculo,
             g.servico as servico_gps,
