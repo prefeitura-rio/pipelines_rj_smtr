@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adicionada as constantes `SUBSIDIO_SPPO_V14_POS_CHECKS_DATASET_ID` e `SUBSIDIO_SPPO_V9_POS_CHECKS_DATASET_ID` no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/577)
+- Adicionadas as constantes `SUBSIDIO_SPPO_V14_POS_CHECKS_DATASET_ID` e `SUBSIDIO_SPPO_V9_POS_CHECKS_DATASET_ID` no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/577)
 
 ## [1.2.0] - 2025-05-08
 
