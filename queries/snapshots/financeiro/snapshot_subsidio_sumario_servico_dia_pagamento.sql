@@ -1,5 +1,13 @@
 {% snapshot snapshot_subsidio_sumario_servico_dia_pagamento %}
-
+{% if var("start_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
+    {{ config(
+            enabled=false,
+            target_schema="financeiro_staging",
+            unique_key="concat(data, '-', servico)",
+            strategy="timestamp",
+        )
+         }}
+{% else %}
     {{
         config(
             target_schema="financeiro_staging",
@@ -10,6 +18,7 @@
             partition_by={"field": "data", "data_type": "date", "granularity": "day"},
         )
     }}
+{% endif %}
 
     select
         * except (versao),

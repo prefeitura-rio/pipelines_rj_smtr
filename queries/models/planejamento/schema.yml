@@ -210,12 +210,6 @@ models:
         description: "{{ doc('servico') }}"
         data_type: string
         quote: true
-        tests:
-          - dbt_utils.relationships_where:
-              name: dbt_utils.relationships_where__servico__viagem_planejada_planejamento
-              to: ref('tecnologia_servico')
-              field: servico
-              to_condition: "inicio_vigencia <= date('{{ var('date_range_end') }}') and (fim_vigencia is null OR fim_vigencia >= date('{{ var('date_range_start') }}'))"
       - name: sentido
         description: "{{ doc('sentido') }}"
         data_type: string
@@ -423,16 +417,16 @@ models:
         description: "Maior tipo de tecnologia permitida para o veículo"
         data_type: string
         tests:
-          - not_null:
-              name: not_null__maior_tecnologia_permitida__tecnologia_servico
-              where: "1=1"
+          - not_null_for_planned_services:
+              name: not_null__maior_tecnologia_permitida__tecnologia_servico 
+              where: "inicio_vigencia <= date('{{ var('date_range_end') }}') and (fim_vigencia is null OR fim_vigencia >= date('{{ var('date_range_start') }}'))"
       - name: menor_tecnologia_permitida
         description: "Menor tipo de tecnologia permitida para o veículo"
         data_type: string
         tests:
-          - not_null:
+          - not_null_for_planned_services:
               name: not_null__menor_tecnologia_permitida__tecnologia_servico
-              where: "1=1"
+              where: "inicio_vigencia <= date('{{ var('date_range_end') }}') and (fim_vigencia is null OR fim_vigencia >= date('{{ var('date_range_start') }}'))"
   - name: servico_planejado_faixa_horaria
     description: "Serviços planejados por data, faixa horária e sentido com informações de viagens"
     columns:
