@@ -772,9 +772,14 @@ class constants(Enum):  # pylint: disable=c0103
         },
     }
 
-    SUBSIDIO_SPPO_POS_CHECKS_DATASET_ID = (
+    SUBSIDIO_SPPO_V9_POS_CHECKS_DATASET_ID = (
         "viagens_remuneradas sumario_servico_dia_pagamento valor_km_tipo_viagem"
     )
+
+    SUBSIDIO_SPPO_V14_POS_CHECKS_DATASET_ID = (
+        "viagens_remuneradas sumario_faixa_servico_dia_pagamento valor_km_tipo_viagem"
+    )
+
     SUBSIDIO_SPPO_POS_CHECKS_LIST = {
         "sumario_faixa_servico_dia_pagamento": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
