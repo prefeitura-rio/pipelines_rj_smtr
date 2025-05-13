@@ -772,6 +772,9 @@ class constants(Enum):  # pylint: disable=c0103
         },
     }
 
+    SUBSIDIO_SPPO_POS_CHECKS_DATASET_ID = (
+        "viagens_remuneradas sumario_servico_dia_pagamento valor_km_tipo_viagem"
+    )
     SUBSIDIO_SPPO_POS_CHECKS_LIST = {
         "sumario_faixa_servico_dia_pagamento": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
@@ -817,6 +820,12 @@ class constants(Enum):  # pylint: disable=c0103
             "check_viagem_completa__viagens_remuneradas": {
                 "description": "Todas viagens processadas com feed atualizado do GTFS"
             },
+        },
+        "valor_km_tipo_viagem": {
+            "date_overlap_tipo_viagem": {
+                "description": "Todos os períodos de vigência não se sobrepõem"
+            },
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
         },
         "sumario_servico_dia_pagamento": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
