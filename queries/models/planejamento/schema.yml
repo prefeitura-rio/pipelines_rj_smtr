@@ -15,10 +15,36 @@ models:
           compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
           where: "1=1"
     columns:
+      - name: feed_version
+        description: "{{ doc('feed_version') }}"
+      - name: feed_start_date
+        description: "{{ doc('feed_start_date') }}"
+      - name: feed_end_date
+        description: "{{ doc('feed_end_date') }}"
+      - name: tipo_os
+        description: "{{ doc('tipo_os') }}"
       - name: servico
         description: "{{ doc('servico') }}"
+      - name: vista
+        description: "{{ doc('vista') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: extensao_ida
+        description: "Distância percorrida na ida"
+      - name: extensao_volta
+        description: "Distância percorrida na volta"
       - name: tipo_dia
         description: "{{ doc('tipo_dia') }}"
+      - name: horario_inicio
+        description: "Horário inicial de funcionamento"
+      - name: horario_fim
+        description: "Horário da última viagem"
+      - name: partidas_ida_dia
+        description: "Quantidade de partidas no sentido ida"
+      - name: partidas_volta_dia
+        description: "Quantidade de partidas no sentido volta"
+      - name: viagens_dia
+        description: "Quantidade de viagens planejadas no dia"
       - name: faixa_horaria_inicio
         description: "{{ doc('faixa_horaria_inicio') }}"
       - name: faixa_horaria_fim
@@ -41,6 +67,8 @@ models:
         #       group_by: [ feed_start_date, tipo_os, tipo_dia, servico ]
         #       strictly: true
         #       where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+      - name: versao
+        description: "{{ doc('versao') }}"
   - name: segmento_shape
     description: Tabela contendo os shapes segmentados usados na validação de viagens.
     columns:
@@ -53,7 +81,7 @@ models:
         data_type: date
         quote: true
       - name: feed_end_date
-        description: Data final do feed (versão).
+        description: "{{ doc('feed_end_date') }}"
         data_type: date
         quote: true
       - name: shape_id
@@ -116,7 +144,7 @@ models:
         data_type: date
         quote: true
       - name: feed_end_date
-        description: Data final do feed (versão).
+        description: "{{ doc('feed_end_date') }}"
         data_type: date
         quote: true
       - name: shape_id
@@ -167,11 +195,11 @@ models:
         data_type: string
         quote: true
       - name: trip_id
-        description: Identificador de uma viagem da tabela trips do GTFS
+        description: "{{ doc('trip_id') }}"
         data_type: string
         quote: true
       - name: route_id
-        description: Identificador de uma rota da tabela routes do GTFS
+        description: "{{ doc('route_id') }}"
         data_type: string
         quote: true
       - name: shape_id
@@ -182,6 +210,12 @@ models:
         description: "{{ doc('servico') }}"
         data_type: string
         quote: true
+        tests:
+          - dbt_utils.relationships_where:
+              name: dbt_utils.relationships_where__servico__viagem_planejada_planejamento
+              to: ref('tecnologia_servico')
+              field: servico
+              to_condition: "inicio_vigencia <= date('{{ var('date_range_end') }}') and (fim_vigencia is null OR fim_vigencia >= date('{{ var('date_range_start') }}'))"
       - name: sentido
         description: "{{ doc('sentido') }}"
         data_type: string
@@ -211,7 +245,7 @@ models:
         data_type: string
         quote: true
       - name: tipo_os
-        description: "Tipo de Ordem de Serviço (ex: 'Regular', 'Extraordinária - Verão')"
+        description: "{{ doc('tipo_os') }}"
         data_type: string
         quote: true
       - name: feed_version
@@ -354,13 +388,51 @@ models:
         quote: true
   - name: tecnologia_servico
     description: "Tabela auxiliar de tecnologias permitidas por serviço"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+          - inicio_vigencia
+          - servico
+          name: dbt_utils.unique_combination_of_columns__tecnologia_servico
+          where: "1=1"
     columns:
+      - name: inicio_vigencia
+        description: "Data de inicio da vigência"
+        data_type: date
+        tests:
+          - not_null:
+              name: not_null__inicio_vigencia__tecnologia_servico
+              where: "1=1"
+      - name: fim_vigencia
+        description: "Data de fim da vigência"
+        data_type: date
       - name: servico
         description: "{{ doc('servico') }}"
+        data_type: string
+      - name: modo
+        description: "{{ doc('modo') }}"
         data_type: string
       - name: codigo_tecnologia
         description: "Código binário onde cada caractere representa uma tecnologia"
         data_type: string
+        tests:
+          - not_null:
+              name: not_null__codigo_tecnologia__tecnologia_servico
+              where: "1=1"
+      - name: maior_tecnologia_permitida
+        description: "Maior tipo de tecnologia permitida para o veículo"
+        data_type: string
+        tests:
+          - not_null:
+              name: not_null__maior_tecnologia_permitida__tecnologia_servico
+              where: "1=1"
+      - name: menor_tecnologia_permitida
+        description: "Menor tipo de tecnologia permitida para o veículo"
+        data_type: string
+        tests:
+          - not_null:
+              name: not_null__menor_tecnologia_permitida__tecnologia_servico
+              where: "1=1"
   - name: servico_planejado_faixa_horaria
     description: "Serviços planejados por data, faixa horária e sentido com informações de viagens"
     columns:

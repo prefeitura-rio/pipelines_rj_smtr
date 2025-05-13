@@ -1,5 +1,28 @@
 # Changelog - planejamento
 
+## [1.4.3] - 2025-05-12
+
+### Adicionado
+
+- Adiciona os dias `2025-04-18` como Feriado e `2025-04-22` como  Ponto Facultativo no modelo `aux_calendario_manual` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/573)
+
+## [1.4.2] - 2025-04-30
+
+### Adicionado
+
+- Cria modelo `aux_ordem_servico_diaria` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/418)
+
+### Alterado
+
+- Refatora `aux_ordem_servico_horario_tratado` para remover dependência do `ordem_servico_gtfs` (desativado) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/418)
+
+## [1.4.1] - 2025-04-10
+
+### Corrigido
+
+- Corrige query para filtrar feeds no modelo `calendario.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/536)
+- Remove datas nulas no modelo `viagem_planejada_planejamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/536)
+
 ## [1.4.0] - 2025-04-08
 
 ### Adicionado

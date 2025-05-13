@@ -24,7 +24,7 @@ class constants(Enum):  # pylint: disable=c0103
     JAE_DATABASE_SETTINGS = {
         "principal_db": {
             "engine": "mysql",
-            "host": "10.5.115.153",
+            "host": "10.5.113.111",
         },
         "tarifa_db": {
             "engine": "postgresql",
@@ -32,11 +32,11 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "transacao_db": {
             "engine": "postgresql",
-            "host": "10.5.115.1",
+            "host": "10.5.112.48",
         },
         "tracking_db": {
             "engine": "postgresql",
-            "host": "10.5.12.67",
+            "host": "10.5.14.235",
         },
         "ressarcimento_db": {
             "engine": "postgresql",
@@ -44,7 +44,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "gratuidade_db": {
             "engine": "postgresql",
-            "host": "10.5.14.228",
+            "host": "10.5.14.15",
         },
         "fiscalizacao_db": {
             "engine": "postgresql",
@@ -52,11 +52,11 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "atm_gateway_db": {
             "engine": "postgresql",
-            "host": "10.5.12.45",
+            "host": "10.5.12.98",
         },
         "device_db": {
             "engine": "postgresql",
-            "host": "10.5.112.161",
+            "host": "10.5.114.83",
         },
         "erp_integracao_db": {
             "engine": "postgresql",
@@ -64,15 +64,15 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "financeiro_db": {
             "engine": "postgresql",
-            "host": "10.5.12.203",
+            "host": "10.5.13.151",
         },
         "midia_db": {
             "engine": "postgresql",
-            "host": "10.5.12.62",
+            "host": "10.5.14.177",
         },
         "processador_transacao_db": {
             "engine": "postgresql",
-            "host": "10.5.12.185",
+            "host": "10.5.13.73",
         },
         "atendimento_db": {
             "engine": "postgresql",
@@ -80,7 +80,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "gateway_pagamento_db": {
             "engine": "postgresql",
-            "host": "10.5.113.179",
+            "host": "10.5.115.111",
         },
         # "iam_db": {
         #     "engine": "mysql",
@@ -88,7 +88,7 @@ class constants(Enum):  # pylint: disable=c0103
         # },
         "vendas_db": {
             "engine": "postgresql",
-            "host": "10.5.113.30",
+            "host": "10.5.112.116",
         },
     }
 
@@ -618,6 +618,10 @@ class constants(Enum):  # pylint: disable=c0103
                 "fare_rules",
                 "estudante_12032025",
                 "temp_estudante_cpfduplicado_14032025",
+                "estudante_11042025",
+                "estudante_01042025",
+                "temp_estudante_cpfduplicado_11042025",
+                "estudante_30042025",
             ],
             "filter": {
                 "ITEM_PEDIDO": ["DT_INCLUSAO"],
@@ -778,6 +782,10 @@ class constants(Enum):  # pylint: disable=c0103
                 "temp_estudante_cpfduplicado_13032025",
                 "temp_estudante_cpfduplicado_14032025",
                 "temp_estudante_cpfduplicado_17032025",
+                "estudante_sme_21012025",
+                "estudante_sme_21022025",
+                "temp_estudante_acerto_20032025",
+                "estudante_universitario_24012025",
             ],
             "filter": {
                 "lancamento_conta_gratuidade": ["data_inclusao"],

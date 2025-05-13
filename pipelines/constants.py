@@ -2,7 +2,7 @@
 """
 Valores constantes gerais para pipelines da rj-smtr
 
-DBT 2025-03-25
+DBT 2025-04-17
 """
 
 from enum import Enum
@@ -211,6 +211,7 @@ class constants(Enum):  # pylint: disable=c0103
     }
 
     # GTFS
+    DATA_GTFS_V2_INICIO = "2025-04-30"
     GTFS_CONTROLE_OS_URL = "https://docs.google.com/spreadsheets/d/\
 1Jn7fmaDOhuHMdMqHo5SGWHCRuerXNWJRmhRjnHxJ9O4\
 /pub?gid=0&single=true&output=csv"

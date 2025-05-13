@@ -1,5 +1,23 @@
 # Changelog - treatment
 
+## [1.1.3] - 2025-05-06
+
+### Adicionado
+
+- Adiciona raise `FAIL` na task `dbt_data_quality_checks` se a task `run_dbt_tests` falhar (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/565)
+
+## [1.1.2] - 2025-04-29
+
+### Adicionado
+
+- Adiciona comando `source freshness` da task `run_dbt` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/554)
+
+## [1.1.1] - 2025-04-14
+
+### Adicionado
+
+- Cria task `run_dbt` que permite executar `models`, `snapshots` e `tests`, e adiciona parâmetro `snapshot_selector` no flow de materialização (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/547)
+
 ## [1.1.0] - 2025-03-13
 
 ### Adicionado

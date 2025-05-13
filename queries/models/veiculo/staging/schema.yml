@@ -131,9 +131,9 @@ models:
       - name: data_infracao
         description: "{{ doc('data_infracao') }}"
       - name: valor
-        description: "Valor devido (R$)"
+        description: "{{ doc('valor') }}"
       - name: id_infracao
-        description: "Código da infração"
+        description: "{{ doc('id_infracao') }}"
       - name: infracao
         description: "Descrição da infração"
       - name: status
@@ -206,7 +206,7 @@ models:
       - name: data
         description: "{{ doc('data_agente') }}"
       - name: datetime_registro
-        description: "Datetime de registro pelo agente público"
+        description: "{{ doc('datetime_registro') }}"
       - name: id_registro
         description: "{{ doc('id_registro') }}"
       - name: id_veiculo
@@ -218,6 +218,6 @@ models:
       - name: validacao
         description: "{{ doc('validacao') }}"
       - name: datetime_captura
-        description: "Datetime de captura do registro pela pipeline"
+        description: "{{ doc('datetime_captura') }}"
       - name: versao
         description: "{{ doc('versao') }}"
