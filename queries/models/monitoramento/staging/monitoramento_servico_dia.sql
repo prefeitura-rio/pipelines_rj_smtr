@@ -1,4 +1,4 @@
-{% if var("start_date") >= var("DATA_SUBSIDIO_V9_INICIO") %} 
+{% if var("start_date") >= var("DATA_SUBSIDIO_V9_INICIO") %}
 {{ config(enabled=false, materialized="ephemeral") }}
 {% else %}
 {{ config(materialized="ephemeral") }}
