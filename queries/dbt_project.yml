@@ -92,7 +92,7 @@ vars:
   trips_staging: "rj-smtr-staging.br_rj_riodejaneiro_sigmob_staging.trips"
 
   ## GTFS
-  data_versao_gtfs: "2024-12-31" # fixada última data disponível
+  data_versao_gtfs: "2025-05-01" # fixada última data disponível
   DATA_GTFS_V2_INICIO: "2025-04-30"
 
   ### Subsídio SPPO (Ônibus) ###
@@ -314,10 +314,10 @@ models:
         +schema: indicadores_continuados_egp_staging
     projeto_subsidio_sppo_encontro_contas:
       +materialized: table
-      +schema: projeto_subsidio_sppo_encontro_contas
+      +schema: projeto_subsidio_sppo_encontro_contas_2024_jan_ago_cenario_e3
       staging:
         +materialized: view
-        +schema: projeto_subsidio_sppo_encontro_contas_staging
+        +schema: projeto_subsidio_sppo_encontro_contas_2024_jan_ago_cenario_e3_staging
     dashboard_controle_vinculo_jae_riocard:
       +materialized: incremental
       +schema: dashboard_controle_vinculo_jae_riocard
