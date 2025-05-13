@@ -1,8 +1,8 @@
 {% if var("start_date") >= var("DATA_SUBSIDIO_V9_INICIO") %}
-{{ config(enabled=false, materialized="ephemeral") }}
+{{ config(enabled=false) }}
 {% else %}
 {{ config(materialized="ephemeral") }}
-{% endif%}
+{% endif %}
 
 select
     data,
