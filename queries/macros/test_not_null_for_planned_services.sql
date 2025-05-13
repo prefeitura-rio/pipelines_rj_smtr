@@ -1,12 +1,16 @@
 {% test not_null_for_planned_services(model, column_name) -%}
-WITH servicos_validos AS (
-    SELECT DISTINCT servico
-    FROM {{ ref('viagem_planejada') }}
-    WHERE data BETWEEN "{{ var('date_range_start') }}" AND "{{ var('date_range_end') }}"
-)
+    with
+        servicos_validos as (
+            select distinct servico
+            from {{ ref("viagem_planejada") }}
+            where
+                data
+                between '{{ var("date_range_start") }}'
+                and '{{ var("date_range_end") }}'
+        )
 
-SELECT *
-FROM {{ model }}
-WHERE {{ column_name }} IS NULL
-  AND servico IN (SELECT servico FROM servicos_validos)
+    select *
+    from {{ model }}
+    where
+        {{ column_name }} is null and servico in (select servico from servicos_validos)
 {% endtest %}
