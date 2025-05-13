@@ -6,8 +6,8 @@
         and date('{{ var("date_range_end") }}')
 {% endset %}
 
-{# {% set calendario = ref("calendario") %} #}
-{% set calendario = "rj-smtr.planejamento.calendario" %}
+{% set calendario = ref("calendario") %}
+{# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
 {% if execute %}
     {% set gtfs_feeds_query %}
         select distinct concat("'", feed_start_date, "'") as feed_start_date
@@ -23,8 +23,8 @@ with
             st_geogpoint(stop_lon, stop_lat) as ponto_parada,
             stop_name as nome_parada,
             'terminal' as tipo_parada
-        -- from {{ ref("stops_gtfs") }}
-        from `rj-smtr`.`gtfs`.`stops`
+        from {{ ref("stops_gtfs") }}
+        {# from `rj-smtr`.`gtfs`.`stops` #}
         where location_type = "1" and feed_start_date in ({{ gtfs_feeds | join(", ") }})
     ),
     garagens as (
@@ -34,7 +34,7 @@ with
             operador as nome_parada,
             'garagem' as tipo_parada
         from {{ ref("staging_garagens") }}
-        where {{ incremental_filter }}
+        where ativa
     ),
     posicoes_veiculos as (
         select id_veiculo, datetime_gps, data, servico, posicao_veiculo_geo

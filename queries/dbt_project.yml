@@ -40,7 +40,7 @@ vars:
   data_inicio_realocacao: "2022-11-15"
   fifteen_minutes: ""
   modo_gps: "onibus"
-  fonte_gps: "zirix"
+  fonte_gps: "conecta"
 
   # Parametros de intersecção do ônibus com rota
   ## Tamanho do buffer da rota

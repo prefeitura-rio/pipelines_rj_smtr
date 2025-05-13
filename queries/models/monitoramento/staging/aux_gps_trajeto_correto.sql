@@ -61,11 +61,11 @@ with
         left join
             (
                 select *
-                -- from {{ ref("viagem_planejada_planejamento") }}
-                from `rj-smtr`.`planejamento`.`viagem_planejada`
+                from {{ ref("viagem_planejada_planejamento") }}
+                {# from `rj-smtr`.`planejamento`.`viagem_planejada` #}
                 left join
-                    -- {{ ref("shapes_geom_gtfs") }} using (
-                    `rj-smtr`.`gtfs`.`shapes_geom` using (
+                    {{ ref("shapes_geom_gtfs") }} using (
+                        {# `rj-smtr`.`gtfs`.`shapes_geom` using ( #}
                         feed_version, feed_start_date, shape_id
                     )
                 where {{ incremental_filter }}

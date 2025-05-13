@@ -5,6 +5,7 @@
 }}
 
 select
+    data,
     nullif(trim(safe_cast(operador as string)), "") as operador,
     nullif(trim(safe_cast(endereco as string)), "") as endereco,
     nullif(trim(safe_cast(bairro as string)), "") as bairro,

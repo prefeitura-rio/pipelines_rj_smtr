@@ -3,33 +3,50 @@
 select
     data,
     safe_cast(
-        datetime(timestamp(datetime_operacao), "America/Sao_Paulo") as datetime
+        datetime(
+            timestamp(safe_cast(json_value(content, '$.datetime_operacao') as string)),
+            "America/Sao_Paulo"
+        ) as datetime
     ) datetime_operacao,
     safe_cast(id_veiculo as string) id_veiculo,
     concat(
-        ifnull(regexp_extract(servico, r'[A-Z]+'), ""),
-        ifnull(regexp_extract(servico, r'[0-9]+'), "")
+        ifnull(
+            regexp_extract(
+                safe_cast(json_value(content, '$.servico') as string), r'[A-Z]+'
+            ),
+            ""
+        ),
+        ifnull(
+            regexp_extract(
+                safe_cast(json_value(content, '$.servico') as string), r'[0-9]+'
+            ),
+            ""
+        )
     ) as servico,
     safe_cast(
-        datetime(timestamp(datetime_entrada), "America/Sao_Paulo") as datetime
+        datetime(
+            timestamp(safe_cast(json_value(content, '$.datetime_entrada') as string)),
+            "America/Sao_Paulo"
+        ) as datetime
     ) as datetime_entrada,
     safe_cast(
-        datetime(timestamp(datetime_saida), "America/Sao_Paulo") as datetime
+        datetime(
+            timestamp(
+                nullif(safe_cast(json_value(content, '$.datetime_saida') as string), "")
+            ),
+            "America/Sao_Paulo"
+        ) as datetime
     ) as datetime_saida,
     safe_cast(
-        datetime(timestamp(timestamp_processamento), "America/Sao_Paulo") as datetime
+        datetime(timestamp(datetime_processamento), "America/Sao_Paulo") as datetime
     ) as datetime_processamento,
     safe_cast(
         datetime(timestamp(timestamp_captura), "America/Sao_Paulo") as datetime
-    ) as datetime_captura,
+    ) as datetime_captura
 from
     {{
         source(
-            "br_rj_riodejaneiro_"
-            ~ var("modo_gps")
-            ~ "_gps_"
-            ~ var("fonte_gps")
-            ~ "_staging",
+            "source_" ~ var("fonte_gps"),
             "realocacao",
         )
     }}

@@ -1,4 +1,4 @@
-{% if var("fifteen_minutes") == "_15_minutos" %} {{ config(materialized="ephemeral") }}  -- verificar isso
+{% if var("fifteen_minutes") == "_15_minutos" %} {{ config(materialized="ephemeral") }}
 {% else %}
     {{
         config(
