@@ -8,12 +8,15 @@
 - Cenário E2: cenário E1 com correções
 */
 
-
+{% if var("start_date") >= var("DATA_SUBSIDIO_V9_INICIO") %}
+{{ config(enabled=false) }}
+{% else %}
 {{
     config(
         materialized="ephemeral",
     )
 }}
+{% endif %}
 
 WITH
 -- 1. Calcula a receita tarifaria por servico e dia

@@ -1,10 +1,16 @@
 # Changelog - queries
 
+## [1.0.3] - 2025-05-13
+
+### Alterado
+
+- Altera selector `planejamento_diario` adicionando o modelo `servico_planejado_faixa_horaria` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/575)
+
 ## [1.0.2] - 2025-04-08
 
 ### Alterado
 
-- Altera selector `apuracao_subsidio_v9` adicionando a `staging_tecnologia_servico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/530)
+- Altera selector `apuracao_subsidio_v9` adicionando o modelo `staging_tecnologia_servico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/530)
 
 ## [1.0.1] - 2025-01-28
 

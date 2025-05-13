@@ -6,6 +6,7 @@
                 target_schema="financeiro_staging",
                 unique_key="concat(data, '-', servico)",
                 strategy="timestamp",
+                updated_at="timestamp_ultima_atualizacao",
             )
         }}
     {% else %}
