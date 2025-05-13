@@ -2,7 +2,7 @@
 {{ config(enabled=false, materialized="ephemeral") }}
 {% else %}
 {{ config(materialized="ephemeral") }}
-{% endif%}
+{% endif %}
 select
     data,
     tipo_dia,

@@ -7,7 +7,7 @@
         labels={'dashboard':'yes'}
     )
 }}
-{% if var('start_date') < var("DATA_SUBSIDIO_V9_INICIO") %}
+{% if var("start_date") < var("DATA_SUBSIDIO_V9_INICIO") %}
 select *
 from {{ ref("monitoramento_servico_dia") }}
 where
