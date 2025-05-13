@@ -1,15 +1,29 @@
 {% snapshot snapshot_subsidio_sumario_servico_dia_pagamento %}
-
-    {{
-        config(
-            target_schema="financeiro_staging",
-            unique_key="concat(data, '-', servico)",
-            strategy="timestamp",
-            updated_at="timestamp_ultima_atualizacao",
-            invalidate_hard_deletes=True,
-            partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-        )
-    }}
+    {% if var("start_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
+        {{
+            config(
+                enabled=false,
+                target_schema="financeiro_staging",
+                unique_key="concat(data, '-', servico)",
+                strategy="timestamp",
+            )
+        }}
+    {% else %}
+        {{
+            config(
+                target_schema="financeiro_staging",
+                unique_key="concat(data, '-', servico)",
+                strategy="timestamp",
+                updated_at="timestamp_ultima_atualizacao",
+                invalidate_hard_deletes=True,
+                partition_by={
+                    "field": "data",
+                    "data_type": "date",
+                    "granularity": "day",
+                },
+            )
+        }}
+    {% endif %}
 
     select
         * except (versao),
