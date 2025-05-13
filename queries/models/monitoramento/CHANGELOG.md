@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrige referencias a modelos desabilitados nos modelos `monitoramento_servico_dia.sql`, `monitoramento_servico_dia_tipo_viagem.sql`, `monitoramento_servico_dia_historico.sql` e `monitoramento_servico_dia_tipo_viagem_historico.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/574)
+- Corrige referências a modelos desabilitados nos modelos `monitoramento_servico_dia.sql`, `monitoramento_servico_dia_tipo_viagem.sql`, `monitoramento_servico_dia_historico.sql` e `monitoramento_servico_dia_tipo_viagem_historico.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/574)
 
 ## [1.3.5] - 2025-03-25
 

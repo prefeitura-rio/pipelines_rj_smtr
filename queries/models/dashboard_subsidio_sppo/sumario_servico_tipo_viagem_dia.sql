@@ -1,6 +1,6 @@
 {% if var("start_date") >= var("DATA_SUBSIDIO_V9_INICIO") %}
 {{ config(enabled=false) }}
-{% endif%}
+{% endif %}
 WITH
   planejado AS (
   SELECT

@@ -4,7 +4,6 @@
 {{ config(alias=this.name ~ var('encontro_contas_modo')) }}
 {% endif %}
 
-
 select
   extract(year from data) as ano,
   consorcio,
