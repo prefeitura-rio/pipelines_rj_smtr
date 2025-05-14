@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo_v2
 
+## [1.0.8] - 2025-05-14
+
+### Alterado
+
+- Alterado o calculo da coluna `valor_judicial` para não somar o `valor_penalidade` a partir e `2025-04-01` no modelo `sumario_faixa_servico_dia_pagamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/580)
+
 ## [1.0.7] - 2025-05-09
 
 ### Corrigido
