@@ -78,7 +78,7 @@ with
             ) as valor_total_sem_glosa,
             sum(valor_apurado) + p.valor_penalidade as valor_total_com_glosa,
             case
-                when p.valor_penalidade != 0
+                when p.valor_penalidade != 0 and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
                 then - p.valor_penalidade
                 else
                     safe_cast(
