@@ -88,6 +88,14 @@ def run_dbt_model(
     flags: str = None,
     _vars: dict | List[Dict] = None,
 ):
+    if not _vars:
+        _vars = {}
+    if isinstance(_vars, dict):
+        _vars["flow_name"] = prefect.context.flow_name
+    else:
+        for a in _vars:
+            a["flow_name"] = prefect.context.flow_name
+
     return run_dbt_model_func(
         dataset_id=dataset_id,
         table_id=table_id,
