@@ -1,0 +1,101 @@
+version: 2
+
+models:
+  - name: aux_gps
+    description: "Tabela com todos os registros de GPS da API {{ var('fonte_gps') }}"
+    columns:
+      - name: data
+        description: "{{ doc('data_captura') }}"
+      - name: hora
+        description: "{{ doc('hora_captura') }}"
+      - name: datetime_gps
+        description: "{{ doc('timestamp_gps') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+      - name: latitude
+        description: "{{ doc('latitude_gps') }}"
+      - name: longitude
+        description: "{{ doc('longitude_gps') }}"
+      - name: velocidade
+        description: "{{ doc('velocidade_instantanea') }}"
+      - name: direcao
+        description: "{{ doc('direcao_gps') }}"
+      - name: route_id
+        description: "{{ doc('route_id') }}"
+      - name: trip_id
+        description: "{{ doc('trip_id') }}"
+      - name: shape_id
+        description: "{{ doc('shape_id') }}"
+      - name: datetime_envio
+        description: "{{ doc('datetime_envio_gps') }}"
+      - name: datetime_servidor
+        description: "{{ doc('datetime_servidor_gps') }}"
+      - name: datetime_captura
+        description: "{{ doc('datetime_captura') }}"
+  - name: aux_realocacao
+    description: "Tabela com todas as realocações de linha informadas pela API {{ var('fonte_gps') }}"
+    columns:
+      - name: data
+        description: "{{ doc('data_captura') }}"
+      - name: hora
+        description: "{{ doc('hora_captura') }}"
+      - name: datetime_operacao
+        description: "{{ doc('datetime_operacao') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: servico
+        description: "{{ doc('servico_realocacao') }}"
+      - name: datetime_entrada
+        description: "{{ doc('datetime_entrada') }}"
+      - name: datetime_saida
+        description: "{{ doc('datetime_saida') }}"
+      - name: datetime_processamento
+        description: "{{ doc('datetime_processamento') }}"
+      - name: datetime_captura
+        description: "{{ doc('datetime_captura') }}"
+
+  - name: aux_gps_realocacao
+    description: "Tabela com realocações de linha válidas da API {{ var('fonte_gps') }}"
+    columns:
+      - name: data
+        description: "{{ doc('data_captura') }}"
+      - name: hora
+        description: "{{ doc('hora_captura') }}"
+      - name: datetime_gps
+        description: "{{ doc('timestamp_gps') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: servico_gps
+        description: "{{ doc('servico_gps') }}"
+      - name: servico_realocado
+        description: "{{ doc('servico_realocacao') }}"
+      - name: datetime_realocado
+        description: "{{ doc('datetime_realocacao') }}"
+
+  - name: staging_garagens
+    description: "Tabela com informações das garagens dos operadores"
+    columns:
+      - name: data
+        description: "{{ doc('data_captura') }}"
+      - name: operador
+        description: "Nome da empresa operadora de transporte público"
+      - name: endereco
+        description: "Endereço completo da garagem do operador"
+      - name: bairro
+        description: "Nome do bairro onde está localizada a garagem"
+      - name: oficial
+        description: "Indicador se a garagem é oficial"
+      - name: ativa
+        description: "Status operacional da garagem"
+      - name: uso
+        description: "Tipo de uso da garagem"
+      - name: obs
+        description: "Observações adicionais sobre a garagem"
+      - name: area_m2
+        description: "Área total da garagem (m²)"
+      - name: geometry_wkt
+        description: "Geometria da garagem em formato WKT"
