@@ -1,0 +1,76 @@
+version: 2
+
+models:
+  - name: registros
+    description: "View para os dados de GPS das vans em staging."
+    columns:
+      - name: codigo
+        description: ""codigo""
+      - name: placa
+        description: "{{ doc('placa') }}"
+      - name: linha
+        description: "{{ doc('linha') }}"
+      - name: latitude
+        description: "{{ doc('latitude_gps') }}"
+      - name: longitude
+        description: "{{ doc('longitude_gps') }}"
+      - name: timestamp_gps
+        description: "{{ doc('timestamp_gps') }}"
+      - name: velocidade
+        description: "{{ doc('velocidade_instantanea') }}"
+      - name: id_migracao_trajeto
+        description: ""id_migracao_trajeto""
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+      - name: trajeto
+        description: "{{ doc('trajeto') }}"
+      - name: timestamp_captura
+        description: "{{ doc('timestamp_captura') }}"
+      - name: data
+        description: "{{ doc('data_captura') }}"
+      - name: hora
+        description: "{{ doc('hora_captura') }}"
+  - name: registros_desaninhada
+    description: "View para os dados de GPS das vans em staging com a coluna content desaninhada."
+    columns:
+      - name: data
+        description: "{{ doc('data_captura') }}"
+      - name: hora
+        description: "{{ doc('hora_captura') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: timestamp_captura
+        description: "{{ doc('timestamp_captura') }}"
+      - name: timestamp_gps
+        description: "{{ doc('timestamp_gps') }}"
+      - name: latitude
+        description: "{{ doc('latitude_gps') }}"
+      - name: longitude
+        description: "{{ doc('longitude_gps') }}"
+      - name: linha
+        description: "{{ doc('linha') }}"
+      - name: velocidade
+        description: "{{ doc('velocidade_instantanea') }}"
+      - name: id_migracao_trajeto
+        description: ""id_migracao_trajeto""
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+      - name: trajeto
+        description: "{{ doc('trajeto') }}"
+      - name: hodometro
+        description: ""hodometro""
+  - name: registros_v2
+    description: "View para os dados de GPS das vans em staging."
+    columns:
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: timestamp_gps
+        description: "{{ doc('timestamp_gps') }}"
+      - name: timestamp_captura
+        description: "{{ doc('timestamp_captura') }}"
+      - name: content
+        description: "{{ doc('content') }}"
+      - name: data
+        description: "{{ doc('data_captura') }}"
+      - name: hora
+        description: "{{ doc('hora_captura') }}"
