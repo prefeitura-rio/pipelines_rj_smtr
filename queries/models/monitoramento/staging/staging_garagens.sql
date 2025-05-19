@@ -12,16 +12,16 @@ with
             nullif(trim(safe_cast(endereco as string)), "") as endereco,
             nullif(trim(safe_cast(bairro as string)), "") as bairro,
             case
-                when safe_cast(oficial as string) = "SIM"
+                when upper(trim(safe_cast(oficial as string))) = "SIM"
                 then true
-                when safe_cast(oficial as string) = "NÃO"
+                when upper(trim(safe_cast(oficial as string))) = "NÃO"
                 then false
                 else null
             end as oficial,
             case
-                when safe_cast(ativa_ou_inativa as string) = "ATIVA"
+                when upper(trim(safe_cast(ativa_ou_inativa as string))) = "ATIVA"
                 then true
-                when safe_cast(ativa_ou_inativa as string) = "INATIVA"
+                when upper(trim(safe_cast(ativa_ou_inativa as string))) = "INATIVA"
                 then false
                 else null
             end as ativa,
