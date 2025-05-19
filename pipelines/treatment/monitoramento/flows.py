@@ -20,6 +20,7 @@ from pipelines.treatment.planejamento.constants import (
     constants as planejamento_constants,
 )
 from pipelines.treatment.templates.flows import create_default_materialization_flow
+from pipelines.utils.prefect import set_default_parameters
 
 cron_every_hour_minute_6 = create_hourly_cron(minute=6)
 
@@ -62,4 +63,34 @@ VIAGEM_VALIDACAO_MATERIALIZACAO = create_default_materialization_flow(
             "schedule_cron": cron_every_hour_minute_6,
         },
     ],
+)
+
+GPS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="gps conecta - materializacao",
+    selector=constants.GPS_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+)
+set_default_parameters(
+    GPS_CONECTA_MATERIALIZACAO,
+    {"flags": "--vars '{'modo_gps': 'onibus', 'fonte_gps': 'conecta' }'"},
+)
+
+GPS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="gps cittati - materializacao",
+    selector=constants.GPS_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+)
+set_default_parameters(
+    GPS_CONECTA_MATERIALIZACAO,
+    {"flags": "--vars '{'modo_gps': 'onibus', 'fonte_gps': 'cittati' }'"},
+)
+
+GPS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="gps zirix - materializacao",
+    selector=constants.GPS_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+)
+set_default_parameters(
+    GPS_CONECTA_MATERIALIZACAO,
+    {"flags": "--vars '{'modo_gps': 'onibus', 'fonte_gps': 'zirix' }'"},
 )
