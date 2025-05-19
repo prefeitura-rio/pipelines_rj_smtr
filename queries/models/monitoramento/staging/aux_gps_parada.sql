@@ -34,7 +34,13 @@ with
             operador as nome_parada,
             'garagem' as tipo_parada
         from {{ ref("staging_garagens") }}
-        where ativa
+        where
+            ativa
+            and inicio_vigencia <= date('{{ var("date_range_end") }}')
+            and (
+                fim_vigencia is null
+                or fim_vigencia >= date('{{ var("date_range_start") }}')
+            )
     ),
     posicoes_veiculos as (
         select id_veiculo, datetime_gps, data, servico, posicao_veiculo_geo
@@ -56,7 +62,11 @@ with
             g.nome_parada,
             g.tipo_parada
         from posicoes_veiculos v
-        join garagens g on st_intersects(v.posicao_veiculo_geo, g.geometry)
+        join
+            garagens g
+            on st_intersects(v.posicao_veiculo_geo, g.geometry)
+            and v.data >= g.inicio_vigencia
+            and (g.fim_vigencia is null or v.data <= g.fim_vigencia)
     ),
     terminais_proximos as (
         select
