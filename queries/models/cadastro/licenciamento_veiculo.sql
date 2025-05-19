@@ -13,7 +13,7 @@
 with
     licenciamento as (
         select *
-        from {{ ref("licenciamento") }}
+        from {{ ref("aux_licenciamento") }}
         {% if is_incremental() %}
             where
                 data between date("{{ var('date_range_start') }}") and date(
@@ -21,8 +21,8 @@ with
                 )
         {% endif %}
     ),
-    datas as (
-        select data
+    {# datas as ( #}
+    {# select data
         from
             unnest(
                 generate_date_array(
@@ -55,25 +55,43 @@ with
         select l.*, d.data_ultimo_arquivo as data_arquivo_fonte
         from datas_preenchimento d
         join licenciamento l on d.data_ultimo_arquivo = l.data
-    ),
+    ), #}
+    {% set constant_columns = [
+        "modo",
+        "permissao",
+        "tecnologia",
+        "ano_fabricacao",
+        "id_carroceria",
+        "id_interno_carroceria",
+        "carroceria",
+        "id_chassi",
+        "id_fabricante_chassi",
+        "nome_chassi",
+        "id_planta",
+        "tipo_combustivel",
+        "tipo_veiculo",
+        "quantidade_lotacao_pe",
+        "quantidade_lotacao_sentado",
+        "indicador_ar_condicionado",
+        "indicador_elevador",
+        "indicador_usb",
+        "indicador_wifi",
+    ] %}
     novos_dados as (
         select
-            ifnull(
-                min(data_inicio_vinculo), min(data_arquivo_fonte)
-            ) as data_inicio_vinculo,
+            ifnull(min(data_inicio_vinculo), min(data)) as data_inicio_vinculo,
             case
                 when max(data) != (select max(data) from licenciamento) then max(data)
             end as data_fim_vinculo,
             id_veiculo,
             placa,
-            max(data_ultima_vistoria) as data_ultima_vistoria,
-            max_by(status, data) as status,
-            min(data_arquivo_fonte) as data_inclusao,
-            max(data_arquivo_fonte) as data_ultimo_arquivo
-        from licenciamento_datas_preenchidas
+            {% for col in constant_columns %} {{ col }}, {% endfor %}
+            min(data) as data_inclusao,
+            max(data) as data_ultimo_arquivo
+        from licenciamento
         group by id_veiculo, placa
     ),
-    sha_dados as (
+    novos_dados_sha as (
         {% set columns = (
             list_columns()
             | reject(
@@ -103,7 +121,6 @@ with
     )
 {% if is_incremental() %}
         ,
-        dados_atuais as (select * from {{ this }}),
         dados_consolidados as (
             select
                 case
@@ -122,18 +139,11 @@ with
                 end as data_fim_vinculo,
                 id_veiculo,
                 placa,
-                case
-                    when a.data_ultima_vistoria is null
-                    then n.data_ultima_vistoria
-                    when a.data_ultima_vistoria > n.data_ultima_vistoria
-                    then a.data_ultima_vistoria
-                    else n.data_ultima_vistoria
-                end as data_ultima_vistoria,
-                case
-                    when a.data_ultimo_arquivo > n.data_ultimo_arquivo
-                    then a.status
-                    else n.status
-                end as status,
+                {% for col in constant_columns %}
+                    case
+                        when a.id_veiculo is not null then a.{{ col }} else n.{{ col }}
+                    end as {{ col }},
+                {% endfor %}
                 case
                     when a.data_inclusao is null
                     then n.data_inclusao
@@ -148,23 +158,24 @@ with
                     then a.data_ultimo_arquivo
                     else n.data_ultimo_arquivo
                 end as data_ultimo_arquivo,
-                sha_dado
-            from dados_atuais a
-            full outer join sha_dados n using (id_veiculo, placa)
+                a.sha_dado as sha_dado_atual,
+                n.sha_dado as sha_dado_novo
+            from {{ this }} a
+            full outer join novos_dados_sha n using (id_veiculo, placa)
         ),
         sha_dados_consolidados as (
             select *, {{ sha_column }} as sha_dado from dados_consolidados
         )
     select
-        c.*,
+        c.* except (sha_dado_atual, sha_dado_novo),
+        coalesce(sha_dado_novo, sha_dado_atual) as sha_dado,
         case
-            when a.sha_dado is null or a.sha_dado != c.sha_dado
+            when sha_dado_atual null or sha_dado_atual != sha_dado_novo
             then current_datetime("America/Sao_Paulo")
             else datetime_ultima_atualizacao
         end as datetime_ultima_atualizacao,
         '{{ var("version") }}' as versao
-    from sha_dados_consolidados c
-    left join dados_atuais a using (id_veiculo, placa)
+    from sha_dados_consolidados
 {% else %}
     select
         *,
