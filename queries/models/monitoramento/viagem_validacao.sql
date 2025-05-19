@@ -56,7 +56,7 @@ with
             sentido,
             countif(id_segmento is not null) as quantidade_segmentos_verificados,
             countif(quantidade_gps > 0) as quantidade_segmentos_validos,
-            round(
+            ceil(
                 countif(id_segmento is not null)
                 * safe_cast((1 - {{ var("parametro_validacao") }}) as numeric)
             ) as quantidade_segmentos_tolerados,
@@ -107,22 +107,8 @@ with
             sentido,
             quantidade_segmentos_verificados,
             quantidade_segmentos_validos,
-            quantidade_segmentos_tolerados,
-            case
-                when quantidade_segmentos_tolerados > 1
-                then {{ var("parametro_validacao") }}
-                else
-                    round(
-                        1 - safe_divide(
-                            quantidade_segmentos_tolerados,
-                            quantidade_segmentos_verificados
-                        ),
-                        1
-                    )
-            end as parametro_validacao,
-            safe_divide(
-                quantidade_segmentos_validos, quantidade_segmentos_verificados
-            ) as indice_validacao,
+            quantidade_segmentos_verificados
+            - quantidade_segmentos_tolerados as quantidade_segmentos_necessarios,
             indicador_servico_divergente,
             indicador_shape_invalido,
             service_ids,
@@ -259,11 +245,10 @@ with
             vm.velocidade_media,
             vm.quantidade_segmentos_verificados,
             vm.quantidade_segmentos_validos,
-            vm.quantidade_segmentos_tolerados,
-            vm.indice_validacao,
+            vm.quantidade_segmentos_necessarios,
             vs.indicador_viagem_sobreposta,
             -- fmt: off
-            vm.indice_validacao >= vm.parametro_validacao as indicador_trajeto_valido,
+            vm.quantidade_segmentos_validos >= vm.quantidade_segmentos_necessarios as indicador_trajeto_valido,
             -- fmt: on
             vm.indicador_servico_planejado_gtfs,
             vm.indicador_servico_planejado_os,
@@ -275,7 +260,9 @@ with
                 vm.shape_id is not null
                 and vm.route_id is not null
                 and not vm.indicador_shape_invalido
-                and vm.indice_validacao >= vm.parametro_validacao
+                -- fmt: off
+                and vm.quantidade_segmentos_validos >= vm.quantidade_segmentos_necessarios
+                -- fmt: on
                 and vm.indicador_servico_planejado_gtfs
                 {% if var("tipo_materializacao") != "monitoramento" %}
                     and not vs.indicador_viagem_sobreposta
@@ -283,7 +270,6 @@ with
                 and not vm.indicador_acima_velocidade_max
                 and ifnull(vm.indicador_servico_planejado_os, true)
             ) as indicador_viagem_valida,
-            vm.parametro_validacao,
             vm.tipo_dia,
             vm.feed_version,
             vm.feed_start_date,
@@ -299,7 +285,7 @@ with
             row_number() over (
                 partition by id_veiculo, datetime_partida, datetime_chegada
                 order by
-                    indice_validacao desc,
+                    quantidade_segmentos_validos desc,
                     indicador_trajeto_alternativo,
                     distancia_planejada desc
             )
@@ -341,7 +327,6 @@ select
     velocidade_media,
     quantidade_segmentos_verificados,
     quantidade_segmentos_validos,
-    indice_validacao,
     indicador_viagem_sobreposta,
     indicador_trajeto_valido,
     indicador_servico_planejado_gtfs,
@@ -351,7 +336,6 @@ select
     indicador_trajeto_alternativo,
     indicador_acima_velocidade_max,
     indicador_viagem_valida,
-    parametro_validacao,
     tipo_dia,
     feed_version,
     feed_start_date,
