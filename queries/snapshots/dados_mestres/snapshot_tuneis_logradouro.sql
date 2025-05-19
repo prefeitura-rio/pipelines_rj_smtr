@@ -2,7 +2,7 @@
 
     {{
         config(
-            target_schema="dados_mestres",
+            target_schema="datario_staging",
             unique_key="id_trecho",
             strategy="timestamp",
             updated_at="timestamp_ultima_atualizacao",
@@ -10,15 +10,8 @@
         )
     }}
 
-    select
-        *,
-        timestamp(
-            current_datetime("America/Sao_Paulo"), "America/Sao_Paulo"
-        ) as timestamp_ultima_atualizacao
+    select *, current_timestamp() as timestamp_ultima_atualizacao
     from {{ source("dados_mestres", "logradouro") }}
     where tipo = "Túnel"
 
 {% endsnapshot %}
-
-{# partition_by={"field": "data", "data_type": "date", "granularity": "day"}, #}
-
