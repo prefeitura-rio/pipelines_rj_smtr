@@ -318,3 +318,11 @@ sources:
 
     tables:
       - name: ordem_servico
+
+  - name: monitoramento
+    database: rj-smtr
+
+    tables:
+      - name: gps_onibus_conecta
+      - name: gps_onibus_cittati
+      - name: gps_onibus_zirix
