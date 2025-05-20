@@ -2,7 +2,7 @@
 
     {{
         config(
-            target_schema="datario_staging",
+            target_schema="monitoramento_staging",
             unique_key="id_trecho",
             strategy="timestamp",
             updated_at="timestamp_ultima_atualizacao",
