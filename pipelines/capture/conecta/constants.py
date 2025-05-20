@@ -28,7 +28,7 @@ class constants(Enum):  # pylint: disable=c0103
         first_timestamp=datetime(2025, 5, 9, 0, 0, 0),
         schedule_cron=create_minute_cron(),
         primary_keys=["id_veiculo", "datetime_servidor"],
-        pretreatment_reader_args={"dtype": "object"},
+        pretreatment_reader_args={"dtype": "object", "convert_dates": False},
     )
 
     CONECTA_REALOCACAO_ENDPOINT = "EnvioRealocacoesSMTR"
@@ -39,5 +39,5 @@ class constants(Enum):  # pylint: disable=c0103
         first_timestamp=datetime(2025, 5, 9, 0, 0, 0),
         schedule_cron=create_minute_cron(minute=10),
         primary_keys=["id_veiculo", "datetime_processamento"],
-        pretreatment_reader_args={"dtype": "object"},
+        pretreatment_reader_args={"dtype": "object", "convert_dates": False},
     )
