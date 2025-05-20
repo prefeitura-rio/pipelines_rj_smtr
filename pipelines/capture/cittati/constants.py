@@ -8,7 +8,6 @@ from enum import Enum
 
 from pipelines.schedules import create_minute_cron
 from pipelines.utils.gcp.bigquery import SourceTable
-from pipelines.utils.pretreatment import pretreat_gps_realocacao, pretreat_gps_registros
 
 
 class constants(Enum):  # pylint: disable=c0103
@@ -29,7 +28,6 @@ class constants(Enum):  # pylint: disable=c0103
         first_timestamp=datetime(2025, 5, 9, 0, 0, 0),
         schedule_cron=create_minute_cron(),
         primary_keys=["id_veiculo", "datetime_servidor"],
-        pretreat_funcs=[pretreat_gps_registros],
     )
 
     CITTATI_REALOCACAO_ENDPOINT = "EnvioViagensRetroativasSMTR"
@@ -40,5 +38,4 @@ class constants(Enum):  # pylint: disable=c0103
         first_timestamp=datetime(2025, 5, 9, 0, 0, 0),
         schedule_cron=create_minute_cron(minute=10),
         primary_keys=["id_veiculo", "datetime_processamento"],
-        pretreat_funcs=[pretreat_gps_realocacao],
     )
