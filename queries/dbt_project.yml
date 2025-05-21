@@ -211,7 +211,7 @@ vars:
 
   limite_reducao_area_buffer:  0.5
   comprimento_minimo_segmento_shape: 990
-  buffer_segmento_metros: 20
+  buffer_segmento_metros: 30
   buffer_tunel_metros: 50
   parametro_validacao: 0.9
   comprimento_shape: 1000
