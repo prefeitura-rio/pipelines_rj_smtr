@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
 
+from pytz import timezone
+
 from pipelines.utils.extractors.api import get_raw_api
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.secret import get_secret
@@ -19,6 +21,8 @@ def create_generic_gps_extractor(
     realocacao_minutes: int = 10,
 ):
     """Base function to create GPS data extractors for different APIs"""
+
+    timestamp = timestamp.astimezone(tz=timezone("UTC"))
 
     if source.table_id == registros_table_id:
         url = f"{base_url}/{registros_endpoint}?"
