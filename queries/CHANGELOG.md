@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona selector `gps` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/297)
+- Adiciona selector `gps` e `gps_15_minutos` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/297)
 
 ## [1.0.3] - 2025-05-13
 
