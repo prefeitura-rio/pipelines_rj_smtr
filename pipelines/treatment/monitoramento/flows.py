@@ -72,7 +72,7 @@ GPS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
 )
 set_default_parameters(
     GPS_CONECTA_MATERIALIZACAO,
-    {"flags": "--vars '{'modo_gps': 'onibus', 'fonte_gps': 'conecta' }'"},
+    {"flags": """--vars '{"modo_gps": "onibus", "fonte_gps": "conecta"}'"""},
 )
 
 GPS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
@@ -81,8 +81,8 @@ GPS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
 )
 set_default_parameters(
-    GPS_CONECTA_MATERIALIZACAO,
-    {"flags": "--vars '{'modo_gps': 'onibus', 'fonte_gps': 'cittati' }'"},
+    GPS_CITTATI_MATERIALIZACAO,
+    {"flags": """--vars '{"modo_gps": "onibus", "fonte_gps": "cittati"}'"""},
 )
 
 GPS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
@@ -91,6 +91,6 @@ GPS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
 )
 set_default_parameters(
-    GPS_CONECTA_MATERIALIZACAO,
-    {"flags": "--vars '{'modo_gps': 'onibus', 'fonte_gps': 'zirix' }'"},
+    GPS_ZIRIX_MATERIALIZACAO,
+    {"flags": """--vars '{"modo_gps": "onibus", "fonte_gps": "zirix"}'"""},
 )
