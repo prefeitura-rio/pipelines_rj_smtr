@@ -11,6 +11,8 @@ with
     registros as (
         -- 1. registros_filtrada
         select
+            data,
+            hora,
             id_veiculo,
             datetime_gps,
             datetime_captura,
@@ -52,8 +54,8 @@ with
     )
 -- 5. Junção final
 select
-    date(r.datetime_gps) data,
-    extract(time from r.datetime_gps) hora,
+    r.data,
+    r.hora,
     r.datetime_gps,
     r.id_veiculo,
     r.servico,

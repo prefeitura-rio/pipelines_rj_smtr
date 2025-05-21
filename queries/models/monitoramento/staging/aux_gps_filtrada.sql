@@ -25,6 +25,7 @@ with
     filtrada as (
         select
             data,
+            hora,
             datetime_gps,
             id_veiculo,
             servico,

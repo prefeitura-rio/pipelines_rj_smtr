@@ -9,8 +9,7 @@ with
                 parse_timestamp(
                     '%Y-%m-%dT%H:%M:%SZ',
                     safe_cast(json_value(content, '$.datetime_operacao') as string)
-                ),
-                "America/Sao_Paulo"
+                )
             ) datetime_operacao,
             safe_cast(id_veiculo as string) id_veiculo,
             concat(
@@ -31,8 +30,7 @@ with
                 parse_timestamp(
                     '%Y-%m-%dT%H:%M:%SZ',
                     safe_cast(json_value(content, '$.datetime_entrada') as string)
-                ),
-                "America/Sao_Paulo"
+                )
             ) datetime_entrada,
             case
                 when
@@ -44,17 +42,15 @@ with
                         parse_timestamp(
                             '%Y-%m-%dT%H:%M:%SZ',
                             safe_cast(json_value(content, '$.datetime_saida') as string)
-                        ),
-                        "America/Sao_Paulo"
+                        )
                     )
             end as datetime_saida,
             datetime(
-                parse_timestamp('%Y-%m-%dT%H:%M:%SZ', datetime_processamento),
-                "America/Sao_Paulo"
+                parse_timestamp('%Y-%m-%dT%H:%M:%SZ', datetime_processamento)
             ) datetime_processamento,
             datetime(
                 parse_timestamp(
-                    '%Y-%m-%d %H:%M:%S%z',
+                    '%Y-%m-%d %H:%M:%S%Ez',
                     safe_cast(
                         json_value(content, '$._datetime_execucao_flow') as string
                     )
@@ -62,7 +58,7 @@ with
                 "America/Sao_Paulo"
             ) datetime_execucao_flow,
             datetime(
-                parse_timestamp('%Y-%m-%d %H:%M:%S%z', timestamp_captura),
+                parse_timestamp('%Y-%m-%d %H:%M:%S%Ez', timestamp_captura),
                 "America/Sao_Paulo"
             ) datetime_captura
         from {{ source("source_" ~ var("fonte_gps"), "realocacao") }}

@@ -31,7 +31,7 @@ with
     ),
     -- 2. Altera registros de GPS com servicos realocados
     gps as (
-        select id_veiculo, datetime_gps, servico, data
+        select id_veiculo, datetime_gps, servico, data, hora
         from {{ ref("aux_gps") }}
         where
             data between date("{{var('date_range_start')}}") and date(
