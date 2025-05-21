@@ -5,11 +5,12 @@ with
         select
             data,
             safe_cast(hora as int64) hora,
-            safe_cast(
-                datetime(
-                    timestamp(safe_cast(json_value(content, '$.datetime') as string)),
-                    "America/Sao_Paulo"
-                ) as datetime
+            datetime(
+                parse_timestamp(
+                    '%Y-%m-%dT%H:%M:%SZ',
+                    safe_cast(json_value(content, '$.datetime') as string)
+                ),
+                "America/Sao_Paulo"
             ) datetime_gps,
             safe_cast(id_veiculo as string) id_veiculo,
             concat(
@@ -38,37 +39,31 @@ with
             safe_cast(json_value(content, '$.route_id') as string) route_id,
             safe_cast(json_value(content, '$.trip_id') as string) trip_id,
             safe_cast(json_value(content, '$.shape_id') as string) shape_id,
-            safe_cast(
-                datetime(
-                    timestamp(
-                        safe_cast(json_value(content, '$.datetime_envio') as string)
-                    ),
-                    "America/Sao_Paulo"
-                ) as datetime
+            datetime(
+                parse_timestamp(
+                    '%Y-%m-%dT%H:%M:%SZ',
+                    safe_cast(json_value(content, '$.datetime_envio') as string)
+                ),
+                "America/Sao_Paulo"
             ) datetime_envio,
-            safe_cast(
-                datetime(
-                    timestamp(
-                        safe_cast(json_value(content, '$.datetime_servidor') as string)
-                    ),
-                    "America/Sao_Paulo"
-                ) as datetime
+            datetime(
+                parse_timestamp('%Y-%m-%dT%H:%M:%SZ', datetime_servidor),
+                "America/Sao_Paulo"
             ) datetime_servidor,
-            safe_cast(
-                datetime(
-                    timestamp(datetime_execucao_flow), "America/Sao_Paulo"
-                ) as datetime
+            datetime(
+                parse_timestamp(
+                    '%Y-%m-%d %H:%M:%S%z',
+                    safe_cast(
+                        json_value(content, '$._datetime_execucao_flow') as string
+                    )
+                ),
+                "America/Sao_Paulo"
             ) datetime_execucao_flow,
-            safe_cast(
-                datetime(timestamp(timestamp_captura), "America/Sao_Paulo") as datetime
+            datetime(
+                parse_timestamp('%Y-%m-%d %H:%M:%S%z', timestamp_captura),
+                "America/Sao_Paulo"
             ) datetime_captura
-        from
-            {{
-                source(
-                    "source_" ~ var("fonte_gps"),
-                    "registros",
-                )
-            }}
+        from {{ source("source_" ~ var("fonte_gps"), "registros") }}
     ),
     filtered_data as (
         select *
