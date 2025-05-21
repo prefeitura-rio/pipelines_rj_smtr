@@ -219,7 +219,10 @@ def get_repo_version() -> str:
 
 @task
 def create_dbt_run_vars(
-    datetime_start: datetime, datetime_end: datetime, repo_version: str, additional_vars: dict
+    datetime_start: datetime,
+    datetime_end: datetime,
+    repo_version: str,
+    additional_vars: Optional[dict] = None,
 ) -> dict:
     """
     Cria a lista de variaveis para rodar o modelo DBT,
