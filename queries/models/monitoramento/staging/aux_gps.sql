@@ -55,6 +55,11 @@ with
                 ) as datetime
             ) datetime_servidor,
             safe_cast(
+                datetime(
+                    timestamp(datetime_execucao_flow), "America/Sao_Paulo"
+                ) as datetime
+            ) datetime_execucao_flow,
+            safe_cast(
                 datetime(timestamp(timestamp_captura), "America/Sao_Paulo") as datetime
             ) datetime_captura
         from
@@ -86,6 +91,7 @@ select
     shape_id,
     datetime_envio,
     datetime_servidor,
+    datetime_execucao_flow,
     datetime_captura
 from filtered_data
 qualify

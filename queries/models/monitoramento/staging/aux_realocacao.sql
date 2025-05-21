@@ -47,6 +47,11 @@ with source_data as (
             datetime(timestamp(datetime_processamento), "America/Sao_Paulo") as datetime
         ) as datetime_processamento,
         safe_cast(
+                datetime(
+                    timestamp(datetime_execucao_flow), "America/Sao_Paulo"
+                ) as datetime
+            ) datetime_execucao_flow,
+        safe_cast(
             datetime(timestamp(timestamp_captura), "America/Sao_Paulo") as datetime
         ) as datetime_captura
     from
@@ -66,6 +71,7 @@ select distinct
     datetime_entrada,
     datetime_saida,
     datetime_processamento,
+    datetime_execucao_flow,
     datetime_captura
 from
     source_data
