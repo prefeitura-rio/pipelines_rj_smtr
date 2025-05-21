@@ -74,8 +74,8 @@ gps_sources = [
         "flow_name": "gps conecta - materializacao",
         "selector": constants.GPS_SELECTOR.value,
         "wait": [
-            conecta_constants.CAPTURA_REGISTROS_CONECTA.value,
-            conecta_constants.CAPTURA_REALOCACAO_CONECTA.value,
+            conecta_constants.CONECTA_REGISTROS_SOURCE.value,
+            conecta_constants.CONECTA_REALOCACAO_SOURCE.value,
         ],
     },
     {
@@ -83,8 +83,8 @@ gps_sources = [
         "flow_name": "gps cittati - materializacao",
         "selector": constants.GPS_SELECTOR.value,
         "wait": [
-            cittati_constants.CAPTURA_REGISTROS_CITTATI.value,
-            cittati_constants.CAPTURA_REALOCACAO_CITTATI.value,
+            cittati_constants.CITTATI_REGISTROS_SOURCE.value,
+            cittati_constants.CITTATI_REALOCACAO_SOURCE.value,
         ],
     },
     {
@@ -92,8 +92,8 @@ gps_sources = [
         "flow_name": "gps zirix - materializacao",
         "selector": constants.GPS_SELECTOR.value,
         "wait": [
-            zirix_constants.CAPTURA_REGISTROS_ZIRIX.value,
-            zirix_constants.CAPTURA_REALOCACAO_ZIRIX.value,
+            zirix_constants.ZIRIX_REGISTROS_SOURCE.value,
+            zirix_constants.ZIRIX_REALOCACAO_SOURCE.value,
         ],
     },
     {
@@ -101,8 +101,8 @@ gps_sources = [
         "flow_name": "gps_15_minutos conecta - materializacao",
         "selector": constants.GPS_15_MINUTOS_SELECTOR.value,
         "wait": [
-            conecta_constants.CAPTURA_REGISTROS_CONECTA.value,
-            conecta_constants.CAPTURA_REALOCACAO_CONECTA.value,
+            conecta_constants.CONECTA_REGISTROS_SOURCE.value,
+            conecta_constants.CONECTA_REALOCACAO_SOURCE.value,
         ],
     },
     {
@@ -110,8 +110,8 @@ gps_sources = [
         "flow_name": "gps_15_minutos cittati - materializacao",
         "selector": constants.GPS_15_MINUTOS_SELECTOR.value,
         "wait": [
-            cittati_constants.CAPTURA_REGISTROS_CITTATI.value,
-            cittati_constants.CAPTURA_REALOCACAO_CITTATI.value,
+            cittati_constants.CITTATI_REGISTROS_SOURCE.value,
+            cittati_constants.CITTATI_REALOCACAO_SOURCE.value,
         ],
     },
     {
@@ -119,8 +119,8 @@ gps_sources = [
         "flow_name": "gps_15_minutos zirix - materializacao",
         "selector": constants.GPS_15_MINUTOS_SELECTOR.value,
         "wait": [
-            zirix_constants.CAPTURA_REGISTROS_ZIRIX.value,
-            zirix_constants.CAPTURA_REALOCACAO_ZIRIX.value,
+            zirix_constants.ZIRIX_REGISTROS_SOURCE.value,
+            zirix_constants.ZIRIX_REALOCACAO_SOURCE.value,
         ],
     },
 ]
