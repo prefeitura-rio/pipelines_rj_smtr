@@ -90,7 +90,7 @@ select
 from filtered_data
 qualify
     row_number() over (
-        partition by id_veiculo, latitude, longitude, datetime_gps, datetime_captura
+        partition by id_veiculo, latitude, longitude, datetime_gps, datetime_servidor
         order by datetime_captura desc
     )
     = 1
