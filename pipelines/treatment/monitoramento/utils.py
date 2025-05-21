@@ -29,7 +29,7 @@ def create_gps_materialization_flow(
         wait=wait_sources,
     )
 
-    gps_vars = {"modo_gps": modo_gps, "fonte_gps": fonte_gps, "15_minutos": "False"}
+    gps_vars = {"modo_gps": modo_gps, "fonte_gps": fonte_gps, "15_minutos": False}
     set_default_parameters(gps_flow, {"additional_vars": gps_vars})
 
     gps_15_minutos_flow = create_default_materialization_flow(
@@ -39,7 +39,7 @@ def create_gps_materialization_flow(
         wait=wait_sources,
     )
 
-    gps_15_vars = {"modo_gps": modo_gps, "fonte_gps": fonte_gps, "15_minutos": "True"}
+    gps_15_vars = {"modo_gps": modo_gps, "fonte_gps": fonte_gps, "15_minutos": True}
     set_default_parameters(gps_15_minutos_flow, {"additional_vars": gps_15_vars})
 
     return gps_flow, gps_15_minutos_flow
