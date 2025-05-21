@@ -1,5 +1,11 @@
 # Changelog - treatment
 
+## [1.1.4] - 2025-05-22
+
+### Adicionado
+
+- Adiciona parâmetro `additional_vars` na task `create_dbt_run_vars` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/586)
+
 ## [1.1.3] - 2025-05-06
 
 ### Adicionado
