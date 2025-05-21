@@ -285,6 +285,8 @@ def transform_raw_to_nested_structure(
         if len(primary_keys) < len(data.columns):
             data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
 
+        captura = create_timestamp_captura(timestamp=datetime.now())
+        data["datetime_execucao_flow"] = captura
         timestamp = create_timestamp_captura(timestamp=timestamp)
         data["timestamp_captura"] = timestamp
 
