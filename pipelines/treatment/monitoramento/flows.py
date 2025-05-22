@@ -24,6 +24,7 @@ from pipelines.treatment.planejamento.constants import (
     constants as planejamento_constants,
 )
 from pipelines.treatment.templates.flows import create_default_materialization_flow
+from pipelines.utils.prefect import set_default_parameters
 
 cron_every_hour_minute_6 = create_hourly_cron(minute=6)
 
@@ -68,14 +69,26 @@ VIAGEM_VALIDACAO_MATERIALIZACAO = create_default_materialization_flow(
     ],
 )
 
-GPS_CONECTA_MATERIALIZACAO, GPS_15_MINUTOS_CONECTA_MATERIALIZACAO = create_gps_materialization_flow(
-    modo_gps="onibus",
-    fonte_gps="conecta",
-    wait_sources=[
+GPS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="gps conecta - materializacao",
+    selector=constants.GPS_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[
         conecta_constants.CONECTA_REGISTROS_SOURCE.value,
         conecta_constants.CONECTA_REALOCACAO_SOURCE.value,
     ],
 )
+gps_vars = {"modo_gps": "onibus", "fonte_gps": "conecta", "15_minutos": False}
+set_default_parameters(GPS_CONECTA_MATERIALIZACAO, {"additional_vars": gps_vars})
+
+# GPS_CONECTA_MATERIALIZACAO,GPS_15_MINUTOS_CONECTA_MATERIALIZACAO=create_gps_materialization_flow(
+#     modo_gps="onibus",
+#     fonte_gps="conecta",
+#     wait_sources=[
+#         conecta_constants.CONECTA_REGISTROS_SOURCE.value,
+#         conecta_constants.CONECTA_REALOCACAO_SOURCE.value,
+#     ],
+# )
 
 GPS_CITTATI_MATERIALIZACAO, GPS_15_MINUTOS_CITTATI_MATERIALIZACAO = create_gps_materialization_flow(
     modo_gps="onibus",
