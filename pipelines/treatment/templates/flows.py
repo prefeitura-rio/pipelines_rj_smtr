@@ -84,6 +84,12 @@ def create_default_materialization_flow(
             accepted_types=bool,
         )
 
+        additional_vars = TypedParameter(
+            name="additional_vars",
+            default=None,
+            accepted_types=(dict, NoneType),
+        )
+
         env = get_run_env()
 
         timestamp = get_scheduled_timestamp()
@@ -121,6 +127,7 @@ def create_default_materialization_flow(
             datetime_start=datetime_start,
             datetime_end=datetime_end,
             repo_version=repo_version,
+            additional_vars=additional_vars,
         )
 
         dbt_run = run_dbt(
