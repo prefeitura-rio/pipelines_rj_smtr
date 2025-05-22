@@ -19,7 +19,6 @@ from pipelines.migration.br_rj_riodejaneiro_onibus_gps_zirix.constants import (
 )
 from pipelines.schedules import create_hourly_cron
 from pipelines.treatment.monitoramento.constants import constants
-from pipelines.treatment.monitoramento.utils import create_gps_materialization_flow
 from pipelines.treatment.planejamento.constants import (
     constants as planejamento_constants,
 )
@@ -78,32 +77,69 @@ GPS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
         conecta_constants.CONECTA_REALOCACAO_SOURCE.value,
     ],
 )
-gps_vars = {"modo_gps": "onibus", "fonte_gps": "conecta", "15_minutos": False}
-set_default_parameters(GPS_CONECTA_MATERIALIZACAO, {"additional_vars": gps_vars})
+gps_vars_conecta = {"modo_gps": "onibus", "fonte_gps": "conecta", "15_minutos": False}
+set_default_parameters(GPS_CONECTA_MATERIALIZACAO, {"additional_vars": gps_vars_conecta})
 
-# GPS_CONECTA_MATERIALIZACAO,GPS_15_MINUTOS_CONECTA_MATERIALIZACAO=create_gps_materialization_flow(
-#     modo_gps="onibus",
-#     fonte_gps="conecta",
-#     wait_sources=[
-#         conecta_constants.CONECTA_REGISTROS_SOURCE.value,
-#         conecta_constants.CONECTA_REALOCACAO_SOURCE.value,
-#     ],
-# )
-
-GPS_CITTATI_MATERIALIZACAO, GPS_15_MINUTOS_CITTATI_MATERIALIZACAO = create_gps_materialization_flow(
-    modo_gps="onibus",
-    fonte_gps="cittati",
-    wait_sources=[
+GPS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="gps cittati - materializacao",
+    selector=constants.GPS_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[
         cittati_constants.CITTATI_REGISTROS_SOURCE.value,
         cittati_constants.CITTATI_REALOCACAO_SOURCE.value,
     ],
 )
+gps_vars_cittati = {"modo_gps": "onibus", "fonte_gps": "cittati", "15_minutos": False}
+set_default_parameters(GPS_CITTATI_MATERIALIZACAO, {"additional_vars": gps_vars_cittati})
 
-GPS_ZIRIX_MATERIALIZACAO, GPS_15_MINUTOS_ZIRIX_MATERIALIZACAO = create_gps_materialization_flow(
-    modo_gps="onibus",
-    fonte_gps="zirix",
-    wait_sources=[
+GPS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="gps zirix - materializacao",
+    selector=constants.GPS_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[
         zirix_constants.ZIRIX_REGISTROS_SOURCE.value,
         zirix_constants.ZIRIX_REALOCACAO_SOURCE.value,
     ],
 )
+gps_vars_zirix = {"modo_gps": "onibus", "fonte_gps": "zirix", "15_minutos": False}
+set_default_parameters(GPS_ZIRIX_MATERIALIZACAO, {"additional_vars": gps_vars_zirix})
+
+GPS_15_MINUTOS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="gps_15_minutos conecta - materializacao",
+    selector=constants.GPS_15_MINUTOS_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[
+        conecta_constants.CONECTA_REGISTROS_SOURCE.value,
+        conecta_constants.CONECTA_REALOCACAO_SOURCE.value,
+    ],
+)
+gps_15_vars_conecta = {"modo_gps": "onibus", "fonte_gps": "conecta", "15_minutos": True}
+set_default_parameters(
+    GPS_15_MINUTOS_CONECTA_MATERIALIZACAO, {"additional_vars": gps_15_vars_conecta}
+)
+
+GPS_15_MINUTOS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="gps_15_minutos cittati - materializacao",
+    selector=constants.GPS_15_MINUTOS_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[
+        cittati_constants.CITTATI_REGISTROS_SOURCE.value,
+        cittati_constants.CITTATI_REALOCACAO_SOURCE.value,
+    ],
+)
+gps_15_vars_cittati = {"modo_gps": "onibus", "fonte_gps": "cittati", "15_minutos": True}
+set_default_parameters(
+    GPS_15_MINUTOS_CITTATI_MATERIALIZACAO, {"additional_vars": gps_15_vars_cittati}
+)
+
+GPS_15_MINUTOS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="gps_15_minutos zirix - materializacao",
+    selector=constants.GPS_15_MINUTOS_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[
+        zirix_constants.ZIRIX_REGISTROS_SOURCE.value,
+        zirix_constants.ZIRIX_REALOCACAO_SOURCE.value,
+    ],
+)
+gps_15_vars_zirix = {"modo_gps": "onibus", "fonte_gps": "zirix", "15_minutos": True}
+set_default_parameters(GPS_15_MINUTOS_ZIRIX_MATERIALIZACAO, {"additional_vars": gps_15_vars_zirix})
