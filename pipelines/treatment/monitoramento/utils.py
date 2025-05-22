@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from prefeitura_rio.pipelines_utils.custom import Flow
+
 from pipelines.constants import constants as smtr_constants
 from pipelines.treatment.monitoramento.constants import constants
 from pipelines.treatment.templates.flows import create_default_materialization_flow
@@ -9,7 +11,7 @@ def create_gps_materialization_flow(
     modo_gps: str,
     fonte_gps: str,
     wait_sources: list,
-) -> tuple:
+) -> tuple[Flow, Flow]:
     """
     Cria flows de materialização de GPS para uma fonte específica.
 
