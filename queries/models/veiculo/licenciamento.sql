@@ -8,7 +8,7 @@
         incremental_strategy="insert_overwrite",
     )
 }}
-{% if is_incremental() and execute %}
+{% if execute %}
     {% set licenciamento_dates = run_query(
         get_version_dates("licenciamento_data_versao_efetiva")
     ) %}
@@ -21,11 +21,11 @@ with
         from {{ ref("licenciamento_stu_staging") }} as l
         where
             data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
-            {% if is_incremental() %}
+            {# {% if is_incremental() %} #}
                 and data
                 between "{{ min_licenciamento_date }}"
                 and "{{ max_licenciamento_date }}"
-            {% endif %}
+            {# {% endif %} #}
     ),
     -- Processo.Rio MTR-CAP-2025/01125 [Correção da alteração do tipo de veículo]
     stu_tipo_veiculo as (
@@ -154,7 +154,7 @@ select
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     "{{ var('version') }}" as versao
 from stu_ano_ultima_vistoria
-where data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
+where date(data) >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}")
 {% if not is_incremental() or var("start_date") < var("DATA_SUBSIDIO_V13_INICIO") %}
     union all
     select
@@ -189,8 +189,8 @@ where data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
     from {{ source("veiculo_staging_rj-smtr", "sppo_licenciamento") }} l
     where
         data < "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
-        {% if is_incremental() %}
+        {# {% if is_incremental() %} #}
             and data
             between "{{ min_licenciamento_date }}" and "{{ max_licenciamento_date }}"
-        {% endif %}
+        {# {% endif %} #}
 {% endif %}

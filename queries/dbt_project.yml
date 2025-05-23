@@ -242,10 +242,10 @@ models:
   rj_smtr:
     projeto_subsidio_sppo:
       +materialized: view
-      +schema: projeto_subsidio_sppo
+      +schema: tcm_reprocessamento__projeto_subsidio_sppo
       deprecated:
         +materialized: view
-        +schema: projeto_subsidio_sppo
+        +schema: tcm_reprocessamento__projeto_subsidio_sppo
     br_rj_riodejaneiro_sigmob:
       +materialized: view
       +schema: br_rj_riodejaneiro_sigmob
@@ -263,16 +263,16 @@ models:
       +schema: br_rj_riodejaneiro_veiculos
     dashboard_subsidio_sppo:
       +materialized: view
-      +schema: dashboard_subsidio_sppo
+      +schema: tcm_reprocessamento__dashboard_subsidio_sppo
     dashboard_subsidio_sppo_staging:
       +materialized: view
-      +schema: dashboard_subsidio_sppo_staging
+      +schema: tcm_reprocessamento__dashboard_subsidio_sppo_staging
     veiculo:
       +materialized: view
-      +schema: veiculo
+      +schema: tcm_reprocessamento__veiculo
       staging:
         +materialized: view
-        +schema: veiculo_staging
+        +schema: tcm_reprocessamento__veiculo_staging
     br_rj_riodejaneiro_rdo:
       +materialized: view
       +schema: br_rj_riodejaneiro_rdo
@@ -345,18 +345,18 @@ models:
     financeiro:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
-      +schema: financeiro
+      +schema: tcm_reprocessamento__financeiro
       staging:
         +materialized: incremental
         +incremental_strategy: insert_overwrite
         +schema: financeiro_staging
     dashboard_subsidio_sppo_v2:
       +materialized: view
-      +schema: dashboard_subsidio_sppo_v2
+      +schema: tcm_reprocessamento__dashboard_subsidio_sppo_v2
     subsidio:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
-      +schema: subsidio
+      +schema: tcm_reprocessamento__subsidio
     catalogo:
       +materialized: view
       +schema: catalogo
