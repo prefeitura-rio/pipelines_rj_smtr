@@ -121,11 +121,11 @@ with
         left join planejada as p using (data, servico, consorcio)
         where
             data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}")
-            {% if is_incremental() %}
+            {# {% if is_incremental() %} #}
                 and data between date("{{ var('start_date') }}") and date_add(
                     date("{{ var('end_date') }}"), interval 1 day
                 )
-            {% endif %}
+            {# {% endif %} #}
     )
 select
     data,

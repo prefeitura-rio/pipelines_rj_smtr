@@ -182,10 +182,10 @@
                 (
                     select *
                     from {{ ref("subsidio_shapes_geom") }}
-                    {% if is_incremental() %}
+                    {# {% if is_incremental() %} #}
                         where
                             data_versao in (select data_versao_shapes from data_efetiva)
-                    {% endif %}
+                    {# {% endif %} #}
                 ) s
                 on s.data_versao = e.data_versao_shapes
         )
@@ -202,11 +202,14 @@
             when p.sentido = "I" or p.sentido = "V"
             then p.sentido
         end as sentido_shape,
+        safe_cast(null as int64) as partidas_total_planejada,  -- Adaptação para formato da SUBSIDIO_V6
         s.start_pt,
         s.end_pt,
         safe_cast(null as int64) as id_tipo_trajeto,  -- Adaptação para formato da SUBSIDIO_V6
         safe_cast(null as string) as feed_version,  -- Adaptação para formato da SUBSIDIO_V6
-        current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao  -- Adaptação para formato da SUBSIDIO_V7
+        current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,  -- Adaptação para formato da SUBSIDIO_V7
+        datetime(concat(p.data,"T00:00:00")) as faixa_horaria_inicio, -- Adaptação para formato da SUBSIDIO_V9
+        datetime(concat(p.data,"T23:59:59")) as faixa_horaria_fim, -- Adaptação para formato da SUBSIDIO_V9
     from quadro_tratada p
     inner join shapes s on p.shape_id = s.shape_id and p.data = s.data
 
@@ -241,8 +244,8 @@
         ),
         ordem_servico_trips_shapes as (
             select *
-            from  {{ ref("ordem_servico_trips_shapes_gtfs") }}
-                -- `rj-smtr.gtfs.ordem_servico_trips_shapes`
+            from -- {{ ref("ordem_servico_trips_shapes_gtfs") }}
+                 `rj-smtr.gtfs.ordem_servico_trips_shapes`
             where feed_start_date in ("{{ feed_start_dates | join('", "') }}")
         ),
         dia_atual as (
@@ -466,8 +469,8 @@
         ),
         shapes as (
             select shape_id, shape, start_pt, end_pt
-            from {{ ref("shapes_geom_gtfs") }}
-            -- `rj-smtr.gtfs.shapes_geom`
+            from -- {{ ref("shapes_geom_gtfs") }}
+             `rj-smtr.gtfs.shapes_geom`
             where feed_start_date in ("{{ feed_start_dates | join('", "') }}")
             qualify
                 row_number() over (partition by shape_id order by feed_start_date desc)

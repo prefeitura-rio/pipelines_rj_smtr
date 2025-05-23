@@ -19,10 +19,10 @@ WITH
     {{ ref("viagem_planejada") }}
   WHERE
     DATA >= DATE( "{{ var("DATA_SUBSIDIO_V2_INICIO") }}" )
-    {% if is_incremental() %}
+    {# {% if is_incremental() %} #}
       AND DATA BETWEEN DATE("{{ var("start_date") }}" )
       AND DATE( "{{ var("end_date") }}" )
-    {% endif %}
+    {# {% endif %} #}
     AND (distancia_total_planejada > 0
     OR distancia_total_planejada IS NOT NULL)
   ),
@@ -39,10 +39,10 @@ WITH
     {{ ref("viagem_transacao") }}
   WHERE
     DATA >= DATE( "{{ var("DATA_SUBSIDIO_V2_INICIO") }}" )
-    {% if is_incremental() %}
+    {# {% if is_incremental() %} #}
       AND DATA BETWEEN DATE("{{ var("start_date") }}" )
       AND DATE( "{{ var("end_date") }}" )
-    {% endif %}
+    {# {% endif %} #}
   ),
   servico_km_tipo AS (
   SELECT
@@ -125,8 +125,8 @@ LEFT JOIN
 ON
   sd.data = pd.data
   AND sd.servico = pd.servico
-{% if is_incremental() %}
+{# {% if is_incremental() %} #}
   WHERE
     sd.data BETWEEN DATE("{{ var("start_date") }}" )
     AND DATE( "{{ var("end_date") }}" )
-{% endif %}
+{# {% endif %} #}

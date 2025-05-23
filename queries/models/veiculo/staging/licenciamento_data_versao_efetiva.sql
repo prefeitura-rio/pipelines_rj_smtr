@@ -10,12 +10,12 @@ with
     licenciamento as (
         select distinct date(data) as data_licenciamento
         from {{ ref("licenciamento_stu_staging") }}
-        {% if is_incremental() %}
+        {# {% if is_incremental() %} #}
             where
                 date(data)
                 between date("{{ var('start_date')}}")
                 and date("{{ modules.datetime.datetime.fromisoformat(var('end_date')) + modules.datetime.timedelta(7) }}")
-        {% endif %}
+        {# {% endif %} #}
     ),
     periodo as (
         select data
@@ -24,9 +24,9 @@ with
                 -- Primeira data de captura de licenciamento
                 generate_date_array('2022-03-21', current_date("America/Sao_Paulo"))
             ) as data
-        {% if is_incremental() %}
+        {# {% if is_incremental() %} #}
             where data between "{{ var('start_date')}}" and "{{ var('end_date')}}"
-        {% endif %}
+        {# {% endif %} #}
     ),
     data_versao_calc as (
         select
@@ -37,13 +37,13 @@ with
                         /* Versão fixa do STU em 2024-03-25 para mar/Q1 devido à falha de
              atualização na fonte da dados (SIURB) */
                         when
-                            date(periodo.data) >= "2024-03-01"
+                            date(periodo.data) >= date("2024-03-01")
                             and date(periodo.data) < "2024-03-16"
                         then date("2024-03-25")
                         /* Versão fixa do STU em 2024-04-09 para mar/Q2 devido à falha de
              atualização na fonte da dados (SIURB) */
                         when
-                            date(periodo.data) >= "2024-03-16"
+                            date(periodo.data) >= date("2024-03-16")
                             and date(periodo.data) < "2024-04-01"
                         then date("2024-04-09")
                         else
@@ -58,7 +58,7 @@ with
                          de dados (SIURB) */
                                     and (
                                         date(periodo.data) < "2024-04-01"
-                                        or data_licenciamento >= '2024-04-09'
+                                        or date(data_licenciamento) >= date('2024-04-09')
                                     )
                             )
                     end

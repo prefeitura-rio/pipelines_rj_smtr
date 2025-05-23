@@ -22,7 +22,7 @@ with
             left join
                 {{ source("gtfs", "ordem_servico") }} as o
                 -- rj-smtr.gtfs.ordem_servico AS o
-                on v.feed_start_date = o.feed_start_date
+                on sdve.feed_start_date = o.feed_start_date
                 and v.servico = o.servico
                 and sdve.tipo_os = o.tipo_os
             where data >= "{{ var('DATA_SUBSIDIO_V7_INICIO') }}"

@@ -93,15 +93,15 @@ with
     ),
     gps as (
         select data, id_veiculo
-        from {{ ref("gps_sppo") }}
-        -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
+        from -- {{ ref("gps_sppo") }}
+         `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
         where
-            {% if is_incremental() %}
+            {# {% if is_incremental() %} #}
                 data between date("{{ var('start_date') }}") and date(
                     "{{ var('end_date') }}"
                 )
-            {% else %}  -- data >= "2023-01-16"
-            {% endif %}
+            {# {% else %}  -- data >= "2023-01-16"
+            {% endif %} #}
         group by 1, 2
     ),
     autuacoes as (
@@ -125,8 +125,8 @@ with
     registros_agente_verao as (
         select distinct
             data, id_veiculo, true as indicador_registro_agente_verao_ar_condicionado
-        from {{ ref("sppo_registro_agente_verao") }}
-        -- `rj-smtr.veiculo.sppo_registro_agente_verao`
+        -- from {{ ref("sppo_registro_agente_verao") }}
+        from `rj-smtr.veiculo.sppo_registro_agente_verao`
         right join infracao_data_versao dve using (data)
         {% if is_incremental() %}
             where
@@ -208,7 +208,7 @@ with
             struct(
                 coalesce(l.indicador_licenciado, false) as indicador_licenciado,
                 if(
-                    data >= "{{ var('DATA_SUBSIDIO_V5_INICIO') }}",
+                    date(data) >= date("{{ var('DATA_SUBSIDIO_V5_INICIO') }}"),
                     coalesce(l.indicador_vistoriado, false),
                     null
                 ) as indicador_vistoriado,
@@ -310,8 +310,8 @@ left join licenciamento_data_versao as l using (data)
 left join infracao_data_versao as i using (data)
 {% if not is_incremental() or var("start_date") < var("DATA_SUBSIDIO_V5_INICIO") %}
     left join
-        {{ ref("subsidio_parametros") }} as p
-        -- `rj-smtr.dashboard_subsidio_sppo.subsidio_parametros` as p
+        -- {{ ref("subsidio_parametros") }} as p
+         `rj-smtr.dashboard_subsidio_sppo.subsidio_parametros` as p
         on gla.indicadores.indicador_licenciado = p.indicador_licenciado
         and gla.indicadores.indicador_ar_condicionado = p.indicador_ar_condicionado
         and gla.indicadores.indicador_autuacao_ar_condicionado
