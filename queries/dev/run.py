@@ -248,7 +248,7 @@ def run_dbt_tests(
 # -*- coding: utf-8 -*-
 # import os
 
-from utils import run_dbt_model, fetch_dataset_sha
+from utils import fetch_dataset_sha, run_dbt_model
 
 # Veja os parâmetros disponíveis da função run_dbt_model em util.py
 
