@@ -1,15 +1,29 @@
 {{
     config(
         materialized="incremental",
+        incremental_strategy="insert_overwrite",
         partition_by={"field": "data", "data_type": "date", "granularity": "day"},
         tags=["geolocalizacao"],
         alias=this.name ~ "_" ~ var("modo_gps") ~ "_" ~ var("fonte_gps"),
     )
 }}
 
+{% set staging_gps = ref("staging_gps") %}
+{% if execute and is_incremental() %}
+    {% set gps_partitions_query %}
+    SELECT DISTINCT
+      CONCAT("'", DATE(data), "'") AS data
+    FROM
+      {{ staging_gps }}
+    WHERE
+      {{ generate_date_hour_partition_filter(var('date_range_start'), var('date_range_end')) }}
+    {% endset %}
+
+    {% set gps_partitions = run_query(gps_partitions_query).columns[0].values() %}
+{% endif %}
+
 with
     registros as (
-        -- 1. registros_filtrada
         select
             data,
             hora,
@@ -21,17 +35,8 @@ with
             latitude,
             longitude,
         from {{ ref("aux_gps_filtrada") }}
-        {% if is_incremental() -%}
-            where
-                data between date("{{var('date_range_start')}}") and date(
-                    "{{var('date_range_end')}}"
-                )
-                and datetime_gps > "{{var('date_range_start')}}"
-                and datetime_gps <= "{{var('date_range_end')}}"
-        {%- endif -%}
     ),
     velocidades as (
-        -- 2. velocidades
         select
             id_veiculo,
             datetime_gps,
@@ -42,56 +47,66 @@ with
         from {{ ref("aux_gps_velocidade") }}
     ),
     paradas as (
-        -- 3. paradas
         select id_veiculo, datetime_gps, servico, tipo_parada
         from {{ ref("aux_gps_parada") }}
     ),
     indicadores as (
-        -- 4. indicador_trajeto_correto
         select id_veiculo, datetime_gps, servico, route_id, indicador_trajeto_correto
         from {{ ref("aux_gps_trajeto_correto") }}
-    )
--- 5. Junção final
-select
-    r.data,
-    r.hora,
-    r.datetime_gps,
-    r.id_veiculo,
-    r.servico,
-    r.latitude,
-    r.longitude,
-    case
-        when indicador_em_movimento is true and indicador_trajeto_correto is true
-        then 'Em operação'
-        when indicador_em_movimento is true and indicador_trajeto_correto is false
-        then 'Operando fora trajeto'
-        when indicador_em_movimento is false
-        then
+    ),
+    novos_dados as (
+        select
+            date(r.datetime_gps) as data,
+            extract(hour from r.datetime_gps) as hora,
+            r.datetime_gps,
+            r.id_veiculo,
+            r.servico,
+            r.latitude,
+            r.longitude,
             case
-                when tipo_parada is not null
-                then concat("Parado ", tipo_parada)
-                else
+                when
+                    indicador_em_movimento is true and indicador_trajeto_correto is true
+                then 'Em operação'
+                when
+                    indicador_em_movimento is true
+                    and indicador_trajeto_correto is false
+                then 'Operando fora trajeto'
+                when indicador_em_movimento is false
+                then
                     case
+                        when tipo_parada is not null
+                        then concat("Parado ", tipo_parada)
                         when indicador_trajeto_correto is true
                         then 'Parado trajeto correto'
                         else 'Parado fora trajeto'
                     end
-            end
-    end status,
-    r.velocidade as velocidade_instantanea,
-    v.velocidade as velocidade_estimada_10_min,
-    v.distancia,
+            end as status,
+            r.velocidade as velocidade_instantanea,
+            v.velocidade as velocidade_estimada_10_min,
+            v.distancia,
+            0 as priority
+        from registros r
+        join indicadores i using (id_veiculo, datetime_gps, servico)
+        join velocidades v using (id_veiculo, datetime_gps, servico)
+        join paradas p using (id_veiculo, datetime_gps, servico)
+    ),
+    particoes_completas as (
+        select *
+        from novos_dados
+
+        {% if is_incremental() and gps_partitions | length > 0 %}
+            union all
+
+            select * except (versao, datetime_ultima_atualizacao), 1 as priority
+            from {{ this }}
+            where data in ({{ gps_partitions | join(", ") }})
+        {% endif %}
+    )
+select
+    * except (priority),
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
-from registros r
-join indicadores i using (id_veiculo, datetime_gps, servico)
-join velocidades v using (id_veiculo, datetime_gps, servico)
-join paradas p using (id_veiculo, datetime_gps, servico)
-{% if is_incremental() -%}
-    where
-        date(r.datetime_gps) between date("{{var('date_range_start')}}") and date(
-            "{{var('date_range_end')}}"
-        )
-        and r.datetime_gps > "{{var('date_range_start')}}"
-        and r.datetime_gps <= "{{var('date_range_end')}}"
-{%- endif -%}
+from particoes_completas
+qualify
+    row_number() over (partition by id_veiculo, datetime_gps, servico order by priority)
+    = 1

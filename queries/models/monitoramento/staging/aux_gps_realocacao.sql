@@ -1,13 +1,8 @@
-{% if var("fifteen_minutes") == "_15_minutos" %} {{ config(materialized="ephemeral") }}
-{% else %}
-    {{
-        config(
-            materialized="incremental",
-            partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-            alias=this.name ~ "_" ~ var("fonte_gps"),
-        )
-    }}
-{% endif %}
+{{ config(materialized="ephemeral") }}
+
+{% set partition_filter %}
+    ({{ generate_date_hour_partition_filter(var('date_range_start'), var('date_range_end')) }})
+{% endset %}
 
 -- 1. Filtra realocações válidas dentro do intervalo de GPS avaliado
 with
@@ -17,13 +12,12 @@ with
             case
                 when datetime_saida is null then datetime_operacao else datetime_saida
             end as datetime_saida,
-        from {{ ref("aux_realocacao") }}
+        from {{ ref("staging_realocacao") }}
         where
+            {{ partition_filter }}
             -- Realocação deve acontecer após o registro de GPS e até 1 hora depois
-            datetime_diff(datetime_operacao, datetime_entrada, minute) between 0 and 60
-            and data between date("{{var('date_range_start')}}") and date(
-                datetime_add("{{var('date_range_end')}}", interval 1 hour)
-            )
+            and datetime_diff(datetime_operacao, datetime_entrada, minute)
+            between 0 and 60
             and (
                 datetime_saida >= datetime("{{var('date_range_start')}}")
                 or datetime_operacao >= datetime("{{var('date_range_start')}}")
@@ -31,21 +25,16 @@ with
     ),
     -- 2. Altera registros de GPS com servicos realocados
     gps as (
-        select id_veiculo, datetime_gps, servico, data, hora
-        from {{ ref("aux_gps") }}
+        select *
+        from {{ ref("staging_gps") }}
         where
-            data between date("{{var('date_range_start')}}") and date(
-                "{{var('date_range_end')}}"
-            )
+            {{ partition_filter }}
             and datetime_gps > "{{var('date_range_start')}}"
             and datetime_gps <= "{{var('date_range_end')}}"
     ),
-    combinacao as (
+    servicos_realocados as (
         select
-            g.data,
-            g.hora,
-            g.datetime_gps,
-            r.id_veiculo,
+            g.* except (servico),
             g.servico as servico_gps,
             r.servico as servico_realocado,
             r.datetime_operacao as datetime_realocado
@@ -55,6 +44,14 @@ with
             on g.id_veiculo = r.id_veiculo
             and g.servico != r.servico
             and g.datetime_gps between r.datetime_entrada and r.datetime_saida
+    ),
+    gps_com_realocacao as (
+        select
+            g.* except (servico),
+            coalesce(s.servico_realocado, g.servico) as servico,
+            s.datetime_realocado
+        from gps g
+        left join servicos_realocados s using (id_veiculo, datetime_gps)
     )
 -- Filtra realocacao mais recente para cada timestamp
 select * except (rn)
@@ -63,8 +60,9 @@ from
         select
             *,
             row_number() over (
-                partition by id_veiculo, datetime_gps order by datetime_realocado desc
+                partition by id_veiculo, datetime_gps
+                order by datetime_captura desc, datetime_realocado desc
             ) as rn
-        from combinacao
+        from gps_com_realocacao
     )
 where rn = 1

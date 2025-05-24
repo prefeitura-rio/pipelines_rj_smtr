@@ -260,11 +260,9 @@ selectors:
     definition:
       union:
         - method: fqn
-          value: aux_gps
+          value: staging_gps
         - method: fqn
-          value: aux_gps_realocacao
-        - method: fqn
-          value: aux_realocacao
+          value: staging_realocacao
         - method: fqn
           value: staging_garagens
         - method: fqn
@@ -275,11 +273,9 @@ selectors:
     definition:
       union:
         - method: fqn
-          value: aux_gps
+          value: staging_gps
         - method: fqn
-          value: aux_gps_realocacao
-        - method: fqn
-          value: aux_realocacao
+          value: staging_realocacao
         - method: fqn
           value: staging_garagens
         - method: fqn

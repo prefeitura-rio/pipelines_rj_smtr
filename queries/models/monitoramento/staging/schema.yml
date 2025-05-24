@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: aux_gps
+  - name: staging_gps
     description: "Tabela com todos os registros de GPS da API {{ var('fonte_gps') }}"
     columns:
       - name: data
@@ -36,7 +36,7 @@ models:
         description: "{{ doc('datetime_servidor_gps') }}"
       - name: datetime_captura
         description: "{{ doc('datetime_captura') }}"
-  - name: aux_realocacao
+  - name: staging_realocacao
     description: "Tabela com todas as realocações de linha informadas pela API {{ var('fonte_gps') }}"
     columns:
       - name: data
@@ -57,25 +57,6 @@ models:
         description: "{{ doc('datetime_processamento') }}"
       - name: datetime_captura
         description: "{{ doc('datetime_captura') }}"
-
-  - name: aux_gps_realocacao
-    description: "Tabela com realocações de linha válidas da API {{ var('fonte_gps') }}"
-    columns:
-      - name: data
-        description: "{{ doc('data_captura') }}"
-      - name: hora
-        description: "{{ doc('hora_captura') }}"
-      - name: datetime_gps
-        description: "{{ doc('timestamp_gps') }}"
-      - name: id_veiculo
-        description: "{{ doc('id_veiculo') }}"
-      - name: servico_gps
-        description: "{{ doc('servico_gps') }}"
-      - name: servico_realocado
-        description: "{{ doc('servico_realocacao') }}"
-      - name: datetime_realocado
-        description: "{{ doc('datetime_realocacao') }}"
-
   - name: staging_garagens
     description: "Tabela com informações das garagens dos operadores"
     columns:

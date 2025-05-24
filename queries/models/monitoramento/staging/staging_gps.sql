@@ -9,7 +9,8 @@ with
                 parse_timestamp(
                     '%Y-%m-%dT%H:%M:%SZ',
                     safe_cast(json_value(content, '$.datetime') as string)
-                )
+                ),
+                "America/Sao_Paulo"
             ) datetime_gps,
             safe_cast(id_veiculo as string) id_veiculo,
             concat(
@@ -42,10 +43,12 @@ with
                 parse_timestamp(
                     '%Y-%m-%dT%H:%M:%SZ',
                     safe_cast(json_value(content, '$.datetime_envio') as string)
-                )
+                ),
+                "America/Sao_Paulo"
             ) datetime_envio,
             datetime(
-                parse_timestamp('%Y-%m-%dT%H:%M:%SZ', datetime_servidor)
+                parse_timestamp('%Y-%m-%dT%H:%M:%SZ', datetime_servidor),
+                "America/Sao_Paulo"
             ) datetime_servidor,
             datetime(
                 parse_timestamp(
@@ -88,14 +91,3 @@ select
     datetime_execucao_flow,
     datetime_captura
 from filtered_data
-qualify
-    row_number() over (
-        partition by
-            id_veiculo,
-            safe_cast(latitude as string),
-            safe_cast(longitude as string),
-            datetime_gps,
-            datetime_servidor
-        order by datetime_captura desc
-    )
-    = 1

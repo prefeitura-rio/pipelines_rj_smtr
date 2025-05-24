@@ -1,6 +1,6 @@
 {{
     config(
-        materialized="incremental",
+        materialized="table",
         partition_by={"field": "data", "data_type": "date", "granularity": "day"},
         tags=["geolocalizacao"],
         alias=this.name ~ "_" ~ var("modo_gps") ~ "_" ~ var("fonte_gps"),
@@ -21,15 +21,6 @@ with
             latitude,
             longitude,
         from {{ ref("aux_gps_filtrada") }}
-        {% if is_incremental() -%}
-            where
-                data between date("{{var('date_range_start')}}") and date(
-                    "{{var('date_range_end')}}"
-                )
-                and datetime_gps
-                > datetime_sub("{{var('date_range_end')}}", interval 75 minute)
-                and datetime_gps <= "{{var('date_range_end')}}"
-        {%- endif -%}
     ),
     velocidades as (
         -- 2. velocidades
@@ -54,8 +45,8 @@ with
     )
 -- 5. Junção final
 select
-    r.data,
-    r.hora,
+    date(r.datetime_gps) data,
+    extract(hour from r.datetime_gps) hora,
     r.datetime_gps,
     r.id_veiculo,
     r.servico,
@@ -88,12 +79,3 @@ from registros r
 join indicadores i using (id_veiculo, datetime_gps, servico)
 join velocidades v using (id_veiculo, datetime_gps, servico)
 join paradas p using (id_veiculo, datetime_gps, servico)
-{% if is_incremental() -%}
-    where
-        date(r.datetime_gps) between date("{{var('date_range_start')}}") and date(
-            "{{var('date_range_end')}}"
-        )
-        and r.datetime_gps
-        > datetime_sub("{{var('date_range_end')}}", interval 75 minute)
-        and r.datetime_gps <= "{{var('date_range_end')}}"
-{%- endif -%}

@@ -31,7 +31,6 @@ with
             safe_cast(geometry_wkt as string) as geometry_wkt
         from {{ source("monitoramento_staging", "garagens") }}
     )
-
 select
     inicio_vigencia,
     date_sub(

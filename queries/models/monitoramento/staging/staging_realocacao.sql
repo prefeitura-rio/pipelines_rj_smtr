@@ -9,7 +9,8 @@ with
                 parse_timestamp(
                     '%Y-%m-%dT%H:%M:%SZ',
                     safe_cast(json_value(content, '$.datetime_operacao') as string)
-                )
+                ),
+                "America/Sao_Paulo"
             ) datetime_operacao,
             safe_cast(id_veiculo as string) id_veiculo,
             concat(
@@ -30,7 +31,8 @@ with
                 parse_timestamp(
                     '%Y-%m-%dT%H:%M:%SZ',
                     safe_cast(json_value(content, '$.datetime_entrada') as string)
-                )
+                ),
+                "America/Sao_Paulo"
             ) datetime_entrada,
             case
                 when
@@ -42,11 +44,13 @@ with
                         parse_timestamp(
                             '%Y-%m-%dT%H:%M:%SZ',
                             safe_cast(json_value(content, '$.datetime_saida') as string)
-                        )
+                        ),
+                        "America/Sao_Paulo"
                     )
             end as datetime_saida,
             datetime(
-                parse_timestamp('%Y-%m-%dT%H:%M:%SZ', datetime_processamento)
+                parse_timestamp('%Y-%m-%dT%H:%M:%SZ', datetime_processamento),
+                "America/Sao_Paulo"
             ) datetime_processamento,
             datetime(
                 parse_timestamp(
