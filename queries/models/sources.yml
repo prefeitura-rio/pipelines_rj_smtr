@@ -318,3 +318,30 @@ sources:
 
     tables:
       - name: ordem_servico
+
+  - name: monitoramento_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: garagens
+
+  - name: source_cittati
+    database: rj-smtr-staging
+
+    tables:
+      - name: registros
+      - name: realocacao
+
+  - name: source_conecta
+    database: rj-smtr-staging
+
+    tables:
+      - name: registros
+      - name: realocacao
+
+  - name: source_zirix
+    database: rj-smtr-staging
+
+    tables:
+      - name: registros
+      - name: realocacao

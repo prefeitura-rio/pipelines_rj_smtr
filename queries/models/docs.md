@@ -767,3 +767,35 @@ Quantidade de viagens apuradas por dia
 {% docs viagens_faixa %}
 Quantidade de viagens apuradas por faixa horária
 {% enddocs %}
+
+{% docs hora_captura %}
+Hora da captura
+{% enddocs %}
+
+{% docs direcao_gps %}
+Direção do movimento em graus
+{% enddocs %}
+
+{% docs datetime_envio_gps %}
+Data e hora em que o GPS enviou os dados de localização
+{% enddocs %}
+
+{% docs datetime_servidor_gps %}
+Data e hora em que o servidor recebeu os dados de localização do GPS
+{% enddocs %}
+
+{% docs datetime_saida %}
+Datetime de saída do veículo na linha realocada
+{% enddocs %}
+
+{% docs datetime_processamento %}
+Datetime de processamento da realocação pela empresa operadora
+{% enddocs %}
+
+{% docs datetime_operacao %}
+Datetime que o registro da realocação foi informado pela empresa operadora
+{% enddocs %}
+
+{% docs servico_realocacao %}
+Linha de ônibus [serviço] realocada informada pela empresa operadora
+{% enddocs %}
