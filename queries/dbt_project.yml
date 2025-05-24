@@ -38,7 +38,7 @@ vars:
   sppo_registros_staging: "rj-smtr-staging.br_rj_riodejaneiro_onibus_gps_staging.registros"
   sppo_realocacao_staging: "rj-smtr-staging.br_rj_riodejaneiro_onibus_gps_staging.realocacao"
   data_inicio_realocacao: "2022-11-15"
-  fifteen_minutes: ""
+  15_minutos: false
   modo_gps: "onibus"
   fonte_gps: "conecta"
 
