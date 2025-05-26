@@ -245,7 +245,8 @@ def convert_timezone(timestamp: datetime) -> datetime:
     tz = timezone(constants.TIMEZONE.value)
 
     if isinstance(timestamp, pendulum.DateTime):
-        timestamp = datetime.fromtimestamp(timestamp.timestamp())
+        pendulum_tz = timezone(timestamp.timezone.name)
+        timestamp = datetime.fromtimestamp(timestamp.timestamp(), tz=pendulum_tz)
 
     log(f"convertido: {timestamp} (type: {type(timestamp)}) (tzinfo: {timestamp.tzinfo})")
 
