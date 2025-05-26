@@ -245,7 +245,7 @@ def convert_timezone(timestamp: datetime) -> datetime:
     tz = timezone(constants.TIMEZONE.value)
 
     if isinstance(timestamp, pendulum.DateTime):
-        timestamp = timestamp.naive()
+        timestamp = datetime.fromtimestamp(timestamp.timestamp())
         timestamp = tz.localize(timestamp)
     elif timestamp.tzinfo is None:
         timestamp = tz.localize(timestamp)
