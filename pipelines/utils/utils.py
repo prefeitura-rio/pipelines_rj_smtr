@@ -234,6 +234,7 @@ def convert_timezone(timestamp: datetime) -> datetime:
     """
     Converte um datetime para a timezone padrão definida nas constantes
 
+
     Args:
         timestamp (datetime): Datetime a ser convertido
 
