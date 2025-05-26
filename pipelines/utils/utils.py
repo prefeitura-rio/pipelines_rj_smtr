@@ -240,6 +240,8 @@ def convert_timezone(timestamp: datetime) -> datetime:
     Returns:
         datetime: Datetime com informação de timezone
     """
+    log(f"Timestamp: {timestamp} (type: {type(timestamp)})")
+
     tz = timezone(constants.TIMEZONE.value)
 
     if isinstance(timestamp, pendulum.DateTime):
