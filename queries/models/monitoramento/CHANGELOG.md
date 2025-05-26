@@ -1,5 +1,10 @@
 # Changelog - monitoramento
 
+## [1.3.7] - 2025-05-26
+
+- Altera lógica de validação de viagens no modelo `viagem_validacao` [quantidade_segmentos_validos >= quantidade_segmentos_necessarios] (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/585)
+- Altera modelo `gps_viagem` adicionando dados de GPS da API da Cittati (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/585)
+
 ## [1.3.6] - 2025-05-13
 
 ### Corrigido
