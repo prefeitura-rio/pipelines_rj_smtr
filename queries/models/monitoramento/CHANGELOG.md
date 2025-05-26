@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.3.7] - 2025-05-20
+
+### Adicionado
+
+ - Cria modelos `gps`, `gps_15_minutos`, `aux_gps`, `aux_gps_filtrada`, `aux_gps_parada`, `aux_gps_realocacao`, `aux_gps_trajeto_correto`, `aux_gps_velocidade` ,`aux_realocacao` e `staging_garagens`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/297)
+
 ## [1.3.6] - 2025-05-13
 
 ### Corrigido
