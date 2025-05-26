@@ -269,7 +269,7 @@ selectors:
           value: gps
 
   - name: gps_15_minutos
-    description: Materialização das tabelas de gps
+    description: Materialização das tabelas de gps 15 minutos
     definition:
       union:
         - method: fqn
