@@ -7,8 +7,8 @@ with
     ),
     shapes as (
         select distinct data, servico, feed_version, feed_start_date, route_id, shape_id
-        {# from {{ ref("viagem_planejada_planejamento") }} #}
-        from `rj-smtr`.`planejamento`.`viagem_planejada`
+        from {{ ref("viagem_planejada_planejamento") }}
+        {# from `rj-smtr`.`planejamento`.`viagem_planejada` #}
         where
             data between date('{{ var("date_range_start") }}') and date(
                 '{{ var("date_range_end") }}'
@@ -26,8 +26,8 @@ with
         from registros r
         left join shapes s using (servico, data)
         left join
-            {# {{ ref("shapes_geom_gtfs") }} sg using ( #}
-            `rj-smtr`.`gtfs`.`shapes_geom` sg using (
+            {{ ref("shapes_geom_gtfs") }} sg using (
+                {# `rj-smtr`.`gtfs`.`shapes_geom` sg using ( #}
                 feed_version, feed_start_date, shape_id
             )
     ),

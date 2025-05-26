@@ -11,7 +11,7 @@ with
             * except (datetime_saida),
             case
                 when datetime_saida is null then datetime_operacao else datetime_saida
-            end as datetime_saida,
+            end as datetime_saida
         from {{ ref("staging_realocacao") }}
         where
             {{ partition_filter }}
