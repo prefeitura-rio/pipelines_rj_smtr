@@ -350,7 +350,9 @@ select
             > (viagens_planejadas_ida_volta + if(indicador_circular, 1, 2))
         then false
         when
-            v.data >= date('{{ var("DATA_SUBSIDIO_V10_INICIO") }}')
+            v.data between date('{{ var("DATA_SUBSIDIO_V10_INICIO") }}') and date_sub(
+                '{{ var("DATA_SUBSIDIO_V15_INICIO") }}', interval 1 day
+            )
             and v.tipo_dia = "Dia Útil"
             and viagens_planejadas < 10
             and viagens_planejadas > 5
@@ -358,49 +360,63 @@ select
             and rn > (viagens_planejadas_ida_volta + if(indicador_circular, 1, 2))
         then false
         when
-            v.data >= date('{{ var("DATA_SUBSIDIO_V10_INICIO") }}')
+            v.data between date('{{ var("DATA_SUBSIDIO_V10_INICIO") }}') and date_sub(
+                '{{ var("DATA_SUBSIDIO_V15_INICIO") }}', interval 1 day
+            )
             and v.tipo_dia = "Dia Útil"
             and viagens_planejadas >= 10
             and pof > 110
             and rn > viagens_planejadas_ida_volta * 1.1
         then false
         when
-            v.data >= date('{{ var("DATA_SUBSIDIO_V10_INICIO") }}')
+            v.data between date('{{ var("DATA_SUBSIDIO_V10_INICIO") }}') and date_sub(
+                '{{ var("DATA_SUBSIDIO_V15_INICIO") }}', interval 1 day
+            )
             and v.tipo_dia = "Dia Útil"
             and viagens_planejadas <= 5
             and pof > 200
             and rn > viagens_planejadas_ida_volta * 2
         then false
         when
-            v.data >= date('{{ var("DATA_SUBSIDIO_V10_INICIO") }}')
+            v.data between date('{{ var("DATA_SUBSIDIO_V10_INICIO") }}') and date_sub(
+                '{{ var("DATA_SUBSIDIO_V15_INICIO") }}', interval 1 day
+            )
             and v.tipo_dia != "Dia Útil"
             and viagens_planejadas < 5
             and pof > 100
             and rn > (viagens_planejadas_ida_volta + if(indicador_circular, 1, 2))
         then false
         when
-            v.data >= date('{{ var("DATA_SUBSIDIO_V10_INICIO") }}')
+            v.data between date('{{ var("DATA_SUBSIDIO_V10_INICIO") }}') and date_sub(
+                '{{ var("DATA_SUBSIDIO_V15_INICIO") }}', interval 1 day
+            )
             and v.tipo_dia != "Dia Útil"
             and viagens_planejadas >= 5
             and pof > 120
             and rn > viagens_planejadas_ida_volta * 1.2
         then false
         when
-            v.data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
+            v.data between date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}') and date_sub(
+                '{{ var("DATA_SUBSIDIO_V10_INICIO") }}', interval 1 day
+            )
             and v.tipo_dia = "Dia Útil"
             and viagens_planejadas > 10
             and pof > 120
             and rn > viagens_planejadas_ida_volta * 1.2
         then false
         when
-            v.data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
+            v.data between date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}') and date_sub(
+                '{{ var("DATA_SUBSIDIO_V10_INICIO") }}', interval 1 day
+            )
             and v.tipo_dia = "Dia Útil"
             and viagens_planejadas <= 10
             and pof > 200
             and rn > viagens_planejadas_ida_volta * 2
         then false
         when
-            v.data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
+            v.data between date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}') and date_sub(
+                '{{ var("DATA_SUBSIDIO_V10_INICIO") }}', interval 1 day
+            )
             and (
                 v.tipo_dia = "Dia Útil"
                 and (viagens_planejadas is null or pof is null or rn is null)
