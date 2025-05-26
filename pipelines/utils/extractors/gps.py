@@ -45,7 +45,6 @@ def create_generic_gps_extractor(
 
     headers = get_secret(secret_path)
     key = list(headers)[0]
-
     params = {
         "guidIdentificacao": headers[key],
         "dataInicial": date_range["date_range_start"],
