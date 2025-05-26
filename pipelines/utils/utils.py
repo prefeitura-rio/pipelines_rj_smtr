@@ -7,6 +7,7 @@ from typing import Any
 
 import basedosdados as bd
 import pandas as pd
+import pendulum
 import pytz
 from croniter import croniter
 from pandas_gbq.exceptions import GenericGBQException
@@ -241,7 +242,10 @@ def convert_timezone(timestamp: datetime) -> datetime:
     """
     tz = timezone(constants.TIMEZONE.value)
 
-    if timestamp.tzinfo is None:
+    if isinstance(timestamp, pendulum.DateTime):
+        timestamp = timestamp.naive()
+        timestamp = tz.localize(timestamp)
+    elif timestamp.tzinfo is None:
         timestamp = tz.localize(timestamp)
     else:
         timestamp = timestamp.astimezone(tz=tz)
