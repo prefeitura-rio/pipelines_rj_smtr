@@ -1,5 +1,11 @@
 # Changelog - capture
 
+## [1.1.2] - 2025-05-09
+
+### Alterado
+
+- Altera task `transform_raw_to_nested_structure` para adicionar coluna `_datetime_execucao_flow` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/571)
+
 ## [1.1.1] - 2025-04-28
 
 ### Adicionado

@@ -89,6 +89,7 @@ sources:
       - name: rho_registros_sppo
       - name: rho_registros_stpl
       - name: rdo_registros_stpl
+      - name: dicionario
 
   - name: br_rj_riodejaneiro_rdo
     database: rj-smtr
@@ -319,8 +320,34 @@ sources:
       - name: ordem_servico
 
   - name: source_fiscalizacao_veiculo
-    database: rj-smtr-dev
+    database: rj-smtr-staging
 
     tables:
       - name: veiculo_lacre
 
+  - name: monitoramento_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: garagens
+
+  - name: source_cittati
+    database: rj-smtr-staging
+
+    tables:
+      - name: registros
+      - name: realocacao
+
+  - name: source_conecta
+    database: rj-smtr-staging
+
+    tables:
+      - name: registros
+      - name: realocacao
+
+  - name: source_zirix
+    database: rj-smtr-staging
+
+    tables:
+      - name: registros
+      - name: realocacao

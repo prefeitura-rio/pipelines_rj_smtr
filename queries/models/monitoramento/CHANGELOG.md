@@ -1,5 +1,17 @@
 # Changelog - monitoramento
 
+## [1.3.7] - 2025-05-20
+
+### Adicionado
+
+ - Cria modelos `gps`, `gps_15_minutos`, `aux_gps`, `aux_gps_filtrada`, `aux_gps_parada`, `aux_gps_realocacao`, `aux_gps_trajeto_correto`, `aux_gps_velocidade` ,`aux_realocacao` e `staging_garagens`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/297)
+
+## [1.3.6] - 2025-05-13
+
+### Corrigido
+
+- Corrige referências a modelos desabilitados nos modelos `monitoramento_servico_dia.sql`, `monitoramento_servico_dia_tipo_viagem.sql`, `monitoramento_servico_dia_historico.sql` e `monitoramento_servico_dia_tipo_viagem_historico.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/574)
+
 ## [1.3.5] - 2025-03-25
 
 ### Alterado
