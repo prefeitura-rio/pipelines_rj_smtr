@@ -226,6 +226,9 @@ vars:
   ### Planejamento ###
   feed_inicial_viagem_planejada: "2024-09-29"
 
+  ### Monitoramento ###
+  data_inicial_veiculo_fiscalizacao_lacre: "2025-03-31"
+
 tests:
   rj_smtr:
     where: "data between date('{date_range_start}') and date('{date_range_end}')"
