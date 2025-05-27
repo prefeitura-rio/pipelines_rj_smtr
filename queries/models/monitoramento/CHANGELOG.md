@@ -1,6 +1,6 @@
 # Changelog - monitoramento
 
-## [1.3.7] - 2025-05-27
+## [1.3.8] - 2025-05-27
 
 ### Adicionado
 
