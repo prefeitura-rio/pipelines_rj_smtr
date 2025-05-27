@@ -33,10 +33,13 @@ with
     ),
     shape_union as (
         select distinct data, feed_start_date, servico, sentido, shape_id
-        from servico_planejado_trip
-        union all
-        select distinct data, feed_start_date, servico, sentido, shape_id
-        from servico_planejado_trajetos_alternativos
+        from (
+                select data, feed_start_date, servico, sentido, shape_id
+                from servico_planejado_trip
+                union all
+                select data, feed_start_date, servico, sentido, shape_id
+                from servico_planejado_trajetos_alternativos
+        )
     ),
     intersec as (
         select
