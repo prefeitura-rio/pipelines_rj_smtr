@@ -109,6 +109,9 @@ with
             quantidade_segmentos_validos,
             quantidade_segmentos_verificados
             - quantidade_segmentos_tolerados as quantidade_segmentos_necessarios,
+            safe_divide(
+                quantidade_segmentos_validos, quantidade_segmentos_verificados
+            ) as indice_validacao,
             indicador_servico_divergente,
             indicador_shape_invalido,
             service_ids,
@@ -246,6 +249,7 @@ with
             vm.quantidade_segmentos_verificados,
             vm.quantidade_segmentos_validos,
             vm.quantidade_segmentos_necessarios,
+            vm.indice_validacao,
             vs.indicador_viagem_sobreposta,
             -- fmt: off
             vm.quantidade_segmentos_validos >= vm.quantidade_segmentos_necessarios as indicador_trajeto_valido,
@@ -279,13 +283,13 @@ with
         left join viagens_sobrepostas vs using (id_viagem)
     ),
     filtro_desvio as (
-        select *
+        select * except (indice_validacao)
         from viagens
         qualify
             row_number() over (
                 partition by id_veiculo, datetime_partida, datetime_chegada
                 order by
-                    quantidade_segmentos_validos desc,
+                    indice_validacao desc,
                     indicador_trajeto_alternativo,
                     distancia_planejada desc
             )
