@@ -317,3 +317,10 @@ sources:
 
     tables:
       - name: ordem_servico
+
+  - name: source_fiscalizacao_veiculo
+    database: rj-smtr-dev
+
+    tables:
+      - name: veiculo_lacre
+
