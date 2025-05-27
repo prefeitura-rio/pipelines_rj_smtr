@@ -17,17 +17,17 @@ with
         from {{ source("monitoramento", "gps_15_minutos_onibus_cittati") }}
     ),
     gps_union as (
-        select *, 'conecta' as fornecedor
+        select *, 'conecta' as fonte_gps
         from gps_conecta
 
         union all
 
-        select *, 'zirix' as fornecedor
+        select *, 'zirix' as fonte_gps
         from gps_zirix
 
         union all
 
-        select *, 'cittati' as fornecedor
+        select *, 'cittati' as fonte_gps
         from gps_cittati
     )
 select *
