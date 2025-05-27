@@ -26,6 +26,10 @@ with
                 then "Ponto Facultativo"  -- Ponto Facultativo - Sexta-feira de Carnaval - (Processo.Rio MTR-PRO-2025/03920)
                 when data between date(2025, 03, 03) and date(2025, 03, 04)
                 then "Domingo"  -- Carnaval - (Processo.Rio MTR-PRO-2025/03920)
+                when data = date(2025, 04, 18)
+                then "Domingo"  -- Feriado - Sexta Feira Santa [Portaria MGI nº 9.783/ 2024]
+                when data = date(2025, 04, 22)
+                then "Ponto Facultativo"  -- DECRETO RIO Nº 55883/2025
             end as tipo_dia,
             case
                 when data between date(2024, 09, 14) and date(2024, 09, 15)
@@ -76,10 +80,6 @@ with
                 then "Atípico + Verão"  -- Processo.Rio MTR-PRO-2025/03920
                 when data between date(2025, 03, 08) and date(2025, 03, 09)
                 then "Extraordinária - Verão"  -- Processo.Rio MTR-PRO-2025/04520
-                when data = date(2025, 04, 18)
-                then "Domingo"  -- Feriado - Sexta Feira Santa
-                when data = date(2025, 04, 22)
-                then "Ponto Facultativo"  -- DECRETO RIO Nº 55883/2025
             end as tipo_os
         from
             unnest(
