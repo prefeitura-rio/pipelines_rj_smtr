@@ -326,3 +326,30 @@ sources:
       - name: gps_onibus_conecta
       - name: gps_onibus_cittati
       - name: gps_onibus_zirix
+
+  - name: monitoramento_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: garagens
+
+  - name: source_cittati
+    database: rj-smtr-staging
+
+    tables:
+      - name: registros
+      - name: realocacao
+
+  - name: source_conecta
+    database: rj-smtr-staging
+
+    tables:
+      - name: registros
+      - name: realocacao
+
+  - name: source_zirix
+    database: rj-smtr-staging
+
+    tables:
+      - name: registros
+      - name: realocacao
