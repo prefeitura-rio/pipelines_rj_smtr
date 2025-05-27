@@ -24,11 +24,10 @@ def create_veiculo_lacre_extractor(
 
     if source.exists():
 
-        last_capture = (
-            source.get_last_scheduled_timestamp(timestamp=timestamp).date().isoformat()
-            + ":00:00:00"
+        last_capture = source.get_last_scheduled_timestamp(timestamp=timestamp).strftime(
+            "%Y-%m-%d %H:%M:%S"
         )
-        timestamp_str = timestamp.date().isoformat + ":00:00:00"
+        timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
         filter_expr = (
             f"ultima_atualizacao > {last_capture} and ultima_atualizacao <= {timestamp_str}"
         )
