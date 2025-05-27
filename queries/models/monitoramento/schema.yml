@@ -364,10 +364,6 @@ models:
         description: Data de fim do lacre
         data_type: date
         quote: true
-      - name: processo
-        description: "Processo.rio de lacre e deslacre"
-        data_type: string
-        quote: true
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
         data_type: string
@@ -376,16 +372,8 @@ models:
         description: "{{ doc('consorcio') }}"
         data_type: string
         quote: true
-      - name: operadora
-        description: "{{ doc('operadora') }}"
-        data_type: string
-        quote: true
       - name: id_auto_infracao
         description: "{{ doc('id_auto_infracao') }}"
-        data_type: string
-        quote: true
-      - name: motivo_lacre
-        description: Motivo para o veículo ter sido lacrado
         data_type: string
         quote: true
       - name: datetime_ultima_atualizacao_fonte

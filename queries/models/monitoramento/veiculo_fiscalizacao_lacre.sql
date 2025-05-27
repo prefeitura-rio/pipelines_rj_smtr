@@ -49,16 +49,13 @@ with
             placa,
             data_do_lacre as data_inicio_lacre,
             data_do_deslacre as data_fim_lacre,
-            processo,
             permissao as id_consorcio,
             consorcio,
-            permissionario_empresa as operadora,
             concat(
                 rpad(regexp_replace(substring(no_do_auto, 1, 2), r'\W', ''), 2),
                 '-',
                 lpad(regexp_replace(substring(no_do_auto, 3), r'\W', ''), 8, '0')
             ) as id_auto_infracao,
-            motivo_do_lacre as motivo_lacre,
             ultima_atualizacao as datetime_ultima_atualizacao_fonte,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
         from staging
@@ -108,3 +105,6 @@ select
     '{{ var("version") }}' as versao
 from particoes_completas p
 join aux_datetime_ultima_atualizacao a using (id_veiculo, placa, data_inicio_lacre)
+where
+    data_fim_lacre > '{{ var("data_inicial_veiculo_fiscalizacao_lacre") }}'
+    or data_fim_lacre is null
