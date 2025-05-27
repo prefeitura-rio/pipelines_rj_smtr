@@ -11,6 +11,16 @@
     )
 }}
 
+
+{% set incremental_filter %}
+    {% if is_incremental() %}
+        data between date_sub(
+            date('{{ var("date_range_start") }}'), interval 1 day
+        ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
+    {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
+    {% endif %}
+{% endset %}
+
 with
     viagem as (
         select
@@ -39,50 +49,26 @@ with
         select data, timestamp_gps, servico, id_veiculo, latitude, longitude
         {# from `rj-smtr.monitoramento.gps_onibus_conecta` #}
         from {{ source("monitoramento", "gps_onibus_conecta") }}
-        where
-            {% if is_incremental() %}
-                data between date_sub(
-                    date('{{ var("date_range_start") }}'), interval 1 day
-                ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
-            {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
-            {% endif %}
+        where {{ incremental_filter }}
 
     ),
     gps_zirix as (
         select data, timestamp_gps, servico, id_veiculo, latitude, longitude
         {# from `rj-smtr.monitoramento.gps_onibus_zirix` #}
         from {{ source("monitoramento", "gps_onibus_zirix") }}
-        where
-            {% if is_incremental() %}
-                data between date_sub(
-                    date('{{ var("date_range_start") }}'), interval 1 day
-                ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
-            {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
-            {% endif %}
+        where {{ incremental_filter }}
     ),
     gps_cittati as (
         select data, timestamp_gps, servico, id_veiculo, latitude, longitude
         {# from `rj-smtr.monitoramento.gps_onibus_cittati` #}
         from {{ source("monitoramento", "gps_onibus_cittati") }}
-        where
-            {% if is_incremental() %}
-                data between date_sub(
-                    date('{{ var("date_range_start") }}'), interval 1 day
-                ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
-            {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
-            {% endif %}
+        where {{ incremental_filter }}
     ),
     gps_brt as (
         select data, timestamp_gps, servico, id_veiculo, latitude, longitude
         {# from `rj-smtr.br_rj_riodejaneiro_veiculos.gps_brt` #}
         from {{ ref("gps_brt") }}
-        where
-            {% if is_incremental() %}
-                data between date_sub(
-                    date('{{ var("date_range_start") }}'), interval 1 day
-                ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
-            {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
-            {% endif %}
+        where {{ incremental_filter }}
     ),
     gps_union as (
         select *, 'conecta' as fornecedor
