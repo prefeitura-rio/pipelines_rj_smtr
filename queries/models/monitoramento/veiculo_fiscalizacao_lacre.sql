@@ -79,8 +79,8 @@ with
             case
                 when
                     array_length(atualizacoes) = 1
-                    or atualizacoes[0].datetime_atualizacao_planilha
-                    = atualizacoes[1].datetime_atualizacao_planilha
+                    or atualizacoes[0].datetime_ultima_atualizacao_fonte
+                    = atualizacoes[1].datetime_ultima_atualizacao_fonte
                 then atualizacoes[0].datetime_ultima_atualizacao
                 else atualizacoes[1].datetime_ultima_atualizacao
             end as datetime_ultima_atualizacao
@@ -92,8 +92,8 @@ with
                     data_inicio_lacre,
                     array_agg(
                         struct(
-                            datetime_atualizacao_planilha
-                            as datetime_atualizacao_planilha,
+                            datetime_ultima_atualizacao_fonte
+                            as datetime_ultima_atualizacao_fonte,
                             datetime_ultima_atualizacao as datetime_ultima_atualizacao
                         )
                         order by datetime_ultima_atualizacao
