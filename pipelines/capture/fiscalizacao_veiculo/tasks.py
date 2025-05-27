@@ -15,7 +15,7 @@ from pipelines.utils.gcp.bigquery import SourceTable
     max_retries=smtr_constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=smtr_constants.RETRY_DELAY.value),
 )
-def create_veiculo_lacre_extractor(
+def create_veiculo_fiscalizacao_lacre_extractor(
     source: SourceTable,
     timestamp: datetime,
 ):

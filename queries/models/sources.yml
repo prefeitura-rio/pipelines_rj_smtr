@@ -323,7 +323,7 @@ sources:
     database: rj-smtr-staging
 
     tables:
-      - name: veiculo_lacre
+      - name: veiculo_fiscalizacao_lacre
 
   - name: monitoramento_staging
     database: rj-smtr-staging

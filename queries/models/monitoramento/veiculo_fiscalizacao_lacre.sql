@@ -59,7 +59,7 @@ with
                 lpad(regexp_replace(substring(no_do_auto, 3), r'\W', ''), 8, '0')
             ) as id_auto_infracao,
             motivo_do_lacre as motivo_lacre,
-            ultima_atualizacao as datetime_atualizacao_planilha,
+            ultima_atualizacao as datetime_ultima_atualizacao_fonte,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
         from staging
 
