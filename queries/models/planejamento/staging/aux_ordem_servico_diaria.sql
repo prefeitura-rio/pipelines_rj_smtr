@@ -22,6 +22,7 @@ select
     sum(quilometragem) as distancia_total_planejada,
     tipo_dia,
     versao_modelo
-from {{ ref("ordem_servico_faixa_horaria") }}
+{# from {{ ref("ordem_servico_faixa_horaria") }} #}
+from `rj-smtr.planejamento.ordem_servico_faixa_horaria`
 where feed_start_date >= date('{{ var("DATA_GTFS_V2_INICIO") }}')
 group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17

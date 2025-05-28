@@ -49,7 +49,8 @@ with
                 )),
             0
         ) * 3.6 velocidade
-    FROM  {{ ref("sppo_aux_registros_filtrada") }}
+    {# FROM  {{ ref("sppo_aux_registros_filtrada") }} #}
+    from `rj-smr.br_rj_riodejaneiro_veiculos.sppo_aux_registros_filtrada`
     {%if not flags.FULL_REFRESH -%}
     WHERE
         data between DATE("{{var('date_range_start')}}") and DATE("{{var('date_range_end')}}")

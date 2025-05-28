@@ -7,7 +7,7 @@
     )
 }}
 
-{% if is_incremental() and execute %}
+{% if execute %}
     {% set infracao_dates = run_query(get_version_dates('infracao_data_versao_efetiva')) %}
     {% set min_infracao_date = infracao_dates.columns[0].values()[0]%}
     {% set max_infracao_date = infracao_dates.columns[1].values()[0]%}
@@ -16,9 +16,9 @@ with
     infracao as (
         select * except (data), date(data) as data
         from {{ ref("infracao_staging") }} as i
-        {% if is_incremental() %}
+        {# {% if is_incremental() %} #}
             where date(data) between date("{{ min_infracao_date }}") and date("{{ max_infracao_date }}")
-        {% endif %}
+        {# {% endif %} #}
     )
 select
     *,

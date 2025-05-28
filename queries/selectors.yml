@@ -9,10 +9,6 @@ selectors:
           value: viagem_transacao
         - method: path
           value: models/dashboard_subsidio_sppo
-        - method: fqn
-          value: monitoramento_sumario_servico_dia_historico
-        - method: fqn
-          value: monitoramento_sumario_servico_dia_tipo_viagem_historico
 
   - name: apuracao_subsidio_v9
     description: Apuração com faixa horária

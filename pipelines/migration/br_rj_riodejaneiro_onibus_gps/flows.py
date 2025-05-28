@@ -93,9 +93,9 @@ with Flow(
     # SETUP
     timestamp = get_current_timestamp()
 
-    rename_flow_run = rename_current_flow_run_now_time(
-        prefix=realocacao_sppo.name + ": ", now_time=timestamp
-    )
+    # rename_flow_run = rename_current_flow_run_now_time(
+    #     prefix=realocacao_sppo.name + ": ", now_time=timestamp
+    # )
 
     partitions = create_date_hour_partition(timestamp)
 
@@ -384,7 +384,7 @@ with Flow(
     recapture_window_days = Parameter("recapture_window_days", default=1)
 
     # SETUP #
-    LABELS = get_current_flow_labels()
+    # LABELS = get_current_flow_labels()
 
     # Consulta de logs para verificar erros
     errors, timestamps, previous_errors = query_logs(
@@ -395,11 +395,11 @@ with Flow(
         recapture_window_days=recapture_window_days,
     )
 
-    rename_flow_run = rename_current_flow_run_now_time(
-        prefix=recaptura_realocacao_sppo.name + ": ",
-        now_time=get_now_time(),
-        wait=timestamps,
-    )
+    # rename_flow_run = rename_current_flow_run_now_time(
+    #     prefix=recaptura_realocacao_sppo.name + ": ",
+    #     now_time=get_now_time(),
+    #     wait=timestamps,
+    # )
 
     # Em caso de erros, executa a recaptura
     with case(errors, True):

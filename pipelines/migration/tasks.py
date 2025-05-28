@@ -524,7 +524,7 @@ def query_logs(
                 SAFE_CAST(erro AS STRING) erro,
                 SAFE_CAST(DATA AS DATE) DATA
             FROM
-                {bq_project(kind='bigquery_staging')}.{dataset_id}_staging.{table_id}_logs AS t
+                rj-smtr-staging.br_rj_riodejaneiro_onibus_gps_staging.{table_id}_logs AS t
         ),
         logs AS (
             SELECT
@@ -1025,7 +1025,9 @@ def bq_upload(
     try:
         # Upload raw to staging
         if raw_filepath:
-            st_obj = Storage(table_id=table_id, dataset_id=dataset_id)
+            st_obj = Storage(
+                table_id=table_id, dataset_id=dataset_id, bucket_name="rj-smtr-staging"
+            )
             log(
                 f"""Uploading raw file to bucket {st_obj.bucket_name} at
                 {st_obj.bucket_name}/{dataset_id}/{table_id}"""
@@ -1043,6 +1045,7 @@ def bq_upload(
             table_id=table_id,
             path=filepath,
             partitions=partitions,
+            bucket_name="rj-smtr-staging",
         )
     except Exception:
         error = traceback.format_exc()
@@ -1141,6 +1144,7 @@ def upload_logs_to_bq(  # pylint: disable=R0913
         table_id=table_id,
         path=filepath.as_posix(),
         partitions=partition,
+        bucket_name="rj-smtr-staging",
     )
     if error is not None:
         raise Exception(f"Pipeline failed with error: {error}")
