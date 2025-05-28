@@ -10,6 +10,9 @@ from copy import deepcopy
 from pipelines.capture.rioonibus.constants import (
     constants as rioonibus_source_constants,
 )
+from pipelines.capture.veiculo_fiscalizacao.constants import (
+    constants as veiculo_fiscalizacao_constants,
+)
 from pipelines.constants import constants as smtr_constants
 from pipelines.migration.br_rj_riodejaneiro_onibus_gps_zirix.constants import (
     constants as gps_zirix_constants,
@@ -62,4 +65,11 @@ VIAGEM_VALIDACAO_MATERIALIZACAO = create_default_materialization_flow(
             "schedule_cron": cron_every_hour_minute_6,
         },
     ],
+)
+
+MONITORAMENTO_VEICULO_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="monitoramento_veiculo - materializacao",
+    selector=constants.MONITORAMENTO_VEICULO_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[veiculo_fiscalizacao_constants.VEICULO_LACRE_SOURCE.value],
 )

@@ -308,3 +308,11 @@ selectors:
       union:
         - method: fqn
           value: snapshot_sppo_veiculo_dia
+
+  - name: monitoramento_veiculo
+    definition:
+      union:
+        - method: fqn
+          value: staging_veiculo_fiscalizacao_lacre
+        - method: fqn
+          value: veiculo_fiscalizacao_lacre

@@ -345,3 +345,46 @@ models:
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
+  - name: veiculo_fiscalizacao_lacre
+    description: Tabela com as informações do controle do lacre e deslacre de veículos
+    columns:
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+        data_type: string
+        quote: true
+      - name: placa
+        description: "{{ doc('placa') }}"
+        data_type: string
+        quote: true
+      - name: data_inicio_lacre
+        description: Data de inicio do lacre [partição]
+        data_type: date
+        quote: true
+      - name: data_fim_lacre
+        description: Data de fim do lacre
+        data_type: date
+        quote: true
+      - name: id_consorcio
+        description: "{{ doc('id_consorcio') }}"
+        data_type: string
+        quote: true
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+        data_type: string
+        quote: true
+      - name: id_auto_infracao
+        description: "{{ doc('id_auto_infracao') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao_fonte
+        description: Datetime da última atualização da informação na fonte dos dados [GMT-3]
+        data_type: datetime
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
