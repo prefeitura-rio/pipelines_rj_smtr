@@ -12,6 +12,9 @@ from pipelines.capture.conecta.constants import constants as conecta_constants
 from pipelines.capture.rioonibus.constants import (
     constants as rioonibus_source_constants,
 )
+from pipelines.capture.veiculo_fiscalizacao.constants import (
+    constants as veiculo_fiscalizacao_constants,
+)
 from pipelines.capture.zirix.constants import constants as zirix_constants
 from pipelines.constants import constants as smtr_constants
 from pipelines.migration.br_rj_riodejaneiro_onibus_gps_zirix.constants import (
@@ -143,3 +146,10 @@ GPS_15_MINUTOS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
 )
 gps_15_vars_zirix = {"modo_gps": "onibus", "fonte_gps": "zirix", "15_minutos": True}
 set_default_parameters(GPS_15_MINUTOS_ZIRIX_MATERIALIZACAO, {"additional_vars": gps_15_vars_zirix})
+
+MONITORAMENTO_VEICULO_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="monitoramento_veiculo - materializacao",
+    selector=constants.MONITORAMENTO_VEICULO_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[veiculo_fiscalizacao_constants.VEICULO_LACRE_SOURCE.value],
+)

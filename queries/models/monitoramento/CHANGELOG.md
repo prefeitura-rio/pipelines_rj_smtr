@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.3.9] - 2025-05-28
+
+### Adicionado
+
+- Cria modelos `staging_veiculo_fiscalizacao_lacre.sql` e `veiculo_fiscalizacao_lacre.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/594)
+
 ## [1.3.8] - 2025-05-28
 
 
