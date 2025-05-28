@@ -33,7 +33,7 @@ with
             datetime(faixa_horaria_inicio) as faixa_horaria_inicio,
             indicador_viagem_dentro_limite
         from
-            {{ ref('viagens_remuneradas') }} r
+            {{ model }} r
             -- `rj-smtr-dev.abr_reprocessamento__dashboard_subsidio_sppo.viagens_remuneradas` r
         left join
             {{ ref('viagens_completa') }} c
