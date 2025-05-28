@@ -60,5 +60,5 @@ with
 select *
 from viagens
 left join os using (data, servico, faixa_horaria_inicio)
-where viagens_total <= partidas and viagens_dentro_limite < viagens_total
+where viagens_total >= partidas and viagens_dentro_limite < partidas
 {% endtest %}
