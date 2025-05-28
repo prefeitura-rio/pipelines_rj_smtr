@@ -56,7 +56,7 @@ with
             sentido,
             countif(id_segmento is not null) as quantidade_segmentos_verificados,
             countif(quantidade_gps > 0) as quantidade_segmentos_validos,
-            ceil(
+            round(
                 countif(id_segmento is not null)
                 * safe_cast((1 - {{ var("parametro_validacao") }}) as numeric)
             ) as quantidade_segmentos_tolerados,
@@ -67,6 +67,7 @@ with
             feed_version,
             feed_start_date
         from {{ ref("gps_segmento_viagem") }}
+        {# from `rj-smtr`.`monitoramento_staging`.`gps_segmento_viagem` #}
         where
             (
                 not indicador_segmento_desconsiderado
@@ -107,8 +108,11 @@ with
             sentido,
             quantidade_segmentos_verificados,
             quantidade_segmentos_validos,
-            quantidade_segmentos_verificados
-            - quantidade_segmentos_tolerados as quantidade_segmentos_necessarios,
+            case
+                when quantidade_segmentos_tolerados >= 1
+                then quantidade_segmentos_verificados - quantidade_segmentos_tolerados
+                else abs(quantidade_segmentos_verificados - 1)
+            end as quantidade_segmentos_necessarios,
             safe_divide(
                 quantidade_segmentos_validos, quantidade_segmentos_verificados
             ) as indice_validacao,
@@ -155,14 +159,14 @@ with
             faixa_horaria_inicio,
             faixa_horaria_fim,
             trip_info
-        {# sum(quilometragem) over (partition by data, servico, faixa_horaria_inicio) as distancia_total_planejada #}
         from {{ ref("servico_planejado_faixa_horaria") }}
+        {# from `rj-smtr`.`planejamento`.`servico_planejado_faixa_horaria` #}
         {% if is_incremental() or var("tipo_materializacao") == "monitoramento" %}
             where {{ incremental_filter }}
         {% endif %}
     ),
     servico_planejado_unnested as (
-        select
+        select distinct
             sp.data,
             sp.servico,
             sp.sentido,
@@ -283,7 +287,7 @@ with
         left join viagens_sobrepostas vs using (id_viagem)
     ),
     filtro_desvio as (
-        select * except (indice_validacao)
+        select *
         from viagens
         qualify
             row_number() over (
@@ -331,6 +335,7 @@ select
     velocidade_media,
     quantidade_segmentos_verificados,
     quantidade_segmentos_validos,
+    quantidade_segmentos_necessarios,
     indicador_viagem_sobreposta,
     indicador_trajeto_valido,
     indicador_servico_planejado_gtfs,
