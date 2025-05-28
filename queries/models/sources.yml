@@ -319,6 +319,12 @@ sources:
     tables:
       - name: ordem_servico
 
+  - name: source_veiculo_fiscalizacao
+    database: rj-smtr-staging
+
+    tables:
+      - name: veiculo_fiscalizacao_lacre
+
   - name: monitoramento_staging
     database: rj-smtr-staging
 

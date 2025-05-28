@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.1.3] - 2025-05-27
+
+### Adicionado
+
+- Cria flow de materialização do monitoramento dos veiculos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/594)
+
 ## [1.1.2] - 2024-11-28
 
 ### Alterado

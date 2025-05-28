@@ -1,5 +1,11 @@
 # Changelog - veiculo
 
+## [2.0.7] - 2025-05-27
+
+### Adicionado
+
+- Adiciona coluna `ultima_situacao` no modelo `licenciamento_stu_staging.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/594)
+
 ## [2.0.6] - 2025-05-09
 
 ### Alterado
