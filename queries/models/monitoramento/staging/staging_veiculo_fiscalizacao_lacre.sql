@@ -37,4 +37,4 @@ select
             safe_cast(json_value(content, '$.ultima_atualizacao') as string)
         )
     ) as ultima_atualizacao
-from {{ source("source_fiscalizacao_veiculo", "veiculo_fiscalizacao_lacre") }}
+from {{ source("source_veiculo_fiscalizacao", "veiculo_fiscalizacao_lacre") }}

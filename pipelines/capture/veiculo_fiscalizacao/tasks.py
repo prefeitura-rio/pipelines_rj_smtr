@@ -5,7 +5,7 @@ from functools import partial
 
 from prefect import task
 
-from pipelines.capture.fiscalizacao_veiculo.constants import constants
+from pipelines.capture.veiculo_fiscalizacao.constants import constants
 from pipelines.constants import constants as smtr_constants
 from pipelines.utils.extractors.gdrive import get_google_sheet_xlsx
 from pipelines.utils.gcp.bigquery import SourceTable

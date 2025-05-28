@@ -319,7 +319,7 @@ sources:
     tables:
       - name: ordem_servico
 
-  - name: source_fiscalizacao_veiculo
+  - name: source_veiculo_fiscalizacao
     database: rj-smtr-staging
 
     tables:
