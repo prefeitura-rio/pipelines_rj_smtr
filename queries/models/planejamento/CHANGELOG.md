@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.4.4] - 2025-05-28
+
+### Adicionado
+
+- Adiciona os dias `2025-05-02` como Ponto facultativo e `2025-05-03` e `2025-05-04` como  Dia Atípico no modelo `aux_calendario_manual` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/597)
+
 ## [1.4.3] - 2025-05-12
 
 ### Adicionado
