@@ -632,6 +632,8 @@ models:
       - check_viagem_completa:
           name: check_viagem_completa__viagens_remuneradas
           where: "data between date('{date_range_start}') and date('{date_range_end}')"
+      - teto_viagens:
+          name: teto_viagens__viagens_remuneradas
     columns:
       - name: data
         description: "{{ doc('data_viagem') }}"
