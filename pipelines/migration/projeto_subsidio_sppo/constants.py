@@ -826,7 +826,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todas viagens processadas com feed atualizado do GTFS"
             },
             "teto_viagens__viagens_remuneradas": {
-                "description": "Todas viagens apuradas dentro da quantidade planejada"
+                "description": "Todas as viagens abaixo do teto foram corretamente identificadas como dentro do limite"
             },
         },
         "valor_km_tipo_viagem": {
