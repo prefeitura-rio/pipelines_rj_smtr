@@ -44,7 +44,7 @@ class constants(Enum):  # pylint: disable=c0103
         schedule_cron=create_minute_cron(minute=15),
         initial_datetime=datetime(2025, 5, 9, 0, 0, 0),
     )
-    
+
     MONITORAMENTO_VEICULO_SELECTOR = DBTSelector(
         name="monitoramento_veiculo",
         schedule_cron=create_daily_cron(hour=7),
