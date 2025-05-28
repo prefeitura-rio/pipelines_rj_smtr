@@ -2,9 +2,14 @@
 
 ## [1.3.8] - 2025-05-28
 
+
 ### Adicionado
 
  - Cria modelo `gps_15_minutos_union` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/586)
+
+### Alterado
+
+- Altera lógica do modelo `aux_gps_trajeto_correto` para considerar trajetos alternativos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/595)
 
 ## [1.3.7] - 2025-05-20
 
