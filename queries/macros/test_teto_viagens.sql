@@ -5,12 +5,12 @@ with
             data,
             servico,
             case
-                when fh.tipo_os != "Regular"
-                then concat(concat(fh.tipo_dia, " - "), fh.tipo_os)
+                when fh.tipo_os != 'Regular'
+                then concat(concat(fh.tipo_dia, ' - '), fh.tipo_os)
                 else fh.tipo_dia
             end as tipo_dia,
             safe_cast(
-                concat(concat(data, "T"), faixa_horaria_inicio) as datetime
+                concat(concat(data, 'T'), faixa_horaria_inicio) as datetime
             ) as faixa_horaria_inicio,
             partidas,
         from {{ ref('ordem_servico_faixa_horaria') }} fh
@@ -20,9 +20,9 @@ with
             -- `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva` s
             on s.feed_start_date = fh.feed_start_date
             and fh.tipo_dia = s.tipo_dia
-            and coalesce(s.tipo_os, "Regular") = fh.tipo_os
+            and coalesce(s.tipo_os, 'Regular') = fh.tipo_os
         where
-            data between "2025-04-01" and "2025-04-30"
+            data between DATE("{{ var('date_range_start') }}") and DATE("{{ var('date_range_end') }}")
             and partidas > 0
             and quilometragem > 0
     ),
@@ -40,13 +40,13 @@ with
             -- `rj-smtr.projeto_subsidio_sppo.viagem_completa` c
             using (data, id_viagem)
         left join
-            {{ ref('viagem_planejada') }} c  p
+            {{ ref('viagem_planejada') }}  p
             -- `rj-smtr.projeto_subsidio_sppo.viagem_planejada` p
             on p.data = c.data
             and r.servico = p.servico
             and c.datetime_partida
             between datetime(faixa_horaria_inicio) and datetime(faixa_horaria_fim)
-        where r.data between "2025-04-01" and "2025-04-30"
+        where r.data between DATE("{{ var('date_range_start') }}") and DATE("{{ var('date_range_end') }}")
     ),
     viagens as (
         select
