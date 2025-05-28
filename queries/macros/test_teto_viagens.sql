@@ -33,8 +33,8 @@
                 and c.datetime_partida
                 between faixa_horaria_inicio and faixa_horaria_fim
             where
-                r.data between date("{{ var('date_range_start') }}") and date(
-                    "{{ var('date_range_end') }}"
+                r.data between date('{{ var("date_range_start") }}') and date(
+                    '{{ var("date_range_end") }}'
                 )
         ),
         viagens as (
