@@ -10,8 +10,8 @@
             from {{ ref("viagem_planejada") }}
             -- from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
             where
-                data between date("{{ var('date_range_start') }}") and date(
-                    "{{ var('date_range_end') }}"
+                data between date('{{ var("date_range_start") }}') and date(
+                    '{{ var("date_range_end") }}'
                 )
                 and (distancia_total_planejada > 0 or distancia_total_planejada is null)
                 and (id_tipo_trajeto = 0 or id_tipo_trajeto is null)
