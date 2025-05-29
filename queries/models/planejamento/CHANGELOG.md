@@ -2,12 +2,6 @@
 
 ## [1.4.5] - 2025-05-29
 
-### Alterado
-
-- Altera tratamento da coluna servico no modelo `tecnologia_servico` para corrigir serviços com menos de 3 dígitos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/600)
-
-## [1.4.5] - 2025-05-29
-
 ### Adicionado
 
 - Adiciona o `subtipo_dia` 'Lady Gaga' para os dias `2025-05-03` e `2025-05-04` no modelo `calendario` em razão da Operação Especial "Todo Mundo no Rio" - Lady Gaga [Processo.Rio MTR-PRO-2025/04520] (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/598)
@@ -15,6 +9,7 @@
 ### Alterado
 
 - Refatora referências do modelo `calendario` em variáveis (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/598)
+- Altera tratamento da coluna servico no modelo `tecnologia_servico` para corrigir serviços com menos de 3 dígitos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/600)
 
 ## [1.4.4] - 2025-05-28
 
