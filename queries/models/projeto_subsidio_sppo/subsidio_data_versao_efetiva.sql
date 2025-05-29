@@ -662,6 +662,10 @@
                     then "Madonna"
                     when ifnull(c.tipo_os, d.tipo_os) like "%Reveillon%"
                     then "Reveillon"
+                    when
+                        data between date(2025, 05, 03) and date(2025, 05, 04)
+                        and ifnull(c.tipo_os, d.tipo_os) = "Dia Atípico"
+                    then "Lady Gaga"  -- Processo.Rio MTR-PRO-2025/04520 [Operação Especial "Todo Mundo no Rio" - Lady Gaga]
                     when ifnull(c.tipo_os, d.tipo_os) = "Regular"
                     then null
                     else ifnull(c.tipo_os, d.tipo_os)
