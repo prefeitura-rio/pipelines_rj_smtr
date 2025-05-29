@@ -10,15 +10,21 @@
     )
 }}
 
-{% set gtfs_feed_info = ref("feed_info_gtfs") %}
-{# {% set gtfs_feed_info = "rj-smtr.gtfs.feed_info" %} #}
+{% set feed_info_gtfs = ref("feed_info_gtfs") %}
+{% set calendar_gtfs = ref("calendar_gtfs") %}
+{% set calendar_dates_gtfs = ref("calendar_dates_gtfs") %}
 {% set calendario_manual = ref("aux_calendario_manual") %}
+
+{# {% set feed_info_gtfs = "rj-smtr.gtfs.feed_info" %} #}
+{# {% set calendar_gtfs = "rj-smtr.gtfs.calendar" %} #}
+{# {% set calendar_dates_gtfs = "rj-smtr.gtfs.calendar_dates" %} #}
+{# {% set calendario_manual = "rj-smtr.planejamento_staging.aux_calendario_manual" %} #}
 
 {% if execute %}
     {% if is_incremental() %}
         {% set gtfs_feeds_query %}
             select concat("'", feed_start_date, "'") as feed_start_date
-            from {{ gtfs_feed_info }}
+            from {{ feed_info_gtfs }}
             where
                 feed_start_date <= date("{{ var('date_range_end') }}")
                 and (feed_end_date IS NULL OR feed_end_date >= date("{{ var('date_range_start') }}"))
@@ -40,8 +46,7 @@
 with
     calendar as (
         select *
-        {# from `rj-smtr.gtfs.calendar` #}
-        from {{ ref("calendar_gtfs") }}
+        from {{ calendar_gtfs }}
         {% if is_incremental() %}
             where feed_start_date in ({{ gtfs_feeds | join(", ") }})
         {% endif %}
@@ -49,7 +54,7 @@ with
     datas as (
         select data, extract(dayofweek from data) as dia_semana, feed_start_date
         from
-            {{ gtfs_feed_info }},
+            {{ feed_info_gtfs }},
             unnest(
                 generate_date_array(
                     {% if is_incremental() %}
@@ -95,8 +100,7 @@ with
             end as service_id,
             cd.exception_type,
             cd.feed_start_date,
-        {# from `rj-smtr.gtfs.calendar_dates` cd #}
-        from {{ ref("calendar_dates_gtfs") }} cd
+        from {{ calendar_dates_gtfs }} cd
         join
             modificacao_manual m
             on cd.date = m.data
@@ -190,6 +194,10 @@ select
         then "Verão"
         when c.tipo_os like "%Madonna%"
         then "Madonna"
+        when
+            data between date(2025, 05, 03) and date(2025, 05, 04)
+            and c.tipo_os = "Dia Atípico"
+        then "Lady Gaga"  -- Processo.Rio MTR-PRO-2025/04520 [Operação Especial "Todo Mundo no Rio" - Lady Gaga]
         when c.tipo_os = "Regular"
         then null
         else c.tipo_os
@@ -201,4 +209,4 @@ select
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
 from service_id_agg c
-join {{ gtfs_feed_info }} i using (feed_start_date)
+join {{ feed_info_gtfs }} i using (feed_start_date)

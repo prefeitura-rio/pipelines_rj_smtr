@@ -56,8 +56,6 @@ vars:
   velocidade_limiar_parado: 3
   ## Distância mínima para que o veículo seja identificado parado em um terminal ou garagem em aux_registros_parada
   distancia_limiar_parada: 250
-  ## Tamanho do buffer do segmento
-  buffer_segmento_metros: 20 # flag_trajeto_correto
 
   ### [ANTIGO] SIGMOB ###
 
@@ -225,6 +223,9 @@ vars:
 
   ### Planejamento ###
   feed_inicial_viagem_planejada: "2024-09-29"
+
+  ### Monitoramento ###
+  data_inicial_veiculo_fiscalizacao_lacre: "2025-03-31"
 
 tests:
   rj_smtr:
