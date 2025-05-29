@@ -20,7 +20,7 @@
     {% set partitions_query %}
 
         SELECT DISTINCT
-            CONCAT("'", data_inicio_lacre, "'") AS data_inicio_lacre
+            CONCAT("'", data_do_lacre, "'") AS data_do_lacre
         FROM
             {{ staging_veiculo_fiscalizacao_lacre }}
         WHERE
