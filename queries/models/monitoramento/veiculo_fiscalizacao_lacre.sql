@@ -65,7 +65,7 @@ with
 
             select * except (versao)
             from {{ this }}
-            where data_inicio_lacre in ({{ partition_list | join(", ") }})
+            where data_inicio_lacre in ({{ partitions | join(", ") }})
         {% endif %}
     ),
     aux_datetime_ultima_atualizacao as (
