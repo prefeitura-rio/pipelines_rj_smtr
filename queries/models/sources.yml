@@ -326,6 +326,15 @@ sources:
       - name: gps_onibus_conecta
       - name: gps_onibus_cittati
       - name: gps_onibus_zirix
+      - name: gps_15_minutos_onibus_conecta
+      - name: gps_15_minutos_onibus_cittati
+      - name: gps_15_minutos_onibus_zirix
+
+  - name: source_veiculo_fiscalizacao
+    database: rj-smtr-staging
+
+    tables:
+      - name: veiculo_fiscalizacao_lacre
 
   - name: monitoramento_staging
     database: rj-smtr-staging
