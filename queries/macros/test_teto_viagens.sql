@@ -23,7 +23,7 @@
             from {{ model }} r
             -- `rj-smtr-dev.abr_reprocessamento__dashboard_subsidio_sppo.viagens_remuneradas` r
             left join
-                {{ ref("viagens_completa") }} c
+                {{ ref("viagem_completa") }} c
                 -- `rj-smtr.projeto_subsidio_sppo.viagem_completa` c
                 using (data, id_viagem)
             left join

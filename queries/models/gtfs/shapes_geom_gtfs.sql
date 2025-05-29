@@ -1,146 +1,145 @@
-{{ config(
-    partition_by = { 'field' :'feed_start_date',
-    'data_type' :'date',
-    'granularity': 'day' },
-    unique_key = ['shape_id', 'feed_start_date'],
-    alias = 'shapes_geom',
-    tags=['geolocalizacao']
-) }}
+-- depends_on: {{ ref('feed_info_gtfs') }}
+{{
+    config(
+        partition_by={
+            "field": "feed_start_date",
+            "data_type": "date",
+            "granularity": "day",
+        },
+        unique_key=["shape_id", "feed_start_date"],
+        alias="shapes_geom",
+        tags=["geolocalizacao"],
+    )
+}}
 
 {% if execute and is_incremental() %}
-  {% set last_feed_version = get_last_feed_start_date(var("data_versao_gtfs")) %}
+    {% set last_feed_version = get_last_feed_start_date(var("data_versao_gtfs")) %}
 {% endif %}
 
-WITH contents AS (
-    SELECT
-        shape_id,
-        ST_GEOGPOINT(shape_pt_lon, shape_pt_lat) AS ponto_shape,
-        shape_pt_sequence,
-        feed_start_date,
-    FROM {{ref('shapes_gtfs')}} s
-    {% if is_incremental() -%}
-        WHERE feed_start_date IN ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
-    {%- endif %}
-),
-pts AS (
-    SELECT *,
-        MAX(shape_pt_sequence) OVER(PARTITION BY feed_start_date, shape_id) final_pt_sequence
-    FROM contents c
-    ORDER BY feed_start_date,
-        shape_id,
-        shape_pt_sequence
-),
-shapes AS (
-    -- BUILD LINESTRINGS OVER SHAPE POINTS
-    SELECT
-        shape_id,
-        feed_start_date,
-        ST_MAKELINE(ARRAY_AGG(ponto_shape)) AS shape,
-        ARRAY_AGG(ponto_shape)[ORDINAL(1)] AS start_pt,
-        ARRAY_AGG(ponto_shape)[ORDINAL(ARRAY_LENGTH(ARRAY_AGG(ponto_shape)))] AS end_pt,
-    FROM pts
-    GROUP BY 1,
-            2
-),
-shapes_half AS (
-    -- BUILD HALF LINESTRINGS OVER SHAPE POINTS
-    (
-        SELECT
+{# {% set shapes_gtfs = ref("shapes_gtfs") %} #}
+{# {% set feed_info_gtfs = ref("feed_info_gtfs") %} #}
+{% set feed_info_gtfs = "rj-smtr.gtfs.feed_info" %}
+{% set shapes_gtfs = "rj-smtr.gtfs.shapes" %}
+
+with
+    contents as (
+        select
+            shape_id,
+            st_geogpoint(shape_pt_lon, shape_pt_lat) as ponto_shape,
+            shape_pt_sequence,
+            feed_start_date,
+        from {{ shapes_gtfs }} s
+        {% if is_incremental() -%}
+            where
+                feed_start_date
+                in ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
+        {%- endif %}
+    ),
+    pts as (
+        select
+            *,
+            max(shape_pt_sequence) over (
+                partition by feed_start_date, shape_id
+            ) final_pt_sequence
+        from contents c
+        order by feed_start_date, shape_id, shape_pt_sequence
+    ),
+    shapes as (
+        -- BUILD LINESTRINGS OVER SHAPE POINTS
+        select
             shape_id,
             feed_start_date,
-            shape_id || "_0" AS new_shape_id,
-            ST_MAKELINE(ARRAY_AGG(ponto_shape)) AS shape,
-            ARRAY_AGG(ponto_shape)[ORDINAL(1)] AS start_pt,
-            ARRAY_AGG(ponto_shape)[ORDINAL(ARRAY_LENGTH(ARRAY_AGG(ponto_shape)))] AS end_pt,
-        FROM
-            pts
-        WHERE
-            shape_pt_sequence <= ROUND(final_pt_sequence / 2)
-        GROUP BY
-            1,
-            2
+            st_makeline(array_agg(ponto_shape)) as shape,
+            array_agg(ponto_shape)[ordinal(1)] as start_pt,
+            array_agg(ponto_shape)[
+                ordinal(array_length(array_agg(ponto_shape)))
+            ] as end_pt,
+        from pts
+        group by 1, 2
+    ),
+    shapes_half as (
+        -- BUILD HALF LINESTRINGS OVER SHAPE POINTS
+        (
+            select
+                shape_id,
+                feed_start_date,
+                shape_id || "_0" as new_shape_id,
+                st_makeline(array_agg(ponto_shape)) as shape,
+                array_agg(ponto_shape)[ordinal(1)] as start_pt,
+                array_agg(ponto_shape)[
+                    ordinal(array_length(array_agg(ponto_shape)))
+                ] as end_pt,
+            from pts
+            where shape_pt_sequence <= round(final_pt_sequence / 2)
+            group by 1, 2
+        )
+        union all
+        (
+            select
+                shape_id,
+                feed_start_date,
+                shape_id || "_1" as new_shape_id,
+                st_makeline(array_agg(ponto_shape)) as shape,
+                array_agg(ponto_shape)[ordinal(1)] as start_pt,
+                array_agg(ponto_shape)[
+                    ordinal(array_length(array_agg(ponto_shape)))
+                ] as end_pt,
+            from pts
+            where shape_pt_sequence > round(final_pt_sequence / 2)
+            group by 1, 2
+        )
+    ),
+    ids as (
+        select * except (rn)
+        from
+            (
+                select
+                    feed_start_date,
+                    shape_id,
+                    shape,
+                    start_pt,
+                    end_pt,
+                    row_number() over (partition by feed_start_date, shape_id) rn
+                from shapes
+            )
+        where rn = 1
+    ),
+    union_shapes as (
+        (select feed_start_date, shape_id, shape, start_pt, end_pt, from ids)
+        union all
+        (
+            select
+                feed_start_date,
+                new_shape_id as shape_id,
+                s.shape,
+                s.start_pt,
+                s.end_pt,
+            from ids as i
+            left join shapes_half as s using (feed_start_date, shape_id)
+            where
+                (
+                    round(st_y(i.start_pt), 4) = round(st_y(i.end_pt), 4)
+                    and round(st_x(i.start_pt), 4) = round(st_x(i.end_pt), 4)
+                )
+                or (
+                    feed_start_date = "2025-05-01" and shape_id in ("iz18", "ycug")  -- Operação Especial "Todo Mundo no Rio" - Lady Gaga
+                )
+        )
     )
-    UNION ALL
-    (
-        SELECT
-            shape_id,
-            feed_start_date,
-            shape_id || "_1" AS new_shape_id,
-            ST_MAKELINE(ARRAY_AGG(ponto_shape)) AS shape,
-            ARRAY_AGG(ponto_shape)[ORDINAL(1)] AS start_pt,
-            ARRAY_AGG(ponto_shape)[ORDINAL(ARRAY_LENGTH(ARRAY_AGG(ponto_shape)))] AS end_pt,
-        FROM
-            pts
-        WHERE
-            shape_pt_sequence > ROUND(final_pt_sequence / 2)
-        GROUP BY
-            1,
-            2
-    )
-),
-ids AS (
-    SELECT
-      * EXCEPT(rn)
-    FROM
-    (
-        SELECT
-            feed_start_date,
-            shape_id,
-            shape,
-            start_pt,
-            end_pt,
-            ROW_NUMBER() OVER(PARTITION BY feed_start_date, shape_id) rn
-        FROM
-            shapes
-    )
-    WHERE rn = 1
-),
-union_shapes AS (
-  (
-    SELECT
-        feed_start_date,
-        shape_id,
-        shape,
-        start_pt,
-        end_pt,
-    FROM
-        ids
-  )
-  UNION ALL
-  (
-    SELECT
-        feed_start_date,
-        new_shape_id AS shape_id,
-        s.shape,
-        s.start_pt,
-        s.end_pt,
-    FROM
-        ids AS i
-    LEFT JOIN
-        shapes_half AS s
-    USING
-        (feed_start_date, shape_id)
-    WHERE
-        ROUND(ST_Y(i.start_pt),4) = ROUND(ST_Y(i.end_pt),4)
-        AND ROUND(ST_X(i.start_pt),4) = ROUND(ST_X(i.end_pt),4)
-  )
-)
-SELECT
+select
     feed_version,
     feed_start_date,
     feed_end_date,
     shape_id,
     shape,
-    ROUND(ST_LENGTH(shape), 1) shape_distance,
+    round(st_length(shape), 1) shape_distance,
     start_pt,
     end_pt,
     '{{ var("version") }}' as versao_modelo
-FROM union_shapes AS m
-LEFT JOIN
-    {{ ref('feed_info_gtfs') }} AS fi
-USING
-    (feed_start_date)
+from union_shapes as m
+left join {{ feed_info_gtfs }} as fi using (feed_start_date)
 {% if is_incremental() -%}
-WHERE
-    fi.feed_start_date IN ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
+    where
+        fi.feed_start_date
+        in ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
 {%- endif %}
