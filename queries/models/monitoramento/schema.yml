@@ -129,16 +129,16 @@ models:
         description: "Quantidade de segmentos com pelo menos um sinal de GPS"
         data_type: int64
         quote: true
-      - name: indice_validacao
-        description: "Quantidade_segmentos_validos dividido por quantidade_segmentos_verificados"
-        data_type: float64
+      - name: quantidade_segmentos_necessarios
+        description: "Quantidade mínima de segmentos para que a viagem seja validada"
+        data_type: int64
         quote: true
       - name: indicador_viagem_sobreposta
         description: "Indica se a viagem se sobrepõe a outra viagem do mesmo veículo"
         data_type: boolean
         quote: true
       - name: indicador_trajeto_valido
-        description: "Indica se o veículo cumpriu o trajeto [indice_validacao >= parametro_validacao]"
+        description: "Indica se o veículo cumpriu o trajeto [quantidade_segmentos_validos >= quantidade_segmentos_necessarios]"
         data_type: boolean
         quote: true
       - name: indicador_servico_planejado_gtfs
@@ -168,10 +168,6 @@ models:
       - name: indicador_viagem_valida
         description: "Indica se a viagem está válida conforme critérios definidos"
         data_type: boolean
-        quote: true
-      - name: parametro_validacao
-        description: "Valor mínimo do indice_validacao para que a viagem seja validada"
-        data_type: float64
         quote: true
       - name: tipo_dia
         description: "{{ doc('tipo_dia') }}"
