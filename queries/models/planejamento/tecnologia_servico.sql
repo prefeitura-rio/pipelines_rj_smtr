@@ -6,7 +6,13 @@
 
 with
     tecnologia as (
-        select *
+        select
+            * except (servico),
+            case
+                when regexp_contains(servico, r'^\d{1,2}$')
+                then lpad(servico, 3, '0')
+                else servico
+            end as servico
         from {{ ref("staging_tecnologia_servico") }}
         where
             codigo_tecnologia != "0000"
