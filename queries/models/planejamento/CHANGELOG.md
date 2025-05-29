@@ -9,6 +9,7 @@
 ### Alterado
 
 - Refatora referências do modelo `calendario` em variáveis (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/598)
+- Altera tratamento da coluna servico no modelo `tecnologia_servico` para corrigir serviços com menos de 3 dígitos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/600)
 
 ## [1.4.4] - 2025-05-28
 
