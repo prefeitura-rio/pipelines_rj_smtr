@@ -29,7 +29,7 @@ def create_veiculo_fiscalizacao_lacre_extractor(
         )
         timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
         filter_expr = (
-            f"ultima_atualizacao > {last_capture} and ultima_atualizacao <= {timestamp_str}"
+            f"ultima_atualizacao > '{last_capture}' and ultima_atualizacao <= '{timestamp_str}'"
         )
 
     return partial(
