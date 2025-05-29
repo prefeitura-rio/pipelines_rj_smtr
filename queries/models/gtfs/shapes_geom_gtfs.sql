@@ -16,10 +16,10 @@
     {% set last_feed_version = get_last_feed_start_date(var("data_versao_gtfs")) %}
 {% endif %}
 
-{# {% set shapes_gtfs = ref("shapes_gtfs") %} #}
-{# {% set feed_info_gtfs = ref("feed_info_gtfs") %} #}
-{% set feed_info_gtfs = "rj-smtr.gtfs.feed_info" %}
-{% set shapes_gtfs = "rj-smtr.gtfs.shapes" %}
+{% set shapes_gtfs = ref("shapes_gtfs") %}
+{% set feed_info_gtfs = ref("feed_info_gtfs") %}
+{# {% set feed_info_gtfs = "rj-smtr.gtfs.feed_info" %} #}
+{# {% set shapes_gtfs = "rj-smtr.gtfs.shapes" %} #}
 
 with
     contents as (

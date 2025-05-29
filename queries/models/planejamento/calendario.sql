@@ -20,7 +20,6 @@
 {# {% set calendar_dates_gtfs = "rj-smtr.gtfs.calendar_dates" %} #}
 {# {% set calendario_manual = "rj-smtr.planejamento_staging.aux_calendario_manual" %} #}
 
-
 {% if execute %}
     {% if is_incremental() %}
         {% set gtfs_feeds_query %}
