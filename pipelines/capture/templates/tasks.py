@@ -278,6 +278,7 @@ def transform_raw_to_nested_structure(
         data = pd.DataFrame()
     else:
         log(f"Raw data:\n{data_info_str(data)}", level="info")
+
         data_columns_len = len(data.columns)
         captura = create_timestamp_captura(timestamp=datetime.now())
         data["_datetime_execucao_flow"] = captura
