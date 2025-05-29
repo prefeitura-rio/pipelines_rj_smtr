@@ -1,10 +1,16 @@
 # Changelog - monitoramento
 
-## [1.3.8] - 2025-05-27
+## [1.3.9] - 2025-05-28
 
 ### Adicionado
 
 - Cria modelos `staging_veiculo_fiscalizacao_lacre.sql` e `veiculo_fiscalizacao_lacre.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/594)
+
+## [1.3.8] - 2025-05-28
+
+### Alterado
+
+- Altera lógica do modelo `aux_gps_trajeto_correto` para considerar trajetos alternativos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/595)
 
 ## [1.3.7] - 2025-05-20
 
