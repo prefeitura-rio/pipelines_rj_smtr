@@ -176,8 +176,7 @@ with
             sp.faixa_horaria_fim,
             trip.shape_id,
             trip.indicador_trajeto_alternativo
-        from servico_planejado sp
-        cross join unnest(sp.trip_info) as trip
+        from servico_planejado sp, unnest(sp.trip_info) as trip
         where trip.shape_id is not null
     ),
     servicos_planejados_os as (
