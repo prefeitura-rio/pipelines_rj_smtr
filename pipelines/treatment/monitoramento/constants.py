@@ -35,14 +35,14 @@ class constants(Enum):  # pylint: disable=c0103
     GPS_SELECTOR = DBTSelector(
         name="gps",
         schedule_cron=create_hourly_cron(minute=6),
-        initial_datetime=datetime(2025, 5, 9, 0, 0, 0),
+        initial_datetime=datetime(2025, 5, 21, 0, 0, 0),
         incremental_delay_hours=1,
     )
 
     GPS_15_MINUTOS_SELECTOR = DBTSelector(
         name="gps_15_minutos",
         schedule_cron=create_minute_cron(minute=15),
-        initial_datetime=datetime(2025, 5, 9, 0, 0, 0),
+        initial_datetime=datetime(2025, 5, 21, 0, 0, 0),
     )
 
     MONITORAMENTO_VEICULO_SELECTOR = DBTSelector(
