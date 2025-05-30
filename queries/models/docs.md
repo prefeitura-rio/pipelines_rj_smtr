@@ -730,7 +730,7 @@ Nome curto da linha operada pelo veículo com variação de serviço [ex: 010, 0
 {% enddocs %}
 
 {% docs start_pt %}
-Ponto inicial do shape em formato geográfico (Point)
+Ponto inicial do shape em formato geográfico [Point]
 {% enddocs %}
 
 {% docs trip_short_name %}
