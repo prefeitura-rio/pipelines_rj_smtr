@@ -43,6 +43,7 @@ def create_default_capture_flow(
     recapture_days: int = 2,
     generate_schedule: bool = True,
     recapture_schedule_cron: Optional[str] = None,
+    get_raw_max_retries: int = constants.MAX_RETRIES.value,
 ):  # pylint: disable=R0914, R0913
     """
     Cria um flow de captura
@@ -70,6 +71,8 @@ def create_default_capture_flow(
 
     if isinstance(source, SourceTable):
         source = [source]
+
+    get_raw_task = get_raw_data.copy(max_retries=get_raw_max_retries)
 
     source_map = {s.table_id: s for s in source}
     with Flow(flow_name) as capture_flow:
@@ -141,7 +144,7 @@ def create_default_capture_flow(
             timestamp=timestamps,
         )
 
-        get_raw = get_raw_data.map(
+        get_raw = get_raw_task.map(
             data_extractor=data_extractors,
             filepaths=filepaths,
             raw_filetype=unmapped(activated_source["raw_filetype"]),

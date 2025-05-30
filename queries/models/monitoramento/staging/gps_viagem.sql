@@ -11,6 +11,16 @@
     )
 }}
 
+
+{% set incremental_filter %}
+    {% if is_incremental() %}
+        data between date_sub(
+            date('{{ var("date_range_start") }}'), interval 1 day
+        ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
+    {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
+    {% endif %}
+{% endset %}
+
 with
     viagem as (
         select
@@ -37,40 +47,28 @@ with
     ),
     gps_conecta as (
         select data, timestamp_gps, servico, id_veiculo, latitude, longitude
-        {# from `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo` #}
-        from {{ ref("gps_sppo") }}
-        where
-            {% if is_incremental() %}
-                data between date_sub(
-                    date('{{ var("date_range_start") }}'), interval 1 day
-                ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
-            {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
-            {% endif %}
+        {# from `rj-smtr.monitoramento.gps_onibus_conecta` #}
+        from {{ source("monitoramento", "gps_onibus_conecta") }}
+        where {{ incremental_filter }}
 
     ),
     gps_zirix as (
         select data, timestamp_gps, servico, id_veiculo, latitude, longitude
-        {# from `rj-smtr.br_rj_riodejaneiro_onibus_gps_zirix.gps_sppo` #}
-        from {{ ref("gps_sppo_zirix") }}
-        where
-            {% if is_incremental() %}
-                data between date_sub(
-                    date('{{ var("date_range_start") }}'), interval 1 day
-                ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
-            {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
-            {% endif %}
+        {# from `rj-smtr.monitoramento.gps_onibus_zirix` #}
+        from {{ source("monitoramento", "gps_onibus_zirix") }}
+        where {{ incremental_filter }}
+    ),
+    gps_cittati as (
+        select data, timestamp_gps, servico, id_veiculo, latitude, longitude
+        {# from `rj-smtr.monitoramento.gps_onibus_cittati` #}
+        from {{ source("monitoramento", "gps_onibus_cittati") }}
+        where {{ incremental_filter }}
     ),
     gps_brt as (
         select data, timestamp_gps, servico, id_veiculo, latitude, longitude
         {# from `rj-smtr.br_rj_riodejaneiro_veiculos.gps_brt` #}
         from {{ ref("gps_brt") }}
-        where
-            {% if is_incremental() %}
-                data between date_sub(
-                    date('{{ var("date_range_start") }}'), interval 1 day
-                ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
-            {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
-            {% endif %}
+        where {{ incremental_filter }}
     ),
     gps_union as (
         select *, 'conecta' as fornecedor
@@ -80,6 +78,11 @@ with
 
         select *, 'zirix' as fornecedor
         from gps_zirix
+
+        union all
+
+        select *, 'cittati' as fornecedor
+        from gps_cittati
 
         union all
 

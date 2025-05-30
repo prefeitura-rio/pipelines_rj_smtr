@@ -1,5 +1,11 @@
 # Changelog - veiculo
 
+## [1.2.0] - 2025-05-08
+
+### Adicionado
+
+- Adiciona execução de snapshots no flow `sppo_veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/570)
+
 ## [1.1.5] - 2025-03-21
 
 ### Alterado

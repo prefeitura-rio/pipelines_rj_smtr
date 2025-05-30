@@ -13,18 +13,18 @@
                     {% if "faixa" in model %}
                         + coalesce(km_apurada_total_licenciado_sem_ar_n_autuado, 0)
                         + coalesce(km_apurada_total_licenciado_com_ar_n_autuado, 0)
-                    {%else%}
+                    {% else %}
                         + coalesce(km_apurada_licenciado_sem_ar_n_autuado, 0)
                         + coalesce(km_apurada_licenciado_com_ar_n_autuado, 0)
-                    {%endif%}
+                    {% endif %}
                     + coalesce(km_apurada_n_vistoriado, 0)
                     + coalesce(km_apurada_sem_transacao, 0),
                     2
                 ) as km_apurada2
             from {{ model }}
             where
-                data between date("{{ var('start_date') }}") and date(
-                    "{{ var('end_date') }}"
+                data between date("{{ var('date_range_start') }}") and date(
+                    "{{ var('date_range_end') }}"
                 )
         )
     select *, abs(km_apurada2 -{{ column_name }}) as dif

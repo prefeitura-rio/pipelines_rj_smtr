@@ -44,23 +44,37 @@ jobs:
           poetry config virtualenvs.create false
           poetry install --with dev --with ci
 
+      # Check last successful run
+      # - name: Find matching workflow
+      #   uses: SamhammerAG/last-successful-build-action@v4
+      #   id: last-fedora-build
+      #   with:
+      #     branch: "main"
+      #     workflow: "Build Fedora Image"
+      # Check changed files
+      # - name: Get changed filepaths
+      #   uses: dorny/paths-filter@v2
+      #   id: filter
+      #   with:
+      #     filters: |
+      #       docker_fedora:
+      #         - "pipelines/capture/serpro/*"
+      #         - "pyproject.toml"
+      #         - "Dockerfile-fedora"
+
       - name: Update image tag in constants
         run: |-
           python .github/workflows/scripts/replace_docker_tag.py debian ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }} ${{ github.sha }}
 
-      - name: Update image tag in constants
+      - name: Update fedora image tag in constants
+        # if: steps.filter.outputs.docker_fedora == 'true'
         run: |-
           python .github/workflows/scripts/replace_docker_tag.py fedora gcr.io/rj-smtr/pipelines-fedora ${{ github.sha }}
 
-      - name: Get changed filepaths
-        uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            docker_fedora:
-              - "pipelines/serpro/*"
-              - "pyproject.toml"
-              - "Dockerfile-fedora"
+      # - name: Add last fedora tag if no changes
+      #   if: steps.filter.outputs.docker_fedora == 'false'
+      #   run: |-
+      #     python .github/workflows/scripts/replace_docker_tag.py fedora gcr.io/rj-smtr/pipelines-fedora ${{ steps.last-fedora-build.outputs.sha }}
 
       - name: Get changed files for code tree analysis
         id: files
@@ -86,7 +100,7 @@ jobs:
           verbose: true
 
       - name: Wait for Docker Fedora image to be available
-        if: steps.filter.outputs.docker_fedora == 'true'
+        # if: steps.filter.outputs.docker_fedora == 'true'
         uses: lewagon/wait-on-check-action@v1.3.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}

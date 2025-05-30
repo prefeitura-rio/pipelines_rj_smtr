@@ -39,4 +39,4 @@ bash -c "echo $1 | base64 --decode > /tmp/credentials.json"
 
 dbt deps
 
-dbt docs generate
+dbt docs generate --static
