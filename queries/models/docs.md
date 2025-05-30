@@ -625,6 +625,10 @@ Valor apurado das viagens que não foram remuneradas por estar acima do teto de 
 Valor pago da autuação (R$)
 {% enddocs %}
 
+{% docs valor_total_glosado %}
+Valor total das viagens considerando o valor máximo por km, subtraído pelo valor efetivo por km (R$)
+{% enddocs %}
+
 {% docs cobertura_temporal %}
 Cobertura temporal
 {% enddocs %}
@@ -883,4 +887,8 @@ Datetime que o registro da realocação foi informado pela empresa operadora
 
 {% docs servico_realocacao %}
 Linha de ônibus [serviço] realocada informada pela empresa operadora
+{% enddocs %}
+
+{% docs posicao_veiculo_geo %}
+Coordenada geográfica [POINT] com a posição que o veículo se encontra, conforme 'longitude' e 'latitude' informadas pelo GPS [EPSG:4326 - WGS84]
 {% enddocs %}
