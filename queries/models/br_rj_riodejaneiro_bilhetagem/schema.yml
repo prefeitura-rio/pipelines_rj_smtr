@@ -379,7 +379,7 @@ models:
     description: "Tabela com os valores totais de pagamento da Jaé agregados por consorcio, operador e dia"
     columns:
       - name: data_ordem
-        description: "{{ doc('data_ordem') }} (partição)"
+        description: "{{ doc('data_ordem') }} [partição]"
         tests:
           - dbt_expectations.expect_column_max_to_be_between:
               min_value: "current_date('America/Sao_Paulo')"
