@@ -726,7 +726,7 @@ Linha de ônibus [serviço] realocada informada pela empresa operadora
 {% enddocs %}
 
 {% docs servico_variacao %}
-Nome curto da linha operada pelo veículo com variação de serviço (ex: 010, 011SN, ...)
+Nome curto da linha operada pelo veículo com variação de serviço [ex: 010, 011SN, ...]
 {% enddocs %}
 
 {% docs start_pt %}
