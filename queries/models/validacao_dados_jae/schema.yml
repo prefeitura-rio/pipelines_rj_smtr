@@ -103,7 +103,7 @@ models:
     description: "Tabela para validação dos dados da ordem de pagamento da Jaé"
     columns:
       - name: data_ordem
-        description: "{{ doc('data_ordem') }} (partição)"
+        description: "{{ doc('data_ordem') }} [partição]"
       - name: id_ordem_pagamento
         description: "Identificador único da ordem de pagamento"
       - name: indicador_captura_invalida
