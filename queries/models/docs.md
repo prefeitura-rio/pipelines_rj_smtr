@@ -205,7 +205,7 @@ String que indica a versão atual do conjunto de dados GTFS
 {% enddocs %}
 
 {% docs feed_end_date %}
-Data final do feed (versão)
+Data final do feed [versão]
 {% enddocs %}
 
 {% docs tipo_servico %}
