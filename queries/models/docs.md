@@ -722,7 +722,7 @@ Quantidade de pontos da autuação
 {% enddocs %}
 
 {% docs servico_realocacao %}
-Linha de ônibus (serviço) realocada informada pela empresa operadora
+Linha de ônibus [serviço] realocada informada pela empresa operadora
 {% enddocs %}
 
 {% docs servico_variacao %}
