@@ -713,10 +713,6 @@ Contagem de sinais de GPS emitidos no tempo da viagem
 Quantidade de pontos da autuação
 {% enddocs %}
 
-{% docs posicao_veiculo_geo %}
-Quantidade de pontos da autuação
-{% enddocs %}
-
 {% docs servico_variacao %}
 Nome curto da linha operada pelo veículo com variação de serviço [ex: 010, 011SN, ...]
 {% enddocs %}
