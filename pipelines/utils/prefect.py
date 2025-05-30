@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """Prefect functions"""
 import time
-
-# import json
 from typing import Any, Dict, Type, Union
 
 import prefect
@@ -10,14 +8,13 @@ from prefect import unmapped
 from prefect.backend.flow_run import FlowRunView, FlowView, watch_flow_run
 from prefect.client import Client
 from prefect.engine.state import Skipped, State
-
-# from prefect.engine.signals import PrefectStateSignal, signal_from_state
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefeitura_rio.pipelines_utils.logging import log
+from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 
 from pipelines.constants import constants
-
-# from prefect.engine.state import Cancelled, State
+from pipelines.utils.discord import format_send_discord_message
+from pipelines.utils.secret import get_secret
 
 
 class TypedParameter(prefect.Parameter):
@@ -302,3 +299,37 @@ def set_default_parameters(flow: prefect.Flow, default_parameters: dict) -> pref
         if parameter.name in default_parameters:
             parameter.default = default_parameters[parameter.name]
     return flow
+
+
+def handler_notify_failure(webhook: str):
+    """Gera um state handler para notificar falhas no Discord.
+
+    Args:
+        webhook (str): A chave para acessar a URL do webhook no secret do infisical.
+
+    Returns:
+        Callable: O state handler
+    """
+
+    def handler(obj, old_state: State, new_state: State) -> State:
+        if new_state.is_failed():
+            webhook_url = get_secret(secret_path=constants.WEBHOOKS_SECRET_PATH.value)[webhook]
+            mentions_tag = (
+                f" - <@&{constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>"
+            )
+            header = f":red_circle: **Erro no flow {prefect.context.flow_name}**"
+            if get_flow_run_mode() == "prod":
+                header = f"{header} {mentions_tag}\n\n"
+            else:
+                header = f"**[DEV]** {header}\n\n"
+            formatted_messages = [header]
+            flow_run_url = f"https://pipelines.dados.rio/flow-run/{prefect.context.flow_run_id}"
+
+            formatted_messages.append(f"**URL da execução:** {flow_run_url}")
+            format_send_discord_message(
+                formatted_messages=formatted_messages, webhook_url=webhook_url
+            )
+
+        return new_state
+
+    return handler

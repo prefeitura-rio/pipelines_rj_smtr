@@ -2,7 +2,7 @@
 """
 Flows for br_rj_riodejaneiro_rdo
 
-DBT 2024-09-06
+DBT: 2025-05-13
 """
 from prefect import Parameter, case
 from prefect.run_configs import KubernetesRun

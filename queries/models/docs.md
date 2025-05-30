@@ -208,6 +208,10 @@ Data inicial do feed [versão] [partição]
 String que indica a versão atual do conjunto de dados GTFS
 {% enddocs %}
 
+{% docs feed_end_date %}
+Data final do feed [versão]
+{% enddocs %}
+
 {% docs tipo_servico %}
 Tipo de Serviço da Linha
 {% enddocs %}
@@ -605,7 +609,7 @@ Descrição do status da infração
 Descrição da autuação
 {% enddocs %}
 
-{% docs trip_id_planejado %}
+{% docs trip_id %}
 Código identificador de trip de referência no GTFS
 {% enddocs %}
 
@@ -651,4 +655,248 @@ Indica se o serviço indicado nos dados de GPS estava diferente do serviço info
 
 {% docs data_fim %}
 Data final do período de vigência dos demais atributos
+{% enddocs %}
+
+{% docs ano %}
+Ano
+{% enddocs %}
+
+{% docs ano_indicador %}
+Ano de apuração do indicador
+{% enddocs %}
+
+{% docs hora_transacao %}
+Hora da transação
+{% enddocs %}
+
+{% docs data_ordem %}
+Data da ordem de pagamento
+{% enddocs %}
+
+{% docs distancia_total_planejada %}
+Distância total planejada do serviço [ida + volta] (km)
+{% enddocs %}
+
+{% docs hora_particao_gps %}
+Hora de partição, conforme 'timestamp_captura' da tabela 'sppo_registros'
+{% enddocs %}
+
+{% docs hora_timestamp_captura %}
+Hora do 'timestamp_captura'
+{% enddocs %}
+
+{% docs id_integracao %}
+Identificador único da integração
+{% enddocs %}
+
+{% docs indicador_autuacao_ar_condicionado %}
+Indicador se o veículo foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado
+{% enddocs %}
+
+{% docs indicador_sensor_temperatura %}
+Indicador se o sensor de temperatura do veículo não estava em funcionamento conforme especificação da SMTR
+{% enddocs %}
+
+{% docs irk %}
+Índice de Remuneração por km (R$/km)
+{% enddocs %}
+
+{% docs km_apurada_autuado_seguranca %}
+Quilometragem apurada de viagens de veículos autuados por segurança
+{% enddocs %}
+
+{% docs km_planejada_dia %}
+Distância planejada para o serviço por dia (km)
+{% enddocs %}
+
+{% docs legislacao %}
+Legislação que estabelece o valor e regras de remuneração
+{% enddocs %}
+
+{% docs n_registros_total %}
+Contagem de sinais de GPS emitidos no tempo da viagem
+{% enddocs %}
+
+{% docs pontuacao %}
+Quantidade de pontos da autuação
+{% enddocs %}
+
+{% docs servico_variacao %}
+Nome curto da linha operada pelo veículo com variação de serviço [ex: 010, 011SN, ...]
+{% enddocs %}
+
+{% docs start_pt %}
+Ponto inicial do shape em formato geográfico [Point]
+{% enddocs %}
+
+{% docs trip_short_name %}
+Texto voltado ao público usado para identificar a viagem aos passageiros, por exemplo, para identificar os números dos trens para viagens de trens suburbanos
+{% enddocs %}
+
+{% docs valor_glosado %}
+Valor total das viagens considerando o valor máximo por km, subtraído pelo valor efetivo por km (R$)
+{% enddocs %}
+
+{% docs valor_judicial %}
+Valor de glosa depositada em juízo [Autuação por ar inoperante, Veículo licenciado sem ar, Penalidade abaixo de 60% e Notificação dos Agentes de Verão]
+{% enddocs %}
+
+{% docs valor_total_sem_glosa %}
+Valor total das viagens considerando o valor máximo por km
+{% enddocs %}
+
+{% docs chave %}
+Chave
+{% enddocs %}
+
+{% docs codigo_enquadramento %}
+Código da autuação
+{% enddocs %}
+
+{% docs datetime_captura %}
+Datetime de captura do registro pela pipeline
+{% enddocs %}
+
+{% docs datetime_entrada %}
+Datetime de entrada do veículo na linha realocada
+{% enddocs %}
+
+{% docs datetime_registro %}
+Datetime de registro pelo agente público
+{% enddocs %}
+
+{% docs descricao_veiculo %}
+Marca/modelo do veículo
+{% enddocs %}
+
+{% docs end_pt %}
+Ponto final do shape em formato geográfico [Point]
+{% enddocs %}
+
+{% docs extensao_volta %}
+Distância percorrida na volta
+{% enddocs %}
+
+{% docs id_empresa %}
+Código identificador da empresa que opera o veículo
+{% enddocs %}
+
+{% docs id_infracao %}
+Código da infração
+{% enddocs %}
+
+{% docs indicador_autuacao_seguranca %}
+Indicador se o veículo foi autuado por infração relacionada à segurança do veículo
+{% enddocs %}
+
+{% docs km_apurada %}
+Distância apurada para o serviço por dia (km)
+{% enddocs %}
+
+{% docs km_apurada_autuado_limpezaequipamento %}
+Quilometragem apurada de viagens de veículos autuados por limpeza ou equipamento
+{% enddocs %}
+
+{% docs km_planejada_faixa %}
+Distância planejada para o serviço por faixa horária (km)
+{% enddocs %}
+
+{% docs mes %}
+Mês de apuração do indicador
+{% enddocs %}
+
+{% docs n_registros_minuto %}
+Contagem de minutos do trajeto com pelo menos 1 sinal de GPS emitido
+{% enddocs %}
+
+{% docs n_registros_shape %}
+Contagem de sinais de GPS emitidos dentro do trajeto
+{% enddocs %}
+
+{% docs operadora %}
+Nome da operadora de transporte [mascarado se for pessoa física]
+{% enddocs %}
+
+{% docs perc_conformidade_shape %}
+Percentual de sinais emitidos dentro do shape [trajeto] ao longo da viagem
+{% enddocs %}
+
+{% docs route_id %}
+Identificador de uma rota da tabela routes do GTFS
+{% enddocs %}
+
+{% docs sentido_bilhetagem %}
+Sentido de operação do serviço [0 = ida, 1 = volta]
+{% enddocs %}
+
+{% docs servico_gps %}
+Linha de ônibus [serviço] informado pelo GPS
+{% enddocs %}
+
+{% docs shape_id_planejado %}
+Código identificador de shape no GTFS com ajustes
+{% enddocs %}
+
+{% docs tempo_viagem %}
+Tempo aferido da viagem (minutos)
+{% enddocs %}
+
+{% docs trip_headsign %}
+Texto que aparece na sinalização identificando o destino da viagem aos passageiros
+{% enddocs %}
+
+{% docs valor %}
+Valor devido (R$)
+{% enddocs %}
+
+{% docs valor_apurado %}
+Valor da distância apurada multiplicada pelo subsídio por quilômetro [sem glosa]. É zerado quando POF < 80%
+{% enddocs %}
+
+{% docs valor_penalidade %}
+Valor penalidade [negativa] [POF <= 60%]
+{% enddocs %}
+
+{% docs viagens_dia %}
+Quantidade de viagens apuradas por dia
+{% enddocs %}
+
+{% docs viagens_faixa %}
+Quantidade de viagens apuradas por faixa horária
+{% enddocs %}
+
+{% docs hora_captura %}
+Hora da captura
+{% enddocs %}
+
+{% docs direcao_gps %}
+Direção do movimento em graus
+{% enddocs %}
+
+{% docs datetime_envio_gps %}
+Data e hora em que o GPS enviou os dados de localização
+{% enddocs %}
+
+{% docs datetime_servidor_gps %}
+Data e hora em que o servidor recebeu os dados de localização do GPS
+{% enddocs %}
+
+{% docs datetime_saida %}
+Datetime de saída do veículo na linha realocada
+{% enddocs %}
+
+{% docs datetime_processamento %}
+Datetime de processamento da realocação pela empresa operadora
+{% enddocs %}
+
+{% docs datetime_operacao %}
+Datetime que o registro da realocação foi informado pela empresa operadora
+{% enddocs %}
+
+{% docs servico_realocacao %}
+Linha de ônibus [serviço] realocada informada pela empresa operadora
+{% enddocs %}
+
+{% docs posicao_veiculo_geo %}
+Coordenada geográfica [POINT] com a posição que o veículo se encontra, conforme 'longitude' e 'latitude' informadas pelo GPS [EPSG:4326 - WGS84]
 {% enddocs %}

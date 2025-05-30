@@ -7,9 +7,9 @@ models:
       - name: data
         description: "Data de referência para partição"
       - name: ano
-        description: "Ano de apuração do indicador"
+        description: "{{ doc('ano_indicador') }}"
       - name: mes
-        description: "Mês de apuração do indicador"
+        description: "{{ doc('mes') }}"
       - name: modo
         description: "Modo de transporte"
       - name: quantidade_veiculo_mes
@@ -24,9 +24,9 @@ models:
   #     - name: data
   #       description: "Data de referência para apuração (partição)"
   #     - name: ano
-  #       description: "Ano de apuração do indicador"
+  #       description: "{{ doc('ano_indicador') }}"
   #     - name: mes
-  #       description: "Mês de apuração do indicador"
+  #       description: "{{ doc('mes') }}"
   #     - name: modo
   #       description: "Modo de transporte"
   #     - name: idade_media_veiculo_mes
@@ -41,9 +41,9 @@ models:
       - name: data
         description: "Data de referência para partição"
       - name: ano
-        description: "Ano de apuração do indicador"
+        description: "{{ doc('ano_indicador') }}"
       - name: mes
-        description: "Mês de apuração do indicador"
+        description: "{{ doc('mes') }}"
       - name: modo
         description: "Modo de transporte"
       - name: idade_media_veiculo_mes
@@ -58,9 +58,9 @@ models:
       - name: data
         description: "Data de referência para partição"
       - name: ano
-        description: "Ano de apuração do indicador"
+        description: "{{ doc('ano_indicador') }}"
       - name: mes
-        description: "Mês de apuração do indicador"
+        description: "{{ doc('mes') }}"
       - name: modo
         description: "Modo de transporte (se aplicável)"
       - name: quantidade_passageiro_gratuidade_mes
@@ -75,9 +75,9 @@ models:
       - name: data
         description: "Data de referência para partição"
       - name: ano
-        description: "Ano de apuração do indicador"
+        description: "{{ doc('ano_indicador') }}"
       - name: mes
-        description: "Mês de apuração do indicador"
+        description: "{{ doc('mes') }}"
       - name: modo
         description: "Modo de transporte (se aplicável)"
       - name: quantidade_passageiro_pagante_mes

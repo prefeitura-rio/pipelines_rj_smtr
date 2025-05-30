@@ -1,5 +1,17 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.2.1] - 2025-05-13
+
+### Adicionado
+
+- Adicionadas as constantes `SUBSIDIO_SPPO_V14_POS_CHECKS_DATASET_ID` e `SUBSIDIO_SPPO_V9_POS_CHECKS_DATASET_ID` no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/577)
+
+## [1.2.0] - 2025-05-08
+
+### Adicionado
+
+- Adiciona execução de snapshots nos flows `viagens_sppo` e `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/570)
+
 ## [1.1.5] - 2025-03-27
 
 ### Corrigido
