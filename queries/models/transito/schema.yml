@@ -75,7 +75,7 @@ models:
       - name: data_limite_recurso
         description: "Data limite para recurso em primeira instância"
       - name: descricao_situacao_autuacao
-        description: "Descrição da situação da autuação"
+        description: "{{ doc('descricao_situacao_autuacao') }}"
       - name: status_infracao
         description: "Descrição do status da infração"
       - name: codigo_enquadramento
@@ -85,7 +85,7 @@ models:
       - name: tipificacao_resumida
         description: "Descrição da autuação"
       - name: pontuacao
-        description: "Quantidade de pontos da autuação"
+        description: "{{ doc('pontuacao') }}"
       - name: gravidade
         description: "Descrição da gravidade da autuação"
       - name: amparo_legal
@@ -239,7 +239,7 @@ models:
       - name: tipificacao_resumida
         description: "{{ doc('tipificacao_resumida') }}"
       - name: pontuacao
-        description: "Quantidade de pontos da autuação"
+        description: "{{ doc('pontuacao') }}"
       - name: gravidade
         description: "Descrição da gravidade da autuação"
       - name: amparo_legal
