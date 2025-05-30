@@ -55,7 +55,7 @@ models:
               name: not_null__subsidio_km__valor_km_tipo_viagem
               where: "data_inicio between date('{date_range_start}') and date('{date_range_end}') or data_fim between date('{date_range_start}') and date('{date_range_end}')"
       - name: irk
-        description: "Índice de Remuneração por km (R$/km)"
+        description: "{{ doc('irk') }}"
         tests:
           - not_null:
               name: not_null__irk__valor_km_tipo_viagem
@@ -71,4 +71,4 @@ models:
       - name: indicador_penalidade_judicial
         description: "{{ doc('indicador_penalidade_judicial') }}"
       - name: legislacao
-        description: "Legislação que estabelece o valor e regras de remuneração"
+        description: "{{ doc('legislacao') }}"
