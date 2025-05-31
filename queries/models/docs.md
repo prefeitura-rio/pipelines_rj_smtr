@@ -917,7 +917,7 @@ Data de pagamento
 Data da última atualização
 {% enddocs %}
 
-{% docs datetime_processamento %}
+{% docs datetime_processamento_viagem %}
 Data e hora do processamento da viagem
 {% enddocs %}
 

@@ -11,7 +11,7 @@ models:
       - name: datetime_chegada
         description: "Data e hora da chegada da viagem [GMT-3]"
       - name: datetime_processamento
-        description: "{{ doc('datetime_processamento') }} [GMT-3]"
+        description: "{{ doc('datetime_processamento_viagem') }} [GMT-3]"
       - name: datetime_captura
         description: "Data e hora da captura da integração [GMT-3]"
       - name: id_veiculo

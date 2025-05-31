@@ -51,7 +51,7 @@ models:
         data_type: string
         quote: true
       - name: datetime_processamento
-        description: {{ doc('datetime_processamento') }} [GMT-3]
+        description: "{{ doc('datetime_processamento_viagem') }} [GMT-3]"
         data_type: datetime
         quote: true
       - name: datetime_captura
