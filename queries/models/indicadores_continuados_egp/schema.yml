@@ -15,7 +15,7 @@ models:
       - name: valor
         description: "Valor do indicador"
       - name: data_ultima_atualizacao
-        description: "Data da última atualização do indicador"
+        description: "{{ doc('data_ultima_atualizacao') }}"
   - name: indicadores_mes_pivot
     description: "Indicadores mensais vinculados ao Escritório de Gerenciamento de Projetos e de Metas [EGP-Rio] pivotados por mês"
     columns:
