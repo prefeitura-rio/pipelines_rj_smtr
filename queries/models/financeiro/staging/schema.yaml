@@ -19,7 +19,7 @@ models:
       - name: viagens_faixa
         description: "{{ doc('viagens_faixa') }}"
       - name: km_apurada_faixa
-        description: "Distância apurada para o serviço por faixa horária (km)"
+        description: "{{ doc('km_apurada_faixa') }}"
       - name: km_planejada_faixa
         description: "{{ doc('km_planejada_faixa') }}"
       - name: pof

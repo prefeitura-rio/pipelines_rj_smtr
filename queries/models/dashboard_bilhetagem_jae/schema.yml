@@ -15,7 +15,7 @@ models:
       - name: operadora
         description: "{{ doc('operadora') }}"
       - name: id_servico_jae
-        description: "Identificador da linha no banco de dados da jaé (É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae)"
+        description: "{{ doc('id_servico_jae') }}"
       - name: servico
         description: "Nome do serviço na tabela cadastro.servicos"
       - name: descricao_servico
@@ -29,7 +29,7 @@ models:
       - name: sentido
         description: "{{ doc('sentido_bilhetagem') }}"
       - name: tipo_transacao_smtr
-        description: "Tipo de transação realizada no padrão usado pela SMTR (Tarifa Cheia, Integração e Gratuidade)"
+        description: "{{ doc('tipo_transacao_smtr') }}"
       - name: tipo_transacao_detalhe_smtr
         description: "Detalhamento sobre a transação, de acordo com o tipo (Tarifa Cheia = tipo do pagamento, Gratuidade = tipo da gratuidade)"
       - name: quantidade_passageiros
@@ -50,7 +50,7 @@ models:
       - name: operadora
         description: "{{ doc('operadora') }}"
       - name: id_servico_jae
-        description: "Identificador da linha no banco de dados da jaé (É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae)"
+        description: "{{ doc('id_servico_jae') }}"
       - name: servico
         description: "Nome do serviço na tabela cadastro.servicos"
       - name: descricao_servico
@@ -60,7 +60,7 @@ models:
       - name: sentido
         description: "{{ doc('sentido_bilhetagem') }}"
       - name: tipo_transacao_smtr
-        description: "Tipo de transação realizada no padrão usado pela SMTR (Tarifa Cheia, Integração e Gratuidade)"
+        description: "{{ doc('tipo_transacao_smtr') }}"
       - name: tipo_transacao_detalhe_smtr
         description: "Detalhamento sobre a transação, de acordo com o tipo (Tarifa Cheia = tipo do pagamento, Gratuidade = tipo da gratuidade)"
       - name: tile_id
@@ -77,7 +77,7 @@ models:
       - name: hora
         description: "Hora da transação"
       - name: id_integracao
-        description: "Identificador único da integração"
+        description: "{{ doc('id_integracao') }}"
       - name: perna_origem
         description: "Número da sequência da transação atual dentro da integração"
       - name: modo_origem

@@ -78,7 +78,7 @@ models:
       - name: consorcio
         description: "{{ doc('consorcio') }}"
       - name: tipo_dia
-        description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sábado, Domingo"
+        description: "{{ doc('tipo_dia') }}"
       - name: id_empresa
         description: "{{ doc('id_empresa') }}"
       - name: id_veiculo
@@ -94,7 +94,7 @@ models:
       - name: datetime_partida
         description: "{{ doc('datetime_partida') }}"
       - name: datetime_chegada
-        description: "Horário de fim da viagem"
+        description: "{{ doc('datetime_chegada') }}"
       - name: tempo_viagem
         description: "{{ doc('tempo_viagem') }}"
       - name: distancia_planejada

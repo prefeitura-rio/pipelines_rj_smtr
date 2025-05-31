@@ -23,11 +23,11 @@ models:
         data_type: string
         quote: true
       - name: id_operadora
-        description: Identificador da operadora na tabela cadastro.operadoras
+        description: "{{ doc('id_operadora') }}"
         data_type: string
         quote: true
       - name: id_servico_jae
-        description: Identificador da linha no banco de dados da jaé (É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae)
+        description: "{{ doc('id_servico_jae') }}"
         data_type: string
         quote: true
       - name: valor_transacao_rateio

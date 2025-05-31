@@ -49,7 +49,7 @@ models:
       - name: tecnologia
         description: "{{ doc('tecnologia') }}"
       - name: subsidio_km
-        description: "Valor de subsídio de remuneração (R$/km)"
+        description: "{{ doc('subsidio_km') }}"
         tests:
           - not_null:
               name: not_null__subsidio_km__valor_km_tipo_viagem

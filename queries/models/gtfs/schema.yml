@@ -230,7 +230,7 @@ models:
       - name: shape
         description: "{{ doc('shape') }}"
       - name: shape_distance
-        description: "Extensão do shape"
+        description: "{{ doc('shape_distance') }}"
       - name: start_pt
         description: "{{ doc('start_pt') }}"
       - name: end_pt
@@ -382,7 +382,7 @@ models:
       - name: consorcio
         description: "Nome do consórcio responsável pela linha"
       - name: horario_inicio
-        description: "Horário inicial de funcionamento"
+        description: "{{ doc('horario_inicio') }}"
       - name: horario_fim
         description: "Horário da última viagem"
       - name: extensao_ida
@@ -398,7 +398,7 @@ models:
       - name: distancia_total_planejada
         description: "{{ doc('distancia_total_planejada') }}"
       - name: tipo_dia
-        description: "Tipo de dia, se dia útil, sábado, domingo ou ponto facultativo"
+        description: "{{ doc('tipo_dia') }}"
       - name: feed_start_date
         description: "{{ doc('feed_start_date') }}"
       - name: feed_end_date
@@ -447,7 +447,7 @@ models:
       - name: extensao_volta
         description: "Distância planejada de volta do trajeto alternativo (km)"
       - name: inicio_periodo
-        description: "Horário inicial de funcionamento do trajeto alternativo"
+        description: "{{ doc('horario_inicio') }} do trajeto alternativo"
       - name: fim_periodo
         description: "Horário final de funcionamento do trajeto alternativo"
       - name: versao_modelo
@@ -494,7 +494,7 @@ models:
       - name: feed_version
         description: "{{ doc('feed_version') }}"
       - name: tipo_dia
-        description: "Dia da semana - categorias: Dia Útil, Sabado, Domingo e Ponto Facultativo"
+        description: "{{ doc('tipo_dia') }}"
       - name: servico
         description: "{{ doc('servico_variacao') }}"
       - name: vista
@@ -510,7 +510,7 @@ models:
       - name: distancia_total_planejada
         description: "{{ doc('distancia_total_planejada') }}"
       - name: inicio_periodo
-        description: "Horário inicial de funcionamento do serviço"
+        description: "{{ doc('horario_inicio') }}"
       - name: fim_periodo
         description: "Horário da final de funcionamento do serviço"
       - name: faixa_horaria_inicio

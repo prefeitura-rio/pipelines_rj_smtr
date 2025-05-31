@@ -52,7 +52,7 @@ models:
       - name: hora
         description: "{{ doc('hora_transacao') }}"
       - name: datetime_transacao
-        description: "Data e hora da transação"
+        description: "{{ doc('datetime_transacao') }}"
       - name: datetime_processamento
         description: "Data e hora de processamento da transação"
       - name: datetime_captura
@@ -64,11 +64,11 @@ models:
       - name: consorcio
         description: "{{ doc('consorcio_nome') }}"
       - name: id_operadora
-        description: "Identificador da operadora na tabela cadastro.operadoras"
+        description: "{{ doc('id_operadora') }}"
       - name: operadora
         description: "{{ doc('operadora') }}"
       - name: id_servico_jae
-        description: "Identificador da linha no banco de dados da jaé (É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae)"
+        description: "{{ doc('id_servico_jae') }}"
       - name: servico_jae
         description: "{{ doc('servico_variacao') }} ou código da estação de BRT na Jaé"
       - name: descricao_servico_jae
@@ -131,7 +131,7 @@ models:
         description: "Sequência da transação dentro da integração"
         data_type: int64
       - name: datetime_transacao
-        description: "Data e hora da transação [GMT-3]"
+        description: "{{ doc('datetime_transacao') }} [GMT-3]"
         data_type: datetime
       - name: id_transacao
         description: "Identificador único da transação"
@@ -140,7 +140,7 @@ models:
         description: "{{ doc('modo') }}"
         data_type: string
       - name: id_servico_jae
-        description: "Identificador da linha no banco de dados da jaé (É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae)"
+        description: "{{ doc('id_servico_jae') }}"
         data_type: string
       - name: sentido
         description: "{{ doc('sentido_bilhetagem') }}"

@@ -31,7 +31,7 @@ models:
       - name: viagens_faixa
         description: "{{ doc('viagens_faixa') }}"
       - name: km_apurada_faixa
-        description: "Distância apurada para o serviço por faixa horária (km)"
+        description: "{{ doc('km_apurada_faixa') }}"
       - name: km_subsidiada_faixa
         description: "Distância subsidiada para o serviço por faixa horária (km)"
       - name: valor_apurado
@@ -68,7 +68,7 @@ models:
       - name: km_apurada_dia
         description: "{{ doc('km_apurada') }}"
       - name: km_subsidiada_dia
-        description: "Distância subsidiada para o serviço por dia (km)"
+        description: "{{ doc('km_subsidiada_dia') }}"
       - name: km_planejada_dia
         description: "{{ doc('km_planejada_dia') }}"
       - name: valor_a_pagar
@@ -80,7 +80,7 @@ models:
       - name: valor_total_sem_glosa
         description: "{{ doc('valor_total_sem_glosa') }}"
       - name: valor_total_apurado
-        description: "Valor total das viagens apuradas, subtraídas as penalidades (POF =< 60%)"
+        description: "{{ doc('valor_total_apurado') }}"
       - name: valor_judicial
         description: "{{ doc('valor_judicial') }}"
       - name: valor_penalidade
