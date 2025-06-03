@@ -189,7 +189,7 @@ models:
       - name: longitude
         description: "Longitude do validador no momento da transmissão"
       - name: id_veiculo
-        description: "[EM DESENVOLVIMENTO] {{ doc('id_veiculo') }} (número de ordem)"
+        description: "{{ doc('codigo') }}"
       - name: sentido
         description: "{{ doc('sentido') }}"
       - name: estado_equipamento
