@@ -18,7 +18,7 @@
 with
     stu as (
         select * except (data), date(data) as data
-        from {{ ref("licenciamento_stu_staging") }} as l
+        from {{ ref("staging_licenciamento_stu") }} as l
         where
             data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
             {% if is_incremental() %}
