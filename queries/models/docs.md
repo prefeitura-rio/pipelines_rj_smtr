@@ -2,6 +2,10 @@
 Consórcio ao qual o serviço pertence
 {% enddocs %}
 
+{% docs consorcio_nome %}
+Nome do consórcio
+{% enddocs %}
+
 {% docs id_veiculo %}
 Código identificador do veículo [número de ordem]
 {% enddocs %}
@@ -23,7 +27,26 @@ Distância do shape [trajeto] planejado (km)
 {% enddocs %}
 
 {% docs tipo_viagem_status %}
-Classificação do tipo de viagem
+Classificação do tipo de viagem:
+
+Não licenciado - viagem realizada por veículo que operou sem licenciamento vigente junto à SMTR;
+Não vistoriado - viagem realizada por veículo que não se encontra vistoriado nos termos do calendário de vistoria da SMTR;
+Lacrado - viagem realizada por veículo lacrado pela equipe de fiscalização da SMTR nos termos do art. 2º desta Resolução;
+Não autorizado por ausência de ar-condicionado - viagem realizada por veículo licenciado sem ar-condicionado, quando exigido para o serviço;
+Não autorizado por capacidade - viagem realizada por veículo licenciado com tecnologia de capacidade inferior àquela determinada para o serviço nos termos do art. 3º;
+Autuado por ar inoperante - viagem realizada por veículo licenciado com ar- condicionado e autuado disciplinarmente no dia por inoperância ou mau funcionamento do sistema de ar-condicionado (Nos termos do art. 23, inciso II, do Decreto nº 36.343/2012);
+Autuado por alterar itinerário - viagem realizada por veículo autuado disciplinarmente por alterar o itinerário aprovado de uma linha ou serviço (Nos termos do art. 17, inciso III, do Decreto nº 36.343/2012);
+Autuado por vista inoperante - viagem realizada por veículo autuado disciplinarmente por inoperância ou mau funcionamento de caixa de vista eletrônica ou similar (Nos termos do art. 23, inciso X, do Decreto nº 36.343/2012);
+Autuado por não atender solicitação de parada - viagem realizada por veículo autuado disciplinarmente por não atender às solicitações de parada para embarque ou desembarque de passageiros nos locais devidamente sinalizados para tal (Nos termos do art. 29, inciso I, do Decreto nº 36.343/2012);
+Autuado por iluminação insuficiente - viagem realizada por veículo autuado disciplinarmente por transitar com o veículo com ausência ou insuficiência na iluminação interna e/ou nos dispositivos internos ou externos de informação aos passageiros (Nos termos do art. 29, inciso XIII, do Decreto nº 36.343/2012);
+Autuado por não concluir itinerário - viagem realizada por veículo autuado disciplinarmente por alterar ou não concluir o itinerário autorizado do veículo (Nos termos do art. 40, inciso I, do Decreto nº 36.343/2012);
+Registrado com ar inoperante - viagem realizada por veículo licenciado com ar condicionado e registrado com o ar condicionado inoperante ou com mal funcionamento devidamente atestado por servidores nos termos da Resolução SMTR Nº 3.682/2024 ou de legislação superveniente;
+Detectado com ar inoperante - viagem realizada por veículo licenciado com ar- condicionado em operação detectado fora dos parâmetros definidos em resolução vigente;
+Sem transação - viagem realizada sem nenhuma transação de bilhetagem nos termos do art. 7º desta Resolução;
+Validador fechado - viagem realizada com o validador fechado nos termos do art. 7º, inciso III desta Resolução;
+Validador associado incorretamente - viagem realizada com validador associado ao serviço incorreto nos termos do art. 7º, inciso IV desta Resolução;
+Licenciado sem ar e não autuado - viagem realizada por veículo licenciado sem ar-condicionado, não enquadrada nas classificações anteriores;
+Licenciado com ar e não autuado - viagem realizada por veículo licenciado com ar-condicionado, não enquadrada nas classificações anteriores.
 {% enddocs %}
 
 {% docs servico %}
@@ -145,7 +168,7 @@ Tipo de pagamento utilizado
 {% enddocs %}
 
 {% docs tipo_dia %}
-Dia da semana - categorias: Dia Útil, Sábado, Domingo
+Dia da semana - categorias: Dia Útil, Sábado, Domingo e Ponto Facultativo
 {% enddocs %}
 
 {% docs faixa_horaria_inicio %}
@@ -649,6 +672,10 @@ Distância do shape [trajeto] planejado (km)
 Indica se o serviço indicado nos dados de GPS estava diferente do serviço informado na viagem
 {% enddocs %}
 
+{% docs data_fim %}
+Data final do período de vigência dos demais atributos
+{% enddocs %}
+
 {% docs ano %}
 Ano
 {% enddocs %}
@@ -891,4 +918,133 @@ Linha de ônibus [serviço] realocada informada pela empresa operadora
 
 {% docs posicao_veiculo_geo %}
 Coordenada geográfica [POINT] com a posição que o veículo se encontra, conforme 'longitude' e 'latitude' informadas pelo GPS [EPSG:4326 - WGS84]
+{% enddocs %}
+
+{% docs coluna %}
+Nome da coluna
+{% enddocs %}
+
+{% docs data_limite_defesa_previa %}
+Data limite para defesa prévia
+{% enddocs %}
+
+{% docs data_pagamento %}
+Data de pagamento
+{% enddocs %}
+
+{% docs data_ultima_atualizacao %}
+Data da última atualização
+{% enddocs %}
+
+{% docs datetime_processamento_viagem %}
+Data e hora do processamento da viagem
+{% enddocs %}
+
+{% docs datetime_transacao %}
+Data e hora da transação
+{% enddocs %}
+
+{% docs especie_veiculo %}
+Espécie do veículo
+{% enddocs %}
+
+{% docs horario_inicio %}
+Horário inicial de funcionamento
+{% enddocs %}
+
+{% docs id_operadora %}
+Identificador da operadora na tabela cadastro.operadoras
+{% enddocs %}
+
+{% docs id_servico_jae %}
+Identificador da linha no banco de dados da jaé [É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae]
+{% enddocs %}
+
+{% docs indicador_autuacao_equipamento %}
+Indicador se o veículo foi autuado por infração relacionada à inoperância ou mau funcionamento de equipamentos do veículo
+{% enddocs %}
+
+{% docs indicador_validador_sbd %}
+Indicador se o veículo se encontra com o novo validador do Sistema de Bilhetagem Digital [BD] instalado
+{% enddocs %}
+
+{% docs infracao %}
+Descrição da infração
+{% enddocs %}
+
+{% docs km_apurada_faixa %}
+Distância apurada para o serviço por faixa horária (km)
+{% enddocs %}
+
+{% docs km_apurada_licenciado_com_ar_n_autuado %}
+Quilometragem apurada de viagens de veículos com ar e não autuados
+{% enddocs %}
+
+{% docs km_apurada_n_vistoriado %}
+Distância apurada de viagens realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria (km)
+{% enddocs %}
+
+{% docs km_subsidiada_dia %}
+Distância subsidiada para o serviço por dia (km)
+{% enddocs %}
+
+{% docs ordem %}
+Ordem de prioridade de aplicação dos valores de remuneração
+{% enddocs %}
+
+{% docs perc_conformidade_distancia %}
+Razão da distância aferida pela distância teórica x 100
+{% enddocs %}
+
+{% docs processo_defesa_autuacao %}
+Número do processo de defesa prévia
+{% enddocs %}
+
+{% docs servico_informado %}
+Serviço informado pelo GPS do veículo
+{% enddocs %}
+
+{% docs shape_distance %}
+Extensão do shape
+{% enddocs %}
+
+{% docs status_veiculo_infracao %}
+CADASTRADA - Registrada no sistema sem guia de pagamento
+EM ABERTO - Com guia de pagamento e dentro do prazo de vencimento
+VENCIDA - Com guia de pagamento e fora do prazo de vencimento
+EM RECURSO - Possui Processo de Recurso aguardando julgamento
+PAGA - Com guia de pagamento efetivamente paga
+CANCELADA - Multa foi cancelada através de um Processo de Recurso
+{% enddocs %}
+
+{% docs subsidio_km %}
+Valor de subsídio de remuneração (R$/km)
+{% enddocs %}
+
+{% docs timestamp_captura_infracao %}
+Timestamp de captura dos dados de infração
+{% enddocs %}
+
+{% docs timestamp_captura_licenciamento %}
+Timestamp de captura dos dados de licenciamento
+{% enddocs %}
+
+{% docs timestamp_processamento %}
+Timestamp de processamento da realocação pela empresa operadora
+{% enddocs %}
+
+{% docs tipo_transacao_smtr %}
+Tipo de transação realizada no padrão usado pela SMTR [Tarifa Cheia, Integração e Gratuidade]
+{% enddocs %}
+
+{% docs uf_proprietario %}
+Estado do proprietário do veículo
+{% enddocs %}
+
+{% docs valor_infracao %}
+Valor monetário da autuação [100%] (R$)
+{% enddocs %}
+
+{% docs valor_total_apurado %}
+Valor total das viagens apuradas, subtraídas as penalidades [POF =< 60%]
 {% enddocs %}
