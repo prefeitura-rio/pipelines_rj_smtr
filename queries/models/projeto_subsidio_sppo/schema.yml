@@ -86,7 +86,7 @@ models:
               inclusive: false
               name: dbt_utils.accepted_range__distancia_planejada__viagem_planejada
       - name: distancia_total_planejada
-        description: "Distância total planejada do serviço [ida + volta] (km)"
+        description: "{{ doc('distancia_total_planejada') }}"
         tests:
           - not_null:
               name: not_null__distancia_total_planejada__viagem_planejada
@@ -95,7 +95,7 @@ models:
               inclusive: false
               name: dbt_utils.accepted_range__distancia_total_planejada__viagem_planejada
       - name: inicio_periodo
-        description: "Início do período de operação planejado"
+        description: "{{ doc('inicio_periodo') }}"
         tests:
           - not_null:
               name: not_null__inicio_periodo__viagem_planejada
@@ -150,7 +150,7 @@ models:
               values: ["I", "V", "C"]
               name: accepted_values__sentido_shape__viagem_planejada
       - name: start_pt
-        description: "Ponto inicial do shape em formato geográfico (Point)"
+        description: "{{ doc('start_pt') }}"
         tests:
           - not_null:
               name: not_null__start_pt__viagem_planejada
@@ -208,7 +208,7 @@ models:
         tests:
           - not_null
       - name: posicao_veiculo_geo
-        description: "Geolocalização do veículo segundo o sinal de GPS"
+        description: "{{ doc('posicao_veiculo_geo') }}"
         tests:
           - not_null
       - name: servico_informado
@@ -253,7 +253,7 @@ models:
           - accepted_values:
               values: ["I", "V", "C"]
       - name: start_pt
-        description: "Ponto inicial do shape em formato geográfico (Point)"
+        description: "{{ doc('start_pt') }}"
       - name: end_pt
         description: "{{ doc('end_pt') }}"
       - name: sentido
@@ -282,7 +282,7 @@ models:
         tests:
           - not_null
       - name: servico_realizado
-        description: "Serviço realizado pelo veículo [com base na identificação do trajeto]"
+        description: "{{ doc('servico') }} [com base na identificação do trajeto]"
         tests:
           - not_null
       - name: trip_id
@@ -306,12 +306,12 @@ models:
           - accepted_values:
               values: ["I", "V", "C"]
       - name: id_viagem
-        description: "Código identificador da viagem [id_veiculo + servico + datetime_partida]"
+        description: "{{ doc('id_viagem') }}"
         tests:
           - not_null
           - unique
       - name: datetime_partida
-        description: "Horário de início da viagem"
+        description: "{{ doc('datetime_partida') }}"
         tests:
           - not_null
       - name: datetime_chegada
@@ -350,7 +350,7 @@ models:
         tests:
           - not_null
       - name: servico_realizado
-        description: "Serviço realizado pelo veículo [com base na identificação do trajeto]"
+        description: "{{ doc('servico') }} [com base na identificação do trajeto]"
         # tests:
           # - not_null
       - name: trip_id
@@ -379,7 +379,7 @@ models:
           - not_null
           - unique
       - name: datetime_partida
-        description: "Horário de início da viagem"
+        description: "{{ doc('datetime_partida') }}"
         tests:
           - not_null
       - name: datetime_chegada
@@ -422,7 +422,7 @@ models:
         tests:
           - not_null
       - name: posicao_veiculo_geo
-        description: "Geolocalização do veículo segundo o sinal de GPS"
+        description: "{{ doc('posicao_veiculo_geo') }}"
         tests:
           - not_null
       - name: servico_informado
@@ -469,7 +469,7 @@ models:
           - not_null
           - unique
       - name: datetime_partida
-        description: "Horário de início da viagem"
+        description: "{{ doc('datetime_partida') }}"
         tests:
           - not_null
       - name: datetime_chegada
@@ -491,7 +491,7 @@ models:
       - name: trip_id_planejado
         description: "{{ doc('trip_id') }}"
       - name: start_pt
-        description: "Ponto inicial do shape em formato geográfico (Point)"
+        description: "{{ doc('start_pt') }}"
       - name: end_pt
         description: "{{ doc('end_pt') }}"
   - name: aux_viagem_registros
@@ -538,7 +538,7 @@ models:
           - not_null
           - not_negative
       - name: n_registros_total
-        description: "Contagem de sinais de GPS emitidos no tempo da viagem"
+        description: "{{ doc('n_registros_total') }}"
         tests:
           - not_null
           - greater_than_zero
@@ -576,7 +576,7 @@ models:
         tests:
           - not_null
       - name: servico_realizado
-        description: "Serviço realizado pelo veículo [com base na identificação do trajeto]"
+        description: "{{ doc('servico') }} [com base na identificação do trajeto]"
         tests:
           - not_null
       - name: trip_id
@@ -606,7 +606,7 @@ models:
           - not_null
           - unique
       - name: datetime_partida
-        description: "Horário de início da viagem"
+        description: "{{ doc('datetime_partida') }}"
         tests:
           - not_null
       - name: datetime_chegada
@@ -656,7 +656,7 @@ models:
           - not_null
           - not_negative
       - name: n_registros_total
-        description: "Contagem de sinais de GPS emitidos no tempo da viagem"
+        description: "{{ doc('n_registros_total') }}"
         tests:
           - not_null
           - greater_than_zero
@@ -716,7 +716,7 @@ models:
         tests:
           - not_null
       - name: servico_realizado
-        description: "Serviço realizado pelo veículo [com base na identificação do trajeto]"
+        description: "{{ doc('servico') }} [com base na identificação do trajeto]"
         tests:
           - not_null
       - name: vista
@@ -743,7 +743,7 @@ models:
           - not_null
           - unique
       - name: datetime_partida
-        description: "Horário de início da viagem"
+        description: "{{ doc('datetime_partida') }}"
         tests:
           - not_null
       - name: datetime_chegada
@@ -758,7 +758,7 @@ models:
           - accepted_values:
               values: ["Completa linha correta", "Completa linha incorreta"]
       - name: inicio_periodo
-        description: "Início do período de operação planejado"
+        description: "{{ doc('inicio_periodo') }}"
         # tests:
           # - not_null
       - name: fim_periodo
@@ -791,7 +791,7 @@ models:
           - not_null
           - greater_than_zero
       - name: n_registros_total
-        description: "Contagem de sinais de GPS emitidos no tempo da viagem"
+        description: "{{ doc('n_registros_total') }}"
         tests:
           - not_null
           - greater_than_zero

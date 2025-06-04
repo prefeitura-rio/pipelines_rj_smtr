@@ -10,9 +10,9 @@ with
             *,
             split(faixa_horaria_inicio, ":") as faixa_horaria_inicio_parts,
             split(faixa_horaria_fim, ":") as faixa_horaria_fim_parts
-        from {{ ref("aux_ordem_servico_faixa_horaria") }}
-    {# from `rj-smtr.planejamento_staging.aux_ordem_servico_faixa_horaria` #}
-    {# from {{ ref("ordem_servico_faixa_horaria") }} #}
+        {# from {{ ref("aux_ordem_servico_faixa_horaria") }} #}
+        {# from `rj-smtr.planejamento_staging.aux_ordem_servico_faixa_horaria` #}
+        from {{ ref("ordem_servico_faixa_horaria") }}
     {# from `rj-smtr.planejamento.ordem_servico_faixa_horaria` #}
     ),
     os_tratamento_horario as (

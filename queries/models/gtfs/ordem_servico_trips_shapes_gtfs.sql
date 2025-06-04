@@ -1,12 +1,12 @@
 {{
-  config(
-    partition_by = {
-      "field": "feed_start_date",
-      "data_type": "date",
-      "granularity": "day"
-    },
-    alias = "ordem_servico_trips_shapes"
-  )
+    config(
+        partition_by={
+            "field": "feed_start_date",
+            "data_type": "date",
+            "granularity": "day",
+        },
+        alias="ordem_servico_trips_shapes",
+    )
 }}
 
 WITH
@@ -109,129 +109,69 @@ WITH
         AND trip_id IS NOT NULL -- Remove serviços de tipo_dia sem planejamento
       )
     )
-  ),
-  -- 3. Inclui trip_ids de ida e volta para trajetos circulares, ajusta shape_id para trajetos circulares e inclui id_tipo_trajeto
-  ordem_servico_trips AS (
-    SELECT
-      * EXCEPT(shape_id, indicador_trajeto_alternativo),
-      shape_id AS shape_id_planejado,
-      CASE
-        WHEN sentido = "C" THEN shape_id || "_" || SPLIT(trip_id, "_")[OFFSET(1)]
-      ELSE
-      shape_id
-    END
-      AS shape_id,
-      CASE
-        WHEN indicador_trajeto_alternativo IS FALSE THEN 0 -- Trajeto regular
-        WHEN indicador_trajeto_alternativo IS TRUE THEN 1 -- Trajeto alternativo
-    END
-      AS id_tipo_trajeto,
-    FROM
-    (
-      (
-        SELECT
-          DISTINCT * EXCEPT(trip_id),
-          trip_id AS trip_id_planejado,
-          trip_id
-        FROM
-          ordem_servico_tratada
-        WHERE
-          sentido = "I"
-          OR sentido = "V"
-      )
-      UNION ALL
-      (
-        SELECT
-          * EXCEPT(trip_id),
-          trip_id AS trip_id_planejado,
-          CONCAT(trip_id, "_0") AS trip_id,
-        FROM
-          ordem_servico_tratada
-        WHERE
-          sentido = "C"
-      )
-      UNION ALL
-      (
-        SELECT
-          * EXCEPT(trip_id),
-          trip_id AS trip_id_planejado,
-          CONCAT(trip_id, "_1") AS trip_id,
-        FROM
-          ordem_servico_tratada
-        WHERE
-          sentido = "C"
-      )
-    )
-  )
-SELECT
-  feed_version,
-  feed_start_date,
-  o.feed_end_date,
-  tipo_os,
-  tipo_dia,
-  servico,
-  vista,
-  o.consorcio,
-  sentido,
-  CASE
-    WHEN feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}' THEN fh.partidas
-    ELSE NULL
-  END AS partidas_total_planejada,
-  distancia_planejada,
-  CASE
-    WHEN feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}' THEN fh.quilometragem
-    ELSE distancia_total_planejada
-  END AS distancia_total_planejada,
-  inicio_periodo,
-  fim_periodo,
-  CASE
-    WHEN feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}' THEN fh.faixa_horaria_inicio
-    ELSE "00:00:00"
-  END AS faixa_horaria_inicio,
-  CASE
-    WHEN feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}' THEN fh.faixa_horaria_fim
-    ELSE "23:59:59"
-  END AS faixa_horaria_fim,
-  trip_id_planejado,
-  trip_id,
-  shape_id,
-  shape_id_planejado,
-  shape,
-  CASE
-    WHEN sentido = "C" AND SPLIT(shape_id, "_")[OFFSET(1)] = "0" THEN "I"
-    WHEN sentido = "C" AND SPLIT(shape_id, "_")[OFFSET(1)] = "1" THEN "V"
-    WHEN sentido = "I" OR sentido = "V" THEN sentido
-END
-  AS sentido_shape,
-  s.start_pt,
-  s.end_pt,
-  id_tipo_trajeto,
-FROM
-  ordem_servico_trips AS o
-LEFT JOIN
-  shapes AS s
-USING
-  (feed_version,
+select
+    feed_version,
     feed_start_date,
-    shape_id)
-LEFT JOIN
-  {{ ref("ordem_servico_faixa_horaria") }} AS fh
-  -- rj-smtr-dev.gtfs.ordem_servico_faixa_horaria AS fh
-USING
-  (feed_version, feed_start_date, tipo_os, tipo_dia, servico)
-WHERE
-{% if is_incremental() -%}
-  feed_start_date = '{{ var("data_versao_gtfs") }}' AND
-{% endif -%}
-  (
+    o.feed_end_date,
+    tipo_os,
+    tipo_dia,
+    servico,
+    o.vista,
+    o.consorcio,
+    sentido,
+    case
+        when feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
+        then fh.partidas
+        else null
+    end as partidas_total_planejada,
+    distancia_planejada,
+    case
+        when feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
+        then fh.quilometragem
+        else distancia_total_planejada
+    end as distancia_total_planejada,
+    inicio_periodo,
+    fim_periodo,
+    case
+        when feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
+        then fh.faixa_horaria_inicio
+        else "00:00:00"
+    end as faixa_horaria_inicio,
+    case
+        when feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
+        then fh.faixa_horaria_fim
+        else "23:59:59"
+    end as faixa_horaria_fim,
+    trip_id_planejado,
+    trip_id,
+    shape_id,
+    shape_id_planejado,
+    shape,
+    case
+        when sentido = "C" and split(shape_id, "_")[offset(1)] = "0"
+        then "I"
+        when sentido = "C" and split(shape_id, "_")[offset(1)] = "1"
+        then "V"
+        when sentido = "I" or sentido = "V"
+        then sentido
+    end as sentido_shape,
+    s.start_pt,
+    s.end_pt,
+    id_tipo_trajeto,
+from ordem_servico_trips as o
+left join shapes as s using (feed_version, feed_start_date, shape_id)
+left join
+    {{ ref("ordem_servico_faixa_horaria") }} as fh
+    -- rj-smtr-dev.gtfs.ordem_servico_faixa_horaria AS fh
+    using (feed_version, feed_start_date, tipo_os, tipo_dia, servico)
+where
+    {% if is_incremental() -%}
+        feed_start_date = '{{ var("data_versao_gtfs") }}' and
+    {% endif -%}
     (
-    feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
-    AND
-      (
-        fh.quilometragem != 0
-        AND (fh.partidas != 0 OR fh.partidas IS NULL)
-      )
+        (
+            feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
+            and (fh.quilometragem != 0 and (fh.partidas != 0 or fh.partidas is null))
+        )
+        or feed_start_date < '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
     )
-    OR
-      feed_start_date < '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
-  )

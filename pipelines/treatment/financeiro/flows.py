@@ -26,7 +26,7 @@ from pipelines.treatment.financeiro.tasks import (
 )
 from pipelines.treatment.templates.flows import create_default_materialization_flow
 from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt
-from pipelines.utils.prefect import TypedParameter
+from pipelines.utils.prefect import TypedParameter, handler_notify_failure
 
 FINANCEIRO_BILHETAGEM_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="financeiro_bilhetagem - materializacao",
@@ -36,6 +36,10 @@ FINANCEIRO_BILHETAGEM_MATERIALIZACAO = create_default_materialization_flow(
         cadastro_constants.CADASTRO_SELECTOR.value,
     ]
     + jae_constants.ORDEM_PAGAMENTO_SOURCES.value,
+)
+
+FINANCEIRO_BILHETAGEM_MATERIALIZACAO.state_handlers.append(
+    handler_notify_failure(webhook="alertas_bilhetagem")
 )
 
 with Flow(

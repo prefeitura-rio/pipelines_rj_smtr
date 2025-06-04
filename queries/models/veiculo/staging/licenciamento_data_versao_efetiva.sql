@@ -13,7 +13,7 @@ with
         {% if is_incremental() %}
             where
                 date(data)
-                between "{{ var('start_date')}}"
+                between date("{{ var('start_date')}}")
                 and date("{{ modules.datetime.datetime.fromisoformat(var('end_date')) + modules.datetime.timedelta(7) }}")
         {% endif %}
     ),

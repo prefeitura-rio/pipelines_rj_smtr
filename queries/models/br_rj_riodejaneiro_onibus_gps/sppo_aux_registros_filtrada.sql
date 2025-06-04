@@ -1,18 +1,12 @@
-{% if var("fifteen_minutes") == "_15_minutos" %}
-    {{
-        config(
-            materialized="ephemeral",
-        )
-    }}
-{% else %}
-    {{
-        config(
-            materialized="incremental",
-            partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-            require_partition_filter=true,
-        )
-    }}
-{% endif %}
+-- fmt: off
+{{
+    config(
+        materialized = 'ephemeral' if var('15_minutos', false) else 'incremental',
+        partition_by = {"field": "data", "data_type": "date", "granularity": "day"} if not var('15_minutos', false) else none,
+        require_partition_filter = true if not var('15_minutos', false) else false
+    )
+}}
+-- fmt: on
 
 /*
 Descrição:

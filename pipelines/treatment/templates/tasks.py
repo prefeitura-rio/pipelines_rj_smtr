@@ -222,6 +222,7 @@ def create_dbt_run_vars(
     datetime_start: datetime,
     datetime_end: datetime,
     repo_version: str,
+    additional_vars: Optional[dict] = None,
 ) -> dict:
     """
     Cria a lista de variaveis para rodar o modelo DBT,
@@ -231,16 +232,23 @@ def create_dbt_run_vars(
         datetime_start (datetime): Datetime inicial da materialização
         datetime_end (datetime): Datetime final da materialização
         repo_version (str): SHA do último commit do repositorio no GITHUB
+        additional_vars (dict): Variáveis extras para executar o modelo DBT
 
     Returns:
         dict[str]: Variáveis para executar o modelo DBT
     """
     pattern = constants.MATERIALIZATION_LAST_RUN_PATTERN.value
-    return {
+
+    _vars = {
         "date_range_start": datetime_start.strftime(pattern),
         "date_range_end": datetime_end.strftime(pattern),
         "version": repo_version,
     }
+
+    if additional_vars:
+        _vars.update(additional_vars)
+
+    return _vars
 
 
 @task
@@ -517,7 +525,7 @@ def dbt_data_quality_checks(
     if isinstance(dbt_logs, list):
         dbt_logs = "\n".join(dbt_logs)
     elif not isinstance(dbt_logs, str):
-        return
+        raise FAIL
 
     checks_results = parse_dbt_test_output(dbt_logs)
 
