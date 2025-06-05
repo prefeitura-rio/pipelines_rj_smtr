@@ -36,7 +36,7 @@
                     )
                 ) as timestamp_array
         ),
-        gps as (
+        gps_data as (
             select data, {{ timestamp }}, latitude, longitude
             from {{ registros }}
             where
@@ -54,7 +54,7 @@
                 extract(date from {{ timestamp }}) as data,
                 extract(hour from {{ timestamp }}) as hora,
                 count(*) as q_gps_raw
-            from gps
+            from gps_data
             group by 1, 2
         ),
         gps_filtrada as (

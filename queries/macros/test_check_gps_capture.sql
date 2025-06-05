@@ -51,10 +51,10 @@
         {%- else -%}
             {%- if table_id == "registros" -%}
                 -- depends_on: {{ ref('staging_gps') }}
-                {% set ref = ref("staging_gps") %}
+                {% set table_ref = ref("staging_gps") %}
             {%- else -%}
                 -- depends_on: {{ ref('staging_realocacao') }}
-                {% set ref = ref("staging_realocacao") %}
+                {% set table_ref = ref("staging_realocacao") %}
             {%- endif -%}
             with
                 t as (
@@ -71,7 +71,7 @@
                 ),
                 capture as (
                     select distinct datetime_captura
-                    from {{ ref }}
+                    from {{ table_ref }}
                     where
                         (
                             {{
