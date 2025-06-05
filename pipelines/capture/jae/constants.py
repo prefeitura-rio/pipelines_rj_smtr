@@ -24,7 +24,7 @@ class constants(Enum):  # pylint: disable=c0103
     JAE_DATABASE_SETTINGS = {
         "principal_db": {
             "engine": "mysql",
-            "host": "10.5.113.111",
+            "host": "10.5.115.178",
         },
         "tarifa_db": {
             "engine": "postgresql",
@@ -52,11 +52,11 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "atm_gateway_db": {
             "engine": "postgresql",
-            "host": "10.5.12.98",
+            "host": "10.5.14.128",
         },
         "device_db": {
             "engine": "postgresql",
-            "host": "10.5.114.83",
+            "host": "10.5.114.114",
         },
         "erp_integracao_db": {
             "engine": "postgresql",
@@ -64,15 +64,15 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "financeiro_db": {
             "engine": "postgresql",
-            "host": "10.5.13.151",
+            "host": "10.5.14.99",
         },
         "midia_db": {
             "engine": "postgresql",
-            "host": "10.5.14.177",
+            "host": "10.5.15.251",
         },
         "processador_transacao_db": {
             "engine": "postgresql",
-            "host": "10.5.13.73",
+            "host": "10.5.13.169",
         },
         "atendimento_db": {
             "engine": "postgresql",
@@ -80,7 +80,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "gateway_pagamento_db": {
             "engine": "postgresql",
-            "host": "10.5.115.111",
+            "host": "10.5.112.246",
         },
         # "iam_db": {
         #     "engine": "mysql",
@@ -88,7 +88,7 @@ class constants(Enum):  # pylint: disable=c0103
         # },
         "vendas_db": {
             "engine": "postgresql",
-            "host": "10.5.112.116",
+            "host": "10.5.112.154",
         },
     }
 

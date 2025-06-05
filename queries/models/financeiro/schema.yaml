@@ -15,7 +15,7 @@ models:
       - name: consorcio
         description: "Consórcio que opera o serviço"
       - name: servico
-        description: "Serviço realizado pelo veículo"
+        description: "{{ doc('servico') }}"
       - name: indicador_ar_condicionado
         description: "{{ doc('indicador_ar_condicionado') }}"
       - name: indicador_penalidade_judicial
@@ -41,7 +41,7 @@ models:
       - name: valor_acima_limite
         description: "{{ doc('valor_acima_limite') }}"
       - name: valor_total_sem_glosa
-        description: "Valor total das viagens considerando o valor máximo por km"
+        description: "{{ doc('valor_total_sem_glosa') }}"
       - name: versao
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
@@ -62,7 +62,7 @@ models:
       - name: consorcio
         description: "Consórcio que opera o serviço"
       - name: servico
-        description: "Serviço realizado pelo veículo"
+        description: "{{ doc('servico') }}"
       - name: viagens_dia
         description: "{{ doc('viagens_dia') }}"
       - name: km_apurada_dia
@@ -70,19 +70,19 @@ models:
       - name: km_subsidiada_dia
         description: "Distância subsidiada para o serviço por dia (km)"
       - name: km_planejada_dia
-        description: "Distância planejada para o serviço por dia (km)"
+        description: "{{ doc('km_planejada_dia') }}"
       - name: valor_a_pagar
         description: "{{ doc('valor_a_pagar') }}"
       - name: valor_glosado
-        description: "{{ doc('valor_total_glosado') }}"
+        description: "{{ doc('valor_glosado') }}"
       - name: valor_acima_limite
         description: "{{ doc('valor_acima_limite') }}"
       - name: valor_total_sem_glosa
-        description: "Valor total das viagens considerando o valor máximo por km"
+        description: "{{ doc('valor_total_sem_glosa') }}"
       - name: valor_total_apurado
         description: "Valor total das viagens apuradas, subtraídas as penalidades (POF =< 60%)"
       - name: valor_judicial
-        description: "Valor de glosa depositada em juízo (Autuação por ar inoperante, Veículo licenciado sem ar, Penalidade abaixo de 60% e Notificação dos Agentes de Verão)"
+        description: "{{ doc('valor_judicial') }}"
       - name: valor_penalidade
         description: "{{ doc('valor_penalidade') }}"
       - name: versao

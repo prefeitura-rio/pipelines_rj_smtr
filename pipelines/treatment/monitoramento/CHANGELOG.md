@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.1.4] - 2025-05-28
+
+### Adicionado
+
+- Cria flow de materialização do gps e gps 15 minutos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/586)
+
 ## [1.1.3] - 2025-05-27
 
 ### Adicionado

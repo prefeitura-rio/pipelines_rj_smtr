@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [7.1.5] - 2025-05-26
+
+### Corrigido
+
+- Corrigidos os períodos de aplicação das regras de apuração (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/593)
+
 ## [7.1.4] - 2025-05-09
 
 ### Adicionado
