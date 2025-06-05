@@ -41,6 +41,17 @@ class TypedParameter(prefect.Parameter):
 
         return param_value
 
+    def get(self, key, default=None):
+        """
+        Método get para quando o parâmetro é um dicionário
+        """
+        param_value = self.run()
+        if param_value is None:
+            return default
+        if isinstance(param_value, dict):
+            return param_value.get(key, default)
+        return default
+
 
 def run_local(flow: prefect.Flow, parameters: Dict[str, Any] = None):
     """
