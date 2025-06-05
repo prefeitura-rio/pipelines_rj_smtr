@@ -1,4 +1,4 @@
-{% if var("encontro_contas_modo") == "" %}
+{% if var("encontro_contas_modo") == "" and var("start_date") < var("DATA_SUBSIDIO_V9_INICIO") %}
 -- 0. Lista servicos e dias atípicos (pagos por recurso)
 WITH
   recursos AS (

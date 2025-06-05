@@ -38,7 +38,9 @@ vars:
   sppo_registros_staging: "rj-smtr-staging.br_rj_riodejaneiro_onibus_gps_staging.registros"
   sppo_realocacao_staging: "rj-smtr-staging.br_rj_riodejaneiro_onibus_gps_staging.realocacao"
   data_inicio_realocacao: "2022-11-15"
-  fifteen_minutes: ""
+  15_minutos: false
+  modo_gps: "onibus"
+  fonte_gps: "conecta"
 
   # Parametros de intersecção do ônibus com rota
   ## Tamanho do buffer da rota
@@ -211,7 +213,7 @@ vars:
 
   limite_reducao_area_buffer:  0.5
   comprimento_minimo_segmento_shape: 990
-  buffer_segmento_metros: 20
+  buffer_segmento_metros: 30
   buffer_tunel_metros: 50
   parametro_validacao: 0.9
   comprimento_shape: 1000
@@ -221,6 +223,9 @@ vars:
 
   ### Planejamento ###
   feed_inicial_viagem_planejada: "2024-09-29"
+
+  ### Monitoramento ###
+  data_inicial_veiculo_fiscalizacao_lacre: "2025-03-31"
 
 tests:
   rj_smtr:
