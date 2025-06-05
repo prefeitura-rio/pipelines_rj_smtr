@@ -89,12 +89,12 @@ post_test_conecta = {
     "model": "gps",
     "checks_list": constants.GPS_POST_CHECKS_LIST.value,
 }
-set_default_parameters(
-    GPS_CONECTA_MATERIALIZACAO,
-    {
-        "additional_vars": gps_vars_conecta,
-    },
-)
+# set_default_parameters(
+#     GPS_CONECTA_MATERIALIZACAO,
+#     {
+#         "additional_vars": gps_vars_conecta,
+#     },
+# )
 set_default_parameters(
     GPS_CONECTA_MATERIALIZACAO,
     {
