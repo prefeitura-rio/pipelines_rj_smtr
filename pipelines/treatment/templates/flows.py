@@ -146,10 +146,10 @@ def create_default_materialization_flow(
         if pre_test:
             dbt_pre_test = run_dbt(
                 resource="test",
-                test_name=pre_test["test_name"],
-                # dataset_id=pre_test.get("dataset_id"),
-                # table_id=pre_test.get("table_id"),
-                # model=pre_test.get("model"),
+                test_name=pre_test.get_value("test_name"),
+                dataset_id=pre_test.get_value("dataset_id"),
+                table_id=pre_test.get_value("table_id"),
+                model=pre_test.get_value("model"),
                 flags=flags,
                 _vars=dbt_run_vars,
                 upstream_tasks=[complete_sources],
@@ -157,7 +157,7 @@ def create_default_materialization_flow(
 
             notify_pre_test = dbt_data_quality_checks(
                 dbt_logs=dbt_pre_test,
-                checks_list=pre_test["checks_list"],
+                checks_list=pre_test.get_value("checks_list"),
                 params=dbt_run_vars,
             )
             wait_pre_test = notify_pre_test
@@ -175,10 +175,10 @@ def create_default_materialization_flow(
         if post_test:
             dbt_post_test = run_dbt(
                 resource="test",
-                # test_name=post_test.get("test_name"),
-                # dataset_id=post_test.get("dataset_id"),
-                # table_id=post_test.get("table_id"),
-                model=post_test["model"],
+                test_name=post_test.get_value("test_name"),
+                dataset_id=post_test.get_value("dataset_id"),
+                table_id=post_test.get_value("table_id"),
+                model=post_test.get_value("model"),
                 flags=flags,
                 _vars=dbt_run_vars,
                 upstream_tasks=[dbt_run],
@@ -186,7 +186,7 @@ def create_default_materialization_flow(
 
             notify_post_test = dbt_data_quality_checks(
                 dbt_logs=dbt_post_test,
-                checks_list=post_test["checks_list"],
+                checks_list=post_test.get_value("checks_list"),
                 params=dbt_run_vars,
             )
             wait_post_test = notify_post_test

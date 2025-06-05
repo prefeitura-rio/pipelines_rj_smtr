@@ -97,24 +97,6 @@ set_default_parameters(
         "post_test": post_test_conecta,
     },
 )
-# set_default_parameters(
-#     GPS_CONECTA_MATERIALIZACAO,
-#     {
-#         "additional_vars": gps_vars_conecta,
-#     },
-# )
-# set_default_parameters(
-#     GPS_CONECTA_MATERIALIZACAO,
-#     {
-#         "pre_test": pre_test_conecta,
-#     },
-# )
-# set_default_parameters(
-#     GPS_CONECTA_MATERIALIZACAO,
-#     {
-#         "post_test": post_test_conecta,
-#     },
-# )
 
 GPS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps cittati - materializacao",
