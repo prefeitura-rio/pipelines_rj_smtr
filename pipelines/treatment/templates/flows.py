@@ -146,17 +146,17 @@ def create_default_materialization_flow(
         if pre_test:
             dbt_pre_test = run_dbt(
                 resource="test",
-                test_name=pre_test["test_name"] if pre_test else None,
-                dataset_id=pre_test["dataset_id"] if pre_test else None,
-                table_id=pre_test["table_id"] if pre_test else None,
-                model=pre_test["model"] if pre_test else None,
+                test_name=pre_test.get("test_name"),  # pylint: disable=E1101
+                dataset_id=pre_test.get("dataset_id"),  # pylint: disable=E1101
+                table_id=pre_test.get("table_id"),  # pylint: disable=E1101
+                model=pre_test.get("model"),  # pylint: disable=E1101
                 flags=flags,
                 _vars=dbt_run_vars,
                 upstream_tasks=[complete_sources],
             )
             notify_pre_test = dbt_data_quality_checks(
                 dbt_logs=dbt_pre_test,
-                checks_list=pre_test["checks_list"] if pre_test else None,
+                checks_list=pre_test.get("checks_list"),  # pylint: disable=E1101
                 params=dbt_run_vars,
             )
             wait_pre_test = notify_pre_test
@@ -174,17 +174,17 @@ def create_default_materialization_flow(
         if post_test:
             dbt_post_test = run_dbt(
                 resource="test",
-                test_name=post_test["test_name"] if post_test else None,
-                dataset_id=post_test["dataset_id"] if post_test else None,
-                table_id=post_test["table_id"] if post_test else None,
-                model=post_test["model"] if post_test else None,
+                test_name=post_test.get("test_name"),  # pylint: disable=E1101
+                dataset_id=post_test.get("dataset_id"),  # pylint: disable=E1101
+                table_id=post_test.get("table_id"),  # pylint: disable=E1101
+                model=post_test.get("model"),  # pylint: disable=E1101
                 flags=flags,
                 _vars=dbt_run_vars,
                 upstream_tasks=[dbt_run],
             )
             notify_post_test = dbt_data_quality_checks(
                 dbt_logs=dbt_post_test,
-                checks_list=post_test["checks_list"] if post_test else None,
+                checks_list=post_test.get("checks_list"),  # pylint: disable=E1101
                 params=dbt_run_vars,
             )
             wait_post_test = notify_post_test
