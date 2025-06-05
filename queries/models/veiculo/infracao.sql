@@ -16,9 +16,9 @@ with
     infracao as (
         select * except (data), date(data) as data
         from {{ ref("infracao_staging") }} as i
-        {# {% if is_incremental() %} #}
+        {% if is_incremental() %}
             where date(data) between date("{{ min_infracao_date }}") and date("{{ max_infracao_date }}")
-        {# {% endif %} #}
+        {% endif %}
     )
 select
     *,

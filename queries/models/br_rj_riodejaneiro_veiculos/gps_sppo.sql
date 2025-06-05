@@ -31,8 +31,7 @@ with
             linha,
             latitude,
             longitude,
-        {# from {{ ref("sppo_aux_registros_filtrada") }} #}
-        from `rj-smr.br_rj_riodejaneiro_veiculos.sppo_aux_registros_filtrada`
+        from {{ ref("sppo_aux_registros_filtrada") }}
         {% if is_incremental() -%}
             where
                 data between date("{{var('date_range_start')}}") and date(

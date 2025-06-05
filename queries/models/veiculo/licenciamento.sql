@@ -21,11 +21,11 @@ with
         from {{ ref("licenciamento_stu_staging") }} as l
         where
             data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
-            {# {% if is_incremental() %} #}
+            {% if is_incremental() %}
                 and data
                 between "{{ min_licenciamento_date }}"
                 and "{{ max_licenciamento_date }}"
-            {# {% endif %} #}
+            {% endif %}
     ),
     -- Processo.Rio MTR-CAP-2025/01125 [Correção da alteração do tipo de veículo]
     stu_tipo_veiculo as (
@@ -189,8 +189,8 @@ where date(data) >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}")
     from {{ source("veiculo_staging_rj-smtr", "sppo_licenciamento") }} l
     where
         data < "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
-        {# {% if is_incremental() %} #}
+        {% if is_incremental() %}
             and data
             between "{{ min_licenciamento_date }}" and "{{ max_licenciamento_date }}"
-        {# {% endif %} #}
+        {% endif %}
 {% endif %}

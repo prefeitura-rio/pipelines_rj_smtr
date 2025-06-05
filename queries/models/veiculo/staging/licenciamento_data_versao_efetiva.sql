@@ -10,12 +10,12 @@ with
     licenciamento as (
         select distinct date(data) as data_licenciamento
         from {{ ref("licenciamento_stu_staging") }}
-        {# {% if is_incremental() %} #}
+        {% if is_incremental() %}
             where
                 date(data)
                 between date("{{ var('start_date')}}")
                 and date("{{ modules.datetime.datetime.fromisoformat(var('end_date')) + modules.datetime.timedelta(7) }}")
-        {# {% endif %} #}
+        {% endif %}
     ),
     periodo as (
         select data
@@ -24,9 +24,9 @@ with
                 -- Primeira data de captura de licenciamento
                 generate_date_array('2022-03-21', current_date("America/Sao_Paulo"))
             ) as data
-        {# {% if is_incremental() %} #}
+        {% if is_incremental() %}
             where data between "{{ var('start_date')}}" and "{{ var('end_date')}}"
-        {# {% endif %} #}
+        {% endif %}
     ),
     data_versao_calc as (
         select

@@ -31,8 +31,10 @@ contents as (
         DATE(data_versao) AS data_versao
     FROM
         {{ var("subsidio_shapes") }} s
+    {% if is_incremental() %}
     WHERE
         data_versao in ("{{ data_versao_shapes | join('", "') }}")
+    {% endif %}
 ),
 pts as (
     select
