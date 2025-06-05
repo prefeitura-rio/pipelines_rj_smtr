@@ -72,7 +72,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "processador_transacao_db": {
             "engine": "postgresql",
-            "host": "10.5.13.73",
+            "host": "10.5.13.169",
         },
         "atendimento_db": {
             "engine": "postgresql",
@@ -88,7 +88,7 @@ class constants(Enum):  # pylint: disable=c0103
         # },
         "vendas_db": {
             "engine": "postgresql",
-            "host": "10.5.112.116",
+            "host": "10.5.112.154",
         },
     }
 
