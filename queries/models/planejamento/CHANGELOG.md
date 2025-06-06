@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.4.6] - 2025-06-06
+
+### Adicionado
+
+- Cria modelo `staging_tuneis` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/617)
+
 ## [1.4.5] - 2025-05-29
 
 ### Adicionado
