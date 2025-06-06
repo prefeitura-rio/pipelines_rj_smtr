@@ -6,6 +6,7 @@
               adicionado os dias atípicos (pois ainda não estão 100% definidos) e
               adicionados os dias-serviço que foram subsidiados, mas não tem receita tarifária
 - Cenário E2: cenário E1 com correções
+- Cenário E3: cenário E2 com correções + ajusta receita sem associação
 */
 with
     -- 1. Calcula a receita tarifaria por servico e dia
@@ -39,14 +40,29 @@ with
             data between "{{ var('start_date') }}" and "{{ var('end_date') }}"
             {# AND DATA NOT IN ("2022-10-02", "2022-10-30", '2023-02-07', '2023-02-08', '2023-02-10', '2023-02-13', '2023-02-17', '2023-02-18', '2023-02-19', '2023-02-20', '2023-02-21', '2023-02-22') #}
             and consorcio in ("Internorte", "Intersul", "Santa Cruz", "Transcarioca")
-            and (
-                length(ifnull(regexp_extract(linha, r"[0-9]+"), "")) != 4
-                and ifnull(regexp_extract(linha, r"[0-9]+"), "") not like "2%"
+            and not (
+                length(ifnull(regexp_extract(linha, r"[0-9]+"), "")) = 4
+                and ifnull(regexp_extract(linha, r"[0-9]+"), "") like "2%"
             )  -- Remove rodoviarios
         group by 1, 2, 3, 4, 5, 6
     ),
-    rdo as (select * from rdo_raw where receita_tarifaria_aferida != 0),
-    -- Remove servicos nao subsidiados
+    correcao_servico_rdo as (
+        select data, servico, servico_corrigido, tipo
+        from {{ ref("staging_encontro_contas_correcao_servico_rdo") }}
+    ),
+    rdo_corrigido as (
+        select *
+        from rdo_raw as r
+        left join
+            (
+                select
+                    * except (servico_corrigido),
+                    servico_corrigido as servico_corrigido_rdo
+                from correcao_servico_rdo
+                where tipo = "Sem planejamento porém com receita tarifária"
+            ) using (data, servico)
+    ),
+    rdo_filtrado as (select * from rdo_corrigido where receita_tarifaria_aferida != 0),  -- Remove servicos nao subsidiados
     sumario_dia as (
         select
             data,
@@ -60,21 +76,43 @@ with
         where data between "{{ var('start_date') }}" and "{{ var('end_date') }}"
         {# and valor_subsidio_pago = 0 -- Desabilitar para Cenário E #}
         group by 1, 2, 3
+    ),
+    sumario_dia_corrigido as (
+        select *
+        from sumario_dia
+        left join
+            (
+                select
+                    * except (servico_corrigido),
+                    servico_corrigido as servico_corrigido_sumario
+                from correcao_servico_rdo
+                where tipo = "Subsídio pago sem receita tarifária"
+            ) using (data, servico)
     )
 select
-    data,
-    coalesce(rdo.consorcio, sd.consorcio) as consorcio,
-    servico,
-    linha,
-    tipo_servico,
-    ordem_servico,
-    receita_tarifaria_aferida
-from rdo
-{# left join sumario_dia sd #}
+    coalesce(sd.data, rdo.data) as data,
+    coalesce(sd.consorcio, rdo.consorcio) as consorcio,
+    coalesce(sd.servico, rdo.servico) as servico,
+    receita_tarifaria_aferida,
+    case
+        when rdo.servico is not null and sd.servico is null
+        then "Sem planejamento porém com receita tarifária"
+        when rdo.servico is null and sd.servico is not null
+        then "Subsídio pago sem receita tarifária"
+        else null
+    end as tipo,
+from sumario_dia_corrigido as sd
 full join
-    sumario_dia sd  -- Cenário E1/E2
-    using (data, servico)
-{# where sd.servico is null #}
+    rdo_filtrado as rdo
+    on (
+        sd.data = rdo.data
+        and (
+            sd.servico = rdo.servico
+            or sd.servico = rdo.servico_corrigido_rdo
+            or sd.servico_corrigido_sumario = rdo.servico_corrigido_rdo
+            or sd.servico_corrigido_sumario = rdo.servico
+        )
+    )
 where
     (
         (subsidio_pago > 0 and receita_tarifaria_aferida is null)
