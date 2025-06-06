@@ -151,8 +151,7 @@ def create_default_materialization_flow(
                 dataset_id=get_from_dict(pre_test, "dataset_id"),
                 table_id=get_from_dict(pre_test, "table_id"),
                 model=get_from_dict(pre_test, "model"),
-                # flags=flags,
-                flags="--target prod",
+                flags=flags,
                 _vars=dbt_run_vars,
                 upstream_tasks=[complete_sources],
             )
@@ -180,8 +179,7 @@ def create_default_materialization_flow(
                 dataset_id=get_from_dict(post_test, "dataset_id"),
                 table_id=get_from_dict(post_test, "table_id"),
                 model=get_from_dict(post_test, "model"),
-                # flags=flags,
-                flags="--target prod",
+                flags=flags,
                 _vars=dbt_run_vars,
                 upstream_tasks=[dbt_run],
             )
