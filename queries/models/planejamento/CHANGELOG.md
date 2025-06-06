@@ -6,6 +6,10 @@
 
 - Cria modelo `staging_tuneis` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/617)
 
+### Alterado
+
+- Altera referência da CTE `tunel` no modelo `segmento_shape` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/617)
+
 ## [1.4.5] - 2025-05-29
 
 ### Adicionado

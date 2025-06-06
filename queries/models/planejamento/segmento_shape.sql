@@ -33,9 +33,7 @@ with
             st_union_agg(
                 st_buffer(geometry, {{ var("buffer_tunel_metros") }})
             ) as buffer_tunel
-        from {{ source("dados_mestres", "logradouro") }}
-        where tipo = "Túnel"
-
+        from {{ ref("staging_tuneis") }}
     ),
     intercessao_segmento as (
         select
