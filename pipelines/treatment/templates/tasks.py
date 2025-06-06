@@ -9,7 +9,6 @@ import requests
 from prefect import task
 from prefect.engine.signals import FAIL
 from prefect.triggers import all_finished
-from prefect.utilities.collections import DotDict
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
@@ -750,9 +749,17 @@ def run_dbt(
 
 
 @task
-def convert_to_dotdict(param: dict) -> DotDict:
+def get_from_dict(param_dict: dict, key: str, default=None):
     """
-    Converte para DotDict
+    Extrai um valor de um dicionário
+
+    Args:
+        param_dict: O dicionário
+        key: A chave a ser buscada
+        default: Valor padrão se a chave não existir
+
+    Returns:
+        O valor da chave ou o default
     """
 
-    return DotDict(param)
+    return param_dict.get(key, default)
