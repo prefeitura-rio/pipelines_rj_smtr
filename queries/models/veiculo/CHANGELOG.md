@@ -1,5 +1,11 @@
 # Changelog - veiculo
 
+## [2.0.8] - 2025-06-06
+
+### Corrigido
+
+- Corrigido o minimo e viagens aceitas no teto de apuração em `viagens_remuneradas.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/616)
+
 ## [2.0.7] - 2025-05-27
 
 ### Adicionado
