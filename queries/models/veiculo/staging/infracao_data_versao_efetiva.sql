@@ -8,8 +8,8 @@
 with
     infracao_date as (
         select distinct date(data) as data_infracao
-        from  {{ ref("infracao_staging") }}
-            -- `rj-smtr.veiculo_staging.infracao`
+        from {{ ref("staging_infracao") }}
+        -- `rj-smtr.veiculo_staging.infracao`
         {% if is_incremental() %}
             where
                 data

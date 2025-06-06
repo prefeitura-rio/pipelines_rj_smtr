@@ -7,7 +7,7 @@ models:
       - dbt_expectations.expect_table_aggregation_to_equal_other_table:
           name: dbt_expectations.expect_table_aggregation_to_equal_other_table__infracao
           expression: count(distinct data)
-          compare_model: ref('infracao_staging')
+          compare_model: ref('staging_infracao')
           compare_expression: count(distinct data)
           group_by: [data]
           compare_group_by: [Date(data)]
