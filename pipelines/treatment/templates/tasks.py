@@ -9,6 +9,7 @@ import requests
 from prefect import task
 from prefect.engine.signals import FAIL
 from prefect.triggers import all_finished
+from prefect.utilities.collections import DotDict
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
@@ -746,3 +747,12 @@ def run_dbt(
 
     log("\n".join(dbt_logs))
     return "\n".join(dbt_logs)
+
+
+@task
+def convert_to_dotdict(param: dict) -> DotDict:
+    """
+    Converte para DotDict
+    """
+
+    return DotDict(param)

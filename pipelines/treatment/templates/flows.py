@@ -7,7 +7,6 @@ from prefect.run_configs import KubernetesRun
 from prefect.schedules import Schedule
 from prefect.schedules.clocks import CronClock
 from prefect.storage import GCS
-from prefect.utilities.collections import DotDict
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
@@ -18,6 +17,7 @@ from pytz import timezone
 from pipelines.constants import constants
 from pipelines.tasks import get_run_env, get_scheduled_timestamp
 from pipelines.treatment.templates.tasks import (
+    convert_to_dotdict,
     create_dbt_run_vars,
     dbt_data_quality_checks,
     get_datetime_end,
@@ -145,7 +145,7 @@ def create_default_materialization_flow(
         )
 
         if pre_test:
-            pre_test_dict = DotDict(pre_test)
+            pre_test_dict = convert_to_dotdict(pre_test)
 
             dbt_pre_test = run_dbt(
                 resource="test",
@@ -176,7 +176,7 @@ def create_default_materialization_flow(
         )
 
         if post_test:
-            post_test_dict = DotDict(post_test)
+            post_test_dict = convert_to_dotdict(post_test)
 
             dbt_post_test = run_dbt(
                 resource="test",
