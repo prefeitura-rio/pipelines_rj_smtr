@@ -247,10 +247,10 @@ models:
   rj_smtr:
     projeto_subsidio_sppo:
       +materialized: view
-      +schema: SMTR202404004977_reprocessamento_projeto_subsidio_sppo
+      +schema: projeto_subsidio_sppo
       deprecated:
         +materialized: view
-        +schema: SMTR202404004977_reprocessamento_projeto_subsidio_sppo
+        +schema: projeto_subsidio_sppo
     br_rj_riodejaneiro_sigmob:
       +materialized: view
       +schema: br_rj_riodejaneiro_sigmob
@@ -268,16 +268,16 @@ models:
       +schema: br_rj_riodejaneiro_veiculos
     dashboard_subsidio_sppo:
       +materialized: view
-      +schema: SMTR202404004977_reprocessamento_dashboard_subsidio_sppo
+      +schema: dashboard_subsidio_sppo
     dashboard_subsidio_sppo_staging:
       +materialized: view
-      +schema: SMTR202404004977_reprocessamento_dashboard_subsidio_sppo_staging
+      +schema: dashboard_subsidio_sppo_staging
     veiculo:
       +materialized: view
-      +schema: SMTR202404004977_reprocessamento_veiculo
+      +schema: veiculo
       staging:
         +materialized: view
-        +schema: SMTR202404004977_reprocessamento_veiculo_staging
+        +schema: veiculo_staging
     br_rj_riodejaneiro_rdo:
       +materialized: view
       +schema: br_rj_riodejaneiro_rdo

@@ -291,6 +291,7 @@ select
         placa,
         safe_cast(null as string)
     ) as placa,
+
     if(
         data >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}"),
         date(l.data_versao),
