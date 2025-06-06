@@ -5,32 +5,25 @@
 {% endif %}
 
 WITH
-  q1 AS (
+  datas AS (
   SELECT
-    FORMAT_DATE('%Y-%m-Q1', date) AS quinzena,
-    date AS data_inicial_quinzena,
-    DATE_ADD(date, INTERVAL 14 DAY) AS data_final_quinzena
+    DATA,
+    CASE
+      WHEN EXTRACT(DAY FROM DATA) <= 15 THEN FORMAT_DATE('%Y-%m-Q1', DATA)
+      ELSE FORMAT_DATE('%Y-%m-Q2', DATA)
+  END
+    AS quinzena,
   FROM
-    UNNEST(GENERATE_DATE_ARRAY('2022-06-01', '2023-12-31', INTERVAL 1 MONTH)) AS date ),
-  q2 AS (
-  SELECT
-    FORMAT_DATE('%Y-%m-Q2', date) AS quinzena,
-    DATE_ADD(date, INTERVAL 15 DAY) AS data_inicial_quinzena,
-    LAST_DAY(date) AS data_final_quinzena
-  FROM
-    UNNEST(GENERATE_DATE_ARRAY('2022-06-01', '2023-12-31', INTERVAL 1 MONTH)) AS date ),
+    UNNEST(GENERATE_DATE_ARRAY(DATE("{{ var('start_date') }}"), DATE("{{ var('end_date') }}"), INTERVAL 1 DAY)) AS DATA ),
   quinzenas AS (
   SELECT
-    *
+    quinzena,
+    MIN(DATA) AS data_inicial_quinzena,
+    MAX(DATA) AS data_final_quinzena
   FROM
-    q1
-  UNION ALL
-  SELECT
-    *
-  FROM
-    q2
-  ORDER BY
-    data_inicial_quinzena )
+    datas
+  GROUP BY
+    quinzena )
 SELECT
   quinzena,
   data_inicial_quinzena,
@@ -38,15 +31,15 @@ SELECT
   consorcio,
   servico,
   COUNT(DATA) AS quantidade_dias_subsidiado,
-  SUM(km_subsidiada) AS km_subsidiada,
-  SUM(receita_total_esperada) AS receita_total_esperada,
-  SUM(receita_tarifaria_esperada) AS receita_tarifaria_esperada,
-  SUM(subsidio_esperado) AS subsidio_esperado,
-  SUM(subsidio_glosado) AS subsidio_glosado,
-  SUM(receita_total_aferida) AS receita_total_aferida,
-  SUM(receita_tarifaria_aferida) AS receita_tarifaria_aferida,
-  SUM(subsidio_pago) AS subsidio_pago,
-  SUM(saldo) AS saldo
+  sum(km_subsidiada) as km_subsidiada,
+  {# sum(receita_total_esperada) as receita_total_esperada, #}
+  sum(receita_tarifaria_esperada) as receita_tarifaria_esperada,
+  {# sum(subsidio_esperado) as subsidio_esperado, #}
+  {# sum(subsidio_glosado) as subsidio_glosado, #}
+  {# sum(receita_total_aferida) as receita_total_aferida, #}
+  sum(receita_tarifaria_aferida) as receita_tarifaria_aferida,
+  {# sum(subsidio_pago) as subsidio_pago, #}
+  sum(saldo) as saldo
 FROM
   quinzenas qz
 LEFT JOIN
