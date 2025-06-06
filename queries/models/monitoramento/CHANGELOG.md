@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.4.1] - 2025-06-06
+
+### Adicionado
+
+- Adiciona testes nos modelos `staging_gps`, `staging_realocacao` e `gps` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/614)
+
 ## [1.4.0] - 2025-05-29
 
 ### Alterado

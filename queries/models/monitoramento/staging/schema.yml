@@ -3,6 +3,11 @@ version: 2
 models:
   - name: staging_gps
     description: "Tabela com todos os registros de GPS da API {{ var('fonte_gps') }}"
+    tests:
+      - check_gps_capture:
+          table_id: registros
+          interval: 1
+          name: check_gps_capture__staging_gps
     columns:
       - name: data
         description: "{{ doc('data_captura') }}"
@@ -38,6 +43,11 @@ models:
         description: "{{ doc('datetime_captura') }}"
   - name: staging_realocacao
     description: "Tabela com todas as realocações de linha informadas pela API {{ var('fonte_gps') }}"
+    tests:
+      - check_gps_capture:
+          table_id: realocacao
+          interval: 10
+          name: check_gps_capture__staging_realocacao
     columns:
       - name: data
         description: "{{ doc('data_captura') }}"

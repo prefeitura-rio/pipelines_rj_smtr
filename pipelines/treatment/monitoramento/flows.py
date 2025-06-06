@@ -81,7 +81,22 @@ GPS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
     ],
 )
 gps_vars_conecta = {"modo_gps": "onibus", "fonte_gps": "conecta", "15_minutos": False}
-set_default_parameters(GPS_CONECTA_MATERIALIZACAO, {"additional_vars": gps_vars_conecta})
+pre_test_conecta = {
+    "test_name": "check_gps_capture__staging_gps check_gps_capture__staging_realocacao",
+    "checks_list": constants.GPS_PRE_CHECKS_LIST.value,
+}
+post_test_conecta = {
+    "model": "gps",
+    "checks_list": constants.GPS_POST_CHECKS_LIST.value,
+}
+set_default_parameters(
+    GPS_CONECTA_MATERIALIZACAO,
+    {
+        "additional_vars": gps_vars_conecta,
+        "pre_test": pre_test_conecta,
+        "post_test": post_test_conecta,
+    },
+)
 
 GPS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps cittati - materializacao",
@@ -93,7 +108,22 @@ GPS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
     ],
 )
 gps_vars_cittati = {"modo_gps": "onibus", "fonte_gps": "cittati", "15_minutos": False}
-set_default_parameters(GPS_CITTATI_MATERIALIZACAO, {"additional_vars": gps_vars_cittati})
+pre_test_cittati = {
+    "test_name": "check_gps_capture__staging_gps check_gps_capture__staging_realocacao",
+    "checks_list": constants.GPS_PRE_CHECKS_LIST.value,
+}
+post_test_cittati = {
+    "model": "gps",
+    "checks_list": constants.GPS_POST_CHECKS_LIST.value,
+}
+set_default_parameters(
+    GPS_CITTATI_MATERIALIZACAO,
+    {
+        "additional_vars": gps_vars_cittati,
+        "pre_test": pre_test_cittati,
+        "post_test": post_test_cittati,
+    },
+)
 
 GPS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps zirix - materializacao",
@@ -105,7 +135,22 @@ GPS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
     ],
 )
 gps_vars_zirix = {"modo_gps": "onibus", "fonte_gps": "zirix", "15_minutos": False}
-set_default_parameters(GPS_ZIRIX_MATERIALIZACAO, {"additional_vars": gps_vars_zirix})
+pre_test_zirix = {
+    "test_name": "check_gps_capture__staging_gps check_gps_capture__staging_realocacao",
+    "checks_list": constants.GPS_PRE_CHECKS_LIST.value,
+}
+post_test_zirix = {
+    "model": "gps",
+    "checks_list": constants.GPS_POST_CHECKS_LIST.value,
+}
+set_default_parameters(
+    GPS_ZIRIX_MATERIALIZACAO,
+    {
+        "additional_vars": gps_vars_zirix,
+        "pre_test": pre_test_zirix,
+        "post_test": post_test_zirix,
+    },
+)
 
 GPS_15_MINUTOS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps_15_minutos conecta - materializacao",

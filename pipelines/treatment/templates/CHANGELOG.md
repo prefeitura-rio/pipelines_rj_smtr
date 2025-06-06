@@ -1,5 +1,11 @@
 # Changelog - treatment
 
+## [1.1.5] - 2025-06-06
+
+### Adicionado
+
+- Adiciona lógica para execução dos testes do dbt no flow de materialização genérico (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/614)
+
 ## [1.1.4] - 2025-05-22
 
 ### Adicionado
