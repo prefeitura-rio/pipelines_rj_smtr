@@ -8,7 +8,7 @@
         incremental_strategy="insert_overwrite",
     )
 }}
-{% if execute %}
+{% if is_incremental() and execute %}
     {% set licenciamento_dates = run_query(
         get_version_dates("licenciamento_data_versao_efetiva")
     ) %}

@@ -9,7 +9,7 @@
     incremental_strategy='insert_overwrite'
 )
 }}
-{% if execute %}
+{% if is_incremental() and execute %}
   {% set run_date_str = "'" ~ var('run_date') ~ "'" %}
   {% set query = "SELECT data_versao_shapes FROM " ~ ref('subsidio_data_versao_efetiva') ~ " WHERE data BETWEEN DATE_SUB(DATE(" ~ run_date_str ~ "), INTERVAL 1 DAY) AND DATE(" ~ run_date_str ~ ")" %}
   {% set result = run_query(query) %}
