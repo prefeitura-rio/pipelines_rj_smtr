@@ -83,15 +83,9 @@ GPS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
 gps_vars_conecta = {"modo_gps": "onibus", "fonte_gps": "conecta", "15_minutos": False}
 pre_test_conecta = {
     "test_name": "check_gps_capture__staging_gps check_gps_capture__staging_realocacao",
-    "dataset_id": None,
-    "table_id": None,
-    "model": None,
     "checks_list": constants.GPS_PRE_CHECKS_LIST.value,
 }
 post_test_conecta = {
-    "test_name": None,
-    "dataset_id": None,
-    "table_id": None,
     "model": "gps",
     "checks_list": constants.GPS_POST_CHECKS_LIST.value,
 }

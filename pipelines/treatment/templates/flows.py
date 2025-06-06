@@ -7,6 +7,7 @@ from prefect.run_configs import KubernetesRun
 from prefect.schedules import Schedule
 from prefect.schedules.clocks import CronClock
 from prefect.storage import GCS
+from prefect.utilities.collections import DotDict
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
@@ -144,19 +145,22 @@ def create_default_materialization_flow(
         )
 
         if pre_test:
+            pre_test_dict = DotDict(pre_test)
+
             dbt_pre_test = run_dbt(
                 resource="test",
-                test_name=pre_test["test_name"],
-                dataset_id=pre_test["dataset_id"],
-                table_id=pre_test["table_id"],
-                model=pre_test["model"],
-                flags=flags,
+                test_name=pre_test_dict.get("test_name"),
+                dataset_id=pre_test_dict.get("dataset_id"),
+                table_id=pre_test_dict.get("table_id"),
+                model=pre_test_dict.get("model"),
+                # flags=flags,
+                flags="--target prod",
                 _vars=dbt_run_vars,
                 upstream_tasks=[complete_sources],
             )
             notify_pre_test = dbt_data_quality_checks(
                 dbt_logs=dbt_pre_test,
-                checks_list=pre_test["checks_list"],
+                checks_list=pre_test_dict.get("checks_list"),
                 params=dbt_run_vars,
             )
             wait_pre_test = notify_pre_test
@@ -172,19 +176,22 @@ def create_default_materialization_flow(
         )
 
         if post_test:
+            post_test_dict = DotDict(post_test)
+
             dbt_post_test = run_dbt(
                 resource="test",
-                test_name=post_test["test_name"],
-                dataset_id=post_test["dataset_id"],
-                table_id=post_test["table_id"],
-                model=post_test["model"],
-                flags=flags,
+                test_name=post_test_dict.get("test_name"),
+                dataset_id=post_test_dict.get("dataset_id"),
+                table_id=post_test_dict.get("table_id"),
+                model=post_test_dict.get("model"),
+                # flags=flags,
+                flags="--target prod",
                 _vars=dbt_run_vars,
                 upstream_tasks=[dbt_run],
             )
             notify_post_test = dbt_data_quality_checks(
                 dbt_logs=dbt_post_test,
-                checks_list=post_test["checks_list"],
+                checks_list=post_test_dict.get("checks_list"),
                 params=dbt_run_vars,
             )
             wait_post_test = notify_post_test
