@@ -7,7 +7,7 @@
              adicionado os dias atípicos (pois ainda não estão 100% definidos) e
              adicionados os dias-serviço que foram subsidiados, mas não tem receita tarifária
 - Cenário H1: cenário H com correções
-- Cenário H2: cenário H1 + extensão até 2025-03-31
+- Cenário H2: cenário H1 + extensão até 2025-03-31 + correções serviços sem associação
 
 */
 with
@@ -72,7 +72,9 @@ with
             {# {{ ref("sumario_servico_dia_historico") }} #}
             {# `rj-smtr.monitoramento.sumario_servico_dia_historico` #}
             {{ ref("staging_encontro_contas_sumario_servico_dia_historico") }}
-        where data between "{{ var('start_date') }}" and "{{ var('end_date') }}"
+        where
+            data between "{{ var('start_date') }}" and "{{ var('end_date') }}"
+            and data not in ("2024-10-06")  -- Eleições 2024
     {# and valor_subsidio_pago = 0 -- Desabilitar para Cenário E #}
     ),
     sumario_dia_corrigido as (
@@ -88,10 +90,6 @@ with
             ) using (data, servico)
     )
 select
-    coalesce(sd.data, rdo.data) as data,
-    coalesce(sd.consorcio, rdo.consorcio) as consorcio,
-    coalesce(sd.servico, rdo.servico) as servico,
-    receita_tarifaria_aferida,
     case
         when rdo.servico is not null and sd.servico is null
         then "Sem planejamento porém com receita tarifária"
@@ -99,6 +97,15 @@ select
         then "Subsídio pago sem receita tarifária"
         else null
     end as tipo,
+    coalesce(sd.data, rdo.data) as data,
+    coalesce(sd.consorcio, rdo.consorcio) as consorcio,
+    coalesce(sd.servico, rdo.servico) as servico,
+    linha,
+    tipo_servico,
+    ordem_servico,
+    receita_tarifaria_aferida,
+    null as justificativa,
+    null as servico_correto
 from sumario_dia_corrigido as sd
 full join
     rdo_filtrado as rdo
