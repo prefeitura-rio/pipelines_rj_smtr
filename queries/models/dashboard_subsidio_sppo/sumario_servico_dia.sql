@@ -18,7 +18,8 @@ WITH
     servico,
     distancia_total_planejada AS km_planejada,
   FROM
-    {{ ref("viagem_planejada") }}
+    -- {{ ref("viagem_planejada") }}
+    `rj-smtr`.`projeto_subsidio_sppo`.`viagem_planejada`
   WHERE
     DATA BETWEEN DATE("{{ var("start_date") }}")
     AND DATE( "{{ var("end_date") }}" )
@@ -34,7 +35,8 @@ WITH
     id_viagem,
     distancia_planejada
  FROM
-    {{ ref("viagem_completa") }}
+    -- {{ ref("viagem_completa") }}
+    `rj-smtr`.`projeto_subsidio_sppo`.`viagem_completa`
   WHERE
     DATA BETWEEN DATE("{{ var("start_date") }}")
     AND DATE( "{{ var("end_date") }}" ) ),
@@ -71,10 +73,11 @@ WITH
       subsidio_km
     FROM
       {{ ref("viagens_remuneradas") }}
+      -- `rj-smtr.dashboard_subsidio_sppo.viagens_remuneradas`
     WHERE
       DATA BETWEEN DATE("{{ var("start_date") }}")
       AND DATE( "{{ var("end_date") }}" )
-      AND indicador_viagem_remunerada IS TRUE),
+      AND indicador_viagem_dentro_limite IS TRUE),
   servico_subsidio_apuracao AS (
   SELECT
     DATA,
@@ -87,12 +90,13 @@ WITH
     2)
 SELECT
   s.*,
-  IF(p.valor IS NULL, st.valor_subsidio_apurado, 0) AS valor_subsidio_pago,
+  IF(p.valor IS NULL, COALESCE(st.valor_subsidio_apurado, 0), 0) AS valor_subsidio_pago,
   IFNULL(-p.valor, 0) AS valor_penalidade
 FROM
   servico_km_apuracao AS s
 LEFT JOIN
   {{ ref("valor_tipo_penalidade") }} AS p
+  -- `rj-smtr`.`dashboard_subsidio_sppo`.`valor_tipo_penalidade` AS p
 ON
   s.data BETWEEN p.data_inicio
   AND p.data_fim

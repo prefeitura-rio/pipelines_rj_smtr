@@ -1,148 +1,205 @@
 -- depends_on: {{ ref('matriz_integracao') }}
 {{
-  config(
-    materialized="incremental",
-    partition_by={
-      "field":"data",
-      "data_type":"date",
-      "granularity": "day"
-    },
-    unique_key='id_transacao',
-  )
+    config(
+        materialized="incremental",
+        incremental_strategy="insert_overwrite",
+        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+    )
 }}
 
-WITH integracao_transacao_deduplicada AS (
-  SELECT
-    * EXCEPT(rn)
-  FROM
-  (
-    SELECT
-      *,
-      ROW_NUMBER() OVER (PARTITION BY id ORDER BY timestamp_captura DESC) AS rn
-    FROM
-      {{ ref("staging_integracao_transacao") }}
-    {% if is_incremental() -%}
-      WHERE
-        DATE(data) BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
-        AND timestamp_captura BETWEEN DATETIME("{{var('date_range_start')}}") AND DATETIME("{{var('date_range_end')}}")
-    {%- endif %}
-  )
-  WHERE
-    rn = 1
-),
-integracao_melt AS (
-    SELECT
-      EXTRACT(DATE FROM im.data_transacao) AS data,
-      EXTRACT(HOUR FROM im.data_transacao) AS hora,
-      i.data_inclusao AS datetime_inclusao,
-      i.data_processamento AS datetime_processamento_integracao,
-      i.timestamp_captura AS datetime_captura,
-      i.id AS id_integracao,
-      im.sequencia_integracao,
-      im.data_transacao AS datetime_transacao,
-      im.id_tipo_modal,
-      im.id_consorcio,
-      im.id_operadora,
-      im.id_linha,
-      im.id_transacao,
-      im.sentido,
-      im.perc_rateio,
-      im.valor_rateio_compensacao,
-      im.valor_rateio,
-      im.valor_transacao,
-      i.valor_transacao_total,
-      i.tx_adicional AS texto_adicional
-    FROM
-      integracao_transacao_deduplicada i,
-      -- Transforma colunas com os dados de cada transação da integração em linhas diferentes
-      UNNEST(
-        [
-          {% for n in range(var('quantidade_integracoes_max')) %}
-            STRUCT(
-              {% for column, column_config in var('colunas_integracao').items() %}
-                {% if column_config.select %}
-                  {{ column }}_t{{ n }} AS {{ column }},
+{% set incremental_filter %}
+    date(data) between date("{{var('date_range_start')}}") and date(
+                            "{{var('date_range_end')}}"
+    )
+    and timestamp_captura
+    between datetime("{{var('date_range_start')}}") and datetime(
+        "{{var('date_range_end')}}"
+                        )
+{% endset %}
+
+{% set integracao_staging = ref("staging_integracao_transacao") %}
+
+{% if execute %}
+    {% if is_incremental() %}
+        {% set integracao_partitions_query %}
+            WITH integracao AS (
+                SELECT DISTINCT
+                    CONCAT("'", DATE(data_transacao), "'") AS data_transacao
+                FROM
+                    {{ integracao_staging }},
+                    UNNEST([
+                        data_transacao_t0,
+                        data_transacao_t1,
+                        data_transacao_t2,
+                        data_transacao_t3,
+                        data_transacao_t4
+                    ]) AS data_transacao
+                WHERE
+                    {{ incremental_filter }}
+            )
+            SELECT
+                *
+            FROM
+                integracao
+            WHERE
+                data_transacao IS NOT NULL
+
+        {% endset %}
+
+        {% set integracao_partitions = (
+            run_query(integracao_partitions_query).columns[0].values()
+        ) %}
+
+    {% endif %}
+{% endif %}
+
+with
+    integracao_transacao_deduplicada as (
+        select * except (rn)
+        from
+            (
+                select
+                    *,
+                    row_number() over (
+                        partition by id order by timestamp_captura desc
+                    ) as rn
+                from {{ integracao_staging }}
+                {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.integracao_transacao` #}
+                {% if is_incremental() -%} where {{ incremental_filter }} {%- endif %}
+            )
+        where rn = 1
+    ),
+    integracao_melt as (
+        select
+            extract(date from im.data_transacao) as data,
+            extract(hour from im.data_transacao) as hora,
+            i.data_inclusao as datetime_inclusao,
+            i.data_processamento as datetime_processamento_integracao,
+            i.timestamp_captura as datetime_captura,
+            i.id as id_integracao,
+            im.sequencia_integracao,
+            im.data_transacao as datetime_transacao,
+            im.id_tipo_modal,
+            im.id_consorcio,
+            im.id_operadora,
+            im.id_linha,
+            im.id_transacao,
+            im.sentido,
+            im.perc_rateio,
+            im.valor_rateio_compensacao,
+            im.valor_rateio,
+            im.valor_transacao,
+            i.valor_transacao_total,
+            i.tx_adicional as texto_adicional,
+            im.id_ordem_rateio
+        from
+            integracao_transacao_deduplicada i,
+            -- Transforma colunas com os dados de cada transação da integração em
+            -- linhas diferentes
+            unnest(
+                [
+                    {% for n in range(var("quantidade_integracoes_max")) %}
+                        struct(
+                            {% for column, column_config in var(
+                                "colunas_integracao"
+                            ).items() %}
+                                {% if column_config.select %}
+                                    {{ column }}_t{{ n }} as {{ column }},
+                                {% endif %}
+                            {% endfor %}
+                            {{ n + 1 }} as sequencia_integracao
+                        )
+                        {% if not loop.last %},{% endif %}
+                    {% endfor %}
+                ]
+            ) as im
+    ),
+    integracao_new as (
+        select
+            i.data,
+            i.hora,
+            i.datetime_processamento_integracao,
+            i.datetime_captura,
+            i.datetime_transacao,
+            timestamp_diff(
+                i.datetime_transacao,
+                lag(i.datetime_transacao) over (
+                    partition by i.id_integracao order by sequencia_integracao
+                ),
+                minute
+            ) as intervalo_integracao,
+            i.id_integracao,
+            i.sequencia_integracao,
+            m.modo,
+            dc.id_consorcio,
+            dc.consorcio,
+            do.id_operadora,
+            do.operadora,
+            i.id_linha as id_servico_jae,
+            l.nr_linha as servico_jae,
+            l.nm_linha as descricao_servico_jae,
+            i.id_transacao,
+            i.sentido,
+            i.perc_rateio as percentual_rateio,
+            i.valor_rateio_compensacao,
+            i.valor_rateio,
+            i.valor_transacao,
+            i.valor_transacao_total,
+            i.texto_adicional,
+            i.id_ordem_rateio,
+            o.data_ordem,
+            o.id_ordem_pagamento,
+            o.id_ordem_pagamento_consorcio as id_ordem_pagamento_consorcio_dia,
+            o.id_ordem_pagamento_consorcio_operadora
+            as id_ordem_pagamento_consorcio_operador_dia,
+            '{{ var("version") }}' as versao
+        from integracao_melt i
+        left join
+            {{ source("cadastro", "modos") }} m
+            on i.id_tipo_modal = m.id_modo
+            and m.fonte = "jae"
+        left join {{ ref("operadoras") }} do on i.id_operadora = do.id_operadora_jae
+        {# `rj-smtr.cadastro.operadoras` do on i.id_operadora = do.id_operadora_jae #}
+        left join {{ ref("consorcios") }} dc on i.id_consorcio = dc.id_consorcio_jae
+        {# `rj-smtr.cadastro.consorcios` dc on i.id_consorcio = dc.id_consorcio_jae #}
+        left join
+            {{ ref("staging_linha") }} l
+            {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.linha` l #}
+            on i.id_linha = l.cd_linha
+        left join {{ ref("staging_ordem_rateio") }} o using (id_ordem_rateio)
+        where i.id_transacao is not null
+    ),
+    complete_partitions as (
+        select *, 0 as priority
+        from integracao_new
+
+        {% if is_incremental() %}
+            union all
+
+            select *, 1 as priority
+            from {{ this }}
+            where
+                {% if integracao_partitions | length > 0 %}
+                    data in ({{ integracao_partitions | join(", ") }})
+                {% else %} data = "2000-01-01"
                 {% endif %}
-              {% endfor %}
-              {{ n + 1 }} AS sequencia_integracao
-            ){% if not loop.last %},{% endif %}
-          {% endfor %}
-        ]
-      ) AS im
-),
-integracao_rn AS (
-  SELECT
-    i.data,
-    i.hora,
-    i.datetime_processamento_integracao,
-    i.datetime_captura,
-    i.datetime_transacao,
-    TIMESTAMP_DIFF(
-      i.datetime_transacao,
-      LAG(i.datetime_transacao) OVER(PARTITION BY i.id_integracao ORDER BY sequencia_integracao),
-      MINUTE
-    ) AS intervalo_integracao,
-    i.id_integracao,
-    i.sequencia_integracao,
-    m.modo,
-    dc.id_consorcio,
-    dc.consorcio,
-    do.id_operadora,
-    do.operadora,
-    i.id_linha AS id_servico_jae,
-    -- s.servico,
-    l.nr_linha AS servico_jae,
-    l.nm_linha AS descricao_servico_jae,
-    i.id_transacao,
-    i.sentido,
-    i.perc_rateio AS percentual_rateio,
-    i.valor_rateio_compensacao,
-    i.valor_rateio,
-    i.valor_transacao,
-    i.valor_transacao_total,
-    i.texto_adicional,
-    '{{ var("version") }}' as versao,
-    ROW_NUMBER() OVER (PARTITION BY id_transacao ORDER BY datetime_processamento_integracao DESC) AS rn
-  FROM
-    integracao_melt i
-  LEFT JOIN
-    {{ source("cadastro", "modos") }} m
-  ON
-    i.id_tipo_modal = m.id_modo AND m.fonte = "jae"
-  LEFT JOIN
-    {{ ref("operadoras") }} AS do
-  ON
-    i.id_operadora = do.id_operadora_jae
-  LEFT JOIN
-    {{ ref("consorcios") }} AS dc
-  ON
-    i.id_consorcio = dc.id_consorcio_jae
-  LEFT JOIN
-    {{ ref("staging_linha") }} AS l
-  ON
-      i.id_linha = l.cd_linha
-  -- LEFT JOIN
-  --   {{ ref("servicos") }} AS s
-  -- ON
-  --   i.id_linha = s.id_servico_jae
-  WHERE i.id_transacao IS NOT NULL
-),
-integracoes_teste_invalidas AS (
-  SELECT DISTINCT
-    i.id_integracao
-  FROM
-    integracao_rn i
-  LEFT JOIN
-    {{ ref("staging_linha_sem_ressarcimento") }} l
-  ON
-    i.id_servico_jae = l.id_linha
-  WHERE
-    l.id_linha IS NOT NULL
-    OR i.data < "2023-07-17"
-)
-SELECT
-  * EXCEPT(rn)
-FROM
-  integracao_rn
-WHERE rn = 1
-AND id_integracao NOT IN (SELECT id_integracao FROM integracoes_teste_invalidas)
+        {% endif %}
+    ),
+    integracoes_teste_invalidas as (
+        select distinct i.id_integracao
+        from complete_partitions i
+        left join
+            {{ ref("staging_linha_sem_ressarcimento") }} l
+            {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.linha_sem_ressarcimento` l #}
+            on i.id_servico_jae = l.id_linha
+        where l.id_linha is not null or i.data < "2023-07-17"
+    )
+select * except (priority)
+from complete_partitions
+where id_integracao not in (select id_integracao from integracoes_teste_invalidas)
+qualify
+    row_number() over (
+        partition by id_integracao, id_transacao
+        order by datetime_processamento_integracao desc, priority
+    )
+    = 1

@@ -1,22 +1,20 @@
 # -*- coding: utf-8 -*-
 """Prefect functions"""
-import inspect
-
-# import json
-from typing import Any, Callable, Dict, Type, Union
+import time
+from typing import Any, Dict, Type, Union
 
 import prefect
 from prefect import unmapped
 from prefect.backend.flow_run import FlowRunView, FlowView, watch_flow_run
-
-# from prefect.engine.signals import PrefectStateSignal, signal_from_state
+from prefect.client import Client
+from prefect.engine.state import Skipped, State
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefeitura_rio.pipelines_utils.logging import log
+from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
 
 from pipelines.constants import constants
-from pipelines.utils.extractors.base import DataExtractor
-
-# from prefect.engine.state import Cancelled, State
+from pipelines.utils.discord import format_send_discord_message
+from pipelines.utils.secret import get_secret
 
 
 class TypedParameter(prefect.Parameter):
@@ -42,66 +40,6 @@ class TypedParameter(prefect.Parameter):
         ), f"Param {self.name} must be {self.accepted_types}. Received {type(param_value)}"
 
         return param_value
-
-
-def extractor_task(func: Callable, **task_init_kwargs):
-    """
-    Decorator para tasks create_extractor_task do flow generico de captura
-    Usado da mesma forma que o decorator task padrão do Prefect.
-
-    A função da task pode receber os seguintes argumentos:
-        env: str,
-        dataset_id: str,
-        table_id: str,
-        save_filepath: str,
-        data_extractor_params: dict,
-        incremental_info: IncrementalInfo
-
-    Garante que os argumentos e retorno da task estão corretos e
-    possibilita que a task seja criada sem precisar de todos os argumentos passados pelo flow
-    """
-    task_init_kwargs["name"] = task_init_kwargs.get("name", func.__name__)
-    signature = inspect.signature(func)
-    assert task_init_kwargs.get("nout", 1) == 1, "nout must be 1"
-
-    return_annotation = signature.return_annotation
-
-    if hasattr(return_annotation, "__origin__") and return_annotation.__origin__ is Union:
-        return_assertion = all(issubclass(t, DataExtractor) for t in return_annotation.__args__)
-    else:
-        return_assertion = issubclass(
-            signature.return_annotation,
-            DataExtractor,
-        )
-
-    assert return_assertion, "return must be DataExtractor subclass"
-
-    def decorator(func):
-        expected_arguments = [
-            "env",
-            "dataset_id",
-            "table_id",
-            "save_filepath",
-            "data_extractor_params",
-            "incremental_info",
-        ]
-
-        function_arguments = [p.name for p in signature.parameters.values()]
-
-        invalid_args = [a for a in function_arguments if a not in expected_arguments]
-
-        if len(invalid_args) > 0:
-            raise ValueError(f"Invalid arguments: {', '.join(invalid_args)}")
-
-        def wrapper(**kwargs):
-            return func(**{k: v for k, v in kwargs.items() if k in function_arguments})
-
-        task_init_kwargs["checkpoint"] = False
-        return prefect.task(wrapper, **task_init_kwargs)
-
-    if func is None:
-        return decorator
-    return decorator(func=func)
 
 
 def run_local(flow: prefect.Flow, parameters: Dict[str, Any] = None):
@@ -298,37 +236,100 @@ def run_flow_mapped(
     return complete_wait
 
 
-# def handler_cancel_subflows(obj, old_state: State, new_state: State) -> State:
-#     if isinstance(new_state, Cancelled):
-#         client = prefect.Client()
-#         subflows = prefect.context.get("_subflow_ids", [])
-#         if len(subflows) > 0:
-#             query = f"""
-#                 query {{
-#                     flow_run(
-#                         where: {{
-#                             _and: [
-#                                 {{state: {{_in: ["Running", "Submitted", "Scheduled"]}}}},
-#                                 {{id: {{_in: {json.dumps(subflows)}}}}}
-#                             ]
-#                         }}
-#                     ) {{
-#                         id
-#                     }}
-#                 }}
-#             """
-#             # pylint: disable=no-member
-#             response = client.graphql(query=query)
-#             active_subflow_runs = response["data"]["flow_run"]
-#             if active_subflow_runs:
-#                 logger = prefect.context.get("logger")
-#                 logger.info(f"Found {len(active_subflow_runs)} subflows running")
-#                 for subflow_run_id in active_subflow_runs:
-#                     logger.info(f"cancelling run: {subflow_run_id}")
-#                     client.cancel_flow_run(flow_run_id=subflow_run_id)
-#                     logger("Run cancelled!")
-#     return new_state
-
-
 class FailedSubFlow(Exception):
     """Erro para ser usado quando um subflow falha"""
+
+
+def handler_skip_if_running_tolerant(tolerance_minutes: int):
+    """
+    State handler that will skip a flow run if another instance of the flow is already running.
+
+    Adapted from Prefect Discourse:
+    https://tinyurl.com/4hn5uz2w
+    """
+    if tolerance_minutes < 0:
+        tolerance_minutes = 0
+
+    def handler(obj, old_state: State, new_state: State) -> State:
+        if new_state.is_running():
+            logger = prefect.context.get("logger")
+            for i in range(tolerance_minutes + 1):
+                client = Client()
+                query = """
+                    query($flow_id: uuid) {
+                        flow_run(
+                            where: {
+                                _and: [
+                                    {state: {_eq: "Running"}},
+                                    {flow_id: {_eq: $flow_id}}
+                                ]
+                            }
+                        ) {
+                            id
+                        }
+                    }
+                """
+                # pylint: disable=no-member
+                response = client.graphql(
+                    query=query,
+                    variables=dict(flow_id=prefect.context.flow_id),
+                )
+                active_flow_runs = response["data"]["flow_run"]
+                if active_flow_runs and i < tolerance_minutes:
+                    logger.info(f"Attempt {i}")
+                    time.sleep(60)
+                else:
+                    break
+            if active_flow_runs:
+                message = (
+                    "Skipping this flow run since there are already some flow runs in progress"
+                )
+                logger.info(message)
+                return Skipped(message)
+        return new_state
+
+    return handler
+
+
+def set_default_parameters(flow: prefect.Flow, default_parameters: dict) -> prefect.Flow:
+    """
+    Sets default parameters for a flow.
+    """
+    for parameter in flow.parameters():
+        if parameter.name in default_parameters:
+            parameter.default = default_parameters[parameter.name]
+    return flow
+
+
+def handler_notify_failure(webhook: str):
+    """Gera um state handler para notificar falhas no Discord.
+
+    Args:
+        webhook (str): A chave para acessar a URL do webhook no secret do infisical.
+
+    Returns:
+        Callable: O state handler
+    """
+
+    def handler(obj, old_state: State, new_state: State) -> State:
+        if new_state.is_failed():
+            webhook_url = get_secret(secret_path=constants.WEBHOOKS_SECRET_PATH.value)[webhook]
+            mentions_tag = (
+                f" - <@&{constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>"
+            )
+            header = f":red_circle: **Erro no flow {prefect.context.flow_name}**"
+            if get_flow_run_mode() == "prod":
+                header = f"{header} {mentions_tag}\n\n"
+            else:
+                header = f"**[DEV]** {header}\n\n"
+            formatted_messages = [header]
+            flow_run_url = f"https://pipelines.dados.rio/flow-run/{prefect.context.flow_run_id}"
+
+            formatted_messages.append(f"**URL da execução:** {flow_run_url}")
+            format_send_discord_message(
+                formatted_messages=formatted_messages, webhook_url=webhook_url
+            )
+
+        return new_state
+
+    return handler

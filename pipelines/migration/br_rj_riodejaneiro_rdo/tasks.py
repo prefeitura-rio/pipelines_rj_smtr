@@ -8,7 +8,6 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-import pandas as pd
 import pendulum
 from dateutil import parser
 from prefect import task
@@ -20,6 +19,7 @@ from pipelines.migration.br_rj_riodejaneiro_rdo.constants import constants
 from pipelines.migration.br_rj_riodejaneiro_rdo.utils import (
     build_table_id,
     merge_file_info_and_errors,
+    read_raw_rdo,
 )
 from pipelines.migration.utils import (  # set_redis_rdo_files,
     connect_ftp,
@@ -96,7 +96,8 @@ def check_files_for_download(files: list, dataset_id: str, table_id: str, mode: 
     download_files = [
         file_info for file_info in files if file_info["filename"] not in exclude_files
     ]
-    log(f"Will download the remaining {len(download_files)} files:{download_files}")
+
+    log(f"Will download the remaining {len(download_files)}")
     return download_files
 
 
@@ -173,9 +174,8 @@ def pre_treatment_br_rj_riodejaneiro_rdo(
             ]
             # context.log.info(f"Config for ETL: {config}")
             # Load data
-            df = pd.read_csv(  # pylint: disable=C0103
-                file_info["raw_path"], header=None, delimiter=";", index_col=False
-            )  # pylint: disable=C0103
+            df = read_raw_rdo(raw_filepath=file_info["raw_path"])
+
             if len(df) == 0:
                 log("Dataframe is empty")
                 status.append({"error": "ValueError: file is empty"})
@@ -215,7 +215,11 @@ def pre_treatment_br_rj_riodejaneiro_rdo(
                 bucket_mode="staging", file_ext="csv"
             )
             Path(file_info["treated_path"]).parent.mkdir(parents=True, exist_ok=True)
-            df.to_csv(file_info["treated_path"], index=False)
+            df.to_csv(
+                file_info["treated_path"],
+                index=False,
+                encoding="utf-8",
+            )
             log(f'Saved treated data to: {file_info["treated_path"]}')
             log(f"Updated file info is:\n{file_info}")
             # Build returns
@@ -260,6 +264,7 @@ def update_redis_ftp_files(
         key = f"{mode}.{key}"
     redis_client = get_redis_client()
     content = redis_client.get(key)  # get current redis state
+    content = {"files": []} if content is None else content
     if errors:
         log(f"Received errors:\n {errors}")
         merge_file_info_and_errors(download_files, errors)

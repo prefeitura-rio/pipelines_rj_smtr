@@ -22,6 +22,7 @@ from prefect import Client, task
 from prefect.backend import FlowRunView
 from prefeitura_rio.pipelines_utils.dbt import run_dbt_model as run_dbt_model_func
 from prefeitura_rio.pipelines_utils.infisical import inject_bd_credentials
+from prefeitura_rio.pipelines_utils.io import get_root_path
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
@@ -43,9 +44,9 @@ from pipelines.migration.utils import (
     read_raw_data,
     save_raw_local_func,
     save_treated_local_func,
-    send_discord_message,
     upload_run_logs_to_bq,
 )
+from pipelines.utils.pretreatment import transform_to_nested_structure
 from pipelines.utils.secret import get_secret
 
 
@@ -237,6 +238,7 @@ def create_dbt_run_vars(
                 mode=mode,
                 delay_hours=dbt_vars["date_range"].get("delay_hours", 0),
                 end_ts=timestamp,
+                truncate_minutes=dbt_vars["date_range"].get("truncate_minutes", True),
             )
 
             flag_date_range = True
@@ -404,7 +406,8 @@ def create_local_partition_path(
     either to save raw or staging files.
     """
     data_folder = os.getenv("DATA_FOLDER", "data")
-    file_path = f"{os.getcwd()}/{data_folder}/{{mode}}/{dataset_id}/{table_id}"
+    root = str(get_root_path())
+    file_path = f"{root}/{data_folder}/{{mode}}/{dataset_id}/{table_id}"
     file_path += f"/{partitions}/{filename}.{{filetype}}"
     log(f"Creating file path: {file_path}")
     return file_path
@@ -628,6 +631,12 @@ def get_raw(  # pylint: disable=R0912
         )
 
         if response.ok:  # status code is less than 400
+            if not response.content and url in [
+                constants.GPS_SPPO_API_BASE_URL_V2.value,
+                constants.GPS_SPPO_API_BASE_URL.value,
+            ]:
+                error = "Dados de GPS vazios"
+
             if filetype == "json":
                 data = response.json()
 
@@ -689,43 +698,41 @@ def create_request_params(
         if table_id == constants.BILHETAGEM_TRACKING_CAPTURE_PARAMS.value["table_id"]:
             project = bq_project(kind="bigquery_staging")
             log(f"project = {project}")
-            try:
-                logs_query = f"""
-                SELECT
-                    timestamp_captura
-                FROM
-                    `{project}.{dataset_id}_staging.{table_id}_logs`
-                WHERE
-                    data <= '{timestamp.strftime("%Y-%m-%d")}'
-                    AND sucesso = "True"
-                ORDER BY
-                    timestamp_captura DESC
-                """
-                last_success_dates = bd.read_sql(query=logs_query, billing_project_id=project)
-                last_success_dates = last_success_dates.iloc[:, 0].to_list()
-                for success_ts in last_success_dates:
-                    success_ts = datetime.fromisoformat(success_ts)
-                    last_id_query = f"""
-                    SELECT
-                        MAX(id)
-                    FROM
-                        `{project}.{dataset_id}_staging.{table_id}`
-                    WHERE
-                        data = '{success_ts.strftime("%Y-%m-%d")}'
-                        and hora = "{success_ts.strftime("%H")}";
-                    """
 
-                    last_captured_id = bd.read_sql(query=last_id_query, billing_project_id=project)
-                    last_captured_id = last_captured_id.iloc[0][0]
-                    if last_captured_id is None:
-                        print("ID is None, trying next timestamp")
-                    else:
-                        log(f"last_captured_id = {last_captured_id}")
-                        break
-            except GenericGBQException as err:
-                if "404 Not found" in str(err):
-                    log("Table Not found, returning id = 0")
-                    last_captured_id = 0
+            logs_query = f"""
+            SELECT
+                timestamp_captura
+            FROM
+                `{project}.{dataset_id}_staging.{table_id}_logs`
+            WHERE
+                DATE(data) BETWEEN
+                    DATE_SUB('{timestamp.strftime("%Y-%m-%d")}', INTERVAL 7 DAY)
+                    AND DATE('{timestamp.strftime("%Y-%m-%d")}')
+                AND sucesso = "True"
+            ORDER BY
+                timestamp_captura DESC
+            """
+            last_success_dates = bd.read_sql(query=logs_query, billing_project_id=project)
+            last_success_dates = last_success_dates.iloc[:, 0].to_list()
+            for success_ts in last_success_dates:
+                success_ts = datetime.fromisoformat(success_ts)
+                last_id_query = f"""
+                SELECT
+                    CAST(MAX(CAST(id AS INTEGER)) AS STRING)
+                FROM
+                    `{project}.{dataset_id}_staging.{table_id}`
+                WHERE
+                    data = '{success_ts.strftime("%Y-%m-%d")}'
+                    and hora = "{success_ts.strftime("%H")}";
+                """
+
+                last_captured_id = bd.read_sql(query=last_id_query, billing_project_id=project)
+                last_captured_id = last_captured_id.iloc[0][0]
+                if last_captured_id is None:
+                    print("ID is None, trying next timestamp")
+                else:
+                    log(f"last_captured_id = {last_captured_id}")
+                    break
 
             request_params["query"] = request_params["query"].format(
                 last_id=last_captured_id,
@@ -1260,6 +1267,7 @@ def get_materialization_date_range(  # pylint: disable=R0913
     mode: str = "prod",
     delay_hours: int = 0,
     end_ts: datetime = None,
+    truncate_minutes: bool = True,
 ):
     """
     Task for generating dict with variables to be passed to the
@@ -1323,16 +1331,22 @@ def get_materialization_date_range(  # pylint: disable=R0913
         last_run = datetime(last_run.year, last_run.month, last_run.day)
 
     # set start to last run hour (H)
-    start_ts = last_run.replace(minute=0, second=0, microsecond=0).strftime(timestr)
+    start_ts = last_run.replace(second=0, microsecond=0)
+    if truncate_minutes:
+        start_ts = start_ts.replace(minute=0)
+
+    start_ts = start_ts.strftime(timestr)
 
     # set end to now - delay
 
     if not end_ts:
         end_ts = pendulum.now(constants.TIMEZONE.value).replace(
-            tzinfo=None, minute=0, second=0, microsecond=0
+            tzinfo=None, second=0, microsecond=0
         )
 
-    end_ts = (end_ts - timedelta(hours=delay_hours)).replace(minute=0, second=0, microsecond=0)
+    end_ts = (end_ts - timedelta(hours=delay_hours)).replace(second=0, microsecond=0)
+    if truncate_minutes:
+        end_ts = end_ts.replace(minute=0)
 
     end_ts = end_ts.strftime(timestr)
 
@@ -1458,6 +1472,16 @@ def get_previous_date(days):
     return now.to_date_string()
 
 
+@task(checkpoint=False)
+def get_posterior_date(days: int) -> str:
+    """
+    Returns the date of {days} days from now in YYYY-MM-DD.
+    """
+    now = pendulum.now(pendulum.timezone("America/Sao_Paulo")).add(days=days)
+
+    return now.to_date_string()
+
+
 ###############
 #
 # Pretreat data
@@ -1515,13 +1539,10 @@ def transform_raw_to_nested_structure(
                 else:
                     log(f"Raw data:\n{data_info_str(data)}", level="info")
 
-                    log("Adding captured timestamp column...", level="info")
-                    data["timestamp_captura"] = timestamp
-
                     if "customFieldValues" not in data:
                         log("Striping string columns...", level="info")
-                        for col in data.columns[data.dtypes == "object"].to_list():
-                            data[col] = data[col].str.strip()
+                        object_cols = data.select_dtypes(include=["object"]).columns
+                        data[object_cols] = data[object_cols].apply(lambda x: x.str.strip())
 
                     if (
                         constants.GTFS_DATASET_ID.value in raw_filepath
@@ -1533,22 +1554,20 @@ def transform_raw_to_nested_structure(
                     log(f"Finished cleaning! Data:\n{data_info_str(data)}", level="info")
 
                     log("Creating nested structure...", level="info")
-                    pk_cols = primary_key + ["timestamp_captura"]
 
-                    data = (
-                        data.groupby(pk_cols)
-                        .apply(
-                            lambda x: x[data.columns.difference(pk_cols)].to_json(
-                                orient="records",
-                                force_ascii=(
-                                    constants.CONTROLE_FINANCEIRO_DATASET_ID.value
-                                    not in raw_filepath
-                                ),
-                            )
-                        )
-                        .str.strip("[]")
-                        .reset_index(name="content")[primary_key + ["content", "timestamp_captura"]]
+                    content_columns = [c for c in data.columns if c not in primary_key]
+                    data["content"] = data.apply(
+                        lambda row: row[[c for c in content_columns]].to_json(
+                            force_ascii=(
+                                constants.CONTROLE_FINANCEIRO_DATASET_ID.value not in raw_filepath
+                            ),
+                        ),
+                        axis=1,
                     )
+
+                    log("Adding captured timestamp column...", level="info")
+                    data["timestamp_captura"] = timestamp
+                    data = data[primary_key + ["content", "timestamp_captura"]]
 
                     log(
                         f"Finished nested structure! Data:\n{data_info_str(data)}",
@@ -1557,6 +1576,88 @@ def transform_raw_to_nested_structure(
 
             # save treated local
             filepath = save_treated_local_func(data=data, error=error, filepath=filepath)
+
+        except Exception:  # pylint: disable=W0703
+            error = traceback.format_exc()
+            log(f"[CATCHED] Task failed with error: \n{error}", level="error")
+
+    return error, filepath
+
+
+@task(nout=2)
+def transform_raw_to_nested_structure_chunked(
+    raw_filepath: str,
+    filepath: str,
+    error: str,
+    timestamp: datetime,
+    chunksize: int,
+    primary_key: list = None,
+    reader_args: dict = None,
+) -> tuple[str, str]:
+    """
+    Task to transform raw data to nested structure
+
+    Args:
+        raw_filepath (str): Path to the saved raw .json file
+        filepath (str): Path to the saved treated .csv file
+        error (str): Error catched from upstream tasks
+        timestamp (datetime): timestamp for flow run
+        chunksize (int): Number of lines to read from the file per chunk
+        primary_key (list, optional): Primary key to be used on nested structure
+        reader_args (dict): arguments to pass to pandas.read_csv or read_json
+
+    Returns:
+        str: Error traceback
+        str: Path to the saved treated .csv file
+    """
+    if error is None:
+        try:
+            # leitura do dado raw
+            error, data_chunks = read_raw_data(
+                filepath=raw_filepath, reader_args={"chunksize": chunksize}
+            )
+
+            if primary_key is None:
+                primary_key = []
+
+            if error is None:
+
+                log("Creating nested structure...", level="info")
+
+                index = 0
+                for chunk in data_chunks:
+
+                    if "customFieldValues" not in chunk:
+                        object_cols = chunk.select_dtypes(include=["object"]).columns
+                        chunk[object_cols] = chunk[object_cols].apply(lambda x: x.str.strip())
+
+                    if (
+                        constants.GTFS_DATASET_ID.value in raw_filepath
+                        and "ordem_servico" in raw_filepath
+                        and "tipo_os" not in chunk.columns
+                    ):
+                        chunk["tipo_os"] = "Regular"
+
+                    transformed_chunk = transform_to_nested_structure(chunk, primary_key)
+                    transformed_chunk["timestamp_captura"] = timestamp
+                    if index == 0:
+                        filepath = save_treated_local_func(
+                            data=transformed_chunk,
+                            error=error,
+                            filepath=filepath,
+                            args={"header": True, "mode": "w"},
+                        )
+                    else:
+                        filepath = save_treated_local_func(
+                            data=transformed_chunk,
+                            error=error,
+                            filepath=filepath,
+                            log_param=False,
+                            args={"header": False, "mode": "a"},
+                        )
+                    index += 1
+
+                log("Finished nested structure!", level="info")
 
         except Exception:  # pylint: disable=W0703
             error = traceback.format_exc()
@@ -1634,44 +1735,6 @@ def perform_checks_for_table(
         )
 
     return checks
-
-
-def format_send_discord_message(formatted_messages: list, webhook_url: str):
-    """
-    Format and send a message to discord
-
-    Args:
-        formatted_messages (list): The formatted messages
-        webhook_url (str): The webhook url
-
-    Returns:
-        None
-    """
-    formatted_message = "".join(formatted_messages)
-    log(formatted_message)
-    msg_ext = len(formatted_message)
-    if msg_ext > 2000:
-        log(f"** Message too long ({msg_ext} characters), will be split into multiple messages **")
-        # Split message into lines
-        lines = formatted_message.split("\n")
-        message_chunks = []
-        chunk = ""
-        for line in lines:
-            if len(chunk) + len(line) + 1 > 2000:  # +1 for the newline character
-                message_chunks.append(chunk)
-                chunk = ""
-            chunk += line + "\n"
-        message_chunks.append(chunk)  # Append the last chunk
-        for chunk in message_chunks:
-            send_discord_message(
-                message=chunk,
-                webhook_url=webhook_url,
-            )
-    else:
-        send_discord_message(
-            message=formatted_message,
-            webhook_url=webhook_url,
-        )
 
 
 ###############
@@ -1816,3 +1879,35 @@ def get_current_flow_mode() -> str:
 @task
 def get_flow_project():
     return prefect.context.get("project_name")
+
+
+@task
+def check_date_in_range(start_date: str, end_date: str, comparison_date: str) -> bool:
+    """
+    Check if comparison_date is between start_date and end_date.
+    """
+    start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+    end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+    comparison_date = datetime.strptime(comparison_date, "%Y-%m-%d").date()
+
+    return start_date < comparison_date <= end_date
+
+
+@task
+def split_date_range(start_date: str, end_date: str, comparison_date: str) -> dict:
+    """
+    Split the date range into two ranges on comparison_date.
+    Returns the first and second ranges.
+    """
+    comparison_date = datetime.strptime(comparison_date, "%Y-%m-%d").date()
+
+    return {
+        "first_range": {
+            "start_date": start_date,
+            "end_date": (comparison_date - timedelta(days=1)).strftime("%Y-%m-%d"),
+        },
+        "second_range": {
+            "start_date": comparison_date.strftime("%Y-%m-%d"),
+            "end_date": end_date,
+        },
+    }

@@ -3,12 +3,14 @@
 Utils for gtfs
 """
 import io
+import re
 
 import openpyxl as xl
 import pandas as pd
 import requests
 from googleapiclient.http import MediaIoBaseDownload
 from prefeitura_rio.pipelines_utils.logging import log
+from unidecode import unidecode
 
 from pipelines.constants import constants
 from pipelines.migration.utils import save_raw_local_func
@@ -130,7 +132,9 @@ def download_xlsx(file_link, drive_service):
     """
     file_id = file_link.split("/")[-2]
 
-    file = drive_service.files().get(fileId=file_id).execute()  # pylint: disable=E1101
+    file = (
+        drive_service.files().get(fileId=file_id, supportsAllDrives=True).execute()
+    )  # pylint: disable=E1101
     mime_type = file.get("mimeType")
 
     if "google-apps" in mime_type:
@@ -201,46 +205,53 @@ def processa_ordem_servico(
         None
     """
 
-    if len(sheetnames) != 2 and regular_sheet_index is None:
-        raise Exception("More than 2 tabs in the file. Please specify the regular sheet index.")
+    sheets = [(i, name) for i, name in enumerate(sheetnames) if "ANEXO I " in name]
+    if not sheets:
+        raise ValueError("Nenhuma aba 'ANEXO I' encontrada no arquivo.")
+    sheets_data = []
 
-    if regular_sheet_index is None:
-        regular_sheet_index = 0
+    columns = {
+        "Serviço": "servico",
+        "Vista": "vista",
+        "Consórcio": "consorcio",
+        "Extensão de Ida": "extensao_ida",
+        "Extensão de Volta": "extensao_volta",
+        "Horário Inicial": "horario_inicio",
+        "Horário\nInicial": "horario_inicio",
+        "Horário Fim": "horario_fim",
+        "Horário\nFim": "horario_fim",
+        "Partidas Ida Dia Útil": "partidas_ida_du",
+        "Partidas Volta Dia Útil": "partidas_volta_du",
+        "Viagens Dia Útil": "viagens_du",
+        "Quilometragem Dia Útil": "km_dia_util",
+        "KM Dia Útil": "km_dia_util",
+        "Partidas Ida Sábado": "partidas_ida_sabado",
+        "Partidas Volta Sábado": "partidas_volta_sabado",
+        "Viagens Sábado": "viagens_sabado",
+        "Quilometragem Sábado": "km_sabado",
+        "KM Sábado": "km_sabado",
+        "Partidas Ida Domingo": "partidas_ida_domingo",
+        "Partidas Volta Domingo": "partidas_volta_domingo",
+        "Viagens Domingo": "viagens_domingo",
+        "Quilometragem Domingo": "km_domingo",
+        "KM Domingo": "km_domingo",
+        "Partidas Ida Ponto Facultativo": "partidas_ida_pf",
+        "Partidas Volta Ponto Facultativo": "partidas_volta_pf",
+        "Viagens Ponto Facultativo": "viagens_pf",
+        "Quilometragem Ponto Facultativo": "km_pf",
+        "KM Ponto Facultativo": "km_pf",
+        "tipo_os": "tipo_os",
+    }
 
-    sheets_range = len(sheetnames) - len([x for x in sheetnames if "ANEXO II" in x])
-    quadro_geral = pd.DataFrame()
+    for sheet_index, sheet_name in sheets:
+        log(f"########## {sheet_name} ##########")
 
-    for i in range(0, sheets_range):
-        log(f"########## {sheetnames[i]} ##########")
-        quadro = pd.read_excel(file_bytes, sheet_name=sheetnames[i], dtype=object)
+        match = re.search(r"\((.*?)\)", sheet_name)
+        if not match:
+            raise ValueError(f"Não foi possível extrair tipo_os do nome da aba: {sheet_name}")
+        tipo_os = match.group(1)
 
-        columns = {
-            "Serviço": "servico",
-            "Vista": "vista",
-            "Consórcio": "consorcio",
-            "Extensão de Ida": "extensao_ida",
-            "Extensão de Volta": "extensao_volta",
-            "Horário Inicial": "horario_inicio",
-            "Horário\nInicial": "horario_inicio",
-            "Horário Fim": "horario_fim",
-            "Horário\nFim": "horario_fim",
-            "Partidas Ida Dia Útil": "partidas_ida_du",
-            "Partidas Volta Dia Útil": "partidas_volta_du",
-            "Viagens Dia Útil": "viagens_du",
-            "Quilometragem Dia Útil": "km_dia_util",
-            "Partidas Ida Sábado": "partidas_ida_sabado",
-            "Partidas Volta Sábado": "partidas_volta_sabado",
-            "Viagens Sábado": "viagens_sabado",
-            "Quilometragem Sábado": "km_sabado",
-            "Partidas Ida Domingo": "partidas_ida_domingo",
-            "Partidas Volta Domingo": "partidas_volta_domingo",
-            "Viagens Domingo": "viagens_domingo",
-            "Quilometragem Domingo": "km_domingo",
-            "Partidas Ida Ponto Facultativo": "partidas_ida_pf",
-            "Partidas Volta Ponto Facultativo": "partidas_volta_pf",
-            "Viagens Ponto Facultativo": "viagens_pf",
-            "Quilometragem Ponto Facultativo": "km_pf",
-        }
+        quadro = pd.read_excel(file_bytes, sheet_name=sheet_name, dtype=object)
 
         quadro = quadro.rename(columns=columns)
 
@@ -248,6 +259,8 @@ def processa_ordem_servico(
         quadro["servico"] = quadro["servico"].str.extract(r"([A-Z]+)", expand=False).fillna(
             ""
         ) + quadro["servico"].str.extract(r"([0-9]+)", expand=False).fillna("")
+
+        quadro["tipo_os"] = tipo_os
 
         quadro = quadro[list(set(columns.values()))]
         quadro = quadro.replace("—", 0)
@@ -270,19 +283,19 @@ def processa_ordem_servico(
 
         extensao_cols = ["extensao_ida", "extensao_volta"]
         quadro[extensao_cols] = quadro[extensao_cols].astype(str)
+        for col in extensao_cols:
+            quadro[col] = quadro[col].str.replace(".", "", regex=False)
         quadro[extensao_cols] = quadro[extensao_cols].apply(pd.to_numeric)
 
         quadro["extensao_ida"] = quadro["extensao_ida"] / 1000
         quadro["extensao_volta"] = quadro["extensao_volta"] / 1000
 
-        if i == regular_sheet_index:
-            quadro["tipo_os"] = "Regular"
+        sheets_data.append(quadro)
 
-            quadro_geral = pd.concat([quadro_geral, quadro])
+    quadro_geral = pd.concat(sheets_data, ignore_index=True)
 
-    # Verificações
     columns_in_dataframe = set(quadro_geral.columns)
-    columns_in_values = set(list(columns.values()) + ["tipo_os"])
+    columns_in_values = set(list(columns.values()))
 
     all_columns_present = columns_in_dataframe.issubset(columns_in_values)
     no_duplicate_columns = len(columns_in_dataframe) == len(quadro_geral.columns)
@@ -296,20 +309,6 @@ def processa_ordem_servico(
 
     if not all_columns_present or not no_duplicate_columns:
         raise Exception("Missing or duplicated columns in ordem_servico")
-
-    quadro_test = quadro_geral.copy()
-    quadro_test["km_test"] = round(
-        (quadro_geral["partidas_volta_du"] * quadro_geral["extensao_volta"])
-        + (quadro_geral["partidas_ida_du"] * quadro_geral["extensao_ida"]),
-        2,
-    )
-    quadro_test["dif"] = quadro_test["km_test"] - quadro_test["km_dia_util"]
-
-    if not (
-        round(abs(quadro_test["dif"].max()), 2) <= 0.01
-        and round(abs(quadro_test["dif"].min()), 2) <= 0.01
-    ):
-        raise Exception("failed to validate km_test and km_dia_util")
 
     local_file_path = list(filter(lambda x: "ordem_servico" in x, local_filepath))[0]
     quadro_geral_csv = quadro_geral.to_csv(index=False)
@@ -339,13 +338,11 @@ def processa_ordem_servico_trajeto_alternativo(
     Raises:
         Exception: If there are missing or duplicated columns in 'Trajetos Alternativos'.
     """
-    # Pre-tratamento para "Trajeto Alternativo"
-    sheet = -1
-    log(f"########## {sheetnames[sheet]} ##########")
 
-    ordem_servico_trajeto_alternativo = pd.read_excel(
-        file_bytes, sheet_name=sheetnames[sheet], dtype=object
-    )
+    sheets = [(i, name) for i, name in enumerate(sheetnames) if "ANEXO II " in name]
+    if not sheets:
+        raise ValueError("Nenhuma aba 'ANEXO II' encontrada no arquivo.")
+    sheets_data = []
 
     alt_columns = {
         "Serviço": "servico",
@@ -360,11 +357,23 @@ def processa_ordem_servico_trajeto_alternativo(
         "Horário Final Interdição": "fim_periodo",
         "Descrição": "descricao",
         "Ativação": "ativacao",
+        "tipo_os": "tipo_os",
     }
 
-    ordem_servico_trajeto_alternativo = ordem_servico_trajeto_alternativo.rename(
-        columns=alt_columns
-    )
+    for sheet_index, sheet_name in sheets:
+        log(f"########## {sheet_name} ##########")
+        match = re.search(r"\((.*?)\)", sheet_name)
+        if not match:
+            raise ValueError(f"Não foi possível extrair tipo_os do nome da aba: {sheet_name}")
+        tipo_os = match.group(1)
+
+        df = pd.read_excel(file_bytes, sheet_name=sheet_name, dtype=object)
+
+        df = df.rename(columns=alt_columns)
+        df["tipo_os"] = tipo_os
+        sheets_data.append(df)
+
+    ordem_servico_trajeto_alternativo = pd.concat(sheets_data, ignore_index=True)
 
     columns_in_dataframe = set(ordem_servico_trajeto_alternativo.columns)
     columns_in_values = set(list(alt_columns.values()))
@@ -411,10 +420,192 @@ def download_file(file_link, drive_service):
     """
     file_id = file_link.split("/")[-2]
 
-    request = drive_service.files().get_media(fileId=file_id)  # pylint: disable=E1101
+    request = drive_service.files().get_media(fileId=file_id, supportsAllDrives=True)
     file_bytes = io.BytesIO()
     downloader = MediaIoBaseDownload(file_bytes, request)
     done = False
     while not done:
         status, done = downloader.next_chunk()
     return file_bytes
+
+
+def processa_ordem_servico_faixa_horaria(
+    sheetnames, file_bytes, local_filepath, raw_filepaths, data_versao_gtfs
+):
+    if data_versao_gtfs >= constants.DATA_GTFS_V2_INICIO.value:
+        sheets = [(i, name) for i, name in enumerate(sheetnames) if "ANEXO I " in name]
+        if not sheets:
+            raise ValueError("Nenhuma aba 'ANEXO I' encontrada no arquivo.")
+    else:
+        sheets = [(i, name) for i, name in enumerate(sheetnames) if "ANEXO III " in name]
+        if not sheets:
+            raise ValueError("Nenhuma aba 'ANEXO III' encontrada no arquivo.")
+    sheets_data = []
+
+    columns = {
+        "Serviço": "servico",
+        "Vista": "vista",
+        "Consórcio": "consorcio",
+        "Extensão de Ida": "extensao_ida",
+        "Extensão de Volta": "extensao_volta",
+        "Horário Inicial Dias Úteis": "horario_inicio_dias_uteis",
+        "Horário Fim Dias Úteis": "horario_fim_dias_uteis",
+        "Horário Inicial - Dias Úteis": "horario_inicio_dias_uteis",
+        "Horário Fim - Dias Úteis": "horario_fim_dias_uteis",
+        "Partidas Ida - Dias Úteis": "partidas_ida_dias_uteis",
+        "Partidas Volta - Dias Úteis": "partidas_volta_dias_uteis",
+        "Viagens - Dias Úteis": "viagens_dias_uteis",
+        "Quilometragem - Dias Úteis": "quilometragem_dias_uteis",
+        "KM - Dias Úteis": "quilometragem_dias_uteis",
+        "Horário Inicial Sábado": "horario_inicio_sabado",
+        "Horário Fim Sábado": "horario_fim_sabado",
+        "Horário Inicial - Sábado": "horario_inicio_sabado",
+        "Horário Fim - Sábado": "horario_fim_sabado",
+        "Partidas Ida - Sábado": "partidas_ida_sabado",
+        "Partidas Volta - Sábado": "partidas_volta_sabado",
+        "Viagens - Sábado": "viagens_sabado",
+        "Quilometragem - Sábado": "quilometragem_sabado",
+        "KM - Sábado": "quilometragem_sabado",
+        "Horário Inicial Domingo": "horario_inicio_domingo",
+        "Horário Fim Domingo": "horario_fim_domingo",
+        "Horário Inicial - Domingo": "horario_inicio_domingo",
+        "Horário Fim - Domingo": "horario_fim_domingo",
+        "Partidas Ida - Domingo": "partidas_ida_domingo",
+        "Partidas Volta - Domingo": "partidas_volta_domingo",
+        "Viagens - Domingo": "viagens_domingo",
+        "Quilometragem - Domingo": "quilometragem_domingo",
+        "KM - Domingo": "quilometragem_domingo",
+        "Horário Inicial Ponto Facultativo": "horario_inicio_ponto_facultativo",
+        "Horário Fim Ponto Facultativo": "horario_fim_ponto_facultativo",
+        "Horário Inicial - Ponto Facultativo": "horario_inicio_ponto_facultativo",
+        "Horário Fim - Ponto Facultativo": "horario_fim_ponto_facultativo",
+        "Partidas Ida - Ponto Facultativo": "partidas_ida_ponto_facultativo",
+        "Partidas Volta - Ponto Facultativo": "partidas_volta_ponto_facultativo",
+        "Viagens - Ponto Facultativo": "viagens_ponto_facultativo",
+        "Quilometragem - Ponto Facultativo": "quilometragem_ponto_facultativo",
+        "KM - Ponto Facultativo": "quilometragem_ponto_facultativo",
+        "tipo_os": "tipo_os",
+    }
+
+    metricas = ["Partidas", "Partidas Ida", "Partidas Volta", "Quilometragem", "KM"]
+    dias = ["Dias Úteis", "Sábado", "Domingo", "Ponto Facultativo"]
+    formatos = [
+        "{metrica} entre {intervalo} — {dia}",
+        "{metrica} entre {intervalo} - {dia}",
+        "{metrica} entre {intervalo} ({dia})",
+    ]
+
+    if data_versao_gtfs >= "2024-11-06":
+        intervalos = [
+            "00h e 03h",
+            "03h e 06h",
+            "06h e 09h",
+            "09h e 12h",
+            "12h e 15h",
+            "15h e 18h",
+            "18h e 21h",
+            "21h e 24h",
+            "24h e 03h (dia seguinte)",
+        ]
+    else:
+        intervalos = [
+            "00h e 03h",
+            "03h e 12h",
+            "12h e 21h",
+            "21h e 24h",
+            "24h e 03h (dia seguinte)",
+        ]
+
+    fh_columns = {
+        formato.format(metrica=metrica, intervalo=intervalo, dia=dia): unidecode(
+            (
+                "quilometragem"
+                if metrica in ["Quilometragem", "KM"]
+                else (
+                    "partidas"
+                    if metrica == "Partidas"
+                    and data_versao_gtfs < constants.DATA_GTFS_V2_INICIO.value
+                    else ("partidas_ida" if metrica == "Partidas Ida" else "partidas_volta")
+                )
+            )
+            + f"_entre_{intervalo.replace(' ', '_').replace('(', '').replace(')', '').replace('-', '_')}_{dia.lower().replace(' ', '_')}"  # noqa
+        )
+        for metrica in metricas
+        for intervalo in intervalos
+        for dia in dias
+        for formato in formatos
+    }
+
+    if data_versao_gtfs >= constants.DATA_GTFS_V2_INICIO.value:
+        columns.update(fh_columns)
+    else:
+        fh_columns["Serviço"] = "servico"
+        fh_columns["Consórcio"] = "consorcio"
+        fh_columns["tipo_os"] = "tipo_os"
+        columns = fh_columns.copy()
+
+    for sheet_index, sheet_name in sheets:
+        log(f"########## {sheet_name} ##########")
+        match = re.search(r"\((.*?)\)", sheet_name)
+        if not match:
+            raise ValueError(f"Não foi possível extrair tipo_os do nome da aba: {sheet_name}")
+        tipo_os = match.group(1)
+
+        df = pd.read_excel(file_bytes, sheet_name=sheet_name, dtype=object)
+
+        df.columns = (
+            df.columns.str.replace("\n", " ").str.strip().str.replace(r"\s+", " ", regex=True)
+        )
+        df = df.rename(columns=lambda x: x.replace("Dia Útil", "Dias Úteis"))
+        df = df.rename(columns=columns)
+
+        for col in df.columns:
+            if "quilometragem" in col or "viagens" in col or "partidas" in col:
+                df[col] = df[col].astype(str).replace("—", 0)
+            if "quilometragem" in col or "viagens" in col:
+                df[col] = df[col].astype(str).apply(convert_to_float).astype(float)
+            if "extensao" in col:
+                df[col] = df[col].apply(pd.to_numeric)
+                df[col] = df[col] / 1000
+            if "horario" in col:
+                df[col] = df[col].astype(str)
+                df[col] = df[col].apply(normalizar_horario)
+
+        df["tipo_os"] = tipo_os
+
+        aux_columns_in_dataframe = set(df.columns)
+        columns_in_values = set(list(columns.values()))
+        aux_missing_columns = columns_in_values - aux_columns_in_dataframe
+
+        for coluna in aux_missing_columns:
+            if "ponto_facultativo" in coluna:
+                df[coluna] = 0
+
+        sheets_data.append(df)
+
+    ordem_servico_faixa_horaria = pd.concat(sheets_data, ignore_index=True)
+
+    columns_in_dataframe = set(ordem_servico_faixa_horaria.columns)
+    missing_columns = columns_in_values - columns_in_dataframe
+    all_columns_present = columns_in_dataframe.issubset(columns_in_values)
+    no_duplicate_columns = len(columns_in_dataframe) == len(ordem_servico_faixa_horaria.columns)
+
+    log(
+        f"All columns present: {all_columns_present}/"
+        f"No duplicate columns: {no_duplicate_columns}/"
+        f"Missing columns: {missing_columns}"
+    )
+
+    if not all_columns_present or not no_duplicate_columns:
+        raise Exception("Missing or duplicated columns in ordem_servico_faixa_horaria")
+
+    local_file_path = list(filter(lambda x: "ordem_servico_faixa_horaria" in x, local_filepath))[0]
+    ordem_servico_faixa_horaria_csv = ordem_servico_faixa_horaria.to_csv(index=False)
+    raw_file_path = save_raw_local_func(
+        data=ordem_servico_faixa_horaria_csv,
+        filepath=local_file_path,
+        filetype="csv",
+    )
+    log(f"Saved file: {raw_file_path}")
+
+    raw_filepaths.append(raw_file_path)

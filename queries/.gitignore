@@ -3,3 +3,5 @@ target/
 dbt_packages/
 logs/
 *dev/
+target-base/
+package-lock.yml

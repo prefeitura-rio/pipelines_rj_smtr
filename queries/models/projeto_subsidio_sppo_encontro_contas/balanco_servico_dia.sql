@@ -1,4 +1,4 @@
-{% if var("encontro_contas_modo") == "" %}
+{% if var("encontro_contas_modo") == "" and var("start_date") < var("DATA_SUBSIDIO_V9_INICIO") %}
 -- 0. Lista servicos e dias atípicos (pagos por recurso)
 WITH
   recursos AS (
@@ -65,7 +65,7 @@ sumario_dia AS (  -- Km apurada por servico e dia
   WHERE
     DATA BETWEEN "2023-09-16"
     AND "2023-12-31"
-    AND indicador_viagem_remunerada = TRUE -- useless
+    AND indicador_viagem_dentro_limite = TRUE -- useless
   GROUP BY
     1,
     2 ),

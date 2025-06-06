@@ -63,12 +63,10 @@ def create_cct_arquivo_retorno_params(
     headers = {"Authorization": f"Bearer {auth_resp.json()['token']}"}
 
     if start_date is not None and end_date is not None:
-        return headers, [
-            {
-                "dt_inicio": start_date,
-                "dt_fim": end_date,
-            }
-        ]
+        return headers, {
+            "dt_inicio": start_date,
+            "dt_fim": end_date,
+        }
 
     redis_client = get_redis_client()
 

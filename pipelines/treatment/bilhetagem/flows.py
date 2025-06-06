@@ -1,75 +1,86 @@
 # -*- coding: utf-8 -*-
-"""Flows de tratamento da bilhetagem"""
-# from datetime import timedelta
+"""
+Flows de tratamento dos dados de bilhetagem
 
-from prefect.run_configs import KubernetesRun
-from prefect.storage import GCS
-from prefeitura_rio.pipelines_utils.custom import Flow
-from prefeitura_rio.pipelines_utils.state_handlers import (
-    handler_inject_bd_credentials,
-    handler_skip_if_running,
-)
+DBT: 2025-04-04
+"""
 
-from pipelines.capture.jae.constants import constants as jae_capture_constants
-from pipelines.capture.jae.flows import JAE_AUXILIAR_CAPTURE
-from pipelines.constants import constants
-
-# from pipelines.schedules import generate_interval_schedule
-from pipelines.tasks import (  # parse_timestamp_to_string,
-    get_scheduled_timestamp,
-    run_subflow,
-)
+from pipelines.capture.jae.constants import constants as jae_constants
+from pipelines.constants import constants as smtr_constants
+from pipelines.treatment.bilhetagem.constants import constants
+from pipelines.treatment.cadastro.constants import constants as cadastro_constants
+from pipelines.treatment.financeiro.constants import constants as financeiro_constants
 from pipelines.treatment.templates.flows import create_default_materialization_flow
-from pipelines.treatment.templates.tasks import create_date_range_variable
+from pipelines.utils.prefect import handler_notify_failure
 
-# from pipelines.utils.dataplex import DataQualityCheckArgs
-
-BILHETAGEM_MATERIALIZACAO = create_default_materialization_flow(
-    flow_name="Bilhetagem - Materialização (subflow)",
-    dataset_id="bilhetagem",
-    datetime_column_name="datetime_processamento",
-    create_datetime_variables_task=create_date_range_variable,
-    overwrite_flow_param_values={
-        "table_id": "transacao",
-        "upstream": True,
-    },
-    agent_label=constants.RJ_SMTR_DEV_AGENT_LABEL.value,
-    # data_quality_checks=[
-    #     DataQualityCheckArgs(check_id="teste-falha", table_partition_column_name="data")
-    # ],
+TRANSACAO_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="transacao - materializacao",
+    selector=constants.TRANSACAO_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[
+        cadastro_constants.CADASTRO_SELECTOR.value,
+        jae_constants.TRANSACAO_SOURCE.value,
+        jae_constants.TRANSACAO_RIOCARD_SOURCE.value,
+    ]
+    + [s for s in jae_constants.JAE_AUXILIAR_SOURCES.value if s.table_id in ["gratuidade"]],
 )
 
-with Flow("Bilhetagem - Tratamento") as bilhetagem_tratamento:
-    timestamp = get_scheduled_timestamp()
+TRANSACAO_MATERIALIZACAO.state_handlers.append(handler_notify_failure(webhook="alertas_bilhetagem"))
 
-    AUXILIAR_CAPTURE = run_subflow(
-        flow_name=JAE_AUXILIAR_CAPTURE.name,
-        parameters=jae_capture_constants.AUXILIAR_TABLE_CAPTURE_PARAMS.value,
-        maximum_parallelism=3,
-    )
-
-    AUXILIAR_CAPTURE.name = "run_captura_auxiliar_jae"
-
-    # TRANSACAO_MATERIALIZACAO = run_subflow(
-    #     flow_name=BILHETAGEM_MATERIALIZACAO.name,
-    #     parameters={"timestamp": parse_timestamp_to_string(timestamp=timestamp, pattern="iso")},
-    #     upstream_tasks=[AUXILIAR_CAPTURE],
-    # )
-    # TRANSACAO_MATERIALIZACAO.name = "run_materializacao_transacao"
-
-
-bilhetagem_tratamento.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
-bilhetagem_tratamento.run_config = KubernetesRun(
-    image=constants.DOCKER_IMAGE.value,
-    labels=[constants.RJ_SMTR_AGENT_LABEL.value],
+INTEGRACAO_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="integracao - materializacao",
+    selector=constants.INTEGRACAO_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[
+        cadastro_constants.CADASTRO_SELECTOR.value,
+        jae_constants.INTEGRACAO_SOURCE.value,
+    ],
 )
 
-bilhetagem_tratamento.state_handlers = [
-    handler_inject_bd_credentials,
-    handler_skip_if_running,
-]
+INTEGRACAO_MATERIALIZACAO.state_handlers.append(
+    handler_notify_failure(webhook="alertas_bilhetagem")
+)
 
-# bilhetagem_tratamento.schedule = generate_interval_schedule(
-#     interval=timedelta(hours=1),
-#     agent_label=constants.RJ_SMTR_AGENT_LABEL.value,
-# )
+PASSAGEIRO_HORA_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="passageiro_hora - materializacao",
+    selector=constants.PASSAGEIRO_HORA_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[constants.TRANSACAO_SELECTOR.value],
+)
+
+GPS_VALIDADOR_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="gps_validador - materializacao",
+    selector=constants.GPS_VALIDADOR_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[
+        cadastro_constants.CADASTRO_SELECTOR.value,
+        jae_constants.GPS_VALIDADOR_SOURCE.value,
+    ],
+)
+
+GPS_VALIDADOR_MATERIALIZACAO.state_handlers.append(
+    handler_notify_failure(webhook="alertas_bilhetagem")
+)
+
+TRANSACAO_ORDEM_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="transacao_ordem - materializacao",
+    selector=constants.TRANSACAO_ORDEM_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[financeiro_constants.FINANCEIRO_BILHETAGEM_SELECTOR.value],
+)
+
+TRANSACAO_ORDEM_MATERIALIZACAO.state_handlers.append(
+    handler_notify_failure(webhook="alertas_bilhetagem")
+)
+
+TRANSACAO_VALOR_ORDEM_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="transacao_valor_ordem - materializacao",
+    selector=constants.TRANSACAO_VALOR_ORDEM_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[
+        constants.TRANSACAO_ORDEM_SELECTOR.value,
+        constants.TRANSACAO_SELECTOR.value,
+        constants.INTEGRACAO_SELECTOR.value,
+    ],
+    generate_schedule=False,
+)

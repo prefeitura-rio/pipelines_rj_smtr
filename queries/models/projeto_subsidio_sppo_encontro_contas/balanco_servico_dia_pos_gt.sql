@@ -65,7 +65,7 @@ sumario_dia AS (  -- Km apurada por servico e dia
   WHERE
     data BETWEEN "2023-09-16"
     AND "2023-12-31"
-    AND indicador_viagem_remunerada = TRUE -- useless
+    AND indicador_viagem_dentro_limite = TRUE -- useless
   GROUP BY
     1,
     2 ),

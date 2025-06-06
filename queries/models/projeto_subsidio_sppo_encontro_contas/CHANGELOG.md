@@ -1,5 +1,17 @@
 # Changelog - projeto_subsidio_sppo_encontro_contas
 
+## [1.0.5] - 2025-05-13
+
+### Corrigido
+
+- Corrige referências a modelos desabilitados nos modelos `aux_balanco_rdo_servico_dia.sql`, `balanco_consorcio_ano.sql`, `balanco_consorcio_dia.sql`, `balanco_servico_ano.sql`, `balanco_servico_dia.sql`, `balanco_servico_quinzena.sql` e `receita_tarifaria_servico_nao_identificado_quinzena.sql` (https://github.com/prefeitura-rio/queries-rj-smtr/pull/574)
+
+## [1.0.4] - 2024-08-29
+
+### Alterado
+
+- Alterado os modelos `balanco_servico_dia` e `balanco_servico_dia_pos_gt` em razão de alterações no modelo `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
+
 ## [1.0.3] - 2024-06-07
 
 ### Adicionado

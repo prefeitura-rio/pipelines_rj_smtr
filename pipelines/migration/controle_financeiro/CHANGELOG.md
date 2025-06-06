@@ -1,5 +1,17 @@
 # Changelog - controle_financeiro
 
+## [1.2.2] - 2024-10-10
+
+### Alterado
+
+- Altera encoding das planilhas de controle financeiro `cb` e `cett` de `UTF-8` para `Windows-1252` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/269)
+
+## [1.2.1] - 2024-09-25
+
+### Alterado
+
+- Altera encoding das planilhas de controle financeiro `cb` e `cett` de `Windows-1252` para `UTF-8` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/248)
+
 ## [1.2.0] - 2024-06-13
 
 ### Alterado
