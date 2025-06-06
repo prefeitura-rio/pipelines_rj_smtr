@@ -14,7 +14,7 @@ config(
 }}
 
 {% if execute %}
-  {% set result = run_query("SELECT feed_start_date FROM " ~ ref('subsidio_data_versao_efetiva') ~ " WHERE data = DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 1 DAY)") %}
+  {% set result = run_query("SELECT data_versao_shapes FROM " ~ ref('subsidio_data_versao_efetiva') ~ " WHERE data = DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 1 DAY)") %}
   {% set feed_start_date =  result.columns[0].values()[0] %}
 {% endif %}
 -- 1. Identifica viagens que estão dentro do quadro planejado (por

@@ -9,7 +9,12 @@
     incremental_strategy='insert_overwrite'
 )
 }}
-
+{% if is_incremental() and execute %}
+  {% set run_date_str = "'" ~ var('run_date') ~ "'" %}
+  {% set query = "SELECT data_versao_shapes FROM " ~ ref('subsidio_data_versao_efetiva') ~ " WHERE data BETWEEN DATE_SUB(DATE(" ~ run_date_str ~ "), INTERVAL 1 DAY) AND DATE(" ~ run_date_str ~ ")" %}
+  {% set result = run_query(query) %}
+  {% set data_versao_shapes = result.columns[0].values() %}
+{% endif %}
 with data_versao as (
     select data_versao_shapes
     from {{ ref("subsidio_data_versao_efetiva") }}
@@ -28,7 +33,7 @@ contents as (
         {{ var("subsidio_shapes") }} s
     {% if is_incremental() %}
     WHERE
-        data_versao in (select data_versao_shapes from data_versao)
+        data_versao in ("{{ data_versao_shapes | join('", "') }}")
     {% endif %}
 ),
 pts as (
