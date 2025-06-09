@@ -90,10 +90,6 @@ with
             ) using (data, servico)
     )
 select
-    coalesce(sd.data, rdo.data) as data,
-    coalesce(sd.consorcio, rdo.consorcio) as consorcio,
-    coalesce(sd.servico, rdo.servico) as servico,
-    receita_tarifaria_aferida,
     case
         when rdo.servico is not null and sd.servico is null
         then "Sem planejamento porém com receita tarifária"
@@ -101,6 +97,15 @@ select
         then "Subsídio pago sem receita tarifária"
         else null
     end as tipo,
+    coalesce(sd.data, rdo.data) as data,
+    coalesce(sd.consorcio, rdo.consorcio) as consorcio,
+    coalesce(sd.servico, rdo.servico) as servico,
+    linha,
+    tipo_servico,
+    ordem_servico,
+    receita_tarifaria_aferida,
+    null as justificativa,
+    null as servico_correto
 from sumario_dia_corrigido as sd
 full join
     rdo_filtrado as rdo
