@@ -3,6 +3,7 @@
 from datetime import datetime
 from types import NoneType
 
+from prefect import case
 from prefect.run_configs import KubernetesRun
 from prefect.schedules import Schedule
 from prefect.schedules.clocks import CronClock
@@ -144,7 +145,7 @@ def create_default_materialization_flow(
             additional_vars=additional_vars,
         )
 
-        if pre_test:
+        with case(isinstance(pre_test, dict), True):
             dbt_pre_test = run_dbt(
                 resource="test",
                 test_name=get_from_dict(pre_test, "test_name"),
@@ -161,7 +162,8 @@ def create_default_materialization_flow(
                 params=dbt_run_vars,
             )
             wait_pre_test = notify_pre_test
-        else:
+
+        with case(pre_test, None):
             wait_pre_test = complete_sources
 
         dbt_run = run_dbt(
@@ -172,7 +174,7 @@ def create_default_materialization_flow(
             upstream_tasks=[wait_pre_test],
         )
 
-        if post_test:
+        with case(isinstance(post_test, dict), True):
             dbt_post_test = run_dbt(
                 resource="test",
                 test_name=get_from_dict(post_test, "test_name"),
@@ -189,7 +191,8 @@ def create_default_materialization_flow(
                 params=dbt_run_vars,
             )
             wait_post_test = notify_post_test
-        else:
+
+        with case(post_test, None):
             wait_post_test = dbt_run
 
         if snapshot_selector:
