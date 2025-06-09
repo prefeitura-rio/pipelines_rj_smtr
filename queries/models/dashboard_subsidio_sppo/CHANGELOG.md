@@ -1,5 +1,12 @@
 # Changelog - dashboard_subsidio_sppo
 
+
+## [7.1.6] - 2025-06-06
+
+### Corrigido
+
+- Corrigido o minimo e viagens aceitas no teto de apuração em `viagens_remuneradas.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/616)
+
 ## [7.1.5] - 2025-05-26
 
 ### Corrigido
