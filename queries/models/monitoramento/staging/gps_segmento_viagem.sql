@@ -163,7 +163,7 @@ with
             v.feed_start_date
         from viagem v
         left join
-            segmento s using (shape_id, feed_version, feed_start_date)
+            segmento s
             on v.feed_version = s.feed_version
             and v.shape_id = s.shape_id
             and v.feed_start_date = s.feed_start_date
