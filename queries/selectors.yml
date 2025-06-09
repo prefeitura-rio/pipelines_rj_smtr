@@ -134,6 +134,8 @@ selectors:
         - method: fqn
           value: staging_linha_consorcio
         - method: fqn
+          value: staging_operadora_transporte
+        - method: fqn
           value: staging_linha_consorcio_operadora_transporte
         - method: fqn
           value: staging_operadora_empresa
