@@ -746,20 +746,3 @@ def run_dbt(
 
     log("\n".join(dbt_logs))
     return "\n".join(dbt_logs)
-
-
-@task
-def get_from_dict(param_dict: dict, key: str, default=None):
-    """
-    Extrai um valor de um dicionário
-
-    Args:
-        param_dict: O dicionário
-        key: A chave a ser buscada
-        default: Valor padrão se a chave não existir
-
-    Returns:
-        O valor da chave ou o default
-    """
-
-    return param_dict.get(key, default)
