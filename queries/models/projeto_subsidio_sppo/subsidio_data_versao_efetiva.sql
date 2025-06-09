@@ -669,7 +669,7 @@
                     when
                         data = date(2025, 05, 24)
                         and ifnull(c.tipo_os, d.tipo_os) = "Dia Atípico"
-                    then "Marcha para Jesus"  -- [Operação especial evento "Marcha para Jesus"]
+                    then "Marcha para Jesus"  -- Processo.Rio ... [Operação especial evento "Marcha para Jesus"]
                     when ifnull(c.tipo_os, d.tipo_os) = "Regular"
                     then null
                     else ifnull(c.tipo_os, d.tipo_os)

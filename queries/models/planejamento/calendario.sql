@@ -201,7 +201,7 @@ select
         when
             data = date(2025, 05, 24)
             and c.tipo_os = "Dia Atípico"
-        then "Marcha para Jesus"  -- [Operação especial evento "Marcha para Jesus"]
+        then "Marcha para Jesus"  -- Processo.Rio ... [Operação especial evento "Marcha para Jesus"]
         when c.tipo_os = "Regular"
         then null
         else c.tipo_os
