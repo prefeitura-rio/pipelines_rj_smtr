@@ -666,6 +666,10 @@
                         data between date(2025, 05, 03) and date(2025, 05, 04)
                         and ifnull(c.tipo_os, d.tipo_os) = "Dia Atípico"
                     then "Lady Gaga"  -- Processo.Rio MTR-PRO-2025/04520 [Operação Especial "Todo Mundo no Rio" - Lady Gaga]
+                    when
+                        data = date(2025, 05, 24)
+                        and ifnull(c.tipo_os, d.tipo_os) = "Dia Atípico"
+                    then "Marcha para Jesus"  -- [Operação especial evento "Marcha para Jesus"]
                     when ifnull(c.tipo_os, d.tipo_os) = "Regular"
                     then null
                     else ifnull(c.tipo_os, d.tipo_os)
