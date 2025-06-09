@@ -30,10 +30,21 @@ with
     ),
     tunel as (
         select
+            {# inicio_vigencia = date(dbt_valid_from)  #}
+            inicio_vigencia as inicio_vigencia_tunel,
+            {# fim_vigencia = date(dbt_valid_to) #}
+            fim_vigencia as fim_vigencia_tunel,
             st_union_agg(
                 st_buffer(geometry, {{ var("buffer_tunel_metros") }})
             ) as buffer_tunel
-        from {{ ref("staging_tuneis") }}
+        from {{ ref("tuneis") }}
+        {# from {{ ref("snapshot_tuneis_logradouro") }} #}
+        where
+            (date({{ last_feed_version }}) between inicio_vigencia and fim_vigencia)
+            or (
+                date({{ last_feed_version }}) >= inicio_vigencia
+                and fim_vigencia is null
+            )
     ),
     intercessao_segmento as (
         select
@@ -61,6 +72,8 @@ with
     indicador_validacao_shape as (
         select
             s.*,
+            t.inicio_vigencia_tunel,
+            t.fim_vigencia_tunel,
             st_intersects(s.segmento, t.buffer_tunel) as indicador_tunel,
             st_area(s.buffer) / st_area(s.buffer_completo)
             < {{ var("limite_reducao_area_buffer") }} as indicador_area_prejudicada,
@@ -105,6 +118,8 @@ from indicador_validacao_shape
         s.comprimento_segmento,
         s.buffer_completo,
         s.buffer,
+        s.inicio_vigencia_tunel,
+        s.fim_vigencia_tunel,
         s.indicador_tunel,
         s.indicador_area_prejudicada,
         s.indicador_segmento_pequeno,
