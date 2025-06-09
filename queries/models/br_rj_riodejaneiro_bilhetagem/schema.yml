@@ -238,7 +238,7 @@ models:
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/388050497607535163/policyTags/5185403103447535390'
       - name: id_veiculo
-        description: "[EM DESENVOLVIMENTO] {{ doc('id_veiculo') }} (número de ordem)"
+        description: "{{ doc('id_veiculo') }}"
       - name: sentido
         description: "{{ doc('sentido') }}"
       - name: estado_equipamento
