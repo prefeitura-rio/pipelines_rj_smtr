@@ -1,6 +1,6 @@
 # Changelog - planejamento
 
-## [1.4.6] - 2025-06-06
+## [1.4.7] - 2025-06-10
 
 ### Adicionado
 
@@ -9,6 +9,12 @@
 ### Alterado
 
 - Altera referência da CTE `tunel` no modelo `segmento_shape` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/617)
+
+## [1.4.6] - 2025-06-09
+
+### Alterado
+
+- Alterado o `subtipo_dia` 'Marcha para Jesus' para o dia `2025-05-24` no modelo `calendario` em razão da Operação Especial "Todo Mundo no Rio" - Lady Gaga [Processo.Rio MTR-PRO-2025/04520] (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/619)
 
 ## [1.4.5] - 2025-05-29
 
