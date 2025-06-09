@@ -5,7 +5,7 @@
 
 ### Corrigido
 
-- Corrigido o minimo e viagens aceitas no teto de apuração em `viagens_remuneradas.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/616)
+- Corrigido o minimo e viagens aceitas no teto de apuração em `viagens_remuneradas.sql` e acordo com a [RESOLUÇÃO SMTR Nº 3843/2025](https://doweb.rio.rj.gov.br/portal/visualizacoes/pdf/7371/#/p:14/e:7371) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/616)
 
 ## [7.1.5] - 2025-05-26
 
