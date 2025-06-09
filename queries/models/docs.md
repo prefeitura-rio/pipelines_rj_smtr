@@ -347,7 +347,7 @@ Classificação do Serviço: Diretão, Estação do BRT, Rodoviário, Troncal do
 Quantidade total de passageiros
 {% enddocs %}
 
-{% docs codigo %}
+{% docs numero_veiculo %}
 Número de ordem do veículo
 {% enddocs %}
 
