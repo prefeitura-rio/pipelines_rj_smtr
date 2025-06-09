@@ -72,6 +72,16 @@ class constants(Enum):  # pylint: disable=c0103
         },
     }
 
+    GPS_PRE_TESTS = {
+        "test_name": "check_gps_capture__staging_gps check_gps_capture__staging_realocacao",
+        "checks_list": GPS_PRE_CHECKS_LIST,
+    }
+
+    GPS_POST_TESTS = {
+        "model": "gps",
+        "checks_list": GPS_POST_CHECKS_LIST,
+    }
+
     GPS_15_MINUTOS_SELECTOR = DBTSelector(
         name="gps_15_minutos",
         schedule_cron=create_minute_cron(minute=15),

@@ -3,7 +3,6 @@
 from datetime import datetime
 from types import NoneType
 
-from prefect import case
 from prefect.run_configs import KubernetesRun
 from prefect.schedules import Schedule
 from prefect.schedules.clocks import CronClock
@@ -22,7 +21,6 @@ from pipelines.treatment.templates.tasks import (
     dbt_data_quality_checks,
     get_datetime_end,
     get_datetime_start,
-    get_from_dict,
     get_repo_version,
     rename_materialization_flow,
     run_dbt,
@@ -40,6 +38,8 @@ def create_default_materialization_flow(
     wait: list = None,
     generate_schedule: bool = True,
     snapshot_selector: DBTSelector = None,
+    run_pre_tests: dict = None,
+    run_post_tests: dict = None,
 ) -> Flow:
     """
     Cria um flow de materialização
@@ -51,7 +51,9 @@ def create_default_materialization_flow(
         wait (list): Lista de DBTSelectors e/ou SourceTables para verificar a completude dos dados
         generate_schedule (bool): Se a função vai agendar o flow com base
             no parametro schedule_cron do selector
-        snapshot_selector (DBTSelector): Objeto que representa o selector do DBT para snapshot.
+        snapshot_selector (DBTSelector): Objeto que representa o selector do DBT para snapshot
+        run_pre_tests (dict): Configuração para testes pré-materialização
+        run_post_tests (dict): Configuração para testes pós-materialização
 
         Returns:
             Flow: Flow de materialização
@@ -89,18 +91,6 @@ def create_default_materialization_flow(
 
         additional_vars = TypedParameter(
             name="additional_vars",
-            default=None,
-            accepted_types=(dict, NoneType),
-        )
-
-        pre_test = TypedParameter(
-            name="pre_test",
-            default=None,
-            accepted_types=(dict, NoneType),
-        )
-
-        post_test = TypedParameter(
-            name="post_test",
             default=None,
             accepted_types=(dict, NoneType),
         )
@@ -145,25 +135,24 @@ def create_default_materialization_flow(
             additional_vars=additional_vars,
         )
 
-        with case(isinstance(pre_test, dict), True):
+        if run_pre_tests:
             dbt_pre_test = run_dbt(
                 resource="test",
-                test_name=get_from_dict(pre_test, "test_name"),
-                dataset_id=get_from_dict(pre_test, "dataset_id"),
-                table_id=get_from_dict(pre_test, "table_id"),
-                model=get_from_dict(pre_test, "model"),
+                test_name=run_pre_tests.get("test_name"),
+                dataset_id=run_pre_tests.get("dataset_id"),
+                table_id=run_pre_tests.get("table_id"),
+                model=run_pre_tests.get("model"),
                 flags=flags,
                 _vars=dbt_run_vars,
                 upstream_tasks=[complete_sources],
             )
             notify_pre_test = dbt_data_quality_checks(
                 dbt_logs=dbt_pre_test,
-                checks_list=get_from_dict(pre_test, "checks_list"),
+                checks_list=run_pre_tests.get("checks_list"),
                 params=dbt_run_vars,
             )
             wait_pre_test = notify_pre_test
-
-        with case(pre_test, None):
+        else:
             wait_pre_test = complete_sources
 
         dbt_run = run_dbt(
@@ -174,25 +163,24 @@ def create_default_materialization_flow(
             upstream_tasks=[wait_pre_test],
         )
 
-        with case(isinstance(post_test, dict), True):
+        if run_post_tests:
             dbt_post_test = run_dbt(
                 resource="test",
-                test_name=get_from_dict(post_test, "test_name"),
-                dataset_id=get_from_dict(post_test, "dataset_id"),
-                table_id=get_from_dict(post_test, "table_id"),
-                model=get_from_dict(post_test, "model"),
+                test_name=run_post_tests.get("test_name"),
+                dataset_id=run_post_tests.get("dataset_id"),
+                table_id=run_post_tests.get("table_id"),
+                model=run_post_tests.get("model"),
                 flags=flags,
                 _vars=dbt_run_vars,
                 upstream_tasks=[dbt_run],
             )
             notify_post_test = dbt_data_quality_checks(
                 dbt_logs=dbt_post_test,
-                checks_list=get_from_dict(post_test, "checks_list"),
+                checks_list=run_post_tests.get("checks_list"),
                 params=dbt_run_vars,
             )
             wait_post_test = notify_post_test
-
-        with case(post_test, None):
+        else:
             wait_post_test = dbt_run
 
         if snapshot_selector:
