@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona parâmetros para execução do teste do dbt no  flow de materialização do gps (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/614)
+- Adiciona parâmetros para execução do teste do dbt no flow de materialização do gps (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/614)
 
 ## [1.1.4] - 2025-05-28
 
