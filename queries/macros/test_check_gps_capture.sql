@@ -1,42 +1,94 @@
 {% test check_gps_capture(model, table_id, interval) -%}
-
-WITH
-    t AS (
-    SELECT
-        DATETIME(timestamp_array) AS timestamp_array
-    FROM
-        UNNEST( GENERATE_TIMESTAMP_ARRAY( TIMESTAMP("{{ var('date_range_start') }}"), TIMESTAMP("{{ var('date_range_end') }}"), INTERVAL {{ interval }} minute) ) AS timestamp_array
-    WHERE
-        timestamp_array < TIMESTAMP("{{ var('date_range_end') }}") ),
-    logs_table AS (
-    SELECT
-        SAFE_CAST(DATETIME(TIMESTAMP(timestamp_captura), "America/Sao_Paulo") AS DATETIME) timestamp_captura,
-        SAFE_CAST(sucesso AS BOOLEAN) sucesso,
-        SAFE_CAST(erro AS STRING) erro,
-        SAFE_CAST(DATA AS DATE) DATA
-    FROM
-        rj-smtr-staging.br_rj_riodejaneiro_onibus_gps_staging.{{ table_id }}_logs AS t ),
-    logs AS (
-    SELECT
-        *,
-        TIMESTAMP_TRUNC(timestamp_captura, minute) AS timestamp_array
-    FROM
-        logs_table
-    WHERE
-        DATA BETWEEN DATE(TIMESTAMP("{{ var('date_range_start') }}"))
-        AND DATE(TIMESTAMP("{{ var('date_range_end') }}"))
-        AND timestamp_captura BETWEEN "{{ var('date_range_start') }}"
-        AND "{{ var('date_range_end') }}" )
-    SELECT
-        COALESCE(logs.timestamp_captura, t.timestamp_array) AS timestamp_captura,
-        logs.erro
-    FROM
-        t
-    LEFT JOIN
-        logs
-    ON
-        logs.timestamp_array = t.timestamp_array
-    WHERE
-        logs.sucesso IS NOT TRUE
-
+    {%- if execute -%}
+        {%- if "sppo" in model -%}
+            with
+                t as (
+                    select datetime(timestamp_array) as timestamp_array
+                    from
+                        unnest(
+                            generate_timestamp_array(
+                                timestamp("{{ var('date_range_start') }}"),
+                                timestamp("{{ var('date_range_end') }}"),
+                                interval {{ interval }} minute
+                            )
+                        ) as timestamp_array
+                    where timestamp_array < timestamp("{{ var('date_range_end') }}")
+                ),
+                logs_table as (
+                    select
+                        safe_cast(
+                            datetime(
+                                timestamp(timestamp_captura), "America/Sao_Paulo"
+                            ) as datetime
+                        ) timestamp_captura,
+                        safe_cast(sucesso as boolean) sucesso,
+                        safe_cast(erro as string) erro,
+                        safe_cast(data as date) data
+                    from
+                        `rj-smtr-staging.br_rj_riodejaneiro_onibus_gps_staging.{{ table_id }}_logs`
+                        as t
+                ),
+                logs as (
+                    select
+                        *, timestamp_trunc(timestamp_captura, minute) as timestamp_array
+                    from logs_table
+                    where
+                        data between date(
+                            timestamp("{{ var('date_range_start') }}")
+                        ) and date(timestamp("{{ var('date_range_end') }}"))
+                        and timestamp_captura
+                        between "{{ var('date_range_start') }}"
+                        and "{{ var('date_range_end') }}"
+                )
+            select
+                coalesce(
+                    logs.timestamp_captura, t.timestamp_array
+                ) as timestamp_captura,
+                logs.erro
+            from t
+            left join logs on logs.timestamp_array = t.timestamp_array
+            where logs.sucesso is not true
+        {%- else -%}
+            {%- if table_id == "registros" -%}
+                -- depends_on: {{ ref('staging_gps') }}
+                {% set table_ref = ref("staging_gps") %}
+            {%- else -%}
+                -- depends_on: {{ ref('staging_realocacao') }}
+                {% set table_ref = ref("staging_realocacao") %}
+            {%- endif -%}
+            with
+                t as (
+                    select datetime(timestamp_array) as timestamp_array
+                    from
+                        unnest(
+                            generate_timestamp_array(
+                                timestamp("{{ var('date_range_start') }}"),
+                                timestamp("{{ var('date_range_end') }}"),
+                                interval {{ interval }} minute
+                            )
+                        ) as timestamp_array
+                    where timestamp_array < timestamp("{{ var('date_range_end') }}")
+                ),
+                capture as (
+                    select distinct datetime_captura
+                    from {{ table_ref }}
+                    where
+                        (
+                            {{
+                                generate_date_hour_partition_filter(
+                                    var("date_range_start"), var("date_range_end")
+                                )
+                            }}
+                        )
+                ),
+                missing_timestamps as (
+                    select t.timestamp_array as datetime_captura
+                    from t
+                    left join capture c on t.timestamp_array = c.datetime_captura
+                    where c.datetime_captura is null
+                )
+            select *
+            from missing_timestamps
+        {%- endif -%}
+    {%- endif -%}
 {%- endtest %}
