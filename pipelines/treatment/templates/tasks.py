@@ -16,6 +16,7 @@ from pytz import timezone
 from pipelines.constants import constants
 from pipelines.treatment.templates.utils import (
     DBTSelector,
+    DBTTest,
     IncompleteDataError,
     create_dataplex_log_message,
     parse_dbt_test_output,
@@ -410,8 +411,8 @@ def check_dbt_test_run(
     run_time = datetime.strptime(run_time, "%H:%M:%S").time()
 
     if datetime_start.time() == run_time:
-        datetime_start_str = (datetime_start - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S")
-        datetime_end_str = (datetime_end - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S")
+        datetime_start_str = f"{(datetime_start - timedelta(days=1)).date().isoformat()}T00:00:00"
+        datetime_end_str = f"{(datetime_end - timedelta(days=1)).date().isoformat()}T23:59:59"
         return True, datetime_start_str, datetime_end_str
     return False, None, None
 
@@ -746,3 +747,58 @@ def run_dbt(
 
     log("\n".join(dbt_logs))
     return "\n".join(dbt_logs)
+
+
+@task(nout=2)
+def check_scheduled_test(
+    timestamp: datetime,
+    test_scheduled_time: time,
+    dbt_vars: dict,
+    dbt_test: DBTTest,
+) -> tuple[bool, dict]:
+    """
+    Compara o timestamp do flow com o horário agendado do teste.
+    Se coincidirem, retorna True e as variáveis ajustadas pelo DBTTest.
+
+    Args:
+        timestamp (datetime): Datetime de execução do flow
+        test_scheduled_time (time): Horário agendado no formato "HH:MM:SS"
+        dbt_vars (dict): Variáveis base do DBT (vindas de create_dbt_run_vars)
+        dbt_test (DBTTest): Configuração do teste para ajustar as variáveis
+
+    Returns:
+        tuple[bool, dict]: (run_test, test_vars)
+            - run_test: True se deve executar o teste
+            - test_vars: Variáveis ajustadas para o teste DBT
+    """
+
+    should_run = timestamp.time() == test_scheduled_time
+
+    if not should_run:
+        return False, dbt_vars
+
+    pattern = constants.MATERIALIZATION_LAST_RUN_PATTERN.value
+
+    datetime_start = datetime.strptime(dbt_vars["date_range_start"], pattern)
+    datetime_end = datetime.strptime(dbt_vars["date_range_end"], pattern)
+
+    adjusted_start, adjusted_end = dbt_test.adjust_datetime_range(datetime_start, datetime_end)
+
+    test_vars = dbt_vars.copy()
+    test_vars.update(
+        {
+            "date_range_start": adjusted_start.strftime(pattern),
+            "date_range_end": adjusted_end.strftime(pattern),
+        }
+    )
+
+    if dbt_test.additional_vars:
+        test_vars.update(dbt_test.additional_vars)
+
+    log("Variáveis do teste ajustadas:")
+    log(f"  - date_range_start: {test_vars['date_range_start']}")
+    log(f"  - date_range_end: {test_vars['date_range_end']}")
+    if dbt_test.additional_vars:
+        log(f"  - additional_vars: {dbt_test.additional_vars}")
+
+    return True, test_vars
