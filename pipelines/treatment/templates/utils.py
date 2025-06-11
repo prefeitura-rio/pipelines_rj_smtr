@@ -2,7 +2,7 @@
 import os
 import re
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Dict, Optional
 
 from google.cloud.dataplex_v1 import DataScanJob
 from prefeitura_rio.pipelines_utils.io import get_root_path
@@ -152,6 +152,58 @@ class DBTSelector:
             ):
                 content[constants.REDIS_LAST_MATERIALIZATION_TS_KEY.value] = value
                 redis_client.set(redis_key, content)
+
+
+class DBTTest:
+    """
+    Classe para configurar testes agendados do DBT
+
+    Args:
+        delay_days (int): Quantidade de dias que serão subtraídos do horário atual
+        truncate_date (bool): Se True, trunca as horas para testar o dia completo
+                             (00:00:00 a 23:59:59)
+        additional_vars (dict, optional): Variáveis adicionais para passar ao DBT
+    """
+
+    def __init__(
+        self,
+        delay_days: int = 0,
+        truncate_date: bool = False,
+        additional_vars: Optional[Dict] = None,
+    ):
+        self.delay_days = delay_days
+        self.truncate_date = truncate_date
+        self.additional_vars = additional_vars or {}
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def adjust_datetime_range(
+        self, datetime_start: datetime, datetime_end: datetime
+    ) -> tuple[datetime, datetime]:
+        """
+        Ajusta o range de datetime
+
+        Args:
+            datetime_start (datetime): Datetime inicial
+            datetime_end (datetime): Datetime final
+
+        Returns:
+            tuple[datetime, datetime]: (datetime_start, datetime_end) ajustados
+        """
+
+        adjusted_start = datetime_start
+        adjusted_end = datetime_end
+
+        if self.delay_days > 0:
+            adjusted_start = adjusted_start - timedelta(days=self.delay_days)
+            adjusted_end = adjusted_end - timedelta(days=self.delay_days)
+
+        if self.truncate_date:
+            adjusted_start = adjusted_start.replace(hour=0, minute=0, second=0, microsecond=0)
+            adjusted_end = adjusted_end.replace(hour=23, minute=59, second=59, microsecond=0)
+
+        return adjusted_start, adjusted_end
 
 
 def create_dataplex_log_message(dataplex_run: DataScanJob) -> str:
