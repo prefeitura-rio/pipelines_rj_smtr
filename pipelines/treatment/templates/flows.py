@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """Flows de Tratamento de dados Genéricos"""
-from datetime import datetime
+from datetime import datetime, time
 from types import NoneType
 
+from prefect import case
 from prefect.run_configs import KubernetesRun
 from prefect.schedules import Schedule
 from prefect.schedules.clocks import CronClock
@@ -15,13 +16,9 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 from pytz import timezone
 
 from pipelines.constants import constants
-from pipelines.tasks import (
-    get_run_env,
-    get_scheduled_timestamp,
-    parse_string_to_timestamp,
-)
+from pipelines.tasks import get_run_env, get_scheduled_timestamp
 from pipelines.treatment.templates.tasks import (
-    check_dbt_test_run,
+    check_scheduled_test,
     create_dbt_run_vars,
     dbt_data_quality_checks,
     get_datetime_end,
@@ -43,7 +40,7 @@ def create_default_materialization_flow(
     wait: list = None,
     generate_schedule: bool = True,
     snapshot_selector: DBTSelector = None,
-    test_scheduled_time: str = None,
+    test_scheduled_time: time = None,
     run_pre_tests: dict = None,
     run_post_tests: dict = None,
 ) -> Flow:
@@ -58,7 +55,7 @@ def create_default_materialization_flow(
         generate_schedule (bool): Se a função vai agendar o flow com base
             no parametro schedule_cron do selector
         snapshot_selector (DBTSelector): Objeto que representa o selector do DBT para snapshot
-        test_scheduled_time (str): Horário para rodar o test no formato "HH:MM:SS"
+        test_scheduled_time (time): Horário para rodar o test no formato "HH:MM:SS"
         run_pre_tests (dict): Configuração para testes pré-materialização
         run_post_tests (dict): Configuração para testes pós-materialização
 
@@ -171,21 +168,18 @@ def create_default_materialization_flow(
         )
 
         if run_post_tests:
-            if test_scheduled_time:
-                run_scheduled_test, datetime_start_str, datetime_end_str = check_dbt_test_run(
-                    datetime_start, datetime_end, test_scheduled_time, upstream_tasks=[dbt_run]
-                )
+            run_scheduled_test, test_vars = check_scheduled_test(
+                timestamp,
+                test_scheduled_time,
+                dbt_run_vars,
+                run_post_tests.get("dbt_test"),
+                upstream_tasks=[dbt_run],
+            )
 
-                test_datetime_start = parse_string_to_timestamp(timestamp_str=datetime_start_str)
-                test_datetime_end = parse_string_to_timestamp(timestamp_str=datetime_end_str)
+            with case(run_scheduled_test, True):
+                test_run_vars = test_vars
 
-                test_run_vars = create_dbt_run_vars(
-                    datetime_start=test_datetime_start,
-                    datetime_end=test_datetime_end,
-                    repo_version=repo_version,
-                    additional_vars=additional_vars,
-                )
-            else:
+            with case(run_scheduled_test, False):
                 test_run_vars = dbt_run_vars
 
             dbt_post_test = run_dbt(
@@ -196,7 +190,7 @@ def create_default_materialization_flow(
                 model=run_post_tests.get("model"),
                 flags=flags,
                 _vars=test_run_vars,
-                upstream_tasks=[dbt_run],
+                upstream_tasks=[run_scheduled_test],
             )
             notify_post_test = dbt_data_quality_checks(
                 dbt_logs=dbt_post_test,
