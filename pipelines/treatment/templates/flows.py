@@ -15,8 +15,13 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 from pytz import timezone
 
 from pipelines.constants import constants
-from pipelines.tasks import get_run_env, get_scheduled_timestamp
+from pipelines.tasks import (
+    get_run_env,
+    get_scheduled_timestamp,
+    parse_string_to_timestamp,
+)
 from pipelines.treatment.templates.tasks import (
+    check_dbt_test_run,
     create_dbt_run_vars,
     dbt_data_quality_checks,
     get_datetime_end,
@@ -38,6 +43,7 @@ def create_default_materialization_flow(
     wait: list = None,
     generate_schedule: bool = True,
     snapshot_selector: DBTSelector = None,
+    test_scheduled_time: str = None,
     run_pre_tests: dict = None,
     run_post_tests: dict = None,
 ) -> Flow:
@@ -52,6 +58,7 @@ def create_default_materialization_flow(
         generate_schedule (bool): Se a função vai agendar o flow com base
             no parametro schedule_cron do selector
         snapshot_selector (DBTSelector): Objeto que representa o selector do DBT para snapshot
+        test_scheduled_time (str): Horário para rodar o test no formato "HH:MM:SS"
         run_pre_tests (dict): Configuração para testes pré-materialização
         run_post_tests (dict): Configuração para testes pós-materialização
 
@@ -164,6 +171,23 @@ def create_default_materialization_flow(
         )
 
         if run_post_tests:
+            if test_scheduled_time:
+                run_scheduled_test, datetime_start_str, datetime_end_str = check_dbt_test_run(
+                    datetime_start, datetime_end, test_scheduled_time, upstream_tasks=[dbt_run]
+                )
+
+                test_datetime_start = parse_string_to_timestamp(timestamp_str=datetime_start_str)
+                test_datetime_end = parse_string_to_timestamp(timestamp_str=datetime_end_str)
+
+                test_run_vars = create_dbt_run_vars(
+                    datetime_start=test_datetime_start,
+                    datetime_end=test_datetime_end,
+                    repo_version=repo_version,
+                    additional_vars=additional_vars,
+                )
+            else:
+                test_run_vars = dbt_run_vars
+
             dbt_post_test = run_dbt(
                 resource="test",
                 test_name=run_post_tests.get("test_name"),
@@ -171,13 +195,13 @@ def create_default_materialization_flow(
                 table_id=run_post_tests.get("table_id"),
                 model=run_post_tests.get("model"),
                 flags=flags,
-                _vars=dbt_run_vars,
+                _vars=test_run_vars,
                 upstream_tasks=[dbt_run],
             )
             notify_post_test = dbt_data_quality_checks(
                 dbt_logs=dbt_post_test,
                 checks_list=run_post_tests.get("checks_list"),
-                params=dbt_run_vars,
+                params=test_run_vars,
             )
             wait_post_test = notify_post_test
         else:

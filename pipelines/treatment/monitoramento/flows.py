@@ -82,7 +82,10 @@ GPS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
     run_post_tests=constants.GPS_POST_TESTS.value,
 )
 gps_vars_conecta = {"modo_gps": "onibus", "fonte_gps": "conecta", "15_minutos": False}
-set_default_parameters(GPS_CONECTA_MATERIALIZACAO, {"additional_vars": gps_vars_conecta})
+set_default_parameters(
+    GPS_CONECTA_MATERIALIZACAO,
+    {"additional_vars": gps_vars_conecta, "test_scheduled_time": "01:00:00"},
+)
 
 GPS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps cittati - materializacao",
@@ -95,7 +98,10 @@ GPS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
     run_post_tests=constants.GPS_POST_TESTS.value,
 )
 gps_vars_cittati = {"modo_gps": "onibus", "fonte_gps": "cittati", "15_minutos": False}
-set_default_parameters(GPS_CITTATI_MATERIALIZACAO, {"additional_vars": gps_vars_cittati})
+set_default_parameters(
+    GPS_CITTATI_MATERIALIZACAO,
+    {"additional_vars": gps_vars_cittati, "test_scheduled_time": "01:00:00"},
+)
 
 GPS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps zirix - materializacao",
@@ -108,7 +114,9 @@ GPS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
     run_post_tests=constants.GPS_POST_TESTS.value,
 )
 gps_vars_zirix = {"modo_gps": "onibus", "fonte_gps": "zirix", "15_minutos": False}
-set_default_parameters(GPS_ZIRIX_MATERIALIZACAO, {"additional_vars": gps_vars_zirix})
+set_default_parameters(
+    GPS_ZIRIX_MATERIALIZACAO, {"additional_vars": gps_vars_zirix, "test_scheduled_time": "01:00:00"}
+)
 
 GPS_15_MINUTOS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps_15_minutos conecta - materializacao",
