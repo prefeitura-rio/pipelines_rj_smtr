@@ -11,7 +11,7 @@ from pipelines.schedules import (
     create_hourly_cron,
     create_minute_cron,
 )
-from pipelines.treatment.templates.utils import DBTSelector
+from pipelines.treatment.templates.utils import DBTSelector, DBTTest
 
 
 class constants(Enum):  # pylint: disable=c0103
@@ -72,6 +72,11 @@ class constants(Enum):  # pylint: disable=c0103
         },
     }
 
+    GPS_DAILY_TEST = DBTTest(
+        delay_days=1,
+        truncate_date=True,
+    )
+
     GPS_PRE_TESTS = {
         "test_name": "check_gps_capture__staging_gps check_gps_capture__staging_realocacao",
         "checks_list": GPS_PRE_CHECKS_LIST,
@@ -80,6 +85,7 @@ class constants(Enum):  # pylint: disable=c0103
     GPS_POST_TESTS = {
         "model": "gps",
         "checks_list": GPS_POST_CHECKS_LIST,
+        "dbt_test": GPS_DAILY_TEST,
     }
 
     GPS_15_MINUTOS_SELECTOR = DBTSelector(
