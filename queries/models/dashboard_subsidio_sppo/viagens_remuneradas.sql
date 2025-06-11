@@ -198,9 +198,22 @@ with
                 round(
                     100 * sum(
                         if(
-                            v.tipo_viagem not in ("Não licenciado", "Não vistoriado"),
-                            v.distancia_planejada,
-                            0
+                            (
+                                p.data < date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
+                                and v.tipo_viagem
+                                in ('Não licenciado', 'Não vistoriado')
+                            )
+                            or (
+                                p.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
+                                and v.tipo_viagem in (
+                                    'Não licenciado',
+                                    'Não vistoriado',
+                                    'Lacrado',
+                                    'Não autorizado por ausência de ar-condicionado'
+                                )
+                            ),
+                            0,
+                            v.distancia_planejada
                         )
                     )
                     / p.km_planejada,
@@ -227,7 +240,9 @@ with
             vt.id_viagem,
             vt.datetime_partida,
             vt.distancia_planejada,
-            sp.subsidio_km,
+            case
+                when vt.tecnologia_remunerada is null then 0 else sp.subsidio_km
+            end as subsidio_km,
             sp.subsidio_km_teto,
             case
                 when
@@ -310,19 +325,28 @@ select
             v.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
             and v.tipo_dia in ("Sabado", "Domingo")
             and pof > 120
-            and rn_pos_v15 > greatest((viagens_planejadas_ida_volta * 1.2), (viagens_planejadas_ida_volta + if(indicador_circular, 1, 2)))
+            and rn_pos_v15 > greatest(
+                (viagens_planejadas_ida_volta * 1.2),
+                (viagens_planejadas_ida_volta + if(indicador_circular, 1, 2))
+            )
         then false
         when
             v.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
             and v.tipo_dia = "Ponto Facultativo"
             and pof > 150
-            and rn_pos_v15 > greatest((viagens_planejadas_ida_volta * 1.5), (viagens_planejadas_ida_volta + if(indicador_circular, 1, 2)))
+            and rn_pos_v15 > greatest(
+                (viagens_planejadas_ida_volta * 1.5),
+                (viagens_planejadas_ida_volta + if(indicador_circular, 1, 2))
+            )
         then false
         when
             v.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
             and v.tipo_dia = "Dia Útil"
             and pof > 110
-            and rn_pos_v15 > greatest((viagens_planejadas_ida_volta * 1.1), (viagens_planejadas_ida_volta + if(indicador_circular, 1, 2)))
+            and rn_pos_v15 > greatest(
+                (viagens_planejadas_ida_volta * 1.1),
+                (viagens_planejadas_ida_volta + if(indicador_circular, 1, 2))
+            )
         then false
         when
             v.data between date('{{ var("DATA_SUBSIDIO_V10_INICIO") }}') and date_sub(

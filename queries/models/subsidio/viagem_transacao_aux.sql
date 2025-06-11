@@ -33,6 +33,7 @@ with
         select
             data,
             datetime_gps,
+            servico_jae,
             id_veiculo,
             id_validador,
             estado_equipamento,
@@ -164,6 +165,7 @@ with
                 (
                     select
                         data,
+                        servico_jae,
                         id_validador,
                         id_veiculo,
                         latitude,
@@ -189,6 +191,7 @@ with
                 (
                     select
                         data,
+                        servico_jae,
                         id_validador,
                         id_veiculo,
                         latitude,
@@ -212,7 +215,14 @@ with
             e.id_validador,
             e.estado_equipamento,
             e.latitude,
-            e.longitude
+            e.longitude,
+            v.servico as servico_viagem,
+            e.servico_jae as servico_gps_validador,
+            case
+                when v.data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                then v.servico = e.servico_jae
+                else true
+            end as indicador_servico_coerente
         from estado_equipamento_aux as e
         join
             viagem as v
@@ -231,16 +241,21 @@ with
         from gps_validador_viagem
         group by 1, 2, 3
     ),
-    -- 13. Considera o validador com maior porcentagem de estado do equipamento
+    -- 13. Calcula maior e menor porcentagem de estado do equipamento
     -- "ABERTO" por viagem
-    estado_equipamento_max_perc as (
+    estado_equipamento_max_min as (
         select
             data,
             id_viagem,
-            max_by(id_validador, percentual_estado_equipamento_aberto) as id_validador,
+            max_by(
+                id_validador, percentual_estado_equipamento_aberto
+            ) as id_validador_max_perc,
             max(
                 percentual_estado_equipamento_aberto
-            ) as percentual_estado_equipamento_aberto
+            ) as max_percentual_estado_equipamento_aberto,
+            min(
+                percentual_estado_equipamento_aberto
+            ) as min_percentual_estado_equipamento_aberto,
         from estado_equipamento_perc
         group by 1, 2
     ),
@@ -251,15 +266,24 @@ with
             data,
             id_viagem,
             id_validador,
-            percentual_estado_equipamento_aberto,
-            if(
-                percentual_estado_equipamento_aberto >= 0.8
-                or percentual_estado_equipamento_aberto is null,
-                true,
-                false
-            ) as indicador_estado_equipamento_aberto
+            case
+                when data < date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                then max_percentual_estado_equipamento_aberto
+                else min_percentual_estado_equipamento_aberto
+            end as percentual_estado_equipamento_aberto,
+            case
+                when data < date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                then
+                    if(
+                        max_percentual_estado_equipamento_aberto >= 0.8
+                        or max_percentual_estado_equipamento_aberto is null,
+                        true,
+                        false
+                    )
+                else if(min_percentual_estado_equipamento_aberto >= 0.8, true, false)
+            end as indicador_estado_equipamento_aberto
         from viagem
-        left join estado_equipamento_max_perc using (data, id_viagem)
+        left join estado_equipamento_max_min using (data, id_viagem)
     )
 select
     v.data,
