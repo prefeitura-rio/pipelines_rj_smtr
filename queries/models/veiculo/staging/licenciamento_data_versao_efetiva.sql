@@ -58,7 +58,7 @@ with
                          de dados (SIURB) */
                                     and (
                                         date(periodo.data) < "2024-04-01"
-                                        or date(data_licenciamento) >= date('2024-04-09')
+                                        or data_licenciamento >= '2024-04-09'
                                     )
                             )
                     end

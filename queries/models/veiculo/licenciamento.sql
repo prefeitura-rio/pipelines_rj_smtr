@@ -154,7 +154,7 @@ select
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     "{{ var('version') }}" as versao
 from stu_ano_ultima_vistoria
-where date(data) >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}")
+where data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
 {% if not is_incremental() or var("start_date") < var("DATA_SUBSIDIO_V13_INICIO") %}
     union all
     select

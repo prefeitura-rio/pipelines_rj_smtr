@@ -208,7 +208,7 @@ with
             struct(
                 coalesce(l.indicador_licenciado, false) as indicador_licenciado,
                 if(
-                    date(data) >= date("{{ var('DATA_SUBSIDIO_V5_INICIO') }}"),
+                    data >= "{{ var('DATA_SUBSIDIO_V5_INICIO') }}",
                     coalesce(l.indicador_vistoriado, false),
                     null
                 ) as indicador_vistoriado,
