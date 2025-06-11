@@ -107,7 +107,6 @@ with
                 then "PADRON"
                 when tipo_veiculo like "%ARTICULADO%"
                 then "ARTICULADO"
-                else safe_cast(null as string)
             end as tecnologia,
             quantidade_lotacao_pe,
             quantidade_lotacao_sentado,
@@ -120,7 +119,6 @@ with
             min(date(data)) over (win) as primeira_data,
             date(data) as data_arquivo_fonte
         from {{ ref("staging_licenciamento_stu") }}
-        window win as (partition by data, id_veiculo, placa order by data)
         where
             data > "2025-03-31"
             {% if is_incremental() %}
@@ -130,6 +128,8 @@ with
                     "{{ var('date_range_end') }}"
                 )
             {% endif %}
+        window win as (partition by data, id_veiculo, placa order by data)
+
     ),
     datas_faltantes as (
         select distinct
@@ -174,6 +174,13 @@ with
             and s.data != s.primeira_data
             and data_corrigida > "2025-03-31"
     ),
+    dados_novos as (
+        select *
+        from inicio_vinculo_preenchido
+        union all
+        select *
+        from licenciamento_datas_preenchidas
+    ),
     {% if is_incremental() %}
         dados_atuais as (
             select *
@@ -191,14 +198,12 @@ with
 
                 {% endif %}
         ),
-        dados_novos as (
+        dados_novos_lacre as (
             select *
-            from inicio_vinculo_preenchido
-            union all
-            select *
-            from licenciamento_datas_preenchidas
-            union all
+            from dados_novos
             {% if lacre_partitions | length > 0 %}
+                union all
+
                 select
                     data,
                     current_date("America/Sao_Paulo") as data_processamento,
@@ -210,7 +215,10 @@ with
                         datetime_ultima_atualizacao
                     )
                 from dados_atuais
-                where data in ({{ lacre_partitions | join(", ") }})
+                where
+                    data in ({{ lacre_partitions | join(", ") }})
+                    and concat(data, id_veiculo, placa)
+                    not in (select concat(data, id_veiculo, placa) from dados_novos)
                 qualify
                     row_number() over (
                         partition by data, id_veiculo, placa
@@ -218,16 +226,8 @@ with
                     )
                     = 1
             {% endif %}
-
         )
-    {% else %}
-        dados_novos as (
-            select *
-            from inicio_vinculo_preenchido
-            union all
-            select *
-            from licenciamento_datas_preenchidas
-        )
+    {% else %} dados_novos_lacre as (select * from dados_novos)
     {% endif %},
     veiculo_lacrado as (
         select
@@ -236,7 +236,7 @@ with
             data_arquivo_fonte,
             '{{ var("version") }}' as versao,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
-        from dados_novos dn
+        from dados_novos_lacre dn
         left join
             veiculo_fiscalizacao_lacre vfl
             on dn.id_veiculo = vfl.id_veiculo
