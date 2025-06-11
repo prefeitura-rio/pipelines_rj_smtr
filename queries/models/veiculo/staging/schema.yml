@@ -65,7 +65,7 @@ models:
       - name: data
         description: "{{ doc('data_captura') }} [partição]"
       - name: timestamp_captura
-        description: "Timestamp de captura dos dados de licenciamento"
+        description: "{{ doc('timestamp_captura_licenciamento') }}"
       - name: modo
         description: "Modo de operação do veiculo"
       - name: id_veiculo
@@ -119,7 +119,7 @@ models:
       - name: data
         description: "{{ doc('data_captura') }} [partição]"
       - name: timestamp_captura
-        description: "Timestamp de captura dos dados de infração"
+        description: "{{ doc('timestamp_captura_infracao') }}"
       - name: modo
         description: "{{ doc('modo_onibus') }}"
       - name: permissao
@@ -135,23 +135,23 @@ models:
       - name: id_infracao
         description: "{{ doc('id_infracao') }}"
       - name: infracao
-        description: "Descrição da infração"
+        description: "{{ doc('infracao') }}"
       - name: status
-        description: "CADASTRADA - Registrada no sistema sem guia de pagamento\n
+        description: "{{ doc('status_veiculo_infracao') }}\n
                       EM ABERTO - Com guia de pagamento e dentro do prazo de vencimento\n
                       VENCIDA - Com guia de pagamento e fora do prazo de vencimento\n
                       EM RECURSO - Possui Processo de Recurso aguardando julgamento\n
                       PAGA - Com guia de pagamento efetivamente paga\n
                       CANCELADA - Multa foi cancelada através de um Processo de Recurso"
       - name: data_pagamento
-        description: "Data de pagamento"
+        description: "{{ doc('data_pagamento') }}"
   - name: sppo_licenciamento_solicitacao_staging
     description: "View de dados cadastrais das solicitações em andamento para ingresso no Sistema de Transporte Urbano [STU]"
     columns:
       - name: data
         description: "{{ doc('data_captura') }} [partição]"
       - name: timestamp_captura
-        description: "Timestamp de captura dos dados de licenciamento"
+        description: "{{ doc('timestamp_captura_licenciamento') }}"
       - name: modo
         description: "{{ doc('modo_onibus') }}"
       - name: id_veiculo
