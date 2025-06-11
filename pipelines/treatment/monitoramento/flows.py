@@ -6,6 +6,7 @@ DBT 2025-06-03
 """
 
 from copy import deepcopy
+from datetime import time
 
 from pipelines.capture.cittati.constants import constants as cittati_constants
 from pipelines.capture.conecta.constants import constants as conecta_constants
@@ -79,12 +80,13 @@ GPS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
         conecta_constants.CONECTA_REGISTROS_SOURCE.value,
         conecta_constants.CONECTA_REALOCACAO_SOURCE.value,
     ],
+    test_scheduled_time=time(1, 0, 0),
     run_post_tests=constants.GPS_POST_TESTS.value,
 )
 gps_vars_conecta = {"modo_gps": "onibus", "fonte_gps": "conecta", "15_minutos": False}
 set_default_parameters(
     GPS_CONECTA_MATERIALIZACAO,
-    {"additional_vars": gps_vars_conecta, "test_scheduled_time": "01:00:00"},
+    {"additional_vars": gps_vars_conecta},
 )
 
 GPS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
@@ -95,12 +97,13 @@ GPS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
         cittati_constants.CITTATI_REGISTROS_SOURCE.value,
         cittati_constants.CITTATI_REALOCACAO_SOURCE.value,
     ],
+    test_scheduled_time=time(1, 0, 0),
     run_post_tests=constants.GPS_POST_TESTS.value,
 )
 gps_vars_cittati = {"modo_gps": "onibus", "fonte_gps": "cittati", "15_minutos": False}
 set_default_parameters(
     GPS_CITTATI_MATERIALIZACAO,
-    {"additional_vars": gps_vars_cittati, "test_scheduled_time": "01:00:00"},
+    {"additional_vars": gps_vars_cittati},
 )
 
 GPS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
@@ -111,12 +114,11 @@ GPS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
         zirix_constants.ZIRIX_REGISTROS_SOURCE.value,
         zirix_constants.ZIRIX_REALOCACAO_SOURCE.value,
     ],
+    test_scheduled_time=time(1, 0, 0),
     run_post_tests=constants.GPS_POST_TESTS.value,
 )
 gps_vars_zirix = {"modo_gps": "onibus", "fonte_gps": "zirix", "15_minutos": False}
-set_default_parameters(
-    GPS_ZIRIX_MATERIALIZACAO, {"additional_vars": gps_vars_zirix, "test_scheduled_time": "01:00:00"}
-)
+set_default_parameters(GPS_ZIRIX_MATERIALIZACAO, {"additional_vars": gps_vars_zirix})
 
 GPS_15_MINUTOS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps_15_minutos conecta - materializacao",
