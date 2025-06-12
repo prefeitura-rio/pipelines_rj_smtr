@@ -159,47 +159,61 @@ def create_default_materialization_flow(
         else:
             wait_pre_test = complete_sources
 
-        # dbt_run = run_dbt(
-        #     resource="model",
-        #     selector_name=selector.name,
-        #     flags=flags,
-        #     _vars=dbt_run_vars,
-        #     upstream_tasks=[wait_pre_test],
-        # )
-        dbt_run = wait_pre_test
+        dbt_run = run_dbt(
+            resource="model",
+            selector_name=selector.name,
+            flags=flags,
+            _vars=dbt_run_vars,
+            upstream_tasks=[wait_pre_test],
+        )
 
         if run_post_tests:
-            run_scheduled_test, test_vars = check_scheduled_test(
-                timestamp,
-                test_scheduled_time,
-                dbt_run_vars,
-                run_post_tests.get("dbt_test"),
-                upstream_tasks=[dbt_run],
-            )
+            if test_scheduled_time is not None:
+                run_scheduled_test, test_vars = check_scheduled_test(
+                    timestamp,
+                    test_scheduled_time,
+                    dbt_run_vars,
+                    run_post_tests.get("dbt_test"),
+                    upstream_tasks=[dbt_run],
+                )
 
-            with case(run_scheduled_test, True):
-                test_run_vars = test_vars
+                with case(run_scheduled_test, True):
+                    dbt_post_test = run_dbt(
+                        resource="test",
+                        test_name=run_post_tests.get("test_name"),
+                        dataset_id=run_post_tests.get("dataset_id"),
+                        table_id=run_post_tests.get("table_id"),
+                        model=run_post_tests.get("model"),
+                        flags=flags,
+                        _vars=test_vars,
+                        upstream_tasks=[run_scheduled_test],
+                    )
+                    notify_post_test = dbt_data_quality_checks(
+                        dbt_logs=dbt_post_test,
+                        checks_list=run_post_tests.get("checks_list"),
+                        params=test_vars,
+                    )
+                    wait_post_test = notify_post_test
 
-            with case(run_scheduled_test, False):
-                test_run_vars = dbt_run_vars
-
-            dbt_post_test = run_dbt(
-                resource="test",
-                test_name=run_post_tests.get("test_name"),
-                dataset_id=run_post_tests.get("dataset_id"),
-                table_id=run_post_tests.get("table_id"),
-                model=run_post_tests.get("model"),
-                # flags=flags,
-                flags="--target prod",
-                _vars=test_run_vars,
-                upstream_tasks=[run_scheduled_test],
-            )
-            notify_post_test = dbt_data_quality_checks(
-                dbt_logs=dbt_post_test,
-                checks_list=run_post_tests.get("checks_list"),
-                params=test_run_vars,
-            )
-            wait_post_test = notify_post_test
+                with case(run_scheduled_test, False):
+                    wait_post_test = dbt_run
+            else:
+                dbt_post_test = run_dbt(
+                    resource="test",
+                    test_name=run_post_tests.get("test_name"),
+                    dataset_id=run_post_tests.get("dataset_id"),
+                    table_id=run_post_tests.get("table_id"),
+                    model=run_post_tests.get("model"),
+                    flags=flags,
+                    _vars=dbt_run_vars,
+                    upstream_tasks=[dbt_run],
+                )
+                notify_post_test = dbt_data_quality_checks(
+                    dbt_logs=dbt_post_test,
+                    checks_list=run_post_tests.get("checks_list"),
+                    params=dbt_run_vars,
+                )
+                wait_post_test = notify_post_test
         else:
             wait_post_test = dbt_run
 
