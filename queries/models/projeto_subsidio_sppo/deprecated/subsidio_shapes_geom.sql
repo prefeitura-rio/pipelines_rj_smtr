@@ -1,3 +1,4 @@
+-- depends_on: {{ ref('subsidio_data_versao_efetiva') }}
 {{ config(
     materialized='incremental',
         partition_by={
