@@ -84,10 +84,7 @@ GPS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
     run_post_tests=constants.GPS_POST_TESTS.value,
 )
 gps_vars_conecta = {"modo_gps": "onibus", "fonte_gps": "conecta", "15_minutos": False}
-set_default_parameters(
-    GPS_CONECTA_MATERIALIZACAO,
-    {"additional_vars": gps_vars_conecta},
-)
+set_default_parameters(GPS_CONECTA_MATERIALIZACAO, {"additional_vars": gps_vars_conecta})
 
 GPS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps cittati - materializacao",
@@ -101,10 +98,7 @@ GPS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
     run_post_tests=constants.GPS_POST_TESTS.value,
 )
 gps_vars_cittati = {"modo_gps": "onibus", "fonte_gps": "cittati", "15_minutos": False}
-set_default_parameters(
-    GPS_CITTATI_MATERIALIZACAO,
-    {"additional_vars": gps_vars_cittati},
-)
+set_default_parameters(GPS_CITTATI_MATERIALIZACAO, {"additional_vars": gps_vars_cittati})
 
 GPS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps zirix - materializacao",
