@@ -111,86 +111,94 @@ with
                 select id_veiculo, placa, ano_ultima_vistoria
                 from {{ ref("aux_sppo_licenciamento_vistoria_atualizada") }}
             ) as c using (id_veiculo, placa)
-    )
-select
-    data,
-    modo,
-    id_veiculo,
-    ano_fabricacao,
-    carroceria,
-    data_ultima_vistoria,
-    id_carroceria,
-    id_chassi,
-    id_fabricante_chassi,
-    id_interno_carroceria,
-    id_planta,
-    indicador_ar_condicionado,
-    indicador_elevador,
-    indicador_usb,
-    indicador_wifi,
-    nome_chassi,
-    permissao,
-    placa,
-    case
-        when tipo_veiculo like "%BASIC%" or tipo_veiculo like "%BS%"
-        then "BASICO"
-        when tipo_veiculo like "%MIDI%"
-        then "MIDI"
-        when tipo_veiculo like "%MINI%"
-        then "MINI"
-        when tipo_veiculo like "%PDRON%" or tipo_veiculo like "%PADRON%"
-        then "PADRON"
-        when tipo_veiculo like "%ARTICULADO%"
-        then "ARTICULADO"
-        else safe_cast(null as string)
-    end as tecnologia,
-    quantidade_lotacao_pe,
-    quantidade_lotacao_sentado,
-    tipo_combustivel,
-    tipo_veiculo,
-    status,
-    data_inicio_vinculo,
-    ano_ultima_vistoria_atualizado,
-    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
-    "{{ var('version') }}" as versao
-from stu_ano_ultima_vistoria
-where data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
-{% if not is_incremental() or var("start_date") < var("DATA_SUBSIDIO_V13_INICIO") %}
-    union all
-    select
-        data,
-        modo,
-        id_veiculo,
-        ano_fabricacao,
-        carroceria,
-        data_ultima_vistoria,
-        id_carroceria,
-        id_chassi,
-        id_fabricante_chassi,
-        id_interno_carroceria,
-        id_planta,
-        indicador_ar_condicionado,
-        indicador_elevador,
-        indicador_usb,
-        indicador_wifi,
-        nome_chassi,
-        permissao,
-        placa,
-        safe_cast(null as string) as tecnologia,
-        quantidade_lotacao_pe,
-        quantidade_lotacao_sentado,
-        tipo_combustivel,
-        tipo_veiculo,
-        status,
-        data_inicio_vinculo,
-        ano_ultima_vistoria_atualizado,
-        current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
-        "{{ var('version') }}" as versao
-    from {{ source("veiculo_staging_rj-smtr", "sppo_licenciamento") }} l
-    where
-        data < "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
-        {% if is_incremental() %}
-            and data
-            between "{{ min_licenciamento_date }}" and "{{ max_licenciamento_date }}"
+    ),
+    licenciamento_final as (
+        select
+            data,
+            modo,
+            id_veiculo,
+            ano_fabricacao,
+            carroceria,
+            data_ultima_vistoria,
+            id_carroceria,
+            id_chassi,
+            id_fabricante_chassi,
+            id_interno_carroceria,
+            id_planta,
+            indicador_ar_condicionado,
+            indicador_elevador,
+            indicador_usb,
+            indicador_wifi,
+            nome_chassi,
+            permissao,
+            placa,
+            case
+                when tipo_veiculo like "%BASIC%" or tipo_veiculo like "%BS%"
+                then "BASICO"
+                when tipo_veiculo like "%MIDI%"
+                then "MIDI"
+                when tipo_veiculo like "%MINI%"
+                then "MINI"
+                when tipo_veiculo like "%PDRON%" or tipo_veiculo like "%PADRON%"
+                then "PADRON"
+                when tipo_veiculo like "%ARTICULADO%"
+                then "ARTICULADO"
+                else safe_cast(null as string)
+            end as tecnologia,
+            quantidade_lotacao_pe,
+            quantidade_lotacao_sentado,
+            tipo_combustivel,
+            tipo_veiculo,
+            status,
+            data_inicio_vinculo,
+            ano_ultima_vistoria_atualizado,
+            current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+            "{{ var('version') }}" as versao
+        from stu_ano_ultima_vistoria
+        where data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
+        {% if not is_incremental() or var("start_date") < var(
+                "DATA_SUBSIDIO_V13_INICIO"
+            ) %}
+            union all
+            select
+                data,
+                modo,
+                id_veiculo,
+                ano_fabricacao,
+                carroceria,
+                data_ultima_vistoria,
+                id_carroceria,
+                id_chassi,
+                id_fabricante_chassi,
+                id_interno_carroceria,
+                id_planta,
+                indicador_ar_condicionado,
+                indicador_elevador,
+                indicador_usb,
+                indicador_wifi,
+                nome_chassi,
+                permissao,
+                placa,
+                safe_cast(null as string) as tecnologia,
+                quantidade_lotacao_pe,
+                quantidade_lotacao_sentado,
+                tipo_combustivel,
+                tipo_veiculo,
+                status,
+                data_inicio_vinculo,
+                ano_ultima_vistoria_atualizado,
+                current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+                "{{ var('version') }}" as versao
+            from {{ source("veiculo_staging_rj-smtr", "sppo_licenciamento") }} l
+            where
+                data < "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
+                {% if is_incremental() %}
+                    and data
+                    between "{{ min_licenciamento_date }}"
+                    and "{{ max_licenciamento_date }}"
+                {% endif %}
         {% endif %}
-{% endif %}
+    )
+select *
+from licenciamento_final
+where data <= '2025-03-31'
