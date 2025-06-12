@@ -22,7 +22,8 @@ with
             placa,
             valor,
             data_pagamento,
-            date(data) as data_inclusao
+            date(data) as data_inclusao,
+            timestamp_captura
         from {{ ref("staging_infracao") }}
         {% if is_incremental() %}
             where
@@ -31,7 +32,6 @@ with
                 )
 
         {% endif %}
-        qualify row_number() over (partition by id_auto_infracao order by data desc) = 1
     ),
     aux_data_inclusao as (
         select id_auto_infracao, min(data_inclusao) as data_inclusao
@@ -50,13 +50,18 @@ with
     ),
     dados_novos as (
         select
-            ad.* except (data_inclusao),
+            ad.* except (data_inclusao, timestamp_captura),
             di.data_inclusao,
             '{{ var("version") }}' as versao,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
         from autuacao_disciplinar_staging ad
         join aux_data_inclusao di using (id_auto_infracao)
         where ad.data > "2025-03-31"
+        qualify
+            row_number() over (
+                partition by id_auto_infracao order by timestamp_captura desc
+            )
+            = 1
     )
 {% if is_incremental() %}
         ,
