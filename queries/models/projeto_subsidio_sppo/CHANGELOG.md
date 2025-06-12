@@ -2,7 +2,7 @@
 
 ## [9.2.5] - 2025-06-12
 
-### Adicionado 
+### Adicionado
 
 - Adicionadas colunas faltantes no modelo `viagem_planejada.sql` para o periodo anterior a `2024-04-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
 
