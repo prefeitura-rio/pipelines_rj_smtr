@@ -15,12 +15,7 @@
   {% set result = run_query(query) %}
   {% set data_versao_shapes = result.columns[0].values() %}
 {% endif %}
-with data_versao as (
-    select data_versao_shapes
-    from {{ ref("subsidio_data_versao_efetiva") }}
-    where data between date_sub("{{ var("run_date") }}", interval 1 day) and date("{{ var("run_date") }}")
-),
-contents as (
+with contents as (
     SELECT
         shape_id,
         ST_GEOGPOINT(
