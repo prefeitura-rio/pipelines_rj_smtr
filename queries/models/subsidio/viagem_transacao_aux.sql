@@ -75,8 +75,7 @@ with
     -- 5. Status dos veículos
     veiculos as (
         select data, id_veiculo, status, tecnologia
-        from {{ ref("sppo_veiculo_dia") }}
-        -- from `rj-smtr.veiculo.sppo_veiculo_dia`
+        from {{ ref("aux_veiculo_dia_consolidada") }}
         where
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
