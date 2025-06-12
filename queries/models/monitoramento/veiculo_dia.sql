@@ -40,7 +40,10 @@ with
             end as indicador_vistoriado,
         from {{ ref("veiculo_licenciamento_dia") }}
         where
-            data_processamento <= date_add(data, interval 7 day)
+            (
+                data_processamento <= date_add(data, interval 7 day)
+                or data_processamento = '2025-06-10'
+            )
             {% if is_incremental() %}
                 and data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
@@ -67,14 +70,14 @@ with
     ),
     gps as (
         select *
-        from
-            {{ ref("aux_veiculo_gps_dia") }}
-            {% if is_incremental() %}
+        from {{ ref("aux_veiculo_gps_dia") }}
+        {% if is_incremental() %}
+            where
                 data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
                 )
 
-            {% endif %}
+        {% endif %}
     ),
     registros_agente_verao as (
         select distinct data, id_veiculo
@@ -94,6 +97,7 @@ with
             l.placa,
             l.modo,
             l.tecnologia,
+            l.tipo_veiculo,
             l.id_veiculo is not null as indicador_licenciado,
             l.indicador_vistoriado,
             l.indicador_ar_condicionado,
@@ -187,6 +191,7 @@ with
             placa,
             gl.modo,
             gl.tecnologia,
+            gl.tipo_veiculo,
             struct(
                 struct(
                     gl.indicador_licenciado as valor,
@@ -234,6 +239,7 @@ select
     placa,
     modo,
     tecnologia,
+    tipo_veiculo,
     case
         when indicadores.indicador_licenciado.valor is false
         then "Não licenciado"
@@ -263,7 +269,7 @@ select
         when indicadores.indicador_ar_condicionado.valor is true
         then "Licenciado com ar e não autuado"
     end as status,
-    indicadores,
+    to_json(indicadores) as indicadores,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     "{{ var('version') }}" as versao
 from gps_licenciamento_autuacao
