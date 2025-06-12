@@ -205,11 +205,37 @@ with
                             )
                             or (
                                 p.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
+                                and p.data
+                                < date('{{ var("DATA_SUBSIDIO_V15B_INICIO") }}')
                                 and v.tipo_viagem in (
                                     'Não licenciado',
                                     'Não vistoriado',
                                     'Lacrado',
                                     'Não autorizado por ausência de ar-condicionado'
+                                )
+                            )
+                            or (
+                                p.data >= date('{{ var("DATA_SUBSIDIO_V15B_INICIO") }}')
+                                and (
+                                    (
+                                        v.tipo_viagem
+                                        = 'Licenciado sem ar e não autuado'
+                                        and p.servico not in (
+                                            select servico
+                                            from
+                                                {{
+                                                    ref(
+                                                        "aux_servicos_contratos_abreviados"
+                                                    )
+                                                }}
+                                        )
+                                    )
+                                    or v.tipo_viagem in (
+                                        'Não licenciado',
+                                        'Não vistoriado',
+                                        'Lacrado',
+                                        'Não autorizado por ausência de ar-condicionado'
+                                    )
                                 )
                             ),
                             0,
