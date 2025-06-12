@@ -159,13 +159,14 @@ def create_default_materialization_flow(
         else:
             wait_pre_test = complete_sources
 
-        dbt_run = run_dbt(
-            resource="model",
-            selector_name=selector.name,
-            flags=flags,
-            _vars=dbt_run_vars,
-            upstream_tasks=[wait_pre_test],
-        )
+        # dbt_run = run_dbt(
+        #     resource="model",
+        #     selector_name=selector.name,
+        #     flags=flags,
+        #     _vars=dbt_run_vars,
+        #     upstream_tasks=[wait_pre_test],
+        # )
+        dbt_run = wait_pre_test
 
         if run_post_tests:
             run_scheduled_test, test_vars = check_scheduled_test(
@@ -188,7 +189,8 @@ def create_default_materialization_flow(
                 dataset_id=run_post_tests.get("dataset_id"),
                 table_id=run_post_tests.get("table_id"),
                 model=run_post_tests.get("model"),
-                flags=flags,
+                # flags=flags,
+                flags="--target prod",
                 _vars=test_run_vars,
                 upstream_tasks=[run_scheduled_test],
             )
