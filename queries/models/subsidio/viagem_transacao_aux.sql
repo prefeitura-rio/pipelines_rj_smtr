@@ -6,7 +6,7 @@
 with
     -- 1. Transações Jaé
     transacao as (
-        select id_veiculo, datetime_transacao
+        select id_veiculo, servico_jae, datetime_transacao
         from {{ ref("transacao") }}
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
         where
@@ -18,7 +18,7 @@ with
     ),
     -- 2. Transações RioCard
     transacao_riocard as (
-        select id_veiculo, datetime_transacao
+        select id_veiculo, servico_jae, datetime_transacao
         from {{ ref("transacao_riocard") }}
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard`
         where
@@ -131,7 +131,13 @@ with
     ),
     -- 8. Contagem de transações Jaé
     transacao_contagem as (
-        select v.data, v.id_viagem, count(t.datetime_transacao) as quantidade_transacao
+        select
+            v.data,
+            v.id_viagem,
+            count(t.datetime_transacao) as quantidade_transacao,
+            countif(
+                v.servico != t.servico_jae
+            ) as quantidade_transacao_servico_divergente
         from transacao as t
         join
             viagem_com_tolerancia as v
@@ -145,7 +151,10 @@ with
         select
             v.data,
             v.id_viagem,
-            count(tr.datetime_transacao) as quantidade_transacao_riocard
+            count(tr.datetime_transacao) as quantidade_transacao_riocard,
+            countif(
+                v.servico != tr.servico_jae
+            ) as quantidade_transacao_riocard_servico_divergente
         from transacao_riocard as tr
         join
             viagem_com_tolerancia as v
@@ -216,13 +225,8 @@ with
             e.estado_equipamento,
             e.latitude,
             e.longitude,
-            v.servico as servico_viagem,
-            e.servico_jae as servico_gps_validador,
-            case
-                when v.data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
-                then v.servico = e.servico_jae
-                else true
-            end as indicador_servico_coerente
+            v.servico,
+            e.servico_jae,
         from estado_equipamento_aux as e
         join
             viagem as v
@@ -236,6 +240,7 @@ with
             data,
             id_viagem,
             id_validador,
+            countif(servico != servico_jae) as quantidade_gps_servico_divergente,
             countif(estado_equipamento = "ABERTO")
             / count(*) as percentual_estado_equipamento_aberto
         from gps_validador_viagem
@@ -247,6 +252,7 @@ with
         select
             data,
             id_viagem,
+            sum(quantidade_gps_servico_divergente) as quantidade_gps_servico_divergente,
             max_by(
                 id_validador, percentual_estado_equipamento_aberto
             ) as id_validador_max_perc,
@@ -266,6 +272,7 @@ with
             data,
             id_viagem,
             id_validador,
+            quantidade_gps_servico_divergente,
             case
                 when data < date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
                 then max_percentual_estado_equipamento_aberto
@@ -310,6 +317,20 @@ select
                             coalesce(tr.quantidade_transacao_riocard, 0) = 0
                             and coalesce(t.quantidade_transacao, 0) = 0
                         )
+                        or coalesce(eev.indicador_estado_equipamento_aberto, false)
+                        = false
+                    )
+                )
+                or (
+                    v.data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                    and (
+                        (
+                            coalesce(tr.quantidade_transacao_riocard, 0) = 0
+                            and coalesce(t.quantidade_transacao, 0) = 0
+                        )
+                        or tr.quantidade_transacao_riocard_servico_divergente > 0
+                        or t.quantidade_transacao_servico_divergente > 0
+                        or eev.quantidade_gps_servico_divergente > 0
                         or coalesce(eev.indicador_estado_equipamento_aberto, false)
                         = false
                     )
