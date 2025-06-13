@@ -11,7 +11,7 @@ from pipelines.schedules import (
     create_hourly_cron,
     create_minute_cron,
 )
-from pipelines.treatment.templates.utils import DBTSelector
+from pipelines.treatment.templates.utils import DBTSelector, DBTTest
 
 
 class constants(Enum):  # pylint: disable=c0103
@@ -39,27 +39,6 @@ class constants(Enum):  # pylint: disable=c0103
         incremental_delay_hours=1,
     )
 
-    GPS_PRE_CHECKS_LIST = {
-        "staging_realocacao": {
-            "check_gps_capture__staging_realocacao": {
-                "description": "Todos os dados de realocação foram capturados"
-            }
-        },
-        "staging_gps": {
-            "check_gps_capture__staging_gps": {
-                "description": "Todos os dados de GPS foram capturados"
-            }
-        },
-        "gps_sppo": {
-            "check_gps_treatment__gps_sppo": {
-                "description": "Todos os dados de GPS foram devidamente tratados"
-            },
-            "dbt_utils.unique_combination_of_columns__gps_sppo": {
-                "description": "Todos os registros são únicos"
-            },
-        },
-    }
-
     GPS_POST_CHECKS_LIST = {
         "gps": {
             "check_gps_treatment__gps": {
@@ -72,15 +51,12 @@ class constants(Enum):  # pylint: disable=c0103
         },
     }
 
-    GPS_PRE_TESTS = {
-        "test_name": "check_gps_capture__staging_gps check_gps_capture__staging_realocacao",
-        "checks_list": GPS_PRE_CHECKS_LIST,
-    }
-
-    GPS_POST_TESTS = {
-        "model": "gps",
-        "checks_list": GPS_POST_CHECKS_LIST,
-    }
+    GPS_DAILY_TEST = DBTTest(
+        model="gps",
+        checks_list=GPS_POST_CHECKS_LIST,
+        delay_days=1,
+        truncate_date=True,
+    )
 
     GPS_15_MINUTOS_SELECTOR = DBTSelector(
         name="gps_15_minutos",
