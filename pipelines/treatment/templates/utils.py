@@ -159,6 +159,11 @@ class DBTTest:
     Classe para configurar testes agendados do DBT
 
     Args:
+        test_name (str, optional): O nome do teste a ser executado
+        dataset_id (str, optional): ID do conjunto de dados do modelo dbt
+        table_id (str, optional): ID da tabela do modelo dbt
+        model (str, optional): Modelo específico a ser testado
+        checks_list (dict, optional): Dicionário com nome e as descrições dos testes
         delay_days (int): Quantidade de dias que serão subtraídos do horário atual
         truncate_date (bool): Se True, trunca as horas para testar o dia completo
                              (00:00:00 a 23:59:59)

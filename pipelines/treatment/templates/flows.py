@@ -56,8 +56,8 @@ def create_default_materialization_flow(
             no parametro schedule_cron do selector
         snapshot_selector (DBTSelector): Objeto que representa o selector do DBT para snapshot
         test_scheduled_time (time): Horário para rodar o test no formato "HH:MM:SS"
-        run_pre_tests (DBTTest): Configuração para testes pré-materialização
-        run_post_tests (DBTTest): Configuração para testes pós-materialização
+        pre_tests (DBTTest): Configuração para testes pré-materialização
+        post_tests (DBTTest): Configuração para testes pós-materialização
 
         Returns:
             Flow: Flow de materialização
