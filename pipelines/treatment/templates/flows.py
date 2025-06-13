@@ -184,7 +184,7 @@ def create_default_materialization_flow(
                 timestamp,
                 test_scheduled_time,
                 dbt_run_vars,
-                post_tests["dbt_test"],
+                post_tests,
                 upstream_tasks=[dbt_run],
             )
 
