@@ -14,7 +14,9 @@ CAPTURA_REGISTROS_CONECTA = create_default_capture_flow(
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     recapture_schedule_cron=create_hourly_cron(),
 )
-CAPTURA_REGISTROS_CONECTA.state_handlers.append(handler_notify_failure(webhook="alertas_gps"))
+CAPTURA_REGISTROS_CONECTA.state_handlers.append(
+    handler_notify_failure(webhook="alertas_gps_onibus")
+)
 
 CAPTURA_REALOCACAO_CONECTA = create_default_capture_flow(
     flow_name="conecta: realocacao - captura",
@@ -23,4 +25,6 @@ CAPTURA_REALOCACAO_CONECTA = create_default_capture_flow(
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     recapture_schedule_cron=create_hourly_cron(),
 )
-CAPTURA_REALOCACAO_CONECTA.state_handlers.append(handler_notify_failure(webhook="alertas_gps"))
+CAPTURA_REALOCACAO_CONECTA.state_handlers.append(
+    handler_notify_failure(webhook="alertas_gps_onibus")
+)
