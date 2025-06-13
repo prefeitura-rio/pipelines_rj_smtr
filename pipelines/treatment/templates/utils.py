@@ -167,10 +167,20 @@ class DBTTest:
 
     def __init__(
         self,
+        test_name: str = None,
+        dataset_id: str = None,
+        table_id: str = None,
+        model: str = None,
+        checks_list: str = None,
         delay_days: int = 0,
         truncate_date: bool = False,
         additional_vars: Optional[Dict] = None,
     ):
+        self.test_name = test_name
+        self.dataset_id = dataset_id
+        self.table_id = table_id
+        self.model = model
+        self.checks_list = checks_list
         self.delay_days = delay_days
         self.truncate_date = truncate_date
         self.additional_vars = additional_vars or {}

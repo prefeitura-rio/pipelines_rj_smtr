@@ -29,7 +29,7 @@ from pipelines.treatment.templates.tasks import (
     setup_dbt_test,
     wait_data_sources,
 )
-from pipelines.treatment.templates.utils import DBTSelector
+from pipelines.treatment.templates.utils import DBTSelector, DBTTest
 from pipelines.utils.prefect import TypedParameter
 
 
@@ -41,8 +41,8 @@ def create_default_materialization_flow(
     generate_schedule: bool = True,
     snapshot_selector: DBTSelector = None,
     test_scheduled_time: time = None,
-    pre_tests: dict = None,
-    post_tests: dict = None,
+    pre_tests: DBTTest = None,
+    post_tests: DBTTest = None,
 ) -> Flow:
     """
     Cria um flow de materialização
@@ -56,8 +56,8 @@ def create_default_materialization_flow(
             no parametro schedule_cron do selector
         snapshot_selector (DBTSelector): Objeto que representa o selector do DBT para snapshot
         test_scheduled_time (time): Horário para rodar o test no formato "HH:MM:SS"
-        run_pre_tests (dict): Configuração para testes pré-materialização
-        run_post_tests (dict): Configuração para testes pós-materialização
+        run_pre_tests (DBTTest): Configuração para testes pré-materialização
+        run_post_tests (DBTTest): Configuração para testes pós-materialização
 
         Returns:
             Flow: Flow de materialização
@@ -144,24 +144,24 @@ def create_default_materialization_flow(
                 timestamp,
                 test_scheduled_time,
                 dbt_run_vars,
-                pre_tests.get("dbt_test"),
+                pre_tests,
                 upstream_tasks=[complete_sources],
             )
 
             with case(run_pre_test, True):
                 dbt_pre_test = run_dbt(
                     resource="test",
-                    test_name=pre_tests.get("test_name"),
-                    dataset_id=pre_tests.get("dataset_id"),
-                    table_id=pre_tests.get("table_id"),
-                    model=pre_tests.get("model"),
+                    test_name=pre_tests["test_name"],
+                    dataset_id=pre_tests["dataset_id"],
+                    table_id=pre_tests["table_id"],
+                    model=pre_tests["model"],
                     flags=flags,
                     _vars=pre_test_vars,
                     upstream_tasks=[run_pre_test],
                 )
                 notify_pre_test = dbt_data_quality_checks(
                     dbt_logs=dbt_pre_test,
-                    checks_list=pre_tests.get("checks_list"),
+                    checks_list=pre_tests["checks_list"],
                     params=pre_test_vars,
                 )
                 wait_pre_test = notify_pre_test
@@ -184,24 +184,24 @@ def create_default_materialization_flow(
                 timestamp,
                 test_scheduled_time,
                 dbt_run_vars,
-                post_tests.get("dbt_test"),
+                post_tests["dbt_test"],
                 upstream_tasks=[dbt_run],
             )
 
             with case(run_post_test, True):
                 dbt_post_test = run_dbt(
                     resource="test",
-                    test_name=post_tests.get("test_name"),
-                    dataset_id=post_tests.get("dataset_id"),
-                    table_id=post_tests.get("table_id"),
-                    model=post_tests.get("model"),
+                    test_name=post_tests["test_name"],
+                    dataset_id=post_tests["dataset_id"],
+                    table_id=post_tests["table_id"],
+                    model=post_tests["model"],
                     flags=flags,
                     _vars=post_test_vars,
                     upstream_tasks=[run_post_test],
                 )
                 notify_post_test = dbt_data_quality_checks(
                     dbt_logs=dbt_post_test,
-                    checks_list=post_tests.get("checks_list"),
+                    checks_list=post_tests["checks_list"],
                     params=post_test_vars,
                 )
                 wait_post_test = notify_post_test
