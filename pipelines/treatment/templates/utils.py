@@ -207,10 +207,16 @@ class DBTTest:
 
         pattern = constants.MATERIALIZATION_LAST_RUN_PATTERN.value
 
-        return {
+        final_dict = {
             "date_range_start": datetime_start.strftime(pattern),
             "date_range_end": datetime_end.strftime(pattern),
-        } | self.additional_vars
+        }
+
+        collision = final_dict.keys() & self.additional_vars.keys()
+        if collision:
+            raise ValueError(f"Variáveis reservadas não podem ser sobrescritas: {collision}")
+
+        return final_dict | self.additional_vars
 
     def adjust_datetime_range(
         self, datetime_start: datetime, datetime_end: datetime
