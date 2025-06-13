@@ -197,11 +197,16 @@ with
             coalesce(
                 round(
                     100 * sum(
-                        if(
-                            v.tipo_viagem not in ("Não licenciado", "Não vistoriado"),
-                            v.distancia_planejada,
-                            0
-                        )
+                        case
+                            when
+                                p.data >= date("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}")
+                                and v.tipo_viagem
+                                not in ("Não licenciado", "Não vistoriado")
+                            then v.distancia_planejada
+                            when p.data < date("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}")
+                            then v.distancia_planejada
+                            else 0
+                        end
                     )
                     / p.km_planejada,
                     2

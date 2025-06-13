@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.2.4] - 2025-06-12
+
+### Alterao
+
+- Inserido ajuste para o tipo_os `Eleição` com feed_start_date `2024-09-29` e `2024-11-06` para considerar o planejamento do GTFS de sábado no domingo. Afetado o modelo `ordem_servico_trips_shapes_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/510)
+
 ## [1.2.3] - 2025-05-29
 
 ### Alterado
