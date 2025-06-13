@@ -750,7 +750,7 @@ def run_dbt(
 
 
 @task(nout=2)
-def check_scheduled_test(
+def setup_dbt_test(
     timestamp: datetime,
     test_scheduled_time: time,
     dbt_vars: dict,
@@ -772,7 +772,9 @@ def check_scheduled_test(
             - test_vars: Variáveis ajustadas para o teste DBT
     """
 
-    should_run = timestamp.time() == test_scheduled_time
+    should_run = (
+        timestamp.time() == test_scheduled_time if test_scheduled_time is not None else True
+    )
 
     if not should_run:
         return False, dbt_vars
@@ -782,23 +784,13 @@ def check_scheduled_test(
     datetime_start = datetime.strptime(dbt_vars["date_range_start"], pattern)
     datetime_end = datetime.strptime(dbt_vars["date_range_end"], pattern)
 
-    adjusted_start, adjusted_end = dbt_test.adjust_datetime_range(datetime_start, datetime_end)
+    adjusted_start, adjusted_end = dbt_test.adjust_datetime_range(
+        datetime_start=datetime_start, datetime_end=datetime_end
+    )
 
     test_vars = dbt_vars.copy()
     test_vars.update(
-        {
-            "date_range_start": adjusted_start.strftime(pattern),
-            "date_range_end": adjusted_end.strftime(pattern),
-        }
+        dbt_test.get_test_vars(datetime_start=adjusted_start, datetime_end=adjusted_end)
     )
-
-    if dbt_test.additional_vars:
-        test_vars.update(dbt_test.additional_vars)
-
-    log("Variáveis do teste ajustadas:")
-    log(f"  - date_range_start: {test_vars['date_range_start']}")
-    log(f"  - date_range_end: {test_vars['date_range_end']}")
-    if dbt_test.additional_vars:
-        log(f"  - additional_vars: {dbt_test.additional_vars}")
 
     return True, test_vars

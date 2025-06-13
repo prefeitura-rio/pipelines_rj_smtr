@@ -178,6 +178,25 @@ class DBTTest:
     def __getitem__(self, key):
         return self.__dict__[key]
 
+    def get_test_vars(self, datetime_start: datetime, datetime_end: datetime) -> dict:
+        """
+        Retorna dict para teste
+
+        Args:
+            datetime_start (datetime): Datetime inicial
+            datetime_end (datetime): Datetime final
+
+        Returns:
+            dict: dicionário com parâmetros para o teste do dbt
+        """
+
+        pattern = constants.MATERIALIZATION_LAST_RUN_PATTERN.value
+
+        return {
+            "date_range_start": datetime_start.strftime(pattern),
+            "date_range_end": datetime_end.strftime(pattern),
+        } | self.additional_vars
+
     def adjust_datetime_range(
         self, datetime_start: datetime, datetime_end: datetime
     ) -> tuple[datetime, datetime]:
