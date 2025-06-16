@@ -799,3 +799,25 @@ Datetime que o registro da realocação foi informado pela empresa operadora
 {% docs servico_realocacao %}
 Linha de ônibus [serviço] realocada informada pela empresa operadora
 {% enddocs %}
+
+{% docs data_pagamento %}
+Data de pagamento
+{% enddocs %}
+
+{% docs data_operacao %}
+Data de operação
+{% enddocs %}
+
+{% docs status_veiculo %}
+Classificação, observados os demais parâmetros - Categorias:
+  - Não licenciado - Veículo que operou, mas não é licenciado
+  - Autuado por ar inoperante - Veículo que operou, foi licenciado com ar condicionado e foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado (023.II)
+  - Autuado por segurança - Veículo que operou, foi licenciado, mas foi autuado por infração relacionada à segurança do veículo
+  - Autuado por limpeza/equipamento - Veículo que operou, foi licenciado, mas foi autuado cumulativamente por infrações relacionadas à limpeza e equipamentos do veículo
+  - Sem ar e não autuado - Veículo que operou, foi licenciado sem ar condicionado e não foi autuado
+  - Com ar e não autuado - Veículo que operou, foi licenciado com ar condicionado e não foi autuado
+{% enddocs %}
+
+{% docs indicadores_veiculo %}
+Indicadores para caraterização do status do veículo
+{% enddocs %}
