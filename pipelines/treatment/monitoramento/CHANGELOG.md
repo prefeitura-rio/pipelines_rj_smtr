@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.1.6] - 2025-06-17
+
+### Alterado
+
+- Altera parâmetros para execução do teste do dbt no flow de materialização do gps (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/622)
+
 ## [1.1.5] - 2025-06-06
 
 ### Adicionado
