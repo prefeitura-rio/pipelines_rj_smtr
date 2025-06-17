@@ -1,5 +1,17 @@
 # Changelog - treatment
 
+## [1.1.6] - 2025-06-17
+
+### Adicionado
+
+- Cria objeto `DBTTest` para configuração dos testes do dbt (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/622)
+- Cria task `setup_dbt_test` que retorna variáveis dos testes do dbt (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/622)
+- Adiciona parâmetro `test_scheduled_time` no flow genérico (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/622)
+
+### Corrigido
+
+- Corrige task `check_dbt_test_run` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/622)
+
 ## [1.1.5] - 2025-06-06
 
 ### Adicionado
