@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.4.2] - 2025-06-18
+
+### Alterado
+
+- Altera lógica do modelo  `gps_segmento_viagem` para considerar vigência da camada dos túneis (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/617)
+
 ## [1.4.1] - 2025-06-06
 
 ### Adicionado
