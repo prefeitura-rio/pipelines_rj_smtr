@@ -3,6 +3,13 @@
 {% if var("tipo_materializacao") == "monitoramento" %} {% set interval_minutes = 120 %}
 {% elif var("tipo_materializacao") == "subsidio" %} {% set interval_minutes = 30 %}
 {% endif %}
+
+{% set status_viagem = (
+    '("Licenciado com ar e não autuado", "Licenciado sem ar e não autuado")'
+) %}
+
+{% set sem_transacao = "coalesce(tr.quantidade_transacao_riocard, 0) = 0  and coalesce(t.quantidade_transacao, 0) = 0" %}
+
 with
     -- 1. Transações Jaé
     transacao as (
@@ -313,34 +320,34 @@ select
                 or (
                     v.data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
                     and (
-                        (
-                            coalesce(tr.quantidade_transacao_riocard, 0) = 0
-                            and coalesce(t.quantidade_transacao, 0) = 0
-                        )
+                        ({{ sem_transacao }})
                         or coalesce(eev.indicador_estado_equipamento_aberto, false)
                         = false
                     )
                 )
                 or (
                     v.data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
-                    and (
-                        (
-                            coalesce(tr.quantidade_transacao_riocard, 0) = 0
-                            and coalesce(t.quantidade_transacao, 0) = 0
-                        )
-                        or tr.quantidade_transacao_riocard_servico_divergente > 0
-                        or t.quantidade_transacao_servico_divergente > 0
-                        or eev.quantidade_gps_servico_divergente > 0
-                        or coalesce(eev.indicador_estado_equipamento_aberto, false)
-                        = false
-                    )
+                    and ({{ sem_transacao }})
                 )
             )
-            and ve.status
-            in ("Licenciado com ar e não autuado", "Licenciado sem ar e não autuado")
+            and ve.status in {{ status_viagem }}
             and v.datetime_partida not between "2024-10-06 06:00:00"
             and "2024-10-06 20:00:00"  -- Eleição (2024-10-06)
         then "Sem transação"
+        when
+            v.data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+            and coalesce(eev.indicador_estado_equipamento_aberto, false) = false
+            and ve.status in {{ status_viagem }}
+        then "Validador fechado"
+        when
+            v.data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+            and (
+                tr.quantidade_transacao_riocard_servico_divergente > 0
+                or t.quantidade_transacao_servico_divergente > 0
+                or eev.quantidade_gps_servico_divergente > 0
+            )
+            and ve.status in {{ status_viagem }}
+        then "Validador associado incorretamente"
         else ve.status
     end as tipo_viagem,
     ve.tecnologia,
