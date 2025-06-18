@@ -11,18 +11,9 @@ with
             tipo_dia,
             consorcio,
             servico,
-            sum(
-                case
-                    when
-                        data >= date("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}")
-                        and tipo_viagem not in ("Não licenciado", "Não vistoriado")
-                    then km_apurada_faixa
-                    when data < date("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}")
-                    then km_apurada_faixa
-                    else 0
-                end
-            ) as km_apurada_faixa
-        from {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
+            sum(km_apurada_faixa) as km_apurada_faixa
+        {# from {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }} #}
+        from rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem
         where
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
