@@ -43,6 +43,7 @@ with
             and (distancia_total_planejada > 0 or distancia_total_planejada is null)
             and (id_tipo_trajeto = 0 or id_tipo_trajeto is null)
             and data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
+            and not (data between "2023-12-31" and "2024-01-01" and servico in ("583","584") and sentido = "I") -- Alteração para o reprocessamento do TCM - MTR-CAP-2025/03003 (2023-10-01 a 2024-01-31)
     ),
     viagens_planejadas as (
         select

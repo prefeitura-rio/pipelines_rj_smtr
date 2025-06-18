@@ -37,13 +37,13 @@ with
                         /* Versão fixa do STU em 2024-03-25 para mar/Q1 devido à falha de
              atualização na fonte da dados (SIURB) */
                         when
-                            date(periodo.data) >= "2024-03-01"
+                            date(periodo.data) >= date("2024-03-01")
                             and date(periodo.data) < "2024-03-16"
                         then date("2024-03-25")
                         /* Versão fixa do STU em 2024-04-09 para mar/Q2 devido à falha de
              atualização na fonte da dados (SIURB) */
                         when
-                            date(periodo.data) >= "2024-03-16"
+                            date(periodo.data) >= date("2024-03-16")
                             and date(periodo.data) < "2024-04-01"
                         then date("2024-04-09")
                         else
