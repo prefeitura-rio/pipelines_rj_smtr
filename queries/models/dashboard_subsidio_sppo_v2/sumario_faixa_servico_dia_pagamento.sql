@@ -18,8 +18,8 @@ with
             viagens_faixa,
             km_planejada_faixa,
             pof
-        from {{ ref("subsidio_faixa_servico_dia") }}
-        -- from `rj-smtr.financeiro_staging.subsidio_faixa_servico_dia`
+        from {{ ref("percentual_operacao_faixa_horaria") }}
+        -- from `rj-smtr.subsidio.percentual_operacao_faixa_horaria`
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
@@ -78,7 +78,9 @@ with
             ) as valor_total_sem_glosa,
             sum(valor_apurado) + p.valor_penalidade as valor_total_com_glosa,
             case
-                when p.valor_penalidade != 0 and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
+                when
+                    p.valor_penalidade != 0
+                    and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
                 then - p.valor_penalidade
                 else
                     safe_cast(

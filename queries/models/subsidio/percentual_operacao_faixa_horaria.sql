@@ -1,4 +1,10 @@
-{{ config(enable=false) }}
+{{
+    config(
+        materialized="incremental",
+        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+        incremental_strategy="insert_overwrite",
+    )
+}}
 
 with
     -- 1. Viagens planejadas
@@ -47,10 +53,24 @@ with
                     round(
                         100 * sum(
                             if(
-                                v.tipo_viagem
-                                not in ("Não licenciado", "Não vistoriado"),
-                                v.distancia_planejada,
-                                0
+                                (
+                                    p.data
+                                    < date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
+                                    and v.tipo_viagem
+                                    in ('Não licenciado', 'Não vistoriado')
+                                )
+                                or (
+                                    p.data
+                                    >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
+                                    and v.tipo_viagem in (
+                                        'Não licenciado',
+                                        'Não vistoriado',
+                                        'Lacrado',
+                                        'Não autorizado por ausência de ar-condicionado'
+                                    )
+                                ),
+                                0,
+                                v.distancia_planejada
                             )
                         )
                         / p.km_planejada,
