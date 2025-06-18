@@ -187,74 +187,18 @@ with
     -- Apuração de km realizado e Percentual de Operação por Faixa Horária (POF)
     servico_faixa_km_apuracao as (
         select
-            p.data,
-            p.tipo_dia,
-            p.faixa_horaria_inicio,
-            p.faixa_horaria_fim,
-            p.consorcio,
-            p.servico,
-            p.km_planejada as km_planejada,
-            coalesce(
-                round(
-                    100 * sum(
-                        if(
-                            (
-                                p.data < date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
-                                and v.tipo_viagem
-                                in ('Não licenciado', 'Não vistoriado')
-                            )
-                            or (
-                                p.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
-                                and p.data
-                                < date('{{ var("DATA_SUBSIDIO_V15B_INICIO") }}')
-                                and v.tipo_viagem in (
-                                    'Não licenciado',
-                                    'Não vistoriado',
-                                    'Lacrado',
-                                    'Não autorizado por ausência de ar-condicionado'
-                                )
-                            )
-                            or (
-                                p.data >= date('{{ var("DATA_SUBSIDIO_V15B_INICIO") }}')
-                                and (
-                                    (
-                                        v.tipo_viagem
-                                        = 'Licenciado sem ar e não autuado'
-                                        and p.servico not in (
-                                            select servico
-                                            from
-                                                {{
-                                                    ref(
-                                                        "aux_servicos_contratos_abreviados"
-                                                    )
-                                                }}
-                                        )
-                                    )
-                                    or v.tipo_viagem in (
-                                        'Não licenciado',
-                                        'Não vistoriado',
-                                        'Lacrado',
-                                        'Não autorizado por ausência de ar-condicionado'
-                                    )
-                                )
-                            ),
-                            0,
-                            v.distancia_planejada
-                        )
-                    )
-                    / p.km_planejada,
-                    2
-                ),
-                0
-            ) as pof
-        from viagem_planejada as p
-        left join
-            viagem_tecnologia as v
-            on p.data = v.data
-            and p.servico = v.servico
-            and v.datetime_partida
-            between p.faixa_horaria_inicio and p.faixa_horaria_fim
-        group by 1, 2, 3, 4, 5, 6, 7
+            data,
+            tipo_dia,
+            faixa_horaria_inicio,
+            faixa_horaria_fim,
+            consorcio,
+            servico,
+            km_planejada_faixa as km_planejada,
+            pof,
+        from {{ ref("percentual_operacao_faixa_horaria") }}
+        where
+            data
+            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
     ),
     viagem_km_tipo as (
         select distinct
@@ -267,7 +211,11 @@ with
             vt.datetime_partida,
             vt.distancia_planejada,
             case
-                when vt.tecnologia_remunerada is null then 0 else sp.subsidio_km
+                when
+                    vt.indicador_penalidade_tecnologia
+                    and vt.data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                then 0
+                else sp.subsidio_km
             end as subsidio_km,
             sp.subsidio_km_teto,
             case
