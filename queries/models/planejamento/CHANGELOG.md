@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Cria modelos `staging_tuneis` e `tuneis` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/617)
+- Cria modelo `tuneis` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/617)
 
 ### Alterado
 
