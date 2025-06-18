@@ -80,7 +80,7 @@ GPS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
         conecta_constants.CONECTA_REGISTROS_SOURCE.value,
         conecta_constants.CONECTA_REALOCACAO_SOURCE.value,
     ],
-    test_scheduled_time=time(1, 0, 0),
+    test_scheduled_time=time(1, 6, 0),
     post_tests=constants.GPS_DAILY_TEST.value,
 )
 gps_vars_conecta = {"modo_gps": "onibus", "fonte_gps": "conecta", "15_minutos": False}
@@ -94,7 +94,7 @@ GPS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
         cittati_constants.CITTATI_REGISTROS_SOURCE.value,
         cittati_constants.CITTATI_REALOCACAO_SOURCE.value,
     ],
-    test_scheduled_time=time(1, 0, 0),
+    test_scheduled_time=time(1, 6, 0),
     post_tests=constants.GPS_DAILY_TEST.value,
 )
 gps_vars_cittati = {"modo_gps": "onibus", "fonte_gps": "cittati", "15_minutos": False}
@@ -108,7 +108,7 @@ GPS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
         zirix_constants.ZIRIX_REGISTROS_SOURCE.value,
         zirix_constants.ZIRIX_REALOCACAO_SOURCE.value,
     ],
-    test_scheduled_time=time(1, 0, 0),
+    test_scheduled_time=time(1, 6, 0),
     post_tests=constants.GPS_DAILY_TEST.value,
 )
 gps_vars_zirix = {"modo_gps": "onibus", "fonte_gps": "zirix", "15_minutos": False}
