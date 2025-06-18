@@ -1,5 +1,5 @@
 /*
-- km_apurada_pod: soma das kms por tipo e por faixa horária que serão consideradas para o cálculo do POD (Percentual de Operação Diária) conforme rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem 
+- km_apurada_pod: soma das kms por tipo e por faixa horária que serão consideradas para o cálculo do POD (Percentual de Operação Diária) conforme rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem
     - Além das kms apuradas normalmente, considera também as kms não vistoriadas (2024-08-16 a 2024-09-30)
 - km_apurada: soma das kms por faixa horária que foram apuradas e utilizadas para o cálculo do subsídio conforme tabelas rj-smtr.dashboard_subsidio_sppo_v2.sumario_faixa_servico_dia e rj-smtr.dashboard_subsidio_sppo_v2.sumario_faixa_servico_dia_pagamento
 - km_planejada: soma das kms por faixa horária que foram planejadas e utilizadas para o cálculo do subsídio conforme tabelas rj-smtr.dashboard_subsidio_sppo_v2.sumario_faixa_servico_dia e rj-smtr.dashboard_subsidio_sppo_v2.sumario_faixa_servico_dia_pagamento
