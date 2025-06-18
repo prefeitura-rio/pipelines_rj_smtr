@@ -30,21 +30,20 @@ with
     ),
     tunel as (
         select
-            {# inicio_vigencia = date(dbt_valid_from)  #}
             inicio_vigencia as inicio_vigencia_tunel,
-            {# fim_vigencia = date(dbt_valid_to) #}
             fim_vigencia as fim_vigencia_tunel,
             st_union_agg(
                 st_buffer(geometry, {{ var("buffer_tunel_metros") }})
             ) as buffer_tunel
         from {{ ref("tuneis") }}
-        {# from {{ ref("snapshot_tuneis_logradouro") }} #}
         where
-            (date({{ last_feed_version }}) between inicio_vigencia and fim_vigencia)
+            (date('{{ last_feed_version }}') between inicio_vigencia and fim_vigencia)
             or (
-                date({{ last_feed_version }}) >= inicio_vigencia
+                date('{{ last_feed_version }}') >= inicio_vigencia
                 and fim_vigencia is null
             )
+            or (date('{{ last_feed_version }}') <= inicio_vigencia)
+        group by 1, 2
     ),
     intercessao_segmento as (
         select
@@ -74,7 +73,9 @@ with
             s.*,
             t.inicio_vigencia_tunel,
             t.fim_vigencia_tunel,
-            st_intersects(s.segmento, t.buffer_tunel) as indicador_tunel,
+            coalesce(
+                st_intersects(s.segmento, t.buffer_tunel), false
+            ) as indicador_tunel,
             st_area(s.buffer) / st_area(s.buffer_completo)
             < {{ var("limite_reducao_area_buffer") }} as indicador_area_prejudicada,
             s.comprimento_segmento
@@ -82,7 +83,7 @@ with
             as indicador_segmento_pequeno,
             cast(id_segmento as integer) as id_segmento_int
         from buffer_segmento_recortado s
-        cross join tunel t
+        left join tunel t on st_intersects(s.segmento, t.buffer_tunel)
     )
 select
     * except (id_segmento_int),
