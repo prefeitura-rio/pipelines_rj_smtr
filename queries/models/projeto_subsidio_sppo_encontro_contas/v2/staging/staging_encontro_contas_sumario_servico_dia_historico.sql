@@ -15,7 +15,14 @@
 select *
 from
     (
-        select * except (valor_penalidade)
+        select
+            data,
+            servico,
+            consorcio,
+            km_apurada as km_apurada_pod,
+            km_apurada,
+            km_planejada,
+            perc_km_planejada,
         from {{ sumario_servico_dia_historico }}
         where data < date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}")
         union all
