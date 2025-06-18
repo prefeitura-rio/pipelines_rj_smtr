@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adicionada exceção no modelo `licenciamento_data_versao_efetiva.sql` para utilizar a data_varsao `2025-03-22` no período de `2023-10-01`a `2024-01-31` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
+- Adicionada exceção no modelo `licenciamento_data_versao_efetiva.sql` para utilizar a data_versao `2025-03-22` no período de `2023-10-01`a `2024-01-31` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
 
 ## [2.0.7] - 2025-05-27
 

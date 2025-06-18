@@ -10,7 +10,7 @@
 
 - Corrigido o modelo `subsidio_shapes_geom.sql` para utilizar o particionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
 
-- Corrigido o modelo `viagem_completa.sql` para utilizar a coluna `data_versao_shapes` quando não `feed_start_date` for nulo (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
+- Corrigido o modelo `viagem_completa.sql` para utilizar a coluna `data_versao_shapes` quando `feed_start_date` for nulo (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
 
 ## [9.2.4] - 2025-05-29
 
