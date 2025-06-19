@@ -398,6 +398,12 @@ models:
         quote: true
       - name: id_auto_infracao
         description: "{{ doc('id_auto_infracao') }}"
+        tests:
+          - dbt_utils.relationships_where:
+              name: dbt_utils.relationships_where__id_auto_infracao__autuacao_disciplinar_historico
+              to: ref('autuacao_disciplinar_historico')
+              from_condition: id_infracao in ('add')
+              field: id_auto_infracao
         data_type: string
         quote: true
       - name: id_infracao
