@@ -51,7 +51,7 @@ with
         from {{ ref("aux_gps_parada") }}
     ),
     indicadores as (
-        select id_veiculo, datetime_gps, servico, route_id, indicador_trajeto_correto
+        select id_veiculo, datetime_gps, servico, indicador_trajeto_correto
         from {{ ref("aux_gps_trajeto_correto") }}
     ),
     novos_dados as (

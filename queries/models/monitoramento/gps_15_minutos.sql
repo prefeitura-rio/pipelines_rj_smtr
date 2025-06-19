@@ -40,7 +40,7 @@ with
     ),
     indicadores as (
         -- 4. indicador_trajeto_correto
-        select id_veiculo, datetime_gps, servico, route_id, indicador_trajeto_correto
+        select id_veiculo, datetime_gps, servico, indicador_trajeto_correto
         from {{ ref("aux_gps_trajeto_correto") }}
     )
 -- 5. Junção final
