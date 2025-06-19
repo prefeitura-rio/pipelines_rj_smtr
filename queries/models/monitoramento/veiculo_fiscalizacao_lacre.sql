@@ -38,7 +38,7 @@ with
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
         qualify
             row_number() over (
-                partition by n_o_de_ordem, placa, data_do_lacre
+                partition by n_o_de_ordem, placa, data_do_lacre, no_do_auto
                 order by timestamp_captura desc
             )
             = 1
@@ -110,7 +110,7 @@ where
     or data_fim_lacre is null
 qualify
     row_number() over (
-        partition by data_inicio_lacre, id_veiculo, placa
+        partition by data_inicio_lacre, id_veiculo, placa, id_auto_infracao
         order by datetime_ultima_atualizacao_fonte desc
     )
     = 1

@@ -99,7 +99,6 @@ with
         )
     select * except (sha_dado)
     from dados_completos_sha
-    window win as (partition by id_auto_infracao order by ordem)
     qualify
         (
             fonte = 'tratada'
@@ -114,5 +113,6 @@ with
                 lag(sha_dado) over (win) != sha_dado or lag(sha_dado) over (win) is null
             )
         )
+    window win as (partition by id_auto_infracao order by ordem)
 {% else %} select * from dados_novos
 {% endif %}

@@ -17,7 +17,7 @@
     {% set licenciamento_previous_file_query %}
         select concat("'", max(data_arquivo_fonte), "'") as data
         from {{ this }}
-        where data = date_sub("{{ var('date_range_start') }}", interval 1 day)
+        where data = date_sub(date("{{ var('date_range_start') }}"), interval 1 day)
 
     {% endset %}
 
@@ -26,28 +26,65 @@
     ) %}
 
     {% set inicio_vinculo_partitions_query %}
-        with novos_veiculos as (
-            select date(data) as data, data_inicio_vinculo
+        with staging as (
+            select date(data) as data, id_veiculo, placa, data_inicio_vinculo
             from {{ staging_licenciamento_stu }}
             where
-                date(data) between date("{{ licenciamento_previous_file }}") and date(
+                date(data) between date({{ licenciamento_previous_file }}) and date(
                     "{{ var('date_range_end') }}"
                 )
+        ),
+        novos_veiculos as (
+            select *
+            from staging
             qualify lag(data_inicio_vinculo) over(partition by id_veiculo, placa order by data) is null
         ),
         menor_inicio_vinculo as (
             select
                 min(data_inicio_vinculo) as data_inicio_vinculo
             from novos_veiculos
-            where data != date("{{ licenciamento_previous_file }}")
+            where data != date({{ licenciamento_previous_file }})
         )
-        select distinct data
+        select distinct concat("'", max(data), "'") as data
         from menor_inicio_vinculo,
         unnest(generate_date_array(data_inicio_vinculo, date("{{ var('date_range_start') }}"), interval 1 day)) as data
 
     {% endset %}
+
     {% set inicio_vinculo_partitions = (
         run_query(inicio_vinculo_partitions_query).columns[0].values()
+    ) %}
+
+    {% set vistoria_partitions_query %}
+        with staging as (
+            select date(data) as data, id_veiculo, placa, data_ultima_vistoria
+            from {{ staging_licenciamento_stu }}
+            where
+                date(data) between date({{ licenciamento_previous_file }}) and date(
+                    "{{ var('date_range_end') }}"
+                )
+        ),
+        veiculos_vistoriados as (
+            select *
+            from staging
+            qualify
+                (lag(data_ultima_vistoria) over(win) is null and data_ultima_vistoria is not null)
+                or lag(data_ultima_vistoria) over(win) != data_ultima_vistoria
+            window win as (partition by id_veiculo, placa order by data)
+        ),
+        menor_data_vistoria as (
+            select
+                min(data_ultima_vistoria) as data_ultima_vistoria
+            from veiculos_vistoriados
+            where data != date({{ licenciamento_previous_file }})
+        )
+        select distinct concat("'", max(data), "'") as data
+        from menor_data_vistoria,
+        unnest(generate_date_array(data_ultima_vistoria, date("{{ var('date_range_start') }}"), interval 1 day)) as data
+
+    {% endset %}
+    {% set vistoria_partitions = (
+        run_query(vistoria_partitions_query).columns[0].values()
     ) %}
 
     {% set lacre_partitions_query %}
@@ -122,14 +159,11 @@ with
         where
             data > "2025-03-31"
             {% if is_incremental() %}
-                and date(
-                    data
-                ) between date("{{ licenciamento_previous_file }}") and date(
+                and date(data) between date({{ licenciamento_previous_file }}) and date(
                     "{{ var('date_range_end') }}"
                 )
             {% endif %}
         window win as (partition by data, id_veiculo, placa order by data)
-
     ),
     datas_faltantes as (
         select distinct
@@ -141,8 +175,8 @@ with
             unnest(
                 {% if is_incremental() %}
                     generate_date_array(
-                        '{{ var("date_range_start") }}',
-                        '{{ var("date_range_end") }}',
+                        date('{{ var("date_range_start") }}'),
+                        date('{{ var("date_range_end") }}'),
                         interval 1 day
                     )
                 {% else %}
@@ -197,46 +231,63 @@ with
                     or data in ({{ inicio_vinculo_partitions | join(", ") }})
 
                 {% endif %}
+                {% if vistoria_partitions | length > 0 %}
+                    or data in ({{ vistoria_partitions | join(", ") }})
+
+                {% endif %}
         ),
-        dados_novos_lacre as (
-            select *
+        dados_novos_lacre_vistoria as (
+            select * except (ultima_data, primeira_data)
             from dados_novos
-            {% if lacre_partitions | length > 0 %}
+
+            {% if lacre_partitions | length > 0 or vistoria_partitions | length > 0 %}
                 union all
 
                 select
-                    data,
+                    da.data,
                     current_date("America/Sao_Paulo") as data_processamento,
-                    * except (
+                    da.* except (
                         data,
                         data_processamento,
                         indicador_veiculo_lacrado,
                         versao,
                         datetime_ultima_atualizacao
                     )
-                from dados_atuais
+                from dados_atuais da
+                left join
+                    (
+                        select distinct data, id_veiculo, placa from dados_novos
+                    ) dn using (data, id_veiculo, placa)
                 where
-                    data in ({{ lacre_partitions | join(", ") }})
-                    and concat(data, id_veiculo, placa)
-                    not in (select concat(data, id_veiculo, placa) from dados_novos)
+                    (
+                        {% if lacre_partitions | length > 0 %}
+                            data in ({{ lacre_partitions | join(", ") }})
+                        {% else %}data = '2000-01-01'
+                        {% endif %}
+                        or {% if vistoria_partitions | length > 0 %}
+                            data in ({{ vistoria_partitions | join(", ") }})
+                        {% else %} data = '2000-01-01'
+                        {% endif %}
+                    )
+                    and dn.data is null
                 qualify
                     row_number() over (
                         partition by data, id_veiculo, placa
                         order by data_processamento desc
                     )
                     = 1
+
             {% endif %}
         )
-    {% else %} dados_novos_lacre as (select * from dados_novos)
+    {% else %} dados_novos_lacre_vistoria as (select * from dados_novos)
     {% endif %},
     veiculo_lacrado as (
         select
-            dn.* except (ultima_data, primeira_data, data_arquivo_fonte),
+            dn.*,
             vfl.id_veiculo is not null as indicador_veiculo_lacrado,
-            data_arquivo_fonte,
             '{{ var("version") }}' as versao,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
-        from dados_novos_lacre dn
+        from dados_novos_lacre_vistoria dn
         left join
             veiculo_fiscalizacao_lacre vfl
             on dn.id_veiculo = vfl.id_veiculo
@@ -253,47 +304,139 @@ with
                 order by indicador_veiculo_lacrado desc
             )
             = 1
-    )
-{% if is_incremental() %}
-        ,
-        dados_completos as (
-            select *
-            from dados_atuais
+    ),
+    data_vistoria_atualizacao as (
+        select
+            date(data) as data,
+            id_veiculo,
+            placa,
+            data_ultima_vistoria,
+            ano_ultima_vistoria
+        from dados_novos
+        qualify
+            (
+                lag(data_ultima_vistoria) over (win) is null
+                and data_ultima_vistoria is not null
+            )
+            or lag(data_ultima_vistoria) over (win) != data_ultima_vistoria
+        window win as (partition by id_veiculo, placa order by data)
 
-            union all
+    ),
+    nova_data_ultima_vistoria as (
+        select
+            nova_data as data,
+            id_veiculo,
+            placa,
+            data_ultima_vistoria,
+            ano_ultima_vistoria
+        from
+            data_vistoria_atualizacao d,
+            unnest(
+                generate_date_array(data_ultima_vistoria, data, interval 1 day)
+            ) as nova_data
+        qualify
+            row_number() over (
+                partition by nova_data, id_veiculo, placa order by d.data desc
+            )
+            = 1
+    ),
+    veiculo_vistoriado as (
+        select
+            v.* except (data_ultima_vistoria, ano_ultima_vistoria),
+            ifnull(
+                d.data_ultima_vistoria, v.data_ultima_vistoria
+            ) as data_ultima_vistoria,
+            ifnull(d.ano_ultima_vistoria, v.ano_ultima_vistoria) as ano_ultima_vistoria
+        from veiculo_lacrado_deduplicado v
+        left join nova_data_ultima_vistoria d using (data, id_veiculo, placa)
+    ),
+    final as (
+        {% if is_incremental() %}
 
-            select *
-            from veiculo_lacrado_deduplicado
-        ),
-        dados_completos_sha as (
-            {% set columns = (
-                list_columns()
-                | reject(
-                    "in",
-                    [
-                        "data_processamento",
-                        "versao",
-                        "datetime_ultima_atualizacao",
-                    ],
+            with
+                dados_completos as (
+                    select *, 1 as priority
+                    from dados_atuais
+
+                    union all by name
+
+                    select *, 0 as priority
+                    from veiculo_vistoriado
+                ),
+                dados_completos_sha as (
+                    {% set columns = (
+                        list_columns()
+                        | reject(
+                            "in",
+                            [
+                                "data_processamento",
+                                "versao",
+                                "datetime_ultima_atualizacao",
+                            ],
+                        )
+                        | list
+                    ) %}
+
+                    select
+                        *,
+                        sha256(
+                            concat(
+                                {% for c in columns %}
+                                    ifnull(cast({{ c }} as string), 'n/a')
+                                    {% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            )
+                        ) as sha_dado
+                    from dados_completos
+                    qualify
+                        row_number() over (
+                            partition by data, data_processamento, id_veiculo, placa
+                            order by priority
+                        )
+                        = 1
                 )
-                | list
-            ) %}
-
-            select
-                *,
-                sha256(
-                    concat(
-                        {% for c in columns %}
-                            ifnull(cast({{ c }} as string), 'n/a')
-                            {% if not loop.last %}, {% endif %}
-                        {% endfor %}
-                    )
-                ) as sha_dado
-            from dados_completos
-        )
-    select * except (sha_dado)
-    from dados_completos_sha
-    window win as (partition by data, id_veiculo, placa order by data_processamento)
-    qualify lag(sha_dado) over (win) != sha_dado or lag(sha_dado) over (win) is null
-{% else %} select * from veiculo_lacrado_deduplicado
-{% endif %}
+            select * except (sha_dado)
+            from dados_completos_sha
+            qualify
+                lag(sha_dado) over (win) != sha_dado or lag(sha_dado) over (win) is null
+            window
+                win as (
+                    partition by data, id_veiculo, placa order by data_processamento
+                )
+        {% else %}select * from veiculo_vistoriado
+        {% endif %}
+    )
+select
+    data,
+    data_processamento,
+    id_veiculo,
+    placa,
+    modo,
+    permissao,
+    ano_fabricacao,
+    id_carroceria,
+    id_interno_carroceria,
+    carroceria,
+    id_chassi,
+    id_fabricante_chassi,
+    nome_chassi,
+    id_planta,
+    tipo_veiculo,
+    status,
+    data_inicio_vinculo,
+    data_ultima_vistoria,
+    ano_ultima_vistoria,
+    ultima_situacao,
+    tecnologia,
+    quantidade_lotacao_pe,
+    quantidade_lotacao_sentado,
+    tipo_combustivel,
+    indicador_ar_condicionado,
+    indicador_elevador,
+    indicador_usb,
+    indicador_wifi,
+    indicador_veiculo_lacrado,
+    data_arquivo_fonte,
+    versao,
+    datetime_ultima_atualizacao
+from final
