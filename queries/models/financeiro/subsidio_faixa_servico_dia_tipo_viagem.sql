@@ -60,8 +60,7 @@ with
             safe_cast(
                 json_value(indicadores, "$.indicador_ar_condicionado") as bool
             ) as indicador_ar_condicionado
-        from {{ ref("sppo_veiculo_dia") }}
-        -- from `rj-smtr.veiculo.sppo_veiculo_dia`
+        from {{ ref("aux_veiculo_dia_consolidada") }}
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')

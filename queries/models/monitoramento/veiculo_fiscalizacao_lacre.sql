@@ -11,7 +11,7 @@
 }}
 
 {% set incremental_filter %}
-  date(data) between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
+    date(data) between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
 {% endset %}
 
 {% set staging_veiculo_fiscalizacao_lacre = ref("staging_veiculo_fiscalizacao_lacre") %}
@@ -38,7 +38,7 @@ with
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
         qualify
             row_number() over (
-                partition by n_o_de_ordem, placa, data_do_lacre
+                partition by n_o_de_ordem, placa, data_do_lacre, no_do_auto
                 order by timestamp_captura desc
             )
             = 1
@@ -108,3 +108,9 @@ join aux_datetime_ultima_atualizacao a using (id_veiculo, placa, data_inicio_lac
 where
     data_fim_lacre > '{{ var("data_inicial_veiculo_fiscalizacao_lacre") }}'
     or data_fim_lacre is null
+qualify
+    row_number() over (
+        partition by data_inicio_lacre, id_veiculo, placa, id_auto_infracao
+        order by datetime_ultima_atualizacao_fonte desc
+    )
+    = 1

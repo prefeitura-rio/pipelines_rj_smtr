@@ -59,4 +59,5 @@ select
             )
     end as data_inicio_vinculo,
     safe_cast(json_value(content, "$.ultima_situacao") as string) ultima_situacao,
+    safe_cast(json_value(content, "$.ano_ultima_vistoria") as int64) ano_ultima_vistoria
 from {{ source("veiculo_staging", "licenciamento_stu") }} as t
