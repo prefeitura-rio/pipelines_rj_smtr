@@ -1,3 +1,9 @@
+{{
+    config(
+        materialized="table",
+    )
+}}
+
 select
     safe_cast(status as string) as status,
     nullif(safe_cast(tecnologia as string), '') as tecnologia,

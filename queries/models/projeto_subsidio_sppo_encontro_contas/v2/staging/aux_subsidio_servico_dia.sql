@@ -13,7 +13,8 @@ with
     ),
     -- 2. Lista pares dia-serviço subsidiados
     subsidio_dia as (
-        select data, consorcio, servico, km_apurada, perc_km_planejada
+        select
+            data, consorcio, servico, km_apurada, perc_km_planejada, valor_subsidio_pago
         from {{ ref("encontro_contas_subsidio_sumario_servico_dia_historico") }}
         where data between "{{ var('start_date') }}" and "{{ var('end_date') }}"
     )

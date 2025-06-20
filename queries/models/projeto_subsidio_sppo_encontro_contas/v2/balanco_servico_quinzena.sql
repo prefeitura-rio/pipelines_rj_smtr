@@ -31,14 +31,14 @@ select
     consorcio,
     servico,
     count(data) as quantidade_dias_subsidiado,
-    sum(km_subsidiada) as km_subsidiada,
+    sum(km_apurada) as km_apurada,
     sum(receita_total_esperada) as receita_total_esperada,
     sum(receita_tarifaria_esperada) as receita_tarifaria_esperada,
     sum(subsidio_esperado) as subsidio_esperado,
     sum(subsidio_glosado) as subsidio_glosado,
     sum(receita_total_aferida) as receita_total_aferida,
     sum(receita_tarifaria_aferida) as receita_tarifaria_aferida,
-    sum(subsidio_pago) as subsidio_pago,
+    sum(valor_subsidio_pago) as subsidio_pago,
     sum(saldo) as saldo
 from quinzenas qz
 left join
