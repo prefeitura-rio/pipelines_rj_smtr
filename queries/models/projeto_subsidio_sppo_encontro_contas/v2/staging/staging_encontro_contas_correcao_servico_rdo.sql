@@ -7,7 +7,15 @@ select
         replace(regexp_replace(receita_tarifaria, r"[^\d,]", ""), ",", ".") as numeric
     ) as receita_tarifaria_aferida_rdo,
     trim(tipo) as tipo,
-    trim(servico) as servico,
+    case
+        when length(trim(servico)) < 3
+        then lpad(trim(servico), 3, "0")
+        else
+            concat(
+                ifnull(regexp_extract(trim(servico), r"[A-Z]+"), ""),
+                ifnull(regexp_extract(trim(servico), r"[0-9]+"), "")
+            )
+    end as servico,
     trim(servico_corrigido) as servico_corrigido,
 from
     {{

@@ -1,9 +1,8 @@
-{{
+{# {{
     config(
         materialized="ephemeral",
     )
-}}
-
+}} #}
 -- Datas que serão desconsideradas no encontro de contas juntamente com o motivo
 {% set datas_excecoes_dict = {
     "2024-10-06": "Eleições 2024",
@@ -50,7 +49,7 @@ with
         where
             data >= "{{ var('DATA_SUBSIDIO_V9_INICIO') }}"  -- Válido apenas a partir da data de início da apuração por faixa horária
             and data between "{{ var('start_date') }}" and "{{ var('end_date') }}"
-            and data not in ({{ datas_excecoes_dict.keys() | join(", ") }})  -- Remove datas de exceção que serão desconsideradas no encontro de contas
+            and data not in ("{{ datas_excecoes_dict.keys() | join(", ") }}")  -- Remove datas de exceção que serão desconsideradas no encontro de contas
             and consorcio in ("Internorte", "Intersul", "Santa Cruz", "Transcarioca")
             and not (
                 length(ifnull(regexp_extract(linha, r"[0-9]+"), "")) = 4
@@ -62,7 +61,7 @@ with
     -- serviço correto que deve ser utilizado no encontro de contas)
     correcao_servico_rdo as (select * from {{ ref("correcao_servico_rdo") }}),
     -- 4. Remove pares dia-serviço sem receita tarifária aferida
-    rdo_filtrado as (select * from rdo_corrigido where receita_tarifaria_aferida != 0),
+    rdo_filtrado as (select * from rdo_raw where receita_tarifaria_aferida != 0),
     -- 5. Associa serviço corrigido aos pares dia-serviço do RDO
     rdo_corrigido as (
         select *
@@ -70,7 +69,7 @@ with
         left join
             (
                 select
-                    * except (servico_corrigido),
+                    * except (servico_corrigido, tipo),
                     servico_corrigido as servico_corrigido_rdo
                 from correcao_servico_rdo
                 where tipo = "Sem planejamento porém com receita tarifária"
@@ -78,12 +77,12 @@ with
     ),
     -- 6. Lista pares dia-serviço subsidiados
     sumario_dia as (
-        select data, consorcio, servico, perc_km_planejada
-        from {{ ref("staging_encontro_contas_sumario_servico_dia_historico") }}
+        select data, consorcio, servico, km_apurada, perc_km_planejada
+        from {{ ref("encontro_contas_sumario_servico_dia_historico") }}
         where
             data >= "{{ var('DATA_SUBSIDIO_V9_INICIO') }}"  -- Válido apenas a partir da data de início da apuração por faixa horária
             and data between "{{ var('start_date') }}" and "{{ var('end_date') }}"
-            and data not in ({{ datas_excecoes_dict.keys() | join(", ") }})  -- Remove datas de exceção que serão desconsideradas no encontro de contas
+            and data not in ("{{ datas_excecoes_dict.keys() | join(", ") }}")  -- Remove datas de exceção que serão desconsideradas no encontro de contas
     ),
     -- 7. Filtra apenas pares dia-serviço com POD >= 80%
     sumario_dia_filtrado as (select * from sumario_dia where perc_km_planejada >= 80),
@@ -94,19 +93,20 @@ with
         left join
             (
                 select
-                    * except (servico_corrigido),
+                    * except (servico_corrigido, tipo),
                     servico_corrigido as servico_corrigido_sumario
                 from correcao_servico_rdo
                 where tipo = "Subsídio pago sem receita tarifária"
             ) using (data, servico)
-    )
+    ),
     -- 9. Associa pares dia-serviço subsidiados aos pares dia-serviço de receita
     -- tarifária
-    sumario_dia_rdo(
+    sumario_dia_rdo as (
         select
             coalesce(sd.data, rdo.data) as data,
             coalesce(sd.consorcio, rdo.consorcio) as consorcio,
-            coalesce(sd.servico, rdo.servico) as servico,
+            sd.servico as servico_sumario,
+            rdo.servico as servico_rdo,
             sd.* except (data, consorcio, servico),
             rdo.* except (data, consorcio, servico)
         from sumario_dia_corrigido as sd
@@ -123,7 +123,7 @@ with
             )
     )
 -- 10. Remove pares dia-serviço atípicos
-select *
-from sumario_dia_rdo
-left join servico_dia_atipico as sda using (data, servico)
-where sda.data is null
+select s.*, sda.data is not null as indicador_atipico
+from sumario_dia_rdo as s
+left join
+    servico_dia_atipico as sda on s.data = sda.data and s.servico_sumario = sda.servico
