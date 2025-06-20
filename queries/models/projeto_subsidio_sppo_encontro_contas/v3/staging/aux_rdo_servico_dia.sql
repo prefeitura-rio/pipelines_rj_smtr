@@ -8,9 +8,13 @@
 {% set rdo40_registros = "rj-smtr.br_rj_riodejaneiro_rdo.rdo40_registros" %}
 
 with
--- 3. Lista pares dia-serviço com correção do serviço (serviço corrigido é o
+    -- 1. Lista pares dia-serviço com correção do serviço (serviço corrigido é o
     -- serviço correto que deve ser utilizado no encontro de contas)
-    correcao_servico_rdo as (select * from {{ ref("correcao_servico_rdo") }}),
+    correcao_servico_rdo as (
+        select *
+        from {{ ref("correcao_servico_rdo") }}
+        where tipo = "Sem planejamento porém com receita tarifária"
+    ),
     -- 2. Calcula a receita tarifária para cada par dia-serviço
     rdo_raw as (
         select
@@ -46,19 +50,12 @@ with
             )  -- Remove rodoviários
         group by all
     ),
-    -- 4. Remove pares dia-serviço sem receita tarifária aferida
+    -- 3. Remove pares dia-serviço sem receita tarifária aferida
     rdo_filtrado as (select * from rdo_raw where receita_tarifaria_aferida != 0)
--- 5. Associa serviço corrigido aos pares dia-serviço do RDO
+-- 4. Associa serviço corrigido aos pares dia-serviço do RDO
 select
     r.* except (servico),
     servico as servico_original_rdo,
-    coalesce(servico_corrigido_rdo, servico) as servico
+    coalesce(servico_corrigido, servico) as servico
 from rdo_filtrado as r
-left join
-    (
-        select
-            * except (servico_corrigido, tipo),
-            servico_corrigido as servico_corrigido_rdo
-        from correcao_servico_rdo
-        where tipo = "Sem planejamento porém com receita tarifária"
-    ) using (data, servico)
+left join correcao_servico_rdo using (data, servico)
