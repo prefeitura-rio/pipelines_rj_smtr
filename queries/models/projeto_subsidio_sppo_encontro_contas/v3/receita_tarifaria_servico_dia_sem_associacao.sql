@@ -71,7 +71,7 @@ with
         from
             {# {{ ref("sumario_servico_dia_historico") }} #}
             {# `rj-smtr.monitoramento.sumario_servico_dia_historico` #}
-            {{ ref("encontro_contas_sumario_servico_dia_historico") }}
+            {{ ref("encontro_contas_subsidio_sumario_servico_dia_historico") }}
         where
             data between "{{ var('start_date') }}" and "{{ var('end_date') }}"
             and data not in ("2024-10-06")  -- Eleições 2024
