@@ -1,11 +1,14 @@
 {{ config(materialized="ephemeral") }}
 select
-    * except (data, receita_tarifaria, tipo),
+    * except (data, receita_tarifaria, tipo, data_resposta, servico, servico_corrigido),
     parse_date("%d/%m/%Y", data) as data,
+    parse_date("%d/%m/%Y", data_resposta) as data_resposta,
     safe_cast(
         replace(regexp_replace(receita_tarifaria, r"[^\d,]", ""), ",", ".") as numeric
     ) as receita_tarifaria_aferida_rdo,
-    trim(tipo) as tipo
+    trim(tipo) as tipo,
+    trim(servico) as servico,
+    trim(servico_corrigido) as servico_corrigido,
 from
     {{
         source(
