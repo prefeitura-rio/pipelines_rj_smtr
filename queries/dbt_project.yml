@@ -208,6 +208,8 @@ vars:
 
   ### Encontro de Contas ###
   encontro_contas_modo: ""
+  # Datas que serão desconsideradas no encontro de contas juntamente com o motivo
+  encontro_contas_datas_excecoes: {"'2024-10-06'": "'Eleições 2024'"}
 
   ### Viagens 2.0 ###
 
