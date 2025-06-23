@@ -14,15 +14,34 @@ with
             tipo_dia,
             consorcio,
             servico,
+            "Ônibus SPPO" as modo,
             faixa_horaria_inicio,
             faixa_horaria_fim,
             distancia_total_planejada as km_planejada
-        from {{ ref("viagem_planejada") }}
-        -- from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
+        {# from {{ ref("viagem_planejada") }} #}
+        from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
             and distancia_total_planejada > 0
+        union all
+        select distinct
+            data,
+            tipo_dia,
+            consorcio,
+            servico,
+            modo,
+            faixa_horaria_inicio,
+            faixa_horaria_fim,
+            quilometragem as km_planejada
+        from {{ ref("servico_planejado_faixa_horaria") }}
+        -- from `rj-smtr.planejamento.servico_planejado_faixa_horaria`
+        where
+            data
+            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
+            and quilometragem > 0
     ),
     -- 2. Viagens realizadas
     viagem as (
@@ -43,6 +62,7 @@ with
             p.faixa_horaria_fim,
             p.consorcio,
             p.servico,
+            p.modo,
             safe_cast(p.km_planejada as numeric) as km_planejada_faixa,
             safe_cast(coalesce(count(v.id_viagem), 0) as int64) as viagens_faixa,
             safe_cast(
@@ -79,6 +99,7 @@ with
             p.faixa_horaria_fim,
             p.consorcio,
             p.servico,
+            p.modo,
             p.km_planejada
     )
 select
@@ -88,6 +109,7 @@ select
     faixa_horaria_fim,
     consorcio,
     servico,
+    modo,
     viagens_faixa,
     km_apurada_faixa,
     km_planejada_faixa,

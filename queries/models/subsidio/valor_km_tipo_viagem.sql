@@ -7,6 +7,7 @@
 select
     safe_cast(status as string) as status,
     nullif(safe_cast(tecnologia as string), '') as tecnologia,
+    safe_cast(modo as string) as modo,
     safe_cast(subsidio_km as float64) as subsidio_km,
     safe_cast(irk as float64) as irk,
     safe_cast(data_inicio as date) as data_inicio,

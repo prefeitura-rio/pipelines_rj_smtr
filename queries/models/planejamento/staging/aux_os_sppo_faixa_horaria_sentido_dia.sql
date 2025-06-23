@@ -48,8 +48,8 @@ with
             partidas_volta,
             quilometragem,
             partidas
-        from {{ ref("calendario") }} c
-        {# from `rj-smtr.planejamento.calendario` c #}
+        {# from {{ ref("calendario") }} c #}
+        from `rj-smtr.planejamento.calendario` c
         join
             os_tratamento_horario o using (
                 feed_version, feed_start_date, tipo_dia, tipo_os
