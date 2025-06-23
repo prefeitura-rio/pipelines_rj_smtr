@@ -11,7 +11,7 @@ models:
       - name: longitude
         description: "{{ doc('longitude_gps') }}"
       - name: posicao_veiculo_geo
-        description: "Coordenada geográfica (POINT) com a posição que o veículo se encontra, conforme 'longitude' e 'latitude' informadas pelo GPS (EPSG:4326 - WGS84)"
+        description: "{{ doc('posicao_veiculo_geo') }}"
       - name: velocidade
         description: "{{ doc('velocidade_instantanea') }}"
       - name: servico
@@ -23,7 +23,7 @@ models:
       - name: data
         description: "{{ doc('data_captura') }}"
       - name: hora
-        description: "Hora do 'timestamp_captura'"
+        description: "{{ doc('hora_timestamp_captura') }}"
       - name: versao
         description: "{{ doc('versao') }}"
   - name: brt_registros
@@ -40,14 +40,14 @@ models:
       - name: data
         description: "{{ doc('data_captura') }}"
       - name: hora
-        description: "Hora do 'timestamp_captura'"
+        description: "{{ doc('hora_timestamp_captura') }}"
   - name: brt_registros_desaninhada
     description: "View para os dados capturados em staging com os valores da coluna content desaninhados"
     columns:
       - name: data
         description: "{{ doc('data_captura') }}"
       - name: hora
-        description: "Hora do 'timestamp_captura'"
+        description: "{{ doc('hora_timestamp_captura') }}"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: timestamp_gps
@@ -94,3 +94,4 @@ models:
   #       description: "{{ doc('data_captura') }}"
   #     - name: hora
   #       description: "Hora do 'timestamp_captura'"
+

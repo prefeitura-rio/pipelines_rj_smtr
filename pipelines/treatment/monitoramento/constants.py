@@ -11,7 +11,7 @@ from pipelines.schedules import (
     create_hourly_cron,
     create_minute_cron,
 )
-from pipelines.treatment.templates.utils import DBTSelector
+from pipelines.treatment.templates.utils import DBTSelector, DBTTest
 
 
 class constants(Enum):  # pylint: disable=c0103
@@ -35,14 +35,33 @@ class constants(Enum):  # pylint: disable=c0103
     GPS_SELECTOR = DBTSelector(
         name="gps",
         schedule_cron=create_hourly_cron(minute=6),
-        initial_datetime=datetime(2025, 5, 9, 0, 0, 0),
+        initial_datetime=datetime(2025, 5, 27, 0, 0, 0),
         incremental_delay_hours=1,
+    )
+
+    GPS_POST_CHECKS_LIST = {
+        "gps": {
+            "check_gps_treatment__gps": {
+                "description": "Todos os dados de GPS foram devidamente tratados"
+            },
+            "dbt_utils.unique_combination_of_columns__gps": {
+                "description": "Todos os registros são únicos"
+            },
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+        },
+    }
+
+    GPS_DAILY_TEST = DBTTest(
+        model="gps",
+        checks_list=GPS_POST_CHECKS_LIST,
+        delay_days=1,
+        truncate_date=True,
     )
 
     GPS_15_MINUTOS_SELECTOR = DBTSelector(
         name="gps_15_minutos",
         schedule_cron=create_minute_cron(minute=15),
-        initial_datetime=datetime(2025, 5, 9, 0, 0, 0),
+        initial_datetime=datetime(2025, 5, 27, 0, 0, 0),
     )
 
     MONITORAMENTO_VEICULO_SELECTOR = DBTSelector(
