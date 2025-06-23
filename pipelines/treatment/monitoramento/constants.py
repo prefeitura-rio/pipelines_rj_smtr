@@ -69,3 +69,47 @@ class constants(Enum):  # pylint: disable=c0103
         schedule_cron=create_daily_cron(hour=7),
         initial_datetime=datetime(2025, 5, 28, 0, 0, 0),
     )
+
+    MONITORAMENTO_VEICULO_CHECKS_LIST = {
+        "veiculo_fiscalizacao_lacre": {
+            "dbt_utils.relationships_where__id_auto_infracao__veiculo_fiscalizacao_lacre": {
+                "description": "Todos os ids de auto infração estão na tabela de autuação"
+            },
+        },
+        "autuacao_disciplinar_historico": {
+            "dbt_utils.relationships_where__id_auto_infracao__autuacao_disciplinar_historico": {
+                "description": "Todos as autuações geraram lacre corretamente"
+            },
+        },
+    }
+
+    MONITORAMENTO_VEICULO_TEST = DBTTest(
+        model="veiculo_fiscalizacao_lacre autuacao_disciplinar_historico",
+        checks_list=MONITORAMENTO_VEICULO_CHECKS_LIST,
+        truncate_date=True,
+    )
+
+    VEICULO_DIA_SELECTOR = DBTSelector(
+        name="veiculo_dia",
+        schedule_cron=create_daily_cron(hour=6),
+        initial_datetime=datetime(2025, 6, 23, 0, 0, 0),
+        incremental_delay_hours=24 * 7,
+    )
+
+    VEICULO_DIA_CHECKS_LIST = {
+        "veiculo_dia": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.unique_combination_of_columns__data_id_veiculo__veiculo_dia": {
+                "description": "Todos os registros são únicos"
+            },
+            "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__veiculo_dia": {
+                "description": "Todas as datas possuem dados"
+            },
+        }
+    }
+
+    VEICULO_DIA_TEST = DBTTest(
+        model="veiculo_dia",
+        checks_list=MONITORAMENTO_VEICULO_CHECKS_LIST,
+        truncate_date=True,
+    )
