@@ -312,6 +312,10 @@ selectors:
       union:
         - method: fqn
           value: snapshot_sppo_veiculo_dia
+        - method: fqn
+          value: snapshot_autuacao_disciplinar_historico
+        - method: fqn
+          value: snapshot_veiculo_fiscalizacao_lacre
 
   - name: monitoramento_veiculo
     definition:
@@ -319,4 +323,26 @@ selectors:
         - method: fqn
           value: staging_veiculo_fiscalizacao_lacre
         - method: fqn
+          value: staging_infracao
+        - method: fqn
           value: veiculo_fiscalizacao_lacre
+        - method: fqn
+          value: autuacao_disciplinar_historico
+
+  - name: cadastro_veiculo
+    definition:
+      union:
+        - method: fqn
+          value: staging_licenciamento_stu
+        - method: fqn
+          value: veiculo_licenciamento_dia
+
+  - name: veiculo_dia
+    definition:
+      union:
+        - method: fqn
+          value: aux_veiculo_gps_dia
+        - method: fqn
+          value: sppo_registro_agente_verao
+        - method: fqn
+          value: veiculo_dia

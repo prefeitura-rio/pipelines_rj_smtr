@@ -25,3 +25,9 @@ CADASTRO_MATERIALIZACAO = create_default_materialization_flow(
         ]
     ],
 )
+
+CADASTRO_VEICULO_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="cadastro_veiculo - materializacao",
+    selector=constants.CADASTRO_VEICULO_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+)
