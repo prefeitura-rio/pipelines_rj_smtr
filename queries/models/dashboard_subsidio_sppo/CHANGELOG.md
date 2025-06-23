@@ -1,5 +1,32 @@
 # Changelog - dashboard_subsidio_sppo
 
+
+## [7.1.6] - 2025-06-06
+
+### Corrigido
+
+- Corrigido o mínimo de viagens admitidas no teto de apuração em `viagens_remuneradas.sql` nos termos da [RESOLUÇÃO SMTR Nº 3843/2025](https://doweb.rio.rj.gov.br/portal/visualizacoes/pdf/7371/#/p:14/e:7371) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/616)
+
+## [7.1.5] - 2025-05-26
+
+### Corrigido
+
+- Corrigidos os períodos de aplicação das regras de apuração (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/593)
+
+## [7.1.4] - 2025-05-09
+
+### Adicionado
+
+- Alterado o modelo `viagens_remuneradas.sql` para inclusão das novas regras de apuração  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/572)
+
+## [7.1.4] - 2025-04-30
+
+### Alterado
+
+- Refatora `viagens_remuneradas` para remover dependência do `ordem_servico_gtfs` (desativado) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/418)
+
+- Desativa `sumario_servico_dia_historico` para datas superiores ou iguais a `DATA_SUBSIDIO_V9_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/418)
+
 ## [7.1.3] - 2025-03-25
 
 ### Alterado

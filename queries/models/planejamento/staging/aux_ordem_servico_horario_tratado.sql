@@ -6,8 +6,7 @@ with
             * except (horario_inicio, horario_fim),
             split(horario_inicio, ":") horario_inicio_parts,
             split(horario_fim, ":") horario_fim_parts
-        {# from `rj-smtr.gtfs.ordem_servico` #}
-        from {{ ref("ordem_servico_gtfs") }}
+        from {{ ref("aux_ordem_servico_diaria") }}
     )
 select
     * except (horario_fim_parts, horario_inicio_parts),

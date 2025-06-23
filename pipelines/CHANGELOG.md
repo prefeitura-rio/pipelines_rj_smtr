@@ -1,5 +1,13 @@
 # Changelog - pipelines
 
+## [1.0.4] - 2025-04-30
+
+### Adicionado
+
+- Adiciona task `remove_key_from_dict` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/418)
+
+- Adiciona constante `DATA_GTFS_V2_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/418)
+
 ## [1.0.3] - 2025-03-10
 
 ### Alterado

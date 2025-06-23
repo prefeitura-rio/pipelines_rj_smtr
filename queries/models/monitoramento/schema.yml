@@ -129,16 +129,16 @@ models:
         description: "Quantidade de segmentos com pelo menos um sinal de GPS"
         data_type: int64
         quote: true
-      - name: indice_validacao
-        description: "Quantidade_segmentos_validos dividido por quantidade_segmentos_verificados"
-        data_type: float64
+      - name: quantidade_segmentos_necessarios
+        description: "Quantidade mínima de segmentos para que a viagem seja validada"
+        data_type: int64
         quote: true
       - name: indicador_viagem_sobreposta
         description: "Indica se a viagem se sobrepõe a outra viagem do mesmo veículo"
         data_type: boolean
         quote: true
       - name: indicador_trajeto_valido
-        description: "Indica se o veículo cumpriu o trajeto [indice_validacao >= parametro_validacao]"
+        description: "Indica se o veículo cumpriu o trajeto [quantidade_segmentos_validos >= quantidade_segmentos_necessarios]"
         data_type: boolean
         quote: true
       - name: indicador_servico_planejado_gtfs
@@ -168,10 +168,6 @@ models:
       - name: indicador_viagem_valida
         description: "Indica se a viagem está válida conforme critérios definidos"
         data_type: boolean
-        quote: true
-      - name: parametro_validacao
-        description: "Valor mínimo do indice_validacao para que a viagem seja validada"
-        data_type: float64
         quote: true
       - name: tipo_dia
         description: "{{ doc('tipo_dia') }}"
@@ -284,4 +280,135 @@ models:
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
+        quote: true
+
+  - name: gps
+    description: "Tabela com os dados tratados de registros de GPS da API {{ var('fonte_gps') }}, incluindo velocidade estimada, estado de movimento, parada em terminal ou garagem e interseção com o traçado da linha informada"
+    tests:
+      - check_gps_treatment:
+          name: check_gps_treatment__gps
+      - dbt_utils.unique_combination_of_columns:
+          name: dbt_utils.unique_combination_of_columns__gps
+          combination_of_columns:
+            - datetime_gps
+            - id_veiculo
+            - latitude
+            - longitude
+    columns:
+      - name: data
+        description: "{{ doc('data_gps') }}"
+      - name: hora
+        description: "{{ doc('hora_gps') }}"
+      - name: datetime_gps
+        description: "{{ doc('timestamp_gps') }}"
+        tests:
+          - not_null:
+              name: not_null__datetime_gps__gps
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+        tests:
+          - not_null:
+              name: not_null__id_veiculo__gps
+      - name: servico
+        description: "{{ doc('servico') }}"
+        tests:
+          - not_null:
+              name: not_null__servico__gps
+      - name: latitude
+        description: "{{ doc('latitude_gps') }}"
+        tests:
+          - not_null:
+              name: not_null__latitude__gps
+      - name: longitude
+        description: "{{ doc('longitude_gps') }}"
+        tests:
+          - not_null:
+              name: not_null__longitude__gps
+      - name: status
+        description: "{{ doc('status_veiculo_gps') }}"
+        tests:
+          - not_null:
+              name: not_null__status__gps
+      - name: velocidade_instantanea
+        description: "{{ doc('velocidade_instantanea') }}"
+      - name: velocidade_estimada_10_min
+        description: "{{ doc('velocidade_estimada_10_min') }}"
+      - name: distancia
+        description: "{{ doc('distancia_gps') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+
+  - name: gps_15_minutos
+    description: "Tabela com os dados tratados de registros de GPS da API {{ var('fonte_gps') }}, incluindo velocidade estimada, estado de movimento, parada em terminal ou garagem e interseção com o traçado da linha informada"
+    columns:
+      - name: data
+        description: "{{ doc('data_gps') }}"
+      - name: hora
+        description: "{{ doc('hora_gps') }}"
+      - name: datetime_gps
+        description: "{{ doc('timestamp_gps') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: latitude
+        description: "{{ doc('latitude_gps') }}"
+      - name: longitude
+        description: "{{ doc('longitude_gps') }}"
+      - name: status
+        description: "{{ doc('status_veiculo_gps') }}"
+      - name: velocidade_instantanea
+        description: "{{ doc('velocidade_instantanea') }}"
+      - name: velocidade_estimada_10_min
+        description: "{{ doc('velocidade_estimada_10_min') }}"
+      - name: distancia
+        description: "{{ doc('distancia_gps') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+  - name: veiculo_fiscalizacao_lacre
+    description: Tabela com as informações do controle do lacre e deslacre de veículos
+    columns:
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+        data_type: string
+        quote: true
+      - name: placa
+        description: "{{ doc('placa') }}"
+        data_type: string
+        quote: true
+      - name: data_inicio_lacre
+        description: Data de inicio do lacre [partição]
+        data_type: date
+        quote: true
+      - name: data_fim_lacre
+        description: Data de fim do lacre
+        data_type: date
+        quote: true
+      - name: id_consorcio
+        description: "{{ doc('id_consorcio') }}"
+        data_type: string
+        quote: true
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+        data_type: string
+        quote: true
+      - name: id_auto_infracao
+        description: "{{ doc('id_auto_infracao') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao_fonte
+        description: Datetime da última atualização da informação na fonte dos dados [GMT-3]
+        data_type: datetime
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
         quote: true

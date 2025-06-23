@@ -13,5 +13,6 @@ select
     safe_cast(data_inicio as date) as data_inicio,
     safe_cast(data_fim as date) as data_fim,
     safe_cast(indicador_penalidade_judicial as bool) as indicador_penalidade_judicial,
-    safe_cast(legislacao as string) as legislacao
+    safe_cast(legislacao as string) as legislacao,
+    safe_cast(ordem as int64) as ordem
 from {{ source("subsidio_staging", "valor_km_tipo_viagem") }}
