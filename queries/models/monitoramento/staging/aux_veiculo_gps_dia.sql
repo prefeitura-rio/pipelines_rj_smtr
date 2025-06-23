@@ -11,8 +11,8 @@
 }}
 
 select data, id_veiculo, count(*) as quantidade_gps
-{# from {{ ref("gps_sppo") }} #}
-from `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo`
+from {{ ref("gps_sppo") }}
+{# from `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo` #}
 where
     data > "2025-03-31"
     {% if is_incremental() %}
