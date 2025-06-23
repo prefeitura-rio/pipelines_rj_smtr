@@ -1,5 +1,15 @@
 # Changelog - veiculo
 
+## [2.0.8] - 2025-06-23
+
+### Adicionado
+
+Criado o modelo `sppo_vistoria_tr_subtt_cmo_recurso_SMTR202404004977_staging.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/124)
+
+### Alterado
+
+- Alterado o modelo `aux_sppo_licenciamento_vistoria_atualizada` para incluir o modelo `sppo_vistoria_tr_subtt_cmo_recurso_SMTR202404004977_staging.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/124)
+
 ## [2.0.7] - 2025-05-27
 
 ### Adicionado
