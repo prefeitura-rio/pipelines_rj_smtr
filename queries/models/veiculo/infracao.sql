@@ -30,7 +30,7 @@ select
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     "{{ var('version') }}" as versao
 from infracao
-where data <= '2025-03-31'
+where data <= '{{ var("data_final_veiculo_arquitetura_1") }}'
 qualify
     row_number() over (
         partition by data, id_auto_infracao order by timestamp_captura desc

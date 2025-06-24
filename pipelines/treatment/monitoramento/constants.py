@@ -110,6 +110,6 @@ class constants(Enum):  # pylint: disable=c0103
 
     VEICULO_DIA_TEST = DBTTest(
         model="veiculo_dia",
-        checks_list=MONITORAMENTO_VEICULO_CHECKS_LIST,
+        checks_list=VEICULO_DIA_CHECKS_LIST,
         truncate_date=True,
     )

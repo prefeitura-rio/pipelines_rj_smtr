@@ -42,7 +42,7 @@ with
         where
             (
                 data_processamento <= date_add(data, interval 7 day)
-                or data_processamento = '2025-06-10'
+                or data_processamento = '2025-06-24'
             )
             {% if is_incremental() %}
                 and data between date("{{ var('date_range_start') }}") and date(
@@ -60,7 +60,7 @@ with
         select *
         from {{ ref("autuacao_disciplinar_historico") }}
         where
-            data_inclusao <= date_add(data, interval 7 day)
+            data_inclusao_datalake <= date_add(data, interval 7 day)
             {% if is_incremental() %}
                 and data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
@@ -109,80 +109,20 @@ with
         left join registros_agente_verao as r using (data, id_veiculo)
     ),
     autuacao_ar_condicionado as (
-        select data, placa, data_inclusao as data_inclusao_autuacao_ar_condicionado
+        select
+            data,
+            placa,
+            data_inclusao_datalake as data_inclusao_datalake_autuacao_ar_condicionado
         from autuacao_disciplinar
         where id_infracao = "023.II"
-    ),
-    autuacao_seguranca as (
-        select data, placa, data_inclusao as data_inclusao_autuacao_seguranca
-        from autuacao_disciplinar
-        where
-            id_infracao in (
-                "016.VI",
-                "023.VII",
-                "024.II",
-                "024.III",
-                "024.IV",
-                "024.V",
-                "024.VI",
-                "024.VII",
-                "024.VIII",
-                "024.IX",
-                "024.XII",
-                "024.XIV",
-                "024.XV",
-                "025.II",
-                "025.XII",
-                "025.XIII",
-                "025.XIV",
-                "026.X"
-            )
-    ),
-    autuacao_equipamento as (
-        select data, placa, data_inclusao as data_inclusao_autuacao_equipamento
-        from autuacao_disciplinar
-        where
-            id_infracao in (
-                "023.IV",
-                "023.V",
-                "023.VI",
-                "023.VIII",
-                "024.XIII",
-                "024.XI",
-                "024.XVIII",
-                "024.XXI",
-                "025.III",
-                "025.IV",
-                "025.V",
-                "025.VI",
-                "025.VII",
-                "025.VIII",
-                "025.IX",
-                "025.X",
-                "025.XI"
-            )
-    ),
-    autuacao_limpeza as (
-        select data, placa, data_inclusao as data_inclusao_autuacao_limpeza
-        from autuacao_disciplinar
-        where id_infracao in ("023.IX", "024.X")
     ),
     autuacao_completa as (
         select distinct
             data,
             placa,
             ac.data is not null as indicador_autuacao_ar_condicionado,
-            s.data is not null as indicador_autuacao_seguranca,
-            e.data is not null as indicador_autuacao_equipamento,
-            l.data is not null as indicador_autuacao_limpeza,
-            ac.data_inclusao_autuacao_ar_condicionado,
-            s.data_inclusao_autuacao_seguranca,
-            e.data_inclusao_autuacao_equipamento,
-            l.data_inclusao_autuacao_limpeza
+            ac.data_inclusao_datalake_autuacao_ar_condicionado,
         from autuacao_ar_condicionado ac
-        full outer join autuacao_seguranca s using (data, placa)
-        full outer join autuacao_equipamento e using (data, placa)
-        full outer join autuacao_limpeza l using (data, placa)
     ),
     gps_licenciamento_autuacao as (
         select
@@ -210,20 +150,9 @@ with
                 ) as indicador_ar_condicionado,
                 struct(
                     a.indicador_autuacao_ar_condicionado as valor,
-                    a.data_inclusao_autuacao_ar_condicionado as data_inclusao_autuacao
+                    a.data_inclusao_datalake_autuacao_ar_condicionado
+                    as data_inclusao_datalake_autuacao
                 ) as indicador_autuacao_ar_condicionado,
-                struct(
-                    a.indicador_autuacao_seguranca as valor,
-                    a.data_inclusao_autuacao_seguranca as data_inclusao_autuacao
-                ) as indicador_autuacao_seguranca,
-                struct(
-                    a.indicador_autuacao_equipamento as valor,
-                    a.data_inclusao_autuacao_equipamento as data_inclusao_autuacao
-                ) as indicador_autuacao_equipamento,
-                struct(
-                    a.indicador_autuacao_limpeza as valor,
-                    a.data_inclusao_autuacao_limpeza as data_inclusao_autuacao
-                ) as indicador_autuacao_limpeza,
                 struct(
                     gl.indicador_registro_agente_verao_ar_condicionado as valor,
                     gl.data_registro_agente_verao as data_registro_agente_verao
@@ -232,44 +161,103 @@ with
             ) as indicadores
         from gps_licenciamento gl
         left join autuacao_completa as a using (data, placa)
-    )
-select
-    data,
-    id_veiculo,
-    placa,
-    modo,
-    tecnologia,
-    tipo_veiculo,
-    case
-        when indicadores.indicador_licenciado.valor is false
-        then "Não licenciado"
-        when indicadores.indicador_vistoriado.valor is false
-        then "Não vistoriado"
-        when
-            indicadores.indicador_ar_condicionado.valor is true
-            and indicadores.indicador_autuacao_ar_condicionado.valor is true
-        then "Autuado por ar inoperante"
-        when
-            indicadores.indicador_autuacao_ar_condicionado.valor is true
-            and indicadores.indicador_registro_agente_verao_ar_condicionado.valor
-            is true
-        then "Registrado com ar inoperante"
-        {# when data < date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
-        then
+    ),
+    dados_novos as (
+        select
+            data,
+            id_veiculo,
+            placa,
+            modo,
+            tecnologia,
+            tipo_veiculo,
             case
-                when indicadores.indicador_autuacao_seguranca.valor is true
-                then "Autuado por segurança"
+                when indicadores.indicador_licenciado.valor is false
+                then "Não licenciado"
+                when indicadores.indicador_vistoriado.valor is false
+                then "Não vistoriado"
                 when
-                    indicadores.indicador_autuacao_limpeza.valor is true
-                    and indicadores.indicador_autuacao_equipamento.valor is true
-                then "Autuado por limpeza/equipamento"
-            end #}
-        when indicadores.indicador_ar_condicionado.valor is false
-        then "Licenciado sem ar e não autuado"
-        when indicadores.indicador_ar_condicionado.valor is true
-        then "Licenciado com ar e não autuado"
-    end as status,
-    to_json(indicadores) as indicadores,
-    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
-    "{{ var('version') }}" as versao
-from gps_licenciamento_autuacao
+                    indicadores.indicador_ar_condicionado.valor is true
+                    and indicadores.indicador_autuacao_ar_condicionado.valor is true
+                then "Autuado por ar inoperante"
+                when
+                    indicadores.indicador_autuacao_ar_condicionado.valor is true
+                    and indicadores.indicador_registro_agente_verao_ar_condicionado.valor
+                    is true
+                then "Registrado com ar inoperante"
+                when indicadores.indicador_ar_condicionado.valor is false
+                then "Licenciado sem ar e não autuado"
+                when indicadores.indicador_ar_condicionado.valor is true
+                then "Licenciado com ar e não autuado"
+            end as status,
+            to_json(indicadores) as indicadores,
+            current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+            "{{ var('version') }}" as versao,
+            '{{ invocation_id }}' as id_execucao_dbt
+        from gps_licenciamento_autuacao
+    )
+{% if is_incremental() %}
+        ,
+        dados_completos as (
+            select *, 1 as ordem
+            from dados_novos
+
+            union all
+
+            select *, 0 as ordem
+            from {{ this }}
+            where
+                data between date("{{ var('date_range_start') }}") and date(
+                    "{{ var('date_range_end') }}"
+                )
+
+        ),
+        sha_dados as (
+            {% set columns = (
+                list_columns()
+                | reject(
+                    "in",
+                    [
+                        "versao",
+                        "datetime_ultima_atualizacao",
+                        "id_execucao_dbt",
+                    ],
+                )
+                | list
+            ) %}
+
+            select
+                *,
+                sha256(
+                    concat(
+                        {% for c in columns %}
+                            ifnull(
+                                {% if c == "indicadores" %}to_json_string(indicadores)
+                                {% else %}cast({{ c }} as string)
+                                {% endif %},
+                                'n/a'
+                            )
+                            {% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    )
+                ) as sha_dado
+            from dados_completos
+        ),
+        dados_completos_invocation_id as (
+            select
+                * except (id_execucao_dbt, sha_dado),
+                case
+                    when
+                        lag(sha_dado) over (win) != sha_dado
+                        or (lag(sha_dado) over (win) is null and ordem = 1)
+                    then id_execucao_dbt
+                    else lag(id_execucao_dbt) over (win)
+                end as id_execucao_dbt
+            from sha_dados
+            window win as (partition by data, id_veiculo order by ordem)
+        )
+
+    select * except (ordem)
+    from dados_completos_invocation_id
+    where ordem = 1
+{% else %} select * from dados_novos
+{% endif %}

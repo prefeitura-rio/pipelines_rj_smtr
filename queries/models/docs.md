@@ -914,3 +914,7 @@ Indicadores para caraterização do status do veículo
 {% docs posicao_veiculo_geo %}
 Coordenada geográfica [POINT] com a posição que o veículo se encontra, conforme 'longitude' e 'latitude' informadas pelo GPS [EPSG:4326 - WGS84]
 {% enddocs %}
+
+{% docs id_execucao_dbt %}
+Identificador da execução do DBT que modificou o dado pela última vez
+{% enddocs %}

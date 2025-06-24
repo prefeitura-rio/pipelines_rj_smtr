@@ -45,7 +45,7 @@
             from novos_veiculos
             where data != date({{ licenciamento_previous_file }})
         )
-        select distinct concat("'", max(data), "'") as data
+        select distinct concat("'", data, "'") as data
         from menor_inicio_vinculo,
         unnest(generate_date_array(data_inicio_vinculo, date("{{ var('date_range_start') }}"), interval 1 day)) as data
 
@@ -78,7 +78,7 @@
             from veiculos_vistoriados
             where data != date({{ licenciamento_previous_file }})
         )
-        select distinct concat("'", max(data), "'") as data
+        select distinct concat("'", data, "'") as data
         from menor_data_vistoria,
         unnest(generate_date_array(data_ultima_vistoria, date("{{ var('date_range_start') }}"), interval 1 day)) as data
 
@@ -102,7 +102,7 @@
             date(data) between date("{{ var('date_range_start') }}") and date(
                 "{{ var('date_range_end') }}"
             )
-        and data > "2025-03-31"
+        and data > '{{ var("data_final_veiculo_arquitetura_1") }}'
 
     {% endset %}
     {% set lacre_partitions = run_query(lacre_partitions_query).columns[0].values() %}
@@ -157,7 +157,7 @@ with
             date(data) as data_arquivo_fonte
         from {{ ref("staging_licenciamento_stu") }}
         where
-            data > "2025-03-31"
+            data > '{{ var("data_final_veiculo_arquitetura_1") }}'
             {% if is_incremental() %}
                 and date(data) between date({{ licenciamento_previous_file }}) and date(
                     "{{ var('date_range_end') }}"
@@ -181,12 +181,14 @@ with
                     )
                 {% else %}
                     generate_date_array(
-                        '2025-03-31', current_date("America/Sao_Paulo"), interval 1 day
+                        '{{ var("data_final_veiculo_arquitetura_1") }}',
+                        current_date("America/Sao_Paulo"),
+                        interval 1 day
                     )
                 {% endif %}
             ) as data
         full outer join licenciamento_staging l using (data)
-        where data > "2025-03-31"
+        where data > '{{ var("data_final_veiculo_arquitetura_1") }}'
     ),
     licenciamento_datas_preenchidas as (
         select df.data, l.* except (data)
@@ -206,7 +208,7 @@ with
         where
             s.ultima_data is null
             and s.data != s.primeira_data
-            and data_corrigida > "2025-03-31"
+            and data_corrigida > '{{ var("data_final_veiculo_arquitetura_1") }}'
     ),
     dados_novos as (
         select *
@@ -251,7 +253,8 @@ with
                         data_processamento,
                         indicador_veiculo_lacrado,
                         versao,
-                        datetime_ultima_atualizacao
+                        datetime_ultima_atualizacao,
+                        id_execucao_dbt
                     )
                 from dados_atuais da
                 left join
@@ -360,7 +363,7 @@ with
 
                     union all by name
 
-                    select *, 0 as priority
+                    select *, cast(null as string) as id_execucao_dbt, 0 as priority
                     from veiculo_vistoriado
                 ),
                 dados_completos_sha as (
@@ -372,6 +375,7 @@ with
                                 "data_processamento",
                                 "versao",
                                 "datetime_ultima_atualizacao",
+                                "id_execucao_dbt",
                             ],
                         )
                         | list
@@ -388,6 +392,32 @@ with
                             )
                         ) as sha_dado
                     from dados_completos
+                ),
+                dados_completos_invocation_id as (
+                    select
+                        * except (id_execucao_dbt),
+                        case
+                            when
+                                lag(sha_dado) over (win) != sha_dado
+                                or (
+                                    lag(sha_dado) over (win) is null
+                                    and count(*) over (win) = 1
+                                )
+                            then '{{ invocation_id }}'
+                            else
+                                ifnull(id_execucao_dbt, lag(id_execucao_dbt) over (win))
+                        end as id_execucao_dbt
+                    from dados_completos_sha
+                    window
+                        win as (
+                            partition by data, id_veiculo, placa, data_processamento
+                            order by priority desc
+                        )
+
+                ),
+                dados_completos_deduplicados as (
+                    select *
+                    from dados_completos_invocation_id
                     qualify
                         row_number() over (
                             partition by data, data_processamento, id_veiculo, placa
@@ -396,14 +426,15 @@ with
                         = 1
                 )
             select * except (sha_dado)
-            from dados_completos_sha
+            from dados_completos_deduplicados
             qualify
                 lag(sha_dado) over (win) != sha_dado or lag(sha_dado) over (win) is null
             window
                 win as (
                     partition by data, id_veiculo, placa order by data_processamento
                 )
-        {% else %}select * from veiculo_vistoriado
+        {% else %}
+            select *, '{{ invocation_id }}' as id_execucao_dbt from veiculo_vistoriado
         {% endif %}
     )
 select
@@ -438,5 +469,7 @@ select
     indicador_veiculo_lacrado,
     data_arquivo_fonte,
     versao,
-    datetime_ultima_atualizacao
+    datetime_ultima_atualizacao,
+    id_execucao_dbt
 from final
+where data <= data_processamento

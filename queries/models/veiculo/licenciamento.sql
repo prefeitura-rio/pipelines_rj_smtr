@@ -201,4 +201,4 @@ with
     )
 select *
 from licenciamento_final
-where data <= '2025-03-31'
+where data <= '{{ var("data_final_veiculo_arquitetura_1") }}'

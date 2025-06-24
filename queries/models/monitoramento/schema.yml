@@ -419,11 +419,15 @@ models:
         data_type: string
         quote: true
   - name: autuacao_disciplinar_historico
-    description: Tabela histórica de todas as multas aplicadas aos modos de transporte no município do Rio de Janeiro
+    description: Tabela histórica de todas as multas aplicadas aos modos de transporte no município do Rio de Janeiro [contém dados a partir de 2025-04-01]
     columns:
       - name: data
         description: "{{ doc('data_infracao') }} [partição]"
         data_type: date
+        quote: true
+      - name: datetime_autuacao
+        description: "Data e hora da autuação [coluna em desenvolvimento]"
+        data_type: datetime
         quote: true
       - name: id_auto_infracao
         description: "{{ doc('id_auto_infracao') }}"
@@ -431,9 +435,58 @@ models:
           - dbt_utils.relationships_where:
               name: dbt_utils.relationships_where__id_auto_infracao__autuacao_disciplinar_historico
               to: ref('autuacao_disciplinar_historico')
-              from_condition: id_infracao in ('add')
+              from_condition: |
+                id_infracao in (
+                  '016.II',
+                  '016.III',
+                  '016.IV',
+                  '016.V',
+                  '016.VI',
+                  '017.IV',
+                  '017.IV',
+                  '019.I',
+                  '019.II',
+                  '019.III',
+                  '023.VII',
+                  '024.VIII',
+                  '024.IX',
+                  '024.X',
+                  '024.XII',
+                  '024.XIII',
+                  '024.XIV',
+                  '024.XV',
+                  '024.XVI',
+                  '024.XVII',
+                  '025.I',
+                  '025.II',
+                  '025.III',
+                  '025.V',
+                  '025.VII',
+                  '025.X',
+                  '025.XI',
+                  '025.XII',
+                  '025.XIII',
+                  '025.XIV',
+                  '025.XV',
+                  '025.XVI',
+                  '026.I',
+                  '026.II',
+                  '026.III',
+                  '026.IV',
+                  '026.V',
+                  '026.VI',
+                  '026.VII',
+                  '026.VIII',
+                  '026.IX',
+                  '026.X',
+                  '026.XI',
+                  '026.XII',
+                  '026.XIII',
+                  '026.XIV'
+                )
+                and modo = 'ONIBUS'
               field: id_auto_infracao
-              where: "1=1"
+              where: "data_inclusao_datalake between date('{date_range_start}') and date('{date_range_end}')"
         data_type: string
         quote: true
       - name: id_infracao
@@ -464,8 +517,12 @@ models:
         description: "{{ doc('data_pagamento') }}"
         data_type: date
         quote: true
-      - name: data_inclusao
+      - name: data_inclusao_stu
         description: Data de inclusão da autuação no arquivo enviado pelo STU
+        data_type: date
+        quote: true
+      - name: data_inclusao_datalake
+        description: Data de inclusão da autuação no datalake
         data_type: date
         quote: true
       - name: versao
@@ -477,7 +534,7 @@ models:
         data_type: datetime
         quote: true
   - name: veiculo_dia
-    description: Tabela resumo dos veículos e seus respectivos indicadores
+    description: Tabela resumo dos veículos e seus respectivos indicadores [contém dados a partir de 2025-04-01]
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
@@ -514,6 +571,8 @@ models:
         description: "{{ doc('tecnologia') }}"
         data_type: string
         quote: true
+      - name: tipo_veiculo
+        description: "{{ doc('tipo_veiculo') }}"
       - name: status
         description: "{{ doc('status_veiculo') }}"
         tests:

@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: infracao
-    description: "Tabela histórica de todas as multas aplicadas aos modos de transporte no município do Rio de Janeiro, com qualquer situação"
+    description: "Tabela histórica de todas as multas aplicadas aos modos de transporte no município do Rio de Janeiro, com qualquer situação [contém dados até 2025-03-31]"
     tests:
       - dbt_expectations.expect_table_aggregation_to_equal_other_table:
           name: dbt_expectations.expect_table_aggregation_to_equal_other_table__infracao
@@ -53,7 +53,7 @@ models:
   - name: licenciamento
     description: "Tabela histórica de dados cadastrais dos veículos que operam o sistema de transporte rodoviário,
                   considerando tanto os licenciados no Sistema de Transporte Urbano [STU] quanto as solicitações
-                  válidas em andamento para ingresso no sistema"
+                  válidas em andamento para ingresso no sistema [contém dados até 2025-03-31]"
     columns:
       - name: data
         description: "{{ doc('data_captura') }} [partição]"
@@ -165,7 +165,7 @@ models:
                       Baixa - Solicitação de baixa de veículo já incluído no STU\n
                       Renumeração - Solicitação de alteração de número de ordem de veículo já incluído no STU"
   - name: sppo_veiculo_dia
-    description: "Tabela resumo dos veículos que operaram no SPPO e seus respectivos indicadores"
+    description: "Tabela resumo dos veículos que operaram no SPPO e seus respectivos indicadores [contém dados até 2025-03-31]"
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:

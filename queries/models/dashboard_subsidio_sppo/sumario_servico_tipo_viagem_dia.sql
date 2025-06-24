@@ -29,7 +29,7 @@ with
         from {{ ref("aux_veiculo_dia_consolidada") }}
         where
             `data` between date("{{ var('data_subsidio_v2_inicio') }}") and date(
-                "{{ var(" end_date ") }}"
+                "{{ var('end_date') }}"
             )
     ),
     viagem_v2 as (

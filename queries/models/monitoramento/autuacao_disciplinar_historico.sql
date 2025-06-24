@@ -14,6 +14,7 @@ with
     autuacao_disciplinar_staging as (
         select
             data_infracao as data,
+            datetime(null) as datetime_autuacao,
             id_auto_infracao,
             id_infracao,
             modo,
@@ -22,7 +23,8 @@ with
             placa,
             valor,
             data_pagamento,
-            date(data) as data_inclusao,
+            date(data) as data_inclusao_stu,
+            current_date("America/Sao_Paulo") as data_inclusao_datalake,
             timestamp_captura
         from {{ ref("staging_infracao") }}
         {% if is_incremental() %}
@@ -34,14 +36,17 @@ with
         {% endif %}
     ),
     aux_data_inclusao as (
-        select id_auto_infracao, min(data_inclusao) as data_inclusao
+        select
+            id_auto_infracao,
+            min(data_inclusao_stu) as data_inclusao_stu,
+            min(data_inclusao_datalake) as data_inclusao_datalake
         from
             {% if is_incremental() %}
                 (
-                    select id_auto_infracao, data_inclusao
+                    select id_auto_infracao, data_inclusao_stu, data_inclusao_datalake
                     from {{ this }}
                     union all
-                    select id_auto_infracao, data_inclusao
+                    select id_auto_infracao, data_inclusao_stu, data_inclusao_datalake
                     from autuacao_disciplinar_staging
                 )
             {% else %} autuacao_disciplinar_staging
@@ -50,13 +55,15 @@ with
     ),
     dados_novos as (
         select
-            ad.* except (data_inclusao, timestamp_captura),
-            di.data_inclusao,
+            ad.* except (data_inclusao_stu, data_inclusao_datalake, timestamp_captura),
+            di.data_inclusao_stu,
+            di.data_inclusao_datalake,
             '{{ var("version") }}' as versao,
-            current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
+            current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+            '{{ invocation_id }}' as id_execucao_dbt
         from autuacao_disciplinar_staging ad
         join aux_data_inclusao di using (id_auto_infracao)
-        where ad.data > "2025-03-31"
+        where ad.data > '{{ var("data_final_veiculo_arquitetura_1") }}'
         qualify
             row_number() over (
                 partition by id_auto_infracao order by timestamp_captura desc
@@ -68,7 +75,7 @@ with
         dados_completos as (
             select *, 'tratada' as fonte, 0 as ordem
             from {{ this }}
-            union all
+            union all by name
             select *, 'staging' as fonte, 1 as ordem
             from dados_novos
         ),
@@ -80,6 +87,7 @@ with
                     [
                         "versao",
                         "datetime_ultima_atualizacao",
+                        "id_execucao_dbt",
                     ],
                 )
                 | list

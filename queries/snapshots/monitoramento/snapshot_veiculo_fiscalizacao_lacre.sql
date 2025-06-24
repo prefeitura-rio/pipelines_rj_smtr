@@ -3,7 +3,7 @@
     {{
         config(
             target_schema="monitoramento_staging",
-            unique_key="concat('data_inicio_lacre', '-', id_veiculo, '-', placa, '-', 'id_auto_infracao')",
+            unique_key="concat(data_inicio_lacre, '-', id_veiculo, '-', placa, '-', id_auto_infracao)",
             strategy="timestamp",
             updated_at="timestamp_ultima_atualizacao",
             invalidate_hard_deletes=True,
