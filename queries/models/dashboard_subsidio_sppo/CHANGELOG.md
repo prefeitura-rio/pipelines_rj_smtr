@@ -1,10 +1,20 @@
 # Changelog - dashboard_subsidio_sppo
 
-## [7.1.7] - 2025-06-24
+## [7.1.8] - 2025-06-24
 
 ### Alterado
 
 - Altera fonte dos dados de veículo para `aux_veiculo_dia_consolidada` no modelo `sumario_servico_tipo_viagem_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
+## [7.1.7] - 2025-06-12
+
+### Corrigido
+
+- Corrigidas as referências do modelo `sumario_servico_dia.sql`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
+
+### Adicionado
+
+- Adicionada exceção para os serviços `583` e `584` no período de `2023-12-31` and `2024-01-01` no sentido Ida em razão do reprocessamento do TCM [MTR-CAP-2025/03003] (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
 
 ## [7.1.6] - 2025-06-06
 
