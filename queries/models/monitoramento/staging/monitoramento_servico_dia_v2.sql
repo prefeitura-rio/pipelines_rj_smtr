@@ -12,8 +12,8 @@ with
             consorcio,
             servico,
             sum(km_apurada_faixa) as km_apurada_faixa
-        {# from {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }} #}
-        from rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem
+        from {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
+        -- from rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem
         where
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
