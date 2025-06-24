@@ -418,6 +418,10 @@ models:
         description: "{{ doc('versao') }}"
         data_type: string
         quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
   - name: autuacao_disciplinar_historico
     description: Tabela histórica de todas as multas aplicadas aos modos de transporte no município do Rio de Janeiro [contém dados a partir de 2025-04-01]
     columns:
@@ -533,6 +537,10 @@ models:
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
         quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
   - name: veiculo_dia
     description: Tabela resumo dos veículos e seus respectivos indicadores [contém dados a partir de 2025-04-01]
     tests:
@@ -590,5 +598,9 @@ models:
         quote: true
       - name: versao
         description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
         data_type: string
         quote: true
