@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.2.2] - 2025-06-24
+
+### Alterado
+
+- Altera valor padrão do parâmetro `materialize_sppo_veiculo_dia` para `False` no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
 ## [1.2.1] - 2025-05-13
 
 ### Adicionado

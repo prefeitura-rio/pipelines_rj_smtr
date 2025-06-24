@@ -1,5 +1,11 @@
 # Changelog - subsidio
 
+## [2.0.3] - 2025-06-24
+
+### Alterado
+
+- Altera fonte dos dados de veículo para `aux_veiculo_dia_consolidada` no modelo `viagem_transacao_aux.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
 ## [2.0.2] - 2025-01-21
 
 # Adicionado

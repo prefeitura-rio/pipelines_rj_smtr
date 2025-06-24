@@ -1,10 +1,18 @@
 # Changelog - cadastro
 
+## [1.5.0] - 2025-06-24
+
+### Adicionado
+- Cria modelo `veiculo_licenciamento_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+- Adiciona coluna `ano_ultima_vistoria` no modelo `staging_licenciamento_stu.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
+### Alterado
+- Move modelo `licenciamento_stu_staging.sql` do dataset `veiculo_staging` para `cadastro_staging` e renomeia para `staging_licenciamento_stu.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
 ## [1.4.0] - 2025-02-17
 
 ### Alterado
 - Adiciona informação de tarifa no modelo `servico_operadora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/435)
-
 
 ## [1.3.1] - 2024-10-08
 

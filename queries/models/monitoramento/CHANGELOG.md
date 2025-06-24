@@ -1,5 +1,16 @@
 # Changelog - monitoramento
 
+## [1.5.0] - 2025-06-24
+
+### Adicionado
+
+- Cria modelos `autuacao_disciplinar_historico.sql`, `aux_veiculo_dia_consolidada.sql`, `aux_veiculo_gps_dia.sql` e `veiculo_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+- Adiciona coluna `id_execucao_dbt` no modelo `veiculo_fiscalizacao_lacre.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
+### Alterado
+
+- Move modelo `infracao_staging.sql` do dataset `veiculo_staging` para `monitoramento_staging` e renomeia para `staging_infracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
 ## [1.4.1] - 2025-06-06
 
 ### Adicionado
