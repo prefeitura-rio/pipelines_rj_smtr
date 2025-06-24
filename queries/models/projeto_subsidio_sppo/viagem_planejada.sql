@@ -202,11 +202,14 @@
             when p.sentido = "I" or p.sentido = "V"
             then p.sentido
         end as sentido_shape,
+        safe_cast(null as int64) as partidas_total_planejada,  -- Adaptação para formato da SUBSIDIO_V6
         s.start_pt,
         s.end_pt,
         safe_cast(null as int64) as id_tipo_trajeto,  -- Adaptação para formato da SUBSIDIO_V6
         safe_cast(null as string) as feed_version,  -- Adaptação para formato da SUBSIDIO_V6
-        current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao  -- Adaptação para formato da SUBSIDIO_V7
+        current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,  -- Adaptação para formato da SUBSIDIO_V7
+        datetime(concat(p.data,"T00:00:00")) as faixa_horaria_inicio, -- Adaptação para formato da SUBSIDIO_V9
+        datetime(concat(p.data,"T23:59:59")) as faixa_horaria_fim, -- Adaptação para formato da SUBSIDIO_V9
     from quadro_tratada p
     inner join shapes s on p.shape_id = s.shape_id and p.data = s.data
 
