@@ -16,7 +16,7 @@ with
             viagens,
             km_apurada
         from {{ ref("sumario_servico_dia_historico") }}
-        where `data` < date("{{ var('data_subsidio_v2_inicio') }}")
+        where `data` < date("{{ var('DATA_SUBSIDIO_V2_INICIO') }}")
     ),
     tipo_viagem_v2 as (  -- Classifica os tipos de viagem (v2)
         select
@@ -28,7 +28,7 @@ with
             ) as indicador_ar_condicionado
         from {{ ref("aux_veiculo_dia_consolidada") }}
         where
-            `data` between date("{{ var('data_subsidio_v2_inicio') }}") and date(
+            `data` between date("{{ var('DATA_SUBSIDIO_V2_INICIO') }}") and date(
                 "{{ var('end_date') }}"
             )
     ),
@@ -41,7 +41,7 @@ with
             distancia_planejada
         from {{ ref("viagem_completa") }}  -- `rj-smtr`.`projeto_subsidio_sppo`.`viagem_completa`
         where
-            `data` between date("{{ var('data_subsidio_v2_inicio') }}") and date(
+            `data` between date("{{ var('DATA_SUBSIDIO_V2_INICIO') }}") and date(
                 "{{ var('end_date') }}"
             )
     ),
@@ -88,7 +88,7 @@ with
             coalesce(v1.km_apurada, 0) as km_apurada
         from sumario_v1 v1
         inner join planejado p on p.`data` = v1.`data` and p.servico = v1.servico
-        where p.`data` < date("{{ var('data_subsidio_v2_inicio') }}")
+        where p.`data` < date("{{ var('DATA_SUBSIDIO_V2_INICIO') }}")
     )
 union all
 (
@@ -103,5 +103,5 @@ union all
         coalesce(v2.km_apurada, 0) as km_apurada
     from sumario_v2 v2
     inner join planejado p on p.`data` = v2.`data` and p.servico = v2.servico
-    where p.`data` >= date("{{ var('data_subsidio_v2_inicio') }}")
+    where p.`data` >= date("{{ var('DATA_SUBSIDIO_V2_INICIO') }}")
 )
