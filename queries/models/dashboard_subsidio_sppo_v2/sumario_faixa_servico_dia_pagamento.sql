@@ -33,8 +33,8 @@
                 r'[\s]+',
                 '_'  -- Substitui múltiplos espaços por um único "_"
             ) as coluna_tipo_viagem
-        {# from {{ ref("valor_km_tipo_viagem") }} #}
-        from `rj-smtr.subsidio.valor_km_tipo_viagem`
+        from {{ ref("valor_km_tipo_viagem") }}
+        {# from `rj-smtr.subsidio.valor_km_tipo_viagem` #}
         where
             status not in ("Não classificado", "Nao licenciado", "Licenciado sem ar")
             and status not like '%(023.II)%'
