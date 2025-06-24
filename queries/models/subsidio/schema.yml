@@ -99,7 +99,7 @@ models:
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
-  - name: servicos_contratos_abreviados
+  - name: servico_contrato_abreviado
     description: "Tabela com serviços das Fases I e II, que têm prazo de contrato abreviado, conforme previsto no Anexo II do ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629)"
     columns:
       - name: servico
