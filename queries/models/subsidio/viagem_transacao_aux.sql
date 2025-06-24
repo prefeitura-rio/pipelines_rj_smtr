@@ -4,10 +4,6 @@
 {% elif var("tipo_materializacao") == "subsidio" %} {% set interval_minutes = 30 %}
 {% endif %}
 
-{% set status_viagem = (
-    '("Licenciado com ar e não autuado", "Licenciado sem ar e não autuado")'
-) %}
-
 {% set sem_transacao = "coalesce(tr.quantidade_transacao_riocard, 0) = 0  and coalesce(t.quantidade_transacao, 0) = 0" %}
 
 with
@@ -143,7 +139,7 @@ with
             v.id_viagem,
             count(t.datetime_transacao) as quantidade_transacao,
             countif(
-                v.servico != t.servico_jae
+                v.servico != t.servico_jae and t.datetime_transacao > v.datetime_partida
             ) as quantidade_transacao_servico_divergente
         from transacao as t
         join
@@ -161,6 +157,7 @@ with
             count(tr.datetime_transacao) as quantidade_transacao_riocard,
             countif(
                 v.servico != tr.servico_jae
+                and tr.datetime_transacao > v.datetime_partida
             ) as quantidade_transacao_riocard_servico_divergente
         from transacao_riocard as tr
         join
@@ -307,6 +304,11 @@ select
     eev.id_validador,
     case
         when
+            ve.status not in (
+                "Licenciado com ar e não autuado", "Licenciado sem ar e não autuado"
+            )
+        then ve.status
+        when
             v.data >= date("{{ var('DATA_SUBSIDIO_V8_INICIO') }}")
             and (
                 (
@@ -330,14 +332,12 @@ select
                     and ({{ sem_transacao }})
                 )
             )
-            and ve.status in {{ status_viagem }}
             and v.datetime_partida not between "2024-10-06 06:00:00"
             and "2024-10-06 20:00:00"  -- Eleição (2024-10-06)
         then "Sem transação"
         when
             v.data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
             and coalesce(eev.indicador_estado_equipamento_aberto, false) = false
-            and ve.status in {{ status_viagem }}
         then "Validador fechado"
         when
             v.data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
@@ -346,7 +346,6 @@ select
                 or t.quantidade_transacao_servico_divergente > 0
                 or eev.quantidade_gps_servico_divergente > 0
             )
-            and ve.status in {{ status_viagem }}
         then "Validador associado incorretamente"
         else ve.status
     end as tipo_viagem,
