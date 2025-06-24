@@ -206,7 +206,7 @@ models:
       - name: km_apurada_detectado_com_ar_inoperante
         description: "Quilometragem apurada de viagens de veículos detectados com ar condicionado inoperante"
       - name: km_apurada_lacrado
-        description: "Quilometragem apurada de viagens de veículos lacrados"
+        description: "Quilometragem apurada de viagens de veículos lacrados pela equipe de fiscalização da SMTR"
       - name: km_apurada_licenciado_com_ar_n_autuado
         description: "Quilometragem apurada de viagens de veículos licenciados com ar condicionado e não autuados"
       - name: km_apurada_licenciado_com_ar_n_autuado_mini
@@ -228,11 +228,11 @@ models:
       - name: km_apurada_licenciado_sem_ar_n_autuado_padron
         description: "Quilometragem apurada de viagens de veículos sem ar e não autuados com tecnologia PADRON"
       - name: km_apurada_n_autorizado_ausencia_ar_condicionado
-        description: "Quilometragem apurada de viagens de veículos não autorizados por ausência de ar condicionado"
+        description: "Quilometragem apurada de viagens realizadas por veículos licenciados sem ar-condicionado, quando exigido para o serviço"
       - name: km_apurada_n_autorizado_capacidade
-        description: "Quilometragem apurada de viagens de veículos não autorizados por capacidade inadequada"
+        description: "Quilometragem apurada de viagens realizadas por veículos licenciados com tecnologia de capacidade inferior àquela determinada para o serviço"
       - name: km_apurada_n_licenciado
-        description: "Quilometragem apurada de viagens de veículos não licenciados"
+        description: "Quilometragem apurada de viagens realizadas por veículo que operaram sem licenciamento vigente junto à SMTR"
       - name: km_apurada_n_vistoriado
         description: "Distância apurada de viagens realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria (km)"
       - name: km_apurada_registrado_com_ar_inoperante
@@ -244,7 +244,7 @@ models:
       - name: km_apurada_validador_fechado
         description: "Quilometragem apurada de viagens com validador fechado"
       - name: km_apurada_total_licenciado_sem_ar_n_autuado
-        description: "Quilometragem total apurada de viagens de veículos sem ar e não autuados"
+        description: "Quilometragem total apurada de viagens de veículos licenciados sem ar-condicionado e não enquadrados nas demais classificações"
       - name: km_apurada_total_licenciado_com_ar_n_autuado
         description: "Quilometragem total apurada de viagens de veículos com ar e não autuados"
       - name: valor_a_pagar
