@@ -10,35 +10,31 @@
     {%- set tipos_query -%}
         select distinct
             status as tipo_viagem,
-            lower(
+            regexp_replace(
                 regexp_replace(
                     regexp_replace(
                         regexp_replace(
-                            regexp_replace(
-                                regexp_replace(
-                                    translate(
-                                        status,
-                                        'áàâãäéèêëíìîïóòôõöúùûüçÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇ',
-                                        'aaaaaeeeeiiiiooooouuuucAAAAAEEEEIIIIOOOOOUUUUC'
-                                    ),
-                                    r'[^\w\s]',  -- Remove caracteres não alfanuméricos
-                                    ''
-                                ),
-                                r'\b(e|por|de)\b',
-                                ''  -- Remove as palavras 'e', 'por' e 'de'
+                            lower(
+                                translate(
+                                    status,
+                                    'áàâãäéèêëíìîïóòôõöúùûüçÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇ',
+                                    'aaaaaeeeeiiiiooooouuuucAAAAAEEEEIIIIOOOOOUUUUC'
+                                )
                             ),
-                            r'\bnao\b',
-                            'n'  -- Substitui 'nao' por 'n'
+                            r'[^\w\s]',  -- Remove caracteres não alfanuméricos
+                            ''
                         ),
-                        r'[_\s]+',
-                        '_'  -- Substitui múltiplos espaços ou underscores por um único "_"
+                        r'\b(e|por|de)\b',
+                        ''  -- Remove as palavras 'e', 'por' e 'de'
                     ),
-                    r'[\s]+',
-                    ''  -- Remove espaços ou underscores duplicados
-                )
+                    r'(^nao|\bnao\b)',
+                    'n '  -- Substitui 'nao' por 'n'
+                ),
+                r'[\s]+',
+                '_'  -- Substitui múltiplos espaços por um único "_"
             ) as coluna_tipo_viagem
-        from {{ ref("valor_km_tipo_viagem") }}
-        {# from `rj-smtr.subsidio.valor_km_tipo_viagem` #}
+        {# from {{ ref("valor_km_tipo_viagem") }} #}
+        from `rj-smtr.subsidio.valor_km_tipo_viagem`
         where
             status not in ("Não classificado", "Nao licenciado", "Licenciado sem ar")
             and status not like '%(023.II)%'
