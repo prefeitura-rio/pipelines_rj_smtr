@@ -187,36 +187,62 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__pof__sumario_faixa_servico_dia_pagamento
               where: "data between date('{date_range_start}') and date('{date_range_end}')"
-      - name: km_apurada_registrado_com_ar_inoperante
-        description: "{{ doc('km_apurada_registrado_com_ar_inoperante') }}"
-      - name: km_apurada_n_licenciado
-        description: "{{ doc('km_apurada_n_licenciado') }}"
+      - name: km_apurada_autuado_alterar_itinerario
+        description: "Quilometragem apurada de viagens de veículos autuados por alterar itinerário"
       - name: km_apurada_autuado_ar_inoperante
         description: "{{ doc('km_apurada_autuado_ar_inoperante') }}"
-      - name: km_apurada_autuado_seguranca
-        description: "{{ doc('km_apurada_autuado_seguranca') }}"
+      - name: km_apurada_autuado_iluminacao_insuficiente
+        description: "Quilometragem apurada de viagens de veículos autuados por iluminação insuficiente"
       - name: km_apurada_autuado_limpezaequipamento
         description: "{{ doc('km_apurada_autuado_limpezaequipamento') }}"
-      - name: km_apurada_n_vistoriado
-        description: "Distância apurada de viagens realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria (km)"
-      - name: km_apurada_sem_transacao
-        description: "Distância apurada de viagens realizadas sem passageiro registrado"
-      - name: km_apurada_licenciado_sem_ar_n_autuado_mini
-        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados com tecnologia MINI"
+      - name: km_apurada_autuado_n_atender_solicitacao_parada
+        description: "Quilometragem apurada de viagens de veículos autuados por não atender solicitação de parada"
+      - name: km_apurada_autuado_n_concluir_itinerario
+        description: "Quilometragem apurada de viagens de veículos autuados por não concluir itinerário"
+      - name: km_apurada_autuado_seguranca
+        description: "{{ doc('km_apurada_autuado_seguranca') }}"
+      - name: km_apurada_autuado_vista_inoperante
+        description: "Quilometragem apurada de viagens de veículos autuados por vista inoperante"
+      - name: km_apurada_detectado_com_ar_inoperante
+        description: "Quilometragem apurada de viagens de veículos detectados com ar condicionado inoperante"
+      - name: km_apurada_lacrado
+        description: "Quilometragem apurada de viagens de veículos lacrados"
+      - name: km_apurada_licenciado_com_ar_n_autuado
+        description: "Quilometragem apurada de viagens de veículos licenciados com ar condicionado e não autuados"
       - name: km_apurada_licenciado_com_ar_n_autuado_mini
         description: "Quilometragem apurada de viagens de veículos com ar e não autuados com tecnologia MINI"
-      - name: km_apurada_licenciado_sem_ar_n_autuado_midi
-        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados com tecnologia MIDI"
       - name: km_apurada_licenciado_com_ar_n_autuado_midi
         description: "Quilometragem apurada de viagens de veículos com ar e não autuados com tecnologia MIDI"
-      - name: km_apurada_licenciado_sem_ar_n_autuado_basico
-        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados com tecnologia BASICO"
       - name: km_apurada_licenciado_com_ar_n_autuado_basico
         description: "Quilometragem apurada de viagens de veículos com ar e não autuados com tecnologia BASICO"
-      - name: km_apurada_licenciado_sem_ar_n_autuado_padron
-        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados com tecnologia PADRON"
       - name: km_apurada_licenciado_com_ar_n_autuado_padron
         description: "Quilometragem apurada de viagens de veículos com ar e não autuados com tecnologia PADRON"
+      - name: km_apurada_licenciado_sem_ar_n_autuado
+        description: "Quilometragem apurada de viagens de veículos licenciados sem ar condicionado e não autuados"
+      - name: km_apurada_licenciado_sem_ar_n_autuado_mini
+        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados com tecnologia MINI"
+      - name: km_apurada_licenciado_sem_ar_n_autuado_midi
+        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados com tecnologia MIDI"
+      - name: km_apurada_licenciado_sem_ar_n_autuado_basico
+        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados com tecnologia BASICO"
+      - name: km_apurada_licenciado_sem_ar_n_autuado_padron
+        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados com tecnologia PADRON"
+      - name: km_apurada_n_autorizado_ausencia_ar_condicionado
+        description: "Quilometragem apurada de viagens de veículos não autorizados por ausência de ar condicionado"
+      - name: km_apurada_n_autorizado_capacidade
+        description: "Quilometragem apurada de viagens de veículos não autorizados por capacidade inadequada"
+      - name: km_apurada_n_licenciado
+        description: "Quilometragem apurada de viagens de veículos não licenciados"
+      - name: km_apurada_n_vistoriado
+        description: "Distância apurada de viagens realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria (km)"
+      - name: km_apurada_registrado_com_ar_inoperante
+        description: "{{ doc('km_apurada_registrado_com_ar_inoperante') }}"
+      - name: km_apurada_sem_transacao
+        description: "Distância apurada de viagens realizadas sem passageiro registrado"
+      - name: km_apurada_validador_associado_incorretamente
+        description: "Quilometragem apurada de viagens com validador associado incorretamente"
+      - name: km_apurada_validador_fechado
+        description: "Quilometragem apurada de viagens com validador fechado"
       - name: km_apurada_total_licenciado_sem_ar_n_autuado
         description: "Quilometragem total apurada de viagens de veículos sem ar e não autuados"
       - name: km_apurada_total_licenciado_com_ar_n_autuado
