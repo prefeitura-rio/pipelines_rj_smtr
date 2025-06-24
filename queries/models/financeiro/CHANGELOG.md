@@ -1,5 +1,11 @@
 # Changelog - financeiro
 
+## [1.0.3] - 2025-06-24
+
+### Alterado
+
+- Altera referência da tabela `subsidio_faixa_servico_dia` para `percentual_operacao_faixa_horaria` nos modelos `subsidio_faixa_servico_dia_tipo_viagem`, `subsidio_penalidade_servico_faixa` e `subsidio_sumario_servico_dia_pagamento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/624)
+
 ## [1.0.2] - 2025-01-27
 
 ### Adicionado

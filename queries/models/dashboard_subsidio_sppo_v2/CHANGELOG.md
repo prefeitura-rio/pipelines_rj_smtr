@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo_v2
 
+## [1.0.9] - 2025-06-24
+
+### Alterado
+
+- Altera referência da tabela `subsidio_faixa_servico_dia` para `percentual_operacao_faixa_horaria` nos modelos `sumario_faixa_servico_dia`, `sumario_faixa_servico_dia_pagamento` e `sumario_servico_dia_pagamento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/624)
+
 ## [1.0.8] - 2025-05-14
 
 ### Alterado
