@@ -33,8 +33,8 @@ with
                         partition by data, tipo_dia, consorcio, servico
                         order by pof, faixa_horaria_inicio
                     ) as rn
-                from {{ ref("subsidio_faixa_servico_dia") }}
-                -- from `rj-smtr.financeiro_staging.subsidio_faixa_servico_dia`
+                from {{ ref("percentual_operacao_faixa_horaria") }}
+                -- from `rj-smtr.subsidio.percentual_operacao_faixa_horaria`
                 {% if is_incremental() %}
                     where
                         data between date('{{ var("start_date") }}') and date(

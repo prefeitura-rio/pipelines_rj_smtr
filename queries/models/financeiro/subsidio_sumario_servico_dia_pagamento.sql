@@ -19,8 +19,8 @@ with
             servico,
             sum(viagens_faixa) as viagens_dia,
             sum(km_planejada_faixa) as km_planejada_dia
-        from {{ ref("subsidio_faixa_servico_dia") }}
-        -- from `rj-smtr.financeiro_staging.subsidio_faixa_servico_dia`
+        from {{ ref("percentual_operacao_faixa_horaria") }}
+        -- from `rj-smtr.subsidio.percentual_operacao_faixa_horaria`
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')

@@ -301,7 +301,7 @@ selectors:
         - method: fqn
           value: snapshot_subsidio_faixa_servico_dia_tipo_viagem
         - method: fqn
-          value: snapshot_subsidio_faixa_servico_dia
+          value: snapshot_percentual_operacao_faixa_horaria
         - method: fqn
           value: snapshot_subsidio_penalidade_servico_faixa
         - method: fqn
