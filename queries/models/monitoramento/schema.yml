@@ -438,7 +438,7 @@ models:
         tests:
           - dbt_utils.relationships_where:
               name: dbt_utils.relationships_where__id_auto_infracao__autuacao_disciplinar_historico
-              to: ref('autuacao_disciplinar_historico')
+              to: ref('veiculo_fiscalizacao_lacre')
               from_condition: |
                 id_infracao in (
                   '016.II',
