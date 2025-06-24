@@ -188,23 +188,23 @@ models:
               name: dbt_utils.accepted_range__pof__sumario_faixa_servico_dia_pagamento
               where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: km_apurada_autuado_alterar_itinerario
-        description: "Quilometragem apurada de viagens de veículos autuados por alterar itinerário"
+        description: "Quilometragem apurada de viagens realizadas por veículos autuados disciplinarmente por alterar o itinerário aprovado de uma linha ou serviço"
       - name: km_apurada_autuado_ar_inoperante
         description: "{{ doc('km_apurada_autuado_ar_inoperante') }}"
       - name: km_apurada_autuado_iluminacao_insuficiente
-        description: "Quilometragem apurada de viagens de veículos autuados por iluminação insuficiente"
+        description: "Quilometragem apurada de viagens realizadas por veículos autuados disciplinarmente por transitar com o veículo com ausência ou insuficiência na iluminação interna e/ou nos dispositivos internos ou externos de informação aos passageiros"
       - name: km_apurada_autuado_limpezaequipamento
         description: "{{ doc('km_apurada_autuado_limpezaequipamento') }}"
       - name: km_apurada_autuado_n_atender_solicitacao_parada
-        description: "Quilometragem apurada de viagens de veículos autuados por não atender solicitação de parada"
+        description: "Quilometragem apurada de viagens realizadas por veículos autuados disciplinarmente por não atender às solicitações de parada para embarque ou desembarque de passageiros nos locais devidamente sinalizados para tal"
       - name: km_apurada_autuado_n_concluir_itinerario
-        description: "Quilometragem apurada de viagens de veículos autuados por não concluir itinerário"
+        description: "Quilometragem apurada de viagens de realizadas por veículos autuados disciplinarmente por alterar ou não concluir o itinerário autorizado do veículo"
       - name: km_apurada_autuado_seguranca
         description: "{{ doc('km_apurada_autuado_seguranca') }}"
       - name: km_apurada_autuado_vista_inoperante
-        description: "Quilometragem apurada de viagens de veículos autuados por vista inoperante"
+        description: "Quilometragem apurada de viagens de realizadas por veículos autuados disciplinarmente por inoperância ou mau funcionamento de caixa de vista eletrônica ou similar"
       - name: km_apurada_detectado_com_ar_inoperante
-        description: "Quilometragem apurada de viagens de veículos detectados com ar condicionado inoperante"
+        description: "Quilometragem apurada de viagens realizadas por veículos licenciado com ar-condicionado em operação detectado fora dos parâmetros definidos em resolução vigente"
       - name: km_apurada_lacrado
         description: "Quilometragem apurada de viagens de veículos lacrados pela equipe de fiscalização da SMTR"
       - name: km_apurada_licenciado_com_ar_n_autuado
@@ -234,13 +234,13 @@ models:
       - name: km_apurada_n_licenciado
         description: "Quilometragem apurada de viagens realizadas por veículo que operaram sem licenciamento vigente junto à SMTR"
       - name: km_apurada_n_vistoriado
-        description: "Distância apurada de viagens realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria (km)"
+        description: "Distância apurada de viagens realizadas por veículo que não se encontra vistoriado nos termos do calendário de vistoria da SMTR (km)"
       - name: km_apurada_registrado_com_ar_inoperante
         description: "{{ doc('km_apurada_registrado_com_ar_inoperante') }}"
       - name: km_apurada_sem_transacao
-        description: "Distância apurada de viagens realizadas sem passageiro registrado"
+        description: "Distância apurada de viagens realizadas sem nenhuma transação de bilhetagem (km)"
       - name: km_apurada_validador_associado_incorretamente
-        description: "Quilometragem apurada de viagens com validador associado incorretamente"
+        description: "Quilometragem apurada de viagens com validador associado ao serviço incorreto"
       - name: km_apurada_validador_fechado
         description: "Quilometragem apurada de viagens com validador fechado"
       - name: km_apurada_total_licenciado_sem_ar_n_autuado
