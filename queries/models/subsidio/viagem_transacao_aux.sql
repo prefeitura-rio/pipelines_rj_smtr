@@ -3,10 +3,13 @@
 {% if var("tipo_materializacao") == "monitoramento" %} {% set interval_minutes = 120 %}
 {% elif var("tipo_materializacao") == "subsidio" %} {% set interval_minutes = 30 %}
 {% endif %}
+
+{% set sem_transacao = "coalesce(tr.quantidade_transacao_riocard, 0) = 0  and coalesce(t.quantidade_transacao, 0) = 0" %}
+
 with
     -- 1. Transações Jaé
     transacao as (
-        select id_veiculo, datetime_transacao
+        select id_veiculo, servico_jae, datetime_transacao
         from {{ ref("transacao") }}
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
         where
@@ -18,7 +21,7 @@ with
     ),
     -- 2. Transações RioCard
     transacao_riocard as (
-        select id_veiculo, datetime_transacao
+        select id_veiculo, servico_jae, datetime_transacao
         from {{ ref("transacao_riocard") }}
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard`
         where
@@ -33,6 +36,7 @@ with
         select
             data,
             datetime_gps,
+            servico_jae,
             id_veiculo,
             id_validador,
             estado_equipamento,
@@ -129,7 +133,13 @@ with
     ),
     -- 8. Contagem de transações Jaé
     transacao_contagem as (
-        select v.data, v.id_viagem, count(t.datetime_transacao) as quantidade_transacao
+        select
+            v.data,
+            v.id_viagem,
+            count(t.datetime_transacao) as quantidade_transacao,
+            countif(
+                v.servico != t.servico_jae and t.datetime_transacao > v.datetime_partida
+            ) as quantidade_transacao_servico_divergente
         from transacao as t
         join
             viagem_com_tolerancia as v
@@ -143,7 +153,11 @@ with
         select
             v.data,
             v.id_viagem,
-            count(tr.datetime_transacao) as quantidade_transacao_riocard
+            count(tr.datetime_transacao) as quantidade_transacao_riocard,
+            countif(
+                v.servico != tr.servico_jae
+                and tr.datetime_transacao > v.datetime_partida
+            ) as quantidade_transacao_riocard_servico_divergente
         from transacao_riocard as tr
         join
             viagem_com_tolerancia as v
@@ -163,6 +177,7 @@ with
                 (
                     select
                         data,
+                        servico_jae,
                         id_validador,
                         id_veiculo,
                         latitude,
@@ -188,6 +203,7 @@ with
                 (
                     select
                         data,
+                        servico_jae,
                         id_validador,
                         id_veiculo,
                         latitude,
@@ -211,7 +227,9 @@ with
             e.id_validador,
             e.estado_equipamento,
             e.latitude,
-            e.longitude
+            e.longitude,
+            v.servico,
+            e.servico_jae,
         from estado_equipamento_aux as e
         join
             viagem as v
@@ -225,21 +243,28 @@ with
             data,
             id_viagem,
             id_validador,
+            countif(servico != servico_jae) as quantidade_gps_servico_divergente,
             countif(estado_equipamento = "ABERTO")
             / count(*) as percentual_estado_equipamento_aberto
         from gps_validador_viagem
         group by 1, 2, 3
     ),
-    -- 13. Considera o validador com maior porcentagem de estado do equipamento
+    -- 13. Calcula maior e menor porcentagem de estado do equipamento
     -- "ABERTO" por viagem
-    estado_equipamento_max_perc as (
+    estado_equipamento_max_min as (
         select
             data,
             id_viagem,
-            max_by(id_validador, percentual_estado_equipamento_aberto) as id_validador,
+            sum(quantidade_gps_servico_divergente) as quantidade_gps_servico_divergente,
+            max_by(
+                id_validador, percentual_estado_equipamento_aberto
+            ) as id_validador_max_perc,
             max(
                 percentual_estado_equipamento_aberto
-            ) as percentual_estado_equipamento_aberto
+            ) as max_percentual_estado_equipamento_aberto,
+            min(
+                percentual_estado_equipamento_aberto
+            ) as min_percentual_estado_equipamento_aberto,
         from estado_equipamento_perc
         group by 1, 2
     ),
@@ -250,15 +275,25 @@ with
             data,
             id_viagem,
             id_validador,
-            percentual_estado_equipamento_aberto,
-            if(
-                percentual_estado_equipamento_aberto >= 0.8
-                or percentual_estado_equipamento_aberto is null,
-                true,
-                false
-            ) as indicador_estado_equipamento_aberto
+            quantidade_gps_servico_divergente,
+            case
+                when data < date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                then max_percentual_estado_equipamento_aberto
+                else min_percentual_estado_equipamento_aberto
+            end as percentual_estado_equipamento_aberto,
+            case
+                when data < date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                then
+                    if(
+                        max_percentual_estado_equipamento_aberto >= 0.8
+                        or max_percentual_estado_equipamento_aberto is null,
+                        true,
+                        false
+                    )
+                else if(min_percentual_estado_equipamento_aberto >= 0.8, true, false)
+            end as indicador_estado_equipamento_aberto
         from viagem
-        left join estado_equipamento_max_perc using (data, id_viagem)
+        left join estado_equipamento_max_min using (data, id_viagem)
     )
 select
     v.data,
@@ -267,6 +302,11 @@ select
     v.servico,
     eev.id_validador,
     case
+        when
+            ve.status not in (
+                "Licenciado com ar e não autuado", "Licenciado sem ar e não autuado"
+            )
+        then ve.status
         when
             v.data >= date("{{ var('DATA_SUBSIDIO_V8_INICIO') }}")
             and (
@@ -281,20 +321,31 @@ select
                 or (
                     v.data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
                     and (
-                        (
-                            coalesce(tr.quantidade_transacao_riocard, 0) = 0
-                            and coalesce(t.quantidade_transacao, 0) = 0
-                        )
+                        ({{ sem_transacao }})
                         or coalesce(eev.indicador_estado_equipamento_aberto, false)
                         = false
                     )
                 )
+                or (
+                    v.data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                    and ({{ sem_transacao }})
+                )
             )
-            and ve.status
-            in ("Licenciado com ar e não autuado", "Licenciado sem ar e não autuado")
             and v.datetime_partida not between "2024-10-06 06:00:00"
             and "2024-10-06 20:00:00"  -- Eleição (2024-10-06)
         then "Sem transação"
+        when
+            v.data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+            and coalesce(eev.indicador_estado_equipamento_aberto, false) = false
+        then "Validador fechado"
+        when
+            v.data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+            and (
+                tr.quantidade_transacao_riocard_servico_divergente > 0
+                or t.quantidade_transacao_servico_divergente > 0
+                or eev.quantidade_gps_servico_divergente > 0
+            )
+        then "Validador associado incorretamente"
         else ve.status
     end as tipo_viagem,
     ve.tecnologia,
