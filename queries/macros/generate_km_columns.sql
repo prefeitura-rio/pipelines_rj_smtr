@@ -20,7 +20,7 @@
                         ''  -- Remove as palavras 'e', 'por' e 'de'
                     ),
                     r'(^nao|\bnao\b)',
-                    'n '  -- Substitui 'nao' por 'n'
+                    'n'  -- Substitui 'nao' por 'n'
                 ),
                 r'[\s]+',
                 '_'  -- Substitui múltiplos espaços por um único "_"
