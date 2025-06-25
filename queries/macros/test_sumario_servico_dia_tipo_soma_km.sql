@@ -1,6 +1,6 @@
-{% test sumario_servico_dia_tipo_soma_km(model, column_name) -%}
-
-    {%- if execute -%}
+{% test sumario_servico_dia_tipo_soma_km(model, column_name) %}
+    -- depends_on: {{ ref('valor_km_tipo_viagem') }}
+    {% if execute and "faixa" in model -%}
         {%- set results = generate_km_columns() -%}
         {%- set colunas_tipo_viagem = results.columns[1].values() -%}
         {%- set tipos_filtrados = (
