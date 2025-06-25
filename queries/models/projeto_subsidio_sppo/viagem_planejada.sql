@@ -287,6 +287,7 @@
                 ts.feed_end_date,
                 "{{ tipo_oss[1] }}" as tipo_os,
                 "{{ tipo_dias[1] }}" as tipo_dia,
+                -- TODO: Incluir Processo.Rio
                 case
                     when "{{ var('run_date') }}" = "2025-06-02"
                     and ts.servico = "864"
@@ -333,6 +334,7 @@
                 on
                 (
                     da.servico = ts.servico
+                    -- TODO: Incluir Processo.Rio
                     {% if var("run_date") == "2025-06-02" %}
                         or (ts.servico = "864" and da.servico = "LECD122")
                         or (ts.servico = "LECD108" and da.servico = "LECD112")
