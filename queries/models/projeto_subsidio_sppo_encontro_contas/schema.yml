@@ -2,8 +2,11 @@ version: 2
 
 models:
   - name: balanco_consorcio_ano
-    description: "Balanço da receita aferida e esperada por consórcio e
-    ano para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
+    latest_version: 2
+    versions:
+      - v: 1
+      - v: 2
+    description: "Balanço da receita aferida e esperada por consórcio e ano para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
     columns:
       - name: ano
         description: "{{ doc('ano') }}"
@@ -28,6 +31,10 @@ models:
       - name: saldo
         description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado (R$)"
   - name: balanco_consorcio_dia
+    latest_version: 2
+    versions:
+      - v: 1
+      - v: 2
     description: "Balanço da receita aferida e esperada por consórcio e dia para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
     columns:
       - name: data
@@ -53,6 +60,10 @@ models:
       - name: saldo
         description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado (R$)"
   - name: balanco_servico_ano
+    latest_version: 2
+    versions:
+      - v: 1
+      - v: 2
     description: "Balanço da receita aferida e esperada por serviço e ano para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
     columns:
       - name: ano
@@ -80,6 +91,10 @@ models:
       - name: saldo
         description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado (R$)"
   - name: balanco_servico_dia
+    latest_version: 2
+    versions:
+      - v: 1
+      - v: 2
     description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
     columns:
       - name: data
@@ -107,6 +122,9 @@ models:
       - name: saldo
         description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado (R$)"
   - name: balanco_servico_dia_pos_gt
+    latest_version: 1
+    versions:
+      - v: 1
     description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados após alterações do Grupo de Trabalho [Processo.Rio MTR-PRO-2024/06270]. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024 e 02/2024"
     columns:
       - name: data
@@ -134,6 +152,10 @@ models:
       - name: saldo
         description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado (R$)"
   - name: balanco_servico_quinzena
+    latest_version: 2
+    versions:
+      - v: 1
+      - v: 2
     description: "Balanço da receita aferida e esperada por serviço e quinzena para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
     columns:
       - name: quinzena
@@ -189,3 +211,19 @@ models:
         description: "Quantidade de dias em que o serviço foi encontrado no RDO na respectiva quinzena"
       - name: receita_tarifaria_aferida_rdo
         description: "Receita tarifária aferida com base no RDO"
+  - name: recurso_encontro_contas
+    latest_version: 2
+    versions:
+      - v: 2
+  - name: aux_rdo_servico_dia
+    latest_version: 2
+    versions:
+      - v: 2
+  - name: aux_subsidio_servico_dia
+    latest_version: 2
+    versions:
+      - v: 2
+  - name: staging_encontro_contas_servico_dia
+    latest_version: 2
+    versions:
+      - v: 2

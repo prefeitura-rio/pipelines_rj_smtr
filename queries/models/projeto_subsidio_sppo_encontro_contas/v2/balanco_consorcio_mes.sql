@@ -1,4 +1,5 @@
 select
+    date_trunc('month', data) as mes_ref,
     extract(year from data) as ano,
     extract(month from data) as mes,
     consorcio,
@@ -12,5 +13,5 @@ select
     sum(valor_subsidio_pago) as subsidio_pago,
     sum(saldo) as saldo
 from {{ ref("balanco_servico_dia") }}
-group by 1, 2, 3
-order by 1, 2, 3
+group by 1, 2, 3, 4
+order by 1, 4
