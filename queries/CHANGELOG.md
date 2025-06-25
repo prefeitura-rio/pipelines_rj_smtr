@@ -1,5 +1,11 @@
 # Changelog - queries
 
+## [1.0.4] - 2025-05-20
+
+### Adicionado
+
+- Adiciona selector `gps` e `gps_15_minutos` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/297)
+
 ## [1.0.3] - 2025-05-13
 
 ### Alterado

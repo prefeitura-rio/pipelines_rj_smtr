@@ -1,5 +1,47 @@
 # Changelog - monitoramento
 
+## [1.4.2] - 2025-06-24
+
+### Alterado
+
+- Alterado o cálculo da `km_apurada` no modelo `monitoramento_servico_dia_v2.sql` para somar a quilometragem dos veículos não licenciados e não vistoriados (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/629)
+
+## [1.4.1] - 2025-06-06
+
+### Adicionado
+
+- Adiciona testes nos modelos `staging_gps`, `staging_realocacao` e `gps` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/614)
+
+## [1.4.0] - 2025-05-29
+
+### Alterado
+
+- Altera lógica de validação de viagens no modelo `viagem_validacao` [quantidade_segmentos_validos >= quantidade_segmentos_necessarios] (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/585)
+- Altera modelo `gps_viagem` adicionando dados de GPS da API da Cittati (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/585)
+
+## [1.3.9] - 2025-05-28
+
+### Adicionado
+
+- Cria modelos `staging_veiculo_fiscalizacao_lacre.sql` e `veiculo_fiscalizacao_lacre.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/594)
+
+## [1.3.8] - 2025-05-28
+
+
+### Adicionado
+
+ - Cria modelo `gps_15_minutos_union` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/586)
+
+### Alterado
+
+- Altera lógica do modelo `aux_gps_trajeto_correto` para considerar trajetos alternativos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/595)
+
+## [1.3.7] - 2025-05-20
+
+### Adicionado
+
+ - Cria modelos `gps`, `gps_15_minutos`, `aux_gps`, `aux_gps_filtrada`, `aux_gps_parada`, `aux_gps_realocacao`, `aux_gps_trajeto_correto`, `aux_gps_velocidade` ,`aux_realocacao` e `staging_garagens`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/297)
+
 ## [1.3.6] - 2025-05-13
 
 ### Corrigido
@@ -27,7 +69,6 @@
 ### Corrigido
 
 - Transforma dados em branco em nulos no modelo `viagem_informada_monitoramento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/408)
-
 
 ## [1.3.0] - 2025-01-22
 

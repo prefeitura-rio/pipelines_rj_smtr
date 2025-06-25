@@ -2,7 +2,7 @@
 """
 Flows for br_rj_riodejaneiro_onibus_gps
 
-DBT 2025-03-27
+DBT 2025-06-24
 """
 
 from copy import deepcopy
@@ -166,7 +166,7 @@ with Flow(
     rematerialization = Parameter("rematerialization", default=False)
     date_range_start_param = Parameter("date_range_start", default=None)
     date_range_end_param = Parameter("date_range_end", default=None)
-    fifteen_minutes = Parameter("fifteen_minutes", default="")
+    _15_minutos = Parameter("15_minutos", default=False)
     materialize_delay_hours = Parameter(
         "materialize_delay_hours",
         default=constants.GPS_SPPO_MATERIALIZE_DELAY_HOURS.value,
@@ -229,7 +229,7 @@ with Flow(
                 table_id=table_id,
                 upstream=True,
                 exclude="+data_versao_efetiva",
-                _vars=[date_range, dataset_sha, {"fifteen_minutes": fifteen_minutes}],
+                _vars=[date_range, dataset_sha, {"15_minutos": _15_minutos}],
                 flags="--full-refresh",
             )
 
@@ -239,7 +239,7 @@ with Flow(
                 dataset_id=dataset_id,
                 table_id=table_id,
                 exclude="+data_versao_efetiva",
-                _vars=[date_range, dataset_sha, {"fifteen_minutes": fifteen_minutes}],
+                _vars=[date_range, dataset_sha, {"15_minutos": _15_minutos}],
                 upstream=True,
             )
 
@@ -594,7 +594,7 @@ materialize_gps_15_min = set_default_parameters(
         "table_id": constants.GPS_SPPO_15_MIN_TREATED_TABLE_ID.value,
         "materialize_delay_hours": 0,
         "truncate_minutes": False,
-        "fifteen_minutes": "_15_minutos",
+        "15_minutos": True,
     },
 )
 materialize_gps_15_min.name = "SMTR: GPS SPPO 15 Minutos - Materialização (subflow)"
@@ -621,7 +621,7 @@ with Flow("SMTR: GPS SPPO 15 Minutos - Tratamento") as recaptura_15min:
             "rebuild": rebuild,
             "materialize_delay_hours": 0,
             "truncate_minutes": False,
-            "fifteen_minutes": "_15_minutos",
+            "15_minutos": True,
         },
     )
 

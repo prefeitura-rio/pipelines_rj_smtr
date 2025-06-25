@@ -279,13 +279,14 @@ def transform_raw_to_nested_structure(
     else:
         log(f"Raw data:\n{data_info_str(data)}", level="info")
 
+        data_columns_len = len(data.columns)
         captura = create_timestamp_captura(timestamp=datetime.now())
         data["_datetime_execucao_flow"] = captura
 
         for step in pretreat_funcs:
             data = step(data=data, timestamp=timestamp, primary_keys=primary_keys)
 
-        if len(primary_keys) < len(data.columns):
+        if len(primary_keys) < data_columns_len:
             data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
 
         timestamp = create_timestamp_captura(timestamp=timestamp)
