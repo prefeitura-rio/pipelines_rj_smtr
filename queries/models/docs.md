@@ -782,7 +782,7 @@ Indicador se o veículo foi autuado por infração relacionada à segurança do 
 {% enddocs %}
 
 {% docs km_apurada %}
-Distância apurada para o serviço por dia (km)
+Distância apurada para o serviço (km)
 {% enddocs %}
 
 {% docs km_apurada_autuado_limpezaequipamento %}
@@ -891,4 +891,52 @@ Linha de ônibus [serviço] realocada informada pela empresa operadora
 
 {% docs posicao_veiculo_geo %}
 Coordenada geográfica [POINT] com a posição que o veículo se encontra, conforme 'longitude' e 'latitude' informadas pelo GPS [EPSG:4326 - WGS84]
+{% enddocs %}
+
+{% docs receita_total_esperada %}
+Receita total esperada com base na quilometragem [irk * km] (R$)
+{% enddocs %}
+
+{% docs receita_tarifaria_esperada %}
+Receita tarifária esperada com base na quilometragem [irk_tarifa_publica * km] (R$)
+{% enddocs %}
+
+{% docs subsidio_esperado %}
+Subsídio esperado com base na quilometragem [subsidio_km * km] (R$)
+{% enddocs %}
+
+{% docs subsidio_glosado %}
+Valor de subsídio glosado conforme legislação vigente [subsidio_esperado - valor_subsidio_pago] (R$)
+{% enddocs %}
+
+{% docs receita_total_aferida %}
+Receita total aferida [receita_tarifaria_aferida + valor_subsidio_pago] (R$)
+{% enddocs %}
+
+{% docs receita_tarifaria_aferida %}
+Receita tarifária aferida com base no RDO informado pelos consórcios (R$)
+{% enddocs %}
+
+{% docs subsidio_pago %}
+Valor de subsídio efetivamente pago (R$)
+{% enddocs %}
+
+{% docs saldo %}
+Saldo entre a receita esperada e a receita aferida [(receita_total_aferida - receita_total_esperada - subsidio_glosado) ou (receita_tarifaria_aferida - receita_tarifaria_esperada)] (R$)
+{% enddocs %}
+
+{% docs quinzena %}
+Identificador da quinzena (1 ou 2) dentro do mês de referência
+{% enddocs %}
+
+{% docs data_inicial_quinzena %}
+Data inicial da quinzena considerada
+{% enddocs %}
+
+{% docs data_final_quinzena %}
+Data final da quinzena considerada
+{% enddocs %}
+
+{% docs km_subsidiada %}
+Quilometragem apurada e subsidiada (km)
 {% enddocs %}

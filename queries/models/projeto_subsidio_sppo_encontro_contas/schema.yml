@@ -6,211 +6,213 @@ models:
     versions:
       - v: 1
       - v: 2
-    description: "Balanço da receita aferida e esperada por consórcio e ano para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
+    description: "Balanço da receita aferida e esperada por consórcio e ano para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025."
     columns:
       - name: ano
         description: "{{ doc('ano') }}"
       - name: consorcio
-        description: "Consórcio"
+        description: "{{ doc('consorcio') }}"
       - name: km_subsidiada
-        description: "Quilometragem apurada e subsidiada via algoritmo (km)"
+        description: "{{ doc('km_subsidiada') }}"
+      - name: km_apurada
+        description: "{{ doc('km_apurada') }}"
       - name: receita_total_esperada
-        description: "Receita total esperada com base na quilometragem [IRK x km] (R$)"
+        description: "{{ doc('receita_total_esperada') }}"
       - name: receita_tarifaria_esperada
-        description: "Receita tarifária esperada com base na quilometragem (R$)"
+        description: "{{ doc('receita_tarifaria_esperada') }}"
       - name: subsidio_esperado
-        description: "Subsídio esperado com base na quilometragem (R$)"
+        description: "{{ doc('subsidio_esperado') }}"
       - name: subsidio_glosado
-        description: "Subsídio glosado conforme os decretos e resoluções vigentes (R$)"
+        description: "{{ doc('subsidio_glosado') }}"
       - name: receita_total_aferida
-        description: "Receita total aferida [receita tarifária + subsidio pago] (R$)"
+        description: "{{ doc('receita_total_aferida') }}"
       - name: receita_tarifaria_aferida
-        description: "Receita tarifária aferida com base no RDO informado pelos consórcios (R$)"
+        description: "{{ doc('receita_tarifaria_aferida') }}"
       - name: subsidio_pago
-        description: "Subsídio pago (R$)"
+        description: "{{ doc('subsidio_pago') }}"
       - name: saldo
-        description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado (R$)"
+        description: "{{ doc('saldo') }}"
   - name: balanco_consorcio_dia
     latest_version: 2
     versions:
       - v: 1
       - v: 2
-    description: "Balanço da receita aferida e esperada por consórcio e dia para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
+    description: "Balanço da receita aferida e esperada por consórcio e dia para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025."
     columns:
       - name: data
         description: "{{ doc('data') }}"
       - name: consorcio
-        description: "Consórcio"
+        description: "{{ doc('consorcio') }}"
       - name: km_subsidiada
-        description: "Quilometragem apurada e subsidiada via algoritmo (km)"
+        description: "{{ doc('km_subsidiada') }}"
       - name: receita_total_esperada
-        description: "Receita total esperada com base na quilometragem [IRK x km] (R$)"
+        description: "{{ doc('receita_total_esperada') }}"
       - name: receita_tarifaria_esperada
-        description: "Receita tarifária esperada com base na quilometragem (R$)"
+        description: "{{ doc('receita_tarifaria_esperada') }}"
       - name: subsidio_esperado
-        description: "Subsídio esperado com base na quilometragem (R$)"
+        description: "{{ doc('subsidio_esperado') }}"
       - name: subsidio_glosado
-        description: "Subsídio glosado conforme os decretos e resoluções vigentes (R$)"
+        description: "{{ doc('subsidio_glosado') }}"
       - name: receita_total_aferida
-        description: "Receita total aferida [receita tarifária + subsidio pago] (R$)"
+        description: "{{ doc('receita_total_aferida') }}"
       - name: receita_tarifaria_aferida
-        description: "Receita tarifária aferida com base no RDO informado pelos consórcios (R$)"
+        description: "{{ doc('receita_tarifaria_aferida') }}"
       - name: subsidio_pago
-        description: "Subsídio pago (R$)"
+        description: "{{ doc('subsidio_pago') }}"
       - name: saldo
-        description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado (R$)"
+        description: "{{ doc('saldo') }}"
   - name: balanco_servico_ano
     latest_version: 2
     versions:
       - v: 1
       - v: 2
-    description: "Balanço da receita aferida e esperada por serviço e ano para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
+    description: "Balanço da receita aferida e esperada por serviço e ano para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025."
     columns:
       - name: ano
         description: "{{ doc('ano') }}"
       - name: consorcio
-        description: "Nome do consórcio"
+        description: "{{ doc('consorcio') }}"
       - name: servico
-        description: "{{ doc('id_veiculo') }}"
+        description: "{{ doc('servico') }}"
       - name: km_subsidiada
-        description: "Quilometragem apurada e subsidiada via algoritmo (km)"
+        description: "{{ doc('km_subsidiada') }}"
       - name: receita_total_esperada
-        description: "Receita total esperada com base na quilometragem [IRK x km] (R$)"
+        description: "{{ doc('receita_total_esperada') }}"
       - name: receita_tarifaria_esperada
-        description: "Receita tarifária esperada com base na quilometragem (R$)"
+        description: "{{ doc('receita_tarifaria_esperada') }}"
       - name: subsidio_esperado
-        description: "Subsídio esperado com base na quilometragem (R$)"
+        description: "{{ doc('subsidio_esperado') }}"
       - name: subsidio_glosado
-        description: "Subsídio glosado conforme os decretos e resoluções vigentes (R$)"
+        description: "{{ doc('subsidio_glosado') }}"
       - name: receita_total_aferida
-        description: "Receita total aferida [receita tarifária + subsidio pago] (R$)"
+        description: "{{ doc('receita_total_aferida') }}"
       - name: receita_tarifaria_aferida
-        description: "Receita tarifária aferida com base no RDO informado pelos consórcios (R$)"
+        description: "{{ doc('receita_tarifaria_aferida') }}"
       - name: subsidio_pago
-        description: "Subsídio pago (R$)"
+        description: "{{ doc('subsidio_pago') }}"
       - name: saldo
-        description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado (R$)"
+        description: "{{ doc('saldo') }}"
   - name: balanco_servico_dia
     latest_version: 2
     versions:
       - v: 1
       - v: 2
-    description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
+    description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025"
     columns:
       - name: data
         description: "{{ doc('data') }}"
       - name: consorcio
-        description: "Nome do consórcio"
+        description: "{{ doc('consorcio') }}"
       - name: servico
-        description: "{{ doc('id_veiculo') }}"
+        description: "{{ doc('servico') }}"
       - name: km_subsidiada
-        description: "Quilometragem apurada e subsidiada via algoritmo (km)"
+        description: "{{ doc('km_subsidiada') }}"
       - name: receita_total_esperada
-        description: "Receita total esperada com base na quilometragem [IRK x km] (R$)"
+        description: "{{ doc('receita_total_esperada') }}"
       - name: receita_tarifaria_esperada
-        description: "Receita tarifária esperada com base na quilometragem (R$)"
+        description: "{{ doc('receita_tarifaria_esperada') }}"
       - name: subsidio_esperado
-        description: "Subsídio esperado com base na quilometragem (R$)"
+        description: "{{ doc('subsidio_esperado') }}"
       - name: subsidio_glosado
-        description: "Subsídio glosado conforme os decretos e resoluções vigentes (R$)"
+        description: "{{ doc('subsidio_glosado') }}"
       - name: receita_total_aferida
-        description: "Receita total aferida [receita tarifária + subsidio pago] (R$)"
+        description: "{{ doc('receita_total_aferida') }}"
       - name: receita_tarifaria_aferida
-        description: "Receita tarifária aferida com base no RDO informado pelos consórcios (R$)"
+        description: "{{ doc('receita_tarifaria_aferida') }}"
       - name: subsidio_pago
-        description: "Subsídio pago (R$)"
+        description: "{{ doc('subsidio_pago') }}"
       - name: saldo
-        description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado (R$)"
+        description: "{{ doc('saldo') }}"
   - name: balanco_servico_dia_pos_gt
     latest_version: 1
     versions:
       - v: 1
-    description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados após alterações do Grupo de Trabalho [Processo.Rio MTR-PRO-2024/06270]. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024 e 02/2024"
+    description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados após alterações do Grupo de Trabalho [Processo.Rio MTR-PRO-2024/06270]. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024, 02/2024 e 01/2025."
     columns:
       - name: data
         description: "{{ doc('data') }}"
       - name: consorcio
-        description: "Consórcio"
+        description: "{{ doc('consorcio') }}"
       - name: servico
-        description: "Serviço"
+        description: "{{ doc('servico') }}"
       - name: km_subsidiada
-        description: "Quilometragem apurada e subsidiada via algoritmo (km)"
+        description: "{{ doc('km_subsidiada') }}"
       - name: receita_total_esperada
-        description: "Receita total esperada com base na quilometragem [IRK x km] (R$)"
+        description: "{{ doc('receita_total_esperada') }}"
       - name: receita_tarifaria_esperada
-        description: "Receita tarifária esperada com base na quilometragem (R$)"
+        description: "{{ doc('receita_tarifaria_esperada') }}"
       - name: subsidio_esperado
-        description: "Subsídio esperado com base na quilometragem (R$)"
+        description: "{{ doc('subsidio_esperado') }}"
       - name: subsidio_glosado
-        description: "Subsídio glosado conforme os decretos e resoluções vigentes (R$)"
+        description: "{{ doc('subsidio_glosado') }}"
       - name: receita_total_aferida
-        description: "Receita total aferida [receita tarifária + subsidio pago] (R$)"
+        description: "{{ doc('receita_total_aferida') }}"
       - name: receita_tarifaria_aferida
-        description: "Receita tarifária aferida com base no RDO informado pelos consórcios (R$)"
+        description: "{{ doc('receita_tarifaria_aferida') }}"
       - name: subsidio_pago
-        description: "Subsídio pago (R$)"
+        description: "{{ doc('subsidio_pago') }}"
       - name: saldo
-        description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado (R$)"
+        description: "{{ doc('saldo') }}"
   - name: balanco_servico_quinzena
     latest_version: 2
     versions:
       - v: 1
       - v: 2
-    description: "Balanço da receita aferida e esperada por serviço e quinzena para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
+    description: "Balanço da receita aferida e esperada por serviço e quinzena para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025."
     columns:
       - name: quinzena
-        description: "Quinzena"
+        description: "{{ doc('quinzena') }}"
       - name: data_inicial_quinzena
-        description: "Data inicial da quinzena"
+        description: "{{ doc('data_inicial_quinzena') }}"
       - name: data_final_quinzena
-        description: "Data final da quinzena"
+        description: "{{ doc('data_final_quinzena') }}"
       - name: consorcio
-        description: "Nome do consórcio"
+        description: "{{ doc('consorcio') }}"
       - name: servico
-        description: "{{ doc('id_veiculo') }}"
+        description: "{{ doc('servico') }}"
       - name: quantidade_dias_subsidiado
-        description: "Quantidade de dias subsidiado"
+        description: "Quantidade de dias em que o serviço recebeu subsídio na quinzena"
       - name: km_subsidiada
-        description: "Quilometragem apurada e subsidiada via algoritmo (km)"
+        description: "{{ doc('km_subsidiada') }}"
       - name: receita_total_esperada
-        description: "Receita total esperada com base na quilometragem [IRK x km] (R$)"
+        description: "{{ doc('receita_total_esperada') }}"
       - name: receita_tarifaria_esperada
-        description: "Receita tarifária esperada com base na quilometragem (R$)"
+        description: "{{ doc('receita_tarifaria_esperada') }}"
       - name: subsidio_esperado
-        description: "Subsídio esperado com base na quilometragem (R$)"
+        description: "{{ doc('subsidio_esperado') }}"
       - name: subsidio_glosado
-        description: "Subsídio glosado conforme os decretos e resoluções vigentes (R$)"
+        description: "{{ doc('subsidio_glosado') }}"
       - name: receita_total_aferida
-        description: "Receita total aferida [receita tarifária + subsidio pago] (R$)"
+        description: "{{ doc('receita_total_aferida') }}"
       - name: receita_tarifaria_aferida
-        description: "Receita tarifária aferida com base no RDO informado pelos consórcios (R$)"
+        description: "{{ doc('receita_tarifaria_aferida') }}"
       - name: subsidio_pago
-        description: "Subsídio pago (R$)"
+        description: "{{ doc('subsidio_pago') }}"
       - name: saldo
-        description: "Saldo entre a receita esperada e aferida, descontado o subsídio glosado (R$)"
+        description: "{{ doc('saldo') }}"
   - name: receita_tarifaria_servico_nao_identificado_quinzena
-    description: "Receita tarifária proveniente do RDO para serviços de ônibus dos consórcios que não foram identificados nos planos operacionais dos respectivos dias"
+    description: "Receita tarifária proveniente do RDO para serviços de ônibus dos consórcios que não foram identificados nos planos operacionais dos respectivos dias."
     columns:
       - name: quinzena
-        description: "Quinzena"
+        description: "{{ doc('quinzena') }}"
       - name: data_inicial_quinzena
-        description: "Data inicial da quinzena"
+        description: "{{ doc('data_inicial_quinzena') }}"
       - name: data_final_quinzena
-        description: "Data final da quinzena"
+        description: "{{ doc('data_final_quinzena') }}"
       - name: consorcio_rdo
-        description: "Consórcio informado no RDO"
+        description: "{{ doc('consorcio') }} informado no RDO"
       - name: servico_tratado_rdo
-        description: "Serviço tratado com base no campo linha do RDO, utilizado para cruzamento com o plano operacional"
+        description: "Serviço tratado (linha) extraído do campo 'linha' do RDO, após tratamento"
       - name: linha_rdo
-        description: "Linha conforme RDO"
+        description: "{{ doc('servico') }} conforme declarada no RDO"
       - name: tipo_servico_rdo
-        description: "Tipo do serviço conforme RDO"
+        description: "{{ doc('tipo_servico') }}"
       - name: ordem_servico_rdo
-        description: "Ordem do serviço conforme o RDO"
+        description: "{{ doc('ordem_servico') }}"
       - name: quantidade_dias_rdo
         description: "Quantidade de dias em que o serviço foi encontrado no RDO na respectiva quinzena"
       - name: receita_tarifaria_aferida_rdo
-        description: "Receita tarifária aferida com base no RDO"
+        description: "{{ doc('receita_tarifaria_aferida') }}"
   - name: recurso_encontro_contas
     latest_version: 2
     versions:
