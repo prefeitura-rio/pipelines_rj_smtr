@@ -2,7 +2,7 @@
 
     {{
         config(
-            target_schema="financeiro_staging",
+            target_schema="subsidio_staging",
             unique_key="concat(data, '-', faixa_horaria_inicio, '-', servico)",
             strategy="timestamp",
             updated_at="timestamp_ultima_atualizacao",
