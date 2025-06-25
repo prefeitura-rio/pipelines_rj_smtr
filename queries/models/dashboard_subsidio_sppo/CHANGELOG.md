@@ -1,10 +1,17 @@
 # Changelog - dashboard_subsidio_sppo
 
-## [7.1.8] - 2025-06-25
+## [7.1.9] - 2025-06-25
 
 ### Alterado
 
 - Altera fonte dos dados de veículo para `aux_veiculo_dia_consolidada` no modelo `sumario_servico_tipo_viagem_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
+## [7.1.8] - 2025-06-24
+
+### Alterado
+
+- Altera referência da CTE `servico_faixa_km_apuracao` no modelo `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/624)
+- Altera lógica do `subsidio_km` no modelo `viagens_remuneradas` conforme Art.3º da [RESOLUÇÃO SMTR Nº 3843/2025](https://doweb.rio.rj.gov.br/portal/visualizacoes/pdf/7371/#/p:14/e:7371) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/624)
 
 ## [7.1.7] - 2025-06-12
 
