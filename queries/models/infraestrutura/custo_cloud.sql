@@ -11,7 +11,7 @@
 {% endset %}
 
 {% set billing_staging = source(
-    "cloudcosts",
+    "infraestrutura_staging",
     "gcp_billing_export_resource_v1_010693_B1EC8D_C0D4DF",
 ) %}
 
