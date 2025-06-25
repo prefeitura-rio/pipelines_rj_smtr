@@ -14,12 +14,15 @@ SELECT
   SAFE_CAST(JSON_VALUE(content,'$.permissao') AS STRING) permissao,
   SAFE_CAST(JSON_VALUE(content,'$.placa') AS STRING) placa,
   SAFE_CAST(id_auto_infracao AS STRING) id_auto_infracao,
-  PARSE_DATE("%d/%m/%Y", SAFE_CAST(JSON_VALUE(content,'$.data_infracao') AS STRING)) data_infracao,
+  PARSE_DATE("%d/%m/%Y", split(SAFE_CAST(JSON_VALUE(content,'$.data_infracao') AS STRING), " ")[OFFSET(0)]) data_infracao,
+  PARSE_DATETIME('%d/%m/%Y %H:%M:%S', CONCAT(SAFE_CAST(JSON_VALUE(content, '$.datetime_infracao') AS STRING), ':00')) AS datetime_infracao,
+  SAFE_CAST(JSON_VALUE(content,'$.infracao') AS STRING) infrac
   SAFE_CAST(JSON_VALUE(content,'$.infracao') AS STRING) infracao,
   SAFE_CAST(JSON_VALUE(content,'$.valor') AS FLOAT64) valor,
   SAFE_CAST(JSON_VALUE(content,'$.status') AS STRING) status,
   IF(JSON_VALUE(content,'$.data_pagamento') = "", NULL, PARSE_DATE("%d/%m/%Y", JSON_VALUE(content,'$.data_pagamento'))) data_pagamento,
   SAFE_CAST(DATETIME(TIMESTAMP_TRUNC(TIMESTAMP(timestamp_captura), SECOND), "America/Sao_Paulo" ) AS DATETIME) timestamp_captura
 FROM
-  {{ source('veiculo_staging','infracao') }} as t
+  `rj-smtr-dev.veiculo_staging.infracao` as t
+  {# {{ source('veiculo_staging','infracao') }} as t #}
 
