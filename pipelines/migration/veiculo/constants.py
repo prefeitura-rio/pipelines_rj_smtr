@@ -57,6 +57,7 @@ class constants(Enum):  # pylint: disable=c0103
         "cm": "id_auto_infracao",
         "data_infracao": "data_infracao",
         "valor": "valor",
+        # "datetime_infracao": "datetime_infracao",
         "cod_infracao": "id_infracao",
         "des_infracao": "infracao",
         "status": "status",
