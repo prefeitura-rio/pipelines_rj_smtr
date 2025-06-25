@@ -916,7 +916,7 @@ Coordenada geográfica [POINT] com a posição que o veículo se encontra, confo
 {% enddocs %}
 
 {% docs inicio_vigencia_tunel %}
-Data de inicio da vigência do túnel
+Data de início da vigência do túnel
 {% enddocs %}
 
 {% docs fim_vigencia_tunel %}
