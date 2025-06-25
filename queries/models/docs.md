@@ -872,10 +872,73 @@ Valor da distância apurada multiplicada pelo subsídio por quilômetro [sem glo
 {% docs valor_penalidade %}
 Valor penalidade [negativa] [POF <= 60%]
 {% enddocs %}
+
 {% docs viagens_dia %}
 Quantidade de viagens apuradas por dia
 {% enddocs %}
 
 {% docs viagens_faixa %}
 Quantidade de viagens apuradas por faixa horária
+{% enddocs %}
+
+{% docs hora_captura %}
+Hora da captura
+{% enddocs %}
+
+{% docs direcao_gps %}
+Direção do movimento em graus
+{% enddocs %}
+
+{% docs datetime_envio_gps %}
+Data e hora em que o GPS enviou os dados de localização
+{% enddocs %}
+
+{% docs datetime_servidor_gps %}
+Data e hora em que o servidor recebeu os dados de localização do GPS
+{% enddocs %}
+
+{% docs datetime_saida %}
+Datetime de saída do veículo na linha realocada
+{% enddocs %}
+
+{% docs datetime_processamento %}
+Datetime de processamento da realocação pela empresa operadora
+{% enddocs %}
+
+{% docs datetime_operacao %}
+Datetime que o registro da realocação foi informado pela empresa operadora
+{% enddocs %}
+
+{% docs servico_realocacao %}
+Linha de ônibus [serviço] realocada informada pela empresa operadora
+{% enddocs %}
+
+{% docs data_pagamento %}
+Data de pagamento
+{% enddocs %}
+
+{% docs data_operacao %}
+Data de operação
+{% enddocs %}
+
+{% docs status_veiculo %}
+Classificação, observados os demais parâmetros - Categorias:
+  - Não licenciado - Veículo que operou, mas não é licenciado
+  - Autuado por ar inoperante - Veículo que operou, foi licenciado com ar condicionado e foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado (023.II)
+  - Autuado por segurança - Veículo que operou, foi licenciado, mas foi autuado por infração relacionada à segurança do veículo
+  - Autuado por limpeza/equipamento - Veículo que operou, foi licenciado, mas foi autuado cumulativamente por infrações relacionadas à limpeza e equipamentos do veículo
+  - Sem ar e não autuado - Veículo que operou, foi licenciado sem ar condicionado e não foi autuado
+  - Com ar e não autuado - Veículo que operou, foi licenciado com ar condicionado e não foi autuado
+{% enddocs %}
+
+{% docs indicadores_veiculo %}
+Indicadores para caraterização do status do veículo
+{% enddocs %}
+
+{% docs posicao_veiculo_geo %}
+Coordenada geográfica [POINT] com a posição que o veículo se encontra, conforme 'longitude' e 'latitude' informadas pelo GPS [EPSG:4326 - WGS84]
+{% enddocs %}
+
+{% docs id_execucao_dbt %}
+Identificador da execução do DBT que modificou o dado pela última vez
 {% enddocs %}
