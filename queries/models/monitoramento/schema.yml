@@ -423,7 +423,7 @@ models:
         data_type: string
         quote: true
   - name: autuacao_disciplinar_historico
-    description: Tabela histórica de todas as multas aplicadas aos modos de transporte no município do Rio de Janeiro
+    description: Tabela histórica de todas as autuações disciplinares aplicadas aos modos de transporte no município do Rio de Janeiro
     columns:
       - name: data
         description: "{{ doc('data_infracao') }} [partição]"
