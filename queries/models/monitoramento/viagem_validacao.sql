@@ -56,6 +56,10 @@ with
             sentido,
             countif(id_segmento is not null) as quantidade_segmentos_verificados,
             countif(quantidade_gps > 0) as quantidade_segmentos_validos,
+            round(
+                countif(id_segmento is not null)
+                * safe_cast((1 - {{ var("parametro_validacao") }}) as numeric)
+            ) as quantidade_segmentos_tolerados,
             max(indicador_servico_divergente) as indicador_servico_divergente,
             max(id_segmento is null) as indicador_shape_invalido,
             service_ids,
@@ -63,6 +67,7 @@ with
             feed_version,
             feed_start_date
         from {{ ref("gps_segmento_viagem") }}
+        {# from `rj-smtr`.`monitoramento_staging`.`gps_segmento_viagem` #}
         where
             (
                 not indicador_segmento_desconsiderado
@@ -103,6 +108,11 @@ with
             sentido,
             quantidade_segmentos_verificados,
             quantidade_segmentos_validos,
+            case
+                when quantidade_segmentos_tolerados >= 1
+                then quantidade_segmentos_verificados - quantidade_segmentos_tolerados
+                else abs(quantidade_segmentos_verificados - 1)
+            end as quantidade_segmentos_necessarios,
             safe_divide(
                 quantidade_segmentos_validos, quantidade_segmentos_verificados
             ) as indice_validacao,
@@ -149,14 +159,14 @@ with
             faixa_horaria_inicio,
             faixa_horaria_fim,
             trip_info
-        {# sum(quilometragem) over (partition by data, servico, faixa_horaria_inicio) as distancia_total_planejada #}
         from {{ ref("servico_planejado_faixa_horaria") }}
+        {# from `rj-smtr`.`planejamento`.`servico_planejado_faixa_horaria` #}
         {% if is_incremental() or var("tipo_materializacao") == "monitoramento" %}
             where {{ incremental_filter }}
         {% endif %}
     ),
     servico_planejado_unnested as (
-        select
+        select distinct
             sp.data,
             sp.servico,
             sp.sentido,
@@ -242,10 +252,11 @@ with
             vm.velocidade_media,
             vm.quantidade_segmentos_verificados,
             vm.quantidade_segmentos_validos,
+            vm.quantidade_segmentos_necessarios,
             vm.indice_validacao,
             vs.indicador_viagem_sobreposta,
             -- fmt: off
-            vm.indice_validacao >= {{ var("parametro_validacao") }} as indicador_trajeto_valido,
+            vm.quantidade_segmentos_validos >= vm.quantidade_segmentos_necessarios as indicador_trajeto_valido,
             -- fmt: on
             vm.indicador_servico_planejado_gtfs,
             vm.indicador_servico_planejado_os,
@@ -257,7 +268,9 @@ with
                 vm.shape_id is not null
                 and vm.route_id is not null
                 and not vm.indicador_shape_invalido
-                and vm.indice_validacao >= {{ var("parametro_validacao") }}
+                -- fmt: off
+                and vm.quantidade_segmentos_validos >= vm.quantidade_segmentos_necessarios
+                -- fmt: on
                 and vm.indicador_servico_planejado_gtfs
                 {% if var("tipo_materializacao") != "monitoramento" %}
                     and not vs.indicador_viagem_sobreposta
@@ -265,7 +278,6 @@ with
                 and not vm.indicador_acima_velocidade_max
                 and ifnull(vm.indicador_servico_planejado_os, true)
             ) as indicador_viagem_valida,
-            {{ var("parametro_validacao") }} as parametro_validacao,
             vm.tipo_dia,
             vm.feed_version,
             vm.feed_start_date,
@@ -323,7 +335,7 @@ select
     velocidade_media,
     quantidade_segmentos_verificados,
     quantidade_segmentos_validos,
-    indice_validacao,
+    quantidade_segmentos_necessarios,
     indicador_viagem_sobreposta,
     indicador_trajeto_valido,
     indicador_servico_planejado_gtfs,
@@ -333,7 +345,6 @@ select
     indicador_trajeto_alternativo,
     indicador_acima_velocidade_max,
     indicador_viagem_valida,
-    parametro_validacao,
     tipo_dia,
     feed_version,
     feed_start_date,

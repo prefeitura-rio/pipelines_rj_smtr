@@ -39,7 +39,9 @@ vars:
   sppo_registros_staging: "rj-smtr-staging.br_rj_riodejaneiro_onibus_gps_staging.registros"
   sppo_realocacao_staging: "rj-smtr-staging.br_rj_riodejaneiro_onibus_gps_staging.realocacao"
   data_inicio_realocacao: "2022-11-15"
-  fifteen_minutes: ""
+  15_minutos: false
+  modo_gps: "onibus"
+  fonte_gps: "conecta"
 
   # Parametros de intersecção do ônibus com rota
   ## Tamanho do buffer da rota
@@ -142,10 +144,12 @@ vars:
   DATA_SUBSIDIO_V13_INICIO: "2025-01-01"
   # Feature Apuração por tecnologia e penalidade por faixa horária (DECRETO 55631/2025)
   DATA_SUBSIDIO_V14_INICIO: "2025-01-05"
-  # ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629)
+  # ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629) e RESOLUÇÃO SMTR 3843/2025
   DATA_SUBSIDIO_V15_INICIO: "2025-04-01"
-  # Feature Não pagamento de tecnologia inferior à mínima permitida [ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629)]
+  # Feature Não pagamento de tecnologia inferior à mínima permitida [ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629) e RESOLUÇÃO SMTR 3843/2025]
   DATA_SUBSIDIO_V15A_INICIO: "2025-07-01"
+  # Feature Não pagamento de viagens licenciadas sem ar condicionado [ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629) e RESOLUÇÃO SMTR 3843/2025]
+  DATA_SUBSIDIO_V15B_INICIO: "2025-11-01"
 
   # Recursos #
   recurso_staging: "rj-smtr-staging.projeto_subsidio_sppo_staging.recurso"
@@ -212,7 +216,7 @@ vars:
 
   limite_reducao_area_buffer:  0.5
   comprimento_minimo_segmento_shape: 990
-  buffer_segmento_metros: 20
+  buffer_segmento_metros: 30
   buffer_tunel_metros: 50
   parametro_validacao: 0.9
   comprimento_shape: 1000
@@ -228,8 +232,12 @@ vars:
   data_inicial_custo_cloud: "2024-10-01"
   data_final_valor_bq_manual: "2025-03-21"
 
-query-comment: "{{ query_comment(node) }}"
 
+
+  ### Monitoramento ###
+  data_inicial_veiculo_fiscalizacao_lacre: "2025-03-31"
+
+query-comment: "{{ query_comment(node) }}"
 
 tests:
   rj_smtr:

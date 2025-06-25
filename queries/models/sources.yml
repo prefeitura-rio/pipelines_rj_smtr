@@ -346,3 +346,47 @@ sources:
 
     tables:
       - name: ordem_servico
+
+  - name: monitoramento
+    database: rj-smtr
+
+    tables:
+      - name: gps_onibus_conecta
+      - name: gps_onibus_cittati
+      - name: gps_onibus_zirix
+      - name: gps_15_minutos_onibus_conecta
+      - name: gps_15_minutos_onibus_cittati
+      - name: gps_15_minutos_onibus_zirix
+
+  - name: source_veiculo_fiscalizacao
+    database: rj-smtr-staging
+
+    tables:
+      - name: veiculo_fiscalizacao_lacre
+
+  - name: monitoramento_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: garagens
+
+  - name: source_cittati
+    database: rj-smtr-staging
+
+    tables:
+      - name: registros
+      - name: realocacao
+
+  - name: source_conecta
+    database: rj-smtr-staging
+
+    tables:
+      - name: registros
+      - name: realocacao
+
+  - name: source_zirix
+    database: rj-smtr-staging
+
+    tables:
+      - name: registros
+      - name: realocacao

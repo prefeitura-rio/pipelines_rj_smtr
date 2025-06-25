@@ -1,4 +1,4 @@
-{% snapshot snapshot_subsidio_faixa_servico_dia %}
+{% snapshot snapshot_percentual_operacao_faixa_horaria %}
 
     {{
         config(
@@ -16,6 +16,6 @@
         timestamp(
             datetime_ultima_atualizacao, "America/Sao_Paulo"
         ) as timestamp_ultima_atualizacao
-    from {{ ref("subsidio_faixa_servico_dia") }}
+    from {{ ref("percentual_operacao_faixa_horaria") }}
 
 {% endsnapshot %}
