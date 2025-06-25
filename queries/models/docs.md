@@ -892,3 +892,11 @@ Linha de ônibus [serviço] realocada informada pela empresa operadora
 {% docs posicao_veiculo_geo %}
 Coordenada geográfica [POINT] com a posição que o veículo se encontra, conforme 'longitude' e 'latitude' informadas pelo GPS [EPSG:4326 - WGS84]
 {% enddocs %}
+
+{% docs inicio_vigencia_tunel %}
+Data de inicio da vigência do túnel
+{% enddocs %}
+
+{% docs fim_vigencia_tunel %}
+Data de fim da vigência do túnel
+{% enddocs %}
