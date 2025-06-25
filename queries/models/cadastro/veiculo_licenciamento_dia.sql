@@ -15,7 +15,7 @@
 
 {% if execute and is_incremental() %}
     {% set licenciamento_previous_file_query %}
-        select concat("'", max(data_arquivo_fonte), "'") as data
+        select concat("'", ifnull(max(data_arquivo_fonte), date("{{ var('date_range_start') }}")), "'") as data
         from {{ this }}
         where data = date_sub(date("{{ var('date_range_start') }}"), interval 1 day)
 
