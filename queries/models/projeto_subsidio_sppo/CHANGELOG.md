@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Alterado o modelo `viagem_planejada.sql` para adicionar exceções para os serviços `864` e `LECD108` serem considerados respectivamente como os serviços `LECD122` e `LECD112` na faixa horaria de 00h à 03h dodia `2025-06-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Alterado o modelo `viagem_planejada.sql` para adicionar exceções para os serviços `864` e `LECD108` serem considerados respectivamente como os serviços `LECD122` e `LECD112` na faixa horaria de 00h à 03h dodia `2025-06-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/646)
 
 ## [9.2.5] - 2025-06-12
 
