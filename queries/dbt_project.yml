@@ -210,6 +210,8 @@ vars:
 
   ### Encontro de Contas ###
   encontro_contas_modo: ""
+  # Datas que serão desconsideradas no encontro de contas juntamente com o motivo
+  encontro_contas_datas_excecoes: {"'2024-10-06'": "'Eleições 2024'"}
 
   ### Viagens 2.0 ###
 
@@ -323,11 +325,18 @@ models:
         +incremental_strategy: insert_overwrite
         +schema: indicadores_continuados_egp_staging
     projeto_subsidio_sppo_encontro_contas:
-      +materialized: table
-      +schema: projeto_subsidio_sppo_encontro_contas
-      staging:
-        +materialized: view
-        +schema: projeto_subsidio_sppo_encontro_contas_staging
+      v1:
+        +materialized: table
+        +schema: projeto_subsidio_sppo_encontro_contas
+        staging:
+          +materialized: view
+          +schema: projeto_subsidio_sppo_encontro_contas_staging
+      v2:
+        +materialized: table
+        +schema: projeto_subsidio_sppo_encontro_contas_v2
+        staging:
+          +materialized: view
+          +schema: projeto_subsidio_sppo_encontro_contas_staging_v2
     dashboard_controle_vinculo_jae_riocard:
       +materialized: incremental
       +schema: dashboard_controle_vinculo_jae_riocard
