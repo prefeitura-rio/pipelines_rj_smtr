@@ -4,7 +4,7 @@ with
     -- ao data lakehouse)
     servico_dia_atipico as (
         select distinct data, servico
-        from {{ ref("recurso_encontro_contas") }}
+        from {{ ref("servico_dia_atipico") }}
         where incorporado_datalakehouse is not true
     ),
     -- 2. Lista pares dia-serviço corrigidos do RDO

@@ -15,7 +15,7 @@ with
     subsidio_dia as (
         select
             data, consorcio, servico, km_apurada, perc_km_planejada, valor_subsidio_pago
-        from {{ ref("encontro_contas_subsidio_sumario_servico_dia_historico") }}
+        from {{ ref("encontro_contas_subsidio_sumario_servico_dia") }}
         where data between "{{ var('start_date') }}" and "{{ var('end_date') }}"
     )
 -- 3. Associa serviço corrigido aos pares dia-serviço do subsídio
