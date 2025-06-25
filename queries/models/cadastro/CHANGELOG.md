@@ -1,6 +1,6 @@
 # Changelog - cadastro
 
-## [1.5.0] - 2025-06-24
+## [1.5.0] - 2025-06-25
 
 ### Adicionado
 - Cria modelo `veiculo_licenciamento_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)

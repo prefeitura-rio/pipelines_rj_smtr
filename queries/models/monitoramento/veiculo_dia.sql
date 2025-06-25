@@ -42,7 +42,7 @@ with
         where
             (
                 data_processamento <= date_add(data, interval 7 day)
-                or data_processamento = '2025-06-24'
+                or data_processamento = '2025-06-25'
             )
             {% if is_incremental() %}
                 and data between date("{{ var('date_range_start') }}") and date(
