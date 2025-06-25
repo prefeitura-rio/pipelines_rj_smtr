@@ -160,7 +160,7 @@ with Flow(
 
     end_date = merge(end_date_get, end_date_def)
 
-    materialize_sppo_veiculo_dia = Parameter("materialize_sppo_veiculo_dia", True)
+    materialize_sppo_veiculo_dia = Parameter("materialize_sppo_veiculo_dia", False)
     test_only = Parameter("test_only", False)
     # publish = Parameter("publish", False)
 
