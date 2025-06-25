@@ -287,11 +287,11 @@
                 ts.feed_end_date,
                 "{{ tipo_oss[1] }}" as tipo_os,
                 "{{ tipo_dias[1] }}" as tipo_dia,
-                case 
-                    when "{{ var('run_date') }}" = "2025-06-02" 
+                case
+                    when "{{ var('run_date') }}" = "2025-06-02"
                     and ts.servico = "864"
                         then "LECD122"
-                    when "{{ var('run_date') }}" = "2025-06-02" 
+                    when "{{ var('run_date') }}" = "2025-06-02"
                             and ts.servico = "LECD108"
                                 then "LECD112"
                 else ts.servico
