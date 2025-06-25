@@ -14,6 +14,8 @@ with
             protopayload_auditlog.authenticationinfo.principalemail as usuario,
             protopayload_auditlog.methodname as metodo,
             protopayload_auditlog.resourcename as id_job,
+            protopayload_auditlog.servicedata_v1_bigquery.jobcompletedevent.job.jobconfiguration.labels
+            as labels,
             regexp_extract(
                 protopayload_auditlog.servicedata_v1_bigquery.jobcompletedevent.job.jobconfiguration.query.query,
                 r'"flow_name"\s*:\s*"([^"]+)"'
@@ -59,6 +61,8 @@ with
             protopayload_auditlog.authenticationinfo.principalemail as usuario,
             protopayload_auditlog.methodname as metodo,
             protopayload_auditlog.resourcename as id_job,
+            protopayload_auditlog.servicedata_v1_bigquery.jobcompletedevent.job.jobconfiguration.labels
+            as labels,
             regexp_extract(
                 protopayload_auditlog.servicedata_v1_bigquery.jobcompletedevent.job.jobconfiguration.query.query,
                 r'"flow_name"\s*:\s*"([^"]+)"'
@@ -102,6 +106,8 @@ with
             protopayload_auditlog.authenticationinfo.principalemail as usuario,
             protopayload_auditlog.methodname as metodo,
             protopayload_auditlog.resourcename as id_job,
+            protopayload_auditlog.servicedata_v1_bigquery.jobcompletedevent.job.jobconfiguration.labels
+            as labels,
             regexp_extract(
                 protopayload_auditlog.servicedata_v1_bigquery.jobcompletedevent.job.jobconfiguration.query.query,
                 r'"flow_name"\s*:\s*"([^"]+)"'
@@ -151,6 +157,11 @@ with
 
         select *
         from staging
+    ),
+    label_dbt as (
+        select data, projeto, id_job, label.value as id_execucao_dbt
+        from union_projetos, unnest(labels) as label
+        where label.key = 'dbt_invocation_id'
     )
 select
     data,
@@ -158,6 +169,7 @@ select
     u.usuario,
     u.metodo,
     u.id_job,
+    u.id_execucao_dbt,
     u.query,
     coalesce(u.nome_flow, u.nome_dashboard) as processo_execucao,
     case
@@ -179,4 +191,5 @@ select
     current_datetime('America/Sao_Paulo') as datetime_ultima_atualizacao
 from union_projetos u
 left join {{ ref("aux_preco_bigquery") }} p using (data)
+left join label_dbt d using (data, projeto, id_job)
 where usuario is not null and bytes_faturados > 0
