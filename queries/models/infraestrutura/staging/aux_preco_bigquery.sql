@@ -19,7 +19,7 @@ with
         from
             {{
                 source(
-                    "infraestrutura_staging",
+                    "cloudcosts",
                     "cloud_pricing_export",
                 )
             }}

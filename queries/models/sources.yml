@@ -299,6 +299,12 @@ sources:
     tables:
       - name: tecnologia_servico
 
+  - name: cloudcosts
+    database: rj-smtr
+
+    tables:
+      - name: cloud_pricing_export
+
   - name: infraestrutura_staging
     database: rj-smtr-staging
 

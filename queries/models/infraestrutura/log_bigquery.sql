@@ -169,7 +169,7 @@ select
     u.usuario,
     u.metodo,
     u.id_job,
-    u.id_execucao_dbt,
+    d.id_execucao_dbt,
     u.query,
     coalesce(u.nome_flow, u.nome_dashboard) as processo_execucao,
     case
