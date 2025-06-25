@@ -6,6 +6,76 @@
     )
 }}
 
+{%- if execute -%}
+    {%- set tipos_query -%}
+        select distinct
+            status as tipo_viagem,
+            regexp_replace(
+                regexp_replace(
+                    regexp_replace(
+                        regexp_replace(
+                            lower(
+                                translate(
+                                    status,
+                                    'áàâãäéèêëíìîïóòôõöúùûüçÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇ',
+                                    'aaaaaeeeeiiiiooooouuuucAAAAAEEEEIIIIOOOOOUUUUC'
+                                )
+                            ),
+                            r'[^\w\s]',  -- Remove caracteres não alfanuméricos
+                            ''
+                        ),
+                        r'\b(e|por|de)\b',
+                        ''  -- Remove as palavras 'e', 'por' e 'de'
+                    ),
+                    r'(^nao|\bnao\b)',
+                    'n '  -- Substitui 'nao' por 'n'
+                ),
+                r'[\s]+',
+                '_'  -- Substitui múltiplos espaços por um único "_"
+            ) as coluna_tipo_viagem
+        from {{ ref("valor_km_tipo_viagem") }}
+        {# from `rj-smtr.subsidio.valor_km_tipo_viagem` #}
+        where
+            status not in ("Não classificado", "Nao licenciado", "Licenciado sem ar")
+            and status not like '%(023.II)%'
+        order by status
+    {%- endset -%}
+
+    {%- set results = run_query(tipos_query) -%}
+    {%- set tipos_viagem = results.columns[0].values() -%}
+    {%- set colunas_tipo_viagem = results.columns[1].values() -%}
+{%- endif -%}
+
+{%- set tecnologias = ["MINI", "MIDI", "BASICO", "PADRON"] -%}
+{%- set tipos = [] -%}
+
+{%- for tipo, coluna in zip(tipos_viagem, colunas_tipo_viagem) -%}
+
+    {%- set is_licenciado = tipo in [
+        "Licenciado sem ar e não autuado",
+        "Licenciado com ar e não autuado",
+    ] -%}
+
+    {%- set _ = tipos.append(
+        {
+            "nome": tipo,
+            "coluna": coluna,
+        }
+    ) -%}
+
+    {%- if is_licenciado -%}
+        {%- for tech in tecnologias -%}
+            {%- set _ = tipos.append(
+                {
+                    "nome": tipo ~ " - " ~ tech,
+                    "coluna": coluna ~ "_" ~ tech | lower,
+                }
+            ) -%}
+        {%- endfor -%}
+    {%- endif -%}
+
+{%- endfor -%}
+
 with
     subsidio_faixa as (
         select
@@ -18,8 +88,8 @@ with
             viagens_faixa,
             km_planejada_faixa,
             pof
-        from {{ ref("subsidio_faixa_servico_dia") }}
-        -- from `rj-smtr.financeiro_staging.subsidio_faixa_servico_dia`
+        from {{ ref("percentual_operacao_faixa_horaria") }}
+        -- from `rj-smtr.subsidio.percentual_operacao_faixa_horaria`
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
@@ -78,7 +148,9 @@ with
             ) as valor_total_sem_glosa,
             sum(valor_apurado) + p.valor_penalidade as valor_total_com_glosa,
             case
-                when p.valor_penalidade != 0
+                when
+                    p.valor_penalidade != 0
+                    and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
                 then - p.valor_penalidade
                 else
                     safe_cast(
@@ -113,7 +185,8 @@ with
             on s.data between sp.data_inicio and sp.data_fim
             and s.tipo_viagem = sp.status
             and (
-                (
+                s.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
+                or (
                     s.data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
                     and (
                         s.tecnologia_remunerada = sp.tecnologia
@@ -167,31 +240,10 @@ with
                     )
             ) pivot (
                 sum(km_apurada_faixa) as km_apurada for tipo_viagem_tecnologia in (
-                    "Registrado com ar inoperante" as registrado_com_ar_inoperante,
-                    "Não licenciado" as n_licenciado,
-                    "Autuado por ar inoperante" as autuado_ar_inoperante,
-                    "Autuado por segurança" as autuado_seguranca,
-                    "Autuado por limpeza/equipamento" as autuado_limpezaequipamento,
-                    "Licenciado sem ar e não autuado" as licenciado_sem_ar_n_autuado,
-                    "Licenciado com ar e não autuado" as licenciado_com_ar_n_autuado,
-                    "Licenciado sem ar e não autuado - MINI"
-                    as licenciado_sem_ar_n_autuado_mini,
-                    "Licenciado com ar e não autuado - MINI"
-                    as licenciado_com_ar_n_autuado_mini,
-                    "Licenciado sem ar e não autuado - MIDI"
-                    as licenciado_sem_ar_n_autuado_midi,
-                    "Licenciado com ar e não autuado - MIDI"
-                    as licenciado_com_ar_n_autuado_midi,
-                    "Licenciado sem ar e não autuado - BASICO"
-                    as licenciado_sem_ar_n_autuado_basico,
-                    "Licenciado com ar e não autuado - BASICO"
-                    as licenciado_com_ar_n_autuado_basico,
-                    "Licenciado sem ar e não autuado - PADRON"
-                    as licenciado_sem_ar_n_autuado_padron,
-                    "Licenciado com ar e não autuado - PADRON"
-                    as licenciado_com_ar_n_autuado_padron,
-                    "Não vistoriado" as n_vistoriado,
-                    "Sem transação" as sem_transacao
+                    {%- for tipo in tipos %}
+                        "{{ tipo.nome }}" as {{ tipo.coluna }}
+                        {%- if not loop.last %},{% endif %}
+                    {%- endfor %}
                 )
             )
     )
@@ -207,41 +259,10 @@ select
     agg.km_subsidiada_faixa,
     s.km_planejada_faixa,
     s.pof,
-    coalesce(
-        km_apurada_registrado_com_ar_inoperante, 0
-    ) as km_apurada_registrado_com_ar_inoperante,
-    coalesce(km_apurada_n_licenciado, 0) as km_apurada_n_licenciado,
-    coalesce(km_apurada_autuado_ar_inoperante, 0) as km_apurada_autuado_ar_inoperante,
-    coalesce(km_apurada_autuado_seguranca, 0) as km_apurada_autuado_seguranca,
-    coalesce(
-        km_apurada_autuado_limpezaequipamento, 0
-    ) as km_apurada_autuado_limpezaequipamento,
-    coalesce(km_apurada_n_vistoriado, 0) as km_apurada_n_vistoriado,
-    coalesce(km_apurada_sem_transacao, 0) as km_apurada_sem_transacao,
-    coalesce(
-        km_apurada_licenciado_sem_ar_n_autuado_mini, 0
-    ) as km_apurada_licenciado_sem_ar_n_autuado_mini,
-    coalesce(
-        km_apurada_licenciado_com_ar_n_autuado_mini, 0
-    ) as km_apurada_licenciado_com_ar_n_autuado_mini,
-    coalesce(
-        km_apurada_licenciado_sem_ar_n_autuado_midi, 0
-    ) as km_apurada_licenciado_sem_ar_n_autuado_midi,
-    coalesce(
-        km_apurada_licenciado_com_ar_n_autuado_midi, 0
-    ) as km_apurada_licenciado_com_ar_n_autuado_midi,
-    coalesce(
-        km_apurada_licenciado_sem_ar_n_autuado_basico, 0
-    ) as km_apurada_licenciado_sem_ar_n_autuado_basico,
-    coalesce(
-        km_apurada_licenciado_com_ar_n_autuado_basico, 0
-    ) as km_apurada_licenciado_com_ar_n_autuado_basico,
-    coalesce(
-        km_apurada_licenciado_sem_ar_n_autuado_padron, 0
-    ) as km_apurada_licenciado_sem_ar_n_autuado_padron,
-    coalesce(
-        km_apurada_licenciado_com_ar_n_autuado_padron, 0
-    ) as km_apurada_licenciado_com_ar_n_autuado_padron,
+    {%- for tipo in tipos %}
+        coalesce(km_apurada_{{ tipo.coluna }}, 0) as km_apurada_{{ tipo.coluna }}
+        {%- if not loop.last %},{% endif %}
+    {%- endfor %},
     case
         when s.data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
         then

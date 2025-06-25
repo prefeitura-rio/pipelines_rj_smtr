@@ -204,6 +204,10 @@ Data inicial do feed [versão] [partição]
 String que indica a versão atual do conjunto de dados GTFS
 {% enddocs %}
 
+{% docs feed_end_date %}
+Data final do feed [versão]
+{% enddocs %}
+
 {% docs tipo_servico %}
 Tipo de Serviço da Linha
 {% enddocs %}
@@ -362,10 +366,6 @@ Indicador percentual de quilometragem apurada em relação à planejada do servi
 
 {% docs valor_glosado_tecnologia %}
 Valor da diferença entre a tecnologia remunerada e tecnologia apurada
-{% enddocs %}
-
-{% docs feed_end_date %}
-Data final do feed [versão]
 {% enddocs %}
 
 {% docs data_captura %}
@@ -649,6 +649,94 @@ Distância do shape [trajeto] planejado (km)
 Indica se o serviço indicado nos dados de GPS estava diferente do serviço informado na viagem
 {% enddocs %}
 
+{% docs ano %}
+Ano
+{% enddocs %}
+
+{% docs ano_indicador %}
+Ano de apuração do indicador
+{% enddocs %}
+
+{% docs hora_transacao %}
+Hora da transação
+{% enddocs %}
+
+{% docs data_ordem %}
+Data da ordem de pagamento
+{% enddocs %}
+
+{% docs distancia_total_planejada %}
+Distância total planejada do serviço [ida + volta] (km)
+{% enddocs %}
+
+{% docs hora_particao_gps %}
+Hora de partição, conforme 'timestamp_captura' da tabela 'sppo_registros'
+{% enddocs %}
+
+{% docs hora_timestamp_captura %}
+Hora do 'timestamp_captura'
+{% enddocs %}
+
+{% docs id_integracao %}
+Identificador único da integração
+{% enddocs %}
+
+{% docs indicador_autuacao_ar_condicionado %}
+Indicador se o veículo foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado
+{% enddocs %}
+
+{% docs indicador_sensor_temperatura %}
+Indicador se o sensor de temperatura do veículo não estava em funcionamento conforme especificação da SMTR
+{% enddocs %}
+
+{% docs irk %}
+Índice de Remuneração por km (R$/km)
+{% enddocs %}
+
+{% docs km_apurada_autuado_seguranca %}
+Quilometragem apurada de viagens de veículos autuados por segurança
+{% enddocs %}
+
+{% docs km_planejada_dia %}
+Distância planejada para o serviço por dia (km)
+{% enddocs %}
+
+{% docs legislacao %}
+Legislação que estabelece o valor e regras de remuneração
+{% enddocs %}
+
+{% docs n_registros_total %}
+Contagem de sinais de GPS emitidos no tempo da viagem
+{% enddocs %}
+
+{% docs pontuacao %}
+Quantidade de pontos da autuação
+{% enddocs %}
+
+{% docs servico_variacao %}
+Nome curto da linha operada pelo veículo com variação de serviço [ex: 010, 011SN, ...]
+{% enddocs %}
+
+{% docs start_pt %}
+Ponto inicial do shape em formato geográfico [Point]
+{% enddocs %}
+
+{% docs trip_short_name %}
+Texto voltado ao público usado para identificar a viagem aos passageiros, por exemplo, para identificar os números dos trens para viagens de trens suburbanos
+{% enddocs %}
+
+{% docs valor_glosado %}
+Valor total das viagens considerando o valor máximo por km, subtraído pelo valor efetivo por km (R$)
+{% enddocs %}
+
+{% docs valor_judicial %}
+Valor de glosa depositada em juízo [Autuação por ar inoperante, Veículo licenciado sem ar, Penalidade abaixo de 60% e Notificação dos Agentes de Verão]
+{% enddocs %}
+
+{% docs valor_total_sem_glosa %}
+Valor total das viagens considerando o valor máximo por km
+{% enddocs %}
+
 {% docs cadastro_cliente %}
 Situação do cadastro do cliente na Jaé (cadastrado ou não cadastrado)
 {% enddocs %}
@@ -784,7 +872,6 @@ Valor da distância apurada multiplicada pelo subsídio por quilômetro [sem glo
 {% docs valor_penalidade %}
 Valor penalidade [negativa] [POF <= 60%]
 {% enddocs %}
-
 {% docs viagens_dia %}
 Quantidade de viagens apuradas por dia
 {% enddocs %}
@@ -792,4 +879,3 @@ Quantidade de viagens apuradas por dia
 {% docs viagens_faixa %}
 Quantidade de viagens apuradas por faixa horária
 {% enddocs %}
-

@@ -16,6 +16,7 @@ from pytz import timezone
 from pipelines.constants import constants
 from pipelines.treatment.templates.utils import (
     DBTSelector,
+    DBTTest,
     IncompleteDataError,
     create_dataplex_log_message,
     parse_dbt_test_output,
@@ -222,6 +223,7 @@ def create_dbt_run_vars(
     datetime_start: datetime,
     datetime_end: datetime,
     repo_version: str,
+    additional_vars: Optional[dict] = None,
 ) -> dict:
     """
     Cria a lista de variaveis para rodar o modelo DBT,
@@ -231,16 +233,23 @@ def create_dbt_run_vars(
         datetime_start (datetime): Datetime inicial da materialização
         datetime_end (datetime): Datetime final da materialização
         repo_version (str): SHA do último commit do repositorio no GITHUB
+        additional_vars (dict): Variáveis extras para executar o modelo DBT
 
     Returns:
         dict[str]: Variáveis para executar o modelo DBT
     """
     pattern = constants.MATERIALIZATION_LAST_RUN_PATTERN.value
-    return {
+
+    _vars = {
         "date_range_start": datetime_start.strftime(pattern),
         "date_range_end": datetime_end.strftime(pattern),
         "version": repo_version,
     }
+
+    if additional_vars:
+        _vars.update(additional_vars)
+
+    return _vars
 
 
 @task
@@ -402,8 +411,8 @@ def check_dbt_test_run(
     run_time = datetime.strptime(run_time, "%H:%M:%S").time()
 
     if datetime_start.time() == run_time:
-        datetime_start_str = (datetime_start - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S")
-        datetime_end_str = (datetime_end - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S")
+        datetime_start_str = f"{(datetime_start - timedelta(days=1)).date().isoformat()}T00:00:00"
+        datetime_end_str = f"{(datetime_end - timedelta(days=1)).date().isoformat()}T23:59:59"
         return True, datetime_start_str, datetime_end_str
     return False, None, None
 
@@ -738,3 +747,50 @@ def run_dbt(
 
     log("\n".join(dbt_logs))
     return "\n".join(dbt_logs)
+
+
+@task(nout=2)
+def setup_dbt_test(
+    timestamp: datetime,
+    test_scheduled_time: time,
+    dbt_vars: dict,
+    dbt_test: DBTTest,
+) -> tuple[bool, dict]:
+    """
+    Compara o timestamp do flow com o horário agendado do teste.
+    Se coincidirem, retorna True e as variáveis ajustadas pelo DBTTest.
+
+    Args:
+        timestamp (datetime): Datetime de execução do flow
+        test_scheduled_time (time): Horário agendado no formato "HH:MM:SS"
+        dbt_vars (dict): Variáveis base do DBT (vindas de create_dbt_run_vars)
+        dbt_test (DBTTest): Configuração do teste para ajustar as variáveis
+
+    Returns:
+        tuple[bool, dict]: (run_test, test_vars)
+            - run_test: True se deve executar o teste
+            - test_vars: Variáveis ajustadas para o teste DBT
+    """
+
+    should_run = (
+        timestamp.time() == test_scheduled_time if test_scheduled_time is not None else True
+    )
+
+    if not should_run:
+        return False, dbt_vars
+
+    pattern = constants.MATERIALIZATION_LAST_RUN_PATTERN.value
+
+    datetime_start = datetime.strptime(dbt_vars["date_range_start"], pattern)
+    datetime_end = datetime.strptime(dbt_vars["date_range_end"], pattern)
+
+    adjusted_start, adjusted_end = dbt_test.adjust_datetime_range(
+        datetime_start=datetime_start, datetime_end=datetime_end
+    )
+
+    test_vars = dbt_vars.copy()
+    test_vars.update(
+        dbt_test.get_test_vars(datetime_start=adjusted_start, datetime_end=adjusted_end)
+    )
+
+    return True, test_vars

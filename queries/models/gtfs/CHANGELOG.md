@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.2.3] - 2025-05-29
+
+### Alterado
+
+- Inclui exceção de `shape_id` no modelo `shapes_geom_gtfs` em razão de trajetos alternativos de serviços circulares (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/598)
+
 ## [1.2.2] - 2025-04-30
 
 ### Alterado

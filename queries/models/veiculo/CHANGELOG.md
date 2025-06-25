@@ -1,5 +1,41 @@
 # Changelog - veiculo
 
+## [2.1.0] - 2025-06-25
+
+### Alterado
+
+- Limita a data máxima para materialização de dados de veículo nos modelos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632):
+  - `infracao.sql`
+  - `licenciamento.sql`
+  - `sppo_veiculo_dia.sql`
+
+- Altera referência das views de staging nos modelos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632):
+  - `infracao.sql`
+  - `licenciamento.sql`
+  - `infracao_data_versao_efetiva.sql`
+  - `licenciamento_data_versao_efetiva.sql`
+
+- Move modelo `infracao_staging.sql` do dataset `veiculo_staging` para `monitoramento_staging` e renomeia para `staging_infracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
+- Move modelo `licenciamento_stu_staging.sql` do dataset `veiculo_staging` para `cadastro_staging` e renomeia para `staging_licenciamento_stu.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
+## [2.0.8] - 2025-06-12
+
+### Adicionado
+
+- Adicionada exceção no modelo `licenciamento_data_versao_efetiva.sql` para utilizar a data_versao `2025-03-22` no período de `2023-10-01`a `2024-01-31` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
+
+## [2.0.7] - 2025-05-27
+
+### Adicionado
+
+- Adiciona coluna `ultima_situacao` no modelo `licenciamento_stu_staging.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/594)
+
+## [2.0.6] - 2025-05-09
+
+### Alterado
+- Alterado o modelo `sppo_veiculo_dia.sql` para remover os status `Autuado por segurança` e `Autuado por limpeza/equipamento` a partir e 2025-04-01 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/572)
+
 ## [2.0.5] - 2025-04-08
 
 ### Adicionado

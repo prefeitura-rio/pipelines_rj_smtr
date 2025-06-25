@@ -1,5 +1,23 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.2.5] - 2025-06-12
+
+### Adicionado
+
+- Adicionadas colunas faltantes no modelo `viagem_planejada.sql` para o periodo anterior a `2024-04-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
+
+### Corrigido
+
+- Corrigido o modelo `subsidio_shapes_geom.sql` para utilizar o particionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
+
+- Corrigido o modelo `viagem_completa.sql` para utilizar a coluna `data_versao_shapes` quando `feed_start_date` for nulo (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
+
+## [9.2.4] - 2025-05-29
+
+### Adicionado
+
+- Adiciona o `subtipo_dia` 'Lady Gaga' para os dias `2025-05-03` e `2025-05-04` no modelo `subsidio_data_versao_efetiva` em razão da Operação Especial "Todo Mundo no Rio" - Lady Gaga [Processo.Rio MTR-PRO-2025/04520] (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/598)
+
 ## [9.2.3] - 2025-03-25
 
 ### Corrigido
@@ -10,7 +28,7 @@
 
 ### Alterado
 
-- Altera o tipo_os dos dia `2025-03-01` à `2025-03-04` para `verão`, do dia `2025-03-05` para `Atípico + verão` e o tipo_dia de `2025-03-03` e `2025-03-04`para `Domingo` no modelo `subsidio_data_verao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/492)
+- Altera o tipo_os dos dia `2025-03-01` à `2025-03-04` para `verão`, do dia `2025-03-05` para `Atípico + verão` e o tipo_dia de `2025-03-03` e `2025-03-04`para `Domingo` no modelo `subsidio_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/492)
 
 ## [9.2.1] - 2025-03-17
 

@@ -2,12 +2,12 @@ version: 2
 
 models:
   - name: infracao
-    description: "Tabela histórica de todas as multas aplicadas aos modos de transporte no município do Rio de Janeiro, com qualquer situação"
+    description: "Tabela histórica de todas as multas aplicadas aos modos de transporte no município do Rio de Janeiro, com qualquer situação [contém dados até 2025-03-31]"
     tests:
       - dbt_expectations.expect_table_aggregation_to_equal_other_table:
           name: dbt_expectations.expect_table_aggregation_to_equal_other_table__infracao
           expression: count(distinct data)
-          compare_model: ref('infracao_staging')
+          compare_model: ref('staging_infracao')
           compare_expression: count(distinct data)
           group_by: [data]
           compare_group_by: [Date(data)]
@@ -45,7 +45,7 @@ models:
                       PAGA - Com guia de pagamento efetivamente paga\n
                       CANCELADA - Multa foi cancelada através de um Processo de Recurso"
       - name: data_pagamento
-        description: "Data de pagamento"
+        description: "{{ doc('data_pagamento') }}"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
       - name: versao
@@ -53,7 +53,7 @@ models:
   - name: licenciamento
     description: "Tabela histórica de dados cadastrais dos veículos que operam o sistema de transporte rodoviário,
                   considerando tanto os licenciados no Sistema de Transporte Urbano [STU] quanto as solicitações
-                  válidas em andamento para ingresso no sistema"
+                  válidas em andamento para ingresso no sistema [contém dados até 2025-03-31]"
     columns:
       - name: data
         description: "{{ doc('data_captura') }} [partição]"
@@ -165,7 +165,7 @@ models:
                       Baixa - Solicitação de baixa de veículo já incluído no STU\n
                       Renumeração - Solicitação de alteração de número de ordem de veículo já incluído no STU"
   - name: sppo_veiculo_dia
-    description: "Tabela resumo dos veículos que operaram no SPPO e seus respectivos indicadores"
+    description: "Tabela resumo dos veículos que operaram no SPPO e seus respectivos indicadores [contém dados até 2025-03-31]"
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
@@ -180,7 +180,7 @@ models:
           name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sppo_veiculo_dia
     columns:
       - name: data
-        description: "Data de operação"
+        description: "{{ doc('data_operacao') }}"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
         tests:
@@ -189,13 +189,13 @@ models:
       - name: placa
         description: "{{ doc('placa') }}"
       - name: indicadores
-        description: "Indicadores para caraterização do status do veículo"
+        description: "{{ doc('indicadores_veiculo') }}"
       - name: indicadores.indicador_licenciado
         description: "{{ doc('indicador_licenciado') }}"
       - name: indicadores.indicador_ar_condicionado
         description: "{{ doc('indicador_ar_condicionado') }}"
       - name: indicadores.indicador_autuacao_ar_condicionado
-        description: "Indicador se o veículo foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado"
+        description: "{{  doc('indicador_autuacao_ar_condicionado') }}"
       - name: indicadores.indicador_autuacao_seguranca
         description: "{{ doc('indicador_autuacao_seguranca') }}"
       - name: indicadores.indicador_autuacao_limpeza
@@ -203,17 +203,11 @@ models:
       - name: indicadores.indicador_autuacao_equipamento
         description: "Indicador se o veículo foi autuado por infração relacionada à inoperância ou mau funcionamento de equipamentos do veículo"
       - name: indicadores.indicador_sensor_temperatura
-        description: "Indicador se o sensor de temperatura do veículo não estava em funcionamento conforme especificação da SMTR"
+        description: "{{  doc('indicador_sensor_temperatura') }}"
       - name: indicadores.indicador_validador_sbd
         description: "Indicador se o veículo se encontra com o novo validador do Sistema de Bilhetagem Digital (SBD) instalado"
       - name: status
-        description: "Classificação, observados os demais parâmetros - Categorias:\n
-                      - Não licenciado - Veículo que operou, mas não é licenciado\n
-                      - Autuado por ar inoperante - Veículo que operou, foi licenciado com ar condicionado e foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado (023.II)\n
-                      - Autuado por segurança - Veículo que operou, foi licenciado, mas foi autuado por infração relacionada à segurança do veículo\n
-                      - Autuado por limpeza/equipamento - Veículo que operou, foi licenciado, mas foi autuado cumulativamente por infrações relacionadas à limpeza e equipamentos do veículo\n
-                      - Sem ar e não autuado - Veículo que operou, foi licenciado sem ar condicionado e não foi autuado\n
-                      - Com ar e não autuado - Veículo que operou, foi licenciado com ar condicionado e não foi autuado"
+        description: "{{ doc('status_veiculo') }}"
         tests:
           - not_null:
               name: not_null__status__sppo_veiculo_dia

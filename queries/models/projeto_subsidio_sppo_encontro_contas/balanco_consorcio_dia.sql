@@ -1,4 +1,8 @@
+{% if var("start_date") >= var("DATA_SUBSIDIO_V9_INICIO") %}
+{{ config(enabled=false) }}
+{% else %}
 {{ config(alias=this.name ~ var('encontro_contas_modo')) }}
+{% endif %}
 
 select
   data,

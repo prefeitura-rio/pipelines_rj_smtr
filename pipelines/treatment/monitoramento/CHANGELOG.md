@@ -1,5 +1,36 @@
 # Changelog - monitoramento
 
+## [1.2.0] - 2025-06-25
+
+### Adicionado
+
+- Adiciona execução de testes do DBT no flow `MONITORAMENTO_VEICULO_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+- Cria flow `VEICULO_DIA_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
+## [1.1.6] - 2025-06-17
+
+### Alterado
+
+- Altera parâmetros para execução do teste do dbt no flow de materialização do gps (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/622)
+
+## [1.1.5] - 2025-06-06
+
+### Adicionado
+
+- Adiciona parâmetros para execução do teste do dbt no flow de materialização do gps (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/614)
+
+## [1.1.4] - 2025-05-28
+
+### Adicionado
+
+- Cria flow de materialização do gps e gps 15 minutos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/586)
+
+## [1.1.3] - 2025-05-27
+
+### Adicionado
+
+- Cria flow de materialização do monitoramento dos veiculos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/594)
+
 ## [1.1.2] - 2024-11-28
 
 ### Alterado

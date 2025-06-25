@@ -1,5 +1,18 @@
 # Changelog - subsidio
 
+## [2.0.4] - 2025-06-25
+
+### Alterado
+
+- Altera fonte dos dados de veículo para `aux_veiculo_dia_consolidada` no modelo `viagem_transacao_aux.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
+## [2.0.3] - 2025-06-24
+
+# Adicionado
+
+- Cria modelos `percentual_operacao_faixa_horaria` e `servico_contrato_abreviado`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/624)
+- Adiciona lógica para novos tipos de viagem conforme termos da [RESOLUÇÃO SMTR Nº 3843/2025](https://doweb.rio.rj.gov.br/portal/visualizacoes/pdf/7371/#/p:14/e:7371) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/624)
+
 ## [2.0.2] - 2025-01-21
 
 # Adicionado

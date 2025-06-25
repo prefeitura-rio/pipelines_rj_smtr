@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Flows de tratamento dos dados de cadastro
+
+DBT: 2025-06-06
 """
 
 from pipelines.capture.jae.constants import constants as jae_constants
@@ -24,4 +26,10 @@ CADASTRO_MATERIALIZACAO = create_default_materialization_flow(
             "cliente",
         ]
     ],
+)
+
+CADASTRO_VEICULO_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="cadastro_veiculo - materializacao",
+    selector=constants.CADASTRO_VEICULO_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
 )
