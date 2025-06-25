@@ -1,5 +1,5 @@
 select
-    date_trunc('month', data) as mes_ref,
+    date_trunc(data, month) as mes_ref,
     extract(year from data) as ano,
     extract(month from data) as mes,
     consorcio,
