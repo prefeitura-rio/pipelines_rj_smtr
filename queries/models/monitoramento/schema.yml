@@ -371,33 +371,76 @@ models:
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: veiculo_fiscalizacao_lacre
     description: Tabela com as informações do controle do lacre e deslacre de veículos
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - id_veiculo
+            - data_inicio_lacre
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - id_veiculo
+            - data_inicio_lacre
     columns:
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
       - name: placa
         description: "{{ doc('placa') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
       - name: data_inicio_lacre
         description: Data de inicio do lacre [partição]
         data_type: date
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
       - name: data_fim_lacre
         description: Data de fim do lacre
         data_type: date
         quote: true
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "2020-01-01"
+              max_value: "2030-12-31"
+              strictly: false
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "2020-01-01"
+              max_value: "2030-12-31"
+              strictly: false
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
       - name: consorcio
         description: "{{ doc('consorcio') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
       - name: id_auto_infracao
         description: "{{ doc('id_auto_infracao') }}"
+        tests:
+          - not_null
+          - not_null
         tests:
           - dbt_utils.relationships_where:
               name: dbt_utils.relationships_where__id_auto_infracao__veiculo_fiscalizacao_lacre
@@ -410,31 +453,86 @@ models:
         description: Datetime da última atualização da informação na fonte dos dados [GMT-3]
         data_type: datetime
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
       - name: versao
         description: "{{ doc('versao') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
       - name: id_execucao_dbt
         description: "{{ doc('id_execucao_dbt') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
   - name: autuacao_disciplinar_historico
     description: Tabela histórica de todas as autuações disciplinares aplicadas aos modos de transporte no município do Rio de Janeiro
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - data
+            - id_auto_infracao
+      - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
+          date_col: data
+          date_part: day
+          test_start_date: "2023-01-01"
+          test_end_date: null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - data
+            - id_auto_infracao
+      - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
+          date_col: data
+          date_part: day
+          test_start_date: "2023-01-01"
+          test_end_date: null
     columns:
       - name: data
         description: "{{ doc('data_infracao') }} [partição]"
         data_type: date
         quote: true
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date
+        tests:
+          - not_null
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date
       - name: datetime_autuacao
         description: "Data e hora da autuação [coluna em desenvolvimento]"
         data_type: datetime
         quote: true
+        tests:
+          - not_null
       - name: id_auto_infracao
         description: "{{ doc('id_auto_infracao') }}"
+        tests:
+          - not_null
+          - not_null
+        tests:
+          - not_null
         tests:
           - dbt_utils.relationships_where:
               name: dbt_utils.relationships_where__id_auto_infracao__autuacao_disciplinar_historico
@@ -493,54 +591,172 @@ models:
               where: "data_inclusao_datalake between date('{date_range_start}') and date('{date_range_end}')"
         data_type: string
         quote: true
+        tests:
+          - not_null
       - name: id_infracao
         description: "{{ doc('id_infracao') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
       - name: modo
         description: "{{ doc('modo_onibus') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["ONIBUS"]
+        tests:
+          - not_null
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["ONIBUS"]
       - name: servico
         description: "{{ doc('servico') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
       - name: permissao
         description: "{{ doc('permissao') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
       - name: placa
         description: "{{ doc('placa') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
       - name: valor
         description: "{{ doc('valor') }}"
         data_type: float64
         quote: true
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 10000  # valor máximo razoável para multas
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 10000
       - name: data_pagamento
         description: "{{ doc('data_pagamento') }}"
         data_type: date
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date
       - name: data_inclusao_stu
         description: Data de inclusão da autuação no arquivo enviado pelo STU
         data_type: date
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date
+        tests:
+          - not_null
       - name: data_inclusao_datalake
         description: Data de inclusão da autuação no datalake
         data_type: date
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date
+        tests:
+          - not_null
       - name: versao
         description: "{{ doc('versao') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date
+        tests:
+          - not_null
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date
+        tests:
+          - not_null
       - name: id_execucao_dbt
         description: "{{ doc('id_execucao_dbt') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date
+        tests:
+          - not_null
   - name: veiculo_dia
     description: Tabela resumo dos veículos e seus respectivos indicadores [contém dados a partir de 2025-04-01]
     tests:
@@ -560,6 +776,16 @@ models:
         description: "{{ doc('data_operacao') }}"
         data_type: date
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
         tests:
@@ -567,18 +793,56 @@ models:
               name: not_null__id_veiculo__veiculo_dia
         data_type: string
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
       - name: placa
         description: "{{ doc('placa') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
       - name: modo
         description: "{{ doc('modo') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["ONIBUS", "VAN", "BRT"]
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["ONIBUS", "VAN", "BRT"]
       - name: tecnologia
         description: "{{ doc('tecnologia') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
       - name: tipo_veiculo
         description: "{{ doc('tipo_veiculo') }}"
       - name: status
@@ -588,19 +852,59 @@ models:
               name: not_null__status__sppo_veiculo_dia
         data_type: string
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
       - name: indicadores
         description: "{{ doc('indicadores_veiculo') }}"
         data_type: json
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
       - name: versao
         description: "{{ doc('versao') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
       - name: id_execucao_dbt
         description: "{{ doc('id_execucao_dbt') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
+        tests:
+          - not_null
