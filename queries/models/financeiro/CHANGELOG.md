@@ -1,5 +1,11 @@
 # Changelog - financeiro
 
+## [1.0.4] - 2025-06-25
+
+### Alterado
+
+- Altera fonte dos dados de veículo para `aux_veiculo_dia_consolidada` no modelo `subsidio_faixa_servico_dia_tipo_viagem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
 ## [1.0.3] - 2025-06-24
 
 ### Alterado
