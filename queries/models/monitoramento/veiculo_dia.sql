@@ -179,10 +179,10 @@ with
             case
                 when indicadores.indicador_licenciado.valor is false
                 then "Não licenciado"
-                when indicadores.indicador_veiculo_lacrado.valor is true
-                then "Lacrado"
                 when indicadores.indicador_vistoriado.valor is false
                 then "Não vistoriado"
+                when indicadores.indicador_veiculo_lacrado.valor is true
+                then "Lacrado"
                 when
                     indicadores.indicador_ar_condicionado.valor is true
                     and indicadores.indicador_autuacao_ar_condicionado.valor is true
