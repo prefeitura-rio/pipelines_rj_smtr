@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [7.1.9] - 2025-06-25
+
+### Alterado
+
+- Altera fonte dos dados de veículo para `aux_veiculo_dia_consolidada` no modelo `sumario_servico_tipo_viagem_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
 ## [7.1.8] - 2025-06-24
 
 ### Alterado

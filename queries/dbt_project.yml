@@ -235,7 +235,7 @@ vars:
 
 
   ### Monitoramento ###
-  data_inicial_veiculo_fiscalizacao_lacre: "2025-03-31"
+  data_final_veiculo_arquitetura_1: "2025-03-31"
 
 query-comment: "{{ query_comment(node) }}"
 
