@@ -6,6 +6,8 @@ models:
     versions:
       - v: 1
       - v: 2
+        config:
+          alias: balanco_consorcio_ano
     description: "Balanço da receita aferida e esperada por consórcio e ano para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025."
     columns:
       - name: ano
@@ -37,6 +39,8 @@ models:
     versions:
       - v: 1
       - v: 2
+        config:
+          alias: balanco_consorcio_dia
     description: "Balanço da receita aferida e esperada por consórcio e dia para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025."
     columns:
       - name: data
@@ -66,6 +70,8 @@ models:
     versions:
       - v: 1
       - v: 2
+        config:
+          alias: balanco_servico_ano
     description: "Balanço da receita aferida e esperada por serviço e ano para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025."
     columns:
       - name: ano
@@ -97,6 +103,8 @@ models:
     versions:
       - v: 1
       - v: 2
+        config:
+          alias: balanco_servico_dia
     description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025"
     columns:
       - name: data
@@ -127,6 +135,8 @@ models:
     latest_version: 1
     versions:
       - v: 1
+        config:
+          alias: balanco_servico_dia_pos_gt
     description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados após alterações do Grupo de Trabalho [Processo.Rio MTR-PRO-2024/06270]. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024, 02/2024 e 01/2025."
     columns:
       - name: data
@@ -158,6 +168,8 @@ models:
     versions:
       - v: 1
       - v: 2
+        config:
+          alias: balanco_servico_quinzena
     description: "Balanço da receita aferida e esperada por serviço e quinzena para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025."
     columns:
       - name: quinzena
@@ -213,19 +225,82 @@ models:
         description: "Quantidade de dias em que o serviço foi encontrado no RDO na respectiva quinzena"
       - name: receita_tarifaria_aferida_rdo
         description: "{{ doc('receita_tarifaria_aferida') }}"
-  - name: recurso_encontro_contas
+  - name: servico_dia_atipico
     latest_version: 2
     versions:
       - v: 2
+        config:
+          alias: servico_dia_atipico
+    description: "Serviços-dia com ocorrências que impactam a apuração. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025."
   - name: aux_rdo_servico_dia
     latest_version: 2
     versions:
       - v: 2
+        config:
+          alias: aux_rdo_servico_dia
+    description: "Receita tarifária aferida por serviço-dia a partir dos registros do RDO com correção dos serviços sem planejamento."
   - name: aux_subsidio_servico_dia
     latest_version: 2
     versions:
       - v: 2
+        config:
+          alias: aux_subsidio_servico_dia
+    description: "Quilometragem apurada e subsídio pago por serviço-dia a partir com correção dos serviços sem receita."
   - name: staging_encontro_contas_servico_dia
     latest_version: 2
     versions:
       - v: 2
+        config:
+          alias: staging_encontro_contas_servico_dia
+    description: "Quilometragem planejada, apurada e Percentual de Operação Diária (POD) por serviço-dia."
+  - name: balanco_consorcio_mes
+    latest_version: 2
+    versions:
+      - v: 2
+        config:
+          alias: balanco_consorcio_mes
+    description: "Balanço da receita aferida e esperada por consórcio, mês e ano para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025."
+    columns:
+      - name: ano
+        description: "{{ doc('ano') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: km_apurada
+        description: "{{ doc('km_apurada') }}"
+      - name: receita_total_esperada
+        description: "{{ doc('receita_total_esperada') }}"
+      - name: receita_tarifaria_esperada
+        description: "{{ doc('receita_tarifaria_esperada') }}"
+      - name: subsidio_esperado
+        description: "{{ doc('subsidio_esperado') }}"
+      - name: subsidio_glosado
+        description: "{{ doc('subsidio_glosado') }}"
+      - name: receita_total_aferida
+        description: "{{ doc('receita_total_aferida') }}"
+      - name: receita_tarifaria_aferida
+        description: "{{ doc('receita_tarifaria_aferida') }}"
+      - name: subsidio_pago
+        description: "{{ doc('subsidio_pago') }}"
+      - name: saldo
+        description: "{{ doc('saldo') }}"
+  - name: correcao_servico_rdo
+    latest_version: 2
+    versions:
+      - v: 2
+        config:
+          alias: correcao_servico_rdo
+    description: "Correção de serviços-dia sem planejamento porém com receita tarifária e com subsídio pago, mas sem receita tarifária"
+  - name: receita_tarifaria_servico_dia_sem_associacao
+    latest_version: 2
+    versions:
+      - v: 2
+        config:
+          alias: receita_tarifaria_servico_dia_sem_associacao
+    description: "Serviços-dia sem planejamento porém com receita tarifária e com subsídio pago, mas sem receita tarifária"
+  - name: encontro_contas_subsidio_sumario_servico_dia
+    latest_version: 2
+    versions:
+      - v: 2
+        config:
+          alias: encontro_contas_subsidio_sumario_servico_dia
+    description: "Sumário do subsídio dos serviços de ônibus [SPPO] por dia para fins do Encontro de Contas"
