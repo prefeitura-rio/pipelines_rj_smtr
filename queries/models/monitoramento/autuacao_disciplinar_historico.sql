@@ -63,7 +63,6 @@ with
             '{{ invocation_id }}' as id_execucao_dbt
         from autuacao_disciplinar_staging ad
         join aux_data_inclusao di using (id_auto_infracao)
-        where ad.data > '{{ var("data_final_veiculo_arquitetura_1") }}'
         qualify
             row_number() over (
                 partition by id_auto_infracao order by timestamp_captura desc
