@@ -17,12 +17,12 @@
             select
                 date(
                     datetime(data) + interval cast(
-                        split(faixa_horaria_inicio, ':')[safe_offset(0)] as int64
+                        split(faixa_horaria_inicio, ":")[safe_offset(0)] as int64
                     ) hour
                 ) as data,
                 servico,
                 datetime(data) + interval cast(
-                    split(faixa_horaria_inicio, ':')[safe_offset(0)] as int64
+                    split(faixa_horaria_inicio, ":")[safe_offset(0)] as int64
                 ) hour as faixa_horaria_inicio,
                 round(sum(quilometragem), 3) as quilometragem
             from {{ ref("subsidio_data_versao_efetiva") }}
