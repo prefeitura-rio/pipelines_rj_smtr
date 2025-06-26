@@ -27,7 +27,7 @@ models:
         data_type: float64
         quote: true
       - name: quantidade_uso
-        description: Quantidade do serviço que foi utilizado (na unidade da coluna unidade_uso)
+        description: Quantidade do serviço que foi utilizado [na unidade da coluna unidade_uso]
         data_type: float64
         quote: true
       - name: unidade_uso
