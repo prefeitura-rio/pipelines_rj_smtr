@@ -737,6 +737,30 @@ Valor de glosa depositada em juízo [Autuação por ar inoperante, Veículo lice
 Valor total das viagens considerando o valor máximo por km
 {% enddocs %}
 
+{% docs cadastro_cliente %}
+Situação do cadastro do cliente na Jaé (cadastrado ou não cadastrado)
+{% enddocs %}
+
+{% docs produto %}
+Produto utilizado para efetuar o pagamento no padrão utilizado na SMTR (Conta Gratuidade, Carteira, VT, Dinheiro, Cartão Avulso ou Visa Internacional)
+{% enddocs %}
+
+{% docs produto_jae %}
+Produto utilizado para efetuar o pagamento conforme os dados originais da Jaé
+{% enddocs %}
+
+{% docs tipo_usuario %}
+Tipo do usuário que efetuou a transação (ex.: Estudante Municipal, Idoso, Pagante)
+{% enddocs %}
+
+{% docs meio_pagamento %}
+Meio de pagamento utilizado no padrão utilizado na SMTR (Cartão, QRCode ou Dinheiro)
+{% enddocs %}
+
+{% docs meio_pagamento_jae %}
+Meio de pagamento conforme os dados originais da Jaé
+{% enddocs %}
+
 {% docs chave %}
 Chave
 {% enddocs %}
