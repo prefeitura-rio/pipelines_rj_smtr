@@ -298,6 +298,7 @@ sources:
 
     tables:
       - name: tecnologia_servico
+      - name: tuneis
 
   - name: cloudcosts
     database: rj-smtr
