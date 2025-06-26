@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo_v2
 
+## [1.1.0] - 2025-06-25
+
+### Alterado
+
+- Altera lógica do modelo `sumario_faixa_servico_dia_pagamento` para utilizar o macro `generate_km_columns` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/639)
+
 ## [1.0.9] - 2025-06-24
 
 ### Alterado
