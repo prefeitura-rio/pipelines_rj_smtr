@@ -17,12 +17,12 @@
             select
                 date(
                     datetime(data) + interval cast(
-                        split(faixa_horaria_inicio, ':')[safe_offset(0)] as int64
+                        split(faixa_horaria_inicio, ":")[safe_offset(0)] as int64
                     ) hour
                 ) as data,
                 servico,
                 datetime(data) + interval cast(
-                    split(faixa_horaria_inicio, ':')[safe_offset(0)] as int64
+                    split(faixa_horaria_inicio, ":")[safe_offset(0)] as int64
                 ) hour as faixa_horaria_inicio,
                 round(sum(quilometragem), 3) as quilometragem
             from {{ ref("subsidio_data_versao_efetiva") }}
@@ -37,8 +37,9 @@
                 ) and date("{{ var('date_range_end') }}")
             group by 1, 2, 3
         )
-        {% if 'viagem_planejada' not in model %}
-            , sumario as (
+        {% if "viagem_planejada" not in model %}
+            ,
+            sumario as (
                 select data, servico, faixa_horaria_inicio, km_planejada_faixa
                 from {{ model }}
                 -- `rj-smtr.dashboard_subsidio_sppo_v2.sumario_faixa_servico_dia_pagamento`
@@ -50,13 +51,32 @@
         {% endif %}
     select *
     from viagem_planejada p
-    full join os_faixa using (data, servico, faixa_horaria_inicio)
-    {% if 'viagem_planejada' not in model %}
+    full join
+        (
+            select
+                * except (servico),
+                -- alteração referente ao Processo.rio MTR-CAP-2025/06098
+                case
+                    when faixa_horaria_inicio = "2025-06-01T00:00:00"
+                    then
+                        case
+                            when servico = "LECD108"
+                            then "LECD112"
+                            when servico = "864"
+                            then "LECD122"
+                            else servico
+                        end
+                    else servico
+                end as servico,
+            from os_faixa
+            where quilometragem != 0
+        ) using (data, servico, faixa_horaria_inicio)
+    {% if "viagem_planejada" not in model %}
         full join sumario using (data, servico, faixa_horaria_inicio)
     {% endif %}
     where
         quilometragem != distancia_total_planejada
-        {% if 'viagem_planejada' not in model %}
+        {% if "viagem_planejada" not in model %}
             or distancia_total_planejada != km_planejada_faixa
         {% endif %}
 {%- endtest %}

@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.2.6] - 2025-06-25
+
+### Alterado
+
+- Alterado o modelo `viagem_planejada.sql` para adicionar exceções que mapeiam os serviços `864` → `LECD122` e `LECD108` → `LECD112` na faixa horária das 00h às 03h do dia `2025-06-01` [Processo.Rio MTR-PRO-2025/06098] (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/646)
+
 ## [9.2.5] - 2025-06-12
 
 ### Adicionado
