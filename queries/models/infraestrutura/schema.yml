@@ -77,6 +77,10 @@ models:
         description: Identificador único do Job
         data_type: string
         quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
       - name: query
         description: Query executada, se houver
         data_type: string
