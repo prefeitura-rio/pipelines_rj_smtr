@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.5.1] - 2025-06-26
+
+### Removido
+
+- Remove a coluna modo do modelo`aux_veiculo_dia_consolidada.sql`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/648)
+
 ## [1.5.0] - 2025-06-25
 
 ### Adicionado
