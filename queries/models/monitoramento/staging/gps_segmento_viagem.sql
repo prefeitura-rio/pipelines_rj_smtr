@@ -81,6 +81,9 @@ with
             shape_id,
             id_segmento,
             buffer,
+            inicio_vigencia_tunel,
+            fim_vigencia_tunel,
+            indicador_tunel,
             indicador_segmento_desconsiderado
         from {{ ref("segmento_shape") }}
         {# from `rj-smtr.planejamento.segmento_shape` #}
@@ -103,6 +106,22 @@ with
             on g.feed_version = s.feed_version
             and g.shape_id = s.shape_id
             and st_intersects(s.buffer, g.geo_point_gps)
+            and (
+                (
+                    s.indicador_tunel
+                    and (
+                        (
+                            g.data
+                            between s.inicio_vigencia_tunel and s.fim_vigencia_tunel
+                        )
+                        or (
+                            g.data >= s.inicio_vigencia_tunel
+                            and s.fim_vigencia_tunel is null
+                        )
+                    )
+                )
+                or (s.inicio_vigencia_tunel is null and s.fim_vigencia_tunel is null)
+            )
         where g.servico_gps = g.servico_viagem
         group by all
     ),
@@ -156,7 +175,27 @@ with
             v.feed_version,
             v.feed_start_date
         from viagem v
-        left join segmento s using (shape_id, feed_version, feed_start_date)
+        left join
+            segmento s
+            on v.feed_version = s.feed_version
+            and v.shape_id = s.shape_id
+            and v.feed_start_date = s.feed_start_date
+            and (
+                (
+                    s.indicador_tunel
+                    and (
+                        (
+                            v.data
+                            between s.inicio_vigencia_tunel and s.fim_vigencia_tunel
+                        )
+                        or (
+                            v.data >= s.inicio_vigencia_tunel
+                            and s.fim_vigencia_tunel is null
+                        )
+                    )
+                )
+                or (s.inicio_vigencia_tunel is null and s.fim_vigencia_tunel is null)
+            )
     )
 select
     v.data,
