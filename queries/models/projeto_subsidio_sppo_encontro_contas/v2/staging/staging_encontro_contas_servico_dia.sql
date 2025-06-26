@@ -21,6 +21,12 @@
 {{ config(materialized="ephemeral") }}
 
 with
+    -- 1. Lista pares data-serviço com km_apurada_pod [soma das kms por tipo e por
+    -- faixa horária que serão consideradas para o cálculo do POD (Percentual de
+    -- Operação Diária) conforme
+    -- rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem. Além das kms
+    -- apuradas normalmente, considera também as kms não vistoriadas (2024-08-16 a
+    -- 2024-09-30)]
     sumario_servico_dia_pod as (
         select
             data,
@@ -40,25 +46,34 @@ with
             ) as km_apurada_pod,
         from {{ subsidio_faixa_servico_dia_tipo_viagem }}
         where
-            data
+            data >= "{{ var('encontro_contas_datas_v2_inicio') }}"
+            and data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
         group by all
     ),
+    -- 2. Lista pares data-serviço junto à km_apurada_faixa e km_planejada_faixa
+    -- sumario_faixa_servico_dia [2024-08-16 (apuração por faixa horária) a 2025-01-04
+    -- (apuração por tecnologia)]
+    -- sumario_faixa_servico_dia_pagamento [2025-01-05 (apuração por tecnologia) em
+    -- diante]
     sumario_faixa_servico as (
         select data, consorcio, servico, km_apurada_faixa, km_planejada_faixa,
         from {{ sumario_faixa_servico_dia }}
         where
-            data
+            data >= "{{ var('encontro_contas_datas_v2_inicio') }}"
+            and data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
             and data < date("{{ var('DATA_SUBSIDIO_V14_INICIO') }}")
         union all
         select data, consorcio, servico, km_apurada_faixa, km_planejada_faixa,
         from {{ sumario_faixa_servico_dia_pagamento }} as sdp
         where
-            data
+            data >= "{{ var('encontro_contas_datas_v2_inicio') }}"
+            and data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
             and data >= date("{{ var('DATA_SUBSIDIO_V14_INICIO') }}")
     ),
+    -- 3. Agrupa pares data-serviço com km_apurada_faixa e km_planejada_faixa
     sumario_servico_dia as (
         select
             data,
@@ -69,6 +84,7 @@ with
         from sumario_faixa_servico
         group by all
     )
+-- 4. Lista pares data-serviço e calcula perc_km_planejada
 select
     data,
     servico,

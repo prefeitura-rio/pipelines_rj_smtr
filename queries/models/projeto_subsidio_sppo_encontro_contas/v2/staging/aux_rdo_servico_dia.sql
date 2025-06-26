@@ -8,14 +8,14 @@
 {% set rdo40_registros = "rj-smtr.br_rj_riodejaneiro_rdo.rdo40_registros" %}
 
 with
-    -- 1. Lista pares dia-serviço com correção do serviço (serviço corrigido é o
+    -- 1. Lista pares data-serviço com correção do serviço (serviço corrigido é o
     -- serviço correto que deve ser utilizado no encontro de contas)
     correcao_servico_rdo as (
         select *
         from {{ ref("correcao_servico_rdo") }}
         where tipo = "Sem planejamento porém com receita tarifária"
     ),
-    -- 2. Calcula a receita tarifária para cada par dia-serviço
+    -- 2. Calcula a receita tarifária para cada par data-serviço
     rdo_raw as (
         select
             data,
@@ -41,7 +41,8 @@ with
             ) as receita_tarifaria_aferida
         from {{ rdo40_registros }}
         where
-            data between "{{ var('start_date') }}" and "{{ var('end_date') }}"
+            data >= "{{ var('encontro_contas_datas_v2_inicio') }}"
+            and data between "{{ var('start_date') }}" and "{{ var('end_date') }}"
             and consorcio in ("Internorte", "Intersul", "Santa Cruz", "Transcarioca")
             and not (
                 length(ifnull(regexp_extract(linha, r"[0-9]+"), "")) = 4
@@ -49,9 +50,9 @@ with
             )  -- Remove rodoviários
         group by all
     ),
-    -- 3. Remove pares dia-serviço sem receita tarifária aferida
+    -- 3. Remove pares data-serviço sem receita tarifária aferida
     rdo_filtrado as (select * from rdo_raw where receita_tarifaria_aferida != 0)
--- 4. Associa serviço corrigido aos pares dia-serviço do RDO
+-- 4. Associa serviço corrigido aos pares data-serviço do RDO
 select
     r.* except (servico),
     servico as servico_original_rdo,

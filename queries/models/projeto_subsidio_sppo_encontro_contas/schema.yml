@@ -5,6 +5,8 @@ models:
     latest_version: 2
     versions:
       - v: 1
+        config:
+          deprecation_date: 2023-12-31
       - v: 2
         config:
           alias: balanco_consorcio_ano
@@ -38,6 +40,8 @@ models:
     latest_version: 2
     versions:
       - v: 1
+        config:
+          deprecation_date: 2023-12-31
       - v: 2
         config:
           alias: balanco_consorcio_dia
@@ -69,6 +73,8 @@ models:
     latest_version: 2
     versions:
       - v: 1
+        config:
+          deprecation_date: 2023-12-31
       - v: 2
         config:
           alias: balanco_servico_ano
@@ -102,10 +108,18 @@ models:
     latest_version: 2
     versions:
       - v: 1
+        config:
+          deprecation_date: 2023-12-31
       - v: 2
         config:
           alias: balanco_servico_dia
     description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+            combination_of_columns:
+            - data
+            - servico
+            name: dbt_utils.unique_combination_of_columns__data_servico__balanco_servico_dia
     columns:
       - name: data
         description: "{{ doc('data') }}"
@@ -132,12 +146,8 @@ models:
       - name: saldo
         description: "{{ doc('saldo') }}"
   - name: balanco_servico_dia_pos_gt
-    latest_version: 1
-    versions:
-      - v: 1
-        config:
-          alias: balanco_servico_dia_pos_gt
     description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados após alterações do Grupo de Trabalho [Processo.Rio MTR-PRO-2024/06270]. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024, 02/2024 e 01/2025."
+    deprecation_date: 2023-12-31
     columns:
       - name: data
         description: "{{ doc('data') }}"
@@ -167,6 +177,8 @@ models:
     latest_version: 2
     versions:
       - v: 1
+        config:
+          deprecation_date: 2023-12-31
       - v: 2
         config:
           alias: balanco_servico_quinzena
@@ -204,6 +216,7 @@ models:
         description: "{{ doc('saldo') }}"
   - name: receita_tarifaria_servico_nao_identificado_quinzena
     description: "Receita tarifária proveniente do RDO para serviços de ônibus dos consórcios que não foram identificados nos planos operacionais dos respectivos dias."
+    deprecation_date: 2023-12-31
     columns:
       - name: quinzena
         description: "{{ doc('quinzena') }}"
@@ -304,3 +317,10 @@ models:
         config:
           alias: encontro_contas_subsidio_sumario_servico_dia
     description: "Sumário do subsídio dos serviços de ônibus [SPPO] por dia para fins do Encontro de Contas"
+  - name: encontro_contas_parametros
+    latest_version: 2
+    versions:
+      - v: 2
+        config:
+          alias: encontro_contas_parametros
+    description: "Parâmetros utilizados para o cálculo do Encontro de Contas dos serviços de ônibus [SPPO]"

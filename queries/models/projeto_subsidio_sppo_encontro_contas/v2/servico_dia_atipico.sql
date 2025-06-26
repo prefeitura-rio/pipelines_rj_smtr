@@ -9,7 +9,7 @@ select
                 ifnull(regexp_extract(trim(servico), r"[0-9]+"), "")
             )
     end as servico,
-    safe_cast(incorporado_bigquery as bool) as incorporado_datalakehouse,
+    safe_cast(incorporado_bigquery as bool) as incorporado_datalake_house,
     * except (data, servico, incorporado_bigquery)
 from
     {{

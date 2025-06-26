@@ -1,17 +1,19 @@
 with
-    -- 1. Lista pares dia-serviço atípicos (recurso pago/em avaliação e ainda não
-    -- incorporados
-    -- ao data lakehouse)
+    -- 1. Lista pares data-serviço atípicos (pares de dia e serviço que registraram
+    -- ocorrências com potencial de impactar a operação e comprometer a apuração das
+    -- viagens válidas. Nesses casos, não é possível estimar a receita esperada com
+    -- base na quilometragem percorrida e, mesmo após recurso, ainda não incorporados
+    -- ao datalake house)
     servico_dia_atipico as (
         select distinct data, servico
         from {{ ref("servico_dia_atipico") }}
-        where incorporado_datalakehouse is not true
+        where incorporado_datalake_house is not true
     ),
-    -- 2. Lista pares dia-serviço corrigidos do RDO
+    -- 2. Lista pares data-serviço corrigidos do RDO
     rdo_corrigido as (select * from {{ ref("aux_rdo_servico_dia") }}),
-    -- 3. Lista pares dia-serviço corrigidos do subsídio
+    -- 3. Lista pares data-serviço corrigidos do subsídio
     subsidio_dia_corrigido as (select * from {{ ref("aux_subsidio_servico_dia") }})
--- 4. Lista os pares dia-serviço que estão sem planejamento porém com receita
+-- 4. Lista os pares data-serviço que estão sem planejamento porém com receita
 -- tarifária ou tem subsídio pago sem receita tarifária aferida
 select
     case
