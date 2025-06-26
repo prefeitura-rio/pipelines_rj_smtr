@@ -2,7 +2,7 @@
 
     {{
         config(
-            target_schema="monitoramento_staging",
+            target_schema="planejamento_staging",
             unique_key="id_trecho",
             strategy="timestamp",
             updated_at="timestamp_ultima_atualizacao",
@@ -10,7 +10,11 @@
         )
     }}
 
-    select *, current_timestamp() as timestamp_ultima_atualizacao
+    select
+        *,
+        timestamp(
+            datetime_ultima_atualizacao, "America/Sao_Paulo"
+        ) as timestamp_ultima_atualizacao
     from {{ source("dados_mestres", "logradouro") }}
     where tipo = "Túnel"
 

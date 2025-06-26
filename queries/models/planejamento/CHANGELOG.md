@@ -1,5 +1,16 @@
 # Changelog - planejamento
 
+## [1.4.7] - 2025-06-24
+
+### Adicionado
+
+- Cria modelo `tuneis` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/617)
+
+### Alterado
+
+- Altera referência da CTE `tunel` no modelo `segmento_shape` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/617)
+- Altera lógica do modelo `segmento_shape` para considerar vigência da camada dos túneis (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/617)
+
 ## [1.4.6] - 2025-06-09
 
 ### Alterado
