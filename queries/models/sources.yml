@@ -305,6 +305,7 @@ sources:
 
     tables:
       - name: tecnologia_servico
+      - name: tuneis
 
   - name: transito_staging
     database: rj-smtr-staging
