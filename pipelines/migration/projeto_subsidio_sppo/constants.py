@@ -741,6 +741,7 @@ class constants(Enum):  # pylint: disable=c0103
             },
         },
         "veiculo_dia": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
             "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__veiculo_dia": {
                 "description": "Todas as datas possuem dados"
             },
