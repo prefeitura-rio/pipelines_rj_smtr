@@ -93,6 +93,7 @@ with
             vs.distancia_planejada,
             vs.sentido,
             vs.modo,
+            t.inicio_vigencia as data_inicio_vigencia,
             vs.tecnologia as tecnologia_apurada,
             case
                 when p.prioridade > p_maior.prioridade
@@ -123,15 +124,6 @@ with
         left join
             prioridade_tecnologia as p_menor
             on t.menor_tecnologia_permitida = p_menor.tecnologia
-    ),
-    viagem_autuacao_servico as (
-        select vt.data, vt.id_viagem, va.id_infracao
-        from viagem_tecnologia vt
-        left join
-            veiculo_autuacao va
-            on vt.data = va.data
-            and vt.id_veiculo = va.id_veiculo
-            and vt.servico = va.servico
     ),
     viagem_autuacao_hora as (
         select vt.data, vt.id_viagem, va.id_infracao
@@ -171,7 +163,7 @@ with
                 then "Não autorizado por capacidade"
                 when vt.status = "Autuado por ar inoperante"
                 then "Autuado por ar inoperante"
-                when vas.id_infracao = "017.III"
+                when vah.id_infracao = "017.III"
                 then "Autuado por alterar itinerário"
                 when vah.id_infracao = "023.X"
                 then "Autuado por vista inoperante"
@@ -189,20 +181,21 @@ with
                 then "Licenciado com ar e não autuado"
             end as tipo_viagem,
             json_set(
-                indicadores,
-                '$.indicador_penalidade_tecnologia.valor',
-                vt.indicador_penalidade_tecnologia
+                json_set(
+                    indicadores,
+                    '$.indicador_penalidade_tecnologia.valor',
+                    vt.indicador_penalidade_tecnologia
+                ),
+                '$.indicador_penalidade_tecnologia.data_inicio_vigencia',
+                vt.data_inicio_vigencia
             ) as indicadores,
             vt.servico,
             vt.sentido,
             vt.distancia_planejada,
-            '{{ var("version") }}' as versao,
-            current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
+            current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+            "{{ var('version') }}" as versao,
+            '{{ invocation_id }}' as id_execucao_dbt
         from viagem_tecnologia vt
-        left join
-            viagem_autuacao_servico vas
-            on vt.id_viagem = vas.id_viagem
-            and vt.data = vas.data
         left join
             viagem_autuacao_hora vah
             on vt.id_viagem = vah.id_viagem
@@ -223,14 +216,77 @@ with
             servico,
             sentido,
             distancia_planejada,
+            datetime_ultima_atualizacao,
             versao,
-            datetime_ultima_atualizacao
+            id_execucao_dbt
         from viagem_classificada vc
         left join
             ordem_status os
             on vc.data between os.data_inicio and os.data_fim
             and vc.tipo_viagem = os.status
-        qualify row_number() over (partition by vc.id_viagem order by os.ordem) = 1
+        qualify
+            row_number() over (partition by vc.data, vc.id_viagem order by os.ordem) = 1
     )
-select *
-from deduplica
+{% if is_incremental() %}
+        ,
+        dados_completos as (
+            select *, 1 as ordem
+            from deduplica
+
+            union all
+
+            select *, 0 as ordem
+            from {{ this }}
+            where {{ incremental_filter }}
+
+        ),
+        sha_dados as (
+            {% set columns = (
+                list_columns()
+                | reject(
+                    "in",
+                    [
+                        "versao",
+                        "datetime_ultima_atualizacao",
+                        "id_execucao_dbt",
+                    ],
+                )
+                | list
+            ) %}
+
+            select
+                *,
+                sha256(
+                    concat(
+                        {% for c in columns %}
+                            ifnull(
+                                {% if c == "indicadores" %}to_json_string(indicadores)
+                                {% else %}cast({{ c }} as string)
+                                {% endif %},
+                                'n/a'
+                            )
+                            {% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    )
+                ) as sha_dado
+            from dados_completos
+        ),
+        dados_completos_invocation_id as (
+            select
+                * except (id_execucao_dbt, sha_dado),
+                case
+                    when
+                        lag(sha_dado) over (win) != sha_dado
+                        or (lag(sha_dado) over (win) is null and ordem = 1)
+                    then id_execucao_dbt
+                    else lag(id_execucao_dbt) over (win)
+                end as id_execucao_dbt
+            from sha_dados
+            window win as (partition by data, id_viagem order by ordem)
+        )
+
+    select * except (ordem)
+    from dados_completos_invocation_id
+    where ordem = 1
+{% else %} select * from deduplica
+{% endif %}
