@@ -7,7 +7,7 @@
 {% set sem_transacao = "coalesce(tr.quantidade_transacao_riocard, 0) = 0  and coalesce(t.quantidade_transacao, 0) = 0" %}
 
 with
-    -- 1. Transações Jaé
+    -- Transações Jaé
     transacao as (
         select id_veiculo, servico_jae, datetime_transacao
         from {{ ref("transacao") }}
@@ -19,7 +19,7 @@ with
             and date(datetime_processamento) - date(datetime_transacao)
             <= interval 6 day
     ),
-    -- 2. Transações RioCard
+    -- Transações RioCard
     transacao_riocard as (
         select id_veiculo, servico_jae, datetime_transacao
         from {{ ref("transacao_riocard") }}
@@ -31,7 +31,7 @@ with
             and date(datetime_processamento) - date(datetime_transacao)
             <= interval 6 day
     ),
-    -- 3. GPS Validador
+    -- GPS Validador
     gps_validador as (
         select
             data,
@@ -57,8 +57,16 @@ with
             )
             and date(datetime_captura) - date(datetime_gps) <= interval 6 day
     ),
-    -- 4. Viagens realizadas
-    viagem as (
+    -- Status dos veículos
+    veiculos as (
+        select data, id_veiculo, status, tecnologia
+        from {{ ref("aux_veiculo_dia_consolidada") }}
+        where
+            data
+            between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
+    ),
+    -- Viagens realizadas
+    viagem_completa as (
         select
             data,
             servico_realizado as servico,
@@ -67,24 +75,47 @@ with
             id_veiculo,
             id_viagem,
             distancia_planejada,
-            sentido
+            sentido,
+            ve.tecnologia as tecnologia_apurada
         from {{ ref("viagem_completa") }}
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
+        left join veiculos as ve using (data, id_veiculo)
         where
             data
             between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
                 "{{ var('end_date') }}"
             )
+            and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
     ),
-    -- 5. Status dos veículos
-    veiculos as (
-        select data, id_veiculo, status, tecnologia
-        from {{ ref("aux_veiculo_dia_consolidada") }}
+    viagem as (
+        -- fmt: off
+        select * from viagem_completa
+
+        full outer union all by name
+        -- fmt: on
+        select
+            data,
+            id_viagem,
+            id_veiculo,
+            datetime_partida,
+            datetime_chegada,
+            modo,
+            tecnologia_apurada,
+            tecnologia_remunerada,
+            tipo_viagem,
+            servico,
+            sentido,
+            distancia_planejada
+        from {{ ref("viagem_classificada") }}
+        -- from `rj-smtr.subsidio.viagem_classificada`
         where
             data
-            between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
+            between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
+                "{{ var('end_date') }}"
+            )
+            and data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
     ),
-    -- 6. Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
+    -- Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
     -- limitada pela viagem anterior
     viagem_com_tolerancia_previa as (
         select
@@ -123,7 +154,7 @@ with
             end as datetime_partida_com_tolerancia
         from viagem as v
     ),
-    -- 7. Considera apenas as viagens realizadas no período de apuração
+    -- Considera apenas as viagens realizadas no período de apuração
     viagem_com_tolerancia as (
         select *
         from viagem_com_tolerancia_previa
@@ -131,7 +162,7 @@ with
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
     ),
-    -- 8. Contagem de transações Jaé
+    -- Contagem de transações Jaé
     transacao_contagem as (
         select
             v.data,
@@ -148,7 +179,7 @@ with
             between v.datetime_partida_com_tolerancia and v.datetime_chegada
         group by v.data, v.id_viagem
     ),
-    -- 9. Contagem de transações RioCard
+    -- Contagem de transações RioCard
     transacao_riocard_contagem as (
         select
             v.data,
@@ -166,7 +197,7 @@ with
             between v.datetime_partida_com_tolerancia and v.datetime_chegada
         group by v.data, v.id_viagem
     ),
-    -- 10. Ajusta estado do equipamento
+    -- Ajusta estado do equipamento
     -- Agrupa mesma posição para mesmo validador e veículo, mantendo preferencialmente
     -- o estado do equipamento "ABERTO" quanto latitude e longitude for diferente de
     -- (0,0)
@@ -197,7 +228,7 @@ with
                             and longitude != 0
                         )
                         or data < date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
-                    group by 1, 2, 3, 4, 5
+                    group by 1, 2, 3, 4, 5, 6
                 )
                 union all
                 (
@@ -218,7 +249,7 @@ with
                 )
             )
     ),
-    -- 11. Relacionamento entre estado do equipamento e viagem
+    -- Relacionamento entre estado do equipamento e viagem
     gps_validador_viagem as (
         select
             v.data,
@@ -236,7 +267,7 @@ with
             on e.id_veiculo = substr(v.id_veiculo, 2)
             and e.datetime_gps between v.datetime_partida and v.datetime_chegada
     ),
-    -- 12. Calcula a porcentagem de estado do equipamento "ABERTO" por validador e
+    -- Calcula a porcentagem de estado do equipamento "ABERTO" por validador e
     -- viagem
     estado_equipamento_perc as (
         select
@@ -249,16 +280,14 @@ with
         from gps_validador_viagem
         group by 1, 2, 3
     ),
-    -- 13. Calcula maior e menor porcentagem de estado do equipamento
+    -- Calcula maior e menor porcentagem de estado do equipamento
     -- "ABERTO" por viagem
     estado_equipamento_max_min as (
         select
             data,
             id_viagem,
             sum(quantidade_gps_servico_divergente) as quantidade_gps_servico_divergente,
-            max_by(
-                id_validador, percentual_estado_equipamento_aberto
-            ) as id_validador_max_perc,
+            max_by(id_validador, percentual_estado_equipamento_aberto) as id_validador,
             max(
                 percentual_estado_equipamento_aberto
             ) as max_percentual_estado_equipamento_aberto,
@@ -268,7 +297,7 @@ with
         from estado_equipamento_perc
         group by 1, 2
     ),
-    -- 14. Verifica se a viagem possui estado do equipamento "ABERTO" em pelo menos
+    -- Verifica se a viagem possui estado do equipamento "ABERTO" em pelo menos
     -- 80% dos registros
     estado_equipamento_verificacao as (
         select
@@ -303,10 +332,10 @@ select
     eev.id_validador,
     case
         when
-            ve.status not in (
+            v.tipo_viagem not in (
                 "Licenciado com ar e não autuado", "Licenciado sem ar e não autuado"
             )
-        then ve.status
+        then v.tipo_viagem
         when
             v.data >= date("{{ var('DATA_SUBSIDIO_V8_INICIO') }}")
             and (
@@ -346,10 +375,12 @@ select
                 or eev.quantidade_gps_servico_divergente > 0
             )
         then "Validador associado incorretamente"
-        else ve.status
+        else v.tipo_viagem
     end as tipo_viagem,
-    ve.tecnologia,
+    v.tecnologia_apurada,
+    v.tecnologia_remunerada,
     v.sentido,
+    v.modo,
     v.distancia_planejada,
     coalesce(t.quantidade_transacao, 0) as quantidade_transacao,
     coalesce(tr.quantidade_transacao_riocard, 0) as quantidade_transacao_riocard,
@@ -360,7 +391,6 @@ select
     v.datetime_chegada,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
 from viagem_com_tolerancia as v
-left join veiculos as ve using (data, id_veiculo)
 left join transacao_contagem as t using (data, id_viagem)
 left join transacao_riocard_contagem as tr using (data, id_viagem)
 left join estado_equipamento_verificacao as eev using (data, id_viagem)
