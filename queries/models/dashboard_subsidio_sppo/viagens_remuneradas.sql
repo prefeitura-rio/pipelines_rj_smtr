@@ -43,7 +43,11 @@ with
             and (distancia_total_planejada > 0 or distancia_total_planejada is null)
             and (id_tipo_trajeto = 0 or id_tipo_trajeto is null)
             and data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
-            and not (data between "2023-12-31" and "2024-01-01" and servico in ("583","584") and sentido = "I") -- Alteração para o reprocessamento do TCM - MTR-CAP-2025/03003 (2023-10-01 a 2024-01-31)
+            and not (
+                data between "2023-12-31" and "2024-01-01"
+                and servico in ("583", "584")
+                and sentido = "I"
+            )  -- Alteração para o reprocessamento do TCM - MTR-CAP-2025/03003 (2023-10-01 a 2024-01-31)
     ),
     viagens_planejadas as (
         select
@@ -126,17 +130,6 @@ with
         from {{ ref("valor_km_tipo_viagem") }}
     -- from `rj-smtr.subsidio.valor_km_tipo_viagem`
     ),
-    tecnologias as (
-        select
-            inicio_vigencia,
-            fim_vigencia,
-            servico,
-            codigo_tecnologia,
-            maior_tecnologia_permitida,
-            menor_tecnologia_permitida
-        from {{ ref("tecnologia_servico") }}
-    ),
-    prioridade_tecnologia as (select * from {{ ref("tecnologia_prioridade") }}),
     -- Viagens com quantidades de transações
     viagem_transacao as (
         select *
@@ -146,44 +139,6 @@ with
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
             and data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
-    ),
-    -- Viagens com tipo e valor de subsídio por km
-    viagem_tecnologia as (
-        select distinct
-            vt.data,
-            vt.servico,
-            vt.tipo_viagem,
-            vt.tecnologia as tecnologia_apurada,
-            case
-                when p.prioridade > p_maior.prioridade
-                then t.maior_tecnologia_permitida
-                when
-                    p.prioridade < p_menor.prioridade
-                    and data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
-                then null
-                else vt.tecnologia
-            end as tecnologia_remunerada,
-            vt.id_viagem,
-            vt.datetime_partida,
-            vt.distancia_planejada,
-            case
-                when p.prioridade < p_menor.prioridade then true else false
-            end as indicador_penalidade_tecnologia
-        from viagem_transacao as vt
-        left join
-            tecnologias as t
-            on vt.servico = t.servico
-            and (
-                (vt.data between t.inicio_vigencia and t.fim_vigencia)
-                or (vt.data >= t.inicio_vigencia and t.fim_vigencia is null)
-            )
-        left join prioridade_tecnologia as p on vt.tecnologia = p.tecnologia
-        left join
-            prioridade_tecnologia as p_maior
-            on t.maior_tecnologia_permitida = p_maior.tecnologia
-        left join
-            prioridade_tecnologia as p_menor
-            on t.menor_tecnologia_permitida = p_menor.tecnologia
     ),
     -- Apuração de km realizado e Percentual de Operação por Faixa Horária (POF)
     servico_faixa_km_apuracao as (
@@ -212,9 +167,7 @@ with
             vt.datetime_partida,
             vt.distancia_planejada,
             case
-                when
-                    vt.indicador_penalidade_tecnologia
-                    and vt.data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                when vt.tipo_viagem = "Não autorizado por capacidade"
                 then 0
                 else sp.subsidio_km
             end as subsidio_km,
@@ -236,10 +189,12 @@ with
                     )
                 else safe_cast(0 as numeric)
             end as valor_glosado_tecnologia,
-            vt.indicador_penalidade_tecnologia,
+            if(
+                vt.tipo_viagem = "Não autorizado por capacidade", true, false
+            ) as indicador_penalidade_tecnologia,
             sp.indicador_penalidade_judicial,
             sp.ordem
-        from viagem_tecnologia as vt
+        from viagem_transacao as vt
         left join
             subsidio_parametros as sp
             on vt.data between sp.data_inicio and sp.data_fim
