@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adicionado limite de data para utilização dos dados do modelo `sppo_veiculo_dia.sql` no modelo`aux_veiculo_dia_consolidada.sql`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/649)
+- Adicionado limite de data para utilização dos dados do modelo `sppo_veiculo_dia.sql` no modelo`aux_veiculo_dia_consolidada.sql`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/648)
 - Adicionada exceção para as datas de autuações disciplinares no modelo `veiculo_dia.sql` para considerar tambem autuações com `data_inclusao_datalake` = `2025-06-25`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/649)
 
 ## [1.5.1] - 2025-06-26

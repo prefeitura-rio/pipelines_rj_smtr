@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adicionados testes do modelo `veiculo_dia` no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/649)
+- Adicionados testes do modelo `veiculo_dia` no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/648)
 
 ## [1.2.2] - 2025-06-25
 
