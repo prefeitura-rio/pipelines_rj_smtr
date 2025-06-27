@@ -42,3 +42,7 @@ where
         or (receita_tarifaria_aferida is not null and perc_km_planejada is null)
     )
     and data not in ({{ var("encontro_contas_datas_excecoes").keys() | join(", ") }})  -- Remove datas de exceção que serão desconsideradas no encontro de contas
+    and not (
+        length(ifnull(regexp_extract(servico, r"[0-9]+"), "")) = 4
+        and ifnull(regexp_extract(servico, r"[0-9]+"), "") like "2%"
+    )  -- Remove rodoviários

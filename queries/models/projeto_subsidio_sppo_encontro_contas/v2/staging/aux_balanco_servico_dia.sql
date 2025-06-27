@@ -23,7 +23,7 @@ with
             datas_servico_pod_menor_80,
             indicador_atipico,
             indicador_data_excecao,
-            receita_tarifaria_aferida is null as indicador_ausencia_receita_tarifaria
+            indicador_ausencia_receita_tarifaria
         from {{ ref("aux_balanco_rdo_subsidio_servico_dia") }}
     ),
     -- 2. Lista os parâmetros de subsídio

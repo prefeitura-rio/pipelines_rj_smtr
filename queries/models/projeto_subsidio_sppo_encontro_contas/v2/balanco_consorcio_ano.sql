@@ -80,7 +80,7 @@ select
     ) as percentual_datas_servico_pod_menor_80,
     round(
         safe_divide(datas_servico_excecao, datas_servico) * 100, 2
-    ) as percentual_datas_servicoo_excecao,
+    ) as percentual_datas_servico_excecao,
     round(
         safe_divide(datas_servico_atipicos, datas_servico) * 100, 2
     ) as percentual_datas_servico_atipicos,
