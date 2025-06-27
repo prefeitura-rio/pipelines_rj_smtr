@@ -31,18 +31,20 @@ with
         select
             data,
             servico,
-            sum(
-                case
-                    when
-                        data >= date("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}")
-                        and tipo_viagem not in ("Não licenciado", "Não vistoriado")
-                    then km_apurada_faixa
-                    when
-                        data < date("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}")
-                        and tipo_viagem not in ("Não licenciado")
-                    then km_apurada_faixa
-                    else 0
-                end
+            safe_cast(
+                sum(
+                    case
+                        when
+                            data >= date("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}")
+                            and tipo_viagem not in ("Não licenciado", "Não vistoriado")
+                        then km_apurada_faixa
+                        when
+                            data < date("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}")
+                            and tipo_viagem not in ("Não licenciado")
+                        then km_apurada_faixa
+                        else 0
+                    end
+                ) as numeric
             ) as km_apurada_pod,
         from {{ subsidio_faixa_servico_dia_tipo_viagem }}
         where
@@ -79,8 +81,8 @@ with
             data,
             consorcio,
             servico,
-            sum(km_apurada_faixa) as km_apurada,
-            sum(km_planejada_faixa) as km_planejada,
+            safe_cast(sum(km_apurada_faixa) as numeric) as km_apurada,
+            safe_cast(sum(km_planejada_faixa) as numeric) as km_planejada,
         from sumario_faixa_servico
         group by all
     )

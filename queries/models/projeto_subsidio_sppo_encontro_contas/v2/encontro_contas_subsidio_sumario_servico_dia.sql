@@ -10,11 +10,11 @@ from
             data,
             servico,
             consorcio,
-            km_apurada as km_apurada_pod,
-            km_apurada,
-            km_planejada,
-            perc_km_planejada,
-            valor_subsidio_pago
+            safe_cast(km_apurada as numeric) as km_apurada_pod,
+            safe_cast(km_apurada as numeric) as km_apurada,
+            safe_cast(km_planejada as numeric) as km_planejada,
+            safe_cast(perc_km_planejada as numeric) as perc_km_planejada,
+            safe_cast(valor_subsidio_pago as numeric) as valor_subsidio_pago
         from {{ sumario_servico_dia_historico }}
         where data < date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}")
         union all

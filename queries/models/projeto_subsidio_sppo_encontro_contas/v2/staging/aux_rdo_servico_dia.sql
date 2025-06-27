@@ -32,12 +32,13 @@ with
             linha,
             tipo_servico,
             ordem_servico,
-            round(
-                sum(receita_buc)
-                + sum(receita_buc_supervia)
-                + sum(receita_cartoes_perna_unica_e_demais)
-                + sum(receita_especie),
-                0
+            safe_cast(
+                (
+                    sum(receita_buc)
+                    + sum(receita_buc_supervia)
+                    + sum(receita_cartoes_perna_unica_e_demais)
+                    + sum(receita_especie)
+                ) as numeric
             ) as receita_tarifaria_aferida
         from {{ rdo40_registros }}
         where
