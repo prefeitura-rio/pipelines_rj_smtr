@@ -6,6 +6,7 @@
 
 select data, id_veiculo, placa, tecnologia, status, indicadores
 from {{ ref("sppo_veiculo_dia") }}
+where data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
 
 union all
 

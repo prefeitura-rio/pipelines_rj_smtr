@@ -31,6 +31,8 @@ selectors:
         - method: fqn
           value: viagem_transacao
         - method: fqn
+          value: percentual_operacao_faixa_horaria
+        - method: fqn
           value: viagens_remuneradas
         - method: path
           value: models/financeiro

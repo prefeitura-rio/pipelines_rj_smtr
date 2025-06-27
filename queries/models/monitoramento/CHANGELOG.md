@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.5.2] - 2025-06-26
+
+### Adicionado
+
+- Adicionado limite de data para utilização dos dados do modelo `sppo_veiculo_dia.sql` no modelo`aux_veiculo_dia_consolidada.sql`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/649)
+
 ## [1.5.1] - 2025-06-26
 
 ### Removido

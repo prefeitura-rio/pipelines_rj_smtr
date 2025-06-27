@@ -33,7 +33,7 @@ class constants(Enum):  # pylint: disable=c0103
     SUBSIDIO_SPPO_DASHBOARD_TABLE_ID = "sumario_servico_dia"
     SUBSIDIO_SPPO_DASHBOARD_SUMARIO_TABLE_ID = "sumario_servico_dia_tipo"
     SUBSIDIO_SPPO_DASHBOARD_SUMARIO_TABLE_ID_V2 = "sumario_servico_dia_pagamento"
-    SUBSIDIO_SPPO_PRE_TEST = "sppo_registros sppo_realocacao check_gps_treatment__gps_sppo sppo_veiculo_dia tecnologia_servico viagem_planejada"  # noqa
+    SUBSIDIO_SPPO_PRE_TEST = "sppo_registros sppo_realocacao check_gps_treatment__gps_sppo sppo_veiculo_dia veiculo_dia tecnologia_servico viagem_planejada"  # noqa
     SUBSIDIO_SPPO_DATA_CHECKS_PARAMS = {
         "check_trips_processing": {
             "query": """SELECT
@@ -738,6 +738,14 @@ class constants(Enum):  # pylint: disable=c0103
             },
             "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sppo_veiculo_dia": {
                 "description": "Todas as datas possuem dados"
+            },
+        },
+        "veiculo_dia": {
+            "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__veiculo_dia": {
+                "description": "Todas as datas possuem dados"
+            },
+            "dbt_utils.unique_combination_of_columns__data_id_veiculo__veiculo_dia": {
+                "description": "Todos os registros são únicos"
             },
         },
         "tecnologia_servico": {

@@ -1,5 +1,11 @@
 # Changelog - queries
 
+## [1.0.5] - 2025-06-26
+
+### Alterado
+
+- Altera selector `apuracao_subsidio_v9` adicionando o modelo `percentual_operacao_faixa_horaria` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/648)
+
 ## [1.0.4] - 2025-05-20
 
 ### Adicionado
