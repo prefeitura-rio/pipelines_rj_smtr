@@ -287,7 +287,9 @@ with
             data,
             id_viagem,
             sum(quantidade_gps_servico_divergente) as quantidade_gps_servico_divergente,
-            max_by(id_validador, percentual_estado_equipamento_aberto) as id_validador,
+            max_by(
+                id_validador, percentual_estado_equipamento_aberto
+            ) as id_validador,
             max(
                 percentual_estado_equipamento_aberto
             ) as max_percentual_estado_equipamento_aberto,
