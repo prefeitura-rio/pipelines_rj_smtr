@@ -35,7 +35,7 @@ Código único identificador da viagem
 {% enddocs %}
 
 {% docs project_id %}
-Nome do projeto [rj-smtr]
+Nome do projeto da GCP
 {% enddocs %}
 
 {% docs dataset_id %}
@@ -647,6 +647,10 @@ Distância do shape [trajeto] planejado (km)
 
 {% docs indicador_servico_divergente %}
 Indica se o serviço indicado nos dados de GPS estava diferente do serviço informado na viagem
+{% enddocs %}
+
+{% docs taxa_conversao_real %}
+Taxa da conversão de Dólar para Real
 {% enddocs %}
 
 {% docs ano %}
