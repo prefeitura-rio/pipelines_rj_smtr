@@ -1,6 +1,6 @@
 # Changelog - monitoramento
 
-## [1.5.2] - 2025-06-26
+## [1.5.2] - 2025-06-27
 
 ### Adicionado
 
