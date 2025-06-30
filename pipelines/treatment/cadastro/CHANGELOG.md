@@ -1,5 +1,15 @@
 # Changelog - cadastro
 
+## [1.1.1] - 2025-06-30
+
+### Adicionado
+
+- Adiciona `wait` no flow `CADASTRO_VEICULO_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/653)
+
+### Alterado
+
+- Altera agendamento do flow `CADASTRO_VEICULO_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/653)
+
 ## [1.1.0] - 2025-06-25
 
 ### Adicionado
