@@ -149,8 +149,8 @@ with Flow(
 
     timestamp = get_current_timestamp(timestamp=timestamp)
 
-    # LABELS = get_current_flow_labels()
-    # MODE = get_current_flow_mode()
+    LABELS = get_current_flow_labels()
+    MODE = get_current_flow_mode()
 
     # Rename flow run
     rename_flow_run = rename_current_flow_run_now_time(
@@ -208,7 +208,7 @@ with Flow(
         timestamp=timestamp,
         error=error,
     )
-    # sppo_infracao_captura.set_dependencies(task=partitions, upstream_tasks=[rename_flow_run])
+    sppo_infracao_captura.set_dependencies(task=partitions, upstream_tasks=[rename_flow_run])
 
 sppo_infracao_captura.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 sppo_infracao_captura.run_config = KubernetesRun(

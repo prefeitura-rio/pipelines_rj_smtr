@@ -22,6 +22,5 @@ SELECT
   IF(JSON_VALUE(content,'$.data_pagamento') = "", NULL, PARSE_DATE("%d/%m/%Y", JSON_VALUE(content,'$.data_pagamento'))) data_pagamento,
   SAFE_CAST(DATETIME(TIMESTAMP_TRUNC(TIMESTAMP(timestamp_captura), SECOND), "America/Sao_Paulo" ) AS DATETIME) timestamp_captura
 FROM
-  `rj-smtr-dev.veiculo_staging.infracao` as t
-  {# {{ source('veiculo_staging','infracao') }} as t #}
+  {{ source('veiculo_staging','infracao') }} as t
 
