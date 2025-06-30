@@ -16,7 +16,6 @@ SELECT
   SAFE_CAST(id_auto_infracao AS STRING) id_auto_infracao,
   PARSE_DATE("%d/%m/%Y", split(SAFE_CAST(JSON_VALUE(content,'$.data_infracao') AS STRING), " ")[OFFSET(0)]) data_infracao,
   PARSE_DATETIME('%d/%m/%Y %H:%M:%S', CONCAT(SAFE_CAST(JSON_VALUE(content, '$.data_infracao') AS STRING), ':00')) AS datetime_infracao,
-  SAFE_CAST(JSON_VALUE(content,'$.infracao') AS STRING) infrac
   SAFE_CAST(JSON_VALUE(content,'$.infracao') AS STRING) infracao,
   SAFE_CAST(JSON_VALUE(content,'$.valor') AS FLOAT64) valor,
   SAFE_CAST(JSON_VALUE(content,'$.status') AS STRING) status,
