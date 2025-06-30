@@ -7,74 +7,47 @@
 }}
 
 {%- if execute -%}
-    {%- set tipos_query -%}
-        select distinct
-            status as tipo_viagem,
-            regexp_replace(
-                regexp_replace(
-                    regexp_replace(
-                        regexp_replace(
-                            lower(
-                                translate(
-                                    status,
-                                    'áàâãäéèêëíìîïóòôõöúùûüçÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇ',
-                                    'aaaaaeeeeiiiiooooouuuucAAAAAEEEEIIIIOOOOOUUUUC'
-                                )
-                            ),
-                            r'[^\w\s]',  -- Remove caracteres não alfanuméricos
-                            ''
-                        ),
-                        r'\b(e|por|de)\b',
-                        ''  -- Remove as palavras 'e', 'por' e 'de'
-                    ),
-                    r'(^nao|\bnao\b)',
-                    'n '  -- Substitui 'nao' por 'n'
-                ),
-                r'[\s]+',
-                '_'  -- Substitui múltiplos espaços por um único "_"
-            ) as coluna_tipo_viagem
-        from {{ ref("valor_km_tipo_viagem") }}
-        {# from `rj-smtr.subsidio.valor_km_tipo_viagem` #}
-        where
-            status not in ("Não classificado", "Nao licenciado", "Licenciado sem ar")
-            and status not like '%(023.II)%'
-        order by status
-    {%- endset -%}
-
-    {%- set results = run_query(tipos_query) -%}
+    {%- set results = generate_km_columns() -%}
     {%- set tipos_viagem = results.columns[0].values() -%}
     {%- set colunas_tipo_viagem = results.columns[1].values() -%}
+
+    {%- set tecnologias = ["MINI", "MIDI", "BASICO", "PADRON"] -%}
+    {%- set tipos = [] -%}
+
+    {%- for tipo, coluna in zip(tipos_viagem, colunas_tipo_viagem) -%}
+
+        {%- set is_licenciado = tipo in [
+            "Licenciado sem ar e não autuado",
+            "Licenciado com ar e não autuado",
+        ] -%}
+
+        {%- set _ = tipos.append(
+            {
+                "nome": tipo,
+                "coluna": coluna,
+            }
+        ) -%}
+
+        {%- if is_licenciado -%}
+            {%- for tech in tecnologias -%}
+                {%- set _ = tipos.append(
+                    {
+                        "nome": tipo ~ " - " ~ tech,
+                        "coluna": coluna ~ "_" ~ tech | lower,
+                    }
+                ) -%}
+            {%- endfor -%}
+        {%- endif -%}
+
+    {%- endfor -%}
 {%- endif -%}
 
-{%- set tecnologias = ["MINI", "MIDI", "BASICO", "PADRON"] -%}
-{%- set tipos = [] -%}
-
-{%- for tipo, coluna in zip(tipos_viagem, colunas_tipo_viagem) -%}
-
-    {%- set is_licenciado = tipo in [
-        "Licenciado sem ar e não autuado",
-        "Licenciado com ar e não autuado",
-    ] -%}
-
-    {%- set _ = tipos.append(
-        {
-            "nome": tipo,
-            "coluna": coluna,
-        }
-    ) -%}
-
-    {%- if is_licenciado -%}
-        {%- for tech in tecnologias -%}
-            {%- set _ = tipos.append(
-                {
-                    "nome": tipo ~ " - " ~ tech,
-                    "coluna": coluna ~ "_" ~ tech | lower,
-                }
-            ) -%}
-        {%- endfor -%}
-    {%- endif -%}
-
-{%- endfor -%}
+{% set incremental_filter %}
+    data between
+        date('{{ var("start_date") }}')
+        and date('{{ var("end_date") }}')
+    and data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
+{% endset %}
 
 with
     subsidio_faixa as (
@@ -90,9 +63,7 @@ with
             pof
         from {{ ref("percentual_operacao_faixa_horaria") }}
         -- from `rj-smtr.subsidio.percentual_operacao_faixa_horaria`
-        where
-            data
-            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+        where {{ incremental_filter }}
     ),
     penalidade as (
         select
@@ -104,9 +75,7 @@ with
             valor_penalidade
         from {{ ref("subsidio_penalidade_servico_faixa") }}
         -- from `rj-smtr.financeiro.subsidio_penalidade_servico_faixa`
-        where
-            data
-            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+        where {{ incremental_filter }}
     ),
     subsidio_parametros as (
         select distinct
@@ -198,9 +167,7 @@ with
                     and sp.tecnologia is null
                 )
             )
-        where
-            data
-            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+        where {{ incremental_filter }}
         group by
             data,
             tipo_dia,
@@ -234,10 +201,7 @@ with
                     km_apurada_faixa
                 from {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
                 -- from `rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem`
-                where
-                    data between date('{{ var("start_date") }}') and date(
-                        '{{ var("end_date") }}'
-                    )
+                where {{ incremental_filter }}
             ) pivot (
                 sum(km_apurada_faixa) as km_apurada for tipo_viagem_tecnologia in (
                     {%- for tipo in tipos %}
