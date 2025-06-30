@@ -1,5 +1,9 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.2.3] - 2025-06-30
+
+- Adiciona teste da  `veiculo_dia` nos pre-tests da apuração (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/653)
+
 ## [1.2.2] - 2025-06-25
 
 ### Alterado
