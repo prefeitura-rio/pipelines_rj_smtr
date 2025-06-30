@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.2.1] - 2025-06-30
+
+### Alterado
+
+- Altera agendamento do flow `MONITORAMENTO_VEICULO_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/653)
+
 ## [1.2.0] - 2025-06-25
 
 ### Adicionado
