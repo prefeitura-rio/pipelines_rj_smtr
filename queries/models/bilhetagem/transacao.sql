@@ -280,6 +280,8 @@ with
                 then "Integral"
                 when t.tipo_transacao_jae = "Transferência EMV"
                 then "Transferência"
+                when t.tipo_transacao_jae = "Integração gratuidade"
+                then "Gratuidade - Integração"
                 else t.tipo_transacao_jae
             end as tipo_transacao_atualizado,
             case
@@ -325,7 +327,9 @@ with
                 then "Dinheiro (Botoeira)"
             end as produto,
             case
-                when t.produto_jae = "Conta Jaé Gratuidade"
+                when
+                    t.produto_jae = "Conta Jaé Gratuidade"
+                    and tipo_transacao_atualizado != "Gratuidade - Integração"
                 then "Gratuidade"
                 else t.tipo_transacao_atualizado
             end as tipo_transacao,
