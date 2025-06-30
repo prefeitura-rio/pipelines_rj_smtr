@@ -1,5 +1,17 @@
 # Changelog - subsidio
 
+## [2.0.5] - 2025-06-27
+
+### Corrigido
+
+- Corrigido a coluna `id_validador` e o agrupamento do estado do equipamento no modelo `viagem_transacao_aux.sql`  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/648)
+
+## [2.0.4] - 2025-06-25
+
+### Alterado
+
+- Altera fonte dos dados de veículo para `aux_veiculo_dia_consolidada` no modelo `viagem_transacao_aux.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
 ## [2.0.3] - 2025-06-24
 
 # Adicionado

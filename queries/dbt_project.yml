@@ -227,7 +227,7 @@ vars:
   feed_inicial_viagem_planejada: "2024-09-29"
 
   ### Monitoramento ###
-  data_inicial_veiculo_fiscalizacao_lacre: "2025-03-31"
+  data_final_veiculo_arquitetura_1: "2025-03-31"
 
 tests:
   rj_smtr:
@@ -353,10 +353,6 @@ models:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
       +schema: financeiro
-      staging:
-        +materialized: incremental
-        +incremental_strategy: insert_overwrite
-        +schema: financeiro_staging
     dashboard_subsidio_sppo_v2:
       +materialized: view
       +schema: dashboard_subsidio_sppo_v2

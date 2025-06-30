@@ -112,6 +112,14 @@ models:
         description: Área de 20m ao redor do segmento com tratamento para não haver interseções entre ele e os segmentos posteriores.
         data_type: geography
         quote: true
+      - name: inicio_vigencia_tunel
+        description: "{{ doc('inicio_vigencia_tunel') }}"
+        data_type: date
+        quote: true
+      - name: fim_vigencia_tunel
+        description: "{{ doc('fim_vigencia_tunel') }}"
+        data_type: date
+        quote: true
       - name: indicador_tunel
         description: Indica se o segmento passa por um túnel.
         data_type: boolean
