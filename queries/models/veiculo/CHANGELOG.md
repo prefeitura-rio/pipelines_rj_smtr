@@ -1,5 +1,11 @@
 # Changelog - veiculo
 
+## [2.1.1] - 2025-06-30
+
+### Adicionado
+
+- Adicionada a coluna `datetime_infracao` no modelo `infracao_staging.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/637)
+
 ## [2.1.0] - 2025-06-25
 
 ### Alterado
