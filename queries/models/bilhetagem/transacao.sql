@@ -15,15 +15,33 @@
 {% endset %}
 
 -- busca quais partições serão atualizadas pelas capturas
-{% if execute %}
-    {% if is_incremental() %}
-        {% set columns = (
-            list_columns()
-            | reject("in", ["versao", "datetime_ultima_atualizacao"])
-            | list
-        ) %}
+{% if execute and is_incremental() %}
+    {% set columns = (
+        list_columns()
+        | reject(
+            "in",
+            ["versao", "datetime_ultima_atualizacao", "id_execucao_dbt"],
+        )
+        | list
+    ) %}
+    {% set sha_column %}
+            sha256(
+                concat(
+                    {% for c in columns %}
+                        {% if c == "geo_point_transacao" %}
+                            ifnull(st_astext(geo_point_transacao), 'n/a')
+                        {% elif c == "hash_cliente" %}
+                            ifnull(to_base64(hash_cliente), 'n/a')
+                        {% else %}ifnull(cast({{ c }} as string), 'n/a')
+                        {% endif %}
 
-        {% set transacao_partitions_query %}
+                        {% if not loop.last %}, {% endif %}
+
+                    {% endfor %}
+                )
+            )
+    {% endset %}
+    {% set transacao_partitions_query %}
             select distinct
                 concat("'", particao, "'") as particao
             from
@@ -47,12 +65,16 @@
                 and partition_id != "__NULL__"
                 and datetime(last_modified_time, "America/Sao_Paulo") between datetime("{{var('date_range_start')}}") and (datetime("{{var('date_range_end')}}"))
 
-        {% endset %}
+    {% endset %}
 
-        {% set transacao_partitions = (
-            run_query(transacao_partitions_query).columns[0].values()
-        ) %}
-    {% endif %}
+    {% set transacao_partitions = (
+        run_query(transacao_partitions_query).columns[0].values()
+    ) %}
+
+{% else %}
+    {% set sha_column %}
+        cast(null as bytes)
+    {% endset %}
 {% endif %}
 
 with
@@ -303,19 +325,21 @@ with
                 then "Dinheiro (Botoeira)"
             end as produto,
             case
-                when
-                    t.produto_jae = "Conta Jaé Gratuidade"
-                    and t.tipo_transacao_jae != "Gratuidade"
-                then concat(t.tipo_transacao_atualizado, " - Gratuidade")
+                when t.produto_jae = "Conta Jaé Gratuidade"
+                then "Gratuidade"
                 else t.tipo_transacao_atualizado
             end as tipo_transacao,
             case
                 when
                     t.tipo_transacao_jae != "Gratuidade"
                     and t.produto_jae != "Conta Jaé Gratuidade"
+                    or t.produto_jae is null
                 then "Pagante"
                 when g.tipo_gratuidade = "Sênior"
                 then "Idoso"
+                else ifnull(g.tipo_gratuidade, "Não Identificado")
+            end as tipo_usuario,
+            case
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino = "Universidade"
                 then "Estudante Passe Livre"
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino is not null
@@ -326,8 +350,7 @@ with
                 then "PCD"
                 when g.tipo_gratuidade = "PCD" and not g.deficiencia_permanente
                 then "DC"
-                else "Não Identificado"
-            end as tipo_usuario,
+            end as subtipo_usuario,
             case
                 when t.meio_pagamento_jae like "Cartão%"
                 then "Cartão"
@@ -374,6 +397,7 @@ with
             tipo_transacao,
             tipo_transacao_jae,
             tipo_usuario,
+            subtipo_usuario,
             meio_pagamento,
             meio_pagamento_jae,
             latitude,
@@ -387,50 +411,47 @@ with
             id_ordem_pagamento_consorcio_dia,
             id_ordem_pagamento
         from transacao_nivel
+    ),
+
+    sha_dados_novos as (
+        select *, {{ sha_column }} as sha_dado_novo from transacao_colunas_ordenadas
+    ),
+    sha_dados_atuais as (
+        {% if is_incremental() %}
+
+            select
+                id_transacao,
+                {{ sha_column }} as sha_dado_atual,
+                datetime_ultima_atualizacao as datetime_ultima_atualizacao_atual,
+                id_execucao_dbt as id_execucao_dbt_atual
+            from transacao_atual
+
+        {% else %}
+            select
+                cast(null as string) as id_transacao,
+                cast(null as bytes) as sha_dado_atual,
+                datetime(null) as datetime_ultima_atualizacao_atual,
+                cast(null as string) as id_execucao_dbt_atual
+        {% endif %}
+    ),
+    sha_dados_completos as (
+        select * from sha_dados_novos left join sha_dados_atuais using (id_transacao)
+    ),
+    transacao_colunas_controle as (
+        select
+            * except (sha_dado_novo, sha_dado_atual, datetime_ultima_atualizacao_atual),
+            '{{ var("version") }}' as versao,
+            case
+                when sha_dado_atual is null or sha_dado_novo != sha_dado_atual
+                then current_datetime("America/Sao_Paulo")
+                else datetime_ultima_atualizacao_atual
+            end as datetime_ultima_atualizacao,
+            case
+                when sha_dado_atual is null or sha_dado_novo != sha_dado_atual
+                then '{{ invocation_id }}'
+                else id_execucao_dbt_atual
+            end as id_execucao_dbt
+        from sha_dados_completos
     )
-
-select
-    t.*,
-    '{{ var("version") }}' as versao,
-    -- Atualiza datetime_ultima_atualizacao apenas se houver alteração do valor em
-    -- algum campo
-    {% if is_incremental() %}
-        case
-            when
-                a.id_transacao is null
-                or sha256(
-                    concat(
-                        {% for c in columns %}
-                            {% if c == "geo_point_transacao" %}
-                                ifnull(st_astext(t.geo_point_transacao), 'n/a')
-                            {% elif c == "hash_cliente" %}
-                                ifnull(to_base64(t.hash_cliente), 'n/a')
-                            {% else %}ifnull(cast(t.{{ c }} as string), 'n/a')
-                            {% endif %}
-
-                            {% if not loop.last %}, {% endif %}
-
-                        {% endfor %}
-                    )
-                ) != sha256(
-                    concat(
-                        {% for c in columns %}
-                            {% if c == "geo_point_transacao" %}
-                                ifnull(st_astext(a.geo_point_transacao), 'n/a')
-                            {% elif c == "hash_cliente" %}
-                                ifnull(to_base64(a.hash_cliente), 'n/a')
-                            {% else %}ifnull(cast(a.{{ c }} as string), 'n/a')
-                            {% endif %}
-
-                            {% if not loop.last %}, {% endif %}
-
-                        {% endfor %}
-                    )
-                )
-            then current_datetime("America/Sao_Paulo")
-            else a.datetime_ultima_atualizacao
-        end
-    {% else %} current_datetime("America/Sao_Paulo")
-    {% endif %} as datetime_ultima_atualizacao
-from transacao_colunas_ordenadas t
-{% if is_incremental() %} left join transacao_atual a using (id_transacao) {% endif %}
+select *
+from transacao_colunas_controle

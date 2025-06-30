@@ -31,7 +31,9 @@ with
     staging_transacao as (
         select *
         from {{ transacao_staging }}
-        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
+        {% if is_incremental() %} where {{ incremental_filter }}
+        {% else %} where data > '2025-06-27'
+        {% endif %}
     ),
     novos_dados as (
         select
@@ -44,6 +46,7 @@ with
             coalesce(do.modo, dc.modo) as modo,
             dc.id_consorcio,
             dc.consorcio,
+            t.cd_operadora as id_operadora_jae,
             do.id_operadora,
             do.operadora,
             t.cd_linha as id_servico_jae,
