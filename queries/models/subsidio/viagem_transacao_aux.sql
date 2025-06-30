@@ -197,7 +197,7 @@ with
                             and longitude != 0
                         )
                         or data < date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
-                    group by 1, 2, 3, 4, 5
+                    group by 1, 2, 3, 4, 5, 6
                 )
                 union all
                 (
@@ -258,7 +258,7 @@ with
             sum(quantidade_gps_servico_divergente) as quantidade_gps_servico_divergente,
             max_by(
                 id_validador, percentual_estado_equipamento_aberto
-            ) as id_validador_max_perc,
+            ) as id_validador,
             max(
                 percentual_estado_equipamento_aberto
             ) as max_percentual_estado_equipamento_aberto,
