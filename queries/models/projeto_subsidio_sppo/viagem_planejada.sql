@@ -208,8 +208,8 @@
         safe_cast(null as int64) as id_tipo_trajeto,  -- Adaptação para formato da SUBSIDIO_V6
         safe_cast(null as string) as feed_version,  -- Adaptação para formato da SUBSIDIO_V6
         current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,  -- Adaptação para formato da SUBSIDIO_V7
-        datetime(concat(p.data,"T00:00:00")) as faixa_horaria_inicio, -- Adaptação para formato da SUBSIDIO_V9
-        datetime(concat(p.data,"T23:59:59")) as faixa_horaria_fim, -- Adaptação para formato da SUBSIDIO_V9
+        datetime(concat(p.data, "T00:00:00")) as faixa_horaria_inicio,  -- Adaptação para formato da SUBSIDIO_V9
+        datetime(concat(p.data, "T23:59:59")) as faixa_horaria_fim,  -- Adaptação para formato da SUBSIDIO_V9
     from quadro_tratada p
     inner join shapes s on p.shape_id = s.shape_id and p.data = s.data
 
@@ -287,7 +287,16 @@
                 ts.feed_end_date,
                 "{{ tipo_oss[1] }}" as tipo_os,
                 "{{ tipo_dias[1] }}" as tipo_dia,
-                ts.servico,
+                -- Alteração referente ao Processo.rio MTR-CAP-2025/06098
+                case
+                    when "{{ var('run_date') }}" = "2025-06-02"
+                    and ts.servico = "864"
+                        then "LECD122"
+                    when "{{ var('run_date') }}" = "2025-06-02"
+                            and ts.servico = "LECD108"
+                                then "LECD112"
+                else ts.servico
+                end as servico,
                 ts.vista,
                 ts.consorcio,
                 ts.sentido,
@@ -321,7 +330,18 @@
                         trip_id_planejado,
                         trip_id
                     from dia_atual
-                ) as da using (servico, sentido, shape_id)
+                ) as da
+                on
+                (
+                    da.servico = ts.servico
+                    -- Alteração referente ao Processo.rio MTR-CAP-2025/06098
+                    {% if var("run_date") == "2025-06-02" %}
+                        or (ts.servico = "864" and da.servico = "LECD122")
+                        or (ts.servico = "LECD108" and da.servico = "LECD112")
+                    {% endif %}
+                )
+                and da.shape_id = ts.shape_id
+                and da.sentido = ts.sentido
             where
                 ts.faixa_horaria_inicio = "24:00:00"
                 and ts.tipo_os = "{{ tipo_oss[0] }}"
@@ -414,8 +434,7 @@
                     null
                 ) as inicio_periodo,
                 if(
-                    fim_periodo is not null
-                    and array_length(fim_periodo_parts) = 3,
+                    fim_periodo is not null and array_length(fim_periodo_parts) = 3,
                     datetime(d.data) + make_interval(
                         hour => safe_cast(fim_periodo_parts[0] as int64),
                         minute => safe_cast(fim_periodo_parts[1] as int64),
@@ -430,11 +449,8 @@
                         minute => safe_cast(o.faixa_horaria_inicio_parts[1] as int64),
                         second => safe_cast(o.faixa_horaria_inicio_parts[2] as int64)
                     ),
-                    datetime(d.data) + make_interval(
-                        hour => 0,
-                        minute => 0,
-                        second => 0
-                    )
+                    datetime(d.data)
+                    + make_interval(hour => 0, minute => 0, second => 0)
                 ) as faixa_horaria_inicio,
                 if(
                     d.data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}"),
@@ -443,11 +459,8 @@
                         minute => safe_cast(o.faixa_horaria_fim_parts[1] as int64),
                         second => safe_cast(o.faixa_horaria_fim_parts[2] as int64)
                     ),
-                    datetime(d.data) + make_interval(
-                        hour => 23,
-                        minute => 59,
-                        second => 59
-                    )
+                    datetime(d.data)
+                    + make_interval(hour => 23, minute => 59, second => 59)
                 ) as faixa_horaria_fim,
                 trip_id_planejado,
                 trip_id,
