@@ -25,7 +25,6 @@
 
 - Move modelo `licenciamento_stu_staging.sql` do dataset `veiculo_staging` para `cadastro_staging` e renomeia para `staging_licenciamento_stu.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
 
-
 ## [2.0.8] - 2025-06-12
 
 ### Adicionado
