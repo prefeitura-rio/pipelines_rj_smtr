@@ -2,6 +2,12 @@
 
 ## [1.2.3] - 2025-06-27
 
+### Corrigido
+
+- Corrigidos os periodos de verificação dos testes dos modelos `veiculo_dia` e `sppo_veiculo_dia` no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/648)
+
+## [1.2.3] - 2025-06-27
+
 ### Adicionado
 
 - Adicionados testes do modelo `veiculo_dia` no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/648)
