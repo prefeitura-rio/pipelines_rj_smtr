@@ -31,6 +31,8 @@ selectors:
         - method: fqn
           value: viagem_transacao
         - method: fqn
+          value: percentual_operacao_faixa_horaria
+        - method: fqn
           value: viagens_remuneradas
         - method: path
           value: models/financeiro
@@ -238,6 +240,18 @@ selectors:
           value: view_passageiros_hora
         - method: fqn
           value: view_passageiros_tile_hora
+
+  - name: infraestrutura
+    description: Materialização das tabelas com informações sobre a infraestrutura de nuvem
+    definition:
+      union:
+        - method: fqn
+          value: custo_cloud
+        - method: fqn
+          value: aux_preco_bigquery
+        - method: fqn
+          value: log_bigquery
+
 
   - name: transito_autuacao
     description: Materialização das tabelas de autuação de trânsito
