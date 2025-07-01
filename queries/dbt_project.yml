@@ -143,10 +143,12 @@ vars:
   DATA_SUBSIDIO_V13_INICIO: "2025-01-01"
   # Feature Apuração por tecnologia e penalidade por faixa horária (DECRETO 55631/2025)
   DATA_SUBSIDIO_V14_INICIO: "2025-01-05"
-  # ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629)
+  # ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629) e RESOLUÇÃO SMTR 3843/2025
   DATA_SUBSIDIO_V15_INICIO: "2025-04-01"
-  # Feature Não pagamento de tecnologia inferior à mínima permitida [ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629)]
+  # Feature Não pagamento de tecnologia inferior à mínima permitida [ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629) e RESOLUÇÃO SMTR 3843/2025]
   DATA_SUBSIDIO_V15A_INICIO: "2025-07-01"
+  # Feature Não pagamento de viagens licenciadas sem ar condicionado [ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629) e RESOLUÇÃO SMTR 3843/2025]
+  DATA_SUBSIDIO_V15B_INICIO: "2025-11-01"
 
   # Recursos #
   recurso_staging: "rj-smtr-staging.projeto_subsidio_sppo_staging.recurso"
@@ -225,7 +227,7 @@ vars:
   feed_inicial_viagem_planejada: "2024-09-29"
 
   ### Monitoramento ###
-  data_inicial_veiculo_fiscalizacao_lacre: "2025-03-31"
+  data_final_veiculo_arquitetura_1: "2025-03-31"
 
 tests:
   rj_smtr:
@@ -351,10 +353,6 @@ models:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
       +schema: financeiro
-      staging:
-        +materialized: incremental
-        +incremental_strategy: insert_overwrite
-        +schema: financeiro_staging
     dashboard_subsidio_sppo_v2:
       +materialized: view
       +schema: dashboard_subsidio_sppo_v2

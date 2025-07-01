@@ -1,6 +1,6 @@
 # Changelog - veiculo
 
-## [2.0.8] - 2025-06-13
+## [2.1.1] - 2025-07-01
 
 ### Corrigido
 
@@ -13,6 +13,32 @@
 ### Adicionado
 
 - Adicionada exceção no período de `2024-08-16` a `2024-10-15` para utilizar a `data_versao` `2024-10-22` no modelo `infracao_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/510)
+
+## [2.1.0] - 2025-06-25
+
+### Alterado
+
+- Limita a data máxima para materialização de dados de veículo nos modelos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632):
+  - `infracao.sql`
+  - `licenciamento.sql`
+  - `sppo_veiculo_dia.sql`
+
+- Altera referência das views de staging nos modelos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632):
+  - `infracao.sql`
+  - `licenciamento.sql`
+  - `infracao_data_versao_efetiva.sql`
+  - `licenciamento_data_versao_efetiva.sql`
+
+- Move modelo `infracao_staging.sql` do dataset `veiculo_staging` para `monitoramento_staging` e renomeia para `staging_infracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
+- Move modelo `licenciamento_stu_staging.sql` do dataset `veiculo_staging` para `cadastro_staging` e renomeia para `staging_licenciamento_stu.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
+## [2.0.8] - 2025-06-12
+
+### Adicionado
+
+- Adicionada exceção no modelo `licenciamento_data_versao_efetiva.sql` para utilizar a data_versao `2025-03-22` no período de `2023-10-01`a `2024-01-31` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
+
 
 ## [2.0.7] - 2025-05-27
 

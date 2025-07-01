@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de monitoramento
 
-DBT 2025-06-03
+DBT 2025-06-27
 """
 
 from copy import deepcopy
@@ -22,6 +22,7 @@ from pipelines.migration.br_rj_riodejaneiro_onibus_gps_zirix.constants import (
     constants as gps_zirix_constants,
 )
 from pipelines.schedules import create_hourly_cron
+from pipelines.treatment.cadastro.constants import constants as cadastro_constants
 from pipelines.treatment.monitoramento.constants import constants
 from pipelines.treatment.planejamento.constants import (
     constants as planejamento_constants,
@@ -161,4 +162,16 @@ MONITORAMENTO_VEICULO_MATERIALIZACAO = create_default_materialization_flow(
     selector=constants.MONITORAMENTO_VEICULO_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[veiculo_fiscalizacao_constants.VEICULO_LACRE_SOURCE.value],
+    post_tests=constants.MONITORAMENTO_VEICULO_TEST.value,
+)
+
+VEICULO_DIA_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="veiculo_dia - materializacao",
+    selector=constants.VEICULO_DIA_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[
+        constants.MONITORAMENTO_VEICULO_SELECTOR.value,
+        cadastro_constants.CADASTRO_VEICULO_SELECTOR.value,
+    ],
+    post_tests=constants.VEICULO_DIA_TEST.value,
 )

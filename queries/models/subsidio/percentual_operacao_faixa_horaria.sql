@@ -52,18 +52,27 @@ with
                 coalesce(
                     round(
                         100 * sum(
-                            case
-                                when
+
+                            if(
+                                (
                                     p.data
-                                    >= date("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}")
+                                    between date("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}") and date_sub('{{ var("DATA_SUBSIDIO_V15_INICIO") }}', interval 1 day)
                                     and v.tipo_viagem
-                                    not in ("Não licenciado", "Não vistoriado")
-                                then v.distancia_planejada
-                                when
-                                    p.data < date("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}")
-                                then v.distancia_planejada
-                                else 0
-                            end
+                                    in ('Não licenciado', 'Não vistoriado')
+                                )
+                                or (
+                                    p.data
+                                    >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
+                                    and v.tipo_viagem in (
+                                        'Não licenciado',
+                                        'Não vistoriado',
+                                        'Lacrado',
+                                        'Não autorizado por ausência de ar-condicionado'
+                                    )
+                                ),
+                                0,
+                                v.distancia_planejada
+                            )
                         )
                         / p.km_planejada,
                         2

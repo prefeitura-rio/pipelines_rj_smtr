@@ -8,8 +8,8 @@
 with
     infracao_date as (
         select distinct date(data) as data_infracao
-        from  {{ ref("infracao_staging") }}
-            -- `rj-smtr.veiculo_staging.infracao`
+        from {{ ref("staging_infracao") }}
+        -- `rj-smtr.veiculo_staging.infracao`
         {% if is_incremental() %}
             where
                 data
@@ -32,6 +32,8 @@ with
         select
             periodo.data,
             case
+                when periodo.data between "2023-10-01" and "2024-01-31"
+                then date("2025-03-22")
                 when periodo.data between "2024-08-16" and "2024-10-15"
                 then date("2024-10-22")
                 else

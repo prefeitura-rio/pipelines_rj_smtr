@@ -1,10 +1,17 @@
 # Changelog - financeiro_staging
 
-## [7.1.8] - 2025-06-12
+## [1.0.3] - 2025-07-1
 
 ### Alterado
 
 - Altera o modelo `subsidio_faixa_servico_dia.sql` para desconsiderar a `distancia_planejada` para o calculo de `pof` de viagens do tipo `Não licenciado` e `Não vistoriado` a partir e `2024-09-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/510)
+
+## [1.0.2] - 2025-06-24
+
+### Removido
+
+- Remove o modelo `subsidio_faixa_servico_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/624)
+
 
 ## [1.0.1] - 2024-09-20
 
