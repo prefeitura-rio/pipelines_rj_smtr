@@ -177,10 +177,8 @@ models:
           row_condition: "1=1"
           test_start_date: "{{ var('date_range_start') }}"
           test_end_date: >-
-            {%- set end_plus1 = modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(days=1) -%}
-            {%- set subsidio = modules.datetime.datetime.fromisoformat(var('DATA_SUBSIDIO_V15_INICIO')) -%}
-            {%- set menor_data = ([end_plus1, subsidio] | sort | first) -%}
-            {{ menor_data.date().isoformat() }}
+            {%- set end_plus1 = (modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(days=1)).date().isoformat() -%}
+            {{ [end_plus1, var('DATA_SUBSIDIO_V15_INICIO')] | sort | first }}
           name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sppo_veiculo_dia
     columns:
       - name: data
