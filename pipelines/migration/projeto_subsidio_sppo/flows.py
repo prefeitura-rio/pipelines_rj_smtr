@@ -233,17 +233,22 @@ with Flow(
             dbt_vars["date_range_end"], constants.DATA_SUBSIDIO_V15_INICIO.value
         )
 
-        DATASET_LIST = []
-
-        SUBSIDIO_SPPO_PRE_TEST_BASE = constants.SUBSIDIO_SPPO_PRE_TEST.value
+        SUBSIDIO_SPPO_PRE_TEST_AFTER_V15 = None
+        SUBSIDIO_SPPO_PRE_TEST_BEFORE_V15 = None
 
         with case(data_maior_ou_igual_V15_END, True):
-            DATASET_LIST.append(" veiculo_dia")
+            SUBSIDIO_SPPO_PRE_TEST_AFTER_V15 = " veiculo_dia"
 
-        with case(data_maior_ou_igual_V15_START, False):
-            DATASET_LIST.append(" sppo_veiculo_dia")
+        with case(data_maior_ou_igual_V15_START, True):
+            SUBSIDIO_SPPO_PRE_TEST_BEFORE_V15 = " sppo_veiculo_dia"
 
-        SUBSIDIO_SPPO_PRE_TEST = SUBSIDIO_SPPO_PRE_TEST_BASE.join(DATASET_LIST)
+        DATASETS_MERGE = [
+            ds
+            for ds in [SUBSIDIO_SPPO_PRE_TEST_AFTER_V15, SUBSIDIO_SPPO_PRE_TEST_BEFORE_V15]
+            if ds is not None
+        ]
+
+        SUBSIDIO_SPPO_PRE_TEST = merge(*DATASETS_MERGE)
 
         SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt_tests(
             dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value + SUBSIDIO_SPPO_PRE_TEST,
@@ -511,29 +516,30 @@ with Flow(
             dbt_vars["date_range_end"], constants.DATA_SUBSIDIO_V15_INICIO.value
         )
 
-        DATASET_LIST = []
-
-        SUBSIDIO_SPPO_PRE_TEST_BASE = constants.SUBSIDIO_SPPO_PRE_TEST.value
+        SUBSIDIO_SPPO_PRE_TEST_AFTER_V15 = None
+        SUBSIDIO_SPPO_PRE_TEST_BEFORE_V15 = None
 
         with case(data_maior_ou_igual_V15_END, True):
-            DATASET_LIST.append(" veiculo_dia")
+            SUBSIDIO_SPPO_PRE_TEST_AFTER_V15 = " veiculo_dia"
 
-        with case(data_maior_ou_igual_V15_START, False):
-            DATASET_LIST.append(" sppo_veiculo_dia")
+        with case(data_maior_ou_igual_V15_START, True):
+            SUBSIDIO_SPPO_PRE_TEST_BEFORE_V15 = " sppo_veiculo_dia"
 
-        SUBSIDIO_SPPO_PRE_TEST = SUBSIDIO_SPPO_PRE_TEST_BASE.join(DATASET_LIST)
+        DATASETS_MERGE = [
+            ds
+            for ds in [
+                SUBSIDIO_SPPO_PRE_TEST_AFTER_V15,
+                SUBSIDIO_SPPO_PRE_TEST_BEFORE_V15,
+            ]
+            if ds is not None
+        ]
+
+        SUBSIDIO_SPPO_PRE_TEST = merge(*DATASETS_MERGE)
 
         SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt_tests(
-            dataset_id=SUBSIDIO_SPPO_PRE_TEST,
+            dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value + SUBSIDIO_SPPO_PRE_TEST,
             exclude="dashboard_subsidio_sppo_v2",
             _vars=dbt_vars,
-        )
-
-        DATA_QUALITY_PRE = dbt_data_quality_checks(
-            dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_PRE,
-            checks_list=constants.SUBSIDIO_SPPO_PRE_CHECKS_LIST.value,
-            webhook_key="subsidio_data_check",
-            params=dbt_vars,
         )
 
         date_in_range = check_date_in_range(
