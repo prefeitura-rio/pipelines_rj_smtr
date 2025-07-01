@@ -38,12 +38,7 @@ models:
       - name: infracao
         description: "{{ doc('infracao') }}"
       - name: status
-        description: "{{ doc('status_veiculo_infracao') }}\n
-                      EM ABERTO - Com guia de pagamento e dentro do prazo de vencimento\n
-                      VENCIDA - Com guia de pagamento e fora do prazo de vencimento\n
-                      EM RECURSO - Possui Processo de Recurso aguardando julgamento\n
-                      PAGA - Com guia de pagamento efetivamente paga\n
-                      CANCELADA - Multa foi cancelada através de um Processo de Recurso"
+        description: "{{ doc('status_veiculo_infracao') }}"
       - name: data_pagamento
         description: "{{ doc('data_pagamento') }}"
       - name: datetime_ultima_atualizacao

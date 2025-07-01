@@ -198,7 +198,7 @@ models:
       - name: km_apurada_n_vistoriado
         description: "{{ doc('km_apurada_n_vistoriado') }}"
       - name: km_apurada_sem_transacao
-        description: "Distância apurada de viagens realizadas sem passageiro registrado"
+        description: "{{ doc('km_apurada_sem_transacao') }}"
       - name: km_apurada_licenciado_sem_ar_n_autuado_mini
         description: "Quilometragem apurada de viagens de veículos sem ar e não autuados com tecnologia MINI"
       - name: km_apurada_licenciado_com_ar_n_autuado_mini

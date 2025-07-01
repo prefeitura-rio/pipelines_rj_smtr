@@ -19,7 +19,7 @@ models:
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
       - name: consorcio
-        description: "{{ doc('consorcio_nome') }}"
+        description: "{{ doc('nome_consorcio') }}"
       - name: id_operadora
         description: "{{ doc('id_operadora') }}"
       - name: operadora
@@ -114,7 +114,7 @@ models:
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
       - name: consorcio
-        description: "{{ doc('consorcio_nome') }}"
+        description: "{{ doc('nome_consorcio') }}"
       - name: id_operadora
         description: "{{ doc('id_operadora') }}"
       - name: operadora
@@ -238,7 +238,7 @@ models:
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/388050497607535163/policyTags/5185403103447535390'
       - name: id_veiculo
-        description: "{{ doc('id_veiculo') }}"
+        description: "{{ doc('numero_veiculo') }}"
       - name: sentido
         description: "{{ doc('sentido') }}"
       - name: estado_equipamento
@@ -259,7 +259,7 @@ models:
       - name: modo
         description: "Tipo de transporte (Ônibus, Van, BRT)"
       - name: consorcio
-        description: "{{ doc('consorcio_nome') }}"
+        description: "{{ doc('nome_consorcio') }}"
       - name: operadora
         description: "{{ doc('operadora') }}"
       - name: id_servico_jae
@@ -292,7 +292,7 @@ models:
       - name: modo
         description: "Tipo de transporte (Ônibus, Van, BRT)"
       - name: consorcio
-        description: "{{ doc('consorcio_nome') }}"
+        description: "{{ doc('nome_consorcio') }}"
       - name: operadora
         description: "{{ doc('operadora') }}"
       - name: id_servico_jae
@@ -338,7 +338,7 @@ models:
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
       - name: consorcio
-        description: "{{ doc('consorcio_nome') }}"
+        description: "{{ doc('nome_consorcio') }}"
       - name: id_ordem_pagamento
         description: "Identificador da ordem pagamento no banco de dados da Jaé"
       - name: quantidade_transacao_debito
@@ -400,7 +400,7 @@ models:
               where: "data_ordem in ({partitions})"
               name: not_null__id_consorcio__ordem_pagamento_consorcio_operador_dia
       - name: consorcio
-        description: "{{ doc('consorcio_nome') }}"
+        description: "{{ doc('nome_consorcio') }}"
         tests:
           - not_null:
               where: "data_ordem in ({partitions})"
@@ -516,7 +516,7 @@ models:
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
       - name: consorcio
-        description: "{{ doc('consorcio_nome') }}"
+        description: "{{ doc('nome_consorcio') }}"
       - name: id_operadora
         description: "{{ doc('id_operadora') }}"
       - name: operadora
@@ -589,7 +589,7 @@ models:
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
       - name: consorcio
-        description: "{{ doc('consorcio_nome') }}"
+        description: "{{ doc('nome_consorcio') }}"
       - name: id_operadora
         description: "{{ doc('id_operadora') }}"
       - name: operadora

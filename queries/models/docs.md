@@ -2,7 +2,7 @@
 Consórcio ao qual o serviço pertence
 {% enddocs %}
 
-{% docs consorcio_nome %}
+{% docs nome_consorcio %}
 Nome do consórcio
 {% enddocs %}
 
@@ -27,25 +27,24 @@ Distância do shape [trajeto] planejado (km)
 {% enddocs %}
 
 {% docs tipo_viagem_status %}
-Classificação do tipo de viagem:
-
-Não licenciado - viagem realizada por veículo que operou sem licenciamento vigente junto à SMTR;
-Não vistoriado - viagem realizada por veículo que não se encontra vistoriado nos termos do calendário de vistoria da SMTR;
-Lacrado - viagem realizada por veículo lacrado pela equipe de fiscalização da SMTR nos termos do art. 2º da Resolução SMTR Nº 3843/2025;
-Não autorizado por ausência de ar-condicionado - viagem realizada por veículo licenciado sem ar-condicionado, quando exigido para o serviço;
-Não autorizado por capacidade - viagem realizada por veículo licenciado com tecnologia de capacidade inferior àquela determinada para o serviço nos termos do art. 3º;
-Autuado por ar inoperante - viagem realizada por veículo licenciado com ar-condicionado e autuado disciplinarmente no dia por inoperância ou mau funcionamento do sistema de ar-condicionado (Nos termos do art. 23, inciso II, do Decreto nº 36.343/2012);
-Autuado por alterar itinerário - viagem realizada por veículo autuado disciplinarmente por alterar o itinerário aprovado de uma linha ou serviço (Nos termos do art. 17, inciso III, do Decreto nº 36.343/2012);
-Autuado por vista inoperante - viagem realizada por veículo autuado disciplinarmente por inoperância ou mau funcionamento de caixa de vista eletrônica ou similar (Nos termos do art. 23, inciso X, do Decreto nº 36.343/2012);
-Autuado por não atender solicitação de parada - viagem realizada por veículo autuado disciplinarmente por não atender às solicitações de parada para embarque ou desembarque de passageiros nos locais devidamente sinalizados para tal (Nos termos do art. 29, inciso I, do Decreto nº 36.343/2012);
-Autuado por iluminação insuficiente - viagem realizada por veículo autuado disciplinarmente por transitar com o veículo com ausência ou insuficiência na iluminação interna e/ou nos dispositivos internos ou externos de informação aos passageiros (Nos termos do art. 29, inciso XIII, do Decreto nº 36.343/2012);
-Autuado por não concluir itinerário - viagem realizada por veículo autuado disciplinarmente por alterar ou não concluir o itinerário autorizado do veículo (Nos termos do art. 40, inciso I, do Decreto nº 36.343/2012);
-Registrado com ar inoperante - viagem realizada por veículo licenciado com ar condicionado e registrado com o ar condicionado inoperante ou com mal funcionamento devidamente atestado por servidores nos termos da Resolução SMTR Nº 3.682/2024 ou de legislação superveniente;
-Detectado com ar inoperante - viagem realizada por veículo licenciado com ar-condicionado em operação detectado fora dos parâmetros definidos em resolução vigente;
-Sem transação - viagem realizada sem nenhuma transação de bilhetagem nos termos do art. 7º da Resolução SMTR Nº 3843/2025;
-Validador fechado - viagem realizada com o validador fechado nos termos do art. 7º, inciso III da Resolução SMTR Nº 3843/2025;
-Validador associado incorretamente - viagem realizada com validador associado ao serviço incorreto nos termos do art. 7º, inciso IV da Resolução SMTR Nº 3843/2025;
-Licenciado sem ar e não autuado - viagem realizada por veículo licenciado sem ar-condicionado, não enquadrada nas classificações anteriores;
+Classificação do tipo de viagem conforme RESOLUÇÃO SMTR Nº 3843/2025:\n
+Não licenciado - viagem realizada por veículo que operou sem licenciamento vigente junto à SMTR;\n
+Não vistoriado - viagem realizada por veículo que não se encontra vistoriado nos termos do calendário de vistoria da SMTR;\n
+Lacrado - viagem realizada por veículo lacrado pela equipe de fiscalização da SMTR nos termos do art. 2º da Resolução SMTR Nº 3843/2025;\n
+Não autorizado por ausência de ar-condicionado - viagem realizada por veículo licenciado sem ar-condicionado, quando exigido para o serviço;\n
+Não autorizado por capacidade - viagem realizada por veículo licenciado com tecnologia de capacidade inferior àquela determinada para o serviço nos termos do art. 3º;\n
+Autuado por ar inoperante - viagem realizada por veículo licenciado com ar-condicionado e autuado disciplinarmente no dia por inoperância ou mau funcionamento do sistema de ar-condicionado (Nos termos do art. 23, inciso II, do Decreto nº 36.343/2012);\n
+Autuado por alterar itinerário - viagem realizada por veículo autuado disciplinarmente por alterar o itinerário aprovado de uma linha ou serviço (Nos termos do art. 17, inciso III, do Decreto nº 36.343/2012);\n
+Autuado por vista inoperante - viagem realizada por veículo autuado disciplinarmente por inoperância ou mau funcionamento de caixa de vista eletrônica ou similar (Nos termos do art. 23, inciso X, do Decreto nº 36.343/2012);\n
+Autuado por não atender solicitação de parada - viagem realizada por veículo autuado disciplinarmente por não atender às solicitações de parada para embarque ou desembarque de passageiros nos locais devidamente sinalizados para tal (Nos termos do art. 29, inciso I, do Decreto nº 36.343/2012);\n
+Autuado por iluminação insuficiente - viagem realizada por veículo autuado disciplinarmente por transitar com o veículo com ausência ou insuficiência na iluminação interna e/ou nos dispositivos internos ou externos de informação aos passageiros (Nos termos do art. 29, inciso XIII, do Decreto nº 36.343/2012);\n
+Autuado por não concluir itinerário - viagem realizada por veículo autuado disciplinarmente por alterar ou não concluir o itinerário autorizado do veículo (Nos termos do art. 40, inciso I, do Decreto nº 36.343/2012);\n
+Registrado com ar inoperante - viagem realizada por veículo licenciado com ar condicionado e registrado com o ar condicionado inoperante ou com mal funcionamento devidamente atestado por servidores nos termos da Resolução SMTR Nº 3.682/2024 ou de legislação superveniente;\n
+Detectado com ar inoperante - viagem realizada por veículo licenciado com ar-condicionado em operação detectado fora dos parâmetros definidos em resolução vigente;\n
+Sem transação - viagem realizada sem nenhuma transação de bilhetagem nos termos do art. 7º da Resolução SMTR Nº 3843/2025;\n
+Validador fechado - viagem realizada com o validador fechado nos termos do art. 7º, inciso III da Resolução SMTR Nº 3843/2025;\n
+Validador associado incorretamente - viagem realizada com validador associado ao serviço incorreto nos termos do art. 7º, inciso IV da Resolução SMTR Nº 3843/2025;\n
+Licenciado sem ar e não autuado - viagem realizada por veículo licenciado sem ar-condicionado, não enquadrada nas classificações anteriores;\n
 Licenciado com ar e não autuado - viagem realizada por veículo licenciado com ar-condicionado, não enquadrada nas classificações anteriores.
 {% enddocs %}
 
@@ -126,12 +125,12 @@ Flag de verificação se o ponto de GPS encontra-se até o limite de 'tamanho_bu
 {% enddocs %}
 
 {% docs status_veiculo_gps %}
-"Em Operação": Quando 'flag_em_movimento' é true e 'flag_trajeto_correto_hist' é true
-"Operando fora do trajeto": Quando 'flag_em_movimento' é true e 'flag_trajeto_correto_hist' é false
-"Parado": Quando 'flag_em_movimento' é false:
- - Se 'tipo_parada' não é nulo, o veículo é considerado "Parado" seguido pelo tipo de parada [ex.: "Parado terminal"]
- - Se 'tipo_parada' é nulo:
-    - Se 'flag_trajeto_correto_hist' é true, o status é "Parado trajeto correto"
+"Em Operação": Quando 'flag_em_movimento' é true e 'flag_trajeto_correto_hist' é true\n
+"Operando fora do trajeto": Quando 'flag_em_movimento' é true e 'flag_trajeto_correto_hist' é false\n
+"Parado": Quando 'flag_em_movimento' é false:\n
+ - Se 'tipo_parada' não é nulo, o veículo é considerado "Parado" seguido pelo tipo de parada [ex.: "Parado terminal"]\n
+ - Se 'tipo_parada' é nulo:\n
+    - Se 'flag_trajeto_correto_hist' é true, o status é "Parado trajeto correto"\n
     - Se 'flag_trajeto_correto_hist' é false, o status é "Parado fora trajeto"
 {% enddocs %}
 
@@ -920,21 +919,17 @@ Datetime que o registro da realocação foi informado pela empresa operadora
 Linha de ônibus [serviço] realocada informada pela empresa operadora
 {% enddocs %}
 
-{% docs data_pagamento %}
-Data de pagamento
-{% enddocs %}
-
 {% docs data_operacao %}
 Data de operação
 {% enddocs %}
 
 {% docs status_veiculo %}
-Classificação, observados os demais parâmetros - Categorias:
-  - Não licenciado - Veículo que operou, mas não é licenciado
-  - Autuado por ar inoperante - Veículo que operou, foi licenciado com ar condicionado e foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado (023.II)
-  - Autuado por segurança - Veículo que operou, foi licenciado, mas foi autuado por infração relacionada à segurança do veículo
-  - Autuado por limpeza/equipamento - Veículo que operou, foi licenciado, mas foi autuado cumulativamente por infrações relacionadas à limpeza e equipamentos do veículo
-  - Sem ar e não autuado - Veículo que operou, foi licenciado sem ar condicionado e não foi autuado
+Classificação, observados os demais parâmetros - Categorias:\n
+  - Não licenciado - Veículo que operou, mas não é licenciado\n
+  - Autuado por ar inoperante - Veículo que operou, foi licenciado com ar condicionado e foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado (023.II)\n
+  - Autuado por segurança - Veículo que operou, foi licenciado, mas foi autuado por infração relacionada à segurança do veículo\n
+  - Autuado por limpeza/equipamento - Veículo que operou, foi licenciado, mas foi autuado cumulativamente por infrações relacionadas à limpeza e equipamentos do veículo\n
+  - Sem ar e não autuado - Veículo que operou, foi licenciado sem ar condicionado e não foi autuado\n
   - Com ar e não autuado - Veículo que operou, foi licenciado com ar condicionado e não foi autuado
 {% enddocs %}
 
@@ -1035,11 +1030,11 @@ Extensão do shape
 {% enddocs %}
 
 {% docs status_veiculo_infracao %}
-CADASTRADA - Registrada no sistema sem guia de pagamento
-EM ABERTO - Com guia de pagamento e dentro do prazo de vencimento
-VENCIDA - Com guia de pagamento e fora do prazo de vencimento
-EM RECURSO - Possui Processo de Recurso aguardando julgamento
-PAGA - Com guia de pagamento efetivamente paga
+CADASTRADA - Registrada no sistema sem guia de pagamento\n
+EM ABERTO - Com guia de pagamento e dentro do prazo de vencimento\n
+VENCIDA - Com guia de pagamento e fora do prazo de vencimento\n
+EM RECURSO - Possui Processo de Recurso aguardando julgamento\n
+PAGA - Com guia de pagamento efetivamente paga\n
 CANCELADA - Multa foi cancelada através de um Processo de Recurso
 {% enddocs %}
 
@@ -1072,7 +1067,7 @@ Valor monetário da autuação [100%] (R$)
 {% enddocs %}
 
 {% docs valor_total_apurado %}
-Valor total das viagens apuradas, subtraídas as penalidades [POF =< 60%]
+Valor total das viagens apuradas, subtraídas as penalidades [POF =< 60%] (R$)
 {% enddocs %}
 
 {% docs inicio_vigencia_tunel %}
@@ -1085,4 +1080,8 @@ Data de fim da vigência do túnel
 
 {% docs id_execucao_dbt %}
 Identificador da execução do DBT que modificou o dado pela última vez
+{% enddocs %}
+
+{% docs km_apurada_sem_transacao %}
+Quilometragem apurada de viagens realizadas sem passageiro registrado
 {% enddocs %}
