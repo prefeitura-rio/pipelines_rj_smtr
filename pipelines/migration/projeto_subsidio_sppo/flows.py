@@ -224,34 +224,8 @@ with Flow(
         # 3. PRE-DATA QUALITY CHECK #
         dbt_vars = {"date_range_start": start_date, "date_range_end": end_date}
 
-        gte = GreaterThanOrEqual()
-        data_maior_ou_igual_V15_START = gte.run(
-            dbt_vars["date_range_start"], constants.DATA_SUBSIDIO_V15_INICIO.value
-        )
-
-        data_maior_ou_igual_V15_END = gte.run(
-            dbt_vars["date_range_end"], constants.DATA_SUBSIDIO_V15_INICIO.value
-        )
-
-        SUBSIDIO_SPPO_PRE_TEST_AFTER_V15 = None
-        SUBSIDIO_SPPO_PRE_TEST_BEFORE_V15 = None
-
-        with case(data_maior_ou_igual_V15_END, True):
-            SUBSIDIO_SPPO_PRE_TEST_AFTER_V15 = " veiculo_dia"
-
-        with case(data_maior_ou_igual_V15_START, True):
-            SUBSIDIO_SPPO_PRE_TEST_BEFORE_V15 = " sppo_veiculo_dia"
-
-        DATASETS_MERGE = [
-            ds
-            for ds in [SUBSIDIO_SPPO_PRE_TEST_AFTER_V15, SUBSIDIO_SPPO_PRE_TEST_BEFORE_V15]
-            if ds is not None
-        ]
-
-        SUBSIDIO_SPPO_PRE_TEST = merge(*DATASETS_MERGE)
-
         SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt_tests(
-            dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value + SUBSIDIO_SPPO_PRE_TEST,
+            dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
             exclude="dashboard_subsidio_sppo_v2",
             _vars=dbt_vars,
         ).set_upstream(task=SPPO_VEICULO_DIA_RUN_WAIT)
@@ -507,39 +481,17 @@ with Flow(
     with case(test_only, True):
         dbt_vars = {"date_range_start": start_date, "date_range_end": end_date}
 
-        gte = GreaterThanOrEqual()
-        data_maior_ou_igual_V15_START = gte.run(
-            dbt_vars["date_range_start"], constants.DATA_SUBSIDIO_V15_INICIO.value
-        )
-
-        data_maior_ou_igual_V15_END = gte.run(
-            dbt_vars["date_range_end"], constants.DATA_SUBSIDIO_V15_INICIO.value
-        )
-
-        SUBSIDIO_SPPO_PRE_TEST_AFTER_V15 = None
-        SUBSIDIO_SPPO_PRE_TEST_BEFORE_V15 = None
-
-        with case(data_maior_ou_igual_V15_END, True):
-            SUBSIDIO_SPPO_PRE_TEST_AFTER_V15 = " veiculo_dia"
-
-        with case(data_maior_ou_igual_V15_START, True):
-            SUBSIDIO_SPPO_PRE_TEST_BEFORE_V15 = " sppo_veiculo_dia"
-
-        DATASETS_MERGE = [
-            ds
-            for ds in [
-                SUBSIDIO_SPPO_PRE_TEST_AFTER_V15,
-                SUBSIDIO_SPPO_PRE_TEST_BEFORE_V15,
-            ]
-            if ds is not None
-        ]
-
-        SUBSIDIO_SPPO_PRE_TEST = merge(*DATASETS_MERGE)
-
         SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt_tests(
-            dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value + SUBSIDIO_SPPO_PRE_TEST,
+            dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
             exclude="dashboard_subsidio_sppo_v2",
             _vars=dbt_vars,
+        )
+
+        DATA_QUALITY_PRE = dbt_data_quality_checks(
+            dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_PRE,
+            checks_list=constants.SUBSIDIO_SPPO_PRE_CHECKS_LIST.value,
+            webhook_key="subsidio_data_check",
+            params=dbt_vars,
         )
 
         date_in_range = check_date_in_range(
