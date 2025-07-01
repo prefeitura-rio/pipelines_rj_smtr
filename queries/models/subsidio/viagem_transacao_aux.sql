@@ -418,8 +418,8 @@ select
     v.tecnologia_remunerada,
     v.sentido,
     v.distancia_planejada,
-    eep.quantidade_transacao,
-    eep.quantidade_transacao_riocard,
+    any_value(eep.quantidade_transacao) as quantidade_transacao,
+    any_value(eep.quantidade_transacao_riocard) as quantidade_transacao_riocard,
     case
         when data < date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
         then max(eep.percentual_estado_equipamento_aberto)
