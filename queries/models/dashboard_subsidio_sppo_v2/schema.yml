@@ -30,7 +30,7 @@ models:
       - name: km_apurada_faixa
         description: "{{ doc('km_apurada_faixa') }}"
       - name: km_subsidiada_faixa
-        description: "Distância subsidiada para o serviço por faixa horária (km)"
+        description: "Quilometragem subsidiada para o serviço por faixa horária (km)"
       - name: km_planejada_faixa
         description: "{{ doc('km_planejada_faixa') }}"
       - name: pof
@@ -52,7 +52,7 @@ models:
       - name: km_apurada_n_vistoriado
         description: "{{ doc('km_apurada_n_vistoriado') }}"
       - name: km_apurada_sem_transacao
-        description: "Distância apurada de viagens realizadas sem passageiro registrado"
+        description: "Quilometragem apurada de viagens realizadas sem passageiro registrado (km)"
       - name: valor_apurado
         description: "{{ doc('valor_apurado') }}"
       - name: valor_acima_limite
@@ -157,7 +157,7 @@ models:
               name: sumario_servico_dia_tipo_soma_km__km_apurada_dia__sumario_faixa_servico_dia_pagamento
               where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: km_subsidiada_faixa
-        description: "Distância subsidiada para o serviço por faixa horária (km)"
+        description: "Quilometragem subsidiada para o serviço por faixa horária (km)"
         tests:
           - not_null:
               name: not_null__km_subsidiada_faixa__sumario_faixa_servico_dia_pagamento
@@ -187,14 +187,12 @@ models:
               min_value: 0
               name: dbt_utils.accepted_range__pof__sumario_faixa_servico_dia_pagamento
               where: "data between date('{date_range_start}') and date('{date_range_end}')"
-      - name: km_apurada_registrado_com_ar_inoperante
-        description: "{{ doc('km_apurada_registrado_com_ar_inoperante') }}"
-      - name: km_apurada_n_licenciado
-        description: "{{ doc('km_apurada_n_licenciado') }}"
+      - name: km_apurada_autuado_alterar_itinerario
+        description: "Quilometragem apurada de viagens realizadas por veículos autuados disciplinarmente por alterar o itinerário aprovado de uma linha ou serviço (km)"
       - name: km_apurada_autuado_ar_inoperante
         description: "{{ doc('km_apurada_autuado_ar_inoperante') }}"
-      - name: km_apurada_autuado_seguranca
-        description: "{{ doc('km_apurada_autuado_seguranca') }}"
+      - name: km_apurada_autuado_iluminacao_insuficiente
+        description: "Quilometragem apurada de viagens realizadas por veículos autuados disciplinarmente por transitar com o veículo com ausência ou insuficiência na iluminação interna e/ou nos dispositivos internos ou externos de informação aos passageiros (km)"
       - name: km_apurada_autuado_limpezaequipamento
         description: "{{ doc('km_apurada_autuado_limpezaequipamento') }}"
       - name: km_apurada_n_vistoriado
@@ -218,7 +216,7 @@ models:
       - name: km_apurada_licenciado_com_ar_n_autuado_padron
         description: "{{ doc('km_apurada_licenciado_com_ar_n_autuado') }} com tecnologia PADRON"
       - name: km_apurada_total_licenciado_sem_ar_n_autuado
-        description: "Quilometragem total apurada de viagens de veículos sem ar e não autuados"
+        description: "Quilometragem total apurada de viagens de veículos licenciados sem ar-condicionado e não enquadrados nas demais classificações"
       - name: km_apurada_total_licenciado_com_ar_n_autuado
         description: "Quilometragem total apurada de viagens de veículos com ar e não autuados"
       - name: valor_a_pagar
@@ -369,7 +367,7 @@ models:
       - name: km_apurada_n_vistoriado
         description: "{{ doc('km_apurada_n_vistoriado') }}"
       - name: km_apurada_sem_transacao
-        description: "Distância apurada de viagens realizadas sem passageiro registrado"
+        description: "Quilometragem apurada de viagens realizadas sem passageiro registrado (km)"
       - name: valor_a_pagar
         description: "{{ doc('valor_a_pagar') }}"
         tests:

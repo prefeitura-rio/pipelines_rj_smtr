@@ -8,6 +8,9 @@ DBT: 2025-06-06
 from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.constants import constants as smtr_constants
 from pipelines.treatment.cadastro.constants import constants
+from pipelines.treatment.monitoramento.constants import (
+    constants as monitoramento_constants,
+)
 from pipelines.treatment.templates.flows import create_default_materialization_flow
 
 CADASTRO_MATERIALIZACAO = create_default_materialization_flow(
@@ -26,4 +29,11 @@ CADASTRO_MATERIALIZACAO = create_default_materialization_flow(
             "cliente",
         ]
     ],
+)
+
+CADASTRO_VEICULO_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="cadastro_veiculo - materializacao",
+    selector=constants.CADASTRO_VEICULO_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[monitoramento_constants.MONITORAMENTO_VEICULO_SELECTOR.value],
 )

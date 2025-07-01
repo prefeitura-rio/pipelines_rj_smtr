@@ -237,95 +237,108 @@ with
         left join licenciamento as l using (data, id_veiculo)
         left join autuacoes_agg as a using (data, placa)
         left join registros_agente_verao as r using (data, id_veiculo)
-    )
-select
-    gla.* except (indicadores, tecnologia, placa),
-    to_json(indicadores) as indicadores,
-    case
-        {% if not is_incremental() or var("start_date") < var(
-            "DATA_SUBSIDIO_V5_INICIO"
-        ) %}
-            when data < date("{{ var('DATA_SUBSIDIO_V5_INICIO') }}") then status
-        {% endif %}
-        when data >= date("{{ var('DATA_SUBSIDIO_V5_INICIO') }}")
-        then
+    ),
+    sppo_veiculo_dia_final as (
+        select
+            gla.* except (indicadores, tecnologia, placa),
+            to_json(indicadores) as indicadores,
             case
-                when indicadores.indicador_licenciado is false
-                then "Não licenciado"
-                when indicadores.indicador_vistoriado is false
-                then "Não vistoriado"
-                when
-                    indicadores.indicador_ar_condicionado is true
-                    and indicadores.indicador_autuacao_ar_condicionado is true
-                then "Autuado por ar inoperante"
-                when
-                    indicadores.indicador_ar_condicionado is true
-                    and indicadores.indicador_registro_agente_verao_ar_condicionado
-                    is true
-                then "Registrado com ar inoperante"
-                when data < date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
+                {% if not is_incremental() or var("start_date") < var(
+                    "DATA_SUBSIDIO_V5_INICIO"
+                ) %}
+                    when data < date("{{ var('DATA_SUBSIDIO_V5_INICIO') }}") then status
+                {% endif %}
+                when data >= date("{{ var('DATA_SUBSIDIO_V5_INICIO') }}")
                 then
                     case
-                        when indicadores.indicador_autuacao_seguranca is true
-                        then "Autuado por segurança"
+                        when indicadores.indicador_licenciado is false
+                        then "Não licenciado"
+                        when indicadores.indicador_vistoriado is false
+                        then "Não vistoriado"
                         when
-                            indicadores.indicador_autuacao_limpeza is true
-                            and indicadores.indicador_autuacao_equipamento is true
-                        then "Autuado por limpeza/equipamento"
+                            indicadores.indicador_ar_condicionado is true
+                            and indicadores.indicador_autuacao_ar_condicionado is true
+                        then "Autuado por ar inoperante"
+                        when
+                            indicadores.indicador_ar_condicionado is true
+                            and indicadores.indicador_registro_agente_verao_ar_condicionado
+                            is true
+                        then "Registrado com ar inoperante"
+                        when data < date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
+                        then
+                            case
+                                when indicadores.indicador_autuacao_seguranca is true
+                                then "Autuado por segurança"
+                                when
+                                    indicadores.indicador_autuacao_limpeza is true
+                                    and indicadores.indicador_autuacao_equipamento
+                                    is true
+                                then "Autuado por limpeza/equipamento"
+                            end
+                        when indicadores.indicador_ar_condicionado is false
+                        then "Licenciado sem ar e não autuado"
+                        when indicadores.indicador_ar_condicionado is true
+                        then "Licenciado com ar e não autuado"
+                        else null
                     end
-                when indicadores.indicador_ar_condicionado is false
-                then "Licenciado sem ar e não autuado"
-                when indicadores.indicador_ar_condicionado is true
-                then "Licenciado com ar e não autuado"
-                else null
-            end
-    end as status,
-    if(
-        data >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}"),
-        tecnologia,
-        safe_cast(null as string)
-    ) as tecnologia,
+            end as status,
+            if(
+                data >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}"),
+                tecnologia,
+                safe_cast(null as string)
+            ) as tecnologia,
 
-    if(
-        data >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}"),
-        placa,
-        safe_cast(null as string)
-    ) as placa,
+            if(
+                data >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}"),
+                placa,
+                safe_cast(null as string)
+            ) as placa,
 
-    if(
-        data >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}"),
-        date(l.data_versao),
-        safe_cast(null as date)
-    ) as data_licenciamento,
+            if(
+                data >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}"),
+                date(l.data_versao),
+                safe_cast(null as date)
+            ) as data_licenciamento,
 
-    if(
-        data >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}"),
-        date(i.data_versao),
-        safe_cast(null as date)
-    ) as data_infracao,
-    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
-    "{{ var('version') }}" as versao
-from gps_licenciamento_autuacao as gla
-left join licenciamento_data_versao as l using (data)
-left join infracao_data_versao as i using (data)
-{% if not is_incremental() or var("start_date") < var("DATA_SUBSIDIO_V5_INICIO") %}
-    left join
-        {{ ref("subsidio_parametros") }} as p
-        -- `rj-smtr.dashboard_subsidio_sppo.subsidio_parametros` as p
-        on gla.indicadores.indicador_licenciado = p.indicador_licenciado
-        and gla.indicadores.indicador_ar_condicionado = p.indicador_ar_condicionado
-        and gla.indicadores.indicador_autuacao_ar_condicionado
-        = p.indicador_autuacao_ar_condicionado
-        and gla.indicadores.indicador_autuacao_seguranca
-        = p.indicador_autuacao_seguranca
-        and gla.indicadores.indicador_autuacao_limpeza = p.indicador_autuacao_limpeza
-        and gla.indicadores.indicador_autuacao_equipamento
-        = p.indicador_autuacao_equipamento
-        and gla.indicadores.indicador_registro_agente_verao_ar_condicionado
-        = p.indicador_registro_agente_verao_ar_condicionado
-        and (data between p.data_inicio and p.data_fim)
-        and data < date("{{ var('DATA_SUBSIDIO_V5_INICIO')}}")
-{% endif %}
-{% if is_incremental() %}
-    where data between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
-{% endif %}
+            if(
+                data >= date("{{ var('DATA_SUBSIDIO_V13_INICIO') }}"),
+                date(i.data_versao),
+                safe_cast(null as date)
+            ) as data_infracao,
+            current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+            "{{ var('version') }}" as versao
+        from gps_licenciamento_autuacao as gla
+        left join licenciamento_data_versao as l using (data)
+        left join infracao_data_versao as i using (data)
+        {% if not is_incremental() or var("start_date") < var(
+                "DATA_SUBSIDIO_V5_INICIO"
+            ) %}
+            left join
+                {{ ref("subsidio_parametros") }} as p
+                -- `rj-smtr.dashboard_subsidio_sppo.subsidio_parametros` as p
+                on gla.indicadores.indicador_licenciado = p.indicador_licenciado
+                and gla.indicadores.indicador_ar_condicionado
+                = p.indicador_ar_condicionado
+                and gla.indicadores.indicador_autuacao_ar_condicionado
+                = p.indicador_autuacao_ar_condicionado
+                and gla.indicadores.indicador_autuacao_seguranca
+                = p.indicador_autuacao_seguranca
+                and gla.indicadores.indicador_autuacao_limpeza
+                = p.indicador_autuacao_limpeza
+                and gla.indicadores.indicador_autuacao_equipamento
+                = p.indicador_autuacao_equipamento
+                and gla.indicadores.indicador_registro_agente_verao_ar_condicionado
+                = p.indicador_registro_agente_verao_ar_condicionado
+                and (data between p.data_inicio and p.data_fim)
+                and data < date("{{ var('DATA_SUBSIDIO_V5_INICIO')}}")
+        {% endif %}
+        {% if is_incremental() %}
+            where
+                data between date("{{ var('start_date') }}") and date(
+                    "{{ var('end_date') }}"
+                )
+        {% endif %}
+    )
+select *
+from sppo_veiculo_dia_final
+where data <= '{{ var("data_final_veiculo_arquitetura_1") }}'

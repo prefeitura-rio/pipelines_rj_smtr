@@ -398,6 +398,12 @@ models:
         quote: true
       - name: id_auto_infracao
         description: "{{ doc('id_auto_infracao') }}"
+        tests:
+          - dbt_utils.relationships_where:
+              name: dbt_utils.relationships_where__id_auto_infracao__veiculo_fiscalizacao_lacre
+              to: ref('autuacao_disciplinar_historico')
+              field: id_auto_infracao
+              where: "1=1"
         data_type: string
         quote: true
       - name: datetime_ultima_atualizacao_fonte
@@ -410,5 +416,193 @@ models:
         quote: true
       - name: versao
         description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
+  - name: autuacao_disciplinar_historico
+    description: Tabela histórica de todas as autuações disciplinares aplicadas aos modos de transporte no município do Rio de Janeiro
+    columns:
+      - name: data
+        description: "{{ doc('data_infracao') }} [partição]"
+        data_type: date
+        quote: true
+      - name: datetime_autuacao
+        description: "Data e hora da autuação [coluna em desenvolvimento]"
+        data_type: datetime
+        quote: true
+      - name: id_auto_infracao
+        description: "{{ doc('id_auto_infracao') }}"
+        tests:
+          - dbt_utils.relationships_where:
+              name: dbt_utils.relationships_where__id_auto_infracao__autuacao_disciplinar_historico
+              to: ref('veiculo_fiscalizacao_lacre')
+              from_condition: |
+                id_infracao in (
+                  '016.II',
+                  '016.III',
+                  '016.IV',
+                  '016.V',
+                  '016.VI',
+                  '017.IV',
+                  '017.IV',
+                  '019.I',
+                  '019.II',
+                  '019.III',
+                  '023.VII',
+                  '024.VIII',
+                  '024.IX',
+                  '024.X',
+                  '024.XII',
+                  '024.XIII',
+                  '024.XIV',
+                  '024.XV',
+                  '024.XVI',
+                  '024.XVII',
+                  '025.I',
+                  '025.II',
+                  '025.III',
+                  '025.V',
+                  '025.VII',
+                  '025.X',
+                  '025.XI',
+                  '025.XII',
+                  '025.XIII',
+                  '025.XIV',
+                  '025.XV',
+                  '025.XVI',
+                  '026.I',
+                  '026.II',
+                  '026.III',
+                  '026.IV',
+                  '026.V',
+                  '026.VI',
+                  '026.VII',
+                  '026.VIII',
+                  '026.IX',
+                  '026.X',
+                  '026.XI',
+                  '026.XII',
+                  '026.XIII',
+                  '026.XIV'
+                )
+                and modo = 'ONIBUS'
+              field: id_auto_infracao
+              where: "data_inclusao_datalake between date('{date_range_start}') and date('{date_range_end}')"
+        data_type: string
+        quote: true
+      - name: id_infracao
+        description: "{{ doc('id_infracao') }}"
+        data_type: string
+        quote: true
+      - name: modo
+        description: "{{ doc('modo_onibus') }}"
+        data_type: string
+        quote: true
+      - name: servico
+        description: "{{ doc('servico') }}"
+        data_type: string
+        quote: true
+      - name: permissao
+        description: "{{ doc('permissao') }}"
+        data_type: string
+        quote: true
+      - name: placa
+        description: "{{ doc('placa') }}"
+        data_type: string
+        quote: true
+      - name: valor
+        description: "{{ doc('valor') }}"
+        data_type: float64
+        quote: true
+      - name: data_pagamento
+        description: "{{ doc('data_pagamento') }}"
+        data_type: date
+        quote: true
+      - name: data_inclusao_stu
+        description: Data de inclusão da autuação no arquivo enviado pelo STU
+        data_type: date
+        quote: true
+      - name: data_inclusao_datalake
+        description: Data de inclusão da autuação no datalake
+        data_type: date
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
+  - name: veiculo_dia
+    description: Tabela resumo dos veículos e seus respectivos indicadores [contém dados a partir de 2025-04-01]
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+          - data
+          - id_veiculo
+          name: dbt_utils.unique_combination_of_columns__data_id_veiculo__veiculo_dia
+      - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
+          date_col: data
+          row_condition: "1=1"
+          test_start_date: "{{ var('date_range_start') }}"
+          test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
+          exclusion_condition: |
+            date_day >= date('{{ var("data_final_veiculo_arquitetura_1") }}')
+          name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__veiculo_dia
+    columns:
+      - name: data
+        description: "{{ doc('data_operacao') }}"
+        data_type: date
+        quote: true
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+        tests:
+          - not_null:
+              name: not_null__id_veiculo__veiculo_dia
+        data_type: string
+        quote: true
+      - name: placa
+        description: "{{ doc('placa') }}"
+        data_type: string
+        quote: true
+      - name: modo
+        description: "{{ doc('modo') }}"
+        data_type: string
+        quote: true
+      - name: tecnologia
+        description: "{{ doc('tecnologia') }}"
+        data_type: string
+        quote: true
+      - name: tipo_veiculo
+        description: "{{ doc('tipo_veiculo') }}"
+      - name: status
+        description: "{{ doc('status_veiculo') }}"
+        tests:
+          - not_null:
+              name: not_null__status__sppo_veiculo_dia
+        data_type: string
+        quote: true
+      - name: indicadores
+        description: "{{ doc('indicadores_veiculo') }}"
+        data_type: json
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
         data_type: string
         quote: true

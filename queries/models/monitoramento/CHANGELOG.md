@@ -1,10 +1,42 @@
 # Changelog - monitoramento
 
+## [1.5.3] - 2025-06-30
+
+### Adicionado
+
+- Adiciona `exclusion_condition` no teste `dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/653)
+
+## [1.5.2] - 2025-06-27
+
+### Adicionado
+
+- Adicionado limite de data para utilização dos dados do modelo `sppo_veiculo_dia.sql` no modelo`aux_veiculo_dia_consolidada.sql`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/648)
+- Adicionada exceção para as datas de autuações disciplinares no modelo `veiculo_dia.sql` para considerar tambem autuações com `data_inclusao_datalake` = `2025-06-25`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/649)
+
+## [1.5.1] - 2025-06-26
+
+### Removido
+
+- Remove a coluna `modo` do modelo `aux_veiculo_dia_consolidada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/648)
+
+
+## [1.5.0] - 2025-06-25
+
+### Adicionado
+
+- Cria modelos `autuacao_disciplinar_historico.sql`, `aux_veiculo_dia_consolidada.sql`, `aux_veiculo_gps_dia.sql` e `veiculo_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+- Adiciona coluna `id_execucao_dbt` no modelo `veiculo_fiscalizacao_lacre.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
+### Alterado
+
+- Move modelo `infracao_staging.sql` do dataset `veiculo_staging` para `monitoramento_staging` e renomeia para `staging_infracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
 ## [1.4.2] - 2025-06-24
 
 ### Alterado
 
 - Alterado o cálculo da `km_apurada` no modelo `monitoramento_servico_dia_v2.sql` para somar a quilometragem dos veículos não licenciados e não vistoriados (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/629)
+- Altera lógica do modelo  `gps_segmento_viagem` para considerar vigência da camada dos túneis (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/617)
 
 ## [1.4.1] - 2025-06-06
 

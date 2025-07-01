@@ -16,8 +16,8 @@ with
             consorcio,
             servico,
             pof
-        from {{ ref("subsidio_faixa_servico_dia") }}
-        -- from `rj-smtr.financeiro_staging.subsidio_faixa_servico_dia`
+        from {{ ref("percentual_operacao_faixa_horaria") }}
+        -- from `rj-smtr.subsidio.percentual_operacao_faixa_horaria`
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
@@ -60,8 +60,7 @@ with
             safe_cast(
                 json_value(indicadores, "$.indicador_ar_condicionado") as bool
             ) as indicador_ar_condicionado
-        from {{ ref("sppo_veiculo_dia") }}
-        -- from `rj-smtr.veiculo.sppo_veiculo_dia`
+        from {{ ref("aux_veiculo_dia_consolidada") }}
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')

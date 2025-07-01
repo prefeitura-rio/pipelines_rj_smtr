@@ -58,7 +58,7 @@ Código único identificador da viagem
 {% enddocs %}
 
 {% docs project_id %}
-Nome do projeto [rj-smtr]
+Nome do projeto da GCP
 {% enddocs %}
 
 {% docs dataset_id %}
@@ -672,6 +672,10 @@ Distância do shape [trajeto] planejado (km)
 Indica se o serviço indicado nos dados de GPS estava diferente do serviço informado na viagem
 {% enddocs %}
 
+{% docs taxa_conversao_real %}
+Taxa da conversão de Dólar para Real
+{% enddocs %}
+
 {% docs data_fim %}
 Data final do período de vigência dos demais atributos
 {% enddocs %}
@@ -916,6 +920,28 @@ Datetime que o registro da realocação foi informado pela empresa operadora
 Linha de ônibus [serviço] realocada informada pela empresa operadora
 {% enddocs %}
 
+{% docs data_pagamento %}
+Data de pagamento
+{% enddocs %}
+
+{% docs data_operacao %}
+Data de operação
+{% enddocs %}
+
+{% docs status_veiculo %}
+Classificação, observados os demais parâmetros - Categorias:
+  - Não licenciado - Veículo que operou, mas não é licenciado
+  - Autuado por ar inoperante - Veículo que operou, foi licenciado com ar condicionado e foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado (023.II)
+  - Autuado por segurança - Veículo que operou, foi licenciado, mas foi autuado por infração relacionada à segurança do veículo
+  - Autuado por limpeza/equipamento - Veículo que operou, foi licenciado, mas foi autuado cumulativamente por infrações relacionadas à limpeza e equipamentos do veículo
+  - Sem ar e não autuado - Veículo que operou, foi licenciado sem ar condicionado e não foi autuado
+  - Com ar e não autuado - Veículo que operou, foi licenciado com ar condicionado e não foi autuado
+{% enddocs %}
+
+{% docs indicadores_veiculo %}
+Indicadores para caraterização do status do veículo
+{% enddocs %}
+
 {% docs posicao_veiculo_geo %}
 Coordenada geográfica [POINT] com a posição que o veículo se encontra, conforme 'longitude' e 'latitude' informadas pelo GPS [EPSG:4326 - WGS84]
 {% enddocs %}
@@ -1047,4 +1073,145 @@ Valor monetário da autuação [100%] (R$)
 
 {% docs valor_total_apurado %}
 Valor total das viagens apuradas, subtraídas as penalidades [POF =< 60%]
+{% enddocs %}
+
+{% docs coluna %}
+Nome da coluna
+{% enddocs %}
+
+{% docs data_limite_defesa_previa %}
+Data limite para defesa prévia
+{% enddocs %}
+
+{% docs data_pagamento %}
+Data de pagamento
+{% enddocs %}
+
+{% docs data_ultima_atualizacao %}
+Data da última atualização
+{% enddocs %}
+
+{% docs datetime_processamento_viagem %}
+Data e hora do processamento da viagem
+{% enddocs %}
+
+{% docs datetime_transacao %}
+Data e hora da transação
+{% enddocs %}
+
+{% docs especie_veiculo %}
+Espécie do veículo
+{% enddocs %}
+
+{% docs horario_inicio %}
+Horário inicial de funcionamento
+{% enddocs %}
+
+{% docs id_operadora %}
+Identificador da operadora na tabela cadastro.operadoras
+{% enddocs %}
+
+{% docs id_servico_jae %}
+Identificador da linha no banco de dados da jaé [É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae]
+{% enddocs %}
+
+{% docs indicador_autuacao_equipamento %}
+Indicador se o veículo foi autuado por infração relacionada à inoperância ou mau funcionamento de equipamentos do veículo
+{% enddocs %}
+
+{% docs indicador_validador_sbd %}
+Indicador se o veículo se encontra com o novo validador do Sistema de Bilhetagem Digital [BD] instalado
+{% enddocs %}
+
+{% docs infracao %}
+Descrição da infração
+{% enddocs %}
+
+{% docs km_apurada_faixa %}
+Distância apurada para o serviço por faixa horária (km)
+{% enddocs %}
+
+{% docs km_apurada_licenciado_com_ar_n_autuado %}
+Quilometragem apurada de viagens de veículos com ar e não autuados
+{% enddocs %}
+
+{% docs km_apurada_n_vistoriado %}
+Distância apurada de viagens realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria (km)
+{% enddocs %}
+
+{% docs km_subsidiada_dia %}
+Distância subsidiada para o serviço por dia (km)
+{% enddocs %}
+
+{% docs ordem %}
+Ordem de prioridade de aplicação dos valores de remuneração
+{% enddocs %}
+
+{% docs perc_conformidade_distancia %}
+Razão da distância aferida pela distância teórica x 100
+{% enddocs %}
+
+{% docs processo_defesa_autuacao %}
+Número do processo de defesa prévia
+{% enddocs %}
+
+{% docs servico_informado %}
+Serviço informado pelo GPS do veículo
+{% enddocs %}
+
+{% docs shape_distance %}
+Extensão do shape
+{% enddocs %}
+
+{% docs status_veiculo_infracao %}
+CADASTRADA - Registrada no sistema sem guia de pagamento
+EM ABERTO - Com guia de pagamento e dentro do prazo de vencimento
+VENCIDA - Com guia de pagamento e fora do prazo de vencimento
+EM RECURSO - Possui Processo de Recurso aguardando julgamento
+PAGA - Com guia de pagamento efetivamente paga
+CANCELADA - Multa foi cancelada através de um Processo de Recurso
+{% enddocs %}
+
+{% docs subsidio_km %}
+Valor de subsídio de remuneração (R$/km)
+{% enddocs %}
+
+{% docs timestamp_captura_infracao %}
+Timestamp de captura dos dados de infração
+{% enddocs %}
+
+{% docs timestamp_captura_licenciamento %}
+Timestamp de captura dos dados de licenciamento
+{% enddocs %}
+
+{% docs timestamp_processamento %}
+Timestamp de processamento da realocação pela empresa operadora
+{% enddocs %}
+
+{% docs tipo_transacao_smtr %}
+Tipo de transação realizada no padrão usado pela SMTR [Tarifa Cheia, Integração e Gratuidade]
+{% enddocs %}
+
+{% docs uf_proprietario %}
+Estado do proprietário do veículo
+{% enddocs %}
+
+{% docs valor_infracao %}
+Valor monetário da autuação [100%] (R$)
+{% enddocs %}
+
+{% docs valor_total_apurado %}
+Valor total das viagens apuradas, subtraídas as penalidades [POF =< 60%]
+{% enddocs %}
+
+{% docs inicio_vigencia_tunel %}
+Data de início da vigência do túnel
+{% enddocs %}
+
+{% docs fim_vigencia_tunel %}
+Data de fim da vigência do túnel
+{% enddocs %}
+
+{% docs id_execucao_dbt %}
+Identificador da execução do DBT que modificou o dado pela última vez
 {% enddocs %}
