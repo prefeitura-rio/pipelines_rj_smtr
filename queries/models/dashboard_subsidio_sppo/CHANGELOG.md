@@ -23,6 +23,12 @@
 
 - Adicionada exceção para os serviços `583` e `584` no período de `2023-12-31` and `2024-01-01` no sentido Ida em razão do reprocessamento do TCM [MTR-CAP-2025/03003] (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
 
+## [7.1.8] - 2025-06-12
+
+### Alterado
+
+- Altera o o modelo `viagens_remuneradas.sql` para desconsiderar a `distancia_planejada` para o calculo de `pof` de viagens do tipo `Não licenciado` e `Não vistoriado` a partir e `2024-09-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/510)
+
 ## [7.1.6] - 2025-06-06
 
 ### Corrigido
