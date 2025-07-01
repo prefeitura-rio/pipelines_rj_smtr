@@ -567,6 +567,6 @@
     left join shapes as s using (shape_id)
     {% if var("run_date") == "2024-05-05" %}
         -- Apuração "Madonna · The Celebration Tour in Rio"
-        where and servico != "SE001"
+        where servico != "SE001"
     {% endif %}
 {% endif %}
