@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de monitoramento
 
-DBT 2025-06-27
+DBT 2025-07-01
 """
 
 from copy import deepcopy
@@ -165,13 +165,23 @@ MONITORAMENTO_VEICULO_MATERIALIZACAO = create_default_materialization_flow(
     post_tests=constants.MONITORAMENTO_VEICULO_TEST.value,
 )
 
+wait_monitoramento_veiculo = deepcopy(constants.MONITORAMENTO_VEICULO_SELECTOR.value)
+wait_monitoramento_veiculo.incremental_delay_hours = (
+    -constants.VEICULO_DIA_SELECTOR.value.incremental_delay_hours
+)
+
+wait_cadastro_veiculo = deepcopy(cadastro_constants.CADASTRO_VEICULO_SELECTOR.value)
+wait_cadastro_veiculo.incremental_delay_hours = (
+    -constants.VEICULO_DIA_SELECTOR.value.incremental_delay_hours
+)
+
 VEICULO_DIA_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="veiculo_dia - materializacao",
     selector=constants.VEICULO_DIA_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[
-        constants.MONITORAMENTO_VEICULO_SELECTOR.value,
-        cadastro_constants.CADASTRO_VEICULO_SELECTOR.value,
+        wait_monitoramento_veiculo,
+        wait_cadastro_veiculo,
     ],
     post_tests=constants.VEICULO_DIA_TEST.value,
 )
