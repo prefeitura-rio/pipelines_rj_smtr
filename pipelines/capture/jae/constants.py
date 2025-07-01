@@ -103,6 +103,7 @@ class constants(Enum):  # pylint: disable=c0103
     GPS_VALIDADOR_TABLE_ID = "gps_validador"
     INTEGRACAO_TABLE_ID = "integracao_transacao"
     TRANSACAO_ORDEM_TABLE_ID = "transacao_ordem"
+    TRANSACAO_RETIFICADA_TABLE_ID = "transacao_retificada"
 
     JAE_TABLE_CAPTURE_PARAMS = {
         TRANSACAO_TABLE_ID: {
@@ -114,6 +115,18 @@ class constants(Enum):  # pylint: disable=c0103
                 WHERE
                     data_processamento >= timestamp '{start}' - INTERVAL '5 minutes'
                     AND data_processamento < timestamp '{end}' - INTERVAL '5 minutes'
+            """,
+            "database": "transacao_db",
+        },
+        TRANSACAO_RETIFICADA_TABLE_ID: {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    transacao_retificada
+                /*WHERE
+                    data_retificacao >= timestamp '{start}' - INTERVAL '5 minutes'
+                    AND data_retificacao < timestamp '{end}' - INTERVAL '5 minutes'*/
             """,
             "database": "transacao_db",
         },
@@ -518,6 +531,15 @@ class constants(Enum):  # pylint: disable=c0103
         first_timestamp=datetime(2025, 3, 21, 0, 0, 0),
         schedule_cron=create_minute_cron(),
         primary_keys=["id"],
+    )
+
+    TRANSACAO_RETIFICADA_SOURCE = SourceTable(
+        source_name=JAE_SOURCE_NAME,
+        table_id=TRANSACAO_RETIFICADA_TABLE_ID,
+        first_timestamp=datetime(2025, 6, 3, 0, 0, 0),
+        schedule_cron=create_minute_cron(minute=10),
+        primary_keys=["id"],
+        bucket_names=JAE_PRIVATE_BUCKET_NAMES,
     )
 
     GPS_VALIDADOR_SOURCE = SourceTable(
