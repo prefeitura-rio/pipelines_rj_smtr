@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrigida a verificação do status `Registrado com ar inoperante` no modelo `veiculo_dia.sql`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/652)
+- Corrigida a verificação do status `Registrado com ar inoperante` no modelo `veiculo_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/652)
 
 ### Adicionado
 
