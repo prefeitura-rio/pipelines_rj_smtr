@@ -6,6 +6,11 @@
 
 - Corrigida a verificação do status `Registrado com ar inoperante` no modelo `veiculo_dia.sql`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/652)
 
+### Adicionado
+
+- Adiciona `exclusion_condition` no teste `dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/653)
+
+
 ## [1.5.2] - 2025-06-27
 
 ### Adicionado
