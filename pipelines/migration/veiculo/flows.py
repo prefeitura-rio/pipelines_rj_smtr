@@ -3,7 +3,7 @@
 """
 Flows for veiculos
 
-DBT: 2025-06-23
+DBT: 2025-06-30a
 """
 
 from copy import deepcopy
@@ -47,7 +47,7 @@ from pipelines.migration.veiculo.tasks import (
     pre_treatment_sppo_infracao,
     pre_treatment_sppo_licenciamento,
 )
-from pipelines.schedules import every_day_hour_seven, every_day_hour_six_minute_fifty
+from pipelines.schedules import every_day_hour_five, every_day_hour_seven
 from pipelines.treatment.templates.tasks import (
     dbt_data_quality_checks,
     run_dbt,
@@ -138,7 +138,7 @@ sppo_licenciamento_captura.state_handlers = [
     handler_initialize_sentry,
     handler_inject_bd_credentials,
 ]
-sppo_licenciamento_captura.schedule = every_day_hour_six_minute_fifty
+sppo_licenciamento_captura.schedule = every_day_hour_five
 
 with Flow(
     f"SMTR: {smtr_constants.VEICULO_DATASET_ID.value} \
@@ -216,7 +216,7 @@ sppo_infracao_captura.run_config = KubernetesRun(
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 sppo_infracao_captura.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
-sppo_infracao_captura.schedule = every_day_hour_six_minute_fifty
+sppo_infracao_captura.schedule = every_day_hour_five
 
 # flake8: noqa: E501
 with Flow(

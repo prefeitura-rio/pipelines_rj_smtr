@@ -1,5 +1,18 @@
 # Changelog - monitoramento
 
+## [1.2.1] - 2025-06-30
+
+### Alterado
+
+- Altera agendamento do flow `MONITORAMENTO_VEICULO_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/653)
+
+## [1.2.0] - 2025-06-25
+
+### Adicionado
+
+- Adiciona execução de testes do DBT no flow `MONITORAMENTO_VEICULO_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+- Cria flow `VEICULO_DIA_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
 ## [1.1.6] - 2025-06-17
 
 ### Alterado

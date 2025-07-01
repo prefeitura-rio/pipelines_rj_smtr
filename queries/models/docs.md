@@ -35,7 +35,7 @@ Código único identificador da viagem
 {% enddocs %}
 
 {% docs project_id %}
-Nome do projeto [rj-smtr]
+Nome do projeto da GCP
 {% enddocs %}
 
 {% docs dataset_id %}
@@ -649,6 +649,10 @@ Distância do shape [trajeto] planejado (km)
 Indica se o serviço indicado nos dados de GPS estava diferente do serviço informado na viagem
 {% enddocs %}
 
+{% docs taxa_conversao_real %}
+Taxa da conversão de Dólar para Real
+{% enddocs %}
+
 {% docs ano %}
 Ano
 {% enddocs %}
@@ -889,6 +893,40 @@ Datetime que o registro da realocação foi informado pela empresa operadora
 Linha de ônibus [serviço] realocada informada pela empresa operadora
 {% enddocs %}
 
+{% docs data_pagamento %}
+Data de pagamento
+{% enddocs %}
+
+{% docs data_operacao %}
+Data de operação
+{% enddocs %}
+
+{% docs status_veiculo %}
+Classificação, observados os demais parâmetros - Categorias:
+  - Não licenciado - Veículo que operou, mas não é licenciado
+  - Autuado por ar inoperante - Veículo que operou, foi licenciado com ar condicionado e foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado (023.II)
+  - Autuado por segurança - Veículo que operou, foi licenciado, mas foi autuado por infração relacionada à segurança do veículo
+  - Autuado por limpeza/equipamento - Veículo que operou, foi licenciado, mas foi autuado cumulativamente por infrações relacionadas à limpeza e equipamentos do veículo
+  - Sem ar e não autuado - Veículo que operou, foi licenciado sem ar condicionado e não foi autuado
+  - Com ar e não autuado - Veículo que operou, foi licenciado com ar condicionado e não foi autuado
+{% enddocs %}
+
+{% docs indicadores_veiculo %}
+Indicadores para caraterização do status do veículo
+{% enddocs %}
+
 {% docs posicao_veiculo_geo %}
 Coordenada geográfica [POINT] com a posição que o veículo se encontra, conforme 'longitude' e 'latitude' informadas pelo GPS [EPSG:4326 - WGS84]
+{% enddocs %}
+
+{% docs inicio_vigencia_tunel %}
+Data de início da vigência do túnel
+{% enddocs %}
+
+{% docs fim_vigencia_tunel %}
+Data de fim da vigência do túnel
+{% enddocs %}
+
+{% docs id_execucao_dbt %}
+Identificador da execução do DBT que modificou o dado pela última vez
 {% enddocs %}

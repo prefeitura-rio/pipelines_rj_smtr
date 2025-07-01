@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de monitoramento
 
-DBT 2025-06-03
+DBT 2025-07-01
 """
 
 from copy import deepcopy
@@ -22,6 +22,7 @@ from pipelines.migration.br_rj_riodejaneiro_onibus_gps_zirix.constants import (
     constants as gps_zirix_constants,
 )
 from pipelines.schedules import create_hourly_cron
+from pipelines.treatment.cadastro.constants import constants as cadastro_constants
 from pipelines.treatment.monitoramento.constants import constants
 from pipelines.treatment.planejamento.constants import (
     constants as planejamento_constants,
@@ -72,6 +73,8 @@ VIAGEM_VALIDACAO_MATERIALIZACAO = create_default_materialization_flow(
     ],
 )
 
+GPS_TEST_SCHEDULE_TIME = time(2, 6, 0)
+
 GPS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps conecta - materializacao",
     selector=constants.GPS_SELECTOR.value,
@@ -80,7 +83,7 @@ GPS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
         conecta_constants.CONECTA_REGISTROS_SOURCE.value,
         conecta_constants.CONECTA_REALOCACAO_SOURCE.value,
     ],
-    test_scheduled_time=time(1, 6, 0),
+    test_scheduled_time=GPS_TEST_SCHEDULE_TIME,
     post_tests=constants.GPS_DAILY_TEST.value,
 )
 gps_vars_conecta = {"modo_gps": "onibus", "fonte_gps": "conecta", "15_minutos": False}
@@ -94,7 +97,7 @@ GPS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
         cittati_constants.CITTATI_REGISTROS_SOURCE.value,
         cittati_constants.CITTATI_REALOCACAO_SOURCE.value,
     ],
-    test_scheduled_time=time(1, 6, 0),
+    test_scheduled_time=GPS_TEST_SCHEDULE_TIME,
     post_tests=constants.GPS_DAILY_TEST.value,
 )
 gps_vars_cittati = {"modo_gps": "onibus", "fonte_gps": "cittati", "15_minutos": False}
@@ -108,7 +111,7 @@ GPS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
         zirix_constants.ZIRIX_REGISTROS_SOURCE.value,
         zirix_constants.ZIRIX_REALOCACAO_SOURCE.value,
     ],
-    test_scheduled_time=time(1, 6, 0),
+    test_scheduled_time=GPS_TEST_SCHEDULE_TIME,
     post_tests=constants.GPS_DAILY_TEST.value,
 )
 gps_vars_zirix = {"modo_gps": "onibus", "fonte_gps": "zirix", "15_minutos": False}
@@ -159,4 +162,26 @@ MONITORAMENTO_VEICULO_MATERIALIZACAO = create_default_materialization_flow(
     selector=constants.MONITORAMENTO_VEICULO_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[veiculo_fiscalizacao_constants.VEICULO_LACRE_SOURCE.value],
+    post_tests=constants.MONITORAMENTO_VEICULO_TEST.value,
+)
+
+wait_monitoramento_veiculo = deepcopy(constants.MONITORAMENTO_VEICULO_SELECTOR.value)
+wait_monitoramento_veiculo.incremental_delay_hours = (
+    -constants.VEICULO_DIA_SELECTOR.value.incremental_delay_hours
+)
+
+wait_cadastro_veiculo = deepcopy(cadastro_constants.CADASTRO_VEICULO_SELECTOR.value)
+wait_cadastro_veiculo.incremental_delay_hours = (
+    -constants.VEICULO_DIA_SELECTOR.value.incremental_delay_hours
+)
+
+VEICULO_DIA_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="veiculo_dia - materializacao",
+    selector=constants.VEICULO_DIA_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[
+        wait_monitoramento_veiculo,
+        wait_cadastro_veiculo,
+    ],
+    post_tests=constants.VEICULO_DIA_TEST.value,
 )

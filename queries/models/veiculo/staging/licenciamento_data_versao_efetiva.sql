@@ -9,12 +9,12 @@
 with
     licenciamento as (
         select distinct date(data) as data_licenciamento
-        from {{ ref("licenciamento_stu_staging") }}
+        from {{ ref("staging_licenciamento_stu") }}
         {% if is_incremental() %}
             where
-                date(data)
-                between date("{{ var('start_date')}}")
-                and date("{{ modules.datetime.datetime.fromisoformat(var('end_date')) + modules.datetime.timedelta(7) }}")
+                date(data) between date("{{ var('start_date')}}") and date(
+                    "{{ modules.datetime.datetime.fromisoformat(var('end_date')) + modules.datetime.timedelta(7) }}"
+                )
         {% endif %}
     ),
     periodo as (
@@ -37,13 +37,13 @@ with
                         /* Versão fixa do STU em 2024-03-25 para mar/Q1 devido à falha de
              atualização na fonte da dados (SIURB) */
                         when
-                            date(periodo.data) >= "2024-03-01"
+                            date(periodo.data) >= date("2024-03-01")
                             and date(periodo.data) < "2024-03-16"
                         then date("2024-03-25")
                         /* Versão fixa do STU em 2024-04-09 para mar/Q2 devido à falha de
              atualização na fonte da dados (SIURB) */
                         when
-                            date(periodo.data) >= "2024-03-16"
+                            date(periodo.data) >= date("2024-03-16")
                             and date(periodo.data) < "2024-04-01"
                         then date("2024-04-09")
                         else

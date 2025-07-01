@@ -100,7 +100,7 @@
                         or q_gps_raw is null
                         or q_gps_filtrada is null
                         or q_gps_treated is null  -- Hipótese de perda de dados no tratamento
-                        or (q_gps_raw <= q_gps_filtrada)
+                        or (q_gps_raw < q_gps_filtrada)
                         or (q_gps_filtrada < q_gps_treated)  -- Hipótese de duplicação de dados
                         or (coalesce(safe_divide(q_gps_filtrada, q_gps_raw), 0) < 0.96)  -- Hipótese de perda de dados no tratamento (superior a 3%)
                         or (
