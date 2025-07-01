@@ -189,7 +189,7 @@ with
                     and indicadores.indicador_autuacao_ar_condicionado.valor is true
                 then "Autuado por ar inoperante"
                 when
-                    indicadores.indicador_autuacao_ar_condicionado.valor is true
+                    indicadores.indicador_ar_condicionado.valor is true
                     and indicadores.indicador_registro_agente_verao_ar_condicionado.valor
                     is true
                 then "Registrado com ar inoperante"
