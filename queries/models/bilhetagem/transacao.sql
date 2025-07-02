@@ -86,8 +86,12 @@ with
     tipo_transacao as (
         select chave as id_tipo_transacao, valor as tipo_transacao
         from {{ ref("dicionario_bilhetagem") }}
-        {# from `rj-smtr.br_rj_riodejaneiro_bilhetagem.dicionario` #}
         where id_tabela = "transacao" and coluna = "id_tipo_transacao"
+    ),
+    tipo_documento as (
+        select chave as cd_tipo_documento, valor as tipo_documento
+        from {{ ref("dicionario_bilhetagem") }}
+        where id_tabela = "cliente" and coluna = "cd_tipo_documento"
     ),
     gratuidade as (
         select
@@ -148,6 +152,8 @@ with
             do.id_operadora,
             t.cd_operadora as id_operadora_jae,
             do.operadora,
+            do.documento as documento_operadora,
+            do.tipo_documento as tipo_documento_operadora,
             t.cd_linha as id_servico_jae,
             l.nr_linha as servico_jae,
             l.nm_linha as descricao_servico_jae,
@@ -162,6 +168,8 @@ with
             t.numero_serie_validador as id_validador,
             t.id_cliente as id_cliente,
             sha256(t.id_cliente) as hash_cliente,
+            c.nr_documento as documento_cliente,
+            tdc.tipo_documento as tipo_documento_cliente,
             t.pan_hash as hash_cartao,
             tp.tipo_pagamento as meio_pagamento_jae,
             p.nm_produto as produto_jae,
@@ -179,8 +187,10 @@ with
         left join {{ ref("consorcios") }} dc on t.cd_consorcio = dc.id_consorcio_jae
         left join {{ ref("staging_linha") }} l on t.cd_linha = l.cd_linha
         left join {{ ref("staging_produto") }} p on t.id_produto = p.cd_produto
+        left join {{ ref("staging_cliente") }} c on t.id_cliente = do.cd_cliente
         left join tipo_transacao tt on tt.id_tipo_transacao = t.tipo_transacao
         left join tipo_pagamento tp on t.id_tipo_midia = tp.id_tipo_pagamento
+        left join tipo_documento tdc on c.cd_tipo_documento = td.cd_tipo_documento
         left join
             {{ ref("staging_linha_sem_ressarcimento") }} lsr
             on t.cd_linha = lsr.id_linha

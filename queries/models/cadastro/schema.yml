@@ -25,11 +25,11 @@ models:
       - name: data_processo
         description: "Data do processo no STU"
       - name: documento
-        description: "Documento do operador (CPF ou CNPJ) [protegido]"
+        description: "{{ doc('documento_operadora') }}"
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/388050497607535163/policyTags/3935188996031375059'
       - name: tipo_documento
-        description: "Tipo do documento do operador (CPF ou CNPJ)"
+        description: "{{ doc('tipo_documento_operadora') }}"
       - name: id_operadora_stu
         description: "Código de permissionário vindo do STU"
       - name: id_operadora_jae

@@ -1010,3 +1010,11 @@ Ponto geográfico do local da transação
 {% docs quantidade_passageiros %}
 Ponto geográfico do local da transação
 {% enddocs %}
+
+{% docs documento_operadora %}
+Documento do operador [CPF ou CNPJ] [protegido]
+{% enddocs %}
+
+{% docs tipo_documento_operadora %}
+Tipo do documento do operador [CPF ou CNPJ]
+{% enddocs %}

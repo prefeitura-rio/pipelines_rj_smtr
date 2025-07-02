@@ -32,6 +32,12 @@ models:
       - name: operadora
         description: "{{ doc('operadora') }}"
         data_type: string
+      - name: documento_operadora
+        description: "{{ doc('documento_operadora') }}"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/388050497607535163/policyTags/3935188996031375059'
+      - name: tipo_documento_operadora
+        description: "{{ doc('tipo_documento_operadora') }}"
       - name: id_servico_jae
         description: "{{ doc('id_servico_jae') }}"
         data_type: string
@@ -60,6 +66,13 @@ models:
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/3266350367297582691'
         data_type: bytes
+      - name: documento_cliente
+        description: "Número do documento do cliente que efetuou a transação"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+        data_type: string
+      - name: tipo_documento_cliente
+        description: "Tipo do documento do cliente que efetuou a transação"
       - name: id_transacao
         description: "{{ doc('id_transacao') }}"
         data_type: string
