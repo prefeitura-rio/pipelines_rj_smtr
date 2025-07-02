@@ -74,6 +74,8 @@ with
             id_viagem,
             distancia_planejada,
             sentido,
+            "Ônibus SPPO" as modo,
+            ve.status as tipo_viagem,
             ve.tecnologia as tecnologia_apurada
         from {{ ref("viagem_completa") }}
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`

@@ -140,6 +140,56 @@ with
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
             and data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
     ),
+    {% if var("start_date") < var("DATA_SUBSIDIO_V15_INICIO") %}
+        tecnologias as (
+            select
+                inicio_vigencia,
+                fim_vigencia,
+                servico,
+                codigo_tecnologia,
+                maior_tecnologia_permitida,
+                menor_tecnologia_permitida
+            from {{ ref("tecnologia_servico") }}
+        ),
+        prioridade_tecnologia as (select * from {{ ref("tecnologia_prioridade") }}),
+        viagem_tecnologia as (
+            select distinct
+                vt.data,
+                vt.servico,
+                vt.tipo_viagem,
+                vt.tecnologia as tecnologia_apurada,
+                case
+                    when p.prioridade > p_maior.prioridade
+                    then t.maior_tecnologia_permitida
+                    when
+                        p.prioridade < p_menor.prioridade
+                        and data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                    then null
+                    else vt.tecnologia
+                end as tecnologia_remunerada,
+                vt.id_viagem,
+                vt.datetime_partida,
+                vt.distancia_planejada,
+                case
+                    when p.prioridade < p_menor.prioridade then true else false
+                end as indicador_penalidade_tecnologia
+            from viagem_transacao as vt
+            left join
+                tecnologias as t
+                on vt.servico = t.servico
+                and (
+                    (vt.data between t.inicio_vigencia and t.fim_vigencia)
+                    or (vt.data >= t.inicio_vigencia and t.fim_vigencia is null)
+                )
+            left join prioridade_tecnologia as p on vt.tecnologia = p.tecnologia
+            left join
+                prioridade_tecnologia as p_maior
+                on t.maior_tecnologia_permitida = p_maior.tecnologia
+            left join
+                prioridade_tecnologia as p_menor
+                on t.menor_tecnologia_permitida = p_menor.tecnologia
+        ),
+    {% endif %}
     -- Apuração de km realizado e Percentual de Operação por Faixa Horária (POF)
     servico_faixa_km_apuracao as (
         select
@@ -194,7 +244,10 @@ with
             ) as indicador_penalidade_tecnologia,
             sp.indicador_penalidade_judicial,
             sp.ordem
-        from viagem_transacao as vt
+        {% if var("start_date") < var("DATA_SUBSIDIO_V15_INICIO") %}
+            from viagem_tecnologia as vt
+        {% else %} from viagem_transacao as vt
+        {% endif %}
         left join
             subsidio_parametros as sp
             on vt.data between sp.data_inicio and sp.data_fim
