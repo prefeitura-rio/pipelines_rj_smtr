@@ -1,10 +1,16 @@
 # Changelog - veiculo
 
+## [2.1.3] - 2025-07-02
+
+### Corrigido
+
+- Corrigido o teste `dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart` no modelo `sppo_veiculo_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/656)
+
 ## [2.1.2] - 2025-07-01
 
 ### Adicionado
 
-Criado o modelo `sppo_vistoria_tr_subtt_cmo_recurso_SMTR202404004977_staging.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/124)
+- Criado o modelo `sppo_vistoria_tr_subtt_cmo_recurso_SMTR202404004977_staging.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/124)
 
 ### Alterado
 
