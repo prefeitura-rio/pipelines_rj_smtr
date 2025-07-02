@@ -10,4 +10,4 @@ select
     safe_cast(id_tabela as string) as id_tabela,
     safe_cast(coluna as string) as coluna,
     safe_cast(valor as string) as valor
-from {{ source("br_rj_riodejaneiro_bilhetagem_staging", "dicionario") }}
+from {{ source("source_jae", "dicionario") }}
