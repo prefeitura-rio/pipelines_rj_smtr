@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Flows de tratamento dos dados de infraestrutura
+
+DBT: 2025-07-02
 """
 
 from pipelines.constants import constants as smtr_constants
