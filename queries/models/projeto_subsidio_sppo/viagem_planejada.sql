@@ -206,6 +206,7 @@
         s.start_pt,
         s.end_pt,
         safe_cast(null as int64) as id_tipo_trajeto,  -- Adaptação para formato da SUBSIDIO_V6
+        safe_cast(null as DATE) as feed_start_date,  -- Adaptação para formato da SUBSIDIO_V6
         safe_cast(null as string) as feed_version,  -- Adaptação para formato da SUBSIDIO_V6
         current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,  -- Adaptação para formato da SUBSIDIO_V7
         datetime(concat(p.data, "T00:00:00")) as faixa_horaria_inicio,  -- Adaptação para formato da SUBSIDIO_V9

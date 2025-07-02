@@ -552,7 +552,7 @@ models:
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data
           row_condition: "1=1"
-          test_start_date: "{{ [var('date_range_start'), var('DATA_SUBSIDIO_V15_INICIO')] | sort | last }}"
+          test_start_date: "{{ var('date_range_start') }}"
           test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(1) }}"
           exclusion_condition: |
             date_day >= date('{{ var("data_final_veiculo_arquitetura_1") }}')
