@@ -31,9 +31,7 @@ with
     staging_transacao as (
         select *
         from {{ transacao_staging }}
-        {% if is_incremental() %} where {{ incremental_filter }}
-        {% else %} where data > '2025-06-27'
-        {% endif %}
+        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
     novos_dados as (
         select

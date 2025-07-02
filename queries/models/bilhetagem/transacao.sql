@@ -187,10 +187,10 @@ with
         left join {{ ref("consorcios") }} dc on t.cd_consorcio = dc.id_consorcio_jae
         left join {{ ref("staging_linha") }} l on t.cd_linha = l.cd_linha
         left join {{ ref("staging_produto") }} p on t.id_produto = p.cd_produto
-        left join {{ ref("staging_cliente") }} c on t.id_cliente = do.cd_cliente
+        left join {{ ref("staging_cliente") }} c on t.id_cliente = c.cd_cliente
         left join tipo_transacao tt on tt.id_tipo_transacao = t.tipo_transacao
         left join tipo_pagamento tp on t.id_tipo_midia = tp.id_tipo_pagamento
-        left join tipo_documento tdc on c.cd_tipo_documento = td.cd_tipo_documento
+        left join tipo_documento tdc on c.cd_tipo_documento = tdc.cd_tipo_documento
         left join
             {{ ref("staging_linha_sem_ressarcimento") }} lsr
             on t.cd_linha = lsr.id_linha

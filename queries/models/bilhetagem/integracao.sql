@@ -155,7 +155,7 @@ with
             dc.id_consorcio,
             dc.consorcio,
             do.id_operadora,
-            i.id_operadora_jae,
+            i.id_operadora as id_operadora_jae,
             do.operadora,
             i.id_linha as id_servico_jae,
             l.nr_linha as servico_jae,
@@ -223,7 +223,7 @@ with
             {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.linha_sem_ressarcimento` l #}
             on i.id_servico_jae = l.id_linha
         where l.id_linha is not null or i.data < "2023-07-17"
-    ),,
+    ),
     integracao_valida as (
         select * except (priority)
         from complete_partitions
@@ -237,7 +237,7 @@ with
             = 1
     ),
     sha_dados_novos as (
-        select *, {{ sha_column }} as sha_dado_novo from integracoes_teste_invalidas
+        select *, {{ sha_column }} as sha_dado_novo from integracao_valida
     ),
     sha_dados_atuais as (
         {% if is_incremental() %}

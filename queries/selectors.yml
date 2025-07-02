@@ -258,7 +258,6 @@ selectors:
         - method: fqn
           value: log_bigquery
 
-
   - name: transito_autuacao
     description: Materialização das tabelas de autuação de trânsito
     definition:
