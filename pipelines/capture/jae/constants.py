@@ -121,12 +121,14 @@ class constants(Enum):  # pylint: disable=c0103
         TRANSACAO_RETIFICADA_TABLE_ID: {
             "query": """
                 SELECT
-                    *
+                    r.*,
+                    t.data_transacao
                 FROM
-                    transacao_retificada
-                /*WHERE
+                    transacao_retificada r
+                JOIN transacao t on r.id_transacao = t.id
+                WHERE
                     data_retificacao >= timestamp '{start}' - INTERVAL '5 minutes'
-                    AND data_retificacao < timestamp '{end}' - INTERVAL '5 minutes'*/
+                    AND data_retificacao < timestamp '{end}' - INTERVAL '5 minutes'
             """,
             "database": "transacao_db",
         },
