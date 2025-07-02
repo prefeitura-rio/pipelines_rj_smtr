@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.2.7] - 2025-07-02
+
+### Adicionado
+
+- Adicionada coluna `feet_start_date` no modelo `viagem_planejada.sql` para o periodo anterior a `2024-04-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
+
 ## [9.2.6] - 2025-06-25
 
 ### Alterado
