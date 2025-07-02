@@ -62,5 +62,6 @@ from novos_dados
     from {{ this }}
     where
         data in ({{ partitions | join(", ") }})
-        and data_particao not in (select distinct data_particao from novos_dados)
+        and data_particao_fonte
+        not in (select distinct data_particao_fonte from novos_dados)
 {% endif %}
