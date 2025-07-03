@@ -930,3 +930,7 @@ Data de fim da vigência do túnel
 {% docs id_execucao_dbt %}
 Identificador da execução do DBT que modificou o dado pela última vez
 {% enddocs %}
+
+{% docs id_transacao %}
+Identificador único da transação
+{% enddocs %}
