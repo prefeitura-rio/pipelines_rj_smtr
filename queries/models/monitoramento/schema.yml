@@ -376,14 +376,23 @@ models:
         description: "{{ doc('id_veiculo') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null:
+              name: not_null__id_veiculo__veiculo_fiscalizacao_lacre
       - name: placa
         description: "{{ doc('placa') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null:
+              name: not_null__placa__veiculo_fiscalizacao_lacre
       - name: data_inicio_lacre
         description: Data de inicio do lacre [partição]
         data_type: date
         quote: true
+        tests:
+          - not_null:
+              name: not_null__data_inicio_lacre__veiculo_fiscalizacao_lacre
       - name: data_fim_lacre
         description: Data de fim do lacre
         data_type: date
@@ -433,6 +442,10 @@ models:
         description: "Data e hora da autuação [coluna em desenvolvimento]"
         data_type: datetime
         quote: true
+        # tests:
+        #   - not_null:
+        #       name: not_null__datetime_autuacao__autuacao_disciplinar_historico
+        #       where: "data_inclusao_datalake between date('{date_range_start}') and date('{date_range_end}')"
       - name: id_auto_infracao
         description: "{{ doc('id_auto_infracao') }}"
         tests:
@@ -497,6 +510,10 @@ models:
         description: "{{ doc('id_infracao') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null:
+              name: not_null__id_infracao__autuacao_disciplinar_historico
+              where: "data_inclusao_datalake between date('{date_range_start}') and date('{date_range_end}')"
       - name: modo
         description: "{{ doc('modo_onibus') }}"
         data_type: string
@@ -513,6 +530,51 @@ models:
         description: "{{ doc('placa') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null:
+              name: not_null__placa__autuacao_disciplinar_historico
+              where: |
+                data_inclusao_datalake between date('{date_range_start}') and date('{date_range_end}')
+                and id_infracao in (
+                  "016.VI",
+                  "023.VII",
+                  "024.II",
+                  "024.III",
+                  "024.IV",
+                  "024.V",
+                  "024.VI",
+                  "024.VII",
+                  "024.VIII",
+                  "024.IX",
+                  "024.XII",
+                  "024.XIV",
+                  "024.XV",
+                  "025.II",
+                  "025.XII",
+                  "025.XIII",
+                  "025.XIV",
+                  "026.X",
+                  "023.II",
+                  "023.IV",
+                  "023.V",
+                  "023.VI",
+                  "023.VIII",
+                  "024.XIII",
+                  "024.XI",
+                  "024.XVIII",
+                  "024.XXI",
+                  "025.III",
+                  "025.IV",
+                  "025.V",
+                  "025.VI",
+                  "025.VII",
+                  "025.VIII",
+                  "025.IX",
+                  "025.X",
+                  "025.XI",
+                  "023.IX",
+                  "024.X"
+                )
       - name: valor
         description: "{{ doc('valor') }}"
         data_type: float64
@@ -525,10 +587,18 @@ models:
         description: Data de inclusão da autuação no arquivo enviado pelo STU
         data_type: date
         quote: true
+        tests:
+          - not_null:
+              name: not_null__data_inclusao_stu__autuacao_disciplinar_historico
+              where: "data_inclusao_datalake between date('{date_range_start}') and date('{date_range_end}')"
       - name: data_inclusao_datalake
         description: Data de inclusão da autuação no datalake
         data_type: date
         quote: true
+        tests:
+          - not_null:
+              name: not_null__data_inclusao_datalake__autuacao_disciplinar_historico
+              where: "data_inclusao_datalake between date('{date_range_start}') and date('{date_range_end}')"
       - name: versao
         description: "{{ doc('versao') }}"
         data_type: string
@@ -562,6 +632,9 @@ models:
         description: "{{ doc('data_operacao') }}"
         data_type: date
         quote: true
+        tests:
+          - not_null:
+              name: not_null__data__veiculo_dia
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
         tests:
@@ -573,6 +646,9 @@ models:
         description: "{{ doc('placa') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null:
+              name: not_null__placa__veiculo_dia
       - name: modo
         description: "{{ doc('modo') }}"
         data_type: string
@@ -581,6 +657,10 @@ models:
         description: "{{ doc('tecnologia') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null:
+              name: not_null__tecnologia__veiculo_dia
+              where: "data between date('{date_range_start}') and date('{date_range_end}') and tipo_veiculo NOT LIKE '%ROD%'"
       - name: tipo_veiculo
         description: "{{ doc('tipo_veiculo') }}"
       - name: status
@@ -594,6 +674,9 @@ models:
         description: "{{ doc('indicadores_veiculo') }}"
         data_type: json
         quote: true
+        tests:
+          - not_null:
+              name: not_null__indicadores__veiculo_dia
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
