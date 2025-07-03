@@ -746,7 +746,7 @@ Situação do cadastro do cliente na Jaé [cadastrado ou não cadastrado]
 {% enddocs %}
 
 {% docs produto %}
-Produto utilizado para efetuar o pagamento no padrão utilizado na SMTR [Conta Gratuidade, Carteira, VT, Dinheiro, Cartão Avulso ou Visa Internacional]
+Produto utilizado para efetuar o pagamento no padrão utilizado na SMTR [Gratuidade, Carteira, VT, Dinheiro (Botoeira), Cartão Avulso ou Visa Internacional]
 {% enddocs %}
 
 {% docs produto_jae %}
@@ -1008,7 +1008,7 @@ Ponto geográfico do local da transação
 {% enddocs %}
 
 {% docs quantidade_passageiros %}
-Ponto geográfico do local da transação
+Quantidade de transações que aconteceram em determinada data e hora
 {% enddocs %}
 
 {% docs documento_operadora %}
