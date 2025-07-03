@@ -1,5 +1,44 @@
 # Changelog - bilhetagem
 
+## [3.0.0] - 2025-07-03
+
+### Adicionado
+
+- Cria modelo `view_transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/505)
+
+### Removido
+
+- Remove modelos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/505):
+  - `dicionario.sql`
+  - `passageiros_hora.sql`
+  - `passageiros_tile_hora.sql`
+  - `transacao.sql`
+  - `transacao_riocard.sql`
+  - `integracao.sql`
+
+- Move modelos do dataset `br_rj_riodejaneiro_bilhetagem_staging` para `bilhetagem_staging` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/505):
+  - `aux_gratuidade.sql`
+  - `aux_passageiro_hora.sql`
+  - `staging_gratuidade.sql`
+  - `staging_integracao_transacao.sql`
+  - `staging_produto.sql`
+  - `staging_transacao_ordem.sql`
+  - `staging_transacao_riocard.sql`
+  - `staging_transacao.sql`
+
+- Move modelos do dataset `br_rj_riodejaneiro_bilhetagem_staging` para `cadastro_staging` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/505):
+  - `staging_cliente.sql`
+  - `staging_consorcio.sql`
+  - `staging_conta_bancaria.sql`
+  - `staging_contato_pessoa_juridica.sql`
+  - `staging_endereco.sql`
+  - `staging_linha_consorcio_operadora_transporte.sql`
+  - `staging_linha_consorcio.sql`
+  - `staging_linha_sem_ressarcimento.sql`
+  - `staging_linha_tarifa.sql`
+  - `staging_linha.sql`
+  - `staging_operadora_transporte.sql`
+
 ## [2.2.1] - 2025-04-04
 
 ### Corrigido
