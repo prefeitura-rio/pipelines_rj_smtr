@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [2.1.4] - 2025-07-03
+
+### Adicionado
+
+- Cria flow `CAPTURA_TRANSACAO_RETIFICADA` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/658)
+
 ## [2.0.4] - 2025-07-02
 
 ### Alterado
