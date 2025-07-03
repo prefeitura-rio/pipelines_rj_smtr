@@ -1,5 +1,15 @@
 # Changelog - bilhetagem
 
+## [3.1.1] - 2025-07-03
+
+### Adicionado
+
+- Cria modelos `staging_transacao_retificada.sql` e `transacao_retificada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/658)
+
+### Alterado
+
+- Remove ordens incorretas do modelo `transacao_valor_ordem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/658)
+
 ## [3.1.0] - 2025-02-04
 
 ### Adicionado
