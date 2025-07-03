@@ -300,12 +300,15 @@ with
     ),
     transacao_retificada as (
         select *
-        from
-            {{ transacao_retificada }}
-            {% if transacao_partitions | length > 0 %}
-                data in ({{ transacao_partitions | join(", ") }})
-            {% else %} data = "2000-01-01"
-            {% endif %}
+        from {{ transacao_retificada }}
+        {% if is_incremental() %}
+            where
+                {% if transacao_partitions | length > 0 %}
+                    data in ({{ transacao_partitions | join(", ") }})
+                {% else %} data = "2000-01-01"
+                {% endif %}
+        {% endif %}
+
     ),
     retificacao_transacao as (
         select
@@ -495,7 +498,12 @@ with
     ),
     transacao_colunas_controle as (
         select
-            * except (sha_dado_novo, sha_dado_atual, datetime_ultima_atualizacao_atual),
+            * except (
+                sha_dado_novo,
+                sha_dado_atual,
+                datetime_ultima_atualizacao_atual,
+                id_execucao_dbt_atual
+            ),
             '{{ var("version") }}' as versao,
             case
                 when sha_dado_atual is null or sha_dado_novo != sha_dado_atual
