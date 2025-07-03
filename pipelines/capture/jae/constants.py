@@ -24,7 +24,7 @@ class constants(Enum):  # pylint: disable=c0103
     JAE_DATABASE_SETTINGS = {
         "principal_db": {
             "engine": "mysql",
-            "host": "10.5.115.178",
+            "host": "10.5.112.98",
         },
         "tarifa_db": {
             "engine": "postgresql",
@@ -646,6 +646,9 @@ class constants(Enum):  # pylint: disable=c0103
                 "estudante_01042025",
                 "temp_estudante_cpfduplicado_11042025",
                 "estudante_30042025",
+                "estudante_24062025",
+                "estudante_20062025",
+                "producao_20250617081705_02_VT",
             ],
             "filter": {
                 "ITEM_PEDIDO": ["DT_INCLUSAO"],
@@ -789,6 +792,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "estudante_import_old",
                 "estudante_import_old",
                 "gratuidade_import_pcd_old",
+                "estudante_seeduc_25032025",
                 # sem permissão: #
                 "pcd_excluir",
                 "estudante_seeduc",
