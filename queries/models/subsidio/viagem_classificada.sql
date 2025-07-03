@@ -7,7 +7,7 @@
 }}
 
 {% set incremental_filter %}
-    data between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}") and data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
+    data between date("{{var('start_date')}}") and date("{{var('end_date')}}") and data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
 {% endset %}
 
 with
