@@ -19,9 +19,28 @@
 
 {% set integracao_staging = ref("staging_integracao_transacao") %}
 
-{% if execute %}
-    {% if is_incremental() %}
-        {% set integracao_partitions_query %}
+{% if execute and is_incremental() %}
+    {% set columns = (
+        list_columns()
+        | reject(
+            "in",
+            ["versao", "datetime_ultima_atualizacao", "id_execucao_dbt"],
+        )
+        | list
+    ) %}
+    {% set sha_column %}
+            sha256(
+                concat(
+                    {% for c in columns %}
+                        ifnull(cast({{ c }} as string), 'n/a')
+
+                        {% if not loop.last %}, {% endif %}
+
+                    {% endfor %}
+                )
+            )
+    {% endset %}
+    {% set integracao_partitions_query %}
             WITH integracao AS (
                 SELECT DISTINCT
                     CONCAT("'", DATE(data_transacao), "'") AS data_transacao
@@ -44,13 +63,15 @@
             WHERE
                 data_transacao IS NOT NULL
 
-        {% endset %}
+    {% endset %}
 
-        {% set integracao_partitions = (
-            run_query(integracao_partitions_query).columns[0].values()
-        ) %}
-
-    {% endif %}
+    {% set integracao_partitions = (
+        run_query(integracao_partitions_query).columns[0].values()
+    ) %}
+{% else %}
+    {% set sha_column %}
+        cast(null as bytes)
+    {% endset %}
 {% endif %}
 
 with
@@ -134,6 +155,7 @@ with
             dc.id_consorcio,
             dc.consorcio,
             do.id_operadora,
+            i.id_operadora as id_operadora_jae,
             do.operadora,
             i.id_linha as id_servico_jae,
             l.nr_linha as servico_jae,
@@ -151,8 +173,7 @@ with
             o.id_ordem_pagamento,
             o.id_ordem_pagamento_consorcio as id_ordem_pagamento_consorcio_dia,
             o.id_ordem_pagamento_consorcio_operadora
-            as id_ordem_pagamento_consorcio_operador_dia,
-            '{{ var("version") }}' as versao
+            as id_ordem_pagamento_consorcio_operador_dia
         from integracao_melt i
         left join
             {{ source("cadastro", "modos") }} m
@@ -169,6 +190,17 @@ with
         left join {{ ref("staging_ordem_rateio") }} o using (id_ordem_rateio)
         where i.id_transacao is not null
     ),
+    {% if is_incremental() %}
+        integracao_atual as (
+            select *
+            from {{ this }}
+            where
+                {% if integracao_partitions | length > 0 %}
+                    data in ({{ integracao_partitions | join(", ") }})
+                {% else %} data = "2000-01-01"
+                {% endif %}
+        ),
+    {% endif %}
     complete_partitions as (
         select *, 0 as priority
         from integracao_new
@@ -176,13 +208,11 @@ with
         {% if is_incremental() %}
             union all
 
-            select *, 1 as priority
-            from {{ this }}
-            where
-                {% if integracao_partitions | length > 0 %}
-                    data in ({{ integracao_partitions | join(", ") }})
-                {% else %} data = "2000-01-01"
-                {% endif %}
+            select
+                * except (versao, datetime_ultima_atualizacao, id_execucao_dbt),
+                1 as priority
+            from integracao_atual
+
         {% endif %}
     ),
     integracoes_teste_invalidas as (
@@ -193,13 +223,62 @@ with
             {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.linha_sem_ressarcimento` l #}
             on i.id_servico_jae = l.id_linha
         where l.id_linha is not null or i.data < "2023-07-17"
+    ),
+    integracao_valida as (
+        select * except (priority)
+        from complete_partitions
+        where
+            id_integracao not in (select id_integracao from integracoes_teste_invalidas)
+        qualify
+            row_number() over (
+                partition by id_integracao, id_transacao
+                order by datetime_processamento_integracao desc, priority
+            )
+            = 1
+    ),
+    sha_dados_novos as (
+        select *, {{ sha_column }} as sha_dado_novo from integracao_valida
+    ),
+    sha_dados_atuais as (
+        {% if is_incremental() %}
+
+            select
+                id_transacao,
+                id_integracao,
+                {{ sha_column }} as sha_dado_atual,
+                datetime_ultima_atualizacao as datetime_ultima_atualizacao_atual,
+                id_execucao_dbt as id_execucao_dbt_atual
+            from integracao_atual
+
+        {% else %}
+            select
+                cast(null as string) as id_transacao,
+                cast(null as string) as id_integracao,
+                cast(null as bytes) as sha_dado_atual,
+                datetime(null) as datetime_ultima_atualizacao_atual,
+                cast(null as string) as id_execucao_dbt_atual
+        {% endif %}
+    ),
+    sha_dados_completos as (
+        select *
+        from sha_dados_novos
+        left join sha_dados_atuais using (id_transacao, id_integracao)
+    ),
+    integracao_colunas_controle as (
+        select
+            * except (sha_dado_novo, sha_dado_atual, datetime_ultima_atualizacao_atual, id_execucao_dbt_atual),
+            '{{ var("version") }}' as versao,
+            case
+                when sha_dado_atual is null or sha_dado_novo != sha_dado_atual
+                then current_datetime("America/Sao_Paulo")
+                else datetime_ultima_atualizacao_atual
+            end as datetime_ultima_atualizacao,
+            case
+                when sha_dado_atual is null or sha_dado_novo != sha_dado_atual
+                then '{{ invocation_id }}'
+                else id_execucao_dbt_atual
+            end as id_execucao_dbt
+        from sha_dados_completos
     )
-select * except (priority)
-from complete_partitions
-where id_integracao not in (select id_integracao from integracoes_teste_invalidas)
-qualify
-    row_number() over (
-        partition by id_integracao, id_transacao
-        order by datetime_processamento_integracao desc, priority
-    )
-    = 1
+select *
+from integracao_colunas_controle
