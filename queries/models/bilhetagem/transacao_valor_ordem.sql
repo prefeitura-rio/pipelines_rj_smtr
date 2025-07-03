@@ -189,11 +189,13 @@ with
             id_ordem_pagamento_consorcio_operador_dia,
             round(valor_total_transacao_bruto, 2) as valor_ordem
         from {{ ref("ordem_pagamento_consorcio_operador_dia") }}
-        where
-            {% if is_incremental() and ordens_pagamento_modificadas | length > 0 %}
-                data_ordem in ({{ ordens_pagamento_modificadas | join(", ") }})
-            {% else %} data_ordem = '2000-01-01'
-            {% endif %}
+        {% if is_incremental() %}
+            where
+                {% if ordens_pagamento_modificadas | length > 0 %}
+                    data_ordem in ({{ ordens_pagamento_modificadas | join(", ") }})
+                {% else %} data_ordem = '2000-01-01'
+                {% endif %}
+        {% endif %}
     ),
     valor_transacao_captura as (
         select
