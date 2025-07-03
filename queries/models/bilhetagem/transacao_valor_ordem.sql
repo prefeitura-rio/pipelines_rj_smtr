@@ -172,10 +172,55 @@ with
             from {{ this }}
             where data_ordem in ({{ ordens_pagamento_modificadas | join(", ") }})
         {% endif %}
+    ),
+    transacao_valor_ordem_completa as (
+        select
+            * except (priority),
+            '{{ var("version") }}' as versao,
+            current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
+        from particao_completa
+        qualify
+            row_number() over (partition by id_transacao, data_ordem order by priority)
+            = 1
+    ),
+    valor_ordem_pagamento as (
+        select
+            data_ordem,
+            id_ordem_pagamento_consorcio_operador_dia,
+            round(valor_total_transacao_bruto, 2) as valor_ordem
+        from {{ ref("ordem_pagamento_consorcio_operador_dia") }}
+        {% if is_incremental() %}
+            where
+                {% if ordens_pagamento_modificadas | length > 0 %}
+                    data_ordem in ({{ ordens_pagamento_modificadas | join(", ") }})
+                {% else %} data_ordem = '2000-01-01'
+                {% endif %}
+        {% endif %}
+    ),
+    valor_transacao_captura as (
+        select
+            data_ordem,
+            id_ordem_pagamento_consorcio_operador_dia,
+            round(sum(valor_transacao_rateio) + 0.0001, 2) as valor_transacao
+        from transacao_valor_ordem_completa
+        group by 1, 2
+    ),
+    ordens_incorretas as (
+        select id_ordem_pagamento_consorcio_operador_dia
+        from valor_ordem_pagamento
+        left join
+            valor_transacao_captura using (
+                id_ordem_pagamento_consorcio_operador_dia, data_ordem
+            )
+        where valor_ordem != valor_transacao
+    ),
+    transacao_valor_ordem_filtrada as (
+        select *
+        from transacao_valor_ordem_completa
+        where
+            id_ordem_pagamento_consorcio_operador_dia not in (
+                select id_ordem_pagamento_consorcio_operador_dia from ordens_incorretas
+            )
     )
-select
-    * except (priority),
-    '{{ var("version") }}' as versao,
-    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
-from particao_completa
-qualify row_number() over (partition by id_transacao, data_ordem order by priority) = 1
+select *
+from transacao_valor_ordem_filtrada
