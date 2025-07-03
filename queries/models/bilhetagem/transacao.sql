@@ -171,6 +171,7 @@ with
             c.nr_documento as documento_cliente,
             tdc.tipo_documento as tipo_documento_cliente,
             t.pan_hash as hash_cartao,
+            t.vl_saldo as saldo_cartao,
             tp.tipo_pagamento as meio_pagamento_jae,
             p.nm_produto as produto_jae,
             tt.tipo_transacao as tipo_transacao_jae,
@@ -221,6 +222,8 @@ with
             id_operadora,
             id_operadora_jae,
             operadora,
+            documento_operadora,
+            tipo_documento_operadora,
             id_servico_jae,
             servico_jae,
             descricao_servico_jae,
@@ -229,7 +232,10 @@ with
             id_validador,
             id_cliente,
             hash_cliente,
+            documento_cliente,
+            tipo_documento_cliente,
             hash_cartao,
+            saldo_cartao,
             meio_pagamento_jae,
             produto_jae,
             tipo_transacao_jae,
@@ -255,6 +261,8 @@ with
                 id_operadora,
                 id_operadora_jae,
                 operadora,
+                documento_operadora,
+                tipo_documento_operadora,
                 id_servico_jae,
                 servico_jae,
                 descricao_servico_jae,
@@ -263,7 +271,10 @@ with
                 id_validador,
                 id_cliente,
                 hash_cliente,
+                documento_cliente,
+                tipo_documento_cliente,
                 hash_cartao,
+                saldo_cartao,
                 meio_pagamento_jae,
                 produto_jae,
                 tipo_transacao_jae,
@@ -290,8 +301,6 @@ with
                 then "Integral"
                 when t.tipo_transacao_jae = "Transferência EMV"
                 then "Transferência"
-                when t.tipo_transacao_jae = "Integração gratuidade"
-                then "Gratuidade - Integração"
                 else t.tipo_transacao_jae
             end as tipo_transacao_atualizado,
             case
@@ -337,9 +346,7 @@ with
                 then "Dinheiro (Botoeira)"
             end as produto,
             case
-                when
-                    t.produto_jae = "Conta Jaé Gratuidade"
-                    and tipo_transacao_atualizado != "Gratuidade - Integração"
+                when t.produto_jae = "Conta Jaé Gratuidade"
                 then "Gratuidade"
                 else t.tipo_transacao_atualizado
             end as tipo_transacao,
@@ -396,6 +403,8 @@ with
             id_operadora,
             id_operadora_jae,
             operadora,
+            documento_operadora,
+            tipo_documento_operadora,
             id_servico_jae,
             servico_jae,
             descricao_servico_jae,
@@ -404,7 +413,10 @@ with
             id_validador,
             id_cliente,
             hash_cliente,
+            documento_cliente,
+            tipo_documento_cliente,
             hash_cartao,
+            saldo_cartao,
             cadastro_cliente,
             produto,
             produto_jae,
