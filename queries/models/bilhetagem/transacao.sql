@@ -8,6 +8,8 @@
 
 {% set transacao_ordem = ref("aux_transacao_id_ordem_pagamento") %}
 {% set aux_transacao_particao = ref("aux_transacao_particao") %}
+{% set transacao_retificada = ref("transacao_retificada") %}
+
 
 {% set incremental_filter %}
     ({{ generate_date_hour_partition_filter(var('date_range_start'), var('date_range_end')) }})
@@ -62,6 +64,17 @@
                 `{{ transacao_ordem.database }}.{{ transacao_ordem.schema }}.INFORMATION_SCHEMA.PARTITIONS`
             where
                 table_name = "{{ transacao_ordem.identifier }}"
+                and partition_id != "__NULL__"
+                and datetime(last_modified_time, "America/Sao_Paulo") between datetime("{{var('date_range_start')}}") and (datetime("{{var('date_range_end')}}"))
+
+            union distinct
+
+            select
+                concat("'", parse_date("%Y%m%d", partition_id), "'") as particao
+            from
+                `{{ transacao_retificada.database }}.{{ transacao_retificada.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+            where
+                table_name = "{{ transacao_retificada.identifier }}"
                 and partition_id != "__NULL__"
                 and datetime(last_modified_time, "America/Sao_Paulo") between datetime("{{var('date_range_start')}}") and (datetime("{{var('date_range_end')}}"))
 
@@ -285,6 +298,23 @@ with
             from transacao_atual
         {% endif %}
     ),
+    transacao_retificada as (
+        select *
+        from
+            {{ transacao_retificada }}
+            {% if transacao_partitions | length > 0 %}
+                data in ({{ transacao_partitions | join(", ") }})
+            {% else %} data = "2000-01-01"
+            {% endif %}
+    ),
+    retificacao_transacao as (
+        select
+            p.* except (tipo_transacao_jae, valor_transacao),
+            tr.tipo_transacao_jae_retificada as tipo_transacao_jae,
+            tr.valor_transacao_retificada as valor_transacao
+        from particao_completa p
+        left join transacao_retificada tr using (id_transacao)
+    ),
     -- Adiciona informações que são modificadas posteriormente pelo processo da Jaé
     transacao_info_posterior as (
         select
@@ -316,7 +346,7 @@ with
             o.id_ordem_pagamento_consorcio_operador_dia,
             o.id_ordem_pagamento_consorcio_dia,
             o.id_ordem_pagamento
-        from particao_completa t
+        from retificacao_transacao t
         left join integracao i using (id_transacao)
         left join transacao_ordem o using (id_transacao)
     ),
