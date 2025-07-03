@@ -1120,3 +1120,7 @@ Identificador da execução do DBT que modificou o dado pela última vez
 {% docs km_apurada_sem_transacao %}
 Quilometragem apurada de viagens realizadas sem passageiro registrado
 {% enddocs %}
+
+{% docs id_transacao %}
+Identificador único da transação
+{% enddocs %}
