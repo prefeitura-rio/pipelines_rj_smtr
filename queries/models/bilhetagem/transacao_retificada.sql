@@ -45,9 +45,9 @@ with
             id as id_retificacao,
             extract(date from data_transacao) as data,
             id_transacao,
-            tto.tipo_transacao as tipo_transacao_original,
+            tto.tipo_transacao as tipo_transacao_jae_original,
             valor_transacao_original,
-            ttr.tipo_transacao as tipo_transacao_retificada,
+            ttr.tipo_transacao as tipo_transacao_jae_retificada,
             valor_transacao_retificada,
             data_retificacao as datetime_retificacao
         from {{ ref("staging_transacao_retificada") }} tr
@@ -69,7 +69,7 @@ with
             sha256(
                 concat(
                     {% for c in columns %}
-                        ifnull(cast(f.{{ c }} as string), 'n/a')
+                        ifnull(cast({{ c }} as string), 'n/a')
 
                         {% if not loop.last %}, {% endif %}
 
