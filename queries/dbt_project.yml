@@ -19,7 +19,7 @@ clean-targets:
 vars:
   ### Date default variables ###
   date_range_start: "2022-01-01T00:00:00"
-  date_range_end: "2022-01-01T01:00:00"
+  date_range_end: "2022-01-02T01:00:00"
   start_date: "2022-01-01T01:00:00"
   end_date: "2022-01-01T01:00:00"
   run_date: "2022-01-01T01:00:00"
