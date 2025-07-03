@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de bilhetagem
 
-DBT: 2025-04-04
+DBT: 2025-07-03
 """
 
 from pipelines.capture.jae.constants import constants as jae_constants
@@ -83,5 +83,4 @@ TRANSACAO_VALOR_ORDEM_MATERIALIZACAO = create_default_materialization_flow(
         constants.TRANSACAO_SELECTOR.value,
         constants.INTEGRACAO_SELECTOR.value,
     ],
-    generate_schedule=False,
 )

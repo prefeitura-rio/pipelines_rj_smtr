@@ -334,6 +334,7 @@ models:
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
         quote: true
+
   - name: passageiro_hora
     description: "Tabela de contagem do número de passageiros por hora."
     columns:
@@ -433,3 +434,51 @@ models:
         description: "{{ doc('column_name') }}"
       - name: valor
         description: "Valor"
+
+  - name: transacao_retificada
+    description: Tabela de retificação das informações das transações da Jaé
+    columns:
+      - name: id_retificacao
+        description: Identificador único da retificação
+        data_type: string
+        quote: true
+      - name: data
+        description: "{{ doc('data_transacao') }}"
+        data_type: date
+        quote: true
+      - name: id_transacao
+        description: "{{ doc('id_transacao') }}"
+        data_type: string
+        quote: true
+      - name: tipo_transacao_jae_original
+        description: Tipo da transação que estava originalmente na transação
+        data_type: string
+        quote: true
+      - name: valor_transacao_original
+        description: Valor da transação que estava originalmente na transação (R$)
+        data_type: float64
+        quote: true
+      - name: tipo_transacao_jae_retificada
+        description: Novo tipo da transação
+        data_type: string
+        quote: true
+      - name: valor_transacao_retificada
+        description: Novo valor da transação (R$)
+        data_type: float64
+        quote: true
+      - name: datetime_retificacao
+        description: Data e hora da retificação da transacao
+        data_type: datetime
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true

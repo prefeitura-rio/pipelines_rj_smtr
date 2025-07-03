@@ -66,6 +66,17 @@ CAPTURA_GPS_VALIDADOR = create_default_capture_flow(
     get_raw_max_retries=0,
 )
 
+# Capturas a cada 10 minutos
+
+CAPTURA_TRANSACAO_RETIFICADA = create_default_capture_flow(
+    flow_name="jae: transacao_retificada - captura",
+    source=constants.TRANSACAO_RETIFICADA_SOURCE.value,
+    create_extractor_task=create_jae_general_extractor,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    recapture_schedule_cron=create_hourly_cron(),
+    get_raw_max_retries=0,
+)
+
 # Capturas por hora
 
 CAPTURA_AUXILIAR = create_default_capture_flow(
