@@ -126,9 +126,8 @@ with
             id_servico_jae,
             ifnull(sum(valor_rateio_compensacao), 0) as valor_transacao_rateio,
             id_ordem_pagamento,
-            id_ordem_pagamento_consorcio as id_ordem_pagamento_consorcio_dia,
-            id_ordem_pagamento_consorcio_operadora
-            as id_ordem_pagamento_consorcio_operador_dia
+            id_ordem_pagamento_consorcio_dia,
+            id_ordem_pagamento_consorcio_operador_dia
         from {{ integracao }}
         {% if is_incremental() %}
             where
