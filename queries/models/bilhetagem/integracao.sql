@@ -260,13 +260,18 @@ with
         {% endif %}
     ),
     sha_dados_completos as (
-        select *
-        from sha_dados_novos
-        left join sha_dados_atuais using (id_transacao, id_integracao)
+        select n.*, a.* except (id_transacao, id_integracao)
+        from sha_dados_novos n
+        left join sha_dados_atuais a using (id_transacao, id_integracao)
     ),
     integracao_colunas_controle as (
         select
-            * except (sha_dado_novo, sha_dado_atual, datetime_ultima_atualizacao_atual, id_execucao_dbt_atual),
+            * except (
+                sha_dado_novo,
+                sha_dado_atual,
+                datetime_ultima_atualizacao_atual,
+                id_execucao_dbt_atual
+            ),
             '{{ var("version") }}' as versao,
             case
                 when sha_dado_atual is null or sha_dado_novo != sha_dado_atual
