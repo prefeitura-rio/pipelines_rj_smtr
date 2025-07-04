@@ -308,13 +308,20 @@ with
                 {% else %} data = "2000-01-01"
                 {% endif %}
         {% endif %}
+        qualify
+            row_number() over (
+                partition by id_transacao order by datetime_retificacao desc
+            )
+            = 1
 
     ),
     retificacao_transacao as (
         select
             p.* except (tipo_transacao_jae, valor_transacao),
-            tr.tipo_transacao_jae_retificada as tipo_transacao_jae,
-            tr.valor_transacao_retificada as valor_transacao
+            ifnull(
+                tr.tipo_transacao_jae_retificada, p.tipo_transacao_jae
+            ) as tipo_transacao_jae,
+            ifnull(tr.valor_transacao_retificada, p.valor_transacao) as valor_transacao
         from particao_completa p
         left join transacao_retificada tr using (id_transacao)
     ),
