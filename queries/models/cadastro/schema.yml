@@ -281,6 +281,7 @@ models:
         tests:
           - not_null:
               name: not_null__tipo_veiculo__veiculo_licenciamento_dia
+              where: "data between date('{date_range_start}') and date('{date_range_end}') and modo = 'ONIBUS'"
       - name: status
         description: Status do veículo
         data_type: string

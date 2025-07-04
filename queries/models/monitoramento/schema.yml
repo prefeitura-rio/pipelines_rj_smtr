@@ -371,6 +371,9 @@ models:
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: veiculo_fiscalizacao_lacre
     description: Tabela com as informações do controle do lacre e deslacre de veículos
+    tests:
+      - test_check_veiculo_lacre:
+          name: test_check_veiculo_lacre__veiculo_fiscalizacao_lacre
     columns:
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
@@ -413,6 +416,8 @@ models:
               to: ref('autuacao_disciplinar_historico')
               field: id_auto_infracao
               where: "1=1"
+          - not_null:
+              name: not_null__id_auto_infracao__veiculo_fiscalizacao_lacre
         data_type: string
         quote: true
       - name: datetime_ultima_atualizacao_fonte
