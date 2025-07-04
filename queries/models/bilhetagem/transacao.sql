@@ -313,8 +313,10 @@ with
     retificacao_transacao as (
         select
             p.* except (tipo_transacao_jae, valor_transacao),
-            tr.tipo_transacao_jae_retificada as tipo_transacao_jae,
-            tr.valor_transacao_retificada as valor_transacao
+            ifnull(
+                tr.tipo_transacao_jae_retificada, p.tipo_transacao_jae
+            ) as tipo_transacao_jae,
+            ifnull(tr.valor_transacao_retificada, p.valor_transacao) as valor_transacao
         from particao_completa p
         left join transacao_retificada tr using (id_transacao)
     ),
