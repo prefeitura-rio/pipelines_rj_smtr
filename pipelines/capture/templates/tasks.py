@@ -169,7 +169,7 @@ def create_filepaths(source: SourceTable, partition: str, timestamp: datetime) -
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
-def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str, multiple_files):
+def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str, source: SourceTable):
     """
     Faz a extração dos dados raw e salva localmente
 
@@ -183,10 +183,19 @@ def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str, m
         raw_filetype (str): tipo de dado raw
     """
     data = data_extractor()
-    if not multiple_files:
+    raw_filepath = filepaths["raw"]
+
+    if source.file_chunk_size is None:
         data = [data]
-    for file in data:
-        save_local_file(filepath=filepaths, filetype=raw_filetype, data=data)
+
+    raw_filepaths = []
+    for idx, file in enumerate(data):
+        filepath_parts = raw_filepath.split(".")
+        filepath = f"{filepath_parts[0]}_{idx}.{filepath_parts[1]}"
+        save_local_file(filepath=filepath, filetype=raw_filetype, data=file)
+        raw_filepaths.append(filepath)
+
+    return raw_filepaths
 
 
 ################
@@ -252,7 +261,7 @@ def upload_source_data_to_gcs(source: SourceTable, partition: str, filepaths: di
 )
 def transform_raw_to_nested_structure(
     raw_filepaths: list[str],
-    source_filepath,
+    filepaths: dict[str],
     timestamp: datetime,
     primary_keys: list[str],
     reader_args: dict,
@@ -295,14 +304,14 @@ def transform_raw_to_nested_structure(
             if len(primary_keys) < data_columns_len:
                 data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
 
-            timestamp = create_timestamp_captura(timestamp=timestamp)
-            data["timestamp_captura"] = timestamp
+            data["timestamp_captura"] = create_timestamp_captura(timestamp=timestamp)
 
         log(
             f"Finished nested structure! Data: \n{data_info_str(data)}",
             level="info",
         )
 
+        source_filepath = filepaths["source"]
         save_local_file(filepath=source_filepath, filetype="csv", data=data, csv_mode=csv_mode)
         csv_mode = "a"
         log(f"Data saved in {source_filepath}")

@@ -22,7 +22,7 @@ from pipelines.utils.database import (
     list_accessible_tables,
     test_database_connection,
 )
-from pipelines.utils.extractors.db import get_raw_db
+from pipelines.utils.extractors.db import get_raw_db, get_raw_db_paginated
 from pipelines.utils.fs import create_partition
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.gcp.storage import Storage
@@ -51,17 +51,20 @@ def create_jae_general_extractor(source: SourceTable, timestamp: datetime):
     query = params["query"].format(start=start, end=end)
     database_name = params["database"]
     database = constants.JAE_DATABASE_SETTINGS.value[database_name]
-
-    return partial(
-        get_raw_db,
-        query=query,
-        engine=database["engine"],
-        host=database["host"],
-        user=credentials["user"],
-        password=credentials["password"],
-        database=database_name,
-        max_retries=3,
-    )
+    general_func_arguments = {
+        "query": query,
+        "engine": database["engine"],
+        "host": database["host"],
+        "user": credentials["user"],
+        "password": credentials["password"],
+        "database": database_name,
+        "max_retries": 3,
+    }
+    if source.table_id == constants.INTEGRACAO_TABLE_ID.value:
+        return partial(
+            get_raw_db_paginated, page_size=source.file_chunk_size, **general_func_arguments
+        )
+    return partial(get_raw_db, **general_func_arguments)
 
 
 @task(nout=2)

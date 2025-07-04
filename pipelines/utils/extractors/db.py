@@ -98,7 +98,7 @@ def get_raw_db_paginated(
             database=database,
             max_retries=max_retries,
         )
-        data += page_data
+        data.append(page_data)
         page_data_len = len(page_data)
         log(
             f"""

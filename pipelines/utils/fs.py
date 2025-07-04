@@ -131,7 +131,7 @@ def save_local_file(
     if isinstance(data, pd.DataFrame):
         log("Received a DataFrame, saving file as CSV")
         if csv_mode == "a":
-            data.to_csv(filepath, index=False, columns=False, mode="a")
+            data.to_csv(filepath, index=False, header=False, mode="a")
         else:
             data.to_csv(filepath, index=False)
         log("File saved!")
