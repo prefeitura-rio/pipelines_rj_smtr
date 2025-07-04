@@ -169,7 +169,7 @@ def create_filepaths(source: SourceTable, partition: str, timestamp: datetime) -
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
-def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str):
+def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str, multiple_files):
     """
     Faz a extração dos dados raw e salva localmente
 
@@ -183,8 +183,10 @@ def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str):
         raw_filetype (str): tipo de dado raw
     """
     data = data_extractor()
-    print("---------------------------" + filepaths["raw"])
-    save_local_file(filepath=filepaths["raw"], filetype=raw_filetype, data=data)
+    if not multiple_files:
+        data = [data]
+    for file in data:
+        save_local_file(filepath=filepaths, filetype=raw_filetype, data=data)
 
 
 ################
