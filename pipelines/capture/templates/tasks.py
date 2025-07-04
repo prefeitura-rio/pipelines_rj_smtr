@@ -196,7 +196,7 @@ def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str):
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
-def upload_raw_file_to_gcs(source: SourceTable, filepaths: dict, partition: str):
+def upload_raw_file_to_gcs(source: SourceTable, raw_filepaths: list[str], partition: str):
     """
     Sobe o arquivo raw para o GCS
 
@@ -209,7 +209,8 @@ def upload_raw_file_to_gcs(source: SourceTable, filepaths: dict, partition: str)
             }
         partition (str): Partição Hive
     """
-    source.upload_raw_file(raw_filepath=filepaths["raw"], partition=partition)
+    for filepath in raw_filepaths:
+        source.upload_raw_file(raw_filepath=filepath, partition=partition)
 
 
 @task(
@@ -248,7 +249,8 @@ def upload_source_data_to_gcs(source: SourceTable, partition: str, filepaths: di
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
 def transform_raw_to_nested_structure(
-    filepaths: dict,
+    raw_filepaths: list[str],
+    source_filepath,
     timestamp: datetime,
     primary_keys: list[str],
     reader_args: dict,
@@ -271,32 +273,34 @@ def transform_raw_to_nested_structure(
                 primary_keys (list[str])
             e retornar um pd.DataFrame
     """
-    data = read_raw_data(filepath=filepaths["raw"], reader_args=reader_args)
+    csv_mode = "w"
+    for raw_filepath in raw_filepaths:
+        data = read_raw_data(filepath=raw_filepath, reader_args=reader_args)
 
-    if data.empty:
-        log("Empty dataframe, skipping transformation...")
-        data = pd.DataFrame()
-    else:
-        log(f"Raw data:\n{data_info_str(data)}", level="info")
+        if data.empty:
+            log("Empty dataframe, skipping transformation...")
+            data = pd.DataFrame()
+        else:
+            log(f"Raw data:\n{data_info_str(data)}", level="info")
 
-        data_columns_len = len(data.columns)
-        captura = create_timestamp_captura(timestamp=datetime.now())
-        data["_datetime_execucao_flow"] = captura
+            data_columns_len = len(data.columns)
+            captura = create_timestamp_captura(timestamp=datetime.now())
+            data["_datetime_execucao_flow"] = captura
 
-        for step in pretreat_funcs:
-            data = step(data=data, timestamp=timestamp, primary_keys=primary_keys)
+            for step in pretreat_funcs:
+                data = step(data=data, timestamp=timestamp, primary_keys=primary_keys)
 
-        if len(primary_keys) < data_columns_len:
-            data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
+            if len(primary_keys) < data_columns_len:
+                data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
 
-        timestamp = create_timestamp_captura(timestamp=timestamp)
-        data["timestamp_captura"] = timestamp
+            timestamp = create_timestamp_captura(timestamp=timestamp)
+            data["timestamp_captura"] = timestamp
 
-    log(
-        f"Finished nested structure! Data: \n{data_info_str(data)}",
-        level="info",
-    )
+        log(
+            f"Finished nested structure! Data: \n{data_info_str(data)}",
+            level="info",
+        )
 
-    source_filepath = filepaths["source"]
-    save_local_file(filepath=source_filepath, filetype="csv", data=data)
-    log(f"Data saved in {source_filepath}")
+        save_local_file(filepath=source_filepath, filetype="csv", data=data, csv_mode=csv_mode)
+        csv_mode = "a"
+        log(f"Data saved in {source_filepath}")
