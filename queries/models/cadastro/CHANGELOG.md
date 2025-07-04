@@ -1,5 +1,22 @@
 # Changelog - cadastro
 
+## [1.6.0] - 2025-07-03
+
+### Adicionado
+
+- Move modelos do dataset `br_rj_riodejaneiro_bilhetagem_staging` para `cadastro_staging` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/505):
+  - `staging_cliente.sql`
+  - `staging_consorcio.sql`
+  - `staging_conta_bancaria.sql`
+  - `staging_contato_pessoa_juridica.sql`
+  - `staging_endereco.sql`
+  - `staging_linha_consorcio_operadora_transporte.sql`
+  - `staging_linha_consorcio.sql`
+  - `staging_linha_sem_ressarcimento.sql`
+  - `staging_linha_tarifa.sql`
+  - `staging_linha.sql`
+  - `staging_operadora_transporte.sql`
+
 ## [1.5.0] - 2025-06-25
 
 ### Adicionado
