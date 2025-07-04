@@ -308,6 +308,11 @@ with
                 {% else %} data = "2000-01-01"
                 {% endif %}
         {% endif %}
+        qualify
+            row_number() over (
+                partition by id_transacao order by datetime_retificacao desc
+            )
+            = 1
 
     ),
     retificacao_transacao as (
