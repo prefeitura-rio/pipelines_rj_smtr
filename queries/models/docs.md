@@ -791,6 +791,30 @@ Valor de glosa depositada em juízo [Autuação por ar inoperante, Veículo lice
 Valor total das viagens considerando o valor máximo por km
 {% enddocs %}
 
+{% docs cadastro_cliente %}
+Situação do cadastro do cliente na Jaé [cadastrado ou não cadastrado]
+{% enddocs %}
+
+{% docs produto %}
+Produto utilizado para efetuar o pagamento no padrão utilizado na SMTR [Gratuidade, Carteira, VT, Dinheiro (Botoeira), Cartão Avulso ou Visa Internacional]
+{% enddocs %}
+
+{% docs produto_jae %}
+Produto utilizado para efetuar o pagamento conforme os dados originais da Jaé
+{% enddocs %}
+
+{% docs tipo_usuario %}
+Tipo do usuário que efetuou a transação [ex.: Estudante, Idoso, Pagante]
+{% enddocs %}
+
+{% docs meio_pagamento %}
+Meio de pagamento utilizado no padrão utilizado na SMTR [Cartão, QRCode ou Dinheiro]
+{% enddocs %}
+
+{% docs meio_pagamento_jae %}
+Meio de pagamento conforme os dados originais da Jaé
+{% enddocs %}
+
 {% docs chave %}
 Chave
 {% enddocs %}
@@ -952,7 +976,7 @@ Classificação, observados os demais parâmetros - Categorias:
 
   - Não licenciado - Veículo que operou, mas não é licenciado
 
-  - Autuado por ar inoperante - Veículo que operou, foi licenciado com ar condicionado e foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado (023.II)
+  - Autuado por ar inoperante - Veículo que operou, foi licenciado com ar condicionado e foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado [023.II]
 
   - Autuado por segurança - Veículo que operou, foi licenciado, mas foi autuado por infração relacionada à segurança do veículo
 
@@ -1121,6 +1145,66 @@ Identificador da execução do DBT que modificou o dado pela última vez
 Quilometragem apurada de viagens realizadas sem passageiro registrado
 {% enddocs %}
 
+{% docs datetime_transacao %}
+Data e hora da transação [GMT-3]
+{% enddocs %}
+
+{% docs datetime_processamento_transacao %}
+Data e hora de processamento da transação [GMT-3]
+{% enddocs %}
+
+{% docs id_operadora %}
+Identificador da operadora na tabela cadastro.operadoras
+{% enddocs %}
+
+{% docs id_servico_jae %}
+Identificador da linha no banco de dados da jaé [É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae]
+{% enddocs %}
+
+{% docs servico_jae %}
+Nome curto da linha operada pelo veículo com variação de serviço [ex: 010, 011SN, ...] ou código da estação de BRT na Jaé
+{% enddocs %}
+
+{% docs id_cliente %}
+Identificador único do cliente [protegido]
+{% enddocs %}
+
 {% docs id_transacao %}
 Identificador único da transação
+{% enddocs %}
+
+{% docs tipo_transacao %}
+Tipo de transação realizada no padrão usado pela SMTR
+{% enddocs %}
+
+{% docs latitude_transacao %}
+Latitude da transação [WGS84]
+{% enddocs %}
+
+{% docs tile_id %}
+Identificador do hexágono da geolocalização na tabela rj-smtr.br_rj_riodejaneiro_geo.h3_res9
+{% enddocs %}
+
+{% docs valor_transacao %}
+Valor debitado na transação atual (R$)
+{% enddocs %}
+
+{% docs id_operadora_jae %}
+Identificador único da operadora no sistema da Jaé
+{% enddocs %}
+
+{% docs geo_point_transacao %}
+Ponto geográfico do local da transação
+{% enddocs %}
+
+{% docs quantidade_passageiros %}
+Quantidade de transações que aconteceram em determinada data e hora
+{% enddocs %}
+
+{% docs documento_operadora %}
+Documento do operador [CPF ou CNPJ] [protegido]
+{% enddocs %}
+
+{% docs tipo_documento_operadora %}
+Tipo do documento do operador [CPF ou CNPJ]
 {% enddocs %}
