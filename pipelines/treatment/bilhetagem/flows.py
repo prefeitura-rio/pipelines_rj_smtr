@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de bilhetagem
 
-DBT: 2025-07-04b
+DBT: 2025-07-04c
 """
 
 from pipelines.capture.jae.constants import constants as jae_constants

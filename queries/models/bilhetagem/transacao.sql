@@ -255,7 +255,8 @@ with
             latitude,
             longitude,
             geo_point_transacao,
-            valor_transacao
+            valor_transacao,
+            0 as priority
         from transacao_nova
 
         {% if is_incremental() %}
@@ -294,7 +295,8 @@ with
                 latitude,
                 longitude,
                 geo_point_transacao,
-                valor_transacao
+                valor_transacao,
+                1 as priority
             from transacao_atual
         {% endif %}
     ),
@@ -315,6 +317,11 @@ with
             = 1
 
     ),
+    particao_completa_deduplicada as (
+        select * except (priority)
+        from particao_completa
+        qualify row_number() over (partition by id_transacao order by priority) = 1
+    ),
     retificacao_transacao as (
         select
             p.* except (tipo_transacao_jae, valor_transacao),
@@ -322,7 +329,7 @@ with
                 tr.tipo_transacao_jae_retificada, p.tipo_transacao_jae
             ) as tipo_transacao_jae,
             ifnull(tr.valor_transacao_retificada, p.valor_transacao) as valor_transacao
-        from particao_completa p
+        from particao_completa_deduplicada p
         left join transacao_retificada tr using (id_transacao)
     ),
     -- Adiciona informações que são modificadas posteriormente pelo processo da Jaé
