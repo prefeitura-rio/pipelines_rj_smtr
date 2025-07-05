@@ -44,7 +44,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: timestamp_captura
-        description: "Timestamp de captura, pela SMTR, do sinal de GPS"
+        description: "{{ doc('timestamp_captura') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -69,7 +69,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: linha
-        description: "Linha de ônibus (serviço)"
+        description: "{{ doc('linha') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -104,7 +104,7 @@ models:
         #       values: [true, false]
         #       quote: false
       - name: flag_trajeto_correto_hist
-        description: "Flag de verificação se, nos últimos 'intervalo_max_desvio_segundos', ao menos algum ponto de GPS encontra-se até o limite de 'tamanho_buffer_metros' do shape da linha [Verdadeiro/Falso]"
+        description: "{{ doc('flag_trajeto_correto_hist') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -137,7 +137,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: linha
-        description: "Linha de ônibus (serviço)"
+        description: "{{ doc('linha') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -210,7 +210,7 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: linha
-        description: "Linha de ônibus (serviço)"
+        description: "{{ doc('linha') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -220,14 +220,14 @@ models:
         #   - not_negative:
         #       partition_column: data
       - name: velocidade
-        description: "Velocidade média nos últimos 10 minutos de operação (km/h)"
+        description: "{{ doc('velocidade_estimada_10_min') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
         #   - not_negative:
         #       partition_column: data
       - name: flag_em_movimento
-        description: "Veículos com 'velocidade' abaixo da 'velocidade_limiar_parado', são considerados como parado (false). Caso contrário, são considerados andando (true)"
+        description: "{{ doc('flag_em_movimento') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -266,12 +266,12 @@ models:
         #   - not_null:
         #       partition_column: data
       - name: timestamp_processamento
-        description: "Timestamp de processamento da realocação pela empresa operadora"
+        description: "{{ doc('timestamp_processamento') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
       - name: timestamp_captura
-        description: "Timestamp de captura, pela SMTR, do registro de realocação"
+        description: "{{ doc('timestamp_captura') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
@@ -313,14 +313,14 @@ models:
         #   - not_negative:
         #       partition_column: data
       - name: linha
-        description: "Linha de ônibus (serviço)"
+        description: "{{ doc('linha') }}"
         # tests:
         #   - not_null:
         #       partition_column: data
         #   - no_space:
         #       partition_column: data
       - name: timestamp_captura
-        description: "Timestamp de captura, pela SMTR, do sinal de GPS"
+        description: "{{ doc('timestamp_captura') }}"
         # tests:
         #   - not_null:
         #       partition_column: data

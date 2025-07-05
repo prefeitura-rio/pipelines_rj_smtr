@@ -151,7 +151,7 @@ models:
       - name: data
         description: "{{ doc('data_captura') }} [partição]"
       - name: timestamp_captura
-        description: "Timestamp de captura dos dados de licenciamento"
+        description: "{{ doc('timestamp_captura_licenciamento') }}"
       - name: modo
         description: "{{ doc('modo_onibus') }}"
       - name: id_veiculo
