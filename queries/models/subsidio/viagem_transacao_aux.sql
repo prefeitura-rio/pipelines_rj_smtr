@@ -4,10 +4,8 @@
 {% elif var("tipo_materializacao") == "subsidio" %} {% set interval_minutes = 30 %}
 {% endif %}
 
-{% set sem_transacao = "coalesce(tr.quantidade_transacao_riocard, 0) = 0  and coalesce(t.quantidade_transacao, 0) = 0" %}
-
 with
-    -- 1. Transações Jaé
+    -- Transações Jaé
     transacao as (
         select id_veiculo, servico_jae, datetime_transacao
         from {{ ref("transacao") }}
@@ -19,7 +17,7 @@ with
             and date(datetime_processamento) - date(datetime_transacao)
             <= interval 6 day
     ),
-    -- 2. Transações RioCard
+    -- Transações RioCard
     transacao_riocard as (
         select id_veiculo, servico_jae, datetime_transacao
         from {{ ref("transacao_riocard") }}
@@ -31,7 +29,7 @@ with
             and date(datetime_processamento) - date(datetime_transacao)
             <= interval 6 day
     ),
-    -- 3. GPS Validador
+    -- GPS Validador
     gps_validador as (
         select
             data,
@@ -57,8 +55,16 @@ with
             )
             and date(datetime_captura) - date(datetime_gps) <= interval 6 day
     ),
-    -- 4. Viagens realizadas
-    viagem as (
+    -- Status dos veículos
+    veiculos as (
+        select data, id_veiculo, status, tecnologia
+        from {{ ref("aux_veiculo_dia_consolidada") }}
+        where
+            data
+            between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
+    ),
+    -- Viagens realizadas
+    viagem_completa as (
         select
             data,
             servico_realizado as servico,
@@ -67,24 +73,49 @@ with
             id_veiculo,
             id_viagem,
             distancia_planejada,
-            sentido
+            sentido,
+            "Ônibus SPPO" as modo,
+            ve.status as tipo_viagem,
+            ve.tecnologia as tecnologia_apurada
         from {{ ref("viagem_completa") }}
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
+        left join veiculos as ve using (data, id_veiculo)
         where
             data
             between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
                 "{{ var('end_date') }}"
             )
+            and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
     ),
-    -- 5. Status dos veículos
-    veiculos as (
-        select data, id_veiculo, status, tecnologia
-        from {{ ref("aux_veiculo_dia_consolidada") }}
+    viagem as (
+        -- fmt: off
+        select * from viagem_completa
+
+        full outer union all by name
+        -- fmt: on
+        select
+            data,
+            id_viagem,
+            id_veiculo,
+            datetime_partida,
+            datetime_chegada,
+            modo,
+            tecnologia_apurada,
+            tecnologia_remunerada,
+            tipo_viagem,
+            servico,
+            sentido,
+            distancia_planejada
+        from {{ ref("viagem_classificada") }}
+        -- from `rj-smtr.subsidio.viagem_classificada`
         where
             data
-            between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
+            between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
+                "{{ var('end_date') }}"
+            )
+            and data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
     ),
-    -- 6. Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
+    -- Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
     -- limitada pela viagem anterior
     viagem_com_tolerancia_previa as (
         select
@@ -123,7 +154,7 @@ with
             end as datetime_partida_com_tolerancia
         from viagem as v
     ),
-    -- 7. Considera apenas as viagens realizadas no período de apuração
+    -- Considera apenas as viagens realizadas no período de apuração
     viagem_com_tolerancia as (
         select *
         from viagem_com_tolerancia_previa
@@ -131,7 +162,7 @@ with
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
     ),
-    -- 8. Contagem de transações Jaé
+    -- Contagem de transações Jaé
     transacao_contagem as (
         select
             v.data,
@@ -146,9 +177,9 @@ with
             on t.id_veiculo = substr(v.id_veiculo, 2)
             and t.datetime_transacao
             between v.datetime_partida_com_tolerancia and v.datetime_chegada
-        group by v.data, v.id_viagem
+        group by 1, 2
     ),
-    -- 9. Contagem de transações RioCard
+    -- Contagem de transações RioCard
     transacao_riocard_contagem as (
         select
             v.data,
@@ -164,9 +195,9 @@ with
             on tr.id_veiculo = substr(v.id_veiculo, 2)
             and tr.datetime_transacao
             between v.datetime_partida_com_tolerancia and v.datetime_chegada
-        group by v.data, v.id_viagem
+        group by 1, 2
     ),
-    -- 10. Ajusta estado do equipamento
+    -- Ajusta estado do equipamento
     -- Agrupa mesma posição para mesmo validador e veículo, mantendo preferencialmente
     -- o estado do equipamento "ABERTO" quanto latitude e longitude for diferente de
     -- (0,0)
@@ -218,7 +249,7 @@ with
                 )
             )
     ),
-    -- 11. Relacionamento entre estado do equipamento e viagem
+    -- Relacionamento entre estado do equipamento e viagem
     gps_validador_viagem as (
         select
             v.data,
@@ -236,131 +267,171 @@ with
             on e.id_veiculo = substr(v.id_veiculo, 2)
             and e.datetime_gps between v.datetime_partida and v.datetime_chegada
     ),
-    -- 12. Calcula a porcentagem de estado do equipamento "ABERTO" por validador e
+    -- Calcula a porcentagem de estado do equipamento "ABERTO" por validador e
     -- viagem
     estado_equipamento_perc as (
         select
             data,
             id_viagem,
             id_validador,
+            coalesce(t.quantidade_transacao, 0) as quantidade_transacao,
+            coalesce(
+                tr.quantidade_transacao_riocard, 0
+            ) as quantidade_transacao_riocard,
+            coalesce(
+                t.quantidade_transacao_servico_divergente, 0
+            ) as quantidade_transacao_servico_divergente,
+            coalesce(
+                tr.quantidade_transacao_riocard_servico_divergente, 0
+            ) as quantidade_transacao_riocard_servico_divergente,
             countif(servico != servico_jae) as quantidade_gps_servico_divergente,
             countif(estado_equipamento = "ABERTO")
             / count(*) as percentual_estado_equipamento_aberto
         from gps_validador_viagem
-        group by 1, 2, 3
+        left join transacao_contagem as t using (data, id_viagem)
+        left join transacao_riocard_contagem as tr using (data, id_viagem)
+        group by all
     ),
-    -- 13. Calcula maior e menor porcentagem de estado do equipamento
-    -- "ABERTO" por viagem
-    estado_equipamento_max_min as (
-        select
-            data,
-            id_viagem,
-            sum(quantidade_gps_servico_divergente) as quantidade_gps_servico_divergente,
-            max_by(
-                id_validador, percentual_estado_equipamento_aberto
-            ) as id_validador,
-            max(
-                percentual_estado_equipamento_aberto
-            ) as max_percentual_estado_equipamento_aberto,
-            min(
-                percentual_estado_equipamento_aberto
-            ) as min_percentual_estado_equipamento_aberto,
-        from estado_equipamento_perc
-        group by 1, 2
-    ),
-    -- 14. Verifica se a viagem possui estado do equipamento "ABERTO" em pelo menos
-    -- 80% dos registros
-    estado_equipamento_verificacao as (
+    validador_tipo_viagem as (
         select
             data,
             id_viagem,
             id_validador,
-            quantidade_gps_servico_divergente,
             case
-                when data < date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
-                then max_percentual_estado_equipamento_aberto
-                else min_percentual_estado_equipamento_aberto
-            end as percentual_estado_equipamento_aberto,
+                when data < date('{{ var("DATA_SUBSIDIO_V12_INICIO") }}')
+                then quantidade_transacao_riocard = 0
+                else (quantidade_transacao_riocard = 0 and quantidade_transacao = 0)
+            end as indicador_sem_transacao,
+            percentual_estado_equipamento_aberto
+            >= 0.8 as indicador_estado_equipamento_aberto,
             case
-                when data < date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
-                then
-                    if(
-                        max_percentual_estado_equipamento_aberto >= 0.8
-                        or max_percentual_estado_equipamento_aberto is null,
-                        true,
-                        false
+                when
+                    data >= date('{{ var("DATA_SUBSIDIO_V8_INICIO") }}')
+                    and (
+                        (
+                            data < date('{{ var("DATA_SUBSIDIO_V12_INICIO") }}')
+                            and (
+                                quantidade_transacao_riocard = 0
+                                or percentual_estado_equipamento_aberto < 0.8
+                            )
+                        )
+                        or (
+                            data >= date('{{ var("DATA_SUBSIDIO_V12_INICIO") }}')
+                            and data < date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                            and (
+                                (
+                                    quantidade_transacao_riocard = 0
+                                    and quantidade_transacao = 0
+                                )
+                                or percentual_estado_equipamento_aberto < 0.8
+                            )
+                        )
+                        or (
+                            data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                            and (
+                                quantidade_transacao_riocard = 0
+                                and quantidade_transacao = 0
+                            )
+                        )
                     )
-                else if(min_percentual_estado_equipamento_aberto >= 0.8, true, false)
+                then 'Sem transação'
+
+                when
+                    data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                    and percentual_estado_equipamento_aberto < 0.8
+                then 'Validador fechado'
+
+                when
+                    data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                    and (
+                        quantidade_transacao_riocard_servico_divergente > 0
+                        or quantidade_transacao_servico_divergente > 0
+                        or quantidade_gps_servico_divergente > 0
+                    )
+                then 'Validador associado incorretamente'
+                else 'Manter tipo viagem'
+            end as tipo_viagem
+        from estado_equipamento_perc
+    ),
+    prioridade_tipo_viagem as (
+        select 'Sem transação' as tipo_viagem, 1 as prioridade
+        union all
+        select 'Validador fechado', 2
+        union all
+        select 'Validador associado incorretamente', 3
+        union all
+        select 'Manter tipo viagem', 4
+    ),
+    estado_equipamento as (
+        select
+            data,
+            id_viagem,
+            max(indicador_sem_transacao) as indicador_sem_transacao,
+            case
+                when data < date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                then max(indicador_estado_equipamento_aberto)
+                else min(indicador_estado_equipamento_aberto)
             end as indicador_estado_equipamento_aberto
-        from viagem
-        left join estado_equipamento_max_min using (data, id_viagem)
+        from validador_tipo_viagem
+        group by 1, 2
+    ),
+    validadores_agrupados as (
+        select
+            vtv.data,
+            vtv.id_viagem,
+            vtv.tipo_viagem,
+            array_agg(distinct vtv.id_validador) as id_validador,
+            ee.indicador_sem_transacao,
+            ee.indicador_estado_equipamento_aberto,
+            ptv.prioridade
+        from validador_tipo_viagem vtv
+        join prioridade_tipo_viagem ptv using (tipo_viagem)
+        join estado_equipamento ee using (data, id_viagem)
+        group by all
+        qualify
+            row_number() over (
+                partition by vtv.data, vtv.id_viagem order by ptv.prioridade
+            )
+            = 1
     )
 select
     v.data,
     v.id_viagem,
     v.id_veiculo,
     v.servico,
-    eev.id_validador,
+    va.id_validador,
     case
         when
-            ve.status not in (
+            v.tipo_viagem not in (
                 "Licenciado com ar e não autuado", "Licenciado sem ar e não autuado"
             )
-        then ve.status
+            or va.tipo_viagem = "Manter tipo viagem"
+        then v.tipo_viagem
         when
-            v.data >= date("{{ var('DATA_SUBSIDIO_V8_INICIO') }}")
-            and (
-                (
-                    v.data < date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
-                    and (
-                        coalesce(tr.quantidade_transacao_riocard, 0) = 0
-                        or coalesce(eev.indicador_estado_equipamento_aberto, false)
-                        = false
-                    )
-                )
-                or (
-                    v.data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
-                    and (
-                        ({{ sem_transacao }})
-                        or coalesce(eev.indicador_estado_equipamento_aberto, false)
-                        = false
-                    )
-                )
-                or (
-                    v.data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
-                    and ({{ sem_transacao }})
-                )
-            )
-            and v.datetime_partida not between "2024-10-06 06:00:00"
-            and "2024-10-06 20:00:00"  -- Eleição (2024-10-06)
-        then "Sem transação"
-        when
-            v.data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
-            and coalesce(eev.indicador_estado_equipamento_aberto, false) = false
-        then "Validador fechado"
-        when
-            v.data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
-            and (
-                tr.quantidade_transacao_riocard_servico_divergente > 0
-                or t.quantidade_transacao_servico_divergente > 0
-                or eev.quantidade_gps_servico_divergente > 0
-            )
-        then "Validador associado incorretamente"
-        else ve.status
+            v.data < date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+            and va.tipo_viagem = "Sem transação"
+            and not va.indicador_sem_transacao
+            and va.indicador_estado_equipamento_aberto
+        then v.tipo_viagem
+        else va.tipo_viagem
     end as tipo_viagem,
-    ve.tecnologia,
+    v.modo,
+    v.tecnologia_apurada,
+    v.tecnologia_remunerada,
     v.sentido,
     v.distancia_planejada,
-    coalesce(t.quantidade_transacao, 0) as quantidade_transacao,
-    coalesce(tr.quantidade_transacao_riocard, 0) as quantidade_transacao_riocard,
-    eev.percentual_estado_equipamento_aberto,
-    eev.indicador_estado_equipamento_aberto,
+    any_value(eep.quantidade_transacao) as quantidade_transacao,
+    any_value(eep.quantidade_transacao_riocard) as quantidade_transacao_riocard,
+    case
+        when data < date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+        then max(eep.percentual_estado_equipamento_aberto)
+        else min(eep.percentual_estado_equipamento_aberto)
+    end as percentual_estado_equipamento_aberto,
+    va.indicador_estado_equipamento_aberto,
     v.datetime_partida_com_tolerancia as datetime_partida_bilhetagem,
     v.datetime_partida,
     v.datetime_chegada,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
 from viagem_com_tolerancia as v
-left join veiculos as ve using (data, id_veiculo)
-left join transacao_contagem as t using (data, id_viagem)
-left join transacao_riocard_contagem as tr using (data, id_viagem)
-left join estado_equipamento_verificacao as eev using (data, id_viagem)
+left join estado_equipamento_perc as eep using (data, id_viagem)
+left join validadores_agrupados as va using (data, id_viagem)
