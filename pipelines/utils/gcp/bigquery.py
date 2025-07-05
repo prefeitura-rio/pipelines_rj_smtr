@@ -180,6 +180,7 @@ class SourceTable(BQTable):
         partition_date_only: bool = False,
         max_recaptures: int = 60,
         raw_filetype: str = "json",
+        file_chunk_size: int = None,
     ) -> None:
         self.source_name = source_name
         super().__init__(
@@ -197,6 +198,7 @@ class SourceTable(BQTable):
         self.pretreatment_reader_args = pretreatment_reader_args
         self.pretreat_funcs = pretreat_funcs or []
         self.schedule_cron = schedule_cron
+        self.file_chunk_size = file_chunk_size
 
     def _create_table_schema(self, sample_filepath: str) -> list[bigquery.SchemaField]:
         """
