@@ -199,6 +199,8 @@ models:
           - id_veiculo
           - data_processamento
           name: dbt_utils.unique_combination_of_columns__veiculo_licenciamento_dia
+      - test_check_data_arquivo_licenciamento:
+          name: test_check_data_arquivo_licenciamento__veiculo_licenciamento_dia
     columns:
       - name: data
         description: Data [partição]
