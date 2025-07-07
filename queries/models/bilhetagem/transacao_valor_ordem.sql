@@ -74,14 +74,15 @@
             run_query(transacao_partitions_query).columns[0].values()
         ) %}
 
-        {% set ordens_pagamento_modificadas_query %}
-            select distinct concat("'", data_ordem, "'") from {{ transacao }} where data in ({{ transacao_partitions | join(", ") }}) and data_ordem is not null
+        {% if transacao_partitions | length > 0 %}
+            {% set ordens_pagamento_modificadas_query %}
+                select distinct concat("'", data_ordem, "'") from {{ transacao }} where data in ({{ transacao_partitions | join(", ") }}) and data_ordem is not null
 
-            union distinct
+                union distinct
 
-            select distinct concat("'", data_ordem, "'") from {{ integracao }} where data in ({{ transacao_partitions | join(", ") }}) and data_ordem is not null
-        {% endset %}
-        {% if transacao_partitions_query | length > 0 %}
+                select distinct concat("'", data_ordem, "'") from {{ integracao }} where data in ({{ transacao_partitions | join(", ") }}) and data_ordem is not null
+            {% endset %}
+
             {% set ordens_pagamento_modificadas = (
                 run_query(ordens_pagamento_modificadas_query)
                 .columns[0]
