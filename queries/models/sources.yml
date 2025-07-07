@@ -121,6 +121,7 @@ sources:
       - name: sppo_registro_agente_verao
       - name: sppo_licenciamento_solicitacao
       - name: sppo_licenciamento
+      - name: sppo_vistoria_tr_subtt_cmo_recurso_SMTR202404004977
       - name: infracao
       - name: licenciamento_stu
 
@@ -272,6 +273,7 @@ sources:
       - name: endereco
       - name: produto
       - name: linha_tarifa
+      - name: transacao_retificada
 
   - name: source_sonda
     database: rj-smtr-staging

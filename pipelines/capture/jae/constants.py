@@ -24,7 +24,7 @@ class constants(Enum):  # pylint: disable=c0103
     JAE_DATABASE_SETTINGS = {
         "principal_db": {
             "engine": "mysql",
-            "host": "10.5.115.178",
+            "host": "10.5.112.98",
         },
         "tarifa_db": {
             "engine": "postgresql",
@@ -103,6 +103,7 @@ class constants(Enum):  # pylint: disable=c0103
     GPS_VALIDADOR_TABLE_ID = "gps_validador"
     INTEGRACAO_TABLE_ID = "integracao_transacao"
     TRANSACAO_ORDEM_TABLE_ID = "transacao_ordem"
+    TRANSACAO_RETIFICADA_TABLE_ID = "transacao_retificada"
 
     JAE_TABLE_CAPTURE_PARAMS = {
         TRANSACAO_TABLE_ID: {
@@ -114,6 +115,20 @@ class constants(Enum):  # pylint: disable=c0103
                 WHERE
                     data_processamento >= timestamp '{start}' - INTERVAL '5 minutes'
                     AND data_processamento < timestamp '{end}' - INTERVAL '5 minutes'
+            """,
+            "database": "transacao_db",
+        },
+        TRANSACAO_RETIFICADA_TABLE_ID: {
+            "query": """
+                SELECT
+                    r.*,
+                    t.data_transacao
+                FROM
+                    transacao_retificada r
+                JOIN transacao t on r.id_transacao = t.id
+                WHERE
+                    data_retificacao >= timestamp '{start}' - INTERVAL '5 minutes'
+                    AND data_retificacao < timestamp '{end}' - INTERVAL '5 minutes'
             """,
             "database": "transacao_db",
         },
@@ -520,6 +535,15 @@ class constants(Enum):  # pylint: disable=c0103
         primary_keys=["id"],
     )
 
+    TRANSACAO_RETIFICADA_SOURCE = SourceTable(
+        source_name=JAE_SOURCE_NAME,
+        table_id=TRANSACAO_RETIFICADA_TABLE_ID,
+        first_timestamp=datetime(2025, 6, 3, 0, 0, 0),
+        schedule_cron=create_minute_cron(minute=10),
+        primary_keys=["id"],
+        bucket_names=JAE_PRIVATE_BUCKET_NAMES,
+    )
+
     GPS_VALIDADOR_SOURCE = SourceTable(
         source_name=JAE_SOURCE_NAME,
         table_id=GPS_VALIDADOR_TABLE_ID,
@@ -622,6 +646,9 @@ class constants(Enum):  # pylint: disable=c0103
                 "estudante_01042025",
                 "temp_estudante_cpfduplicado_11042025",
                 "estudante_30042025",
+                "estudante_24062025",
+                "estudante_20062025",
+                "producao_20250617081705_02_VT",
             ],
             "filter": {
                 "ITEM_PEDIDO": ["DT_INCLUSAO"],
@@ -765,6 +792,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "estudante_import_old",
                 "estudante_import_old",
                 "gratuidade_import_pcd_old",
+                "estudante_seeduc_25032025",
                 # sem permissão: #
                 "pcd_excluir",
                 "estudante_seeduc",

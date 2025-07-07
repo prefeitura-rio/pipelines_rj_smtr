@@ -1,8 +1,14 @@
 # Changelog - bilhetagem
 
+## [2.0.2] - 2025-07-03
+
+### Alterado
+
+- Agenda execução do flow `TRANSACAO_VALOR_ORDEM_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/658)
+
 ## [2.0.1] - 2025-05-05
 
-## Adicionado
+### Adicionado
 
 - Adiciona `handler_notify_failure` nos flows (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/559):
   - `TRANSACAO_MATERIALIZACAO`
@@ -12,7 +18,7 @@
 
 ## [2.0.0] - 2025-03-26
 
-## Adicionado
+### Adicionado
 
 - Migra flows de tratamento da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/489)
 

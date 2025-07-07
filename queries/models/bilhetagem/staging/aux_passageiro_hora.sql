@@ -10,21 +10,11 @@ select
     descricao_servico_jae,
     sentido,
     id_transacao,
-    tipo_transacao_smtr,
-    ifnull(
-        case
-            when tipo_transacao_smtr = "Gratuidade"
-            then tipo_gratuidade
-            when tipo_transacao_smtr = "Integração"
-            then "Integração"
-            when tipo_transacao_smtr = "Transferência"
-            then "Transferência"
-            else tipo_pagamento
-        end,
-        "Não Identificado"
-    ) as tipo_transacao_detalhe_smtr,
-    tipo_gratuidade,
-    tipo_pagamento,
+    cadastro_cliente,
+    produto,
+    tipo_transacao,
+    tipo_usuario,
+    meio_pagamento,
     geo_point_transacao
 from {{ ref("transacao") }}
 where
@@ -51,10 +41,11 @@ select
     descricao_servico_jae,
     sentido,
     id_transacao,
-    "RioCard" as tipo_transacao_smtr,
-    "RioCard" as tipo_transacao_detalhe_smtr,
-    null as tipo_gratuidade,
-    "RioCard" as tipo_pagamento,
+    "Não Cadastrado" as cadastro_cliente,
+    "RioCard" as produto,
+    "RioCard" as tipo_transacao,
+    "RioCard" as tipo_usuario,
+    "RioCard" as meio_pagamento,
     st_geogpoint(longitude, latitude) as geo_point_transacao
 from {{ ref("transacao_riocard") }}
 where

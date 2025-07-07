@@ -1,5 +1,19 @@
 # Changelog - source_jae
 
+## [2.1.4] - 2025-07-03
+
+### Adicionado
+
+- Cria flow `CAPTURA_TRANSACAO_RETIFICADA` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/658)
+
+## [2.0.4] - 2025-07-02
+
+### Alterado
+- Altera IP do banco `principal_db` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/655)
+- Adiciona tabelas `estudante_seeduc_25032025`, `estudante_24062025`, `estudante_20062025` e `producao_20250617081705_02_VT` no exclude do backup da billing pay (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/655)
+
+### Alterado
+
 ## [2.0.3] - 2025-04-28
 
 ### Alterado
