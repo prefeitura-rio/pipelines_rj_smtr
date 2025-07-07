@@ -12,7 +12,7 @@
             select date(data) as data, id_veiculo, placa
             from {{ ref("staging_licenciamento_stu") }}
             where
-                data between date_sub(
+                date(data) between date_sub(
                     date("{{ var('date_range_start') }}"), interval 1 day
                 ) and date("{{ var('date_range_end') }}")
         ),

@@ -371,9 +371,6 @@ models:
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: veiculo_fiscalizacao_lacre
     description: Tabela com as informações do controle do lacre e deslacre de veículos
-    tests:
-      - test_check_veiculo_lacre:
-          name: test_check_veiculo_lacre__veiculo_fiscalizacao_lacre
     columns:
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
@@ -632,6 +629,8 @@ models:
           exclusion_condition: |
             date_day >= date('{{ var("data_final_veiculo_arquitetura_1") }}')
           name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__veiculo_dia
+      - test_check_veiculo_lacre:
+          name: test_check_veiculo_lacre__veiculo_fiscalizacao_lacre
     columns:
       - name: data
         description: "{{ doc('data_operacao') }}"
