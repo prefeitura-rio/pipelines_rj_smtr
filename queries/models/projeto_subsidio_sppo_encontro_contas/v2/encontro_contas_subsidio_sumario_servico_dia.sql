@@ -19,7 +19,7 @@ from
         where data < date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}")
         union all
         select *
-        from {{ ref("staging_encontro_contas_servico_dia") }}
+        from {{ ref("aux_encontro_contas_servico_dia") }}
         where data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}")
     )
 where

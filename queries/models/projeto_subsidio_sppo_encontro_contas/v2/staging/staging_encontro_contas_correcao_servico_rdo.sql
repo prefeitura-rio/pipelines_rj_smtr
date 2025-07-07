@@ -1,4 +1,3 @@
-{{ config(materialized="ephemeral") }}
 select
     * except (data, receita_tarifaria, tipo, data_resposta, servico, servico_corrigido),
     parse_date("%d/%m/%Y", data) as data,
