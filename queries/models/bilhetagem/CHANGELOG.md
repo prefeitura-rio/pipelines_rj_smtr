@@ -1,5 +1,38 @@
 # Changelog - bilhetagem
 
+## [3.2.0] - 2025-07-03
+
+### Adicionado
+
+- Cria modelos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/505):
+   `aux_transacao_particao.sql`
+   `dicionario_bilhetagem.sql`
+   `integracao.sql`
+   `passageiro_hora.sql`
+   `passageiro_tile_hora.sql`
+   `transacao_riocard.sql`
+   `transacao.sql`
+
+- Move modelos do dataset `br_rj_riodejaneiro_bilhetagem_staging` para `bilhetagem_staging` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/505):
+  - `aux_gratuidade.sql`
+  - `aux_passageiro_hora.sql`
+  - `staging_gratuidade.sql`
+  - `staging_integracao_transacao.sql`
+  - `staging_produto.sql`
+  - `staging_transacao_ordem.sql`
+  - `staging_transacao_riocard.sql`
+  - `staging_transacao.sql`
+
+## [3.1.1] - 2025-07-03
+
+### Adicionado
+
+- Cria modelos `staging_transacao_retificada.sql` e `transacao_retificada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/658)
+
+### Alterado
+
+- Remove ordens incorretas do modelo `transacao_valor_ordem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/658)
+
 ## [3.1.0] - 2025-02-04
 
 ### Adicionado

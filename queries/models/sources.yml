@@ -280,6 +280,7 @@ sources:
       - name: endereco
       - name: produto
       - name: linha_tarifa
+      - name: transacao_retificada
 
   - name: source_sonda
     database: rj-smtr-staging

@@ -1,5 +1,13 @@
 # Changelog - dashboard_bilhetagem_jae
 
+## [2.0.0] - 2025-07-03
+
+### Alterado
+
+- Renomeia modelos `view_passageiros_hora.sql` e `view_passageiros_tile_hora.sql` para `view_passageiro_hora.sql` e `view_passageiro_tile_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/505)
+
+- Altera modelos `view_passageiro_hora.sql` e `view_passageiro_tile_hora.sql` para refletir a nova classificação de transação (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/505)
+
 ## [1.0.2] - 2024-08-05
 
 ### Adicionado
