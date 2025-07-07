@@ -25,8 +25,6 @@ with
             ) as timestamp_captura,
             json_value(content, '$.data_pagamento') as raw_data_pagamento
         from {{ source("veiculo_staging", "infracao") }} as t
-        from `rj-smtr-staging.veiculo_staging.infracao`
-        where data = "2025-07-06"
     ),
 
     infracoes_com_datas as (
@@ -34,7 +32,7 @@ with
             *,
 
             -- Parse apenas a data (sem hora)
-            parse_date(
+            safe.parse_date(
                 "%d/%m/%Y", split(raw_data_infracao, " ")[offset(0)]
             ) as data_infracao,
 
