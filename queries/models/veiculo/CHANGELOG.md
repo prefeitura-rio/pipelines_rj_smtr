@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrigida a verificação do status do veiculo no modelo `sppo_veiculo_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/510)
+- Corrigida a verificação do status do veículo no modelo `sppo_veiculo_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/510)
 
 ### Alterado
 
