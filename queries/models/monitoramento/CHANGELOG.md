@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrigida a coluna `datetime_infracao` no modelo `staging_infracao.sql` para datas anteriores a `2025-06-25` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/652)
+- Corrigida a coluna `datetime_infracao` no modelo `staging_infracao.sql` para datas anteriores a `2025-06-25` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/666)
 
 ## [1.5.3] - 2025-06-30
 
