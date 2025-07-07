@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [2.1.5] - 2025-07-07
+
+### Alterado
+
+- Refatora captura da tabela `integracao_transacao` para utilizar paginação (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/664)
+
 ## [2.1.4] - 2025-07-03
 
 ### Adicionado
