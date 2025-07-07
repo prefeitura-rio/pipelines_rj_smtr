@@ -2,6 +2,7 @@
 """
 Tasks for rj_smtr
 """
+import os
 from copy import deepcopy
 from datetime import datetime, timedelta
 from typing import Callable
@@ -190,8 +191,8 @@ def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str, s
 
     raw_filepaths = []
     for idx, file in enumerate(data):
-        filepath_parts = raw_filepath.split(".")
-        filepath = f"{filepath_parts[0]}_{idx}.{filepath_parts[1]}"
+        base_path, ext = os.path.splitext(raw_filepath)
+        filepath = f"{base_path}_{idx}{ext}"
         save_local_file(filepath=filepath, filetype=raw_filetype, data=file)
         raw_filepaths.append(filepath)
 
