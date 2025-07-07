@@ -2,7 +2,7 @@
 """Módulo para interagir com tabelas e datasets do BigQuery"""
 import csv
 from datetime import datetime, timedelta
-from typing import Callable
+from typing import Callable, Optional
 
 import basedosdados as bd
 import pandas as pd
@@ -180,6 +180,7 @@ class SourceTable(BQTable):
         partition_date_only: bool = False,
         max_recaptures: int = 60,
         raw_filetype: str = "json",
+        file_chunk_size: Optional[int] = None,
     ) -> None:
         self.source_name = source_name
         super().__init__(
@@ -197,6 +198,7 @@ class SourceTable(BQTable):
         self.pretreatment_reader_args = pretreatment_reader_args
         self.pretreat_funcs = pretreat_funcs or []
         self.schedule_cron = schedule_cron
+        self.file_chunk_size = file_chunk_size
 
     def _create_table_schema(self, sample_filepath: str) -> list[bigquery.SchemaField]:
         """
