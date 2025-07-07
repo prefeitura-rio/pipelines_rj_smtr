@@ -1,6 +1,6 @@
 # Changelog - financeiro_staging
 
-## [1.0.3] - 2025-07-1
+## [1.0.3] - 2025-07-07
 
 ### Alterado
 
@@ -11,7 +11,6 @@
 ### Removido
 
 - Remove o modelo `subsidio_faixa_servico_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/624)
-
 
 ## [1.0.1] - 2024-09-20
 
