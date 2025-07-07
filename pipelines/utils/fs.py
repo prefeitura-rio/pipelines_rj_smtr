@@ -120,7 +120,9 @@ def save_local_file(
 
     Args:
         filepath (str): Caminho para salvar o arquivo
+        filetype (str): Extensão do arquivo
         data Union[str, dict, list[dict], pd.DataFrame]: Dados que serão salvos no arquivo
+        csv_mode (str): Modo de escrita no arquivo CSV
     """
     log(f"Saving data on local file: {filepath}")
 

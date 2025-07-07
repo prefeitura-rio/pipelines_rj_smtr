@@ -182,6 +182,7 @@ def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str, s
                 "source": source/caminho/para/salvar/arquivo.extensao
             }
         raw_filetype (str): tipo de dado raw
+        source (SourceTable): Objeto representando a fonte de dados capturados
     """
     data = data_extractor()
     raw_filepath = filepaths["raw"]
@@ -214,11 +215,7 @@ def upload_raw_file_to_gcs(source: SourceTable, raw_filepaths: list[str], partit
 
     Args:
         source (SourceTable): Objeto representando a fonte de dados capturados
-        filepaths (dict): Dicionário no formato:
-            {
-                "raw": raw/caminho/para/salvar/arquivo.extensao,
-                "source": source/caminho/para/salvar/arquivo.extensao
-            }
+        raw_filepaths (list): Lista de caminhos para ler os dados raw
         partition (str): Partição Hive
     """
     for filepath in raw_filepaths:
@@ -272,7 +269,7 @@ def transform_raw_to_nested_structure(
     Task para aplicar pre-tratamentos e transformar os dados para o formato aninhado
 
     Args:
-        raw_filepath (str): Caminho para ler os dados raw
+        raw_filepaths (list): Lista de caminhos para ler os dados raw
         source_filepath (str): Caminho para salvar os dados tratados
         timestamp (datetime): A timestamp da execução do Flow
         primary_keys (list): Lista de primary keys da tabela
