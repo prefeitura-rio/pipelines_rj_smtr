@@ -1,8 +1,3 @@
-{# {{
-    config(
-        materialized="ephemeral",
-    )
-}} #}
 with
     -- 1. Lista pares data-serviço atípicos (pares de dia e serviço que registraram
     -- ocorrências com potencial de impactar a operação e comprometer a apuração das

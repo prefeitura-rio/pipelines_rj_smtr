@@ -1,8 +1,3 @@
-{# {{
-    config(
-        materialized="ephemeral",
-    )
-}} #}
 -- Referências
 {# {% set rdo40_registros = ref("rdo40_registros") %} #}
 {% set rdo40_registros = "rj-smtr.br_rj_riodejaneiro_rdo.rdo40_registros" %}

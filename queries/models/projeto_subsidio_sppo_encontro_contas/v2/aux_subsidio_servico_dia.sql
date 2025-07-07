@@ -1,8 +1,3 @@
-{# {{
-    config(
-        materialized="ephemeral",
-    )
-}} #}
 with
     -- 1. Lista pares data-serviço com correção do serviço (serviço corrigido é o
     -- serviço correto que deve ser utilizado no encontro de contas)
