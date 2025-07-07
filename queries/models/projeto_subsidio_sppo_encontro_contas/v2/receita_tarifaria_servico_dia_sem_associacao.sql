@@ -5,9 +5,7 @@ with
     -- base na quilometragem percorrida e, mesmo após recurso, ainda não incorporados
     -- ao datalake house)
     servico_dia_atipico as (
-        select distinct data, servico
-        from {{ ref("servico_dia_atipico") }}
-        where incorporado_datalake_house is not true
+        select distinct data, servico from {{ ref("servico_dia_atipico") }}
     ),
     -- 2. Lista pares data-serviço corrigidos do RDO
     rdo_corrigido as (select * from {{ ref("aux_rdo_servico_dia") }}),
