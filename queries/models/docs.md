@@ -1015,24 +1015,12 @@ Data da última atualização
 Data e hora do processamento da viagem
 {% enddocs %}
 
-{% docs datetime_transacao %}
-Data e hora da transação
-{% enddocs %}
-
 {% docs especie_veiculo %}
 Espécie do veículo
 {% enddocs %}
 
 {% docs horario_inicio %}
 Horário inicial de funcionamento
-{% enddocs %}
-
-{% docs id_operadora %}
-Identificador da operadora na tabela cadastro.operadoras
-{% enddocs %}
-
-{% docs id_servico_jae %}
-Identificador da linha no banco de dados da jaé [É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae]
 {% enddocs %}
 
 {% docs indicador_autuacao_equipamento %}
