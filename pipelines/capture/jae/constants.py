@@ -166,6 +166,7 @@ class constants(Enum):  # pylint: disable=c0103
                 WHERE
                     data_inclusao BETWEEN '{start}'
                     AND '{end}'
+                ORDER BY data_inclusao
             """,
         },
         TRANSACAO_ORDEM_TABLE_ID: {
@@ -559,6 +560,7 @@ class constants(Enum):  # pylint: disable=c0103
         schedule_cron=create_daily_cron(hour=5),
         primary_keys=["id"],
         max_recaptures=2,
+        file_chunk_size=20000,
     )
 
     JAE_AUXILIAR_SOURCES = [
