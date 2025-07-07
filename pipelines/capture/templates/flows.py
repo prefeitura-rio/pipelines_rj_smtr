@@ -144,29 +144,31 @@ def create_default_capture_flow(
             timestamp=timestamps,
         )
 
-        get_raw = get_raw_task.map(
+        raw_filepaths = get_raw_task.map(
             data_extractor=data_extractors,
             filepaths=filepaths,
             raw_filetype=unmapped(activated_source["raw_filetype"]),
+            source=unmapped(activated_source),
         )
 
         upload_raw = upload_raw_file_to_gcs.map(
             source=unmapped(activated_source),
-            filepaths=filepaths,
+            raw_filepaths=raw_filepaths,
             partition=partitions,
         )
-        upload_raw.set_upstream(get_raw)
+        upload_raw.set_upstream(raw_filepaths)
 
         # Pré-tratamento #
 
         pretreatment = transform_raw_to_nested_structure.map(
+            raw_filepaths=raw_filepaths,
             filepaths=filepaths,
             timestamp=timestamps,
             primary_keys=unmapped(activated_source["primary_keys"]),
             reader_args=unmapped(activated_source["pretreatment_reader_args"]),
             pretreat_funcs=unmapped(activated_source["pretreat_funcs"]),
         )
-        pretreatment.set_upstream(get_raw)
+        pretreatment.set_upstream(raw_filepaths)
 
         upload_source = upload_source_data_to_gcs.map(
             source=unmapped(activated_source),
