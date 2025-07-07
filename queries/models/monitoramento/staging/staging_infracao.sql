@@ -15,7 +15,7 @@ SELECT
   SAFE_CAST(JSON_VALUE(content,'$.placa') AS STRING) placa,
   SAFE_CAST(id_auto_infracao AS STRING) id_auto_infracao,
   PARSE_DATE("%d/%m/%Y", split(SAFE_CAST(JSON_VALUE(content,'$.data_infracao') AS STRING), " ")[OFFSET(0)]) data_infracao,
-  PARSE_DATETIME('%d/%m/%Y %H:%M:%S', 
+  PARSE_DATETIME('%d/%m/%Y %H:%M:%S',
     IF(
       REGEXP_CONTAINS(JSON_VALUE(content, '$.data_infracao'), r'\d{2}/\d{2}/\d{4} \d{2}:\d{2}'),
       CONCAT(SAFE_CAST(JSON_VALUE(content, '$.data_infracao') AS STRING), ':00'),
