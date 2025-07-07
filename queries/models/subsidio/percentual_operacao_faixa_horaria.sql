@@ -56,7 +56,7 @@ with
                             if(
                                 (
                                     p.data
-                                    between date("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}") and date_sub('{{ var("DATA_SUBSIDIO_V15_INICIO") }}', interval 1 day)
+                                    between date("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}") and date_sub(Date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}'), interval 1 day)
                                     and v.tipo_viagem
                                     in ('Não licenciado', 'Não vistoriado')
                                 )

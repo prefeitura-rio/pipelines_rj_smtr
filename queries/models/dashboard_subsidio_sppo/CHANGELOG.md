@@ -1,9 +1,9 @@
 # Changelog - dashboard_subsidio_sppo
-## [7.1.0] - 2025-07-07
+## [7.2.0] - 2025-07-07
 
 ### Alterado
 
-- Altera o o modelo `viagens_remuneradas.sql` para desconsiderar a `distancia_planejada` para o calculo de `pof` de viagens do tipo `Não licenciado` e `Não vistoriado` a partir e `2024-09-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/510)
+- Altera o modelo `viagens_remuneradas.sql` para desconsiderar a `distancia_planejada` para o calculo de `pof` de viagens do tipo `Não licenciado` e `Não vistoriado` a partir e `2024-09-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/510)
 
 ## [7.1.9] - 2025-06-25
 
