@@ -32,12 +32,12 @@ with
             *,
 
             -- Parse apenas a data (sem hora)
-            safe.parse_date(
+            parse_date(
                 "%d/%m/%Y", split(raw_data_infracao, " ")[offset(0)]
             ) as data_infracao,
 
             -- Normaliza e converte para DATETIME (com hora, mesmo que seja 00:00:00)
-            safe.parse_datetime(
+            parse_datetime(
                 "%d/%m/%Y %H:%M:%S",
                 case
                     when
