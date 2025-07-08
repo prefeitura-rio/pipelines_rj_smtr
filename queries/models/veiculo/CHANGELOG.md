@@ -1,5 +1,11 @@
 # Changelog - veiculo
 
+## [2.1.4] - 2025-07-08
+
+### Corrigido
+
+- Corrigida a a coluna `ano_ultima_vistoria` no modelo `licenciamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/656)
+
 ## [2.1.3] - 2025-07-02
 
 ### Corrigido

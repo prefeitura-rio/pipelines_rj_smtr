@@ -87,7 +87,7 @@ with
     ),
     stu_rn as (
         select
-            * except (timestamp_captura),
+            * except (timestamp_captura, ano_ultima_vistoria),
             extract(year from data_ultima_vistoria) as ano_ultima_vistoria,
         from stu_tipo_veiculo
         qualify row_number() over (partition by data, id_veiculo) = 1
