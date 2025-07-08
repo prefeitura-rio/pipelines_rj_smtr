@@ -5,7 +5,7 @@
 # Adicionado
 
 - Cria modelo `viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/649)
-- Adiciona as colunas `modo`, `tecnologia_apurada`, `tecnologia_remunerada` e `sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/649)
+- Adiciona as colunas `modo`, `tecnologia_apurada`, `tecnologia_remunerada` e `sentido` no modelo `viagem_transacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/649)
 
 ### Alterado
 
