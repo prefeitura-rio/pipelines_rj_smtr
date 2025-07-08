@@ -78,7 +78,7 @@
                 on vle.id_veiculo = vd.id_veiculo
                 and vle.data_lacre = vd.data
                 and vle.placa = vd.placa
-            where vd.indicador_veiculo_lacrado is false
+            where vd.indicador_veiculo_lacrado is false or vd.id_veiculo is null
         ),
         falhas as (
             select data, id_veiculo, placa, erro

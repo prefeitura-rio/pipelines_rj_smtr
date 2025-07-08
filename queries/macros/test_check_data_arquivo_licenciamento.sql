@@ -23,7 +23,7 @@
                 vld.placa,
                 max(sls.data) as data_arquivo_mais_recente
             from veiculo_licenciamento_dados vld
-            join
+            left join
                 staging_licenciamento_stu sls
                 on vld.id_veiculo = sls.id_veiculo
                 and vld.placa = sls.placa
@@ -42,5 +42,7 @@
         on vld.data = damrpv.data
         and vld.id_veiculo = damrpv.id_veiculo
         and vld.placa = damrpv.placa
-    where vld.data_arquivo_fonte != damrpv.data_arquivo_mais_recente
+    where
+        vld.data_arquivo_fonte != damrpv.data_arquivo_mais_recente
+        or damrpv.data_arquivo_mais_recente is null
 {% endtest %}
