@@ -12,6 +12,7 @@
 
 {% set incremental_filter %}
     date(data) between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
+    and regexp_contains(no_do_auto, r'/')
 {% endset %}
 
 {% set staging_veiculo_fiscalizacao_lacre = ref("staging_veiculo_fiscalizacao_lacre") %}
@@ -35,7 +36,9 @@ with
     staging as (
         select *
         from {{ staging_veiculo_fiscalizacao_lacre }}
-        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
+        {% if is_incremental() %} where {{ incremental_filter }}
+        {% else %} where regexp_contains(no_do_auto, r'/')
+        {% endif %}
         qualify
             row_number() over (
                 partition by n_o_de_ordem, placa, data_do_lacre, no_do_auto
