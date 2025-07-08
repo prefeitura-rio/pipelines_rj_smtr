@@ -36,4 +36,5 @@ CADASTRO_VEICULO_MATERIALIZACAO = create_default_materialization_flow(
     selector=constants.CADASTRO_VEICULO_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[monitoramento_constants.MONITORAMENTO_VEICULO_SELECTOR.value],
+    post_tests=constants.CADASTRO_VEICULO_TEST.value,
 )
