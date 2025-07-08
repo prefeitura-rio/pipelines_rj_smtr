@@ -57,9 +57,19 @@ with
             data,
             id_veiculo,
             status,
-            safe_cast(
-                json_value(indicadores, "$.indicador_ar_condicionado") as bool
-            ) as indicador_ar_condicionado
+            case
+                when data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
+                then
+                    safe_cast(
+                        json_value(indicadores, "$.indicador_ar_condicionado") as bool
+                    )
+                else
+                    safe_cast(
+                        json_value(
+                            indicadores, "$.indicador_ar_condicionado.valor"
+                        ) as bool
+                    )
+            end as indicador_ar_condicionado
         from {{ ref("aux_veiculo_dia_consolidada") }}
         where
             data
