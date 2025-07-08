@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrigido a coluna `status` no modelo `sppo_veiculo_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Corrigido a coluna `status` no modelo `sppo_veiculo_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/677)
 
 ## [2.1.4] - 2025-07-08
 
