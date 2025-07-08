@@ -32,6 +32,10 @@ with
                 then "Ponto Facultativo"  -- DECRETO RIO Nº 55883/2025
                 when data = date(2025, 05, 02)
                 then "Ponto Facultativo"  -- DECRETO RIO Nº 56034 DE 29 DE ABRIL DE 2025
+                when data = date(2025, 06, 19)
+                then "Domingo"  -- DECRETO RIO Nº 56189 DE 10 DE JUNHO DE 2025
+                when data = date(2025, 06, 20)
+                then "Ponto Facultativo"  -- DECRETO RIO Nº 56189 DE 10 DE JUNHO DE 2025
             end as tipo_dia,
             case
                 when data between date(2024, 09, 14) and date(2024, 09, 15)
