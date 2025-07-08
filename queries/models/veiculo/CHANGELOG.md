@@ -1,5 +1,11 @@
 # Changelog - veiculo
 
+## [2.1.5] - 2025-07-08
+
+### Corrigido
+
+- Corrigido a coluna `status` no modelo `sppo_veiculo_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
 ## [2.1.4] - 2025-07-08
 
 ### Corrigido
