@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrigida a a coluna `ano_ultima_vistoria` no modelo `licenciamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/656)
+- Corrigida a a coluna `ano_ultima_vistoria` no modelo `licenciamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/676)
 
 ## [2.1.3] - 2025-07-02
 
