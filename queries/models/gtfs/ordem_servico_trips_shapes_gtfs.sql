@@ -49,7 +49,7 @@ with
                         and (
                             (
                                 o.tipo_dia = t.tipo_dia
-                                and o.tipo_os not in ("CNU", "Enem")
+                                and o.tipo_os not in ("CNU", "Enem", "Eleição")
                             )
                             or (
                                 o.tipo_dia = "Ponto Facultativo"
@@ -64,11 +64,11 @@ with
                             )  -- Domingo CNU
                             or (
                                 o.feed_start_date in ("2024-09-29", "2024-11-06")
-                                and o.tipo_os = "Enem"
+                                and o.tipo_os in ("Enem", "Eleição")
                                 and o.tipo_dia = "Domingo"
                                 and t.tipo_dia = "Sabado"
                             )
-                        )  -- Domingo Enem
+                        )  -- Domingo Enem/Eleição
                         and (
                             (o.sentido in ("I", "C") and t.direction_id = "0")
                             or (o.sentido = "V" and t.direction_id = "1")

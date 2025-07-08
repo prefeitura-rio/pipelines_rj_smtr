@@ -1,5 +1,19 @@
 # Changelog - veiculo
 
+## [2.1.4] - 2025-07-07
+
+### Corrigido
+
+- Corrigida a verificação do status do veículo no modelo `sppo_veiculo_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/510)
+
+### Alterado
+
+- Formatados os modelos `sppo_registro_agente_verao.sql` e `sppo_registro_agente_verao_staging.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/510)
+
+### Adicionado
+
+- Adicionada exceção no período de `2024-08-16` a `2024-10-15` para utilizar a `data_versao` `2024-10-22` no modelo `infracao_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/510)
+
 ## [2.1.3] - 2025-07-02
 
 ### Corrigido
@@ -46,6 +60,7 @@
 ### Adicionado
 
 - Adicionada exceção no modelo `licenciamento_data_versao_efetiva.sql` para utilizar a data_versao `2025-03-22` no período de `2023-10-01`a `2024-01-31` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
+
 
 ## [2.0.7] - 2025-05-27
 
