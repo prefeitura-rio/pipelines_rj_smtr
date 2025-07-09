@@ -1,5 +1,11 @@
 # Changelog - cadastro
 
+## [1.1.2] - 2025-07-08
+
+### Adicionado
+
+- Adiciona testes no flow `CADASTRO_VEICULO_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/668)
+
 ## [1.1.1] - 2025-06-30
 
 ### Adicionado

@@ -72,11 +72,13 @@ class constants(Enum):  # pylint: disable=c0103
 
     MONITORAMENTO_VEICULO_CHECKS_LIST = {
         "veiculo_fiscalizacao_lacre": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
             "dbt_utils.relationships_where__id_auto_infracao__veiculo_fiscalizacao_lacre": {
                 "description": "Todos os ids de auto infração estão na tabela de autuação"
             },
         },
         "autuacao_disciplinar_historico": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
             "dbt_utils.relationships_where__id_auto_infracao__autuacao_disciplinar_historico": {
                 "description": "Todos as autuações geraram lacre corretamente"
             },
@@ -104,6 +106,9 @@ class constants(Enum):  # pylint: disable=c0103
             },
             "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__veiculo_dia": {
                 "description": "Todas as datas possuem dados"
+            },
+            "test_check_veiculo_lacre__veiculo_fiscalizacao_lacre": {
+                "description": "Todos os veículos lacrados têm dados consistentes entre `veiculo_dia` e `veiculo_fiscalizacao_lacre`"  # noqa
             },
         }
     }
