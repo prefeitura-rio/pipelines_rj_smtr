@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.2.3] - 2025-07-09
+
+### Corrigido
+
+- Corrige nome do teste na `VEICULO_DIA_CHECKS_LIST` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/681)
+
 ## [1.2.2] - 2025-07-08
 
 ### Adicionado
