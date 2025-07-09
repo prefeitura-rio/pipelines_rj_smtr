@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.2.2] - 2025-07-08
+
+### Adicionado
+
+- Adiciona novos testes em  `MONITORAMENTO_VEICULO_CHECKS_LIST` e `VEICULO_DIA_CHECKS_LIST` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/668)
+
 ## [1.2.1] - 2025-06-30
 
 ### Alterado
