@@ -34,7 +34,7 @@ with
         select data, datetime_autuacao, id_infracao, servico, placa
         from {{ ref("autuacao_disciplinar_historico") }}
         where
-            data_inclusao_datalake <= date_add(data, interval 7 day)  -- precisa disso ?
+            data_inclusao_datalake <= date_add(data, interval 7 day)
             and {{ incremental_filter }}
             and modo = "ONIBUS"
     ),
@@ -130,7 +130,7 @@ with
         from viagem_tecnologia vt
         left join
             veiculo_autuacao va
-            on vt.data = va.data
+            on vt.data between va.data and date_add(va.data, interval 1 day)
             and vt.id_veiculo = va.id_veiculo
             and va.datetime_autuacao between vt.datetime_partida and vt.datetime_chegada
     ),

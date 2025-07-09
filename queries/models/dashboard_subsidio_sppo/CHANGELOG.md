@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [7.2.0] - 2025-07-08
+
+### Adicionado
+
+- Adiciona lógica condicional no modelo `viagens_remuneradas` para definir e utilizar a CTE `viagem_tecnologia` apenas quando `start_date` for anterior a `DATA_SUBSIDIO_V15_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/649)
+
 ## [7.1.9] - 2025-06-25
 
 ### Alterado
