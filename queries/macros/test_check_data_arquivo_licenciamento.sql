@@ -1,5 +1,13 @@
 {% test test_check_data_arquivo_licenciamento(model) %}
     with
+        previous_file as (
+            select
+                ifnull(
+                    max(data_arquivo_fonte), date("{{ var('date_range_start') }}")
+                ) as data
+            from {{ ref("veiculo_licenciamento_dia") }}
+            where data = date_sub(date("{{ var('date_range_start') }}"), interval 1 day)
+        ),
         veiculo_licenciamento_dados as (
             select data, data_arquivo_fonte, id_veiculo, placa
             from {{ model }}
@@ -9,12 +17,12 @@
                 )
         ),
         staging_licenciamento_stu as (
-            select date(data) as data, id_veiculo, placa
-            from {{ ref("staging_licenciamento_stu") }}
+            select date(sls.data) as data, id_veiculo, placa
+            from {{ ref("staging_licenciamento_stu") }} sls
+            cross join previous_file pf
             where
-                date(data) between date_sub(
-                    date("{{ var('date_range_start') }}"), interval 1 day
-                ) and date("{{ var('date_range_end') }}")
+                date(sls.data)
+                between date(pf.data) and date("{{ var('date_range_end') }}")
         ),
         data_arquivo_mais_recente_por_veiculo as (
             select
