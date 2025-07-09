@@ -112,13 +112,29 @@ models:
         description: "{{ doc('servico') }}"
   - name: viagem_classificada
     description: "Tabela com classificação de viagens de ônibus [SPPO] baseado no status do veículo e autuações"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+          - data
+          - id_viagem
+          - id_veiculo
+          name: dbt_utils.unique_combination_of_columns__viagem_classificada
     columns:
       - name: data
         description: "{{ doc('data_viagem') }} [partição]"
+        tests:
+          - not_null:
+              name: not_null__data__viagem_classificada
       - name: id_viagem
         description: "{{ doc('id_viagem') }}"
+        tests:
+          - not_null:
+              name: not_null__id_viagem__viagem_classificada
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
+        tests:
+          - not_null:
+              name: not_null__id_veiculo__viagem_classificada
       - name: datetime_partida
         description: "{{ doc('datetime_partida') }}"
       - name: datetime_chegada
@@ -127,10 +143,19 @@ models:
         description: "{{ doc('modo') }}"
       - name: tecnologia_apurada
         description: "{{ doc('tecnologia') }}"
+        tests:
+          - not_null:
+              name: not_null__tecnologia_apurada__viagem_classificada
       - name: tecnologia_remunerada
         description: "{{ doc('tecnologia_remunerada') }}"
+        tests:
+          - not_null:
+              name: not_null__tecnologia_remunerada__viagem_classificada
       - name: tipo_viagem
         description: "{{ doc('tipo_viagem_status') }}"
+        tests:
+          - not_null:
+              name: not_null__tipo_viagem__viagem_classificada
       - name: indicadores
         description: "{{ doc('indicadores_veiculo') }}"
       - name: servico
