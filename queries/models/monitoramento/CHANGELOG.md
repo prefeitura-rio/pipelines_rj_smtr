@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.5.5] - 2025-07-08
+
+### Alterado
+
+- Altera filtro no modelo `veiculo_fiscalizacao_lacre` para não materializar dados com `id_auto_infracao` nulo (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/668)
+
 ## [1.5.4] - 2025-07-07
 
 ### Corrigido
