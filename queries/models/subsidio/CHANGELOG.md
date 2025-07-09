@@ -9,7 +9,7 @@
 
 ### Alterado
 
-- Refatora a  coluna `id_validador` para incluir a lista de validadores que classificaram a viagem no modelo `viagem_transacao_aux` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/649)
+- Refatora a coluna `id_validador` para incluir a lista de validadores que classificaram a viagem no modelo `viagem_transacao_aux` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/649)
 
 ## [2.0.5] - 2025-06-27
 
