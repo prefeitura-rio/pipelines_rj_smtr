@@ -10,9 +10,11 @@
     )
 }}
 
+{% set regex_filter %} regexp_contains(no_do_auto, r'/') {% endset %}
+
 {% set incremental_filter %}
     date(data) between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
-    and regexp_contains(no_do_auto, r'/')
+    and {{ regex_filter }}
 {% endset %}
 
 {% set staging_veiculo_fiscalizacao_lacre = ref("staging_veiculo_fiscalizacao_lacre") %}
@@ -37,7 +39,7 @@ with
         select *
         from {{ staging_veiculo_fiscalizacao_lacre }}
         {% if is_incremental() %} where {{ incremental_filter }}
-        {% else %} where regexp_contains(no_do_auto, r'/')
+        {% else %} where {{ regex_filter }}
         {% endif %}
         qualify
             row_number() over (
