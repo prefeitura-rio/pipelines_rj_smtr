@@ -87,6 +87,7 @@ class constants(Enum):  # pylint: disable=c0103
 
     MONITORAMENTO_VEICULO_TEST = DBTTest(
         model="veiculo_fiscalizacao_lacre autuacao_disciplinar_historico",
+        exclude="test_check_veiculo_lacre__veiculo_dia",
         checks_list=MONITORAMENTO_VEICULO_CHECKS_LIST,
         truncate_date=True,
     )
@@ -107,7 +108,7 @@ class constants(Enum):  # pylint: disable=c0103
             "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__veiculo_dia": {
                 "description": "Todas as datas possuem dados"
             },
-            "test_check_veiculo_lacre__veiculo_fiscalizacao_lacre": {
+            "test_check_veiculo_lacre__veiculo_dia": {
                 "description": "Todos os veículos lacrados têm dados consistentes entre `veiculo_dia` e `veiculo_fiscalizacao_lacre`"  # noqa
             },
         }

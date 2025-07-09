@@ -379,6 +379,7 @@ models:
         tests:
           - not_null:
               name: not_null__id_veiculo__veiculo_fiscalizacao_lacre
+              where: "1=1"
       - name: placa
         description: "{{ doc('placa') }}"
         data_type: string
@@ -386,6 +387,7 @@ models:
         tests:
           - not_null:
               name: not_null__placa__veiculo_fiscalizacao_lacre
+              where: "1=1"
       - name: data_inicio_lacre
         description: Data de inicio do lacre [partição]
         data_type: date
@@ -393,6 +395,7 @@ models:
         tests:
           - not_null:
               name: not_null__data_inicio_lacre__veiculo_fiscalizacao_lacre
+              where: "1=1"
       - name: data_fim_lacre
         description: Data de fim do lacre
         data_type: date
@@ -415,6 +418,7 @@ models:
               where: "1=1"
           - not_null:
               name: not_null__id_auto_infracao__veiculo_fiscalizacao_lacre
+              where: "1=1"
         data_type: string
         quote: true
       - name: datetime_ultima_atualizacao_fonte
@@ -444,10 +448,10 @@ models:
         description: "Data e hora da autuação [coluna em desenvolvimento]"
         data_type: datetime
         quote: true
-        # tests:
-        #   - not_null:
-        #       name: not_null__datetime_autuacao__autuacao_disciplinar_historico
-        #       where: "data_inclusao_datalake between date('{date_range_start}') and date('{date_range_end}')"
+        tests:
+          - not_null:
+              name: not_null__datetime_autuacao__autuacao_disciplinar_historico
+              where: "data_inclusao_datalake between date('{date_range_start}') and date('{date_range_end}')"
       - name: id_auto_infracao
         description: "{{ doc('id_auto_infracao') }}"
         tests:
@@ -630,7 +634,7 @@ models:
             date_day >= date('{{ var("data_final_veiculo_arquitetura_1") }}')
           name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__veiculo_dia
       - test_check_veiculo_lacre:
-          name: test_check_veiculo_lacre__veiculo_fiscalizacao_lacre
+          name: test_check_veiculo_lacre__veiculo_dia
     columns:
       - name: data
         description: "{{ doc('data_operacao') }}"

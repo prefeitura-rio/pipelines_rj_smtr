@@ -1,5 +1,12 @@
 # Changelog - treatment
 
+## [1.1.7] - 2025-07-09
+
+### Adicionado
+
+- Adiciona parâmetro `exclude` no objeto `DBTTest`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/681)
+- Adiciona parâmetro `exclude` no `dbt_pre_test` e `dbt_post_test` do flow genérico (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/681)
+
 ## [1.1.6] - 2025-06-17
 
 ### Adicionado

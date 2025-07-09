@@ -163,6 +163,7 @@ class DBTTest:
         dataset_id (str, optional): ID do conjunto de dados do modelo dbt
         table_id (str, optional): ID da tabela do modelo dbt
         model (str, optional): Modelo específico a ser testado
+        exclude (str, optional): Recurso dbt para ser excluído do teste
         checks_list (dict, optional): Dicionário com nome e as descrições dos testes
         delay_days (int): Quantidade de dias que serão subtraídos do horário atual
         truncate_date (bool): Se True, trunca as horas para testar o dia completo
@@ -176,6 +177,7 @@ class DBTTest:
         dataset_id: Optional[str] = None,
         table_id: Optional[str] = None,
         model: Optional[str] = None,
+        exclude: Optional[str] = None,
         checks_list: Optional[Dict] = None,
         delay_days: int = 0,
         truncate_date: bool = False,
@@ -185,6 +187,7 @@ class DBTTest:
         self.dataset_id = dataset_id
         self.table_id = table_id
         self.model = model
+        self.exclude = exclude
         self.checks_list = checks_list or {}
         self.delay_days = delay_days
         self.truncate_date = truncate_date
