@@ -1156,9 +1156,9 @@ Distância planejada para o serviço (km)
 {% enddocs %}
 
 {% docs data_fim %}
-Data final do período de tempo para um determinado IRK
+Data final do período para um determinado IRK
 {% enddocs %}
 
 {% docs data_inicio %}
-Data inicial do período de tempo para um determinado IRK
+Data inicial do período para um determinado IRK
 {% enddocs %}

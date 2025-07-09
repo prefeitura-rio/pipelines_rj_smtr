@@ -16,8 +16,28 @@ models:
         description: "{{ doc('ano') }}"
       - name: consorcio
         description: "{{ doc('consorcio') }}"
-      - name: km_apurada
-        description: "{{ doc('km_apurada') }}"
+      - name: datas_servico
+        description: "{{ doc('datas_servico') }}"
+      - name: datas_servico_pod_menor_80
+        description: "{{ doc('datas_servico_pod_menor_80') }}"
+      - name: datas_servico_excecao
+        description: "{{ doc('datas_servico_excecao') }}"
+      - name: datas_servico_atipicos
+        description: "{{ doc('datas_servico_atipicos') }}"
+      - name: datas_servico_ausencia_receita_tarifaria
+        description: "{{ doc('datas_servico_ausencia_receita_tarifaria') }}"
+      - name: datas_servico_tipicos
+        description: "{{ doc('datas_servico_tipicos') }}"
+      - name: percentual_datas_servico_pod_menor_80
+        description: "{{ doc('percentual_datas_servico_pod_menor_80') }}"
+      - name: percentual_datas_servico_excecao
+        description: "{{ doc('percentual_datas_servico_excecao') }}"
+      - name: percentual_datas_servico_atipicos
+        description: "{{ doc('percentual_datas_servico_atipicos') }}"
+      - name: percentual_datas_servico_ausencia_receita
+        description: "{{ doc('percentual_datas_servico_ausencia_receita') }}"
+      - name: percentual_datas_servico_tipicos
+        description: "{{ doc('percentual_datas_servico_tipicos') }}"
       - name: km_apurada
         description: "{{ doc('km_apurada') }}"
       - name: receita_total_esperada
@@ -116,10 +136,10 @@ models:
     description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025"
     tests:
       - dbt_utils.unique_combination_of_columns:
-            combination_of_columns:
+          combination_of_columns:
             - data
             - servico
-            name: dbt_utils.unique_combination_of_columns__data_servico__balanco_servico_dia
+          name: dbt_utils.unique_combination_of_columns__data_servico__balanco_servico_dia
     columns:
       - name: data
         description: "{{ doc('data') }}"
