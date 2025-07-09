@@ -14,7 +14,7 @@ with
     autuacao_disciplinar_staging as (
         select
             data_infracao as data,
-            datetime(null) as datetime_autuacao,
+            datetime_infracao as datetime_autuacao,
             id_auto_infracao,
             id_infracao,
             modo,
