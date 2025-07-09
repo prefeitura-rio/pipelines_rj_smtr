@@ -16,8 +16,8 @@ models:
         description: "{{ doc('ano') }}"
       - name: consorcio
         description: "{{ doc('consorcio') }}"
-      - name: km_subsidiada
-        description: "{{ doc('km_subsidiada') }}"
+      - name: km_apurada
+        description: "{{ doc('km_apurada') }}"
       - name: km_apurada
         description: "{{ doc('km_apurada') }}"
       - name: receita_total_esperada
@@ -51,8 +51,8 @@ models:
         description: "{{ doc('data') }}"
       - name: consorcio
         description: "{{ doc('consorcio') }}"
-      - name: km_subsidiada
-        description: "{{ doc('km_subsidiada') }}"
+      - name: km_apurada
+        description: "{{ doc('km_apurada') }}"
       - name: receita_total_esperada
         description: "{{ doc('receita_total_esperada') }}"
       - name: receita_tarifaria_esperada
@@ -245,6 +245,15 @@ models:
         config:
           alias: servico_dia_atipico
     description: "Serviços-dia com ocorrências que impactam a apuração. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025."
+    columns:
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: tipo
+        description: "{{ doc('tipo_recurso') }}"
+      - name: status
+        description: "{{ doc('status') }}"
   - name: aux_rdo_servico_dia
     latest_version: 2
     versions:
@@ -252,6 +261,23 @@ models:
         config:
           alias: aux_rdo_servico_dia
     description: "Receita tarifária aferida por serviço-dia a partir dos registros do RDO com correção dos serviços sem planejamento."
+    columns:
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: linha
+        description: "{{ doc('linha') }}"
+      - name: tipo_servico
+        description: "{{ doc('tipo_servico') }}"
+      - name: ordem_servico
+        description: "{{ doc('ordem_servico') }}"
+      - name: receita_tarifaria_aferida
+        description: "{{ doc('receita_tarifaria_aferida') }}"
+      - name: servico_original_rdo
+        description: "{{ doc('servico_original_rdo') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
   - name: aux_subsidio_servico_dia
     latest_version: 2
     versions:
@@ -259,6 +285,21 @@ models:
         config:
           alias: aux_subsidio_servico_dia
     description: "Quilometragem apurada e subsídio pago por serviço-dia a partir com correção dos serviços sem receita."
+    columns:
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: km_apurada
+        description: "{{ doc('km_apurada') }}"
+      - name: perc_km_planejada
+        description: "{{ doc('perc_km_planejada') }}"
+      - name: valor_subsidio_pago
+        description: "{{ doc('valor_subsidio_pago') }}"
+      - name: servico_original_subsidio
+        description: "{{ doc('servico_original_subsidio') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
   - name: staging_encontro_contas_servico_dia
     latest_version: 2
     versions:
@@ -266,6 +307,31 @@ models:
         config:
           alias: staging_encontro_contas_servico_dia
     description: "Quilometragem planejada, apurada e Percentual de Operação Diária (POD) por serviço-dia."
+    columns:
+      - name: processo_origem
+        description: "Processo de origem da correção"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: linha
+        description: "{{ doc('linha') }}"
+      - name: tipo_servico
+        description: "{{ doc('tipo_servico') }}"
+      - name: ordem_servico
+        description: "{{ doc('ordem_servico') }}"
+      - name: justificativa
+        description: "Justificativa para a correção"
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: data_resposta
+        description: "Data da resposta da Rio Ônibus com a correção necessária"
+      - name: receita_tarifaria_aferida_rdo
+        description: "Receita tarifaria aferida no Relatório Diário de Operações"
+      - name: tipo
+        description: "{{ doc('tipo_recurso') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: servico_corrigido
+        description: "{{ doc('servico_corrigido') }}"
   - name: balanco_consorcio_mes
     latest_version: 2
     versions:
@@ -274,10 +340,36 @@ models:
           alias: balanco_consorcio_mes
     description: "Balanço da receita aferida e esperada por consórcio, mês e ano para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025."
     columns:
+      - name: ano_mes
+        description: "Ano e mês de referência"
       - name: ano
         description: "{{ doc('ano') }}"
+      - name: mes
+        description: "{{ doc('mes') }}"
       - name: consorcio
         description: "{{ doc('consorcio') }}"
+      - name: datas_servico
+        description: "{{ doc('datas_servico') }}"
+      - name: datas_servico_pod_menor_80
+        description: "{{ doc('datas_servico_pod_menor_80') }}"
+      - name: datas_servico_excecao
+        description: "{{ doc('datas_servico_excecao') }}"
+      - name: datas_servico_atipicos
+        description: "{{ doc('datas_servico_atipicos') }}"
+      - name: datas_servico_ausencia_receita_tarifaria
+        description: "{{ doc('datas_servico_ausencia_receita_tarifaria') }}"
+      - name: datas_servico_tipicos
+        description: "{{ doc('datas_servico_tipicos') }}"
+      - name: percentual_datas_servico_pod_menor_80
+        description: "{{ doc('percentual_datas_servico_pod_menor_80') }}"
+      - name: percentual_datas_servico_excecao
+        description: "{{ doc('percentual_datas_servico_excecao') }}"
+      - name: percentual_datas_servico_atipicos
+        description: "{{ doc('percentual_datas_servico_atipicos') }}"
+      - name: percentual_datas_servico_ausencia_receita
+        description: "{{ doc('percentual_datas_servico_ausencia_receita') }}"
+      - name: percentual_datas_servico_tipicos
+        description: "{{ doc('percentual_datas_servico_tipicos') }}"
       - name: km_apurada
         description: "{{ doc('km_apurada') }}"
       - name: receita_total_esperada
@@ -303,6 +395,15 @@ models:
         config:
           alias: correcao_servico_rdo
     description: "Correção de serviços-dia sem planejamento porém com receita tarifária e com subsídio pago, mas sem receita tarifária"
+    columns:
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: servico_corrigido
+        description: "{{ doc('servico_corrigido') }}"
+      - name: tipo
+        description: "tipo"
   - name: receita_tarifaria_servico_dia_sem_associacao
     latest_version: 2
     versions:
@@ -310,6 +411,31 @@ models:
         config:
           alias: receita_tarifaria_servico_dia_sem_associacao
     description: "Serviços-dia sem planejamento porém com receita tarifária e com subsídio pago, mas sem receita tarifária"
+    columns:
+      - name: tipo
+        description: "{{ doc('tipo_inconsistencia') }}"
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: linha
+        description: "{{ doc('linha') }}"
+      - name: servico_original_rdo
+        description: "{{ doc('servico_original_rdo') }}"
+      - name: servico_original_subsidio
+        description: "{{ doc('servico_original_subsidio') }}"
+      - name: tipo_servico
+        description: "{{ doc('tipo_servico') }}"
+      - name: ordem_servico
+        description: "{{ doc('ordem_servico') }}"
+      - name: receita_tarifaria_aferida
+        description: "{{ doc('receita_tarifaria_aferida') }}"
+      - name: justificativa
+        description: "Justificativa para a exclusão do par serviço-data"
+      - name: servico_correto
+        description: "{{ doc('servico_corrigido') }}"
   - name: encontro_contas_subsidio_sumario_servico_dia
     latest_version: 2
     versions:
@@ -317,6 +443,23 @@ models:
         config:
           alias: encontro_contas_subsidio_sumario_servico_dia
     description: "Sumário do subsídio dos serviços de ônibus [SPPO] por dia para fins do Encontro de Contas"
+    columns:
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: km_apurada_pod
+        description: "{{ doc('km_apurada_pod') }}"
+      - name: km_apurada
+        description: "{{ doc('km_apurada') }}"
+      - name: km_planejada
+        description: "{{ doc('km_planejada') }}"
+      - name: perc_km_planejada
+        description: "{{ doc('perc_km_planejada') }}"
+      - name: valor_subsidio_pago
+        description: "{{ doc('valor_subsidio_pago') }}"
   - name: encontro_contas_parametros
     latest_version: 2
     versions:
@@ -324,3 +467,14 @@ models:
         config:
           alias: encontro_contas_parametros
     description: "Parâmetros utilizados para o cálculo do Encontro de Contas dos serviços de ônibus [SPPO]"
+    columns:
+      - name: data_inicio
+        description: "{{ doc('data_inicio') }}"
+      - name: data_fim
+        description: "{{ doc('data_fim') }}"
+      - name: irk
+        description: "{{ doc('irk') }}"
+      - name: irk_tarifa_publica
+        description: "{{ doc('irk_tarifa_publica') }}"
+      - name: subsidio_km
+        description: "{{ doc('subsidio_km') }}"

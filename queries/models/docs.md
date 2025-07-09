@@ -30,6 +30,10 @@ Classificação do tipo de viagem
 Serviço realizado pelo veículo
 {% enddocs %}
 
+{% docs servico_corrigido %}
+Serviço realizado pelo veículo após correção
+{% enddocs %}
+
 {% docs id_viagem %}
 Código único identificador da viagem
 {% enddocs %}
@@ -1065,4 +1069,84 @@ Data final da quinzena considerada
 
 {% docs km_subsidiada %}
 Quilometragem apurada e subsidiada (km)
+{% enddocs %}
+
+{% docs datas_servico %}
+Quantidade total de serviços-dia no período
+{% enddocs %}
+
+{% docs datas_servico_pod_menor_80 %}
+Quantidade de serviços-dia com POD menor que 80%
+{% enddocs %}
+
+{% docs datas_servico_excecao %}
+Quantidade de serviços-dia em datas de exceção
+{% enddocs %}
+
+{% docs datas_servico_atipicos %}
+Quantidade de serviços-dia atípicos
+{% enddocs %}
+
+{% docs datas_servico_ausencia_receita_tarifaria %}
+Quantidade de serviços-dia sem receita tarifária
+{% enddocs %}
+
+{% docs datas_servico_tipicos %}
+Quantidade de serviços-dia típicos
+{% enddocs %}
+
+{% docs percentual_datas_servico_pod_menor_80 %}
+Percentual de serviços-dia com POD menor que 80%
+{% enddocs %}
+
+{% docs percentual_datas_servico_excecao %}
+Percentual de serviços-dia em datas de exceção
+{% enddocs %}
+
+{% docs percentual_datas_servico_atipicos %}
+Percentual de serviços-dia atípicos
+{% enddocs %}
+
+{% docs percentual_datas_servico_ausencia_receita %}
+Percentual de serviços-dia sem receita tarifária
+{% enddocs %}
+
+{% docs percentual_datas_servico_tipicos %}
+Percentual de serviços-dia típicos
+{% enddocs %}
+
+{% docs perc_km_planejada %}
+Percentual da quilometragem planejada do total
+{% enddocs %}
+
+{% docs irk_tarifa_publica %}
+Índice de Remuneração por Quilômetro tarifário
+{% enddocs %}
+
+{% docs subsidio_km %}
+Valor do subsídio por quilômetro (R$/km)
+{% enddocs %}
+
+{% docs tipo_recurso %}
+"Tipo de recurso ou justificativa que motivou a exclusão daquele par serviço-dia"
+{% enddocs %}
+
+{% docs tipo_inconsistencia %}
+"Classificação do tipo de inconsistência encontrada no par data-serviço"
+{% enddocs %}
+
+{% docs km_apurada_pod %}
+Distância apurada para o serviço (km) para cálculo do [POD]
+{% enddocs %}
+
+{% docs servico_original_rdo %}
+Serviço informado no Relatório Diário de Operações [RDO]
+{% enddocs %}
+
+{% docs valor_subsidio_pago %}
+Valor total pago de subsídio
+{% enddocs %}
+
+{% docs servico_original_subsidio %}
+Serviço que informado no Subsídio
 {% enddocs %}
