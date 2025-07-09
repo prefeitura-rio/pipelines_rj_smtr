@@ -889,4 +889,10 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todos serviços com valores de penalidade aceitos"
             },
         },
+        "viagem_classificada": {
+            "dbt_utils.unique_combination_of_columns__viagem_classificada": {
+                "description": "Todos os registros de `viagem_classificada` são unicos"
+            },
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+        },
     }

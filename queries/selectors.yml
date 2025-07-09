@@ -21,17 +21,13 @@ selectors:
         - method: path
           value: models/dashboard_subsidio_sppo_staging
         - method: fqn
-          value: valor_km_tipo_viagem
-        - method: fqn
           value: valor_tipo_penalidade
         - method: fqn
           value: staging_tecnologia_servico
         - method: fqn
           value: tecnologia_servico
-        - method: fqn
-          value: viagem_transacao
-        - method: fqn
-          value: percentual_operacao_faixa_horaria
+        - method: path
+          value: models/subsidio
         - method: fqn
           value: viagens_remuneradas
         - method: path

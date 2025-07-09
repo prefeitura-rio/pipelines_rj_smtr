@@ -1,5 +1,11 @@
 # Changelog - queries
 
+## [1.0.6] - 2025-07-09
+
+### Alterado
+
+- Altera selector `apuracao_subsidio_v9` para executar todos os modelos do dataset `subsidio` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/649)
+
 ## [1.0.5] - 2025-06-27
 
 ### Alterado
