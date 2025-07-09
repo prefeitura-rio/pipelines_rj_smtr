@@ -671,7 +671,7 @@ models:
         description: "{{ doc('status_veiculo') }}"
         tests:
           - not_null:
-              name: not_null__status__sppo_veiculo_dia
+              name: not_null__status__veiculo_dia
         data_type: string
         quote: true
       - name: indicadores
