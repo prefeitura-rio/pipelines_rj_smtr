@@ -157,7 +157,7 @@ with
                 vt.data,
                 vt.servico,
                 vt.tipo_viagem,
-                vt.tecnologia as tecnologia_apurada,
+                vt.tecnologia_apurada,
                 case
                     when p.prioridade > p_maior.prioridade
                     then t.maior_tecnologia_permitida
@@ -165,7 +165,7 @@ with
                         p.prioridade < p_menor.prioridade
                         and data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
                     then null
-                    else vt.tecnologia
+                    else vt.tecnologia_apurada
                 end as tecnologia_remunerada,
                 vt.id_viagem,
                 vt.datetime_partida,
@@ -181,7 +181,7 @@ with
                     (vt.data between t.inicio_vigencia and t.fim_vigencia)
                     or (vt.data >= t.inicio_vigencia and t.fim_vigencia is null)
                 )
-            left join prioridade_tecnologia as p on vt.tecnologia = p.tecnologia
+            left join prioridade_tecnologia as p on vt.tecnologia_apurada = p.tecnologia
             left join
                 prioridade_tecnologia as p_maior
                 on t.maior_tecnologia_permitida = p_maior.tecnologia
