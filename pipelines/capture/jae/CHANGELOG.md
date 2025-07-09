@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [2.1.6] - 2025-07-09
+
+### Alterado
+
+- Altera IP do banco `principal_db` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/679)
+
 ## [2.1.5] - 2025-07-07
 
 ### Alterado
