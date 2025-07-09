@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.4.8] - 2025-07-08
+
+### Alterado
+
+- Alterados o `tipo_dia` no modelo `aux_calendario_manual.sql` de `2025-06-19` -> `Domingo` e `2025-06-20` -> `Ponto facultativo` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/671)
+
 ## [1.4.7] - 2025-06-24
 
 ### Adicionado

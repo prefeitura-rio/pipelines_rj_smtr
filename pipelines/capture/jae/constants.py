@@ -24,7 +24,7 @@ class constants(Enum):  # pylint: disable=c0103
     JAE_DATABASE_SETTINGS = {
         "principal_db": {
             "engine": "mysql",
-            "host": "10.5.112.98",
+            "host": "10.5.114.6",
         },
         "tarifa_db": {
             "engine": "postgresql",
