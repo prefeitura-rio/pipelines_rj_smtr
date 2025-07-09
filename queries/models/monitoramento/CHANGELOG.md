@@ -5,6 +5,8 @@
 ### Corrigido
 
 - Corrigida a coluna `datetime_infracao` no modelo `staging_infracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/668)
+- Corrigido os filtros dos testes do modelo `veiculo_fiscalizacao_lacre` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/681)
+- Corrigido nome do teste do modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/681)
 
 ## [1.5.5] - 2025-07-08
 
