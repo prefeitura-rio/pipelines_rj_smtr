@@ -6,6 +6,10 @@
 
 - Corrige nome do teste na `VEICULO_DIA_CHECKS_LIST` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/681)
 
+### Adicionado
+
+- Adiciona parâmetro exclude no `MONITORAMENTO_VEICULO_TEST` para não executar o teste `test_check_veiculo_lacre__veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/681)
+
 ## [1.2.2] - 2025-07-08
 
 ### Adicionado
