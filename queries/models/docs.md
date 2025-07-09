@@ -1150,3 +1150,7 @@ Valor total pago de subsídio
 {% docs servico_original_subsidio %}
 Serviço que informado no Subsídio
 {% enddocs %}
+
+{% docs km_planejada %}
+Distância planejada para o serviço (km)
+{% enddocs %}
