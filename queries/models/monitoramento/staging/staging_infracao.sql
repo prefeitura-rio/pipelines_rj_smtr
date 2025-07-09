@@ -50,8 +50,6 @@ with
                             raw_data_infracao, r'^\d{2}/\d{2}/\d{4} \d{2}:\d{2}'
                         )
                     then concat(raw_data_infracao, ':00')
-                    when regexp_contains(raw_data_infracao, r'^\d{2}/\d{2}/\d{4}$')
-                    then concat(raw_data_infracao, ' 00:00:00')
                     else null
                 end
             ) as datetime_infracao,

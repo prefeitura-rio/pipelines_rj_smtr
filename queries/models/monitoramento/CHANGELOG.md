@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.5.6] - 2025-07-09
+
+### Corrigido
+
+- Corrigida a coluna `datetime_infracao` no modelo `staging_infracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/668)
+
 ## [1.5.5] - 2025-07-08
 
 ### Alterado
