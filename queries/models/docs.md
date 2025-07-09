@@ -1154,3 +1154,11 @@ Serviço que informado no Subsídio
 {% docs km_planejada %}
 Distância planejada para o serviço (km)
 {% enddocs %}
+
+{% docs data_fim %}
+Data final do período de tempo para um determinado IRK
+{% enddocs %}
+
+{% docs data_inicio %}
+Data inicial do período de tempo para um determinado IRK
+{% enddocs %}
