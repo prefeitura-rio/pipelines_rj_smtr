@@ -49,6 +49,7 @@ models:
               to: ref('tecnologia_servico')
               field: servico
               to_condition: "inicio_vigencia <= date('{{ var('date_range_end') }}') and (fim_vigencia is null OR fim_vigencia >= date('{{ var('date_range_start') }}'))"
+              where: "data BETWEEN greatest(date('{date_range_start}'), date('{DATA_SUBSIDIO_V13_INICIO}')) and date('{date_range_end}')"
       - name: vista
         description: "Itinerário do serviço [ex: Bananal ↔ Saens Peña]"
         tests:
@@ -72,6 +73,7 @@ models:
         tests:
           - not_null:
               name: not_null__partidas_total_planejada__viagem_planejada
+              where: "data BETWEEN greatest(date('{date_range_start}'), date('{DATA_SUBSIDIO_V6_INICIO}')) and date('{date_range_end}')"
           - dbt_utils.accepted_range:
               min_value: 0
               inclusive: false
@@ -164,6 +166,7 @@ models:
         tests:
           - not_null:
               name: not_null__id_tipo_trajeto__viagem_planejada
+              where: "data BETWEEN greatest(date('{date_range_start}'), date('{DATA_SUBSIDIO_V6_INICIO}')) and date('{date_range_end}')"
           - accepted_values:
               values: [0,1]
               quote: false
@@ -173,11 +176,13 @@ models:
         tests:
           - not_null:
               name: not_null__feed_version__viagem_planejada
+              where: "data BETWEEN greatest(date('{date_range_start}'), date('{DATA_SUBSIDIO_V6_INICIO}')) and date('{date_range_end}')"
       - name: feed_start_date
         description: "Data inicial do feed do GTFS [Válida a partir de 2024-04-01]"
         tests:
           - not_null:
               name: not_null__feed_start_date__viagem_planejada
+              where: "data BETWEEN greatest(date('{date_range_start}'), date('{DATA_SUBSIDIO_V6_INICIO}')) and date('{date_range_end}')"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         tests:
