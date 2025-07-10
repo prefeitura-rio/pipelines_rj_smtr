@@ -168,7 +168,7 @@ with
         from ordem_agrupada
         {% if is_incremental() and ordens_pagamento_modificadas | length > 0 %}
             union all
-            select *, 1 as priority
+            select * except(versao, datetime_ultima_atualizacao), 1 as priority
             from {{ this }}
             where data_ordem in ({{ ordens_pagamento_modificadas | join(", ") }})
         {% endif %}
