@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.2.9] - 2025-07-10
+
+### Corrigido
+
+- Corrigido o agrupamento do select final no modelo `viagem_transacao_aux.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/691)
+
 ## [9.2.8] - 2025-07-10
 
 ### Corrigido

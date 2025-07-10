@@ -423,7 +423,7 @@ select
     any_value(eep.quantidade_transacao) as quantidade_transacao,
     any_value(eep.quantidade_transacao_riocard) as quantidade_transacao_riocard,
     case
-        when data < date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+        when v.data < date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
         then max(eep.percentual_estado_equipamento_aberto)
         else min(eep.percentual_estado_equipamento_aberto)
     end as percentual_estado_equipamento_aberto,
@@ -435,3 +435,4 @@ select
 from viagem_com_tolerancia as v
 left join estado_equipamento_perc as eep using (data, id_viagem)
 left join validadores_agrupados as va using (data, id_viagem)
+group by all
