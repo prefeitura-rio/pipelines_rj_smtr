@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.2.8] - 2025-07-10
+
+### Corrigido
+
+- Corrigidos data de inicio dos testes das colunas `feed_start_date`, `id_tipo_trajeto`, `feed_version` e `partidas_total_planejada` no modelo `viagem_planejada.sql` para a partir de `2024-04-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
 ## [9.2.7] - 2025-07-02
 
 ### Adicionado
