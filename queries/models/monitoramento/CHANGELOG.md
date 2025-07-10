@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.5.7] - 2025-07-10
+
+### Alterado
+
+- Alterada exceção para as datas de autuações disciplinares e dados de licenciamento de veículos no modelo `veiculo_dia.sql` para considerar tambem `data_inclusao_datalake` e `data_processamento` iguais a `2025-07-10`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/686)
+
 ## [1.5.6] - 2025-07-09
 
 ### Corrigido
