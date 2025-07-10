@@ -657,6 +657,7 @@ models:
         tests:
           - not_null:
               name: not_null__placa__veiculo_dia
+              where: "data between date('{date_range_start}') and date('{date_range_end}') and status != 'Não licenciado'"
       - name: modo
         description: "{{ doc('modo') }}"
         data_type: string
