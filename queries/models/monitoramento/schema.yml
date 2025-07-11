@@ -509,7 +509,9 @@ models:
                 )
                 and modo = 'ONIBUS'
               field: id_auto_infracao
-              where: "data_inclusao_datalake between date('{date_range_start}') and date('{date_range_end}')"
+              where: |
+                data_inclusao_datalake between date('{date_range_start}') and date('{date_range_end}')
+                and data between date('{date_range_start}') and date('{date_range_end}')
         data_type: string
         quote: true
       - name: id_infracao
