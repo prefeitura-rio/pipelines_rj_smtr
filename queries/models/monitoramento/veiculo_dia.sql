@@ -60,8 +60,11 @@ with
         select *
         from {{ ref("autuacao_disciplinar_historico") }}
         where
-            data_inclusao_datalake <= date_add(data, interval 7 day)
-            or data_inclusao_datalake = "2025-07-10"  -- Primeira data de inclusão dos dados de autuações disciplinares
+            (
+                data_inclusao_datalake <= date_add(data, interval 7 day)
+                or data_inclusao_datalake
+                = date("{{var('data_inclusao_autuacao_disciplinar')}}")  -- Primeira data de inclusão dos dados de autuações disciplinares
+            )
             {% if is_incremental() %}
                 and data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
