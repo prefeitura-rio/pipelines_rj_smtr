@@ -35,7 +35,7 @@ models:
       - name: data
         description: "{{ doc('data') }}"
       - name: tipo_dia
-        description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sábado, Domingo"
+        description: "{{ doc('tipo_dia') }}"
         tests:
           - not_null:
               name: not_null__tipo_dia__viagem_planejada
@@ -217,7 +217,7 @@ models:
         tests:
           - not_null
       - name: servico_informado
-        description: "Serviço informado pelo GPS do veículo"
+        description: "{{ doc('servico_informado') }}"
         tests:
           - not_null
       - name: servico_realizado
@@ -283,7 +283,7 @@ models:
         # tests:
           # - not_null
       - name: servico_informado
-        description: "Serviço informado pelo GPS do veículo"
+        description: "{{ doc('servico_informado') }}"
         tests:
           - not_null
       - name: servico_realizado
@@ -320,7 +320,7 @@ models:
         tests:
           - not_null
       - name: datetime_chegada
-        description: "Horário de fim da viagem"
+        description: "{{ doc('datetime_chegada') }}"
         tests:
           - not_null
       - name: versao_modelo
@@ -351,7 +351,7 @@ models:
         # tests:
           # - not_null
       - name: servico_informado
-        description: "Serviço informado pelo GPS do veículo"
+        description: "{{ doc('servico_informado') }}"
         tests:
           - not_null
       - name: servico_realizado
@@ -388,7 +388,7 @@ models:
         tests:
           - not_null
       - name: datetime_chegada
-        description: "Horário de fim da viagem"
+        description: "{{ doc('datetime_chegada') }}"
         tests:
           - not_null
       - name: versao_modelo
@@ -431,7 +431,7 @@ models:
         tests:
           - not_null
       - name: servico_informado
-        description: "Serviço informado pelo GPS do veículo"
+        description: "{{ doc('servico_informado') }}"
         tests:
           - not_null
       - name: servico_realizado
@@ -478,7 +478,7 @@ models:
         tests:
           - not_null
       - name: datetime_chegada
-        description: "Horário de fim da viagem"
+        description: "{{ doc('datetime_chegada') }}"
         tests:
           - not_null
       - name: distancia_inicio_fim
@@ -577,7 +577,7 @@ models:
         # tests:
           # - not_null
       - name: servico_informado
-        description: "Serviço informado pelo GPS do veículo"
+        description: "{{ doc('servico_informado') }}"
         tests:
           - not_null
       - name: servico_realizado
@@ -615,7 +615,7 @@ models:
         tests:
           - not_null
       - name: datetime_chegada
-        description: "Horário de fim da viagem"
+        description: "{{ doc('datetime_chegada') }}"
         tests:
           - not_null
       - name: tempo_viagem
@@ -678,7 +678,7 @@ models:
           - not_null
           - greater_than_zero
       - name: perc_conformidade_distancia
-        description: "Razão da distância aferida pela distância teórica x 100"
+        description: "{{ doc('perc_conformidade_distancia') }}"
         tests:
           - not_null
           - greater_than_zero
@@ -695,7 +695,7 @@ models:
     description: "Detalhes de todas as viagens completas identificadas"
     columns:
       - name: consorcio
-        description: "Consórcio ao qual o serviço pertence"
+        description: "{{ doc('consorcio') }}"
         tests:
           - not_null
       - name: data
@@ -703,7 +703,7 @@ models:
         tests:
           - not_null
       - name: tipo_dia
-        description: "Dia da semana considerado para o cálculo da distância planejada - categorias: Dia Útil, Sábado, Domingo"
+        description: "{{ doc('tipo_dia') }}"
         tests:
           - not_null
           - accepted_values:
@@ -717,7 +717,7 @@ models:
         # tests:
           # - not_null
       - name: servico_informado
-        description: "Serviço informado pelo GPS do veículo"
+        description: "{{ doc('servico_informado') }}"
         tests:
           - not_null
       - name: servico_realizado
@@ -752,7 +752,7 @@ models:
         tests:
           - not_null
       - name: datetime_chegada
-        description: "Horário de fim da viagem"
+        description: "{{ doc('datetime_chegada') }}"
         tests:
           - not_null
       - name: tipo_viagem
@@ -813,7 +813,7 @@ models:
           - not_null
           - greater_than_zero
       - name: perc_conformidade_distancia
-        description: "Razão da distância aferida pela distância teórica x 100"
+        description: "{{ doc('perc_conformidade_distancia') }}"
         tests:
           - not_null
           - greater_than_zero
@@ -839,7 +839,7 @@ models:
       - name: data
         description: "Data de Operação [Partição]"
       - name: tipo_dia
-        description: "Dia da semana - categorias: Dia Útil, Sabado, Domingo e Ponto Facultativo"
+        description: "{{ doc('tipo_dia') }}"
       - name: subtipo_dia
         description: "Subtipo de dia [ex: 'Verão', válida a partir de 2024-04-01]"
       - name: data_versao_trips

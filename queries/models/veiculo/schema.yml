@@ -18,7 +18,7 @@ models:
       - name: data
         description: "{{ doc('data_captura') }} [partição]"
       - name: timestamp_captura
-        description: "Timestamp de captura dos dados de infração"
+        description: "{{ doc('timestamp_captura_infracao') }}"
       - name: modo
         description: "{{ doc('modo_onibus') }}"
       - name: permissao
@@ -36,14 +36,9 @@ models:
       - name: id_infracao
         description: "{{ doc('id_infracao') }}"
       - name: infracao
-        description: "Descrição da infração"
+        description: "{{ doc('infracao') }}"
       - name: status
-        description: "CADASTRADA - Registrada no sistema sem guia de pagamento\n
-                      EM ABERTO - Com guia de pagamento e dentro do prazo de vencimento\n
-                      VENCIDA - Com guia de pagamento e fora do prazo de vencimento\n
-                      EM RECURSO - Possui Processo de Recurso aguardando julgamento\n
-                      PAGA - Com guia de pagamento efetivamente paga\n
-                      CANCELADA - Multa foi cancelada através de um Processo de Recurso"
+        description: "{{ doc('status_veiculo_infracao') }}"
       - name: data_pagamento
         description: "{{ doc('data_pagamento') }}"
       - name: datetime_ultima_atualizacao
@@ -115,7 +110,7 @@ models:
       - name: data
         description: "{{ doc('data_captura') }} [partição]"
       - name: timestamp_captura
-        description: "Timestamp de captura dos dados de licenciamento"
+        description: "{{ doc('timestamp_captura_licenciamento') }}"
       - name: modo
         description: "{{ doc('modo_onibus') }}"
       - name: id_veiculo
@@ -203,11 +198,11 @@ models:
       - name: indicadores.indicador_autuacao_limpeza
         description: "{{ doc('indicador_autuacao_limpeza') }}"
       - name: indicadores.indicador_autuacao_equipamento
-        description: "Indicador se o veículo foi autuado por infração relacionada à inoperância ou mau funcionamento de equipamentos do veículo"
+        description: "{{ doc('indicador_autuacao_equipamento') }}"
       - name: indicadores.indicador_sensor_temperatura
         description: "{{  doc('indicador_sensor_temperatura') }}"
       - name: indicadores.indicador_validador_sbd
-        description: "Indicador se o veículo se encontra com o novo validador do Sistema de Bilhetagem Digital (SBD) instalado"
+        description: "{{ doc('indicador_validador_sbd') }}"
       - name: status
         description: "{{ doc('status_veiculo') }}"
         tests:

@@ -35,6 +35,8 @@
                 data between date_sub(
                     date("{{ var('date_range_start') }}"), interval 1 day
                 ) and date("{{ var('date_range_end') }}")
+                and partidas > 0
+                and quilometragem > 0
             group by 1, 2, 3
         )
         {% if "viagem_planejada" not in model %}

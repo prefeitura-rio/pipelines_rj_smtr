@@ -303,11 +303,11 @@ models:
         data_type: string
         quote: true
       - name: id_operadora
-        description: "{{  doc('id_operadora') }}"
+        description: "{{ doc('id_operadora') }}"
         data_type: string
         quote: true
       - name: id_servico_jae
-        description: "{{  doc('id_servico_jae') }}"
+        description: "{{ doc('id_servico_jae') }}"
         data_type: string
         quote: true
       - name: valor_transacao_rateio
