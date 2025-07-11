@@ -261,9 +261,9 @@ with
             e.longitude,
             v.servico,
             e.servico_jae,
-        from estado_equipamento_aux as e
-        join
-            viagem as v
+        from viagem as v
+        left join
+            estado_equipamento_aux as e
             on e.id_veiculo = substr(v.id_veiculo, 2)
             and e.datetime_gps between v.datetime_partida and v.datetime_chegada
     ),
@@ -380,7 +380,7 @@ with
             vtv.data,
             vtv.id_viagem,
             vtv.tipo_viagem,
-            array_agg(distinct vtv.id_validador) as id_validador,
+            array_agg(distinct vtv.id_validador ignore nulls) as id_validador,
             ee.indicador_sem_transacao,
             ee.indicador_estado_equipamento_aberto,
             ptv.prioridade
