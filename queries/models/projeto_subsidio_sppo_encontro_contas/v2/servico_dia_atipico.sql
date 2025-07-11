@@ -1,0 +1,5 @@
+select data, servico, tipo, status
+from {{ ref("aux_servico_dia_atipico") }}
+where
+    incorporado_datalake_house is not true
+    and data not in ({{ var("encontro_contas_datas_excecoes").keys() | join(", ") }})  -- Remove datas de exceção que serão desconsideradas no encontro de contas
