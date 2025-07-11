@@ -14,6 +14,9 @@ with
 -- 4. Lista os pares data-serviço que estão sem planejamento porém com receita
 -- tarifária ou tem subsídio pago sem receita tarifária aferida
 select
+    data,
+    servico,
+    coalesce(sd.consorcio, rdo.consorcio) as consorcio,
     case
         when rdo.servico is not null and sd.servico is null
         then "Sem planejamento porém com receita tarifária"
@@ -21,9 +24,6 @@ select
         then "Subsídio pago sem receita tarifária"
         else null
     end as tipo,
-    data,
-    coalesce(sd.consorcio, rdo.consorcio) as consorcio,
-    servico,
     linha,
     servico_original_rdo,
     servico_original_subsidio,

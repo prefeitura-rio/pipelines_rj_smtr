@@ -1,7 +1,7 @@
 select
     extract(year from data) as ano,
-    consorcio,
     servico,
+    consorcio,
     sum(km_apurada) as km_apurada,
     sum(receita_total_esperada) as receita_total_esperada,
     sum(receita_tarifaria_esperada) as receita_tarifaria_esperada,

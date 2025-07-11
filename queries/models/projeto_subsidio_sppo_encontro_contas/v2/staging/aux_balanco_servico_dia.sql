@@ -9,8 +9,8 @@ with
     balanco_rdo_subsidio_servico_dia as (
         select
             data,
-            consorcio,
             servico,
+            consorcio,
             if(
                 {{ indicadores_false }}, receita_tarifaria_aferida, null
             ) as receita_tarifaria_aferida,
