@@ -748,6 +748,9 @@ class constants(Enum):  # pylint: disable=c0103
             "dbt_utils.unique_combination_of_columns__data_id_veiculo__veiculo_dia": {
                 "description": "Todos os registros são únicos"
             },
+            "test_check_veiculo_lacre__veiculo_dia": {
+                "description": "Todos os veículos lacrados têm dados consistentes entre `veiculo_dia` e `veiculo_fiscalizacao_lacre`"  # noqa
+            },
         },
         "tecnologia_servico": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
@@ -777,6 +780,11 @@ class constants(Enum):  # pylint: disable=c0103
             },
             "check_km_planejada": {
                 "description": "Todas as viagens possuem `km_planejada` correspondente à OS"
+            },
+        },
+        "viagens_remuneradas": {
+            "teto_viagens__viagens_remuneradas": {
+                "description": "Todas as viagens foram corretamente identificadas dentro das regras de limite"
             },
         },
     }
@@ -844,6 +852,22 @@ class constants(Enum):  # pylint: disable=c0103
             },
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
         },
+        "sumario_servico_dia_tipo": {
+            "sumario_servico_dia_tipo_soma_km__km_apurada__sumario_servico_dia_tipo": {
+                "description": "Todas as somas dos tipos de quilometragem são equivalentes à quilometragem total"
+            },
+            "dbt_expectations.expect_column_values_to_be_between__data__sumario_servico_dia_tipo": {
+                "description": "Todos os registros estão dentro da vigência da tabela"
+            },
+        },
+        "sumario_servico_dia_historico": {
+            "subsidio_viagens_atualizadas__sumario_servico_dia_historico": {
+                "description": "Todos os registros da sumario_servico_dia_historico estão atualizados em relação à `viagem_completa` e à última atualização do feed GTFS"
+            },
+            "dbt_expectations.expect_column_values_to_be_between__data__sumario_servico_dia_historico": {
+                "description": "Todos os registros estão dentro da vigência da tabela"
+            },
+        },
         "sumario_servico_dia_pagamento": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
             "dbt_utils.accepted_range": {
@@ -872,6 +896,11 @@ class constants(Enum):  # pylint: disable=c0103
             },
         },
         "sumario_servico_dia": {
+            "dbt_expectations.expect_column_values_to_be_between__data__sumario_dia": {
+                "description": "Todos os registros estão dentro da vigência da tabela"
+            },
+        },
+        "sumario_servico_dia": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
             "dbt_utils.accepted_range": {
                 "description": "Todos os valores da coluna `{column_name}` maiores ou iguais a zero"
@@ -887,6 +916,40 @@ class constants(Enum):  # pylint: disable=c0103
             },
             "dbt_expectations.expect_table_aggregation_to_equal_other_table__sumario_servico_dia": {
                 "description": "Todos serviços com valores de penalidade aceitos"
+            },
+            "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_servico_dia": {
+                "description": "Todas as datas possuem dados"
+            },
+            "dbt_expectations.expect_column_values_to_be_between__data__sumario_servico_dia": {
+                "description": "Todos os registros estão dentro da vigência da tabela"
+            },
+        },
+        "sumario_servico_dia_tipo_sem_glosa": {
+            "dbt_expectations.expect_column_values_to_be_between__data__sumario_servico_dia_tipo_sem_glosa": {
+                "description": "Todos os registros estão dentro da vigência da tabela"
+            },
+            "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_servico_dia_tipo_sem_glosa": {
+                "description": "Todas as datas possuem dados"
+            },
+            "dbt_utils.unique_combination_of_columns__sumario_servico_dia_tipo_sem_glosa": {
+                "description": "Todos os registros de sumario_servico_dia_tipo_sem_glosa são unicos"
+            },
+            "teto_pagamento_valor_subsidio_pago__sumario_servico_dia_tipo_sem_glosa": {
+                "description": "Todos serviços abaixo do teto de pagamento de valor do subsídio"
+            },
+            "dbt_utils.accepted_range": {
+                "description": "Todos os valores da coluna `{column_name}` são maiores ou iguais a zero"
+            },
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+        },
+        "sumario_servico_tipo_viagem_dia": {
+            "dbt_expectations.expect_column_values_to_be_between__data__sumario_servico_tipo_viagem_dia": {
+                "description": "Todos os registros estão dentro da vigência da tabela"
+            },
+        },
+        "viagens_realizadas": {
+            "dbt_expectations.expect_column_values_to_be_between__data__viagens_realizadas": {
+                "description": "Todos os registros estão dentro da vigência da tabela"
             },
         },
         "viagem_classificada": {
