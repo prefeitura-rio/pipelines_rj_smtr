@@ -34,7 +34,11 @@ with
         select data, datetime_autuacao, id_infracao, servico, placa
         from {{ ref("autuacao_disciplinar_historico") }}
         where
-            data_inclusao_datalake <= date_add(data, interval 7 day)
+            (
+                data_inclusao_datalake <= date_add(data, interval 7 day)
+                or data_inclusao_datalake
+                = date("{{var('data_inclusao_autuacao_disciplinar')}}")  -- Primeira data de inclusão dos dados de autuações disciplinares
+            )
             and {{ incremental_filter }}
             and modo = "ONIBUS"
     ),
