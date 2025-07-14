@@ -773,7 +773,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todos os valores da coluna `{column_name}` são aceitos"
             },
             "dbt_expectations.expect_table_aggregation_to_equal_other_table__viagem_planejada": {
-                "description": "Todos os dados de 'tipo_os' correspondem 1:1 entre as tabelas 'subsidio_data_versao_efetiva' e 'viagem_planejada'."  # noqa
+                "description": "Todos os dados de `tipo_os` correspondem 1:1 entre as tabelas `subsidio_data_versao_efetiva` e `viagem_planejada`."  # noqa
             },
             "dbt_utils.relationships_where__servico__viagem_planejada": {
                 "description": "Todos os serviços planejados possuem tecnologia permitida."  # noqa
@@ -807,7 +807,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todos os valores da coluna `{column_name}` maiores ou iguais a zero"
             },
             "dbt_utils.unique_combination_of_columns__sumario_faixa_servico_dia_pagamento": {
-                "description": "Todos os registros de `sumario_faixa_servico_dia_pagamento` são unicos"
+                "description": "Todos os registros são únicos"
             },
             "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_faixa_servico_dia_pagamento": {
                 "description": "Todas as datas possuem dados"
@@ -862,7 +862,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "sumario_servico_dia_historico": {
             "subsidio_viagens_atualizadas__sumario_servico_dia_historico": {
-                "description": "Todos os registros da sumario_servico_dia_historico estão atualizados em relação à `viagem_completa` e à última atualização do feed GTFS"
+                "description": "Todos os registros estão atualizados em relação à `viagem_completa` e à última atualização do feed GTFS"
             },
             "dbt_expectations.expect_column_values_to_be_between__data__sumario_servico_dia_historico": {
                 "description": "Todos os registros estão dentro da vigência da tabela"
@@ -874,7 +874,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todos os valores da coluna `{column_name}` maiores ou iguais a zero"
             },
             "dbt_utils.unique_combination_of_columns__sumario_servico_dia_pagamento": {
-                "description": "Todos os registros de `sumario_servico_dia_pagamento` são unicos"
+                "description": "Todos os registros são únicos"
             },
             "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sumario_servico_dia_pagamento": {
                 "description": "Todas as datas possuem dados"
@@ -895,7 +895,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todas as somas de `valor_a_pagar` e `valor_penalidade` não nulos e maior ou igual a zero"
             },
         },
-        "sumario_servico_dia": {
+        "sumario_dia": {
             "dbt_expectations.expect_column_values_to_be_between__data__sumario_dia": {
                 "description": "Todos os registros estão dentro da vigência da tabela"
             },
@@ -912,7 +912,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todos serviços abaixo do teto de pagamento de valor do subsídio"
             },
             "dbt_utils.unique_combination_of_columns__sumario_servico_dia": {
-                "description": "Todos os registros de sumario_servico_dia são unicos"
+                "description": "Todos os registros são únicos"
             },
             "dbt_expectations.expect_table_aggregation_to_equal_other_table__sumario_servico_dia": {
                 "description": "Todos serviços com valores de penalidade aceitos"
@@ -932,7 +932,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todas as datas possuem dados"
             },
             "dbt_utils.unique_combination_of_columns__sumario_servico_dia_tipo_sem_glosa": {
-                "description": "Todos os registros de sumario_servico_dia_tipo_sem_glosa são unicos"
+                "description": "Todos os registros são únicos"
             },
             "teto_pagamento_valor_subsidio_pago__sumario_servico_dia_tipo_sem_glosa": {
                 "description": "Todos serviços abaixo do teto de pagamento de valor do subsídio"
@@ -954,7 +954,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "viagem_classificada": {
             "dbt_utils.unique_combination_of_columns__viagem_classificada": {
-                "description": "Todos os registros de `viagem_classificada` são unicos"
+                "description": "Todos os registros são únicos"
             },
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
         },
