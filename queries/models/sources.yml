@@ -399,3 +399,9 @@ sources:
     tables:
       - name: registros
       - name: realocacao
+
+  - name: clima_estacao_meteorologica
+    database: rj-cor
+
+    tables:
+      - name: meteorologia_inmet
