@@ -104,7 +104,7 @@ sources:
       - name: parametros_km
 
   - name: projeto_subsidio_sppo_encontro_contas_staging
-    database: rj-smtr-dev
+    database: rj-smtr
 
     tables:
       - name: parametros_km
@@ -297,7 +297,7 @@ sources:
       - name: matriz_integracao_excecao
 
   - name: subsidio_staging
-    database: rj-smtr-dev
+    database: rj-smtr
 
     tables:
       - name: valor_km_tipo_viagem
