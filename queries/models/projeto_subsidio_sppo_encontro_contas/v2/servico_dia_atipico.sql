@@ -1,4 +1,3 @@
-
 select
     data,
     servico,
