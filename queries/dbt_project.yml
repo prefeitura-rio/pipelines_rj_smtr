@@ -152,6 +152,8 @@ vars:
   DATA_SUBSIDIO_V15A_INICIO: "2025-08-01"
   # Feature Não pagamento de viagens licenciadas sem ar condicionado [ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629) e RESOLUÇÃO SMTR 3843/2025]
   DATA_SUBSIDIO_V15B_INICIO: "2025-11-01"
+  # Feature Não pagamento de viagens licenciadas sem ar condicionado [ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629) e RESOLUÇÃO SMTR 3843/2025]
+  DATA_SUBSIDIO_V15C_INICIO: "2025-07-16"
 
   # Recursos #
   recurso_staging: "rj-smtr-staging.projeto_subsidio_sppo_staging.recurso"
