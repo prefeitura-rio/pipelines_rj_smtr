@@ -213,11 +213,14 @@ Data final do feed [versão]
 {% enddocs %}
 
 {% docs tipo_servico %}
-Tipo de Serviço da Linha
+Tipo de serviço da linha, conforme RDO [Relatório Diário de Operação]
+{% enddocs %}
+
+{% docs tipo_servico_jae %}
 {% enddocs %}
 
 {% docs ordem_servico %}
-Ordem de Serviço da Linha
+Ordem de serviço da linha, conforme RDO [Relatório Diário de Operação]
 {% enddocs %}
 
 {% docs codigo_veiculo %}
@@ -1044,7 +1047,7 @@ Receita total aferida [receita_tarifaria_aferida + valor_subsidio_pago] (R$)
 {% enddocs %}
 
 {% docs receita_tarifaria_aferida %}
-Receita tarifária aferida com base no RDO informado pelos consórcios (R$)
+Receita tarifária aferida com base no RDO [Relatório Diário de Operação] (R$)
 {% enddocs %}
 
 {% docs subsidio_pago %}
@@ -1072,55 +1075,55 @@ Quilometragem apurada e subsidiada (km)
 {% enddocs %}
 
 {% docs datas_servico %}
-Quantidade total de serviços-dia no período
+Quantidade total de pares data-serviço no período
 {% enddocs %}
 
 {% docs datas_servico_pod_menor_80 %}
-Quantidade de serviços-dia com POD menor que 80%
+Quantidade de pares data-serviço com POD [Percentual de Operação Diário] menor que 80%
 {% enddocs %}
 
 {% docs datas_servico_excecao %}
-Quantidade de serviços-dia em datas de exceção
+Quantidade de pares data-serviço em datas de exceção
 {% enddocs %}
 
 {% docs datas_servico_atipicos %}
-Quantidade de serviços-dia atípicos
+Quantidade de pares data-serviço atípicos
 {% enddocs %}
 
 {% docs datas_servico_ausencia_receita_tarifaria %}
-Quantidade de serviços-dia sem receita tarifária
+Quantidade de pares data-serviço sem receita tarifária
 {% enddocs %}
 
 {% docs datas_servico_tipicos %}
-Quantidade de serviços-dia típicos
+Quantidade de pares data-serviço típicos
 {% enddocs %}
 
 {% docs percentual_datas_servico_pod_menor_80 %}
-Percentual de serviços-dia com POD menor que 80%
+Percentual de pares data-serviço com POD [Percentual de Operação Diário] menor que 80%
 {% enddocs %}
 
 {% docs percentual_datas_servico_excecao %}
-Percentual de serviços-dia em datas de exceção
+Percentual de pares data-serviço em datas de exceção
 {% enddocs %}
 
 {% docs percentual_datas_servico_atipicos %}
-Percentual de serviços-dia atípicos
+Percentual de pares data-serviço atípicos
 {% enddocs %}
 
 {% docs percentual_datas_servico_ausencia_receita %}
-Percentual de serviços-dia sem receita tarifária
+Percentual de pares data-serviço sem receita tarifária
 {% enddocs %}
 
 {% docs percentual_datas_servico_tipicos %}
-Percentual de serviços-dia típicos
+Percentual de pares data-serviço típicos
 {% enddocs %}
 
 {% docs perc_km_planejada %}
-Percentual da quilometragem planejada do total
+Percentual de quilometragem apurada em relação à planejada do serviço ou POD [Percentual de Operação Diário]
 {% enddocs %}
 
 {% docs irk_tarifa_publica %}
-Índice de Remuneração por Quilômetro tarifário
+Índice de Remuneração por Quilômetro [tarifário] (R$/km)
 {% enddocs %}
 
 {% docs subsidio_km %}
@@ -1128,19 +1131,19 @@ Valor do subsídio por quilômetro (R$/km)
 {% enddocs %}
 
 {% docs tipo_recurso %}
-"Tipo de recurso ou justificativa que motivou a exclusão daquele par serviço-dia"
+Tipo de recurso ou justificativa que motivou a exclusão daquele par data-serviço
 {% enddocs %}
 
 {% docs tipo_inconsistencia %}
-"Classificação do tipo de inconsistência encontrada no par data-serviço"
+Classificação do tipo de inconsistência encontrada no par data-serviço
 {% enddocs %}
 
 {% docs km_apurada_pod %}
-Distância apurada para o serviço (km) para cálculo do [POD]
+Distância apurada para o serviço (km) para cálculo do POD [Percentual de Operação Diário]
 {% enddocs %}
 
 {% docs servico_original_rdo %}
-Serviço informado no Relatório Diário de Operações [RDO]
+Serviço informado no RDO [Relatório Diário de Operação] com tratamento
 {% enddocs %}
 
 {% docs valor_subsidio_pago %}
@@ -1148,7 +1151,7 @@ Valor total pago de subsídio
 {% enddocs %}
 
 {% docs servico_original_subsidio %}
-Serviço que informado no Subsídio
+Serviço apurado no subsídio
 {% enddocs %}
 
 {% docs km_planejada %}

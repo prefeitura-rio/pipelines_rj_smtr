@@ -7,10 +7,11 @@ models:
       - v: 1
         config:
           deprecation_date: 2023-12-31
+          description: "Balanço da receita aferida e esperada por consórcio e ano para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
       - v: 2
         config:
           alias: balanco_consorcio_ano
-    description: "Balanço da receita aferida e esperada por consórcio e ano para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025."
+          description: "Balanço da receita aferida e esperada por consórcio e ano para pares data-serviço subsidiados [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: ano
         description: "{{ doc('ano') }}"
@@ -62,10 +63,11 @@ models:
       - v: 1
         config:
           deprecation_date: 2023-12-31
+          description: "Balanço da receita aferida e esperada por consórcio e dia para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
       - v: 2
         config:
           alias: balanco_consorcio_dia
-    description: "Balanço da receita aferida e esperada por consórcio e dia para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025."
+          description: "Balanço da receita aferida e esperada por consórcio e dia para pares data-serviço subsidiados [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: data
         description: "{{ doc('data') }}"
@@ -95,10 +97,11 @@ models:
       - v: 1
         config:
           deprecation_date: 2023-12-31
+          description: "Balanço da receita aferida e esperada por serviço e ano para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
       - v: 2
         config:
           alias: balanco_servico_ano
-    description: "Balanço da receita aferida e esperada por serviço e ano para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025."
+          description: "Balanço da receita aferida e esperada por serviço e ano para pares data-serviço subsidiados [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: ano
         description: "{{ doc('ano') }}"
@@ -124,16 +127,19 @@ models:
         description: "{{ doc('subsidio_pago') }}"
       - name: saldo
         description: "{{ doc('saldo') }}"
+      - name: km_apurada
+        description: "{{ doc('km_apurada') }}"
   - name: balanco_servico_dia
     latest_version: 2
     versions:
       - v: 1
         config:
           deprecation_date: 2023-12-31
+          description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
       - v: 2
         config:
           alias: balanco_servico_dia
-    description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025"
+          description: "Balanço da receita aferida e esperada por servico e dia para pares data-serviço subsidiados [Processo.Rio MTR-PRO-2025/18086]"
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
@@ -165,8 +171,12 @@ models:
         description: "{{ doc('subsidio_pago') }}"
       - name: saldo
         description: "{{ doc('saldo') }}"
+      - name: km_apurada
+        description: "{{ doc('km_apurada') }}"
+      - name: valor_subsidio_pago
+        description: "{{ doc('valor_subsidio_pago') }}"
   - name: balanco_servico_dia_pos_gt
-    description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados após alterações do Grupo de Trabalho [Processo.Rio MTR-PRO-2024/06270]. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024, 02/2024 e 01/2025."
+    description: "Balanço da receita aferida e esperada por servico e dia para pares data-serviço subsidiados após alterações do Grupo de Trabalho [Processo.Rio MTR-PRO-2024/06270]. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024, 02/2024 e 01/2025."
     deprecation_date: 2023-12-31
     columns:
       - name: data
@@ -199,10 +209,11 @@ models:
       - v: 1
         config:
           deprecation_date: 2023-12-31
+          description: "Balanço da receita aferida e esperada por serviço e quinzena para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
       - v: 2
         config:
           alias: balanco_servico_quinzena
-    description: "Balanço da receita aferida e esperada por serviço e quinzena para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025."
+          description: "Balanço da receita aferida e esperada por serviço e quinzena para pares data-serviço subsidiados [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: quinzena
         description: "{{ doc('quinzena') }}"
@@ -234,6 +245,8 @@ models:
         description: "{{ doc('subsidio_pago') }}"
       - name: saldo
         description: "{{ doc('saldo') }}"
+      - name: km_apurada
+        description: "{{ doc('km_apurada') }}"
   - name: receita_tarifaria_servico_nao_identificado_quinzena
     description: "Receita tarifária proveniente do RDO para serviços de ônibus dos consórcios que não foram identificados nos planos operacionais dos respectivos dias."
     deprecation_date: 2023-12-31
@@ -264,7 +277,7 @@ models:
       - v: 2
         config:
           alias: servico_dia_atipico
-    description: "Serviços-dia com ocorrências que impactam a apuração. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025."
+    description: "Pares data-serviço com ocorrências que impactam a apuração [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: data
         description: "{{ doc('data') }}"
@@ -273,14 +286,14 @@ models:
       - name: tipo
         description: "{{ doc('tipo_recurso') }}"
       - name: status
-        description: "{{ doc('status') }}"
+        description: "Situação de análise do recurso ou justificativa"
   - name: aux_rdo_servico_dia
     latest_version: 2
     versions:
       - v: 2
         config:
           alias: aux_rdo_servico_dia
-    description: "Receita tarifária aferida por serviço-dia a partir dos registros do RDO com correção dos serviços sem planejamento."
+    description: "Receita tarifária aferida por serviço-dia a partir dos registros do RDO com correção dos serviços sem planejamento [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: data
         description: "{{ doc('data') }}"
@@ -304,7 +317,7 @@ models:
       - v: 2
         config:
           alias: aux_subsidio_servico_dia
-    description: "Quilometragem apurada e subsídio pago por serviço-dia a partir com correção dos serviços sem receita."
+    description: "Quilometragem apurada e subsídio pago por serviço-dia a partir com correção dos serviços sem receita [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: data
         description: "{{ doc('data') }}"
@@ -320,45 +333,13 @@ models:
         description: "{{ doc('servico_original_subsidio') }}"
       - name: servico
         description: "{{ doc('servico') }}"
-  - name: staging_encontro_contas_servico_dia
-    latest_version: 2
-    versions:
-      - v: 2
-        config:
-          alias: staging_encontro_contas_servico_dia
-    description: "Quilometragem planejada, apurada e Percentual de Operação Diária (POD) por serviço-dia."
-    columns:
-      - name: processo_origem
-        description: "Processo de origem da correção"
-      - name: consorcio
-        description: "{{ doc('consorcio') }}"
-      - name: linha
-        description: "{{ doc('linha') }}"
-      - name: tipo_servico
-        description: "{{ doc('tipo_servico') }}"
-      - name: ordem_servico
-        description: "{{ doc('ordem_servico') }}"
-      - name: justificativa
-        description: "Justificativa para a correção"
-      - name: data
-        description: "{{ doc('data') }}"
-      - name: data_resposta
-        description: "Data da resposta da Rio Ônibus com a correção necessária"
-      - name: receita_tarifaria_aferida_rdo
-        description: "Receita tarifaria aferida no Relatório Diário de Operações"
-      - name: tipo
-        description: "{{ doc('tipo_recurso') }}"
-      - name: servico
-        description: "{{ doc('servico') }}"
-      - name: servico_corrigido
-        description: "{{ doc('servico_corrigido') }}"
   - name: balanco_consorcio_mes
     latest_version: 2
     versions:
       - v: 2
         config:
           alias: balanco_consorcio_mes
-    description: "Balanço da receita aferida e esperada por consórcio, mês e ano para serviços-dia subsidiados. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024 e 01/2025."
+    description: "Balanço da receita aferida e esperada por consórcio, mês e ano para pares data-serviço subsidiados [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: ano_mes
         description: "Ano e mês de referência"
@@ -414,7 +395,7 @@ models:
       - v: 2
         config:
           alias: correcao_servico_rdo
-    description: "Correção de serviços-dia sem planejamento porém com receita tarifária e com subsídio pago, mas sem receita tarifária"
+    description: "Correção de pares data-serviço sem planejamento porém com receita tarifária e com subsídio pago, mas sem receita tarifária [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: data
         description: "{{ doc('data') }}"
@@ -430,7 +411,7 @@ models:
       - v: 2
         config:
           alias: receita_tarifaria_servico_dia_sem_associacao
-    description: "Serviços-dia sem planejamento porém com receita tarifária e com subsídio pago, mas sem receita tarifária"
+    description: "Pares data-serviço sem planejamento porém com receita tarifária e com subsídio pago, mas sem receita tarifária mesmo após as correções [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: tipo
         description: "{{ doc('tipo_inconsistencia') }}"
@@ -441,7 +422,7 @@ models:
       - name: servico
         description: "{{ doc('servico') }}"
       - name: linha
-        description: "{{ doc('linha') }}"
+        description: "Serviço de ônibus [linha] informado no RDO [Relatório Diário de Operação]"
       - name: servico_original_rdo
         description: "{{ doc('servico_original_rdo') }}"
       - name: servico_original_subsidio
@@ -453,7 +434,7 @@ models:
       - name: receita_tarifaria_aferida
         description: "{{ doc('receita_tarifaria_aferida') }}"
       - name: justificativa
-        description: "Justificativa para a exclusão do par serviço-data"
+        description: "Justificativa para a exclusão do par data-serviço"
       - name: servico_correto
         description: "{{ doc('servico_corrigido') }}"
   - name: encontro_contas_subsidio_sumario_servico_dia
@@ -462,7 +443,7 @@ models:
       - v: 2
         config:
           alias: encontro_contas_subsidio_sumario_servico_dia
-    description: "Sumário do subsídio dos serviços de ônibus [SPPO] por dia para fins do Encontro de Contas"
+    description: "Sumário do subsídio do SPPO [Serviço Público de Transporte de Passageiros por Ônibus] por dia para fins do Encontro de Contas [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: data
         description: "{{ doc('data') }}"
@@ -486,7 +467,7 @@ models:
       - v: 2
         config:
           alias: encontro_contas_parametros
-    description: "Parâmetros utilizados para o cálculo do Encontro de Contas dos serviços de ônibus [SPPO]"
+    description: "Parâmetros utilizados para o cálculo do Encontro de Contas do SPPO [Serviço Público de Transporte de Passageiros por Ônibus - Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: data_inicio
         description: "{{ doc('data_inicio') }}"
