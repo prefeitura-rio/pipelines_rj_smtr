@@ -18,7 +18,7 @@ def get_secret(secret_path: str = "/", secret_name: str = None, environment: str
     Returns:
         dict: Dicionário com os dados retornados do Infisical
     """
-    log(os.environ["webhooks"])
+    log(os.environ["WEBHOOKS"])
     log(os.environ["SENTRY_DSN"])
     client = get_infisical_client()
     if not secret_path.startswith("/"):
