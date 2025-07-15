@@ -1,3 +1,9 @@
+{{
+    config(
+        partition_by={"field": "data_inicial_quinzena"},
+    )
+}}
+
 with
     datas as (
         select
@@ -45,4 +51,3 @@ left join
     {{ ref("balanco_servico_dia") }} bs
     on bs.data between qz.data_inicial_quinzena and qz.data_final_quinzena
 group by quinzena, data_inicial_quinzena, data_final_quinzena, consorcio, servico
-order by data_inicial_quinzena, consorcio, servico

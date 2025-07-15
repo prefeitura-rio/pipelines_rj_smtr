@@ -1,3 +1,13 @@
+{{
+    config(
+        partition_by={
+            "field": "ano",
+            "data_type": "int64",
+            "range": {"start": 2024, "end": 2100, "interval": 1},
+        },
+    )
+}}
+
 select
     extract(year from data) as ano,
     servico,
@@ -13,4 +23,3 @@ select
     sum(saldo) as saldo
 from {{ ref("balanco_servico_dia") }}
 group by 1, 2, 3
-order by 1, 2, 3

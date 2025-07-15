@@ -12,4 +12,3 @@ select
     sum(saldo) as saldo
 from {{ ref("balanco_servico_dia") }}
 group by 1, 2
-order by 1, 2

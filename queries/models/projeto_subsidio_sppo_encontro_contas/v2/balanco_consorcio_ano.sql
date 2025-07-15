@@ -1,3 +1,13 @@
+{{
+    config(
+        partition_by={
+            "field": "ano",
+            "data_type": "int64",
+            "range": {"start": 2024, "end": 2100, "interval": 1},
+        },
+    )
+}}
+
 with
     balanco_agg_raw as (
         select
@@ -103,4 +113,3 @@ select
     saldo
 
 from balanco_agg
-order by ano, consorcio

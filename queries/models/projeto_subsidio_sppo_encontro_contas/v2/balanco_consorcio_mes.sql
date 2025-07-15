@@ -1,3 +1,9 @@
+{{
+    config(
+        partition_by={"field": "ano_mes", "granularity": "month"},
+    )
+}}
+
 with
     balanco_agg_raw as (
         select
@@ -107,4 +113,3 @@ select
     saldo
 
 from balanco_agg
-order by ano_mes, consorcio

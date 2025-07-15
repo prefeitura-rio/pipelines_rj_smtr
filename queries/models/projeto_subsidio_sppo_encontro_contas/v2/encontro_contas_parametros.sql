@@ -1,3 +1,9 @@
+{{
+    config(
+        partition_by={"field": "data_inicio"},
+    )
+}}
+
 select
     min(data_inicio) as data_inicio,
     max(data_fim) as data_fim,
@@ -7,4 +13,3 @@ select
 from {{ ref("valor_km_tipo_viagem") }}
 where data_inicio >= "{{ var('encontro_contas_datas_v2_inicio') }}"
 group by all
-order by data_inicio
