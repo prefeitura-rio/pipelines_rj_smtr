@@ -100,9 +100,16 @@ sources:
 
   - name: projeto_subsidio_sppo_encontro_contas
     database: rj-smtr
+    tables:
+      - name: parametros_km
+
+  - name: projeto_subsidio_sppo_encontro_contas_staging
+    database: rj-smtr
 
     tables:
       - name: parametros_km
+      - name: rdo_rioonibus_correcao_servico_2024_2025
+      - name: subtt_cmo_recurso_encontro_contas
 
   - name: veiculo_staging_rj-smtr
     database: rj-smtr
