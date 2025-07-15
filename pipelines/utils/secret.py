@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+import os
+
 from prefeitura_rio.pipelines_utils.infisical import get_infisical_client
+from prefeitura_rio.pipelines_utils.logging import log
 
 
 def get_secret(secret_path: str = "/", secret_name: str = None, environment: str = "dev"):
@@ -15,6 +18,8 @@ def get_secret(secret_path: str = "/", secret_name: str = None, environment: str
     Returns:
         dict: Dicionário com os dados retornados do Infisical
     """
+    log(os.environ["webhooks"])
+    log(os.environ["SENTRY_DSN"])
     client = get_infisical_client()
     if not secret_path.startswith("/"):
         secret_path = f"/{secret_path}"

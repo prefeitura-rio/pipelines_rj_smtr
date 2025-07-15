@@ -3,7 +3,9 @@
 
 DBT: 2025-05-05
 """
-from prefect import Parameter, case
+from prefect import Parameter
+
+# from prefect import Parameter, case
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefeitura_rio.pipelines_utils.custom import Flow
@@ -39,8 +41,8 @@ with Flow("dbt: teste source freshness") as flow_source_freshness:
 
     dbt_output = run_dbt(resource="source freshness")
     flag_notify_discord, failed_sources = parse_source_freshness_output(dbt_output=dbt_output)
-    with case(flag_notify_discord, True):
-        discord_notification = source_freshness_notify_discord(failed_sources=failed_sources)
+    # with case(flag_notify_discord, True):
+    discord_notification = source_freshness_notify_discord(failed_sources=failed_sources)
 
     flow_source_freshness.set_reference_tasks(
         [
