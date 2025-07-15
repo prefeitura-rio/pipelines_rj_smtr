@@ -20,6 +20,9 @@ select
     sum(receita_total_aferida) as receita_total_aferida,
     sum(receita_tarifaria_aferida) as receita_tarifaria_aferida,
     sum(valor_subsidio_pago) as subsidio_pago,
-    sum(saldo) as saldo
+    sum(saldo) as saldo,
+    '{{ var("version") }}' as versao,
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+    '{{ invocation_id }}' as id_execucao_dbt
 from {{ ref("balanco_servico_dia") }}
-group by 1, 2, 3
+group by all

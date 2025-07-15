@@ -34,5 +34,12 @@ with
             = 1
     )
 
-select data, servico, servico_corrigido, tipo
+select
+    data,
+    servico,
+    servico_corrigido,
+    tipo,
+    '{{ var("version") }}' as versao,
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+    '{{ invocation_id }}' as id_execucao_dbt
 from pares_circulares

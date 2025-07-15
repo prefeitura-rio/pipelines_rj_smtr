@@ -57,6 +57,12 @@ models:
         description: "{{ doc('subsidio_pago') }}"
       - name: saldo
         description: "{{ doc('saldo') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
   - name: balanco_consorcio_dia
     latest_version: 2
     versions:
@@ -91,6 +97,12 @@ models:
         description: "{{ doc('subsidio_pago') }}"
       - name: saldo
         description: "{{ doc('saldo') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
   - name: balanco_servico_ano
     latest_version: 2
     versions:
@@ -129,6 +141,12 @@ models:
         description: "{{ doc('saldo') }}"
       - name: km_apurada
         description: "{{ doc('km_apurada') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
   - name: balanco_servico_dia
     latest_version: 2
     versions:
@@ -175,6 +193,12 @@ models:
         description: "{{ doc('km_apurada') }}"
       - name: valor_subsidio_pago
         description: "{{ doc('valor_subsidio_pago') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
   - name: balanco_servico_dia_pos_gt
     description: "Balanço da receita aferida e esperada por servico e dia para pares data-serviço subsidiados após alterações do Grupo de Trabalho [Processo.Rio MTR-PRO-2024/06270]. Ver metodologia nas notas técnicas TR/SUBTT Nº 01/2024, 02/2024 e 01/2025."
     deprecation_date: 2023-12-31
@@ -247,6 +271,12 @@ models:
         description: "{{ doc('saldo') }}"
       - name: km_apurada
         description: "{{ doc('km_apurada') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
   - name: receita_tarifaria_servico_nao_identificado_quinzena
     description: "Receita tarifária proveniente do RDO para serviços de ônibus dos consórcios que não foram identificados nos planos operacionais dos respectivos dias."
     deprecation_date: 2023-12-31
@@ -287,6 +317,12 @@ models:
         description: "{{ doc('tipo_recurso') }}"
       - name: status
         description: "Situação de análise do recurso ou justificativa"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
   - name: aux_rdo_servico_dia
     latest_version: 2
     versions:
@@ -389,6 +425,12 @@ models:
         description: "{{ doc('subsidio_pago') }}"
       - name: saldo
         description: "{{ doc('saldo') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
   - name: correcao_servico_rdo
     latest_version: 2
     versions:
@@ -404,7 +446,13 @@ models:
       - name: servico_corrigido
         description: "{{ doc('servico_corrigido') }}"
       - name: tipo
-        description: "tipo"
+        description: "{{ doc('tipo_inconsistencia') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
   - name: receita_tarifaria_servico_dia_sem_associacao
     latest_version: 2
     versions:
@@ -437,6 +485,12 @@ models:
         description: "Justificativa para a exclusão do par data-serviço"
       - name: servico_correto
         description: "{{ doc('servico_corrigido') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
   - name: encontro_contas_subsidio_sumario_servico_dia
     latest_version: 2
     versions:
@@ -461,6 +515,12 @@ models:
         description: "{{ doc('perc_km_planejada') }}"
       - name: valor_subsidio_pago
         description: "{{ doc('valor_subsidio_pago') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
   - name: encontro_contas_parametros
     latest_version: 2
     versions:
@@ -479,3 +539,9 @@ models:
         description: "{{ doc('irk_tarifa_publica') }}"
       - name: subsidio_km
         description: "{{ doc('subsidio_km') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"

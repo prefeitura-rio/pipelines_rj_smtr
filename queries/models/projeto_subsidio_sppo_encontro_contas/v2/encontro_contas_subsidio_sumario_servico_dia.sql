@@ -1,9 +1,14 @@
-{% set sumario_servico_dia_historico = ref("monitoramento_sumario_servico_dia_historico") %}
+{% set sumario_servico_dia_historico = ref(
+    "monitoramento_sumario_servico_dia_historico"
+) %}
 {# {% set sumario_servico_dia_historico = (
     "rj-smtr.monitoramento.sumario_servico_dia_historico"
 ) %} #}
-
-select *
+select
+    *,
+    '{{ var("version") }}' as versao,
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+    '{{ invocation_id }}' as id_execucao_dbt
 from
     (
         select

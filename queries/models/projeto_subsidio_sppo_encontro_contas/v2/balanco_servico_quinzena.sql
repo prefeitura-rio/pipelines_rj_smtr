@@ -45,9 +45,12 @@ select
     sum(receita_total_aferida) as receita_total_aferida,
     sum(receita_tarifaria_aferida) as receita_tarifaria_aferida,
     sum(valor_subsidio_pago) as subsidio_pago,
-    sum(saldo) as saldo
+    sum(saldo) as saldo,
+    '{{ var("version") }}' as versao,
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+    '{{ invocation_id }}' as id_execucao_dbt
 from quinzenas qz
 left join
     {{ ref("balanco_servico_dia") }} bs
     on bs.data between qz.data_inicial_quinzena and qz.data_final_quinzena
-group by quinzena, data_inicial_quinzena, data_final_quinzena, consorcio, servico
+group by all
