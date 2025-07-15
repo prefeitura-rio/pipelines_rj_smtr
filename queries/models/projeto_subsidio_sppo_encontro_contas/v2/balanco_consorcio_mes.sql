@@ -110,6 +110,9 @@ select
     receita_total_aferida,
     receita_tarifaria_aferida,
     subsidio_pago,
-    saldo
+    saldo,
+    '{{ var("version") }}' as versao,
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+    '{{ invocation_id }}' as id_execucao_dbt
 
 from balanco_agg
