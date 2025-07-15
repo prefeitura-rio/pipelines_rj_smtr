@@ -25,9 +25,33 @@ with
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         where {{ incremental_filter }}
     ),
+    veiculo_ano_fabricacao as (
+        select data, id_veiculo, ano_fabricacao, placa
+        from {{ ref("veiculo_licenciamento_dia") }}
+        where
+            (
+                data_processamento <= date_add(data, interval 7 day)
+                or data_processamento
+                = date("{{var('data_processamento_veiculo_licenciamento')}}")  -- Primeira data de inclusão dos dados de licenciamento
+            )
+            {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
+        qualify
+            row_number() over (
+                partition by data, id_veiculo, placa order by data_processamento desc
+            )
+            = 1
+    ),
     veiculos as (
-        select data, id_veiculo, placa, tecnologia, status, indicadores
-        from {{ ref("aux_veiculo_dia_consolidada") }}
+        select
+            v.data,
+            v.id_veiculo,
+            v.placa,
+            v.tecnologia,
+            v.status,
+            v.indicadores,
+            vaf.ano_fabricacao
+        from {{ ref("aux_veiculo_dia_consolidada") }} v
+        left join veiculo_ano_fabricacao vaf using (data, id_veiculo, placa)
         where {{ incremental_filter }}
     ),
     autuacao_disciplinar as (
@@ -76,6 +100,7 @@ with
             v.datetime_partida,
             v.datetime_chegada,
             v.id_veiculo,
+            ve.ano_fabricacao,
             v.id_viagem,
             v.distancia_planejada,
             v.sentido,
@@ -93,6 +118,7 @@ with
             vs.datetime_partida,
             vs.datetime_chegada,
             vs.id_veiculo,
+            vs.ano_fabricacao,
             vs.id_viagem,
             vs.distancia_planejada,
             vs.sentido,
@@ -146,6 +172,7 @@ with
             vt.datetime_partida,
             vt.datetime_chegada,
             vt.modo,
+            vt.ano_fabricacao,
             vt.tecnologia_apurada,
             vt.tecnologia_remunerada,
             case
@@ -213,6 +240,7 @@ with
             datetime_partida,
             datetime_chegada,
             modo,
+            ano_fabricacao,
             tecnologia_apurada,
             tecnologia_remunerada,
             tipo_viagem,

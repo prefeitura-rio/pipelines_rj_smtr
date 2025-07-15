@@ -141,6 +141,8 @@ models:
         description: "{{ doc('datetime_chegada') }}"
       - name: modo
         description: "{{ doc('modo') }}"
+      - name: ano_fabricacao
+        description: "{{ doc('ano_fabricacao') }} [chassi]"
       - name: tecnologia_apurada
         description: "{{ doc('tecnologia') }}"
         tests:

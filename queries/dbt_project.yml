@@ -115,6 +115,7 @@ vars:
   tipo_materializacao: "subsidio"
   data_inicio_trips_shapes: "2023-04-01"
   data_inclusao_autuacao_disciplinar: "2025-07-10"
+  data_processamento_veiculo_licenciamento: "2025-07-10"
   # Feature penalidade de autuação por inoperância do ar condicionado (DECRETO RIO 51940/2023)
   DATA_SUBSIDIO_V2_INICIO: "2023-01-16"
   # Feature penalidade de autuação por segurança e limpeza/equipamento (DECRETO RIO 52820/2023)
