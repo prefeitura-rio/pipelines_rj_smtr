@@ -5,18 +5,18 @@
 - km_planejada: soma das kms por faixa horária que foram planejadas e utilizadas para o cálculo do subsídio conforme tabelas rj-smtr.dashboard_subsidio_sppo_v2.sumario_faixa_servico_dia e rj-smtr.dashboard_subsidio_sppo_v2.sumario_faixa_servico_dia_pagamento
 - perc_km_planejada: percentual de km_apurada_pod em relação a km_planejada, ou seja, o POD (Percentual de Operação Diária) do serviço
 */
-{# {% set subsidio_faixa_servico_dia_tipo_viagem = ref("subsidio_faixa_servico_dia_tipo_viagem") %} #}
-{# {% set sumario_faixa_servico_dia = ref("sumario_faixa_servico_dia") %} #}
-{# {% set sumario_faixa_servico_dia_pagamento = ref("sumario_faixa_servico_dia_pagamento") %} #}
-{% set subsidio_faixa_servico_dia_tipo_viagem = (
+{% set subsidio_faixa_servico_dia_tipo_viagem = ref("subsidio_faixa_servico_dia_tipo_viagem") %}
+{% set sumario_faixa_servico_dia = ref("sumario_faixa_servico_dia") %}
+{% set sumario_faixa_servico_dia_pagamento = ref("sumario_faixa_servico_dia_pagamento") %}
+{# {% set subsidio_faixa_servico_dia_tipo_viagem = (
     "rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem"
-) %}
-{% set sumario_faixa_servico_dia = (
+) %} #}
+{# {% set sumario_faixa_servico_dia = (
     "rj-smtr.dashboard_subsidio_sppo_v2.sumario_faixa_servico_dia"
-) %}
-{% set sumario_faixa_servico_dia_pagamento = (
+) %} #}
+{# {% set sumario_faixa_servico_dia_pagamento = (
     "rj-smtr.dashboard_subsidio_sppo_v2.sumario_faixa_servico_dia_pagamento"
-) %}
+) %} #}
 
 {{ config(materialized="ephemeral") }}
 

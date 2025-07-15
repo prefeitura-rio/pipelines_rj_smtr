@@ -1,7 +1,7 @@
-{# {% set sumario_servico_dia_historico = ref("monitoramento_sumario_servico_dia_historico") %} #}
-{% set sumario_servico_dia_historico = (
+{% set sumario_servico_dia_historico = ref("monitoramento_sumario_servico_dia_historico") %}
+{# {% set sumario_servico_dia_historico = (
     "rj-smtr.monitoramento.sumario_servico_dia_historico"
-) %}
+) %} #}
 
 select *
 from
