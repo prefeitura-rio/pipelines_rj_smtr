@@ -7,7 +7,6 @@
 select
   extract(year from data) as ano,
   consorcio,
-  servico,
   sum(km_subsidiada) as km_subsidiada,
   sum(receita_total_esperada) as receita_total_esperada,
   sum(receita_tarifaria_esperada) as receita_tarifaria_esperada,
@@ -17,6 +16,6 @@ select
   sum(receita_tarifaria_aferida) as receita_tarifaria_aferida,
   sum(subsidio_pago) as subsidio_pago,
   sum(saldo) as saldo
-from {{ ref("balanco_servico_dia" ~ var('encontro_contas_modo')) }}
-group by 1,2,3
-order by 1,2,3
+from {{ ref("balanco_servico_dia" ~ var('encontro_contas_modo'), v=1) }}
+group by 1,2
+order by 1,2

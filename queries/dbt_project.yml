@@ -215,6 +215,27 @@ vars:
 
   ### Encontro de Contas ###
   encontro_contas_modo: ""
+  # Datas que serão desconsideradas no encontro de contas juntamente com o motivo
+  encontro_contas_datas_excecoes: {
+    "'2024-10-06'": "'Eleições 2024'",
+    "'2024-02-09'": "'Carnaval 2024'",
+    "'2024-02-10'": "'Carnaval 2024'",
+    "'2024-02-11'": "'Carnaval 2024'",
+    "'2024-02-12'": "'Carnaval 2024'",
+    "'2024-02-13'": "'Carnaval 2024'",
+    "'2024-02-14'": "'Carnaval 2024'",
+    "'2025-02-28'": "'Carnaval 2025'",
+    "'2025-03-01'": "'Carnaval 2025'",
+    "'2025-03-02'": "'Carnaval 2025'",
+    "'2025-03-03'": "'Carnaval 2025'",
+    "'2025-03-04'": "'Carnaval 2025'",
+    "'2025-03-05'": "'Carnaval 2025'",
+    "'2025-03-07'": "'Carnaval 2025'",
+    "'2025-03-08'": "'Carnaval 2025'",
+    "'2025-03-09'": "'Carnaval 2025'"
+  }
+  # Versões
+  encontro_contas_datas_v2_inicio: "2024-01-01"
 
   ### Viagens 2.0 ###
 
@@ -337,11 +358,25 @@ models:
         +incremental_strategy: insert_overwrite
         +schema: indicadores_continuados_egp_staging
     projeto_subsidio_sppo_encontro_contas:
-      +materialized: table
-      +schema: projeto_subsidio_sppo_encontro_contas
-      staging:
-        +materialized: view
-        +schema: projeto_subsidio_sppo_encontro_contas_staging
+      v1:
+        +materialized: table
+        +schema: projeto_subsidio_sppo_encontro_contas
+        +enabled: false
+        staging:
+          +materialized: view
+          +schema: projeto_subsidio_sppo_encontro_contas_staging
+      v2:
+        +materialized: incremental
+        +incremental_strategy: insert_overwrite
+        +schema: projeto_subsidio_sppo_encontro_contas_v2
+        +description: "Encontro de Contas SPPO [Serviço Público de Transporte de Passageiros por Ônibus] de 2024-01-01 a 2025-03-31 [Processo.Rio MTR-PRO-2025/18086]"
+        +partition_by:
+          field: "data"
+          data_type: "date"
+          granularity: "day"
+        staging:
+          +materialized: view
+          +schema: projeto_subsidio_sppo_encontro_contas_staging_v2
     dashboard_controle_vinculo_jae_riocard:
       +materialized: incremental
       +schema: dashboard_controle_vinculo_jae_riocard
