@@ -1,5 +1,10 @@
 # Changelog - gtfs
 
+## [1.2.4] - 2025-07-16
+
+### Alterado
+- Altera o flow `gtfs_captura_nova` para o novo modelo de OS (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/704)
+
 ## [1.2.3] - 2025-05-06
 
 ### Corrigido
