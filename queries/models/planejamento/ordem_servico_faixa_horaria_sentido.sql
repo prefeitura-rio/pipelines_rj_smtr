@@ -142,8 +142,8 @@ select
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     '{{ invocation_id }}' as id_execucao_dbt
 from dados_faixa as d
-{# left join {{ ref("feed_info_gtfs") }} as fi on d.data_versao = fi.feed_start_date #}
-left join `rj-smtr.gtfs.feed_info` as fi on d.data_versao = fi.feed_start_date
+left join {{ ref("feed_info_gtfs") }} as fi on d.data_versao = fi.feed_start_date
+-- left join `rj-smtr.gtfs.feed_info` as fi on d.data_versao = fi.feed_start_date
 where
     {% if is_incremental() -%}
         d.data_versao in ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
