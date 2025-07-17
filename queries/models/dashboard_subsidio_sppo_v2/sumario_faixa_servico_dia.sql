@@ -1,14 +1,10 @@
-{% if var("start_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
-    {{ config(enabled=false) }}
-{% else %}
-    {{
-        config(
-            materialized="incremental",
-            partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-            incremental_strategy="insert_overwrite",
-        )
-    }}
-{% endif %}
+{{
+    config(
+        materialized="incremental",
+        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+        incremental_strategy="insert_overwrite",
+    )
+}}
 
 with
     subsidio_faixa as (
@@ -128,3 +124,4 @@ left join
     pivot_data as pd using (
         data, tipo_dia, faixa_horaria_inicio, faixa_horaria_fim, consorcio, servico
     )
+where data < date("{{ var('DATA_SUBSIDIO_V14_INICIO') }}")
