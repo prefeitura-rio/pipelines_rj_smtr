@@ -14,7 +14,7 @@ with
     viagens as (
         select
             data,
-            servico,
+            servico_realizado as servico,
             datetime_partida,
             datetime_chegada,
             id_veiculo,
@@ -24,12 +24,12 @@ with
             -- sentido,
             -- modo,
         -- from {{ ref("viagem_classificada") }}
-        from `rj-smtr.subsidio.viagem_classificada`
+        from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         -- where
         --     data between date("{{ var('start_date') }}") and date_add(
         --         date("{{ var('end_date') }}"), interval 1 day
             -- )
-        where data = "2025-06-17"
+        where data = "2025-05-12"
     ),
     gps_validador as (
         select
@@ -41,7 +41,7 @@ with
             estado_equipamento,
             latitude,
             longitude,
-            temperatura,
+            SAFE_CAST(temperatura AS NUMERIC) as temperatura,
             datetime_captura
         -- from {{ ref("gps_validador") }}
         from `rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador`
@@ -49,33 +49,26 @@ with
         --     data between date("{{ var('start_date') }}") and date_add(
         --         date("{{ var('end_date') }}"), interval 1 day
         --     )
-            where data = "2025-06-17"
-    ),
-    indicadores_temperatura_veiculo as (
-        select
-            data,
-            id_veiculo,
-            countif(temperatura is not null) > 0 as indicador_temperatura_transmitida,
-            count(distinct temperatura) = 1 as indicador_temperatura_variacao,
-        from gps_validador
-        -- where
-        --     data
-        --     between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
-        where data = "2025-06-17"
-        group by 1, 2
+            where data = "2025-05-12"
     ),
     veiculos as (
-        select distinct id_veiculo, data, indicador_ar_condicionado, ano_fabricacao
+        select
+            distinct id_veiculo,
+            data,
+            indicador_ar_condicionado,
+            ano_fabricacao
         -- from {{ ref("licenciamento") }}
         from `rj-smtr`.`cadastro`.`veiculo_licenciamento_dia`
         -- where
         -- {{ incremental_filter }}
-        where data = "2025-06-17"
+        where data = "2025-05-12"
     ),
     gps_validador_viagem as (
         select
             v.data,
             e.datetime_gps,
+            v.datetime_partida,
+            v.datetime_chegada,
             e.datetime_captura,
             v.id_viagem,
             v.id_veiculo,
@@ -94,8 +87,10 @@ with
         select
             data,
             id_veiculo,
-            count(temperatura) as quantidade_pre_tratamento,
-            countif(temperatura is null or temperatura = 0) as quantidade_nula_zero
+            count(*) as quantidade_pre_tratamento,
+            countif(temperatura is null or temperatura = 0) as quantidade_nula_zero,
+            countif(temperatura is not null) > 0 as indicador_temperatura_transmitida,
+            count(distinct temperatura) > 1 as indicador_temperatura_variacao,
         from gps_validador_viagem
         group by 1,2
     ),
@@ -106,89 +101,124 @@ with
             EXTRACT(HOUR FROM horario) as hora  -- atualizar dps
         from `rj-cor.clima_estacao_meteorologica.meteorologia_inmet`
         -- where {{ incremental_filter }}
-        where data_particao = "2025-06-17"
+        where data_particao = "2025-05-12"
         and id_estacao in("A621", "A652", "A636", "A602")
         group by all
     ),
     metricas_base as (
         select
-            id_veiculo,
-            data,
+            g.id_veiculo,
+            g.data,
             hora,
             temperatura,
+            datetime_gps,
             -- Cálcula 1 e 3 quartil
-            percentile_cont(temperatura, 0.25) over (partition by data, hora) as q1,
-            percentile_cont(temperatura, 0.75) over (partition by data, hora) as q3,
-            -- Cálcula a mediana
-            percentile_cont(temperatura, 0.5) over (partition by data, hora) as mediana
-        from gps_validador_viagem
-        where temperatura is not null or temperatura != 0
+            percentile_cont(temperatura, 0.25) over (partition by g.data, hora) as q1,
+            percentile_cont(temperatura, 0.75) over (partition by g.data, hora) as q3,
+        from gps_validador_viagem as g
+        left join veiculos as ve using (id_veiculo)
+        WHERE temperatura IS NOT NULL
+        AND temperatura != 0
     ),
-    metricas_estatisticas as (
+    metricas_iqr as (
         select
             *,
             -- Cálcula o intervalo do IQR
             q3 - q1 as iqr,
             -- Cálcula os limites inferior e superior do IQR
             q1 - 1.5 * (q3 - q1) as iqr_limite_inferior,
-            q3 + 1.5 * (q3 - q1) as iqr_limite_superior,
-            -- Desvio absoluto da mediana
-            abs(temperatura - mediana) as desvio_abs
+            q3 + 1.5 * (q3 - q1) as iqr_limite_superior
         from metricas_base
+    )
+    ,
+    temperatura_filtrada_iqr as (
+        select
+            *,
+            COUNT(*) quantidade_pos_tratamento_iqr,
+            -- Cálcula a mediana para usar no calculo do robust z-score
+            percentile_cont(temperatura, 0.5) over (partition by data, hora) as mediana
+        from metricas_iqr
+        where -- Filtra os dados com iqr
+            temperatura >= iqr_limite_inferior
+            and temperatura <= iqr_limite_superior
+        group by all
+    ),
+    metrica_mediana as (
+        select
+            *,
+            -- Desvio absoluto da mediana para usar no calculo do robust z-score
+            abs(temperatura - mediana) as desvio_abs
+        from temperatura_filtrada_iqr
     ),
     metrica_mad as (
         select
             *,
-            -- MAD = mediana dos desvios absolutos
+            -- MAD = mediana dos desvios absolutos para usar no calculo do robust z-score
             percentile_cont(desvio_abs, 0.5) over (partition by data, hora) as mad
-        from metricas_estatisticas
+        from metrica_mediana
     ),
     metrica_robust_z_score as (
         select
             *,
-            -- Modified Z-Score
+            -- Robust Z-Score
             safe_divide(0.6745 * (temperatura - mediana), mad) as robust_z_score
         from metrica_mad
     ),
-    temperatura_filtrada as (
+    temperatura_filtrada_total as (
         select
-        *,
-        COUNT(*) quantidade_pos_tratamento
+            *,
+            COUNT(*) quantidade_pos_tratamento_total
         from metrica_robust_z_score
-        where
-            temperatura > iqr_limite_inferior
-            or temperatura < iqr_limite_superior
-            and robust_z_score > 3.5
+        where  -- Filtra os dados com o r z-score
+            ABS(robust_z_score) <= 3.5
         group by all
     ),
-    agg_temperatura_viagem as ( -- TESTAR SUM EM TUDO E SEPARADAMENTE
+    agg_temperatura_viagem as (
         select
             data,
             id_veiculo,
-            SAFE_DIVIDE(SUM(quantidade_pos_tratamento), SUM(quantidade_pre_tratamento - quantidade_nula_zero)) * 100 as indicador_temperatura_atipica_descartada,
-            SAFE_DIVIDE(SUM(quantidade_nula_zero), SUM(quantidade_pre_tratamento)) * 100 as indicador_temperatura_nula_descartada
+            TRUNC(COALESCE(SAFE_DIVIDE(SUM(quantidade_pos_tratamento_total), SUM(quantidade_pre_tratamento)) * 100, 0), 2) as percentual_temperatura_atipica_descartada,
+            TRUNC(COALESCE(SAFE_DIVIDE(SUM(quantidade_nula_zero), SUM(quantidade_pre_tratamento)) * 100, 0), 2) as percentual_temperatura_nula_descartada,
+            indicador_temperatura_transmitida,
+            indicador_temperatura_variacao,
         from gps_validador_indicadores
-        left join temperatura_filtrada
+        left join temperatura_filtrada_total
             using(data, id_veiculo)
-        group by 1,2
+        group by all
     ),
     classificacao_temperatura as (
         select
+            i.data,
+            i.hora,
+            i.id_veiculo,
+            id_viagem,
+            i.datetime_gps,
+            f.temperatura as temperatura_int,
+            e.temperatura as temperatura_ext,
+            f.temperatura <= 24 or ((e.temperatura - f.temperatura) > 8) as classificacao_temperatura_regular,
+            f.temperatura <= 24 as indicador_temperatura_menor_igual_24,
+            ((e.temperatura - f.temperatura) > 8) as indicador_diferenca_temperatura_externa_interna
+        from gps_validador_viagem as i
+        left join temperatura_filtrada_total as f
+        on f.data = i.data and f.datetime_gps between datetime_partida and datetime_chegada and f.id_veiculo = i.id_veiculo
+        left join temperatura_inmet as e
+        on e.data = i.data and e.hora = i.hora
+    ),
+    percentual_indicadores_viagem as (
+        select
             data,
-            hora,
             id_veiculo,
             id_viagem,
-            g.temperatura as temperatura_int,
-            t.temperatura as temperatura_ext,
-            g.temperatura <= 24 or ((t.temperatura - g.temperatura) > 8) as classificacao_temperatura_regular
-        from gps_validador_viagem as g
-        left join temperatura_inmet as t using(data, hora)
-    ),
-    percentual_viagem as (
-        select
-        id_viagem,
-        (countif(classificacao_temperatura_regular) / count(*)) * 100 as percentual_temperatura_regular
+            trunc((countif(classificacao_temperatura_regular) / count(*)) * 100, 2) as percentual_temperatura_regular,
+            (countif(classificacao_temperatura_regular) / count(*)) * 100 >= 80 as indicador_temperatura_regular,
+            indicador_temperatura_variacao,
+            indicador_temperatura_transmitida,
+            percentual_temperatura_nula_descartada,
+            percentual_temperatura_atipica_descartada,
+            (percentual_temperatura_nula_descartada + percentual_temperatura_atipica_descartada) as teste,
+            (percentual_temperatura_nula_descartada + percentual_temperatura_atipica_descartada) > 50 as indicador_temperatura_descartada,
         from classificacao_temperatura
-        group by 1
-    ) select * from percentual_viagem
+        left join agg_temperatura_viagem using (data, id_veiculo)
+        group by all
+     ) select * from percentual_indicadores_viagem
 
