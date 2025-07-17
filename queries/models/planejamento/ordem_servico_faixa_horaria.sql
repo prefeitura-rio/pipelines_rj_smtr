@@ -350,7 +350,8 @@ from dados_agrupados as d
 left join {{ ref("feed_info_gtfs") }} as fi on d.data_versao = fi.feed_start_date
 {% if is_incremental() -%}
     where
-        d.data_versao IN ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
-        AND fi.feed_start_date IN ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
+        d.data_versao in ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
+        and fi.feed_start_date
+        in ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
 {% else %} where d.data_versao >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
 {% endif %} and d.data_versao < '{{ var("DATA_GTFS_V4_INICIO") }}'

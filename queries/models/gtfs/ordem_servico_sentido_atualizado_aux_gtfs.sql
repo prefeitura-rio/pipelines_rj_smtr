@@ -60,15 +60,26 @@ where
             feed_start_date < '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
             and (distancia_total_planejada != 0 and (partidas != 0 or partidas is null))
         )
-        or feed_start_date between '{{ var("DATA_SUBSIDIO_V9_INICIO") }}' and date_sub('{{ var("DATA_GTFS_V4_INICIO") }}', interval 1 day)
+        or feed_start_date between '{{ var("DATA_SUBSIDIO_V9_INICIO") }}' and date_sub(
+            '{{ var("DATA_GTFS_V4_INICIO") }}', interval 1 day
+        )
     )
 union all by name
 select
-    * except(sentido, extensao, datetime_ultima_atualizacao, id_execucao_dbt, versao, quilometragem, faixa_horaria_inicio, faixa_horaria_fim),
+    * except (
+        sentido,
+        extensao,
+        datetime_ultima_atualizacao,
+        id_execucao_dbt,
+        versao,
+        quilometragem,
+        faixa_horaria_inicio,
+        faixa_horaria_fim
+    ),
     left(sentido, 1) as sentido,
     extensao as distancia_planejada,
     partidas as viagens_planejadas,
     quilometragem as distancia_total_planejada,
     null as inicio_periodo,
     null as fim_periodo
-from {{ ref("ordem_servico_faixa_horaria_sentido")}}
+from {{ ref("ordem_servico_faixa_horaria_sentido") }}

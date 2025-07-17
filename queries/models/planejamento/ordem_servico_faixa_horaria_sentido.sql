@@ -144,9 +144,11 @@ select
 from dados_faixa as d
 {# left join {{ ref("feed_info_gtfs") }} as fi on d.data_versao = fi.feed_start_date #}
 left join `rj-smtr.gtfs.feed_info` as fi on d.data_versao = fi.feed_start_date
-    where
-{% if is_incremental() -%}
-        d.data_versao IN ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
-        AND fi.feed_start_date IN ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
+where
+    {% if is_incremental() -%}
+        d.data_versao in ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
+        and fi.feed_start_date
+        in ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
         and
-{% endif %}  d.data_versao >= '{{ var("DATA_GTFS_V4_INICIO") }}'
+    {% endif %} d.data_versao
+    >= '{{ var("DATA_GTFS_V4_INICIO") }}'
