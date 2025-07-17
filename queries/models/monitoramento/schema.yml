@@ -371,6 +371,21 @@ models:
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: veiculo_fiscalizacao_lacre
     description: Tabela com as informações do controle do lacre e deslacre de veículos
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+          - id_veiculo
+          - data_inicio_lacre
+          - id_auto_infracao
+          name: dbt_utils.unique_combination_of_columns__id_veiculo__veiculo_fiscalizacao_lacre
+          where: "1=1"
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+          - placa
+          - data_inicio_lacre
+          - id_auto_infracao
+          name: dbt_utils.unique_combination_of_columns__placa__veiculo_fiscalizacao_lacre
+          where: "1=1"
     columns:
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
