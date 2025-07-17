@@ -63,7 +63,7 @@ where
         or feed_start_date between '{{ var("DATA_SUBSIDIO_V9_INICIO") }}' and date_sub('{{ var("DATA_GTFS_V4_INICIO") }}', interval 1 day)
     )
 union all by name
-select 
+select
     * except(sentido, extensao, datetime_ultima_atualizacao, id_execucao_dbt, partidas, versao, quilometragem),
     left(sentido, 1) as sentido,
     extensao as distancia_planejada,
@@ -71,4 +71,4 @@ select
     quilometragem as distancia_total_planejada,
     null as inicio_periodo,
     null as fim_periodo
-from {{ ref("ordem_servico_faixa_horaria_sentido")}} 
+from {{ ref("ordem_servico_faixa_horaria_sentido")}}
