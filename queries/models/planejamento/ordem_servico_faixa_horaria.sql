@@ -9,6 +9,9 @@
 }}
 
 {% if execute %}
+    {% if is_incremental() %}
+        {% set last_feed_version = get_last_feed_start_date(var("data_versao_gtfs")) %}
+    {% endif %}
     {% if var("data_versao_gtfs") < var("DATA_SUBSIDIO_V11_INICIO") %}
         {% set intervalos = [
             {"inicio": "00", "fim": "03"},
@@ -32,6 +35,7 @@
     {% endif %}
     {% set dias = ["dias_uteis", "sabado", "domingo", "ponto_facultativo"] %}
 {% endif %}
+
 
 with
     dados as (
@@ -339,12 +343,15 @@ select
     fi.feed_start_date,
     fi.feed_end_date,
     d.* except (data_versao),
-    '{{ var("version") }}' as versao_modelo
+    '{{ var("version") }}' as versao,
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+    '{{ invocation_id }}' as id_execucao_dbt
 from dados_agrupados as d
 left join {{ ref("feed_info_gtfs") }} as fi on d.data_versao = fi.feed_start_date
 {% if is_incremental() -%}
     where
-        d.data_versao = '{{ var("data_versao_gtfs") }}'
-        and fi.feed_start_date = '{{ var("data_versao_gtfs") }}'
+        d.data_versao in ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
+        and fi.feed_start_date
+        in ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
 {% else %} where d.data_versao >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
-{% endif %}
+{% endif %} and d.data_versao < '{{ var("DATA_GTFS_V4_INICIO") }}'
