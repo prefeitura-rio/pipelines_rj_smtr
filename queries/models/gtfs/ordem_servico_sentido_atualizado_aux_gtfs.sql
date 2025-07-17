@@ -64,7 +64,7 @@ where
     )
 union all by name
 select
-    * except(sentido, extensao, datetime_ultima_atualizacao, id_execucao_dbt, partidas, versao, quilometragem),
+    * except(sentido, extensao, datetime_ultima_atualizacao, id_execucao_dbt, versao, quilometragem, faixa_horaria_inicio, faixa_horaria_fim),
     left(sentido, 1) as sentido,
     extensao as distancia_planejada,
     partidas as viagens_planejadas,
