@@ -107,7 +107,7 @@ with
                         latitude,
                         longitude,
                         estado_equipamento,
-                        datetime_gps,
+                        datetime_gps
                     from gps_validador_bilhetagem
                     where
                         data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
@@ -126,7 +126,7 @@ with
             e.latitude,
             e.longitude,
             v.servico,
-            e.servico_jae,
+            e.servico_jae
         from viagens as v
         left join
             estado_equipamento_aux as e
@@ -170,7 +170,7 @@ with
             e.latitude,
             e.longitude,
             temperatura,
-            extract(hour from datetime_gps) as hora,
+            extract(hour from datetime_gps) as hora
         from viagens as v
         left join
             gps_validador as e
