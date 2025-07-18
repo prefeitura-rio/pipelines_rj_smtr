@@ -46,7 +46,6 @@ with
             data between date("{{ var('start_date') }}") and date_add(
             date("{{ var('end_date') }}"), interval 1 day
         )
-        where data = "2025-05-12"
     ),
     gps_validador_bilhetagem as (
         select
@@ -143,7 +142,7 @@ with
             countif(estado_equipamento = "ABERTO") / count(*)
             >= 0.8 as indicador_estado_equipamento_aberto
         from gps_validador_bilhetagem_viagem
-        group by all
+        group by 1,2,3
     ),
     indicadores_temperatura_veiculo as (
         select
@@ -153,6 +152,7 @@ with
             count(distinct temperatura) = 1 as indicador_temperatura_variacao,
         from gps_validador
         where
+            data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
         group by 1, 2
     ),
@@ -199,7 +199,7 @@ with
             date("{{ var('end_date') }}"), interval 1 day
         )
             and id_estacao in ("A621", "A652", "A636", "A602") -- Estações do Rio de Janeiro
-        group by all
+        group by 1,2,3
     ),
     metricas_base as (
         select
@@ -212,7 +212,6 @@ with
             percentile_cont(temperatura, 0.25) over (partition by g.data, hora) as q1,
             percentile_cont(temperatura, 0.75) over (partition by g.data, hora) as q3,
         from gps_validador_viagem as g
-        left join veiculos as ve using (id_veiculo)
         where temperatura is not null and temperatura != 0
     ),
     metricas_iqr as (
@@ -256,7 +255,9 @@ with
         from metrica_mad
     ),
     temperatura_filtrada_total as (
-        select *, count(*) quantidade_pos_tratamento_total
+        select
+            *,
+            count(*) as quantidade_pos_tratamento_total
         from metrica_robust_z_score
         where  -- Filtra os dados com o r z-score
             abs(robust_z_score) <= 3.5
@@ -355,7 +356,7 @@ with
             p.indicador_temperatura_transmitida,
             p.indicador_temperatura_descartada,
             p.indicador_temperatura_regular,
-            p.percentual_temperatura_regular,
+            p.percentual_temperatura_regular
         from percentual_indicadores_viagem as p
         left join gps_validador as g using (data, id_veiculo)
         left join viagens as c using (data, id_viagem)
