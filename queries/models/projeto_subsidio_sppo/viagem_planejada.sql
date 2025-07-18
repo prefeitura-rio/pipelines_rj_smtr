@@ -245,8 +245,8 @@
         ),
         ordem_servico_trips_shapes as (
             select *
-            from --  {{ ref("ordem_servico_trips_shapes_gtfs") }}
-                 `rj-smtr.gtfs.ordem_servico_trips_shapes`
+            from  {{ ref("ordem_servico_trips_shapes_gtfs") }}
+                -- `rj-smtr.gtfs.ordem_servico_trips_shapes`
             where feed_start_date in ("{{ feed_start_dates | join('", "') }}")
         ),
         dia_atual as (
@@ -487,8 +487,8 @@
         ),
         shapes as (
             select shape_id, shape, start_pt, end_pt
-            from -- {{ ref("shapes_geom_gtfs") }}
-             `rj-smtr.gtfs.shapes_geom`
+            from {{ ref("shapes_geom_gtfs") }}
+            -- `rj-smtr.gtfs.shapes_geom`
             where feed_start_date in ("{{ feed_start_dates | join('", "') }}")
             qualify
                 row_number() over (partition by shape_id order by feed_start_date desc)
