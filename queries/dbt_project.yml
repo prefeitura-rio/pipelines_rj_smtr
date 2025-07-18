@@ -441,6 +441,10 @@ models:
       staging:
         +materialized: view
         +schema: bilhetagem_staging
+    bilhetagem_interno:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: bilhetagem_interno
     datario:
       +materialized: view
       +schema: datario
