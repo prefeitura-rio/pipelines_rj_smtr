@@ -55,7 +55,7 @@ from pipelines.tasks import (
     remove_key_from_dict,
     task_value_is_none,
 )
-from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt_tests
+from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt
 
 # from pipelines.capture.templates.flows import create_default_capture_flow
 
@@ -276,7 +276,8 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             mode=mode,
         ).set_upstream(task=wait_run_dbt_model)
 
-        gtfs_data_quality = run_dbt_tests(
+        gtfs_data_quality = run_dbt(
+            resource="test",
             dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value
             + " "
             + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,

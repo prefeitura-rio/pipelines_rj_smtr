@@ -67,7 +67,7 @@ from pipelines.schedules import (
 from pipelines.treatment.templates.tasks import (
     check_dbt_test_run,
     dbt_data_quality_checks,
-    run_dbt_tests,
+    run_dbt,
 )
 
 # from pipelines.utils.execute_dbt_model.tasks import get_k8s_dbt_client
@@ -253,7 +253,8 @@ with Flow(
             _vars = {"date_range_start": datetime_start, "date_range_end": datetime_end}
 
             with case(RUN_TEST, True):
-                gps_sppo_data_quality = run_dbt_tests(
+                gps_sppo_data_quality = run_dbt(
+                    resource="test",
                     dataset_id=dataset_id,
                     table_id=table_id,
                     _vars=_vars,
@@ -289,7 +290,8 @@ with Flow(
 
         _vars = {"date_range_start": date_range_start_param, "date_range_end": date_range_end_param}
 
-        gps_sppo_data_quality = run_dbt_tests(
+        gps_sppo_data_quality = run_dbt(
+            resource="test",
             dataset_id=dataset_id,
             table_id=table_id,
             _vars=_vars,

@@ -48,11 +48,7 @@ from pipelines.migration.veiculo.tasks import (
     pre_treatment_sppo_licenciamento,
 )
 from pipelines.schedules import every_day_hour_five, every_day_hour_seven
-from pipelines.treatment.templates.tasks import (
-    dbt_data_quality_checks,
-    run_dbt,
-    run_dbt_tests,
-)
+from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt
 
 # Flows #
 
@@ -269,7 +265,8 @@ with Flow(
         new_dict=dataset_sha,
     )[0]
 
-    VEICULO_DATA_QUALITY_TEST = run_dbt_tests(
+    VEICULO_DATA_QUALITY_TEST = run_dbt(
+        resource="test",
         dataset_id=smtr_constants.VEICULO_DATASET_ID.value,
         _vars=dbt_vars,
     ).set_upstream(WAIT_DBT_RUN)
