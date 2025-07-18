@@ -52,13 +52,67 @@ with
         where data = "2025-05-12"
     ),
     veiculos as (
-        select distinct id_veiculo, data, indicador_ar_condicionado, ano_fabricacao
+        select
+            distinct id_veiculo,
+                data,
+                indicador_ar_condicionado,
+                ano_fabricacao
         -- from {{ ref("licenciamento") }}
         from `rj-smtr`.`cadastro`.`veiculo_licenciamento_dia`
         -- where
         -- {{ incremental_filter }}
         where data = "2025-05-12"
     ),
+    -- estado_equipamento_aux as (
+    --         select *
+    --         from
+    --             (
+    --                 (
+    --                     select
+    --                         data,
+    --                         servico_jae,
+    --                         id_validador,
+    --                         id_veiculo,
+    --                         latitude,
+    --                         longitude,
+    --                         if(
+    --                             count(
+    --                                 case when estado_equipamento = "ABERTO" then 1 end
+    --                             )
+    --                             >= 1,
+    --                             "ABERTO",
+    --                             "FECHADO"
+    --                         ) as estado_equipamento,
+    --                         min(datetime_gps) as datetime_gps,
+    --                     from gps_validador
+    --                     where
+    --                         (
+    --                             data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
+    --                             and latitude != 0
+    --                             and longitude != 0
+    --                         )
+    --                         or data < date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
+    --                     group by 1, 2, 3, 4, 5, 6
+    --                 )
+    --                 union all
+    --                 (
+    --                     select
+    --                         data,
+    --                         servico_jae,
+    --                         id_validador,
+    --                         id_veiculo,
+    --                         latitude,
+    --                         longitude,
+    --                         estado_equipamento,
+    --                         datetime_gps,
+    --                     from gps_validador
+    --                     where
+    --                         data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
+    --                         and latitude = 0
+    --                         and longitude = 0
+    --                 )
+    --             )
+    --     ),
     gps_validador_viagem as (
         select
             v.data,
@@ -80,6 +134,31 @@ with
             on e.id_veiculo = substr(v.id_veiculo, 2)
             and e.datetime_gps between v.datetime_partida and v.datetime_chegada
     ),
+    -- estado_equipamento_perc as (
+    --         select
+    --             data,
+    --             id_viagem,
+    --             id_validador,
+    --             coalesce(t.quantidade_transacao, 0) as quantidade_transacao,
+    --             coalesce(
+    --                 tr.quantidade_transacao_riocard, 0
+    --             ) as quantidade_transacao_riocard,
+    --             coalesce(
+    --                 t.quantidade_transacao_servico_divergente, 0
+    --             ) as quantidade_transacao_servico_divergente,
+    --             coalesce(
+    --                 tr.quantidade_transacao_riocard_servico_divergente, 0
+    --             ) as quantidade_transacao_riocard_servico_divergente,
+    --             countif(servico != servico_jae) > 0 as indicador_gps_servico_divergente,
+    --             countif(estado_equipamento = "ABERTO")
+    --             / count(*) as percentual_estado_equipamento_aberto,
+    --             countif(estado_equipamento = "ABERTO") / count(*)
+    --             >= 0.8 as indicador_estado_equipamento_aberto
+    --         from gps_validador_viagem
+    --         left join transacao_contagem as t using (data, id_viagem)
+    --         left join transacao_riocard_contagem as tr using (data, id_viagem)
+    --         group by all
+    --     ),
     gps_validador_indicadores as (
         select
             data,
@@ -228,27 +307,42 @@ with
             data,
             id_veiculo,
             id_viagem,
-            trunc(
-                (countif(classificacao_temperatura_regular) / count(*)) * 100, 2
-            ) as percentual_temperatura_regular,
-            (countif(classificacao_temperatura_regular) / count(*)) * 100
-            >= 80 as indicador_temperatura_regular,
+            trunc((countif(classificacao_temperatura_regular) / count(*)) * 100, 2) as percentual_temperatura_regular,
+            (countif(classificacao_temperatura_regular) / count(*)) * 100 >= 80 as indicador_temperatura_regular,
             indicador_temperatura_variacao,
             indicador_temperatura_transmitida,
             percentual_temperatura_nula_descartada,
             percentual_temperatura_atipica_descartada,
-            (
-                percentual_temperatura_nula_descartada
-                + percentual_temperatura_atipica_descartada
-            ) as teste,
-            (
-                percentual_temperatura_nula_descartada
-                + percentual_temperatura_atipica_descartada
-            )
-            > 50 as indicador_temperatura_descartada,
+            (percentual_temperatura_nula_descartada + percentual_temperatura_atipica_descartada) as teste,
+            (percentual_temperatura_nula_descartada + percentual_temperatura_atipica_descartada)> 50 as indicador_temperatura_descartada,
         from classificacao_temperatura
         left join agg_temperatura_viagem using (data, id_veiculo)
         group by all
     )
-select *
-from percentual_indicadores_viagem
+        select
+            p.data,
+            p.id_viagem,
+            p.id_veiculo,
+            c.tipo_viagem,
+            c.indicadores,
+            c.datetime_partida,
+            c.datetime_chegada,
+            c.modo,
+            c.servico,
+            c.sentido,
+            c.distancia_planejada,
+            v.ano_fabricacao, -- sera inserido no modelo da viagem_classificada
+            -- indicador_estado_equipamento_aberto,
+            -- indicador_gps_servico_divergente,
+            v.indicador_ar_condicionado,
+            p.indicador_temperatura_variacao,
+            p.indicador_temperatura_transmitida,
+            p.indicador_temperatura_descartada,
+            p.indicador_temperatura_regular,
+            p.percentual_temperatura_regular,
+        from percentual_indicadores_viagem as p
+        left join `rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador` as g using (data, id_veiculo)
+        left join `rj-smtr.subsidio.viagem_classificada` as c using (data, id_viagem)
+        left join veiculos as v
+            on p.data = v.data and p.id_veiculo = v.id_veiculo
+
