@@ -181,14 +181,14 @@ every_day_hour_five_and_hour_fourteen = Schedule(
             interval=timedelta(days=1),
             start_date=datetime(2022, 11, 30, 5, 0, tzinfo=timezone(constants.TIMEZONE.value)),
             labels=[
-                emd_constants.RJ_SMTR_AGENT_LABEL.value,
+                emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value,
             ],
         ),
         IntervalClock(
             interval=timedelta(days=1),
             start_date=datetime(2022, 11, 30, 14, 0, tzinfo=timezone(constants.TIMEZONE.value)),
             labels=[
-                emd_constants.RJ_SMTR_AGENT_LABEL.value,
+                emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value,
             ],
         ),
     ]
