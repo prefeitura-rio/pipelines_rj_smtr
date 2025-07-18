@@ -349,6 +349,12 @@ selectors:
           value: veiculo_fiscalizacao_lacre
         - method: fqn
           value: autuacao_disciplinar_historico
+        - method: fqn
+          value: temperatura_inmet
+        - method: fqn
+          value: aux_viagem_temperatura
+        - method: fqn
+          value: veiculo_regularidade_temperatura_dia
 
   - name: cadastro_veiculo
     definition:
