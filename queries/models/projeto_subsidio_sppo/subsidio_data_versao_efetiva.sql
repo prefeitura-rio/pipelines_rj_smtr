@@ -678,10 +678,10 @@
                 i.feed_start_date,
                 ifnull(c.tipo_os, d.tipo_os) as tipo_os,
             from dates as d
-            left join 
+            left join
             {# {{ ref("feed_info_gtfs") }} as i using (feed_version) #}
             `rj-smtr.gtfs.feed_info` as i using (feed_version)
-            left join 
+            left join
             {# {{ ref("aux_calendario_manual") }} as c using (data) #}
             `rj-smtr.planejamento_staging.aux_calendario_manual` as c using (data)
             where
