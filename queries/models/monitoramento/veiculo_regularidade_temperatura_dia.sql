@@ -28,7 +28,10 @@ with
             as indicador_temperatura_atipica_descartada,
         from {{ ref("aux_viagem_temperatura") }}
         where
-            data between date("{{var('start_date')}}") and date("{{var('end_date')}}")
+            data
+            between date_sub(date("{{var('start_date')}}"), interval 4 day) and date(
+                "{{var('end_date')}}"
+            )
             and data >= date("{{ var('DATA_SUBSIDIO_V16_INICIO') }}")
     )
     agg_veiculo as (

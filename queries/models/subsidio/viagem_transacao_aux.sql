@@ -172,7 +172,7 @@ with
             between v.datetime_partida_com_tolerancia and v.datetime_chegada
         group by 1, 2
     ),
-    {% if var("start_date") < var("DATA_SUBSIDIO_V16_INICIO") %}
+    {% if date(var("start_date")) < date(var("DATA_SUBSIDIO_V16_INICIO")) %}
         -- GPS Validador
         gps_validador as (
             select
@@ -224,7 +224,7 @@ with
                                 "ABERTO",
                                 "FECHADO"
                             ) as estado_equipamento,
-                            min(datetime_gps) as datetime_gps,
+                            min(datetime_gps) as datetime_gps
                         from gps_validador
                         where
                             (
@@ -320,11 +320,14 @@ with
                 safe_cast(
                     json_value(
                         item, '$.percentual_estado_equipamento_aberto'
-                    ) as float64
+                    ) as numeric
                 ) as percentual_estado_equipamento_aberto,
                 safe_cast(
                     json_value(item, '$.valor') as bool
-                ) as indicador_estado_equipamento_aberto
+                ) as indicador_estado_equipamento_aberto,
+                safe_cast(
+                    json_value(item, '$.indicador_gps_servico_divergente') as bool
+                ) as indicador_gps_servico_divergente
             from viagem v
             left join
                 transacao_contagem t on v.data = t.data and v.id_viagem = t.id_viagem
