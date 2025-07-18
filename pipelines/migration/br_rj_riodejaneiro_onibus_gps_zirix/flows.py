@@ -47,7 +47,8 @@ from pipelines.migration.tasks import (
     set_last_run_timestamp,
     upload_logs_to_bq,
 )
-from pipelines.schedules import every_10_minutes, every_hour_minute_six, every_minute
+
+# from pipelines.schedules import every_10_minutes, every_hour_minute_six, every_minute
 
 # Flows #
 
@@ -110,7 +111,7 @@ realocacao_sppo_zirix.run_config = KubernetesRun(
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 realocacao_sppo_zirix.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
-realocacao_sppo_zirix.schedule = every_10_minutes
+# realocacao_sppo_zirix.schedule = every_10_minutes
 
 with Flow(
     "SMTR: GPS SPPO Zirix Realocação - Recaptura (subflow)",
@@ -356,7 +357,7 @@ captura_sppo_zirix.run_config = KubernetesRun(
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 captura_sppo_zirix.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
-captura_sppo_zirix.schedule = every_minute
+# captura_sppo_zirix.schedule = every_minute
 
 
 with Flow(
@@ -485,4 +486,4 @@ recaptura_zirix.run_config = KubernetesRun(
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 recaptura_zirix.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
-recaptura_zirix.schedule = every_hour_minute_six
+# recaptura_zirix.schedule = every_hour_minute_six
