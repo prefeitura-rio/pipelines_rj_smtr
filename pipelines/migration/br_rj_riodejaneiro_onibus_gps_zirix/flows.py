@@ -41,13 +41,13 @@ from pipelines.migration.tasks import (
     parse_timestamp_to_string,
     query_logs,
     rename_current_flow_run_now_time,
-    run_dbt_model,
     save_raw_local,
     save_treated_local,
     set_last_run_timestamp,
     upload_logs_to_bq,
 )
 from pipelines.schedules import every_10_minutes, every_hour_minute_six, every_minute
+from pipelines.treatment.templates.tasks import run_dbt
 
 # Flows #
 
@@ -259,7 +259,8 @@ with Flow(
 
     # Run materialization #
     with case(rebuild, True):
-        RUN = run_dbt_model(
+        RUN = run_dbt(
+            resource="model",
             dataset_id=dataset_id,
             table_id=table_id,
             upstream=True,
@@ -275,7 +276,8 @@ with Flow(
             mode=MODE,
         )
     with case(rebuild, False):
-        RUN = run_dbt_model(
+        RUN = run_dbt(
+            resource="model",
             dataset_id=dataset_id,
             table_id=table_id,
             exclude="+data_versao_efetiva",

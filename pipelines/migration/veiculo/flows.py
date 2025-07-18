@@ -34,7 +34,6 @@ from pipelines.migration.tasks import (
     get_run_dates,
     parse_timestamp_to_string,
     rename_current_flow_run_now_time,
-    run_dbt_model,
     save_raw_local,
     save_treated_local,
     upload_logs_to_bq,
@@ -48,11 +47,7 @@ from pipelines.migration.veiculo.tasks import (
     pre_treatment_sppo_licenciamento,
 )
 from pipelines.schedules import every_day_hour_five, every_day_hour_seven
-from pipelines.treatment.templates.tasks import (
-    dbt_data_quality_checks,
-    run_dbt,
-    run_dbt_tests,
-)
+from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt
 
 # Flows #
 
@@ -250,7 +245,8 @@ with Flow(
     _vars = get_join_dict(dict_list=DATE_RANGE, new_dict=dataset_sha)
 
     # 2. TREAT #
-    WAIT_DBT_RUN = run_dbt_model(
+    WAIT_DBT_RUN = run_dbt(
+        resource="model",
         dataset_id=smtr_constants.VEICULO_DATASET_ID.value,
         table_id=constants.SPPO_VEICULO_DIA_TABLE_ID.value,
         upstream=True,
@@ -269,7 +265,8 @@ with Flow(
         new_dict=dataset_sha,
     )[0]
 
-    VEICULO_DATA_QUALITY_TEST = run_dbt_tests(
+    VEICULO_DATA_QUALITY_TEST = run_dbt(
+        resource="test",
         dataset_id=smtr_constants.VEICULO_DATASET_ID.value,
         _vars=dbt_vars,
     ).set_upstream(WAIT_DBT_RUN)
