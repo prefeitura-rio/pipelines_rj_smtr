@@ -77,24 +77,37 @@ with Flow(
     # Get default parameters #
     date_range_start = Parameter("date_range_start", default=False)
     date_range_end = Parameter("date_range_end", default=False)
-    run_d0 = Parameter("run_d0", default=True)
+    run_d0_param = Parameter("run_d0", default=True)
     rematerialization = Parameter("rematerialization", default=False)
 
     current_time = get_now_time()
     second_run = current_time >= "13:59"
+
     with case(rematerialization, True):
-        run_dates_rematerialization = get_run_dates(date_range_start, date_range_end)
+        run_dates_remat = get_run_dates(date_range_start, date_range_end)
 
     with case(rematerialization, False):
+        run_dates_true = None
+        run_dates_false = None
 
         with case(second_run, True):
-            run_dates_second_run_true = [get_posterior_date(1)]
-            run_d0 = False
-        with case(second_run, False):
-            run_dates_second_run_false = get_run_dates(date_range_start, date_range_end)
+            run_dates_true = [{"run_date": get_posterior_date(1)}]
 
-        run_dates_second_run = merge(run_dates_second_run_true, run_dates_second_run_false)
-    run_dates = merge(run_dates_second_run, run_dates_rematerialization)
+        with case(second_run, False):
+            run_dates_false = get_run_dates(date_range_start, date_range_end)
+
+        run_dates_non_remat = merge(run_dates_true, run_dates_false)
+
+    run_dates = merge(run_dates_remat, run_dates_non_remat)
+
+    run_d0_force_false = None
+    run_d0_keep_original = run_d0_param
+
+    with case(rematerialization, False):
+        with case(second_run, True):
+            run_d0_force_false = False
+
+    run_d0 = merge(run_d0_keep_original, run_d0_force_false)
 
     rename_flow_run = rename_current_flow_run_now_time(
         prefix=viagens_sppo.name + ": ", now_time=run_dates
@@ -115,7 +128,6 @@ with Flow(
     _vars = get_join_dict(dict_list=run_dates, new_dict=dataset_sha)
 
     RUN = run_dbt_model.map(
-        # dbt_client=unmapped(dbt_client),
         dataset_id=unmapped(constants.SUBSIDIO_SPPO_DATASET_ID.value),
         table_id=unmapped(constants.SUBSIDIO_SPPO_TABLE_ID.value),
         upstream=unmapped(True),
