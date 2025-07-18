@@ -172,7 +172,7 @@ with
             between v.datetime_partida_com_tolerancia and v.datetime_chegada
         group by 1, 2
     ),
-    {% if date(var("start_date")) < date(var("DATA_SUBSIDIO_V16_INICIO")) %}
+    {% if var("start_date") < var("DATA_SUBSIDIO_V16_INICIO") %}
         -- GPS Validador
         gps_validador as (
             select
