@@ -34,7 +34,6 @@ from pipelines.migration.tasks import (
     get_run_dates,
     parse_timestamp_to_string,
     rename_current_flow_run_now_time,
-    run_dbt_model,
     save_raw_local,
     save_treated_local,
     upload_logs_to_bq,
@@ -246,7 +245,8 @@ with Flow(
     _vars = get_join_dict(dict_list=DATE_RANGE, new_dict=dataset_sha)
 
     # 2. TREAT #
-    WAIT_DBT_RUN = run_dbt_model(
+    WAIT_DBT_RUN = run_dbt(
+        resource="model",
         dataset_id=smtr_constants.VEICULO_DATASET_ID.value,
         table_id=constants.SPPO_VEICULO_DIA_TABLE_ID.value,
         upstream=True,

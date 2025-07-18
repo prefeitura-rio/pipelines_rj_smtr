@@ -37,7 +37,6 @@ from pipelines.migration.tasks import (
     get_previous_date,
     get_run_dates,
     rename_current_flow_run_now_time,
-    run_dbt_model,
     split_date_range,
 )
 from pipelines.migration.veiculo.flows import sppo_veiculo_dia
@@ -90,7 +89,8 @@ with Flow(
 
     _vars = get_join_dict(dict_list=run_dates, new_dict=dataset_sha)
 
-    RUN = run_dbt_model.map(
+    RUN = run_dbt.map(
+        resource="model",
         # dbt_client=unmapped(dbt_client),
         dataset_id=unmapped(constants.SUBSIDIO_SPPO_DATASET_ID.value),
         table_id=unmapped(constants.SUBSIDIO_SPPO_TABLE_ID.value),
@@ -101,7 +101,8 @@ with Flow(
 
     with case(run_d0, True):
         date_d0 = get_posterior_date(1)
-        RUN_2_TRUE = run_dbt_model(
+        RUN_2_TRUE = run_dbt(
+            resource="model",
             dataset_id=constants.SUBSIDIO_SPPO_DATASET_ID.value,
             table_id="subsidio_data_versao_efetiva viagem_planejada",
             _vars={"run_date": date_d0, "version": dataset_sha},

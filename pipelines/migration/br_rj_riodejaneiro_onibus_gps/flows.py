@@ -51,7 +51,6 @@ from pipelines.migration.tasks import (  # get_local_dbt_client,
     parse_timestamp_to_string,
     query_logs,
     rename_current_flow_run_now_time,
-    run_dbt_model,
     save_raw_local,
     save_treated_local,
     set_last_run_timestamp,
@@ -223,7 +222,8 @@ with Flow(
 
         # Run materialization #
         with case(rebuild, True):
-            RUN_TRUE = run_dbt_model(
+            RUN_TRUE = run_dbt(
+                resource="model",
                 # dbt_client=dbt_client,
                 dataset_id=dataset_id,
                 table_id=table_id,
@@ -234,7 +234,8 @@ with Flow(
             )
 
         with case(rebuild, False):
-            RUN_FALSE = run_dbt_model(
+            RUN_FALSE = run_dbt(
+                resource="model",
                 # dbt_client=dbt_client,
                 dataset_id=dataset_id,
                 table_id=table_id,

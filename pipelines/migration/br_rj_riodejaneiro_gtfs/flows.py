@@ -40,7 +40,6 @@ from pipelines.migration.tasks import (
     get_current_timestamp,
     get_join_dict,
     rename_current_flow_run_now_time,
-    run_dbt_model,
     transform_raw_to_nested_structure_chunked,
     unpack_mapped_results_nout2,
     upload_raw_data_to_gcs,
@@ -247,7 +246,8 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
         version = fetch_dataset_sha(dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value)
         dbt_vars = get_join_dict([{"data_versao_gtfs": data_versao_gtfs}], version)[0]
 
-        wait_run_dbt_model = run_dbt_model(
+        wait_run_dbt_model = run_dbt(
+            resource="model",
             dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value
             + " "
             + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,
