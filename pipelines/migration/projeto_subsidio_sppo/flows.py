@@ -33,6 +33,7 @@ from pipelines.migration.tasks import (
     get_flow_project,
     get_join_dict,
     get_now_date,
+    get_now_time,
     get_posterior_date,
     get_previous_date,
     get_run_dates,
@@ -41,7 +42,10 @@ from pipelines.migration.tasks import (
     split_date_range,
 )
 from pipelines.migration.veiculo.flows import sppo_veiculo_dia
-from pipelines.schedules import every_day_hour_five, every_day_hour_seven_minute_five
+from pipelines.schedules import (
+    every_day_hour_five_and_hour_fourteen,
+    every_day_hour_seven_minute_five,
+)
 from pipelines.tasks import check_fail, transform_task_state
 from pipelines.treatment.templates.tasks import (
     dbt_data_quality_checks,
@@ -73,9 +77,37 @@ with Flow(
     # Get default parameters #
     date_range_start = Parameter("date_range_start", default=False)
     date_range_end = Parameter("date_range_end", default=False)
-    run_d0 = Parameter("run_d0", default=True)
+    run_d0_param = Parameter("run_d0", default=True)
+    rematerialization = Parameter("rematerialization", default=False)
 
-    run_dates = get_run_dates(date_range_start, date_range_end)
+    current_time = get_now_time()
+    second_run = current_time >= "13:59"
+
+    with case(rematerialization, True):
+        run_dates_remat = get_run_dates(date_range_start, date_range_end)
+
+    with case(rematerialization, False):
+        run_dates_true = None
+        run_dates_false = None
+
+        with case(second_run, True):
+            run_dates_true = [{"run_date": get_posterior_date(1)}]
+
+        with case(second_run, False):
+            run_dates_false = get_run_dates(date_range_start, date_range_end)
+
+        run_dates_non_remat = merge(run_dates_true, run_dates_false)
+
+    run_dates = merge(run_dates_remat, run_dates_non_remat)
+
+    run_d0_force_false = None
+    run_d0_keep_original = run_d0_param
+
+    with case(rematerialization, False):
+        with case(second_run, True):
+            run_d0_force_false = False
+
+    run_d0 = merge(run_d0_keep_original, run_d0_force_false)
 
     rename_flow_run = rename_current_flow_run_now_time(
         prefix=viagens_sppo.name + ": ", now_time=run_dates
@@ -96,7 +128,6 @@ with Flow(
     _vars = get_join_dict(dict_list=run_dates, new_dict=dataset_sha)
 
     RUN = run_dbt_model.map(
-        # dbt_client=unmapped(dbt_client),
         dataset_id=unmapped(constants.SUBSIDIO_SPPO_DATASET_ID.value),
         table_id=unmapped(constants.SUBSIDIO_SPPO_TABLE_ID.value),
         upstream=unmapped(True),
@@ -116,11 +147,12 @@ with Flow(
 
     RUN_2 = merge(RUN_2_TRUE, RUN_2_FALSE)
 
-    RUN_SNAPSHOTS = run_dbt(
-        resource="snapshot",
-        selector_name="snapshot_viagem",
-        upstream_tasks=[RUN_2],
-    )
+    with case(second_run, False):
+        RUN_SNAPSHOTS = run_dbt(
+            resource="snapshot",
+            selector_name="snapshot_viagem",
+            upstream_tasks=[RUN_2],
+        )
 
 
 viagens_sppo.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
@@ -128,7 +160,7 @@ viagens_sppo.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value, labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value]
 )
 viagens_sppo.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
-viagens_sppo.schedule = every_day_hour_five
+viagens_sppo.schedule = every_day_hour_five_and_hour_fourteen
 
 with Flow(
     "SMTR: Subsídio SPPO Apuração - Tratamento",

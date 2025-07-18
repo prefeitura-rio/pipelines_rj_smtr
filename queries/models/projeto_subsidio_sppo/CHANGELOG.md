@@ -4,6 +4,12 @@
 
 ### Corrigido
 
+- Alterado o modelo `viagem_planejada.sql` para não somar as distancias planejadas do dia anterior entre 24h e 03h após `2025-07-16`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/713)
+
+## [9.2.9] - 2025-07-10
+
+### Corrigido
+
 - Corrigido o agrupamento do select final no modelo `viagem_transacao_aux.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/691)
 
 ## [9.2.8] - 2025-07-10
