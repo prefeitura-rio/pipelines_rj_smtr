@@ -12,7 +12,7 @@
 /*
     Case 1+2: Cidadãos próximos a estações BRT + CadÚnico
     Filtros:
-    1) Pessoa Física; 
+    1) Pessoa Física;
     2) Geolocalizada e moradora da cidade do Rio;
     3) Viva;
     4) Maior de idade;
