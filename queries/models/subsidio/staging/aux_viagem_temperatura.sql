@@ -27,6 +27,7 @@ with
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
+            and data >= date("{{ var('DATA_SUBSIDIO_V16_INICIO') }}")
             )
     ),
     gps_validador as (
@@ -45,6 +46,7 @@ with
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
+            and data >= date("{{ var('DATA_SUBSIDIO_V16_INICIO') }}")
             )
     ),
     gps_validador_bilhetagem as (
@@ -66,7 +68,7 @@ with
                 )
                 or data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
             )
-            and date(datetime_captura) - date(datetime_gps) <= interval 6 day
+            and date_diff(date(datetime_captura), date(datetime_gps) <= 6
     ),
     estado_equipamento_aux as (
         select *
@@ -152,8 +154,7 @@ with
             count(distinct temperatura) = 1 as indicador_temperatura_variacao,
         from gps_validador
         where
-            data
-            between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
+            {{ incremental_filter }}
         group by 1, 2
     ),
     gps_validador_viagem as (
@@ -341,31 +342,31 @@ with
         left join agg_temperatura_viagem using (data, id_veiculo)
         group by all
     )
-select
-    p.data,
-    p.id_viagem,
-    p.id_veiculo,
-    c.tipo_viagem,
-    c.indicadores,
-    c.datetime_partida,
-    c.datetime_chegada,
-    c.modo,
-    c.servico,
-    c.sentido,
-    c.distancia_planejada,
-    c.ano_fabricacao,
-    b.indicador_estado_equipamento_aberto,
-    b.indicador_gps_servico_divergente,
-    c.indicador_ar_condicionado,
-    p.indicador_temperatura_variacao,
-    p.indicador_temperatura_transmitida,
-    p.indicador_temperatura_descartada,
-    p.indicador_temperatura_regular,
-    p.percentual_temperatura_regular
-from percentual_indicadores_viagem as p
-left join gps_validador as g using (data, id_veiculo)
-left join viagens as c using (data, id_viagem)
-left join
-    indicador_equipamento_bilhetagem as b
-    on p.data = b.data
-    and p.id_viagem = b.id_viagem
+        select
+            p.data,
+            p.id_viagem,
+            p.id_veiculo,
+            c.tipo_viagem,
+            c.indicadores,
+            c.datetime_partida,
+            c.datetime_chegada,
+            c.modo,
+            c.servico,
+            c.sentido,
+            c.distancia_planejada,
+            c.ano_fabricacao,
+            b.indicador_estado_equipamento_aberto,
+            b.indicador_gps_servico_divergente,
+            c.indicador_ar_condicionado,
+            p.indicador_temperatura_variacao,
+            p.indicador_temperatura_transmitida,
+            p.indicador_temperatura_descartada,
+            p.indicador_temperatura_regular,
+            p.percentual_temperatura_regular
+        from percentual_indicadores_viagem as p
+        left join gps_validador as g using (data, id_veiculo)
+        left join viagens as c using (data, id_viagem)
+        left join indicador_equipamento_bilhetagem as b
+            on p.data = b.data
+        and p.id_viagem = b.id_viagem
+        where {{ incremental_filter }}
