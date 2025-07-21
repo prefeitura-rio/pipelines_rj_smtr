@@ -90,7 +90,7 @@ with Flow(
     _vars = get_join_dict(dict_list=run_dates, new_dict=dataset_sha)
 
     RUN = run_dbt.map(
-        resource="model",
+        resource=unmapped("model"),
         # dbt_client=unmapped(dbt_client),
         dataset_id=unmapped(constants.SUBSIDIO_SPPO_DATASET_ID.value),
         table_id=unmapped(constants.SUBSIDIO_SPPO_TABLE_ID.value),
