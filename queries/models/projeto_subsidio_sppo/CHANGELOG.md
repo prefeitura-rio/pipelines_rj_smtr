@@ -1,10 +1,12 @@
 # Changelog - projeto_subsidio_sppo
 
-## [9.2.9] - 2025-07-10
+## [9.3.0] - 2025-07-21
 
-### Corrigido
+### Alterado
 
 - Alterado o modelo `viagem_planejada.sql` para não somar as distancias planejadas do dia anterior entre 24h e 03h após `2025-07-16`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/713)
+
+- refatorado o modelo `viagem_planejada.sql` para utilizar versionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/713)
 
 ## [9.2.9] - 2025-07-10
 
