@@ -1,5 +1,11 @@
 # Changelog - treatment
 
+## [1.1.8] - 2025-07-21
+
+### Corrigido
+
+- Corrige task `run_dbt` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/715)
+
 ## [1.1.7] - 2025-07-09
 
 ### Adicionado

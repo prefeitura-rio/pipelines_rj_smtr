@@ -1,5 +1,11 @@
 # Changelog - veiculo
 
+## [1.2.1] - 2025-07-21
+
+### Alterado
+
+- Altera as tasks `run_dbt_model` e `run_dbt_tests` pela task genérica `run_dbt` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/715)
+
 ## [1.2.0] - 2025-05-08
 
 ### Adicionado
