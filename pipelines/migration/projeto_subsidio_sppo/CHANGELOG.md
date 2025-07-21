@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.2.5] - 2025-07-21
+
+### Alterado
+
+- Altera as tasks `run_dbt_model`, `run_dbt_selector` e `run_dbt_tests` pela task genérica `run_dbt` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/715)
+
 ## [1.2.4] - 2025-06-30
 
 ### Adicionado
