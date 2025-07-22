@@ -189,6 +189,13 @@ sources:
     tables:
       - name: viagem_informada
 
+  - name: source_jae_dev
+    database: rj-smtr-dev
+    schema: source_jae
+
+    tables:
+      - name: lancamento
+
   - name: source_jae
     database: rj-smtr-staging
 
