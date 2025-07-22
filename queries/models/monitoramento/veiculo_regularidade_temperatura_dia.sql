@@ -17,15 +17,24 @@ with
             id_viagem,
             id_veiculo,
             ano_fabricacao,
-            indicadores.indicador_ar_condicionado.valor as indicador_ar_condicionado,
-            indicadores.indicador_temperatura_variacao.valor
-            as indicador_temperatura_variacao,
-            indicadores.indicador_temperatura_transmitida.valor
-            as indicador_temperatura_transmitida,
-            indicadores.indicador_temperatura_nula_descartada.valor
-            as indicador_temperatura_nula_descartada,
-            indicadores.indicador_temperatura_atipica_descartada.valor
-            as indicador_temperatura_atipica_descartada,
+            safe_cast(
+                json_value(indicadores, '$.indicador_ar_condicionado.valor') as bool
+            ) as indicador_ar_condicionado,
+            safe_cast(
+                json_value(
+                    indicadores, '$.indicador_temperatura_variacao.valor'
+                ) as bool
+            ) as indicador_temperatura_variacao,
+            safe_cast(
+                json_value(
+                    indicadores, '$.indicador_temperatura_transmitida.valor'
+                ) as bool
+            ) as indicador_temperatura_transmitida,
+            safe_cast(
+                json_value(
+                    indicadores, '$.indicador_temperatura_descartada.valor'
+                ) as bool
+            ) as indicador_temperatura_descartada
         from {{ ref("aux_viagem_temperatura") }}
         where
             data
@@ -33,7 +42,7 @@ with
                 "{{var('end_date')}}"
             )
             and data >= date("{{ var('DATA_SUBSIDIO_V16_INICIO') }}")
-    )
+    ),
     agg_veiculo as (
         select
             data,
@@ -42,12 +51,7 @@ with
             indicador_ar_condicionado,
             max(indicador_temperatura_variacao) as indicador_temperatura_variacao,
             max(indicador_temperatura_transmitida) as indicador_temperatura_transmitida,
-            max(
-                indicador_temperatura_nula_descartada
-            ) as indicador_temperatura_nula_descartada,
-            max(
-                indicador_temperatura_atipica_descartada
-            ) as indicador_temperatura_atipica_descartada,
+            max(indicador_temperatura_descartada) as indicador_temperatura_descartada
         from viagem_temperatura
         group by all
     ),
@@ -58,10 +62,7 @@ with
                 when
                     not indicador_temperatura_variacao
                     or not indicador_temperatura_transmitida
-                    or (
-                        indicador_temperatura_nula_descartada
-                        and indicador_temperatura_atipica_descartada
-                    )
+                    or (indicador_temperatura_descartada)
                 then true
                 else false
             end as indicio_falha
@@ -100,8 +101,7 @@ with
                                         ""
                                     ),
                                     if(
-                                        indicador_temperatura_nula_descartada
-                                        and indicador_temperatura_atipica_descartada,
+                                        indicador_temperatura_descartada,
                                         "Mais de 50% dos registros descartados",
                                         ""
                                     )
@@ -120,9 +120,8 @@ select
     indicador_ar_condicionado,
     indicador_temperatura_variacao,
     indicador_temperatura_transmitida,
-    indicador_temperatura_nula_descartada,
-    indicador_temperatura_atipica_descartada,
+    indicador_temperatura_descartada,
     quantidade_dia_falha_operacional,
+    indicador_falha,
     motivo
 from veiculo_com_falha
-where indicador_falha
