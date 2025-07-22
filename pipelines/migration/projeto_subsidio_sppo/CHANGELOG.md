@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Alterado o flow `viagens_sppo` para fazer duas apurações por dia as 05h e 14h (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/713)
+- Alterado o flow `viagens_sppo` para fazer duas apurações por dia às 05h e 14h (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/713)
 
 ## [1.2.5] - 2025-07-21
 
