@@ -121,7 +121,6 @@ with Flow(
 
     _vars = get_join_dict(dict_list=run_dates, new_dict=dataset_sha)
 
-
     RUN = run_dbt.map(
         resource=unmapped("model"),
         # dbt_client=unmapped(dbt_client),
