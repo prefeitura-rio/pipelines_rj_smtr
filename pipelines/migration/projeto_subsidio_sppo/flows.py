@@ -75,7 +75,8 @@ with Flow(
     rematerialization = Parameter("rematerialization", default=False)
 
     current_time = get_now_time()
-    second_run = current_time >= "13:59"
+    current_time_formated = task(lambda s: s if len(s) >= 5 else f"0{s}")(current_time)
+    second_run = current_time_formated >= "13:59"
 
     with case(rematerialization, True):
         run_dates_remat = get_run_dates(date_range_start, date_range_end)
