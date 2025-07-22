@@ -7,28 +7,28 @@
 }}
 
 {% set incremental_filter %}
-    data between date("{{var('start_date')}}") and date("{{var('end_date')}}") and data >= date("{{ var('DATA_SUBSIDIO_V16_INICIO') }}")
+    data between date("{{var('start_date')}}") and date_add(date("{{ var('end_date') }}"), interval 1 day) and data >= date("{{ var('DATA_SUBSIDIO_V16_INICIO') }}")
 {% endset %}
 
 with
     viagens as (
         select
             data,
-            servico_realizado as servico,
+            servico,
             datetime_partida,
             datetime_chegada,
             id_veiculo,
             id_viagem,
+            tipo_viagem,
+            indicadores,
             ano_fabricacao,
             distancia_planejada,
             sentido,
-            modo,
+            modo
         from {{ ref("viagem_classificada") }}
         where
-            data between date("{{ var('start_date') }}") and date_add(
-                date("{{ var('end_date') }}"), interval 1 day
+            data between date("{{var('start_date')}}") and date("{{var('end_date')}}")
             and data >= date("{{ var('DATA_SUBSIDIO_V16_INICIO') }}")
-            )
     ),
     gps_validador as (
         select
@@ -43,11 +43,7 @@ with
             safe_cast(temperatura as numeric) as temperatura,
             datetime_captura
         from {{ ref("gps_validador") }}
-        where
-            data between date("{{ var('start_date') }}") and date_add(
-                date("{{ var('end_date') }}"), interval 1 day
-            and data >= date("{{ var('DATA_SUBSIDIO_V16_INICIO') }}")
-            )
+        where {{ incremental_filter }}
     ),
     gps_validador_bilhetagem as (
         select
@@ -60,15 +56,7 @@ with
             latitude,
             longitude
         from gps_validador
-        where
-            (
-                (
-                    data < date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
-                    and (latitude != 0 or longitude != 0)
-                )
-                or data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
-            )
-            and date_diff(date(datetime_captura), date(datetime_gps) <= 6
+        where date_diff(date(datetime_captura), date(datetime_gps), day) <= 6
     ),
     estado_equipamento_aux as (
         select *
@@ -90,14 +78,8 @@ with
                         ) as estado_equipamento,
                         min(datetime_gps) as datetime_gps,
                     from gps_validador_bilhetagem
-                    where
-                        (
-                            data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
-                            and latitude != 0
-                            and longitude != 0
-                        )
-                        or data < date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
-                    group by 1, 2, 3, 4, 5, 6
+                    where latitude != 0 and longitude != 0
+                    group by all
                 )
                 union all
                 (
@@ -111,10 +93,7 @@ with
                         estado_equipamento,
                         datetime_gps
                     from gps_validador_bilhetagem
-                    where
-                        data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
-                        and latitude = 0
-                        and longitude = 0
+                    where latitude = 0 and longitude = 0
                 )
             )
     ),
@@ -141,21 +120,13 @@ with
             id_viagem,
             id_validador,
             countif(servico != servico_jae) > 0 as indicador_gps_servico_divergente,
+            trunc(
+                countif(estado_equipamento = "ABERTO") / count(*), 5
+            ) as percentual_estado_equipamento_aberto,
             countif(estado_equipamento = "ABERTO") / count(*)
             >= 0.8 as indicador_estado_equipamento_aberto
         from gps_validador_bilhetagem_viagem
         group by 1, 2, 3
-    ),
-    indicadores_temperatura_veiculo as (
-        select
-            data,
-            id_veiculo,
-            countif(temperatura is not null) > 0 as indicador_temperatura_transmitida,
-            count(distinct temperatura) = 1 as indicador_temperatura_variacao,
-        from gps_validador
-        where
-            {{ incremental_filter }}
-        group by 1, 2
     ),
     gps_validador_viagem as (
         select
@@ -185,7 +156,7 @@ with
             count(*) as quantidade_pre_tratamento,
             countif(temperatura is null or temperatura = 0) as quantidade_nula_zero,
             countif(temperatura is not null) > 0 as indicador_temperatura_transmitida,
-            count(distinct temperatura) > 1 as indicador_temperatura_variacao,
+            count(distinct temperatura) > 1 as indicador_temperatura_variacao
         from gps_validador_viagem
         group by 1, 2
     ),
@@ -193,10 +164,7 @@ with
         select data, extract(hour from hora) as hora, max(temperatura) as temperatura
         from {{ ref("temperatura_inmet") }}
         where
-            data between date("{{ var('start_date') }}") and date_add(
-                date("{{ var('end_date') }}"), interval 1 day
-            )
-            and id_estacao in ("A621", "A652", "A636", "A602")  -- Estações do Rio de Janeiro
+            {{ incremental_filter }} and id_estacao in ("A621", "A652", "A636", "A602")  -- Estações do Rio de Janeiro
         group by 1, 2
     ),
     metricas_base as (
@@ -268,8 +236,7 @@ with
                     safe_divide(
                         sum(quantidade_pos_tratamento_total),
                         sum(quantidade_pre_tratamento)
-                    )
-                    * 100,
+                    ),
                     0
                 ),
                 2
@@ -278,8 +245,7 @@ with
                 coalesce(
                     safe_divide(
                         sum(quantidade_nula_zero), sum(quantidade_pre_tratamento)
-                    )
-                    * 100,
+                    ),
                     0
                 ),
                 2
@@ -313,7 +279,10 @@ with
             on f.data = i.data
             and f.datetime_gps between datetime_partida and datetime_chegada
             and f.id_veiculo = i.id_veiculo
-        left join temperatura_inmet as e on e.data = i.data and e.hora = i.hora
+        left join
+            temperatura_inmet as e
+            on e.data = extract(date from i.datetime_gps)
+            and e.hora = extract(hour from i.datetime_gps)
     ),
     percentual_indicadores_viagem as (
         select
@@ -321,10 +290,10 @@ with
             id_veiculo,
             id_viagem,
             trunc(
-                (countif(classificacao_temperatura_regular) / count(*)) * 100, 2
+                (countif(classificacao_temperatura_regular) / count(*)), 2
             ) as percentual_temperatura_regular,
-            (countif(classificacao_temperatura_regular) / count(*)) * 100
-            >= 80 as indicador_temperatura_regular,
+            (countif(classificacao_temperatura_regular) / count(*))
+            >= 0.8 as indicador_temperatura_regular,
             indicador_temperatura_variacao,
             indicador_temperatura_transmitida,
             percentual_temperatura_nula_descartada,
@@ -332,41 +301,91 @@ with
             (
                 percentual_temperatura_nula_descartada
                 + percentual_temperatura_atipica_descartada
-            ) as teste,
-            (
-                percentual_temperatura_nula_descartada
-                + percentual_temperatura_atipica_descartada
             )
-            > 50 as indicador_temperatura_descartada,
+            > 0.5 as indicador_temperatura_descartada,
         from classificacao_temperatura
         left join agg_temperatura_viagem using (data, id_veiculo)
         group by all
-    )
+    ),
+    struct_indicadores as (
         select
-            p.data,
-            p.id_viagem,
-            p.id_veiculo,
-            c.tipo_viagem,
-            c.indicadores,
-            c.datetime_partida,
-            c.datetime_chegada,
-            c.modo,
-            c.servico,
-            c.sentido,
-            c.distancia_planejada,
-            c.ano_fabricacao,
-            b.indicador_estado_equipamento_aberto,
-            b.indicador_gps_servico_divergente,
-            c.indicador_ar_condicionado,
-            p.indicador_temperatura_variacao,
-            p.indicador_temperatura_transmitida,
-            p.indicador_temperatura_descartada,
-            p.indicador_temperatura_regular,
-            p.percentual_temperatura_regular
-        from percentual_indicadores_viagem as p
-        left join gps_validador as g using (data, id_veiculo)
-        left join viagens as c using (data, id_viagem)
-        left join indicador_equipamento_bilhetagem as b
-            on p.data = b.data
-        and p.id_viagem = b.id_viagem
-        where {{ incremental_filter }}
+            v.data,
+            v.id_viagem,
+            v.id_veiculo,
+            v.tipo_viagem,
+            to_json_string(v.indicadores) as indicadores_str,
+            v.datetime_partida,
+            v.datetime_chegada,
+            v.modo,
+            v.servico,
+            v.sentido,
+            v.distancia_planejada,
+            v.ano_fabricacao,
+            to_json_string(
+                struct(
+                    struct(
+                        current_date("America/Sao_Paulo") as data_apuracao_subsidio,
+                        p.indicador_temperatura_regular as valor,
+                        p.percentual_temperatura_regular
+                        as percentual_temperatura_regular
+                    ) as indicador_temperatura_regular,
+                    struct(
+                        current_date("America/Sao_Paulo") as data_apuracao_subsidio,
+                        p.indicador_temperatura_variacao as valor
+                    ) as indicador_temperatura_variacao,
+                    struct(
+                        current_date("America/Sao_Paulo") as data_apuracao_subsidio,
+                        p.indicador_temperatura_transmitida as valor
+                    ) as indicador_temperatura_transmitida,
+                    struct(
+                        current_date("America/Sao_Paulo") as data_apuracao_subsidio,
+                        p.indicador_temperatura_descartada as valor,
+                        p.percentual_temperatura_nula_descartada
+                        as percentual_temperatura_nula_descartada,
+                        p.percentual_temperatura_atipica_descartada
+                        as percentual_temperatura_atipica_descartada
+                    ) as indicador_temperatura_descartada,
+                    struct(
+                        current_date("America/Sao_Paulo") as data_apuracao_subsidio,
+                        (
+                            select
+                                array_agg(
+                                    struct(
+                                        ieb.id_validador,
+                                        ieb.indicador_gps_servico_divergente,
+                                        ieb.indicador_estado_equipamento_aberto,
+                                        ieb.percentual_estado_equipamento_aberto
+                                    )
+                                )
+                            from indicador_equipamento_bilhetagem ieb
+                            where ieb.data = v.data and ieb.id_viagem = v.id_viagem
+                        ) as valores
+                    ) as indicador_validador
+                )
+            ) as indicadores_novos
+        from viagens as v
+        left join percentual_indicadores_viagem as p using (data, id_viagem)
+    )
+select
+    s.data,
+    s.id_viagem,
+    s.id_veiculo,
+    s.tipo_viagem,
+    parse_json(
+        concat(
+            left(s.indicadores_str, length(s.indicadores_str) - 1),
+            ',',
+            substr(s.indicadores_novos, 2)
+        )
+    ) as indicadores,
+    s.datetime_partida,
+    s.datetime_chegada,
+    s.modo,
+    s.servico,
+    s.sentido,
+    s.distancia_planejada,
+    s.ano_fabricacao,
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+    "{{ var('version') }}" as versao,
+    '{{ invocation_id }}' as id_execucao_dbt
+from struct_indicadores as s

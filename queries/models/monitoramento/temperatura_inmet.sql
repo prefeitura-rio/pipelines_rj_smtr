@@ -12,9 +12,10 @@
 
 select data_particao as data, horario as hora, id_estacao, temperatura
 from {{ source("clima_estacao_meteorologica", "meteorologia_inmet") }}
-{% if is_incremental() %}
-    where
-        data_particao between date("{{ var('date_range_start') }}") and date(
+where
+    data >= date("{{ var('DATA_SUBSIDIO_V16_INICIO') }}")
+    {% if is_incremental() %}
+        and data_particao between date("{{ var('date_range_start') }}") and date(
             "{{ var('date_range_end') }}"
         )
-{% endif %}
+    {% endif %}
