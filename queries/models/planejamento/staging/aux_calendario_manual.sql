@@ -37,9 +37,9 @@ with
                 when data = date(2025, 06, 20)
                 then "Ponto Facultativo"  -- DECRETO RIO Nº 56189 DE 10 DE JUNHO DE 2025 / MTR-MEM-2025/01539
                 when data = date(2025, 07, 04)
-                then "Ponto Facultativo"  -- LEI Nº 8.881, DE 14 DE ABRIL DE 2025 / MTR-PRO-2025/16278 
+                then "Ponto Facultativo"  -- LEI Nº 8.881, DE 14 DE ABRIL DE 2025 / MTR-PRO-2025/16278
                 when data = date(2025, 07, 07)
-                then "Ponto Facultativo"  -- LEI Nº 8.881, DE 14 DE ABRIL DE 2025 / MTR-PRO-2025/16278 
+                then "Ponto Facultativo"  -- LEI Nº 8.881, DE 14 DE ABRIL DE 2025 / MTR-PRO-2025/16278
             end as tipo_dia,
             case
                 when data between date(2024, 09, 14) and date(2024, 09, 15)
