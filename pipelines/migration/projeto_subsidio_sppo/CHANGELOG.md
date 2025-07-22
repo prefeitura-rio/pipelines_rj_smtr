@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.2.6] - 2025-07-22
+
+### Adicionado
+
+- Alterado o flow `viagens_sppo` para fazer duas apurações por dia às 05h e 14h (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/713)
+
 ## [1.2.5] - 2025-07-21
 
 ### Alterado
