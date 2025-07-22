@@ -38,7 +38,6 @@ from pipelines.migration.tasks import (
     get_previous_date,
     get_run_dates,
     rename_current_flow_run_now_time,
-    run_dbt_model,
     split_date_range,
 )
 from pipelines.migration.veiculo.flows import sppo_veiculo_dia
@@ -47,12 +46,7 @@ from pipelines.schedules import (
     every_day_hour_seven_minute_five,
 )
 from pipelines.tasks import check_fail, transform_task_state
-from pipelines.treatment.templates.tasks import (
-    dbt_data_quality_checks,
-    run_dbt,
-    run_dbt_selector,
-    run_dbt_tests,
-)
+from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt
 
 # from pipelines.materialize_to_datario.flows import (
 #     smtr_materialize_to_datario_viagem_sppo_flow,
@@ -127,7 +121,10 @@ with Flow(
 
     _vars = get_join_dict(dict_list=run_dates, new_dict=dataset_sha)
 
-    RUN = run_dbt_model.map(
+
+    RUN = run_dbt.map(
+        resource=unmapped("model"),
+        # dbt_client=unmapped(dbt_client),
         dataset_id=unmapped(constants.SUBSIDIO_SPPO_DATASET_ID.value),
         table_id=unmapped(constants.SUBSIDIO_SPPO_TABLE_ID.value),
         upstream=unmapped(True),
@@ -137,7 +134,8 @@ with Flow(
 
     with case(run_d0, True):
         date_d0 = get_posterior_date(1)
-        RUN_2_TRUE = run_dbt_model(
+        RUN_2_TRUE = run_dbt(
+            resource="model",
             dataset_id=constants.SUBSIDIO_SPPO_DATASET_ID.value,
             table_id="subsidio_data_versao_efetiva viagem_planejada",
             _vars={"run_date": date_d0, "version": dataset_sha},
@@ -256,7 +254,8 @@ with Flow(
         # 3. PRE-DATA QUALITY CHECK #
         dbt_vars = {"date_range_start": start_date, "date_range_end": end_date}
 
-        SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt_tests(
+        SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt(
+            resource="test",
             dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
             exclude="dashboard_subsidio_sppo_v2",
             _vars=dbt_vars,
@@ -286,13 +285,15 @@ with Flow(
                     dict_list=[_vars], new_dict=date_intervals["first_range"]
                 )[0]
 
-                APURACAO_FIRST_RANGE_RUN = run_dbt_selector(
+                APURACAO_FIRST_RANGE_RUN = run_dbt(
+                    resource="model",
                     selector_name="apuracao_subsidio_v8",
                     _vars=dbt_vars_first_range,
                 )
 
                 # POST-DATA QUALITY CHECK #
-                DATA_QUALITY_POS_FIRST_RANGE = run_dbt_tests(
+                DATA_QUALITY_POS_FIRST_RANGE = run_dbt(
+                    resource="test",
                     dataset_id="dashboard_subsidio_sppo",
                     _vars={
                         "date_range_start": date_intervals["first_range"]["start_date"],
@@ -316,7 +317,8 @@ with Flow(
                     upstream_tasks=[DATA_QUALITY_POS_FIRST_RANGE],
                 )[0]
 
-                APURACAO_SECOND_RANGE = run_dbt_selector(
+                APURACAO_SECOND_RANGE = run_dbt(
+                    resource="model",
                     selector_name="apuracao_subsidio_v9",
                     _vars=dbt_vars_second_range,
                     upstream_tasks=[dbt_vars_second_range],
@@ -327,14 +329,16 @@ with Flow(
                     upstream_tasks=[APURACAO_SECOND_RANGE],
                 )[0]
 
-                MONITORAMENTO_RUN = run_dbt_selector(
+                MONITORAMENTO_RUN = run_dbt(
+                    resource="model",
                     selector_name="monitoramento_subsidio",
                     _vars=dbt_vars_monitoramento,
                     upstream_tasks=[dbt_vars_monitoramento],
                 )
 
                 # POST-DATA QUALITY CHECK #
-                DATA_QUALITY_POS_SECOND_RANGE = run_dbt_tests(
+                DATA_QUALITY_POS_SECOND_RANGE = run_dbt(
+                    resource="test",
                     dataset_id=constants.SUBSIDIO_SPPO_V9_POS_CHECKS_DATASET_ID.value,
                     _vars={
                         "date_range_start": date_intervals["second_range"]["start_date"],
@@ -359,12 +363,14 @@ with Flow(
                 )
 
                 with case(data_maior_ou_igual_v9, False):
-                    APURACAO_V8_RUN = run_dbt_selector(
+                    APURACAO_V8_RUN = run_dbt(
+                        resource="model",
                         selector_name="apuracao_subsidio_v8",
                         _vars=_vars,
                     )
                     # POST-DATA QUALITY CHECK #
-                    DATA_QUALITY_POS_V8 = run_dbt_tests(
+                    DATA_QUALITY_POS_V8 = run_dbt(
+                        resource="test",
                         dataset_id="dashboard_subsidio_sppo",
                         _vars=dbt_vars,
                     ).set_upstream(task=APURACAO_V8_RUN)
@@ -377,7 +383,8 @@ with Flow(
                     )
 
                 with case(data_maior_ou_igual_v9, True):
-                    APURACAO_V9_RUN = run_dbt_selector(
+                    APURACAO_V9_RUN = run_dbt(
+                        resource="model",
                         selector_name="apuracao_subsidio_v9",
                         _vars=_vars,
                     )
@@ -388,7 +395,8 @@ with Flow(
                         upstream_tasks=[APURACAO_V9_RUN],
                     )[0]
 
-                    MONITORAMENTO_V9_RUN = run_dbt_selector(
+                    MONITORAMENTO_V9_RUN = run_dbt(
+                        resource="model",
                         selector_name="monitoramento_subsidio",
                         _vars=_vars_v9,
                         upstream_tasks=[_vars_v9],
@@ -407,7 +415,8 @@ with Flow(
                             constants.DATA_SUBSIDIO_V14_INICIO.value,
                         )
 
-                        DATA_QUALITY_POS_V9_FIRST_RANGE = run_dbt_tests(
+                        DATA_QUALITY_POS_V9_FIRST_RANGE = run_dbt(
+                            resource="test",
                             dataset_id=constants.SUBSIDIO_SPPO_V9_POS_CHECKS_DATASET_ID.value,  # noqa
                             _vars={
                                 "date_range_start": date_intervals["first_range"]["start_date"],
@@ -425,7 +434,8 @@ with Flow(
                             },
                         )
 
-                        DATA_QUALITY_POS_V9_SECOND_RANGE = run_dbt_tests(
+                        DATA_QUALITY_POS_V9_SECOND_RANGE = run_dbt(
+                            resource="test",
                             dataset_id=constants.SUBSIDIO_SPPO_V14_POS_CHECKS_DATASET_ID.value,  # noqa
                             _vars={
                                 "date_range_start": date_intervals["second_range"]["start_date"],
@@ -447,7 +457,8 @@ with Flow(
                             _vars["start_date"], constants.DATA_SUBSIDIO_V14_INICIO.value
                         )
                         with case(data_maior_ou_igual_v14, False):
-                            DATA_QUALITY_POS_BEFORE_V14 = run_dbt_tests(
+                            DATA_QUALITY_POS_BEFORE_V14 = run_dbt(
+                                resource="test",
                                 dataset_id=constants.SUBSIDIO_SPPO_V9_POS_CHECKS_DATASET_ID.value,  # noqa
                                 _vars=dbt_vars,
                             ).set_upstream(task=APURACAO_V9_RUN)
@@ -457,7 +468,8 @@ with Flow(
                             )
 
                         with case(data_maior_ou_igual_v14, True):
-                            DATA_QUALITY_POS_V14 = run_dbt_tests(
+                            DATA_QUALITY_POS_V14 = run_dbt(
+                                resource="test",
                                 dataset_id=constants.SUBSIDIO_SPPO_V14_POS_CHECKS_DATASET_ID.value,  # noqa
                                 _vars=dbt_vars,
                             ).set_upstream(task=APURACAO_V9_RUN)
@@ -513,7 +525,8 @@ with Flow(
     with case(test_only, True):
         dbt_vars = {"date_range_start": start_date, "date_range_end": end_date}
 
-        SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt_tests(
+        SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt(
+            resource="test",
             dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
             exclude="dashboard_subsidio_sppo_v2",
             _vars=dbt_vars,
@@ -535,7 +548,8 @@ with Flow(
                 _vars["start_date"], _vars["end_date"], constants.DATA_SUBSIDIO_V9_INICIO.value
             )
 
-            SUBSIDIO_SPPO_DATA_QUALITY_POS = run_dbt_tests(
+            SUBSIDIO_SPPO_DATA_QUALITY_POS = run_dbt(
+                resource="test",
                 dataset_id="dashboard_subsidio_sppo",
                 _vars={
                     "date_range_start": date_intervals["first_range"]["start_date"],
@@ -553,7 +567,8 @@ with Flow(
                 },
             )
 
-            SUBSIDIO_SPPO_DATA_QUALITY_POS_2 = run_dbt_tests(
+            SUBSIDIO_SPPO_DATA_QUALITY_POS_2 = run_dbt(
+                resource="test",
                 dataset_id="viagens_remuneradas sumario_servico_dia_pagamento",
                 _vars={
                     "date_range_start": date_intervals["second_range"]["start_date"],
@@ -578,7 +593,8 @@ with Flow(
             )
 
             with case(data_maior_ou_igual_v9, False):
-                SUBSIDIO_SPPO_DATA_QUALITY_POS = run_dbt_tests(
+                SUBSIDIO_SPPO_DATA_QUALITY_POS = run_dbt(
+                    resource="test",
                     dataset_id="dashboard_subsidio_sppo",
                     _vars=dbt_vars,
                 )
@@ -602,7 +618,8 @@ with Flow(
                         constants.DATA_SUBSIDIO_V14_INICIO.value,
                     )
 
-                    SUBSIDIO_SPPO_DATA_QUALITY_POS = run_dbt_tests(
+                    SUBSIDIO_SPPO_DATA_QUALITY_POS = run_dbt(
+                        resource="test",
                         dataset_id="viagens_remuneradas sumario_servico_dia_pagamento",  # noqa
                         _vars={
                             "date_range_start": date_intervals["first_range"]["start_date"],
@@ -620,7 +637,8 @@ with Flow(
                         },
                     )
 
-                    SUBSIDIO_SPPO_DATA_QUALITY_POS_2 = run_dbt_tests(
+                    SUBSIDIO_SPPO_DATA_QUALITY_POS_2 = run_dbt(
+                        resource="test",
                         dataset_id="viagens_remuneradas sumario_faixa_servico_dia_pagamento",  # noqa
                         _vars={
                             "date_range_start": date_intervals["second_range"]["start_date"],
@@ -642,7 +660,8 @@ with Flow(
                         _vars["start_date"], constants.DATA_SUBSIDIO_V14_INICIO.value
                     )
                     with case(data_maior_ou_igual_v14, False):
-                        SUBSIDIO_SPPO_DATA_QUALITY_POS_V9 = run_dbt_tests(
+                        SUBSIDIO_SPPO_DATA_QUALITY_POS_V9 = run_dbt(
+                            resource="test",
                             dataset_id="viagens_remuneradas sumario_servico_dia_pagamento",  # noqa
                             _vars=dbt_vars,
                         )
@@ -652,7 +671,8 @@ with Flow(
                         )
 
                     with case(data_maior_ou_igual_v14, True):
-                        SUBSIDIO_SPPO_DATA_QUALITY_POS_V14 = run_dbt_tests(
+                        SUBSIDIO_SPPO_DATA_QUALITY_POS_V14 = run_dbt(
+                            resource="test",
                             dataset_id="viagens_remuneradas sumario_faixa_servico_dia_pagamento",  # noqa
                             _vars=dbt_vars,
                         )
