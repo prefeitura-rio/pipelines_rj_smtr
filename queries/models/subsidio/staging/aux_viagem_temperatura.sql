@@ -23,6 +23,8 @@ with
             indicadores,
             ano_fabricacao,
             distancia_planejada,
+            tecnologia_apurada,
+            tecnologia_remunerada,
             sentido,
             modo
         from {{ ref("viagem_classificada") }}
@@ -370,6 +372,12 @@ select
     s.data,
     s.id_viagem,
     s.id_veiculo,
+    s.datetime_partida,
+    s.datetime_chegada,
+    s.modo,
+    s.ano_fabricacao,
+    s.tecnologia_apurada,
+    s.tecnologia_remunerada,
     s.tipo_viagem,
     parse_json(
         concat(
@@ -378,13 +386,9 @@ select
             substr(s.indicadores_novos, 2)
         )
     ) as indicadores,
-    s.datetime_partida,
-    s.datetime_chegada,
-    s.modo,
     s.servico,
     s.sentido,
     s.distancia_planejada,
-    s.ano_fabricacao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     "{{ var('version') }}" as versao,
     '{{ invocation_id }}' as id_execucao_dbt

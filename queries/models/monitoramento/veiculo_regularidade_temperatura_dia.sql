@@ -32,6 +32,18 @@ with
             ) as indicador_temperatura_transmitida,
             safe_cast(
                 json_value(
+                    indicadores,
+                    '$.indicador_temperatura_descartada.percentual_temperatura_nula_descartada'
+                ) as numeric
+            ) as percentual_temperatura_nula_descartada,
+            safe_cast(
+                json_value(
+                    indicadores,
+                    '$.indicador_temperatura_descartada.percentual_temperatura_atipica_descartada'
+                ) as numeric
+            ) as percentual_temperatura_atipica_descartada,
+            safe_cast(
+                json_value(
                     indicadores, '$.indicador_temperatura_descartada.valor'
                 ) as bool
             ) as indicador_temperatura_descartada
@@ -51,6 +63,12 @@ with
             indicador_ar_condicionado,
             max(indicador_temperatura_variacao) as indicador_temperatura_variacao,
             max(indicador_temperatura_transmitida) as indicador_temperatura_transmitida,
+            max(
+                percentual_temperatura_nula_descartada
+            ) as percentual_temperatura_nula_descartada,
+            max(
+                percentual_temperatura_atipica_descartada
+            ) as percentual_temperatura_atipica_descartada,
             max(indicador_temperatura_descartada) as indicador_temperatura_descartada
         from viagem_temperatura
         group by all
@@ -120,8 +138,11 @@ select
     indicador_ar_condicionado,
     indicador_temperatura_variacao,
     indicador_temperatura_transmitida,
+    percentual_temperatura_nula_descartada,
+    percentual_temperatura_atipica_descartada,
     indicador_temperatura_descartada,
     quantidade_dia_falha_operacional,
     indicador_falha,
     motivo
 from veiculo_com_falha
+where indicador_falha

@@ -290,8 +290,9 @@ with
                     tr.quantidade_transacao_riocard_servico_divergente, 0
                 ) as quantidade_transacao_riocard_servico_divergente,
                 countif(servico != servico_jae) > 0 as indicador_gps_servico_divergente,
-                countif(estado_equipamento = "ABERTO")
-                / count(*) as percentual_estado_equipamento_aberto,
+                trunc(
+                    countif(estado_equipamento = "ABERTO") / count(*), 5
+                ) as percentual_estado_equipamento_aberto,
                 countif(estado_equipamento = "ABERTO") / count(*)
                 >= 0.8 as indicador_estado_equipamento_aberto
             from gps_validador_viagem
@@ -323,7 +324,7 @@ with
                     ) as numeric
                 ) as percentual_estado_equipamento_aberto,
                 safe_cast(
-                    json_value(item, '$.valor') as bool
+                    json_value(item, '$.indicador_estado_equipamento_aberto') as bool
                 ) as indicador_estado_equipamento_aberto,
                 safe_cast(
                     json_value(item, '$.indicador_gps_servico_divergente') as bool
@@ -337,9 +338,7 @@ with
                 and v.id_viagem = tr.id_viagem
             left join
                 unnest(
-                    json_query_array(
-                        v.indicadores, '$.indicador_estado_equipamento_aberto.valores'
-                    )
+                    json_query_array(v.indicadores, '$.indicador_validador.valores')
                 ) as item
         ),
     {% endif %}
