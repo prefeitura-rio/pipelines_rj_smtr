@@ -82,8 +82,6 @@ with Flow(
         run_dates_remat = get_run_dates(date_range_start, date_range_end)
 
     with case(rematerialization, False):
-        run_dates_true = None
-        run_dates_false = None
 
         with case(second_run, True):
             run_dates_true = [{"run_date": get_posterior_date(1)}]
