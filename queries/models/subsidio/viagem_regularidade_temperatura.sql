@@ -24,6 +24,24 @@ with
             tecnologia_remunerada,
             tipo_viagem,
             indicadores,
+            safe_cast(
+                json_value(
+                    indicadores, '$.indicador_temperatura_variacao.valor'
+                ) as bool
+            ) as indicador_temperatura_variacao,
+            safe_cast(
+                json_value(
+                    indicadores, '$.indicador_temperatura_transmitida.valor'
+                ) as bool
+            ) as indicador_temperatura_transmitida,
+            safe_cast(
+                json_value(
+                    indicadores, '$.indicador_temperatura_descartada.valor'
+                ) as bool
+            ) as indicador_temperatura_descartada,
+            safe_cast(
+                json_value(indicadores, '$.indicador_temperatura_regular.valor') as bool
+            ) as indicador_temperatura_regular,
             servico,
             sentido,
             distancia_planejada
@@ -34,17 +52,9 @@ with
         select
             data,
             id_veiculo,
-            (
-                (
-                    ano_fabricacao <= 2019
-                    and indicador_falha
-                    and data >= date('{{ var("DATA_SUBSIDIO_V16_INICIO") }}')
-                )
-                or (
-                    indicador_falha
-                    and data >= date('{{ var("DATA_SUBSIDIO_V18_INICIO") }}')
-                )
-            ) as indicador_falha
+            safe_cast(
+                json_value(indicadores, '$.indicador_falha_recorrente.valor') as bool
+            ) as indicador_falha_recorrente
         from {{ ref("veiculo_regularidade_temperatura_dia") }}
         where {{ incremental_filter }}
     ),
@@ -66,7 +76,26 @@ with
                         "Licenciado sem ar e não autuado"
                     )
                 then vt.tipo_viagem
-                when vr.indicador_falha
+                when
+                    (
+                        ano_fabricacao <= 2019
+                        and (
+                            vr.indicador_falha_recorrente
+                            or vt.indicador_temperatura_descartada
+                            or not vt.indicador_temperatura_transmitida
+                            or not vt.indicador_temperatura_regular
+                        )
+                        and data >= date('{{ var("DATA_SUBSIDIO_V16_INICIO") }}')
+                    )
+                    or (
+                        (
+                            vr.indicador_falha_recorrente
+                            or vt.indicador_temperatura_descartada
+                            or not vt.indicador_temperatura_transmitida
+                            or not vt.indicador_temperatura_regular
+                        )
+                        and data >= date('{{ var("DATA_SUBSIDIO_V18_INICIO") }}')
+                    )
                 then "Detectado com ar inoperante"
                 else vt.tipo_viagem
             end as tipo_viagem,
@@ -76,9 +105,15 @@ with
                         vt.ano_fabricacao <= 2019
                         or vt.data >= date('{{ var("DATA_SUBSIDIO_V18_INICIO") }}')
                     )
-                then vr.indicador_falha
+                then
+                    (
+                        not vr.indicador_falha_recorrente
+                        and not vt.indicador_temperatura_descartada
+                        and vt.indicador_temperatura_transmitida
+                        and vt.indicador_temperatura_regular
+                    )
                 else null
-            end as indicador_regularidade_temperatura,
+            end as indicador_regularidade_ar_condicionado,
             indicadores,
             servico,
             sentido,
@@ -100,10 +135,10 @@ select
     json_set(
         json_set(
             indicadores,
-            '$.indicador_regularidade_temperatura.valor',
-            indicador_regularidade_temperatura
+            '$.indicador_regularidade_ar_condicionado.valor',
+            indicador_regularidade_ar_condicionado
         ),
-        '$.indicador_regularidade_temperatura.data_apuracao_subsidio',
+        '$.indicador_regularidade_ar_condicionado.datetime_apuracao_subsidio',
         current_datetime("America/Sao_Paulo")
     ) as indicadores,
     servico,

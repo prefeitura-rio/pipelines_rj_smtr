@@ -21,6 +21,9 @@ with
             id_viagem,
             tipo_viagem,
             indicadores,
+            safe_cast(
+                json_value(indicadores, '$.indicador_ar_condicionado.valor') as bool
+            ) as indicador_ar_condicionado,
             ano_fabricacao,
             distancia_planejada,
             tecnologia_apurada,
@@ -47,19 +50,6 @@ with
         from {{ ref("gps_validador") }}
         where {{ incremental_filter }}
     ),
-    gps_validador_bilhetagem as (
-        select
-            data,
-            datetime_gps,
-            servico_jae,
-            id_veiculo,
-            id_validador,
-            estado_equipamento,
-            latitude,
-            longitude
-        from gps_validador
-        where date_diff(date(datetime_captura), date(datetime_gps), day) <= 6
-    ),
     estado_equipamento_aux as (
         select *
         from
@@ -79,7 +69,7 @@ with
                             "FECHADO"
                         ) as estado_equipamento,
                         min(datetime_gps) as datetime_gps,
-                    from gps_validador_bilhetagem
+                    from gps_validador
                     where latitude != 0 and longitude != 0
                     group by all
                 )
@@ -94,7 +84,7 @@ with
                         longitude,
                         estado_equipamento,
                         datetime_gps
-                    from gps_validador_bilhetagem
+                    from gps_validador
                     where latitude = 0 and longitude = 0
                 )
             )
@@ -139,6 +129,7 @@ with
             e.datetime_captura,
             v.id_viagem,
             v.id_veiculo,
+            v.indicador_ar_condicionado,
             e.id_validador,
             e.estado_equipamento,
             e.latitude,
@@ -160,6 +151,7 @@ with
             countif(temperatura is not null) > 0 as indicador_temperatura_transmitida,
             count(distinct temperatura) > 1 as indicador_temperatura_variacao
         from gps_validador_viagem
+        where indicador_ar_condicionado
         group by 1, 2
     ),
     temperatura_inmet as (
@@ -178,9 +170,9 @@ with
             datetime_gps,
             -- Cálcula 1 e 3 quartil
             percentile_cont(temperatura, 0.25) over (partition by g.data, hora) as q1,
-            percentile_cont(temperatura, 0.75) over (partition by g.data, hora) as q3,
+            percentile_cont(temperatura, 0.75) over (partition by g.data, hora) as q3
         from gps_validador_viagem as g
-        where temperatura is not null and temperatura != 0
+        where temperatura is not null and temperatura != 0 and indicador_ar_condicionado
     ),
     metricas_iqr as (
         select
@@ -264,6 +256,7 @@ with
             i.hora,
             i.id_veiculo,
             id_viagem,
+            indicador_ar_condicionado,
             i.datetime_gps,
             f.temperatura as temperatura_int,
             e.temperatura as temperatura_ext,
@@ -291,11 +284,21 @@ with
             data,
             id_veiculo,
             id_viagem,
-            trunc(
-                (countif(classificacao_temperatura_regular) / count(*)), 2
-            ) as percentual_temperatura_regular,
-            (countif(classificacao_temperatura_regular) / count(*))
-            >= 0.8 as indicador_temperatura_regular,
+            case
+                when max(indicador_ar_condicionado)
+                then trunc((countif(classificacao_temperatura_regular) / count(*)), 2)
+                else null
+            end as percentual_temperatura_regular,
+            case
+                when max(indicador_ar_condicionado)
+                then (countif(classificacao_temperatura_regular) / count(*)) >= 0.8
+                else null
+            end as indicador_temperatura_regular,
+            case
+                when max(indicador_ar_condicionado)
+                then current_datetime("America/Sao_Paulo")
+                else null
+            end as datetime_apuracao_subsidio,
             indicador_temperatura_variacao,
             indicador_temperatura_transmitida,
             percentual_temperatura_nula_descartada,
@@ -323,32 +326,39 @@ with
             v.sentido,
             v.distancia_planejada,
             v.ano_fabricacao,
+            v.tecnologia_apurada,
+            v.tecnologia_remunerada,
             to_json_string(
                 struct(
                     struct(
-                        current_date("America/Sao_Paulo") as data_apuracao_subsidio,
+                        p.datetime_apuracao_subsidio,
                         p.indicador_temperatura_regular as valor,
-                        p.percentual_temperatura_regular
-                        as percentual_temperatura_regular
+                        safe_cast(
+                            p.percentual_temperatura_regular as string
+                        ) as percentual_temperatura_regular
                     ) as indicador_temperatura_regular,
                     struct(
-                        current_date("America/Sao_Paulo") as data_apuracao_subsidio,
+                        p.datetime_apuracao_subsidio,
                         p.indicador_temperatura_variacao as valor
                     ) as indicador_temperatura_variacao,
                     struct(
-                        current_date("America/Sao_Paulo") as data_apuracao_subsidio,
+                        p.datetime_apuracao_subsidio,
                         p.indicador_temperatura_transmitida as valor
                     ) as indicador_temperatura_transmitida,
                     struct(
-                        current_date("America/Sao_Paulo") as data_apuracao_subsidio,
+                        p.datetime_apuracao_subsidio,
                         p.indicador_temperatura_descartada as valor,
-                        p.percentual_temperatura_nula_descartada
-                        as percentual_temperatura_nula_descartada,
-                        p.percentual_temperatura_atipica_descartada
-                        as percentual_temperatura_atipica_descartada
+                        safe_cast(
+                            p.percentual_temperatura_nula_descartada as string
+                        ) as percentual_temperatura_nula_descartada,
+                        safe_cast(
+                            p.percentual_temperatura_atipica_descartada as string
+                        ) as percentual_temperatura_atipica_descartada
                     ) as indicador_temperatura_descartada,
                     struct(
-                        current_date("America/Sao_Paulo") as data_apuracao_subsidio,
+                        current_datetime(
+                            "America/Sao_Paulo"
+                        ) as datetime_apuracao_subsidio,
                         (
                             select
                                 array_agg(
@@ -356,7 +366,10 @@ with
                                         ieb.id_validador,
                                         ieb.indicador_gps_servico_divergente,
                                         ieb.indicador_estado_equipamento_aberto,
-                                        ieb.percentual_estado_equipamento_aberto
+                                        safe_cast(
+                                            ieb.percentual_estado_equipamento_aberto
+                                            as string
+                                        ) as percentual_estado_equipamento_aberto
                                     )
                                 )
                             from indicador_equipamento_bilhetagem ieb
