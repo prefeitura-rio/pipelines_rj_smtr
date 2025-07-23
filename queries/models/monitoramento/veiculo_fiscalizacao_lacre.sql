@@ -67,11 +67,34 @@ with
         from staging
 
         {% if is_incremental() and partitions | length > 0 %}
+
+            {% set max_data_query %}
+                select max(data) as max_data
+                from {{ staging_veiculo_fiscalizacao_lacre }}
+            {% endset %}
+            {% set max_data = run_query(max_data_query).columns[0].values()[0] %}
+
             union all
 
             select * except (versao)
-            from {{ this }}
+            from {{ this }} as historico
             where data_inicio_lacre in ({{ partitions | join(", ") }})
+            and exists (
+                select 1
+                from {{ staging_veiculo_fiscalizacao_lacre }} as s
+                where
+                    s.data = date('{{ max_data }}')
+                    and s.n_o_de_ordem = historico.id_veiculo
+                    and s.placa = historico.placa
+                    and s.data_do_lacre = historico.data_inicio_lacre
+                    and regexp_contains(s.no_do_auto, r'/')
+                    and concat(
+                        rpad(regexp_replace(substring(s.no_do_auto, 1, 2), r'\W', ''), 2),
+                        '-',
+                        lpad(regexp_replace(substring(s.no_do_auto, 3), r'\W', ''), 8, '0')
+                    ) = historico.id_auto_infracao
+            )
+
         {% endif %}
     ),
     aux_datetime_ultima_atualizacao as (
