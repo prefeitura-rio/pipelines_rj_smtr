@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrigido o modelo `viagem_planejada.sql` para não não utilizar o modelo `viagem_planejada_v1.sql` antes de `2024-04-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/719)
+- Corrigido o modelo `viagem_planejada.sql` para não utilizar o modelo `viagem_planejada_v1.sql` antes de `2024-04-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/719)
 
 ## [9.3.0] - 2025-07-21
 
