@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.5.8] - 2025-07-23
+
+### Alterado
+
+- Alterado o modelo `veiculo_fiscalizacao_lacre.sql` para lidar com correções dos dados capturados (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/719)
+
 ## [1.5.7] - 2025-07-10
 
 ### Alterado
