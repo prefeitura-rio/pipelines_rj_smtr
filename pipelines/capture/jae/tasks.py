@@ -666,10 +666,9 @@ def get_capture_gaps(
     timestamp_captura_start: datetime,
     timestamp_captura_end: datetime,
 ) -> list[str]:
-    pass
     params = constants.CHECK_CAPTURE_PARAMS.value[table_id]
-    datalake_table_name = params["datalake_table"]
-    table_capture_params = constants.JAE_TABLE_CAPTURE_PARAMS.value[datalake_table_name]
+    # datalake_table_name = params["datalake_table"]
+    table_capture_params = constants.JAE_TABLE_CAPTURE_PARAMS.value[table_id]
     # database = table_capture_params["database"]
     # credentials = get_secret(constants.JAE_SECRET_PATH.value)
     # database_settings = constants.JAE_DATABASE_SETTINGS.value[database]
@@ -710,7 +709,7 @@ def get_capture_gaps(
         ;
         """
 
-    jae_start_ts = timestamp_captura_start - timedelta(minutes=params["interval_minutes"])
+    jae_start_ts = timestamp_captura_start
     # jae_result = []
     while jae_start_ts < timestamp_captura_end:
         jae_end_ts = min(jae_start_ts + timedelta(days=1), timestamp_captura_end)
