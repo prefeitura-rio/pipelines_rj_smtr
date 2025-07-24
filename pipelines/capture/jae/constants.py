@@ -113,10 +113,11 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     transacao
                 WHERE
-                    data_processamento >= timestamp '{start}' - INTERVAL '5 minutes'
-                    AND data_processamento < timestamp '{end}' - INTERVAL '5 minutes'
+                    data_processamento >= timestamp '{start}' - INTERVAL '{delay} minutes'
+                    AND data_processamento < timestamp '{end}' - INTERVAL '{delay} minutes'
             """,
             "database": "transacao_db",
+            "capture_delay_minutes": 5,
         },
         TRANSACAO_RETIFICADA_TABLE_ID: {
             "query": """
@@ -613,6 +614,15 @@ class constants(Enum):  # pylint: disable=c0103
             "data_transacao",
         ],
     )
+
+    CHECK_CAPTURE_PARAMS = {
+        TRANSACAO_TABLE_ID: {
+            "source": TRANSACAO_SOURCE,
+            "jae_table": "transacao",
+            "datalake_table": "rj-smtr.bilhetagem.transacao",
+            "timestamp_column": "datetime_processamento",
+        }
+    }
 
     BACKUP_BILLING_PAY_FOLDER = "backup_jae_billingpay"
 

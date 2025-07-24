@@ -291,3 +291,10 @@ backup_billingpay_historico.state_handlers = [
 #         for t in v.keys()
 #     ]
 # )
+
+with Flow("jae: verificacao captura") as verifica_captura:
+    start_timestamp = Parameter(name="start_timestamp", default=None)
+    end_timestamp = Parameter(name="end_timestamp", default=None)
+    table_ids = Parameter(name="table_ids", default=[])
+
+    timestamp = get_scheduled_timestamp()

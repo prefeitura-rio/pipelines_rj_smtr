@@ -2,6 +2,7 @@
 """Tasks de captura dos dados da Jaé"""
 from datetime import datetime, timedelta
 from functools import partial
+from typing import Optional
 
 import pandas as pd
 from prefect import task
@@ -48,7 +49,11 @@ def create_jae_general_extractor(source: SourceTable, timestamp: datetime):
     )
     end = timestamp.astimezone(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S")
 
-    query = params["query"].format(start=start, end=end)
+    query = params["query"].format(
+        start=start,
+        end=end,
+        delay=params.get("capture_delay_minutes"),
+    )
     database_name = params["database"]
     database = constants.JAE_DATABASE_SETTINGS.value[database_name]
     general_func_arguments = {
@@ -615,3 +620,50 @@ def set_redis_historic_table(
         redis_client.set(redis_key, save_value)
     else:
         log(f"[{redis_key}] {save_value} é menor que o valor salvo no Redis")
+
+
+# TASKS PARA VERIFICAÇÃO DE GAPS NA CAPTURA #
+
+
+@task
+def rename_flow_run_jae_capture_check(
+    timestamp_captura_start: datetime, timestamp_captura_end: datetime
+):
+    start = timestamp_captura_start.isoformat()
+    end = timestamp_captura_end.isoformat()
+    rename_current_flow_run(name=f"verificacao captura: from {start.isoformat()} to {end}")
+
+
+@task(
+    max_retries=smtr_constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=smtr_constants.RETRY_DELAY.value),
+    nout=2,
+)
+def jae_capture_check_get_ts_range(
+    timestamp: datetime,
+    timestamp_captura_start: Optional[str],
+    timestamp_captura_end: Optional[str],
+) -> tuple[datetime, datetime]:
+    if timestamp_captura_start is not None:
+        start = datetime.fromisoformat(timestamp_captura_start)
+    else:
+        start = (timestamp - timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+
+    if timestamp_captura_end is not None:
+        end = datetime.fromisoformat(timestamp_captura_end)
+    else:
+        end = (timestamp - timedelta(days=1)).replace(hour=23, minute=59, second=59, microsecond=0)
+
+    return convert_timezone(timestamp=start), convert_timezone(timestamp=end)
+
+
+@task(
+    max_retries=smtr_constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=smtr_constants.RETRY_DELAY.value),
+)
+def get_capture_gaps(
+    table_id: str,
+    timestamp_captura_start: datetime,
+    timestamp_captura_end: datetime,
+) -> list[str]:
+    pass
