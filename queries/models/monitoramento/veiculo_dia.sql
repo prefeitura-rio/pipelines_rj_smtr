@@ -42,8 +42,13 @@ with
         where
             (
                 data_processamento <= date_add(data, interval 7 day)
-                or data_processamento
-                = date("{{var('data_processamento_veiculo_licenciamento')}}")  -- Primeira data de inclusão dos dados de licenciamento
+                or data_processamento in (
+                    {{
+                        var("data_processamento_veiculo_licenciamento_dia") | join(
+                            ", "
+                        )
+                    }}
+                )
             )
             {% if is_incremental() %}
                 and data between date("{{ var('date_range_start') }}") and date(
