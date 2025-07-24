@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.2.4] - 2025-07-23
+
+### Alterado
+
+- Alterado o flow `MONITORAMENTO_VEICULO_MATERIALIZACAO` para adicionar a materialização do snapshot (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
 ## [1.2.3] - 2025-07-09
 
 ### Corrigido
