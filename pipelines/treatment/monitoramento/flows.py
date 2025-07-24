@@ -160,6 +160,7 @@ set_default_parameters(GPS_15_MINUTOS_ZIRIX_MATERIALIZACAO, {"additional_vars": 
 MONITORAMENTO_VEICULO_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="monitoramento_veiculo - materializacao",
     selector=constants.MONITORAMENTO_VEICULO_SELECTOR.value,
+    snapshot_selector=constants.SNAPSHOT_VEICULO_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[veiculo_fiscalizacao_constants.VEICULO_LACRE_SOURCE.value],
     post_tests=constants.MONITORAMENTO_VEICULO_TEST.value,
