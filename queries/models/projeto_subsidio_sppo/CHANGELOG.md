@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.3.2] - 2025-07-24
+
+### Corrigido
+
+- Corrigida a data final da soma de quilometragem planejada para o dia seguinte no modelo `viagem_planejada_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/721)
+
 ## [9.3.1] - 2025-07-23
 
 ### Corrigido
