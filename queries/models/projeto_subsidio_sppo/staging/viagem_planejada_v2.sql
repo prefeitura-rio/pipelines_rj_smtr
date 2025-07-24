@@ -69,7 +69,7 @@ with
             and feed_start_date = date("{{ feed_start_dates[1] }}")
             and tipo_dia = "{{ tipo_dias[1] }}"
     ),
-    {% if var('run_date') < var('DATA_GTFS_V4_INICIO') %}
+    {% if var('run_date') <= var('DATA_GTFS_V4_INICIO') %}
     -- 2. Busca partidas e quilometragem da faixa horaria (dia anterior)
     dia_anterior as (
         select
@@ -170,7 +170,7 @@ with
             sentido_shape,
             id_tipo_trajeto,
         from dia_atual
-        {% if var('run_date') < var('DATA_GTFS_V4_INICIO') %}
+        {% if var('run_date') <= var('DATA_GTFS_V4_INICIO') %}
         union all
         select
             feed_version,
