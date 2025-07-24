@@ -618,7 +618,6 @@ class constants(Enum):  # pylint: disable=c0103
     CHECK_CAPTURE_PARAMS = {
         TRANSACAO_TABLE_ID: {
             "source": TRANSACAO_SOURCE,
-            "jae_table": "transacao",
             "datalake_table": "rj-smtr.bilhetagem.transacao",
             "timestamp_column": "datetime_processamento",
         }

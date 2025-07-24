@@ -667,49 +667,107 @@ def get_capture_gaps(
     timestamp_captura_end: datetime,
 ) -> list[str]:
     pass
-    # params = constants.CHECK_CAPTURE_PARAMS.value[table_id]
-    # datalake_table_name = params["datalake_table"]
-    # table_capture_params = constants.JAE_TABLE_CAPTURE_PARAMS.value[datalake_table_name]
+    params = constants.CHECK_CAPTURE_PARAMS.value[table_id]
+    datalake_table_name = params["datalake_table"]
+    table_capture_params = constants.JAE_TABLE_CAPTURE_PARAMS.value[datalake_table_name]
     # database = table_capture_params["database"]
     # credentials = get_secret(constants.JAE_SECRET_PATH.value)
     # database_settings = constants.JAE_DATABASE_SETTINGS.value[database]
-    # timestamp_column = params["timestamp_column"]
-    # capture_query = table_capture_params["query"].format(
-    #     start=timestamp_captura_start.astimezone(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M
-    # :%S"),
-    #     end=timestamp_captura_end.astimezone(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S"),
-    #     delay=table_capture_params.get("capture_delay_minutes"),
-    # )
-    # query_jae = f"""
-    # WITH timestamps_captura AS (
-    #     SELECT generate_series(
-    #         timestamp '{{data}} 00:00:00',
-    #         timestamp '{{data}} 23:59:00',
-    #         interval '1 minute'
-    #     ) AS minuto
-    # ),
-    # dados_jae AS (
-    #     {capture_query}
-    # )
+    capture_delay = table_capture_params.get("capture_delay_minutes", 0)
+    timestamp_column = params["timestamp_column"]
+
+    base_query_jae = f"""
+        WITH timestamps_captura AS (
+            SELECT generate_series(
+                timestamp '{{timestamp_captura_start}}',
+                timestamp '{{timestamp_captura_end}}',
+                interval '1 minute'
+            ) AS timestamp_captura
+        ),
+        dados_jae AS (
+            {table_capture_params["query"]}
+        )
+        contagens AS (
+            SELECT
+                date_trunc(
+                    'minute', {timestamp_column}
+                )
+                - INTERVAL '{{delay}} minutes'
+                - INTERVAL '1 minutes' AS timestamp_captura,
+                COUNT(id) AS total_jae
+            FROM
+                dados_jae
+            GROUP BY
+                minuto
+        )
+        SELECT
+            tc.timestamp_captura,
+            COALESCE(c.total_jae, 0) AS total_jae
+        FROM
+            timestamps_captura tc
+        LEFT JOIN
+            contagens c USING(timestamp_captura)
+        ;
+        """
+
+    jae_start_ts = timestamp_captura_start - timedelta(minutes=params["interval_minutes"])
+    # jae_result = []
+    while jae_start_ts < timestamp_captura_end:
+        jae_end_ts = min(jae_start_ts + timedelta(days=1), timestamp_captura_end)
+
+        jae_start_ts_utc = jae_start_ts.astimezone(tz=timezone("UTC"))
+        jae_end_ts_utc = jae_end_ts.astimezone(tz=timezone("UTC"))
+
+        base_query_jae.format(
+            timestamp_captura_start=jae_start_ts_utc.strftime("%Y-%m-%d %H:%M:%S"),
+            timestamp_captura_end=jae_end_ts_utc.strftime("%Y-%m-%d %H:%M:%S"),
+            start=jae_start_ts_utc.replace(hour=0, minute=0, second=0, microsecond=0).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            ),
+            end=jae_end_ts_utc.replace(hour=23, minute=59, second=59, microsecond=59).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            ),
+            delay=capture_delay,
+        )
+
+        jae_start_ts = jae_end_ts
+
+    # query_datalake = f"""
+    # WITH
     # contagens AS (
     #     SELECT
-    #         date_trunc('minute', {timestamp_column}) AS minuto,
-    #         COUNT(id) AS total_jae
+    #         timestamp_captura,
+    #         COUNT(DISTINCT {params['source'].primary_keys[0]}) AS total_datalake
     #     FROM
-    #         {params['jae_table']}
+    #         {params['datalake_table']}
     #     WHERE
-    #         {timestamp_column} >= '{{data}} 00:00:00'
-    #         AND {timestamp_column} <= '{{data}} 23:59:59'
+    #         DATA BETWEEN '{timestamp_captura_start.date().isoformat()}'
+    #         AND '{timestamp_captura_end.date().isoformat()}'
+    #         AND timestamp_captura BETWEEN {timestamp_captura_start.strftime("%Y-%m-%d %H:%M:%S")}
+    #         AND {timestamp_captura_end.strftime("%Y-%m-%d %H:%M:%S")}
     #     GROUP BY
-    #         minuto
+    #         1
+    # ),
+    # timestamps_captura AS (
+    #     SELECT
+    #         DATETIME(timestamp_captura) AS timestamps_captura
+    #     FROM
+    #         UNNEST(
+    #             GENERATE_TIMESTAMP_ARRAY(
+    #                 '{timestamp_captura_start.strftime("%Y-%m-%d %H:%M:%S")}',
+    #                 '{timestamp_captura_end.strftime("%Y-%m-%d %H:%M:%S")}',
+    #                 INTERVAL 1 minute
+    #             )
+    #         ) AS timestamp_captura
     # )
     # SELECT
-    # m.minuto,
-    # COALESCE(c.total_jae, 0) AS total_jae
+    #     timestamp_captura,
+    #     COALESCE(total_datalake, 0) AS total_datalake
     # FROM
-    # minutos m
+    #     timestamps_captura
     # LEFT JOIN
-    # contagens c ON m.minuto = c.minuto
-    # ORDER BY
-    # m.minuto;
+    #     contagens
+    # USING
+    #     (timestamp_captura)
+    # ;
     # """
