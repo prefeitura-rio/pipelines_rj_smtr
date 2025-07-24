@@ -178,7 +178,7 @@ def get_jae_timestamp_captura_count(
         ),
         dados_jae AS (
             {table_capture_params["query"]}
-        )
+        ),
         contagens AS (
             SELECT
                 date_trunc(
@@ -190,7 +190,7 @@ def get_jae_timestamp_captura_count(
             FROM
                 dados_jae
             GROUP BY
-                minuto
+                1
         )
         SELECT
             tc.timestamp_captura,
@@ -204,41 +204,44 @@ def get_jae_timestamp_captura_count(
 
     jae_start_ts = timestamp_captura_start
     jae_result = []
-    """
-    2025-07-22 00:00:00
-    2025-04 24 07:00:00
 
-    2025-07-22 00:01:00
-    2025-07-23 00:00:00
-
-
-    """
     while jae_start_ts < timestamp_captura_end:
         jae_end_ts = min(jae_start_ts + timedelta(days=1), timestamp_captura_end)
 
         jae_start_ts_utc = jae_start_ts.astimezone(tz=timezone("UTC"))
         jae_end_ts_utc = jae_end_ts.astimezone(tz=timezone("UTC"))
 
-        df_count_jae = pd.read_sql(
-            sql=base_query_jae.format(
-                timestamp_captura_start=jae_start_ts_utc.strftime("%Y-%m-%d %H:%M:%S"),
-                timestamp_captura_end=jae_end_ts_utc.strftime("%Y-%m-%d %H:%M:%S"),
-                start=jae_start_ts_utc.replace(hour=0, minute=0, second=0, microsecond=0).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                ),
-                end=jae_end_ts_utc.replace(hour=23, minute=59, second=59, microsecond=59).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                ),
-                delay=capture_delay,
+        jae_end_ts_format = (
+            jae_end_ts - timedelta(minutes=1) if jae_end_ts < timestamp_captura_end else jae_end_ts
+        )
+
+        query = base_query_jae.format(
+            timestamp_captura_start=jae_start_ts.strftime("%Y-%m-%d %H:%M:%S"),
+            timestamp_captura_end=jae_end_ts_format.strftime("%Y-%m-%d %H:%M:%S"),
+            start=(
+                jae_start_ts_utc.replace(hour=0, minute=0, second=0, microsecond=0)
+                - timedelta(minutes=capture_delay + 1)
+            ).strftime("%Y-%m-%d %H:%M:%S"),
+            end=jae_end_ts_utc.replace(hour=23, minute=59, second=59, microsecond=59).strftime(
+                "%Y-%m-%d %H:%M:%S"
             ),
+            delay=capture_delay,
+        )
+
+        log(f"Executando query\n{query}")
+        df_count_jae = pd.read_sql(
+            sql=query,
             con=connection,
         )
+
         df_count_jae["timestamp_captura"] = (
             pd.to_datetime(df_count_jae["timestamp_captura"])
             .dt.tz_localize("UTC")
             .dt.tz_convert("America/Sao_Paulo")
         )
 
-        jae_result
+        jae_result.append(df_count_jae)
 
-        jae_start_ts = jae_end_ts + timedelta(minutes=1)
+        jae_start_ts = jae_end_ts
+
+    return pd.concat(jae_result)

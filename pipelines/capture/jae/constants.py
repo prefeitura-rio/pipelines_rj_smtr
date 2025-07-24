@@ -618,9 +618,19 @@ class constants(Enum):  # pylint: disable=c0103
     CHECK_CAPTURE_PARAMS = {
         TRANSACAO_TABLE_ID: {
             "source": TRANSACAO_SOURCE,
-            "datalake_table": "rj-smtr.bilhetagem.transacao",
-            "timestamp_column": "datetime_processamento",
-        }
+            "datalake_table": "rj-smtr.bilhetagem_staging.transacao",
+            "timestamp_column": "data_processamento",
+        },
+        TRANSACAO_RIOCARD_TABLE_ID: {
+            "source": TRANSACAO_RIOCARD_SOURCE,
+            "datalake_table": "rj-smtr.bilhetagem_staging.transacao_riocard",
+            "timestamp_column": "data_processamento",
+        },
+        GPS_VALIDADOR_TABLE_ID: {
+            "source": GPS_VALIDADOR_SOURCE,
+            "datalake_table": "rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.gps_validador",
+            "timestamp_column": "data_tracking",
+        },
     }
 
     BACKUP_BILLING_PAY_FOLDER = "backup_jae_billingpay"

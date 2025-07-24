@@ -4,7 +4,9 @@ from datetime import datetime, timedelta
 from functools import partial
 from typing import Optional
 
+import basedosdados as bd
 import pandas as pd
+import prefect
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
@@ -14,6 +16,7 @@ from sqlalchemy import DATE, DATETIME, TIMESTAMP, create_engine, inspect
 from pipelines.capture.jae.constants import constants
 from pipelines.capture.jae.utils import (
     create_billingpay_backup_filepath,
+    get_jae_timestamp_captura_count,
     get_redis_last_backup,
     get_table_data_backup_billingpay,
 )
@@ -631,7 +634,7 @@ def rename_flow_run_jae_capture_check(
 ):
     start = timestamp_captura_start.isoformat()
     end = timestamp_captura_end.isoformat()
-    rename_current_flow_run(name=f"verificacao captura: from {start.isoformat()} to {end}")
+    rename_current_flow_run(name=f"verificacao captura: from {start} to {end}")
 
 
 @task(
@@ -641,18 +644,23 @@ def rename_flow_run_jae_capture_check(
 )
 def jae_capture_check_get_ts_range(
     timestamp: datetime,
+    retroactive_days: int,
     timestamp_captura_start: Optional[str],
     timestamp_captura_end: Optional[str],
 ) -> tuple[datetime, datetime]:
     if timestamp_captura_start is not None:
         start = datetime.fromisoformat(timestamp_captura_start)
     else:
-        start = (timestamp - timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        start = (timestamp - timedelta(days=retroactive_days)).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
 
     if timestamp_captura_end is not None:
         end = datetime.fromisoformat(timestamp_captura_end)
     else:
-        end = (timestamp - timedelta(days=1)).replace(hour=23, minute=59, second=59, microsecond=0)
+        end = (timestamp - timedelta(days=retroactive_days)).replace(
+            hour=23, minute=59, second=59, microsecond=0
+        )
 
     return convert_timezone(timestamp=start), convert_timezone(timestamp=end)
 
@@ -667,106 +675,93 @@ def get_capture_gaps(
     timestamp_captura_end: datetime,
 ) -> list[str]:
     params = constants.CHECK_CAPTURE_PARAMS.value[table_id]
-    # datalake_table_name = params["datalake_table"]
-    table_capture_params = constants.JAE_TABLE_CAPTURE_PARAMS.value[table_id]
-    # database = table_capture_params["database"]
-    # credentials = get_secret(constants.JAE_SECRET_PATH.value)
-    # database_settings = constants.JAE_DATABASE_SETTINGS.value[database]
-    capture_delay = table_capture_params.get("capture_delay_minutes", 0)
     timestamp_column = params["timestamp_column"]
 
-    base_query_jae = f"""
-        WITH timestamps_captura AS (
-            SELECT generate_series(
-                timestamp '{{timestamp_captura_start}}',
-                timestamp '{{timestamp_captura_end}}',
-                interval '1 minute'
-            ) AS timestamp_captura
-        ),
-        dados_jae AS (
-            {table_capture_params["query"]}
-        )
-        contagens AS (
-            SELECT
-                date_trunc(
-                    'minute', {timestamp_column}
-                )
-                - INTERVAL '{{delay}} minutes'
-                - INTERVAL '1 minutes' AS timestamp_captura,
-                COUNT(id) AS total_jae
-            FROM
-                dados_jae
-            GROUP BY
-                minuto
-        )
+    df_jae = get_jae_timestamp_captura_count(
+        table_id=table_id,
+        timestamp_column=timestamp_column,
+        timestamp_captura_start=timestamp_captura_start,
+        timestamp_captura_end=timestamp_captura_end,
+    )
+
+    query_datalake = f"""
+    WITH contagens AS (
         SELECT
-            tc.timestamp_captura,
-            COALESCE(c.total_jae, 0) AS total_jae
+            timestamp_captura,
+            COUNT(DISTINCT {params['source'].primary_keys[0]}) AS total_datalake
         FROM
-            timestamps_captura tc
-        LEFT JOIN
-            contagens c USING(timestamp_captura)
-        ;
-        """
+            {params['datalake_table']}
+        WHERE
+            DATA BETWEEN '{timestamp_captura_start.date().isoformat()}'
+            AND '{timestamp_captura_end.date().isoformat()}'
+            AND timestamp_captura BETWEEN '{timestamp_captura_start.strftime("%Y-%m-%d %H:%M:%S")}'
+            AND '{timestamp_captura_end.strftime("%Y-%m-%d %H:%M:%S")}'
+        GROUP BY
+            1
+    ),
+    timestamps_captura AS (
+        SELECT
+            DATETIME(timestamp_captura) AS timestamps_captura
+        FROM
+            UNNEST(
+                GENERATE_TIMESTAMP_ARRAY(
+                    '{timestamp_captura_start.strftime("%Y-%m-%d %H:%M:%S")}',
+                    '{timestamp_captura_end.strftime("%Y-%m-%d %H:%M:%S")}',
+                    INTERVAL 1 minute
+                )
+            ) AS timestamp_captura
+    )
+    SELECT
+        timestamp_captura,
+        COALESCE(total_datalake, 0) AS total_datalake
+    FROM
+        timestamps_captura
+    LEFT JOIN
+        contagens
+    USING
+        (timestamp_captura)
+    ;
+    """
+    df_datalake = bd.read_sql(query=query_datalake, from_file=True)
 
-    jae_start_ts = timestamp_captura_start
-    # jae_result = []
-    while jae_start_ts < timestamp_captura_end:
-        jae_end_ts = min(jae_start_ts + timedelta(days=1), timestamp_captura_end)
+    df_merge = df_jae.merge(df_datalake, how="left", on="minuto")
 
-        jae_start_ts_utc = jae_start_ts.astimezone(tz=timezone("UTC"))
-        jae_end_ts_utc = jae_end_ts.astimezone(tz=timezone("UTC"))
+    df_merge = df_merge.loc[
+        df_merge["total_datalake"].astype(int) != df_merge["total_jae"].astype(int)
+    ].sort_values(by=["timestamp_captura"])
 
-        base_query_jae.format(
-            timestamp_captura_start=jae_start_ts_utc.strftime("%Y-%m-%d %H:%M:%S"),
-            timestamp_captura_end=jae_end_ts_utc.strftime("%Y-%m-%d %H:%M:%S"),
-            start=jae_start_ts_utc.replace(hour=0, minute=0, second=0, microsecond=0).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            ),
-            end=jae_end_ts_utc.replace(hour=23, minute=59, second=59, microsecond=59).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            ),
-            delay=capture_delay,
+    timestamps = df_merge["timestamp_captura"].dt.strftime("%Y-%m-%d %H:%M:%S").tolist()
+
+    if len(timestamps) > 0:
+        log(
+            "[{table_id}] Os seguintes timestamps estão divergentes:\n{timestamps_str}".format(
+                table_id=table_id, timestamps_str="\n".join(timestamps)
+            )
         )
+    else:
+        log(f"[{table_id}] Todos os dados foram capturados com sucesso!")
 
-        jae_start_ts = jae_end_ts
+    return timestamps
 
-    # query_datalake = f"""
-    # WITH
-    # contagens AS (
-    #     SELECT
-    #         timestamp_captura,
-    #         COUNT(DISTINCT {params['source'].primary_keys[0]}) AS total_datalake
-    #     FROM
-    #         {params['datalake_table']}
-    #     WHERE
-    #         DATA BETWEEN '{timestamp_captura_start.date().isoformat()}'
-    #         AND '{timestamp_captura_end.date().isoformat()}'
-    #         AND timestamp_captura BETWEEN {timestamp_captura_start.strftime("%Y-%m-%d %H:%M:%S")}
-    #         AND {timestamp_captura_end.strftime("%Y-%m-%d %H:%M:%S")}
-    #     GROUP BY
-    #         1
-    # ),
-    # timestamps_captura AS (
-    #     SELECT
-    #         DATETIME(timestamp_captura) AS timestamps_captura
-    #     FROM
-    #         UNNEST(
-    #             GENERATE_TIMESTAMP_ARRAY(
-    #                 '{timestamp_captura_start.strftime("%Y-%m-%d %H:%M:%S")}',
-    #                 '{timestamp_captura_end.strftime("%Y-%m-%d %H:%M:%S")}',
-    #                 INTERVAL 1 minute
-    #             )
-    #         ) AS timestamp_captura
-    # )
-    # SELECT
-    #     timestamp_captura,
-    #     COALESCE(total_datalake, 0) AS total_datalake
-    # FROM
-    #     timestamps_captura
-    # LEFT JOIN
-    #     contagens
-    # USING
-    #     (timestamp_captura)
-    # ;
-    # """
+
+@task
+def create_capture_check_discord_message(table_id: str, timestamps: list[dict]) -> str:
+    timestamps_len = len(timestamps)
+    message = f"""
+Tabela: {table_id}
+Foram encontradas {timestamps_len} timestamps com dados faltantes
+"""
+    if timestamps_len > 0:
+        mentions_tag = (
+            f" - <@&{smtr_constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>"
+        )
+        message = f":red_circle: {message}"
+        message += (
+            "\n"
+            + f"https://pipelines.dados.rio/flow-run/{prefect.context.flow_run_id}"
+            + "\n"
+            + mentions_tag
+        )
+    else:
+        message = f":green_circle: {message}"
+    return message
