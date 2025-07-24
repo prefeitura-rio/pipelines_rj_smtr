@@ -667,3 +667,49 @@ def get_capture_gaps(
     timestamp_captura_end: datetime,
 ) -> list[str]:
     pass
+    # params = constants.CHECK_CAPTURE_PARAMS.value[table_id]
+    # datalake_table_name = params["datalake_table"]
+    # table_capture_params = constants.JAE_TABLE_CAPTURE_PARAMS.value[datalake_table_name]
+    # database = table_capture_params["database"]
+    # credentials = get_secret(constants.JAE_SECRET_PATH.value)
+    # database_settings = constants.JAE_DATABASE_SETTINGS.value[database]
+    # timestamp_column = params["timestamp_column"]
+    # capture_query = table_capture_params["query"].format(
+    #     start=timestamp_captura_start.astimezone(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M
+    # :%S"),
+    #     end=timestamp_captura_end.astimezone(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S"),
+    #     delay=table_capture_params.get("capture_delay_minutes"),
+    # )
+    # query_jae = f"""
+    # WITH timestamps_captura AS (
+    #     SELECT generate_series(
+    #         timestamp '{{data}} 00:00:00',
+    #         timestamp '{{data}} 23:59:00',
+    #         interval '1 minute'
+    #     ) AS minuto
+    # ),
+    # dados_jae AS (
+    #     {capture_query}
+    # )
+    # contagens AS (
+    #     SELECT
+    #         date_trunc('minute', {timestamp_column}) AS minuto,
+    #         COUNT(id) AS total_jae
+    #     FROM
+    #         {params['jae_table']}
+    #     WHERE
+    #         {timestamp_column} >= '{{data}} 00:00:00'
+    #         AND {timestamp_column} <= '{{data}} 23:59:59'
+    #     GROUP BY
+    #         minuto
+    # )
+    # SELECT
+    # m.minuto,
+    # COALESCE(c.total_jae, 0) AS total_jae
+    # FROM
+    # minutos m
+    # LEFT JOIN
+    # contagens c ON m.minuto = c.minuto
+    # ORDER BY
+    # m.minuto;
+    # """
