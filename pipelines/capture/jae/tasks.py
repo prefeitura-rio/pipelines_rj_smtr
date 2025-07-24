@@ -722,6 +722,8 @@ def get_capture_gaps(
         (timestamp_captura)
     ;
     """
+
+    log(f"Executando query\n{query_datalake}")
     df_datalake = bd.read_sql(query=query_datalake, from_file=True)
 
     df_merge = df_jae.merge(df_datalake, how="left", on="minuto")
