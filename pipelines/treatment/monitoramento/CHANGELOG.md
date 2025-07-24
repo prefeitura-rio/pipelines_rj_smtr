@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Alterado o flow `MONITORAMENTO_VEICULO_MATERIALIZACAO` para adicionar a materialização do snapshot (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Alterado o flow `MONITORAMENTO_VEICULO_MATERIALIZACAO` para adicionar a materialização do snapshot (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/720)
 
 ## [1.2.3] - 2025-07-09
 
