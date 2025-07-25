@@ -700,3 +700,76 @@ models:
         description: "{{ doc('id_execucao_dbt') }}"
         data_type: string
         quote: true
+  - name: monitoramento_viagem_transacao
+    description: "Tabela de monitoramento com quantidade de transações por viagem"
+    columns:
+      - name: data
+        description: "{{ doc('data_viagem') }} [partição]"
+      - name: id_viagem
+        description: "{{ doc('id_viagem') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: id_validador
+        description: "{{ doc('id_validador') }}"
+      - name: tipo_viagem
+        description: "{{ doc('tipo_viagem_status') }}"
+      - name: modo
+        description: "{{ doc('modo') }}"
+      - name: tecnologia_apurada
+        description: "{{ doc('tecnologia') }}"
+      - name: tecnologia_remunerada
+        description: "{{ doc('tecnologia_remunerada') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+      - name: distancia_planejada
+        description: "{{ doc('distancia_planejada') }}"
+      - name: quantidade_transacao
+        description: "Quantidade de transações da Jaé registradas entre datetime_partida_bilhetagem e datetime_chegada"
+      - name: quantidade_transacao_riocard
+        description: "Quantidade de transações da RioCard registradas entre datetime_partida_bilhetagem e datetime_chegada"
+      - name: percentual_estado_equipamento_aberto
+        description: "Percentual de registros com estado de equipamento ABERTO durante a viagem"
+      - name: indicador_estado_equipamento_aberto
+        description: "Indicador se todos os registros de GPS foram transmitidos com o estado ABERTO entre datetime_partida e datetime_chegada"
+      - name: datetime_partida_bilhetagem
+        description: "Horário de início da viagem para contagem das transações, considerando uma tolerância de até 30 minutos do ínicio da viagem, limitada pelo encerramento da viagem anterior realizada pelo mesmo veículo, com adição de 1 segundo"
+      - name: datetime_partida
+        description: "{{ doc('datetime_partida') }}"
+      - name: datetime_chegada
+        description: "{{ doc('datetime_chegada') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+  - name: temperatura_inmet
+    description: "Tabela com dados de temperatura das estações meteorológicas do INMET"
+    columns:
+      - name: data
+        description: "{{ doc('data') }} [partição]"
+      - name: hora
+        description: "Hora da medição meteorológica"
+      - name: id_estacao
+        description: "Identificador da estação meteorológica do INMET"
+      - name: temperatura
+        description: "Temperatura medida pela estação meteorológica (°C)"
+  - name: veiculo_regularidade_temperatura_dia
+    description: "Tabela com indicadores de regularidade de temperatura por veículo por dia"
+    columns:
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: ano_fabricacao
+        description: "{{ doc('ano_fabricacao') }}"
+      - name: indicadores
+        description: "Indicadores de regularidade do sistema de ar condicionado e temperatura"
+      - name: quantidade_dia_falha_operacional
+        description: "Quantidade consecutiva de dias com falha operacional do ar condicionado"
+      - name: motivo
+        description: "Descrição do motivo da falha do sistema de ar condicionado"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
