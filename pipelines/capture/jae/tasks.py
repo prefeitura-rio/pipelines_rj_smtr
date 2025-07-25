@@ -655,14 +655,16 @@ def jae_capture_check_get_ts_range(
             hour=0, minute=0, second=0, microsecond=0
         )
 
-    if timestamp_captura_end is not None:
-        end = datetime.fromisoformat(timestamp_captura_end)
-    else:
-        end = (timestamp - timedelta(days=retroactive_days)).replace(
-            hour=23, minute=59, second=59, microsecond=0
-        )
+    start = convert_timezone(timestamp=start)
 
-    return convert_timezone(timestamp=start), convert_timezone(timestamp=end)
+    if timestamp_captura_end is not None:
+        end = timestamp = datetime.fromisoformat(timestamp_captura_end)
+    else:
+        end = timestamp = start.replace(hour=23, minute=59, second=59, microsecond=0)
+
+    end = convert_timezone(timestamp=end)
+
+    return start, end
 
 
 @task(
@@ -701,7 +703,7 @@ def get_capture_gaps(
     ),
     timestamps_captura AS (
         SELECT
-            DATETIME(timestamp_captura) AS timestamps_captura
+            DATETIME(timestamp_captura) AS timestamp_captura
         FROM
             UNNEST(
                 GENERATE_TIMESTAMP_ARRAY(
@@ -726,7 +728,11 @@ def get_capture_gaps(
     log(f"Executando query\n{query_datalake}")
     df_datalake = bd.read_sql(query=query_datalake, from_file=True)
 
-    df_merge = df_jae.merge(df_datalake, how="left", on="minuto")
+    df_datalake["timestamp_captura"] = df_datalake["timestamp_captura"].dt.tz_localize(
+        smtr_constants.TIMEZONE.value
+    )
+
+    df_merge = df_jae.merge(df_datalake, how="left", on="timestamp_captura")
 
     df_merge = df_merge.loc[
         df_merge["total_datalake"].astype(int) != df_merge["total_jae"].astype(int)
@@ -747,10 +753,16 @@ def get_capture_gaps(
 
 
 @task
-def create_capture_check_discord_message(table_id: str, timestamps: list[dict]) -> str:
+def create_capture_check_discord_message(
+    table_id: str,
+    timestamps: list[dict],
+    timestamp_captura_start: datetime,
+    timestamp_captura_end: datetime,
+) -> str:
     timestamps_len = len(timestamps)
     message = f"""
 Tabela: {table_id}
+De {timestamp_captura_start.isoformat()} até {timestamp_captura_end.isoformat()}
 Foram encontradas {timestamps_len} timestamps com dados faltantes
 """
     if timestamps_len > 0:

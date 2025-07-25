@@ -184,8 +184,8 @@ def get_jae_timestamp_captura_count(
                 date_trunc(
                     'minute', {timestamp_column}
                 )
-                - INTERVAL '{{delay}} minutes'
-                - INTERVAL '1 minutes' AS timestamp_captura,
+                + INTERVAL '{{delay}} minutes'
+                + INTERVAL '1 minutes' AS timestamp_captura,
                 COUNT(id) AS total_jae
             FROM
                 dados_jae
@@ -211,13 +211,15 @@ def get_jae_timestamp_captura_count(
         jae_start_ts_utc = jae_start_ts.astimezone(tz=timezone("UTC"))
         jae_end_ts_utc = jae_end_ts.astimezone(tz=timezone("UTC"))
 
-        jae_end_ts_format = (
-            jae_end_ts - timedelta(minutes=1) if jae_end_ts < timestamp_captura_end else jae_end_ts
+        jae_end_ts_utc_format = (
+            jae_end_ts_utc - timedelta(minutes=1)
+            if jae_end_ts_utc < timestamp_captura_end
+            else jae_end_ts_utc
         )
 
         query = base_query_jae.format(
-            timestamp_captura_start=jae_start_ts.strftime("%Y-%m-%d %H:%M:%S"),
-            timestamp_captura_end=jae_end_ts_format.strftime("%Y-%m-%d %H:%M:%S"),
+            timestamp_captura_start=jae_start_ts_utc.strftime("%Y-%m-%d %H:%M:%S"),
+            timestamp_captura_end=jae_end_ts_utc_format.strftime("%Y-%m-%d %H:%M:%S"),
             start=(
                 jae_start_ts_utc.replace(hour=0, minute=0, second=0, microsecond=0)
                 - timedelta(minutes=capture_delay + 1)
@@ -237,7 +239,7 @@ def get_jae_timestamp_captura_count(
         df_count_jae["timestamp_captura"] = (
             pd.to_datetime(df_count_jae["timestamp_captura"])
             .dt.tz_localize("UTC")
-            .dt.tz_convert("America/Sao_Paulo")
+            .dt.tz_convert(smtr_constants.TIMEZONE.value)
         )
 
         jae_result.append(df_count_jae)

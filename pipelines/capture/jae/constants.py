@@ -140,10 +140,11 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     transacao_riocard
                 WHERE
-                    data_processamento >= timestamp '{start}' - INTERVAL '5 minutes'
-                    AND data_processamento < timestamp '{end}' - INTERVAL '5 minutes'
+                    data_processamento >= timestamp '{start}' - INTERVAL '{delay} minutes'
+                    AND data_processamento < timestamp '{end}' - INTERVAL '{delay} minutes'
             """,
             "database": "transacao_db",
+            "capture_delay_minutes": 5,
         },
         GPS_VALIDADOR_TABLE_ID: {
             "query": """
@@ -152,10 +153,11 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     tracking_detalhe
                 WHERE
-                    data_tracking >= timestamp '{start}' - INTERVAL '10 minutes'
-                    AND data_tracking < timestamp '{end}' - INTERVAL '10 minutes'
+                    data_tracking >= timestamp '{start}' - INTERVAL '{delay} minutes'
+                    AND data_tracking < timestamp '{end}' - INTERVAL '{delay} minutes'
             """,
             "database": "tracking_db",
+            "capture_delay_minutes": 10,
         },
         INTEGRACAO_TABLE_ID: {
             "database": "ressarcimento_db",
