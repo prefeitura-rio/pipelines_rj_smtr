@@ -59,36 +59,7 @@ with
             between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
                 "{{ var('end_date') }}"
             )
-            and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
-    ),
-    viagem as (
-        -- fmt: off
-        select * from viagem_completa
-
-        full outer union all by name
-        -- fmt: on
-        select
-            data,
-            id_viagem,
-            id_veiculo,
-            datetime_partida,
-            datetime_chegada,
-            modo,
-            tecnologia_apurada,
-            tecnologia_remunerada,
-            tipo_viagem,
-            indicadores,
-            servico,
-            sentido,
-            distancia_planejada
-        from {{ ref("viagem_regularidade_temperatura") }}
-        -- from `rj-smtr.subsidio.viagem_regularidade_temperatura`
-        where
-            data
-            between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
-                "{{ var('end_date') }}"
-            )
-            and data >= date("{{ var('DATA_SUBSIDIO_V16_INICIO') }}")
+            and data < date("{{ var('DATA_SUBSIDIO_V16_INICIO') }}")
     ),
     -- Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
     -- limitada pela viagem anterior
@@ -127,7 +98,7 @@ with
                         )
                     )
             end as datetime_partida_com_tolerancia
-        from viagem as v
+        from viagem_completa as v
     ),
     -- Considera apenas as viagens realizadas no período de apuração
     viagem_com_tolerancia as (
@@ -172,176 +143,131 @@ with
             between v.datetime_partida_com_tolerancia and v.datetime_chegada
         group by 1, 2
     ),
-    {% if var("start_date") < var("DATA_SUBSIDIO_V16_INICIO") %}
-        -- GPS Validador
-        gps_validador as (
-            select
-                data,
-                datetime_gps,
-                servico_jae,
-                id_veiculo,
-                id_validador,
-                estado_equipamento,
-                latitude,
-                longitude
-            from {{ ref("gps_validador") }}
-            -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador`
-            where
-                data between date("{{ var('start_date') }}") and date_add(
-                    date("{{ var('end_date') }}"), interval 1 day
-                )
-                and (
-                    (
-                        data < date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
-                        and (latitude != 0 or longitude != 0)
-                    )
-                    or data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
-                )
-                and date(datetime_captura) - date(datetime_gps) <= interval 6 day
-        ),
-        -- Ajusta estado do equipamento
-        -- Agrupa mesma posição para mesmo validador e veículo, mantendo
-        -- preferencialmente
-        -- o estado do equipamento "ABERTO" quanto latitude e longitude for diferente de
-        -- (0,0)
-        estado_equipamento_aux as (
-            select *
-            from
+    -- GPS Validador
+    gps_validador as (
+        select
+            data,
+            datetime_gps,
+            servico_jae,
+            id_veiculo,
+            id_validador,
+            estado_equipamento,
+            latitude,
+            longitude
+        from {{ ref("gps_validador") }}
+        -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador`
+        where
+            data between date("{{ var('start_date') }}") and date_add(
+                date("{{ var('end_date') }}"), interval 1 day
+            )
+            and (
                 (
-                    (
-                        select
-                            data,
-                            servico_jae,
-                            id_validador,
-                            id_veiculo,
-                            latitude,
-                            longitude,
-                            if(
-                                count(
-                                    case when estado_equipamento = "ABERTO" then 1 end
-                                )
-                                >= 1,
-                                "ABERTO",
-                                "FECHADO"
-                            ) as estado_equipamento,
-                            min(datetime_gps) as datetime_gps
-                        from gps_validador
-                        where
-                            (
-                                data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
-                                and latitude != 0
-                                and longitude != 0
-                            )
-                            or data < date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
-                        group by 1, 2, 3, 4, 5, 6
-                    )
-                    union all
-                    (
-                        select
-                            data,
-                            servico_jae,
-                            id_validador,
-                            id_veiculo,
-                            latitude,
-                            longitude,
-                            estado_equipamento,
-                            datetime_gps,
-                        from gps_validador
-                        where
-                            data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
-                            and latitude = 0
-                            and longitude = 0
-                    )
+                    data < date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
+                    and (latitude != 0 or longitude != 0)
                 )
-        ),
-        -- Relacionamento entre estado do equipamento e viagem
-        gps_validador_viagem as (
-            select
-                v.data,
-                e.datetime_gps,
-                v.id_viagem,
-                e.id_validador,
-                e.estado_equipamento,
-                e.latitude,
-                e.longitude,
-                v.servico,
-                e.servico_jae,
-            from viagem as v
-            left join
-                estado_equipamento_aux as e
-                on e.id_veiculo = substr(v.id_veiculo, 2)
-                and e.datetime_gps between v.datetime_partida and v.datetime_chegada
-        ),
-        -- Calcula a porcentagem de estado do equipamento "ABERTO" por validador e
-        -- viagem
-        estado_equipamento_perc as (
-            select
-                data,
-                id_viagem,
-                id_validador,
-                coalesce(t.quantidade_transacao, 0) as quantidade_transacao,
-                coalesce(
-                    tr.quantidade_transacao_riocard, 0
-                ) as quantidade_transacao_riocard,
-                coalesce(
-                    t.quantidade_transacao_servico_divergente, 0
-                ) as quantidade_transacao_servico_divergente,
-                coalesce(
-                    tr.quantidade_transacao_riocard_servico_divergente, 0
-                ) as quantidade_transacao_riocard_servico_divergente,
-                countif(servico != servico_jae) > 0 as indicador_gps_servico_divergente,
-                trunc(
-                    countif(estado_equipamento = "ABERTO") / count(*), 5
-                ) as percentual_estado_equipamento_aberto,
-                countif(estado_equipamento = "ABERTO") / count(*)
-                >= 0.8 as indicador_estado_equipamento_aberto
-            from gps_validador_viagem
-            left join transacao_contagem as t using (data, id_viagem)
-            left join transacao_riocard_contagem as tr using (data, id_viagem)
-            group by all
-        ),
-    {% else %}
-        -- Calcula a porcentagem de estado do equipamento "ABERTO" por validador e
-        -- viagem
-        estado_equipamento_perc as (
-            select
-                v.data,
-                v.id_viagem,
-                safe_cast(json_value(item, '$.id_validador') as string) as id_validador,
-                coalesce(t.quantidade_transacao, 0) as quantidade_transacao,
-                coalesce(
-                    tr.quantidade_transacao_riocard, 0
-                ) as quantidade_transacao_riocard,
-                coalesce(
-                    t.quantidade_transacao_servico_divergente, 0
-                ) as quantidade_transacao_servico_divergente,
-                coalesce(
-                    tr.quantidade_transacao_riocard_servico_divergente, 0
-                ) as quantidade_transacao_riocard_servico_divergente,
-                safe_cast(
-                    json_value(
-                        item, '$.percentual_estado_equipamento_aberto'
-                    ) as numeric
-                ) as percentual_estado_equipamento_aberto,
-                safe_cast(
-                    json_value(item, '$.indicador_estado_equipamento_aberto') as bool
-                ) as indicador_estado_equipamento_aberto,
-                safe_cast(
-                    json_value(item, '$.indicador_gps_servico_divergente') as bool
-                ) as indicador_gps_servico_divergente
-            from viagem v
-            left join
-                transacao_contagem t on v.data = t.data and v.id_viagem = t.id_viagem
-            left join
-                transacao_riocard_contagem tr
-                on v.data = tr.data
-                and v.id_viagem = tr.id_viagem
-            left join
-                unnest(
-                    json_query_array(v.indicadores, '$.indicador_validador.valores')
-                ) as item
-        ),
-    {% endif %}
+                or data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
+            )
+            and date(datetime_captura) - date(datetime_gps) <= interval 6 day
+    ),
+    -- Ajusta estado do equipamento
+    -- Agrupa mesma posição para mesmo validador e veículo, mantendo
+    -- preferencialmente
+    -- o estado do equipamento "ABERTO" quanto latitude e longitude for diferente de
+    -- (0,0)
+    estado_equipamento_aux as (
+        select *
+        from
+            (
+                (
+                    select
+                        data,
+                        servico_jae,
+                        id_validador,
+                        id_veiculo,
+                        latitude,
+                        longitude,
+                        if(
+                            count(case when estado_equipamento = "ABERTO" then 1 end)
+                            >= 1,
+                            "ABERTO",
+                            "FECHADO"
+                        ) as estado_equipamento,
+                        min(datetime_gps) as datetime_gps
+                    from gps_validador
+                    where
+                        (
+                            data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
+                            and latitude != 0
+                            and longitude != 0
+                        )
+                        or data < date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
+                    group by 1, 2, 3, 4, 5, 6
+                )
+                union all
+                (
+                    select
+                        data,
+                        servico_jae,
+                        id_validador,
+                        id_veiculo,
+                        latitude,
+                        longitude,
+                        estado_equipamento,
+                        datetime_gps,
+                    from gps_validador
+                    where
+                        data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
+                        and latitude = 0
+                        and longitude = 0
+                )
+            )
+    ),
+    -- Relacionamento entre estado do equipamento e viagem
+    gps_validador_viagem as (
+        select
+            v.data,
+            e.datetime_gps,
+            v.id_viagem,
+            e.id_validador,
+            e.estado_equipamento,
+            e.latitude,
+            e.longitude,
+            v.servico,
+            e.servico_jae,
+        from viagem_completa as v
+        left join
+            estado_equipamento_aux as e
+            on e.id_veiculo = substr(v.id_veiculo, 2)
+            and e.datetime_gps between v.datetime_partida and v.datetime_chegada
+    ),
+    -- Calcula a porcentagem de estado do equipamento "ABERTO" por validador e
+    -- viagem
+    estado_equipamento_perc as (
+        select
+            data,
+            id_viagem,
+            id_validador,
+            coalesce(t.quantidade_transacao, 0) as quantidade_transacao,
+            coalesce(
+                tr.quantidade_transacao_riocard, 0
+            ) as quantidade_transacao_riocard,
+            coalesce(
+                t.quantidade_transacao_servico_divergente, 0
+            ) as quantidade_transacao_servico_divergente,
+            coalesce(
+                tr.quantidade_transacao_riocard_servico_divergente, 0
+            ) as quantidade_transacao_riocard_servico_divergente,
+            countif(servico != servico_jae) > 0 as indicador_gps_servico_divergente,
+            safe_cast(
+                trunc(countif(estado_equipamento = "ABERTO") / count(*), 5) as numeric
+            ) as percentual_estado_equipamento_aberto,
+            countif(estado_equipamento = "ABERTO") / count(*)
+            >= 0.8 as indicador_estado_equipamento_aberto
+        from gps_validador_viagem
+        left join transacao_contagem as t using (data, id_viagem)
+        left join transacao_riocard_contagem as tr using (data, id_viagem)
+        group by all
+    ),
     validador_tipo_viagem as (
         select
             data,
