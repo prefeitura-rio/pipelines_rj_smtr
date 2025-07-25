@@ -94,9 +94,15 @@ models:
     description: "Tabela auxiliar para controle de falhas consecutivas de ar condicionado por veículo"
     columns:
       - name: data
-        description: "{{ doc('data') }}"
+        description: "{{ doc('data') }} [partição]"
+        tests:
+          - not_null:
+              name: not_null__data__aux_veiculo_falha_ar_condicionado
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
+        tests:
+          - not_null:
+              name: not_null__id_veiculo__aux_veiculo_falha_ar_condicionado
       - name: ano_fabricacao
         description: "{{ doc('ano_fabricacao') }}"
       - name: indicador_ar_condicionado
@@ -118,7 +124,10 @@ models:
       - name: indicio_falha
         description: "Indicador de indício de falha no sistema de ar condicionado"
       - name: quantidade_dia_falha_operacional
-        description: "Quantidade consecutiva de dias com falha operacional do ar condicionado"
+        description: "{{ doc('quantidade_dia_falha_operacional') }}"
+        tests:
+          - not_null:
+              name: not_null__quantidade_dia_falha_operacional__aux_veiculo_falha_ar_condicionado
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
       - name: versao

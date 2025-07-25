@@ -705,10 +705,19 @@ models:
     columns:
       - name: data
         description: "{{ doc('data_viagem') }} [partição]"
+        tests:
+          - not_null:
+              name: not_null__data__monitoramento_viagem_transacao
       - name: id_viagem
         description: "{{ doc('id_viagem') }}"
+        tests:
+          - not_null:
+              name: not_null__id_viagem__monitoramento_viagem_transacao
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
+        tests:
+          - not_null:
+              name: not_null__id_veiculo__monitoramento_viagem_transacao
       - name: servico
         description: "{{ doc('servico') }}"
       - name: id_validador
@@ -746,27 +755,60 @@ models:
     columns:
       - name: data
         description: "{{ doc('data') }} [partição]"
+        tests:
+          - not_null:
+              name: not_null__data__temperatura_inmet
       - name: hora
         description: "Hora da medição meteorológica"
+        tests:
+          - not_null:
+              name: not_null__hora__temperatura_inmet
       - name: id_estacao
         description: "Identificador da estação meteorológica do INMET"
+        tests:
+          - not_null:
+              name: not_null__id_estacao__temperatura_inmet
       - name: temperatura
         description: "Temperatura medida pela estação meteorológica (°C)"
+        tests:
+          - not_null:
+              name: not_null__temperatura__temperatura_inmet
   - name: veiculo_regularidade_temperatura_dia
     description: "Tabela com indicadores de regularidade de temperatura por veículo por dia"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - data
+            - id_veiculo
+          name: dbt_utils.unique_combination_of_columns__veiculo_regularidade_temperatura_dia
     columns:
       - name: data
         description: "{{ doc('data') }}"
+        tests:
+          - not_null:
+              name: not_null__data__veiculo_regularidade_temperatura_dia
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
+        tests:
+          - not_null:
+              name: not_null__id_veiculo__veiculo_regularidade_temperatura_dia
       - name: ano_fabricacao
         description: "{{ doc('ano_fabricacao') }}"
+        tests:
+          - not_null:
+              name: not_null__ano_fabricacao__veiculo_regularidade_temperatura_dia
       - name: indicadores
         description: "Indicadores de regularidade do sistema de ar condicionado e temperatura"
       - name: quantidade_dia_falha_operacional
-        description: "Quantidade consecutiva de dias com falha operacional do ar condicionado"
+        description: "{{ doc('quantidade_dia_falha_operacional') }}"
+        tests:
+          - not_null:
+              name: not_null__quantidade_dia_falha_operacional__veiculo_regularidade_temperatura_dia
       - name: motivo
         description: "Descrição do motivo da falha do sistema de ar condicionado"
+        tests:
+          - not_null:
+              name: not_null__motivo__veiculo_regularidade_temperatura_dia
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
       - name: versao

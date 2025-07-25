@@ -354,6 +354,8 @@ selectors:
         - method: fqn
           value: aux_viagem_temperatura
         - method: fqn
+          value: aux_veiculo_falha_ar_condicionado
+        - method: fqn
           value: veiculo_regularidade_temperatura_dia
         - method: fqn
           value: veiculo_dia

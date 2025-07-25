@@ -73,7 +73,7 @@ with
             data,
             id_veiculo,
             ano_fabricacao,
-            to_json_string(
+            to_json(
                 struct(
                     struct(
                         data_processamento_licenciamento,
