@@ -25,33 +25,9 @@ with
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         where {{ incremental_filter }}
     ),
-    veiculo_ano_fabricacao as (
-        select data, id_veiculo, ano_fabricacao, placa
-        from {{ ref("veiculo_licenciamento_dia") }}
-        where
-            (
-                data_processamento <= date_add(data, interval 7 day)
-                or data_processamento
-                = date("{{var('data_processamento_veiculo_licenciamento')}}")  -- Primeira data de inclusão dos dados de licenciamento
-            )
-            {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
-        qualify
-            row_number() over (
-                partition by data, id_veiculo, placa order by data_processamento desc
-            )
-            = 1
-    ),
     veiculos as (
-        select
-            v.data,
-            v.id_veiculo,
-            v.placa,
-            v.tecnologia,
-            v.status,
-            v.indicadores,
-            vaf.ano_fabricacao
-        from {{ ref("aux_veiculo_dia_consolidada") }} v
-        left join veiculo_ano_fabricacao vaf using (data, id_veiculo, placa)
+        select data, id_veiculo, placa, ano_fabricacao, tecnologia, status, indicadores,
+        from {{ ref("aux_veiculo_dia_consolidada") }}
         where {{ incremental_filter }}
     ),
     autuacao_disciplinar as (
