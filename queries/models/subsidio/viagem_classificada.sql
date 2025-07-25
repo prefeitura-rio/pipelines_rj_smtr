@@ -159,11 +159,11 @@ with
                     vt.status = "Licenciado sem ar e não autuado"
                     and vt.servico
                     not in (select servico from {{ ref("servico_contrato_abreviado") }})
-                    and vt.data >= date("{{ var('DATA_SUBSIDIO_V15B_INICIO') }}")
+                    and vt.data >= date("{{ var('DATA_SUBSIDIO_V15C_INICIO') }}")
                 then "Não autorizado por ausência de ar-condicionado"
                 when
                     vt.indicador_penalidade_tecnologia
-                    and vt.data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                    and vt.data >= date('{{ var("DATA_SUBSIDIO_V15B_INICIO") }}')
                 then "Não autorizado por capacidade"
                 when vt.status = "Autuado por ar inoperante"
                 then "Autuado por ar inoperante"
