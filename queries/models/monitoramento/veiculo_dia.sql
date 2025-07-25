@@ -108,6 +108,7 @@ with
             l.modo,
             l.tecnologia,
             l.tipo_veiculo,
+            l.ano_fabricacao,
             l.id_veiculo is not null as indicador_licenciado,
             l.indicador_vistoriado,
             l.indicador_ar_condicionado,
@@ -143,6 +144,7 @@ with
             gl.modo,
             gl.tecnologia,
             gl.tipo_veiculo,
+            gl.ano_fabricacao,
             struct(
                 struct(
                     gl.indicador_licenciado as valor,
@@ -165,7 +167,7 @@ with
                     as data_processamento_licenciamento
                 ) as indicador_veiculo_lacrado,
                 struct(
-                    a.indicador_autuacao_ar_condicionado as valor,
+                    coalesce(a.indicador_autuacao_ar_condicionado, false) as valor,
                     a.data_inclusao_datalake_autuacao_ar_condicionado
                     as data_inclusao_datalake_autuacao
                 ) as indicador_autuacao_ar_condicionado,
@@ -186,6 +188,7 @@ with
             modo,
             tecnologia,
             tipo_veiculo,
+            ano_fabricacao,
             case
                 when indicadores.indicador_licenciado.valor is false
                 then "Não licenciado"

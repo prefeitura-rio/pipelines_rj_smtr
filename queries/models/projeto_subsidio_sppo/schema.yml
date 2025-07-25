@@ -49,8 +49,7 @@ models:
               to: ref('tecnologia_servico')
               field: servico
               to_condition: "inicio_vigencia <= date('{{ var('date_range_end') }}') and (fim_vigencia is null OR fim_vigencia >= date('{{ var('date_range_start') }}'))"
-              where: "data BETWEEN greatest(date('{date_range_start}'), date('{DATA_SUBSIDIO_V15A_INICIO}')) and date('{date_range_end}')"
-
+              where: "data BETWEEN greatest(date('{date_range_start}'), date('{DATA_SUBSIDIO_V16_INICIO}')) and date('{date_range_end}')"
       - name: vista
         description: "Itinerário do serviço [ex: Bananal ↔ Saens Peña]"
         tests:
