@@ -6,7 +6,7 @@
     )
 }}
 
-{% if var("start_date") < var("DATA_SUBSIDIO_V16_INICIO") %}
+{% if var("start_date") < var("DATA_SUBSIDIO_V17_INICIO") %}
     select
         data,
         id_viagem,
@@ -28,7 +28,7 @@
         datetime_chegada,
         datetime_ultima_atualizacao
     from {{ ref("viagem_transacao_aux_v1") }}
-    where data < date("{{ var('DATA_SUBSIDIO_V16_INICIO') }}")
+    where data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
 
     union all
 {% endif %}
@@ -54,4 +54,4 @@ select
     datetime_chegada,
     datetime_ultima_atualizacao
 from {{ ref("viagem_transacao_aux_v2") }}
-where data >= date("{{ var('DATA_SUBSIDIO_V16_INICIO') }}")
+where data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")

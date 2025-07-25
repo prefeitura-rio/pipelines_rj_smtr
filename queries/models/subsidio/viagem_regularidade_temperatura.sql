@@ -7,7 +7,7 @@
 }}
 
 {% set incremental_filter %}
-    data between date("{{var('start_date')}}") and date("{{var('end_date')}}") and data >= date("{{ var('DATA_SUBSIDIO_V16_INICIO') }}")
+    data between date("{{var('start_date')}}") and date("{{var('end_date')}}") and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
 {% endset %}
 
 with
@@ -85,7 +85,7 @@ with
                             or not vt.indicador_temperatura_transmitida
                             or not vt.indicador_temperatura_regular
                         )
-                        and data >= date('{{ var("DATA_SUBSIDIO_V16_INICIO") }}')
+                        and data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
                     )
                     or (
                         (
@@ -94,7 +94,7 @@ with
                             or not vt.indicador_temperatura_transmitida
                             or not vt.indicador_temperatura_regular
                         )
-                        and data >= date('{{ var("DATA_SUBSIDIO_V18_INICIO") }}')
+                        and data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}')
                     )
                 then "Detectado com ar inoperante"
                 else vt.tipo_viagem
@@ -103,7 +103,7 @@ with
                 when
                     (
                         vt.ano_fabricacao <= 2019
-                        or vt.data >= date('{{ var("DATA_SUBSIDIO_V18_INICIO") }}')
+                        or vt.data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}')
                     )
                 then
                     (
