@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 import pandas as pd
 from pandas import DataFrame
+
 
 def model(dbt, session: "bigquery") -> DataFrame:
     """
@@ -61,25 +63,27 @@ def model(dbt, session: "bigquery") -> DataFrame:
     resultados_calibrados = []
 
     # Identificar os segmentos únicos para iterar (ex: dia útil, sábado, etc.)
-    segmentos = matriz_expandida_df[["tipo_dia", "subtipo_dia"]].drop_duplicates().to_records(index=False)
+    segmentos = (
+        matriz_expandida_df[["tipo_dia", "subtipo_dia"]].drop_duplicates().to_records(index=False)
+    )
 
     # 2. Loop para calibrar cada segmento separadamente
     for tipo_dia, subtipo_dia in segmentos:
-        
+
         # Filtra os dados para o segmento atual
         matriz_segmento = matriz_expandida_df[
-            (matriz_expandida_df["tipo_dia"] == tipo_dia) &
-            (matriz_expandida_df["subtipo_dia"] == subtipo_dia)
+            (matriz_expandida_df["tipo_dia"] == tipo_dia)
+            & (matriz_expandida_df["subtipo_dia"] == subtipo_dia)
         ]
-        
+
         alvos_origem_segmento = totais_origem_df[
-            (totais_origem_df["tipo_dia"] == tipo_dia) &
-            (totais_origem_df["subtipo_dia"] == subtipo_dia)
+            (totais_origem_df["tipo_dia"] == tipo_dia)
+            & (totais_origem_df["subtipo_dia"] == subtipo_dia)
         ].set_index("origem_id")["quantidade_embarques_real"]
 
         alvos_destino_segmento = totais_destino_df[
-            (totais_destino_df["tipo_dia"] == tipo_dia) &
-            (totais_destino_df["subtipo_dia"] == subtipo_dia)
+            (totais_destino_df["tipo_dia"] == tipo_dia)
+            & (totais_destino_df["subtipo_dia"] == subtipo_dia)
         ].set_index("destino_id")["quantidade_desembarques_real"]
 
         # Se não houver dados para este segmento, pula para o próximo
@@ -92,8 +96,12 @@ def model(dbt, session: "bigquery") -> DataFrame:
         ).fillna(0)
 
         # 4. Alinhar os índices e colunas para garantir a correspondência
-        matriz_pivotada, alvos_origem = matriz_pivotada.align(alvos_origem_segmento, axis=0, fill_value=0)
-        matriz_pivotada, alvos_destino = matriz_pivotada.align(alvos_destino_segmento, axis=1, fill_value=0)
+        matriz_pivotada, alvos_origem = matriz_pivotada.align(
+            alvos_origem_segmento, axis=0, fill_value=0
+        )
+        matriz_pivotada, alvos_destino = matriz_pivotada.align(
+            alvos_destino_segmento, axis=1, fill_value=0
+        )
 
         # 5. Implementar o loop iterativo do Método de Furness (ex: 10 iterações)
         for _ in range(10):
@@ -111,17 +119,17 @@ def model(dbt, session: "bigquery") -> DataFrame:
         # 6. Preparar o DataFrame final (transformar de volta para o formato longo)
         df_calibrado_segmento = matriz_pivotada.stack().reset_index()
         df_calibrado_segmento.columns = ["origem_id", "destino_id", "viagens_calibradas_dia"]
-        
+
         # Adicionar as colunas de segmento de volta
         df_calibrado_segmento["tipo_dia"] = tipo_dia
         df_calibrado_segmento["subtipo_dia"] = subtipo_dia
-        
+
         # Adicionar o resultado à lista
         resultados_calibrados.append(df_calibrado_segmento)
 
     # 7. Concatenar os resultados de todos os segmentos
     df_final_calibrado = pd.concat(resultados_calibrados)
-    
+
     # Opcional: Remover linhas com fluxo zero para manter a tabela menor
     df_final_calibrado = df_final_calibrado[df_final_calibrado["viagens_calibradas_dia"] > 0.01]
 
