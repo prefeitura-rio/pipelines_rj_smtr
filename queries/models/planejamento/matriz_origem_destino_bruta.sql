@@ -36,10 +36,7 @@ Etapa 2: hex
 - Lógica: Converte a geometria de texto para o tipo GEOGRAPHY.
 - Saída: Tabela de lookup que mapeia cada `tile_id` à sua forma geométrica.
 */
-    hex as (
-        select tile_id, st_geogfromtext(geometry) as geometry
-        from {{ source("br_rj_riodejaneiro_geo", "h3_res8") }}
-    ),
+    hex as (select tile_id, geometry_hex from {{ ref("h3_res8") }}),
     /*
 Etapa 3: transacao
 - Propósito: Coletar as transações relevantes e associá-las a uma localização.
@@ -51,7 +48,7 @@ Etapa 3: transacao
     transacao as (
         select t.data, t.datetime_transacao, h.tile_id, t.hash_cliente
         from {{ ref("transacao") }} as t
-        join hex as h on st_contains(h.geometry, t.geo_point_transacao)
+        join hex as h on st_contains(h.geometry_hex, t.geo_point_transacao)
         where
             {{ incremental_filter }}
             and (
@@ -188,7 +185,7 @@ Etapa 9: viagens_agregadas
             id_viagem,
             array_agg(tile_id_origem order by datetime_transacao asc limit 1)[
                 offset(0)
-            ] as origem_id,
+            ] as tile_id_origem,
             coalesce(
                 array_agg(
                     tile_id_destino_preditivo order by datetime_transacao desc limit 1
@@ -196,7 +193,7 @@ Etapa 9: viagens_agregadas
                 array_agg(tile_id_origem order by datetime_transacao desc limit 1)[
                     offset(0)
                 ]
-            ) as destino_id,
+            ) as tile_id_destino,
             count(*) as tamanho_viagem
         from viagens
         group by hash_cliente, id_viagem
@@ -223,7 +220,7 @@ Etapa 11: viagens_finais
 - Saída: A lista final e filtrada de viagens válidas, pronta para a agregação.
 */
     viagens_finais as (
-        select j.data, j.origem_id, j.destino_id, c.tipo_dia, c.subtipo_dia
+        select j.data, j.tile_id_origem, j.tile_id_destino, c.tipo_dia, c.subtipo_dia
         from viagens_avaliadas as j
         left join calendario as c using (data)
         where j.tamanho_viagem >= 2 or j.id_viagem < j.max_viagem_cliente
@@ -239,8 +236,8 @@ Etapa 12: viagens_finais_agg
         select
             tipo_dia,
             subtipo_dia,
-            origem_id,
-            destino_id,
+            tile_id_origem,
+            tile_id_destino,
             {# string_agg(
                 distinct cast(data as string), ', ' order by data
             ) as datas_consideradas, #}
@@ -258,8 +255,8 @@ Etapa 13: Seleção Final
 select
     tipo_dia,
     subtipo_dia,
-    origem_id,
-    destino_id,
+    tile_id_origem,
+    tile_id_destino,
     {# datas_consideradas, #}
     media_viagens_dia,
     '{{ var("version") }}' as versao,
