@@ -2,6 +2,7 @@
 import pandas as pd
 from pandas import DataFrame
 
+
 def model(dbt, session) -> DataFrame:
     """
     Documentação do Modelo: matriz_origem_destino_calibrada
