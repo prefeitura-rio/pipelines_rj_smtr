@@ -241,7 +241,8 @@ Etapa 12: viagens_finais_agg
             {# string_agg(
                 distinct cast(data as string), ', ' order by data
             ) as datas_consideradas, #}
-            count(*) / count(distinct data) as media_viagens_dia
+            count(*) as total_viagens,
+            count(distinct data) as total_dias,
         from viagens_finais
         group by all
     )
@@ -258,7 +259,9 @@ select
     tile_id_origem,
     tile_id_destino,
     {# datas_consideradas, #}
-    media_viagens_dia,
+    total_viagens,
+    total_dias,
+    total_viagens / total_dias as media_viagens_dia,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     '{{ invocation_id }}' as id_execucao_dbt
