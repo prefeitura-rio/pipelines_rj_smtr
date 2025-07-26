@@ -1,3 +1,55 @@
+/*
+Documentação do Modelo
+======================================================
+
+1. Descrição Geral do Modelo
+-----------------------------
+Este modelo é o núcleo do processo de construção da Matriz Origem-Destino (OD).
+Ele transforma registros brutos e individuais de transações de bilhetagem em uma
+matriz final que mostra a média de viagens diárias entre zonas geográficas (hexágonos H3).
+A análise é baseada em uma amostra de passageiros identificados (que possuem cartões e
+realizaram mais de uma transação no período) e serve como uma "matriz semente" para
+etapas futuras de expansão e calibração.
+
+2. Lógica de Negócio Essencial (Passo a Passo)
+-----------------------------------------------
+O modelo executa uma sequência complexa de transformações:
+- **Pré-filtragem:** Clientes com apenas uma transação no período são removidos, pois não é
+  possível inferir um deslocamento.
+- **Construção de Viagens (Recursão):** O passo mais complexo. Transações sequenciais de um
+  mesmo cliente são agrupadas em "viagens" utilizando uma CTE Recursiva, com base em duas
+  regras de tempo:
+    - **Janela de 4 horas:** Transações dentro de 4 horas do início da viagem são
+      consideradas parte da mesma.
+    - **Gap de 24 horas:** A sequência de atividade de um cliente é interrompida se houver
+      um intervalo maior que 24 horas entre duas transações consecutivas.
+- **Lógica de Destino Híbrida:** O destino de uma viagem é definido como a localização da
+  próxima atividade do cliente (destino preditivo). Caso seja a última atividade do
+  cliente, o destino é a localização da última transação da própria viagem.
+- **Filtragem de Viagens Válidas:** Viagens de uma única transação são descartadas, a menos
+  que sejam seguidas por outra viagem do mesmo cliente. Isso garante que os resultados
+  representem deslocamentos reais.
+- **Agregação Final:** As viagens válidas são agrupadas por Origem, Destino e Tipo de Dia
+  para calcular a média de viagens diárias para cada rota.
+
+3. Particularidades e Premissas
+--------------------------------
+- **Tratamento de Viagens da Madrugada:** O modelo busca transações de um dia além do
+  período solicitado para capturar corretamente as viagens que começam no final do último
+  dia e terminam na madrugada do dia seguinte. O filtro final garante que apenas as viagens
+  *iniciadas* no período de interesse sejam contabilizadas.
+- **Amostra vs. Universo:** A matriz gerada representa os padrões da amostra de passageiros
+  identificados. A premissa é que este padrão pode ser usado para estimar o comportamento
+  do universo total de passageiros em modelos subsequentes.
+
+4. Entradas e Saídas Principais
+--------------------------------
+- **Entradas:** `calendario`, `h3_res8`, `transacao`.
+- **Saída:** Tabela agregada com as colunas: `tipo_dia`, `subtipo_dia`, `origem_id`,
+  `destino_id`, `total_viagens`, `total_dias`, `media_viagens_dia`, e metadados de execução.
+
+*/
+
 {{
     config(
         materialized="table",
@@ -50,7 +102,7 @@ Etapa 3: transacao
         from {{ ref("transacao") }} as t
         join hex as h on st_contains(h.geometry_hex, t.geo_point_transacao)
         where
-            {{ incremental_filter }}
+            between date("{{ var('date_range_start') }}") and date_add(date("{{ var('date_range_end') }}"),interval 1 day)
             and (
                 to_base64(hash_cliente)
                 != "NnRh5t0HvbVzQstksqjY4PoTxThCqV7CCpDTW91ut38="
@@ -223,7 +275,8 @@ Etapa 11: viagens_finais
         select j.data, j.tile_id_origem, j.tile_id_destino, c.tipo_dia, c.subtipo_dia
         from viagens_avaliadas as j
         left join calendario as c using (data)
-        where j.tamanho_viagem >= 2 or j.id_viagem < j.max_viagem_cliente
+        where {{ incremental_filter }}
+        and (j.tamanho_viagem >= 2 or j.id_viagem < j.max_viagem_cliente)
     ),
     /*
 Etapa 12: viagens_finais_agg
