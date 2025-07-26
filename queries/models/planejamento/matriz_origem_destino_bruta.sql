@@ -4,12 +4,12 @@
     )
 }}
 
-{# 
+{#
 Jinja Set Block: incremental_filter
 - Propósito: Define um bloco de código SQL reutilizável para a filtragem de datas.
 - Lógica: Cria uma cláusula `BETWEEN` que utiliza variáveis do dbt (`date_range_start`, `date_range_end`).
            Isso permite que o intervalo de datas da consulta seja alterado dinamicamente
-           sem modificar o código principal, por exemplo, via linha de comando do dbt. 
+           sem modificar o código principal, por exemplo, via linha de comando do dbt.
 #}
 {% set incremental_filter %}
     data
