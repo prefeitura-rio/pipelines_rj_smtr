@@ -176,6 +176,10 @@ selectors:
           value: transacao_riocard
         - method: fqn
           value: view_transacao
+        - method: fqn
+          value: staging_lancamento
+        - method: fqn
+          value: recarga_jae
 
   - name: integracao
     description: Materialização das tabelas de integracao da bilhetagem

@@ -6,6 +6,22 @@
     )
 }}
 
+{% set incremental_filter %}
+(
+    {{
+        generate_date_hour_partition_filter(
+            var("date_range_start"), var("date_range_end")
+        )
+    }}
+)
+and timestamp_captura
+between datetime("{{var('date_range_start')}}") and datetime(
+    "{{var('date_range_end')}}"
+                )
+{% endset %}
+
+{% set staging_lancamento = ref("staging_lancamento") %}
+
 {% if is_incremental() %}
 
     {% set columns = (
@@ -29,6 +45,19 @@
             )
     {% endset %}
 
+    {% set recarga_partitions_query %}
+            select distinct
+                concat("'", date(dt_lancamento), "'") as particao
+            from
+                {{ staging_lancamento }}
+            where {{ incremental_filter }}
+
+    {% endset %}
+
+    {% set recarga_partitions = (
+        run_query(recarga_partitions_query).columns[0].values()
+    ) %}
+
 {% else %} {% set sha_column = "cast(null as bytes)" %}
 {% endif %}
 
@@ -36,28 +65,15 @@ with
     lancamento_staging as (
         select *
         from {{ ref("staging_lancamento") }}
-        {% if is_incremental() %}
-            where
-                (
-                    {{
-                        generate_date_hour_partition_filter(
-                            var("date_range_start"), var("date_range_end")
-                        )
-                    }}
-                )
-                and timestamp_captura
-                between datetime("{{var('date_range_start')}}") and datetime(
-                    "{{var('date_range_end')}}"
-                )
-        {% endif %}
+        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
     dados_novos as (
         select
             date(dt_lancamento) as data,
-            id_lancamento as id_recarga,
+            id_lancamento,
+            id_conta,
             dt_lancamento as datetime_recarga,
             cd_cliente as id_cliente,
-            id_conta,
             ds_tipo_conta as tipo_conta,
             ds_tipo_movimento as tipo_movimento,
             vl_lancamento as valor_recarga,
@@ -71,16 +87,13 @@ with
             select *
             from {{ this }}
             where
-                data
-                between date(
-                    datetime_sub(
-                        datetime("{{var('date_range_start')}}"), interval 5 minutes
-                    )
-                ) and date(
-                    datetime_sub(
-                        datetime("{{var('date_range_end')}}"), interval 5 minutes
-                    )
-                )
+            {% if is_incremental() %}
+                where
+                    {% if recarga_partitions | length > 0 %}
+                        data in ({{ recarga_partitions | join(", ") }})
+                    {% else %} data = "2000-01-01"
+                    {% endif %}
+            {% endif %}
         ),
     {% endif %}
     particoes_completas as (
@@ -98,13 +111,21 @@ with
         {% endif %}
     ),
     sha_dados_novos as (
-        select *, {{ sha_column }} as sha_dado_novo from particoes_completas
+        select *, {{ sha_column }} as sha_dado_novo
+        from particoes_completas
+        qualify
+            row_number() over (
+                partition by id_lancamento, id_conta
+                order by priority, datetime_recarga desc
+            )
+            = 1
     ),
     sha_dados_atuais as (
         {% if is_incremental() %}
 
             select
-                id_recarga,
+                id_lancamento,
+                id_conta,
                 {{ sha_column }} as sha_dado_atual,
                 datetime_ultima_atualizacao as datetime_ultima_atualizacao_atual,
                 id_execucao_dbt as id_execucao_dbt_atual
@@ -112,16 +133,17 @@ with
 
         {% else %}
             select
-                cast(null as string) as id_recarga,
+                cast(null as string) as id_lancamento,
+                cast(null as string) as id_conta,
                 cast(null as bytes) as sha_dado_atual,
                 datetime(null) as datetime_ultima_atualizacao_atual,
                 cast(null as string) as id_execucao_dbt_atual
         {% endif %}
     ),
     sha_dados_completos as (
-        select n.*, a.* except (id_recarga)
+        select n.*, a.* except (id_lancamento, id_conta)
         from sha_dados_novos n
-        left join sha_dados_atuais a using (id_recarga)
+        left join sha_dados_atuais a using (id_lancamento, id_conta)
     ),
     colunas_controle as (
         select

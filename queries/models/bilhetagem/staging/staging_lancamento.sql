@@ -33,4 +33,4 @@ select
     safe_cast(json_value(content, '$.tipo_moeda') as string) as tipo_moeda,
     safe_cast(json_value(content, '$.cd_cliente') as string) as cd_cliente,
     safe_cast(json_value(content, '$.nr_logico_midia') as string) as nr_logico_midia
-from {{ source("source_jae_dev", "lancamento") }}
+from {{ source("source_jae", "lancamento") }}
