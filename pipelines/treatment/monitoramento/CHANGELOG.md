@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.2.5] - 2025-07-28
+
+### Adicionado
+
+- Adiciona descrição dos testes de unicidade no `MONITORAMENTO_VEICULO_CHECKS_LIST` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/708)
+
 ## [1.2.4] - 2025-07-23
 
 ### Alterado
