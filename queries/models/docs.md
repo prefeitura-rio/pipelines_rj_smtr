@@ -1173,3 +1173,7 @@ Quantidade consecutiva de dias com falha operacional do ar condicionado
 {% docs indicadores_viagem %}
 Indicadores para classificação da viagem
 {% enddocs %}
+
+{% docs data_verificacao_regularidade %}
+Data de verificação da regularidade
+{% enddocs %}
