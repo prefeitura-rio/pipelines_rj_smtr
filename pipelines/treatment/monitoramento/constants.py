@@ -70,6 +70,10 @@ class constants(Enum):  # pylint: disable=c0103
         initial_datetime=datetime(2025, 5, 28, 0, 0, 0),
     )
 
+    SNAPSHOT_VEICULO_SELECTOR = DBTSelector(
+        name="snapshot_veiculo",
+    )
+
     MONITORAMENTO_VEICULO_CHECKS_LIST = {
         "veiculo_fiscalizacao_lacre": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},

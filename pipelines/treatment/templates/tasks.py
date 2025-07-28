@@ -275,14 +275,15 @@ def run_dbt_selector(
             for elem in _vars:
                 elem["flow_name"] = prefect.context.flow_name
                 vars_dict.update(elem)
-            vars_str = f'"{vars_dict}"'
-            run_command += f" --vars {vars_str}"
+            _vars = vars_dict
         else:
             _vars["flow_name"] = prefect.context.flow_name
-            vars_str = f'"{_vars}"'
-            run_command += f" --vars {vars_str}"
     else:
         _vars = {"flow_name": prefect.context.flow_name}
+
+    vars_str = f'"{_vars}"'
+    run_command += f" --vars {vars_str}"
+
     if flags:
         run_command += f" {flags}"
 
@@ -475,14 +476,14 @@ def run_dbt_tests(
             for elem in _vars:
                 elem["flow_name"] = prefect.context.flow_name
                 vars_dict.update(elem)
-            vars_str = f'"{vars_dict}"'
-            run_command += f" --vars {vars_str}"
+            _vars = vars_dict
         else:
             _vars["flow_name"] = prefect.context.flow_name
-            vars_str = f'"{_vars}"'
-            run_command += f" --vars {vars_str}"
     else:
         _vars = {"flow_name": prefect.context.flow_name}
+
+    vars_str = f'"{_vars}"'
+    run_command += f" --vars {vars_str}"
 
     if flags:
         run_command += f" {flags}"
@@ -697,27 +698,29 @@ def run_dbt(
 
     run_command = f"dbt {dbt_command}"
 
-    if resource in ["model", "snapshot"]:
-        if not selector_name:
-            raise ValueError(f"selector_name is required for resource type: {resource}")
-        run_command += f" --selector {selector_name}"
-    elif resource == "test":
-        run_command += " --select "
-
-        if test_name:
-            run_command += test_name
+    if any(
+        param is not None
+        for param in [selector_name, dataset_id, table_id, model, upstream, downstream, test_name]
+    ):
+        if selector_name:
+            run_command += f" --selector {selector_name}"
         else:
-            if not model and dataset_id:
-                model = dataset_id
-                if table_id:
-                    model += f".{table_id}"
+            run_command += " --select "
 
-            if model:
-                if upstream:
-                    run_command += "+"
-                run_command += model
-                if downstream:
-                    run_command += "+"
+            if test_name:
+                run_command += test_name
+            else:
+                if not model and dataset_id:
+                    model = dataset_id
+                    if table_id:
+                        model += f".{table_id}"
+
+                if model:
+                    if upstream:
+                        run_command += "+"
+                    run_command += model
+                    if downstream:
+                        run_command += "+"
 
     if exclude:
         run_command += f" --exclude {exclude}"
@@ -726,12 +729,16 @@ def run_dbt(
         if isinstance(_vars, list):
             vars_dict = {}
             for elem in _vars:
+                elem["flow_name"] = prefect.context.flow_name
                 vars_dict.update(elem)
-            vars_str = f'"{vars_dict}"'
-            run_command += f" --vars {vars_str}"
+            _vars = vars_dict
         else:
-            vars_str = f'"{_vars}"'
-            run_command += f" --vars {vars_str}"
+            _vars["flow_name"] = prefect.context.flow_name
+    else:
+        _vars = {"flow_name": prefect.context.flow_name}
+
+    vars_str = f'"{_vars}"'
+    run_command += f" --vars {vars_str}"
 
     if flags:
         run_command += f" {flags}"

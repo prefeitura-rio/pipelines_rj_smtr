@@ -317,7 +317,7 @@ with
                         )
                         or (
                             data >= date('{{ var("DATA_SUBSIDIO_V12_INICIO") }}')
-                            and data < date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                            and data < date('{{ var("DATA_SUBSIDIO_V15B_INICIO") }}')
                             and (
                                 (
                                     quantidade_transacao_riocard = 0
@@ -327,7 +327,7 @@ with
                             )
                         )
                         or (
-                            data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                            data >= date('{{ var("DATA_SUBSIDIO_V15B_INICIO") }}')
                             and (
                                 quantidade_transacao_riocard = 0
                                 and quantidade_transacao = 0
@@ -337,12 +337,12 @@ with
                 then 'Sem transação'
 
                 when
-                    data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                    data >= date('{{ var("DATA_SUBSIDIO_V15B_INICIO") }}')
                     and percentual_estado_equipamento_aberto < 0.8
                 then 'Validador fechado'
 
                 when
-                    data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                    data >= date('{{ var("DATA_SUBSIDIO_V15B_INICIO") }}')
                     and (
                         quantidade_transacao_riocard_servico_divergente > 0
                         or quantidade_transacao_servico_divergente > 0
@@ -368,7 +368,7 @@ with
             id_viagem,
             max(indicador_sem_transacao) as indicador_sem_transacao,
             case
-                when data < date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                when data < date('{{ var("DATA_SUBSIDIO_V15B_INICIO") }}')
                 then max(indicador_estado_equipamento_aberto)
                 else min(indicador_estado_equipamento_aberto)
             end as indicador_estado_equipamento_aberto
@@ -408,7 +408,7 @@ select
             or va.tipo_viagem = "Manter tipo viagem"
         then v.tipo_viagem
         when
-            v.data < date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+            v.data < date('{{ var("DATA_SUBSIDIO_V15B_INICIO") }}')
             and va.tipo_viagem = "Sem transação"
             and not va.indicador_sem_transacao
             and va.indicador_estado_equipamento_aberto
@@ -423,7 +423,7 @@ select
     any_value(eep.quantidade_transacao) as quantidade_transacao,
     any_value(eep.quantidade_transacao_riocard) as quantidade_transacao_riocard,
     case
-        when v.data < date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+        when v.data < date('{{ var("DATA_SUBSIDIO_V15B_INICIO") }}')
         then max(eep.percentual_estado_equipamento_aberto)
         else min(eep.percentual_estado_equipamento_aberto)
     end as percentual_estado_equipamento_aberto,
