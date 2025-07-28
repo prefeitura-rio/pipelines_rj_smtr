@@ -4,18 +4,18 @@
 # IMPORTAÇÃO DE BIBLIOTECAS
 # ----------------------------------------------------------------
 # Bibliotecas padrão e geoespaciais
+import geopandas as gpd
 import numpy as np
 import pandas as pd
-import geopandas as gpd
 import pyproj
-from scipy.spatial import Voronoi
-from shapely import wkt
-from shapely.geometry import Polygon, box
-from shapely.ops import transform
 
 # Bibliotecas do PySpark
 from pyspark.sql.functions import lit
 from pyspark.sql.types import StringType
+from scipy.spatial import Voronoi
+from shapely import wkt
+from shapely.geometry import Polygon, box
+from shapely.ops import transform
 
 
 # ----------------------------------------------------------------
@@ -46,7 +46,7 @@ def model(dbt, session):
     # --- Configuração do Modelo dbt ---
     dbt.config(
         materialized="table",
-        packages=["numpy", "pandas", "geopandas", "pyproj", "shapely", "scipy"]
+        packages=["numpy", "pandas", "geopandas", "pyproj", "shapely", "scipy"],
     )
 
     # --- 1. SETUP E LEITURA DOS DADOS PREPARADOS ---
@@ -102,10 +102,10 @@ def model(dbt, session):
     box_row = box_limits_pandas_df.iloc[0]
     # Cria a geometria da caixa em coordenadas geográficas
     geographic_box = box(
-        box_row['min_longitude'],
-        box_row['min_latitude'],
-        box_row['max_longitude'],
-        box_row['max_latitude']
+        box_row["min_longitude"],
+        box_row["min_latitude"],
+        box_row["max_longitude"],
+        box_row["max_latitude"],
     )
     # Transforma a caixa para a mesma projeção métrica dos cálculos
     bounding_box_metric = transform_projection(geographic_box)
@@ -125,13 +125,11 @@ def model(dbt, session):
                 final_polygon = transform_projection(clipped_polygon, from_shapely=True)
 
                 # Associa o polígono ao seu 'stop_id' original
-                stop_id = stops_pandas_df.iloc[i]['stop_id']
+                stop_id = stops_pandas_df.iloc[i]["stop_id"]
                 voronoi_polygons[stop_id] = final_polygon.wkt
 
     # Cria um novo DataFrame Pandas com os resultados
-    voronoi_df_pandas = pd.DataFrame(
-        voronoi_polygons.items(), columns=["stop_id", "wkt_voronoi"]
-    )
+    voronoi_df_pandas = pd.DataFrame(voronoi_polygons.items(), columns=["stop_id", "wkt_voronoi"])
 
     # --- 3. JUNÇÃO DOS RESULTADOS E RETORNO ---
 
@@ -139,11 +137,7 @@ def model(dbt, session):
     voronoi_df_spark = session.createDataFrame(voronoi_df_pandas)
 
     # Junta os polígonos de Voronoi de volta ao DataFrame original das paradas
-    final_df = df_prepared_stops.join(
-        voronoi_df_spark,
-        on="stop_id",
-        how="left"
-    )
+    final_df = df_prepared_stops.join(voronoi_df_spark, on="stop_id", how="left")
 
     # Retorna o DataFrame final enriquecido
     return final_df
