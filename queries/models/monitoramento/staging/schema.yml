@@ -10,7 +10,8 @@ models:
           name: check_gps_capture__staging_gps
     columns:
       - name: data
-        description: "{{ doc('data_captura') }}"
+        # description:
+        # "{{ doc('data_captura') }}"
       - name: hora
         description: "{{ doc('hora_captura') }}"
       - name: datetime_gps
