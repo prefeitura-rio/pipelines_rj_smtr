@@ -24,7 +24,8 @@
         {"inicio": "12", "fim": "15"},
         {"inicio": "15", "fim": "18"},
         {"inicio": "18", "fim": "21"},
-        {"inicio": "21", "fim": "23"},
+        {"inicio": "21", "fim": "22"},
+        {"inicio": "22", "fim": "23"},
         {"inicio": "23", "fim": "24"},
     ] %}
     {% set dias = ["dias_uteis", "sabado", "domingo", "ponto_facultativo"] %}
