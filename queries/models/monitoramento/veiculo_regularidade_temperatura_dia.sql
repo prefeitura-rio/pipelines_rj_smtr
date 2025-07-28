@@ -73,36 +73,26 @@ with
             data,
             id_veiculo,
             ano_fabricacao,
-            to_json(
-                struct(
-                    struct(
-                        data_processamento_licenciamento,
-                        indicador_ar_condicionado as valor
-                    ) as indicador_ar_condicionado,
-                    struct(
-                        data_verificacao_regularidade,
-                        indicador_temperatura_variacao as valor
-                    ) as indicador_temperatura_variacao,
-                    struct(
-                        data_verificacao_regularidade,
-                        indicador_temperatura_transmitida as valor
-                    ) as indicador_temperatura_transmitida,
-                    struct(
-                        data_verificacao_regularidade,
-                        indicador_temperatura_descartada as valor,
-                        safe_cast(
-                            percentual_temperatura_nula_descartada as string
-                        ) as percentual_temperatura_nula_descartada,
-                        safe_cast(
-                            percentual_temperatura_atipica_descartada as string
-                        ) as percentual_temperatura_atipica_descartada
-                    ) as indicador_temperatura_descartada,
-                    struct(
-                        current_date("America/Sao_Paulo") as data_verificacao_falha,
-                        indicador_falha_recorrente as valor
-                    ) as indicador_falha_recorrente
-                )
-            ) as indicadores,
+            struct(
+                data_processamento_licenciamento, indicador_ar_condicionado as valor
+            ) as indicador_ar_condicionado,
+            struct(
+                data_verificacao_regularidade, indicador_temperatura_variacao as valor
+            ) as indicador_temperatura_variacao,
+            struct(
+                data_verificacao_regularidade,
+                indicador_temperatura_transmitida as valor
+            ) as indicador_temperatura_transmitida,
+            struct(
+                data_verificacao_regularidade,
+                indicador_temperatura_descartada as valor,
+                percentual_temperatura_nula_descartada,
+                percentual_temperatura_atipica_descartada
+            ) as indicador_temperatura_descartada,
+            struct(
+                current_date("America/Sao_Paulo") as data_verificacao_falha,
+                indicador_falha_recorrente as valor
+            ) as indicador_falha_recorrente,
             quantidade_dia_falha_operacional,
             motivo,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
@@ -142,12 +132,7 @@ with
                 sha256(
                     concat(
                         {% for c in columns %}
-                            ifnull(
-                                {% if c == "indicadores" %}to_json_string(indicadores)
-                                {% else %}cast({{ c }} as string)
-                                {% endif %},
-                                'n/a'
-                            )
+                            ifnull(cast({{ c }} as string), 'n/a')
                             {% if not loop.last %}, {% endif %}
                         {% endfor %}
                     )
@@ -167,13 +152,8 @@ with
             from sha_dados
             window win as (partition by data, id_veiculo order by ordem)
         )
-
     select * except (ordem)
     from dados_completos_invocation_id
     where ordem = 1
 {% else %} select * from dados_novos
 {% endif %}
-
-    -- trocar variaveis dbt de acordo com o flow
-    -- materializar veiculo_dia todo dia
-

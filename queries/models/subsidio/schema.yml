@@ -200,7 +200,7 @@ models:
       - name: tipo_viagem
         description: "{{ doc('tipo_viagem_status') }}"
       - name: indicadores
-        description: "Indicadores incluindo regularidade do ar condicionado baseada em temperatura"
+        description: "{{ doc('indicadores_viagem') }}"
       - name: servico
         description: "{{ doc('servico') }}"
       - name: sentido

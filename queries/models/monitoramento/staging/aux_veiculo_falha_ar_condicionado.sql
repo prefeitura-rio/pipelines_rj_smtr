@@ -20,6 +20,7 @@ with
         select
             data,
             id_veiculo,
+            placa,
             ano_fabricacao,
             safe_cast(
                 json_value(indicadores, '$.indicador_ar_condicionado.valor') as bool
@@ -70,6 +71,7 @@ with
         select distinct
             data,
             id_veiculo,
+            placa,
             ano_fabricacao,
             indicador_ar_condicionado,
             data_processamento_licenciamento,
@@ -111,11 +113,11 @@ with
         select
             d.*,
             i.* except (data, id_veiculo),
-            last_value(ano_fabricacao ignore nulls) over (
+            last_value(placa ignore nulls) over (
                 partition by id_veiculo
                 order by data
                 rows between unbounded preceding and 1 preceding
-            ) as ano_fabricacao_anterior,
+            ) as placa_anterior,
             case
                 when
                     not indicador_temperatura_variacao
@@ -142,9 +144,7 @@ with
             (
                 select
                     *,
-                    countif(
-                        not indicio_falha or ano_fabricacao != ano_fabricacao_anterior
-                    ) over (
+                    countif(not indicio_falha or placa != placa_anterior) over (
                         partition by id_veiculo
                         order by data
                         rows between unbounded preceding and current row
@@ -178,7 +178,7 @@ with
     {% endif %}
     final as (
         select
-            * except (quantidade_dia_falha_operacional, ano_fabricacao_anterior),
+            * except (quantidade_dia_falha_operacional, placa_anterior),
             last_value(quantidade_dia_falha_operacional ignore nulls) over (
                 partition by id_veiculo
                 order by data
