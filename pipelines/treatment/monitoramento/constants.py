@@ -80,6 +80,12 @@ class constants(Enum):  # pylint: disable=c0103
             "dbt_utils.relationships_where__id_auto_infracao__veiculo_fiscalizacao_lacre": {
                 "description": "Todos os ids de auto infração estão na tabela de autuação"
             },
+            "dbt_utils.unique_combination_of_columns__id_veiculo__veiculo_fiscalizacao_lacre": {
+                "description": "Todos os registros são únicos para combinação `id_veiculo`, `data_inicio_lacre` e `id_auto_infracao`"  # noqa
+            },
+            "dbt_utils.unique_combination_of_columns__placa__veiculo_fiscalizacao_lacre": {
+                "description": "Todos os registros são únicos para combinação `placa`, `data_inicio_lacre` e `id_auto_infracao`"  # noqa
+            },
         },
         "autuacao_disciplinar_historico": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
