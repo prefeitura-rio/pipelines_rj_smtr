@@ -97,6 +97,7 @@ vars:
   ## GTFS
   data_versao_gtfs: "2024-12-31" # fixada última data disponível
   DATA_GTFS_V2_INICIO: "2025-04-30"
+  DATA_GTFS_V4_INICIO: "2025-07-16"
 
   ### Subsídio SPPO (Ônibus) ###
   buffer: 500 # distância em metros para buffer
@@ -115,6 +116,7 @@ vars:
   tipo_materializacao: "subsidio"
   data_inicio_trips_shapes: "2023-04-01"
   data_inclusao_autuacao_disciplinar: "2025-07-10"
+  data_processamento_veiculo_licenciamento_dia: ["'2025-07-10'", "'2025-07-24'"]
   # Feature penalidade de autuação por inoperância do ar condicionado (DECRETO RIO 51940/2023)
   DATA_SUBSIDIO_V2_INICIO: "2023-01-16"
   # Feature penalidade de autuação por segurança e limpeza/equipamento (DECRETO RIO 52820/2023)
@@ -148,9 +150,11 @@ vars:
   # ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629) e RESOLUÇÃO SMTR 3843/2025
   DATA_SUBSIDIO_V15_INICIO: "2025-04-01"
   # Feature Não pagamento de tecnologia inferior à mínima permitida [ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629) e RESOLUÇÃO SMTR 3843/2025]
-  DATA_SUBSIDIO_V15A_INICIO: "2025-08-01"
+  DATA_SUBSIDIO_V15A_INICIO: "2025-07-01"
+  # Feature validadores e transações Jaé [ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629), RESOLUÇÃO SMTR 3843/2025 e RESOLUÇÃO SMTR 3858/2025]
+  DATA_SUBSIDIO_V15B_INICIO: "2025-08-01"
   # Feature Não pagamento de viagens licenciadas sem ar condicionado [ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629) e RESOLUÇÃO SMTR 3843/2025]
-  DATA_SUBSIDIO_V15B_INICIO: "2025-11-01"
+  DATA_SUBSIDIO_V15C_INICIO: "2025-11-01"
 
   # Recursos #
   recurso_staging: "rj-smtr-staging.projeto_subsidio_sppo_staging.recurso"

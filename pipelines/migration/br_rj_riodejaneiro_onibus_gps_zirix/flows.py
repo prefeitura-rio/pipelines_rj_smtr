@@ -41,13 +41,14 @@ from pipelines.migration.tasks import (
     parse_timestamp_to_string,
     query_logs,
     rename_current_flow_run_now_time,
-    run_dbt_model,
     save_raw_local,
     save_treated_local,
     set_last_run_timestamp,
     upload_logs_to_bq,
 )
-from pipelines.schedules import every_10_minutes, every_hour_minute_six, every_minute
+from pipelines.treatment.templates.tasks import run_dbt
+
+# from pipelines.schedules import every_10_minutes, every_hour_minute_six, every_minute
 
 # Flows #
 
@@ -110,7 +111,7 @@ realocacao_sppo_zirix.run_config = KubernetesRun(
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 realocacao_sppo_zirix.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
-realocacao_sppo_zirix.schedule = every_10_minutes
+# realocacao_sppo_zirix.schedule = every_10_minutes
 
 with Flow(
     "SMTR: GPS SPPO Zirix Realocação - Recaptura (subflow)",
@@ -259,7 +260,8 @@ with Flow(
 
     # Run materialization #
     with case(rebuild, True):
-        RUN = run_dbt_model(
+        RUN = run_dbt(
+            resource="model",
             dataset_id=dataset_id,
             table_id=table_id,
             upstream=True,
@@ -275,7 +277,8 @@ with Flow(
             mode=MODE,
         )
     with case(rebuild, False):
-        RUN = run_dbt_model(
+        RUN = run_dbt(
+            resource="model",
             dataset_id=dataset_id,
             table_id=table_id,
             exclude="+data_versao_efetiva",
@@ -356,7 +359,7 @@ captura_sppo_zirix.run_config = KubernetesRun(
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 captura_sppo_zirix.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
-captura_sppo_zirix.schedule = every_minute
+# captura_sppo_zirix.schedule = every_minute
 
 
 with Flow(
@@ -485,4 +488,4 @@ recaptura_zirix.run_config = KubernetesRun(
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 recaptura_zirix.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
-recaptura_zirix.schedule = every_hour_minute_six
+# recaptura_zirix.schedule = every_hour_minute_six
