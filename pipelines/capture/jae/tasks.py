@@ -42,6 +42,14 @@ from pipelines.utils.utils import convert_timezone
 def create_jae_general_extractor(source: SourceTable, timestamp: datetime):
     """Cria a extração de tabelas da Jaé"""
 
+    if source.table_id == constants.GPS_VALIDADOR_TABLE_ID.value and timestamp < datetime(
+        2025, 3, 26, 15, 31, 0
+    ):
+        raise ValueError(
+            """A recaptura de dados anteriores deve ser feita manualmente.
+            A coluna de captura foi alterada de ID para data_tracking"""
+        )
+
     credentials = get_secret(constants.JAE_SECRET_PATH.value)
     params = constants.JAE_TABLE_CAPTURE_PARAMS.value[source.table_id]
 
@@ -52,10 +60,22 @@ def create_jae_general_extractor(source: SourceTable, timestamp: datetime):
     )
     end = timestamp.astimezone(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S")
 
+    capture_delay_minutes = params.get("capture_delay_minutes", {"0": 0})
+
+    delay_timestamps = (
+        convert_timezone(timestamp=datetime.fromisoformat(a))
+        for a in capture_delay_minutes.keys()
+        if a != "0"
+    )
+    delay = capture_delay_minutes["0"]
+    for t in delay_timestamps:
+        if timestamp >= t:
+            delay = capture_delay_minutes[t]
+
     query = params["query"].format(
         start=start,
         end=end,
-        delay=params.get("capture_delay_minutes"),
+        delay=delay,
     )
     database_name = params["database"]
     database = constants.JAE_DATABASE_SETTINGS.value[database_name]
@@ -678,9 +698,9 @@ def get_capture_gaps(
 ) -> list[str]:
     params = constants.CHECK_CAPTURE_PARAMS.value[table_id]
     timestamp_column = params["timestamp_column"]
-
+    source = params["source"]
     df_jae = get_jae_timestamp_captura_count(
-        table_id=table_id,
+        source=source,
         timestamp_column=timestamp_column,
         timestamp_captura_start=timestamp_captura_start,
         timestamp_captura_end=timestamp_captura_end,
@@ -690,7 +710,7 @@ def get_capture_gaps(
     WITH contagens AS (
         SELECT
             timestamp_captura,
-            COUNT(DISTINCT {params['source'].primary_keys[0]}) AS total_datalake
+            COUNT(DISTINCT {source.primary_keys[0]}) AS total_datalake
         FROM
             {params['datalake_table']}
         WHERE
