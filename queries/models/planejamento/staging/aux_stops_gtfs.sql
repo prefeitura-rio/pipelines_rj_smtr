@@ -79,5 +79,5 @@ with
 select
     * except (representative_geography),
     st_geogfromtext(representative_geography) as representative_geography,
-    representative_geography as wkt_stop
+    representative_geography as wkt_representative_stop
 from stops_with_station_info_agg

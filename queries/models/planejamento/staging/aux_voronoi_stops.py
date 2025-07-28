@@ -4,18 +4,15 @@
 # IMPORTAÇÃO DE BIBLIOTECAS
 # ----------------------------------------------------------------
 # Bibliotecas padrão e geoespaciais
-import geopandas as gpd
 import numpy as np
 import pandas as pd
 import pyproj
-
-# Bibliotecas do PySpark
+from shapely import wkt
+from shapely.geometry import box
+from shapely.ops import transform
+from geovoronoi import voronoi_regions_from_coords
 from pyspark.sql.functions import lit
 from pyspark.sql.types import StringType
-from scipy.spatial import Voronoi
-from shapely import wkt
-from shapely.geometry import Polygon, box
-from shapely.ops import transform
 
 
 # ----------------------------------------------------------------
@@ -46,16 +43,13 @@ def model(dbt, session):
     # --- Configuração do Modelo dbt ---
     dbt.config(
         materialized="table",
-        packages=["numpy", "pandas", "geopandas", "pyproj", "shapely", "scipy"],
+        packages=["numpy", "pandas", "pyproj", "shapely", "geovoronoi"],
     )
 
     # --- 1. SETUP E LEITURA DOS DADOS PREPARADOS ---
 
     # Lê a tabela de paradas já filtrada e georreferenciada.
     df_prepared_stops = dbt.ref("aux_stops_gtfs")
-
-    # Lê a tabela que contém a caixa delimitadora
-    df_box_limits = dbt.ref("aux_limites_caixa")
 
     # Definição das projeções CRS (Coordinate Reference System)
     bq_projection = pyproj.CRS(dbt.config.get("projecao_wgs_84"))
@@ -76,14 +70,15 @@ def model(dbt, session):
     # --- 2. CÁLCULO GLOBAL DE VORONOI NO DRIVER ---
 
     # Coleta os dados para Pandas DataFrames para computação em memória.
-    stops_pandas_df = df_prepared_stops.select("stop_id", "wkt_stop").toPandas()
-    box_limits_pandas_df = df_box_limits.toPandas()
+    stops_pandas_df = df_prepared_stops.select(
+        "representative_stop_id", "wkt_representative_stop"
+    ).toPandas()
 
-    if stops_pandas_df.empty or box_limits_pandas_df.empty:
+    if stops_pandas_df.empty:
         return df_prepared_stops.withColumn("wkt_voronoi", lit(None).cast(StringType()))
 
     # Converte WKT para objetos Shapely e projeta para o sistema métrico
-    stops_pandas_df["geometry_metric"] = stops_pandas_df["wkt_stop"].apply(
+    stops_pandas_df["geometry_metric"] = stops_pandas_df["wkt_representative_stop"].apply(
         lambda w: transform_projection(wkt.loads(w))
     )
 
@@ -94,50 +89,55 @@ def model(dbt, session):
     if len(points_coords) < 4:
         return df_prepared_stops.withColumn("wkt_voronoi", lit(None).cast(StringType()))
 
-    # Executa o algoritmo de Voronoi
-    vor = Voronoi(points_coords)
+    # Cria bounding box com margem
+    minx, miny = points_coords.min(axis=0)
+    maxx, maxy = points_coords.max(axis=0)
+    buffer_x = (maxx - minx) * 0.05
+    buffer_y = (maxy - miny) * 0.05
+    geographic_box = box(minx - buffer_x, miny - buffer_y, maxx + buffer_x, maxy + buffer_y)
 
-    # AJUSTE PRINCIPAL: Usa a caixa delimitadora fornecida pelo dbt var
-    # Extrai os limites do DataFrame da caixa
-    box_row = box_limits_pandas_df.iloc[0]
-    # Cria a geometria da caixa em coordenadas geográficas
-    geographic_box = box(
-        box_row["min_longitude"],
-        box_row["min_latitude"],
-        box_row["max_longitude"],
-        box_row["max_latitude"],
+    # --- Cálculo de Voronoi com clipping automático ---
+    regions, _ = voronoi_regions_from_coords(points_coords, geographic_box)
+
+    # voronoi_polygons = {}
+    # for point_idx, poly in regions.items():
+    #     if poly.is_valid and not poly.is_empty:
+    #         final_polygon = transform_projection(poly, from_shapely=True)
+    #         representative_stop_id = stops_pandas_df.iloc[point_idx]["representative_stop_id"]
+    #         voronoi_polygons[representative_stop_id] = final_polygon.wkt
+
+    # Cria DataFrame com índice dos pontos e geometria Voronoi
+    regions_df = pd.DataFrame.from_dict(
+        regions, orient="index", columns=["geometry_metric"]
+    ).reset_index().rename(columns={"index": "point_idx"})
+
+    # Junta com a tabela original de paradas, para recuperar o stop_id
+    regions_df["representative_stop_id"] = regions_df["point_idx"].map(
+        stops_pandas_df["representative_stop_id"]
     )
-    # Transforma a caixa para a mesma projeção métrica dos cálculos
-    bounding_box_metric = transform_projection(geographic_box)
 
-    # Itera sobre as regiões de Voronoi para construir os polígonos
-    voronoi_polygons = {}
-    for i, region_index in enumerate(vor.point_region):
-        if -1 not in vor.regions[region_index]:
-            polygon_vertices = vor.vertices[vor.regions[region_index]]
-            polygon = Polygon(polygon_vertices)
+    # Transforma a geometria de volta para EPSG:4326
+    regions_df["geometry_wgs84"] = regions_df["geometry_metric"].apply(
+        lambda g: transform_projection(g, from_shapely=True)
+    )
 
-            # Recorta ("clipa") o polígono com a caixa delimitadora externa
-            clipped_polygon = polygon.intersection(bounding_box_metric)
+    # Extrai WKT
+    regions_df["wkt_voronoi"] = regions_df["geometry_wgs84"].apply(lambda g: g.wkt)
 
-            if clipped_polygon.is_valid and not clipped_polygon.is_empty:
-                # Transforma o polígono de volta para a projeção geográfica (WGS 84)
-                final_polygon = transform_projection(clipped_polygon, from_shapely=True)
+    # --- 3. JUNÇÃO DOS RESULTADOS E RETORNO ---
 
-                # Associa o polígono ao seu 'stop_id' original
-                stop_id = stops_pandas_df.iloc[i]["stop_id"]
-                voronoi_polygons[stop_id] = final_polygon.wkt
-
-    # Cria um novo DataFrame Pandas com os resultados
-    voronoi_df_pandas = pd.DataFrame(voronoi_polygons.items(), columns=["stop_id", "wkt_voronoi"])
+    # DataFrame com polígonos
+    # voronoi_df_pandas = pd.DataFrame(
+    #     voronoi_polygons.items(), columns=["representative_stop_id", "wkt_voronoi"]
+    # )
 
     # --- 3. JUNÇÃO DOS RESULTADOS E RETORNO ---
 
     # Converte o DataFrame de resultados de Pandas para Spark
-    voronoi_df_spark = session.createDataFrame(voronoi_df_pandas)
+    voronoi_df_spark = session.createDataFrame(regions_df)
 
     # Junta os polígonos de Voronoi de volta ao DataFrame original das paradas
-    final_df = df_prepared_stops.join(voronoi_df_spark, on="stop_id", how="left")
+    final_df = df_prepared_stops.join(voronoi_df_spark, on="representative_stop_id", how="left")
 
     # Retorna o DataFrame final enriquecido
     return final_df
