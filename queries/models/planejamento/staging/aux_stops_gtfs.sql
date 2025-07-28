@@ -35,7 +35,7 @@ with
             stop_lon,
             st_geogpoint(stop_lon, stop_lat) as station_geography
         from {{ ref("stops_gtfs") }}
-        where feed_start_date = "2025-07-16" and location_type = "1"
+        where feed_start_date = "2025-07-16" and location_type = "1" and stop_lat is not null and stop_lon is not null
     ),
 
     -- 3. Enriquece cada parada com os dados de sua estação-mãe, se existir.
