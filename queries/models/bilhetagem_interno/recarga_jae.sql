@@ -87,13 +87,11 @@ with
             select *
             from {{ this }}
             where
-            {% if is_incremental() %}
-                where
-                    {% if recarga_partitions | length > 0 %}
-                        data in ({{ recarga_partitions | join(", ") }})
-                    {% else %} data = "2000-01-01"
-                    {% endif %}
-            {% endif %}
+                {% if recarga_partitions | length > 0 %}
+                    data in ({{ recarga_partitions | join(", ") }})
+                {% else %} data = "2000-01-01"
+                {% endif %}
+
         ),
     {% endif %}
     particoes_completas as (
