@@ -7,12 +7,12 @@
 import numpy as np
 import pandas as pd
 import pyproj
-from shapely import wkt
-from shapely.geometry import box
-from shapely.ops import transform
 from geovoronoi import voronoi_regions_from_coords
 from pyspark.sql.functions import lit
 from pyspark.sql.types import StringType
+from shapely import wkt
+from shapely.geometry import box
+from shapely.ops import transform
 
 
 # ----------------------------------------------------------------
@@ -107,9 +107,11 @@ def model(dbt, session):
     #         voronoi_polygons[representative_stop_id] = final_polygon.wkt
 
     # Cria DataFrame com índice dos pontos e geometria Voronoi
-    regions_df = pd.DataFrame.from_dict(
-        regions, orient="index", columns=["geometry_metric"]
-    ).reset_index().rename(columns={"index": "point_idx"})
+    regions_df = (
+        pd.DataFrame.from_dict(regions, orient="index", columns=["geometry_metric"])
+        .reset_index()
+        .rename(columns={"index": "point_idx"})
+    )
 
     # Junta com a tabela original de paradas, para recuperar o stop_id
     regions_df["representative_stop_id"] = regions_df["point_idx"].map(
