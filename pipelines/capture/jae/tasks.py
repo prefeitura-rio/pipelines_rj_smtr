@@ -703,9 +703,9 @@ def jae_capture_check_get_ts_range(
     start = convert_timezone(timestamp=start)
 
     if timestamp_captura_end is not None:
-        end = timestamp = datetime.fromisoformat(timestamp_captura_end)
+        end = datetime.fromisoformat(timestamp_captura_end)
     else:
-        end = timestamp = start.replace(hour=23, minute=59, second=59, microsecond=0)
+        end = start.replace(hour=23, minute=59, second=59, microsecond=0)
 
     end = convert_timezone(timestamp=end)
 
