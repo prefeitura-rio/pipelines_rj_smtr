@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: ordem_servico_diaria
+    description: "Dados diários das linhas presentes no município"
+    columns:
+      - name: DATA
+        description: "Data da ordem de serviço"
+      - name: tipo_dia
+        description: "{{ doc('tipo_dia') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: vista
+        description: "{{ doc('vista') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+      - name: viagens_planejadas
+        description: "{{ doc('viagens_planejadas') }}"
+      - name: inicio_periodo
+        description: "{{ doc('inicio_periodo') }}"
+      - name: fim_periodo
+        description: "{{ doc('fim_periodo') }}"

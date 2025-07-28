@@ -1,5 +1,10 @@
 # Changelog - controle_financeiro
 
+## [1.0.2] - 2024-11-13
+
+### Alterado
+- Adiciona deduplicação no modelo `aux_retorno_ordem_pagamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/321)
+
 ## [1.0.1] - 2024-06-13
 
 ### Corrigido

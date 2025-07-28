@@ -1,5 +1,12 @@
 # Changelog - validacao_dados_jae
 
+## [2.0.0] - 2024-12-30
+
+### Alterado
+
+- Altera modelos `integracao_nao_realizada.sql` e `integracao_invalida.sql` para considerar a matriz publicada pela SMTR (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/371)
+- Altera variável de data dos modelos `integracao_nao_realizada.sql` e `integracao_invalida.sql` de `run_date` para `date_range_[start/end]` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/371)
+
 ## [1.1.3] - 2024-09-04
 
 ### Alterado

@@ -1,5 +1,17 @@
 # Changelog - projeto_subsidio_sppo_encontro_contas
 
+## [2.0.0] - 2025-07-15
+
+### Adicionado
+
+- Adicionada versão 2.0 dos modelos para o cálculo do Encontro de Contas do SPPO [Serviço Público de Transporte de Passageiros por Ônibus] com base no Processo.Rio MTR-PRO-2025/18086 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/511)
+
+## [1.0.5] - 2025-05-13
+
+### Corrigido
+
+- Corrige referências a modelos desabilitados nos modelos `aux_balanco_rdo_servico_dia.sql`, `balanco_consorcio_ano.sql`, `balanco_consorcio_dia.sql`, `balanco_servico_ano.sql`, `balanco_servico_dia.sql`, `balanco_servico_quinzena.sql` e `receita_tarifaria_servico_nao_identificado_quinzena.sql` (https://github.com/prefeitura-rio/queries-rj-smtr/pull/574)
+
 ## [1.0.4] - 2024-08-29
 
 ### Alterado

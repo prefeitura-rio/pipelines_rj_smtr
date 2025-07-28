@@ -1,9 +1,20 @@
 # -*- coding: utf-8 -*-
 """Functions to pretreat data"""
-import json
+import re
 
 import pandas as pd
 from prefeitura_rio.pipelines_utils.logging import log
+from unidecode import unidecode
+
+
+def normalize_text(text):
+    text = unidecode(text)
+    text = re.sub(r"[^a-zA-Z0-9]+", "_", text)
+    text = re.sub(r"_+", "_", text)
+    text = text.strip("_")
+    text = text.lower()
+
+    return text
 
 
 def transform_to_nested_structure(data: pd.DataFrame, primary_keys: list) -> pd.DataFrame:
@@ -20,9 +31,7 @@ def transform_to_nested_structure(data: pd.DataFrame, primary_keys: list) -> pd.
     """
     content_columns = [c for c in data.columns if c not in primary_keys]
     data["content"] = data.apply(
-        lambda row: json.dumps(
-            row[content_columns].to_dict(),
-        ),
+        lambda row: row[[c for c in content_columns]].to_json(),
         axis=1,
     )
     return data[primary_keys + ["content"]]

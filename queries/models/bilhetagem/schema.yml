@@ -1,0 +1,484 @@
+models:
+  - name: transacao
+    description: "Tabela com informações da Jaé sobre as transações realizadas no sistema de transporte municipal"
+    columns:
+      - name: data
+        description: "{{ doc('data_transacao') }} [partição]"
+        data_type: date
+      - name: hora
+        description: "{{ doc('hora_transacao') }}"
+        data_type: int64
+      - name: datetime_transacao
+        description: "{{ doc('datetime_transacao') }}"
+        data_type: datetime
+      - name: datetime_processamento
+        description: "{{ doc('datetime_processamento_transacao') }}"
+        data_type: datetime
+      - name: datetime_captura
+        description: "{{ doc('datetime_captura') }}"
+        data_type: datetime
+      - name: modo
+        description: "{{ doc('modo') }}"
+        data_type: string
+      - name: id_consorcio
+        description: "{{ doc('id_consorcio') }}"
+        data_type: string
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+        data_type: string
+      - name: id_operadora
+        description: "{{ doc('id_operadora') }}"
+        data_type: string
+      - name: operadora
+        description: "{{ doc('operadora') }}"
+        data_type: string
+      - name: documento_operadora
+        description: "{{ doc('documento_operadora') }}"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/388050497607535163/policyTags/3935188996031375059'
+      - name: tipo_documento_operadora
+        description: "{{ doc('tipo_documento_operadora') }}"
+      - name: id_servico_jae
+        description: "{{ doc('id_servico_jae') }}"
+        data_type: string
+      - name: servico_jae
+        description: "{{ doc('servico_jae') }}"
+        data_type: string
+      - name: descricao_servico_jae
+        description: "{{ doc('descricao_servico_jae') }}"
+        data_type: string
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+        data_type: string
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+        data_type: string
+      - name: id_validador
+        description: "{{ doc('id_validador') }}"
+        data_type: string
+      - name: id_cliente
+        description: "{{ doc('id_cliente') }}"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+        data_type: string
+      - name: hash_cliente
+        description: "Hash identificador do cliente [protegido]"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/3266350367297582691'
+        data_type: bytes
+      - name: documento_cliente
+        description: "Número do documento do cliente que efetuou a transação"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+        data_type: string
+      - name: tipo_documento_cliente
+        description: "Tipo do documento do cliente que efetuou a transação"
+      - name: id_transacao
+        description: "{{ doc('id_transacao') }}"
+        data_type: string
+      - name: tipo_transacao_jae
+        description: "Tipo de transação realizada conforme o dado original da Jaé [a primeira perna de integrações são classificadas como tipo Débito e não Integração]"
+        data_type: string
+      - name: tipo_transacao
+        description: "{{ doc('tipo_transacao') }}"
+        data_type: string
+      - name: latitude
+        description: "{{ doc('latitude_transacao') }}"
+        data_type: float64
+      - name: longitude
+        description: "{{ doc('longitude_transacao') }}"
+        data_type: float64
+      - name: geo_point_transacao
+        description: "{{ doc('geo_point_transacao') }}"
+        data_type: geography
+      - name: valor_transacao
+        description: "{{ doc('valor_transacao') }}"
+        data_type: float64
+      - name: valor_pagamento
+        description: "Valor valor a ser pago pela transação (R$). Valores nulos indicam que o valor de pagamento para a transação ainda não foi calculado"
+        data_type: float64
+      - name: data_ordem
+        description: "{{ doc('data_ordem') }}"
+        data_type: date
+      - name: id_ordem_pagamento_servico_operador_dia
+        description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_servico_operador_dia"
+        data_type: string
+      - name: id_ordem_pagamento_consorcio_operador_dia
+        description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_operador_dia"
+        data_type: string
+      - name: id_ordem_pagamento_consorcio_dia
+        description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_dia"
+        data_type: string
+      - name: id_ordem_pagamento
+        description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_dia"
+        data_type: string
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+      - name: id_operadora_jae
+        description: "{{ doc('id_operadora_jae') }}"
+        data_type: string
+        quote: true
+      - name: hash_cartao
+        description: Hash identificador do cartão [protegido]
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+        data_type: string
+        quote: true
+      - name: saldo_cartao
+        description: "Saldo restante no cartão do cliente no momento da transação (R$)"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+      - name: cadastro_cliente
+        description: "{{ doc('cadastro_cliente') }}"
+        data_type: string
+        quote: true
+      - name: produto
+        description: "{{ doc('produto') }}"
+        data_type: string
+        quote: true
+      - name: produto_jae
+        description: "{{ doc('produto_jae') }}"
+        data_type: string
+        quote: true
+      - name: tipo_usuario
+        description: "{{ doc('tipo_usuario') }}"
+        data_type: string
+        quote: true
+      - name: subtipo_usuario
+        description: "Subipo do usuário que efetuou a transação [ex.: Estudante municipal, DC] [protegido]"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+        data_type: string
+      - name: meio_pagamento
+        description: "{{ doc('meio_pagamento') }}"
+        data_type: string
+        quote: true
+      - name: meio_pagamento_jae
+        description: "{{ doc('meio_pagamento_jae') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
+  - name: integracao
+    description: "Tabela de integrações realizadas entre modos do sistema de transporte municipal, contendo os valores da repartição tarifária (quando houver). [Dados em fase de teste]"
+    columns:
+      - name: data
+        description: "{{ doc('data_transacao') }} [partição]"
+      - name: hora
+        description: "{{ doc('hora_transacao') }}"
+      - name: datetime_processamento_integracao
+        description: "Data e hora de processamento da integração em GMT-3"
+      - name: datetime_captura
+        description: "{{ doc('datetime_captura') }}"
+      - name: datetime_transacao
+        description: "{{ doc('datetime_transacao') }}"
+      - name: intervalo_integracao
+        description: "Tempo entre a perna atual da integração e a anterior em minutos"
+      - name: id_integracao
+        description: "Identificador único da integração"
+      - name: sequencia_integracao
+        description: "Sequência da transação dentro da integração"
+      - name: modo
+        description: "{{ doc('modo') }}"
+      - name: id_consorcio
+        description: "{{ doc('id_consorcio') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: id_operadora
+        description: "{{ doc('id_operadora') }}"
+      - name: id_operadora_jae
+        description: "{{ doc('id_operadora_jae') }}"
+      - name: operadora
+        description: "{{ doc('operadora') }}"
+      - name: id_servico_jae
+        description: "{{ doc('id_servico_jae') }}"
+      - name: servico_jae
+        description: "{{ doc('servico_jae') }}"
+      - name: descricao_servico_jae
+        description: "{{ doc('descricao_servico_jae') }}"
+      - name: id_transacao
+        description: "{{ doc('id_transacao') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+      - name: percentual_rateio
+        description: "{{ doc('percentual_rateio') }}"
+      - name: valor_rateio_compensacao
+        description: "Valor a ser compensado pela ou à operadora (R$)"
+      - name: valor_rateio
+        description: "Valor real ganho pela operadora pela transação (R$)"
+      - name: valor_transacao
+        description: "{{ doc('valor_transacao') }}"
+      - name: valor_transacao_total
+        description: "Valor total das transações da integração (R$)"
+      - name: texto_adicional
+        description: "Observação adicional"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
+  - name: transacao_riocard
+    description: "Tabela com as transações feitas com RioCard que foram registradas pelo validador da Jaé"
+    columns:
+      - name: data
+        description: "{{ doc('data_transacao') }} [partição]"
+      - name: hora
+        description: "{{ doc('hora_transacao') }}"
+      - name: datetime_transacao
+        description: "{{ doc('datetime_transacao') }}"
+      - name: datetime_processamento
+        description: "{{ doc('datetime_processamento_transacao') }}"
+      - name: datetime_captura
+        description: "{{ doc('datetime_captura') }}"
+      - name: modo
+        description: "{{ doc('modo') }}"
+      - name: id_consorcio
+        description: "{{ doc('id_consorcio') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: id_operadora
+        description: "Identificador único da operadora de transporte na tabela rj-smtr.cadastro.operadoras"
+      - name: id_operadora_jae
+        description: "{{ doc('id_operadora_jae') }}"
+      - name: operadora
+        description: "{{ doc('operadora') }}"
+      - name: id_servico_jae
+        description: "{{ doc('id_servico_jae') }}"
+      - name: servico_jae
+        description: "{{ doc('servico_jae') }}"
+      - name: descricao_servico_jae
+        description: "{{ doc('descricao_servico_jae') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: id_validador
+        description: "{{ doc('id_validador') }}"
+      - name: id_transacao
+        description: "{{ doc('id_transacao') }}"
+      - name: latitude
+        description: "{{ doc('latitude_transacao') }}"
+      - name: longitude
+        description: "{{ doc('longitude_transacao') }}"
+      - name: geo_point_transacao
+        description: "{{ doc('geo_point_transacao') }}"
+      - name: valor_transacao
+        description: "{{ doc('valor_transacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+
+  - name: transacao_valor_ordem
+    description: Tabela contendo o valor de cada transação em uma ordem de pagamento
+    columns:
+      - name: data_ordem
+        description: "{{ doc('data_transacao') }} [partição]"
+        data_type: date
+        quote: true
+      - name: data_transacao
+        description: "{{ doc('data_transacao') }}"
+        data_type: date
+        quote: true
+      - name: id_transacao
+        description: "{{ doc('id_transacao') }}"
+        data_type: string
+        quote: true
+      - name: modo
+        description: "{{ doc('modo') }}"
+        data_type: string
+        quote: true
+      - name: consorcio
+        description: "{{  doc('consorcio') }}"
+        data_type: string
+        quote: true
+      - name: id_operadora
+        description: "{{  doc('id_operadora') }}"
+        data_type: string
+        quote: true
+      - name: id_servico_jae
+        description: "{{  doc('id_servico_jae') }}"
+        data_type: string
+        quote: true
+      - name: valor_transacao_rateio
+        description: Valor da transação com o rateio [se houver] (R$)
+        data_type: float64
+        quote: true
+      - name: id_ordem_pagamento
+        description: Identificador da ordem pagamento no banco de dados da Jaé
+        data_type: string
+        quote: true
+      - name: id_ordem_pagamento_consorcio_dia
+        description: Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_dia
+        data_type: string
+        quote: true
+      - name: id_ordem_pagamento_consorcio_operador_dia
+        description: Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_operador_dia
+        data_type: string
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+
+  - name: passageiro_hora
+    description: "Tabela de contagem do número de passageiros por hora."
+    columns:
+      - name: data
+        description: "{{ doc('data_transacao') }} [partição]"
+      - name: hora
+        description: "{{ doc('hora_transacao') }}"
+      - name: modo
+        description: "{{ doc('modo') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: id_servico_jae
+        description: "{{ doc('id_servico_jae') }}"
+      - name: servico_jae
+        description: "{{ doc('servico_jae') }}"
+      - name: descricao_servico_jae
+        description: "{{ doc('descricao_servico_jae') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+      - name: cadastro_cliente
+        description: "{{ doc('cadastro_cliente') }}"
+        data_type: string
+        quote: true
+      - name: produto
+        description: "{{ doc('produto') }}"
+        data_type: string
+        quote: true
+      - name: tipo_transacao
+        description: "{{ doc('tipo_transacao') }}"
+        data_type: string
+      - name: tipo_usuario
+        description: "{{ doc('tipo_usuario') }}"
+        data_type: string
+        quote: true
+      - name: meio_pagamento
+        description: "{{ doc('meio_pagamento') }}"
+        data_type: string
+        quote: true
+      - name: quantidade_passageiros
+        description: "{{ doc('quantidade_passageiros') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+  - name: passageiro_tile_hora
+    description: "Tabela de contagem do número de passageiros por hora dentro de um grid de geolocalização."
+    columns:
+      - name: data
+        description: "{{ doc('data_transacao') }} [partição]"
+      - name: hora
+        description: "{{ doc('hora_transacao') }}"
+      - name: modo
+        description: "{{ doc('modo') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: id_servico_jae
+        description: "{{ doc('id_servico_jae') }}"
+      - name: servico_jae
+        description: "{{ doc('servico_jae') }}"
+      - name: descricao_servico_jae
+        description: "{{ doc('descricao_servico_jae') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+      - name: cadastro_cliente
+        description: "{{ doc('cadastro_cliente') }}"
+        data_type: string
+        quote: true
+      - name: produto
+        description: "{{ doc('produto') }}"
+        data_type: string
+        quote: true
+      - name: tipo_transacao
+        description: "{{ doc('tipo_transacao') }}"
+        data_type: string
+      - name: tipo_usuario
+        description: "{{ doc('tipo_usuario') }}"
+        data_type: string
+        quote: true
+      - name: meio_pagamento
+        description: "{{ doc('meio_pagamento') }}"
+        data_type: string
+        quote: true
+      - name: tile_id
+        description: "Identificador do hexágono da geolocalização da transação na tabela rj-smtr.br_rj_riodejaneiro_geo.h3_res9"
+      - name: quantidade_passageiros
+        description: "{{ doc('quantidade_passageiros') }}"
+      - name: versao
+        description: "Código de controle de versão do dado (SHA Github)"
+  - name: dicionario_bilhetagem
+    description: "Dicionário dos dados de bilhetagem"
+    columns:
+      - name: chave
+        description: "Chave"
+      - name: cobertura_temporal
+        description: "{{ doc('cobertura_temporal') }}"
+      - name: id_tabela
+        description: "Nome da tabela"
+      - name: coluna
+        description: "{{ doc('column_name') }}"
+      - name: valor
+        description: "Valor"
+
+  - name: transacao_retificada
+    description: Tabela de retificação das informações das transações da Jaé
+    columns:
+      - name: id_retificacao
+        description: Identificador único da retificação
+        data_type: string
+        quote: true
+      - name: data
+        description: "{{ doc('data_transacao') }}"
+        data_type: date
+        quote: true
+      - name: id_transacao
+        description: "{{ doc('id_transacao') }}"
+        data_type: string
+        quote: true
+      - name: tipo_transacao_jae_original
+        description: Tipo da transação que estava originalmente na transação
+        data_type: string
+        quote: true
+      - name: valor_transacao_original
+        description: Valor da transação que estava originalmente na transação (R$)
+        data_type: float64
+        quote: true
+      - name: tipo_transacao_jae_retificada
+        description: Novo tipo da transação
+        data_type: string
+        quote: true
+      - name: valor_transacao_retificada
+        description: Novo valor da transação (R$)
+        data_type: float64
+        quote: true
+      - name: datetime_retificacao
+        description: Data e hora da retificação da transacao
+        data_type: datetime
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true

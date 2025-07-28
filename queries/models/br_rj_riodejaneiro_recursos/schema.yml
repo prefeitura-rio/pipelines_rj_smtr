@@ -52,7 +52,7 @@ models:
         - name: numero_relatorio_cimu
           description: Número do relatório CIMU
         - name: data_viagem
-          description: Data da viagem
+          description: "{{ doc('data_viagem') }}"
         - name: datetime_captura
           description: Data/hora de captura dos dados
         - name: datetime_recurso
@@ -99,7 +99,7 @@ models:
     description: "Recursos em avaliação pela Coordenadoria de Monitoramento (TR/SUBTT/CMO)"
     columns:
       - name: data
-        description: "Data da viagem"
+        description: "{{ doc('data_viagem') }}"
       - name: id_recurso
         description: "Número de ID do recurso"
       - name: tipo_recurso
@@ -110,7 +110,7 @@ models:
     description: "Recursos julgados e pagos (desconsideram-se os recursos que afetam a quinzena, sem data em específico)"
     columns:
       - name: data
-        description: "Data da viagem"
+        description: "{{ doc('data_viagem') }}"
       - name: tipo_dia
         description: "Tipo de dia (ex.: dia útil, sábado, domingo ou ponto facultativo)"
       - name: id_recurso

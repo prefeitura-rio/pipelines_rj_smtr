@@ -2,6 +2,7 @@
     config(
         materialized="incremental",
         partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+        require_partition_filter=true,
     )
 }}
 /*
@@ -58,6 +59,13 @@ with
                 (select max_latitude from box)
             )
     )
-select * except (rn), "{{ var(" version ") }}" as versao
+    << <<
+    << < head
+select * except (rn), "{{ var(" version ") }}" as versao == == == =
+select
+    * except (rn),
+    '{{ var("version") }}' as versao
+    >> >>
+    >> > 2 fd5087f871bda1002d2966acc377487a5ca6431
 from filtrada
 where rn = 1

@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 """General purpose functions"""
 import io
+import uuid
 from datetime import date, datetime
 from typing import Any
 
 import basedosdados as bd
 import pandas as pd
+import pendulum
 import pytz
 from croniter import croniter
 from pandas_gbq.exceptions import GenericGBQException
@@ -34,6 +36,8 @@ def custom_serialization(obj: Any) -> Any:
             if obj.tzinfo is None:
                 obj = obj.tz_localize("UTC").tz_convert(constants.TIMEZONE.value)
         return obj.isoformat()
+    elif isinstance(obj, uuid.UUID):
+        return str(obj)
 
     raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
 
@@ -237,6 +241,10 @@ def convert_timezone(timestamp: datetime) -> datetime:
         datetime: Datetime com informação de timezone
     """
     tz = timezone(constants.TIMEZONE.value)
+
+    if isinstance(timestamp, pendulum.DateTime):
+        pendulum_tz = timestamp.timezone
+        timestamp = datetime.fromtimestamp(timestamp.timestamp(), tz=pendulum_tz)
 
     if timestamp.tzinfo is None:
         timestamp = tz.localize(timestamp)

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Módulo para interagir com tabelas e datasets do BigQuery"""
-
+import csv
 from datetime import datetime, timedelta
-from typing import Callable
+from typing import Callable, Optional
 
 import basedosdados as bd
 import pandas as pd
@@ -14,7 +14,7 @@ from prefeitura_rio.pipelines_utils.logging import log
 from pipelines.constants import constants
 from pipelines.utils.gcp.base import GCPBase
 from pipelines.utils.gcp.storage import Storage
-from pipelines.utils.utils import convert_timezone, cron_date_range
+from pipelines.utils.utils import convert_timezone, cron_date_range, cron_get_last_date
 
 
 class Dataset(GCPBase):
@@ -180,6 +180,7 @@ class SourceTable(BQTable):
         partition_date_only: bool = False,
         max_recaptures: int = 60,
         raw_filetype: str = "json",
+        file_chunk_size: Optional[int] = None,
     ) -> None:
         self.source_name = source_name
         super().__init__(
@@ -197,13 +198,14 @@ class SourceTable(BQTable):
         self.pretreatment_reader_args = pretreatment_reader_args
         self.pretreat_funcs = pretreat_funcs or []
         self.schedule_cron = schedule_cron
+        self.file_chunk_size = file_chunk_size
 
-    def _create_table_schema(self) -> list[bigquery.SchemaField]:
+    def _create_table_schema(self, sample_filepath: str) -> list[bigquery.SchemaField]:
         """
         Cria schema para os argumentos da criação de tabela externa no BQ
         """
         log("Creating table schema...")
-        columns = self.primary_keys + ["content", "timestamp_captura"]
+        columns = next(csv.reader(open(sample_filepath, encoding="utf-8")))
 
         log(f"Columns: {columns}")
         schema = [
@@ -212,7 +214,7 @@ class SourceTable(BQTable):
         log("Schema created!")
         return schema
 
-    def _create_table_config(self) -> bigquery.ExternalConfig:
+    def _create_table_config(self, sample_filepath: str) -> bigquery.ExternalConfig:
         """
         Cria as configurações da tabela externa no BQ
         """
@@ -220,18 +222,31 @@ class SourceTable(BQTable):
         external_config.options.skip_leading_rows = 1
         external_config.options.allow_quoted_newlines = True
         external_config.autodetect = False
-        external_config.schema = self._create_table_schema()
+        external_config.schema = self._create_table_schema(sample_filepath=sample_filepath)
         external_config.options.field_delimiter = ","
         external_config.options.allow_jagged_rows = False
 
         uri = f"gs://{self.bucket_name}/source/{self.dataset_id}/{self.table_id}/*"
         external_config.source_uris = uri
         hive_partitioning = HivePartitioningOptions()
-        hive_partitioning.mode = "STRINGS"
+        hive_partitioning.mode = "AUTO"
         hive_partitioning.source_uri_prefix = uri.replace("*", "")
         external_config.hive_partitioning = hive_partitioning
 
         return external_config
+
+    def get_last_scheduled_timestamp(self, timestamp: datetime) -> datetime:
+        """
+        Retorna o último timestamp programado antes do timestamp fornecido
+        com base na expressão cron configurada
+
+        Args:
+            timestamp (datetime): O timestamp de referência
+
+        Returns:
+            datetime: O último timestamp programado com base na expressão cron
+        """
+        return cron_get_last_date(cron_expr=self.schedule_cron, timestamp=timestamp)
 
     def get_uncaptured_timestamps(self, timestamp: datetime, retroactive_days: int = 2) -> list:
         """
@@ -263,7 +278,9 @@ class SourceTable(BQTable):
             files = files + [
                 convert_timezone(datetime.strptime(b.name.split("/")[-1], "%Y-%m-%d-%H-%M-%S.csv"))
                 for b in st.bucket.list_blobs(prefix=prefix)
+                if ".csv" in b.name
             ]
+
         return [d for d in full_range if d not in files][: self.max_recaptures]
 
     def upload_raw_file(self, raw_filepath: str, partition: str):
@@ -281,12 +298,13 @@ class SourceTable(BQTable):
             partition=partition,
         )
 
-    def create(self, location: str = "US"):
+    def create(self, sample_filepath: str, location: str = "US"):
         """
         Cria tabela externa do BQ
 
         Args:
             location (str): Localização do dataset
+            sample_filepath (str): Caminho com dados da tabela (usados para criar o schema)
         """
         log(f"Creating External Table: {self.table_full_name}")
         dataset_obj = Dataset(dataset_id=self.dataset_id, env=self.env, location=location)
@@ -296,7 +314,9 @@ class SourceTable(BQTable):
 
         bq_table = bigquery.Table(self.table_full_name)
         bq_table.description = f"staging table for `{self.table_full_name}`"
-        bq_table.external_data_configuration = self._create_table_config()
+        bq_table.external_data_configuration = self._create_table_config(
+            sample_filepath=sample_filepath
+        )
 
         client.create_table(bq_table)
         log("Table created!")

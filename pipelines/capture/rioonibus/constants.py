@@ -6,7 +6,7 @@ Valores constantes para captura de dados da Rio Ônibus
 from datetime import datetime
 from enum import Enum
 
-from pipelines.schedules import cron_every_day_hour_7
+from pipelines.schedules import create_daily_cron
 from pipelines.utils.gcp.bigquery import SourceTable
 
 
@@ -23,7 +23,7 @@ class constants(Enum):  # pylint: disable=c0103
         source_name=RIO_ONIBUS_SOURCE_NAME,
         table_id="viagem_informada",
         first_timestamp=datetime(2024, 10, 16, 0, 0, 0),
-        schedule_cron=cron_every_day_hour_7,
+        schedule_cron=create_daily_cron(hour=7),
         partition_date_only=True,
         max_recaptures=5,
         primary_keys=["id_viagem"],

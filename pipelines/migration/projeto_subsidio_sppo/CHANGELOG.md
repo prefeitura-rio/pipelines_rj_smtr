@@ -1,5 +1,109 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.2.6] - 2025-07-22
+
+### Adicionado
+
+- Alterado o flow `viagens_sppo` para fazer duas apurações por dia às 05h e 14h (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/713)
+
+## [1.2.5] - 2025-07-21
+
+### Alterado
+
+- Altera as tasks `run_dbt_model`, `run_dbt_selector` e `run_dbt_tests` pela task genérica `run_dbt` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/715)
+
+## [1.2.4] - 2025-06-30
+
+### Adicionado
+
+- Adicionados testes do modelo `veiculo_dia` no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/648)
+
+## [1.2.3] - 2025-06-30
+
+- Adiciona teste da  `veiculo_dia` nos pre-tests da apuração (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/653)
+
+## [1.2.2] - 2025-06-25
+
+### Alterado
+
+- Altera valor padrão do parâmetro `materialize_sppo_veiculo_dia` para `False` no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
+## [1.2.1] - 2025-05-13
+
+### Adicionado
+
+- Adicionadas as constantes `SUBSIDIO_SPPO_V14_POS_CHECKS_DATASET_ID` e `SUBSIDIO_SPPO_V9_POS_CHECKS_DATASET_ID` no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/577)
+
+## [1.2.0] - 2025-05-08
+
+### Adicionado
+
+- Adiciona execução de snapshots nos flows `viagens_sppo` e `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/570)
+
+## [1.1.5] - 2025-03-27
+
+### Corrigido
+
+- Corrigida a materialização do modelo `aux_calendario_manual.sql` no flow `viagens_sppo` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/500)
+
+## [1.1.4] - 2025-03-27
+
+### Alterado
+
+- Alterado teste `test_check_gps_treatment.sql` para desconsiderar duplicações assim como o modelo `sppo_aux_registros_filtrada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/500)
+
+## [1.1.3] - 2025-03-21
+
+### Adicionado
+
+- Adicionados os testes da modelo `viagem_planejada.sql` aos testes do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/479)
+
+## [1.1.2] - 2025-02-17
+
+### Corrigido
+
+- Corrige a descrição dos testes do modelo `sumario_faixa_servico_dia_pagamento.sql`  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/433)
+
+## [1.1.1] - 2025-02-11
+
+### Corrigido
+
+- Corrige logica de execução dos teste no flow `subsidio_sppo_apuracao`  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/423)
+
+## [1.1.0] - 2025-02-04
+
+### Adicionado
+
+- Adicionados os testes do modelo `sumario_faixa_servico_dia_pagamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/401)
+
+### Corrigido
+
+- Corrigidas e refatoradas as descrições dos testes do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/401)
+
+## [1.0.9] - 2025-01-23
+
+### Alterado
+
+- Remove parâmetro `stu_data_versao` do flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/395)
+
+## [1.0.8] - 2025-01-03
+
+### Corrigido
+
+- Corrigida a materialização dos modelos do dataset `monitoramento` no flow do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/391)
+
+## [1.0.7] - 2025-01-03
+
+### Adicionado
+
+- Adiciona a materialização dos modelos do dataset `monitoramento` ao flow do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/372)
+
+## [1.0.6] - 2024-12-17
+
+### Adicionado
+
+- Adiciona automação dos testes do DBT no arquivo `flows.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/256)
+
 ## [1.0.5] - 2024-08-29
 
 ### Alterado

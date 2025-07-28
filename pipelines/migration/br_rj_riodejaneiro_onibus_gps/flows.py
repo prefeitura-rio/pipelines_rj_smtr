@@ -2,7 +2,7 @@
 """
 Flows for br_rj_riodejaneiro_onibus_gps
 
-DBT 2024-08-20
+DBT 2025-06-24
 """
 
 from copy import deepcopy
@@ -51,7 +51,6 @@ from pipelines.migration.tasks import (  # get_local_dbt_client,
     parse_timestamp_to_string,
     query_logs,
     rename_current_flow_run_now_time,
-    run_dbt_model,
     save_raw_local,
     save_treated_local,
     set_last_run_timestamp,
@@ -67,7 +66,7 @@ from pipelines.schedules import (
 from pipelines.treatment.templates.tasks import (
     check_dbt_test_run,
     dbt_data_quality_checks,
-    run_dbt_tests,
+    run_dbt,
 )
 
 # from pipelines.utils.execute_dbt_model.tasks import get_k8s_dbt_client
@@ -164,9 +163,9 @@ with Flow(
     table_id = Parameter("table_id", default=constants.GPS_SPPO_TREATED_TABLE_ID.value)
     rebuild = Parameter("rebuild", False)
     rematerialization = Parameter("rematerialization", default=False)
-    date_range_start = Parameter("date_range_start", default=None)
-    date_range_end = Parameter("date_range_end", default=None)
-    fifteen_minutes = Parameter("fifteen_minutes", default="")
+    date_range_start_param = Parameter("date_range_start", default=None)
+    date_range_end_param = Parameter("date_range_end", default=None)
+    _15_minutos = Parameter("15_minutos", default=False)
     materialize_delay_hours = Parameter(
         "materialize_delay_hours",
         default=constants.GPS_SPPO_MATERIALIZE_DELAY_HOURS.value,
@@ -208,7 +207,7 @@ with Flow(
                     "date_range_start": start,
                     "date_range_end": end,
                 }
-            )(start=date_range_start, end=date_range_end)
+            )(start=date_range_start_param, end=date_range_end_param)
 
             RUN_CLEAN_TRUE = clean_br_rj_riodejaneiro_onibus_gps(date_range_true)
 
@@ -223,25 +222,30 @@ with Flow(
 
         # Run materialization #
         with case(rebuild, True):
-            RUN_TRUE = run_dbt_model(
+            RUN_TRUE = run_dbt(
+                resource="model",
                 # dbt_client=dbt_client,
                 dataset_id=dataset_id,
                 table_id=table_id,
                 upstream=True,
                 exclude="+data_versao_efetiva",
-                _vars=[date_range, dataset_sha, {"fifteen_minutes": fifteen_minutes}],
+                _vars=[date_range, dataset_sha, {"15_minutos": _15_minutos}],
                 flags="--full-refresh",
             )
 
         with case(rebuild, False):
-            RUN_FALSE = run_dbt_model(
+            RUN_FALSE = run_dbt(
+                resource="model",
                 # dbt_client=dbt_client,
                 dataset_id=dataset_id,
                 table_id=table_id,
                 exclude="+data_versao_efetiva",
-                _vars=[date_range, dataset_sha, {"fifteen_minutes": fifteen_minutes}],
+                _vars=[date_range, dataset_sha, {"15_minutos": _15_minutos}],
                 upstream=True,
             )
+
+            date_range_start = date_range["date_range_start"]
+            date_range_end = date_range["date_range_end"]
 
             RUN_TEST, datetime_start, datetime_end = check_dbt_test_run(
                 date_range_start, date_range_end, run_time_test, upstream_tasks=[RUN_FALSE]
@@ -250,7 +254,8 @@ with Flow(
             _vars = {"date_range_start": datetime_start, "date_range_end": datetime_end}
 
             with case(RUN_TEST, True):
-                gps_sppo_data_quality = run_dbt_tests(
+                gps_sppo_data_quality = run_dbt(
+                    resource="test",
                     dataset_id=dataset_id,
                     table_id=table_id,
                     _vars=_vars,
@@ -284,9 +289,10 @@ with Flow(
         materialize_sppo.set_reference_tasks([RUN, RUN_CLEAN, SET])
     with case(test_only, True):
 
-        _vars = {"date_range_start": date_range_start, "date_range_end": date_range_end}
+        _vars = {"date_range_start": date_range_start_param, "date_range_end": date_range_end_param}
 
-        gps_sppo_data_quality = run_dbt_tests(
+        gps_sppo_data_quality = run_dbt(
+            resource="test",
             dataset_id=dataset_id,
             table_id=table_id,
             _vars=_vars,
@@ -591,7 +597,7 @@ materialize_gps_15_min = set_default_parameters(
         "table_id": constants.GPS_SPPO_15_MIN_TREATED_TABLE_ID.value,
         "materialize_delay_hours": 0,
         "truncate_minutes": False,
-        "fifteen_minutes": "_15_minutos",
+        "15_minutos": True,
     },
 )
 materialize_gps_15_min.name = "SMTR: GPS SPPO 15 Minutos - Materialização (subflow)"
@@ -618,7 +624,7 @@ with Flow("SMTR: GPS SPPO 15 Minutos - Tratamento") as recaptura_15min:
             "rebuild": rebuild,
             "materialize_delay_hours": 0,
             "truncate_minutes": False,
-            "fifteen_minutes": "_15_minutos",
+            "15_minutos": True,
         },
     )
 

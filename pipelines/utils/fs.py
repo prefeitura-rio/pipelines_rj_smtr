@@ -109,13 +109,20 @@ def get_filetype(filepath: str):
     return os.path.splitext(filepath)[1].removeprefix(".")
 
 
-def save_local_file(filepath: str, filetype: str, data: Union[str, dict, list[dict], pd.DataFrame]):
+def save_local_file(
+    filepath: str,
+    filetype: str,
+    data: Union[str, dict, list[dict], pd.DataFrame],
+    csv_mode="w",
+):
     """
     Salva um arquivo localmente
 
     Args:
         filepath (str): Caminho para salvar o arquivo
+        filetype (str): Extensão do arquivo
         data Union[str, dict, list[dict], pd.DataFrame]: Dados que serão salvos no arquivo
+        csv_mode (str): Modo de escrita no arquivo CSV
     """
     log(f"Saving data on local file: {filepath}")
 
@@ -125,7 +132,10 @@ def save_local_file(filepath: str, filetype: str, data: Union[str, dict, list[di
 
     if isinstance(data, pd.DataFrame):
         log("Received a DataFrame, saving file as CSV")
-        data.to_csv(filepath, index=False)
+        if csv_mode == "a":
+            data.to_csv(filepath, index=False, header=False, mode="a")
+        else:
+            data.to_csv(filepath, index=False)
         log("File saved!")
         return
 

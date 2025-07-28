@@ -2,6 +2,7 @@
 """
 Tasks for rj_smtr
 """
+import os
 from copy import deepcopy
 from datetime import datetime, timedelta
 from typing import Callable
@@ -31,26 +32,25 @@ from pipelines.utils.utils import create_timestamp_captura, data_info_str
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
-def set_env(env: str, source: SourceTable) -> SourceTable:
+def set_env(env: str, table_id: str, source_map: dict[str, SourceTable]) -> SourceTable:
     """
-    Cria um objeto de tabela para interagir com o BigQuery
-    Creates basedosdados Table object
+    Cria um objeto de tabela source para interagir com o BigQuery
 
     Args:
-        env (str): dev ou prod,
-        dataset_id (str): dataset_id no BigQuery,
-        table_id (str): table_id no BigQuery,
-        bucket_name (Union[None, str]): Nome do bucket com os dados da tabela no GCS,
-            se for None, usa o bucket padrão do ambiente
-        timestamp (datetime): timestamp gerado pela execução do flow,
-        partition_date_only (bool): True se o particionamento deve ser feito apenas por data
-            False se o particionamento deve ser feito por data e hora,
-        raw_filetype (str): Tipo do arquivo raw (json, csv...),
+        env (str): dev ou prod
+        table_id (str): Nome da tabela que será capturada
+        source_map (dict[str, SourceTable]): Dicionário no formato
+            {"table_id": SourceTable(), ...}
 
     Returns:
-        BQTable: Objeto para manipular a tabela no BigQuery
+        SourceTable: Objeto para manipular a tabela source no BigQuery
     """
-    source = deepcopy(source)
+    if table_id not in source_map.keys():
+        raise ValueError(
+            f"source {table_id} não disponível no flow.\n sources: {source_map.keys()}"
+        )
+    source = deepcopy(source_map[table_id])
+
     return source.set_env(env=env)
 
 
@@ -58,15 +58,23 @@ def set_env(env: str, source: SourceTable) -> SourceTable:
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
-def rename_capture_flow(flow_name: str, timestamp: datetime, recapture: bool) -> bool:
+def rename_capture_flow(
+    table_id: str,
+    timestamp: datetime,
+    recapture: bool,
+) -> bool:
     """
     Renomeia a run atual do Flow de captura com o formato:
-    <flow_name>: <timestamp> - recaptura: <recapture>
+    <table_id>: <timestamp> - recaptura: <recapture>
 
+    Args:
+        env (str): dev ou prod
+        table_id (str): Nome da tabela que será capturada
+        recaptura (bool): Se a execução é uma recaptura ou não
     Returns:
         bool: Se o flow foi renomeado
     """
-    name = f"{flow_name}: {timestamp.isoformat()} - recaptura: {recapture}"
+    name = f"{table_id}: {timestamp.isoformat()} - recaptura: {recapture}"
     return rename_current_flow_run(name=name)
 
 
@@ -162,7 +170,7 @@ def create_filepaths(source: SourceTable, partition: str, timestamp: datetime) -
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
-def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str):
+def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str, source: SourceTable):
     """
     Faz a extração dos dados raw e salva localmente
 
@@ -174,10 +182,22 @@ def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str):
                 "source": source/caminho/para/salvar/arquivo.extensao
             }
         raw_filetype (str): tipo de dado raw
+        source (SourceTable): Objeto representando a fonte de dados capturados
     """
     data = data_extractor()
-    print("---------------------------" + filepaths["raw"])
-    save_local_file(filepath=filepaths["raw"], filetype=raw_filetype, data=data)
+    raw_filepath = filepaths["raw"]
+
+    if source.file_chunk_size is None:
+        data = [data]
+
+    raw_filepaths = []
+    for idx, file in enumerate(data):
+        base_path, ext = os.path.splitext(raw_filepath)
+        filepath = f"{base_path}_{idx}{ext}"
+        save_local_file(filepath=filepath, filetype=raw_filetype, data=file)
+        raw_filepaths.append(filepath)
+
+    return raw_filepaths
 
 
 ################
@@ -189,20 +209,17 @@ def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str):
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
-def upload_raw_file_to_gcs(source: SourceTable, filepaths: dict, partition: str):
+def upload_raw_file_to_gcs(source: SourceTable, raw_filepaths: list[str], partition: str):
     """
     Sobe o arquivo raw para o GCS
 
     Args:
         source (SourceTable): Objeto representando a fonte de dados capturados
-        filepaths (dict): Dicionário no formato:
-            {
-                "raw": raw/caminho/para/salvar/arquivo.extensao,
-                "source": source/caminho/para/salvar/arquivo.extensao
-            }
+        raw_filepaths (list): Lista de caminhos para ler os dados raw
         partition (str): Partição Hive
     """
-    source.upload_raw_file(raw_filepath=filepaths["raw"], partition=partition)
+    for filepath in raw_filepaths:
+        source.upload_raw_file(raw_filepath=filepath, partition=partition)
 
 
 @task(
@@ -225,7 +242,7 @@ def upload_source_data_to_gcs(source: SourceTable, partition: str, filepaths: di
     if not source.exists():
         log("Staging Table does not exist, creating table...")
         source.append(source_filepath=filepaths["source"], partition=partition)
-        source.create()
+        source.create(sample_filepath=filepaths["source"])
     else:
         log("Staging Table already exists, appending to it...")
         source.append(source_filepath=filepaths["source"], partition=partition)
@@ -241,7 +258,8 @@ def upload_source_data_to_gcs(source: SourceTable, partition: str, filepaths: di
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
 def transform_raw_to_nested_structure(
-    filepaths: dict,
+    raw_filepaths: list[str],
+    filepaths: dict[str],
     timestamp: datetime,
     primary_keys: list[str],
     reader_args: dict,
@@ -251,7 +269,7 @@ def transform_raw_to_nested_structure(
     Task para aplicar pre-tratamentos e transformar os dados para o formato aninhado
 
     Args:
-        raw_filepath (str): Caminho para ler os dados raw
+        raw_filepaths (list): Lista de caminhos para ler os dados raw
         source_filepath (str): Caminho para salvar os dados tratados
         timestamp (datetime): A timestamp da execução do Flow
         primary_keys (list): Lista de primary keys da tabela
@@ -264,27 +282,34 @@ def transform_raw_to_nested_structure(
                 primary_keys (list[str])
             e retornar um pd.DataFrame
     """
-    data = read_raw_data(filepath=filepaths["raw"], reader_args=reader_args)
+    csv_mode = "w"
+    for raw_filepath in raw_filepaths:
+        data = read_raw_data(filepath=raw_filepath, reader_args=reader_args)
 
-    if data.empty:
-        log("Empty dataframe, skipping transformation...")
-        data = pd.DataFrame()
-    else:
-        log(f"Raw data:\n{data_info_str(data)}", level="info")
+        if data.empty:
+            log("Empty dataframe, skipping transformation...")
+            data = pd.DataFrame()
+        else:
+            log(f"Raw data:\n{data_info_str(data)}", level="info")
 
-        for step in pretreat_funcs:
-            data = step(data=data, timestamp=timestamp, primary_keys=primary_keys)
+            data_columns_len = len(data.columns)
+            captura = create_timestamp_captura(timestamp=datetime.now())
+            data["_datetime_execucao_flow"] = captura
 
-        data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
+            for step in pretreat_funcs:
+                data = step(data=data, timestamp=timestamp, primary_keys=primary_keys)
 
-        timestamp = create_timestamp_captura(timestamp=timestamp)
-        data["timestamp_captura"] = timestamp
+            if len(primary_keys) < data_columns_len:
+                data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
 
-    log(
-        f"Finished nested structure! Data: \n{data_info_str(data)}",
-        level="info",
-    )
+            data["timestamp_captura"] = create_timestamp_captura(timestamp=timestamp)
 
-    source_filepath = filepaths["source"]
-    save_local_file(filepath=source_filepath, filetype="csv", data=data)
-    log(f"Data saved in {source_filepath}")
+        log(
+            f"Finished nested structure! Data: \n{data_info_str(data)}",
+            level="info",
+        )
+
+        source_filepath = filepaths["source"]
+        save_local_file(filepath=source_filepath, filetype="csv", data=data, csv_mode=csv_mode)
+        csv_mode = "a"
+        log(f"Data saved in {source_filepath}")

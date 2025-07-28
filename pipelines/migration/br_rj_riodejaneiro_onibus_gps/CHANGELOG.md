@@ -1,5 +1,17 @@
 # Changelog - br_rj_riodejaneiro_onibus_gps
 
+## [1.0.5] - 2025-07-21
+
+### Alterado
+
+- Altera as tasks `run_dbt_model` e `run_dbt_tests` pela task genérica `run_dbt` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/715)
+
+## [1.0.4] - 2025-02-06
+
+### Corrigido
+
+- Corrige as descrições de testes do modelo `gps_sppo` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/401)
+
 ## [1.0.3] - 2024-10-29
 
 ### Alterado

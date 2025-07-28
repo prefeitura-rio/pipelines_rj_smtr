@@ -2,7 +2,7 @@
 """
 Flows for br_rj_riodejaneiro_rdo
 
-DBT 2024-09-06
+DBT: 2025-05-13
 """
 from prefect import Parameter, case
 from prefect.run_configs import KubernetesRun
@@ -39,10 +39,10 @@ from pipelines.migration.tasks import (
     get_join_dict,
     get_now_time,
     rename_current_flow_run_now_time,
-    run_dbt_model,
     set_last_run_timestamp,
 )
 from pipelines.schedules import every_day
+from pipelines.treatment.templates.tasks import run_dbt
 
 # from pipelines.utils.execute_dbt_model.tasks import get_k8s_dbt_client
 # from pipelines.utils.execute_dbt_model.tasks import run_dbt_model
@@ -79,7 +79,8 @@ with Flow(
     dbt_vars = get_join_dict([date_range], version)
     # Run materialization #
     with case(rebuild, True):
-        RUN = run_dbt_model(
+        RUN = run_dbt(
+            resource="model",
             dataset_id=dataset_id,
             table_id=table_id,
             upstream=True,
@@ -95,7 +96,8 @@ with Flow(
             mode=MODE,
         )
     with case(rebuild, False):
-        RUN = run_dbt_model(
+        RUN = run_dbt(
+            resource="model",
             dataset_id=dataset_id,
             table_id=table_id,
             upstream=True,

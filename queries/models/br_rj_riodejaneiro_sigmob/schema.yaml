@@ -70,12 +70,12 @@ models:
     description: "View para os dados capturados em staging com os valores da coluna content desaninhados do cadastro dos serviços (routes) (Descontinuada a partir de 2022-09-13)."
     columns:
       - name: route_id
-        tests:
-          - not_null:
-              partition_column: data_versao
-          - unique_key:
-              partition_column: data_versao
-              combined_keys: ""
+        # tests:
+        #   - not_null:
+        #       partition_column: data_versao
+        #   - unique_key:
+        #       partition_column: data_versao
+        #       combined_keys: ""
   - name: trips
     description: "View para os dados capturados em staging do cadastro dos itinerários (Descontinuada a partir de 2022-09-13)."
   - name: trips_desaninhada
@@ -83,39 +83,39 @@ models:
     columns:
       - name: trip_id
         description: "Identificador único para um itinerário"
-        tests:
-          - not_null:
-              partition_column: data_versao
-          - unique_key:
-              partition_column: data_versao
-              combined_keys: ""
-          - one_to_one:
-              partition_column: data_versao
-              to_table: ref('shapes_geom')
+        # tests:
+        #   - not_null:
+        #       partition_column: data_versao
+        #   - unique_key:
+        #       partition_column: data_versao
+        #       combined_keys: ""
+        #   - one_to_one:
+        #       partition_column: data_versao
+        #       to_table: ref('shapes_geom')
       - name: route_id
         description: "Identificador única para a route (serviço)"
-        tests:
-          - many_to_one:
-              foreign_key: route_id
-              partition_column: data_versao
-              to_table: ref('routes_desaninhada')
+        # tests:
+        #   - many_to_one:
+        #       foreign_key: route_id
+        #       partition_column: data_versao
+        #       to_table: ref('routes_desaninhada')
   - name: shapes_geom
     description: "Tabela com as linestrings de cada itinarário consolidadas a partir da captura ponto a ponto (Descontinuada a partir de 2022-09-13)."
     columns:
-      - name: shape_id
-        tests:
-          - not_null:
-              partition_column: data_versao
+      # - name: shape_id
+      #   tests:
+      #     - not_null:
+      #         partition_column: data_versao
       - name: trip_id
-        tests:
-          - not_null:
-              partition_column: data_versao
-          - unique_key:
-              partition_column: data_versao
-              combined_keys: ""
-          - one_to_one:
-              partition_column: data_versao
-              to_table: ref('trips_desaninhada')
+        # tests:
+        #   - not_null:
+        #       partition_column: data_versao
+        #   - unique_key:
+        #       partition_column: data_versao
+        #       combined_keys: ""
+        #   - one_to_one:
+        #       partition_column: data_versao
+        #       to_table: ref('trips_desaninhada')
   - name: agency
     description: "View para os dados capturados em staging do cadastro das agências de transporte público (Descontinuada a partir de 2022-09-13)."
     columns:

@@ -11,7 +11,9 @@ test/*.csv
 setup.py
 .vscode/*
 *.hdf
-
+pipelines/treinamento_cmo/*
+.cmo/*
+**/cmo.py
 
 
 # Byte-compiled / optimized / DLL files

@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: staging_operadora_empresa
-    description: "View para os dados capturados em staging com tratamento básico das empresas operadoras."
+    description: "View para os dados capturados em staging com tratamento básico das empresas operadoras"
     columns:
       - name: data
         description: "Data de captura"
@@ -25,7 +25,7 @@ models:
       - name: tipo_permissao
         description: "Tipo de permissão da empresa"
   - name: staging_operadora_pessoa_fisica
-    description: "View para os dados capturados em staging com tratamento básico dos operadores pessoa física."
+    description: "View para os dados capturados em staging com tratamento básico dos operadores pessoa física"
     columns:
       - name: data
         description: "Data de captura"
@@ -44,7 +44,7 @@ models:
       - name: nome
         description: "Nome do operador"
       - name: placa
-        description: "Placa do veículo"
+        description: "{{ doc('placa') }}"
       - name: id_modo
         description: "Identificador do modo de transporte"
       - name: modo

@@ -12,8 +12,43 @@ from pytz import timezone
 from pipelines.constants import constants
 from pipelines.constants import constants as emd_constants
 
-cron_every_day_hour_7 = "0 7 * * *"
-cron_every_day_hour_7_minute_10 = "10 7 * * *"
+
+def create_daily_cron(hour: int, minute: int = 0) -> str:
+    """
+    Cria uma expressão cron de execução diário na hora e minuto definido
+
+    Args:
+        hour (int): Hora de execução
+        minute (int): Minuto da execução
+
+    Returns:
+        str: expressão cron
+    """
+    return f"{minute} {hour} * * *"
+
+
+def create_hourly_cron(minute: int = 0) -> str:
+    """
+    Cria uma expressão cron de execução de hora em hora no minuto definido
+
+    Args:
+        minute (int): Minuto da execução
+
+    Returns:
+        str: expressão cron
+    """
+    return f"{minute} * * * *"
+
+
+def create_minute_cron(minute: int = 1) -> str:
+    """
+    Cria uma expressão cron de execução a cada X minutos
+    Args:
+        minute (int): A cada quantos minutos será executado
+    Returns:
+        str: expressão cron
+    """
+    return f"*/{minute} * * * *"
 
 
 def generate_interval_schedule(
@@ -140,12 +175,42 @@ every_day_hour_five = Schedule(
         ),
     ]
 )
+every_day_hour_five_and_hour_fourteen = Schedule(
+    clocks=[
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(2022, 11, 30, 5, 0, tzinfo=timezone(constants.TIMEZONE.value)),
+            labels=[
+                emd_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        ),
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(2022, 11, 30, 14, 0, tzinfo=timezone(constants.TIMEZONE.value)),
+            labels=[
+                emd_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        ),
+    ]
+)
 
 every_5_minutes = Schedule(
     clocks=[
         IntervalClock(
             interval=timedelta(minutes=5),
             start_date=datetime(2021, 1, 1, 0, 0, 0, tzinfo=timezone(constants.TIMEZONE.value)),
+            labels=[
+                emd_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        ),
+    ]
+)
+
+every_day_hour_six_minute_fifty = Schedule(
+    clocks=[
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(2025, 2, 1, 6, 50, 0, tzinfo=timezone(constants.TIMEZONE.value)),
             labels=[
                 emd_constants.RJ_SMTR_AGENT_LABEL.value,
             ],

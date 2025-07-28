@@ -7,9 +7,9 @@ models:
       - name: data
         description: "Data de referência para partição"
       - name: ano
-        description: "Ano de apuração do indicador"
+        description: "{{ doc('ano_indicador') }}"
       - name: mes
-        description: "Mês de apuração do indicador"
+        description: "{{ doc('mes') }}"
       - name: modo
         description: "Modo de transporte"
       - name: quantidade_veiculo_mes
@@ -17,16 +17,16 @@ models:
       - name: data_ultima_atualizacao
         description: "Data da última atualização do indicador"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   # - name: idade_media_frota_licenciada
   #   description: "Indicador de idade média da frota licenciada por mês"
   #   columns:
   #     - name: data
   #       description: "Data de referência para apuração (partição)"
   #     - name: ano
-  #       description: "Ano de apuração do indicador"
+  #       description: "{{ doc('ano_indicador') }}"
   #     - name: mes
-  #       description: "Mês de apuração do indicador"
+  #       description: "{{ doc('mes') }}"
   #     - name: modo
   #       description: "Modo de transporte"
   #     - name: idade_media_veiculo_mes
@@ -34,16 +34,16 @@ models:
   #     - name: data_ultima_atualizacao
   #       description: "Data da última atualização do indicador"
   #     - name: versao
-  #       description: "Código de controle de versão do dado (SHA Github)"
+  #       description: "{{ doc('versao') }}"
   - name: idade_media_frota_operante_onibus
     description: "Indicador de idade média da frota operante por mês"
     columns:
       - name: data
         description: "Data de referência para partição"
       - name: ano
-        description: "Ano de apuração do indicador"
+        description: "{{ doc('ano_indicador') }}"
       - name: mes
-        description: "Mês de apuração do indicador"
+        description: "{{ doc('mes') }}"
       - name: modo
         description: "Modo de transporte"
       - name: idade_media_veiculo_mes
@@ -51,16 +51,16 @@ models:
       - name: data_ultima_atualizacao
         description: "Data da última atualização do indicador"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: passageiro_gratuidade
     description: "Indicador de gratuidades por mês"
     columns:
       - name: data
         description: "Data de referência para partição"
       - name: ano
-        description: "Ano de apuração do indicador"
+        description: "{{ doc('ano_indicador') }}"
       - name: mes
-        description: "Mês de apuração do indicador"
+        description: "{{ doc('mes') }}"
       - name: modo
         description: "Modo de transporte (se aplicável)"
       - name: quantidade_passageiro_gratuidade_mes
@@ -68,16 +68,16 @@ models:
       - name: data_ultima_atualizacao
         description: "Data da última atualização do indicador"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
   - name: passageiro_pagante
     description: "Indicador de passageiros pagantes por mês"
     columns:
       - name: data
         description: "Data de referência para partição"
       - name: ano
-        description: "Ano de apuração do indicador"
+        description: "{{ doc('ano_indicador') }}"
       - name: mes
-        description: "Mês de apuração do indicador"
+        description: "{{ doc('mes') }}"
       - name: modo
         description: "Modo de transporte (se aplicável)"
       - name: quantidade_passageiro_pagante_mes
@@ -85,4 +85,4 @@ models:
       - name: data_ultima_atualizacao
         description: "Data da última atualização do indicador"
       - name: versao
-        description: "Código de controle de versão do dado (SHA Github)"
+        description: "{{ doc('versao') }}"
