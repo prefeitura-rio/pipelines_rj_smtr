@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.5.9] - 2025-07-28
+
+### Adicionado
+
+- Adiciona testes de unicidade no modelo `veiculo_fiscalizacao_lacre.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/708)
+
 ## [1.5.8] - 2025-07-23
 
 ### Alterado
