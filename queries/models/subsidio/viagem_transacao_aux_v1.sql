@@ -4,6 +4,11 @@
 {% elif var("tipo_materializacao") == "subsidio" %} {% set interval_minutes = 30 %}
 {% endif %}
 
+{% set incremental_filter %}
+    data between date("{{ var('start_date') }}") and date_add(date("{{ var('end_date') }}"), interval 1 day)
+    and data <= date_add(date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}"), interval 1 day)
+{% endset %}
+
 with
     -- Transações Jaé
     transacao as (
@@ -11,9 +16,7 @@ with
         from {{ ref("transacao") }}
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
         where
-            data between date("{{ var('start_date') }}") and date_add(
-                date("{{ var('end_date') }}"), interval 1 day
-            )
+            {{ incremental_filter }}
             and date(datetime_processamento) - date(datetime_transacao)
             <= interval 6 day
     ),
@@ -23,9 +26,7 @@ with
         from {{ ref("transacao_riocard") }}
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard`
         where
-            data between date("{{ var('start_date') }}") and date_add(
-                date("{{ var('end_date') }}"), interval 1 day
-            )
+            {{ incremental_filter }}
             and date(datetime_processamento) - date(datetime_transacao)
             <= interval 6 day
     ),
@@ -36,6 +37,7 @@ with
         where
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
+            data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
     ),
     -- Viagens realizadas
     viagem_completa as (
@@ -59,6 +61,7 @@ with
             between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
                 "{{ var('end_date') }}"
             )
+            data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
     ),
     -- Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
     -- limitada pela viagem anterior
@@ -156,9 +159,7 @@ with
         from {{ ref("gps_validador") }}
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador`
         where
-            data between date("{{ var('start_date') }}") and date_add(
-                date("{{ var('end_date') }}"), interval 1 day
-            )
+            {{ incremental_filter }}
             and (
                 (
                     data < date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
