@@ -652,6 +652,14 @@ def set_redis_historic_table(
 def rename_flow_run_jae_capture_check(
     timestamp_captura_start: datetime, timestamp_captura_end: datetime
 ):
+    """
+    Renomeia a execução do flow de checagem da captura da Jaé
+
+    Args:
+        timestamp_captura_start (datetime): Data e hora inicial da janela de verificação.
+        timestamp_captura_end (datetime): Data e hora final da janela de verificação.
+    """
+
     start = timestamp_captura_start.isoformat()
     end = timestamp_captura_end.isoformat()
     rename_current_flow_run(name=f"verificacao captura: from {start} to {end}")
@@ -668,6 +676,23 @@ def jae_capture_check_get_ts_range(
     timestamp_captura_start: Optional[str],
     timestamp_captura_end: Optional[str],
 ) -> tuple[datetime, datetime]:
+    """
+    Calcula o intervalo de para checagem da captura dos dados da Jaé.
+
+    Args:
+        timestamp (datetime): Data e hora de execução do flow
+        retroactive_days (int): Número de dias a subtrair de `timestamp` para definir
+            o início do intervalo
+        timestamp_captura_start (Optional[str]): Parâmetro do flow para definição
+            de timestamp inicial de forma manual
+        timestamp_captura_end (Optional[str]): Parâmetro do flow para definição
+            de timestamp final de forma manual
+
+    Returns:
+        tuple[datetime, datetime]: Intervalo com:
+            - start (datetime): Início do intervalo
+            - end (datetime): Fim do intervalo
+    """
     if timestamp_captura_start is not None:
         start = datetime.fromisoformat(timestamp_captura_start)
     else:
@@ -696,6 +721,19 @@ def get_capture_gaps(
     timestamp_captura_start: datetime,
     timestamp_captura_end: datetime,
 ) -> list[str]:
+    """
+    Identifica timestamps com divergência entre os dados presentes
+    na base da Jaé e os dados capturados no datalake.
+
+    Args:
+        table_id (str): Nome da tabela no BigQuery
+        timestamp_captura_start (datetime): Início do intervalo de verificação
+        timestamp_captura_end (datetime): Fim do intervalo de verificação
+
+    Returns:
+        list[str]: Lista de strings no formato `%Y-%m-%d %H:%M:%S` representando os timestamps
+        com divergência de contagem entre JAE e datalake
+    """
     params = constants.CHECK_CAPTURE_PARAMS.value[table_id]
     timestamp_column = params["timestamp_column"]
     source = params["source"]
@@ -779,6 +817,18 @@ def create_capture_check_discord_message(
     timestamp_captura_start: datetime,
     timestamp_captura_end: datetime,
 ) -> str:
+    """
+    Cria a mensagem para notificação no Discord com o resultado da verificação de captura de dados
+
+    Args:
+        table_id (str): Nome da tabela no BigQuery
+        timestamps (list[dict]): Lista de timestamps com falhas na captura
+        timestamp_captura_start (datetime): Início do intervalo analisado
+        timestamp_captura_end (datetime): Fim do intervalo analisado
+
+    Returns:
+        str: Mensagem para ser enviada no Discord
+    """
     timestamps_len = len(timestamps)
     message = f"""
 Tabela: {table_id}

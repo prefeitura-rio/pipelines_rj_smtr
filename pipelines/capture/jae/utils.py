@@ -155,6 +155,20 @@ def get_jae_timestamp_captura_count(
     timestamp_captura_start: datetime,
     timestamp_captura_end: datetime,
 ) -> pd.DataFrame:
+    """
+    Retorna a contagem de registros por timestamp_captura de uma tabela da Jaé.
+
+    Args:
+        source (SourceTable): Objeto contendo informações da tabela
+        timestamp_column (str): Nome da coluna de timestamp que os dados capturados são filtrados
+        timestamp_captura_start (datetime): Data e hora inicial da janela de captura
+        timestamp_captura_end (datetime): Data e hora final da janela de captura
+
+    Returns:
+        pd.DataFrame: DataFrame com duas colunas:
+            - `timestamp_captura` (datetime): Coluna timestamp_captura correspondente.
+            - `total_jae` (int): Contagem de registros na base da Jaé.
+    """
     table_capture_params = constants.JAE_TABLE_CAPTURE_PARAMS.value[source.table_id]
     database = table_capture_params["database"]
     credentials = get_secret(constants.JAE_SECRET_PATH.value)
