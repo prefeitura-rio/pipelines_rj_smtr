@@ -232,7 +232,6 @@ def get_jae_timestamp_captura_count(
             contagens c
         ON
             tc.timestamp_captura = c.datetime_truncado + (tc.delay + 1 || ' minutes')::interval
-        ;
     """
 
     jae_start_ts = timestamp_captura_start

@@ -780,7 +780,6 @@ def get_capture_gaps(
         contagens
     USING
         (timestamp_captura)
-    ;
     """
 
     log(f"Executando query\n{query_datalake}")
