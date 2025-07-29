@@ -187,6 +187,13 @@ models:
           name: dbt_utils.unique_combination_of_columns__viagem_regularidade_temperatura
       - test_check_regularidade_temperatura:
           name: test_check_regularidade_temperatura__viagem_regularidade_temperatura
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          expression: count(id_viagem)
+          compare_model: ref("viagem_classificada")
+          compare_expression: count(id_viagem)
+          group_by: [data]
+          compare_group_by: [data]
+          name: dbt_expectations.expect_table_aggregation_to_equal_other_table__viagem_regularidade_temperatura
     columns:
       - name: data
         description: "{{ doc('data_viagem') }} [partição]"
