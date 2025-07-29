@@ -114,10 +114,11 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     transacao
                 WHERE
-                    data_processamento >= timestamp '{start}' - INTERVAL '5 minutes'
-                    AND data_processamento < timestamp '{end}' - INTERVAL '5 minutes'
+                    data_processamento >= timestamp '{start}' - INTERVAL '{delay} minutes'
+                    AND data_processamento < timestamp '{end}' - INTERVAL '{delay} minutes'
             """,
             "database": "transacao_db",
+            "capture_delay_minutes": {"0": 0, "2025-03-26 15:36:00": 5},
         },
         TRANSACAO_RETIFICADA_TABLE_ID: {
             "query": """
@@ -140,10 +141,11 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     transacao_riocard
                 WHERE
-                    data_processamento >= timestamp '{start}' - INTERVAL '5 minutes'
-                    AND data_processamento < timestamp '{end}' - INTERVAL '5 minutes'
+                    data_processamento >= timestamp '{start}' - INTERVAL '{delay} minutes'
+                    AND data_processamento < timestamp '{end}' - INTERVAL '{delay} minutes'
             """,
             "database": "transacao_db",
+            "capture_delay_minutes": {"0": 0, "2025-03-26 15:36:00": 5},
         },
         GPS_VALIDADOR_TABLE_ID: {
             "query": """
@@ -152,10 +154,11 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     tracking_detalhe
                 WHERE
-                    data_tracking >= timestamp '{start}' - INTERVAL '10 minutes'
-                    AND data_tracking < timestamp '{end}' - INTERVAL '10 minutes'
+                    data_tracking >= timestamp '{start}' - INTERVAL '{delay} minutes'
+                    AND data_tracking < timestamp '{end}' - INTERVAL '{delay} minutes'
             """,
             "database": "tracking_db",
+            "capture_delay_minutes": {"0": 0, "2025-03-26T15:31:00": 10},
         },
         INTEGRACAO_TABLE_ID: {
             "database": "ressarcimento_db",
@@ -660,6 +663,24 @@ class constants(Enum):  # pylint: disable=c0103
             "data_transacao",
         ],
     )
+
+    CHECK_CAPTURE_PARAMS = {
+        TRANSACAO_TABLE_ID: {
+            "source": TRANSACAO_SOURCE,
+            "datalake_table": "rj-smtr.bilhetagem_staging.transacao",
+            "timestamp_column": "data_processamento",
+        },
+        TRANSACAO_RIOCARD_TABLE_ID: {
+            "source": TRANSACAO_RIOCARD_SOURCE,
+            "datalake_table": "rj-smtr.bilhetagem_staging.transacao_riocard",
+            "timestamp_column": "data_processamento",
+        },
+        GPS_VALIDADOR_TABLE_ID: {
+            "source": GPS_VALIDADOR_SOURCE,
+            "datalake_table": "rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.gps_validador",
+            "timestamp_column": "data_tracking",
+        },
+    }
 
     BACKUP_BILLING_PAY_FOLDER = "backup_jae_billingpay"
 
