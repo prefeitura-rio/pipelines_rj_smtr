@@ -31,4 +31,4 @@ where
     celular_disparo is not null
     -- and (remover telefones que estejam na blacklist)
     -- and (remover telefones que já tenham recebido o disparo)
-    
+
