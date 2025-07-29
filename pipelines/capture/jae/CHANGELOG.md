@@ -1,5 +1,15 @@
 # Changelog - source_jae
 
+## [2.2.0] - 2025-07-28
+
+### Adicionado
+
+- Cria flow `verifica_captura` para checagem de completude dos dados capturados em relação ao DB da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/733)
+
+### Alterado
+
+- Altera lógica de definição do delay de captura dos dados da Jaé, para criar compatibilidade entre versões (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/733)
+
 ## [2.1.6] - 2025-07-09
 
 ### Alterado
