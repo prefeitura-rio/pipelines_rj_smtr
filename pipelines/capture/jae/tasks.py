@@ -63,7 +63,7 @@ def create_jae_general_extractor(source: SourceTable, timestamp: datetime):
     capture_delay_minutes = params.get("capture_delay_minutes", {"0": 0})
 
     delay_timestamps = (
-        convert_timezone(timestamp=datetime.fromisoformat(a))
+        convert_timezone(timestamp=datetime.fromisoformat(a)).strftime("%Y-%m-%d %H:%M:%S")
         for a in capture_delay_minutes.keys()
         if a != "0"
     )
