@@ -157,7 +157,7 @@ class constants(Enum):  # pylint: disable=c0103
                     AND data_tracking < timestamp '{end}' - INTERVAL '{delay} minutes'
             """,
             "database": "tracking_db",
-            "capture_delay_minutes": {"0": 0, "2025-03-26T15:31:00": 10},
+            "capture_delay_minutes": {"0": 0, "2025-03-26 15:31:00": 10},
         },
         INTEGRACAO_TABLE_ID: {
             "database": "ressarcimento_db",
