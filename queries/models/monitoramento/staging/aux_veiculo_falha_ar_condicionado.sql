@@ -11,7 +11,7 @@
 }}
 
 {% set incremental_filter %}
-    data between date("{{var('start_date')}}") and date("{{var('end_date')}}")
+    data between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
             and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
 {% endset %}
 
@@ -88,7 +88,7 @@ with
         dia_anterior as (
             select id_veiculo, quantidade_dia_falha_operacional
             from {{ this }}
-            where data = date_sub(date("{{ var('start_date') }}"), interval 1 day)
+            where data = date_sub(date("{{ var('date_range_start') }}"), interval 1 day)
         ),
         veiculos as (
             select distinct id_veiculo
@@ -104,7 +104,8 @@ with
         from
             unnest(
                 generate_date_array(
-                    date("{{var('start_date')}}"), date("{{var('end_date')}}")
+                    date("{{var('date_range_start')}}"),
+                    date("{{var('date_range_end')}}")
                 )
             ) as data
     ),

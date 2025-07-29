@@ -7,7 +7,7 @@
 }}
 
 {% set incremental_filter %}
-    data between date("{{var('start_date')}}") and date_add(date("{{ var('end_date') }}"), interval 1 day) and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+    data between date("{{var('date_range_start')}}") and date_add(date("{{ var('date_range_end') }}"), interval 1 day) and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
 {% endset %}
 
 with
@@ -34,7 +34,9 @@ with
         from {{ ref("viagem_classificada") }}
         {# from `rj-smtr-dev.botelho__subsidio.viagem_classificada` #}
         where
-            data between date("{{var('start_date')}}") and date("{{var('end_date')}}")
+            data between date("{{var('date_range_start')}}") and date(
+                "{{var('date_range_end')}}"
+            )
             and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
     ),
     gps_validador as (  -- Dados base de GPS, temperatura, etc
