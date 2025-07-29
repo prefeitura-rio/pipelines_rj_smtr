@@ -70,7 +70,7 @@ def create_jae_general_extractor(source: SourceTable, timestamp: datetime):
     delay = capture_delay_minutes["0"]
     for t in delay_timestamps:
         if timestamp >= t:
-            delay = capture_delay_minutes[t]
+            delay = capture_delay_minutes[t.strftime("%Y-%m-%d %H:%M:%S")]
 
     query = params["query"].format(
         start=start,
