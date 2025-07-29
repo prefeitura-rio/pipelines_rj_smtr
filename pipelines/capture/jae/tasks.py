@@ -42,8 +42,8 @@ from pipelines.utils.utils import convert_timezone
 def create_jae_general_extractor(source: SourceTable, timestamp: datetime):
     """Cria a extração de tabelas da Jaé"""
 
-    if source.table_id == constants.GPS_VALIDADOR_TABLE_ID.value and timestamp < datetime(
-        2025, 3, 26, 15, 31, 0
+    if source.table_id == constants.GPS_VALIDADOR_TABLE_ID.value and timestamp < convert_timezone(
+        datetime(2025, 3, 26, 15, 31, 0)
     ):
         raise ValueError(
             """A recaptura de dados anteriores deve ser feita manualmente.
