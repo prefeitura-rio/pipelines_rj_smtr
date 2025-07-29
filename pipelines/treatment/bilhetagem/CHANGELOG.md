@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [2.0.3] - 2025-07-29
+
+### Adicionado
+
+- Adiciona source da tabela `lancamento` da Jaé no wait do flow `TRANSACAO_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/735)
+
 ## [2.0.2] - 2025-07-03
 
 ### Alterado
