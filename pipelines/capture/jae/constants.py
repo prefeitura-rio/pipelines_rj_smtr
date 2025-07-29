@@ -600,7 +600,6 @@ class constants(Enum):  # pylint: disable=c0103
         schedule_cron=create_minute_cron(),
         primary_keys=["id_lancamento"],
         bucket_names=JAE_PRIVATE_BUCKET_NAMES,
-        max_recaptures=1500,
     )
 
     INTEGRACAO_SOURCE = SourceTable(
@@ -946,7 +945,6 @@ class constants(Enum):  # pylint: disable=c0103
                     "dt_fechamento",
                     "dt_inclusao",
                 ],
-                # "lancamento": ["dt_lancamento"],
                 "evento_recebido": ["dt_inclusao"],
                 "movimento": ["dt_movimento"],
                 "evento_processado": ["dt_inclusao"],
