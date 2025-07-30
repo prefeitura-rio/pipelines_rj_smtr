@@ -49,6 +49,7 @@ e as integrações capturadas entre date_range_start e date_range_end
 select
     * except (id_transacao, geo_point_transacao),
     count(id_transacao) as quantidade_passageiros,
+    sum(valor_pagamento / 0.96) as valor_total_transacao,
     '{{ var("version") }}' as versao
 from {{ ref("aux_passageiro_hora") }}
 where

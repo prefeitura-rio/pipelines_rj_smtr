@@ -15,7 +15,8 @@ select
     tipo_transacao,
     tipo_usuario,
     meio_pagamento,
-    geo_point_transacao
+    geo_point_transacao,
+    valor_pagamento
 from {{ ref("transacao") }}
 where
     id_servico_jae not in ("140", "142")
@@ -46,7 +47,8 @@ select
     "RioCard" as tipo_transacao,
     "RioCard" as tipo_usuario,
     "RioCard" as meio_pagamento,
-    st_geogpoint(longitude, latitude) as geo_point_transacao
+    st_geogpoint(longitude, latitude) as geo_point_transacao,
+    valor_transacao as valor_pagamento
 from {{ ref("transacao_riocard") }}
 where
     (id_servico_jae not in ("140", "142") or id_servico_jae is null)
