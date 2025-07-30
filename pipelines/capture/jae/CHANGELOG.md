@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Altera schedules das capturas das ordens de pagamento e da transacao_ordem
+- Altera schedules das capturas das ordens de pagamento e da  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/740)
 
 ## [2.3.0] - 2025-07-29
 

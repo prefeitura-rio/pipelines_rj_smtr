@@ -4,7 +4,7 @@
 
 ### Removido
 
-- Remove filtro `timestamp_captura` no modelo `aux_transacao_id_ordem_pagamento.sql`
+- Remove filtro `timestamp_captura` no modelo `aux_transacao_id_ordem_pagamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/740)
 
 ## [3.2.0] - 2025-07-03
 

@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Considera a primeira captura das ordens de pagamento nos modelos:
+- Considera a primeira captura das ordens de pagamento nos modelos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/740):
   - `staging_ordem_pagamento_consorcio_operadora.sql`
   - `staging_ordem_pagamento_consorcio.sql`
   - `staging_ordem_pagamento.sql`
