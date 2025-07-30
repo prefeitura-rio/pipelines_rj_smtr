@@ -328,8 +328,8 @@ with Flow("jae: verificacao captura") as verifica_captura:
     discord_messages = create_capture_check_discord_message.map(
         table_id=table_ids,
         timestamps=timestamps,
-        timestamp_captura_start=timestamp_captura_start,
-        timestamp_captura_end=timestamp_captura_end,
+        timestamp_captura_start=unmapped(timestamp_captura_start),
+        timestamp_captura_end=unmapped(timestamp_captura_end),
     )
 
     send_discord_message = log_discord.map(
