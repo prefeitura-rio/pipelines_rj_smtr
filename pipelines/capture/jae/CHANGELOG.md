@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [2.3.0] - 2025-07-29
+
+### Adicionado
+
+- Cria flow `CAPTURA_LANCAMENTO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/735)
+
 ## [2.2.0] - 2025-07-28
 
 ### Adicionado
