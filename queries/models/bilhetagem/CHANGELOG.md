@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [3.2.1] - 2025-07-30
+
+### Removido
+
+- Remove filtro `timestamp_captura` no modelo `aux_transacao_id_ordem_pagamento.sql`
+
 ## [3.2.0] - 2025-07-03
 
 ### Adicionado

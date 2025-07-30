@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [2.0.4] - 2025-07-30
+
+### Alterado
+
+- Altera schedule da materialização da transacao_ordem
+
 ## [2.0.3] - 2025-07-29
 
 ### Adicionado

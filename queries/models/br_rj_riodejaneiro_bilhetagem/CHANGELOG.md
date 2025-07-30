@@ -1,5 +1,16 @@
 # Changelog - bilhetagem
 
+## [3.0.1] - 2025-07-30
+
+### Alterado
+
+- Considera a primeira captura das ordens de pagamento nos modelos:
+  - `staging_ordem_pagamento_consorcio_operadora.sql`
+  - `staging_ordem_pagamento_consorcio.sql`
+  - `staging_ordem_pagamento.sql`
+  - `staging_ordem_rateio.sql`
+  - `staging_ordem_ressarcimento.sql`
+
 ## [3.0.0] - 2025-07-03
 
 ### Adicionado

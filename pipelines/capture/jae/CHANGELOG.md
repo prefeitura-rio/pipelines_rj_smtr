@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [2.3.1] - 2025-07-30
+
+### Alterado
+
+- Altera schedules das capturas das ordens de pagamento e da transacao_ordem
+
 ## [2.3.0] - 2025-07-29
 
 ### Adicionado
