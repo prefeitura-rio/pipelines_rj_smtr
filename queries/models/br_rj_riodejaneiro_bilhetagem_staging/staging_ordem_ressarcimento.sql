@@ -80,7 +80,7 @@ with
         select
             *,
             row_number() over (
-                partition by id_ordem_ressarcimento order by timestamp_captura desc
+                partition by id_ordem_ressarcimento order by timestamp_captura
             ) as rn
         from ordem_ressarcimento
     )
