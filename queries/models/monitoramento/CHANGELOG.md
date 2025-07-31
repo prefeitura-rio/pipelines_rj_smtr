@@ -5,7 +5,7 @@
 ### Adicionado
 
 - Cria modelos `aux_veiculo_falha_ar_condicionado`, `temperatura_inmet` e `veiculo_regularidade_temperatura_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
-- Adiciona coluna `ano_fabricao` nos modelos `veiculo_dia` e `aux_veiculo_dia_consolidada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+- Adiciona coluna `ano_fabricacao` nos modelos `veiculo_dia` e `aux_veiculo_dia_consolidada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
 - Adiciona teste dos modelos `aux_veiculo_falha_ar_condicionado`, `temperatura_inmet` e `veiculo_regularidade_temperatura_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
 
 ### Alterado
