@@ -90,3 +90,51 @@ models:
         description: "Área total da garagem (m²)"
       - name: geometry_wkt
         description: "Geometria da garagem em formato WKT"
+  - name: aux_veiculo_falha_ar_condicionado
+    description: "Tabela auxiliar para controle de falhas consecutivas de ar condicionado por veículo"
+    columns:
+      - name: data
+        description: "{{ doc('data') }} [partição]"
+        tests:
+          - not_null:
+              name: not_null__data__aux_veiculo_falha_ar_condicionado
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+        tests:
+          - not_null:
+              name: not_null__id_veiculo__aux_veiculo_falha_ar_condicionado
+      - name: placa
+        description: "{{ doc('placa') }}"
+      - name: ano_fabricacao
+        description: "{{ doc('ano_fabricacao') }}"
+      - name: indicador_ar_condicionado
+        description: "{{ doc('indicador_ar_condicionado') }}"
+      - name: data_processamento_licenciamento
+        description: "Data de processamento do licenciamento do veículo"
+      - name: data_verificacao_regularidade
+        description: "Data de verificação da regularidade do ar condicionado"
+      - name: indicador_temperatura_variacao
+        description: "Indicador se houve variação na temperatura transmitida pelo veículo"
+      - name: indicador_temperatura_transmitida
+        description: "Indicador se o veículo transmitiu dados de temperatura"
+      - name: percentual_temperatura_nula_descartada
+        description: "Percentual de registros de temperatura nula ou zero descartados"
+      - name: percentual_temperatura_atipica_descartada
+        description: "Percentual de registros de temperatura atípica descartados"
+      - name: indicador_temperatura_descartada
+        description: "Indicador se mais de 50% dos registros de temperatura foram descartados"
+      - name: indicio_falha
+        description: "Indicador de indício de falha no sistema de ar condicionado"
+      - name: quantidade_dia_falha_operacional
+        description: "{{ doc('quantidade_dia_falha_operacional') }}"
+        tests:
+          - not_null:
+              name: not_null__quantidade_dia_falha_operacional__aux_veiculo_falha_ar_condicionado
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+
+# trigger coderabbit review
