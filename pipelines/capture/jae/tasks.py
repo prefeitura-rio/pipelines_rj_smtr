@@ -88,7 +88,7 @@ def create_jae_general_extractor(source: SourceTable, timestamp: datetime):
         "database": database_name,
         "max_retries": 3,
     }
-    if source.table_id == source.file_chunk_size is not None:
+    if source.file_chunk_size is not None:
         return partial(
             get_raw_db_paginated, page_size=source.file_chunk_size, **general_func_arguments
         )
