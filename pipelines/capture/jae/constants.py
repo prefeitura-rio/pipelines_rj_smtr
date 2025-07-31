@@ -635,7 +635,7 @@ class constants(Enum):  # pylint: disable=c0103
             source_name=JAE_SOURCE_NAME,
             table_id=k,
             first_timestamp=datetime(2024, 12, 30, 0, 0, 0),
-            schedule_cron=create_daily_cron(hour=6),
+            schedule_cron=create_daily_cron(hour=7),
             primary_keys=v["primary_keys"],
             pretreatment_reader_args=v.get("pretreatment_reader_args"),
             pretreat_funcs=v.get("pretreat_funcs"),
@@ -652,7 +652,7 @@ class constants(Enum):  # pylint: disable=c0103
         source_name=JAE_SOURCE_NAME,
         table_id=TRANSACAO_ORDEM_TABLE_ID,
         first_timestamp=datetime(2024, 11, 21, 0, 0, 0),
-        schedule_cron=create_daily_cron(hour=6, minute=30),
+        schedule_cron=create_daily_cron(hour=7, minute=30),
         partition_date_only=True,
         max_recaptures=5,
         primary_keys=[
@@ -661,6 +661,7 @@ class constants(Enum):  # pylint: disable=c0103
             "data_processamento",
             "data_transacao",
         ],
+        file_chunk_size=200000,
     )
 
     CHECK_CAPTURE_PARAMS = {
