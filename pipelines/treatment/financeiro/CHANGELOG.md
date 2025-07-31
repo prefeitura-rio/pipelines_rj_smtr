@@ -1,5 +1,11 @@
 # Changelog - financeiro
 
+## [2.0.3] - 2025-07-31
+
+### Alterado
+
+- Altera schedule da materialização das ordens de pagamento da bilhetagem
+
 ## [2.0.2] - 2025-07-30
 
 ### Alterado
