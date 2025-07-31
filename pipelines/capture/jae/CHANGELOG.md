@@ -1,10 +1,17 @@
 # Changelog - source_jae
 
+## [2.3.2] - 2025-07-31
+
+### Alterado
+
+- Altera schedules das capturas das ordens de pagamento e da transacao_ordem (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/743)
+- Altera chunk_size da captura da transacao_ordem (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/743)
+
 ## [2.3.1] - 2025-07-30
 
 ### Alterado
 
-- Altera schedules das capturas das ordens de pagamento e da  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/740)
+- Altera schedules das capturas das ordens de pagamento e da transacao_ordem (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/740)
 
 ## [2.3.0] - 2025-07-29
 
