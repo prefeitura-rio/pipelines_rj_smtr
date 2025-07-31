@@ -60,16 +60,14 @@ with
                 json_value(content, '$.GTFS_ROUTE_ID') as string
             ) as gtfs_route_id,
             safe_cast(json_value(content, '$.GTFS_STOP_ID') as string) as gtfs_stop_id
-        from {{ source("source_jae", "linha") }}
-    ),
-    linha_rn as (
-        select
-            *,
-            row_number() over (
-                partition by cd_linha order by timestamp_captura desc
-            ) as rn
-        from linha
+        from
+            (
+                select *
+                from {{ source("source_jae", "linha") }}
+                union all
+                select *
+                from `rj-smtr-dev.source_jae.linha`
+            )
     )
-select * except (rn)
-from linha_rn
-where rn = 1
+select *
+from linha
