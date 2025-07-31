@@ -74,25 +74,27 @@ with
             id_veiculo,
             ano_fabricacao,
             struct(
-                data_processamento_licenciamento, indicador_ar_condicionado as valor
-            ) as indicador_ar_condicionado,
-            struct(
-                data_verificacao_regularidade, indicador_temperatura_variacao as valor
-            ) as indicador_temperatura_variacao,
-            struct(
-                data_verificacao_regularidade,
-                indicador_temperatura_transmitida as valor
-            ) as indicador_temperatura_transmitida,
-            struct(
-                data_verificacao_regularidade,
-                indicador_temperatura_descartada as valor,
-                percentual_temperatura_nula_descartada,
-                percentual_temperatura_atipica_descartada
-            ) as indicador_temperatura_descartada,
-            struct(
-                current_date("America/Sao_Paulo") as data_verificacao_falha,
-                indicador_falha_recorrente as valor
-            ) as indicador_falha_recorrente,
+                struct(
+                    data_processamento_licenciamento, indicador_ar_condicionado as valor
+                ) as indicador_ar_condicionado,
+                struct(
+                    data_verificacao_regularidade, indicador_temperatura_variacao as valor
+                ) as indicador_temperatura_variacao,
+                struct(
+                    data_verificacao_regularidade,
+                    indicador_temperatura_transmitida as valor
+                ) as indicador_temperatura_transmitida,
+                struct(
+                    data_verificacao_regularidade,
+                    indicador_temperatura_descartada as valor,
+                    percentual_temperatura_nula_descartada,
+                    percentual_temperatura_atipica_descartada
+                ) as indicador_temperatura_descartada,
+                struct(
+                    current_date("America/Sao_Paulo") as data_verificacao_falha,
+                    indicador_falha_recorrente as valor
+                ) as indicador_falha_recorrente
+            ) as indicadores,
             quantidade_dia_falha_operacional,
             motivo,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
@@ -132,7 +134,12 @@ with
                 sha256(
                     concat(
                         {% for c in columns %}
-                            ifnull(cast({{ c }} as string), 'n/a')
+                            ifnull(
+                                {% if c == "indicadores" %}to_json_string(indicadores)
+                                {% else %}cast({{ c }} as string)
+                                {% endif %},
+                                'n/a'
+                            )
                             {% if not loop.last %}, {% endif %}
                         {% endfor %}
                     )

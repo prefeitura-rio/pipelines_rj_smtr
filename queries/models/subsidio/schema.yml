@@ -145,18 +145,30 @@ models:
         description: "{{ doc('datetime_chegada') }}"
       - name: modo
         description: "{{ doc('modo') }}"
+      - name: placa
+        description: "{{ doc('placa') }}"
+        tests:
+          - not_null:
+              name: not_null__placa__viagem_classificada
+              where: "data between date('{date_range_start}') and date('{date_range_end}') and tipo_viagem != 'Não licenciado'"
       - name: ano_fabricacao
         description: "{{ doc('ano_fabricacao') }} [chassi]"
+        tests:
+          - not_null:
+              name: not_null__ano_fabricacao__viagem_classificada
+              where: "data between date('{date_range_start}') and date('{date_range_end}') and tipo_viagem != 'Não licenciado'"
       - name: tecnologia_apurada
         description: "{{ doc('tecnologia') }}"
         tests:
           - not_null:
               name: not_null__tecnologia_apurada__viagem_classificada
+              where: "data between date('{date_range_start}') and date('{date_range_end}') and tipo_viagem != 'Não licenciado'"
       - name: tecnologia_remunerada
         description: "{{ doc('tecnologia_remunerada') }}"
         tests:
           - not_null:
               name: not_null__tecnologia_remunerada__viagem_classificada
+              where: "data between date('{date_range_start}') and date('{date_range_end}') and tipo_viagem not in ('Não autorizado por capacidade', 'Não licenciado', 'Não vistoriado', 'Lacrado', 'Não autorizado por ausência de ar-condicionado')"
       - name: tipo_viagem
         description: "{{ doc('tipo_viagem_status') }}"
         tests:
@@ -227,16 +239,19 @@ models:
         tests:
           - not_null:
               name: not_null__ano_fabricacao__viagem_regularidade_temperatura
+              where: "data between date('{date_range_start}') and date('{date_range_end}') and tipo_viagem != 'Não licenciado'"
       - name: tecnologia_apurada
         description: "{{ doc('tecnologia') }}"
         tests:
           - not_null:
               name: not_null__tecnologia_apurada__viagem_regularidade_temperatura
+              where: "data between date('{date_range_start}') and date('{date_range_end}') and tipo_viagem != 'Não licenciado'"
       - name: tecnologia_remunerada
         description: "{{ doc('tecnologia_remunerada') }}"
         tests:
           - not_null:
               name: not_null__tecnologia_remunerada__viagem_regularidade_temperatura
+              where: "data between date('{date_range_start}') and date('{date_range_end}') and tipo_viagem not in ('Não autorizado por capacidade', 'Não licenciado', 'Não vistoriado', 'Lacrado', 'Não autorizado por ausência de ar-condicionado')"
       - name: tipo_viagem
         description: "{{ doc('tipo_viagem_status') }}"
         tests:

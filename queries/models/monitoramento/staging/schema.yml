@@ -103,6 +103,8 @@ models:
         tests:
           - not_null:
               name: not_null__id_veiculo__aux_veiculo_falha_ar_condicionado
+      - name: placa
+        description: "{{ doc('placa') }}"
       - name: ano_fabricacao
         description: "{{ doc('ano_fabricacao') }}"
       - name: indicador_ar_condicionado

@@ -397,7 +397,6 @@ select  -- Estrutura final do modelo auxiliar
     s.servico,
     s.sentido,
     s.distancia_planejada,
-    s.quantidade_pre_tratamento as quantidade_total_temperatura,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     "{{ var('version') }}" as versao,
     '{{ invocation_id }}' as id_execucao_dbt

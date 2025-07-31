@@ -52,9 +52,7 @@ with
         select
             data,
             id_veiculo,
-            safe_cast(
-                json_value(indicadores, '$.indicador_falha_recorrente.valor') as bool
-            ) as indicador_falha_recorrente
+            indicadores.indicador_falha_recorrente.valor as indicador_falha_recorrente
         from {{ ref("veiculo_regularidade_temperatura_dia") }}
         where {{ incremental_filter }}
     ),
