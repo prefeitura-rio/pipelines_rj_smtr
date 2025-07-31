@@ -28,6 +28,9 @@ selectors:
           value: tecnologia_servico
         - method: path
           value: models/subsidio
+        - exclude:
+          - method: fqn
+            value: aux_viagem_temperatura
         - method: fqn
           value: viagens_remuneradas
         - method: path
