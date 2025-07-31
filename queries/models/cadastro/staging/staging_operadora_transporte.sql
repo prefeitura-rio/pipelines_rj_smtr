@@ -8,7 +8,9 @@ with
     operadora_transporte as (
         select
             data,
-            safe_cast(cd_operadora_transporte as string) as cd_operadora_transporte,
+            replace(
+                safe_cast(cd_operadora_transporte as string), ".0", ""
+            ) as cd_operadora_transporte,
             timestamp_captura,
             datetime(
                 parse_timestamp(
@@ -17,12 +19,14 @@ with
                 ),
                 "America/Sao_Paulo"
             ) as datetime_inclusao,
-            safe_cast(json_value(content, '$.CD_CLIENTE') as string) as cd_cliente,
-            safe_cast(
-                json_value(content, '$.CD_TIPO_CLIENTE') as string
+            replace(
+                safe_cast(json_value(content, '$.CD_CLIENTE') as string), ".0", ""
+            ) as cd_cliente,
+            replace(
+                safe_cast(json_value(content, '$.CD_TIPO_CLIENTE') as string), ".0", ""
             ) as cd_tipo_cliente,
-            safe_cast(
-                json_value(content, '$.CD_TIPO_MODAL') as string
+            replace(
+                safe_cast(json_value(content, '$.CD_TIPO_MODAL') as string), ".0", ""
             ) as cd_tipo_modal,
             safe_cast(
                 json_value(content, '$.IN_SITUACAO_ATIVIDADE') as string

@@ -12,7 +12,7 @@ with
                 parse_timestamp('%Y-%m-%d %H:%M:%S%Ez', timestamp_captura),
                 "America/Sao_Paulo"
             ) as timestamp_captura,
-            safe_cast(cd_linha as string) as cd_linha,
+            replace(safe_cast(cd_linha as string), '.0', '') as cd_linha,
             datetime(
                 parse_timestamp(
                     '%Y-%m-%dT%H:%M:%S%Ez',
