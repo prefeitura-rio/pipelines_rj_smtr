@@ -72,7 +72,7 @@ with
                             "ABERTO",
                             "FECHADO"
                         ) as estado_equipamento,
-                        min(datetime_gps) as datetime_gps,
+                        min(datetime_gps) as datetime_gps
                     from gps_validador
                     where latitude != 0 and longitude != 0
                     group by all
@@ -236,7 +236,7 @@ with
                 2
             ) as percentual_temperatura_nula_descartada,
             indicador_temperatura_transmitida,
-            indicador_temperatura_variacao,
+            indicador_temperatura_variacao
         from gps_validador_indicadores
         left join temperatura_filtrada_total using (data, id_veiculo)
         group by all

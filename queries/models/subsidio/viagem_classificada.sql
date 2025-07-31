@@ -26,7 +26,7 @@ with
         where {{ incremental_filter }}
     ),
     veiculos as (
-        select data, id_veiculo, placa, ano_fabricacao, tecnologia, status, indicadores,
+        select data, id_veiculo, placa, ano_fabricacao, tecnologia, status, indicadores
         from {{ ref("aux_veiculo_dia_consolidada") }}
         where {{ incremental_filter }}
     ),
