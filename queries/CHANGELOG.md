@@ -1,5 +1,12 @@
 # Changelog - queries
 
+## [1.0.7] - 2025-07-31
+
+### Alterado
+
+- Altera selector `apuracao_subsidio_v9` excluindo o modelo `aux_viagem_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+- Altera selector `monitoramento_veiculo` adicionando os modelos `aux_viagem_temperatura`, `temperatura_inmet`, `aux_veiculo_falha_ar_condicionado`, `veiculo_regularidade_temperatura_dia` e `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+
 ## [1.0.6] - 2025-07-09
 
 ### Alterado
