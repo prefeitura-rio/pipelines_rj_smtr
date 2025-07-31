@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [7.2.1] - 2025-07-31
+
+### Alterado
+
+- Alterado variável `DATA_SUBSIDIO_V15A_INICIO` por `DATA_SUBSIDIO_V17_INICIO` no modelo `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+
 ## [7.2.0] - 2025-07-08
 
 ### Adicionado
