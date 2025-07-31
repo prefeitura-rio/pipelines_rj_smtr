@@ -4,8 +4,8 @@
 
 ### Alterado
 
-- Altera schedules das capturas das ordens de pagamento e da transacao_ordem ()
-- Altera chunk_size da captura da transacao_ordem ()
+- Altera schedules das capturas das ordens de pagamento e da transacao_ordem (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/743)
+- Altera chunk_size da captura da transacao_ordem (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/743)
 
 ## [2.3.1] - 2025-07-30
 

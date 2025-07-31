@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Altera schedule da materialização da transacao_ordem
+- Altera schedule da materialização da transacao_ordem (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/743)
 
 ## [2.0.4] - 2025-07-30
 
