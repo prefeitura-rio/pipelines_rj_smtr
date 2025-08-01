@@ -166,7 +166,7 @@ models:
         tests:
           - not_null:
               name: not_null__tecnologia_apurada__viagem_classificada
-              where: "data between date('{date_start_daterange_start}') and date('{end_date}') and data >= date('{DATA_SUBSIDIO_V15_INICIO}') and tipo_viagem != 'Não licenciado'"
+              where: "data between date('{start_date}') and date('{end_date}') and data >= date('{DATA_SUBSIDIO_V15_INICIO}') and tipo_viagem != 'Não licenciado'"
       - name: tecnologia_remunerada
         description: "{{ doc('tecnologia_remunerada') }}"
         tests:
