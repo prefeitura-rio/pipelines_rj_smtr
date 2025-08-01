@@ -1165,3 +1165,15 @@ Data final do período para um determinado IRK
 {% docs data_inicio %}
 Data inicial do período para um determinado IRK
 {% enddocs %}
+
+{% docs quantidade_dia_falha_operacional %}
+Quantidade consecutiva de dias com falha operacional do ar condicionado
+{% enddocs %}
+
+{% docs indicadores_viagem %}
+Indicadores para classificação da viagem
+{% enddocs %}
+
+{% docs data_verificacao_regularidade %}
+Data de verificação da regularidade
+{% enddocs %}
