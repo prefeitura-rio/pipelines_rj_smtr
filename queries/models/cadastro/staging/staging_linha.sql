@@ -65,7 +65,7 @@ with
                 select *
                 from {{ source("source_jae", "linha") }}
                 union all
-                select * except (hora)
+                select *
                 from `rj-smtr-dev.source_jae.linha`
             )
     )
