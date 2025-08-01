@@ -45,9 +45,7 @@ with
                     ifnull(descricao_servico_jae, 'n/a'),
                     ifnull(gtfs_route_id, 'n/a'),
                     ifnull(gtfs_stop_id, 'n/a'),
-                    ifnull(cast(datetime_inclusao as string), 'n/a'),
-                    ifnull(cast(datetime_inicio_validade as string), 'n/a'),
-                    ifnull(cast(datetime_fim_validade as string), 'n/a')
+                    ifnull(cast(datetime_inclusao as string), 'n/a')
                 )
             ) as sha_dado
         from dados_completos
