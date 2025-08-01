@@ -183,8 +183,8 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     transacao
                 WHERE
-                    DATE(data_processamento) >= DATE('{start}')
-                    AND DATE(data_processamento) <= DATE('{end}')
+                    data_processamento >= '{start}'
+                    AND data_processamento <= '{end}'
                     AND id_ordem_ressarcimento IS NOT NULL
                 ORDER BY data_processamento
             """,
