@@ -93,10 +93,31 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todos as autuações geraram lacre corretamente"
             },
         },
+        "temperatura_inmet": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+        },
+        "aux_viagem_temperatura": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.unique_combination_of_columns__aux_viagem_temperatura": {
+                "description": "Todos os registros são únicos"
+            },
+        },
+        "aux_veiculo_falha_ar_condicionado": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.unique_combination_of_columns__aux_veiculo_falha_ar_condicionado": {
+                "description": "Todos os registros são únicos"
+            },
+        },
+        "veiculo_regularidade_temperatura_dia": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.unique_combination_of_columns__veiculo_regularidade_temperatura_dia": {
+                "description": "Todos os registros são únicos"
+            },
+        },
     }
 
     MONITORAMENTO_VEICULO_TEST = DBTTest(
-        model="veiculo_fiscalizacao_lacre autuacao_disciplinar_historico",
+        model="veiculo_fiscalizacao_lacre autuacao_disciplinar_historico temperatura_inmet aux_viagem_temperatura aux_veiculo_falha_ar_condicionado veiculo_regularidade_temperatura_dia",  # noqa
         exclude="test_check_veiculo_lacre__veiculo_dia",
         checks_list=MONITORAMENTO_VEICULO_CHECKS_LIST,
         truncate_date=True,
