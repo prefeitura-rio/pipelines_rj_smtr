@@ -186,6 +186,7 @@ class constants(Enum):  # pylint: disable=c0103
                     DATE(data_processamento) >= DATE('{start}')
                     AND DATE(data_processamento) <= DATE('{end}')
                     AND id_ordem_ressarcimento IS NOT NULL
+                ORDER BY data_processamento
             """,
             "database": "transacao_db",
         },
@@ -652,7 +653,7 @@ class constants(Enum):  # pylint: disable=c0103
         source_name=JAE_SOURCE_NAME,
         table_id=TRANSACAO_ORDEM_TABLE_ID,
         first_timestamp=datetime(2024, 11, 21, 0, 0, 0),
-        schedule_cron=create_daily_cron(hour=7, minute=30),
+        schedule_cron=create_daily_cron(hour=8, minute=30),
         partition_date_only=True,
         max_recaptures=5,
         primary_keys=[

@@ -43,7 +43,7 @@ class constants(Enum):  # pylint: disable=c0103
 
     TRANSACAO_ORDEM_SELECTOR = DBTSelector(
         name="transacao_ordem",
-        schedule_cron=create_daily_cron(hour=7, minute=40),
+        schedule_cron=create_daily_cron(hour=9),
         initial_datetime=datetime(2024, 11, 21, 0, 0, 0),
     )
 
