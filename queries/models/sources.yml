@@ -416,7 +416,7 @@ sources:
       - name: meteorologia_inmet
         freshness:
           warn_after:
-            count: 1
+            count: 2
             period: hour
           filter: |
             {% set now = modules.datetime.datetime.now(
