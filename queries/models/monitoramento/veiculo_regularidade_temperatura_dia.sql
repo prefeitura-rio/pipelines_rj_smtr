@@ -78,7 +78,8 @@ with
                     data_processamento_licenciamento, indicador_ar_condicionado as valor
                 ) as indicador_ar_condicionado,
                 struct(
-                    data_verificacao_regularidade, indicador_temperatura_variacao as valor
+                    data_verificacao_regularidade,
+                    indicador_temperatura_variacao as valor
                 ) as indicador_temperatura_variacao,
                 struct(
                     data_verificacao_regularidade,
