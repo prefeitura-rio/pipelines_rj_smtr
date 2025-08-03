@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Inclui modo `Metrô` do modelo `aux_passageiro_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/751)
+- Inclui modo `Metrô` no modelo `aux_passageiro_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/751)
 
 ## [3.2.1] - 2025-07-30
 
