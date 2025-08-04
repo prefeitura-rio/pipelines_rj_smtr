@@ -49,7 +49,6 @@ with
             on lco.cd_operadora_transporte = o.id_operadora_jae
         join {{ ref("consorcios") }} c on lco.cd_consorcio = c.id_consorcio_jae
         join linha_jae l on lco.cd_linha = l.cd_linha
-        left join linha_tarifa lt on lco.cd_linha = lt.cd_linha
         left join {{ ref("aux_linha_tarifa") }} lt on lco.cd_linha = lt.cd_linha
         where
             (
