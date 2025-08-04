@@ -1,5 +1,12 @@
 # Changelog - bilhetagem
 
+## [3.2.3] - 2025-08-04
+
+### Adicionado
+
+- Adiciona a coluna `valor_pagamento` no modelo `aux_passageiro_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/742)
+- Adiciona a coluna `valor_total_transacao` no modelo `passageiro_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/742)
+
 ## [3.2.2] - 2025-08-03
 
 ### Alterado
