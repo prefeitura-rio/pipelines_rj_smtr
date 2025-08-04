@@ -1,5 +1,15 @@
 # Changelog - cadastro
 
+## [1.6.1] - 2025-08-04
+
+### Adicionado
+
+Cria modelo `aux_servico_jae.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/755)
+
+### Alterado
+
+- Faz deduplicação da tabela `staging_linha` nos modelos `servico_operadora.sql` e `servicos.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/755)
+
 ## [1.6.0] - 2025-07-03
 
 ### Adicionado
