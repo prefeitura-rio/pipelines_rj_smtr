@@ -7,7 +7,7 @@
 {% if execute %}
     {% set result = run_query(
         "SELECT tipo_os, feed_version, feed_start_date, tipo_dia FROM "
-        ~ "`rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`"
+        ~ ref("subsidio_data_versao_efetiva")
         ~ " WHERE data BETWEEN DATE_SUB(DATE('"
         ~ var("run_date")
         ~ "'), INTERVAL 2 DAY) AND DATE_SUB(DATE('"
@@ -24,8 +24,8 @@ with
     -- 1. Define datas do período planejado
     data_versao_efetiva as (
         select data, tipo_dia, subtipo_dia, feed_version, feed_start_date, tipo_os,
-        from -- {{ ref("subsidio_data_versao_efetiva") }}
-        `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
+        from {{ ref("subsidio_data_versao_efetiva") }}
+        -- `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
         where
             data
             between date_sub("{{ var('run_date') }}", interval 2 day) and date_sub(
@@ -69,7 +69,7 @@ with
             and feed_start_date = date("{{ feed_start_dates[1] }}")
             and tipo_dia = "{{ tipo_dias[1] }}"
     ),
-    {% if var('run_date') <= var('DATA_GTFS_V4_INICIO') %}
+    {% if var('run_date') < var('DATA_GTFS_V4_INICIO') %}
     -- 2. Busca partidas e quilometragem da faixa horaria (dia anterior)
     dia_anterior as (
         select
@@ -170,7 +170,7 @@ with
             sentido_shape,
             id_tipo_trajeto,
         from dia_atual
-        {% if var('run_date') <= var('DATA_GTFS_V4_INICIO') %}
+        {% if var('run_date') < var('DATA_GTFS_V4_INICIO') %}
         union all
         select
             feed_version,
@@ -278,7 +278,8 @@ with
         select shape_id, shape, start_pt, end_pt
         from -- {{ ref("shapes_geom_gtfs") }}
          `rj-smtr.gtfs.shapes_geom`
-        where feed_start_date in ("{{ feed_start_dates | join('", "') }}")
+        {# where feed_start_date in ("{{ feed_start_dates | join('", "') }}") #}
+        where feed_start_date = date("{{ feed_start_dates[1] }}")
         qualify
             row_number() over (partition by shape_id order by feed_start_date desc)
             = 1

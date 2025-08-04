@@ -13,6 +13,19 @@ with
             where feed_start_date = '{{ var("data_versao_gtfs") }}'
         {% endif -%}
     ),
+    ordem_servico_faixa_horaria_sentido as (
+        select * except(sentido),
+        case 
+            when sentido = "Ida" then "I"
+            when sentido = "Volta" then "V"
+            when sentido = "Circular" then "C"
+            else null
+        end as sentido,
+        from {{ ref("ordem_servico_faixa_horaria_sentido")}}
+        {% if is_incremental() -%}
+            where feed_start_date = '{{ var("data_versao_gtfs") }}'
+        {% endif -%}
+    ),
     -- 2. Trata a OS, inclui trip_ids e ajusta nomes das colunas
     ordem_servico_tratada as (
         select *
@@ -41,29 +54,6 @@ with
                         {{ ref("trips_filtrada_aux_gtfs") }} as t
                         on t.feed_version = o.feed_version
                         and o.servico = t.trip_short_name
-                        and (
-                            (
-                                o.tipo_dia = t.tipo_dia
-                                and o.tipo_os not in ("CNU", "Enem")
-                            )
-                            or (
-                                o.tipo_dia = "Ponto Facultativo"
-                                and t.tipo_dia = "Dia Útil"
-                                and o.tipo_os != "CNU"
-                            )
-                            or (
-                                o.feed_start_date = "2024-08-16"
-                                and o.tipo_os = "CNU"
-                                and o.tipo_dia = "Domingo"
-                                and t.tipo_dia = "Sabado"
-                            )  -- Domingo CNU
-                            or (
-                                o.feed_start_date in ("2024-09-29", "2024-11-06")
-                                and o.tipo_os = "Enem"
-                                and o.tipo_dia = "Domingo"
-                                and t.tipo_dia = "Sabado"
-                            )
-                        )  -- Domingo Enem
                         and (
                             (o.sentido in ("I", "C") and t.direction_id = "0")
                             or (o.sentido = "V" and t.direction_id = "1")
@@ -136,7 +126,7 @@ with
                 then 0  -- Trajeto regular
                 when indicador_trajeto_alternativo is true
                 then 1  -- Trajeto alternativo
-            end as id_tipo_trajeto,
+            end as id_tipo_trajeto
         from
             (
                 (
@@ -178,27 +168,13 @@ from
             o.vista,
             o.consorcio,
             o.sentido,
-            case
-                when feed_start_date >= '2024-08-16' then fh.partidas else null
-            end as partidas_total_planejada,
+            fh.partidas as partidas_total_planejada,
             distancia_planejada,
-            case
-                when feed_start_date >= '2024-08-16'
-                then fh.quilometragem
-                else distancia_total_planejada
-            end as distancia_total_planejada,
+            fh.quilometragem as distancia_total_planejada,
             inicio_periodo,
             fim_periodo,
-            case
-                when feed_start_date >= '2024-08-16'
-                then fh.faixa_horaria_inicio
-                else "00:00:00"
-            end as faixa_horaria_inicio,
-            case
-                when feed_start_date >= '2024-08-16'
-                then fh.faixa_horaria_fim
-                else "23:59:59"
-            end as faixa_horaria_fim,
+            fh.faixa_horaria_inicio as faixa_horaria_inicio,
+            fh.faixa_horaria_fim as faixa_horaria_fim,
             trip_id_planejado,
             trip_id,
             shape_id,
@@ -214,26 +190,21 @@ from
             end as sentido_shape,
             s.start_pt,
             s.end_pt,
-            id_tipo_trajeto,
+            id_tipo_trajeto
         from ordem_servico_trips as o
         left join shapes as s using (feed_version, feed_start_date, shape_id)
         left join
-            {{ ref("ordem_servico_faixa_horaria_sentido") }} fh using (
-                feed_version, feed_start_date, tipo_os, tipo_dia, servico
+            ordem_servico_faixa_horaria_sentido fh using (
+                feed_version, feed_start_date, tipo_os, tipo_dia, servico, sentido
             )
         where
             {% if is_incremental() -%}
                 feed_start_date = '{{ var("data_versao_gtfs") }}' and
             {% endif -%}
             (
-                (
-                    feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
-                    and (
+                
                         fh.quilometragem != 0
                         and (fh.partidas != 0 or fh.partidas is null)
-                    )
-                )
-                or feed_start_date < '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
             )
             and feed_start_date >= '{{ var("DATA_GTFS_V4_INICIO") }}'
         qualify

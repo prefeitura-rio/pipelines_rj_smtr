@@ -7,7 +7,7 @@
 {%- if execute %}
     {% set query = (
         "SELECT DISTINCT COALESCE(feed_start_date, data_versao_trips, data_versao_shapes, data_versao_frequencies) FROM "
-        ~ " `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`"
+        ~ ref("subsidio_data_versao_efetiva")
         ~ " WHERE data BETWEEN DATE('"
         ~ var("start_date")
         ~ "') AND DATE('"
@@ -47,18 +47,6 @@ with
                 and sentido = "I"
             )  -- Alteração para o reprocessamento do TCM - MTR-CAP-2025/03003 (2023-10-01 a 2024-01-31)
     ),
-    viagens_planejadas as (
-        select
-            feed_start_date,
-            servico,
-            tipo_dia,
-            tipo_os,
-            sentido,
-            sum(partidas) as viagens_planejadas,
-        from {{ ref("ordem_servico_faixa_horaria_sentido") }}
-        where feed_start_date in ('{{ feed_start_dates|join("', '") }}')
-        group by 1,2,3,4, 5
-    ),
     data_versao_efetiva as (
         select
             data,
@@ -70,8 +58,8 @@ with
                 data_versao_shapes,
                 data_versao_frequencies
             ) as feed_start_date
-        --from {{ ref("subsidio_data_versao_efetiva") }}
-         from `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
+        from {{ ref("subsidio_data_versao_efetiva") }}
+        -- from `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
         -- (alterar também query no bloco execute)
         where
             data
@@ -84,20 +72,14 @@ with
             p.tipo_dia,
             p.consorcio,
             p.servico,
-            sentido,
+            p.sentido,
             p.faixa_horaria_inicio,
             p.faixa_horaria_fim,
             p.km_planejada,
-            v.viagens_planejadas,
+            p.partidas_total_planejada as viagens_planejadas,
             p.indicador_circular
         from planejado as p
         left join data_versao_efetiva as d using (data, tipo_dia)
-        left join
-            viagens_planejadas as v
-            on d.feed_start_date = v.feed_start_date
-            and p.tipo_dia = v.tipo_dia
-            and p.servico = v.servico
-            and (d.tipo_os = v.tipo_os or (d.tipo_os is null and v.tipo_os = "Regular"))
     ),
     -- Parâmetros de subsídio
     subsidio_parametros as (
@@ -268,7 +250,7 @@ from
     (
         select
             v.*,
-            p.* except (data, servico),
+            p.* except (data, servico, sentido),
             row_number() over (
                 partition by v.data, v.servico, v.sentido, faixa_horaria_inicio, faixa_horaria_fim
                 order by ordem, datetime_partida

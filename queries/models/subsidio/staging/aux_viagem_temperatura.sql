@@ -31,8 +31,8 @@ with
             tecnologia_remunerada,
             sentido,
             modo
-        from {{ ref("viagem_classificada") }}
-        {# from `rj-smtr-dev.botelho__subsidio.viagem_classificada` #}
+        {# from {{ ref("viagem_classificada") }} #}
+        from `rj-smtr.subsidio.viagem_classificada`
         where
             data between date("{{var('date_range_start')}}") and date(
                 "{{var('date_range_end')}}"

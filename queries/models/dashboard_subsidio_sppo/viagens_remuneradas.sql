@@ -1,4 +1,3 @@
-
 {{
     config(
         materialized="incremental",
@@ -8,13 +7,13 @@
     )
 }}
 {% if var("start_date") < var("DATA_GTFS_V4_INICIO") %}
-select *
-from {{ ref("viagens_remuneradas_v1") }}
-where
-    data < date("{{ var('DATA_GTFS_V4_INICIO') }}")
-union all by name
+    select *
+    from {{ ref("viagens_remuneradas_v1") }}
+    where
+        data < date("{{ var('DATA_GTFS_V4_INICIO') }}")
+    union all by name
 {% endif %}
-select *
-from {{ ref("viagens_remuneradas_v2") }}
-where
-    data >= date("{{ var('DATA_GTFS_V4_INICIO') }}")
+SELECT *
+FROM {{ ref("viagens_remuneradas_v2") }}
+WHERE
+  data >= date("{{ var('DATA_GTFS_V4_INICIO') }}")

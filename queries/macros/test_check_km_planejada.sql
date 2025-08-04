@@ -28,7 +28,11 @@
             from {{ ref("subsidio_data_versao_efetiva") }}
             -- `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
             left join
+            {% if var('date_range_start') < var('DATA_GTFS_V4_INICIO') %}
                 {{ ref("ordem_servico_faixa_horaria") }}
+            {% else %}
+                {{ ref("ordem_servico_faixa_horaria_sentido") }}
+            {% endif %}
                 -- `rj-smtr.planejamento.ordem_servico_faixa_horaria`
                 using (feed_start_date, tipo_os, tipo_dia)
             where

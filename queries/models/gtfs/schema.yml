@@ -460,7 +460,7 @@ models:
       - dbt_expectations.expect_table_aggregation_to_equal_other_table:
           name: dbt_expectations.expect_table_aggregation_to_equal_other_table__ordem_servico_trips_shapes_gtfs
           expression: count(distinct feed_start_date)
-          compare_model: ref("ordem_servico_faixa_horaria")
+          compare_model: ref("ordem_servico_faixa_horaria") if var('data_versao_gtfs') < var('DATA_GTFS_V4_INICIO') else ref("ordem_servico_faixa_horaria_sentido")
           compare_expression: count(distinct feed_start_date)
           group_by: [feed_start_date, tipo_os, tipo_dia, servico, faixa_horaria_inicio]
           compare_group_by: [feed_start_date, tipo_os, tipo_dia, servico, faixa_horaria_inicio]
