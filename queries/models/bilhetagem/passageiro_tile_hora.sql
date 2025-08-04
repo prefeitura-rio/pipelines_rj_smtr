@@ -47,7 +47,7 @@ e as integrações capturadas entre date_range_start e date_range_end
 {% endif %}
 
 select
-    p.* except (id_transacao, geo_point_transacao),
+    p.* except (id_transacao, geo_point_transacao, valor_pagamento),
     geo.tile_id,
     count(id_transacao) as quantidade_passageiros,
     '{{ var("version") }}' as versao
