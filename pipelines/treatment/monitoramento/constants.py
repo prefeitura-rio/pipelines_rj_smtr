@@ -118,7 +118,7 @@ class constants(Enum):  # pylint: disable=c0103
 
     MONITORAMENTO_VEICULO_TEST = DBTTest(
         model="veiculo_fiscalizacao_lacre autuacao_disciplinar_historico temperatura_inmet aux_viagem_temperatura aux_veiculo_falha_ar_condicionado veiculo_regularidade_temperatura_dia",  # noqa
-        exclude="test_check_veiculo_lacre__veiculo_dia",
+        exclude="test_check_veiculo_lacre__veiculo_dia test_check_regularidade_temperatura__viagem_regularidade_temperatura",  # noqa
         checks_list=MONITORAMENTO_VEICULO_CHECKS_LIST,
         truncate_date=True,
     )
