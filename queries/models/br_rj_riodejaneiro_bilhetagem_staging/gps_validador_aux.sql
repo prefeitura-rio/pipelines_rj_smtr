@@ -1,41 +1,30 @@
-{{
-    config(
-        materialized="view"
-    )
-}}
+{{ config(materialized="view") }}
 
-SELECT
+select
     do.modo,
     g.data,
     g.hora,
-    g.data_tracking AS datetime_gps,
-    g.timestamp_captura AS datetime_captura,
+    g.data_tracking as datetime_gps,
+    g.timestamp_captura as datetime_captura,
     do.id_operadora,
     do.operadora,
-    g.codigo_linha_veiculo AS id_servico_jae,
+    g.codigo_linha_veiculo as id_servico_jae,
     -- s.servico,
-    l.nr_linha AS servico_jae,
-    l.nm_linha AS descricao_servico_jae,
-    prefixo_veiculo AS id_veiculo,
-    g.numero_serie_equipamento AS id_validador,
-    g.id AS id_transmissao_gps,
-    g.latitude_equipamento AS latitude,
-    g.longitude_equipamento AS longitude,
-    INITCAP(g.sentido_linha) AS sentido,
+    l.nr_linha as servico_jae,
+    l.nm_linha as descricao_servico_jae,
+    prefixo_veiculo as id_veiculo,
+    g.numero_serie_equipamento as id_validador,
+    g.id as id_transmissao_gps,
+    g.latitude_equipamento as latitude,
+    g.longitude_equipamento as longitude,
+    initcap(g.sentido_linha) as sentido,
     g.estado_equipamento,
     g.temperatura,
     g.versao_app
-FROM
-    {{ ref("staging_gps_validador") }} g
-LEFT JOIN
-    {{ ref("operadoras") }} AS do
-ON
-    g.codigo_operadora = do.id_operadora_jae
-LEFT JOIN
-    {{ ref("staging_linha") }} AS l
-ON
-    g.codigo_linha_veiculo = l.cd_linha
--- LEFT JOIN
---     {{ ref("servicos") }} AS s
--- ON
---     g.codigo_linha_veiculo = s.id_servico_jae
+from {{ ref("staging_gps_validador") }} g
+left join {{ ref("operadoras") }} as do on g.codigo_operadora = do.id_operadora_jae
+left join
+    {{ ref("aux_servico_jae") }} s
+    on g.codigo_linha_veiculo = s.cd_linha
+    and g.data_tracking >= s.datetime_inicio_validade
+    and (g.data_tracking < s.datetime_fim_validade or s.datetime_fim_validade is null)

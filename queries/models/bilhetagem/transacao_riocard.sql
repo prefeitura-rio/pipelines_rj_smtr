@@ -65,7 +65,14 @@ with
             t.valor_transacao
         from staging_transacao t
         left join {{ ref("operadoras") }} do on t.cd_operadora = do.id_operadora_jae
-        left join {{ ref("staging_linha") }} l on t.cd_linha = l.cd_linha
+        left join
+            {{ ref("aux_servico_jae") }} l
+            on t.cd_linha = l.cd_linha
+            and t.data_transacao >= l.datetime_inicio_validade
+            and (
+                t.data_transacao < l.datetime_fim_validade
+                or l.datetime_fim_validade is null
+            )
         left join
             {{ ref("staging_linha_consorcio") }} lc
             on t.cd_linha = lc.cd_linha

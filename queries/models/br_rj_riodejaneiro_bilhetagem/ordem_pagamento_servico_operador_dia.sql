@@ -11,6 +11,21 @@
 }}
 
 with
+    aux_servico as (
+        select
+            date(datetime_inicio_validade) as data_inicio_validade,
+            date(datetime_fim_validade) as data_fim_validade,
+            id_linha,
+            nr_linha,
+            nm_linha
+        from {{ ref("aux_servico_jae") }}
+        qualify
+            row_number() over (
+                partition by date(datetime_inicio_validade), id_linha
+                order by data_inicio_validade desc
+            )
+            = 1
+    ),
     ordem_pagamento as (
         select
             r.data_ordem,
@@ -60,7 +75,11 @@ with
             )
         left join {{ ref("operadoras") }} as do on r.id_operadora = do.id_operadora_jae
         left join {{ ref("consorcios") }} as dc on r.id_consorcio = dc.id_consorcio_jae
-        left join {{ ref("staging_linha") }} as l on r.id_linha = l.cd_linha
+        left join
+            aux_servico s
+            on r.id_linha = s.cd_linha
+            and r.data_ordem >= s.data_inicio_validade
+            and (r.data_ordem < s.data_fim_validade or s.data_fim_validade is null)
         {% if is_incremental() %}
             where
                 date(r.data) between date("{{var('date_range_start')}}") and date(
