@@ -14,6 +14,7 @@ with
             tipo_dia,
             consorcio,
             servico,
+            sentido,
             faixa_horaria_inicio,
             faixa_horaria_fim,
             distancia_total_planejada as km_planejada
@@ -27,7 +28,7 @@ with
     -- 2. Viagens realizadas
     viagem as (
         select
-            data, servico, id_viagem, tipo_viagem, datetime_partida, distancia_planejada
+            data, servico, sentido, id_viagem, tipo_viagem, datetime_partida, distancia_planejada
         from {{ ref("viagem_transacao") }}
         -- from `rj-smtr.subsidio.viagem_transacao`
         where
@@ -43,6 +44,7 @@ with
             p.faixa_horaria_fim,
             p.consorcio,
             p.servico,
+            p.sentido,
             safe_cast(p.km_planejada as numeric) as km_planejada_faixa,
             safe_cast(coalesce(count(v.id_viagem), 0) as int64) as viagens_faixa,
             safe_cast(
@@ -84,6 +86,7 @@ with
             viagem as v
             on p.data = v.data
             and p.servico = v.servico
+            and p.sentido = v.sentido
             and v.datetime_partida
             between p.faixa_horaria_inicio and p.faixa_horaria_fim
         group by
@@ -93,6 +96,7 @@ with
             p.faixa_horaria_fim,
             p.consorcio,
             p.servico,
+            p.sentido,
             p.km_planejada
     )
 select
@@ -102,6 +106,7 @@ select
     faixa_horaria_fim,
     consorcio,
     servico,
+    sentido,
     viagens_faixa,
     km_apurada_faixa,
     km_planejada_faixa,
