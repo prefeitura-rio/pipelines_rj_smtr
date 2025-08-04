@@ -1,5 +1,12 @@
 # Changelog - source_jae
 
+## [2.3.3] - 2025-08-04
+
+### Removido
+
+- Remove filtro da captura da tabela linha (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/755)
+
+
 ## [2.3.2] - 2025-07-31
 
 ### Alterado

@@ -1,6 +1,14 @@
 {{ config(materialized="table") }}
 
+
 with
+    linha_jae as (
+        select *
+        from {{ ref("staging_linha") }}
+        qualify
+            row_number() over (partition by cd_linha order by timestamp_captura desc)
+            = 1
+    ),
     tratado as (
         select
             c.modo,
@@ -40,7 +48,8 @@ with
             {{ ref("operadoras") }} o
             on lco.cd_operadora_transporte = o.id_operadora_jae
         join {{ ref("consorcios") }} c on lco.cd_consorcio = c.id_consorcio_jae
-        join {{ ref("staging_linha") }} l on lco.cd_linha = l.cd_linha
+        join linha_jae l on lco.cd_linha = l.cd_linha
+        left join linha_tarifa lt on lco.cd_linha = lt.cd_linha
         left join {{ ref("aux_linha_tarifa") }} lt on lco.cd_linha = lt.cd_linha
         where
             (
