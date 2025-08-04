@@ -8,7 +8,7 @@ with
     ordem_pagamento_consorcio as (
         select
             data,
-            safe_cast(id as string) as id_ordem_pagamento_consorcio,
+            replace(safe_cast(id as string), '.0', '') as id_ordem_pagamento_consorcio,
             timestamp_captura,
             datetime(
                 parse_timestamp(
@@ -20,7 +20,9 @@ with
             parse_date(
                 '%Y-%m-%d', safe_cast(json_value(content, '$.data_ordem') as string)
             ) as data_ordem,
-            safe_cast(json_value(content, '$.id_consorcio') as string) as id_consorcio,
+            replace(
+                safe_cast(json_value(content, '$.id_consorcio') as string), '.0', ''
+            ) as id_consorcio,
             safe_cast(
                 json_value(content, '$.id_ordem_pagamento') as string
             ) as id_ordem_pagamento,

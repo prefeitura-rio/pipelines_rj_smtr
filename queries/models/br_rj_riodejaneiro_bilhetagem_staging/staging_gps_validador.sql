@@ -24,8 +24,8 @@ select
     safe_cast(
         json_value(content, '$.bytes_transmitidos_geral') as float64
     ) as bytes_transmitidos_geral,
-    safe_cast(
-        json_value(content, '$.codigo_linha_veiculo') as string
+    replace(
+        safe_cast(json_value(content, '$.codigo_linha_veiculo') as string), ".0", ""
     ) as codigo_linha_veiculo,
     replace(
         safe_cast(json_value(content, '$.codigo_operadora') as string), ".0", ""
@@ -62,7 +62,9 @@ select
     safe_cast(
         json_value(content, '$.numero_serie_equipamento') as string
     ) as numero_serie_equipamento,
-    safe_cast(json_value(content, '$.prefixo_veiculo') as string) as prefixo_veiculo,
+    replace(
+        safe_cast(json_value(content, '$.prefixo_veiculo') as string), ".0", ""
+    ) as prefixo_veiculo,
     safe_cast(
         json_value(content, '$.qtd_transacoes_enviadas') as float64
     ) as qtd_transacoes_enviadas,
