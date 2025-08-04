@@ -26,6 +26,7 @@ where
         or (modo = "Ônibus" and data >= date("2024-04-19"))
         or (modo = "Van" and consorcio = "STPC" and data >= date("2024-07-01"))
         or (modo = "Van" and consorcio = "STPL" and data >= date("2024-07-15"))
+        or (modo = "Metrô" and consorcio = "METRÔ" and data >= date("2025-08-02"))
     )
     and tipo_transacao is not null
 
@@ -57,5 +58,6 @@ where
         or (modo = "Ônibus" and data >= date("2024-04-19"))
         or (modo = "Van" and consorcio = "STPC" and data >= date("2024-07-01"))
         or (modo = "Van" and consorcio = "STPL" and data >= date("2024-07-15"))
+        or (modo = "Metrô" and consorcio = "METRÔ" and data >= date("2025-08-02"))
         or modo is null
     )
