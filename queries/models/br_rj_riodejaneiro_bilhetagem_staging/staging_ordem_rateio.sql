@@ -175,7 +175,7 @@ from
         select
             *,
             row_number() over (
-                partition by id_ordem_rateio order by timestamp_captura desc
+                partition by id_ordem_rateio order by timestamp_captura
             ) as rn
         from ordem_rateio
     )

@@ -68,7 +68,10 @@ TRANSACAO_ORDEM_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="transacao_ordem - materializacao",
     selector=constants.TRANSACAO_ORDEM_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
-    wait=[financeiro_constants.FINANCEIRO_BILHETAGEM_SELECTOR.value],
+    wait=[
+        financeiro_constants.FINANCEIRO_BILHETAGEM_SELECTOR.value,
+        jae_constants.TRANSACAO_ORDEM_SOURCE.value,
+    ],
 )
 
 TRANSACAO_ORDEM_MATERIALIZACAO.state_handlers.append(
