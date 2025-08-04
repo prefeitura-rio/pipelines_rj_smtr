@@ -14,7 +14,7 @@ setup.py
 pipelines/treinamento_cmo/*
 .cmo/*
 **/cmo.py
-queries/.kubernetes
+
 
 
 
