@@ -146,6 +146,8 @@ selectors:
         - method: fqn
           value: aux_servicos_gtfs
         - method: fqn
+          value: aux_servico_jae
+        - method: fqn
           value: cadastro
 
   - name: transacao
