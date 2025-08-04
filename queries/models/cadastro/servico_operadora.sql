@@ -8,17 +8,6 @@ with
         qualify
             row_number() over (partition by cd_linha order by timestamp_captura desc)
             = 1
-    )
-    linha_tarifa as (
-        select
-            cd_linha,
-            vl_tarifa_ida as tarifa_ida,
-            vl_tarifa_volta as tarifa_volta,
-            dt_inicio_validade,
-            lead(dt_inicio_validade) over (
-                partition by cd_linha order by nr_sequencia
-            ) as data_fim_validade
-        from {{ ref("staging_linha_tarifa") }}
     ),
     tratado as (
         select
@@ -61,6 +50,7 @@ with
         join {{ ref("consorcios") }} c on lco.cd_consorcio = c.id_consorcio_jae
         join linha_jae l on lco.cd_linha = l.cd_linha
         left join linha_tarifa lt on lco.cd_linha = lt.cd_linha
+        left join {{ ref("aux_linha_tarifa") }} lt on lco.cd_linha = lt.cd_linha
         where
             (
                 (
