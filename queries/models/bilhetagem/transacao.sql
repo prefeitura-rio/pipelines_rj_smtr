@@ -167,9 +167,9 @@ with
             do.operadora,
             do.documento as documento_operadora,
             do.tipo_documento as tipo_documento_operadora,
-            t.cd_linha as id_servico_jae,
-            s.nr_linha as servico_jae,
-            s.nm_linha as descricao_servico_jae,
+            s.id_servico_jae,
+            s.servico_jae,
+            s.descricao_servico_jae,
             sentido,
             case
                 when m.modo = "VLT"
@@ -201,7 +201,7 @@ with
         left join {{ ref("consorcios") }} dc on t.cd_consorcio = dc.id_consorcio_jae
         left join
             {{ ref("aux_servico_jae") }} s
-            on t.cd_linha = s.cd_linha
+            on t.cd_linha = s.id_servico_jae
             and t.data_transacao >= s.datetime_inicio_validade
             and (
                 t.data_transacao < s.datetime_fim_validade

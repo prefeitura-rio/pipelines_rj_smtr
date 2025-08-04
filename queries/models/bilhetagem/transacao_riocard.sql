@@ -47,9 +47,9 @@ with
             t.cd_operadora as id_operadora_jae,
             do.id_operadora,
             do.operadora,
-            t.cd_linha as id_servico_jae,
-            l.nr_linha as servico_jae,
-            l.nm_linha as descricao_servico_jae,
+            l.id_servico_jae,
+            l.servico_jae,
+            l.descricao_servico_jae,
             t.sentido,
             case
                 when do.modo = "VLT"
@@ -67,7 +67,7 @@ with
         left join {{ ref("operadoras") }} do on t.cd_operadora = do.id_operadora_jae
         left join
             {{ ref("aux_servico_jae") }} l
-            on t.cd_linha = l.cd_linha
+            on t.cd_linha = l.id_servico_jae
             and t.data_transacao >= l.datetime_inicio_validade
             and (
                 t.data_transacao < l.datetime_fim_validade

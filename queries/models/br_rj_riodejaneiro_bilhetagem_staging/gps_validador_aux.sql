@@ -8,10 +8,9 @@ select
     g.timestamp_captura as datetime_captura,
     do.id_operadora,
     do.operadora,
-    g.codigo_linha_veiculo as id_servico_jae,
-    -- s.servico,
-    l.nr_linha as servico_jae,
-    l.nm_linha as descricao_servico_jae,
+    s.id_servico_jae,
+    s.servico_jae,
+    s.descricao_servico_jae,
     prefixo_veiculo as id_veiculo,
     g.numero_serie_equipamento as id_validador,
     g.id as id_transmissao_gps,
@@ -25,6 +24,6 @@ from {{ ref("staging_gps_validador") }} g
 left join {{ ref("operadoras") }} as do on g.codigo_operadora = do.id_operadora_jae
 left join
     {{ ref("aux_servico_jae") }} s
-    on g.codigo_linha_veiculo = s.cd_linha
+    on g.codigo_linha_veiculo = s.id_servico_jae
     and g.data_tracking >= s.datetime_inicio_validade
     and (g.data_tracking < s.datetime_fim_validade or s.datetime_fim_validade is null)

@@ -15,9 +15,10 @@ with
         select
             date(datetime_inicio_validade) as data_inicio_validade,
             date(datetime_fim_validade) as data_fim_validade,
-            id_linha,
-            nr_linha,
-            nm_linha
+            id_servico_jae,
+            servico_jae,
+            descricao_servico_jae,
+
         from {{ ref("aux_servico_jae") }}
         qualify
             row_number() over (
@@ -34,9 +35,9 @@ with
             dc.consorcio,
             do.id_operadora,
             do.operadora,
-            r.id_linha as id_servico_jae,
-            l.nr_linha as servico_jae,
-            l.nm_linha as descricao_servico_jae,
+            l.id_servico_jae,
+            l.servico_jae,
+            l.descricao_servico_jae,
             r.id_ordem_pagamento_consorcio_operadora
             as id_ordem_pagamento_consorcio_operador_dia,
             r.id_ordem_pagamento_consorcio as id_ordem_pagamento_consorcio_dia,
@@ -76,10 +77,10 @@ with
         left join {{ ref("operadoras") }} as do on r.id_operadora = do.id_operadora_jae
         left join {{ ref("consorcios") }} as dc on r.id_consorcio = dc.id_consorcio_jae
         left join
-            aux_servico s
-            on r.id_linha = s.cd_linha
-            and r.data_ordem >= s.data_inicio_validade
-            and (r.data_ordem < s.data_fim_validade or s.data_fim_validade is null)
+            aux_servico l
+            on r.id_linha = l.id_servico_jae
+            and r.data_ordem >= l.data_inicio_validade
+            and (r.data_ordem < l.data_fim_validade or s.data_fim_validade is null)
         {% if is_incremental() %}
             where
                 date(r.data) between date("{{var('date_range_start')}}") and date(
