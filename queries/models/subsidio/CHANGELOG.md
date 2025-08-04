@@ -1,5 +1,18 @@
 # Changelog - subsidio
 
+## [2.0.7] - 2025-07-31
+
+### Adicionado
+
+- Cria modelos `aux_viagem_temperatura`, `viagem_transacao_aux_v1`, `viagem_transacao_aux_v2` e `viagem_regularidade_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+- Adiciona testes para os modelos `aux_viagem_temperatura` e `viagem_regularidade_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+- Adiciona as colunas `placa` e `ano_fabricacao` no modelo `viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+
+### Alterado
+
+- Altera o modelo `viagem_transacao` para utilizar os modelos `viagem_transacao_aux_v1` e `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+- Altera testes do modelo `viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+
 ## [2.0.6] - 2025-07-03
 
 ### Adicionado

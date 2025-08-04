@@ -1,5 +1,17 @@
 # Changelog - bilhetagem
 
+## [3.2.2] - 2025-08-03
+
+### Alterado
+
+- Inclui modo `Metrô` no modelo `aux_passageiro_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/751)
+
+## [3.2.1] - 2025-07-30
+
+### Removido
+
+- Remove filtro `timestamp_captura` no modelo `aux_transacao_id_ordem_pagamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/740)
+
 ## [3.2.0] - 2025-07-03
 
 ### Adicionado

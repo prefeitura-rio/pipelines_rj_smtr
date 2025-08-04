@@ -28,6 +28,9 @@ selectors:
           value: tecnologia_servico
         - method: path
           value: models/subsidio
+        - exclude:
+          - method: fqn
+            value: aux_viagem_temperatura
         - method: fqn
           value: viagens_remuneradas
         - method: path
@@ -353,6 +356,20 @@ selectors:
           value: veiculo_fiscalizacao_lacre
         - method: fqn
           value: autuacao_disciplinar_historico
+        - method: fqn
+          value: temperatura_inmet
+        - method: fqn
+          value: viagem_classificada
+        - method: fqn
+          value: aux_veiculo_gps_dia
+        - method: fqn
+          value: aux_viagem_temperatura
+        - method: fqn
+          value: aux_veiculo_falha_ar_condicionado
+        - method: fqn
+          value: veiculo_regularidade_temperatura_dia
+        - method: fqn
+          value: veiculo_dia
 
   - name: cadastro_veiculo
     definition:

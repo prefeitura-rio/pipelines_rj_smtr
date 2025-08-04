@@ -69,8 +69,7 @@ with
         select
             *,
             row_number() over (
-                partition by id_ordem_pagamento_consorcio
-                order by timestamp_captura desc
+                partition by id_ordem_pagamento_consorcio order by timestamp_captura
             ) as rn
         from ordem_pagamento_consorcio
     )
