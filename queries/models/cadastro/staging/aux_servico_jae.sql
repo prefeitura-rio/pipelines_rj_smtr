@@ -25,15 +25,19 @@ with
         from {{ ref("staging_linha") }}
         {% if is_incremental() %}
             where
-                data between date({{ var("date_range_start") }}) and date(
-                    {{ var("date_range_end") }}
+                data between date('{{ var("date_range_start") }}') and date(
+                    '{{ var("date_range_end") }}'
                 )
         {% endif %}
     ),
     dados_completos as (
         select *
         from staging
-        {% if is_incremental() %} select * from {{ this }} {% endif %}
+        {% if is_incremental() %}
+            union all
+            select *
+            from {{ this }}
+        {% endif %}
     ),
     dados_completos_sha as (
         select
