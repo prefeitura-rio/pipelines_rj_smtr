@@ -12,8 +12,8 @@ select
         parse_timestamp('%Y-%m-%d %H:%M:%S%Ez', timestamp_captura), "America/Sao_Paulo"
     ) as timestamp_captura,
     safe_cast(json_value(content, '$.id_transacao') as string) as id_transacao,
-    safe_cast(
-        json_value(content, '$.tipo_transacao_original') as string
+    replace(
+        safe_cast(json_value(content, '$.tipo_transacao_original') as string), '.0', ''
     ) as tipo_transacao_original,
     safe_cast(
         json_value(content, '$.valor_transacao_original') as float64
@@ -27,8 +27,10 @@ select
     safe_cast(
         json_value(content, '$.uid_origem_original') as string
     ) as uid_origem_original,
-    safe_cast(
-        json_value(content, '$.tipo_transacao_retificada') as string
+    replace(
+        safe_cast(json_value(content, '$.tipo_transacao_retificada') as string),
+        '.0',
+        ''
     ) as tipo_transacao_retificada,
     safe_cast(
         json_value(content, '$.valor_transacao_retificada') as float64

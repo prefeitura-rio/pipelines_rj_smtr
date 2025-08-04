@@ -8,7 +8,7 @@ with
     ordem_pagamento as (
         select
             data,
-            safe_cast(id as string) as id_ordem_pagamento,
+            replace(safe_cast(id as string), '.0', '') as id_ordem_pagamento,
             timestamp_captura,
             datetime(
                 parse_timestamp(
