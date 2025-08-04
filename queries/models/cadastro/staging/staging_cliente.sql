@@ -4,10 +4,12 @@ with
     cliente as (
         select
             data,
-            safe_cast(cd_cliente as string) as cd_cliente,
+            replace(safe_cast(cd_cliente as string), '.0', '') as cd_cliente,
             timestamp_captura,
-            safe_cast(
-                json_value(content, '$.CD_TIPO_DOCUMENTO') as string
+            replace(
+                safe_cast(json_value(content, '$.CD_TIPO_DOCUMENTO') as string),
+                ".0",
+                ""
             ) as cd_tipo_documento,
             safe_cast(json_value(content, '$.NM_CLIENTE') as string) as nm_cliente,
             safe_cast(

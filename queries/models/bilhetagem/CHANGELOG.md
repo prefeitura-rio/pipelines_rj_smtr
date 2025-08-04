@@ -1,5 +1,12 @@
 # Changelog - bilhetagem
 
+## [3.2.4] - 2025-08-04
+
+### Alterado
+
+- Trata dados de id inteiro nos modelos de staging da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/755)
+- Altera tabela com informações de serviço da Jaé nos modelos `transacao.sql` e `transacao_riocard.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/755)
+
 ## [3.2.3] - 2025-08-04
 
 ### Adicionado
