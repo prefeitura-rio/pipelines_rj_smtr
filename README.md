@@ -12,7 +12,7 @@
     - `. .pipelines/bin/activate`
 
 - Instale as dependencias do projeto:
-    - `poetry install --all-extras`
+    - `poetry install --all-groups`
     - `pip install -e .`
 
 - Crie um arquivo `.env` na raiz do projeto, contendo as seguintes variáveis:
