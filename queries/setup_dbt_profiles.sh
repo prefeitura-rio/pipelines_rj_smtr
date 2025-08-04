@@ -1,16 +1,13 @@
-echo "Creating directories..."
-
-mkdir ./credentials-dev
-
-mkdir ./credentials-prod
-
-mkdir ./profiles
+#!/usr/bin/env bash
+set -euo pipefail
+mkdir -p ./credentials-dev
+mkdir -p ./credentials-prod
+mkdir -p ./profiles
 
 echo "Mounting files from env..."
 
-bash -c "echo $1 | base64 --decode > ./credentials-dev/dev.json"
-
-bash -c "echo $1 | base64 --decode > ./credentials-prod/prod.json"
+printf '%s' "$1" | base64 --decode > ./credentials-dev/dev.json
+printf '%s' "$1" | base64 --decode > ./credentials-prod/prod.json
 
 echo """
 queries:

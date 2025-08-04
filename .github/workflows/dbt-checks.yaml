@@ -17,10 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Python version
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: "3.9"
 
@@ -50,4 +50,4 @@ jobs:
 
       - name: Run sqlfmt
         working-directory: queries
-        run: sqlfmt --diff ${{ steps.changed-files.outputs.all_changed_files }}
+        run: sqlfmt --diff .
