@@ -15,7 +15,7 @@ with
     ),
     ordem_servico_faixa_horaria_sentido as (
         select * except(sentido),
-        case 
+        case
             when sentido = "Ida" then "I"
             when sentido = "Volta" then "V"
             when sentido = "Circular" then "C"
@@ -202,7 +202,7 @@ from
                 feed_start_date = '{{ var("data_versao_gtfs") }}' and
             {% endif -%}
             (
-                
+
                         fh.quilometragem != 0
                         and (fh.partidas != 0 or fh.partidas is null)
             )
