@@ -11,8 +11,6 @@ with
             lco.cd_linha as id_servico_jae,
             l.nr_linha as servico_jae,
             l.nm_linha as descricao_servico_jae,
-            lt.tarifa_ida,
-            lt.tarifa_volta,
             coalesce(l.gtfs_route_id, l.gtfs_stop_id) as id_servico_gtfs,
             case
                 when l.gtfs_route_id is not null
@@ -20,6 +18,8 @@ with
                 when l.gtfs_stop_id is not null
                 then 'stops'
             end as tabela_origem_gtfs,
+            lt.tarifa_ida,
+            lt.tarifa_volta,
             case
                 when datetime(lco.dt_inicio_validade) > lt.dt_inicio_validade
                 then datetime(lco.dt_inicio_validade)
@@ -35,13 +35,13 @@ with
                 when datetime(lco.dt_fim_validade) < lt.data_fim_validade
                 then datetime(lco.dt_fim_validade)
             end as data_fim_validade
-        from {{ ref("staging_linha_consorcio_operadora_transporte") }} as lco
+        from {{ ref("staging_linha_consorcio_operadora_transporte") }} lco
         inner join
-            {{ ref("operadoras") }} as o
+            {{ ref("operadoras") }} o
             on lco.cd_operadora_transporte = o.id_operadora_jae
-        inner join {{ ref("consorcios") }} as c on lco.cd_consorcio = c.id_consorcio_jae
-        inner join {{ ref("staging_linha") }} as l on lco.cd_linha = l.cd_linha
-        left join {{ ref("aux_linha_tarifa") }} as lt on lco.cd_linha = lt.cd_linha
+        inner join {{ ref("consorcios") }} c on lco.cd_consorcio = c.id_consorcio_jae
+        inner join {{ ref("staging_linha") }} l on lco.cd_linha = l.cd_linha
+        left join {{ ref("aux_linha_tarifa") }} lt on lco.cd_linha = lt.cd_linha
         where
             (
                 (
