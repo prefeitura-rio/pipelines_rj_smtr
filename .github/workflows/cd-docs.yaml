@@ -52,11 +52,6 @@ jobs:
       # - run: |-
       #     gcloud --quiet auth configure-docker
 
-      - name: Install DBT dependencies
-        run: |
-          cd queries
-          dbt deps
-
       - name: Generate Docs Static Files
         run: |
           cd queries
