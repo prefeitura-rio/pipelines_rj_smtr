@@ -55,7 +55,6 @@ with
             )
             or (lt.data_fim_validade is null or lco.dt_fim_validade is null)
     )
-
 select *, '{{ var("version") }}' as versao
 from tratado
 where data_inicio_validade < data_fim_validade or data_fim_validade is null
