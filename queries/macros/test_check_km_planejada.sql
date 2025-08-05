@@ -4,6 +4,7 @@
             select distinct
                 data,
                 servico,
+                sentido,
                 faixa_horaria_inicio,
                 round(distancia_total_planejada, 3) as distancia_total_planejada
             from {{ ref("viagem_planejada") }}
@@ -21,6 +22,14 @@
                     ) hour
                 ) as data,
                 servico,
+                {% if var('date_range_start') >= var('DATA_GTFS_V4_INICIO') %}
+                    case 
+                        when sentido = "Ida" then "I"
+                        when sentido = "Volta" then "V"
+                        when sentido = "Circular" then "C"
+                        else sentido
+                    end as sentido,
+                {% endif %}
                 datetime(data) + interval cast(
                     split(faixa_horaria_inicio, ":")[safe_offset(0)] as int64
                 ) hour as faixa_horaria_inicio,
@@ -39,7 +48,7 @@
                 data between date_sub(
                     date("{{ var('date_range_start') }}"), interval 1 day
                 ) and date("{{ var('date_range_end') }}")
-            group by 1, 2, 3
+            group by all
         )
         {% if "viagem_planejada" not in model %}
             ,
@@ -74,9 +83,19 @@
                 end as servico,
             from os_faixa
             where quilometragem != 0
-        ) using (data, servico, faixa_horaria_inicio)
+        ) 
+        {% if var('date_range_start') < var('DATA_GTFS_V4_INICIO') %}
+            using (data, servico, faixa_horaria_inicio)
+        {% else %}
+            using (data, servico, faixa_horaria_inicio, sentido)
+        {% endif %}
     {% if "viagem_planejada" not in model %}
-        full join sumario using (data, servico, faixa_horaria_inicio)
+        full join sumario 
+        {% if var('date_range_start') < var('DATA_GTFS_V4_INICIO') %}
+            using (data, servico, faixa_horaria_inicio)
+        {% else %}
+            using (data, servico, faixa_horaria_inicio, sentido)
+        {% endif %}
     {% endif %}
     where
         quilometragem != distancia_total_planejada
