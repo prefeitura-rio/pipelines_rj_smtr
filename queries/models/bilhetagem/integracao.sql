@@ -184,9 +184,13 @@ with
         left join {{ ref("consorcios") }} dc on i.id_consorcio = dc.id_consorcio_jae
         {# `rj-smtr.cadastro.consorcios` dc on i.id_consorcio = dc.id_consorcio_jae #}
         left join
-            {{ ref("staging_linha") }} l
-            {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.linha` l #}
-            on i.id_linha = l.cd_linha
+            {{ ref("aux_servico_jae") }} l
+            on i.id_linha = l.id_servico_jae
+            and i.datetime_transacao >= l.datetime_inicio_validade
+            and (
+                i.datetime_transacao < l.datetime_fim_validade
+                or l.datetime_fim_validade is null
+            )
         left join {{ ref("staging_ordem_rateio") }} o using (id_ordem_rateio)
         where i.id_transacao is not null
     ),
