@@ -767,6 +767,9 @@ models:
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: temperatura_inmet
     description: "Tabela com dados de temperatura das estações meteorológicas do INMET"
+    tests:
+      - test_completude_temperatura_inmet:
+          name: test_completude__temperatura_inmet
     columns:
       - name: data
         description: "{{ doc('data') }} [partição]"
