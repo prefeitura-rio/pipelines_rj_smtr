@@ -412,6 +412,8 @@ models:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
       +schema: subsidio
+      staging:
+        +schema: subsidio_staging
     catalogo:
       +materialized: view
       +schema: catalogo
