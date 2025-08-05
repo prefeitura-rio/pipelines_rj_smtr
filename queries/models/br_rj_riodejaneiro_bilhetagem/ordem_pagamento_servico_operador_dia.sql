@@ -22,7 +22,7 @@ with
         from {{ ref("aux_servico_jae") }}
         qualify
             row_number() over (
-                partition by date(datetime_inicio_validade), id_linha
+                partition by date(datetime_inicio_validade), id_servico_jae
                 order by data_inicio_validade desc
             )
             = 1
