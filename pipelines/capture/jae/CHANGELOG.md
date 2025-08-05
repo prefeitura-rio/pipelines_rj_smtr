@@ -2,7 +2,7 @@
 
 ## [2.3.4] - 2025-08-05
 
-- Aumenta memória nos flows `CAPTURA_INTEGRACAO`, `CAPTURA_TRANSACAO_ORDEM` e `verifica_captura`
+- Aumenta memória nos flows `CAPTURA_INTEGRACAO`, `CAPTURA_TRANSACAO_ORDEM` e `verifica_captura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/759)
 
 ## [2.3.3] - 2025-08-04
 
