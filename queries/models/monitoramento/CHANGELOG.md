@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.6.1] - 2025-08-05
+
+### Adicionado
+
+- Adiciona teste `test_completude__temperatura_inmet` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/761)
+
 ## [1.6.0] - 2025-07-31
 
 ### Adicionado
