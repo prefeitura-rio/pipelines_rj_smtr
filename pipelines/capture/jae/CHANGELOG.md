@@ -1,5 +1,9 @@
 # Changelog - source_jae
 
+## [2.3.4] - 2025-08-05
+
+- Aumenta memória nos flows `CAPTURA_INTEGRACAO`, `CAPTURA_TRANSACAO_ORDEM` e `verifica_captura`
+
 ## [2.3.3] - 2025-08-04
 
 ### Removido
