@@ -682,8 +682,8 @@
             {# {{ ref("feed_info_gtfs") }} as i using (feed_version) #}
             `rj-smtr.gtfs.feed_info` as i using (feed_version)
             left join
-            {# {{ ref("aux_calendario_manual") }} as c using (data) #}
-            rj-smtr.planejamento_staging.aux_calendario_manual as c using (data)
+            {{ ref("aux_calendario_manual") }} as c using (data)
+            {# rj-smtr.planejamento_staging.aux_calendario_manual as c using (data) #}
             where
                 {% if is_incremental() %}
                     data = date_sub(date("{{ var('run_date') }}"), interval 1 day)
@@ -703,8 +703,8 @@
         tipo_os,
     from data_versao_efetiva_manual as d
     left join
-        {# {{ ref("feed_info_gtfs") }} as i #}
-        `rj-smtr.gtfs.feed_info` as i
+        {{ ref("feed_info_gtfs") }} as i
+        {# `rj-smtr.gtfs.feed_info` as i #}
         on (
             data between i.feed_start_date and i.feed_end_date
             or (data >= i.feed_start_date and i.feed_end_date is null)

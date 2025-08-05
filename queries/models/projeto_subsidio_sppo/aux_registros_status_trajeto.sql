@@ -140,8 +140,8 @@ shapes AS (
   SELECT
     *
   FROM
-    --{{ ref("shapes_geom_gtfs") }}
-     rj-smtr.gtfs.shapes_geom
+    {{ ref("shapes_geom_gtfs") }}
+    -- rj-smtr.gtfs.shapes_geom
   WHERE
     feed_start_date IN ('{{ feed_start_dates|join("', '") }}')
 ),

@@ -25,8 +25,7 @@ WITH
     SELECT
       *
     FROM
-      {# {{ ref("shapes_geom_gtfs") }} #}
-      rj-smtr.gtfs.shapes_geom
+      {{ ref("shapes_geom_gtfs") }}
     {% if is_incremental() -%}
     WHERE
       feed_start_date = '{{ var("data_versao_gtfs") }}'
