@@ -23,7 +23,7 @@
                 ) as data,
                 servico,
                 {% if var('date_range_start') >= var('DATA_GTFS_V4_INICIO') %}
-                    case 
+                    case
                         when sentido = "Ida" then "I"
                         when sentido = "Volta" then "V"
                         when sentido = "Circular" then "C"
@@ -83,14 +83,14 @@
                 end as servico,
             from os_faixa
             where quilometragem != 0
-        ) 
+        )
         {% if var('date_range_start') < var('DATA_GTFS_V4_INICIO') %}
             using (data, servico, faixa_horaria_inicio)
         {% else %}
             using (data, servico, faixa_horaria_inicio, sentido)
         {% endif %}
     {% if "viagem_planejada" not in model %}
-        full join sumario 
+        full join sumario
         {% if var('date_range_start') < var('DATA_GTFS_V4_INICIO') %}
             using (data, servico, faixa_horaria_inicio)
         {% else %}
