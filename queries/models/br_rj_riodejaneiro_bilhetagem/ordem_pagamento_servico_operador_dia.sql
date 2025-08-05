@@ -80,7 +80,7 @@ with
             aux_servico l
             on r.id_linha = l.id_servico_jae
             and r.data_ordem >= l.data_inicio_validade
-            and (r.data_ordem < l.data_fim_validade or s.data_fim_validade is null)
+            and (r.data_ordem < l.data_fim_validade or l.data_fim_validade is null)
         {% if is_incremental() %}
             where
                 date(r.data) between date("{{var('date_range_start')}}") and date(
