@@ -1,5 +1,15 @@
 # Changelog - gtfs
 
+## [1.2.4] - 2025-08-05
+
+### Corrigido
+
+- Corrigida a verificação de shapes circulares no modelo `shapes_geom_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+
+### Alterado
+
+- Alterados os modelos `ordem_servico_trips_shapes.sql` e `ordem_servico_sentido_atualizado_aux_gtfs` para utilização do versionamento e da tabela `ordem_servico_faixa_horaria_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+
 ## [1.2.3] - 2025-05-29
 
 ### Alterado
