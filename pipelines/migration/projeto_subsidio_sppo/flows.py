@@ -22,6 +22,8 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
 )
 
+from pipelines.capture.jae.constants import constants as jae_constants
+from pipelines.capture.jae.tasks import get_capture_gaps, jae_capture_check_get_ts_range
 from pipelines.constants import constants as smtr_constants
 from pipelines.migration.projeto_subsidio_sppo.constants import constants
 from pipelines.migration.projeto_subsidio_sppo.tasks import check_param
@@ -45,7 +47,12 @@ from pipelines.schedules import (
     every_day_hour_five_and_hour_fourteen,
     every_day_hour_seven_minute_five,
 )
-from pipelines.tasks import check_fail, transform_task_state
+from pipelines.tasks import (  # flow_log,
+    add_days_to_date,
+    check_fail,
+    get_scheduled_timestamp,
+    transform_task_state,
+)
 from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt
 
 # from pipelines.materialize_to_datario.flows import (
@@ -216,6 +223,8 @@ with Flow(
     dates = [{"start_date": start_date, "end_date": end_date}]
     _vars = get_join_dict(dict_list=dates, new_dict=dataset_sha)[0]
 
+    timestamp = get_scheduled_timestamp()
+
     # 2. MATERIALIZE DATA #
     with case(test_only, False):
         with case(materialize_sppo_veiculo_dia, True):
@@ -252,6 +261,27 @@ with Flow(
         # 3. PRE-DATA QUALITY CHECK #
         dbt_vars = {"date_range_start": start_date, "date_range_end": end_date}
 
+        timestamp_captura_start, timestamp_captura_end = jae_capture_check_get_ts_range(
+            timestamp=timestamp,
+            retroactive_days=0,
+            timestamp_captura_start=start_date_param,
+            timestamp_captura_end=add_days_to_date(end_date_param),
+        )
+
+        # timestamps = get_capture_gaps.map(
+        #     table_id=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys()),
+        #     timestamp_captura_start=unmapped(timestamp_captura_start),
+        #     timestamp_captura_end=unmapped(timestamp_captura_end),
+        # )
+
+        timestamps = get_capture_gaps(
+            table_id=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys())[0],
+            timestamp_captura_start=timestamp_captura_start,
+            timestamp_captura_end=timestamp_captura_end,
+        )
+
+        missing_timestamps = task(lambda s: True if len(s) > 0 else None)(timestamps)
+
         SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt(
             resource="test",
             dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
@@ -267,8 +297,9 @@ with Flow(
         )
 
         test_failed = check_fail(DATA_QUALITY_PRE)
+        materialize_subsidio = merge(missing_timestamps, test_failed)
 
-        with case(test_failed, False):
+        with case(materialize_subsidio, False):
             # 4. CALCULATE #
             date_in_range = check_date_in_range(
                 _vars["start_date"], _vars["end_date"], constants.DATA_SUBSIDIO_V9_INICIO.value
@@ -522,6 +553,25 @@ with Flow(
             #     )
     with case(test_only, True):
         dbt_vars = {"date_range_start": start_date, "date_range_end": end_date}
+
+        timestamp_captura_start, timestamp_captura_end = jae_capture_check_get_ts_range(
+            timestamp=timestamp,
+            retroactive_days=0,
+            timestamp_captura_start=start_date_param,
+            timestamp_captura_end=add_days_to_date(end_date_param),
+        )
+
+        # timestamps = get_capture_gaps.map(
+        #     table_id=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys()),
+        #     timestamp_captura_start=unmapped(timestamp_captura_start),
+        #     timestamp_captura_end=unmapped(timestamp_captura_end),
+        # )
+
+        timestamps = get_capture_gaps(
+            table_id=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys())[0],
+            timestamp_captura_start=timestamp_captura_start,
+            timestamp_captura_end=timestamp_captura_end,
+        )
 
         SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt(
             resource="test",
