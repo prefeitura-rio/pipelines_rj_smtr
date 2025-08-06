@@ -45,8 +45,8 @@ with
             servico,
             sentido,
             distancia_planejada
-        {# from {{ ref("aux_viagem_temperatura") }} #}
-        from rj-smtr.subsidio.aux_viagem_temperatura
+        from {{ ref("aux_viagem_temperatura") }}
+        {# from rj-smtr.subsidio.aux_viagem_temperatura #}
         where {{ incremental_filter }}
     ),
     veiculo_regularidade as (
@@ -54,8 +54,8 @@ with
             data,
             id_veiculo,
             indicadores.indicador_falha_recorrente.valor as indicador_falha_recorrente
-        {# from {{ ref("veiculo_regularidade_temperatura_dia") }} #}
-        from rj-smtr.monitoramento.veiculo_regularidade_temperatura_dia
+        from {{ ref("veiculo_regularidade_temperatura_dia") }}
+        {# from rj-smtr.monitoramento.veiculo_regularidade_temperatura_dia #}
         where {{ incremental_filter }}
     ),
     regularidade_temperatura as (
