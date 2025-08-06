@@ -37,7 +37,7 @@ with
             id_ordem_pagamento_consorcio_operador_dia,
             data as data_transacao
         from {{ ref("aux_transacao_id_ordem_pagamento") }}
-        {% if is_incremental() %}
+        {% if is_incremental() and partitions | length > 0 %}
             where data in ({{ partitions | join(", ") }})
         {% endif %}
     )
