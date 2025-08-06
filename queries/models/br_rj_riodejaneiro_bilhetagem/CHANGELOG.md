@@ -1,5 +1,23 @@
 # Changelog - bilhetagem
 
+## [3.0.2] - 2025-08-04
+
+### Alterado
+
+- Trata dados de id inteiro nos modelos de staging da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/755)
+- Altera tabela com informações de serviço da Jaé nos modelos `gps_validador_aux.sql` e `ordem_pagamento_servico_operador_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/755)
+
+## [3.0.1] - 2025-07-30
+
+### Alterado
+
+- Considera a primeira captura das ordens de pagamento nos modelos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/740):
+  - `staging_ordem_pagamento_consorcio_operadora.sql`
+  - `staging_ordem_pagamento_consorcio.sql`
+  - `staging_ordem_pagamento.sql`
+  - `staging_ordem_rateio.sql`
+  - `staging_ordem_ressarcimento.sql`
+
 ## [3.0.0] - 2025-07-03
 
 ### Adicionado

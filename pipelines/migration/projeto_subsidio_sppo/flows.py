@@ -3,7 +3,7 @@
 """
 Flows for projeto_subsidio_sppo
 
-DBT: 2025-07-28
+DBT: 2025-08-01
 """
 
 from prefect import Parameter, case, task
@@ -671,8 +671,9 @@ with Flow(
                     with case(data_maior_ou_igual_v14, True):
                         SUBSIDIO_SPPO_DATA_QUALITY_POS_V14 = run_dbt(
                             resource="test",
-                            dataset_id="viagens_remuneradas sumario_faixa_servico_dia_pagamento",  # noqa
+                            dataset_id="viagem_classificada viagem_regularidade_temperatura viagens_remuneradas sumario_faixa_servico_dia_pagamento",  # noqa
                             _vars=dbt_vars,
+                            exclude="aux_viagem_temperatura veiculo_regularidade_temperatura_dia",
                         )
 
                         SUBSIDIO_SPPO_DATA_QUALITY_POS_V14 = transform_task_state(

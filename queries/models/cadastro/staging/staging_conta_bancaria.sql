@@ -1,33 +1,32 @@
 {{
-  config(
-    alias='conta_bancaria',
-  )
+    config(
+        alias="conta_bancaria",
+    )
 }}
 
-WITH
-    conta_bancaria AS (
-        SELECT
+with
+    conta_bancaria as (
+        select
             data,
-            SAFE_CAST(CD_CLIENTE AS STRING) AS cd_cliente,
+            replace(safe_cast(cd_cliente as string), '.0', '') as cd_cliente,
             timestamp_captura,
-            SAFE_CAST(JSON_VALUE(content, '$.CD_AGENCIA') AS STRING) AS cd_agencia,
-            SAFE_CAST(JSON_VALUE(content, '$.CD_TIPO_CONTA') AS STRING) AS cd_tipo_conta,
-            SAFE_CAST(JSON_VALUE(content, '$.NM_BANCO') AS STRING) AS nm_banco,
-            SAFE_CAST(JSON_VALUE(content, '$.NR_BANCO') AS STRING) AS nr_banco,
-            SAFE_CAST(JSON_VALUE(content, '$.NR_CONTA') AS STRING) AS nr_conta,
-        FROM
-            {{ source("br_rj_riodejaneiro_bilhetagem_staging", "conta_bancaria") }}
+            safe_cast(json_value(content, '$.CD_AGENCIA') as string) as cd_agencia,
+            safe_cast(
+                json_value(content, '$.CD_TIPO_CONTA') as string
+            ) as cd_tipo_conta,
+            safe_cast(json_value(content, '$.NM_BANCO') as string) as nm_banco,
+            safe_cast(json_value(content, '$.NR_BANCO') as string) as nr_banco,
+            safe_cast(json_value(content, '$.NR_CONTA') as string) as nr_conta,
+        from {{ source("br_rj_riodejaneiro_bilhetagem_staging", "conta_bancaria") }}
     ),
-    conta_bancaria_rn AS (
-        SELECT
+    conta_bancaria_rn as (
+        select
             *,
-            ROW_NUMBER() OVER (PARTITION BY cd_cliente ORDER BY timestamp_captura DESC) AS rn
-        FROM
-            conta_bancaria
+            row_number() over (
+                partition by cd_cliente order by timestamp_captura desc
+            ) as rn
+        from conta_bancaria
     )
-SELECT
-  * EXCEPT(rn)
-FROM
-  conta_bancaria_rn
-WHERE
-  rn = 1
+select * except (rn)
+from conta_bancaria_rn
+where rn = 1
