@@ -136,7 +136,7 @@ with
                 then 0  -- Trajeto regular
                 when indicador_trajeto_alternativo is true
                 then 1  -- Trajeto alternativo
-            end as id_tipo_trajeto,
+            end as id_tipo_trajeto
         from
             (
                 (

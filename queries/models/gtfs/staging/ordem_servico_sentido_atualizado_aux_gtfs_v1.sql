@@ -32,7 +32,7 @@ with
         select
             * except (horario_inicio, horario_fim),
             horario_inicio as inicio_periodo,
-            horario_fim as fim_periodo,
+            horario_fim as fim_periodo
         from {{ ref("aux_ordem_servico_diaria") }}
         {% if is_incremental() -%}
             where feed_start_date = '{{ var("data_versao_gtfs") }}'

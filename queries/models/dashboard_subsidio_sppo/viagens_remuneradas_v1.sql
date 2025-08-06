@@ -53,7 +53,7 @@ with
             viagens_planejadas,
             partidas_ida,
             partidas_volta,
-            tipo_os,
+            tipo_os
         from {{ ref("aux_ordem_servico_diaria") }}
         where feed_start_date in ('{{ feed_start_dates|join("', '") }}')
     ),

@@ -20,7 +20,7 @@ with
             when sentido = "Volta" then "V"
             when sentido = "Circular" then "C"
             else null
-        end as sentido,
+        end as sentido
         from {{ ref("ordem_servico_faixa_horaria_sentido")}}
         {% if is_incremental() -%}
             where feed_start_date = '{{ var("data_versao_gtfs") }}'
@@ -140,7 +140,7 @@ with
                     select
                         * except (trip_id),
                         trip_id as trip_id_planejado,
-                        concat(trip_id, "_0") as trip_id,
+                        concat(trip_id, "_0") as trip_id
                     from ordem_servico_tratada
                     where sentido = "C"
                 )
