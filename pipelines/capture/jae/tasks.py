@@ -2,8 +2,11 @@
 """Tasks de captura dos dados da Jaé"""
 from datetime import datetime, timedelta
 from functools import partial
+from typing import Optional
 
+import basedosdados as bd
 import pandas as pd
+import prefect
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
@@ -13,6 +16,7 @@ from sqlalchemy import DATE, DATETIME, TIMESTAMP, create_engine, inspect
 from pipelines.capture.jae.constants import constants
 from pipelines.capture.jae.utils import (
     create_billingpay_backup_filepath,
+    get_jae_timestamp_captura_count,
     get_redis_last_backup,
     get_table_data_backup_billingpay,
 )
@@ -38,17 +42,43 @@ from pipelines.utils.utils import convert_timezone
 def create_jae_general_extractor(source: SourceTable, timestamp: datetime):
     """Cria a extração de tabelas da Jaé"""
 
+    if source.table_id == constants.GPS_VALIDADOR_TABLE_ID.value and timestamp < convert_timezone(
+        datetime(2025, 3, 26, 15, 31, 0)
+    ):
+        raise ValueError(
+            """A recaptura de dados anteriores deve ser feita manualmente.
+            A coluna de captura foi alterada de ID para data_tracking"""
+        )
+
     credentials = get_secret(constants.JAE_SECRET_PATH.value)
     params = constants.JAE_TABLE_CAPTURE_PARAMS.value[source.table_id]
 
-    start = (
-        source.get_last_scheduled_timestamp(timestamp=timestamp)
-        .astimezone(tz=timezone("UTC"))
-        .strftime("%Y-%m-%d %H:%M:%S")
-    )
-    end = timestamp.astimezone(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S")
+    start = source.get_last_scheduled_timestamp(timestamp=timestamp).astimezone(tz=timezone("UTC"))
+    end = timestamp.astimezone(tz=timezone("UTC"))
 
-    query = params["query"].format(start=start, end=end)
+    if source.table_id == constants.TRANSACAO_ORDEM_TABLE_ID.value:
+        start = start.replace(hour=0, minute=0, second=0)
+        end = end.replace(hour=23, minute=59, second=59)
+
+    start = start.strftime("%Y-%m-%d %H:%M:%S")
+    end = end.strftime("%Y-%m-%d %H:%M:%S")
+    capture_delay_minutes = params.get("capture_delay_minutes", {"0": 0})
+
+    delay_timestamps = (
+        convert_timezone(timestamp=datetime.fromisoformat(a))
+        for a in capture_delay_minutes.keys()
+        if a != "0"
+    )
+    delay = capture_delay_minutes["0"]
+    for t in delay_timestamps:
+        if timestamp >= t:
+            delay = capture_delay_minutes[t.strftime("%Y-%m-%d %H:%M:%S")]
+
+    query = params["query"].format(
+        start=start,
+        end=end,
+        delay=delay,
+    )
     database_name = params["database"]
     database = constants.JAE_DATABASE_SETTINGS.value[database_name]
     general_func_arguments = {
@@ -60,7 +90,7 @@ def create_jae_general_extractor(source: SourceTable, timestamp: datetime):
         "database": database_name,
         "max_retries": 3,
     }
-    if source.table_id == constants.INTEGRACAO_TABLE_ID.value:
+    if source.file_chunk_size is not None:
         return partial(
             get_raw_db_paginated, page_size=source.file_chunk_size, **general_func_arguments
         )
@@ -615,3 +645,208 @@ def set_redis_historic_table(
         redis_client.set(redis_key, save_value)
     else:
         log(f"[{redis_key}] {save_value} é menor que o valor salvo no Redis")
+
+
+# TASKS PARA VERIFICAÇÃO DE GAPS NA CAPTURA #
+
+
+@task
+def rename_flow_run_jae_capture_check(
+    timestamp_captura_start: datetime, timestamp_captura_end: datetime
+):
+    """
+    Renomeia a execução do flow de checagem da captura da Jaé
+
+    Args:
+        timestamp_captura_start (datetime): Data e hora inicial da janela de verificação.
+        timestamp_captura_end (datetime): Data e hora final da janela de verificação.
+    """
+
+    start = timestamp_captura_start.isoformat()
+    end = timestamp_captura_end.isoformat()
+    rename_current_flow_run(name=f"verificacao captura: from {start} to {end}")
+
+
+@task(
+    max_retries=smtr_constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=smtr_constants.RETRY_DELAY.value),
+    nout=2,
+)
+def jae_capture_check_get_ts_range(
+    timestamp: datetime,
+    retroactive_days: int,
+    timestamp_captura_start: Optional[str],
+    timestamp_captura_end: Optional[str],
+) -> tuple[datetime, datetime]:
+    """
+    Calcula o intervalo de para checagem da captura dos dados da Jaé.
+
+    Args:
+        timestamp (datetime): Data e hora de execução do flow
+        retroactive_days (int): Número de dias a subtrair de `timestamp` para definir
+            o início do intervalo
+        timestamp_captura_start (Optional[str]): Parâmetro do flow para definição
+            de timestamp inicial de forma manual
+        timestamp_captura_end (Optional[str]): Parâmetro do flow para definição
+            de timestamp final de forma manual
+
+    Returns:
+        tuple[datetime, datetime]: Intervalo com:
+            - start (datetime): Início do intervalo
+            - end (datetime): Fim do intervalo
+    """
+    if timestamp_captura_start is not None:
+        start = datetime.fromisoformat(timestamp_captura_start)
+    else:
+        start = (timestamp - timedelta(days=retroactive_days)).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+
+    start = convert_timezone(timestamp=start)
+
+    if timestamp_captura_end is not None:
+        end = datetime.fromisoformat(timestamp_captura_end)
+    else:
+        end = start.replace(hour=23, minute=59, second=59, microsecond=0)
+
+    end = convert_timezone(timestamp=end)
+
+    return start, end
+
+
+@task(
+    max_retries=smtr_constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=smtr_constants.RETRY_DELAY.value),
+)
+def get_capture_gaps(
+    table_id: str,
+    timestamp_captura_start: datetime,
+    timestamp_captura_end: datetime,
+) -> list[str]:
+    """
+    Identifica timestamps com divergência entre os dados presentes
+    na base da Jaé e os dados capturados no datalake.
+
+    Args:
+        table_id (str): Nome da tabela no BigQuery
+        timestamp_captura_start (datetime): Início do intervalo de verificação
+        timestamp_captura_end (datetime): Fim do intervalo de verificação
+
+    Returns:
+        list[str]: Lista de strings no formato `%Y-%m-%d %H:%M:%S` representando os timestamps
+        com divergência de contagem entre JAE e datalake
+    """
+    params = constants.CHECK_CAPTURE_PARAMS.value[table_id]
+    timestamp_column = params["timestamp_column"]
+    source = params["source"]
+    df_jae = get_jae_timestamp_captura_count(
+        source=source,
+        timestamp_column=timestamp_column,
+        timestamp_captura_start=timestamp_captura_start,
+        timestamp_captura_end=timestamp_captura_end,
+    )
+
+    query_datalake = f"""
+    WITH contagens AS (
+        SELECT
+            timestamp_captura,
+            COUNT(DISTINCT {source.primary_keys[0]}) AS total_datalake
+        FROM
+            {params['datalake_table']}
+        WHERE
+            DATA BETWEEN '{timestamp_captura_start.date().isoformat()}'
+            AND '{timestamp_captura_end.date().isoformat()}'
+            AND timestamp_captura BETWEEN '{timestamp_captura_start.strftime("%Y-%m-%d %H:%M:%S")}'
+            AND '{timestamp_captura_end.strftime("%Y-%m-%d %H:%M:%S")}'
+        GROUP BY
+            1
+    ),
+    timestamps_captura AS (
+        SELECT
+            DATETIME(timestamp_captura) AS timestamp_captura
+        FROM
+            UNNEST(
+                GENERATE_TIMESTAMP_ARRAY(
+                    '{timestamp_captura_start.strftime("%Y-%m-%d %H:%M:%S")}',
+                    '{timestamp_captura_end.strftime("%Y-%m-%d %H:%M:%S")}',
+                    INTERVAL 1 minute
+                )
+            ) AS timestamp_captura
+    )
+    SELECT
+        timestamp_captura,
+        COALESCE(total_datalake, 0) AS total_datalake
+    FROM
+        timestamps_captura
+    LEFT JOIN
+        contagens
+    USING
+        (timestamp_captura)
+    """
+
+    log(f"Executando query\n{query_datalake}")
+    df_datalake = bd.read_sql(query=query_datalake, from_file=True)
+
+    df_datalake["timestamp_captura"] = df_datalake["timestamp_captura"].dt.tz_localize(
+        smtr_constants.TIMEZONE.value
+    )
+
+    df_merge = df_jae.merge(df_datalake, how="left", on="timestamp_captura")
+
+    df_merge = df_merge.loc[
+        df_merge["total_datalake"].astype(int) != df_merge["total_jae"].astype(int)
+    ].sort_values(by=["timestamp_captura"])
+
+    timestamps = df_merge["timestamp_captura"].dt.strftime("%Y-%m-%d %H:%M:%S").tolist()
+
+    if len(timestamps) > 0:
+        log(
+            "[{table_id}] Os seguintes timestamps estão divergentes:\n{timestamps_str}".format(
+                table_id=table_id, timestamps_str="\n".join(timestamps)
+            )
+        )
+    else:
+        log(f"[{table_id}] Todos os dados foram capturados com sucesso!")
+
+    return timestamps
+
+
+@task
+def create_capture_check_discord_message(
+    table_id: str,
+    timestamps: list[dict],
+    timestamp_captura_start: datetime,
+    timestamp_captura_end: datetime,
+) -> str:
+    """
+    Cria a mensagem para notificação no Discord com o resultado da verificação de captura de dados
+
+    Args:
+        table_id (str): Nome da tabela no BigQuery
+        timestamps (list[dict]): Lista de timestamps com falhas na captura
+        timestamp_captura_start (datetime): Início do intervalo analisado
+        timestamp_captura_end (datetime): Fim do intervalo analisado
+
+    Returns:
+        str: Mensagem para ser enviada no Discord
+    """
+    timestamps_len = len(timestamps)
+    message = f"""
+Tabela: {table_id}
+De {timestamp_captura_start.isoformat()} até {timestamp_captura_end.isoformat()}
+Foram encontradas {timestamps_len} timestamps com dados faltantes
+"""
+    if timestamps_len > 0:
+        mentions_tag = (
+            f" - <@&{smtr_constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>"
+        )
+        message = f":red_circle: {message}"
+        message += (
+            "\n"
+            + f"https://pipelines.dados.rio/flow-run/{prefect.context.flow_run_id}"
+            + "\n"
+            + mentions_tag
+        )
+    else:
+        message = f":green_circle: {message}"
+    return message

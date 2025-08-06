@@ -371,6 +371,21 @@ models:
         description: "{{ doc('datetime_ultima_atualizacao') }}"
   - name: veiculo_fiscalizacao_lacre
     description: Tabela com as informações do controle do lacre e deslacre de veículos
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+          - id_veiculo
+          - data_inicio_lacre
+          - id_auto_infracao
+          name: dbt_utils.unique_combination_of_columns__id_veiculo__veiculo_fiscalizacao_lacre
+          where: "1=1"
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+          - placa
+          - data_inicio_lacre
+          - id_auto_infracao
+          name: dbt_utils.unique_combination_of_columns__placa__veiculo_fiscalizacao_lacre
+          where: "1=1"
     columns:
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
@@ -700,3 +715,145 @@ models:
         description: "{{ doc('id_execucao_dbt') }}"
         data_type: string
         quote: true
+  - name: monitoramento_viagem_transacao
+    description: "Tabela de monitoramento com quantidade de transações por viagem"
+    columns:
+      - name: data
+        description: "{{ doc('data_viagem') }} [partição]"
+        tests:
+          - not_null:
+              name: not_null__data__monitoramento_viagem_transacao
+      - name: id_viagem
+        description: "{{ doc('id_viagem') }}"
+        tests:
+          - not_null:
+              name: not_null__id_viagem__monitoramento_viagem_transacao
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+        tests:
+          - not_null:
+              name: not_null__id_veiculo__monitoramento_viagem_transacao
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: id_validador
+        description: "{{ doc('id_validador') }}"
+      - name: tipo_viagem
+        description: "{{ doc('tipo_viagem_status') }}"
+      - name: modo
+        description: "{{ doc('modo') }}"
+      - name: tecnologia_apurada
+        description: "{{ doc('tecnologia') }}"
+      - name: tecnologia_remunerada
+        description: "{{ doc('tecnologia_remunerada') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+      - name: distancia_planejada
+        description: "{{ doc('distancia_planejada') }}"
+      - name: quantidade_transacao
+        description: "Quantidade de transações da Jaé registradas entre datetime_partida_bilhetagem e datetime_chegada"
+      - name: quantidade_transacao_riocard
+        description: "Quantidade de transações da RioCard registradas entre datetime_partida_bilhetagem e datetime_chegada"
+      - name: percentual_estado_equipamento_aberto
+        description: "Percentual de registros com estado de equipamento ABERTO durante a viagem"
+      - name: indicador_estado_equipamento_aberto
+        description: "Indicador se todos os registros de GPS foram transmitidos com o estado ABERTO entre datetime_partida e datetime_chegada"
+      - name: datetime_partida_bilhetagem
+        description: "Horário de início da viagem para contagem das transações, considerando uma tolerância de até 30 minutos do ínicio da viagem, limitada pelo encerramento da viagem anterior realizada pelo mesmo veículo, com adição de 1 segundo"
+      - name: datetime_partida
+        description: "{{ doc('datetime_partida') }}"
+      - name: datetime_chegada
+        description: "{{ doc('datetime_chegada') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+  - name: temperatura_inmet
+    description: "Tabela com dados de temperatura das estações meteorológicas do INMET"
+    tests:
+      - test_completude_temperatura_inmet:
+          name: test_completude__temperatura_inmet
+    columns:
+      - name: data
+        description: "{{ doc('data') }} [partição]"
+        tests:
+          - not_null:
+              name: not_null__data__temperatura_inmet
+      - name: hora
+        description: "Hora da medição meteorológica"
+        tests:
+          - not_null:
+              name: not_null__hora__temperatura_inmet
+      - name: id_estacao
+        description: "Identificador da estação meteorológica do INMET"
+        tests:
+          - not_null:
+              name: not_null__id_estacao__temperatura_inmet
+      - name: temperatura
+        description: "Temperatura medida pela estação meteorológica (°C)"
+        tests:
+          - not_null:
+              name: not_null__temperatura__temperatura_inmet
+  - name: veiculo_regularidade_temperatura_dia
+    description: "Tabela com indicadores de regularidade de temperatura por veículo por dia"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - data
+            - id_veiculo
+          name: dbt_utils.unique_combination_of_columns__veiculo_regularidade_temperatura_dia
+    columns:
+      - name: data
+        description: "{{ doc('data') }}"
+        tests:
+          - not_null:
+              name: not_null__data__veiculo_regularidade_temperatura_dia
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+        tests:
+          - not_null:
+              name: not_null__id_veiculo__veiculo_regularidade_temperatura_dia
+      - name: ano_fabricacao
+        description: "{{ doc('ano_fabricacao') }}"
+        tests:
+          - not_null:
+              name: not_null__ano_fabricacao__veiculo_regularidade_temperatura_dia
+      - name: indicadores
+        description: "Indicadores de regularidade do sistema de ar condicionado e temperatura"
+      - name: indicadores.indicador_ar_condicionado.valor
+        description: "Indicador se há sistema de ar condicionado no veículo"
+      - name: indicadores.indicador_ar_condicionado.data_processamento_licenciamento
+        description: "Data de processamento do licenciamento do veículo"
+      - name: indicadores.indicador_temperatura_variacao.valor
+        description: "Indicador se houve variação na temperatura transmitida pelo veículo"
+      - name: indicadores.indicador_temperatura_variacao.data_verificacao_regularidade
+        description: "{{ doc('data_verificacao_regularidade') }}"
+      - name: indicadores.indicador_temperatura_transmitida.valor
+        description: "Indicador se o veículo transmitiu dados de temperatura"
+      - name: indicadores.indicador_temperatura_transmitida.data_verificacao_regularidade
+        description: "{{ doc('data_verificacao_regularidade') }}"
+      - name: indicadores.indicador_temperatura_descartada.valor
+        description: "Indicador se mais de 50% dos registros de temperatura foram descartados"
+      - name: indicadores.indicador_temperatura_descartada.data_verificacao_regularidade
+        description: "{{ doc('data_verificacao_regularidade') }}"
+      - name: indicadores.indicador_temperatura_descartada.percentual_temperatura_nula_descartada
+        description: "Indicador de percentual de registros de temperatura nula descartados"
+      - name: indicadores.indicador_temperatura_descartada.percentual_temperatura_atipica_descartada
+        description: "Indicador de percentual de registros de temperatura atípica descartados"
+      - name: indicadores.indicador_falha_recorrente.valor
+        description: "Indicador se houve padrão de falha recorrente por 5 (cinco) dias de operação consecutivos"
+      - name: indicadores.indicador_falha_recorrente.data_verificacao_falha
+        description: "Data de verificação do padrão de falha recorrente"
+      - name: quantidade_dia_falha_operacional
+        description: "{{ doc('quantidade_dia_falha_operacional') }}"
+        tests:
+          - not_null:
+              name: not_null__quantidade_dia_falha_operacional__veiculo_regularidade_temperatura_dia
+      - name: motivo
+        description: "Descrição do motivo da falha do sistema de ar condicionado"
+        tests:
+          - not_null:
+              name: not_null__motivo__veiculo_regularidade_temperatura_dia
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"

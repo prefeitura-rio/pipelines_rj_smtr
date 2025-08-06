@@ -104,6 +104,7 @@ class constants(Enum):  # pylint: disable=c0103
     INTEGRACAO_TABLE_ID = "integracao_transacao"
     TRANSACAO_ORDEM_TABLE_ID = "transacao_ordem"
     TRANSACAO_RETIFICADA_TABLE_ID = "transacao_retificada"
+    LANCAMENTO_TABLE_ID = "lancamento"
 
     JAE_TABLE_CAPTURE_PARAMS = {
         TRANSACAO_TABLE_ID: {
@@ -113,10 +114,11 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     transacao
                 WHERE
-                    data_processamento >= timestamp '{start}' - INTERVAL '5 minutes'
-                    AND data_processamento < timestamp '{end}' - INTERVAL '5 minutes'
+                    data_processamento >= timestamp '{start}' - INTERVAL '{delay} minutes'
+                    AND data_processamento < timestamp '{end}' - INTERVAL '{delay} minutes'
             """,
             "database": "transacao_db",
+            "capture_delay_minutes": {"0": 0, "2025-03-26 15:36:00": 5},
         },
         TRANSACAO_RETIFICADA_TABLE_ID: {
             "query": """
@@ -139,10 +141,11 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     transacao_riocard
                 WHERE
-                    data_processamento >= timestamp '{start}' - INTERVAL '5 minutes'
-                    AND data_processamento < timestamp '{end}' - INTERVAL '5 minutes'
+                    data_processamento >= timestamp '{start}' - INTERVAL '{delay} minutes'
+                    AND data_processamento < timestamp '{end}' - INTERVAL '{delay} minutes'
             """,
             "database": "transacao_db",
+            "capture_delay_minutes": {"0": 0, "2025-03-26 15:36:00": 5},
         },
         GPS_VALIDADOR_TABLE_ID: {
             "query": """
@@ -151,10 +154,11 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     tracking_detalhe
                 WHERE
-                    data_tracking >= timestamp '{start}' - INTERVAL '10 minutes'
-                    AND data_tracking < timestamp '{end}' - INTERVAL '10 minutes'
+                    data_tracking >= timestamp '{start}' - INTERVAL '{delay} minutes'
+                    AND data_tracking < timestamp '{end}' - INTERVAL '{delay} minutes'
             """,
             "database": "tracking_db",
+            "capture_delay_minutes": {"0": 0, "2025-03-26 15:31:00": 10},
         },
         INTEGRACAO_TABLE_ID: {
             "database": "ressarcimento_db",
@@ -179,11 +183,48 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     transacao
                 WHERE
-                    DATE(data_processamento) >= DATE('{start}')
-                    AND DATE(data_processamento) <= DATE('{end}')
+                    data_processamento >= '{start}'
+                    AND data_processamento <= '{end}'
                     AND id_ordem_ressarcimento IS NOT NULL
+                ORDER BY data_processamento
             """,
             "database": "transacao_db",
+        },
+        LANCAMENTO_TABLE_ID: {
+            "query": """
+                SELECT
+                    l.*,
+                    m.cd_tipo_movimento,
+                    tm.ds_tipo_movimento,
+                    tc.ds_tipo_conta,
+                    tc.id_tipo_moeda,
+                    tmo.descricao as tipo_moeda,
+                    c.cd_cliente,
+                    c.nr_logico_midia
+                FROM
+                    lancamento l
+                LEFT JOIN
+                    movimento m
+                USING(id_movimento)
+                LEFT JOIN
+                    tipo_movimento tm
+                USING(cd_tipo_movimento)
+                LEFT JOIN
+                    conta c
+                USING(id_conta)
+                LEFT JOIN
+                    tipo_conta tc
+                USING(cd_tipo_conta)
+                LEFT JOIN
+                    tipo_moeda tmo
+                ON tc.id_tipo_moeda = tmo.id
+                WHERE
+                    l.dt_lancamento >= timestamp '{start}' - INTERVAL '5 minutes'
+                    AND l.dt_lancamento < timestamp '{end}' - INTERVAL '5 minutes'
+                ORDER BY l.dt_lancamento DESC
+
+            """,
+            "database": "financeiro_db",
         },
         "linha": {
             "query": """
@@ -191,9 +232,6 @@ class constants(Enum):  # pylint: disable=c0103
                     *
                 FROM
                     LINHA
-                WHERE
-                    DT_INCLUSAO BETWEEN '{start}'
-                    AND '{end}'
             """,
             "database": "principal_db",
             "primary_keys": ["CD_LINHA"],
@@ -553,6 +591,15 @@ class constants(Enum):  # pylint: disable=c0103
         primary_keys=["id"],
     )
 
+    LANCAMENTO_SOURCE = SourceTable(
+        source_name=JAE_SOURCE_NAME,
+        table_id=LANCAMENTO_TABLE_ID,
+        first_timestamp=datetime(2025, 7, 21, 0, 0, 0),
+        schedule_cron=create_minute_cron(),
+        primary_keys=["id_lancamento"],
+        bucket_names=JAE_PRIVATE_BUCKET_NAMES,
+    )
+
     INTEGRACAO_SOURCE = SourceTable(
         source_name=JAE_SOURCE_NAME,
         table_id=INTEGRACAO_TABLE_ID,
@@ -586,7 +633,7 @@ class constants(Enum):  # pylint: disable=c0103
             source_name=JAE_SOURCE_NAME,
             table_id=k,
             first_timestamp=datetime(2024, 12, 30, 0, 0, 0),
-            schedule_cron=create_daily_cron(hour=5),
+            schedule_cron=create_daily_cron(hour=7),
             primary_keys=v["primary_keys"],
             pretreatment_reader_args=v.get("pretreatment_reader_args"),
             pretreat_funcs=v.get("pretreat_funcs"),
@@ -603,7 +650,7 @@ class constants(Enum):  # pylint: disable=c0103
         source_name=JAE_SOURCE_NAME,
         table_id=TRANSACAO_ORDEM_TABLE_ID,
         first_timestamp=datetime(2024, 11, 21, 0, 0, 0),
-        schedule_cron=create_daily_cron(hour=6),
+        schedule_cron=create_daily_cron(hour=8, minute=30),
         partition_date_only=True,
         max_recaptures=5,
         primary_keys=[
@@ -612,7 +659,26 @@ class constants(Enum):  # pylint: disable=c0103
             "data_processamento",
             "data_transacao",
         ],
+        file_chunk_size=200000,
     )
+
+    CHECK_CAPTURE_PARAMS = {
+        TRANSACAO_TABLE_ID: {
+            "source": TRANSACAO_SOURCE,
+            "datalake_table": "rj-smtr.bilhetagem_staging.transacao",
+            "timestamp_column": "data_processamento",
+        },
+        TRANSACAO_RIOCARD_TABLE_ID: {
+            "source": TRANSACAO_RIOCARD_SOURCE,
+            "datalake_table": "rj-smtr.bilhetagem_staging.transacao_riocard",
+            "timestamp_column": "data_processamento",
+        },
+        GPS_VALIDADOR_TABLE_ID: {
+            "source": GPS_VALIDADOR_SOURCE,
+            "datalake_table": "rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.gps_validador",
+            "timestamp_column": "data_tracking",
+        },
+    }
 
     BACKUP_BILLING_PAY_FOLDER = "backup_jae_billingpay"
 
@@ -865,6 +931,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "sequencia_lancamento",
                 "cliente_fraude_05092024",
                 "cargas_garota_vip_18082023",
+                "lancamento",
             ],
             "filter": {
                 "conta": [
@@ -877,7 +944,6 @@ class constants(Enum):  # pylint: disable=c0103
                     "dt_fechamento",
                     "dt_inclusao",
                 ],
-                "lancamento": ["dt_lancamento"],
                 "evento_recebido": ["dt_inclusao"],
                 "movimento": ["dt_movimento"],
                 "evento_processado": ["dt_inclusao"],

@@ -8,7 +8,7 @@ with
     ordem_ressarcimento as (
         select
             data,
-            safe_cast(id as string) as id_ordem_ressarcimento,
+            replace(safe_cast(id as string), '.0', '') as id_ordem_ressarcimento,
             timestamp_captura,
             datetime(
                 parse_timestamp(
@@ -20,19 +20,35 @@ with
             parse_date(
                 '%Y-%m-%d', safe_cast(json_value(content, '$.data_ordem') as string)
             ) as data_ordem,
-            safe_cast(json_value(content, '$.id_consorcio') as string) as id_consorcio,
-            safe_cast(json_value(content, '$.id_linha') as string) as id_linha,
-            safe_cast(json_value(content, '$.id_operadora') as string) as id_operadora,
-            safe_cast(
-                json_value(content, '$.id_ordem_pagamento') as string
+            replace(
+                safe_cast(json_value(content, '$.id_consorcio') as string), '.0', ''
+            ) as id_consorcio,
+            replace(
+                safe_cast(json_value(content, '$.id_linha') as string), '.0', ''
+            ) as id_linha,
+            replace(
+                safe_cast(json_value(content, '$.id_operadora') as string), '.0', ''
+            ) as id_operadora,
+            replace(
+                safe_cast(json_value(content, '$.id_ordem_pagamento') as string),
+                '.0',
+                ''
             ) as id_ordem_pagamento,
-            safe_cast(
-                json_value(content, '$.id_ordem_pagamento_consorcio') as string
+            replace(
+                safe_cast(
+                    json_value(content, '$.id_ordem_pagamento_consorcio') as string
+                ),
+                '.0',
+                ''
             ) as id_ordem_pagamento_consorcio,
-            safe_cast(
-                json_value(
-                    content, '$.id_ordem_pagamento_consorcio_operadora'
-                ) as string
+            replace(
+                safe_cast(
+                    json_value(
+                        content, '$.id_ordem_pagamento_consorcio_operadora'
+                    ) as string
+                ),
+                '.0',
+                ''
             ) as id_ordem_pagamento_consorcio_operadora,
             safe_cast(
                 json_value(content, '$.id_status_ordem') as string
@@ -80,7 +96,7 @@ with
         select
             *,
             row_number() over (
-                partition by id_ordem_ressarcimento order by timestamp_captura desc
+                partition by id_ordem_ressarcimento order by timestamp_captura
             ) as rn
         from ordem_ressarcimento
     )

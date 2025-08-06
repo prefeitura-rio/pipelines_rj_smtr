@@ -23,10 +23,18 @@ with
             parse_date(
                 '%Y-%m-%d', safe_cast(json_value(content, '$.data_ordem') as string)
             ) as data_ordem,
-            safe_cast(json_value(content, '$.id_consorcio') as string) as id_consorcio,
-            safe_cast(json_value(content, '$.id_operadora') as string) as id_operadora,
-            safe_cast(
-                json_value(content, '$.id_ordem_pagamento_consorcio') as string
+            replace(
+                safe_cast(json_value(content, '$.id_consorcio') as string), ".0", ""
+            ) as id_consorcio,
+            replace(
+                safe_cast(json_value(content, '$.id_operadora') as string), ".0", ""
+            ) as id_operadora,
+            replace(
+                safe_cast(
+                    json_value(content, '$.id_ordem_pagamento_consorcio') as string
+                ),
+                ".0",
+                ""
             ) as id_ordem_pagamento_consorcio,
             safe_cast(json_value(content, '$.qtd_debito') as integer) as qtd_debito,
             safe_cast(
@@ -78,7 +86,7 @@ with
             *,
             row_number() over (
                 partition by id_ordem_pagamento_consorcio_operadora
-                order by timestamp_captura desc
+                order by timestamp_captura
             ) as rn
         from ordem_pagamento_consorcio_operadora
     )

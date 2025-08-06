@@ -7,7 +7,11 @@
 }}
 
 {% set incremental_filter %}
-    data between date("{{var('start_date')}}") and date("{{var('end_date')}}") and data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
+    {% if var("flow_name") == "monitoramento_veiculo - materializacao" %}
+        data between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}") and data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
+    {% else %}
+        data between date("{{var('start_date')}}") and date("{{var('end_date')}}") and data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
+    {% endif %}
 {% endset %}
 
 with
@@ -26,7 +30,7 @@ with
         where {{ incremental_filter }}
     ),
     veiculos as (
-        select data, id_veiculo, placa, tecnologia, status, indicadores
+        select data, id_veiculo, placa, ano_fabricacao, tecnologia, status, indicadores
         from {{ ref("aux_veiculo_dia_consolidada") }}
         where {{ incremental_filter }}
     ),
@@ -76,6 +80,8 @@ with
             v.datetime_partida,
             v.datetime_chegada,
             v.id_veiculo,
+            ve.placa,
+            ve.ano_fabricacao,
             v.id_viagem,
             v.distancia_planejada,
             v.sentido,
@@ -93,6 +99,8 @@ with
             vs.datetime_partida,
             vs.datetime_chegada,
             vs.id_veiculo,
+            vs.placa,
+            vs.ano_fabricacao,
             vs.id_viagem,
             vs.distancia_planejada,
             vs.sentido,
@@ -104,7 +112,7 @@ with
                 then t.maior_tecnologia_permitida
                 when
                     p.prioridade < p_menor.prioridade
-                    and data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                    and data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
                 then null
                 else vs.tecnologia
             end as tecnologia_remunerada,
@@ -146,6 +154,8 @@ with
             vt.datetime_partida,
             vt.datetime_chegada,
             vt.modo,
+            vt.placa,
+            vt.ano_fabricacao,
             vt.tecnologia_apurada,
             vt.tecnologia_remunerada,
             case
@@ -159,11 +169,11 @@ with
                     vt.status = "Licenciado sem ar e não autuado"
                     and vt.servico
                     not in (select servico from {{ ref("servico_contrato_abreviado") }})
-                    and vt.data >= date("{{ var('DATA_SUBSIDIO_V15C_INICIO') }}")
+                    and vt.data >= date("{{ var('DATA_SUBSIDIO_V19_INICIO') }}")
                 then "Não autorizado por ausência de ar-condicionado"
                 when
                     vt.indicador_penalidade_tecnologia
-                    and vt.data >= date('{{ var("DATA_SUBSIDIO_V15A_INICIO") }}')
+                    and vt.data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
                 then "Não autorizado por capacidade"
                 when vt.status = "Autuado por ar inoperante"
                 then "Autuado por ar inoperante"
@@ -210,6 +220,8 @@ with
             data,
             id_viagem,
             id_veiculo,
+            placa,
+            ano_fabricacao,
             datetime_partida,
             datetime_chegada,
             modo,
