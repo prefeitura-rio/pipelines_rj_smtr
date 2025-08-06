@@ -82,6 +82,8 @@ selectors:
           value: staging_transacao_ordem
         - method: fqn
           value: aux_transacao_id_ordem_pagamento
+        - method: fqn
+          value: aux_data_ordem_transacao
 
   - name: transacao_valor_ordem
     description: Materialização da tabela contendo os valores das transações em cada ordem de pagamento
