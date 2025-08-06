@@ -17,6 +17,7 @@
                 data between date_sub("{{ var('run_date') }}", interval 1 day) and date(
                     "{{ var('run_date') }}"
                 )
+                and data < date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
         ),
         -- 2. Puxa dados de distancia quadro no quadro horário
         quadro as (

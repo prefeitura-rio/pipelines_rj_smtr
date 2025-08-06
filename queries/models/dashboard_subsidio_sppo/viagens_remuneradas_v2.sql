@@ -46,6 +46,7 @@ with
                 and servico in ("583", "584")
                 and sentido = "I"
             )  -- Alteração para o reprocessamento do TCM - MTR-CAP-2025/03003 (2023-10-01 a 2024-01-31)
+            and data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
     ),
     data_versao_efetiva as (
         select
@@ -64,7 +65,7 @@ with
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
-            and data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
+            and data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
     ),
     viagem_planejada as (
         select
@@ -113,7 +114,7 @@ with
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
-            and data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
+            and data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
     ),
     -- Apuração de km realizado e Percentual de Operação por Faixa Horária (POF)
     servico_faixa_km_apuracao as (
@@ -131,6 +132,7 @@ with
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            and data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
     ),
     viagem_km_tipo as (
         select distinct
