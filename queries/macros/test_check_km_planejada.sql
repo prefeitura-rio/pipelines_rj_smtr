@@ -29,12 +29,11 @@
                     feed_start_date, tipo_os, tipo_dia
                 )
             where
-                data between geatest(
+                data between greatest(
                     date("{{ var('date_range_start') }}"),
                     date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
                 ) and date("{{ var('date_range_end') }}")
-                full outer
-            union all by name
+            full outer union all by name
             select
                 feed_start_date,
                 servico,
