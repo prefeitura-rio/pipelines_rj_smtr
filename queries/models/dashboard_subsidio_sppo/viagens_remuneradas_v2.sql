@@ -127,7 +127,7 @@ with
             servico,
             sentido,
             km_planejada_faixa as km_planejada,
-            pof,
+            pof
         from {{ ref("percentual_operacao_faixa_horaria") }}
         where
             data
