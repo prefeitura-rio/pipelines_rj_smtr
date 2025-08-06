@@ -14,6 +14,45 @@
                     "{{ var('date_range_end') }}"
                 )
         ),
+        os as (
+            select
+                feed_start_date,
+                servico,
+                sentido,
+                tipo_os,
+                tipo_dia,
+                faixa_horaria_inicio,
+                quilometragem
+            from {{ ref("subsidio_data_versao_efetiva") }}
+            left join
+                {{ ref("ordem_servico_faixa_horaria_sentido") }} using (
+                    feed_start_date, tipo_os, tipo_dia
+                )
+            where
+                data between geatest(
+                    date("{{ var('date_range_start') }}"),
+                    date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+                ) and date("{{ var('date_range_end') }}")
+                full outer
+            union all by name
+            select
+                feed_start_date,
+                servico,
+                tipo_os,
+                tipo_dia,
+                faixa_horaria_inicio,
+                quilometragem
+            from {{ ref("subsidio_data_versao_efetiva") }}
+            left join
+                {{ ref("ordem_servico_faixa_horaria") }} using (
+                    feed_start_date, tipo_os, tipo_dia
+                )
+            where
+                data between date("{{ var('date_range_start') }}") and least(
+                    date("{{ var('date_range_end') }}"),
+                    date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+                )
+        ),
         os_faixa as (
             select
                 date(
@@ -22,32 +61,12 @@
                     ) hour
                 ) as data,
                 servico,
-                {% if var('date_range_start') >= var('DATA_GTFS_V4_INICIO') %}
-                    case
-                        when sentido = "Ida" then "I"
-                        when sentido = "Volta" then "V"
-                        when sentido = "Circular" then "C"
-                        else sentido
-                    end as sentido,
-                {% endif %}
+                coalesce(left(sentido, 1), null) as sentido,
                 datetime(data) + interval cast(
                     split(faixa_horaria_inicio, ":")[safe_offset(0)] as int64
                 ) hour as faixa_horaria_inicio,
                 round(sum(quilometragem), 3) as quilometragem
-            from {{ ref("subsidio_data_versao_efetiva") }}
-            -- `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
-            left join
-            {% if var('date_range_start') < var('DATA_GTFS_V4_INICIO') %}
-                {{ ref("ordem_servico_faixa_horaria") }}
-            {% else %}
-                {{ ref("ordem_servico_faixa_horaria_sentido") }}
-            {% endif %}
-                -- `rj-smtr.planejamento.ordem_servico_faixa_horaria`
-                using (feed_start_date, tipo_os, tipo_dia)
-            where
-                data between date_sub(
-                    date("{{ var('date_range_start') }}"), interval 1 day
-                ) and date("{{ var('date_range_end') }}")
+            from os
             group by all
         )
         {% if "viagem_planejada" not in model %}
@@ -83,19 +102,9 @@
                 end as servico,
             from os_faixa
             where quilometragem != 0
-        )
-        {% if var('date_range_start') < var('DATA_GTFS_V4_INICIO') %}
-            using (data, servico, faixa_horaria_inicio)
-        {% else %}
-            using (data, servico, faixa_horaria_inicio, sentido)
-        {% endif %}
+        ) using (data, servico, faixa_horaria_inicio, sentido)
     {% if "viagem_planejada" not in model %}
-        full join sumario
-        {% if var('date_range_start') < var('DATA_GTFS_V4_INICIO') %}
-            using (data, servico, faixa_horaria_inicio)
-        {% else %}
-            using (data, servico, faixa_horaria_inicio, sentido)
-        {% endif %}
+        full join sumario using (data, servico, faixa_horaria_inicio, sentido)
     {% endif %}
     where
         quilometragem != distancia_total_planejada

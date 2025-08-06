@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrigida a verificação de shapes circulares no modelo `shapes_geom_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+- Corrigida a verificação de shapes circulares no modelo `shapes_geom_gtfs` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
 
 ### Alterado
 

@@ -1,8 +1,4 @@
-{{
-    config(
-       materialized="ephemeral"
-    )
-}}
+{{ config(materialized="ephemeral") }}
 
 with
     -- 1. Busca os shapes em formato geográfico
@@ -14,14 +10,8 @@ with
         {% endif -%}
     ),
     ordem_servico_faixa_horaria_sentido as (
-        select * except(sentido),
-        case
-            when sentido = "Ida" then "I"
-            when sentido = "Volta" then "V"
-            when sentido = "Circular" then "C"
-            else null
-        end as sentido
-        from {{ ref("ordem_servico_faixa_horaria_sentido")}}
+        select * except (sentido), left(sentido, 1) as sentido
+        from {{ ref("ordem_servico_faixa_horaria_sentido") }}
         {% if is_incremental() -%}
             where feed_start_date = '{{ var("data_versao_gtfs") }}'
         {% endif -%}
@@ -42,14 +32,14 @@ with
                         vista,
                         consorcio,
                         sentido,
-                        distancia_planejada,
-                        distancia_total_planejada,
-                        inicio_periodo,
-                        fim_periodo,
+                        extensao as distancia_planejada,
+                        quilometragem as distancia_total_planejada,
+                        cast(null as string) as inicio_periodo,
+                        cast(null as string) as fim_periodo,
                         trip_id,
                         shape_id,
                         indicador_trajeto_alternativo
-                    from {{ ref("ordem_servico_sentido_atualizado_aux_gtfs") }} as o
+                    from ordem_servico_faixa_horaria_sentido as o
                     left join
                         {{ ref("trips_filtrada_aux_gtfs") }} as t
                         on t.feed_version = o.feed_version
@@ -72,23 +62,17 @@ with
                         o.vista || " " || ot.evento as vista,
                         o.consorcio,
                         sentido,
-                        ot.distancia_planejada,
-                        distancia_total_planejada,
-                        coalesce(ot.inicio_periodo, o.inicio_periodo) as inicio_periodo,
-                        coalesce(ot.fim_periodo, o.fim_periodo) as fim_periodo,
+                        extensao as distancia_planejada,
+                        quilometragem as distancia_total_planejada,
+                        cast(null as string) as inicio_periodo,
+                        cast(null as string) as fim_periodo,
                         trip_id,
                         shape_id,
                         indicador_trajeto_alternativo
                     from
-                        {{
-                            ref(
-                                "ordem_servico_trajeto_alternativo_sentido_atualizado_aux_gtfs"
-                            )
-                        }}
-                        as ot
-                    left join
-                        {{ ref("ordem_servico_sentido_atualizado_aux_gtfs") }} as o
-                        using (feed_version, tipo_os, servico, sentido)
+                        ordem_servico_faixa_horaria_sentido as o using (
+                            feed_version, tipo_os, servico, sentido
+                        )
                     left join
                         {{ ref("trips_filtrada_aux_gtfs") }} as t
                         on t.feed_version = o.feed_version
@@ -201,22 +185,6 @@ from
             {% if is_incremental() -%}
                 feed_start_date = '{{ var("data_versao_gtfs") }}' and
             {% endif -%}
-            (
-
-                        fh.quilometragem != 0
-                        and (fh.partidas != 0 or fh.partidas is null)
-            )
+            (fh.quilometragem != 0 and (fh.partidas != 0 or fh.partidas is null))
             and feed_start_date >= '{{ var("DATA_GTFS_V4_INICIO") }}'
-        qualify
-            row_number() over (
-                partition by
-                    feed_start_date,
-                    tipo_dia,
-                    tipo_os,
-                    servico,
-                    faixa_horaria_inicio,
-                    shape_id,
-                    sentido
-            )
-            = 1
     )

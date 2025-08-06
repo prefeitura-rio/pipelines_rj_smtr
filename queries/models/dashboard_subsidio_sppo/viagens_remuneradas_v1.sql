@@ -17,7 +17,9 @@
     {% set feed_start_dates = run_query(query).columns[0].values() %}
     {{- log(feed_start_dates, info=True) -}}
 {% endif -%}
-
+{% set incremental_filter %}
+    data between date("{{var('start_date')}}") and date("{{ var('end_date') }}") and data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+{% endset %}
 with
     -- Viagens planejadas (agrupadas por data e serviço)
     planejado as (
@@ -34,8 +36,7 @@ with
         from {{ ref("viagem_planejada") }}
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
         where
-            data
-            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            {{ incremental_filter }}
             and (distancia_total_planejada > 0 or distancia_total_planejada is null)
             and (id_tipo_trajeto = 0 or id_tipo_trajeto is null)
             and data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
@@ -44,7 +45,6 @@ with
                 and servico in ("583", "584")
                 and sentido = "I"
             )  -- Alteração para o reprocessamento do TCM - MTR-CAP-2025/03003 (2023-10-01 a 2024-01-31)
-            and data < date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
     ),
     viagens_planejadas as (
         select
@@ -73,10 +73,8 @@ with
         -- from `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
         -- (alterar também query no bloco execute)
         where
-            data
-            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            {{ incremental_filter }}
             and data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
-            and data < date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
     ),
     viagem_planejada as (
         select
@@ -134,10 +132,8 @@ with
         from {{ ref("viagem_transacao") }}
         -- from `rj-smtr.subsidio.viagem_transacao`
         where
-            data
-            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            {{ incremental_filter }}
             and data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
-            and data < date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
     ),
     {% if var("start_date") < var("DATA_SUBSIDIO_V15_INICIO") %}
         tecnologias as (
@@ -201,10 +197,7 @@ with
             km_planejada_faixa as km_planejada,
             pof,
         from {{ ref("percentual_operacao_faixa_horaria") }}
-        where
-            data
-            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
-            and data < date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
+        where {{ incremental_filter }}
     ),
     viagem_km_tipo as (
         select distinct
@@ -293,6 +286,7 @@ with
 select
     v.* except (
         rn,
+        rn_pos_v15,
         datetime_partida,
         viagens_planejadas,
         viagens_planejadas_ida_volta,

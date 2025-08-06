@@ -57,6 +57,7 @@ LEFT JOIN
         ARRAY_AGG(DISTINCT sentido) AS sentido_array,
     FROM
         {{ ref("ordem_servico_sentido_atualizado_aux_gtfs") }}
+        -- criar v2 com ordem_servico_faixa_horaria_sentido
     GROUP BY
         1,
         2

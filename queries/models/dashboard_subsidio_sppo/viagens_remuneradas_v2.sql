@@ -1,12 +1,8 @@
-{{
-    config(
-        materialized="ephemeral"
-    )
-}}
+{{ config(materialized="ephemeral") }}
 
 {%- if execute %}
     {% set query = (
-        "SELECT DISTINCT COALESCE(feed_start_date, data_versao_trips, data_versao_shapes, data_versao_frequencies) FROM "
+        "SELECT DISTINCT feed_start_date FROM "
         ~ ref("subsidio_data_versao_efetiva")
         ~ " WHERE data BETWEEN DATE('"
         ~ var("start_date")
@@ -19,6 +15,9 @@
     {{- log(feed_start_dates, info=True) -}}
 {% endif -%}
 
+{% set incremental_filter %}
+    data between date("{{var('start_date')}}") and date("{{ var('end_date') }}") and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+{% endset %}
 with
     -- Viagens planejadas (agrupadas por data e serviço)
     planejado as (
@@ -30,57 +29,22 @@ with
             sentido,
             faixa_horaria_inicio,
             faixa_horaria_fim,
-            partidas_total_planejada,
+            partidas_total_planejada as viagens_planejadas,
             distancia_total_planejada as km_planejada,
             if(sentido = "C", true, false) as indicador_circular
         from {{ ref("viagem_planejada") }}
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
         where
-            data
-            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+            {{ incremental_filter }}
             and (distancia_total_planejada > 0 or distancia_total_planejada is null)
             and (id_tipo_trajeto = 0 or id_tipo_trajeto is null)
-            and data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
-            and not (
-                data between "2023-12-31" and "2024-01-01"
-                and servico in ("583", "584")
-                and sentido = "I"
-            )  -- Alteração para o reprocessamento do TCM - MTR-CAP-2025/03003 (2023-10-01 a 2024-01-31)
-            and data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
     ),
     data_versao_efetiva as (
-        select
-            data,
-            tipo_dia,
-            tipo_os,
-            coalesce(
-                feed_start_date,
-                data_versao_trips,
-                data_versao_shapes,
-                data_versao_frequencies
-            ) as feed_start_date
+        select data, tipo_dia, tipo_os, feed_start_date
         from {{ ref("subsidio_data_versao_efetiva") }}
         -- from `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
         -- (alterar também query no bloco execute)
-        where
-            data
-            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
-            and data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
-    ),
-    viagem_planejada as (
-        select
-            p.data,
-            p.tipo_dia,
-            p.consorcio,
-            p.servico,
-            p.sentido,
-            p.faixa_horaria_inicio,
-            p.faixa_horaria_fim,
-            p.km_planejada,
-            p.partidas_total_planejada as viagens_planejadas,
-            p.indicador_circular
-        from planejado as p
-        left join data_versao_efetiva as d using (data, tipo_dia)
+        where {{ incremental_filter }}
     ),
     -- Parâmetros de subsídio
     subsidio_parametros as (
@@ -104,17 +68,14 @@ with
             end as subsidio_km_teto,
             indicador_penalidade_judicial,
             ordem
-    from {{ ref("valor_km_tipo_viagem") }}
+        from {{ ref("valor_km_tipo_viagem") }}
     ),
     -- Viagens com quantidades de transações
     viagem_transacao as (
         select *
         from {{ ref("viagem_transacao") }}
         -- from `rj-smtr.subsidio.viagem_transacao`
-        where
-            data
-            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
-            and data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
+        where {{ incremental_filter }}
     ),
     -- Apuração de km realizado e Percentual de Operação por Faixa Horária (POF)
     servico_faixa_km_apuracao as (
@@ -129,10 +90,7 @@ with
             km_planejada_faixa as km_planejada,
             pof
         from {{ ref("percentual_operacao_faixa_horaria") }}
-        where
-            data
-            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
-            and data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
+        where {{ incremental_filter }}
     ),
     viagem_km_tipo as (
         select distinct
@@ -218,31 +176,22 @@ select
     ),
     case
         when
-            v.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
+            v.data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
             and v.tipo_dia in ("Sabado", "Domingo")
             and pof > 120
-            and rn > greatest(
-                (viagens_planejadas * 1.2),
-                (viagens_planejadas + if(indicador_circular, 1, 2))
-            )
+            and rn > greatest((viagens_planejadas * 1.2), (viagens_planejadas + 1))
         then false
         when
-            v.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
+            v.data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
             and v.tipo_dia = "Ponto Facultativo"
             and pof > 150
-            and rn > greatest(
-                (viagens_planejadas * 1.5),
-                (viagens_planejadas + if(indicador_circular, 1, 2))
-            )
+            and rn > greatest((viagens_planejadas * 1.5), (viagens_planejadas + 1))
         then false
         when
-            v.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
+            v.data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
             and v.tipo_dia = "Dia Útil"
             and pof > 110
-            and rn > greatest(
-                (viagens_planejadas * 1.1),
-                (viagens_planejadas + if(indicador_circular, 1, 2))
-            )
+            and rn > greatest((viagens_planejadas * 1.1), (viagens_planejadas + 1))
         then false
         else true
     end as indicador_viagem_dentro_limite,
@@ -254,12 +203,17 @@ from
             v.*,
             p.* except (data, servico, sentido),
             row_number() over (
-                partition by v.data, v.servico, v.sentido, faixa_horaria_inicio, faixa_horaria_fim
+                partition by
+                    v.data,
+                    v.servico,
+                    v.sentido,
+                    faixa_horaria_inicio,
+                    faixa_horaria_fim
                 order by ordem, datetime_partida
             ) as rn
         from viagem_km_tipo as v
         left join
-            viagem_planejada as p
+            planejado as p
             on p.data = v.data
             and p.servico = v.servico
             and p.sentido = v.sentido
