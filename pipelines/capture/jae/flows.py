@@ -116,9 +116,9 @@ CAPTURA_INTEGRACAO.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
     cpu_limit="1000m",
-    memory_limit="4600Mi",
+    memory_limit="6000Mi",
     cpu_request="500m",
-    memory_request="1000Mi",
+    memory_request="2000Mi",
 )
 
 CAPTURA_ORDEM_PAGAMENTO = create_default_capture_flow(
