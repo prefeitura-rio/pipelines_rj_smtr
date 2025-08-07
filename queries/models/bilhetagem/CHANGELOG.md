@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Ajusta a coluna `tipo_transacao_jae` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/768)
+- Ajusta a coluna `tipo_transacao` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/768)
 
 ## [3.2.4] - 2025-08-04
 
