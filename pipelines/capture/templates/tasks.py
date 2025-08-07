@@ -184,18 +184,16 @@ def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str, s
         raw_filetype (str): tipo de dado raw
         source (SourceTable): Objeto representando a fonte de dados capturados
     """
-    data = data_extractor()
     raw_filepath = filepaths["raw"]
 
-    if source.file_chunk_size is None:
-        data = [data]
-
-    raw_filepaths = []
-    for idx, file in enumerate(data):
+    if source.file_chunk_size is not None:
+        raw_filepaths = data_extractor(raw_filepath=raw_filepath)
+    else:
+        data = data_extractor()
         base_path, ext = os.path.splitext(raw_filepath)
-        filepath = f"{base_path}_{idx}{ext}"
-        save_local_file(filepath=filepath, filetype=raw_filetype, data=file)
-        raw_filepaths.append(filepath)
+        filepath = f"{base_path}_0{ext}"
+        save_local_file(filepath=filepath, filetype=raw_filetype, data=data)
+        raw_filepaths = [filepath]
 
     return raw_filepaths
 
