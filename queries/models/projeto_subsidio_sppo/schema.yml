@@ -101,13 +101,13 @@ models:
         tests:
           - not_null:
               name: not_null__inicio_periodo__viagem_planejada
-              where: "data BETWEEN date('{date_range_start}') and least(date('{date_range_end}'), date_sub(date('{DATA_GTFS_V4_INICIO}'), interval 1 day))"
+              where: "data BETWEEN date('{date_range_start}') and least(date('{date_range_end}'), date_sub(date('{DATA_SUBSIDIO_V17_INICIO}'), interval 1 day))"
       - name: fim_periodo
         description: "Fim do período de operação planejado"
         tests:
           - not_null:
               name: not_null__fim_periodo__viagem_planejada
-              where: "data BETWEEN date('{date_range_start}') and least(date('{date_range_end}'), date_sub(date('{DATA_GTFS_V4_INICIO}'), interval 1 day))"
+              where: "data BETWEEN date('{date_range_start}') and least(date('{date_range_end}'), date_sub(date('{DATA_SUBSIDIO_V17_INICIO}'), interval 1 day))"
       - name: faixa_horaria_inicio
         description: "{{ doc('faixa_horaria_inicio') }}"
         tests:
