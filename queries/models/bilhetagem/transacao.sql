@@ -346,7 +346,7 @@ with
             case
                 when
                     t.tipo_transacao_jae in ("Integração", "Integração EMV")
-                    or i.id_transacao is not null
+                    or (i.id_transacao is not null and not in ("Transferência EMV", "Transferência"))
                 then "Integração"
                 when
                     t.tipo_transacao_jae in (
