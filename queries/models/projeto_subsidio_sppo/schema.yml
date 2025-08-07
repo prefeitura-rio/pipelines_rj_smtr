@@ -190,6 +190,8 @@ models:
         tests:
           - not_null:
               name: not_null__datetime_ultima_atualizacao__viagem_planejada
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
 
   - name: aux_registros_status_trajeto
     description: "Tabela auxiliar de classificação dos registros de GPS no trajeto [shape], com base no serviço informado pelo veículo [atualizada diariamente, sem histórico]"

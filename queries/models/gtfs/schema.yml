@@ -537,3 +537,5 @@ models:
         description: "Tipo de trajeto (0 - Regular, 1 - Alternativo)"
       - name: tipo_os
         description: "{{ doc('tipo_os') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
