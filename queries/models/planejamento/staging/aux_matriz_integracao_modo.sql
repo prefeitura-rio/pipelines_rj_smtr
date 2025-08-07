@@ -14,6 +14,7 @@ with
             modo,
             tempo_integracao_minutos
         from {{ ref("matriz_reparticao_tarifaria") }}, unnest(sequencia_modo) as modo
+        where "Metrô" not in unnest(sequencia_modo)
     ),
     modos_origem_destino as (
         select
