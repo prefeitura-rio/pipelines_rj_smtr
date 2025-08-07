@@ -21,7 +21,7 @@ WITH
     {%- endif %}
   ),
   ordem_servico_faixa_horaria_sentido as (
-        select 
+        select
         feed_start_date,
         servico,
         ARRAY_AGG(DISTINCT left(sentido, 1)) AS sentido_array,
