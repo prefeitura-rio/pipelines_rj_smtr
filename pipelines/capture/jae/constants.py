@@ -232,9 +232,6 @@ class constants(Enum):  # pylint: disable=c0103
                     *
                 FROM
                     LINHA
-                WHERE
-                    DT_INCLUSAO BETWEEN '{start}'
-                    AND '{end}'
             """,
             "database": "principal_db",
             "primary_keys": ["CD_LINHA"],

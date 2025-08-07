@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Flows de tratamento dos dados financeiros
+
+DBT 2025-08-05a
 """
 from types import NoneType
 

@@ -112,6 +112,15 @@ CAPTURA_INTEGRACAO = create_default_capture_flow(
 )
 set_default_parameters(CAPTURA_INTEGRACAO, {"recapture": True})
 
+# CAPTURA_INTEGRACAO.run_config = KubernetesRun(
+#     image=smtr_constants.DOCKER_IMAGE.value,
+#     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
+#     cpu_limit="1000m",
+#     memory_limit="4600Mi",
+#     cpu_request="500m",
+#     memory_request="1000Mi",
+# )
+
 CAPTURA_ORDEM_PAGAMENTO = create_default_capture_flow(
     flow_name="jae: ordem_pagamento - captura",
     source=constants.ORDEM_PAGAMENTO_SOURCES.value,
@@ -129,6 +138,15 @@ CAPTURA_TRANSACAO_ORDEM = create_default_capture_flow(
     get_raw_max_retries=0,
 )
 set_default_parameters(CAPTURA_TRANSACAO_ORDEM, {"recapture": True})
+
+# CAPTURA_TRANSACAO_ORDEM.run_config = KubernetesRun(
+#     image=smtr_constants.DOCKER_IMAGE.value,
+#     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
+#     cpu_limit="1000m",
+#     memory_limit="4600Mi",
+#     cpu_request="500m",
+#     memory_request="1000Mi",
+# )
 
 with Flow("jae: verifica ip do banco de dados") as verificacao_ip:
     success, failed_connections = test_jae_databases_connections()
@@ -350,6 +368,10 @@ verifica_captura.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 verifica_captura.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
+    cpu_limit="1000m",
+    memory_limit="4600Mi",
+    cpu_request="500m",
+    memory_request="1000Mi",
 )
 verifica_captura.state_handlers = [
     handler_inject_bd_credentials,

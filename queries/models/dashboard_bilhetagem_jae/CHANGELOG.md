@@ -1,5 +1,11 @@
 # Changelog - dashboard_bilhetagem_jae
 
+## [2.0.1] - 2025-08-04
+
+### Adicionado
+
+- Adiciona a coluna `valor_total_transacao` no modelo `view_passageiro_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/742)
+
 ## [2.0.0] - 2025-07-03
 
 ### Alterado
