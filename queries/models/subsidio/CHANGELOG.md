@@ -1,10 +1,10 @@
 # Changelog - subsidio
 
-## [2.0.8] - 2025-08-05
+## [2.0.8] - 2025-08-07
 
 ### Alterado
 
-- Alterado o modelo `percentual_operacao_faixa_horaria` para apuração por sentido (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+- Alterado o modelo `percentual_operacao_faixa_horaria` para apuração por sentido e utilização do versionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
 
 ## [2.0.7] - 2025-07-31
 

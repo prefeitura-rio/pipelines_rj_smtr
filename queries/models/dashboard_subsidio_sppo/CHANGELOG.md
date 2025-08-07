@@ -1,10 +1,10 @@
 # Changelog - dashboard_subsidio_sppo
 
-## [8.0.0] - 2025-08-05
+## [8.0.0] - 2025-08-07
 
 ### Alterado
 
-- Alterado o modelo `viagens_remuneradas` para apuração por sentido (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+- Alterado o modelo `viagens_remuneradas` para apuração por sentido e para utilização do versionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
 
 ## [7.2.1] - 2025-07-31
 
