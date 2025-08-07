@@ -9,7 +9,7 @@ with
     sumario_faixa_servico_dia_pagamento as (
         select *
         from {{ ref("sumario_faixa_servico_dia_pagamento_v2") }}
-        where data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}") 
+        where data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
         full outer union all by name
         select *
         from {{ ref("sumario_faixa_servico_dia_pagamento_v1") }}
