@@ -58,7 +58,7 @@ def create_jae_general_extractor(source: SourceTable, timestamp: datetime):
 
     if source.table_id == constants.TRANSACAO_ORDEM_TABLE_ID.value:
         start = start.replace(hour=0, minute=0, second=0)
-        end = end.replace(hour=23, minute=59, second=59)
+        end = end.replace(hour=6, minute=0, second=0)
 
     start = start.strftime("%Y-%m-%d %H:%M:%S")
     end = end.strftime("%Y-%m-%d %H:%M:%S")
