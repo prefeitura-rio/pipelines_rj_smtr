@@ -1,6 +1,6 @@
 {{ config(materialized="ephemeral") }}
 {% set incremental_filter %}
-    data between date("{{var('start_date')}}") and date("{{ var('end_date') }}") and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+    data between greatest(date("{{var('start_date')}}"), date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")) and date("{{ var('end_date') }}")
 {% endset %}
 with
     -- 1. Viagens planejadas
