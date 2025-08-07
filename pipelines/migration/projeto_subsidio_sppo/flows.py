@@ -23,7 +23,11 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 )
 
 from pipelines.capture.jae.constants import constants as jae_constants
-from pipelines.capture.jae.tasks import get_capture_gaps, jae_capture_check_get_ts_range
+from pipelines.capture.jae.tasks import (
+    create_capture_check_discord_message,
+    get_capture_gaps,
+    jae_capture_check_get_ts_range,
+)
 from pipelines.constants import constants as smtr_constants
 from pipelines.migration.projeto_subsidio_sppo.constants import constants
 from pipelines.migration.projeto_subsidio_sppo.tasks import check_param
@@ -51,6 +55,7 @@ from pipelines.tasks import (  # flow_log,
     add_days_to_date,
     check_fail,
     get_scheduled_timestamp,
+    log_discord,
     transform_task_state,
 )
 from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt
@@ -278,6 +283,18 @@ with Flow(
             table_id=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys())[0],
             timestamp_captura_start=timestamp_captura_start,
             timestamp_captura_end=timestamp_captura_end,
+        )
+
+        discord_messages = create_capture_check_discord_message.map(
+            table_id=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys())[0],
+            timestamps=timestamps,
+            timestamp_captura_start=timestamp_captura_start,
+            timestamp_captura_end=timestamp_captura_end,
+        )
+
+        send_discord_message = log_discord.map(
+            message=discord_messages,
+            key=unmapped("subsidio_data_check"),
         )
 
         missing_timestamps = task(lambda s: True if len(s) > 0 else None)(timestamps)
@@ -571,6 +588,18 @@ with Flow(
             table_id=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys())[0],
             timestamp_captura_start=timestamp_captura_start,
             timestamp_captura_end=timestamp_captura_end,
+        )
+
+        discord_messages = create_capture_check_discord_message.map(
+            table_id=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys())[0],
+            timestamps=timestamps,
+            timestamp_captura_start=timestamp_captura_start,
+            timestamp_captura_end=timestamp_captura_end,
+        )
+
+        send_discord_message = log_discord.map(
+            message=discord_messages,
+            key=unmapped("subsidio_data_check"),
         )
 
         SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt(
