@@ -51,7 +51,8 @@ with
             longitude,
             safe_cast(temperatura as numeric) as temperatura,
             datetime_captura
-        from {{ ref("gps_validador") }}
+        {# from {{ ref("gps_validador") }} #}
+        from rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador
         where {{ incremental_filter }}
     ),
     estado_equipamento_aux as (  -- Dados de estado do equipamento do validador
@@ -160,7 +161,8 @@ with
     ),
     temperatura_inmet as (  -- Dados de temperatura externa do INMET
         select data, extract(hour from hora) as hora, max(temperatura) as temperatura
-        from {{ ref("temperatura_inmet") }}
+        {# from {{ ref("temperatura_inmet") }} #}
+        from rj-smtr.monitoramento.temperatura_inmet
         where
             {{ incremental_filter }} and id_estacao in ("A621", "A652", "A636", "A602")  -- Estações do Rio de Janeiro
         group by 1, 2

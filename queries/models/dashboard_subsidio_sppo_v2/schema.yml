@@ -87,6 +87,7 @@ models:
           - data
           - servico
           - faixa_horaria_inicio
+          - sentido
           name: dbt_utils.unique_combination_of_columns__sumario_faixa_servico_dia_pagamento
           where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - dbt_utils.expression_is_true:

@@ -16,7 +16,7 @@
 {% endif -%}
 
 {% set incremental_filter %}
-    data between date("{{var('start_date')}}") and date("{{ var('end_date') }}") and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+    data between greatest(date("{{var('start_date')}}"), date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}"))  and date("{{ var('end_date') }}")
 {% endset %}
 with
     -- Viagens planejadas (agrupadas por data e serviço)
@@ -31,7 +31,6 @@ with
             faixa_horaria_fim,
             partidas_total_planejada as viagens_planejadas,
             distancia_total_planejada as km_planejada,
-            if(sentido = "C", true, false) as indicador_circular
         from {{ ref("viagem_planejada") }}
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
         where
@@ -171,8 +170,7 @@ select
         tipo_dia,
         consorcio,
         faixa_horaria_inicio,
-        faixa_horaria_fim,
-        indicador_circular
+        faixa_horaria_fim
     ),
     case
         when

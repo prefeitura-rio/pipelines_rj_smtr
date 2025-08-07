@@ -8,8 +8,8 @@
 }}
 select *
 from {{ ref("viagens_remuneradas_v1") }}
-where data < date("{{ var('DATA_GTFS_V4_INICIO') }}")
+where data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
 full outer union all by name
 select *
 from {{ ref("viagens_remuneradas_v2") }}
-where data >= date("{{ var('DATA_GTFS_V4_INICIO') }}")
+where data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")

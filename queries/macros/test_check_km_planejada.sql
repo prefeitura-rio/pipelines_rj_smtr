@@ -16,9 +16,10 @@
         ),
         os as (
             select
+                data,
                 feed_start_date,
                 servico,
-                sentido,
+                left(sentido, 1) as sentido,
                 tipo_os,
                 tipo_dia,
                 faixa_horaria_inicio,
@@ -33,8 +34,10 @@
                     date("{{ var('date_range_start') }}"),
                     date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
                 ) and date("{{ var('date_range_end') }}")
-            full outer union all by name
+                full outer
+            union all by name
             select
+                data,
                 feed_start_date,
                 servico,
                 tipo_os,
@@ -47,10 +50,10 @@
                     feed_start_date, tipo_os, tipo_dia
                 )
             where
-                data between date("{{ var('date_range_start') }}") and least(
-                    date("{{ var('date_range_end') }}"),
-                    date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+                data between date("{{ var('date_range_start') }}") and date(
+                    "{{ var('date_range_end') }}"
                 )
+                and data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
         ),
         os_faixa as (
             select
@@ -60,7 +63,6 @@
                     ) hour
                 ) as data,
                 servico,
-                coalesce(left(sentido, 1), null) as sentido,
                 datetime(data) + interval cast(
                     split(faixa_horaria_inicio, ":")[safe_offset(0)] as int64
                 ) hour as faixa_horaria_inicio,
@@ -71,7 +73,15 @@
         {% if "viagem_planejada" not in model %}
             ,
             sumario as (
-                select data, servico, faixa_horaria_inicio, km_planejada_faixa
+                select
+                    data,
+                    servico,
+                    faixa_horaria_inicio,
+                    km_planejada_faixa,
+                    {% if var("date_range_end") >= var("DATA_SUBSIDIO_V17_INICIO") %}
+                        sentido,
+                    {% else %} cast(null as string) as sentido
+                    {% endif %}
                 from {{ model }}
                 -- `rj-smtr.dashboard_subsidio_sppo_v2.sumario_faixa_servico_dia_pagamento`
                 where
