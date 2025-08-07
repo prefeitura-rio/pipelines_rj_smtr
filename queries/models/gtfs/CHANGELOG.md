@@ -8,7 +8,7 @@
 
 ### Alterado
 
-- Alterados os modelos `ordem_servico_trips_shapes` para utilização do versionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+- Alterados os modelos `ordem_servico_trips_shapes` e `ordem_servico_trajeto_alternativo_sentido_atualizado_aux_gtfs` para utilização do versionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
 
 - Removido o union all com o modelo `ordem_servico_faixa_horaria_sentido` no modelo `ordem_servico_sentido_atualizado_aux_gtfs` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
 
