@@ -12,8 +12,8 @@ Identificação de todas as trips de referência para os trajetos alternativos
         ~ " WHERE feed_start_date = '"
         ~ var("data_versao_gtfs")
         ~ "'"
-    ) -%}
     {%- set eventos_trajetos_alternativos = run_query(query).columns[0].values() -%}
+    ) -%}
 {% endif %}
 
 with
@@ -59,12 +59,9 @@ with
                     end as tipo_dia,
                     case
                         when
-                            (
-                                {% for evento in eventos_trajetos_alternativos %}
-                                    trip_headsign like "%{{evento}}%" or
-                                {% endfor %}
-                                service_id = "EXCEP"
-                            )
+                            {% for evento in eventos_trajetos_alternativos %}
+                                (trip_headsign like "%{{evento}}%" or
+                            {% endfor %} service_id = "EXCEP")
                         then true
                         else false
                     end as indicador_trajeto_alternativo,
@@ -76,20 +73,11 @@ with
             )
     )
 -- 3. Busca as trips de referência para cada serviço, sentido, e tipo_dia
-select * except (rn)
-from
-    (
-        select
-            * except (shape_distance),
-            row_number() over (
-                partition by trip_partition
-                order by
-                    feed_version,
-                    trip_short_name,
-                    tipo_dia,
-                    direction_id,
-                    shape_distance desc
-            ) as rn
-        from trips_all
-    )
-where rn = 1
+select * except (shape_distance),
+from trips_all
+qualify
+    row_number() over (
+        partition by trip_partition
+        order by
+            feed_version, trip_short_name, tipo_dia, direction_id, shape_distance desc
+    ) = 1
