@@ -5,16 +5,14 @@ with
     shapes as (
         select *
         from {{ ref("shapes_geom_gtfs") }}
-        {% if is_incremental() -%}
-            where feed_start_date = '{{ var("data_versao_gtfs") }}'
-        {% endif -%}
+        where feed_start_date = '{{ var("data_versao_gtfs") }}'
     ),
     ordem_servico_faixa_horaria_sentido as (
         select * except (sentido), left(sentido, 1) as sentido
         from {{ ref("ordem_servico_faixa_horaria_sentido") }}
-        {% if is_incremental() -%}
-            where feed_start_date = '{{ var("data_versao_gtfs") }}'
-        {% endif -%}
+        where
+            feed_start_date = '{{ var("data_versao_gtfs") }}'
+            and (quilometragem != 0 and (partidas != 0 or partidas is null))
     ),
     -- 2. Trata a OS, inclui trip_ids e ajusta nomes das colunas
     ordem_servico_tratada as (
@@ -36,6 +34,9 @@ with
                         quilometragem as distancia_total_planejada,
                         cast(null as string) as inicio_periodo,
                         cast(null as string) as fim_periodo,
+                        partidas as partidas_total_planejada,
+                        faixa_horaria_inicio as faixa_horaria_inicio,
+                        faixa_horaria_fim as faixa_horaria_fim,
                         trip_id,
                         shape_id,
                         indicador_trajeto_alternativo
@@ -44,6 +45,13 @@ with
                         {{ ref("trips_filtrada_aux_gtfs") }} as t
                         on t.feed_version = o.feed_version
                         and o.servico = t.trip_short_name
+                        and (
+                            o.tipo_dia = t.tipo_dia
+                            or (
+                                o.tipo_dia = "Ponto Facultativo"
+                                and t.tipo_dia = "Dia Útil"
+                            )
+                        )
                         and (
                             (o.sentido in ("I", "C") and t.direction_id = "0")
                             or (o.sentido = "V" and t.direction_id = "1")
@@ -66,6 +74,9 @@ with
                         quilometragem as distancia_total_planejada,
                         cast(null as string) as inicio_periodo,
                         cast(null as string) as fim_periodo,
+                        o.partidas as partidas_total_planejada,
+                        o.faixa_horaria_inicio as faixa_horaria_inicio,
+                        o.faixa_horaria_fim as faixa_horaria_fim,
                         trip_id,
                         shape_id,
                         indicador_trajeto_alternativo
@@ -159,13 +170,13 @@ from
             o.vista,
             o.consorcio,
             o.sentido,
-            fh.partidas as partidas_total_planejada,
+            partidas_total_planejada,
             distancia_planejada,
-            fh.quilometragem as distancia_total_planejada,
+            distancia_total_planejada,
             inicio_periodo,
             fim_periodo,
-            fh.faixa_horaria_inicio as faixa_horaria_inicio,
-            fh.faixa_horaria_fim as faixa_horaria_fim,
+            faixa_horaria_inicio,
+            faixa_horaria_fim,
             trip_id_planejado,
             trip_id,
             shape_id,
@@ -184,14 +195,7 @@ from
             id_tipo_trajeto
         from ordem_servico_trips as o
         left join shapes as s using (feed_version, feed_start_date, shape_id)
-        left join
-            ordem_servico_faixa_horaria_sentido fh using (
-                feed_version, feed_start_date, tipo_os, tipo_dia, servico, sentido
-            )
         where
-            {% if is_incremental() -%}
-                feed_start_date = '{{ var("data_versao_gtfs") }}' and
-            {% endif -%}
-            (fh.quilometragem != 0 and (fh.partidas != 0 or fh.partidas is null))
+            feed_start_date = '{{ var("data_versao_gtfs") }}'
             and feed_start_date >= '{{ var("DATA_GTFS_V4_INICIO") }}'
     )
