@@ -151,3 +151,9 @@ dmypy.json
 
 # VSCode project settings
 .vscode/
+
+# Kilocode Memory Bank
+.kilocode/
+
+# Documentação gerada localmente
+
