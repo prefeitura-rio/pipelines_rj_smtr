@@ -122,6 +122,11 @@ with
                     and round(st_x(i.start_pt), 4) = round(st_x(i.end_pt), 4)
                 )
                 or (
+                    feed_start_date >= "{{ var('DATA_GTFS_V4_INICIO') }}"
+                    and trunc(st_y(i.start_pt), 4) = trunc(st_y(i.end_pt), 4)
+                    and trunc(st_x(i.start_pt), 4) = trunc(st_x(i.end_pt), 4)
+                )
+                or (
                     feed_start_date = "2025-05-01" and shape_id in ("iz18", "ycug")  -- Operação Especial "Todo Mundo no Rio" - Lady Gaga
                 )
         )
