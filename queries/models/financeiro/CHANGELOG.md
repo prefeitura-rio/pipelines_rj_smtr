@@ -1,5 +1,11 @@
 # Changelog - financeiro
 
+## [1.0.5] - 2025-08-07
+
+### Alterado
+
+- Alterados os modelos `subsidio_faixa_servico_dia_tipo_viagem` e `subsidio_penalidade_servico_faixa` para utilizar o versionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+
 ## [1.0.4] - 2025-06-25
 
 ### Alterado

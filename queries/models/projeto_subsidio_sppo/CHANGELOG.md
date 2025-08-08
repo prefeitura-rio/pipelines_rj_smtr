@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.3.3] - 2025-08-07
+
+### Alterado
+
+- Adicionado coluna de controle no modelo `viagem_planejada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+
 ## [9.3.2] - 2025-07-24
 
 ### Corrigido
