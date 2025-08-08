@@ -5,9 +5,7 @@ with
     shapes as (
         select *
         from {{ ref("shapes_geom_gtfs") }}
-        {% if is_incremental() -%}
-            where feed_start_date = '{{ var("data_versao_gtfs") }}'
-        {% endif -%}
+        where feed_start_date = '{{ var("data_versao_gtfs") }}'
     ),
     -- 2. Trata a OS, inclui trip_ids e ajusta nomes das colunas
     ordem_servico_tratada as (
@@ -220,10 +218,8 @@ from
             -- rj-smtr-dev.gtfs.ordem_servico_faixa_horaria AS fh
             using (feed_version, feed_start_date, tipo_os, tipo_dia, servico)
         where
-            {% if is_incremental() -%}
-                feed_start_date = '{{ var("data_versao_gtfs") }}' and
-            {% endif -%}
-            (
+            feed_start_date = '{{ var("data_versao_gtfs") }}'
+            and (
                 (
                     feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
                     and (
