@@ -280,6 +280,8 @@ models:
         description: "{{ doc('datetime_ultima_atualizacao') }}"
       - name: id_execucao_dbt
         description: "{{ doc('id_execucao_dbt') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
   - name: sumario_servico_dia_pagamento
     description: "Sumário do subsídio dos serviços de ônibus [SPPO] por dia [Dados entre 2024-08-16 e 2025-01-05]"
     tests:

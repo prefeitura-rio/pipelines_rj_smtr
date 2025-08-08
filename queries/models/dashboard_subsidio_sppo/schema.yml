@@ -704,3 +704,5 @@ models:
         description: "{{ doc('indicador_penalidade_judicial') }}"
       - name: id_execucao_dbt
         description: "{{ doc('id_execucao_dbt') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
