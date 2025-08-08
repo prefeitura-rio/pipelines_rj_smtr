@@ -101,11 +101,13 @@ models:
         tests:
           - not_null:
               name: not_null__inicio_periodo__viagem_planejada
+              where: "data BETWEEN date('{date_range_start}') and least(date('{date_range_end}'), date_sub(date('{DATA_SUBSIDIO_V17_INICIO}'), interval 1 day))"
       - name: fim_periodo
         description: "Fim do período de operação planejado"
         tests:
           - not_null:
               name: not_null__fim_periodo__viagem_planejada
+              where: "data BETWEEN date('{date_range_start}') and least(date('{date_range_end}'), date_sub(date('{DATA_SUBSIDIO_V17_INICIO}'), interval 1 day))"
       - name: faixa_horaria_inicio
         description: "{{ doc('faixa_horaria_inicio') }}"
         tests:
@@ -188,6 +190,8 @@ models:
         tests:
           - not_null:
               name: not_null__datetime_ultima_atualizacao__viagem_planejada
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
 
   - name: aux_registros_status_trajeto
     description: "Tabela auxiliar de classificação dos registros de GPS no trajeto [shape], com base no serviço informado pelo veículo [atualizada diariamente, sem histórico]"
