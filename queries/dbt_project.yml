@@ -339,9 +339,9 @@ models:
     br_rj_riodejaneiro_stu:
       +materialized: view
       +schema: br_rj_riodejaneiro_stu
-    app-cct:
+    projeto_app_cct:
       +materialized: view
-      +schema: app_cct
+      +schema: projeto_app_cct
     cadastro:
       +schema: cadastro
       staging:
