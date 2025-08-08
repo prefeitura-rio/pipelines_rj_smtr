@@ -16,5 +16,5 @@ with
         from {{ ref("subsidio_penalidade_servico_faixa_v2") }}
         where data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
     )
-select *, '{ invocation_id }' as id_execucao_dbt
+select *, '{{ invocation_id }}' as id_execucao_dbt
 from subsidio_penalidade_servico_faixa
