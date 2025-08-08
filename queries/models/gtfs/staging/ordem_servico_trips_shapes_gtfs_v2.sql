@@ -70,6 +70,13 @@ with
                         shape_id,
                         indicador_trajeto_alternativo
                     from
+                        {{
+                            ref(
+                                "ordem_servico_trajeto_alternativo_sentido_atualizado_aux_gtfs"
+                            )
+                        }}
+                        as ot
+                    left join
                         ordem_servico_faixa_horaria_sentido as o using (
                             feed_version, tipo_os, servico, sentido
                         )
