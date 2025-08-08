@@ -1,5 +1,23 @@
 # Changelog - gtfs
 
+## [1.2.5] - 2025-08-08
+
+### Corrigido
+
+- Corrigido o join com os trajetos alternativos no modelo `ordem_servico_trips_shapes_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/773)
+
+## [1.2.4] - 2025-08-07
+
+### Corrigido
+
+- Corrigida a verificação de shapes circulares no modelo `shapes_geom_gtfs` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+
+### Alterado
+
+- Alterados os modelos `ordem_servico_trips_shapes` e `ordem_servico_trajeto_alternativo_sentido_atualizado_aux_gtfs` para utilização do versionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+
+- Removido o union all com o modelo `ordem_servico_faixa_horaria_sentido` no modelo `ordem_servico_sentido_atualizado_aux_gtfs` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+
 ## [1.2.3] - 2025-05-29
 
 ### Alterado
