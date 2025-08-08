@@ -3,96 +3,93 @@
 Identificação de um trip de referência para cada serviço e sentido regular
 Identificação de todas as trips de referência para os trajetos alternativos
 */
-
-{{
-  config(
-    materialized='ephemeral'
-  )
-}}
+{{ config(materialized="ephemeral") }}
 
 {% if execute -%}
-  {% if is_incremental() -%}
-    {%- set query = "SELECT DISTINCT evento FROM " ~ ref('ordem_servico_trajeto_alternativo_gtfs') ~ " WHERE feed_start_date = '" ~ var('data_versao_gtfs')  ~ "'" -%}
-  {% else %}
-    {%- set query = "SELECT DISTINCT evento FROM " ~ ref('ordem_servico_trajeto_alternativo_gtfs') -%}
-  {% endif -%}
-  {%- set eventos_trajetos_alternativos = run_query(query).columns[0].values() -%}
+    {%- set query = (
+        "SELECT DISTINCT evento FROM "
+        ~ ref("ordem_servico_trajeto_alternativo_gtfs")
+        ~ " WHERE feed_start_date = '"
+        ~ var("data_versao_gtfs")
+        ~ "'"
+    ) -%}
+    {%- set eventos_trajetos_alternativos = run_query(query).columns[0].values() -%}
 {% endif %}
 
-WITH
-  -- 1. Busca os shapes em formato geográfico
-  shapes AS (
-    SELECT
-      *
-    FROM
-      {{ ref("shapes_geom_gtfs") }}
-    {% if is_incremental() -%}
-    WHERE
-      feed_start_date = '{{ var("data_versao_gtfs") }}'
-    {% endif -%}
-  ),
-  -- 2. Busca as trips
-  trips_all AS (
-    SELECT
-      *,
-      CASE
-        WHEN indicador_trajeto_alternativo = TRUE THEN CONCAT(feed_version, trip_short_name, tipo_dia, direction_id, shape_id)
-        ELSE CONCAT(feed_version, trip_short_name, tipo_dia, direction_id)
-      END AS trip_partition
-    FROM
-    (
-      SELECT
-        service_id,
-        trip_id,
-        trip_headsign,
-        trip_short_name,
-        direction_id,
-        shape_id,
-        feed_version,
-        shape_distance,
-        start_pt,
-        end_pt,
-        CASE
-          WHEN service_id LIKE "%U_%" THEN "Dia Útil"
-          WHEN service_id LIKE "%S_%" THEN "Sabado"
-          WHEN service_id LIKE "%D_%" THEN "Domingo"
-        ELSE
-        service_id
-      END
-        AS tipo_dia,
-        CASE WHEN (
-          {% for evento in eventos_trajetos_alternativos %}
-          trip_headsign LIKE "%{{evento}}%" OR
-          {% endfor %}
-          service_id = "EXCEP") THEN TRUE
-        ELSE FALSE
-      END
-        AS indicador_trajeto_alternativo,
-      FROM
-        {{ ref("trips_gtfs") }}
-      LEFT JOIN
-        shapes
-      USING
-        (feed_start_date,
-        feed_version,
-        shape_id)
-      WHERE
-        {% if is_incremental() -%}
-        feed_start_date = '{{ var("data_versao_gtfs") }}' AND
-        {% endif %}
-        service_id NOT LIKE "%_DESAT_%"  -- Desconsidera service_ids desativados
+with
+    -- 1. Busca os shapes em formato geográfico
+    shapes as (
+        select *
+        from {{ ref("shapes_geom_gtfs") }}
+        where feed_start_date = '{{ var("data_versao_gtfs") }}'
+    ),
+    -- 2. Busca as trips
+    trips_all as (
+        select
+            *,
+            case
+                when indicador_trajeto_alternativo = true
+                then
+                    concat(
+                        feed_version, trip_short_name, tipo_dia, direction_id, shape_id
+                    )
+                else concat(feed_version, trip_short_name, tipo_dia, direction_id)
+            end as trip_partition
+        from
+            (
+                select
+                    service_id,
+                    trip_id,
+                    trip_headsign,
+                    trip_short_name,
+                    direction_id,
+                    shape_id,
+                    feed_version,
+                    shape_distance,
+                    start_pt,
+                    end_pt,
+                    case
+                        when service_id like "%U_%"
+                        then "Dia Útil"
+                        when service_id like "%S_%"
+                        then "Sabado"
+                        when service_id like "%D_%"
+                        then "Domingo"
+                        else service_id
+                    end as tipo_dia,
+                    case
+                        when
+                            (
+                                {% for evento in eventos_trajetos_alternativos %}
+                                    trip_headsign like "%{{evento}}%" or
+                                {% endfor %}
+                                service_id = "EXCEP"
+                            )
+                        then true
+                        else false
+                    end as indicador_trajeto_alternativo,
+                from {{ ref("trips_gtfs") }}
+                left join shapes using (feed_start_date, feed_version, shape_id)
+                where
+                    feed_start_date = '{{ var("data_versao_gtfs") }}'
+                    and service_id not like "%_DESAT_%"  -- Desconsidera service_ids desativados
+            )
     )
-  )
 -- 3. Busca as trips de referência para cada serviço, sentido, e tipo_dia
-SELECT
-    * EXCEPT(rn)
-FROM
-(
-    SELECT
-    * EXCEPT(shape_distance),
-    ROW_NUMBER() OVER (PARTITION BY trip_partition ORDER BY feed_version, trip_short_name, tipo_dia, direction_id, shape_distance DESC) AS rn
-    FROM
-    trips_all
-)
-WHERE
-    rn = 1
+select * except (rn)
+from
+    (
+        select
+            * except (shape_distance),
+            row_number() over (
+                partition by trip_partition
+                order by
+                    feed_version,
+                    trip_short_name,
+                    tipo_dia,
+                    direction_id,
+                    shape_distance desc
+            ) as rn
+        from trips_all
+    )
+where rn = 1

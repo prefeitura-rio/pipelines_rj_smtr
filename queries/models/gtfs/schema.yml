@@ -482,7 +482,7 @@ models:
           name: dbt_expectations.expect_table_row_count_to_be_between__ordem_servico_trips_shapes_gtfs
           min_value: 1
           max_value: 2
-          group_by: [feed_start_date, tipo_dia, tipo_os, servico, faixa_horaria_inicio, shape_id]
+          group_by: [feed_start_date, tipo_dia, tipo_os, servico, faixa_horaria_inicio, shape_id, sentido]
           row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
           strictly: false
           where: "1=1"
