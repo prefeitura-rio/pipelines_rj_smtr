@@ -4,13 +4,13 @@
 
 ### Alterado
 
-- Adicionado o `indicador_duplo_sentido` no modelo `ordem_servico_trajeto_alternatico_sentido_atualizado_aux_gtfs_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/773)
+- Adicionado o `indicador_duplo_sentido` no modelo `ordem_servico_trajeto_alternatico_sentido_atualizado_aux_gtfs_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/776)
 
-- Removidos a condição para materialização incremental nos modelos efêmeros `ordem_servico_trajeto_alternatico_sentido_atualizado_aux_gtfs`, `ordem_servico_trips_shapes` e `trips_filtrada_aux_gtfs` e suas versões (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/773)
+- Removidos a condição para materialização incremental nos modelos efêmeros `ordem_servico_trajeto_alternatico_sentido_atualizado_aux_gtfs`, `ordem_servico_trips_shapes` e `trips_filtrada_aux_gtfs` e suas versões (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/776)
 
 ### Corrigido
 
-- Corrigida a duplicação no modelo `ordem_servico_trips_shapes_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/773)
+- Corrigida a duplicação no modelo `ordem_servico_trips_shapes_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/776)
 
 ## [1.2.5] - 2025-08-08
 

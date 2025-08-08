@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Movidos os modelos `viagens_remuneradas_v1` e `viagens_remuneradas_v2` para a pasta staging (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+- Movidos os modelos `viagens_remuneradas_v1` e `viagens_remuneradas_v2` para a pasta staging (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/776)
 
 ## [8.0.0] - 2025-08-07
 
