@@ -12,7 +12,7 @@
 }}
 {% if is_incremental() and execute %}
   {% set run_date_str = "'" ~ var('run_date') ~ "'" %}
-  {% set query = "SELECT data_versao_shapes FROM " ~ ref('subsidio_data_versao_efetiva') ~ " WHERE data BETWEEN DATE_SUB(DATE(" ~ run_date_str ~ "), INTERVAL 1 DAY) AND DATE(" ~ run_date_str ~ ")" %}
+  {% set query = "SELECT COALESCE(data_versao_shapes, feed_start_date) FROM " ~ ref('subsidio_data_versao_efetiva') ~ " WHERE data BETWEEN DATE_SUB(DATE(" ~ run_date_str ~ "), INTERVAL 1 DAY) AND DATE(" ~ run_date_str ~ ")" %}
   {% set result = run_query(query) %}
   {% set data_versao_shapes = result.columns[0].values() %}
 {% endif %}
