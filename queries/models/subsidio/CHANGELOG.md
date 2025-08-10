@@ -1,5 +1,11 @@
 # Changelog - subsidio
 
+## [2.0.9] - 2025-08-08
+
+### Alterado
+
+- Altera a data para regra de `Validador associado incorretamente` nos modelos `viagem_transacao_aux_v2` `viagem_transacao_aux_v1` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/769)
+
 ## [2.0.8] - 2025-08-07
 
 ### Alterado
