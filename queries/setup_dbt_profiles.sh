@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -euo pipefail
 mkdir -p ./credentials-dev
 mkdir -p ./credentials-prod
 mkdir -p ./profiles
