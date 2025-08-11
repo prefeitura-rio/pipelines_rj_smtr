@@ -83,7 +83,7 @@ selectors:
         - method: fqn
           value: aux_transacao_id_ordem_pagamento
         - method: fqn
-          value: aux_data_ordem_transacao
+          value: data_ordem_transacao
 
   - name: transacao_valor_ordem
     description: Materialização da tabela contendo os valores das transações em cada ordem de pagamento

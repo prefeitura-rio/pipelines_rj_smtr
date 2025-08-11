@@ -14,6 +14,7 @@
 date(data) between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
 {% endset %}
 
+{% set transacao_ordem = ref("staging_transacao_ordem") %}
 {% set aux_transacao_id_ordem_pagamento = ref("aux_transacao_id_ordem_pagamento") %}
 {% if execute %}
     {% if is_incremental() %}
@@ -40,13 +41,26 @@ date(data) between date("{{var('date_range_start')}}") and date("{{var('date_ran
         {% endset %}
         {% set partitions_query %}
 
-            select distinct concat("'", data_ordem, "'") as data_ordem
-            from {{ aux_transacao_id_ordem_pagamento }}
+            select distinct concat("'", data_transacao, "'") as data_transacao
+            from {{ transacao_ordem }}
             where {{ incremental_filter }}
 
         {% endset %}
 
         {% set partitions = run_query(partitions_query).columns[0].values() %}
+
+        {% set data_ordem_partitions_query %}
+
+            select distinct concat("'", data_ordem , "'") as data_ordem
+            from {{ aux_transacao_id_ordem_pagamento }}
+            where
+                {% if partitions | length > 0 %}
+                    data in ({{ partitions | join(", ") }})
+                {% else %} 1 = 0
+                {% endif %}
+        {% endset %}
+
+        {% set data_ordem_partitions = run_query(data_ordem_partitions_query).columns[0].values() %}
 
     {% else %} {% set sha_column = "cast(null as bytes)" %}
     {% endif %}
@@ -62,8 +76,7 @@ with
         {% if is_incremental() %}
             where
                 {% if partitions | length > 0 %}
-                    {{ incremental_filter }}
-                    and data_ordem in ({{ partitions | join(", ") }})
+                    data in ({{ partitions | join(", ") }})
                 {% else %} 1 = 0
                 {% endif %}
         {% endif %}
@@ -74,11 +87,10 @@ with
             select *
             from {{ this }}
             where
-                {% if partitions | length > 0 %}
-                    data_ordem in ({{ partitions | join(", ") }})
+                {% if data_ordem_partitions | length > 0 %}
+                    data_ordem in ({{ data_ordem_partitions | join(", ") }})
                 {% else %} 1 = 0
                 {% endif %}
-
         ),
     {% endif %}
     particoes_completas as (
