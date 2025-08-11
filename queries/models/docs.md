@@ -1177,3 +1177,7 @@ Indicadores para classificação da viagem
 {% docs data_verificacao_regularidade %}
 Data de verificação da regularidade
 {% enddocs %}
+
+{% docs id_ordem_pagamento_consorcio_operador_dia %}
+Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_operador_dia
+{% enddocs %}
