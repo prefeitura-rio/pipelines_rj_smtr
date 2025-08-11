@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [2.0.6] - 2025-08-11
+
+### Alterado
+
+- Altera schedule da materialização da transacao_ordem e integracao (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/781)
+
 ## [2.0.5] - 2025-07-31
 
 ### Alterado

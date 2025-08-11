@@ -83,6 +83,8 @@ selectors:
         - method: fqn
           value: aux_transacao_id_ordem_pagamento
         - method: fqn
+          value: data_ordem_transacao
+        - method: fqn
           value: transacao_cct
 
   - name: transacao_valor_ordem
