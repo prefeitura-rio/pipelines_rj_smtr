@@ -312,9 +312,9 @@ with Flow(
         )
 
         test_failed = check_fail(DATA_QUALITY_PRE)
-        materialize_subsidio = merge(missing_timestamps, test_failed)
+        skip_materialization = merge(missing_timestamps, test_failed)
 
-        with case(materialize_subsidio, False):
+        with case(skip_materialization, False):
             # 4. CALCULATE #
             date_in_range = check_date_in_range(
                 _vars["start_date"], _vars["end_date"], constants.DATA_SUBSIDIO_V9_INICIO.value
