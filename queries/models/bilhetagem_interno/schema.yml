@@ -54,3 +54,30 @@ models:
         description: "{{ doc('id_execucao_dbt') }}"
         data_type: string
         quote: true
+  - name: data_ordem_transacao
+    description: Tabela com relacionamento entre data_transacao e data_ordem
+    columns:
+      - name: data_ordem
+        description: "{{ doc('data_ordem') }} [partição]"
+        data_type: date
+        quote: true
+      - name: id_ordem_pagamento_consorcio_operador_dia
+        description: "{{ doc('id_ordem_pagamento_consorcio_operador_dia') }}"
+        data_type: string
+        quote: true
+      - name: data_transacao
+        description: "{{ doc('data_transacao') }}"
+        data_type: date
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
