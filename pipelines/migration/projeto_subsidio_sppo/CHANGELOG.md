@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.2.7] - 2025-08-11
+
+### Adicionado
+
+- Adiciona verificação da captura dos dados de bilhetagem no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/765)
+
 ## [1.2.6] - 2025-07-22
 
 ### Adicionado
