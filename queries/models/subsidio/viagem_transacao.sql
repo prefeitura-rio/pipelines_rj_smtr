@@ -26,10 +26,10 @@ select
     datetime_partida,
     datetime_chegada,
     datetime_ultima_atualizacao
-from {{ ref("viagem_transacao_aux_v1") }}
-where data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+from {{ ref("viagem_transacao_aux_v2") }}
+where data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
 
-union all
+full outer union all by name
 
 select
     data,
@@ -40,7 +40,6 @@ select
     tipo_viagem,
     modo,
     tecnologia_apurada,
-    tecnologia_remunerada,
     sentido,
     distancia_planejada,
     quantidade_transacao,
@@ -51,5 +50,5 @@ select
     datetime_partida,
     datetime_chegada,
     datetime_ultima_atualizacao
-from {{ ref("viagem_transacao_aux_v2") }}
-where data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+from {{ ref("viagem_transacao_aux_v1") }}
+where data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
