@@ -1,5 +1,25 @@
 # Changelog - bilhetagem
 
+## [3.2.5] - 2025-08-07
+
+### Alterado
+
+- Ajusta a coluna `tipo_transacao` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/768)
+
+## [3.2.4] - 2025-08-04
+
+### Alterado
+
+- Trata dados de id inteiro nos modelos de staging da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/755)
+- Altera tabela com informações de serviço da Jaé nos modelos `transacao.sql` e `transacao_riocard.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/755)
+
+## [3.2.3] - 2025-08-04
+
+### Adicionado
+
+- Adiciona a coluna `valor_pagamento` no modelo `aux_passageiro_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/742)
+- Adiciona a coluna `valor_total_transacao` no modelo `passageiro_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/742)
+
 ## [3.2.2] - 2025-08-03
 
 ### Alterado

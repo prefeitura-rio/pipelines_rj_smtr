@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo_v2
 
+## [1.1.1] - 2025-08-07
+
+### Alterado
+
+- Alterado o modelo `sumario_faixa_servico_dia_pagamento` para utilizar o versionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+
 ## [1.1.0] - 2025-06-25
 
 ### Alterado
