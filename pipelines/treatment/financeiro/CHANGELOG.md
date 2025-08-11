@@ -1,5 +1,12 @@
 # Changelog - financeiro
 
+## [2.0.4] - 2025-08-11
+
+### Alterado
+
+- Altera schedule da materialização das ordens de pagamento da bilhetagem (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/781)
+- Altera webhook do flow `FINANCEIRO_BILHETAGEM_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/781)
+
 ## [2.0.3] - 2025-07-31
 
 ### Alterado

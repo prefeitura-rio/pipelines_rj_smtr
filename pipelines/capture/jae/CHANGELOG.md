@@ -1,7 +1,14 @@
 # Changelog - source_jae
 
+## [2.3.5] - 2025-08-11
+
+### Alterado
+
+- Altera schedules das capturas das ordens de pagamento e da transacao_ordem (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/781)
+
 ## [2.3.4] - 2025-08-05
 
+### Alterado
 - Aumenta memória nos flows `CAPTURA_INTEGRACAO`, `CAPTURA_TRANSACAO_ORDEM` e `verifica_captura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/759)
 
 ## [2.3.3] - 2025-08-04
