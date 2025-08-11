@@ -63,6 +63,7 @@
                     ) hour
                 ) as data,
                 servico,
+                sentido,
                 datetime(data) + interval cast(
                     split(faixa_horaria_inicio, ":")[safe_offset(0)] as int64
                 ) hour as faixa_horaria_inicio,
