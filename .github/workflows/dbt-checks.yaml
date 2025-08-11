@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python version
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.9"
 
@@ -33,7 +33,7 @@ jobs:
 
       # Setup gcloud CLI
       - name: Setup Google Cloud CLI
-        uses: google-github-actions/setup-gcloud@v0.2.1
+        uses: google-github-actions/setup-gcloud@v1
         with:
           service_account_key: ${{ secrets.GKE_SA_KEY }}
           project_id: ${{ secrets.GKE_PROJECT_ID}}
@@ -49,7 +49,7 @@ jobs:
 
       - name: Run sqlfmt
         working-directory: queries
-        run: sqlfmt --diff ${{ steps.files.outputs.all }}
+        run: sqlfmt --diff ${{ steps.files.outputs.all_changed_files }}
 
       - name: Run DBT compile
         working-directory: queries
