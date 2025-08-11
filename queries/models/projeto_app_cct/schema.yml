@@ -17,6 +17,6 @@ models:
       - name: id_ordem_pagamento
         description: "Identificador da ordem de pagamento."
       - name: id_ordem_pagamento_consorcio_operador_dia
-        description: "Identificador único da ordem de pagamento por consorcio, operador e dia."
+        description: "{{ doc('id_ordem_pagamento_consorcio_operador_dia') }}"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
