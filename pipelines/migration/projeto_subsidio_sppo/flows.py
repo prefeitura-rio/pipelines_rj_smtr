@@ -51,7 +51,7 @@ from pipelines.schedules import (
     every_day_hour_five_and_hour_fourteen,
     every_day_hour_seven_minute_five,
 )
-from pipelines.tasks import (  # flow_log,
+from pipelines.tasks import (
     add_days_to_date,
     check_fail,
     get_scheduled_timestamp,
@@ -202,6 +202,10 @@ with Flow(
 
     materialize_sppo_veiculo_dia = Parameter("materialize_sppo_veiculo_dia", False)
     test_only = Parameter("test_only", False)
+    table_ids_jae = Parameter(
+        name="table_ids_jae",
+        default=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys()),
+    )
     # publish = Parameter("publish", False)
 
     run_dates = get_run_dates(start_date, end_date)
@@ -270,26 +274,20 @@ with Flow(
             timestamp=timestamp,
             retroactive_days=0,
             timestamp_captura_start=start_date_param,
-            timestamp_captura_end=add_days_to_date(end_date_param),
-        )
+            timestamp_captura_end=add_days_to_date(date_str=end_date_param, days=7),
+        ).set_upstream(task=SPPO_VEICULO_DIA_RUN_WAIT)
 
-        # timestamps = get_capture_gaps.map(
-        #     table_id=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys()),
-        #     timestamp_captura_start=unmapped(timestamp_captura_start),
-        #     timestamp_captura_end=unmapped(timestamp_captura_end),
-        # )
-
-        timestamps = get_capture_gaps(
-            table_id=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys())[0],
-            timestamp_captura_start=timestamp_captura_start,
-            timestamp_captura_end=timestamp_captura_end,
+        timestamps = get_capture_gaps.map(
+            table_id=table_ids_jae,
+            timestamp_captura_start=unmapped(timestamp_captura_start),
+            timestamp_captura_end=unmapped(timestamp_captura_end),
         )
 
         discord_messages = create_capture_check_discord_message.map(
-            table_id=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys())[0],
+            table_id=table_ids_jae,
             timestamps=timestamps,
-            timestamp_captura_start=timestamp_captura_start,
-            timestamp_captura_end=timestamp_captura_end,
+            timestamp_captura_start=unmapped(timestamp_captura_start),
+            timestamp_captura_end=unmapped(timestamp_captura_end),
         )
 
         send_discord_message = log_discord.map(
@@ -304,7 +302,7 @@ with Flow(
             dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
             exclude="dashboard_subsidio_sppo_v2",
             _vars=dbt_vars,
-        ).set_upstream(task=SPPO_VEICULO_DIA_RUN_WAIT)
+        ).set_upstream(task=send_discord_message)
 
         DATA_QUALITY_PRE = dbt_data_quality_checks(
             dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_PRE,
@@ -575,26 +573,20 @@ with Flow(
             timestamp=timestamp,
             retroactive_days=0,
             timestamp_captura_start=start_date_param,
-            timestamp_captura_end=add_days_to_date(end_date_param),
+            timestamp_captura_end=add_days_to_date(date_str=end_date_param, days=7),
         )
 
-        # timestamps = get_capture_gaps.map(
-        #     table_id=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys()),
-        #     timestamp_captura_start=unmapped(timestamp_captura_start),
-        #     timestamp_captura_end=unmapped(timestamp_captura_end),
-        # )
-
-        timestamps = get_capture_gaps(
-            table_id=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys())[0],
-            timestamp_captura_start=timestamp_captura_start,
-            timestamp_captura_end=timestamp_captura_end,
+        timestamps = get_capture_gaps.map(
+            table_id=table_ids_jae,
+            timestamp_captura_start=unmapped(timestamp_captura_start),
+            timestamp_captura_end=unmapped(timestamp_captura_end),
         )
 
         discord_messages = create_capture_check_discord_message.map(
-            table_id=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys())[0],
+            table_id=table_ids_jae,
             timestamps=timestamps,
-            timestamp_captura_start=timestamp_captura_start,
-            timestamp_captura_end=timestamp_captura_end,
+            timestamp_captura_start=unmapped(timestamp_captura_start),
+            timestamp_captura_end=unmapped(timestamp_captura_end),
         )
 
         send_discord_message = log_discord.map(
@@ -607,7 +599,7 @@ with Flow(
             dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
             exclude="dashboard_subsidio_sppo_v2",
             _vars=dbt_vars,
-        )
+        ).set_upstream(task=send_discord_message)
 
         DATA_QUALITY_PRE = dbt_data_quality_checks(
             dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_PRE,

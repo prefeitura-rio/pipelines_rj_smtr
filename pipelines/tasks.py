@@ -288,7 +288,7 @@ def add_days_to_date(
     Args:
         date_str (str): Data no formato especificado (default: "YYYY-MM-DD").
         days (int): Número de dias a adicionar (pode ser negativo).
-        fmt (str): Formato da data (default: "%Y-%m-%d").
+        pattern (str): Formato da data (default: "%Y-%m-%d").
 
     Returns:
         str: Nova data como string.
