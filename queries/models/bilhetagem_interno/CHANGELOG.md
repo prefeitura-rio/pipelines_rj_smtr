@@ -1,6 +1,6 @@
 # Changelog - bilhetagem_interno
 
-## [1.0.1] - 2025-08-06
+## [1.0.1] - 2025-08-11
 
 ### Adicionado
 
