@@ -41,7 +41,7 @@ date(data) between date("{{var('date_range_start')}}") and date("{{var('date_ran
         {% endset %}
         {% set partitions_query %}
 
-            select distinct concat("'", data_transacao, "'") as data_transacao
+            select distinct concat("'", date(data_transacao), "'") as data_transacao
             from {{ transacao_ordem }}
             where {{ incremental_filter }}
 
@@ -60,7 +60,9 @@ date(data) between date("{{var('date_range_start')}}") and date("{{var('date_ran
                 {% endif %}
         {% endset %}
 
-        {% set data_ordem_partitions = run_query(data_ordem_partitions_query).columns[0].values() %}
+        {% set data_ordem_partitions = (
+            run_query(data_ordem_partitions_query).columns[0].values()
+        ) %}
 
     {% else %} {% set sha_column = "cast(null as bytes)" %}
     {% endif %}
@@ -75,14 +77,12 @@ with
         from {{ aux_transacao_id_ordem_pagamento }}
         {% if is_incremental() %}
             where
-                {% if partitions | length > 0 %}
-                    data in ({{ partitions | join(", ") }})
+                {% if partitions | length > 0 %} data in ({{ partitions | join(", ") }})
                 {% else %} 1 = 0
                 {% endif %}
         {% endif %}
     ),
     {% if is_incremental() %}
-
         dados_atuais as (
             select *
             from {{ this }}
@@ -104,7 +104,6 @@ with
                 * except (versao, datetime_ultima_atualizacao, id_execucao_dbt),
                 1 as priority
             from dados_atuais
-
         {% endif %}
     ),
     sha_dados_novos as (
@@ -122,7 +121,6 @@ with
     ),
     sha_dados_atuais as (
         {% if is_incremental() %}
-
             select
                 data_ordem,
                 id_ordem_pagamento_consorcio_operador_dia,
@@ -131,7 +129,6 @@ with
                 datetime_ultima_atualizacao as datetime_ultima_atualizacao_atual,
                 id_execucao_dbt as id_execucao_dbt_atual
             from dados_atuais
-
         {% else %}
             select
                 date(null) as data_ordem,
