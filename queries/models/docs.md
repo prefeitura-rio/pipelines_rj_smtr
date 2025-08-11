@@ -1181,3 +1181,11 @@ Data de verificação da regularidade
 {% docs id_ordem_pagamento_consorcio_operador_dia %}
 Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_operador_dia
 {% enddocs %}
+
+{% docs id_ordem_pagamento %}
+Identificador único da ordem de pagamento.
+{% enddocs %}
+
+{% docs valor_pagamento %}
+Valor de pagamento da transação
+{% enddocs %}

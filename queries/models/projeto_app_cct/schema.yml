@@ -13,9 +13,9 @@ models:
       - name: consorcio
         description: "{{ doc('consorcio') }}"
       - name: valor_pagamento
-        description: "Valor do pagamento da transação."
+        description: "{{ doc('valor_pagamento') }}"
       - name: id_ordem_pagamento
-        description: "Identificador da ordem de pagamento."
+        description: "{{ doc('id_ordem_pagamento') }}"
       - name: id_ordem_pagamento_consorcio_operador_dia
         description: "{{ doc('id_ordem_pagamento_consorcio_operador_dia') }}"
       - name: datetime_ultima_atualizacao
