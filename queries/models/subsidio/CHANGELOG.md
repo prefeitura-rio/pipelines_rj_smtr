@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrigida a coluna `tecnologia_remunerada` nos modelos `viagem_transacao` e `viagem_transacao_aux_v1` assim como a data limite do modelo `viagem_transacao_aux_v1` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/769)
+- Corrigida a coluna `tecnologia_remunerada` nos modelos `viagem_transacao` e `viagem_transacao_aux_v1` assim como a data limite do modelo `viagem_transacao_aux_v1` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/782)
 
 ## [2.0.9] - 2025-08-08
 
