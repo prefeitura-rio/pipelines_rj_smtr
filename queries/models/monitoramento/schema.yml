@@ -770,6 +770,7 @@ models:
     tests:
       - test_completude_temperatura_inmet:
           name: test_completude__temperatura_inmet
+          where: "data between date('{date_range_start}') and date_sub(date('{date_range_end}'), interval 1 day)"
     columns:
       - name: data
         description: "{{ doc('data') }} [partição]"
