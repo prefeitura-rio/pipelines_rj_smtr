@@ -48,7 +48,7 @@ jobs:
         run: sh setup_dbt_profiles.sh
 
       - name: Run sqlfmt
-        working-directory: queries
+        if: steps.files.outputs.all_changed_files != ''
         run: sqlfmt --diff ${{ steps.files.outputs.all_changed_files }}
 
       - name: Run DBT compile
