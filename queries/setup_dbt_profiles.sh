@@ -29,4 +29,6 @@ queries:
       threads: 2
       keyfile: $PWD/credentials-prod/prod.json""" > profiles/profiles.yml
 
+cat profiles/profiles.yml
+
 dbt deps --profiles-dir profiles
