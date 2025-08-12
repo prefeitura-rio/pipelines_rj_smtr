@@ -7,7 +7,43 @@
 }}
 
 {% set max_pernas = 3 %}
+{% set transacao = ref("transacao") %}
 {% set transferencia = ref("aux_transferencia_calculada") %}
+
+{% if execute and is_incremental() %}
+
+    {% set partitions_query %}
+        with particoes as (
+            select
+                parse_date("%Y%m%d", partition_id) as particao
+                {# concat("'", parse_date("%Y%m%d", partition_id), "'") as particao #}
+            from
+                `{{ transacao.database }}.{{ transacao.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+            where
+                table_name = "{{ transacao.identifier }}"
+                and partition_id != "__NULL__"
+                and datetime(last_modified_time, "America/Sao_Paulo") between datetime("{{var('date_range_start')}}") and (datetime("{{var('date_range_end')}}"))
+            ),
+        particoes_adjacentes as (
+            select date_add(particao, interval 1 day) as particao
+            from particoes
+
+            union distinct
+
+            select date_sub(particao, interval 1 day) as particao
+            from particoes
+        )
+        select concat("'", particao, "'") as particao from particoes
+
+        union distinct
+
+        select concat("'", particao, "'") as particao from particoes_adjacentes
+
+    {% endset %}
+
+    {% set partitions = run_query(partitions_query).columns[0].values() %}
+
+{% endif %}
 
 with
     transacao as (
@@ -17,19 +53,31 @@ with
             (
                 cadastro_cliente = 'Não Cadastrado', hash_cartao, id_cliente
             ) as cliente_cartao
-        from  {# {{ ref("transacao") }} #}
-            `rj-smtr.bilhetagem.transacao`
+        from {{ ref("transacao") }}
         where
-            data between '2025-08-06' and '2025-08-08'
-            and tipo_transacao != "Gratuidade"
-            and tipo_transacao_jae != 'Botoeira'
+            tipo_transacao != "Gratuidade" and tipo_transacao_jae != 'Botoeira'
+            {% if is_incremental() %}
+                {% if partitions | length > 0 %}
+                    and data in ({{ partitions | join(", ") }})
+                {% else %} and false
+                {% endif %}
+            {% endif %}
     ),
     matriz as (
         select *
         from {{ ref("matriz_integracao") }}
         where tipo_integracao = 'Integração'
     ),
-    transferencia as (select * from {{ transferencia }}),
+    transferencia as (
+        select *
+        from {{ transferencia }}
+        {% if is_incremental() %}
+            where
+                {% if partitions | length > 0 %} data in ({{ partitions | join(", ") }})
+                {% else %} false
+                {% endif %}
+        {% endif %}
+    ),
     transacao_transferencia as (
         select * from transferencia where sequencia_transferencia > 1
     ),
@@ -130,99 +178,15 @@ with
     integracao_sem_perna_unica as (
         select * from join_matriz qualify count(*) over (partition by id_integracao) > 1
     ),
-    {% for i in range(max_pernas) %}
-        {% if i == 0 %} {% set tabela_dados = "integracao_sem_perna_unica" %}
-        {% else %}
-            {% set last_i = i | int - 1 %} {% set tabela_dados = "remocao_" ~ last_i %}
-        {% endif %}
-
-        indicador_remover_{{ i }} as (
-            select
-                *,
-                row_number() over (
-                    partition by id_transacao order by datetime_inicio_integracao
-                )
-                > 1 as indicador_remover
-            from {{ tabela_dados }}
-        ),
-        max_indicador_remover_{{ i }} as (
-            select
-                id_integracao,
-                cliente_cartao,
-                datetime_inicio_integracao,
-                max(indicador_remover) indicador_remover,
-            from indicador_remover_{{ i }}
-            group by 1, 2, 3
-        ),
-        validacao_{{ i }} as (
-            select * except (indicador_remover),
-            from indicador_remover_{{ i }}
-            qualify
-                lag(indicador_remover) over (
-                    partition by cliente_cartao order by datetime_inicio_integracao
-                )
-                is false
-                and indicador_remover is true
-        ),
-        remocao_{{ i }} as (
-            select i.*
-            from {{ tabela_dados }} i
-            left join validacao_{{ i }} v using (id_integracao)
-            where v.id_integracao is null
-        ),
-    {% endfor %}
-
-    transferencia_id_integracao as (
-        select t.*, ifnull(r.id_integracao, t.id_transferencia) as id_integracao
-        from transacao_transferencia t
-        left join remocao_{{ max_pernas - 1 }} r on t.id_transferencia = r.id_transacao
-    ),
-    union_integracao_transferencia as (
-        {% set relation = adapter.get_relation(
-            database=transferencia.database,
-            schema=transferencia.schema,
-            identifier=transferencia.identifier,
-        ) %}
-        {% set transferencia_columns = (
-            adapter.get_columns_in_relation(relation)
-            | map(attribute="name")
-            | reject(
-                "in",
-                ["id_transferencia", "sequencia_transferencia"],
-            )
-            | list
-        ) %}
-
-        select
-            {{ transferencia_columns | join(", ") }},
-            'Integração' as tipo_integracao,
-            id_integracao
-        from remocao_{{ max_pernas - 1 }}
-        union all by name
-        select
-            * except (id_transferencia, sequencia_transferencia),
-            'Transferência' as tipo_integracao,
-        from transferencia_id_integracao
-    ),
-    sequencia_integracao_atualizada as (
-        select
-            *,
-            row_number() over (
-                partition by id_integracao order by datetime_transacao
-            ) as sequencia_integracao,
-            min(datetime_transacao) over (
-                partition by id_integracao
-            ) as datetime_inicio_integracao,
-        from union_integracao_transferencia
-    ),
-    final as (
+    integracao_completa as (
         select
             data,
             id_integracao,
+            datetime_inicio_integracao,
             sequencia_integracao,
-            if(
+            {# if(
                 sequencia_integracao = 1, 'Primeira perna', tipo_integracao
-            ) as tipo_integracao,
+            ) as tipo_integracao, #}
             id_transacao,
             datetime_transacao,
             datetime_processamento,
@@ -245,9 +209,61 @@ with
             tipo_usuario,
             meio_pagamento,
             meio_pagamento_jae,
-            valor_transacao
-        from sequencia_integracao_atualizada
-        where date(datetime_inicio_integracao) = '2025-08-07'
-    )
+            valor_transacao,
+            cliente_cartao
+        from integracao_sem_perna_unica
+
+        {% if is_incremental() and partitions | length > 0 %}
+            union all
+
+            select *
+            from {{ this }}
+            where
+                data in ({{ partitions | join(", ") }})
+                and id_integracao
+                not in (select id_integracao from integracao_sem_perna_unica)
+        {% endif %}
+    ),
+    {% for i in range(max_pernas + 1) %}
+        {% if i == 0 %} {% set tabela_dados = "integracao_completa" %}
+        {% else %}
+            {% set last_i = i | int - 1 %} {% set tabela_dados = "remocao_" ~ last_i %}
+        {% endif %}
+
+        indicador_remover_{{ i }} as (
+            select
+                *,
+                row_number() over (
+                    partition by id_transacao order by datetime_inicio_integracao
+                )
+                > 1 as indicador_remover
+            from {{ tabela_dados }}
+        ),
+        max_indicador_remover_{{ i }} as (
+            select
+                * except (indicador_remover),
+                max(indicador_remover) over (
+                    partition by id_integracao
+                ) as indicador_remover,
+            from indicador_remover_{{ i }}
+        ),
+        validacao_{{ i }} as (
+            select * except (indicador_remover),
+            from max_indicador_remover_{{ i }}
+            qualify
+                lag(indicador_remover) over (
+                    partition by cliente_cartao order by datetime_inicio_integracao
+                )
+                is false
+                and indicador_remover is true
+        ),
+        remocao_{{ i }} as (
+            select i.*
+            from {{ tabela_dados }} i
+            left join validacao_{{ i }} v using (id_integracao)
+            where v.id_integracao is null
+        ),
+    {% endfor %}
+    final as (select * from remocao_{{ max_pernas }})
 select *
 from final

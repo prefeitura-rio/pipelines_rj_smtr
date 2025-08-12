@@ -1,27 +1,69 @@
 {{
     config(
-        materialized="incremental",
-        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-        incremental_strategy="insert_overwrite",
+        materialized="table",
     )
 }}
 
-{% set max_pernas = 6 %}
+{% set max_pernas = 7 %}
+{% set transacao = ref("transacao") %}
+
+{% if execute and not flags.FULL_REFRESH %}
+
+    {% set partitions_query %}
+        with particoes as (
+            select
+                parse_date("%Y%m%d", partition_id) as particao
+                {# concat("'", parse_date("%Y%m%d", partition_id), "'") as particao #}
+            from
+                `{{ transacao.database }}.{{ transacao.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+            where
+                table_name = "{{ transacao.identifier }}"
+                and partition_id != "__NULL__"
+                and datetime(last_modified_time, "America/Sao_Paulo") between datetime("{{var('date_range_start')}}") and (datetime("{{var('date_range_end')}}"))
+        ),
+        particoes_adjacentes as (
+            select date_add(particao, interval 1 day) as particao
+            from particoes
+
+            union distinct
+
+            select date_sub(particao, interval 1 day) as particao
+            from particoes
+        )
+        select concat("'", particao, "'") as particao from particoes
+
+        union distinct
+
+        select concat("'", particao, "'") as particao from particoes_adjacentes
+
+    {% endset %}
+
+    {% set partitions = run_query(partitions_query).columns[0].values() %}
+
+{% endif %}
 
 with
+    matriz as (
+        select *
+        from {{ ref("matriz_integracao") }}
+        where tipo_integracao = 'Transferência'
+    ),
     transacao as (
         select
             *,
             if(
                 cadastro_cliente = 'Não Cadastrado', hash_cartao, id_cliente
             ) as cliente_cartao
-        from
-            {# {{ ref("transacao") }} #}
-            `rj-smtr.bilhetagem.transacao`
+        from {{ transacao }}
         where
-            data between '2025-08-06' and '2025-08-08'
-            and tipo_transacao != "Gratuidade"
-            and tipo_transacao_jae != 'Botoeira'
+            tipo_transacao != "Gratuidade" and tipo_transacao_jae != 'Botoeira'
+            {% if not flags.FULL_REFRESH %}
+                {% if partitions | length > 0 %}
+                    and data in ({{ partitions | join(", ") }})
+
+                {% else %} and false
+                {% endif %}
+            {% endif %}
     ),
     transacao_mudanca_modo as (
         select
@@ -30,7 +72,7 @@ with
                 when
                     ifnull(
                         lag(modo) over (
-                            partition by id_cliente order by datetime_transacao
+                            partition by cliente_cartao order by datetime_transacao
                         ),
                         ''
                     )
@@ -43,17 +85,12 @@ with
         select
             *,
             sum(separacao_bloco) over (
-                partition by id_cliente order by datetime_transacao
+                partition by cliente_cartao order by datetime_transacao
             ) as id_bloco
         from transacao_mudanca_modo
     ),
     transacao_modo_filtrado as (
         select * from identificacao_bloco where modo in ('VLT', 'BRT')
-    ),
-    matriz as (
-        select *
-        from {{ ref("matriz_integracao") }}
-        where tipo_integracao = 'Transferência'
     ),
     lista_transferencia as (
         select
@@ -114,61 +151,25 @@ with
                 or m.id_servico_jae_origem is null
             )
             and tempo_integracao <= tempo_integracao_minutos
+            and st.id_servico_jae_origem != st.id_servico_jae
         qualify
             min(m.indicador_integracao) over (partition by st.id_transferencia) is true
     ),
     transacao_valida as (
         select *
         from join_matriz
+        where integracao is not null or sequencia_transferencia = 1
         qualify
-            countif(integracao is null) over (partition by id_transferencia) = 1
-            and count(*) over (partition by id_transferencia) > 1
+            sequencia_transferencia = row_number() over (
+                partition by id_transferencia order by datetime_transacao
+            )
     ),
-    {% for i in range(max_pernas) %}
-        {% if i == 0 %} {% set tabela_dados = "transacao_valida" %}
-        {% else %}
-            {% set last_i = i | int - 1 %} {% set tabela_dados = "remocao_" ~ last_i %}
-        {% endif %}
-
-        indicador_remover_{{ i }} as (
-            select
-                *,
-                row_number() over (
-                    partition by id_transacao order by datetime_inicio_transferencia
-                )
-                > 1 as indicador_remover
-            from {{ tabela_dados }}
-        ),
-        max_indicador_remover_{{ i }} as (
-            select
-                id_transferencia,
-                cliente_cartao,
-                datetime_inicio_transferencia,
-                max(indicador_remover) indicador_remover,
-            from indicador_remover_{{ i }}
-            group by 1, 2, 3
-        ),
-        validacao_{{ i }} as (
-            select * except (indicador_remover),
-            from indicador_remover_{{ i }}
-            qualify
-                lag(indicador_remover) over (
-                    partition by cliente_cartao order by datetime_inicio_transferencia
-                )
-                is false
-                and indicador_remover is true
-        ),
-        remocao_{{ i }} as (
-            select i.*
-            from {{ tabela_dados }} i
-            left join validacao_{{ i }} v using (id_transferencia)
-            where v.id_transferencia is null
-        ),
-    {% endfor %}
-    final as (
+    transferencia_sem_perna_unica as (
         select
             data,
             id_transferencia,
+            cliente_cartao,
+            datetime_inicio_transferencia,
             sequencia_transferencia,
             id_transacao,
             datetime_transacao,
@@ -178,19 +179,23 @@ with
             consorcio,
             id_servico_jae,
             servico_jae,
-            sentido,
             descricao_servico_jae,
-            tipo_transacao_jae,
-            tipo_transacao,
-            produto,
-            produto_jae,
+            sentido,
+            id_veiculo,
+            id_validador,
             id_cliente,
             hash_cartao,
-            id_validador,
+            cadastro_cliente,
+            produto,
+            produto_jae,
+            tipo_transacao_jae,
+            tipo_transacao,
+            tipo_usuario,
+            meio_pagamento,
+            meio_pagamento_jae,
             valor_transacao
-        from remocao_{{ max_pernas - 1 }}
-        where date(datetime_inicio_transferencia) = '2025-08-07'
-
+        from transacao_valida
+        qualify count(*) over (partition by id_transferencia) > 1
     )
 select *
-from final
+from transferencia_sem_perna_unica

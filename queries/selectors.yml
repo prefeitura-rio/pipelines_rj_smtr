@@ -109,7 +109,11 @@ selectors:
     definition:
       union:
         - method: fqn
-          value: integracao_invalida
+          value: aux_transacao_possivel_transferencia
+        - method: fqn
+          value: aux_transferencia_calculada
+        - method: fqn
+          value: aux_integracao_calculada
         - method: fqn
           value: integracao_nao_realizada
 
