@@ -107,7 +107,7 @@ models:
         description: "{{ doc('id_ordem_pagamento_consorcio_operador_dia') }}"
         data_type: string
       - name: id_ordem_pagamento_consorcio_dia
-        description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_dia"
+        description: "{{ doc('id_ordem_pagamento_consorcio_dia') }}"
         data_type: string
       - name: id_ordem_pagamento
         description: "{{ doc('id_ordem_pagamento') }}"
@@ -249,7 +249,7 @@ models:
       - name: consorcio
         description: "{{ doc('consorcio') }}"
       - name: id_operadora
-        description: "Identificador único da operadora de transporte na tabela rj-smtr.cadastro.operadoras"
+        description: "{{ doc('id_operadora') }}"
       - name: id_operadora_jae
         description: "{{ doc('id_operadora_jae') }}"
       - name: operadora
@@ -315,15 +315,15 @@ models:
         data_type: float64
         quote: true
       - name: id_ordem_pagamento
-        description: Identificador da ordem pagamento no banco de dados da Jaé
+        description: "{{ doc('id_ordem_pagamento') }}"
         data_type: string
         quote: true
       - name: id_ordem_pagamento_consorcio_dia
-        description: Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_dia
+        description: "{{ doc('id_ordem_pagamento_consorcio_dia') }}"
         data_type: string
         quote: true
       - name: id_ordem_pagamento_consorcio_operador_dia
-        description: Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_operador_dia
+        description: "{{ doc('id_ordem_pagamento_consorcio_operador_dia') }}"
         data_type: string
         quote: true
       - name: versao
