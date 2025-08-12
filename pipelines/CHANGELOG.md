@@ -1,5 +1,11 @@
 # Changelog - pipelines
 
+## [1.0.5] - 2025-08-11
+
+### Adicionado
+
+- Adiciona task `add_days_to_date` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/765)
+
 ## [1.0.4] - 2025-04-30
 
 ### Adicionado
