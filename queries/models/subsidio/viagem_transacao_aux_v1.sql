@@ -37,7 +37,7 @@ with
         where
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
-            data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+            and data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
     ),
     -- Viagens realizadas
     viagem_completa as (
@@ -61,7 +61,7 @@ with
             between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
                 "{{ var('end_date') }}"
             )
-            data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+            and data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
     ),
     -- Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
     -- limitada pela viagem anterior
@@ -392,7 +392,6 @@ select
     end as tipo_viagem,
     v.modo,
     v.tecnologia_apurada,
-    v.tecnologia_remunerada,
     v.sentido,
     v.distancia_planejada,
     any_value(eep.quantidade_transacao) as quantidade_transacao,

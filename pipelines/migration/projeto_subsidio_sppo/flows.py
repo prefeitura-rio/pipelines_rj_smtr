@@ -22,6 +22,12 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
 )
 
+from pipelines.capture.jae.constants import constants as jae_constants
+from pipelines.capture.jae.tasks import (
+    create_capture_check_discord_message,
+    get_capture_gaps,
+    jae_capture_check_get_ts_range,
+)
 from pipelines.constants import constants as smtr_constants
 from pipelines.migration.projeto_subsidio_sppo.constants import constants
 from pipelines.migration.projeto_subsidio_sppo.tasks import check_param
@@ -45,7 +51,13 @@ from pipelines.schedules import (
     every_day_hour_five_and_hour_fourteen,
     every_day_hour_seven_minute_five,
 )
-from pipelines.tasks import check_fail, transform_task_state
+from pipelines.tasks import (
+    add_days_to_date,
+    check_fail,
+    get_scheduled_timestamp,
+    log_discord,
+    transform_task_state,
+)
 from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt
 
 # from pipelines.materialize_to_datario.flows import (
@@ -190,6 +202,10 @@ with Flow(
 
     materialize_sppo_veiculo_dia = Parameter("materialize_sppo_veiculo_dia", False)
     test_only = Parameter("test_only", False)
+    table_ids_jae = Parameter(
+        name="table_ids_jae",
+        default=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys()),
+    )
     # publish = Parameter("publish", False)
 
     run_dates = get_run_dates(start_date, end_date)
@@ -215,6 +231,8 @@ with Flow(
 
     dates = [{"start_date": start_date, "end_date": end_date}]
     _vars = get_join_dict(dict_list=dates, new_dict=dataset_sha)[0]
+
+    timestamp = get_scheduled_timestamp()
 
     # 2. MATERIALIZE DATA #
     with case(test_only, False):
@@ -252,12 +270,39 @@ with Flow(
         # 3. PRE-DATA QUALITY CHECK #
         dbt_vars = {"date_range_start": start_date, "date_range_end": end_date}
 
+        timestamp_captura_start, timestamp_captura_end = jae_capture_check_get_ts_range(
+            timestamp=timestamp,
+            retroactive_days=0,
+            timestamp_captura_start=start_date_param,
+            timestamp_captura_end=add_days_to_date(date_str=end_date_param, days=7),
+        ).set_upstream(task=SPPO_VEICULO_DIA_RUN_WAIT)
+
+        timestamps = get_capture_gaps.map(
+            table_id=table_ids_jae,
+            timestamp_captura_start=unmapped(timestamp_captura_start),
+            timestamp_captura_end=unmapped(timestamp_captura_end),
+        )
+
+        discord_messages = create_capture_check_discord_message.map(
+            table_id=table_ids_jae,
+            timestamps=timestamps,
+            timestamp_captura_start=unmapped(timestamp_captura_start),
+            timestamp_captura_end=unmapped(timestamp_captura_end),
+        )
+
+        send_discord_message = log_discord.map(
+            message=discord_messages,
+            key=unmapped("subsidio_data_check"),
+        )
+
+        missing_timestamps = task(lambda s: True if len(s) > 0 else None)(timestamps)
+
         SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt(
             resource="test",
             dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
             exclude="dashboard_subsidio_sppo_v2",
             _vars=dbt_vars,
-        ).set_upstream(task=SPPO_VEICULO_DIA_RUN_WAIT)
+        ).set_upstream(task=send_discord_message)
 
         DATA_QUALITY_PRE = dbt_data_quality_checks(
             dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_PRE,
@@ -267,8 +312,9 @@ with Flow(
         )
 
         test_failed = check_fail(DATA_QUALITY_PRE)
+        skip_materialization = merge(missing_timestamps, test_failed)
 
-        with case(test_failed, False):
+        with case(skip_materialization, False):
             # 4. CALCULATE #
             date_in_range = check_date_in_range(
                 _vars["start_date"], _vars["end_date"], constants.DATA_SUBSIDIO_V9_INICIO.value
@@ -523,12 +569,37 @@ with Flow(
     with case(test_only, True):
         dbt_vars = {"date_range_start": start_date, "date_range_end": end_date}
 
+        timestamp_captura_start, timestamp_captura_end = jae_capture_check_get_ts_range(
+            timestamp=timestamp,
+            retroactive_days=0,
+            timestamp_captura_start=start_date_param,
+            timestamp_captura_end=add_days_to_date(date_str=end_date_param, days=7),
+        )
+
+        timestamps = get_capture_gaps.map(
+            table_id=table_ids_jae,
+            timestamp_captura_start=unmapped(timestamp_captura_start),
+            timestamp_captura_end=unmapped(timestamp_captura_end),
+        )
+
+        discord_messages = create_capture_check_discord_message.map(
+            table_id=table_ids_jae,
+            timestamps=timestamps,
+            timestamp_captura_start=unmapped(timestamp_captura_start),
+            timestamp_captura_end=unmapped(timestamp_captura_end),
+        )
+
+        send_discord_message = log_discord.map(
+            message=discord_messages,
+            key=unmapped("subsidio_data_check"),
+        )
+
         SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt(
             resource="test",
             dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
             exclude="dashboard_subsidio_sppo_v2",
             _vars=dbt_vars,
-        )
+        ).set_upstream(task=send_discord_message)
 
         DATA_QUALITY_PRE = dbt_data_quality_checks(
             dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_PRE,
