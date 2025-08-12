@@ -965,7 +965,7 @@ class constants(Enum):  # pylint: disable=c0103
             "test_check_regularidade_temperatura__viagem_regularidade_temperatura": {
                 "description": "Todos os registros têm o indicador de regularidade do ar-condicionado consistente com as regras da resolução vigente"
             },
-            "dbt_expectations.expect_table_aggregation_to_equal_other_table__viagem_regularidade_temperatura": {
+            "dbt_utils.relationships_where__id_viagem__viagem_regularidade_temperatura": {
                 "description": "Todos os dados de `id_viagem` correspondem 1:1 entre as tabelas `viagem_classificada` e `viagem_regularidade_temperatura`."
             },
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},

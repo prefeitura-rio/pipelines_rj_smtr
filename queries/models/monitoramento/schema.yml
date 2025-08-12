@@ -598,6 +598,7 @@ models:
                   "023.IX",
                   "024.X"
                 )
+                and modo = 'ONIBUS'
       - name: valor
         description: "{{ doc('valor') }}"
         data_type: float64

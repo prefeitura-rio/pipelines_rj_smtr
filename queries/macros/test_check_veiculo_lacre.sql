@@ -6,9 +6,19 @@
                 id_veiculo,
                 placa,
                 json_value(indicadores, '$.indicador_veiculo_lacrado.valor')
-                = 'true' as indicador_veiculo_lacrado
+                = 'true' as indicador_veiculo_lacrado,
+                safe_cast(json_value(indicadores, '$.indicador_veiculo_lacrado.data_processamento_licenciamento') as date) as data_processamento_licenciamento
             from {{ model }}
             where
+                data between date("{{ var('date_range_start') }}") and date(
+                    "{{ var('date_range_end') }}"
+                )
+                
+        ),
+        veiculo_licenciamento_dia as (
+          select data, id_veiculo, placa, indicador_veiculo_lacrado, data_processamento
+          from {{ ref('veiculo_licenciamento_dia') }} 
+          where
                 data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
                 )
@@ -62,7 +72,13 @@
                 on vd.id_veiculo = vle.id_veiculo
                 and vd.data = vle.data_lacre
                 and vd.placa = vle.placa
-            where vd.indicador_veiculo_lacrado is true and vle.id_veiculo is null
+                left join veiculo_licenciamento_dia vld
+             on vd.id_veiculo = vld.id_veiculo
+                and vd.data = vld.data
+                and vd.placa = vld.placa
+                and vd.data_processamento_licenciamento = vld.data_processamento
+            where vd.indicador_veiculo_lacrado is true and vle.id_veiculo is null 
+            and vld.indicador_veiculo_lacrado is false
         ),
         -- Teste 2: Verificar se todos os veículos lacrados da
         -- veiculo_fiscalizacao_lacre estão marcados como lacrados na veiculo_dia
@@ -78,7 +94,13 @@
                 on vle.id_veiculo = vd.id_veiculo
                 and vle.data_lacre = vd.data
                 and vle.placa = vd.placa
+            left join veiculo_licenciamento_dia vld
+                on vd.id_veiculo = vld.id_veiculo
+                and vd.data = vld.data
+                and vd.placa = vld.placa
+                and vd.data_processamento_licenciamento = vld.data_processamento
             where vd.indicador_veiculo_lacrado is false
+            and vld.indicador_veiculo_lacrado is true
         ),
         falhas as (
             select data, id_veiculo, placa, erro
