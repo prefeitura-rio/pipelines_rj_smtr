@@ -13,11 +13,11 @@
                 data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
                 )
-                
+
         ),
         veiculo_licenciamento_dia as (
           select data, id_veiculo, placa, indicador_veiculo_lacrado, data_processamento
-          from {{ ref('veiculo_licenciamento_dia') }} 
+          from {{ ref('veiculo_licenciamento_dia') }}
           where
                 data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
@@ -77,7 +77,7 @@
                 and vd.data = vld.data
                 and vd.placa = vld.placa
                 and vd.data_processamento_licenciamento = vld.data_processamento
-            where vd.indicador_veiculo_lacrado is true and vle.id_veiculo is null 
+            where vd.indicador_veiculo_lacrado is true and vle.id_veiculo is null
             and vld.indicador_veiculo_lacrado is false
         ),
         -- Teste 2: Verificar se todos os veículos lacrados da
