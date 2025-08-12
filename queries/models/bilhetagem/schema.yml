@@ -11,17 +11,27 @@ models:
       - name: datetime_transacao
         description: "{{ doc('datetime_transacao') }}"
         data_type: datetime
+        tests:
+          - not_null
       - name: datetime_processamento
         description: "{{ doc('datetime_processamento_transacao') }}"
         data_type: datetime
+        tests:
+          - not_null
       - name: datetime_captura
         description: "{{ doc('datetime_captura') }}"
         data_type: datetime
       - name: modo
         description: "{{ doc('modo') }}"
         data_type: string
+        tests:
+          - not_null
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
+        tests:
+          - relationships:
+              to: ref('rj_smtr.cadastro.consorcios')
+              field: id_consorcio
         data_type: string
       - name: consorcio
         description: "{{ doc('consorcio') }}"
@@ -29,32 +39,53 @@ models:
       - name: id_operadora
         description: "{{ doc('id_operadora') }}"
         data_type: string
+        tests:
+          - relationships:
+              to: ref('rj_smtr.cadastro.operadoras')
+              field: id_operadora
+          - not_null
       - name: operadora
         description: "{{ doc('operadora') }}"
         data_type: string
+        tests:
+          - not_null
       - name: documento_operadora
         description: "{{ doc('documento_operadora') }}"
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/388050497607535163/policyTags/3935188996031375059'
+        tests:
+          - not_null
       - name: tipo_documento_operadora
         description: "{{ doc('tipo_documento_operadora') }}"
+        tests:
+          - not_null
       - name: id_servico_jae
         description: "{{ doc('id_servico_jae') }}"
         data_type: string
+        tests:
+          - not_null
       - name: servico_jae
         description: "{{ doc('servico_jae') }}"
         data_type: string
+        tests:
+          - not_null
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
         data_type: string
+        tests:
+          - not_null
       - name: sentido
         description: "{{ doc('sentido') }}"
+        tests:
+          - not_null
         data_type: string
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
         data_type: string
       - name: id_validador
         description: "{{ doc('id_validador') }}"
+        tests:
+          - not_null
         data_type: string
       - name: id_cliente
         description: "{{ doc('id_cliente') }}"
@@ -75,13 +106,20 @@ models:
         description: "Tipo do documento do cliente que efetuou a transação"
       - name: id_transacao
         description: "{{ doc('id_transacao') }}"
+        tests:
+          - unique
+          - not_null
         data_type: string
       - name: tipo_transacao_jae
         description: "Tipo de transação realizada conforme o dado original da Jaé [a primeira perna de integrações são classificadas como tipo Débito e não Integração]"
         data_type: string
+        tests:
+          - not_null
       - name: tipo_transacao
         description: "{{ doc('tipo_transacao') }}"
         data_type: string
+        tests:
+          - not_null
       - name: latitude
         description: "{{ doc('latitude_transacao') }}"
         data_type: float64
@@ -93,6 +131,8 @@ models:
         data_type: geography
       - name: valor_transacao
         description: "{{ doc('valor_transacao') }}"
+        tests:
+          - not_null
         data_type: float64
       - name: valor_pagamento
         description: "Valor valor a ser pago pela transação (R$). Valores nulos indicam que o valor de pagamento para a transação ainda não foi calculado"
@@ -101,16 +141,16 @@ models:
         description: "{{ doc('data_ordem') }}"
         data_type: date
       - name: id_ordem_pagamento_servico_operador_dia
-        description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_servico_operador_dia"
+        description: "{{ doc('id_ordem_pagamento_servico_operador_dia') }}"
         data_type: string
       - name: id_ordem_pagamento_consorcio_operador_dia
-        description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_operador_dia"
+        description: "{{ doc('id_ordem_pagamento_consorcio_operador_dia') }}"
         data_type: string
       - name: id_ordem_pagamento_consorcio_dia
-        description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_dia"
+        description: "{{ doc('id_ordem_pagamento_consorcio_dia') }}"
         data_type: string
       - name: id_ordem_pagamento
-        description: "Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_dia"
+        description: "{{ doc('id_ordem_pagamento') }}"
         data_type: string
       - name: versao
         description: "{{ doc('versao') }}"
@@ -118,6 +158,8 @@ models:
       - name: id_operadora_jae
         description: "{{ doc('id_operadora_jae') }}"
         data_type: string
+        tests:
+          - not_null
         quote: true
       - name: hash_cartao
         description: Hash identificador do cartão [protegido]
@@ -135,15 +177,21 @@ models:
         quote: true
       - name: produto
         description: "{{ doc('produto') }}"
+        tests:
+          - not_null
         data_type: string
         quote: true
       - name: produto_jae
         description: "{{ doc('produto_jae') }}"
+        tests:
+          - not_null
         data_type: string
         quote: true
       - name: tipo_usuario
         description: "{{ doc('tipo_usuario') }}"
         data_type: string
+        tests:
+          - not_null
         quote: true
       - name: subtipo_usuario
         description: "Subipo do usuário que efetuou a transação [ex.: Estudante municipal, DC] [protegido]"
@@ -152,10 +200,14 @@ models:
         data_type: string
       - name: meio_pagamento
         description: "{{ doc('meio_pagamento') }}"
+        tests:
+          - not_null
         data_type: string
         quote: true
       - name: meio_pagamento_jae
         description: "{{ doc('meio_pagamento_jae') }}"
+        tests:
+          - not_null
         data_type: string
         quote: true
       - name: datetime_ultima_atualizacao
@@ -179,34 +231,67 @@ models:
         description: "{{ doc('datetime_captura') }}"
       - name: datetime_transacao
         description: "{{ doc('datetime_transacao') }}"
+        tests:
+          - not_null
       - name: intervalo_integracao
         description: "Tempo entre a perna atual da integração e a anterior em minutos"
       - name: id_integracao
         description: "Identificador único da integração"
+        tests:
+          - unique
+          - not_null
       - name: sequencia_integracao
         description: "Sequência da transação dentro da integração"
       - name: modo
         description: "{{ doc('modo') }}"
+        tests:
+          - not_null
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
+        tests:
+          - relationships:
+              to: ref('rj_smtr.cadastro.consorcios')
+              field: id_consorcio
       - name: consorcio
         description: "{{ doc('consorcio') }}"
       - name: id_operadora
         description: "{{ doc('id_operadora') }}"
+        tests:
+          - relationships:
+              to: ref('rj_smtr.cadastro.operadoras')
+              field: id_operadora
+          - not_null
       - name: id_operadora_jae
         description: "{{ doc('id_operadora_jae') }}"
+        tests:
+          - not_null
       - name: operadora
         description: "{{ doc('operadora') }}"
+        tests:
+          - not_null
       - name: id_servico_jae
         description: "{{ doc('id_servico_jae') }}"
+        tests:
+          - relationships:
+              to: ref('rj_smtr.cadastro.servicos')
+              field: id_servico_jae
+          - not_null
       - name: servico_jae
         description: "{{ doc('servico_jae') }}"
+        tests:
+          - not_null
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
+        tests:
+          - not_null
       - name: id_transacao
         description: "{{ doc('id_transacao') }}"
+        tests:
+          - not_null
       - name: sentido
         description: "{{ doc('sentido') }}"
+        tests:
+          - not_null
       - name: percentual_rateio
         description: "{{ doc('percentual_rateio') }}"
       - name: valor_rateio_compensacao
@@ -215,6 +300,8 @@ models:
         description: "Valor real ganho pela operadora pela transação (R$)"
       - name: valor_transacao
         description: "{{ doc('valor_transacao') }}"
+        tests:
+          - not_null
       - name: valor_transacao_total
         description: "Valor total das transações da integração (R$)"
       - name: texto_adicional
@@ -238,36 +325,65 @@ models:
         description: "{{ doc('hora_transacao') }}"
       - name: datetime_transacao
         description: "{{ doc('datetime_transacao') }}"
+        tests:
+          - not_null
       - name: datetime_processamento
         description: "{{ doc('datetime_processamento_transacao') }}"
+        tests:
+          - not_null
       - name: datetime_captura
         description: "{{ doc('datetime_captura') }}"
       - name: modo
         description: "{{ doc('modo') }}"
+        tests:
+          - not_null
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
+        tests:
+          - relationships:
+            to: ref('rj_smtr.cadastro.consorcios')
+            field: id_consorcio
+          - not_null
       - name: consorcio
         description: "{{ doc('consorcio') }}"
       - name: id_operadora
-        description: "Identificador único da operadora de transporte na tabela rj-smtr.cadastro.operadoras"
+        description: "{{ doc('id_operadora') }}"
+        tests:
+          - not_null
       - name: id_operadora_jae
         description: "{{ doc('id_operadora_jae') }}"
+        tests:
+          - not_null
       - name: operadora
         description: "{{ doc('operadora') }}"
+        tests:
+          - not_null
       - name: id_servico_jae
         description: "{{ doc('id_servico_jae') }}"
+        tests:
+          - not_null
       - name: servico_jae
         description: "{{ doc('servico_jae') }}"
+        tests:
+          - not_null
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
+        tests:
+          - not_null
       - name: sentido
         description: "{{ doc('sentido') }}"
+        tests:
+          - not_null
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: id_validador
         description: "{{ doc('id_validador') }}"
+        tests:
+          - not_null
       - name: id_transacao
         description: "{{ doc('id_transacao') }}"
+        tests:
+          - not_null
       - name: latitude
         description: "{{ doc('latitude_transacao') }}"
       - name: longitude
@@ -276,6 +392,8 @@ models:
         description: "{{ doc('geo_point_transacao') }}"
       - name: valor_transacao
         description: "{{ doc('valor_transacao') }}"
+        tests:
+          - not_null
       - name: versao
         description: "{{ doc('versao') }}"
 
@@ -290,14 +408,20 @@ models:
         description: "{{ doc('data_transacao') }}"
         data_type: date
         quote: true
+        tests:
+          - not_null
       - name: id_transacao
         description: "{{ doc('id_transacao') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
       - name: modo
         description: "{{ doc('modo') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
       - name: consorcio
         description: "{{  doc('consorcio') }}"
         data_type: string
@@ -306,24 +430,30 @@ models:
         description: "{{  doc('id_operadora') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
       - name: id_servico_jae
         description: "{{  doc('id_servico_jae') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
       - name: valor_transacao_rateio
         description: Valor da transação com o rateio [se houver] (R$)
         data_type: float64
         quote: true
+        tests:
+          - not_null
       - name: id_ordem_pagamento
-        description: Identificador da ordem pagamento no banco de dados da Jaé
+        description: "{{ doc('id_ordem_pagamento') }}"
         data_type: string
         quote: true
       - name: id_ordem_pagamento_consorcio_dia
-        description: Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_dia
+        description: "{{ doc('id_ordem_pagamento_consorcio_dia') }}"
         data_type: string
         quote: true
       - name: id_ordem_pagamento_consorcio_operador_dia
-        description: Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_operador_dia
+        description: "{{ doc('id_ordem_pagamento_consorcio_operador_dia') }}"
         data_type: string
         quote: true
       - name: versao
@@ -344,16 +474,26 @@ models:
         description: "{{ doc('hora_transacao') }}"
       - name: modo
         description: "{{ doc('modo') }}"
+        tests:
+          - not_null
       - name: consorcio
         description: "{{ doc('consorcio') }}"
       - name: id_servico_jae
         description: "{{ doc('id_servico_jae') }}"
+        tests:
+          - not_null
       - name: servico_jae
         description: "{{ doc('servico_jae') }}"
+        tests:
+          - not_null
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
+        tests:
+          - not_null
       - name: sentido
         description: "{{ doc('sentido') }}"
+        tests:
+          - not_null
       - name: cadastro_cliente
         description: "{{ doc('cadastro_cliente') }}"
         data_type: string
@@ -362,6 +502,8 @@ models:
         description: "{{ doc('produto') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
       - name: tipo_transacao
         description: "{{ doc('tipo_transacao') }}"
         data_type: string
@@ -369,10 +511,14 @@ models:
         description: "{{ doc('tipo_usuario') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
       - name: meio_pagamento
         description: "{{ doc('meio_pagamento') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
       - name: quantidade_passageiros
         description: "{{ doc('quantidade_passageiros') }}"
       - name: versao
@@ -386,16 +532,26 @@ models:
         description: "{{ doc('hora_transacao') }}"
       - name: modo
         description: "{{ doc('modo') }}"
+        tests:
+          - not_null
       - name: consorcio
         description: "{{ doc('consorcio') }}"
       - name: id_servico_jae
         description: "{{ doc('id_servico_jae') }}"
+        tests:
+          - not_null
       - name: servico_jae
         description: "{{ doc('servico_jae') }}"
+        tests:
+          - not_null
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
+        tests:
+          - not_null
       - name: sentido
         description: "{{ doc('sentido') }}"
+        tests:
+          - not_null
       - name: cadastro_cliente
         description: "{{ doc('cadastro_cliente') }}"
         data_type: string
@@ -404,17 +560,25 @@ models:
         description: "{{ doc('produto') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
       - name: tipo_transacao
         description: "{{ doc('tipo_transacao') }}"
         data_type: string
+        tests:
+          - not_null
       - name: tipo_usuario
         description: "{{ doc('tipo_usuario') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
       - name: meio_pagamento
         description: "{{ doc('meio_pagamento') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
       - name: tile_id
         description: "Identificador do hexágono da geolocalização da transação na tabela rj-smtr.br_rj_riodejaneiro_geo.h3_res9"
       - name: quantidade_passageiros
@@ -442,6 +606,8 @@ models:
         description: Identificador único da retificação
         data_type: string
         quote: true
+        tests:
+          - not_null
       - name: data
         description: "{{ doc('data_transacao') }}"
         data_type: date
@@ -450,22 +616,32 @@ models:
         description: "{{ doc('id_transacao') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null
       - name: tipo_transacao_jae_original
         description: Tipo da transação que estava originalmente na transação
         data_type: string
         quote: true
+        tests:
+          - not_null
       - name: valor_transacao_original
         description: Valor da transação que estava originalmente na transação (R$)
         data_type: float64
         quote: true
+        tests:
+          - not_null
       - name: tipo_transacao_jae_retificada
         description: Novo tipo da transação
         data_type: string
         quote: true
+        tests:
+          - not_null
       - name: valor_transacao_retificada
         description: Novo valor da transação (R$)
         data_type: float64
         quote: true
+        tests:
+          - not_null
       - name: datetime_retificacao
         description: Data e hora da retificação da transacao
         data_type: datetime
