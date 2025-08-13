@@ -781,6 +781,9 @@ class constants(Enum):  # pylint: disable=c0103
             "check_km_planejada": {
                 "description": "Todas as viagens possuem `km_planejada` correspondente à OS"
             },
+            "check_partidas_planejadas": {
+                "description": "Todas as viagens possuem `partidas_total_planejada` correspondente à OS"
+            },
         },
         "viagens_remuneradas": {
             "teto_viagens__viagens_remuneradas": {
