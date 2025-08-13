@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.6.2] - 2025-08-13
+
+### Corrigido
+
+- Corrige teste `dbt_utils.relationships_where__id_auto_infracao__autuacao_disciplinar_historico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/761)
+
 ## [1.6.1] - 2025-08-05
 
 ### Adicionado
