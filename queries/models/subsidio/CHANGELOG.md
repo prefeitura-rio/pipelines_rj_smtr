@@ -2,9 +2,9 @@
 
 ## [2.1.1] - 2025-08-13
 
-### Alterado
+### Corrigido
 
-- Adicionado coalesce na verificação do `indicador_falha_recorrente` no modelo `viagem_regularidade_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/786)
+-  Ajustado o tratamento de NULL de `indicador_falha_recorrente` com `coalesce(..., false)` no modelo `viagem_regularidade_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/786)
 
 ## [2.1.0] - 2025-08-11
 
