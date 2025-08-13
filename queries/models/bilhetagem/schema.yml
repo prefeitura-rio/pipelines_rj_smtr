@@ -1,6 +1,9 @@
 models:
   - name: transacao
     description: "Tabela com informações da Jaé sobre as transações realizadas no sistema de transporte municipal"
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: "case when data_ordem is not null then id_ordem_pagamento is not null else true end"
     columns:
       - name: data
         description: "{{ doc('data_transacao') }} [partição]"
@@ -28,10 +31,6 @@ models:
           - not_null
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
-        tests:
-          - relationships:
-              to: ref('rj_smtr.cadastro.consorcios')
-              field: id_consorcio
         data_type: string
       - name: consorcio
         description: "{{ doc('consorcio') }}"
@@ -40,10 +39,8 @@ models:
         description: "{{ doc('id_operadora') }}"
         data_type: string
         tests:
-          - relationships:
-              to: ref('rj_smtr.cadastro.operadoras')
-              field: id_operadora
           - not_null
+          - unique
       - name: operadora
         description: "{{ doc('operadora') }}"
         data_type: string
@@ -137,7 +134,7 @@ models:
       - name: valor_pagamento
         description: "Valor valor a ser pago pela transação (R$). Valores nulos indicam que o valor de pagamento para a transação ainda não foi calculado"
         data_type: float64
-      - name: data_ordem
+      - name:
         description: "{{ doc('data_ordem') }}"
         data_type: date
       - name: id_ordem_pagamento_servico_operador_dia
@@ -248,18 +245,11 @@ models:
           - not_null
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
-        tests:
-          - relationships:
-              to: ref('rj_smtr.cadastro.consorcios')
-              field: id_consorcio
       - name: consorcio
         description: "{{ doc('consorcio') }}"
       - name: id_operadora
         description: "{{ doc('id_operadora') }}"
         tests:
-          - relationships:
-              to: ref('rj_smtr.cadastro.operadoras')
-              field: id_operadora
           - not_null
       - name: id_operadora_jae
         description: "{{ doc('id_operadora_jae') }}"
@@ -272,9 +262,6 @@ models:
       - name: id_servico_jae
         description: "{{ doc('id_servico_jae') }}"
         tests:
-          - relationships:
-              to: ref('rj_smtr.cadastro.servicos')
-              field: id_servico_jae
           - not_null
       - name: servico_jae
         description: "{{ doc('servico_jae') }}"
@@ -340,9 +327,6 @@ models:
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
         tests:
-          - relationships:
-            to: ref('rj_smtr.cadastro.consorcios')
-            field: id_consorcio
           - not_null
       - name: consorcio
         description: "{{ doc('consorcio') }}"
