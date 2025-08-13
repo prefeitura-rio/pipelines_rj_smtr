@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.3.4] - 2025-08-13
+
+### Adicionado
+
+- Adicionado o teste `check_partidas_planejadas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/784)
+
 ## [9.3.3] - 2025-08-07
 
 ### Alterado

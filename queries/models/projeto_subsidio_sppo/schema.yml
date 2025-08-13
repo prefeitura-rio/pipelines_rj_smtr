@@ -31,6 +31,8 @@ models:
           name: dbt_utils.unique_combination_of_columns__viagem_planejada
       - check_km_planejada:
           name: check_km_planejada__viagem_planejada
+      - check_partidas_planejadas:
+          name: check_partidas_planejadas__viagem_planejada
     columns:
       - name: data
         description: "{{ doc('data') }}"
