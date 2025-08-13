@@ -49,7 +49,7 @@ with
                         )
                     }}
                 )
-                or ( 
+                or (
                     data between "2025-07-16" and "2025-07-31" -- Excessão para lacres adicionados após o prazo em 2025-Q2
                 )
             )
