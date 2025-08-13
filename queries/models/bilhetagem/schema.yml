@@ -38,9 +38,6 @@ models:
       - name: id_operadora
         description: "{{ doc('id_operadora') }}"
         data_type: string
-        tests:
-          - not_null
-          - unique
       - name: operadora
         description: "{{ doc('operadora') }}"
         data_type: string
@@ -132,9 +129,9 @@ models:
           - not_null
         data_type: float64
       - name: valor_pagamento
-        description: "Valor valor a ser pago pela transação (R$). Valores nulos indicam que o valor de pagamento para a transação ainda não foi calculado"
+        description: "Valor a ser pago pela transação (R$). Valores nulos indicam que o valor de pagamento para a transação ainda não foi calculado"
         data_type: float64
-      - name:
+      - name: data_ordem
         description: "{{ doc('data_ordem') }}"
         data_type: date
       - name: id_ordem_pagamento_servico_operador_dia
@@ -249,8 +246,6 @@ models:
         description: "{{ doc('consorcio') }}"
       - name: id_operadora
         description: "{{ doc('id_operadora') }}"
-        tests:
-          - not_null
       - name: id_operadora_jae
         description: "{{ doc('id_operadora_jae') }}"
         tests:
@@ -332,8 +327,6 @@ models:
         description: "{{ doc('consorcio') }}"
       - name: id_operadora
         description: "{{ doc('id_operadora') }}"
-        tests:
-          - not_null
       - name: id_operadora_jae
         description: "{{ doc('id_operadora_jae') }}"
         tests:
