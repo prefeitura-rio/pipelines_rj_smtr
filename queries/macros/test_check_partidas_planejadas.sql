@@ -40,13 +40,13 @@
                 ) and date("{{ var('date_range_end') }}")
                 and quilometragem != 0
         )
-        
+
     select *
     from viagem_planejada p
     full join
          os_faixa using (data, servico, faixa_horaria_inicio, sentido)
-   
+
     where
         partidas != partidas_total_planejada
-        
+
 {%- endtest %}
