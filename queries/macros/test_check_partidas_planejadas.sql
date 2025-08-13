@@ -12,9 +12,10 @@
             from {{ ref("viagem_planejada") }}
             -- `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
             where
-                data between greatest(date('{date_range_start}'), date('{DATA_SUBSIDIO_V17_INICIO}')) and date(
-                    "{{ var('date_range_end') }}"
-                )
+                data between greatest(
+                    date("{{ var('date_range_start') }}"),
+                    date('{DATA_SUBSIDIO_V17_INICIO}')
+                ) and date("{{ var('date_range_end') }}")
         ),
         os_faixa as (
             select
@@ -43,10 +44,8 @@
 
     select *
     from viagem_planejada p
-    full join
-         os_faixa using (data, servico, faixa_horaria_inicio, sentido)
+    full join os_faixa using (data, servico, faixa_horaria_inicio, sentido)
 
-    where
-        partidas != partidas_total_planejada
+    where partidas != partidas_total_planejada
 
 {%- endtest %}
