@@ -78,7 +78,7 @@ with
                     (
                         ano_fabricacao <= 2019
                         and (
-                            vr.indicador_falha_recorrente
+                            coalesce(vr.indicador_falha_recorrente, false)
                             or vt.indicador_temperatura_descartada
                             or not vt.indicador_temperatura_transmitida
                             or not vt.indicador_temperatura_regular
@@ -87,7 +87,7 @@ with
                     )
                     or (
                         (
-                            vr.indicador_falha_recorrente
+                            coalesce(vr.indicador_falha_recorrente, false)
                             or vt.indicador_temperatura_descartada
                             or not vt.indicador_temperatura_transmitida
                             or not vt.indicador_temperatura_regular
@@ -105,7 +105,7 @@ with
                     )
                 then
                     (
-                        not vr.indicador_falha_recorrente
+                        not coalesce(vr.indicador_falha_recorrente, false)
                         and not vt.indicador_temperatura_descartada
                         and vt.indicador_temperatura_transmitida
                         and vt.indicador_temperatura_regular
