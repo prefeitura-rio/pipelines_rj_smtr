@@ -129,7 +129,7 @@ models:
           - not_null
         data_type: float64
       - name: valor_pagamento
-        description: "Valor a ser pago pela transação (R$). Valores nulos indicam que o valor de pagamento para a transação ainda não foi calculado"
+        description: "{{ doc('valor_pagamento') }}"
         data_type: float64
       - name: data_ordem
         description: "{{ doc('data_ordem') }}"

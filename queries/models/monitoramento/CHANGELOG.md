@@ -1,5 +1,15 @@
 # Changelog - monitoramento
 
+## [1.6.2] - 2025-08-13
+
+### Adicionado
+
+- Adicionada excessão para lacres adicionados após o prazo entre `2025-07-16` e `2025-07-31` no modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/785)
+
+### Corrigido
+
+- Corrige teste `dbt_utils.relationships_where__id_auto_infracao__autuacao_disciplinar_historico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/785)
+
 ## [1.6.1] - 2025-08-05
 
 ### Adicionado

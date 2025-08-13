@@ -1195,5 +1195,5 @@ Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagam
 {% enddocs %}
 
 {% docs valor_pagamento %}
-Valor a ser pago pela transação (R$). Valores nulos indicam que o valor de pagamento para a transação ainda não foi calculado
+Valor de pagamento da transação
 {% enddocs %}
