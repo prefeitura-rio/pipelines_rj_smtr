@@ -10,6 +10,17 @@
     data between date("{{var('start_date')}}") and date("{{var('end_date')}}") and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
 {% endset %}
 
+{% set condicao_veiculo %}
+    (vt.ano_fabricacao <= 2019 or vt.data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}'))
+{% endset %}
+
+{% set condicao_ar_inoperante %}
+    (coalesce(vr.indicador_falha_recorrente, false)
+    or vt.indicador_temperatura_nula_zero_viagem
+    or not vt.indicador_temperatura_transmitida_viagem
+    or not vt.indicador_temperatura_regular_viagem)
+{% endset %}
+
 with
     viagem_temperatura as (
         select
@@ -41,9 +52,9 @@ with
             ) as indicador_temperatura_descartada_viagem,
             safe_cast(
                 json_value(
-                    indicadores, '$.indicador_temperatura_nula_viagem.valor'
+                    indicadores, '$.indicador_temperatura_nula_zero_viagem.valor'
                 ) as bool
-            ) as indicador_temperatura_nula_viagem,
+            ) as indicador_temperatura_nula_zero_viagem,
             safe_cast(
                 json_value(
                     indicadores, '$.indicador_temperatura_regular_viagem.valor'
@@ -59,7 +70,9 @@ with
         select
             data,
             id_veiculo,
-            indicadores.indicador_falha_recorrente.valor as indicador_falha_recorrente
+            indicadores.indicador_falha_recorrente.valor as indicador_falha_recorrente,
+            indicadores.indicador_falha_recorrente.data_verificacao_falha
+            as data_verificacao_falha
         from {{ ref("veiculo_regularidade_temperatura_dia") }}
         where {{ incremental_filter }}
     ),
@@ -81,44 +94,17 @@ with
                         "Licenciado sem ar e não autuado"
                     )
                 then vt.tipo_viagem
-                when
-                    (
-                        ano_fabricacao <= 2019
-                        and (
-                            coalesce(vr.indicador_falha_recorrente, false)
-                            or vt.indicador_temperatura_nula_viagem
-                            or not vt.indicador_temperatura_transmitida_viagem
-                            or not vt.indicador_temperatura_regular_viagem
-                        )
-                        and data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
-                    )
-                    or (
-                        (
-                            coalesce(vr.indicador_falha_recorrente, false)
-                            or vt.indicador_temperatura_nula_viagem
-                            or not vt.indicador_temperatura_transmitida_viagem
-                            or not vt.indicador_temperatura_regular_viagem
-                        )
-                        and data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}')
-                    )
+                when {{ condicao_veiculo }} and {{ condicao_ar_inoperante }}
                 then "Detectado com ar inoperante"
                 else vt.tipo_viagem
             end as tipo_viagem,
             case
-                when
-                    (
-                        vt.ano_fabricacao <= 2019
-                        or vt.data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}')
-                    )
-                then
-                    (
-                        not coalesce(vr.indicador_falha_recorrente, false)
-                        and not vt.indicador_temperatura_nula_viagem
-                        and vt.indicador_temperatura_transmitida_viagem
-                        and vt.indicador_temperatura_regular_viagem
-                    )
+                when {{ condicao_veiculo }}
+                then not {{ condicao_ar_inoperante }}
                 else null
             end as indicador_regularidade_ar_condicionado_viagem,
+            indicador_falha_recorrente,
+            data_verificacao_falha,
             indicadores,
             servico,
             sentido,
@@ -139,7 +125,15 @@ select
     tipo_viagem,
     json_set(
         json_set(
-            indicadores,
+            json_set(
+                json_set(
+                    indicadores,
+                    '$.indicador_falha_recorrente.valor',
+                    indicador_falha_recorrente
+                ),
+                '$.indicador_falha_recorrente.data_verificacao_falha',
+                data_verificacao_falha
+            ),
             '$.indicador_regularidade_ar_condicionado_viagem.valor',
             indicador_regularidade_ar_condicionado_viagem
         ),

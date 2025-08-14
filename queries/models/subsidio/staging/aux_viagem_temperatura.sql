@@ -32,7 +32,7 @@ with
             sentido,
             modo
         from {{ ref("viagem_classificada") }}
-        {# from `rj-smtr-dev.botelho__subsidio.viagem_classificada` #}
+        {# from `rj-smtr.subsidio.viagem_classificada` #}
         where
             data between date("{{var('date_range_start')}}") and date(
                 "{{var('date_range_end')}}"
@@ -52,7 +52,7 @@ with
             safe_cast(temperatura as numeric) as temperatura,
             datetime_captura
         from {{ ref("gps_validador") }}
-        where {{ incremental_filter }}
+        where {{ incremental_filter }} and modo = "Ônibus"
     ),
     estado_equipamento_aux as (  -- Dados de estado do equipamento do validador
         select *
@@ -207,7 +207,7 @@ with
         from metrica_mad
     ),
     temperatura_filtrada_total as (  -- Filtro dos dados atípicos com base no Robust Z-Score
-        select *, count(*) as quantidade_pos_tratamento_total
+        select *, count(*) as quantidade_atipica
         from metrica_robust_z_score
         where abs(robust_z_score) <= 3.5
         group by all
@@ -218,17 +218,21 @@ with
             id_viagem,
             quantidade_pre_tratamento,
             quantidade_nula_zero,
-            quantidade_pos_tratamento_total,
+            quantidade_nula_zero
+            + coalesce(quantidade_atipica, 0) as quantidade_pos_tratamento,
             trunc(
                 coalesce(
                     safe_divide(
-                        sum(quantidade_pos_tratamento_total),
+                        (
+                            sum(quantidade_nula_zero)
+                            + sum(coalesce(quantidade_atipica, 0))
+                        ),
                         sum(quantidade_pre_tratamento)
                     ),
                     0
                 ),
                 2
-            ) as percentual_temperatura_atipica_descartada,
+            ) as percentual_temperatura_pos_tratamento_descartada,
             trunc(
                 coalesce(
                     safe_divide(
@@ -237,7 +241,7 @@ with
                     0
                 ),
                 2
-            ) as percentual_temperatura_nula_descartada,
+            ) as percentual_temperatura_nula_zero_descartada,
             indicador_temperatura_transmitida_viagem,
             indicador_temperatura_variacao_viagem
         from gps_validador_indicadores
@@ -297,16 +301,13 @@ with
             indicador_temperatura_transmitida_viagem,
             quantidade_pre_tratamento,
             quantidade_nula_zero,
-            quantidade_pos_tratamento_total,
-            percentual_temperatura_nula_descartada,
-            percentual_temperatura_atipica_descartada,
-            (
-                percentual_temperatura_nula_descartada
-                + percentual_temperatura_atipica_descartada
-            )
+            quantidade_pos_tratamento,
+            percentual_temperatura_nula_zero_descartada,
+            percentual_temperatura_pos_tratamento_descartada,
+            percentual_temperatura_pos_tratamento_descartada
             > 0.5 as indicador_temperatura_descartada_viagem,
-            percentual_temperatura_nula_descartada
-            = 1 as indicador_temperatura_nula_viagem
+            percentual_temperatura_nula_zero_descartada
+            = 1 as indicador_temperatura_nula_zero_viagem
         from classificacao_temperatura
         left join agg_temperatura_viagem using (data, id_viagem)
         group by all
@@ -330,7 +331,7 @@ with
             v.tecnologia_remunerada,
             quantidade_pre_tratamento,
             quantidade_nula_zero,
-            quantidade_pos_tratamento_total,
+            quantidade_pos_tratamento,
             to_json_string(
                 struct(
                     struct(
@@ -352,16 +353,16 @@ with
                         p.datetime_apuracao_subsidio,
                         p.indicador_temperatura_descartada_viagem as valor,
                         safe_cast(
-                            p.percentual_temperatura_nula_descartada as string
-                        ) as percentual_temperatura_nula_descartada,
-                        safe_cast(
-                            p.percentual_temperatura_atipica_descartada as string
-                        ) as percentual_temperatura_atipica_descartada
+                            p.percentual_temperatura_pos_tratamento_descartada as string
+                        ) as percentual_temperatura_pos_tratamento_descartada
                     ) as indicador_temperatura_descartada_viagem,
                     struct(
                         p.datetime_apuracao_subsidio,
-                        p.indicador_temperatura_nula_viagem as valor
-                    ) as indicador_temperatura_nula_viagem,
+                        p.indicador_temperatura_nula_zero_viagem as valor,
+                        safe_cast(
+                            p.percentual_temperatura_nula_zero_descartada as string
+                        ) as percentual_temperatura_nula_zero_descartada
+                    ) as indicador_temperatura_nula_zero_viagem,
                     struct(
                         current_datetime(
                             "America/Sao_Paulo"
@@ -402,7 +403,7 @@ select  -- Estrutura final do modelo auxiliar
     s.tipo_viagem,
     quantidade_pre_tratamento,
     quantidade_nula_zero,
-    quantidade_pos_tratamento_total,
+    quantidade_pos_tratamento,
     parse_json(
         concat(
             left(s.indicadores_str, length(s.indicadores_str) - 1),

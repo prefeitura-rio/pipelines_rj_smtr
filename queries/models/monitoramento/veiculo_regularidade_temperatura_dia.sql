@@ -26,9 +26,10 @@ with
             data_verificacao_regularidade,
             indicador_temperatura_variacao_veiculo,
             indicador_temperatura_transmitida_veiculo,
-            percentual_temperatura_nula_descartada,
-            percentual_temperatura_atipica_descartada,
+            percentual_temperatura_pos_tratamento_descartada,
             indicador_temperatura_descartada_veiculo,
+            percentual_viagem_temperatura_pos_tratamento_descartada,
+            indicador_viagem_temperatura_descartada_veiculo,
             quantidade_dia_falha_operacional
         from {{ ref("aux_veiculo_falha_ar_condicionado") }}
         where {{ incremental_filter }} and indicio_falha
@@ -59,6 +60,11 @@ with
                                         indicador_temperatura_descartada_veiculo,
                                         "Descarte de mais de 50% dos registros de temperatura de todas as viagens realizadas em um dia de operação",
                                         ""
+                                    ),
+                                    if(
+                                        indicador_viagem_temperatura_descartada_veiculo,
+                                        "Descarte de mais de 50% das viagens (...) em um dia de operação",
+                                        ""
                                     )
                                 ]
                             ) as motivo
@@ -88,9 +94,13 @@ with
                 struct(
                     data_verificacao_regularidade,
                     indicador_temperatura_descartada_veiculo as valor,
-                    percentual_temperatura_nula_descartada,
-                    percentual_temperatura_atipica_descartada
+                    percentual_temperatura_pos_tratamento_descartada
                 ) as indicador_temperatura_descartada_veiculo,
+                struct(
+                    data_verificacao_regularidade,
+                    indicador_viagem_temperatura_descartada_veiculo as valor,
+                    percentual_viagem_temperatura_pos_tratamento_descartada
+                ) as indicador_viagem_temperatura_descartada_veiculo,
                 struct(
                     current_date("America/Sao_Paulo") as data_verificacao_falha,
                     indicador_falha_recorrente as valor
