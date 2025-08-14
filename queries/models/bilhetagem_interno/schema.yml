@@ -1,4 +1,11 @@
 models:
+  - name: disparos_whatsapp_caso_1_2
+    description: ""
+    columns:
+      - name: vars
+        description: ""
+        policy_tags:
+            - 'projects/rj-smtr-dev/locations/us/taxonomies/1688927184371506251/policyTags/8698618633874150807'
   - name: recarga_jae
     description: Tabela com os dados de recarga dos cartões da Jaé
     columns:
