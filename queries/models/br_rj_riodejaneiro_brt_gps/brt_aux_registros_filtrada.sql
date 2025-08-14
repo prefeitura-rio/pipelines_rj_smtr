@@ -61,4 +61,7 @@ with
     )
 select * except (rn), '{{ var("version") }}' as versao
 from filtrada
-where rn = 1
+where
+    rn = 1
+
+    -- trigger sqlfmt again

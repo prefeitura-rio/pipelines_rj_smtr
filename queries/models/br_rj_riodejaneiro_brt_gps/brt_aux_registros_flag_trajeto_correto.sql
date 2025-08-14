@@ -90,3 +90,4 @@ WITH
       data,
       data_versao,
       timestamp_gps
+-- trigger sqlfmt
