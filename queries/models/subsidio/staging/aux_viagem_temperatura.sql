@@ -221,29 +221,20 @@ with
             coalesce(quantidade_pos_tratamento, 0) as quantidade_pos_tratamento,
             1 - trunc(
                 coalesce(
-                    safe_divide(
-                        sum(coalesce(quantidade_pos_tratamento, 0)),
-                        sum(quantidade_pre_tratamento)
-                    ),
-                    0
+                    safe_divide(quantidade_pos_tratamento, quantidade_pre_tratamento), 0
                 ),
                 2
             ) as percentual_temperatura_pos_tratamento_descartada,
             trunc(
                 coalesce(
-                    safe_divide(
-                        sum(quantidade_nula_zero), sum(quantidade_pre_tratamento)
-                    ),
-                    0
+                    safe_divide(quantidade_nula_zero, quantidade_pre_tratamento), 0
                 ),
                 2
             ) as percentual_temperatura_nula_zero_descartada,
             indicador_temperatura_transmitida_viagem,
             indicador_temperatura_variacao_viagem
         from gps_validador_indicadores
-        left join temperatura_filtrada_total using (data, id_viagem)
         left join qtd_pos_tratamento using (data, id_viagem)
-        group by all
     ),
     classificacao_temperatura as (  -- Regras para classificação de temperatura regular
         select
