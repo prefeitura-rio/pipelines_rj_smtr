@@ -40,7 +40,7 @@ with
             and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
     ),
     gps_validador as (  -- Dados base de GPS, temperatura, etc
-        select
+        select distinct
             data,
             datetime_gps,
             servico_jae,
@@ -189,11 +189,9 @@ with
     temperatura_filtrada_iqr as (  -- Filtro dos dados atípicos com IQR e calcula métricas base para Robust Z-Score
         select
             *,
-            count(*) quantidade_pos_tratamento_iqr,
             percentile_cont(temperatura, 0.5) over (partition by data, hora) as mediana
         from metricas_iqr
         where temperatura >= iqr_limite_inferior and temperatura <= iqr_limite_superior
-        group by all
     ),
     metrica_mediana as (  -- Métrica base para Robust Z-Score - Desvio Absoluto
         select *, abs(temperatura - mediana) as desvio_abs from temperatura_filtrada_iqr
@@ -207,10 +205,12 @@ with
         from metrica_mad
     ),
     temperatura_filtrada_total as (  -- Filtro dos dados atípicos com base no Robust Z-Score
-        select *, count(*) as quantidade_pos_tratamento
-        from metrica_robust_z_score
-        where abs(robust_z_score) <= 3.5
-        group by all
+        select * from metrica_robust_z_score where abs(robust_z_score) <= 3.5
+    ),
+    qtd_pos_tratamento as (  -- Calcula a quantidade de registros de temperatura após tratamento por viagem
+        select data, id_viagem, count(temperatura) as quantidade_pos_tratamento
+        from temperatura_filtrada_total
+        group by data, id_viagem
     ),
     agg_temperatura_viagem as (  -- Percentuais de temperatura descartada e nula
         select
@@ -242,6 +242,7 @@ with
             indicador_temperatura_variacao_viagem
         from gps_validador_indicadores
         left join temperatura_filtrada_total using (data, id_viagem)
+        left join qtd_pos_tratamento using (data, id_viagem)
         group by all
     ),
     classificacao_temperatura as (  -- Regras para classificação de temperatura regular
@@ -266,7 +267,6 @@ with
         left join
             temperatura_filtrada_total as f
             on f.data = i.data
-            and f.datetime_gps between datetime_partida and datetime_chegada
             and f.id_viagem = i.id_viagem
         left join
             temperatura_inmet as e
@@ -301,7 +301,7 @@ with
             percentual_temperatura_nula_zero_descartada,
             percentual_temperatura_pos_tratamento_descartada,
             percentual_temperatura_pos_tratamento_descartada
-            > 0.5 as indicador_temperatura_descartada_viagem,
+            > 0.5 as indicador_temperatura_pos_tratamento_descartada_viagem,
             percentual_temperatura_nula_zero_descartada
             = 1 as indicador_temperatura_nula_zero_viagem
         from classificacao_temperatura
@@ -347,11 +347,12 @@ with
                     ) as indicador_temperatura_transmitida_viagem,
                     struct(
                         p.datetime_apuracao_subsidio,
-                        p.indicador_temperatura_descartada_viagem as valor,
+                        p.indicador_temperatura_pos_tratamento_descartada_viagem
+                        as valor,
                         safe_cast(
                             p.percentual_temperatura_pos_tratamento_descartada as string
                         ) as percentual_temperatura_pos_tratamento_descartada
-                    ) as indicador_temperatura_descartada_viagem,
+                    ) as indicador_temperatura_pos_tratamento_descartada_viagem,
                     struct(
                         p.datetime_apuracao_subsidio,
                         p.indicador_temperatura_nula_zero_viagem as valor,

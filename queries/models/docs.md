@@ -1203,7 +1203,7 @@ Indicador se o veículo transmitiu dados de temperatura
 {% enddocs %}
 
 {% docs percentual_viagem_temperatura_pos_tratamento_descartada %}
-Percentual de viagens com mais de 50% de registros de temperatura descartados após tratamento estatístico
+Percentual de viagens com mais de 50% de registros de temperatura descartados após tratamento estatístico em um dia de operação
 {% enddocs %}
 
 {% docs percentual_temperatura_pos_tratamento_descartada %}
@@ -1211,9 +1211,9 @@ Percentual de registros de temperatura descartados após tratamento estatístico
 {% enddocs %}
 
 {% docs indicador_temperatura_descartada_veiculo %}
-Indica se mais de 50% dos registros de temperatura foram descartados após tratamento estatístico em um dia de operação
+Indica se percentual_temperatura_pos_tratamento_descartada é maior que 50%
 {% enddocs %}
 
 {% docs indicador_viagem_temperatura_descartada_veiculo %}
-Indica se mais de 50% das viagens realizadas tiveram mais de 50% dos registros de temperatura descartados após tratamento estatístico em um dia de operação
+Indica se percentual_viagem_temperatura_pos_tratamento_descartada é maior que 50%
 {% enddocs %}

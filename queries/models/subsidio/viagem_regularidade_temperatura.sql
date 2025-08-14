@@ -47,9 +47,10 @@ with
             ) as indicador_temperatura_transmitida_viagem,
             safe_cast(
                 json_value(
-                    indicadores, '$.indicador_temperatura_descartada_viagem.valor'
+                    indicadores,
+                    '$.indicador_temperatura_pos_tratamento_descartada_viagem.valor'
                 ) as bool
-            ) as indicador_temperatura_descartada_viagem,
+            ) as indicador_temperatura_pos_tratamento_descartada_viagem,
             safe_cast(
                 json_value(
                     indicadores, '$.indicador_temperatura_nula_zero_viagem.valor'

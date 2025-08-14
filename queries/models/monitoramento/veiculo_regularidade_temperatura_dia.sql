@@ -63,7 +63,7 @@ with
                                     ),
                                     if(
                                         indicador_viagem_temperatura_descartada_veiculo,
-                                        "Descarte de mais de 50% das viagens (...) em um dia de operação",
+                                        "Mais de 50% das viagens realizadas em um dia de operação com percentual_viagem_temperatura_pos_tratamento_descartada superior a 50%",
                                         ""
                                     )
                                 ]

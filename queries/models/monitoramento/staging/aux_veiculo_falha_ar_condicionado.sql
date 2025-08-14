@@ -54,13 +54,13 @@ with
             safe_cast(
                 json_value(
                     indicadores,
-                    '$.indicador_temperatura_descartada_viagem.percentual_temperatura_pos_tratamento_descartada'
+                    '$.indicador_temperatura_pos_tratamento_descartada_viagem.percentual_temperatura_pos_tratamento_descartada'
                 ) as numeric
             ) as percentual_temperatura_pos_tratamento_descartada_viagem,
             safe_cast(
                 json_value(
                     indicadores,
-                    '$.indicador_temperatura_descartada_viagem.datetime_apuracao_subsidio'
+                    '$.indicador_temperatura_pos_tratamento_descartada_viagem.datetime_apuracao_subsidio'
                 ) as datetime
             ) as datetime_apuracao_subsidio,
         from {{ ref("aux_viagem_temperatura") }}
@@ -80,7 +80,7 @@ with
             max(
                 indicador_temperatura_transmitida_viagem
             ) as indicador_temperatura_transmitida_veiculo,
-            trunc(
+            1 - trunc(
                 coalesce(
                     safe_divide(
                         sum(quantidade_pos_tratamento), sum(quantidade_pre_tratamento)
