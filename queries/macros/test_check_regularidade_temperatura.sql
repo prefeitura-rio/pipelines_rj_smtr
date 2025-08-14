@@ -12,19 +12,19 @@
                 id_viagem,
                 safe_cast(
                     json_value(
-                        indicadores, '$.indicador_temperatura_descartada.valor'
+                        indicadores, '$.indicador_temperatura_nula_zero_viagem.valor'
                     ) as bool
-                ) as indicador_temperatura_descartada,
+                ) as indicador_temperatura_nula_zero_viagem,
                 safe_cast(
                     json_value(
-                        indicadores, '$.indicador_temperatura_transmitida.valor'
+                        indicadores, '$.indicador_temperatura_transmitida_viagem.valor'
                     ) as bool
-                ) as indicador_temperatura_transmitida,
+                ) as indicador_temperatura_transmitida_viagem,
                 safe_cast(
                     json_value(
-                        indicadores, '$.indicador_temperatura_regular.valor'
+                        indicadores, '$.indicador_temperatura_regular_viagem.valor'
                     ) as bool
-                ) as indicador_temperatura_regular
+                ) as indicador_temperatura_regular_viagem
             from {{ ref("aux_viagem_temperatura") }}
             where {{ incremental_filter }}
         ),
@@ -48,9 +48,10 @@
                 ) as indicador_ar_condicionado,
                 safe_cast(
                     json_value(
-                        indicadores, '$.indicador_regularidade_ar_condicionado.valor'
+                        indicadores,
+                        '$.indicador_regularidade_ar_condicionado_viagem.valor'
                     ) as bool
-                ) as indicador_regularidade_ar_condicionado
+                ) as indicador_regularidade_ar_condicionado_viagem
             from {{ model }}
         ),
         indicadores_completo as (
@@ -60,10 +61,10 @@
                 i.id_viagem,
                 i.ano_fabricacao,
                 i.indicador_ar_condicionado,
-                i.indicador_regularidade_ar_condicionado,
-                t.indicador_temperatura_descartada,
-                t.indicador_temperatura_transmitida,
-                t.indicador_temperatura_regular,
+                i.indicador_regularidade_ar_condicionado_viagem,
+                t.indicador_temperatura_nula_zero_viagem,
+                t.indicador_temperatura_transmitida_viagem,
+                t.indicador_temperatura_regular_viagem,
                 v.indicador_falha_recorrente
             from indicadores i
             left join
@@ -79,23 +80,22 @@
                 id_veiculo,
                 id_viagem,
                 ano_fabricacao,
-                'Quando deveria `indicador_regularidade_ar_condicionado` ser TRUE, mas não é'
+                'Quando deveria `indicador_regularidade_ar_condicionado_viagem` ser TRUE, mas não é'
                 as falha
             from indicadores_completo
             where
                 (
-                    -- Quando deveria `indicador_regularidade_ar_condicionado` ser
-                    -- TRUE, mas não é
+                    {# Quando deveria `indicador_regularidade_ar_condicionado_viagem` ser TRUE, mas não é #}
                     (
                         ano_fabricacao <= 2019
                         or data >= date("{{ var('DATA_SUBSIDIO_V19_INICIO') }}")
                     )
                     and indicador_ar_condicionado
                     and not indicador_falha_recorrente
-                    and not indicador_temperatura_descartada
-                    and indicador_temperatura_transmitida
-                    and indicador_temperatura_regular
-                    and not indicador_regularidade_ar_condicionado
+                    and not indicador_temperatura_nula_zero_viagem
+                    and indicador_temperatura_transmitida_viagem
+                    and indicador_temperatura_regular_viagem
+                    and not indicador_regularidade_ar_condicionado_viagem
                 )
         ),
         teste_2_falha as (
@@ -104,24 +104,23 @@
                 id_veiculo,
                 id_viagem,
                 ano_fabricacao,
-                'Quando `indicador_regularidade_ar_condicionado` deveria ser FALSE, mas não é'
+                'Quando `indicador_regularidade_ar_condicionado_viagem` deveria ser FALSE, mas não é'
                 as falha
             from indicadores_completo
             where
                 (
-                    -- Quando `indicador_regularidade_ar_condicionado` deveria ser
-                    -- FALSE, mas não é
+                    {# Quando `indicador_regularidade_ar_condicionado_viagem` deveria ser FALSE, mas não é #}
                     (
                         ano_fabricacao <= 2019
                         or data >= date("{{ var('DATA_SUBSIDIO_V19_INICIO') }}")
                     )
                     and (
                         indicador_falha_recorrente
-                        or indicador_temperatura_descartada
-                        or not indicador_temperatura_transmitida
-                        or not indicador_temperatura_regular
+                        or indicador_temperatura_nula_zero_viagem
+                        or not indicador_temperatura_transmitida_viagem
+                        or not indicador_temperatura_regular_viagem
                     )
-                    and indicador_regularidade_ar_condicionado
+                    and indicador_regularidade_ar_condicionado_viagem
                 )
         ),
         teste_3_falha as (
@@ -135,14 +134,13 @@
             from indicadores_completo
             where
                 (
-                    -- Quando deveria ser NULL de acordo com o Art 2º-E da resolução,
-                    -- mas não é
+                    {# Quando deveria ser NULL de acordo com o Art 2º-E da resolução, mas não é #}
                     (
                         ano_fabricacao > 2019
                         and data <= date("{{ var('DATA_SUBSIDIO_V19_INICIO') }}")
                     )
                     and not indicador_ar_condicionado
-                    and indicador_regularidade_ar_condicionado is not null
+                    and indicador_regularidade_ar_condicionado_viagem is not null
                 )
         ),
         falhas as (
