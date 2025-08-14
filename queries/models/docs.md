@@ -1193,3 +1193,27 @@ Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagam
 {% docs valor_pagamento %}
 Valor de pagamento da transação
 {% enddocs %}
+
+{% docs indicador_temperatura_variacao_veiculo %}
+Indicador se houve variação na temperatura transmitida pelo veículo
+{% enddocs %}
+
+{% docs indicador_temperatura_transmitida_veiculo %}
+Indicador se o veículo transmitiu dados de temperatura
+{% enddocs %}
+
+{% docs percentual_viagem_temperatura_pos_tratamento_descartada %}
+Percentual de viagens com mais de 50% de registros de temperatura descartados após tratamento estatístico
+{% enddocs %}
+
+{% docs percentual_temperatura_pos_tratamento_descartada %}
+Percentual de registros de temperatura descartados após tratamento estatístico em um dia de operação
+{% enddocs %}
+
+{% docs indicador_temperatura_descartada_veiculo %}
+Indica se mais de 50% dos registros de temperatura foram descartados após tratamento estatístico em um dia de operação
+{% enddocs %}
+
+{% docs indicador_viagem_temperatura_descartada_veiculo %}
+Indica se mais de 50% das viagens realizadas tiveram mais de 50% dos registros de temperatura descartados após tratamento estatístico em um dia de operação
+{% enddocs %}
