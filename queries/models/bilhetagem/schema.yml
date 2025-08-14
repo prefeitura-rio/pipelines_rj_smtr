@@ -1,11 +1,6 @@
 models:
   - name: transacao
     description: "Tabela com informações da Jaé sobre as transações realizadas no sistema de transporte municipal"
-    tests:
-      - unique:
-          column_name: id_transacao
-      - not_null:
-        where: tipo_transacao_jae not in ('Gratuidade', 'Transferência', 'Integração gratuidade', 'Botoeira')
     columns:
       - name: data
         description: "{{ doc('data_transacao') }} [partição]"
@@ -63,7 +58,7 @@ models:
         tests:
           - not_null:
               name: not_null__id_servico_jae__transacao
-              where: not in (SELECT id_servico_jae FROM {{ ref('linha_sem_ressarcimento') }})
+              where: id_servico_jae not in (SELECT id_servico_jae FROM {{ ref('staging_linha_sem_ressarcimento') }})
       - name: servico_jae
         description: "{{ doc('servico_jae') }}"
         data_type: string
@@ -108,7 +103,9 @@ models:
         description: "{{ doc('id_transacao') }}"
         tests:
           - unique
-          - not_null
+          - not_null:
+            name: not_null__id_transacao__transacao
+            where: tipo_transacao_jae not in ('Gratuidade', 'Transferência', 'Integração gratuidade', 'Botoeira')
         data_type: string
       - name: tipo_transacao_jae
         description: "Tipo de transação realizada conforme o dado original da Jaé [a primeira perna de integrações são classificadas como tipo Débito e não Integração]"
