@@ -1,5 +1,11 @@
 # Changelog - subsidio
 
+## [2.1.1] - 2025-08-14
+
+### Alterado
+
+- Refatora modelos `aux_veiculo_falha_ar_condicionado` e `veiculo_regularidade_temperatura_dia`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/787)
+
 ## [2.1.0] - 2025-08-11
 
 ### Corrigido
