@@ -207,7 +207,7 @@ with
         from metrica_mad
     ),
     temperatura_filtrada_total as (  -- Filtro dos dados atípicos com base no Robust Z-Score
-        select *, count(*) as quantidade_atipica
+        select *, count(*) as quantidade_pos_tratamento
         from metrica_robust_z_score
         where abs(robust_z_score) <= 3.5
         group by all
@@ -218,15 +218,11 @@ with
             id_viagem,
             quantidade_pre_tratamento,
             quantidade_nula_zero,
-            quantidade_nula_zero
-            + coalesce(quantidade_atipica, 0) as quantidade_pos_tratamento,
-            trunc(
+            coalesce(quantidade_pos_tratamento, 0) as quantidade_pos_tratamento,
+            1 - trunc(
                 coalesce(
                     safe_divide(
-                        (
-                            sum(quantidade_nula_zero)
-                            + sum(coalesce(quantidade_atipica, 0))
-                        ),
+                        sum(coalesce(quantidade_pos_tratamento, 0)),
                         sum(quantidade_pre_tratamento)
                     ),
                     0
