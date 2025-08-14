@@ -149,11 +149,12 @@ with
     gps_validador_indicadores as (  -- Indicadores de temperatura por veículo
         select
             data,
-            id_veiculo,
+            id_viagem,
             count(*) as quantidade_pre_tratamento,
             countif(temperatura is null or temperatura = 0) as quantidade_nula_zero,
-            countif(temperatura is not null) > 0 as indicador_temperatura_transmitida,
-            count(distinct temperatura) > 1 as indicador_temperatura_variacao
+            countif(temperatura is not null)
+            > 0 as indicador_temperatura_transmitida_viagem,
+            count(distinct temperatura) > 1 as indicador_temperatura_variacao_viagem
         from gps_validador_viagem
         where indicador_ar_condicionado
         group by 1, 2
@@ -167,7 +168,7 @@ with
     ),
     metricas_base as (  -- 1 e 3 quartil da temperatura por hora e dia
         select
-            g.id_veiculo,
+            g.id_viagem,
             g.data,
             hora,
             temperatura,
@@ -214,8 +215,10 @@ with
     agg_temperatura_viagem as (  -- Percentuais de temperatura descartada e nula
         select
             data,
-            id_veiculo,
+            id_viagem,
             quantidade_pre_tratamento,
+            quantidade_nula_zero,
+            quantidade_pos_tratamento_total,
             trunc(
                 coalesce(
                     safe_divide(
@@ -235,10 +238,10 @@ with
                 ),
                 2
             ) as percentual_temperatura_nula_descartada,
-            indicador_temperatura_transmitida,
-            indicador_temperatura_variacao
+            indicador_temperatura_transmitida_viagem,
+            indicador_temperatura_variacao_viagem
         from gps_validador_indicadores
-        left join temperatura_filtrada_total using (data, id_veiculo)
+        left join temperatura_filtrada_total using (data, id_viagem)
         group by all
     ),
     classificacao_temperatura as (  -- Regras para classificação de temperatura regular
@@ -246,7 +249,7 @@ with
             i.data,
             i.hora,
             i.id_veiculo,
-            id_viagem,
+            i.id_viagem,
             indicador_ar_condicionado,
             i.datetime_gps,
             f.temperatura as temperatura_int,
@@ -264,7 +267,7 @@ with
             temperatura_filtrada_total as f
             on f.data = i.data
             and f.datetime_gps between datetime_partida and datetime_chegada
-            and f.id_veiculo = i.id_veiculo
+            and f.id_viagem = i.id_viagem
         left join
             temperatura_inmet as e
             on e.data = extract(date from i.datetime_gps)
@@ -275,7 +278,6 @@ with
             data,
             id_veiculo,
             id_viagem,
-            quantidade_pre_tratamento,
             case
                 when max(indicador_ar_condicionado)
                 then trunc((countif(classificacao_temperatura_regular) / count(*)), 2)
@@ -285,23 +287,28 @@ with
                 when max(indicador_ar_condicionado)
                 then (countif(classificacao_temperatura_regular) / count(*)) >= 0.8
                 else null
-            end as indicador_temperatura_regular,
+            end as indicador_temperatura_regular_viagem,
             case
                 when max(indicador_ar_condicionado)
                 then current_datetime("America/Sao_Paulo")
                 else null
             end as datetime_apuracao_subsidio,
-            indicador_temperatura_variacao,
-            indicador_temperatura_transmitida,
+            indicador_temperatura_variacao_viagem,
+            indicador_temperatura_transmitida_viagem,
+            quantidade_pre_tratamento,
+            quantidade_nula_zero,
+            quantidade_pos_tratamento_total,
             percentual_temperatura_nula_descartada,
             percentual_temperatura_atipica_descartada,
             (
                 percentual_temperatura_nula_descartada
                 + percentual_temperatura_atipica_descartada
             )
-            > 0.5 as indicador_temperatura_descartada
+            > 0.5 as indicador_temperatura_descartada_viagem,
+            percentual_temperatura_nula_descartada
+            = 1 as indicador_temperatura_nula_viagem
         from classificacao_temperatura
-        left join agg_temperatura_viagem using (data, id_veiculo)
+        left join agg_temperatura_viagem using (data, id_viagem)
         group by all
     ),
     struct_indicadores as (  -- Estrutura indicadores em formato JSON
@@ -321,33 +328,40 @@ with
             v.distancia_planejada,
             v.tecnologia_apurada,
             v.tecnologia_remunerada,
+            quantidade_pre_tratamento,
+            quantidade_nula_zero,
+            quantidade_pos_tratamento_total,
             to_json_string(
                 struct(
                     struct(
                         p.datetime_apuracao_subsidio,
-                        p.indicador_temperatura_regular as valor,
+                        p.indicador_temperatura_regular_viagem as valor,
                         safe_cast(
                             p.percentual_temperatura_regular as string
                         ) as percentual_temperatura_regular
-                    ) as indicador_temperatura_regular,
+                    ) as indicador_temperatura_regular_viagem,
                     struct(
                         p.datetime_apuracao_subsidio,
-                        p.indicador_temperatura_variacao as valor
-                    ) as indicador_temperatura_variacao,
+                        p.indicador_temperatura_variacao_viagem as valor
+                    ) as indicador_temperatura_variacao_viagem,
                     struct(
                         p.datetime_apuracao_subsidio,
-                        p.indicador_temperatura_transmitida as valor
-                    ) as indicador_temperatura_transmitida,
+                        p.indicador_temperatura_transmitida_viagem as valor
+                    ) as indicador_temperatura_transmitida_viagem,
                     struct(
                         p.datetime_apuracao_subsidio,
-                        p.indicador_temperatura_descartada as valor,
+                        p.indicador_temperatura_descartada_viagem as valor,
                         safe_cast(
                             p.percentual_temperatura_nula_descartada as string
                         ) as percentual_temperatura_nula_descartada,
                         safe_cast(
                             p.percentual_temperatura_atipica_descartada as string
                         ) as percentual_temperatura_atipica_descartada
-                    ) as indicador_temperatura_descartada,
+                    ) as indicador_temperatura_descartada_viagem,
+                    struct(
+                        p.datetime_apuracao_subsidio,
+                        p.indicador_temperatura_nula_viagem as valor
+                    ) as indicador_temperatura_nula_viagem,
                     struct(
                         current_datetime(
                             "America/Sao_Paulo"
@@ -371,7 +385,6 @@ with
                     ) as indicador_validador
                 )
             ) as indicadores_novos,
-            p.quantidade_pre_tratamento
         from viagens as v
         left join percentual_indicadores_viagem as p using (data, id_viagem)
     )
@@ -387,6 +400,9 @@ select  -- Estrutura final do modelo auxiliar
     s.tecnologia_apurada,
     s.tecnologia_remunerada,
     s.tipo_viagem,
+    quantidade_pre_tratamento,
+    quantidade_nula_zero,
+    quantidade_pos_tratamento_total,
     parse_json(
         concat(
             left(s.indicadores_str, length(s.indicadores_str) - 1),

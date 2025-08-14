@@ -24,11 +24,11 @@ with
             indicador_ar_condicionado,
             data_processamento_licenciamento,
             data_verificacao_regularidade,
-            indicador_temperatura_variacao,
-            indicador_temperatura_transmitida,
+            indicador_temperatura_variacao_veiculo,
+            indicador_temperatura_transmitida_veiculo,
             percentual_temperatura_nula_descartada,
             percentual_temperatura_atipica_descartada,
-            indicador_temperatura_descartada,
+            indicador_temperatura_descartada_veiculo,
             quantidade_dia_falha_operacional
         from {{ ref("aux_veiculo_falha_ar_condicionado") }}
         where {{ incremental_filter }} and indicio_falha
@@ -46,17 +46,17 @@ with
                             unnest(
                                 [
                                     if(
-                                        not indicador_temperatura_variacao,
+                                        not indicador_temperatura_variacao_veiculo,
                                         "Repetição do mesmo valor de temperatura ao longo de todas as viagens realizadas em um dia de operação",
                                         ""
                                     ),
                                     if(
-                                        not indicador_temperatura_transmitida,
+                                        not indicador_temperatura_transmitida_veiculo,
                                         "Ausência total de transmissão de dados de temperatura interna durante um dia de operação",
                                         ""
                                     ),
                                     if(
-                                        indicador_temperatura_descartada,
+                                        indicador_temperatura_descartada_veiculo,
                                         "Descarte de mais de 50% dos registros de temperatura de todas as viagens realizadas em um dia de operação",
                                         ""
                                     )
@@ -79,18 +79,18 @@ with
                 ) as indicador_ar_condicionado,
                 struct(
                     data_verificacao_regularidade,
-                    indicador_temperatura_variacao as valor
-                ) as indicador_temperatura_variacao,
+                    indicador_temperatura_variacao_veiculo as valor
+                ) as indicador_temperatura_variacao_veiculo,
                 struct(
                     data_verificacao_regularidade,
-                    indicador_temperatura_transmitida as valor
-                ) as indicador_temperatura_transmitida,
+                    indicador_temperatura_transmitida_veiculo as valor
+                ) as indicador_temperatura_transmitida_veiculo,
                 struct(
                     data_verificacao_regularidade,
-                    indicador_temperatura_descartada as valor,
+                    indicador_temperatura_descartada_veiculo as valor,
                     percentual_temperatura_nula_descartada,
                     percentual_temperatura_atipica_descartada
-                ) as indicador_temperatura_descartada,
+                ) as indicador_temperatura_descartada_veiculo,
                 struct(
                     current_date("America/Sao_Paulo") as data_verificacao_falha,
                     indicador_falha_recorrente as valor

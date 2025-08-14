@@ -26,22 +26,29 @@ with
             indicadores,
             safe_cast(
                 json_value(
-                    indicadores, '$.indicador_temperatura_variacao.valor'
+                    indicadores, '$.indicador_temperatura_variacao_viagem.valor'
                 ) as bool
-            ) as indicador_temperatura_variacao,
+            ) as indicador_temperatura_variacao_viagem,
             safe_cast(
                 json_value(
-                    indicadores, '$.indicador_temperatura_transmitida.valor'
+                    indicadores, '$.indicador_temperatura_transmitida_viagem.valor'
                 ) as bool
-            ) as indicador_temperatura_transmitida,
+            ) as indicador_temperatura_transmitida_viagem,
             safe_cast(
                 json_value(
-                    indicadores, '$.indicador_temperatura_descartada.valor'
+                    indicadores, '$.indicador_temperatura_descartada_viagem.valor'
                 ) as bool
-            ) as indicador_temperatura_descartada,
+            ) as indicador_temperatura_descartada_viagem,
             safe_cast(
-                json_value(indicadores, '$.indicador_temperatura_regular.valor') as bool
-            ) as indicador_temperatura_regular,
+                json_value(
+                    indicadores, '$.indicador_temperatura_nula_viagem.valor'
+                ) as bool
+            ) as indicador_temperatura_nula_viagem,
+            safe_cast(
+                json_value(
+                    indicadores, '$.indicador_temperatura_regular_viagem.valor'
+                ) as bool
+            ) as indicador_temperatura_regular_viagem,
             servico,
             sentido,
             distancia_planejada
@@ -78,19 +85,19 @@ with
                     (
                         ano_fabricacao <= 2019
                         and (
-                            vr.indicador_falha_recorrente
-                            or vt.indicador_temperatura_descartada
-                            or not vt.indicador_temperatura_transmitida
-                            or not vt.indicador_temperatura_regular
+                            coalesce(vr.indicador_falha_recorrente, false)
+                            or vt.indicador_temperatura_nula_viagem
+                            or not vt.indicador_temperatura_transmitida_viagem
+                            or not vt.indicador_temperatura_regular_viagem
                         )
                         and data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
                     )
                     or (
                         (
-                            vr.indicador_falha_recorrente
-                            or vt.indicador_temperatura_descartada
-                            or not vt.indicador_temperatura_transmitida
-                            or not vt.indicador_temperatura_regular
+                            coalesce(vr.indicador_falha_recorrente, false)
+                            or vt.indicador_temperatura_nula_viagem
+                            or not vt.indicador_temperatura_transmitida_viagem
+                            or not vt.indicador_temperatura_regular_viagem
                         )
                         and data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}')
                     )
@@ -105,13 +112,13 @@ with
                     )
                 then
                     (
-                        not vr.indicador_falha_recorrente
-                        and not vt.indicador_temperatura_descartada
-                        and vt.indicador_temperatura_transmitida
-                        and vt.indicador_temperatura_regular
+                        not coalesce(vr.indicador_falha_recorrente, false)
+                        and not vt.indicador_temperatura_nula_viagem
+                        and vt.indicador_temperatura_transmitida_viagem
+                        and vt.indicador_temperatura_regular_viagem
                     )
                 else null
-            end as indicador_regularidade_ar_condicionado,
+            end as indicador_regularidade_ar_condicionado_viagem,
             indicadores,
             servico,
             sentido,
@@ -133,10 +140,10 @@ select
     json_set(
         json_set(
             indicadores,
-            '$.indicador_regularidade_ar_condicionado.valor',
-            indicador_regularidade_ar_condicionado
+            '$.indicador_regularidade_ar_condicionado_viagem.valor',
+            indicador_regularidade_ar_condicionado_viagem
         ),
-        '$.indicador_regularidade_ar_condicionado.datetime_apuracao_subsidio',
+        '$.indicador_regularidade_ar_condicionado_viagem.datetime_apuracao_subsidio',
         current_datetime("America/Sao_Paulo")
     ) as indicadores,
     servico,

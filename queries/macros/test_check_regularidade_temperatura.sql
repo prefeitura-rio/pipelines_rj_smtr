@@ -12,19 +12,19 @@
                 id_viagem,
                 safe_cast(
                     json_value(
-                        indicadores, '$.indicador_temperatura_descartada.valor'
+                        indicadores, '$.indicador_temperatura_descartada_viagem.valor'
                     ) as bool
-                ) as indicador_temperatura_descartada,
+                ) as indicador_temperatura_descartada_viagem,
                 safe_cast(
                     json_value(
-                        indicadores, '$.indicador_temperatura_transmitida.valor'
+                        indicadores, '$.indicador_temperatura_transmitida_viagem.valor'
                     ) as bool
-                ) as indicador_temperatura_transmitida,
+                ) as indicador_temperatura_transmitida_viagem,
                 safe_cast(
                     json_value(
-                        indicadores, '$.indicador_temperatura_regular.valor'
+                        indicadores, '$.indicador_temperatura_regular_viagem.valor'
                     ) as bool
-                ) as indicador_temperatura_regular
+                ) as indicador_temperatura_regular_viagem
             from {{ ref("aux_viagem_temperatura") }}
             where {{ incremental_filter }}
         ),
@@ -61,9 +61,9 @@
                 i.ano_fabricacao,
                 i.indicador_ar_condicionado,
                 i.indicador_regularidade_ar_condicionado,
-                t.indicador_temperatura_descartada,
-                t.indicador_temperatura_transmitida,
-                t.indicador_temperatura_regular,
+                t.indicador_temperatura_descartada_viagem,
+                t.indicador_temperatura_transmitida_viagem,
+                t.indicador_temperatura_regular_viagem,
                 v.indicador_falha_recorrente
             from indicadores i
             left join
@@ -92,9 +92,9 @@
                     )
                     and indicador_ar_condicionado
                     and not indicador_falha_recorrente
-                    and not indicador_temperatura_descartada
-                    and indicador_temperatura_transmitida
-                    and indicador_temperatura_regular
+                    and not indicador_temperatura_descartada_viagem
+                    and indicador_temperatura_transmitida_viagem
+                    and indicador_temperatura_regular_viagem
                     and not indicador_regularidade_ar_condicionado
                 )
         ),
@@ -117,9 +117,9 @@
                     )
                     and (
                         indicador_falha_recorrente
-                        or indicador_temperatura_descartada
-                        or not indicador_temperatura_transmitida
-                        or not indicador_temperatura_regular
+                        or indicador_temperatura_descartada_viagem
+                        or not indicador_temperatura_transmitida_viagem
+                        or not indicador_temperatura_regular_viagem
                     )
                     and indicador_regularidade_ar_condicionado
                 )

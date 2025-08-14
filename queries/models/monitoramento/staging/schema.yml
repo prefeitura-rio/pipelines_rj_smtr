@@ -113,15 +113,15 @@ models:
         description: "Data de processamento do licenciamento do veículo"
       - name: data_verificacao_regularidade
         description: "Data de verificação da regularidade do ar condicionado"
-      - name: indicador_temperatura_variacao
+      - name: indicador_temperatura_variacao_veiculo
         description: "Indicador se houve variação na temperatura transmitida pelo veículo"
-      - name: indicador_temperatura_transmitida
+      - name: indicador_temperatura_transmitida_veiculo
         description: "Indicador se o veículo transmitiu dados de temperatura"
       - name: percentual_temperatura_nula_descartada
         description: "Percentual de registros de temperatura nula ou zero descartados"
       - name: percentual_temperatura_atipica_descartada
         description: "Percentual de registros de temperatura atípica descartados"
-      - name: indicador_temperatura_descartada
+      - name: indicador_temperatura_descartada_veiculo
         description: "Indicador se mais de 50% dos registros de temperatura foram descartados"
       - name: indicio_falha
         description: "Indicador de indício de falha no sistema de ar condicionado"
