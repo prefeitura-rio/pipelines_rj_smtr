@@ -23,7 +23,8 @@ models:
         data_type: datetime
         tests:
           - not_null:
-            where: DATE(datetime_processamento) < CURRENT_DATE
+              name: not_null__datetime_processamento__transacao
+              where: DATE(datetime_processamento) < CURRENT_DATE
       - name: datetime_captura
         description: "{{ doc('datetime_captura') }}"
         data_type: datetime
@@ -140,8 +141,9 @@ models:
         description: "{{ doc('data_ordem') }}"
         data_type: date
         tests:
-          - not_null
-            where: id_ordem_pagamento_consorcio_operador_dia is not null
+          - not_null:
+              name: not_null__data_ordem__transacao
+              where: id_ordem_pagamento_consorcio_operador_dia is not null
       - name: id_ordem_pagamento_servico_operador_dia
         description: "{{ doc('id_ordem_pagamento_servico_operador_dia') }}"
         data_type: string
