@@ -16,6 +16,7 @@ with
             )
             and date(datetime_processamento) - date(datetime_transacao)
             <= interval 6 day
+            and modo = "Ônibus"
     ),
     -- Transações RioCard
     transacao_riocard as (
@@ -28,6 +29,7 @@ with
             )
             and date(datetime_processamento) - date(datetime_transacao)
             <= interval 6 day
+            and modo = "Ônibus"
     ),
     -- Viagens realizadas
     viagem as (

@@ -19,6 +19,7 @@ with
             {{ incremental_filter }}
             and date(datetime_processamento) - date(datetime_transacao)
             <= interval 6 day
+            and modo = "Ônibus"
     ),
     -- Transações RioCard
     transacao_riocard as (
@@ -29,6 +30,7 @@ with
             {{ incremental_filter }}
             and date(datetime_processamento) - date(datetime_transacao)
             <= interval 6 day
+            and modo = "Ônibus"
     ),
     -- Status dos veículos
     veiculos as (
@@ -168,6 +170,7 @@ with
                 or data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
             )
             and date(datetime_captura) - date(datetime_gps) <= interval 6 day
+            and modo = "Ônibus"
     ),
     -- Ajusta estado do equipamento
     -- Agrupa mesma posição para mesmo validador e veículo, mantendo
