@@ -66,7 +66,21 @@ with
         select
             v.data,
             v.servico,
-            ve.status as tipo_viagem,
+            case
+                when
+                    v.data >= date("{{ var('DATA_SUBSIDIO_V3_INICIO') }}")
+                    and ve.status = "Nao licenciado"
+                then "Não licenciado"
+                when
+                    v.data >= date("{{ var('DATA_SUBSIDIO_V3_INICIO') }}")
+                    and ve.status = "Licenciado sem ar"
+                then "Licenciado sem ar e não autuado"
+                when
+                    v.data >= date("{{ var('DATA_SUBSIDIO_V3_INICIO') }}")
+                    and ve.status = "Licenciado com ar e não autuado (023.II)"
+                then "Licenciado com ar e não autuado"
+                else ve.status
+            end as tipo_viagem,
             count(id_viagem) as viagens,
             sum(distancia_planejada) as km_apurada
         from viagem as v
