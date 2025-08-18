@@ -124,7 +124,12 @@ with
             percentual_viagem_temperatura_pos_tratamento_descartada
             > 0.5 as indicador_viagem_temperatura_descartada_veiculo
         from agg_viagem_temperatura
-        where indicador_ar_condicionado
+        where
+            indicador_ar_condicionado
+            and (
+                vt.ano_fabricacao <= 2019
+                or vt.data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}')
+            )
     ),
     {% if is_incremental() %}
         dia_anterior as (
