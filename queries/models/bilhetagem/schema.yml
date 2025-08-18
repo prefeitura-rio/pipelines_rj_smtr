@@ -158,7 +158,7 @@ models:
           - not_null:
               name: not_null__data_ordem__transacao
               where: |
-                id_servico_jae not in (select id_linha from rj-smtr.cadastro_staging.linha_sem_ressarcimento)
+                id_servico_jae not in (select id_linha from `rj-smtr.cadastro_staging.linha_sem_ressarcimento`)
                 and date(datetime_processamento) < current_date("America/Sao_Paulo")
                 and tipo_transacao_jae not in ('Gratuidade', 'Transferência', 'Transferência EMV', 'Integração gratuidade', 'Botoeira')
                 and data in ({partitions})
