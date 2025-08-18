@@ -210,15 +210,6 @@ models:
       - test_check_regularidade_temperatura:
           name: test_check_regularidade_temperatura__viagem_regularidade_temperatura
           where: "data between date('{date_range_start}') and date('{date_range_end}') and data >= date('{DATA_SUBSIDIO_V17_INICIO}')"
-      # - dbt_expectations.expect_table_aggregation_to_equal_other_table:
-      #     expression: count(id_viagem)
-      #     compare_model: ref("viagem_classificada")
-      #     compare_expression: count(id_viagem)
-      #     group_by: [data]
-      #     compare_group_by: [data]
-      #     name: dbt_expectations.expect_table_aggregation_to_equal_other_table__viagem_regularidade_temperatura
-      #     compare_row_condition: "data between date('{{ var('date_range_start') }}') and date('{{ var('date_range_end') }}') and data >= date('{{ var('DATA_SUBSIDIO_V17_INICIO') }}')"
-      #     where: "data between date('{date_range_start}') and date('{date_range_end}') and data >= date('{DATA_SUBSIDIO_V17_INICIO}')"
     columns:
       - name: data
         description: "{{ doc('data_viagem') }} [partição]"

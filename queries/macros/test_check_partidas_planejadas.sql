@@ -14,7 +14,7 @@
             where
                 data between greatest(
                     date("{{ var('date_range_start') }}"),
-                    date('{DATA_SUBSIDIO_V17_INICIO}')
+                    date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
                 ) and date("{{ var('date_range_end') }}")
         ),
         os_faixa as (
