@@ -234,6 +234,9 @@ models:
               name: not_null__sentido__gps_validador_van
       - name: estado_equipamento
         description: "{{ doc('estado_equipamento') }}"
+        tests:
+          - not_null:
+              name: not_null__estado_equipamento__gps_validador_van
       - name: temperatura
         description: "Temperatura do local, medida pelo sensor do validador (ºC)"
       - name: versao_app
