@@ -19,6 +19,7 @@ with
             {{ incremental_filter }}
             and date(datetime_processamento) - date(datetime_transacao)
             <= interval 6 day
+            and modo = "Ônibus"
     ),
     -- Transações RioCard
     transacao_riocard as (
@@ -29,6 +30,7 @@ with
             {{ incremental_filter }}
             and date(datetime_processamento) - date(datetime_transacao)
             <= interval 6 day
+            and modo = "Ônibus"
     ),
     -- Status dos veículos
     veiculos as (
@@ -37,7 +39,7 @@ with
         where
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
-            data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+            and data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
     ),
     -- Viagens realizadas
     viagem_completa as (
@@ -61,7 +63,7 @@ with
             between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
                 "{{ var('end_date') }}"
             )
-            data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+            and data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
     ),
     -- Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
     -- limitada pela viagem anterior
@@ -168,6 +170,7 @@ with
                 or data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
             )
             and date(datetime_captura) - date(datetime_gps) <= interval 6 day
+            and modo = "Ônibus"
     ),
     -- Ajusta estado do equipamento
     -- Agrupa mesma posição para mesmo validador e veículo, mantendo
@@ -392,7 +395,6 @@ select
     end as tipo_viagem,
     v.modo,
     v.tecnologia_apurada,
-    v.tecnologia_remunerada,
     v.sentido,
     v.distancia_planejada,
     any_value(eep.quantidade_transacao) as quantidade_transacao,

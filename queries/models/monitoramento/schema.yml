@@ -488,13 +488,14 @@ models:
                   '023.VII',
                   '024.VIII',
                   '024.IX',
-                  '024.X',
+                  '024.XI',
                   '024.XII',
                   '024.XIII',
                   '024.XIV',
                   '024.XV',
                   '024.XVI',
                   '024.XVII',
+                  '024.XXII',
                   '025.I',
                   '025.II',
                   '025.III',
@@ -822,22 +823,26 @@ models:
         description: "Indicador se há sistema de ar condicionado no veículo"
       - name: indicadores.indicador_ar_condicionado.data_processamento_licenciamento
         description: "Data de processamento do licenciamento do veículo"
-      - name: indicadores.indicador_temperatura_variacao.valor
-        description: "Indicador se houve variação na temperatura transmitida pelo veículo"
-      - name: indicadores.indicador_temperatura_variacao.data_verificacao_regularidade
+      - name: indicadores.indicador_temperatura_variacao_veiculo.valor
+        description: "{{ doc('indicador_temperatura_variacao_veiculo') }}"
+      - name: indicadores.indicador_temperatura_variacao_veiculo.data_verificacao_regularidade
         description: "{{ doc('data_verificacao_regularidade') }}"
-      - name: indicadores.indicador_temperatura_transmitida.valor
-        description: "Indicador se o veículo transmitiu dados de temperatura"
-      - name: indicadores.indicador_temperatura_transmitida.data_verificacao_regularidade
+      - name: indicadores.indicador_temperatura_transmitida_veiculo.valor
+        description: "{{ doc('indicador_temperatura_transmitida_veiculo') }}"
+      - name: indicadores.indicador_temperatura_transmitida_veiculo.data_verificacao_regularidade
         description: "{{ doc('data_verificacao_regularidade') }}"
-      - name: indicadores.indicador_temperatura_descartada.valor
-        description: "Indicador se mais de 50% dos registros de temperatura foram descartados"
-      - name: indicadores.indicador_temperatura_descartada.data_verificacao_regularidade
+      - name: indicadores.indicador_temperatura_descartada_veiculo.valor
+        description: "{{ doc('indicador_temperatura_descartada_veiculo') }}"
+      - name: indicadores.indicador_temperatura_descartada_veiculo.data_verificacao_regularidade
         description: "{{ doc('data_verificacao_regularidade') }}"
-      - name: indicadores.indicador_temperatura_descartada.percentual_temperatura_nula_descartada
-        description: "Indicador de percentual de registros de temperatura nula descartados"
-      - name: indicadores.indicador_temperatura_descartada.percentual_temperatura_atipica_descartada
-        description: "Indicador de percentual de registros de temperatura atípica descartados"
+      - name: indicadores.indicador_temperatura_descartada_veiculo.percentual_temperatura_pos_tratamento_descartada
+        description: "{{ doc('percentual_temperatura_pos_tratamento_descartada') }}"
+      - name: indicadores.indicador_viagem_temperatura_descartada_veiculo.valor
+        description: "{{ doc('indicador_viagem_temperatura_descartada_veiculo') }}"
+      - name: indicadores.indicador_viagem_temperatura_descartada_veiculo.percentual_viagem_temperatura_pos_tratamento_descartada
+        description: "{{ doc('percentual_viagem_temperatura_pos_tratamento_descartada') }}"
+      - name: indicadores.indicador_viagem_temperatura_descartada_veiculo.data_verificacao_regularidade
+        description: "{{ doc('data_verificacao_regularidade') }}"
       - name: indicadores.indicador_falha_recorrente.valor
         description: "Indicador se houve padrão de falha recorrente por 5 (cinco) dias de operação consecutivos"
       - name: indicadores.indicador_falha_recorrente.data_verificacao_falha
