@@ -90,7 +90,7 @@ with
     ),
     particao_completa as (
         select *
-        from aux_calculo_integracao
+        from integracao_filtrada
 
         {% if is_incremental() and partitions | length > 0 %}
             union all

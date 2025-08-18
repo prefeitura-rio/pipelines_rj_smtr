@@ -184,7 +184,7 @@ models:
       - name: id_integracao
         description: "Identificador único da integração"
       - name: sequencia_integracao
-        description: "{{ doc('id_integracao') }} "
+        description: "{{ doc('sequencia_integracao') }}"
       - name: modo
         description: "{{ doc('modo') }}"
       - name: id_consorcio

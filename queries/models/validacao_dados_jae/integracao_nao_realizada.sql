@@ -35,15 +35,22 @@ with
         {% if is_incremental() %}
             where
                 {% if partitions | length > 0 %}
+
                     data in ({{ partitions | join(", ") }})
-                    and date(datetime_inicio_integracao)
-                    in ({{ partitions | join(", ") }})
+                    or data in ({{ adjacent_partitions | join(", ") }})
+
                 {% else %} false
                 {% endif %}
         {% endif %}
         qualify
             max(date(datetime_processamento)) over (partition by id_integracao)
             < current_date("America/Sao_Paulo")
+            and (
+                date(max(datetime_transacao) over (partition by id_integracao))
+                in ({{ partitions | join(", ") }})
+                or date(min(datetime_transacao) over (partition by id_integracao))
+                in ({{ partitions | join(", ") }})
+            )
     ),
     integracao_jae as (
         select
