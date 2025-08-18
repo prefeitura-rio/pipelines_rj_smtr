@@ -15,10 +15,15 @@
 {% endset %}
 
 {% set condicao_ar_inoperante %}
-    (coalesce(vr.indicador_falha_recorrente, false)
-    or vt.indicador_temperatura_nula_zero_viagem
-    or not vt.indicador_temperatura_transmitida_viagem
-    or not vt.indicador_temperatura_regular_viagem)
+    (
+        (
+            vt.data >= date('{{ var("DATA_SUBSIDIO_V20_INICIO") }}')
+            and coalesce(vr.indicador_falha_recorrente, false)
+        )
+        or vt.indicador_temperatura_nula_zero_viagem
+        or not vt.indicador_temperatura_transmitida_viagem
+        or not vt.indicador_temperatura_regular_viagem
+    )
 {% endset %}
 
 with
