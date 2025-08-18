@@ -16,6 +16,7 @@ with
             )
             and date(datetime_processamento) - date(datetime_transacao)
             <= interval 6 day
+            and modo = "Ônibus"
     ),
     -- Transações RioCard
     transacao_riocard as (
@@ -28,6 +29,7 @@ with
             )
             and date(datetime_processamento) - date(datetime_transacao)
             <= interval 6 day
+            and modo = "Ônibus"
     ),
     -- Viagens realizadas
     viagem as (
@@ -222,7 +224,7 @@ with
                 then 'Validador fechado'
 
                 when
-                    data >= date('{{ var("DATA_SUBSIDIO_V18_INICIO") }}')
+                    data >= date('{{ var("DATA_SUBSIDIO_V20_INICIO") }}')
                     and (
                         quantidade_transacao_riocard_servico_divergente > 0
                         or quantidade_transacao_servico_divergente > 0

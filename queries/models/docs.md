@@ -1189,3 +1189,43 @@ Hash identificador do cartão [protegido]
 {% docs tipo_transacao_jae %}
 Tipo de transação realizada conforme o dado original da Jaé [a primeira perna de integrações são classificadas como tipo Débito e não Integração]
 {% enddocs %}
+
+{% docs id_ordem_pagamento_consorcio_operador_dia %}
+Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_operador_dia
+{% enddocs %}
+
+{% docs id_ordem_pagamento_consorcio_dia %}
+Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.id_ordem_pagamento_consorcio_dia
+{% enddocs %}
+
+{% docs id_ordem_pagamento %}
+Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento
+{% enddocs %}
+
+{% docs valor_pagamento %}
+Valor de pagamento da transação
+{% enddocs %}
+
+{% docs indicador_temperatura_variacao_veiculo %}
+Indicador se houve variação na temperatura transmitida pelo veículo
+{% enddocs %}
+
+{% docs indicador_temperatura_transmitida_veiculo %}
+Indicador se o veículo transmitiu dados de temperatura
+{% enddocs %}
+
+{% docs percentual_viagem_temperatura_pos_tratamento_descartada %}
+Percentual de viagens com mais de 50% de registros de temperatura descartados após tratamento estatístico em um dia de operação
+{% enddocs %}
+
+{% docs percentual_temperatura_pos_tratamento_descartada %}
+Percentual de registros de temperatura descartados após tratamento estatístico em um dia de operação
+{% enddocs %}
+
+{% docs indicador_temperatura_descartada_veiculo %}
+Indica se percentual_temperatura_pos_tratamento_descartada é maior que 50%
+{% enddocs %}
+
+{% docs indicador_viagem_temperatura_descartada_veiculo %}
+Indica se percentual_viagem_temperatura_pos_tratamento_descartada é maior que 50%
+{% enddocs %}
