@@ -1177,3 +1177,15 @@ Indicadores para classificação da viagem
 {% docs data_verificacao_regularidade %}
 Data de verificação da regularidade
 {% enddocs %}
+
+{% docs sequencia_integracao %}
+Sequência da transação dentro da integração
+{% enddocs %}
+
+{% docs hash_cartao %}
+Hash identificador do cartão [protegido]
+{% enddocs %}
+
+{% docs tipo_transacao_jae %}
+Tipo de transação realizada conforme o dado original da Jaé [a primeira perna de integrações são classificadas como tipo Débito e não Integração]
+{% enddocs %}
