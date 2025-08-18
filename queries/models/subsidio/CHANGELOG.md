@@ -1,5 +1,29 @@
 # Changelog - subsidio
 
+## [2.1.1] - 2025-08-14
+
+### Alterado
+
+- Refatora modelos `aux_veiculo_falha_ar_condicionado` e `veiculo_regularidade_temperatura_dia`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/787)
+
+## [2.1.0] - 2025-08-11
+
+### Corrigido
+
+- Corrigida a coluna `tecnologia_remunerada` nos modelos `viagem_transacao` e `viagem_transacao_aux_v1` assim como a data limite do modelo `viagem_transacao_aux_v1` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/782)
+
+## [2.0.9] - 2025-08-08
+
+### Alterado
+
+- Altera a data para regra de `Validador associado incorretamente` nos modelos `viagem_transacao_aux_v2` `viagem_transacao_aux_v1` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/769)
+
+## [2.0.8] - 2025-08-07
+
+### Alterado
+
+- Alterado o modelo `percentual_operacao_faixa_horaria` para apuração por sentido e utilização do versionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+
 ## [2.0.7] - 2025-07-31
 
 ### Adicionado

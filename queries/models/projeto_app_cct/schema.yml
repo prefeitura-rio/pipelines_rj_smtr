@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: transacao_cct
+    description: "Transações para apuração do CCT."
+    columns:
+      - name: id_transacao
+        description: "{{ doc('id_transacao') }}"
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: datetime_transacao
+        description: "{{ doc('datetime_transacao') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: valor_pagamento
+        description: "{{ doc('valor_pagamento') }}"
+      - name: id_ordem_pagamento
+        description: "{{ doc('id_ordem_pagamento') }}"
+      - name: id_ordem_pagamento_consorcio_operador_dia
+        description: "{{ doc('id_ordem_pagamento_consorcio_operador_dia') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
