@@ -18,17 +18,17 @@
                     where
                         table_name = "{{relation.identifier}}"
                         and partition_id != "NULL"
-                        and datetime(last_modified_time, "America/Sao_Paulo") between datetime("{{var('date_range_start')}}") and (datetime("{{var('date_range_end')}}"))
+                        and datetime(last_modified_time, "America/Sao_Paulo") >= datetime("{{var('date_range_start')}}")
+                        and datetime(last_modified_time, "America/Sao_Paulo") < datetime("{{var('date_range_end')}}")
                 {% endset %}
 
                 {% set partitions = run_query(partition_query).columns[0].values() %}
-                {% set var_value = partitions | join(", ")%}
-            {% else %}
-                {% set var_value = var(var_name) %}
+                {% set var_value = partitions | join(", ") %}
+            {% else %} {% set var_value = var(var_name) %}
             {% endif %}
             {% set final_where.value = final_where.value.replace(
-                    var_replace, var_value
-                ) %}
+                var_replace, var_value
+            ) %}
         {% endfor %}
         (select * from {{ relation }} where {{ final_where.value }})
     {%- else -%} {{ relation }}
