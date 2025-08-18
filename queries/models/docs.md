@@ -1221,3 +1221,7 @@ Indica se percentual_temperatura_pos_tratamento_descartada é maior que 50%
 {% docs indicador_viagem_temperatura_descartada_veiculo %}
 Indica se percentual_viagem_temperatura_pos_tratamento_descartada é maior que 50%
 {% enddocs %}
+
+{% docs estado_equipamento %}
+Validador aberto ou fechado no momento da transmissão
+{% enddocs %}
