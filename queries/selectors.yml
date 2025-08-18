@@ -109,9 +109,9 @@ selectors:
     definition:
       union:
         - method: fqn
-          value: aux_transacao_possivel_transferencia
+          value: aux_particao_calculo_integracao
         - method: fqn
-          value: aux_transferencia_calculada
+          value: aux_calculo_integracao
         - method: fqn
           value: aux_integracao_calculada
         - method: fqn
