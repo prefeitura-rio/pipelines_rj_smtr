@@ -98,7 +98,7 @@ models:
           - not_null:
               name: not_null__modo__gps_validador
       - name: data
-        description: "{{ doc('data') }}"
+        description: "Data do recebimento da transmissão do GPS (partição)"
       - name: hora
         description: "Hora do recebimento da transmissão do GPS"
       - name: datetime_gps
@@ -176,7 +176,7 @@ models:
           - not_null:
               name: not_null__modo__gps_validador_van
       - name: data
-        description: "{{ doc('data') }}"
+        description: "Data do recebimento da transmissão do GPS (partição)"
       - name: hora
         description: "Hora do recebimento da transmissão do GPS"
       - name: datetime_gps
@@ -217,6 +217,8 @@ models:
         tests:
           - not_null:
               name: not_null__id_transmissao_gps__gps_validador_van
+          - unique:
+              name: unique__id_transmissao_gps__gps_validador_van
       - name: latitude
         description: "Latitude do validador no momento da transmissão [protegido]"
         policy_tags:
