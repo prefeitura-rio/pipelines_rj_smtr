@@ -97,7 +97,7 @@ with
 
             select o.*
             from {{ this }} o
-            left join aux_calculo_integracao n using (id_transacao)
+            left join integracao_filtrada n using (id_transacao)
             where
                 o.data in ({{ partitions | join(", ") }})
                 or o.data in ({{ adjacent_partitions | join(", ") }})
