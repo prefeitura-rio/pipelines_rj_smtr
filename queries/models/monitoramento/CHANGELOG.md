@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.6.4] - 2025-08-15
+
+### Alterado
+
+- Refatora modelos `aux_veiculo_falha_ar_condicionado` e `veiculo_regularidade_temperatura_dia` para não materializar dados antes de `DATA_SUBSIDIO_V20_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/788)
+
 ## [1.6.3] - 2025-08-14
 
 ### Alterado
