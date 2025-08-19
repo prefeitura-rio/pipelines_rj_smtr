@@ -2,6 +2,30 @@
 
 ## [3.2.5] - 2025-08-07
 
+### Adicionado
+
+- Adiciona testes not_null e unique nos modelos de `bilhetagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/783):
+  - `transacao.sql`
+  - `transacao_riocard.sql`
+  - `transacao_valor_ordem.sql`
+  - `transacao_retificada.sql`
+  - `integracao.sql`
+  - `passageiro_hora.sql`
+  - `passageiro_tile_hora.sql`
+
+- Adiciona testes not_null e unique nos modelos de `br_rj_riodejaneiro_bilhetagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/783):
+  - `gps_validador.sql`
+  - `gps_validador_van.sql`
+
+### Alterado
+
+- Ajusta a coluna `tipo_transacao_jae` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/783)
+- Ajusta a coluna `tipo_usuario` no modelo `transacao_riocard.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/783)
+- Ajusta a coluna `produto` no modelo `transacao_riocard.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/783)
+- Ajusta a coluna `tipo_transacao` no modelo `transacao_riocard.sql` (
+
+## [3.2.5] - 2025-08-07
+
 ### Alterado
 
 - Ajusta a coluna `tipo_transacao` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/768)
