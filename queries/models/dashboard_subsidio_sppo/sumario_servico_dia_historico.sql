@@ -54,6 +54,7 @@ with
         from {{ ref("sumario_dia") }}
         -- `rj-smtr`.`dashboard_subsidio_sppo`.`sumario_dia`
         left join viagem_planejada using (`data`, servico)
+        where data < DATE( "{{ var('DATA_SUBSIDIO_V2_INICIO') }}" )
     ),
     -- v2: Valor do subsídio pós glosa por tipos de viagem (2023-01-16 a 2023-07-15 e
     -- após de 2023-09-01)
@@ -73,6 +74,7 @@ with
         from {{ ref("sumario_servico_dia") }}
         -- `rj-smtr`.`dashboard_subsidio_sppo`.`sumario_servico_dia`
         left join viagem_planejada using (`data`, servico)
+        where data >= DATE( "{{ var('DATA_SUBSIDIO_V2_INICIO') }}" )
     ),
     -- Valor do subsídio sem glosas - Suspenso por Decisão Judicial (Entre 2023-07-16
     -- e 2023-08-31) (R$ 2.81/km em 2023)
