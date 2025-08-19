@@ -37,7 +37,7 @@
                             ifnull(
                                 regexp_replace(
                                     cast({{ c }} as string),
-                                    r'"datetime_verificacao_regularidade":"[^"]*"[,}]',
+                                    r'"datetime_verificacao_regularidade":"[^"]*",',
                                     ''
                                 ),
                                 'n/a'
@@ -538,7 +538,7 @@ with
             parse_json(
                 regexp_replace(
                     indicadores_str,
-                    r'"datetime_verificacao_regularidade":"[^"]*"[,}]',
+                    r'"datetime_verificacao_regularidade":"[^"]*",',
                     concat(
                         '"datetime_verificacao_regularidade":"',
                         datetime_verificacao_atual,
