@@ -5,7 +5,7 @@
 
 # Adicionado
 
-- Cria nova lógica para o cálculo de integrações não realizada (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/793):
+- Cria nova lógica para o cálculo de integrações não realizadas (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/793):
   - `aux_particao_calculo_integracao.sql`
   - `aux_transacao_filtro_integracao_calculada.sql`
   - `aux_calculo_integracao.py`
