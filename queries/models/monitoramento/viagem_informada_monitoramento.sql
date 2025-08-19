@@ -26,7 +26,7 @@
             FROM
                 {{ staging_viagem_informada_rioonibus }}
             WHERE
-                {{ incremental_filter }}
+                {{ incremental_filter }} and data_viagem is not null
 
             UNION DISTINCT
 
@@ -35,7 +35,7 @@
             FROM
                 {{ staging_viagem_informada_brt }}
             WHERE
-                {{ incremental_filter }}
+                {{ incremental_filter }} and data_viagem is not null
 
         {% endset %}
 
