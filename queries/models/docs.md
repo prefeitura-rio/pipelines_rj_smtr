@@ -70,6 +70,10 @@ Licenciado com ar e não autuado - viagem realizada por veículo licenciado com 
 Serviço realizado pelo veículo
 {% enddocs %}
 
+{% docs servico_corrigido %}
+Serviço realizado pelo veículo após correção
+{% enddocs %}
+
 {% docs id_viagem %}
 Código único identificador da viagem
 {% enddocs %}
@@ -255,11 +259,14 @@ Data final do feed [versão]
 {% enddocs %}
 
 {% docs tipo_servico %}
-Tipo de Serviço da Linha
+Tipo de serviço da linha, conforme RDO [Relatório Diário de Operação]
+{% enddocs %}
+
+{% docs tipo_servico_jae %}
 {% enddocs %}
 
 {% docs ordem_servico %}
-Ordem de Serviço da Linha
+Ordem de serviço da linha, conforme RDO [Relatório Diário de Operação]
 {% enddocs %}
 
 {% docs codigo_veiculo %}
@@ -860,7 +867,7 @@ Indicador se o veículo foi autuado por infração relacionada à segurança do 
 {% enddocs %}
 
 {% docs km_apurada %}
-Distância apurada para o serviço por dia (km)
+Distância apurada para o serviço (km)
 {% enddocs %}
 
 {% docs km_apurada_autuado_limpezaequipamento %}
@@ -1195,4 +1202,196 @@ Documento do operador [CPF ou CNPJ] [protegido]
 
 {% docs tipo_documento_operadora %}
 Tipo do documento do operador [CPF ou CNPJ]
+{% enddocs %}
+
+{% docs receita_total_esperada %}
+Receita total esperada com base na quilometragem [irk * km] (R$)
+{% enddocs %}
+
+{% docs receita_tarifaria_esperada %}
+Receita tarifária esperada com base na quilometragem [irk_tarifa_publica * km] (R$)
+{% enddocs %}
+
+{% docs subsidio_esperado %}
+Subsídio esperado com base na quilometragem [subsidio_km * km] (R$)
+{% enddocs %}
+
+{% docs subsidio_glosado %}
+Valor de subsídio glosado conforme legislação vigente [subsidio_esperado - valor_subsidio_pago] (R$)
+{% enddocs %}
+
+{% docs receita_total_aferida %}
+Receita total aferida [receita_tarifaria_aferida + valor_subsidio_pago] (R$)
+{% enddocs %}
+
+{% docs receita_tarifaria_aferida %}
+Receita tarifária aferida com base no RDO [Relatório Diário de Operação] (R$)
+{% enddocs %}
+
+{% docs subsidio_pago %}
+Valor de subsídio efetivamente pago (R$)
+{% enddocs %}
+
+{% docs saldo %}
+Saldo entre a receita esperada e a receita aferida [(receita_total_aferida - receita_total_esperada - subsidio_glosado) ou (receita_tarifaria_aferida - receita_tarifaria_esperada)] (R$)
+{% enddocs %}
+
+{% docs quinzena %}
+Identificador da quinzena (1 ou 2) dentro do mês de referência
+{% enddocs %}
+
+{% docs data_inicial_quinzena %}
+Data inicial da quinzena considerada
+{% enddocs %}
+
+{% docs data_final_quinzena %}
+Data final da quinzena considerada
+{% enddocs %}
+
+{% docs km_subsidiada %}
+Quilometragem apurada e subsidiada (km)
+{% enddocs %}
+
+{% docs datas_servico %}
+Quantidade total de pares data-serviço no período
+{% enddocs %}
+
+{% docs datas_servico_pod_menor_80 %}
+Quantidade de pares data-serviço com POD [Percentual de Operação Diário] menor que 80%
+{% enddocs %}
+
+{% docs datas_servico_excecao %}
+Quantidade de pares data-serviço em datas de exceção
+{% enddocs %}
+
+{% docs datas_servico_atipicos %}
+Quantidade de pares data-serviço atípicos
+{% enddocs %}
+
+{% docs datas_servico_ausencia_receita_tarifaria %}
+Quantidade de pares data-serviço sem receita tarifária
+{% enddocs %}
+
+{% docs datas_servico_tipicos %}
+Quantidade de pares data-serviço típicos
+{% enddocs %}
+
+{% docs percentual_datas_servico_pod_menor_80 %}
+Percentual de pares data-serviço com POD [Percentual de Operação Diário] menor que 80%
+{% enddocs %}
+
+{% docs percentual_datas_servico_excecao %}
+Percentual de pares data-serviço em datas de exceção
+{% enddocs %}
+
+{% docs percentual_datas_servico_atipicos %}
+Percentual de pares data-serviço atípicos
+{% enddocs %}
+
+{% docs percentual_datas_servico_ausencia_receita %}
+Percentual de pares data-serviço sem receita tarifária
+{% enddocs %}
+
+{% docs percentual_datas_servico_tipicos %}
+Percentual de pares data-serviço típicos
+{% enddocs %}
+
+{% docs perc_km_planejada %}
+Percentual de quilometragem apurada em relação à planejada do serviço ou POD [Percentual de Operação Diário]
+{% enddocs %}
+
+{% docs irk_tarifa_publica %}
+Índice de Remuneração por Quilômetro [tarifário] (R$/km)
+{% enddocs %}
+
+{% docs subsidio_km %}
+Valor do subsídio por quilômetro (R$/km)
+{% enddocs %}
+
+{% docs tipo_recurso %}
+Tipo de recurso ou justificativa que motivou a exclusão daquele par data-serviço
+{% enddocs %}
+
+{% docs tipo_inconsistencia %}
+Classificação do tipo de inconsistência encontrada no par data-serviço
+{% enddocs %}
+
+{% docs km_apurada_pod %}
+Distância apurada para o serviço (km) para cálculo do POD [Percentual de Operação Diário]
+{% enddocs %}
+
+{% docs servico_original_rdo %}
+Serviço informado no RDO [Relatório Diário de Operação] com tratamento
+{% enddocs %}
+
+{% docs valor_subsidio_pago %}
+Valor total pago de subsídio
+{% enddocs %}
+
+{% docs servico_original_subsidio %}
+Serviço apurado no subsídio
+{% enddocs %}
+
+{% docs km_planejada %}
+Distância planejada para o serviço (km)
+{% enddocs %}
+
+{% docs data_fim %}
+Data final do período para um determinado IRK
+{% enddocs %}
+
+{% docs data_inicio %}
+Data inicial do período para um determinado IRK
+{% enddocs %}
+
+{% docs quantidade_dia_falha_operacional %}
+Quantidade consecutiva de dias com falha operacional do ar condicionado
+{% enddocs %}
+
+{% docs indicadores_viagem %}
+Indicadores para classificação da viagem
+{% enddocs %}
+
+{% docs data_verificacao_regularidade %}
+Data de verificação da regularidade
+{% enddocs %}
+
+{% docs id_ordem_pagamento_consorcio_operador_dia %}
+Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_operador_dia
+{% enddocs %}
+
+{% docs id_ordem_pagamento_consorcio_dia %}
+Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.id_ordem_pagamento_consorcio_dia
+{% enddocs %}
+
+{% docs id_ordem_pagamento %}
+Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento
+{% enddocs %}
+
+{% docs valor_pagamento %}
+Valor de pagamento da transação
+{% enddocs %}
+
+{% docs indicador_temperatura_variacao_veiculo %}
+Indicador se houve variação na temperatura transmitida pelo veículo
+{% enddocs %}
+
+{% docs indicador_temperatura_transmitida_veiculo %}
+Indicador se o veículo transmitiu dados de temperatura
+{% enddocs %}
+
+{% docs percentual_viagem_temperatura_pos_tratamento_descartada %}
+Percentual de viagens com mais de 50% de registros de temperatura descartados após tratamento estatístico em um dia de operação
+{% enddocs %}
+
+{% docs percentual_temperatura_pos_tratamento_descartada %}
+Percentual de registros de temperatura descartados após tratamento estatístico em um dia de operação
+{% enddocs %}
+
+{% docs indicador_temperatura_descartada_veiculo %}
+Indica se percentual_temperatura_pos_tratamento_descartada é maior que 50%
+{% enddocs %}
+
+{% docs indicador_viagem_temperatura_descartada_veiculo %}
+Indica se percentual_viagem_temperatura_pos_tratamento_descartada é maior que 50%
 {% enddocs %}

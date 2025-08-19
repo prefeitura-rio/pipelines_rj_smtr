@@ -28,6 +28,9 @@ selectors:
           value: tecnologia_servico
         - method: path
           value: models/subsidio
+        - exclude:
+          - method: fqn
+            value: aux_viagem_temperatura
         - method: fqn
           value: viagens_remuneradas
         - method: path
@@ -79,6 +82,10 @@ selectors:
           value: staging_transacao_ordem
         - method: fqn
           value: aux_transacao_id_ordem_pagamento
+        - method: fqn
+          value: data_ordem_transacao
+        - method: fqn
+          value: transacao_cct
 
   - name: transacao_valor_ordem
     description: Materialização da tabela contendo os valores das transações em cada ordem de pagamento
@@ -146,6 +153,8 @@ selectors:
         - method: fqn
           value: aux_servicos_gtfs
         - method: fqn
+          value: aux_servico_jae
+        - method: fqn
           value: cadastro
 
   - name: transacao
@@ -176,6 +185,10 @@ selectors:
           value: transacao_riocard
         - method: fqn
           value: view_transacao
+        - method: fqn
+          value: staging_lancamento
+        - method: fqn
+          value: recarga_jae
 
   - name: integracao
     description: Materialização das tabelas de integracao da bilhetagem
@@ -349,6 +362,20 @@ selectors:
           value: veiculo_fiscalizacao_lacre
         - method: fqn
           value: autuacao_disciplinar_historico
+        - method: fqn
+          value: temperatura_inmet
+        - method: fqn
+          value: viagem_classificada
+        - method: fqn
+          value: aux_veiculo_gps_dia
+        - method: fqn
+          value: aux_viagem_temperatura
+        - method: fqn
+          value: aux_veiculo_falha_ar_condicionado
+        - method: fqn
+          value: veiculo_regularidade_temperatura_dia
+        - method: fqn
+          value: veiculo_dia
 
   - name: cadastro_veiculo
     definition:

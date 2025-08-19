@@ -10,7 +10,9 @@ select
     datetime(
         parse_timestamp('%Y-%m-%d %H:%M:%S%Ez', timestamp_captura), "America/Sao_Paulo"
     ) as timestamp_captura,
-    safe_cast(json_value(content, '$.cd_cliente') as string) as cd_cliente,
+    replace(
+        safe_cast(json_value(content, '$.cd_cliente') as string), '.0', ''
+    ) as cd_cliente,
     datetime(
         parse_timestamp(
             '%Y-%m-%dT%H:%M:%E*S%Ez',

@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de bilhetagem
 
-DBT: 2025-07-10
+DBT: 2025-08-12
 """
 
 from pipelines.capture.jae.constants import constants as jae_constants
@@ -22,6 +22,7 @@ TRANSACAO_MATERIALIZACAO = create_default_materialization_flow(
         jae_constants.TRANSACAO_SOURCE.value,
         jae_constants.TRANSACAO_RIOCARD_SOURCE.value,
         constants.INTEGRACAO_SELECTOR.value,
+        jae_constants.LANCAMENTO_SOURCE.value,
     ]
     + [s for s in jae_constants.JAE_AUXILIAR_SOURCES.value if s.table_id in ["gratuidade"]],
 )
@@ -67,7 +68,10 @@ TRANSACAO_ORDEM_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="transacao_ordem - materializacao",
     selector=constants.TRANSACAO_ORDEM_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
-    wait=[financeiro_constants.FINANCEIRO_BILHETAGEM_SELECTOR.value],
+    wait=[
+        financeiro_constants.FINANCEIRO_BILHETAGEM_SELECTOR.value,
+        jae_constants.TRANSACAO_ORDEM_SOURCE.value,
+    ],
 )
 
 TRANSACAO_ORDEM_MATERIALIZACAO.state_handlers.append(

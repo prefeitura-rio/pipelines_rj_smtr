@@ -1,5 +1,57 @@
 # Changelog - monitoramento
 
+## [1.6.4] - 2025-08-15
+
+### Alterado
+
+- Refatora modelos `aux_veiculo_falha_ar_condicionado` e `veiculo_regularidade_temperatura_dia` para não materializar dados antes de `DATA_SUBSIDIO_V20_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/788)
+
+## [1.6.3] - 2025-08-14
+
+### Alterado
+
+- Refatora modelos `aux_veiculo_falha_ar_condicionado` e `veiculo_regularidade_temperatura_dia`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/787)
+
+## [1.6.2] - 2025-08-13
+
+### Adicionado
+
+- Adicionada excessão para lacres adicionados após o prazo entre `2025-07-16` e `2025-07-31` no modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/785)
+
+### Corrigido
+
+- Corrige teste `dbt_utils.relationships_where__id_auto_infracao__autuacao_disciplinar_historico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/785)
+
+## [1.6.1] - 2025-08-05
+
+### Adicionado
+
+- Adiciona teste `test_completude__temperatura_inmet` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/761)
+
+## [1.6.0] - 2025-07-31
+
+### Adicionado
+
+- Cria modelos `aux_veiculo_falha_ar_condicionado`, `temperatura_inmet` e `veiculo_regularidade_temperatura_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+- Adiciona coluna `ano_fabricacao` nos modelos `veiculo_dia` e `aux_veiculo_dia_consolidada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+- Adiciona teste dos modelos `aux_veiculo_falha_ar_condicionado`, `temperatura_inmet` e `veiculo_regularidade_temperatura_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+
+### Alterado
+
+- Refatora modelo `monitoramento_viagem_transacao` para utilizar os modelos `viagem_transacao_aux_v1` e `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+
+## [1.5.9] - 2025-07-28
+
+### Adicionado
+
+- Adiciona testes de unicidade no modelo `veiculo_fiscalizacao_lacre.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/708)
+
+## [1.5.8] - 2025-07-23
+
+### Alterado
+
+- Alterado o modelo `veiculo_fiscalizacao_lacre.sql` para lidar com correções dos dados capturados (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/719)
+
 ## [1.5.7] - 2025-07-10
 
 ### Alterado

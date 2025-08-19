@@ -2,7 +2,7 @@
 """
 Flows for gtfs
 
-DBT 2025-06-12
+DBT 2025-08-08a
 """
 
 from prefect import Parameter, case, task
@@ -40,7 +40,6 @@ from pipelines.migration.tasks import (
     get_current_timestamp,
     get_join_dict,
     rename_current_flow_run_now_time,
-    run_dbt_model,
     transform_raw_to_nested_structure_chunked,
     unpack_mapped_results_nout2,
     upload_raw_data_to_gcs,
@@ -55,7 +54,7 @@ from pipelines.tasks import (
     remove_key_from_dict,
     task_value_is_none,
 )
-from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt_tests
+from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt
 
 # from pipelines.capture.templates.flows import create_default_capture_flow
 
@@ -247,7 +246,8 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
         version = fetch_dataset_sha(dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value)
         dbt_vars = get_join_dict([{"data_versao_gtfs": data_versao_gtfs}], version)[0]
 
-        wait_run_dbt_model = run_dbt_model(
+        wait_run_dbt_model = run_dbt(
+            resource="model",
             dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value
             + " "
             + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,
@@ -276,12 +276,13 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             mode=mode,
         ).set_upstream(task=wait_run_dbt_model)
 
-        gtfs_data_quality = run_dbt_tests(
+        gtfs_data_quality = run_dbt(
+            resource="test",
             dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value
             + " "
             + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,
             _vars=dbt_vars,
-            exclude="tecnologia_servico",
+            exclude="tecnologia_servico sumario_faixa_servico_dia sumario_faixa_servico_dia_pagamento viagem_planejada viagens_remuneradas sumario_servico_dia_historico",  # noqa
         ).set_upstream(task=wait_run_dbt_model)
 
         gtfs_data_quality_results = dbt_data_quality_checks(

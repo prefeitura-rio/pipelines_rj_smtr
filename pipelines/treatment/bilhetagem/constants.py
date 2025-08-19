@@ -24,7 +24,7 @@ class constants(Enum):  # pylint: disable=c0103
 
     INTEGRACAO_SELECTOR = DBTSelector(
         name="integracao",
-        schedule_cron=create_daily_cron(hour=5, minute=15),
+        schedule_cron=create_daily_cron(hour=6, minute=30),
         initial_datetime=datetime(2025, 3, 26, 0, 0, 0),
     )
 
@@ -43,12 +43,12 @@ class constants(Enum):  # pylint: disable=c0103
 
     TRANSACAO_ORDEM_SELECTOR = DBTSelector(
         name="transacao_ordem",
-        schedule_cron=create_daily_cron(hour=6, minute=10),
+        schedule_cron=create_daily_cron(hour=9),
         initial_datetime=datetime(2024, 11, 21, 0, 0, 0),
     )
 
     TRANSACAO_VALOR_ORDEM_SELECTOR = DBTSelector(
         name="transacao_valor_ordem",
-        schedule_cron=create_daily_cron(hour=7, minute=40),
+        schedule_cron=create_daily_cron(hour=11, minute=30),
         initial_datetime=datetime(2025, 2, 4, 0, 0, 0),
     )

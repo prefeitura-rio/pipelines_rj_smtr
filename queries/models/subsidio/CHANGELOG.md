@@ -1,5 +1,48 @@
 # Changelog - subsidio
 
+## [2.1.2] - 2025-08-15
+
+### Alterado
+
+- Altera lógica para considerar `indicador_falha_recorrente` após `DATA_SUBSIDIO_V20_INICIO` no modelo `viagem_regularidade_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/788)
+
+## [2.1.1] - 2025-08-14
+
+### Alterado
+
+- Refatora modelos `aux_viagem_temperatura` e `viagem_regularidade_temperatura`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/787)
+
+## [2.1.0] - 2025-08-11
+
+### Corrigido
+
+- Corrigida a coluna `tecnologia_remunerada` nos modelos `viagem_transacao` e `viagem_transacao_aux_v1` assim como a data limite do modelo `viagem_transacao_aux_v1` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/782)
+
+## [2.0.9] - 2025-08-08
+
+### Alterado
+
+- Altera a data para regra de `Validador associado incorretamente` nos modelos `viagem_transacao_aux_v2` `viagem_transacao_aux_v1` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/769)
+
+## [2.0.8] - 2025-08-07
+
+### Alterado
+
+- Alterado o modelo `percentual_operacao_faixa_horaria` para apuração por sentido e utilização do versionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+
+## [2.0.7] - 2025-07-31
+
+### Adicionado
+
+- Cria modelos `aux_viagem_temperatura`, `viagem_transacao_aux_v1`, `viagem_transacao_aux_v2` e `viagem_regularidade_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+- Adiciona testes para os modelos `aux_viagem_temperatura` e `viagem_regularidade_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+- Adiciona as colunas `placa` e `ano_fabricacao` no modelo `viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+
+### Alterado
+
+- Altera o modelo `viagem_transacao` para utilizar os modelos `viagem_transacao_aux_v1` e `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+- Altera testes do modelo `viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+
 ## [2.0.6] - 2025-07-03
 
 ### Adicionado

@@ -87,6 +87,7 @@ models:
           - data
           - servico
           - faixa_horaria_inicio
+          - sentido
           name: dbt_utils.unique_combination_of_columns__sumario_faixa_servico_dia_pagamento
           where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - dbt_utils.expression_is_true:
@@ -249,6 +250,10 @@ models:
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
   - name: sumario_servico_dia_pagamento
     description: "Sumário do subsídio dos serviços de ônibus [SPPO] por dia [Dados entre 2024-08-16 e 2025-01-05]"
     tests:

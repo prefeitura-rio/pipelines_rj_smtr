@@ -1,5 +1,23 @@
 # Changelog - monitoramento
 
+## [1.2.6] - 2025-08-05
+
+### Adicionado
+
+- Adiciona descrição do teste `test_completude__temperatura_inmet` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/761)
+
+## [1.2.5] - 2025-07-28
+
+### Adicionado
+
+- Adiciona descrição dos testes de unicidade no `MONITORAMENTO_VEICULO_CHECKS_LIST` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/708)
+
+## [1.2.4] - 2025-07-23
+
+### Alterado
+
+- Alterado o flow `MONITORAMENTO_VEICULO_MATERIALIZACAO` para adicionar a materialização do snapshot (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/720)
+
 ## [1.2.3] - 2025-07-09
 
 ### Corrigido

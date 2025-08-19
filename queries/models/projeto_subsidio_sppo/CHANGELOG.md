@@ -1,5 +1,31 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.3.3] - 2025-08-07
+
+### Alterado
+
+- Adicionado coluna de controle no modelo `viagem_planejada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+
+## [9.3.2] - 2025-07-24
+
+### Corrigido
+
+- Corrigida a data final da soma de quilometragem planejada para o dia seguinte no modelo `viagem_planejada_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/721)
+
+## [9.3.1] - 2025-07-23
+
+### Corrigido
+
+- Corrigido o modelo `viagem_planejada.sql` para não utilizar o modelo `viagem_planejada_v1.sql` antes de `2024-04-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/719)
+
+## [9.3.0] - 2025-07-21
+
+### Alterado
+
+- Alterado o modelo `viagem_planejada.sql` para não somar as distâncias planejadas do dia anterior entre 24h e 03h após `2025-07-16` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/713)
+
+- Refatorado o modelo `viagem_planejada.sql` para utilizar versionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/713)
+
 ## [9.2.9] - 2025-07-10
 
 ### Corrigido
