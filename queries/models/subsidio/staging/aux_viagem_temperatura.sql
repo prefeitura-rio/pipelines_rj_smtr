@@ -37,7 +37,7 @@
                             ifnull(
                                 regexp_replace(
                                     cast({{ c }} as string),
-                                    r'"datetime_apuracao_subsidio":"[^"]*"[,}]',
+                                    r'"datetime_verificacao_regularidade":"[^"]*"[,}]',
                                     ''
                                 ),
                                 'n/a'
@@ -333,7 +333,7 @@ with
                 when max(indicador_ar_condicionado)
                 then current_datetime("America/Sao_Paulo")
                 else null
-            end as datetime_apuracao_subsidio,
+            end as datetime_verificacao_regularidade,
             indicador_temperatura_variacao_viagem,
             indicador_temperatura_transmitida_viagem,
             quantidade_pre_tratamento,
@@ -367,7 +367,7 @@ with
         from indicador_equipamento_bilhetagem ieb
         group by ieb.data, ieb.id_viagem
     ),
-    dados_novos as (  -- Estrutura indicadores em formato JSON sem datetime_apuracao_subsidio
+    dados_novos as (  -- Estrutura indicadores em formato JSON sem datetime_verificacao_regularidade
         select
             v.data,
             v.id_viagem,
@@ -390,22 +390,22 @@ with
             to_json_string(
                 struct(
                     struct(
-                        p.datetime_apuracao_subsidio,
+                        p.datetime_verificacao_regularidade,
                         p.indicador_temperatura_regular_viagem as valor,
                         safe_cast(
                             p.percentual_temperatura_regular as string
                         ) as percentual_temperatura_regular
                     ) as indicador_temperatura_regular_viagem,
                     struct(
-                        p.datetime_apuracao_subsidio,
+                        p.datetime_verificacao_regularidade,
                         p.indicador_temperatura_variacao_viagem as valor
                     ) as indicador_temperatura_variacao_viagem,
                     struct(
-                        p.datetime_apuracao_subsidio,
+                        p.datetime_verificacao_regularidade,
                         p.indicador_temperatura_transmitida_viagem as valor
                     ) as indicador_temperatura_transmitida_viagem,
                     struct(
-                        p.datetime_apuracao_subsidio,
+                        p.datetime_verificacao_regularidade,
                         p.indicador_temperatura_pos_tratamento_descartada_viagem
                         as valor,
                         safe_cast(
@@ -413,14 +413,14 @@ with
                         ) as percentual_temperatura_pos_tratamento_descartada
                     ) as indicador_temperatura_pos_tratamento_descartada_viagem,
                     struct(
-                        p.datetime_apuracao_subsidio,
+                        p.datetime_verificacao_regularidade,
                         p.indicador_temperatura_nula_zero_viagem as valor,
                         safe_cast(
                             p.percentual_temperatura_nula_zero_descartada as string
                         ) as percentual_temperatura_nula_zero_descartada
                     ) as indicador_temperatura_nula_zero_viagem,
                     struct(
-                        p.datetime_apuracao_subsidio, iva.valores
+                        p.datetime_verificacao_regularidade, iva.valores
                     ) as indicador_validador
                 )
             ) as indicadores_novos,
@@ -498,7 +498,7 @@ with
         from sha_dados_novos n
         left join sha_dados_atuais a using (data, id_viagem)
     ),
-    struct_indicadores as (  -- Define datetime_apuracao_atual
+    struct_indicadores as (  -- Define datetime_verificacao_atual
         select
             * except (
                 sha_dado_novo,
@@ -511,7 +511,7 @@ with
                 when sha_dado_atual is null or sha_dado_novo != sha_dado_atual
                 then current_datetime("America/Sao_Paulo")
                 else datetime_ultima_atualizacao_atual
-            end as datetime_apuracao_atual,
+            end as datetime_verificacao_atual,
             case
                 when sha_dado_atual is null or sha_dado_novo != sha_dado_atual
                 then '{{ invocation_id }}'
@@ -538,9 +538,11 @@ with
             parse_json(
                 regexp_replace(
                     indicadores_str,
-                    r'"datetime_apuracao_subsidio":"[^"]*"[,}]',
+                    r'"datetime_verificacao_regularidade":"[^"]*"[,}]',
                     concat(
-                        '"datetime_apuracao_subsidio":"', datetime_apuracao_atual, '",'
+                        '"datetime_verificacao_regularidade":"',
+                        datetime_verificacao_atual,
+                        '",'
                     )
                 )
             ) as indicadores,
@@ -548,7 +550,7 @@ with
             sentido,
             distancia_planejada,
             '{{ var("version") }}' as versao,
-            datetime_apuracao_atual as datetime_ultima_atualizacao,
+            datetime_verificacao_atual as datetime_ultima_atualizacao,
             id_execucao_dbt
         from struct_indicadores as s
     )

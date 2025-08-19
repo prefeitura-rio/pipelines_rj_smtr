@@ -1,4 +1,3 @@
-snapshot_viagem_regularidade_temperatura
 {% snapshot snapshot_viagem_regularidade_temperatura %}
 
     {{
