@@ -1,5 +1,11 @@
 # Changelog - subsidio
 
+## [2.1.3] - 2025-08-19
+
+### Adiciona
+
+- Adiciona lógica das colunas de controle no modelo `aux_viagem_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/796)
+
 ## [2.1.2] - 2025-08-15
 
 ### Alterado

@@ -1,5 +1,15 @@
 # Changelog - monitoramento
 
+## [1.6.5] - 2025-08-19
+
+### Corrigido
+
+- Corrige filtro no modelo `aux_veiculo_falha_ar_condicionado` para filtrar veículos que aplicam as regras de climatização (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/796)
+
+### Alterado
+
+- Altera lógica das colunas de controle no modelo `aux_veiculo_falha_ar_condicionado` para alterar a coluna `datetime_ultima_atualizacao` somente se a linha alterar (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/796)
+
 ## [1.6.4] - 2025-08-15
 
 ### Alterado
