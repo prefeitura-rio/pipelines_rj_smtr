@@ -9,7 +9,7 @@
         {% for match in matches %}
             {% set var_name = match.group(1) %}
             {% set var_replace = "{" ~ var_name ~ "}" %}
-            {% if var_name == "partitions" %}
+            {% if var_name == "partitions" and var(var_name) == "" %}
                 {% set partition_query %}
                     select
                         concat("'", parse_date("%Y%m%d", partition_id), "'") as particao
@@ -17,7 +17,7 @@
                         {{relation.database}}.{{relation.schema}}.INFORMATION_SCHEMA.PARTITIONS
                     where
                         table_name = "{{relation.identifier}}"
-                        and partition_id != "NULL"
+                        and partition_id != "__NULL__"
                         and datetime(last_modified_time, "America/Sao_Paulo") >= datetime("{{var('date_range_start')}}")
                         and datetime(last_modified_time, "America/Sao_Paulo") < datetime("{{var('date_range_end')}}")
                 {% endset %}

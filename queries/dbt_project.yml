@@ -278,6 +278,8 @@ tests:
       where: "data between date('{date_range_start}') and date('{date_range_end}') and data < date('{DATA_SUBSIDIO_V14_INICIO}')"
     bilhetagem:
       where: "data in ({partitions})"
+    br_rj_riodejaneiro_bilhetagem:
+      where: "data in ({partitions})"
 
 snapshots:
   +persist_docs:

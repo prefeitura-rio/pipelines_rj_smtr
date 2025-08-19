@@ -348,7 +348,8 @@ with
                     t.tipo_transacao_jae in ("Integração", "Integração EMV")
                     or (
                         i.id_transacao is not null
-                        and t.tipo_transacao_jae not in ("Transferência EMV", "Transferência")
+                        and t.tipo_transacao_jae
+                        not in ("Transferência EMV", "Transferência")
                     )
                 then "Integração"
                 when
@@ -358,6 +359,17 @@ with
                 then "Integral"
                 when t.tipo_transacao_jae = "Transferência EMV"
                 then "Transferência"
+                when
+                    t.tipo_transacao_jae in (
+                        "Gratuidade acompanhante",
+                        "Gratuidade operadora",
+                        "Gratuidade operador sênior",
+                        "Gratuidade operador pcd",
+                        "Gratuidade operador estudante",
+                        "Gratuidade operador menor 5 anos",
+                        "Gratuidade operador policial"
+                    )
+                then "Gratuidade"
                 else t.tipo_transacao_jae
             end as tipo_transacao_atualizado,
             case
@@ -401,6 +413,8 @@ with
                 then "Visa Internacional"
                 when t.tipo_transacao_jae = "Botoeira"
                 then "Dinheiro (Botoeira)"
+                when tipo_transacao_jae like "Gratuidade operador%"
+                then "Gratuidade Operadora"
             end as produto,
             case
                 when t.produto_jae = "Conta Jaé Gratuidade"
@@ -415,6 +429,8 @@ with
                 then "Pagante"
                 when g.tipo_gratuidade = "Sênior"
                 then "Idoso"
+                when tipo_transacao_jae like "Gratuidade operador%"
+                then "Gratuidade Operadora"
                 else ifnull(g.tipo_gratuidade, "Não Identificado")
             end as tipo_usuario,
             case

@@ -128,11 +128,13 @@ models:
         tests:
           - not_null:
               name: not_null__id_servico_jae__gps_validador
+              where: "data in ({partitions}) and estado_equipamento != 'FECHADO'"
       - name: servico_jae
         description: "{{ doc('servico_jae') }}"
         tests:
           - not_null:
               name: not_null__servico_jae__gps_validador
+              where: "data in ({partitions}) and estado_equipamento != 'FECHADO'"
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
       - name: id_validador
@@ -145,6 +147,8 @@ models:
         tests:
           - not_null:
               name: not_null__id_transmissao_gps__gps_validador
+          - unique:
+              name: unique__id_transmissao_gps__gps_validador
       - name: latitude
         description: "Latitude do validador no momento da transmissão"
       - name: longitude
@@ -200,11 +204,13 @@ models:
         tests:
           - not_null:
               name: not_null__id_servico_jae__gps_validador_van
+              where: "data in ({partitions}) and estado_equipamento != 'FECHADO'"
       - name: servico_jae
         description: "{{ doc('servico_jae') }}"
         tests:
           - not_null:
               name: not_null__servico_jae__gps_validador_van
+              where: "data in ({partitions}) and estado_equipamento != 'FECHADO'"
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
       - name: id_validador

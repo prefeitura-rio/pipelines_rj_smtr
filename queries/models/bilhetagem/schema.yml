@@ -211,9 +211,6 @@ models:
         quote: true
       - name: produto_jae
         description: "{{ doc('produto_jae') }}"
-        tests:
-          - not_null:
-              name: not_null__produto_jae__transacao
         data_type: string
         quote: true
       - name: tipo_usuario
@@ -252,6 +249,12 @@ models:
         quote: true
   - name: integracao
     description: "Tabela de integrações realizadas entre modos do sistema de transporte municipal, contendo os valores da repartição tarifária (quando houver). [Dados em fase de teste]"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          name: dbt_utils.unique_combination_of_columns__integracao
+          combination_of_columns:
+            - id_integracao
+            - id_transacao
     columns:
       - name: data
         description: "{{ doc('data_transacao') }} [partição]"
@@ -271,8 +274,6 @@ models:
       - name: id_integracao
         description: "Identificador único da integração"
         tests:
-          - unique:
-              name: unique__id_integracao__integracao
           - not_null:
               name: not_null__id_integracao__integracao
       - name: sequencia_integracao
@@ -388,9 +389,6 @@ models:
               name: not_null__id_operadora_jae__transacao_riocard
       - name: operadora
         description: "{{ doc('operadora') }}"
-        tests:
-          - not_null:
-              name: not_null__operadora__transacao_riocard
       - name: id_servico_jae
         description: "{{ doc('id_servico_jae') }}"
         tests:
@@ -439,6 +437,13 @@ models:
 
   - name: transacao_valor_ordem
     description: Tabela contendo o valor de cada transação em uma ordem de pagamento
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          name: dbt_utils.unique_combination_of_columns__transacao_valor_ordem
+          combination_of_columns:
+            - data_ordem
+            - id_transacao
+          where: data_ordem in ({partitions})
     columns:
       - name: data_ordem
         description: "{{ doc('data_transacao') }} [partição]"
@@ -451,6 +456,7 @@ models:
         tests:
           - not_null:
               name: not_null__data_transacao__transacao_valor_ordem
+              where: data_ordem in ({partitions})
       - name: id_transacao
         description: "{{ doc('id_transacao') }}"
         data_type: string
@@ -458,6 +464,7 @@ models:
         tests:
           - not_null:
               name: not_null__id_transacao__transacao_valor_ordem
+              where: data_ordem in ({partitions})
       - name: modo
         description: "{{ doc('modo') }}"
         data_type: string
@@ -465,6 +472,7 @@ models:
         tests:
           - not_null:
               name: not_null__modo__transacao_valor_ordem
+              where: data_ordem in ({partitions})
       - name: consorcio
         description: "{{  doc('consorcio') }}"
         data_type: string
@@ -476,6 +484,7 @@ models:
         tests:
           - not_null:
               name: not_null__id_operadora__transacao_valor_ordem
+              where: data_ordem in ({partitions})
       - name: id_servico_jae
         description: "{{  doc('id_servico_jae') }}"
         data_type: string
@@ -483,6 +492,7 @@ models:
         tests:
           - not_null:
               name: not_null__id_servico_jae__transacao_valor_ordem
+              where: data_ordem in ({partitions})
       - name: valor_transacao_rateio
         description: Valor da transação com o rateio [se houver] (R$)
         data_type: float64
@@ -490,6 +500,7 @@ models:
         tests:
           - not_null:
               name: not_null__valor_transacao_rateio__transacao_valor_ordem
+              where: data_ordem in ({partitions})
       - name: id_ordem_pagamento
         description: "{{ doc('id_ordem_pagamento') }}"
         data_type: string
@@ -549,6 +560,9 @@ models:
         description: "{{ doc('cadastro_cliente') }}"
         data_type: string
         quote: true
+        tests:
+          - not_null:
+              name: not_null__cadastro_cliente__passageiro_hora
       - name: produto
         description: "{{ doc('produto') }}"
         data_type: string

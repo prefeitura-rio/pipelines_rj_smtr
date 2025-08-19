@@ -33,9 +33,10 @@ class constants(Enum):  # pylint: disable=c0103
     }
 
     TRANSACAO_DAILY_TEST = DBTTest(
-        model="transacao" "transacao_riocard",
+        model="transacao transacao_riocard",
         checks_list=TRANSACAO_POST_CHECKS_LIST,
         truncate_date=True,
+        delay_days_start=1,
     )
 
     INTEGRACAO_SELECTOR = DBTSelector(
@@ -47,7 +48,9 @@ class constants(Enum):  # pylint: disable=c0103
     INTEGRACAO_POST_CHECKS_LIST = {
         "integracao": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
-            "unique": {"description": "Todos os registros são únicos"},
+            "dbt_utils.unique_combination_of_columns__integracao": {
+                "description": "Todos os registros são únicos"
+            },
         }
     }
 
@@ -55,6 +58,7 @@ class constants(Enum):  # pylint: disable=c0103
         model="integracao",
         checks_list=INTEGRACAO_POST_CHECKS_LIST,
         truncate_date=True,
+        delay_days_start=1,
     )
 
     PASSAGEIRO_HORA_SELECTOR = DBTSelector(
@@ -73,7 +77,7 @@ class constants(Enum):  # pylint: disable=c0103
     }
 
     PASSAGEIRO_HORA_DAILY_TEST = DBTTest(
-        model="passageiro_hora" "passageiro_tile_hora",
+        model="passageiro_hora passageiro_tile_hora",
         checks_list=PASSAGEIRO_HORA_POST_CHECKS_LIST,
         truncate_date=True,
     )
@@ -97,7 +101,7 @@ class constants(Enum):  # pylint: disable=c0103
     }
 
     GPS_VALIDADOR_DAILY_TEST = DBTTest(
-        model="gps_validador" "gps_validador_van",
+        model="gps_validador gps_validador_van",
         checks_list=GPS_VALIDADOR_POST_CHECKS_LIST,
         truncate_date=True,
     )
@@ -117,6 +121,9 @@ class constants(Enum):  # pylint: disable=c0103
     TRANSACAO_VALOR_ORDEM_POST_CHECKS_LIST = {
         "transacao_valor_ordem": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.unique_combination_of_columns__transacao_valor_ordem": {
+                "description": "Todos os registros são únicos"
+            },
         }
     }
 
@@ -124,4 +131,5 @@ class constants(Enum):  # pylint: disable=c0103
         model="transacao_valor_ordem",
         checks_list=TRANSACAO_VALOR_ORDEM_POST_CHECKS_LIST,
         truncate_date=True,
+        delay_days_start=1,
     )
