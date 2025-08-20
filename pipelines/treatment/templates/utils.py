@@ -179,7 +179,8 @@ class DBTTest:
         model: Optional[str] = None,
         exclude: Optional[str] = None,
         checks_list: Optional[Dict] = None,
-        delay_days: int = 0,
+        delay_days_start: int = 0,
+        delay_days_end: int = 0,
         truncate_date: bool = False,
         additional_vars: Optional[Dict] = None,
     ):
@@ -189,7 +190,8 @@ class DBTTest:
         self.model = model
         self.exclude = exclude
         self.checks_list = checks_list or {}
-        self.delay_days = delay_days
+        self.delay_days_start = delay_days_start
+        self.delay_days_end = delay_days_end
         self.truncate_date = truncate_date
         self.additional_vars = additional_vars or {}
 
@@ -238,9 +240,8 @@ class DBTTest:
         adjusted_start = datetime_start
         adjusted_end = datetime_end
 
-        if self.delay_days > 0:
-            adjusted_start = adjusted_start - timedelta(days=self.delay_days)
-            adjusted_end = adjusted_end - timedelta(days=self.delay_days)
+        adjusted_start = adjusted_start - timedelta(days=self.delay_days_start)
+        adjusted_end = adjusted_end - timedelta(days=self.delay_days_end)
 
         if self.truncate_date:
             adjusted_start = adjusted_start.replace(hour=0, minute=0, second=0, microsecond=0)
