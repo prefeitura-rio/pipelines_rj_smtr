@@ -45,12 +45,14 @@ with
         qualify
             max(date(datetime_processamento)) over (partition by id_integracao)
             < current_date("America/Sao_Paulo")
-            and (
-                date(max(datetime_transacao) over (partition by id_integracao))
-                in ({{ partitions | join(", ") }})
-                or date(min(datetime_transacao) over (partition by id_integracao))
-                in ({{ partitions | join(", ") }})
-            )
+            {% if is_incremental() and partitions | length > 0 %}
+                and (
+                    date(max(datetime_transacao) over (partition by id_integracao))
+                    in ({{ partitions | join(", ") }})
+                    or date(min(datetime_transacao) over (partition by id_integracao))
+                    in ({{ partitions | join(", ") }})
+                )
+            {% endif %}
     ),
     integracao_jae as (
         select
