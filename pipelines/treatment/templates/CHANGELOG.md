@@ -1,5 +1,11 @@
 # Changelog - treatment
 
+## [1.1.9] - 2025-08-19
+
+### Alterado
+
+- Altera o `delay_days` em `delay_days_start` e `delay_days_end` na classe `DBTTest` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/783)
+
 ## [1.1.8] - 2025-07-21
 
 ### Corrigido

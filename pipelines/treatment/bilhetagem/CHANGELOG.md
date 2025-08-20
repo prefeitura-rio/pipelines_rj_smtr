@@ -1,5 +1,21 @@
 # Changelog - bilhetagem
 
+## [2.0.7] - 2025-08-19
+
+### Adicionado
+
+- Adiciona `post_tests` nos flows (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/783):
+  - `TRANSACAO_MATERIALIZACAO`
+  - `INTEGRACAO_MATERIALIZACAO`
+  - `GPS_VALIDADOR_MATERIALIZACAO`
+  - `PASSAGEIRO_HORA_MATERIALIZACAO`
+  - `TRANSACAO_VALOR_ORDEM_MATERIALIZACAO`
+
+- Adiciona `test_scheduled_time` nos flows (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/783):
+  - `TRANSACAO_MATERIALIZACAO`
+  - `PASSAGEIRO_HORA_MATERIALIZACAO`
+  - `GPS_VALIDADOR_MATERIALIZACAO`
+
 ## [2.0.6] - 2025-08-11
 
 ### Alterado
