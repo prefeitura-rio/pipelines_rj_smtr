@@ -1,5 +1,11 @@
 # Changelog - queries
 
+## [1.0.8] - 2025-08-19
+
+### Adicionado
+
+- Adiciona filtro de data para os modelos de `bilhetagem` e `br_rj_riodejaneiro_bilhetagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+
 ## [1.0.7] - 2025-07-31
 
 ### Alterado
