@@ -6,6 +6,10 @@
 
 - Altera selector `snapshot_veiculo` adicionando os snapshots `snapshot_veiculo_regularidade_temperatura_dia` e `snapshot_viagem_regularidade_temperatura`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/796)
 
+### Adicionado
+
+- Adiciona filtro de data para os modelos de `bilhetagem` e `br_rj_riodejaneiro_bilhetagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/783)
+
 ## [1.0.7] - 2025-07-31
 
 ### Alterado
