@@ -115,6 +115,8 @@ selectors:
         - method: fqn
           value: aux_particao_calculo_integracao
         - method: fqn
+          value: aux_transacao_filtro_integracao_calculada
+        - method: fqn
           value: aux_calculo_integracao
         - method: fqn
           value: aux_integracao_calculada
