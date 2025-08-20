@@ -59,7 +59,11 @@ with
         from {{ ref("integracao") }}
         {% if is_incremental() %}
             where
-                {% if partitions | length > 0 %} data in ({{ partitions | join(", ") }})
+                {% if partitions | length > 0 %}
+
+                    data in ({{ partitions | join(", ") }})
+                    or data in ({{ adjacent_partitions | join(", ") }})
+
                 {% else %} false
                 {% endif %}
         {% endif %}
