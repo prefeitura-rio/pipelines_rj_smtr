@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.4.10] - 2025-08-19
+
+### Adicionado
+
+- Adiciona filtro para dados do metrô no modelo `aux_matriz_integracao_modo.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/793)
+
 ## [1.4.9] - 2025-07-22
 
 ### Alterado

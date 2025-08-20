@@ -1,5 +1,17 @@
 # Changelog - validacao_dados_jae
 
+## [3.0.0] - 2025-08-19
+
+
+# Adicionado
+
+- Cria nova lógica para o cálculo de integrações não realizadas (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/793):
+  - `aux_particao_calculo_integracao.sql`
+  - `aux_transacao_filtro_integracao_calculada.sql`
+  - `aux_calculo_integracao.py`
+  - `aux_integracao_calculada.sql`
+  - `integracao_nao_realizada.sql`
+
 ## [2.0.0] - 2024-12-30
 
 ### Alterado
