@@ -429,6 +429,12 @@ with
                 then "Pagante"
                 when g.tipo_gratuidade = "Sênior"
                 then "Idoso"
+                when
+                    t.tipo_transacao_jae
+                    in ("Gratuidade operador sênior", "Gratuidade operador estudante")
+                then initcap(split(t.tipo_transacao_jae, " ")[2])
+                when t.tipo_transacao_jae = "Gratuidade operador pcd"
+                then "PCD"
                 when tipo_transacao_jae like "Gratuidade operador%"
                 then "Gratuidade Operadora"
                 else ifnull(g.tipo_gratuidade, "Não Identificado")
