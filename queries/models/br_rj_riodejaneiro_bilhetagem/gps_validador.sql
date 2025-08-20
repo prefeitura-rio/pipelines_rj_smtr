@@ -83,9 +83,11 @@ with
         from {{ gps_validador_aux }}
         where
             modo != "Van"
-            {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
+            {% if is_incremental() %} and {{ incremental_filter }}
+            {% else %} and data >= '2025-08-19'
+            {% endif %}
     ),
-    {% if is_incremental and partitions | length > 0 %}
+    {% if is_incremental() and partitions | length > 0 %}
         dados_atuais as (
             select * from {{ this }} where data in ({{ partitions | join(", ") }})
         ),
@@ -94,7 +96,7 @@ with
         select *, 0 as priority
         from dados_novos
 
-        {% if is_incremental and partitions | length > 0 %}
+        {% if is_incremental() and partitions | length > 0 %}
             union all
 
             select
@@ -115,7 +117,7 @@ with
     sha_dados_atuais as (
         {% if is_incremental() %}
             select
-                id_transmissao_gps,,
+                id_transmissao_gps,
                 {{ sha_column }} as sha_dado_atual,
                 datetime_ultima_atualizacao as datetime_ultima_atualizacao_atual,
                 id_execucao_dbt as id_execucao_dbt_atual
@@ -131,9 +133,9 @@ with
         {% endif %}
     ),
     sha_dados_completos as (
-        select n.*, a.* except (id_transacao, id_integracao)
+        select n.*, a.* except (id_transmissao_gps)
         from gps_deduplicado n
-        left join sha_dados_atuais a using (id_transacao, id_integracao)
+        left join sha_dados_atuais a using (id_transmissao_gps)
     ),
     gps_colunas_controle as (
         select
