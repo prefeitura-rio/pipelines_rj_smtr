@@ -1,6 +1,6 @@
 # Changelog - bilhetagem
 
-## [3.2.5] - 2025-08-07
+## [3.2.6] - 2025-08-20
 
 ### Adicionado
 
@@ -20,9 +20,7 @@
 ### Alterado
 
 - Ajusta a coluna `tipo_transacao_jae` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/783)
-- Ajusta a coluna `tipo_usuario` no modelo `transacao_riocard.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/783)
-- Ajusta a coluna `produto` no modelo `transacao_riocard.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/783)
-- Ajusta a coluna `tipo_transacao` no modelo `transacao_riocard.sql` (
+- Ajusta a coluna `tipo_usuario`, `produto` e `tipo_transacao` no modelo `transacao_riocard.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/783)
 
 ## [3.2.5] - 2025-08-07
 
