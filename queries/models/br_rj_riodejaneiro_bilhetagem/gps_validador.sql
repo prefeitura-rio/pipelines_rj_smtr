@@ -115,7 +115,7 @@ with
             = 1
     ),
     sha_dados_atuais as (
-        {% if is_incremental() %}
+        {% if is_incremental() and partitions | length > 0 %}
             select
                 id_transmissao_gps,
                 {{ sha_column }} as sha_dado_atual,
