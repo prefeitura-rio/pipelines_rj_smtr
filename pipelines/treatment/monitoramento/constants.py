@@ -54,7 +54,8 @@ class constants(Enum):  # pylint: disable=c0103
     GPS_DAILY_TEST = DBTTest(
         model="gps",
         checks_list=GPS_POST_CHECKS_LIST,
-        delay_days=1,
+        delay_days_start=1,
+        delay_days_end=1,
         truncate_date=True,
     )
 

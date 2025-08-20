@@ -1182,12 +1182,16 @@ Data de verificação da regularidade
 Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_operador_dia
 {% enddocs %}
 
+{% docs id_ordem_pagamento_servico_operador_dia %}
+Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_servico_operador_dia
+{% enddocs %}
+
 {% docs id_ordem_pagamento_consorcio_dia %}
-Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.id_ordem_pagamento_consorcio_dia
+Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_consorcio_dia
 {% enddocs %}
 
 {% docs id_ordem_pagamento %}
-Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento
+Identificador único da tabela rj-smtr.br_rj_riodejaneiro_bilhetagem.ordem_pagamento_dia
 {% enddocs %}
 
 {% docs valor_pagamento %}
@@ -1216,4 +1220,8 @@ Indica se percentual_temperatura_pos_tratamento_descartada é maior que 50%
 
 {% docs indicador_viagem_temperatura_descartada_veiculo %}
 Indica se percentual_viagem_temperatura_pos_tratamento_descartada é maior que 50%
+{% enddocs %}
+
+{% docs estado_equipamento %}
+Validador aberto ou fechado no momento da transmissão
 {% enddocs %}
