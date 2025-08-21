@@ -886,6 +886,11 @@ class constants(Enum):  # pylint: disable=c0103
                 "estudante_sme_21022025",
                 "temp_estudante_acerto_20032025",
                 "estudante_universitario_24012025",
+                "estudante_sme_17032025",
+                "estudante_sme_31032025",
+                "estudante_universitario_25032025",
+                "estudante_universitario_25042025",
+                "estudante_universitario_12032025",
             ],
             "filter": {
                 "lancamento_conta_gratuidade": ["data_inclusao"],
