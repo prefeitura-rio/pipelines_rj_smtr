@@ -160,7 +160,8 @@ models:
               where: |
                 id_servico_jae not in (select id_linha from `rj-smtr.cadastro_staging.linha_sem_ressarcimento`)
                 and date(datetime_processamento) < current_date("America/Sao_Paulo")
-                and tipo_transacao_jae not in ('Gratuidade', 'Transferência', 'Transferência EMV', 'Integração gratuidade', 'Botoeira')
+                and tipo_transacao_jae not in ('Transferência', 'Transferência EMV', 'Botoeira')
+                and tipo_transacao != "Gratuidade"
                 and data in ({partitions})
       - name: id_ordem_pagamento_servico_operador_dia
         description: "{{ doc('id_ordem_pagamento_servico_operador_dia') }}"
@@ -239,6 +240,7 @@ models:
         tests:
           - not_null:
               name: not_null__meio_pagamento_jae__transacao
+              where: tipo_transacao_jae != 'Gratuidade operadora' and data in ({partitions})
         data_type: string
         quote: true
       - name: datetime_ultima_atualizacao
