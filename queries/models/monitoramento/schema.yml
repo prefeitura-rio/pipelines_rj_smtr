@@ -794,6 +794,12 @@ models:
         tests:
           - not_null:
               name: not_null__temperatura__temperatura_inmet
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
   - name: veiculo_regularidade_temperatura_dia
     description: "Tabela com indicadores de regularidade de temperatura por veículo por dia"
     tests:
