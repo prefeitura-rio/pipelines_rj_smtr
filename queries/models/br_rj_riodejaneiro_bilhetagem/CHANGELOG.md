@@ -1,5 +1,16 @@
 # Changelog - bilhetagem
 
+## [3.0.3] - 2025-08-21
+
+### Adicionado
+
+- Adiciona colunas de controle e `id_operadora_jae` nos modelos `gps_validador.sql` e `gps_validador_van.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/803)
+
+### Alterado
+
+- Altera incremental strategy dos modelos `gps_validador.sql` e `gps_validador_van.sql` para `insert-overwrite` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/803)
+
+
 ## [3.0.2] - 2025-08-04
 
 ### Alterado
