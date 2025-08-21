@@ -7,6 +7,7 @@ select
     g.data_tracking as datetime_gps,
     g.timestamp_captura as datetime_captura,
     do.id_operadora,
+    g.codigo_operadora as id_operadora_jae,
     do.operadora,
     s.id_servico_jae,
     s.servico_jae,
