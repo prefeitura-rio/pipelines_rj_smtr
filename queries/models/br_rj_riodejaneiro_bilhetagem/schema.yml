@@ -116,6 +116,8 @@ models:
         tests:
           - not_null:
               name: not_null__id_operadora__gps_validador
+      - name: id_operadora_jae
+        description: "{{ doc('id_operadora_jae') }}"
       - name: operadora
         description: "{{ doc('operadora') }}"
         tests:
@@ -171,6 +173,14 @@ models:
         description: "Versão do Software do validador"
       - name: versao
         description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
   - name: gps_validador_van
     description: "Tabela de posições de GPS de todos os validadores da Jaé instalados em vans, incluindo estado do equipamento [Aberto/Fechado], serviço, sentido e veículo associado e temperatura do veículo"
     columns:
@@ -192,6 +202,8 @@ models:
         tests:
           - not_null:
               name: not_null__id_operadora__gps_validador_van
+      - name: id_operadora_jae
+        description: "{{ doc('id_operadora_jae') }}"
       - name: operadora
         description: "{{ doc('operadora') }}"
         tests:
@@ -251,6 +263,14 @@ models:
         description: "Versão do Software do validador"
       - name: versao
         description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
   - name: ordem_pagamento_consorcio_dia
     description: "Tabela com os valores totais de pagamento da Jaé agregados por consorcio e dia"
     columns:
