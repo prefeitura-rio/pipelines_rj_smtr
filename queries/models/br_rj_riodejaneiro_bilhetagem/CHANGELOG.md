@@ -1,6 +1,6 @@
 # Changelog - bilhetagem
 
-## [3.0.3] - 2025-08-20
+## [3.0.3] - 2025-08-21
 
 ### Adicionado
 
