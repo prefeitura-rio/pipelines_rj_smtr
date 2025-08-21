@@ -83,9 +83,7 @@ with
         from {{ gps_validador_aux }}
         where
             modo != "Van"
-            {% if is_incremental() %} and {{ incremental_filter }}
-            {% else %} and data >= '2025-08-19'
-            {% endif %}
+            {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
     ),
     {% if is_incremental() and partitions | length > 0 %}
         dados_atuais as (
