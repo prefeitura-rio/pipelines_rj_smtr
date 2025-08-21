@@ -9,7 +9,9 @@
 
 
 {% set incremental_filter %}
-  DATE(data) BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
+    date(data)
+    between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
+    and data_viagem is not null
 {% endset %}
 
 {% set staging_viagem_informada_rioonibus = ref("staging_viagem_informada_rioonibus") %}
@@ -26,7 +28,7 @@
             FROM
                 {{ staging_viagem_informada_rioonibus }}
             WHERE
-                {{ incremental_filter }} and data_viagem is not null
+                {{ incremental_filter }}
 
             UNION DISTINCT
 
@@ -35,7 +37,7 @@
             FROM
                 {{ staging_viagem_informada_brt }}
             WHERE
-                {{ incremental_filter }} and data_viagem is not null
+                {{ incremental_filter }}
 
         {% endset %}
 
