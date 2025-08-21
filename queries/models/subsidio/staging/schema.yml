@@ -66,6 +66,12 @@ models:
         tests:
           - not_null:
               name: not_null__tipo_viagem__aux_viagem_temperatura
+      - name: quantidade_pre_tratamento
+        description: "Quantidade de registros de temperatura antes do tratamento estatístico"
+      - name: quantidade_nula_zero
+        description: "Quantidade de registros de temperatura nulos ou iguais a zero"
+      - name: quantidade_pos_tratamento
+        description: "Quantidade de registros de temperatura após o tratamento estatístico"
       - name: indicadores
         description: "Indicadores expandidos incluindo temperatura, validadores e ar condicionado"
         tests:

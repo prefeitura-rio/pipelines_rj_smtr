@@ -10,6 +10,22 @@
     data between date("{{var('start_date')}}") and date("{{var('end_date')}}") and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
 {% endset %}
 
+{% set condicao_veiculo %}
+    (vt.ano_fabricacao <= 2019 or vt.data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}'))
+{% endset %}
+
+{% set condicao_ar_inoperante %}
+    (
+        (
+            vt.data >= date('{{ var("DATA_SUBSIDIO_V20_INICIO") }}')
+            and coalesce(vr.indicador_falha_recorrente, false)
+        )
+        or vt.indicador_temperatura_nula_zero_viagem
+        or not vt.indicador_temperatura_transmitida_viagem
+        or not vt.indicador_temperatura_regular_viagem
+    )
+{% endset %}
+
 with
     viagem_temperatura as (
         select
@@ -26,22 +42,30 @@ with
             indicadores,
             safe_cast(
                 json_value(
-                    indicadores, '$.indicador_temperatura_variacao.valor'
+                    indicadores, '$.indicador_temperatura_variacao_viagem.valor'
                 ) as bool
-            ) as indicador_temperatura_variacao,
+            ) as indicador_temperatura_variacao_viagem,
             safe_cast(
                 json_value(
-                    indicadores, '$.indicador_temperatura_transmitida.valor'
+                    indicadores, '$.indicador_temperatura_transmitida_viagem.valor'
                 ) as bool
-            ) as indicador_temperatura_transmitida,
+            ) as indicador_temperatura_transmitida_viagem,
             safe_cast(
                 json_value(
-                    indicadores, '$.indicador_temperatura_descartada.valor'
+                    indicadores,
+                    '$.indicador_temperatura_pos_tratamento_descartada_viagem.valor'
                 ) as bool
-            ) as indicador_temperatura_descartada,
+            ) as indicador_temperatura_pos_tratamento_descartada_viagem,
             safe_cast(
-                json_value(indicadores, '$.indicador_temperatura_regular.valor') as bool
-            ) as indicador_temperatura_regular,
+                json_value(
+                    indicadores, '$.indicador_temperatura_nula_zero_viagem.valor'
+                ) as bool
+            ) as indicador_temperatura_nula_zero_viagem,
+            safe_cast(
+                json_value(
+                    indicadores, '$.indicador_temperatura_regular_viagem.valor'
+                ) as bool
+            ) as indicador_temperatura_regular_viagem,
             servico,
             sentido,
             distancia_planejada
@@ -52,7 +76,9 @@ with
         select
             data,
             id_veiculo,
-            indicadores.indicador_falha_recorrente.valor as indicador_falha_recorrente
+            indicadores.indicador_falha_recorrente.valor as indicador_falha_recorrente,
+            indicadores.indicador_falha_recorrente.data_verificacao_falha
+            as data_verificacao_falha
         from {{ ref("veiculo_regularidade_temperatura_dia") }}
         where {{ incremental_filter }}
     ),
@@ -74,44 +100,17 @@ with
                         "Licenciado sem ar e não autuado"
                     )
                 then vt.tipo_viagem
-                when
-                    (
-                        ano_fabricacao <= 2019
-                        and (
-                            vr.indicador_falha_recorrente
-                            or vt.indicador_temperatura_descartada
-                            or not vt.indicador_temperatura_transmitida
-                            or not vt.indicador_temperatura_regular
-                        )
-                        and data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
-                    )
-                    or (
-                        (
-                            vr.indicador_falha_recorrente
-                            or vt.indicador_temperatura_descartada
-                            or not vt.indicador_temperatura_transmitida
-                            or not vt.indicador_temperatura_regular
-                        )
-                        and data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}')
-                    )
+                when {{ condicao_veiculo }} and {{ condicao_ar_inoperante }}
                 then "Detectado com ar inoperante"
                 else vt.tipo_viagem
             end as tipo_viagem,
             case
-                when
-                    (
-                        vt.ano_fabricacao <= 2019
-                        or vt.data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}')
-                    )
-                then
-                    (
-                        not vr.indicador_falha_recorrente
-                        and not vt.indicador_temperatura_descartada
-                        and vt.indicador_temperatura_transmitida
-                        and vt.indicador_temperatura_regular
-                    )
+                when {{ condicao_veiculo }}
+                then not {{ condicao_ar_inoperante }}
                 else null
-            end as indicador_regularidade_ar_condicionado,
+            end as indicador_regularidade_ar_condicionado_viagem,
+            indicador_falha_recorrente,
+            data_verificacao_falha,
             indicadores,
             servico,
             sentido,
@@ -132,11 +131,19 @@ select
     tipo_viagem,
     json_set(
         json_set(
-            indicadores,
-            '$.indicador_regularidade_ar_condicionado.valor',
-            indicador_regularidade_ar_condicionado
+            json_set(
+                json_set(
+                    indicadores,
+                    '$.indicador_falha_recorrente.valor',
+                    indicador_falha_recorrente
+                ),
+                '$.indicador_falha_recorrente.data_verificacao_falha',
+                data_verificacao_falha
+            ),
+            '$.indicador_regularidade_ar_condicionado_viagem.valor',
+            indicador_regularidade_ar_condicionado_viagem
         ),
-        '$.indicador_regularidade_ar_condicionado.datetime_apuracao_subsidio',
+        '$.indicador_regularidade_ar_condicionado_viagem.datetime_apuracao_subsidio',
         current_datetime("America/Sao_Paulo")
     ) as indicadores,
     servico,

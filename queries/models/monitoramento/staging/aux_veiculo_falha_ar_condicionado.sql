@@ -12,16 +12,26 @@
 
 {% set incremental_filter %}
     data between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
-            and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+            and data >= date("{{ var('DATA_SUBSIDIO_V20_INICIO') }}")
+{% endset %}
+
+{% set condicao_falha %}
+    (not indicador_temperatura_variacao_veiculo
+    or not indicador_temperatura_transmitida_veiculo
+    or indicador_temperatura_descartada_veiculo
+    or indicador_viagem_temperatura_descartada_veiculo)
 {% endset %}
 
 with
     viagem_temperatura as (
         select
             data,
+            id_viagem,
             id_veiculo,
             placa,
             ano_fabricacao,
+            quantidade_pre_tratamento,
+            quantidade_pos_tratamento,
             safe_cast(
                 json_value(indicadores, '$.indicador_ar_condicionado.valor') as bool
             ) as indicador_ar_condicionado,
@@ -33,39 +43,68 @@ with
             ) as data_processamento_licenciamento,
             safe_cast(
                 json_value(
-                    indicadores, '$.indicador_temperatura_variacao.valor'
+                    indicadores, '$.indicador_temperatura_variacao_viagem.valor'
                 ) as bool
-            ) as indicador_temperatura_variacao,
+            ) as indicador_temperatura_variacao_viagem,
             safe_cast(
                 json_value(
-                    indicadores, '$.indicador_temperatura_transmitida.valor'
+                    indicadores, '$.indicador_temperatura_transmitida_viagem.valor'
                 ) as bool
-            ) as indicador_temperatura_transmitida,
+            ) as indicador_temperatura_transmitida_viagem,
             safe_cast(
                 json_value(
                     indicadores,
-                    '$.indicador_temperatura_descartada.percentual_temperatura_nula_descartada'
+                    '$.indicador_temperatura_pos_tratamento_descartada_viagem.percentual_temperatura_pos_tratamento_descartada'
                 ) as numeric
-            ) as percentual_temperatura_nula_descartada,
+            ) as percentual_temperatura_pos_tratamento_descartada_viagem,
             safe_cast(
                 json_value(
                     indicadores,
-                    '$.indicador_temperatura_descartada.percentual_temperatura_atipica_descartada'
-                ) as numeric
-            ) as percentual_temperatura_atipica_descartada,
-            safe_cast(
-                json_value(
-                    indicadores, '$.indicador_temperatura_descartada.valor'
-                ) as bool
-            ) as indicador_temperatura_descartada,
-            safe_cast(
-                json_value(
-                    indicadores,
-                    '$.indicador_temperatura_descartada.datetime_apuracao_subsidio'
+                    '$.indicador_temperatura_pos_tratamento_descartada_viagem.datetime_apuracao_subsidio'
                 ) as datetime
             ) as datetime_apuracao_subsidio,
         from {{ ref("aux_viagem_temperatura") }}
         where {{ incremental_filter }}
+    ),
+    agg_viagem_temperatura as (
+        select
+            data,
+            id_veiculo,
+            placa,
+            ano_fabricacao,
+            indicador_ar_condicionado,
+            data_processamento_licenciamento,
+            max(
+                indicador_temperatura_variacao_viagem
+            ) as indicador_temperatura_variacao_veiculo,
+            max(
+                indicador_temperatura_transmitida_viagem
+            ) as indicador_temperatura_transmitida_veiculo,
+            1 - trunc(
+                coalesce(
+                    safe_divide(
+                        sum(quantidade_pos_tratamento), sum(quantidade_pre_tratamento)
+                    ),
+                    0
+                ),
+                2
+            ) as percentual_temperatura_pos_tratamento_descartada,
+            trunc(
+                coalesce(
+                    safe_divide(
+                        countif(
+                            percentual_temperatura_pos_tratamento_descartada_viagem
+                            > 0.5
+                        ),
+                        count(id_viagem)
+                    ),
+                    0
+                ),
+                2
+            ) as percentual_viagem_temperatura_pos_tratamento_descartada,
+            max(date(datetime_apuracao_subsidio)) as data_verificacao_regularidade
+        from viagem_temperatura
+        group by all
     ),
     indicador_veiculo as (
         select distinct
@@ -75,13 +114,16 @@ with
             ano_fabricacao,
             indicador_ar_condicionado,
             data_processamento_licenciamento,
-            date(datetime_apuracao_subsidio) as data_verificacao_regularidade,
-            indicador_temperatura_variacao,
-            indicador_temperatura_transmitida,
-            percentual_temperatura_nula_descartada,
-            percentual_temperatura_atipica_descartada,
-            indicador_temperatura_descartada
-        from viagem_temperatura
+            data_verificacao_regularidade,
+            indicador_temperatura_variacao_veiculo,
+            indicador_temperatura_transmitida_veiculo,
+            percentual_temperatura_pos_tratamento_descartada,
+            percentual_temperatura_pos_tratamento_descartada
+            > 0.5 as indicador_temperatura_descartada_veiculo,
+            percentual_viagem_temperatura_pos_tratamento_descartada,
+            percentual_viagem_temperatura_pos_tratamento_descartada
+            > 0.5 as indicador_viagem_temperatura_descartada_veiculo
+        from agg_viagem_temperatura
         where indicador_ar_condicionado
     ),
     {% if is_incremental() %}
@@ -120,15 +162,9 @@ with
                 rows between unbounded preceding and 1 preceding
             ) as placa_anterior,
             case
-                when
-                    not indicador_temperatura_variacao
-                    or not indicador_temperatura_transmitida
-                    or indicador_temperatura_descartada
+                when {{ condicao_falha }}
                 then true
-                when
-                    indicador_temperatura_variacao
-                    and indicador_temperatura_transmitida
-                    and not indicador_temperatura_descartada
+                when not {{ condicao_falha }}
                 then false
                 else null
             end as indicio_falha
