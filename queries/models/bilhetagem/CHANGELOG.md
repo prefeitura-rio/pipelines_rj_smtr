@@ -1,5 +1,17 @@
 # Changelog - bilhetagem
 
+## [3.2.7] - 2025-08-21
+
+### Adicionado
+
+- Adiciona coluna `subtipo_usuario_protegido` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/804)
+
+### Alterado
+
+- Altera `tipo_usuario` PCD para Saúde no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/804)
+- Remove subtipo quando a transação não for gratuidade no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/804)
+
+
 ## [3.2.6] - 2025-08-20
 
 ### Adicionado

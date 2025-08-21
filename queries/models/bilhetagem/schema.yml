@@ -222,7 +222,9 @@ models:
               name: not_null__tipo_usuario__transacao
         quote: true
       - name: subtipo_usuario
-        description: "Subtipo do usuário que efetuou a transação [ex.: Estudante municipal, DC] [protegido]"
+        description: "Subtipo do usuário que efetuou a transação sem dados relacionados à saúde [ex.: Estudante municipal]"
+      - name: subtipo_usuario_protegido
+        description: "Subtipo do usuário que efetuou a transação com dados relacionados à saúde [ex.: Estudante municipal, DC] [protegido]"
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
         data_type: string
