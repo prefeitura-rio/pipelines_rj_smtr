@@ -717,6 +717,10 @@ class constants(Enum):  # pylint: disable=c0103
                 "estudante_24062025",
                 "estudante_20062025",
                 "producao_20250617081705_02_VT",
+                "temp_estudante_15082025",
+                "estudante_11072025",
+                "temp_cliente_02082025",
+                "temp_requisicao_pedido_ticketeira",
             ],
             "filter": {
                 "ITEM_PEDIDO": ["DT_INCLUSAO"],
