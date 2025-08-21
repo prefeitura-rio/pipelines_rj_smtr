@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona coluna `tipo_transacao` na tabela da view `transacao_cct.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/804)
+- Adiciona coluna `tipo_transacao` na tabela da view `transacao_cct.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/805)
 
 ## [1.0.0] - 2025-08-08
 
