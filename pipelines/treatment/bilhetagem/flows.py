@@ -39,6 +39,11 @@ INTEGRACAO_MATERIALIZACAO = create_default_materialization_flow(
     wait=[
         cadastro_constants.CADASTRO_SELECTOR.value,
         jae_constants.INTEGRACAO_SOURCE.value,
+    ]
+    + [
+        s
+        for s in jae_constants.ORDEM_PAGAMENTO_SOURCES.value
+        if s.table_id in ["ordem_ressarcimento"]
     ],
     post_tests=constants.INTEGRACAO_DAILY_TEST.value,
 )
