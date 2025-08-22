@@ -1,5 +1,10 @@
 # Changelog - source_jae
 
+## [2.3.6] - 2025-08-22
+
+### Alterado
+- Aumenta memória nos flows `CAPTURA_INTEGRACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/807)
+
 ## [2.3.5] - 2025-08-11
 
 ### Alterado
