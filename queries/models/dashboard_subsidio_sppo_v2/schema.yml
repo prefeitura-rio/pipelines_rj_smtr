@@ -201,7 +201,7 @@ models:
       - name: km_apurada_sem_transacao
         description: "{{ doc('km_apurada_sem_transacao') }}"
       - name: km_apurada_licenciado_sem_ar_n_autuado_mini
-        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados com tecnologia MINI"
+        description: "{{ doc('km_apurada_licenciado_sem_ar_n_autuado') }} com tecnologia MINI"
       - name: km_apurada_licenciado_com_ar_n_autuado_mini
         description: "{{ doc('km_apurada_licenciado_com_ar_n_autuado') }} com tecnologia MINI"
       - name: km_apurada_licenciado_sem_ar_n_autuado_midi

@@ -262,9 +262,6 @@ Data final do feed [versão]
 Tipo de serviço da linha, conforme RDO [Relatório Diário de Operação]
 {% enddocs %}
 
-{% docs tipo_servico_jae %}
-{% enddocs %}
-
 {% docs ordem_servico %}
 Ordem de serviço da linha, conforme RDO [Relatório Diário de Operação]
 {% enddocs %}
@@ -1410,4 +1407,12 @@ Indica se percentual_viagem_temperatura_pos_tratamento_descartada é maior que 5
 
 {% docs estado_equipamento %}
 Validador aberto ou fechado no momento da transmissão
+{% enddocs %}
+
+{% docs servico_cadastro %}
+Nome do serviço consolidado. Para linhas, é o nome curto da linha [ex: 010, 011SN]. E para estações, é o stop_code do GTFS ou o código interno da estação no banco de dados da Jaé. [Caso o registro não exista no GTFS, busca o serviço na base de dados da Jaé]
+{% enddocs %}
+
+{% docs descricao_servico_cadastro %}
+Nome completo do serviço consolidado. Para linhas é, primariamente o route_long_name da tabela routes do GTFS. Para estações é primariamente a coluna stop_name da tabela stops do GTFS. [Caso o registro não exista no GTFS, busca o serviço na base de dados da Jaé]
 {% enddocs %}

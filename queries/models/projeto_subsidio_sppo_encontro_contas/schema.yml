@@ -118,7 +118,7 @@ models:
       - name: ano
         description: "{{ doc('ano') }}"
       - name: consorcio
-        description: "{{ doc('nome_consorcio') }}"
+        description: "{{ doc('consorcio') }}"
       - name: servico
         description: "{{ doc('servico') }}"
       - name: km_subsidiada
@@ -168,7 +168,7 @@ models:
       - name: data
         description: "{{ doc('data') }}"
       - name: consorcio
-        description: "{{ doc('nome_consorcio') }}"
+        description: "{{ doc('consorcio') }}"
       - name: servico
         description: "{{ doc('servico') }}"
       - name: km_subsidiada
@@ -246,7 +246,7 @@ models:
       - name: data_final_quinzena
         description: "{{ doc('data_final_quinzena') }}"
       - name: consorcio
-        description: "{{ doc('nome_consorcio') }}"
+        description: "{{ doc('consorcio') }}"
       - name: servico
         description: "{{ doc('servico') }}"
       - name: quantidade_dias_subsidiado
