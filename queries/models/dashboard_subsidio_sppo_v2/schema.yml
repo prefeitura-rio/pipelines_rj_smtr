@@ -22,13 +22,13 @@ models:
       - name: faixa_horaria_fim
         description: "{{ doc('faixa_horaria_fim') }}"
       - name: consorcio
-        description: "Consórcio que opera o serviço"
+        description: "{{ doc('consorcio') }}"
       - name: servico
         description: "{{ doc('servico') }}"
       - name: viagens_faixa
         description: "{{ doc('viagens_faixa') }}"
       - name: km_apurada_faixa
-        description: "Quilometragem apurada para o serviço por faixa horária (km)"
+        description: "{{ doc('km_apurada_faixa') }}"
       - name: km_subsidiada_faixa
         description: "Quilometragem subsidiada para o serviço por faixa horária (km)"
       - name: km_planejada_faixa
@@ -48,9 +48,9 @@ models:
       - name: km_apurada_licenciado_sem_ar_n_autuado
         description: "{{ doc('km_apurada_licenciado_sem_ar_n_autuado') }}"
       - name: km_apurada_licenciado_com_ar_n_autuado
-        description: "Quilometragem apurada de viagens de veículos com ar e não autuados (km)"
+        description: "{{ doc('km_apurada_licenciado_com_ar_n_autuado') }}"
       - name: km_apurada_n_vistoriado
-        description: "Quilometragem apurada de viagens realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria (km)"
+        description: "{{ doc('km_apurada_n_vistoriado') }}"
       - name: km_apurada_sem_transacao
         description: "Quilometragem apurada de viagens realizadas sem passageiro registrado (km)"
       - name: valor_apurado
@@ -123,7 +123,7 @@ models:
       - name: faixa_horaria_fim
         description: "{{ doc('faixa_horaria_fim') }}"
       - name: consorcio
-        description: "Consórcio que opera o serviço"
+        description: "{{ doc('consorcio') }}"
         tests:
           - not_null:
               name: not_null__consorcio__sumario_faixa_servico_dia_pagamento
@@ -145,7 +145,7 @@ models:
               name: dbt_utils.accepted_range__viagens_faixa__sumario_faixa_servico_dia_pagamento
               where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: km_apurada_faixa
-        description: "Quilometragem apurada para o serviço por faixa horária (km)"
+        description: "{{ doc('km_apurada_faixa') }}"
         tests:
           - not_null:
               name: not_null__km_apurada_faixa__sumario_faixa_servico_dia_pagamento
@@ -196,54 +196,26 @@ models:
         description: "Quilometragem apurada de viagens realizadas por veículos autuados disciplinarmente por transitar com o veículo com ausência ou insuficiência na iluminação interna e/ou nos dispositivos internos ou externos de informação aos passageiros (km)"
       - name: km_apurada_autuado_limpezaequipamento
         description: "{{ doc('km_apurada_autuado_limpezaequipamento') }}"
-      - name: km_apurada_autuado_n_atender_solicitacao_parada
-        description: "Quilometragem apurada de viagens realizadas por veículos autuados disciplinarmente por não atender às solicitações de parada para embarque ou desembarque de passageiros nos locais devidamente sinalizados para tal (km)"
-      - name: km_apurada_autuado_n_concluir_itinerario
-        description: "Quilometragem apurada de viagens de realizadas por veículos autuados disciplinarmente por alterar ou não concluir o itinerário autorizado do veículo (km)"
-      - name: km_apurada_autuado_seguranca
-        description: "{{ doc('km_apurada_autuado_seguranca') }}"
-      - name: km_apurada_autuado_vista_inoperante
-        description: "Quilometragem apurada de viagens de realizadas por veículos autuados disciplinarmente por inoperância ou mau funcionamento de caixa de vista eletrônica ou similar (km)"
-      - name: km_apurada_detectado_com_ar_inoperante
-        description: "Quilometragem apurada de viagens realizadas por veículos licenciado com ar-condicionado em operação detectado fora dos parâmetros definidos em resolução vigente (km)"
-      - name: km_apurada_lacrado
-        description: "Quilometragem apurada de viagens de veículos lacrados pela equipe de fiscalização da SMTR (km)"
-      - name: km_apurada_licenciado_com_ar_n_autuado
-        description: "Quilometragem apurada de viagens de veículos licenciados com ar condicionado e não autuados (km)"
-      - name: km_apurada_licenciado_com_ar_n_autuado_mini
-        description: "Quilometragem apurada de viagens de veículos com ar e não autuados com tecnologia MINI (km)"
-      - name: km_apurada_licenciado_com_ar_n_autuado_midi
-        description: "Quilometragem apurada de viagens de veículos com ar e não autuados com tecnologia MIDI (km)"
-      - name: km_apurada_licenciado_com_ar_n_autuado_basico
-        description: "Quilometragem apurada de viagens de veículos com ar e não autuados com tecnologia BASICO (km)"
-      - name: km_apurada_licenciado_com_ar_n_autuado_padron
-        description: "Quilometragem apurada de viagens de veículos com ar e não autuados com tecnologia PADRON (km)"
-      - name: km_apurada_licenciado_sem_ar_n_autuado
-        description: "Quilometragem apurada de viagens de veículos licenciados sem ar condicionado e não autuados (km)"
-      - name: km_apurada_licenciado_sem_ar_n_autuado_mini
-        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados com tecnologia MINI (km)"
-      - name: km_apurada_licenciado_sem_ar_n_autuado_midi
-        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados com tecnologia MIDI (km)"
-      - name: km_apurada_licenciado_sem_ar_n_autuado_basico
-        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados com tecnologia BASICO (km)"
-      - name: km_apurada_licenciado_sem_ar_n_autuado_padron
-        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados com tecnologia PADRON (km)"
-      - name: km_apurada_n_autorizado_ausencia_ar_condicionado
-        description: "Quilometragem apurada de viagens realizadas por veículos licenciados sem ar-condicionado, quando exigido para o serviço (km)"
-      - name: km_apurada_n_autorizado_capacidade
-        description: "Quilometragem apurada de viagens realizadas por veículos licenciados com tecnologia de capacidade inferior àquela determinada para o serviço (km)"
-      - name: km_apurada_n_licenciado
-        description: "Quilometragem apurada de viagens realizadas por veículo que operaram sem licenciamento vigente junto à SMTR (km)"
       - name: km_apurada_n_vistoriado
-        description: "Quilometragem apurada de viagens realizadas por veículo que não se encontra vistoriado nos termos do calendário de vistoria da SMTR (km)"
-      - name: km_apurada_registrado_com_ar_inoperante
-        description: "{{ doc('km_apurada_registrado_com_ar_inoperante') }}"
+        description: "{{ doc('km_apurada_n_vistoriado') }}"
       - name: km_apurada_sem_transacao
-        description: "Quilometragem apurada de viagens realizadas sem nenhuma transação de bilhetagem (km)"
-      - name: km_apurada_validador_associado_incorretamente
-        description: "Quilometragem apurada de viagens com validador associado ao serviço incorreto (km)"
-      - name: km_apurada_validador_fechado
-        description: "Quilometragem apurada de viagens com validador fechado (km)"
+        description: "{{ doc('km_apurada_sem_transacao') }}"
+      - name: km_apurada_licenciado_sem_ar_n_autuado_mini
+        description: "{{ doc('km_apurada_licenciado_sem_ar_n_autuado') }} com tecnologia MINI"
+      - name: km_apurada_licenciado_com_ar_n_autuado_mini
+        description: "{{ doc('km_apurada_licenciado_com_ar_n_autuado') }} com tecnologia MINI"
+      - name: km_apurada_licenciado_sem_ar_n_autuado_midi
+        description: "{{ doc('km_apurada_licenciado_sem_ar_n_autuado') }} com tecnologia MIDI"
+      - name: km_apurada_licenciado_com_ar_n_autuado_midi
+        description: "{{ doc('km_apurada_licenciado_com_ar_n_autuado') }} com tecnologia MIDI"
+      - name: km_apurada_licenciado_sem_ar_n_autuado_basico
+        description: "{{ doc('km_apurada_licenciado_sem_ar_n_autuado') }} com tecnologia BASICO"
+      - name: km_apurada_licenciado_com_ar_n_autuado_basico
+        description: "{{ doc('km_apurada_licenciado_com_ar_n_autuado') }} com tecnologia BASICO"
+      - name: km_apurada_licenciado_sem_ar_n_autuado_padron
+        description: "{{ doc('km_apurada_licenciado_sem_ar_n_autuado') }} com tecnologia PADRON"
+      - name: km_apurada_licenciado_com_ar_n_autuado_padron
+        description: "{{ doc('km_apurada_licenciado_com_ar_n_autuado') }} com tecnologia PADRON"
       - name: km_apurada_total_licenciado_sem_ar_n_autuado
         description: "Quilometragem total apurada de viagens de veículos licenciados sem ar-condicionado e não enquadrados nas demais classificações"
       - name: km_apurada_total_licenciado_com_ar_n_autuado
@@ -262,10 +234,8 @@ models:
         description: "{{ doc('valor_acima_limite') }}"
       - name: valor_total_sem_glosa
         description: "{{ doc('valor_total_sem_glosa') }}"
-      - name: valor_judicial
-        description: "{{ doc('valor_judicial') }}"
       - name: valor_total_apurado
-        description: "Valor total das viagens apuradas, subtraídas as penalidades (POF =< 60%)"
+        description: "{{ doc('valor_total_apurado') }}"
       - name: valor_judicial
         description: "{{ doc('valor_judicial') }}"
       - name: valor_penalidade
@@ -330,7 +300,7 @@ models:
           - not_null:
               name: not_null__tipo_dia__sumario_servico_dia_pagamento
       - name: consorcio
-        description: "Consórcio que opera o serviço"
+        description: "{{ doc('consorcio') }}"
         tests:
           - not_null:
               name: not_null__consorcio__sumario_servico_dia_pagamento
@@ -358,7 +328,7 @@ models:
           - sumario_servico_dia_tipo_soma_km:
               name: sumario_servico_dia_tipo_soma_km__km_apurada_dia__sumario_servico_dia_pagamento
       - name: km_subsidiada_dia
-        description: "Quilometragem subsidiada para o serviço por dia (km)"
+        description: "{{ doc('km_subsidiada_dia') }}"
         tests:
           - not_null:
               name: not_null__km_subsidiada_dia__sumario_servico_dia_pagamento
@@ -396,9 +366,9 @@ models:
       - name: km_apurada_licenciado_sem_ar_n_autuado
         description: "{{ doc('km_apurada_licenciado_sem_ar_n_autuado') }}"
       - name: km_apurada_licenciado_com_ar_n_autuado
-        description: "Quilometragem apurada de viagens de veículos com ar e não autuados (km)"
+        description: "{{ doc('km_apurada_licenciado_com_ar_n_autuado') }}"
       - name: km_apurada_n_vistoriado
-        description: "Quilometragem apurada de viagens realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria (km)"
+        description: "{{ doc('km_apurada_n_vistoriado') }}"
       - name: km_apurada_sem_transacao
         description: "Quilometragem apurada de viagens realizadas sem passageiro registrado (km)"
       - name: valor_a_pagar
@@ -413,7 +383,7 @@ models:
       - name: valor_total_sem_glosa
         description: "{{ doc('valor_total_sem_glosa') }}"
       - name: valor_total_apurado
-        description: "Valor total das viagens apuradas, subtraídas as penalidades (POF =< 60%)"
+        description: "{{ doc('valor_total_apurado') }}"
       - name: valor_judicial
         description: "{{ doc('valor_judicial') }}"
       - name: valor_penalidade
