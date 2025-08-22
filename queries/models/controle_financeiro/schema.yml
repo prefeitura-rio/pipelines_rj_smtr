@@ -13,7 +13,7 @@ models:
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
       - name: id_operadora
-        description: "Identificador da operadora na tabela cadastro.operadoras"
+        description: "{{ doc('id_operadora') }}"
       - name: modo
         description: "{{ doc('modo') }}"
       - name: favorecido

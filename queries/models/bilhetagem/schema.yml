@@ -482,7 +482,7 @@ models:
         data_type: string
         quote: true
       - name: id_operadora
-        description: "{{  doc('id_operadora') }}"
+        description: "{{ doc('id_operadora') }}"
         data_type: string
         quote: true
         tests:
@@ -490,7 +490,7 @@ models:
               name: not_null__id_operadora__transacao_valor_ordem
               where: data_ordem in ({partitions})
       - name: id_servico_jae
-        description: "{{  doc('id_servico_jae') }}"
+        description: "{{ doc('id_servico_jae') }}"
         data_type: string
         quote: true
         tests:
