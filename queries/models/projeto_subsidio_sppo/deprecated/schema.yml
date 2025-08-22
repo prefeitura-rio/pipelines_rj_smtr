@@ -10,7 +10,7 @@ models:
       - name: shape
         description: "{{ doc('shape') }}"
       - name: shape_distance
-        description: "Extensão do shape"
+        description: "{{ doc('shape_distance') }}"
       - name: start_pt
         description: "{{ doc('start_pt') }}"
       - name: end_pt
@@ -52,7 +52,7 @@ models:
       - name: consorcio
         description: "Nome do consórcio responsável pelo serviço"
       - name: horario_inicio
-        description: "Horário inicial de funcionamento do serviço"
+        description: "{{ doc('horario_inicio') }}"
       - name: horario_fim
         description: "Horário da final de funcionamento do serviço"
       - name: distancia_planejada
@@ -62,7 +62,7 @@ models:
       - name: trip_id
         description: "{{ doc('trip_id') }}"
       - name: tipo_dia
-        description: "Dia da semana - categorias: Dia Útil, Sabado, Domingo e Ponto Facultativo"
+        description: "{{ doc('tipo_dia') }}"
       - name: distancia_total_planejada
         description: "Distância total planejada do serviço em km (junta ida+volta multiplicado pela quantidade de viagens)"
       - name: versao_modelo
