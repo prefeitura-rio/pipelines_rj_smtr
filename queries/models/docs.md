@@ -51,7 +51,7 @@ Autuado por iluminação insuficiente - viagem realizada por veículo autuado di
 
 Autuado por não concluir itinerário - viagem realizada por veículo autuado disciplinarmente por alterar ou não concluir o itinerário autorizado do veículo (Nos termos do art. 40, inciso I, do Decreto nº 36.343/2012);
 
-Registrado com ar inoperante - viagem realizada por veículo licenciado com ar condicionado e registrado com o ar condicionado inoperante ou com mal funcionamento devidamente atestado por servidores nos termos da Resolução SMTR Nº 3.682/2024 ou de legislação superveniente;
+Registrado com ar inoperante - viagem realizada por veículo licenciado com ar-condicionado e registrado com o ar condicionado inoperante ou com mau funcionamento devidamente atestado por servidores nos termos da Resolução SMTR Nº 3.682/2024 ou de legislação superveniente;
 
 Detectado com ar inoperante - viagem realizada por veículo licenciado com ar-condicionado em operação detectado fora dos parâmetros definidos em resolução vigente;
 
@@ -1336,7 +1336,7 @@ Serviço apurado no subsídio
 Distância planejada para o serviço (km)
 {% enddocs %}
 
-{% docs data_fim %}
+{% docs data_fim_irk %}
 Data final do período para um determinado IRK
 {% enddocs %}
 
