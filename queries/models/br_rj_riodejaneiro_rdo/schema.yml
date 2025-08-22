@@ -305,12 +305,12 @@ models:
     description: "Dicionário de dados"
     columns:
       - name: chave
-        description: "Chave"
+        description: "{{ doc('chave') }}"
       - name: cobertura_temporal
-        description: "Cobertura temporal"
+        description: "{{ doc('cobertura_temporal') }}"
       - name: id_tabela
-        description: "Nome da tabela"
+        description: "{{ doc('table_id') }}"
       - name: coluna
-        description: "Nome da coluna"
+        description: "{{ doc('coluna') }}"
       - name: valor
         description: "Valor"
