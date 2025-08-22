@@ -205,15 +205,15 @@ models:
       - name: km_apurada_licenciado_com_ar_n_autuado_mini
         description: "{{ doc('km_apurada_licenciado_com_ar_n_autuado') }} com tecnologia MINI"
       - name: km_apurada_licenciado_sem_ar_n_autuado_midi
-        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados com tecnologia MIDI"
+        description: "{{ doc('km_apurada_licenciado_sem_ar_n_autuado') }} com tecnologia MIDI"
       - name: km_apurada_licenciado_com_ar_n_autuado_midi
         description: "{{ doc('km_apurada_licenciado_com_ar_n_autuado') }} com tecnologia MIDI"
       - name: km_apurada_licenciado_sem_ar_n_autuado_basico
-        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados com tecnologia BASICO"
+        description: "{{ doc('km_apurada_licenciado_sem_ar_n_autuado') }} com tecnologia BASICO"
       - name: km_apurada_licenciado_com_ar_n_autuado_basico
         description: "{{ doc('km_apurada_licenciado_com_ar_n_autuado') }} com tecnologia BASICO"
       - name: km_apurada_licenciado_sem_ar_n_autuado_padron
-        description: "Quilometragem apurada de viagens de veículos sem ar e não autuados com tecnologia PADRON"
+        description: "{{ doc('km_apurada_licenciado_sem_ar_n_autuado') }} com tecnologia PADRON"
       - name: km_apurada_licenciado_com_ar_n_autuado_padron
         description: "{{ doc('km_apurada_licenciado_com_ar_n_autuado') }} com tecnologia PADRON"
       - name: km_apurada_total_licenciado_sem_ar_n_autuado
@@ -234,8 +234,6 @@ models:
         description: "{{ doc('valor_acima_limite') }}"
       - name: valor_total_sem_glosa
         description: "{{ doc('valor_total_sem_glosa') }}"
-      - name: valor_judicial
-        description: "{{ doc('valor_judicial') }}"
       - name: valor_total_apurado
         description: "{{ doc('valor_total_apurado') }}"
       - name: valor_judicial
