@@ -64,7 +64,7 @@ with
                 "{{ var('end_date') }}"
             )
             and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
-            
+
     ),
     viagem as (
 
