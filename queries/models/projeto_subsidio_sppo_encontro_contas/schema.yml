@@ -532,7 +532,7 @@ models:
       - name: data_inicio
         description: "{{ doc('data_inicio') }}"
       - name: data_fim
-        description: "{{ doc('data_fim') }}"
+        description: "{{ doc('data_fim_irk') }}"
       - name: irk
         description: "{{ doc('irk') }}"
       - name: irk_tarifa_publica
@@ -545,3 +545,4 @@ models:
         description: "{{ doc('versao') }}"
       - name: id_execucao_dbt
         description: "{{ doc('id_execucao_dbt') }}"
+

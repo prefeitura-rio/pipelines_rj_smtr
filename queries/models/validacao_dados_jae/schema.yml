@@ -52,7 +52,7 @@ models:
       - name: hora
         description: "{{ doc('hora_transacao') }}"
       - name: datetime_transacao
-        description: "Data e hora da transação"
+        description: "{{ doc('datetime_transacao') }}"
       - name: datetime_processamento
         description: "Data e hora de processamento da transação"
       - name: datetime_captura
@@ -62,13 +62,13 @@ models:
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
       - name: consorcio
-        description: "Nome do consórcio"
+        description: "{{ doc('consorcio') }}"
       - name: id_operadora
-        description: "Identificador da operadora na tabela cadastro.operadoras"
+        description: "{{ doc('id_operadora') }}"
       - name: operadora
         description: "{{ doc('operadora') }}"
       - name: id_servico_jae
-        description: "Identificador da linha no banco de dados da jaé (É possível cruzar os dados com a tabela rj-smtr.cadastro.servicos usando a coluna id_servico_jae)"
+        description: "{{ doc('id_servico_jae') }}"
       - name: servico_jae
         description: "{{ doc('servico_variacao') }} ou código da estação de BRT na Jaé"
       - name: descricao_servico_jae
@@ -136,6 +136,10 @@ models:
       - name: sequencia_integracao
         description: "{{ doc('sequencia_integracao') }}"
         data_type: int64
+        quote: true
+      - name: datetime_transacao
+        description: "{{ doc('datetime_transacao') }} [GMT-3]"
+        data_type: datetime
         quote: true
       - name: tipo_integracao
         description: Tipo da integração [Primeira perna, Integração ou Transferência]
