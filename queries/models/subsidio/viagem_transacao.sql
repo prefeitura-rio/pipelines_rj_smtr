@@ -40,6 +40,7 @@ select
     tipo_viagem,
     modo,
     tecnologia_apurada,
+    tecnologia_remunerada,
     sentido,
     distancia_planejada,
     quantidade_transacao,
