@@ -2,8 +2,9 @@
 """
 Flows de tratamento dos dados de bilhetagem
 
-DBT: 2025-08-12
+DBT: 2025-08-21b
 """
+from datetime import time
 
 from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.constants import constants as smtr_constants
@@ -25,6 +26,8 @@ TRANSACAO_MATERIALIZACAO = create_default_materialization_flow(
         jae_constants.LANCAMENTO_SOURCE.value,
     ]
     + [s for s in jae_constants.JAE_AUXILIAR_SOURCES.value if s.table_id in ["gratuidade"]],
+    post_tests=constants.TRANSACAO_DAILY_TEST.value,
+    test_scheduled_time=time(11, 15, 0),
 )
 
 TRANSACAO_MATERIALIZACAO.state_handlers.append(handler_notify_failure(webhook="alertas_bilhetagem"))
@@ -37,6 +40,7 @@ INTEGRACAO_MATERIALIZACAO = create_default_materialization_flow(
         cadastro_constants.CADASTRO_SELECTOR.value,
         jae_constants.INTEGRACAO_SOURCE.value,
     ],
+    post_tests=constants.INTEGRACAO_DAILY_TEST.value,
 )
 
 INTEGRACAO_MATERIALIZACAO.state_handlers.append(
@@ -48,6 +52,8 @@ PASSAGEIRO_HORA_MATERIALIZACAO = create_default_materialization_flow(
     selector=constants.PASSAGEIRO_HORA_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[constants.TRANSACAO_SELECTOR.value],
+    post_tests=constants.PASSAGEIRO_HORA_DAILY_TEST.value,
+    test_scheduled_time=time(0, 25, 0),
 )
 
 GPS_VALIDADOR_MATERIALIZACAO = create_default_materialization_flow(
@@ -58,6 +64,8 @@ GPS_VALIDADOR_MATERIALIZACAO = create_default_materialization_flow(
         cadastro_constants.CADASTRO_SELECTOR.value,
         jae_constants.GPS_VALIDADOR_SOURCE.value,
     ],
+    post_tests=constants.GPS_VALIDADOR_DAILY_TEST.value,
+    test_scheduled_time=time(1, 15, 0),
 )
 
 GPS_VALIDADOR_MATERIALIZACAO.state_handlers.append(
@@ -87,4 +95,5 @@ TRANSACAO_VALOR_ORDEM_MATERIALIZACAO = create_default_materialization_flow(
         constants.TRANSACAO_SELECTOR.value,
         constants.INTEGRACAO_SELECTOR.value,
     ],
+    post_tests=constants.TRANSACAO_VALOR_ORDEM_DAILY_TEST.value,
 )

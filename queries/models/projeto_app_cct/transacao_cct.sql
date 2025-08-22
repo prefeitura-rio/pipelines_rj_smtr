@@ -3,6 +3,7 @@ select
     data,
     datetime_transacao,
     consorcio,
+    tipo_transacao,
     valor_pagamento,
     id_ordem_pagamento,
     id_ordem_pagamento_consorcio_operador_dia,

@@ -113,7 +113,13 @@ selectors:
     definition:
       union:
         - method: fqn
-          value: integracao_invalida
+          value: aux_particao_calculo_integracao
+        - method: fqn
+          value: aux_transacao_filtro_integracao_calculada
+        - method: fqn
+          value: aux_calculo_integracao
+        - method: fqn
+          value: aux_integracao_calculada
         - method: fqn
           value: integracao_nao_realizada
 
@@ -189,6 +195,8 @@ selectors:
           value: staging_lancamento
         - method: fqn
           value: recarga_jae
+        - method: fqn
+          value: transacao_gratuidade_estudante_municipal
 
   - name: integracao
     description: Materialização das tabelas de integracao da bilhetagem
