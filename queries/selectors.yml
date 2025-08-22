@@ -362,6 +362,8 @@ selectors:
           value: snapshot_veiculo_regularidade_temperatura_dia
         - method: fqn
           value: snapshot_viagem_regularidade_temperatura
+        - method: fqn
+          value: snapshot_temperatura_inmet
 
   - name: monitoramento_veiculo
     definition:
