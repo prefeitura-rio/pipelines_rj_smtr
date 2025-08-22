@@ -12,9 +12,8 @@
 
 {% set incremental_filter %}
     data between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
-            and data >= date("{{ var('DATA_SUBSIDIO_V20_INICIO') }}")
+    and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
 {% endset %}
-
 with
     aux_veiculo as (
         select

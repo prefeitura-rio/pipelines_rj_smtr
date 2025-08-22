@@ -325,6 +325,11 @@ with
                 else null
             end as percentual_temperatura_regular,
             case
+                when
+                    max(indicador_ar_condicionado)
+                    and percentual_temperatura_pos_tratamento_descartada = 1
+                    and percentual_temperatura_nula_zero_descartada < 1
+                then true
                 when max(indicador_ar_condicionado)
                 then (countif(classificacao_temperatura_regular) / count(*)) >= 0.8
                 else null
