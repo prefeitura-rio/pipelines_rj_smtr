@@ -1304,10 +1304,6 @@ Percentual de quilometragem apurada em relação à planejada do serviço ou POD
 Índice de Remuneração por Quilômetro [tarifário] (R$/km)
 {% enddocs %}
 
-{% docs subsidio_km %}
-Valor do subsídio por quilômetro (R$/km)
-{% enddocs %}
-
 {% docs tipo_recurso %}
 Tipo de recurso ou justificativa que motivou a exclusão daquele par data-serviço
 {% enddocs %}
