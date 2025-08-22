@@ -9,12 +9,13 @@
 ### Alterado
 
 - Altera lógica das colunas de controle no modelo `aux_veiculo_falha_ar_condicionado` para alterar a coluna `datetime_ultima_atualizacao` somente se a linha alterar (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/796)
+- Refatora modelos `aux_veiculo_falha_ar_condicionado` e `veiculo_regularidade_temperatura_dia` para não materializar dados antes de `DATA_SUBSIDIO_V17_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/796)
 
 ## [1.6.4] - 2025-08-15
 
 ### Alterado
 
-- Refatora modelos `aux_veiculo_falha_ar_condicionado` e `veiculo_regularidade_temperatura_dia` para não materializar dados antes de `DATA_SUBSIDIO_V20_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/788)
+- Refatora modelos `aux_veiculo_falha_ar_condicionado` e `veiculo_regularidade_temperatura_dia` para não materializar dados antes de `DATA_SUBSIDIO_V20_INICIO`, alteração referente ao Processo.rio `MTR-CAP-2025/25179` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/788)
 
 ## [1.6.3] - 2025-08-14
 

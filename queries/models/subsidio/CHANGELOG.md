@@ -10,7 +10,7 @@
 
 ### Alterado
 
-- Altera lógica para considerar `indicador_falha_recorrente` após `DATA_SUBSIDIO_V20_INICIO` no modelo `viagem_regularidade_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/788)
+- Altera lógica para considerar `indicador_falha_recorrente` após `DATA_SUBSIDIO_V20_INICIO` no modelo `viagem_regularidade_temperatura`, alteração referente ao Processo.rio `MTR-CAP-2025/25179` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/788)
 
 ## [2.1.1] - 2025-08-14
 
