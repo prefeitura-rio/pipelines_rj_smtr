@@ -157,6 +157,10 @@ models:
         description: "Indica se o shape existe no GTFS no feed vigente durante a data da viagem"
         data_type: boolean
         quote: true
+      - name: indicador_dados_validos
+        description: "Indica se os dados essenciais para validação da viagem estão preenchidos corretamente"
+        data_type: boolean
+        quote: true
       - name: indicador_trajeto_alternativo
         description: "Indica se o shape é um trajeto alternativo"
         data_type: boolean

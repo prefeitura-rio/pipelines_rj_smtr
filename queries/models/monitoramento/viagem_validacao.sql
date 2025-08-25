@@ -118,12 +118,19 @@ with
             ) as indice_validacao,
             indicador_servico_divergente,
             indicador_shape_invalido,
+            (
+                shape_id is not null
+                and route_id is not null
+                and id_veiculo is not null
+                and id_veiculo != ""
+            ) as indicador_dados_validos,
             service_ids,
             tipo_dia,
             feed_version,
             feed_start_date
         from contagem
     ),
+    viagens_campos_validos as (select * from indice where indicador_dados_validos),
     trips as (
         select distinct
             feed_start_date,
@@ -139,14 +146,14 @@ with
     ),
     servicos_planejados_gtfs as (
         select
-            i.*,
+            v.*,
             (
                 select count(*)
-                from unnest(i.service_ids) as service_id
+                from unnest(v.service_ids) as service_id
                 join unnest(t.service_ids) as service_id using (service_id)
             )
             > 0 as indicador_servico_planejado_gtfs
-        from indice i
+        from viagens_campos_validos v
         left join trips t using (feed_start_date, feed_version, route_id)
     ),
     servico_planejado as (
@@ -262,12 +269,11 @@ with
             vm.indicador_servico_planejado_os,
             vm.indicador_servico_divergente,
             vm.indicador_shape_invalido,
+            vm.indicador_dados_validos,
             vm.indicador_trajeto_alternativo,
             vm.indicador_acima_velocidade_max,
             (
-                vm.shape_id is not null
-                and vm.route_id is not null
-                and not vm.indicador_shape_invalido
+                vm.indicador_dados_validos and not vm.indicador_shape_invalido
                 -- fmt: off
                 and vm.quantidade_segmentos_validos >= vm.quantidade_segmentos_necessarios
                 -- fmt: on
@@ -280,12 +286,22 @@ with
             ) as indicador_viagem_valida,
             vm.tipo_dia,
             vm.feed_version,
-            vm.feed_start_date,
-            '{{ var("version") }}' as versao,
-            current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
+            vm.feed_start_date
         from viagens_velocidade_media vm
         left join viagens_sobrepostas vs using (id_viagem)
     ),
+    -- fmt: off
+    viagem_completa as (
+        select *
+        from viagens
+
+        full outer union all by name
+
+        select *, indicador_dados_validos as indicador_viagem_valida
+        from indice
+        where not indicador_dados_validos
+    ),
+    -- fmt: on
     filtro_desvio as (
         select *
         from viagens
@@ -342,16 +358,18 @@ select
     indicador_servico_planejado_os,
     indicador_servico_divergente,
     indicador_shape_invalido,
+    indicador_dados_validos,
     indicador_trajeto_alternativo,
     indicador_acima_velocidade_max,
     indicador_viagem_valida,
     tipo_dia,
     feed_version,
     feed_start_date,
-    versao,
-    datetime_ultima_atualizacao
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+    "{{ var('version') }}" as versao,
+    '{{ invocation_id }}' as id_execucao_dbt
 {% if var("tipo_materializacao") == "monitoramento" %} from filtro_chegada
-{% else %} from viagens
+{% else %} from viagem_completa
 {% endif %}
 where
     data between date('{{ var("date_range_start") }}') and date(

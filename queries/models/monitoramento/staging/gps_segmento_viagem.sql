@@ -61,7 +61,7 @@ with
             gv.geo_point_gps,
             gv.servico_viagem,
             gv.servico_gps,
-            gv.timestamp_gps,
+            gv.datetime_gps,
             c.feed_version,
             c.feed_start_date
         {% if var("tipo_materializacao") == "monitoramento" %}
