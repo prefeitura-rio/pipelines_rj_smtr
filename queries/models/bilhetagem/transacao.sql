@@ -433,13 +433,31 @@ with
                     t.tipo_transacao_jae
                     in ("Gratuidade operador sênior", "Gratuidade operador estudante")
                 then initcap(split(t.tipo_transacao_jae, " ")[2])
-                when t.tipo_transacao_jae = "Gratuidade operador pcd"
-                then "PCD"
+                when
+                    t.tipo_transacao_jae = "Gratuidade operador pcd"
+                    or g.tipo_gratuidade = "PCD"
+                then "Saúde"
                 when tipo_transacao_jae like "Gratuidade operador%"
                 then "Gratuidade Operadora"
                 else ifnull(g.tipo_gratuidade, "Não Identificado")
             end as tipo_usuario,
             case
+                when
+                    t.tipo_transacao_jae != "Gratuidade"
+                    and t.produto_jae != "Conta Jaé Gratuidade"
+                then null
+                when g.tipo_gratuidade = "Estudante" and g.rede_ensino = "Universidade"
+                then "Estudante Passe Livre"
+                when g.tipo_gratuidade = "Estudante" and g.rede_ensino is not null
+                then concat("Estudante ", split(g.rede_ensino, " - ")[0])
+                when g.tipo_gratuidade = "Estudante"
+                then "Estudante Não Identificado"
+            end as subtipo_usuario,
+            case
+                when
+                    t.tipo_transacao_jae != "Gratuidade"
+                    and t.produto_jae != "Conta Jaé Gratuidade"
+                then null
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino = "Universidade"
                 then "Estudante Passe Livre"
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino is not null
@@ -450,7 +468,7 @@ with
                 then "PCD"
                 when g.tipo_gratuidade = "PCD" and not g.deficiencia_permanente
                 then "DC"
-            end as subtipo_usuario,
+            end as subtipo_usuario_protegido,
             case
                 when t.meio_pagamento_jae like "Cartão%"
                 then "Cartão"
@@ -503,6 +521,7 @@ with
             tipo_transacao_jae,
             tipo_usuario,
             subtipo_usuario,
+            subtipo_usuario_protegido,
             meio_pagamento,
             meio_pagamento_jae,
             latitude,

@@ -160,7 +160,8 @@ models:
               where: |
                 id_servico_jae not in (select id_linha from `rj-smtr.cadastro_staging.linha_sem_ressarcimento`)
                 and date(datetime_processamento) < current_date("America/Sao_Paulo")
-                and tipo_transacao_jae not in ('Gratuidade', 'Transferência', 'Transferência EMV', 'Integração gratuidade', 'Botoeira')
+                and tipo_transacao_jae not in ('Transferência', 'Transferência EMV', 'Botoeira')
+                and tipo_transacao != "Gratuidade"
                 and data in ({partitions})
       - name: id_ordem_pagamento_servico_operador_dia
         description: "{{ doc('id_ordem_pagamento_servico_operador_dia') }}"
@@ -221,7 +222,9 @@ models:
               name: not_null__tipo_usuario__transacao
         quote: true
       - name: subtipo_usuario
-        description: "Subtipo do usuário que efetuou a transação [ex.: Estudante municipal, DC] [protegido]"
+        description: "Subtipo do usuário que efetuou a transação sem dados relacionados à saúde [ex.: Estudante municipal]"
+      - name: subtipo_usuario_protegido
+        description: "Subtipo do usuário que efetuou a transação com dados relacionados à saúde [ex.: Estudante municipal, DC] [protegido]"
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
         data_type: string
@@ -237,6 +240,7 @@ models:
         tests:
           - not_null:
               name: not_null__meio_pagamento_jae__transacao
+              where: tipo_transacao_jae != 'Gratuidade operadora' and data in ({partitions})
         data_type: string
         quote: true
       - name: datetime_ultima_atualizacao
@@ -478,7 +482,7 @@ models:
         data_type: string
         quote: true
       - name: id_operadora
-        description: "{{  doc('id_operadora') }}"
+        description: "{{ doc('id_operadora') }}"
         data_type: string
         quote: true
         tests:
@@ -486,7 +490,7 @@ models:
               name: not_null__id_operadora__transacao_valor_ordem
               where: data_ordem in ({partitions})
       - name: id_servico_jae
-        description: "{{  doc('id_servico_jae') }}"
+        description: "{{ doc('id_servico_jae') }}"
         data_type: string
         quote: true
         tests:

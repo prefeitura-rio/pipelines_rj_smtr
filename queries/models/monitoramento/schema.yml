@@ -51,7 +51,7 @@ models:
         data_type: string
         quote: true
       - name: datetime_processamento
-        description: Data e hora do processamento da viagem [GMT-3]
+        description: "{{ doc('datetime_processamento_viagem') }} [GMT-3]"
         data_type: datetime
         quote: true
       - name: datetime_captura
@@ -198,7 +198,7 @@ models:
     description: "Segmentos de viagem associados a sinais de GPS"
     columns:
       - name: data
-        description: "Data da viagem [partição]"
+        description: "{{ doc('data_viagem') }} [partição]"
         data_type: date
         quote: true
       - name: id_viagem
@@ -603,6 +603,7 @@ models:
                   "023.IX",
                   "024.X"
                 )
+                and modo = 'ONIBUS'
       - name: valor
         description: "{{ doc('valor') }}"
         data_type: float64
