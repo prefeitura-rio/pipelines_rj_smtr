@@ -6,6 +6,10 @@
 
 - Adiciona lógica das colunas de controle no modelo `aux_viagem_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/796)
 
+### Alterado
+
+- Altera lógica para classificar viagens como `Sem transação`, `Validador fechado` e `Validador associado incorretamente` após `DATA_SUBSIDIO_V20_INICIO` no modelo `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/796)
+
 ## [2.1.2] - 2025-08-15
 
 ### Alterado
