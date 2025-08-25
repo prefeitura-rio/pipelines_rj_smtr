@@ -14,6 +14,8 @@ models:
         description: "{{ doc('consorcio') }}"
       - name: tipo_transacao
         description: "{{ doc('tipo_transacao') }}"
+      - name: tipo_transacao_jae
+        description: "{{ doc('tipo_transacao_jae') }}"
       - name: valor_pagamento
         description: "{{ doc('valor_pagamento') }}"
       - name: id_ordem_pagamento
