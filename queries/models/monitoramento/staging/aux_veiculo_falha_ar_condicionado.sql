@@ -12,7 +12,7 @@
 
 {% set incremental_filter %}
     data between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
-            and data >= date("{{ var('DATA_SUBSIDIO_V20_INICIO') }}")
+    and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
 {% endset %}
 
 {% set condicao_falha %}
@@ -60,11 +60,16 @@ with
             safe_cast(
                 json_value(
                     indicadores,
-                    '$.indicador_temperatura_pos_tratamento_descartada_viagem.datetime_apuracao_subsidio'
+                    '$.indicador_temperatura_pos_tratamento_descartada_viagem.datetime_verificacao_regularidade'
                 ) as datetime
-            ) as datetime_apuracao_subsidio,
+            ) as datetime_verificacao_regularidade,
         from {{ ref("aux_viagem_temperatura") }}
-        where {{ incremental_filter }}
+        where
+            {{ incremental_filter }}
+            and (
+                ano_fabricacao <= 2019
+                or data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}')
+            )
     ),
     agg_viagem_temperatura as (
         select
@@ -102,8 +107,11 @@ with
                 ),
                 2
             ) as percentual_viagem_temperatura_pos_tratamento_descartada,
-            max(date(datetime_apuracao_subsidio)) as data_verificacao_regularidade
+            max(
+                date(datetime_verificacao_regularidade)
+            ) as data_verificacao_regularidade
         from viagem_temperatura
+        where indicador_ar_condicionado
         group by all
     ),
     indicador_veiculo as (
@@ -124,7 +132,6 @@ with
             percentual_viagem_temperatura_pos_tratamento_descartada
             > 0.5 as indicador_viagem_temperatura_descartada_veiculo
         from agg_viagem_temperatura
-        where indicador_ar_condicionado
     ),
     {% if is_incremental() %}
         dia_anterior as (

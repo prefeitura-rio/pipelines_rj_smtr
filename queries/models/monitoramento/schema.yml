@@ -772,6 +772,7 @@ models:
     tests:
       - test_completude_temperatura_inmet:
           name: test_completude__temperatura_inmet
+          where: "data between date('{date_range_start}') and date_sub(date('{date_range_end}'), interval 1 day)"
     columns:
       - name: data
         description: "{{ doc('data') }} [partição]"
@@ -793,6 +794,12 @@ models:
         tests:
           - not_null:
               name: not_null__temperatura__temperatura_inmet
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
   - name: veiculo_regularidade_temperatura_dia
     description: "Tabela com indicadores de regularidade de temperatura por veículo por dia"
     tests:

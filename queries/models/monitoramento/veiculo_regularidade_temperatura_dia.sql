@@ -12,9 +12,8 @@
 
 {% set incremental_filter %}
     data between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
-            and data >= date("{{ var('DATA_SUBSIDIO_V20_INICIO') }}")
+    and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
 {% endset %}
-
 with
     aux_veiculo as (
         select
@@ -157,9 +156,16 @@ with
                 ) as sha_dado
             from dados_completos
         ),
-        dados_completos_invocation_id as (
+        colunas_controle as (
             select
-                * except (id_execucao_dbt, sha_dado),
+                * except (datetime_ultima_atualizacao, id_execucao_dbt, sha_dado),
+                case
+                    when
+                        lag(sha_dado) over (win) != sha_dado
+                        or (lag(sha_dado) over (win) is null and ordem = 1)
+                    then datetime_ultima_atualizacao
+                    else lag(datetime_ultima_atualizacao) over (win)
+                end as datetime_ultima_atualizacao,
                 case
                     when
                         lag(sha_dado) over (win) != sha_dado
@@ -170,8 +176,17 @@ with
             from sha_dados
             window win as (partition by data, id_veiculo order by ordem)
         )
-    select * except (ordem)
-    from dados_completos_invocation_id
+    select
+        data,
+        id_veiculo,
+        ano_fabricacao,
+        indicadores,
+        quantidade_dia_falha_operacional,
+        motivo,
+        datetime_ultima_atualizacao,
+        versao,
+        id_execucao_dbt
+    from colunas_controle
     where ordem = 1
 {% else %} select * from dados_novos
 {% endif %}

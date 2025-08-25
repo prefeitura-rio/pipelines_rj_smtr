@@ -209,7 +209,7 @@ with
                             )
                         )
                         or (
-                            data >= date('{{ var("DATA_SUBSIDIO_V18_INICIO") }}')
+                            data >= date('{{ var("DATA_SUBSIDIO_V20_INICIO") }}')
                             and (
                                 quantidade_transacao_riocard = 0
                                 and quantidade_transacao = 0
@@ -219,7 +219,7 @@ with
                 then 'Sem transação'
 
                 when
-                    data >= date('{{ var("DATA_SUBSIDIO_V18_INICIO") }}')
+                    data >= date('{{ var("DATA_SUBSIDIO_V20_INICIO") }}')
                     and not indicador_estado_equipamento_aberto
                 then 'Validador fechado'
 
