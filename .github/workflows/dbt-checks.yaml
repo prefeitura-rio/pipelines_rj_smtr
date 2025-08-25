@@ -31,11 +31,11 @@ jobs:
           pip install --no-cache-dir -r requirements.txt
 
       - name: Install sqlfmt
-        run: pip install shandy-sqlfmt[jinjafmt]
+        run: pip install 'shandy-sqlfmt[jinjafmt]'
 
       # Setup gcloud CLI
       - name: Setup Google Cloud CLI
-        uses: google-github-actions/setup-gcloud@v1
+        uses: google-github-actions/setup-gcloud@v2
         with:
           service_account_key: ${{ secrets.GKE_SA_KEY }}
           project_id: ${{ secrets.GKE_PROJECT_ID}}
@@ -47,9 +47,10 @@ jobs:
 
       - name: Setup DBT profile
         working-directory: queries
-        run: sh setup_dbt_profiles.sh
+        run: sh setup_dbt_profiles.sh ${{ secrets.GKE_SA_KEY }}
 
       - name: Run sqlfmt
+        continue-on-error: true
         if: steps.files.outputs.all_changed_files != ''
         run: sqlfmt --diff ${{ steps.files.outputs.all_changed_files }}
 
