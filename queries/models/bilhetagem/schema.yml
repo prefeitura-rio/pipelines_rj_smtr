@@ -107,12 +107,12 @@ models:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/3266350367297582691'
         data_type: bytes
       - name: documento_cliente
-        description: "Número do documento do cliente que efetuou a transação"
+        description: "{{ doc('documento_cliente') }} que efetuou a transação [protegido]"
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
         data_type: string
       - name: tipo_documento_cliente
-        description: "Tipo do documento do cliente que efetuou a transação"
+        description: "{{ doc('tipo_documento_cliente') }} que efetuou a transação"
       - name: id_transacao
         description: "{{ doc('id_transacao') }}"
         tests:
@@ -222,9 +222,9 @@ models:
               name: not_null__tipo_usuario__transacao
         quote: true
       - name: subtipo_usuario
-        description: "Subtipo do usuário que efetuou a transação sem dados relacionados à saúde [ex.: Estudante municipal]"
+        description: "Subtipo do usuário que efetuou a transação sem dados relacionados à saúde [ex.: Ensino Básico municipal]"
       - name: subtipo_usuario_protegido
-        description: "Subtipo do usuário que efetuou a transação com dados relacionados à saúde [ex.: Estudante municipal, DC] [protegido]"
+        description: "Subtipo do usuário que efetuou a transação com dados relacionados à saúde [ex.: Ensino Básico municipal, DC] [protegido]"
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
         data_type: string

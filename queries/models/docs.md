@@ -1416,3 +1416,11 @@ Nome do serviço consolidado. Para linhas, é o nome curto da linha [ex: 010, 01
 {% docs descricao_servico_cadastro %}
 Nome completo do serviço consolidado. Para linhas é, primariamente o route_long_name da tabela routes do GTFS. Para estações é primariamente a coluna stop_name da tabela stops do GTFS. [Caso o registro não exista no GTFS, busca o serviço na base de dados da Jaé]
 {% enddocs %}
+
+{% docs tipo_documento_cliente %}
+Tipo do documento do cliente
+{% enddocs %}
+
+{% docs documento_cliente %}
+Número do documento do cliente
+{% enddocs %}

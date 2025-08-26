@@ -1,0 +1,80 @@
+models:
+  - name: cliente_jae
+    description: Tabela contendo os dados de cadastro dos clientes na Jaé
+    columns:
+      - name: id_cliente_particao
+        description: Identificador do cliente no tipo inteiro [particao] [protegido]
+        data_type: int64
+        quote: true
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+      - name: id_cliente
+        description: "{{ doc('id_cliente') }}"
+        data_type: string
+        quote: true
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+      - name: nome
+        description: Nome do cliente [protegido]
+        data_type: string
+        quote: true
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+      - name: nome_social
+        description: Nome social do cliente [protegido]
+        data_type: string
+        quote: true
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+      - name: tipo_pessoa
+        description: Pessoa física ou jurídica
+        data_type: string
+        quote: true
+      - name: tipo_documento
+        description: "{{ doc('tipo_documento_cliente') }}"
+        data_type: string
+        quote: true
+      - name: documento
+        description: "{{ doc('documento_cliente') }}"
+        data_type: string
+        quote: true
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+      - name: documento_alternativo
+        description: Número do documento alternativo do cliente [protegido]
+        data_type: string
+        quote: true
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+      - name: email
+        description: Email do cliente [protegido]
+        data_type: string
+        quote: true
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+      - name: telefone
+        description: Número do telefone do cliente [protegido]
+        data_type: string
+        quote: true
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+      - name: datetime_cadastro
+        description: Data e hora do cadastro do cliente no sistema da Jaé
+        data_type: datetime
+        quote: true
+      - name: datetime_captura
+        description: "{{ doc('datetime_captura') }}"
+        data_type: datetime
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
