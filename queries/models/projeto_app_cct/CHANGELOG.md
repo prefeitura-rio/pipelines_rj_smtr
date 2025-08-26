@@ -1,5 +1,11 @@
 # Changelog - projeto_app_cct
 
+## [1.0.2] - 2025-08-26
+
+### Adicionado
+
+- Adiciona filtro `modo = 'Van'` na view `transacao_cct.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/808)
+
 ## [1.0.1] - 2025-08-21
 
 ### Adicionado
