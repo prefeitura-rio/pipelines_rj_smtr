@@ -6,8 +6,8 @@ from functools import partial
 from prefect import task
 
 from pipelines.capture.inmet.constants import constants
-from pipelines.capture.inmet.utils import get_inmet_estacoes
 from pipelines.constants import constants as smtr_constants
+from pipelines.utils.extractors.api import get_raw_api_list
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.secret import get_secret
 
@@ -24,6 +24,10 @@ def create_temperatura_extractor(
 ):
     """Cria a extração de dados de TEMPERATURA na api do INMET"""
 
+    start = timestamp - timedelta(days=1)
+    data_inicio = start.strftime("%Y-%m-%d")
+    data_fim = timestamp.strftime("%Y-%m-%d")
+
     key = get_secret(constants.INMET_SECRET_PATH.value)["key"]
 
     estacoes = [
@@ -38,15 +42,9 @@ def create_temperatura_extractor(
         "A656",
     ]
 
-    start = timestamp - timedelta(days=1)
-    data_inicio = start.strftime("%Y-%m-%d")
-    data_fim = timestamp.strftime("%Y-%m-%d")
+    url_list = []
+    for estacao in estacoes:
+        url = f"{constants.INMET_BASE_URL.value,}/{data_inicio}/{data_fim}/{estacao}/{key}"
+        url_list += url
 
-    return partial(
-        get_inmet_estacoes,
-        base_url=constants.INMET_BASE_URL.value,
-        data_inicio=data_inicio,
-        data_fim=data_fim,
-        estacoes=estacoes,
-        token=key,
-    )
+    return partial(get_raw_api_list, url=url_list)

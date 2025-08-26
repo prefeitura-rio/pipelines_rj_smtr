@@ -4,33 +4,7 @@ from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
 
-from pipelines.utils.extractors.api import get_raw_api
 from pipelines.utils.utils import convert_timezone
-
-
-def get_inmet_estacoes(base_url, data_inicio, data_fim, estacoes, token) -> list[dict]:
-    """
-    Função para extrair dados da API do INMET para múltiplas estações
-    em um intervalo de datas, agregando os resultados em uma única lista.
-
-    Args:
-        base_url (str): URL base da API do INMET.
-        data_inicio (str): Data inicial no formato YYYY-MM-DD.
-        data_fim (str): Data final no formato YYYY-MM-DD.
-        estacoes (list[str]): Lista de códigos de estações meteorológicas.
-        token (str): Token de autenticação da API.
-
-    Returns:
-        list[dict]: Lista de registros retornados pela API para todas as estações.
-    """
-
-    data = []
-    for estacao in estacoes:
-        url = f"{base_url}/{data_inicio}/{data_fim}/{estacao}/{token}"
-        dados = get_raw_api(url, raw_filetype="json")
-        data += dados
-
-    return data
 
 
 def pretreatment_inmet(
