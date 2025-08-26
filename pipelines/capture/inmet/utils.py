@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import numpy as np
 import pandas as pd
@@ -135,8 +135,9 @@ def pretreatment_inmet(
             data[col] = data[col].replace(["", "null"], np.nan)
             data[col] = data[col].astype(float)
 
-    timestamp_hora = timestamp.strftime("%H:%M:%S")
-    data = data[data["horario"] == timestamp_hora]
+    timestamp_filtro = timestamp - timedelta(days=1)
+    data_filtro = timestamp_filtro.strftime("%Y-%m-%d")
+    data = data[data["data"] == data_filtro]
 
     # Remove linhas totalmente vazias
     data = data.dropna(subset=[c for c in float_cols if c in data.columns], how="all")

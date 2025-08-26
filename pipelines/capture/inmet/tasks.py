@@ -4,13 +4,14 @@ from datetime import datetime, timedelta
 from functools import partial
 
 from prefect import task
-from pytz import timezone
 
 from pipelines.capture.inmet.constants import constants
 from pipelines.capture.inmet.utils import get_inmet_estacoes
 from pipelines.constants import constants as smtr_constants
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.secret import get_secret
+
+# from pytz import timezone
 
 
 @task(
@@ -37,10 +38,9 @@ def create_temperatura_extractor(
         "A656",
     ]
 
-    start = source.get_last_scheduled_timestamp(timestamp=timestamp).astimezone(tz=timezone("UTC"))
-    end = timestamp.astimezone(tz=timezone("UTC"))
+    start = timestamp - timedelta(days=1)
     data_inicio = start.strftime("%Y-%m-%d")
-    data_fim = end.strftime("%Y-%m-%d")
+    data_fim = timestamp.strftime("%Y-%m-%d")
 
     return partial(
         get_inmet_estacoes,
