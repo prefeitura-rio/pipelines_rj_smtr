@@ -165,7 +165,6 @@ selectors:
         - method: fqn
           value: cliente_jae
 
-
   - name: transacao
     description: Materialização das tabelas de transação da bilhetagem
     definition:
