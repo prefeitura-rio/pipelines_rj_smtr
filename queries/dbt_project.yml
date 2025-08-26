@@ -489,6 +489,3 @@ models:
     cadastro_interno:
       +materialized: incremental
       +schema: cadastro_interno
-      staging:
-        +schema: cadastro_interno_staging
-
