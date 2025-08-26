@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
+import numpy as np
 import pandas as pd
 
 from pipelines.utils.extractors.api import get_raw_api
@@ -130,6 +131,7 @@ def pretreatment_inmet(
 
     for col in float_cols:
         if col in data.columns:
+            data[col] = data[col].replace(["", "null"], np.nan)
             data[col] = data[col].astype(float)
 
     timestamp_hora = timestamp.strftime("%H:%M:%S")
