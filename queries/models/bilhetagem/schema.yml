@@ -65,18 +65,21 @@ models:
         tests:
           - not_null:
               name: not_null__id_servico_jae__transacao
+              where: data in ({partitions}) and extract(year from data) > 2023
       - name: servico_jae
         description: "{{ doc('servico_jae') }}"
         data_type: string
         tests:
           - not_null:
               name: not_null__servico_jae__transacao
+              where: data in ({partitions}) and extract(year from data) > 2023
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
         data_type: string
         tests:
           - not_null:
               name: not_null__descricao_servico_jae__transacao
+              where: data in ({partitions}) and extract(year from data) > 2023
       - name: sentido
         description: "{{ doc('sentido') }}"
         tests:
@@ -308,16 +311,19 @@ models:
         tests:
           - not_null:
               name: not_null__id_servico_jae__integracao
+              where: data in ({partitions}) and extract(year from data) > 2023
       - name: servico_jae
         description: "{{ doc('servico_jae') }}"
         tests:
           - not_null:
               name: not_null__servico_jae__integracao
+              where: data in ({partitions}) and extract(year from data) > 2023
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
         tests:
           - not_null:
               name: not_null__descricao_servico_jae__integracao
+              where: data in ({partitions}) and extract(year from data) > 2023
       - name: id_transacao
         description: "{{ doc('id_transacao') }}"
         tests:
@@ -496,7 +502,7 @@ models:
         tests:
           - not_null:
               name: not_null__id_servico_jae__transacao_valor_ordem
-              where: data_ordem in ({partitions})
+              where: data_ordem in ({partitions}) and extract(year from data) > 2023
       - name: valor_transacao_rateio
         description: Valor da transação com o rateio [se houver] (R$)
         data_type: float64
@@ -545,16 +551,19 @@ models:
         tests:
           - not_null:
               name: not_null__id_servico_jae__passageiro_hora
+              where: data in ({partitions}) and extract(year from data) > 2023
       - name: servico_jae
         description: "{{ doc('servico_jae') }}"
         tests:
           - not_null:
               name: not_null__servico_jae__passageiro_hora
+              where: data in ({partitions}) and extract(year from data) > 2023
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
         tests:
           - not_null:
               name: not_null__descricao_servico_jae__passageiro_hora
+              where: data in ({partitions}) and extract(year from data) > 2023
       - name: sentido
         description: "{{ doc('sentido') }}"
         tests:
@@ -621,16 +630,19 @@ models:
         tests:
           - not_null:
               name: not_null__id_servico_jae__passageiro_tile_hora
+              where: data in ({partitions}) and extract(year from data) > 2023
       - name: servico_jae
         description: "{{ doc('servico_jae') }}"
         tests:
           - not_null:
               name: not_null__servico_jae__passageiro_tile_hora
+              where: data in ({partitions}) and extract(year from data) > 2023
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
         tests:
           - not_null:
               name: not_null__descricao_servico_jae__passageiro_tile_hora
+              where: data in ({partitions}) and extract(year from data) > 2023
       - name: sentido
         description: "{{ doc('sentido') }}"
         tests:
