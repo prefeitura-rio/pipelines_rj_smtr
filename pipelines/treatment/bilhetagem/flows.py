@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de bilhetagem
 
-DBT: 2025-08-21b
+DBT: 2025-08-26
 """
 from datetime import time
 
