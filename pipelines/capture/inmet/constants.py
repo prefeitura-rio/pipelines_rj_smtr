@@ -26,5 +26,5 @@ class constants(Enum):  # pylint: disable=c0103
         first_timestamp=datetime(2025, 7, 16, 0, 0, 0),
         schedule_cron=create_daily_cron(hour=5),
         partition_date_only=True,
-        primary_keys=["id_estacao", "data", "horario"],
+        primary_keys=["CD_ESTACAO", "DT_MEDICAO", "HR_MEDICAO"],
     )
