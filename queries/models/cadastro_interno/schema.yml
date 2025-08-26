@@ -15,7 +15,7 @@ models:
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
       - name: nome
-        description: Nome do cliente [protegido]
+        description: "{{ doc('nome_cliente') }} [protegido]"
         data_type: string
         quote: true
         policy_tags:

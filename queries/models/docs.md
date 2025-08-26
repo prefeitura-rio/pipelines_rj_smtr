@@ -1388,3 +1388,11 @@ Tipo do documento do cliente
 {% docs documento_cliente %}
 Número do documento do cliente
 {% enddocs %}
+
+{% docs nome_cliente %}
+Nome do cliente
+{% enddocs %}
+
+{% docs subtipo_usuario %}
+Subtipo do usuário que efetuou a transação sem dados relacionados à saúde [ex.: Ensino Básico municipal]
+{% enddocs %}
