@@ -94,6 +94,7 @@ def pretreatment_inmet(
     data = data.rename(columns=rename_cols)
 
     # Converte coluna de horas (ex.: 2300 -> 23:00:00)
+    data["horario"] = data["horario"].astype(str).str.zfill(4)
     data["horario"] = pd.to_datetime(data["horario"], format="%H%M")
     data["horario"] = data["horario"].dt.strftime("%H:%M:%S")
 
