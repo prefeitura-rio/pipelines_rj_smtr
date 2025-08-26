@@ -101,7 +101,7 @@ def get_raw_api_top_skip(
 
 def get_raw_api_list(
     url: Union[str, list[str]],
-    params_list: Union[None, list[dict]],
+    params_list: Union[None, list[dict]] = None,
     headers: Union[None, dict] = None,
 ) -> list[dict]:
     """
@@ -119,7 +119,7 @@ def get_raw_api_list(
     data = []
     if isinstance(url, list):
         for single_url in url:
-            page_data = get_raw_api(url=single_url, raw_filetype="json")
+            page_data = get_raw_api(url=single_url, headers=headers, raw_filetype="json")
             data += page_data
     else:
         for params in params_list:

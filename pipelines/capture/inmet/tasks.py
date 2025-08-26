@@ -44,7 +44,7 @@ def create_temperatura_extractor(
 
     url_list = []
     for estacao in estacoes:
-        url = f"{constants.INMET_BASE_URL.value,}/{data_inicio}/{data_fim}/{estacao}/{key}"
+        url = f"{constants.INMET_BASE_URL.value}/{data_inicio}/{data_fim}/{estacao}/{key}"
         url_list += url
 
     return partial(get_raw_api_list, url=url_list)
