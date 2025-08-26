@@ -26,6 +26,7 @@ class constants(Enum):  # pylint: disable=c0103
         table_id=INMET_TEMPERATURA_TABLE_ID,
         first_timestamp=datetime(2025, 7, 16, 0, 0, 0),
         schedule_cron=create_daily_cron(hour=5),
-        primary_keys=["id_estacao"],
+        partition_date_only=True,
+        primary_keys=["id_estacao", "data", "horario"],
         pretreat_funcs=[pretreatment_inmet],
     )
