@@ -437,7 +437,7 @@ with
                     or g.tipo_gratuidade = "PCD"
                 then "Saúde"
                 when tipo_transacao_jae like "Gratuidade operador%"
-                then "Gratuidade Operadora"
+                then "Operadora"
                 else ifnull(g.tipo_gratuidade, "Não Identificado")
             end as tipo_usuario,
             case
