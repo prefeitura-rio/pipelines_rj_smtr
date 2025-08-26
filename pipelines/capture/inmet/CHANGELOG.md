@@ -4,4 +4,4 @@
 
 ### Adicionado
 
-- Cria flow de captura dos dados de temperatura do INMET (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/811)
+- Cria flow de captura dos dados do INMET (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/811)

@@ -22,7 +22,7 @@ def create_temperatura_extractor(
     source: SourceTable,  # pylint: disable=W0613
     timestamp: datetime,
 ):
-    """Cria a extração de dados de TEMPERATURA na api do INMET"""
+    """Cria a extração de dados da api do INMET"""
 
     start = timestamp - timedelta(days=1)
     data_inicio = start.strftime("%Y-%m-%d")
