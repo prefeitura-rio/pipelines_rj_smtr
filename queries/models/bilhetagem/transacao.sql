@@ -422,7 +422,7 @@ with
             end as tipo_transacao,
             case
                 when
-                    t.tipo_transacao_jae != "Gratuidade"
+                    t.tipo_transacao_jae not like "%Gratuidade%"
                     and t.produto_jae != "Conta Jaé Gratuidade"
                     or t.produto_jae is null
                 then "Pagante"
@@ -473,6 +473,8 @@ with
                 then "Cartão"
                 when t.tipo_transacao_jae = "Botoeira"
                 then "Dinheiro"
+                when t.tipo_transacao_jae = "Gratuidade operadora"
+                then "Gratuidade operadora"
                 else t.meio_pagamento_jae
             end as meio_pagamento
         from transacao_info_posterior t
