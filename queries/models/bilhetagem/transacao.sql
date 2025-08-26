@@ -463,7 +463,19 @@ with
                 then "Ensino Superior"
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino is not null
                 then concat("Ensino Básico ", split(g.rede_ensino, " - ")[0])
-                when g.tipo_gratuidade = "Estudante"
+                when
+                    (
+                        g.tipo_gratuidade = "Estudante"
+                        or t.tipo_transacao_jae = "Gratuidade operador estudante"
+                    )
+                    or (
+                        t.tipo_transacao_jae = "Gratuidade operador pcd"
+                        or (
+                            g.tipo_gratuidade = "PCD"
+                            and g.deficiencia_permanente is null
+
+                        )
+                    )
                 then "Não Identificado"
                 when g.tipo_gratuidade = "PCD" and g.deficiencia_permanente
                 then "PCD"
