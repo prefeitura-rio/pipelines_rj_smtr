@@ -6,7 +6,6 @@ Valores constantes para captura de dados do INMET
 from datetime import datetime
 from enum import Enum
 
-from pipelines.capture.inmet.utils import pretreatment_inmet
 from pipelines.schedules import create_daily_cron
 from pipelines.utils.gcp.bigquery import SourceTable
 
@@ -28,5 +27,4 @@ class constants(Enum):  # pylint: disable=c0103
         schedule_cron=create_daily_cron(hour=5),
         partition_date_only=True,
         primary_keys=["id_estacao", "data", "horario"],
-        pretreat_funcs=[pretreatment_inmet],
     )
