@@ -99,7 +99,7 @@ def pretreatment_inmet(
     data["horario"] = data["horario"].dt.strftime("%H:%M:%S")
 
     # Converte timezone
-    data["datetime"] = pd.to_datetime(data["data"] + " " + data["horario"])
+    data["datetime"] = pd.to_datetime(data["data"] + " " + data["horario"], utc=True)
     data["datetime"] = data["datetime"].apply(convert_timezone)
     data["data"] = data["datetime"].dt.strftime("%Y-%m-%d")
     data["horario"] = data["datetime"].dt.strftime("%H:%M:%S")
