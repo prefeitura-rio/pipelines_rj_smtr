@@ -449,7 +449,9 @@ with
                 then "Ensino Superior"
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino is not null
                 then concat("Ensino Básico ", split(g.rede_ensino, " - ")[0])
-                when g.tipo_gratuidade = "Estudante"
+                when
+                    g.tipo_gratuidade = "Estudante"
+                    or t.tipo_transacao_jae = "Gratuidade operador estudante"
                 then "Não Identificado"
             end as subtipo_usuario,
             case
@@ -473,8 +475,6 @@ with
                 then "Cartão"
                 when t.tipo_transacao_jae = "Botoeira"
                 then "Dinheiro"
-                when t.tipo_transacao_jae = "Gratuidade operadora"
-                then "Gratuidade operadora"
                 else t.meio_pagamento_jae
             end as meio_pagamento
         from transacao_info_posterior t
