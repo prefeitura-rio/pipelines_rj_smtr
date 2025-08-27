@@ -295,7 +295,7 @@ with Flow(
             key=unmapped("subsidio_data_check"),
         )
 
-        missing_timestamps = task(lambda s: True if len(s) > 0 else None)(timestamps)
+        # missing_timestamps = task(lambda s: True if len(s) > 0 else None)(timestamps)
 
         SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt(
             resource="test",
@@ -312,9 +312,9 @@ with Flow(
         )
 
         test_failed = check_fail(DATA_QUALITY_PRE)
-        skip_materialization = merge(missing_timestamps, test_failed)
+        # skip_materialization = merge(missing_timestamps, test_failed)
 
-        with case(skip_materialization, False):
+        with case(test_failed, False):
             # 4. CALCULATE #
             date_in_range = check_date_in_range(
                 _vars["start_date"], _vars["end_date"], constants.DATA_SUBSIDIO_V9_INICIO.value
