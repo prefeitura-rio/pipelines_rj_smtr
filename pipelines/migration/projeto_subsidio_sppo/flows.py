@@ -295,7 +295,7 @@ with Flow(
             key=unmapped("subsidio_data_check"),
         )
 
-        missing_timestamps = task(lambda s: True if len(s) > 0 else None)(timestamps)
+        missing_timestamps = task(lambda s: True if len(s) > 0 else False)(timestamps)
 
         SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt(
             resource="test",
@@ -312,7 +312,7 @@ with Flow(
         )
 
         test_failed = check_fail(DATA_QUALITY_PRE)
-        skip_materialization = merge(missing_timestamps, test_failed)
+        skip_materialization = task(lambda a, b: a or b)(missing_timestamps, test_failed)
 
         with case(skip_materialization, False):
             # 4. CALCULATE #
