@@ -22,4 +22,5 @@ from {{ ref("transacao") }} t
 join {{ ref("cliente_jae") }} c using (id_cliente)
 where
     t.tipo_transacao_jae in ('Gratuidade', 'Integração gratuidade')
-    t.tipo_usuario = "Estudante" and t.subtipo_usuario = 'Ensino Básico Municipal'
+    and t.tipo_usuario = "Estudante"
+    and t.subtipo_usuario = 'Ensino Básico Municipal'

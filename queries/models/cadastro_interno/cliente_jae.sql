@@ -115,7 +115,7 @@ with
     ),
     sha_dados_novos as (select *, {{ sha_column }} as sha_dado_novo from dados_novos),
     sha_dados_atuais as (
-        {% if is_incremental() %}
+        {% if is_incremental() and partitions | length > 0 %}
 
             select
                 id_cliente,
