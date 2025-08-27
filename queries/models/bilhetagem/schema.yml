@@ -503,7 +503,7 @@ models:
         tests:
           - not_null:
               name: not_null__id_servico_jae__transacao_valor_ordem
-              where: data_ordem in ({partitions}) and extract(year from data) > 2023
+              where: data_ordem in ({partitions}) and extract(year from data_ordem) > 2023
       - name: valor_transacao_rateio
         description: Valor da transação com o rateio [se houver] (R$)
         data_type: float64
