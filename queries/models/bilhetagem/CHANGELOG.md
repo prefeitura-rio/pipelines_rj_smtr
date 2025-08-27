@@ -3,7 +3,8 @@
 ## [3.2.9] - 2025-08-27
 
 ### Alterado
-- Define valor das transações do RioCard como `null` para datas anteriores a `2025-08-02` no modelo `aux_passageiro_hora.sql`
+
+- Define valor das transações do RioCard como `null` para datas anteriores a `2025-08-02` no modelo `aux_passageiro_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/817)
 
 ## [3.2.8] - 2025-08-27
 
