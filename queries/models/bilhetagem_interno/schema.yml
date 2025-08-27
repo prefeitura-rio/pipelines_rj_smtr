@@ -93,125 +93,27 @@ models:
       - name: datetime_transacao
         description: "{{ doc('datetime_transacao') }}"
         data_type: datetime
-      - name: datetime_processamento
-        description: "{{ doc('datetime_processamento_transacao') }}"
-        data_type: datetime
-      - name: datetime_captura
-        description: "{{ doc('datetime_captura') }}"
-        data_type: datetime
-      - name: modo
-        description: "{{ doc('modo') }}"
-        data_type: string
-      - name: id_consorcio
-        description: "{{ doc('id_consorcio') }}"
-        data_type: string
-      - name: consorcio
-        description: "{{ doc('consorcio') }}"
-        data_type: string
-      - name: id_operadora
-        description: "{{ doc('id_operadora') }}"
-        data_type: string
-      - name: operadora
-        description: "{{ doc('operadora') }}"
-        data_type: string
-      - name: tipo_documento_operadora
-        description: "{{ doc('tipo_documento_operadora') }}"
-      - name: id_servico_jae
-        description: "{{ doc('id_servico_jae') }}"
-        data_type: string
-      - name: servico_jae
-        description: "{{ doc('servico_jae') }}"
-        data_type: string
-      - name: descricao_servico_jae
-        description: "{{ doc('descricao_servico_jae') }}"
-      - name: sentido
-        description: "{{ doc('sentido') }}"
-        data_type: string
-      - name: id_veiculo
-        description: "{{ doc('id_veiculo') }}"
-        data_type: string
-      - name: id_validador
-        description: "{{ doc('id_validador') }}"
-        data_type: string
-      - name: tipo_documento_cliente
-        description: "Tipo do documento do cliente que efetuou a transação"
       - name: id_transacao
         description: "{{ doc('id_transacao') }}"
         data_type: string
+      - name: modo
+        description: "{{ doc('modo') }}"
+        data_type: string
+      - name: tipo_documento_cliente
+        description: "{{ doc('tipo_documento_cliente') }}"
+      - name: documento_cliente
+        description: "{{ doc('documento_cliente') }}"
+      - name: nome_cliente
+        description: "{{ doc('nome_cliente') }}"
       - name: tipo_transacao_jae
         description: "{{ doc('tipo_transacao_jae') }}"
         data_type: string
       - name: tipo_transacao
         description: "{{ doc('tipo_transacao') }}"
         data_type: string
-      - name: latitude
-        description: "{{ doc('latitude_transacao') }}"
-        data_type: float64
-      - name: longitude
-        description: "{{ doc('longitude_transacao') }}"
-        data_type: float64
-      - name: geo_point_transacao
-        description: "{{ doc('geo_point_transacao') }}"
-        data_type: geography
-      - name: valor_transacao
-        description: "{{ doc('valor_transacao') }}"
-        data_type: float64
-      - name: valor_pagamento
-        description: "{{ doc('valor_pagamento') }}"
-        data_type: float64
-      - name: data_ordem
-        description: "{{ doc('data_ordem') }}"
-        data_type: date
-      - name: id_ordem_pagamento_servico_operador_dia
-        description: "{{ doc('id_ordem_pagamento_servico_operador_dia') }}"
-        data_type: string
-      - name: id_ordem_pagamento_consorcio_operador_dia
-        description: "{{ doc('id_ordem_pagamento_consorcio_operador_dia') }}"
-        data_type: string
-      - name: id_ordem_pagamento_consorcio_dia
-        description: "{{ doc('id_ordem_pagamento_consorcio_dia') }}"
-        data_type: string
-      - name: id_ordem_pagamento
-        description: "{{ doc('id_ordem_pagamento') }}"
-        data_type: string
-      - name: versao
-        description: "{{ doc('versao') }}"
-        data_type: string
-      - name: id_operadora_jae
-        description: "{{ doc('id_operadora_jae') }}"
-        data_type: string
-        quote: true
-      - name: cadastro_cliente
-        description: "{{ doc('cadastro_cliente') }}"
-        data_type: string
-        quote: true
-      - name: produto
-        description: "{{ doc('produto') }}"
-        data_type: string
-        quote: true
-      - name: produto_jae
-        description: "{{ doc('produto_jae') }}"
-        data_type: string
-        quote: true
       - name: tipo_usuario
         description: "{{ doc('tipo_usuario') }}"
         data_type: string
         quote: true
       - name: subtipo_usuario
-        description: "Subtipo do usuário que efetuou a transação sem dados relacionados à saúde [ex.: Estudante municipal]"
-      - name: meio_pagamento
-        description: "{{ doc('meio_pagamento') }}"
-        data_type: string
-        quote: true
-      - name: meio_pagamento_jae
-        description: "{{ doc('meio_pagamento_jae') }}"
-        data_type: string
-        quote: true
-      - name: datetime_ultima_atualizacao
-        description: "{{ doc('datetime_ultima_atualizacao') }}"
-        data_type: datetime
-        quote: true
-      - name: id_execucao_dbt
-        description: "{{ doc('id_execucao_dbt') }}"
-        data_type: string
-        quote: true
+        description: "{{ doc('subtipo_usuario') }}"
