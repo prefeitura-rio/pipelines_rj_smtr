@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.6.6] - 2025-08-27
+
+### Alterado
+
+- Adicionada excessão para licenciamento entre `2025-08-01` e `2025-08-18` no modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/816)
+
 ## [1.6.5] - 2025-08-19
 
 ### Corrigido
