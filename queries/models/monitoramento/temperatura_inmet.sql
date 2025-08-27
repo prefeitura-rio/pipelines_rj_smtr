@@ -27,8 +27,6 @@ with
         from {{ ref("staging_temperatura_inmet") }}
         where
             data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
-            and id_estacao
-            in ("A602", "A621", "A636", "A651", "A652", "A653", "A654", "A655", "A656")  -- Estações do Rio de Janeiro
             {% if is_incremental() %}
                 and {{ incremental_filter }}
                 and data between date("{{ var('date_range_start') }}") and date(
