@@ -1,5 +1,11 @@
 # Changelog - bilhetagem_interno
 
+## [1.1.2] - 2025-08-27
+
+### Alterado
+
+- Altera colunas do modelo `transacao_gratuidade_estudante_municipal.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/812)
+
 ## [1.1.0] - 2025-08-21
 
 ### Adicionado

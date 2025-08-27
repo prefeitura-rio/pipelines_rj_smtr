@@ -6,16 +6,21 @@
 
 
 select
-    * except (
-        documento_operadora,
-        id_cliente,
-        hash_cliente,
-        documento_cliente,
-        hash_cartao,
-        saldo_cartao,
-        subtipo_usuario_protegido
-    )
-from {{ ref("transacao") }}
+    t.data,
+    t.hora,
+    t.datetime_transacao,
+    t.id_transacao,
+    t.modo,
+    t.tipo_documento_cliente,
+    t.documento_cliente,
+    c.nome as nome_cliente,
+    t.tipo_transacao,
+    t.tipo_transacao_jae,
+    t.tipo_usuario,
+    t.subtipo_usuario
+from {{ ref("transacao") }} t
+join {{ ref("cliente_jae") }} c using (id_cliente)
 where
-    tipo_transacao_jae in ('Gratuidade', 'Integração gratuidade')
-    and subtipo_usuario = 'Estudante Municipal'
+    t.tipo_transacao_jae in ('Gratuidade', 'Integração gratuidade')
+    and t.tipo_usuario = "Estudante"
+    and t.subtipo_usuario = 'Ensino Básico Municipal'
