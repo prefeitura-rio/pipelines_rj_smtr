@@ -1,5 +1,17 @@
 # Changelog - bilhetagem
 
+## [3.2.8] - 2025-08-27
+
+### Alterado
+
+- `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/812):
+  - Altera a fonte dos dados de cliente para o modelo `cliente_jae.sql`
+  - Altera classificação das colunas de subtipo do usuário para gratuidades de estudantes
+
+### Corrigido
+
+- Corrige gratuidades sendo com `tipo_usuario` pagante na `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/812)
+
 ## [3.2.7] - 2025-08-21
 
 ### Adicionado
