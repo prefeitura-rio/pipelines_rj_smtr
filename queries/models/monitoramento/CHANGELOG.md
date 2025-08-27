@@ -1,5 +1,15 @@
 # Changelog - monitoramento
 
+## [1.6.6] - 2025-08-27
+
+### Adicionado
+
+- Cria o modelo `staging_temperatura_inmet` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/811)
+
+### Alterado
+
+- Altera o modelo `temperatura_inmet` para unir os dados `staging_temperatura_inmet` com `source("clima_estacao_meteorologica", "meteorologia_inmet")` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/811)
+
 ## [1.6.5] - 2025-08-19
 
 ### Corrigido
