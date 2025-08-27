@@ -358,12 +358,6 @@ selectors:
           value: snapshot_autuacao_disciplinar_historico
         - method: fqn
           value: snapshot_veiculo_fiscalizacao_lacre
-        - method: fqn
-          value: snapshot_veiculo_regularidade_temperatura_dia
-        - method: fqn
-          value: snapshot_viagem_regularidade_temperatura
-        - method: fqn
-          value: snapshot_temperatura_inmet
 
   - name: monitoramento_veiculo
     definition:
@@ -408,3 +402,27 @@ selectors:
           value: sppo_registro_agente_verao
         - method: fqn
           value: veiculo_dia
+
+  - name: monitoramento_temperatura
+    definition:
+      union:
+        - method: fqn
+          value: temperatura_inmet
+        - method: fqn
+          value: viagem_classificada
+        - method: fqn
+          value: aux_viagem_temperatura
+        - method: fqn
+          value: aux_veiculo_falha_ar_condicionado
+        - method: fqn
+          value: veiculo_regularidade_temperatura_dia
+
+  - name: snapshot_temperatura
+    definition:
+      union:
+        - method: fqn
+          value: snapshot_veiculo_regularidade_temperatura_dia
+        - method: fqn
+          value: snapshot_viagem_regularidade_temperatura
+        - method: fqn
+          value: snapshot_temperatura_inmet
