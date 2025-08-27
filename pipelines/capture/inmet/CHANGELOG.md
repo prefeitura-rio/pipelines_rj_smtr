@@ -1,6 +1,6 @@
 # Changelog - source_inmet
 
-## [1.0.0] - 2025-08-26
+## [1.0.0] - 2025-08-27
 
 ### Adicionado
 

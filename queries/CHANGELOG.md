@@ -1,6 +1,6 @@
 # Changelog - queries
 
-## [1.0.8] - 2025-08-19
+## [1.0.9] - 2025-08-27
 
 ### Adicionado
 
