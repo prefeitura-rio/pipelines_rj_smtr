@@ -1394,5 +1394,5 @@ Nome do cliente
 {% enddocs %}
 
 {% docs subtipo_usuario %}
-Subtipo do usuário que efetuou a transação sem dados relacionados à saúde [ex.: Ensino Básico municipal]
+Subtipo do usuário que efetuou a transação sem dados relacionados à saúde [ex.: Ensino Básico Municipal]
 {% enddocs %}

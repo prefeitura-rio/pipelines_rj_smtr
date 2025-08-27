@@ -438,7 +438,7 @@ with
                 then "Saúde"
                 when tipo_transacao_jae like "Gratuidade operador%"
                 then "Operadora"
-                else ifnull(g.tipo_gratuidade, "Não Identificado")
+                else g.tipo_gratuidade
             end as tipo_usuario,
             case
                 when
@@ -449,10 +449,6 @@ with
                 then "Ensino Superior"
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino is not null
                 then concat("Ensino Básico ", split(g.rede_ensino, " - ")[0])
-                when
-                    g.tipo_gratuidade = "Estudante"
-                    or t.tipo_transacao_jae = "Gratuidade operador estudante"
-                then "Não Identificado"
             end as subtipo_usuario,
             case
                 when
@@ -463,20 +459,6 @@ with
                 then "Ensino Superior"
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino is not null
                 then concat("Ensino Básico ", split(g.rede_ensino, " - ")[0])
-                when
-                    (
-                        g.tipo_gratuidade = "Estudante"
-                        or t.tipo_transacao_jae = "Gratuidade operador estudante"
-                    )
-                    or (
-                        t.tipo_transacao_jae = "Gratuidade operador pcd"
-                        or (
-                            g.tipo_gratuidade = "PCD"
-                            and g.deficiencia_permanente is null
-
-                        )
-                    )
-                then "Não Identificado"
                 when g.tipo_gratuidade = "PCD" and g.deficiencia_permanente
                 then "PCD"
                 when g.tipo_gratuidade = "PCD" and not g.deficiencia_permanente

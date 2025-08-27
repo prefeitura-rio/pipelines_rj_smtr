@@ -227,7 +227,7 @@ models:
       - name: subtipo_usuario
         description: "{{ doc('subtipo_usuario') }}"
       - name: subtipo_usuario_protegido
-        description: "Subtipo do usuário que efetuou a transação com dados relacionados à saúde [ex.: Ensino Básico municipal, DC] [protegido]"
+        description: "Subtipo do usuário que efetuou a transação com dados relacionados à saúde [ex.: Ensino Básico Municipal, DC] [protegido]"
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
         data_type: string
