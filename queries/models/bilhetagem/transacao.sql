@@ -433,7 +433,8 @@ with
                     in ("Gratuidade operador sênior", "Gratuidade operador estudante")
                 then initcap(split(t.tipo_transacao_jae, " ")[2])
                 when
-                    t.tipo_transacao_jae = "Gratuidade operador pcd"
+                    t.tipo_transacao_jae
+                    in ("Gratuidade operador pcd", "Gratuidade acompanhante")
                     or g.tipo_gratuidade = "PCD"
                 then "Saúde"
                 when tipo_transacao_jae like "Gratuidade operador%"
