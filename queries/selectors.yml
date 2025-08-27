@@ -407,6 +407,8 @@ selectors:
     definition:
       union:
         - method: fqn
+          value: staging_temperatura_inmet
+        - method: fqn
           value: temperatura_inmet
         - method: fqn
           value: viagem_classificada
