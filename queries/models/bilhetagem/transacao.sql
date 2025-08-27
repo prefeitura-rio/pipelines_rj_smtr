@@ -181,8 +181,8 @@ with
             t.numero_serie_validador as id_validador,
             t.id_cliente as id_cliente,
             sha256(t.id_cliente) as hash_cliente,
-            c.nr_documento as documento_cliente,
-            tdc.tipo_documento as tipo_documento_cliente,
+            c.documento as documento_cliente,
+            c.tipo_documento as tipo_documento_cliente,
             t.pan_hash as hash_cartao,
             t.vl_saldo as saldo_cartao,
             tp.tipo_pagamento as meio_pagamento_jae,
@@ -208,10 +208,9 @@ with
                 or s.datetime_fim_validade is null
             )
         left join {{ ref("staging_produto") }} p on t.id_produto = p.cd_produto
-        left join {{ ref("staging_cliente") }} c on t.id_cliente = c.cd_cliente
+        left join {{ ref("cliente_jae") }} c using (id_cliente)
         left join tipo_transacao tt on tt.id_tipo_transacao = t.tipo_transacao
         left join tipo_pagamento tp on t.id_tipo_midia = tp.id_tipo_pagamento
-        left join tipo_documento tdc on c.cd_tipo_documento = tdc.cd_tipo_documento
         left join
             {{ ref("staging_linha_sem_ressarcimento") }} lsr
             on t.cd_linha = lsr.id_linha
@@ -423,7 +422,7 @@ with
             end as tipo_transacao,
             case
                 when
-                    t.tipo_transacao_jae != "Gratuidade"
+                    t.tipo_transacao_jae not like "%Gratuidade%"
                     and t.produto_jae != "Conta Jaé Gratuidade"
                     or t.produto_jae is null
                 then "Pagante"
@@ -434,12 +433,13 @@ with
                     in ("Gratuidade operador sênior", "Gratuidade operador estudante")
                 then initcap(split(t.tipo_transacao_jae, " ")[2])
                 when
-                    t.tipo_transacao_jae = "Gratuidade operador pcd"
+                    t.tipo_transacao_jae
+                    in ("Gratuidade operador pcd", "Gratuidade acompanhante")
                     or g.tipo_gratuidade = "PCD"
                 then "Saúde"
                 when tipo_transacao_jae like "Gratuidade operador%"
-                then "Gratuidade Operadora"
-                else ifnull(g.tipo_gratuidade, "Não Identificado")
+                then "Operadora"
+                else g.tipo_gratuidade
             end as tipo_usuario,
             case
                 when
@@ -447,11 +447,9 @@ with
                     and t.produto_jae != "Conta Jaé Gratuidade"
                 then null
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino = "Universidade"
-                then "Estudante Passe Livre"
+                then "Ensino Superior"
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino is not null
-                then concat("Estudante ", split(g.rede_ensino, " - ")[0])
-                when g.tipo_gratuidade = "Estudante"
-                then "Estudante Não Identificado"
+                then concat("Ensino Básico ", split(g.rede_ensino, " - ")[0])
             end as subtipo_usuario,
             case
                 when
@@ -459,11 +457,9 @@ with
                     and t.produto_jae != "Conta Jaé Gratuidade"
                 then null
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino = "Universidade"
-                then "Estudante Passe Livre"
+                then "Ensino Superior"
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino is not null
-                then concat("Estudante ", split(g.rede_ensino, " - ")[0])
-                when g.tipo_gratuidade = "Estudante"
-                then "Estudante Não Identificado"
+                then concat("Ensino Básico ", split(g.rede_ensino, " - ")[0])
                 when g.tipo_gratuidade = "PCD" and g.deficiencia_permanente
                 then "PCD"
                 when g.tipo_gratuidade = "PCD" and not g.deficiencia_permanente
