@@ -10,4 +10,5 @@ CAPTURA_TEMPERATURA_INMET = create_default_capture_flow(
     source=constants.INMET_METEOROLOGIA_SOURCE.value,
     create_extractor_task=create_temperatura_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    generate_schedule=False,
 )
