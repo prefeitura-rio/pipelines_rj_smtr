@@ -1,10 +1,20 @@
 # Changelog - subsidio
 
+## [2.1.3] - 2025-08-19
+
+### Adiciona
+
+- Adiciona lógica das colunas de controle no modelo `aux_viagem_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/796)
+
+### Alterado
+
+- Altera lógica para classificar viagens como `Sem transação`, `Validador fechado` e `Validador associado incorretamente` após `DATA_SUBSIDIO_V20_INICIO` no modelo `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/796)
+
 ## [2.1.2] - 2025-08-15
 
 ### Alterado
 
-- Altera lógica para considerar `indicador_falha_recorrente` após `DATA_SUBSIDIO_V20_INICIO` no modelo `viagem_regularidade_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/788)
+- Altera lógica para considerar `indicador_falha_recorrente` após `DATA_SUBSIDIO_V20_INICIO` no modelo `viagem_regularidade_temperatura`, alteração referente ao Processo.rio `MTR-CAP-2025/25179` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/788)
 
 ## [2.1.1] - 2025-08-14
 

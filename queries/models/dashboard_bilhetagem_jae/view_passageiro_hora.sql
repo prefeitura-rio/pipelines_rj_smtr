@@ -28,7 +28,7 @@ select
     p.cadastro_cliente,
     p.produto,
     p.tipo_transacao,
-    p.tipo_usuario,
+    ifnull(p.tipo_usuario, "Não Identificado") as tipo_usuario,
     p.meio_pagamento,
     p.quantidade_passageiros,
     p.valor_total_transacao
