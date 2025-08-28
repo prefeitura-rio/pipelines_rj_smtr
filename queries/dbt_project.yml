@@ -486,4 +486,6 @@ models:
       +schema: infraestrutura
       staging:
         +schema: infraestrutura_staging
-
+    cadastro_interno:
+      +materialized: incremental
+      +schema: cadastro_interno
