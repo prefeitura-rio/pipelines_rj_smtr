@@ -39,7 +39,8 @@ def atualizar_descricao_tabela(client, projeto, schema, nome, descricao_tabela, 
     if descricao_tabela and tabela["description"] != descricao_tabela:
         if len(descricao_tabela) > 16384:
             print(
-                f"A descrição da da tabela '{table_id}' tem mais de 16384 caracteres, não é possível atualizar."
+                f"A descrição da da tabela '{table_id}' tem mais de 16384 caracteres, \
+                    não é possível atualizar."
             )
         else:
             print(f"Atualizando a descrição da tabela '{table_id}'")
@@ -53,7 +54,8 @@ def atualizar_descricao_tabela(client, projeto, schema, nome, descricao_tabela, 
             ) or "description" not in field:
                 if len(descricoes_colunas[field["name"]]) > 1024:
                     print(
-                        f"A descrição da coluna '{field['name']}' da tabela '{table_id}' tem mais de 1024 caracteres, não é possível atualizar."
+                        f"A descrição da coluna '{field['name']}' da tabela '{table_id}' \
+                            tem mais de 1024 caracteres, não é possível atualizar."
                     )
                     continue
                 print(f"Atualizando a descrição da coluna '{field['name']}' da tabela '{table_id}'")
