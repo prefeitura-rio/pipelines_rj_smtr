@@ -1,5 +1,15 @@
 # Changelog - queries
 
+## [1.0.9] - 2025-08-27
+
+### Adicionado
+
+- Cria selector `snapshot_temperatura` e `monitoramento_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/811)
+
+### Alterado
+
+- Altera selector `snapshot_veiculo` removendo os snapshots `snapshot_veiculo_regularidade_temperatura_dia`, `snapshot_temperatura_inmet` e `snapshot_viagem_regularidade_temperatura`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/811)
+
 ## [1.0.8] - 2025-08-19
 
 ### Alterado

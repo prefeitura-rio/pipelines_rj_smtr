@@ -8,7 +8,7 @@ from prefect import task
 
 from pipelines.capture.rioonibus.constants import constants
 from pipelines.constants import constants as smtr_constants
-from pipelines.utils.extractors.api import get_raw_api_params_list
+from pipelines.utils.extractors.api import get_raw_api_list
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.secret import get_secret
 
@@ -36,7 +36,7 @@ def create_viagem_informada_extractor(
     ]
 
     return partial(
-        get_raw_api_params_list,
+        get_raw_api_list,
         url=constants.VIAGEM_INFORMADA_BASE_URL.value,
         params_list=params,
     )
