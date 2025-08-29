@@ -45,7 +45,7 @@ FINANCEIRO_BILHETAGEM_MATERIALIZACAO.state_handlers.append(
 )
 
 with Flow(
-    name="ordem_pagamento_consorcio_operador_dia - quality check"
+    name="bilhetagem_consorcio_operador_dia - quality check"
 ) as ordem_pagamento_quality_check:
     start_datetime = TypedParameter(
         name="start_datetime",
@@ -62,8 +62,8 @@ with Flow(
         default=None,
         accepted_types=(NoneType, list),
     )
-    DATASET_ID = smtr_constants.BILHETAGEM_DATASET_ID.value
-    TABLE_ID = "ordem_pagamento_consorcio_operador_dia"
+    DATASET_ID = constants.FINANCEIRO_DATASET_ID.value
+    TABLE_ID = "bilhetagem_consorcio_operador_dia"
 
     env = get_run_env()
     timestamp = get_scheduled_timestamp()
