@@ -329,10 +329,6 @@ selectors:
     definition:
       union:
         - method: fqn
-          value: snapshot_viagens_remuneradas
-        - method: fqn
-          value: snapshot_viagem_transacao
-        - method: fqn
           value: snapshot_viagem_completa
         - method: fqn
           value: snapshot_viagem_planejada
@@ -340,6 +336,10 @@ selectors:
   - name: snapshot_subsidio
     definition:
       union:
+        - method: fqn
+          value: snapshot_viagens_remuneradas
+        - method: fqn
+          value: snapshot_viagem_transacao
         - method: fqn
           value: snapshot_subsidio_faixa_servico_dia_tipo_viagem
         - method: fqn
