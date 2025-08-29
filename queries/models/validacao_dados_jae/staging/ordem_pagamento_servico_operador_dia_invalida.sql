@@ -60,7 +60,7 @@ with
     ),
     id_ordem_pagamento as (
         select data_ordem, id_ordem_pagamento
-        from {{ ref("ordem_pagamento_dia") }}
+        from {{ ref("bilhetagem_dia") }}
         {% if is_incremental() %}
             where data_ordem = date("{{var('run_date')}}")
         {% endif %}

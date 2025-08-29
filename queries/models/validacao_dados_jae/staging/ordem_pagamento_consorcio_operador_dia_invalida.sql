@@ -33,7 +33,7 @@ with
             id_ordem_pagamento,
             quantidade_total_transacao,
             valor_total_transacao_liquido_ordem as valor_total_transacao_liquido
-        from {{ ref("ordem_pagamento_consorcio_operador_dia") }}
+        from {{ ref("bilhetagem_consorcio_operador_dia") }}
         {% if is_incremental() %}
             where data_ordem = date("{{var('run_date')}}")
         {% endif %}

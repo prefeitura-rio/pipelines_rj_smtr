@@ -24,7 +24,7 @@ class constants(Enum):  # pylint: disable=c0103
     )
 
     ORDEM_PAGAMENTO_CHECKS_LIST = {
-        "ordem_pagamento_consorcio_operador_dia": {
+        "bilhetagem_consorcio_operador_dia": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
             "dbt_expectations.expect_column_max_to_be_between__data_ordem__bilhetagem_consorcio_operador_dia": {  # noqa
                 "description": "A Ordem de pagamento está em dia"
