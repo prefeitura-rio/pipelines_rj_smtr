@@ -303,8 +303,7 @@ with Flow(
 
             SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt(
                 resource="test",
-                # dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
-                dataset_id="tecnologia_servico",
+                dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
                 exclude="dashboard_subsidio_sppo_v2 teto_viagens__viagens_remuneradas",
                 _vars=dbt_vars,
             ).set_upstream(task=timestamps)
