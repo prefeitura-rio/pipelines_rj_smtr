@@ -108,13 +108,14 @@ with
             id_ordem_pagamento_consorcio_dia,
             id_ordem_pagamento_consorcio_operador_dia
         from {{ ref("transacao") }}
-        {% if is_incremental() %}
-            where
-                {% if transacao_partitions | length > 0 %}
+        where
+            tipo_transacao_jae != "Botoeira"
+            {% if is_incremental() %}
+                and {% if transacao_partitions | length > 0 %}
                     data in ({{ transacao_partitions | join(", ") }})
                 {% else %} data = "2000-01-01"
                 {% endif %}
-        {% endif %}
+            {% endif %}
     ),
     integracao as (
         select
