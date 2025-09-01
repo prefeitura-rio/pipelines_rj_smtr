@@ -11,7 +11,7 @@
 }}
 
 {% set incremental_filter %}
-    data_particao between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
+    between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
 {% endset %}
 
 with
@@ -20,7 +20,7 @@ with
         from {{ source("clima_estacao_meteorologica", "meteorologia_inmet") }}
         where
             data_particao >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
-            {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
+            {% if is_incremental() %} and data_particao {{ incremental_filter }} {% endif %}
     ),
     dados_contingencia as (
         select data, hora, id_estacao, temperatura
@@ -28,10 +28,8 @@ with
         where
             data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
             {% if is_incremental() %}
-                and {{ incremental_filter }}
-                and data between date("{{ var('date_range_start') }}") and date(
-                    "{{ var('date_range_end') }}"
-                )
+                and data_particao between date("{{ var('date_range_start') }}") and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
+                and data {{ incremental_filter }}
             {% endif %}
     ),
     dados_combinados as (
