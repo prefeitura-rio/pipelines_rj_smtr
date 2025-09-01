@@ -122,6 +122,12 @@ def get_raw_api_list(
             page_data = get_raw_api(url=single_url, headers=headers, raw_filetype="json")
             data += page_data
     else:
+        if params_list is None:
+            raise ValueError(
+                "Quando 'url' é uma string, 'params_list' deve ser fornecido. "
+                "Para uma única chamada de API sem parâmetros, use 'get_raw_api'."
+            )
+
         for params in params_list:
             page_data = get_raw_api(url=url, headers=headers, params=params, raw_filetype="json")
             data += page_data
