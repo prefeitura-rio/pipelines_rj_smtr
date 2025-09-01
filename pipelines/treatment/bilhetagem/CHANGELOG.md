@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [2.0.9] - 2025-09-01
+
+### Removido
+
+- Move materialização do `gps_validador` para o dataset `monitoramento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/822)
+
 ## [2.0.8] - 2025-08-22
 
 ### Adicionado
