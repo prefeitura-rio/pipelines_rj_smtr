@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.2.7] - 2025-09-01
+
+### Adicionado
+
+- Move materialização do `gps_validador` para o dataset `monitoramento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/822)
+
 ## [1.2.6] - 2025-08-05
 
 ### Adicionado
