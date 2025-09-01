@@ -376,7 +376,7 @@ with
                     i.id_transacao is not null
                     or o.id_transacao is not null
                     or date(t.datetime_processamento)
-                    < (select max(data_ordem) from {{ ref("ordem_pagamento_dia") }})
+                    < (select max(data_ordem) from {{ ref("bilhetagem_dia") }})
                 then coalesce(i.valor_rateio, t.valor_transacao) * 0.96
             end as valor_pagamento,
             o.data_ordem,
@@ -423,15 +423,16 @@ with
             case
                 when
                     t.tipo_transacao_jae not like "%Gratuidade%"
-                    and t.produto_jae != "Conta Jaé Gratuidade"
-                    or t.produto_jae is null
+                    and (
+                        t.produto_jae != "Conta Jaé Gratuidade" or t.produto_jae is null
+                    )
                 then "Pagante"
-                when g.tipo_gratuidade = "Sênior"
-                then "Idoso"
                 when
-                    t.tipo_transacao_jae
-                    in ("Gratuidade operador sênior", "Gratuidade operador estudante")
-                then initcap(split(t.tipo_transacao_jae, " ")[2])
+                    g.tipo_gratuidade = "Sênior"
+                    or t.tipo_transacao_jae = "Gratuidade operador sênior"
+                then "Idoso"
+                when t.tipo_transacao_jae = "Gratuidade operador estudante"
+                then "Estudante"
                 when
                     t.tipo_transacao_jae
                     in ("Gratuidade operador pcd", "Gratuidade acompanhante")
@@ -443,8 +444,15 @@ with
             end as tipo_usuario,
             case
                 when
-                    t.tipo_transacao_jae != "Gratuidade"
-                    and t.produto_jae != "Conta Jaé Gratuidade"
+                    t.tipo_transacao_jae = "Gratuidade acompanhante"
+                    or (
+                        t.tipo_transacao_jae not like "%Gratuidade%"
+                        and (
+                            t.produto_jae != "Conta Jaé Gratuidade"
+                            or t.produto_jae is null
+                        )
+
+                    )
                 then null
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino = "Universidade"
                 then "Ensino Superior"
@@ -452,6 +460,8 @@ with
                 then concat("Ensino Básico ", split(g.rede_ensino, " - ")[0])
             end as subtipo_usuario,
             case
+                when tipo_transacao_jae = "Gratuidade acompanhante"
+                then "Acompanhante"
                 when
                     t.tipo_transacao_jae != "Gratuidade"
                     and t.produto_jae != "Conta Jaé Gratuidade"
