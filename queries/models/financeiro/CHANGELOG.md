@@ -1,5 +1,11 @@
 # Changelog - financeiro
 
+## [1.1.0] - 2025-09-01
+
+### Alterado
+
+- Move modelos do dataset `br_rj_riodejaneiro_bilhetagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/822)
+
 ## [1.0.5] - 2025-08-07
 
 ### Alterado
