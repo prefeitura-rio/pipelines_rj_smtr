@@ -1,5 +1,11 @@
 # Changelog - financeiro
 
+## [2.0.5] - 2025-09-01
+
+### Alterado
+
+- Altera referências dos modelos de ordem de pagamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/822)
+
 ## [2.0.4] - 2025-08-11
 
 ### Alterado
