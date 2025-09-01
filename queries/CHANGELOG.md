@@ -1,5 +1,11 @@
 # Changelog - queries
 
+## [1.0.9] - 2025-09-01
+
+### Alterado
+
+- Altera selector `snapshot_viagem` movendo os snapshots `snapshot_viagens_remuneradas`, `snapshot_viagem_transacao` para o `snapshot_subsidio`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/818)
+
 ## [1.0.8] - 2025-08-19
 
 ### Alterado
