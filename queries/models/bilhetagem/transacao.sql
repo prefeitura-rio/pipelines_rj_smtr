@@ -423,8 +423,9 @@ with
             case
                 when
                     t.tipo_transacao_jae not like "%Gratuidade%"
-                    and t.produto_jae != "Conta Jaé Gratuidade"
-                    or t.produto_jae is null
+                    and (
+                        t.produto_jae != "Conta Jaé Gratuidade" or t.produto_jae is null
+                    )
                 then "Pagante"
                 when g.tipo_gratuidade = "Sênior"
                 then "Idoso"
@@ -443,8 +444,11 @@ with
             end as tipo_usuario,
             case
                 when
-                    t.tipo_transacao_jae != "Gratuidade"
-                    and t.produto_jae != "Conta Jaé Gratuidade"
+                    (tipo_transacao_jae = "Gratuidade acompanhante")
+                    or (
+                        t.tipo_transacao_jae != "Gratuidade"
+                        and t.produto_jae != "Conta Jaé Gratuidade"
+                    )
                 then null
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino = "Universidade"
                 then "Ensino Superior"
@@ -452,6 +456,8 @@ with
                 then concat("Ensino Básico ", split(g.rede_ensino, " - ")[0])
             end as subtipo_usuario,
             case
+                when tipo_transacao_jae = "Gratuidade acompanhante"
+                then "Acompanhante"
                 when
                     t.tipo_transacao_jae != "Gratuidade"
                     and t.produto_jae != "Conta Jaé Gratuidade"
