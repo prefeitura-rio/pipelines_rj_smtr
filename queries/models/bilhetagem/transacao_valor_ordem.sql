@@ -189,7 +189,7 @@ with
             data_ordem,
             id_ordem_pagamento_consorcio_operador_dia,
             round(valor_total_transacao_bruto, 2) as valor_ordem
-        from {{ ref("ordem_pagamento_consorcio_operador_dia") }}
+        from {{ ref("bilhetagem_consorcio_operador_dia") }}
         {% if is_incremental() %}
             where
                 {% if ordens_pagamento_modificadas | length > 0 %}

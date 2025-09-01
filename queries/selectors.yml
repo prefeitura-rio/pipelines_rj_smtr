@@ -245,13 +245,15 @@ selectors:
         - method: fqn
           value: aux_retorno_ordem_pagamento
         - method: fqn
-          value: ordem_pagamento_servico_operador_dia
+          value: bilhetagem_servico_operador_dia
+        - method: fqn
+          value: bilhetagem_consorcio_operador_dia
+        - method: fqn
+          value: bilhetagem_consorcio_dia
+        - method: fqn
+          value: bilhetagem_dia
         - method: fqn
           value: ordem_pagamento_consorcio_operador_dia
-        - method: fqn
-          value: ordem_pagamento_consorcio_dia
-        - method: fqn
-          value: ordem_pagamento_dia
 
   - name: passageiro_hora
     description: Materialização das tabelas agregadas de transação
