@@ -108,13 +108,14 @@ with
             id_ordem_pagamento_consorcio_dia,
             id_ordem_pagamento_consorcio_operador_dia
         from {{ ref("transacao") }}
-        {% if is_incremental() %}
-            where
-                {% if transacao_partitions | length > 0 %}
+        where
+            tipo_transacao_jae != "Botoeira"
+            {% if is_incremental() %}
+                and {% if transacao_partitions | length > 0 %}
                     data in ({{ transacao_partitions | join(", ") }})
                 {% else %} data = "2000-01-01"
                 {% endif %}
-        {% endif %}
+            {% endif %}
     ),
     integracao as (
         select
@@ -168,7 +169,7 @@ with
         from ordem_agrupada
         {% if is_incremental() and ordens_pagamento_modificadas | length > 0 %}
             union all
-            select * except(versao, datetime_ultima_atualizacao), 1 as priority
+            select * except (versao, datetime_ultima_atualizacao), 1 as priority
             from {{ this }}
             where data_ordem in ({{ ordens_pagamento_modificadas | join(", ") }})
         {% endif %}
@@ -188,7 +189,7 @@ with
             data_ordem,
             id_ordem_pagamento_consorcio_operador_dia,
             round(valor_total_transacao_bruto, 2) as valor_ordem
-        from {{ ref("ordem_pagamento_consorcio_operador_dia") }}
+        from {{ ref("bilhetagem_consorcio_operador_dia") }}
         {% if is_incremental() %}
             where
                 {% if ordens_pagamento_modificadas | length > 0 %}
