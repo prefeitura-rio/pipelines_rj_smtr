@@ -27,43 +27,7 @@ Distância do shape [trajeto] planejado (km)
 {% enddocs %}
 
 {% docs tipo_viagem_status %}
-Classificação do tipo de viagem conforme RESOLUÇÃO SMTR Nº 3843/2025:
-
-Não licenciado - viagem realizada por veículo que operou sem licenciamento vigente junto à SMTR;
-
-Não vistoriado - viagem realizada por veículo que não se encontra vistoriado nos termos do calendário de vistoria da SMTR;
-
-Lacrado - viagem realizada por veículo lacrado pela equipe de fiscalização da SMTR nos termos do art. 2º da Resolução SMTR Nº 3843/2025;
-
-Não autorizado por ausência de ar-condicionado - viagem realizada por veículo licenciado sem ar-condicionado, quando exigido para o serviço;
-
-Não autorizado por capacidade - viagem realizada por veículo licenciado com tecnologia de capacidade inferior àquela determinada para o serviço nos termos do art. 3º;
-
-Autuado por ar inoperante - viagem realizada por veículo licenciado com ar-condicionado e autuado disciplinarmente no dia por inoperância ou mau funcionamento do sistema de ar-condicionado (Nos termos do art. 23, inciso II, do Decreto nº 36.343/2012);
-
-Autuado por alterar itinerário - viagem realizada por veículo autuado disciplinarmente por alterar o itinerário aprovado de uma linha ou serviço (Nos termos do art. 17, inciso III, do Decreto nº 36.343/2012);
-
-Autuado por vista inoperante - viagem realizada por veículo autuado disciplinarmente por inoperância ou mau funcionamento de caixa de vista eletrônica ou similar (Nos termos do art. 23, inciso X, do Decreto nº 36.343/2012);
-
-Autuado por não atender solicitação de parada - viagem realizada por veículo autuado disciplinarmente por não atender às solicitações de parada para embarque ou desembarque de passageiros nos locais devidamente sinalizados para tal (Nos termos do art. 29, inciso I, do Decreto nº 36.343/2012);
-
-Autuado por iluminação insuficiente - viagem realizada por veículo autuado disciplinarmente por transitar com o veículo com ausência ou insuficiência na iluminação interna e/ou nos dispositivos internos ou externos de informação aos passageiros (Nos termos do art. 29, inciso XIII, do Decreto nº 36.343/2012);
-
-Autuado por não concluir itinerário - viagem realizada por veículo autuado disciplinarmente por alterar ou não concluir o itinerário autorizado do veículo (Nos termos do art. 40, inciso I, do Decreto nº 36.343/2012);
-
-Registrado com ar inoperante - viagem realizada por veículo licenciado com ar-condicionado e registrado com o ar condicionado inoperante ou com mau funcionamento devidamente atestado por servidores nos termos da Resolução SMTR Nº 3.682/2024 ou de legislação superveniente;
-
-Detectado com ar inoperante - viagem realizada por veículo licenciado com ar-condicionado em operação detectado fora dos parâmetros definidos em resolução vigente;
-
-Sem transação - viagem realizada sem nenhuma transação de bilhetagem nos termos do art. 7º da Resolução SMTR Nº 3843/2025;
-
-Validador fechado - viagem realizada com o validador fechado nos termos do art. 7º, inciso III da Resolução SMTR Nº 3843/2025;
-
-Validador associado incorretamente - viagem realizada com validador associado ao serviço incorreto nos termos do art. 7º, inciso IV da Resolução SMTR Nº 3843/2025;
-
-Licenciado sem ar e não autuado - viagem realizada por veículo licenciado sem ar-condicionado, não enquadrada nas classificações anteriores;
-
-Licenciado com ar e não autuado - viagem realizada por veículo licenciado com ar-condicionado, não enquadrada nas classificações anteriores.
+Classificação do tipo de viagem conforme RESOLUÇÃO SMTR Nº 3843/2025
 {% enddocs %}
 
 {% docs servico %}
@@ -1415,4 +1379,20 @@ Nome do serviço consolidado. Para linhas, é o nome curto da linha [ex: 010, 01
 
 {% docs descricao_servico_cadastro %}
 Nome completo do serviço consolidado. Para linhas é, primariamente o route_long_name da tabela routes do GTFS. Para estações é primariamente a coluna stop_name da tabela stops do GTFS. [Caso o registro não exista no GTFS, busca o serviço na base de dados da Jaé]
+{% enddocs %}
+
+{% docs tipo_documento_cliente %}
+Tipo do documento do cliente
+{% enddocs %}
+
+{% docs documento_cliente %}
+Número do documento do cliente
+{% enddocs %}
+
+{% docs nome_cliente %}
+Nome do cliente
+{% enddocs %}
+
+{% docs subtipo_usuario %}
+Subtipo do usuário que efetuou a transação sem dados relacionados à saúde [ex.: Ensino Básico Municipal]
 {% enddocs %}
