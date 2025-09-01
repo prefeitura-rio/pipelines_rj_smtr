@@ -278,8 +278,6 @@ tests:
       where: "data between date('{date_range_start}') and date('{date_range_end}') and data < date('{DATA_SUBSIDIO_V14_INICIO}')"
     bilhetagem:
       where: "data in ({partitions})"
-    br_rj_riodejaneiro_bilhetagem:
-      where: "data in ({partitions})"
 
 snapshots:
   +persist_docs:
@@ -333,9 +331,6 @@ models:
     br_rj_riodejaneiro_bilhetagem:
       +materialized: incremental
       +schema: br_rj_riodejaneiro_bilhetagem
-    br_rj_riodejaneiro_bilhetagem_staging:
-      +materialized: view
-      +schema: br_rj_riodejaneiro_bilhetagem_staging
     dashboard_bilhetagem_implantacao_jae:
       +materialized: table
       +schema: dashboard_bilhetagem_implantacao_jae
@@ -414,6 +409,9 @@ models:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
       +schema: financeiro
+      staging:
+        +schema: financeiro_staging
+
     dashboard_subsidio_sppo_v2:
       +materialized: view
       +schema: dashboard_subsidio_sppo_v2
