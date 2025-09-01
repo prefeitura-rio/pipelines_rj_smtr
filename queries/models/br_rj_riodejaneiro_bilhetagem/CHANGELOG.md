@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [3.0.4] - 2025-09-01
+
+### Alterado
+
+- Move modelos do dataset `br_rj_riodejaneiro_bilhetagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/822)
+
 ## [3.0.3] - 2025-08-21
 
 ### Adicionado

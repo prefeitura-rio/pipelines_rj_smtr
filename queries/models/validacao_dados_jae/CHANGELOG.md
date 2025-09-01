@@ -1,9 +1,14 @@
 # Changelog - validacao_dados_jae
 
+## [3.0.1] - 2025-09-01
+
+### Alterado
+
+- Altera referências dos modelos de ordem de pagamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/822)
+
 ## [3.0.0] - 2025-08-19
 
-
-# Adicionado
+### Adicionado
 
 - Cria nova lógica para o cálculo de integrações não realizadas (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/793):
   - `aux_particao_calculo_integracao.sql`
