@@ -444,10 +444,14 @@ with
             end as tipo_usuario,
             case
                 when
-                    (tipo_transacao_jae = "Gratuidade acompanhante")
+                    t.tipo_transacao_jae = "Gratuidade acompanhante"
                     or (
-                        t.tipo_transacao_jae != "Gratuidade"
-                        and t.produto_jae != "Conta Jaé Gratuidade"
+                        t.tipo_transacao_jae not like "%Gratuidade%"
+                        and (
+                            t.produto_jae != "Conta Jaé Gratuidade"
+                            or t.produto_jae is null
+                        )
+
                     )
                 then null
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino = "Universidade"

@@ -224,4 +224,4 @@ with
             )
     )
 select *
-from transacao_valor_ordem_completa
+from transacao_valor_ordem_filtrada
