@@ -870,3 +870,181 @@ models:
         description: "{{ doc('versao') }}"
       - name: id_execucao_dbt
         description: "{{ doc('id_execucao_dbt') }}"
+  - name: gps_validador
+    description: "Tabela de posições de GPS de todos os validadores da Jaé, incluindo estado do equipamento [Aberto/Fechado], serviço, sentido e veículo associado e temperatura do veículo"
+    columns:
+      - name: modo
+        description: "{{ doc('modo') }}"
+        tests:
+          - not_null:
+              name: not_null__modo__gps_validador
+      - name: data
+        description: "Data do recebimento da transmissão do GPS (partição)"
+      - name: hora
+        description: "Hora do recebimento da transmissão do GPS"
+      - name: datetime_gps
+        description: "Data e hora do recebimento da transmissão do GPS [GMT-3]"
+        tests:
+          - not_null:
+              name: not_null__datetime_gps__gps_validador
+      - name: datetime_captura
+        description: "{{ doc('datetime_captura') }}"
+        tests:
+          - not_null:
+              name: not_null__datetime_captura__gps_validador
+      - name: id_operadora
+        description: "{{ doc('id_operadora') }}"
+        tests:
+          - not_null:
+              name: not_null__id_operadora__gps_validador
+      - name: id_operadora_jae
+        description: "{{ doc('id_operadora_jae') }}"
+      - name: operadora
+        description: "{{ doc('operadora') }}"
+        tests:
+          - not_null:
+              name: not_null__operadora__gps_validador
+      - name: id_servico_jae
+        description: "{{ doc('id_servico_jae') }}"
+        tests:
+          - not_null:
+              name: not_null__id_servico_jae__gps_validador
+              where: "data in ({partitions}) and estado_equipamento != 'FECHADO'"
+      - name: servico_jae
+        description: "{{ doc('servico_jae') }}"
+        tests:
+          - not_null:
+              name: not_null__servico_jae__gps_validador
+              where: "data in ({partitions}) and estado_equipamento != 'FECHADO'"
+      - name: descricao_servico_jae
+        description: "{{ doc('descricao_servico_jae') }}"
+      - name: id_validador
+        description: "{{ doc('id_validador') }}"
+        tests:
+          - not_null:
+              name: not_null__id_validador__gps_validador
+      - name: id_transmissao_gps
+        description: "Identificador único da tabela de GPS dos validadores"
+        tests:
+          - not_null:
+              name: not_null__id_transmissao_gps__gps_validador
+          - unique:
+              name: unique__id_transmissao_gps__gps_validador
+      - name: latitude
+        description: "Latitude do validador no momento da transmissão"
+      - name: longitude
+        description: "Longitude do validador no momento da transmissão"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+        tests:
+          - not_null:
+              name: not_null__sentido__gps_validador
+      - name: estado_equipamento
+        description: "Validador aberto ou fechado no momento da transmissão"
+        tests:
+          - not_null:
+              name: not_null__estado_equipamento__gps_validador
+      - name: temperatura
+        description: "Temperatura do local, medida pelo sensor do validador (ºC)"
+      - name: versao_app
+        description: "Versão do Software do validador"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
+  - name: gps_validador_van
+    description: "Tabela de posições de GPS de todos os validadores da Jaé instalados em vans, incluindo estado do equipamento [Aberto/Fechado], serviço, sentido e veículo associado e temperatura do veículo"
+    columns:
+      - name: modo
+        description: "{{ doc('modo') }}"
+        tests:
+          - not_null:
+              name: not_null__modo__gps_validador_van
+      - name: data
+        description: "Data do recebimento da transmissão do GPS (partição)"
+      - name: hora
+        description: "Hora do recebimento da transmissão do GPS"
+      - name: datetime_gps
+        description: "Data e hora do recebimento da transmissão do GPS [GMT-3]"
+      - name: datetime_captura
+        description: "Data e hora da captura do dado de GPS [GMT-3]"
+      - name: id_operadora
+        description: "{{ doc('id_operadora') }}"
+        tests:
+          - not_null:
+              name: not_null__id_operadora__gps_validador_van
+      - name: id_operadora_jae
+        description: "{{ doc('id_operadora_jae') }}"
+      - name: operadora
+        description: "{{ doc('operadora') }}"
+        tests:
+          - not_null:
+              name: not_null__operadora__gps_validador_van
+      - name: id_servico_jae
+        description: "{{ doc('id_servico_jae') }}"
+        tests:
+          - not_null:
+              name: not_null__id_servico_jae__gps_validador_van
+              where: "data in ({partitions}) and estado_equipamento != 'FECHADO'"
+      - name: servico_jae
+        description: "{{ doc('servico_jae') }}"
+        tests:
+          - not_null:
+              name: not_null__servico_jae__gps_validador_van
+              where: "data in ({partitions}) and estado_equipamento != 'FECHADO'"
+      - name: descricao_servico_jae
+        description: "{{ doc('descricao_servico_jae') }}"
+      - name: id_validador
+        description: "{{ doc('id_validador') }}"
+        tests:
+          - not_null:
+              name: not_null__id_validador__gps_validador_van
+      - name: id_transmissao_gps
+        description: "Identificador único da tabela de GPS dos validadores"
+        tests:
+          - not_null:
+              name: not_null__id_transmissao_gps__gps_validador_van
+          - unique:
+              name: unique__id_transmissao_gps__gps_validador_van
+      - name: latitude
+        description: "Latitude do validador no momento da transmissão [protegido]"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/388050497607535163/policyTags/5185403103447535390'
+      - name: longitude
+        description: "Longitude do validador no momento da transmissão [protegido]"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/388050497607535163/policyTags/5185403103447535390'
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+        tests:
+          - not_null:
+              name: not_null__sentido__gps_validador_van
+      - name: estado_equipamento
+        description: "{{ doc('estado_equipamento') }}"
+        tests:
+          - not_null:
+              name: not_null__estado_equipamento__gps_validador_van
+      - name: temperatura
+        description: "Temperatura do local, medida pelo sensor do validador (ºC)"
+      - name: versao_app
+        description: "Versão do Software do validador"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true

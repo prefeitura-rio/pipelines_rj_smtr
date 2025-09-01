@@ -297,7 +297,7 @@ models:
       - name: versao
         description: "{{ doc('versao') }}"
   - name: bilhetagem_servico_operador_dia
-    descriptions: "Tabela com os valores totais de pagamento da Jaé agregados por serviço, operador e dia"
+    description: "Tabela com os valores totais de pagamento da Jaé agregados por serviço, operador e dia"
     columns:
       - name: data_ordem
         description: "{{ doc('data_ordem') }} (partição)"
