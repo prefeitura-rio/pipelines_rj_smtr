@@ -427,12 +427,12 @@ with
                         t.produto_jae != "Conta Jaé Gratuidade" or t.produto_jae is null
                     )
                 then "Pagante"
-                when g.tipo_gratuidade = "Sênior"
-                then "Idoso"
                 when
-                    t.tipo_transacao_jae
-                    in ("Gratuidade operador sênior", "Gratuidade operador estudante")
-                then initcap(split(t.tipo_transacao_jae, " ")[2])
+                    g.tipo_gratuidade = "Sênior"
+                    or t.tipo_transacao_jae = "Gratuidade operador sênior"
+                then "Idoso"
+                when t.tipo_transacao_jae = "Gratuidade operador estudante"
+                then "Estudante"
                 when
                     t.tipo_transacao_jae
                     in ("Gratuidade operador pcd", "Gratuidade acompanhante")
