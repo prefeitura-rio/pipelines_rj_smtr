@@ -1,62 +1,54 @@
 {{
-  config(
-    incremental_strategy="insert_overwrite",
-    partition_by={
-      "field": "data_ordem",
-      "data_type": "date",
-      "granularity": "day"
-    },
-  )
+    config(
+        incremental_strategy="insert_overwrite",
+        partition_by={
+            "field": "data_ordem",
+            "data_type": "date",
+            "granularity": "day",
+        },
+    )
 }}
 
-WITH ordem_pagamento_consorcio_dia AS (
-  SELECT
-    data_ordem,
-    id_ordem_pagamento,
-    SUM(quantidade_total_transacao) AS quantidade_total_transacao,
-    SUM(valor_total_transacao_liquido) AS valor_total_transacao_liquido
-  FROM
-    {{ ref("ordem_pagamento_consorcio_dia") }}
-  {% if is_incremental() %}
-    WHERE
-      data_ordem = DATE("{{var('run_date')}}")
-  {% endif %}
-  GROUP BY
-    1,
-    2
-),
-ordem_pagamento_dia AS (
-  SELECT
-    data_ordem,
-    id_ordem_pagamento,
-    quantidade_total_transacao,
-    valor_total_transacao_liquido
-  FROM
-    {{ ref("ordem_pagamento_dia") }}
-  {% if is_incremental() %}
-    WHERE
-      data_ordem = DATE("{{var('run_date')}}")
-  {% endif %}
-),
-indicadores AS (
-SELECT
-  d.data_ordem,
-  d.id_ordem_pagamento,
-  d.quantidade_total_transacao,
-  cd.quantidade_total_transacao AS quantidade_total_transacao_agregacao,
-  d.valor_total_transacao_liquido,
-  cd.valor_total_transacao_liquido AS valor_total_transacao_liquido_agregacao,
-  ROUND(cd.valor_total_transacao_liquido, 2) != ROUND(d.valor_total_transacao_liquido, 2) OR cd.quantidade_total_transacao != d.quantidade_total_transacao AS indicador_agregacao_invalida
-FROM
-  ordem_pagamento_dia d
-LEFT JOIN
-  ordem_pagamento_consorcio_dia cd
-USING(data_ordem, id_ordem_pagamento)
-)
-SELECT
-  *,
-  '{{ var("version") }}' AS versao
-FROM
-  indicadores
-WHERE
-  indicador_agregacao_invalida = TRUE
+with
+    ordem_pagamento_consorcio_dia as (
+        select
+            data_ordem,
+            id_ordem_pagamento,
+            sum(quantidade_total_transacao) as quantidade_total_transacao,
+            sum(valor_total_transacao_liquido) as valor_total_transacao_liquido
+        from {{ ref("bilhetagem_consorcio_dia") }}
+        {% if is_incremental() %}
+            where data_ordem = date("{{var('run_date')}}")
+        {% endif %}
+        group by 1, 2
+    ),
+    ordem_pagamento_dia as (
+        select
+            data_ordem,
+            id_ordem_pagamento,
+            quantidade_total_transacao,
+            valor_total_transacao_liquido
+        from {{ ref("bilhetagem_dia") }}
+        {% if is_incremental() %}
+            where data_ordem = date("{{var('run_date')}}")
+        {% endif %}
+    ),
+    indicadores as (
+        select
+            d.data_ordem,
+            d.id_ordem_pagamento,
+            d.quantidade_total_transacao,
+            cd.quantidade_total_transacao as quantidade_total_transacao_agregacao,
+            d.valor_total_transacao_liquido,
+            cd.valor_total_transacao_liquido as valor_total_transacao_liquido_agregacao,
+            round(cd.valor_total_transacao_liquido, 2)
+            != round(d.valor_total_transacao_liquido, 2)
+            or cd.quantidade_total_transacao
+            != d.quantidade_total_transacao as indicador_agregacao_invalida
+        from ordem_pagamento_dia d
+        left join
+            ordem_pagamento_consorcio_dia cd using (data_ordem, id_ordem_pagamento)
+    )
+select *, '{{ var("version") }}' as versao
+from indicadores
+where indicador_agregacao_invalida = true
