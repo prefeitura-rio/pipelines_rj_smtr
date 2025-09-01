@@ -61,21 +61,6 @@ PASSAGEIRO_HORA_MATERIALIZACAO = create_default_materialization_flow(
     test_scheduled_time=time(0, 25, 0),
 )
 
-GPS_VALIDADOR_MATERIALIZACAO = create_default_materialization_flow(
-    flow_name="gps_validador - materializacao",
-    selector=constants.GPS_VALIDADOR_SELECTOR.value,
-    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
-    wait=[
-        cadastro_constants.CADASTRO_SELECTOR.value,
-        jae_constants.GPS_VALIDADOR_SOURCE.value,
-    ],
-    post_tests=constants.GPS_VALIDADOR_DAILY_TEST.value,
-    test_scheduled_time=time(1, 15, 0),
-)
-
-GPS_VALIDADOR_MATERIALIZACAO.state_handlers.append(
-    handler_notify_failure(webhook="alertas_bilhetagem")
-)
 
 TRANSACAO_ORDEM_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="transacao_ordem - materializacao",
