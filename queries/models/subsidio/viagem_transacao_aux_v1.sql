@@ -295,7 +295,7 @@ with
                         )
                         or (
                             data >= date('{{ var("DATA_SUBSIDIO_V12_INICIO") }}')
-                            and data < date('{{ var("DATA_SUBSIDIO_V18_INICIO") }}')
+                            and data < date('{{ var("DATA_SUBSIDIO_V20_INICIO") }}')
                             and (
                                 (
                                     quantidade_transacao_riocard = 0
@@ -304,39 +304,14 @@ with
                                 or not indicador_estado_equipamento_aberto
                             )
                         )
-                        or (
-                            data >= date('{{ var("DATA_SUBSIDIO_V18_INICIO") }}')
-                            and (
-                                quantidade_transacao_riocard = 0
-                                and quantidade_transacao = 0
-                            )
-                        )
                     )
                 then 'Sem transação'
-
-                when
-                    data >= date('{{ var("DATA_SUBSIDIO_V18_INICIO") }}')
-                    and not indicador_estado_equipamento_aberto
-                then 'Validador fechado'
-
-                when
-                    data >= date('{{ var("DATA_SUBSIDIO_V20_INICIO") }}')
-                    and (
-                        quantidade_transacao_riocard_servico_divergente > 0
-                        or quantidade_transacao_servico_divergente > 0
-                        or indicador_gps_servico_divergente
-                    )
-                then 'Validador associado incorretamente'
                 else 'Manter tipo viagem'
             end as tipo_viagem
         from estado_equipamento_perc
     ),
     prioridade_tipo_viagem as (
         select 'Sem transação' as tipo_viagem, 1 as prioridade
-        union all
-        select 'Validador fechado', 2
-        union all
-        select 'Validador associado incorretamente', 3
         union all
         select 'Manter tipo viagem', 4
     ),
@@ -345,11 +320,9 @@ with
             data,
             id_viagem,
             max(indicador_sem_transacao) as indicador_sem_transacao,
-            case
-                when data < date('{{ var("DATA_SUBSIDIO_V18_INICIO") }}')
-                then max(indicador_estado_equipamento_aberto)
-                else min(indicador_estado_equipamento_aberto)
-            end as indicador_estado_equipamento_aberto
+            max(
+                indicador_estado_equipamento_aberto
+            ) as indicador_estado_equipamento_aberto
         from validador_tipo_viagem
         group by 1, 2
     ),
@@ -386,7 +359,7 @@ select
             or va.tipo_viagem = "Manter tipo viagem"
         then v.tipo_viagem
         when
-            v.data < date('{{ var("DATA_SUBSIDIO_V18_INICIO") }}')
+            v.data < date('{{ var("DATA_SUBSIDIO_V20_INICIO") }}')
             and va.tipo_viagem = "Sem transação"
             and not va.indicador_sem_transacao
             and va.indicador_estado_equipamento_aberto
@@ -399,11 +372,9 @@ select
     v.distancia_planejada,
     any_value(eep.quantidade_transacao) as quantidade_transacao,
     any_value(eep.quantidade_transacao_riocard) as quantidade_transacao_riocard,
-    case
-        when v.data < date('{{ var("DATA_SUBSIDIO_V18_INICIO") }}')
-        then max(eep.percentual_estado_equipamento_aberto)
-        else min(eep.percentual_estado_equipamento_aberto)
-    end as percentual_estado_equipamento_aberto,
+    max(
+        eep.percentual_estado_equipamento_aberto
+    ) as percentual_estado_equipamento_aberto,
     va.indicador_estado_equipamento_aberto,
     v.datetime_partida_com_tolerancia as datetime_partida_bilhetagem,
     v.datetime_partida,
