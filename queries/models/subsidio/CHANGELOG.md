@@ -1,8 +1,14 @@
 # Changelog - subsidio
 
+## [2.1.4] - 2025-09-02
+
+### Alterado
+
+- Alterado lógica dos modelos `viagem_transacao_aux_v1` e `viagem_transacao_aux_v2` trocando a `DATA_SUBSIDIO_V18_INICIO` pela `DATA_SUBSIDIO_V20_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/829)
+
 ## [2.1.3] - 2025-08-19
 
-### Adiciona
+### Adicionado
 
 - Adiciona lógica das colunas de controle no modelo `aux_viagem_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/796)
 
