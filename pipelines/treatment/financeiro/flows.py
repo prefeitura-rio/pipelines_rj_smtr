@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados financeiros
 
-DBT 2025-09-01
+DBT 2025-09-02
 """
 from types import NoneType
 
