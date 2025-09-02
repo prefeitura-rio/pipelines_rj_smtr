@@ -807,9 +807,7 @@ class constants(Enum):  # pylint: disable=c0103
         "viagens_remuneradas sumario_servico_dia_pagamento valor_km_tipo_viagem"
     )
 
-    SUBSIDIO_SPPO_V14_POS_CHECKS_DATASET_ID = (
-        "viagens_remuneradas sumario_faixa_servico_dia_pagamento valor_km_tipo_viagem"
-    )
+    SUBSIDIO_SPPO_V14_POS_CHECKS_DATASET_ID = "viagem_classificada viagem_regularidade_temperatura viagens_remuneradas sumario_faixa_servico_dia_pagamento valor_km_tipo_viagem"
 
     SUBSIDIO_SPPO_POS_CHECKS_LIST = {
         "sumario_faixa_servico_dia_pagamento": {
