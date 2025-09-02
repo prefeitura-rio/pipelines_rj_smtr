@@ -33,7 +33,7 @@ class constants(Enum):  # pylint: disable=c0103
     SUBSIDIO_SPPO_DASHBOARD_TABLE_ID = "sumario_servico_dia"
     SUBSIDIO_SPPO_DASHBOARD_SUMARIO_TABLE_ID = "sumario_servico_dia_tipo"
     SUBSIDIO_SPPO_DASHBOARD_SUMARIO_TABLE_ID_V2 = "sumario_servico_dia_pagamento"
-    SUBSIDIO_SPPO_PRE_TEST = "sppo_registros sppo_realocacao check_gps_treatment__gps_sppo sppo_veiculo_dia veiculo_dia tecnologia_servico viagem_planejada"  # noqa
+    SUBSIDIO_SPPO_PRE_TEST = "sppo_registros sppo_realocacao check_gps_treatment__gps_sppo sppo_veiculo_dia veiculo_dia tecnologia_servico viagem_planejada transacao transacao_riocard gps_validador"  # noqa
     SUBSIDIO_SPPO_DATA_CHECKS_PARAMS = {
         "check_trips_processing": {
             "query": """SELECT
@@ -789,6 +789,17 @@ class constants(Enum):  # pylint: disable=c0103
             "teto_viagens__viagens_remuneradas": {
                 "description": "Todas as viagens foram corretamente identificadas dentro das regras de limite"
             },
+        },
+        "transacao": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "unique": {"description": "Todos os registros são únicos"},
+        },
+        "transacao_riocard": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+        },
+        "gps_validador": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "unique": {"description": "Todos os registros são únicos"},
         },
     }
 

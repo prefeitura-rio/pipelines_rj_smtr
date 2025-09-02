@@ -6,6 +6,7 @@
 
 - Adiciona testes dos modelos `viagem_classificada` e `viagem_regularidade_temperatura` no `SUBSIDIO_SPPO_V14_POS_CHECKS_DATASET_ID` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/818)
 - Adiciona parâmetro `skip_pre_test` no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/818)
+- Adiciona testes de bilhetagem no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/833)
 
 ## [1.2.7] - 2025-08-11
 
