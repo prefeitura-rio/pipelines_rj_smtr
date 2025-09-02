@@ -304,7 +304,7 @@ with
                                 or not indicador_estado_equipamento_aberto
                             )
                         )
-                        )
+                    )
                 then 'Sem transação'
                 else 'Manter tipo viagem'
             end as tipo_viagem
@@ -320,7 +320,9 @@ with
             data,
             id_viagem,
             max(indicador_sem_transacao) as indicador_sem_transacao,
-            max(indicador_estado_equipamento_aberto) as indicador_estado_equipamento_aberto
+            max(
+                indicador_estado_equipamento_aberto
+            ) as indicador_estado_equipamento_aberto
         from validador_tipo_viagem
         group by 1, 2
     ),
@@ -370,7 +372,9 @@ select
     v.distancia_planejada,
     any_value(eep.quantidade_transacao) as quantidade_transacao,
     any_value(eep.quantidade_transacao_riocard) as quantidade_transacao_riocard,
-    max(eep.percentual_estado_equipamento_aberto) as percentual_estado_equipamento_aberto,
+    max(
+        eep.percentual_estado_equipamento_aberto
+    ) as percentual_estado_equipamento_aberto,
     va.indicador_estado_equipamento_aberto,
     v.datetime_partida_com_tolerancia as datetime_partida_bilhetagem,
     v.datetime_partida,
