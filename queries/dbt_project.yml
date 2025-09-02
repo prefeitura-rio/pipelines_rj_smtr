@@ -411,6 +411,7 @@ models:
       +schema: financeiro
       staging:
         +schema: financeiro_staging
+        +materialized: view
 
     dashboard_subsidio_sppo_v2:
       +materialized: view
