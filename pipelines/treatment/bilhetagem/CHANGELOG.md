@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [2.0.10] - 2025-09-03
+
+### Adicionado
+
+- Adiciona teste `dbt_utils.expression_is_true__transacao_valor_ordem`
+
 ## [2.0.9] - 2025-09-01
 
 ### Removido
