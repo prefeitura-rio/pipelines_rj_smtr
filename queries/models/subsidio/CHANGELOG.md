@@ -4,6 +4,7 @@
 
 ### Alterado
 
+- Altera lógica da cte `particoes_completas` no modelo `aux_viagem_temperatura` adicionando um inner join para materializar os dados atuais somente se ainda existirem nos dados novos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/835)
 - Alterado lógica dos modelos `viagem_transacao_aux_v1` e `viagem_transacao_aux_v2` trocando a `DATA_SUBSIDIO_V18_INICIO` pela `DATA_SUBSIDIO_V20_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/829)
 
 ## [2.1.3] - 2025-08-19

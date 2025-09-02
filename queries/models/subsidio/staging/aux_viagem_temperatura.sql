@@ -465,14 +465,14 @@ with
     particoes_completas as (
         select *
         from indicadores_concatenados
-
         {% if is_incremental() %}
             union all by name
 
             select
-                * except (versao, datetime_ultima_atualizacao, id_execucao_dbt),
+                da.* except (versao, datetime_ultima_atualizacao, id_execucao_dbt),
                 1 as priority
-            from dados_atuais
+            from dados_atuais as da
+            inner join indicadores_concatenados using (data, id_viagem)  -- Dados atuais só são incluídos se ainda existem nos dados novos
         {% endif %}
     ),
     sha_dados_novos as (
