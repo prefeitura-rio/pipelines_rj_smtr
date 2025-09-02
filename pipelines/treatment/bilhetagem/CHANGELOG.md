@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona teste `dbt_utils.expression_is_true__transacao_valor_ordem`
+- Adiciona teste `dbt_utils.expression_is_true__transacao_valor_ordem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/836)
 
 ## [2.0.9] - 2025-09-01
 
