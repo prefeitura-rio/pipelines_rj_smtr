@@ -33,8 +33,12 @@ selectors:
             value: aux_viagem_temperatura
         - method: fqn
           value: viagens_remuneradas
-        - method: path
-          value: models/financeiro
+        - method: fqn
+          value: subsidio_faixa_servico_dia_tipo_viagem
+        - method: fqn
+          value: subsidio_penalidade_servico_faixa
+        - method: fqn
+          value: subsidio_sumario_servico_dia_pagamento
         - method: path
           value: models/dashboard_subsidio_sppo_v2
 
@@ -331,10 +335,6 @@ selectors:
     definition:
       union:
         - method: fqn
-          value: snapshot_viagens_remuneradas
-        - method: fqn
-          value: snapshot_viagem_transacao
-        - method: fqn
           value: snapshot_viagem_completa
         - method: fqn
           value: snapshot_viagem_planejada
@@ -342,6 +342,10 @@ selectors:
   - name: snapshot_subsidio
     definition:
       union:
+        - method: fqn
+          value: snapshot_viagens_remuneradas
+        - method: fqn
+          value: snapshot_viagem_transacao
         - method: fqn
           value: snapshot_subsidio_faixa_servico_dia_tipo_viagem
         - method: fqn
