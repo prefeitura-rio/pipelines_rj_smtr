@@ -425,3 +425,9 @@ sources:
 
             data_particao = date("{{ now.date() }}")
         loaded_at_field: timestamp(datetime(data_particao, horario), 'America/Sao_Paulo')
+
+  - name: source_inmet
+    database: rj-smtr-staging
+
+    tables:
+      - name: meteorologia
