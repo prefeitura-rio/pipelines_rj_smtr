@@ -23,3 +23,4 @@
     {{ schema_name }}
 
 {%- endmacro %}
+
