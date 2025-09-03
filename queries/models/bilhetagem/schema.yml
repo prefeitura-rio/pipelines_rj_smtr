@@ -373,7 +373,7 @@ models:
         description: "{{ doc('datetime_processamento_transacao') }}"
         tests:
           - not_null:
-              name: not_null__datetime
+              name: not_null__datetime_processamento__transacao_riocard
       - name: datetime_captura
         description: "{{ doc('datetime_captura') }}"
       - name: modo
@@ -427,6 +427,8 @@ models:
       - name: id_transacao
         description: "{{ doc('id_transacao') }}"
         tests:
+          - unique:
+              name: unique__id_transacao__transacao_riocard
           - not_null:
               name: not_null__id_transacao__transacao_riocard
       - name: latitude

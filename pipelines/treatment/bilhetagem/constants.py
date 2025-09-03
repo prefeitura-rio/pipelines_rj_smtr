@@ -29,6 +29,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "transacao_riocard": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "unique": {"description": "Todos os registros são únicos"},
         },
     }
 
