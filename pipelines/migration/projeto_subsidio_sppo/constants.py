@@ -6,6 +6,10 @@ Constant values for rj_smtr projeto_subsidio_sppo
 from enum import Enum
 
 from pipelines.constants import constants as smtr_constants
+from pipelines.treatment.bilhetagem.constants import constants as bilhetagem_constants
+from pipelines.treatment.monitoramento.constants import (
+    constants as monitoramento_constants,
+)
 
 
 class constants(Enum):  # pylint: disable=c0103
@@ -803,6 +807,12 @@ class constants(Enum):  # pylint: disable=c0103
             "unique": {"description": "Todos os registros são únicos"},
         },
     }
+
+    SUBSIDIO_SPPO_PRE_CHECKS_LIST = (
+        SUBSIDIO_SPPO_PRE_CHECKS_LIST
+        | monitoramento_constants.GPS_VALIDADOR_POST_CHECKS_LIST.value
+        | bilhetagem_constants.TRANSACAO_POST_CHECKS_LIST.value
+    )
 
     SUBSIDIO_SPPO_V9_POS_CHECKS_DATASET_ID = (
         "viagens_remuneradas sumario_servico_dia_pagamento valor_km_tipo_viagem"
