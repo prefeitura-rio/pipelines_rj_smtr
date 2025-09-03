@@ -188,6 +188,15 @@ VEICULO_DIA_MATERIALIZACAO = create_default_materialization_flow(
     post_tests=constants.VEICULO_DIA_TEST.value,
 )
 
+MONITORAMENTO_TEMPERATURA_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="monitoramento_temperatura - materializacao",
+    selector=constants.MONITORAMENTO_TEMPERATURA_SELECTOR.value,
+    snapshot_selector=constants.SNAPSHOT_TEMPERATURA_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[constants.MONITORAMENTO_VEICULO_SELECTOR.value],
+    post_tests=constants.MONITORAMENTO_TEMPERATURA_TEST.value,
+)
+
 GPS_VALIDADOR_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps_validador - materializacao",
     selector=constants.GPS_VALIDADOR_SELECTOR.value,
