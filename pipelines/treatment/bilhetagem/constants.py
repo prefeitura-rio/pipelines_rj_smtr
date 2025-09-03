@@ -101,6 +101,9 @@ class constants(Enum):  # pylint: disable=c0103
             "dbt_utils.unique_combination_of_columns__transacao_valor_ordem": {
                 "description": "Todos os registros são únicos"
             },
+            "dbt_utils.expression_is_true__transacao_valor_ordem": {
+                "description": "Todas ordens estão presentes na tabela"
+            },
         }
     }
 

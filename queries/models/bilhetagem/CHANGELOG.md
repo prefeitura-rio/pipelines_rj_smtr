@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [3.2.12] - 2025-09-03
+
+### Adicionado
+
+- Adiciona teste `dbt_utils.expression_is_true__transacao_valor_ordem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/836)
+
 ## [3.2.11] - 2025-09-01
 
 ### Alterado
