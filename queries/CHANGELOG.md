@@ -1,9 +1,14 @@
 # Changelog - queries
 
-## [1.0.9] - 2025-09-01
+## [1.0.9] - 2025-09-02
+
+### Adicionado
+
+- Cria selector `snapshot_temperatura` e `monitoramento_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/811)
 
 ### Alterado
 
+- Altera selector `snapshot_veiculo` removendo os snapshots `snapshot_veiculo_regularidade_temperatura_dia`, `snapshot_temperatura_inmet` e `snapshot_viagem_regularidade_temperatura`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/811)
 - Altera selector `snapshot_viagem` movendo os snapshots `snapshot_viagens_remuneradas`, `snapshot_viagem_transacao` para o `snapshot_subsidio`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/818)
 - Altera selector `apuracao_subsidio_v9` substituindo `models/financeiro` por `subsidio_faixa_servico_dia_tipo_viagem`, `subsidio_penalidade_servico_faixa` e `subsidio_sumario_servico_dia_pagamento`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/818)
 
