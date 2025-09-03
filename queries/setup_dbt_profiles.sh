@@ -10,7 +10,7 @@ echo "$1" | base64 --decode > ./credentials-prod/prod.json
 
 echo """
 queries:
-  target: dev
+  target: prod
   outputs:
     dev:
       type: bigquery
