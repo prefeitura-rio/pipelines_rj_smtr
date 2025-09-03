@@ -675,7 +675,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         GPS_VALIDADOR_TABLE_ID: {
             "source": GPS_VALIDADOR_SOURCE,
-            "datalake_table": "rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.gps_validador",
+            "datalake_table": "rj-smtr.monitoramento_staging.gps_validador",
             "timestamp_column": "data_tracking",
         },
     }
