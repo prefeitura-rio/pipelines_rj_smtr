@@ -454,6 +454,21 @@ models:
             - data_ordem
             - id_transacao
           where: data_ordem in ({partitions})
+      - dbt_utils.expression_is_true:
+          expression: not exists (
+              select 1
+              from {{ ref('bilhetagem_consorcio_operador_dia') }} y
+              where
+                data_ordem in ({{ var('partitions') }})
+                and quantidade_transacao_debito + quantidade_transacao_integracao + quantidade_transacao_rateio_credito + quantidade_transacao_rateio_debito > 0
+                and not exists (
+                  select 1
+                  from {{ ref('transacao_valor_ordem') }} x
+                  where data_ordem in ({{ var('partitions') }}) and x.id_ordem_pagamento_consorcio_operador_dia = y.id_ordem_pagamento_consorcio_operador_dia
+                )
+            )
+          name: dbt_utils.expression_is_true__transacao_valor_ordem
+          where: data_ordem in ({partitions})
     columns:
       - name: data_ordem
         description: "{{ doc('data_transacao') }} [partição]"
