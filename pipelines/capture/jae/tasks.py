@@ -19,6 +19,7 @@ from pipelines.capture.jae.utils import (
     get_jae_timestamp_captura_count,
     get_redis_last_backup,
     get_table_data_backup_billingpay,
+    save_capture_check_results,
 )
 from pipelines.constants import constants as smtr_constants
 from pipelines.utils.database import (
@@ -719,6 +720,7 @@ def jae_capture_check_get_ts_range(
     retry_delay=timedelta(seconds=smtr_constants.RETRY_DELAY.value),
 )
 def get_capture_gaps(
+    env: str,
     table_id: str,
     timestamp_captura_start: datetime,
     timestamp_captura_end: datetime,
@@ -728,6 +730,7 @@ def get_capture_gaps(
     na base da Jaé e os dados capturados no datalake.
 
     Args:
+        env (str): prod ou dev
         table_id (str): Nome da tabela no BigQuery
         timestamp_captura_start (datetime): Início do intervalo de verificação
         timestamp_captura_end (datetime): Fim do intervalo de verificação
@@ -746,11 +749,14 @@ def get_capture_gaps(
         timestamp_captura_end=timestamp_captura_end,
     )
 
+    primary_keys = params["primary_keys"]
+    primary_keys = primary_keys if len(primary_keys) == 1 else f"CONCAT({','.join(primary_keys)})"
+
     query_datalake = f"""
     WITH contagens AS (
         SELECT
             timestamp_captura,
-            COUNT(DISTINCT {source.primary_keys[0]}) AS total_datalake
+            COUNT(DISTINCT {primary_keys}) AS total_datalake
         FROM
             {params['datalake_table']}
         WHERE
@@ -792,12 +798,19 @@ def get_capture_gaps(
     )
 
     df_merge = df_jae.merge(df_datalake, how="left", on="timestamp_captura")
+    df_merge["table_id"] = table_id
+    df_merge["total_datalake"] = df_merge["total_datalake"].astype(int)
+    df_merge["total_jae"] = df_merge["total_jae"].astype(int)
+    df_merge["indicador_captura_correta"] = df_merge["total_datalake"] == df_merge["total_jae"]
 
-    df_merge = df_merge.loc[
-        df_merge["total_datalake"].astype(int) != df_merge["total_jae"].astype(int)
-    ].sort_values(by=["timestamp_captura"])
+    timestamps = (
+        df_merge.loc[df_merge["indicador_captura_correta"]]
+        .sort_values(by=["timestamp_captura"])["timestamp_captura"]
+        .dt.strftime("%Y-%m-%d %H:%M:%S")
+        .tolist()
+    )
 
-    timestamps = df_merge["timestamp_captura"].dt.strftime("%Y-%m-%d %H:%M:%S").tolist()
+    save_capture_check_results(env=env, results=df_merge)
 
     if len(timestamps) > 0:
         log(
