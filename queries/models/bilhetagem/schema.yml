@@ -454,21 +454,8 @@ models:
             - data_ordem
             - id_transacao
           where: data_ordem in ({partitions})
-      - dbt_utils.expression_is_true:
-          expression: not exists (
-              select 1
-              from {{ ref('bilhetagem_consorcio_operador_dia') }} y
-              where
-                data_ordem in ({{ var('partitions') }})
-                and quantidade_transacao_debito + quantidade_transacao_integracao + quantidade_transacao_rateio_credito + quantidade_transacao_rateio_debito > 0
-                and not exists (
-                  select 1
-                  from {{ ref('transacao_valor_ordem') }} x
-                  where data_ordem in ({{ var('partitions') }}) and x.id_ordem_pagamento_consorcio_operador_dia = y.id_ordem_pagamento_consorcio_operador_dia
-                )
-            )
-          name: dbt_utils.expression_is_true__transacao_valor_ordem
-          where: data_ordem in ({partitions})
+      - transacao_valor_ordem_completa:
+          name: transacao_valor_ordem_completa__transacao_valor_ordem
     columns:
       - name: data_ordem
         description: "{{ doc('data_transacao') }} [partição]"
@@ -517,7 +504,7 @@ models:
         tests:
           - not_null:
               name: not_null__id_servico_jae__transacao_valor_ordem
-              where: data_ordem in ({partitions}) and extract(year from data_ordem) > 2023
+              where: data_ordem in ({partitions}) and extract(year from data_transacao) > 2023
       - name: valor_transacao_rateio
         description: Valor da transação com o rateio [se houver] (R$)
         data_type: float64
