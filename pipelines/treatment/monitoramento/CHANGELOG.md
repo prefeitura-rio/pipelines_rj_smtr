@@ -1,5 +1,21 @@
 # Changelog - monitoramento
 
+## [1.2.8] - 2025-09-02
+
+### Adicionado
+
+- Cria flow de materialização `monitoramento_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/811)
+
+### Alterado
+
+- Altera constantes de monitoramento de veículos removendo testes relacionados a climatização (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/811)
+
+## [1.2.7] - 2025-09-01
+
+### Adicionado
+
+- Move materialização do `gps_validador` para o dataset `monitoramento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/822)
+
 ## [1.2.6] - 2025-08-05
 
 ### Adicionado

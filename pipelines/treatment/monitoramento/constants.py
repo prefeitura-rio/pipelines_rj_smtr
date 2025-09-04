@@ -94,35 +94,11 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todos as autuações geraram lacre corretamente"
             },
         },
-        "temperatura_inmet": {
-            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
-            "test_completude__temperatura_inmet": {
-                "description": "Há pelo menos uma temperatura não nula registrada em alguma das estações do Rio de Janeiro em cada uma das 24 horas do dia"  # noqa
-            },
-        },
-        "aux_viagem_temperatura": {
-            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
-            "dbt_utils.unique_combination_of_columns__aux_viagem_temperatura": {
-                "description": "Todos os registros são únicos"
-            },
-        },
-        "aux_veiculo_falha_ar_condicionado": {
-            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
-            "dbt_utils.unique_combination_of_columns__aux_veiculo_falha_ar_condicionado": {
-                "description": "Todos os registros são únicos"
-            },
-        },
-        "veiculo_regularidade_temperatura_dia": {
-            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
-            "dbt_utils.unique_combination_of_columns__veiculo_regularidade_temperatura_dia": {
-                "description": "Todos os registros são únicos"
-            },
-        },
     }
 
     MONITORAMENTO_VEICULO_TEST = DBTTest(
-        model="veiculo_fiscalizacao_lacre autuacao_disciplinar_historico temperatura_inmet aux_viagem_temperatura aux_veiculo_falha_ar_condicionado veiculo_regularidade_temperatura_dia",  # noqa
-        exclude="test_check_veiculo_lacre__veiculo_dia test_check_regularidade_temperatura__viagem_regularidade_temperatura",  # noqa
+        model="veiculo_fiscalizacao_lacre autuacao_disciplinar_historico",  # noqa
+        exclude="test_check_veiculo_lacre__veiculo_dia",  # noqa
         checks_list=MONITORAMENTO_VEICULO_CHECKS_LIST,
         truncate_date=True,
     )
@@ -152,5 +128,73 @@ class constants(Enum):  # pylint: disable=c0103
     VEICULO_DIA_TEST = DBTTest(
         model="veiculo_dia",
         checks_list=VEICULO_DIA_CHECKS_LIST,
+        truncate_date=True,
+    )
+
+    MONITORAMENTO_TEMPERATURA_CHECKS_LIST = {
+        "temperatura_inmet": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "test_completude__temperatura_inmet": {
+                "description": "Há pelo menos uma temperatura não nula registrada em alguma das estações do Rio de Janeiro em cada uma das 24 horas do dia"  # noqa
+            },
+        },
+        "aux_viagem_temperatura": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.unique_combination_of_columns__aux_viagem_temperatura": {
+                "description": "Todos os registros são únicos"
+            },
+        },
+        "aux_veiculo_falha_ar_condicionado": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.unique_combination_of_columns__aux_veiculo_falha_ar_condicionado": {
+                "description": "Todos os registros são únicos"
+            },
+        },
+        "veiculo_regularidade_temperatura_dia": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "dbt_utils.unique_combination_of_columns__veiculo_regularidade_temperatura_dia": {
+                "description": "Todos os registros são únicos"
+            },
+        },
+    }
+
+    MONITORAMENTO_TEMPERATURA_SELECTOR = DBTSelector(
+        name="monitoramento_temperatura",
+        schedule_cron=create_daily_cron(hour=6),
+        initial_datetime=datetime(2025, 7, 16, 0, 0, 0),
+    )
+
+    MONITORAMENTO_TEMPERATURA_TEST = DBTTest(
+        model="temperatura_inmet aux_viagem_temperatura aux_veiculo_falha_ar_condicionado veiculo_regularidade_temperatura_dia",  # noqa
+        exclude="test_check_regularidade_temperatura__viagem_regularidade_temperatura",  # noqa
+        checks_list=MONITORAMENTO_TEMPERATURA_CHECKS_LIST,
+        truncate_date=True,
+    )
+
+    SNAPSHOT_TEMPERATURA_SELECTOR = DBTSelector(
+        name="snapshot_temperatura",
+    )
+
+    GPS_VALIDADOR_SELECTOR = DBTSelector(
+        name="gps_validador",
+        schedule_cron=create_hourly_cron(minute=15),
+        initial_datetime=datetime(2025, 3, 26, 0, 0, 0),
+        incremental_delay_hours=1,
+    )
+
+    GPS_VALIDADOR_POST_CHECKS_LIST = {
+        "gps_validador": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "unique": {"description": "Todos os registros são únicos"},
+        },
+        "gps_validador_van": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "unique": {"description": "Todos os registros são únicos"},
+        },
+    }
+
+    GPS_VALIDADOR_DAILY_TEST = DBTTest(
+        model="gps_validador gps_validador_van",
+        checks_list=GPS_VALIDADOR_POST_CHECKS_LIST,
         truncate_date=True,
     )

@@ -1,10 +1,26 @@
 # Changelog - queries
 
-## [1.0.8] - 2025-08-19
+## [1.0.9] - 2025-09-02
 
 ### Adicionado
 
-- Adiciona filtro de data para os modelos de `bilhetagem` e `br_rj_riodejaneiro_bilhetagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+- Cria selector `snapshot_temperatura` e `monitoramento_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/811)
+
+### Alterado
+
+- Altera selector `snapshot_veiculo` removendo os snapshots `snapshot_veiculo_regularidade_temperatura_dia`, `snapshot_temperatura_inmet` e `snapshot_viagem_regularidade_temperatura`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/811)
+- Altera selector `snapshot_viagem` movendo os snapshots `snapshot_viagens_remuneradas`, `snapshot_viagem_transacao` para o `snapshot_subsidio`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/818)
+- Altera selector `apuracao_subsidio_v9` substituindo `models/financeiro` por `subsidio_faixa_servico_dia_tipo_viagem`, `subsidio_penalidade_servico_faixa` e `subsidio_sumario_servico_dia_pagamento`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/818)
+
+## [1.0.8] - 2025-08-19
+
+### Alterado
+
+- Altera selector `snapshot_veiculo` adicionando os snapshots `snapshot_veiculo_regularidade_temperatura_dia`, `snapshot_temperatura_inmet` e `snapshot_viagem_regularidade_temperatura`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/796)
+
+### Adicionado
+
+- Adiciona filtro de data para os modelos de `bilhetagem` e `br_rj_riodejaneiro_bilhetagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/783)
 
 ## [1.0.7] - 2025-07-31
 

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=W0511
+# pylint: disable=W0511, E1101
 """
 Flows for projeto_subsidio_sppo
 
-DBT: 2025-08-18
+DBT: 2025-09-04
 """
 
 from prefect import Parameter, case, task
@@ -202,6 +202,7 @@ with Flow(
 
     materialize_sppo_veiculo_dia = Parameter("materialize_sppo_veiculo_dia", False)
     test_only = Parameter("test_only", False)
+    skip_pre_test = Parameter("skip_pre_test", default=False)
     table_ids_jae = Parameter(
         name="table_ids_jae",
         default=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys()),
@@ -268,52 +269,59 @@ with Flow(
         SPPO_VEICULO_DIA_RUN_WAIT = transform_task_state(SPPO_VEICULO_DIA_RUN_WAIT)
 
         # 3. PRE-DATA QUALITY CHECK #
-        dbt_vars = {"date_range_start": start_date, "date_range_end": end_date}
+        with case(skip_pre_test, False):
+            dbt_vars = {"date_range_start": start_date, "date_range_end": end_date}
 
-        timestamp_captura_start, timestamp_captura_end = jae_capture_check_get_ts_range(
-            timestamp=timestamp,
-            retroactive_days=0,
-            timestamp_captura_start=start_date_param,
-            timestamp_captura_end=add_days_to_date(date_str=end_date_param, days=7),
-        ).set_upstream(task=SPPO_VEICULO_DIA_RUN_WAIT)
+            timestamp_captura_start, timestamp_captura_end = jae_capture_check_get_ts_range(
+                timestamp=timestamp,
+                retroactive_days=0,
+                timestamp_captura_start=start_date_param,
+                timestamp_captura_end=add_days_to_date(date_str=end_date_param, days=7),
+            ).set_upstream(task=SPPO_VEICULO_DIA_RUN_WAIT)
 
-        timestamps = get_capture_gaps.map(
-            table_id=table_ids_jae,
-            timestamp_captura_start=unmapped(timestamp_captura_start),
-            timestamp_captura_end=unmapped(timestamp_captura_end),
-        )
+            timestamps = get_capture_gaps.map(
+                table_id=table_ids_jae,
+                timestamp_captura_start=unmapped(timestamp_captura_start),
+                timestamp_captura_end=unmapped(timestamp_captura_end),
+            )
 
-        discord_messages = create_capture_check_discord_message.map(
-            table_id=table_ids_jae,
-            timestamps=timestamps,
-            timestamp_captura_start=unmapped(timestamp_captura_start),
-            timestamp_captura_end=unmapped(timestamp_captura_end),
-        )
+            discord_messages = create_capture_check_discord_message.map(
+                table_id=table_ids_jae,
+                timestamps=timestamps,
+                timestamp_captura_start=unmapped(timestamp_captura_start),
+                timestamp_captura_end=unmapped(timestamp_captura_end),
+            )
 
-        send_discord_message = log_discord.map(
-            message=discord_messages,
-            key=unmapped("subsidio_data_check"),
-        )
+            send_discord_message = log_discord.map(
+                message=discord_messages,
+                key=unmapped("subsidio_data_check"),
+            )
 
-        missing_timestamps = task(lambda s: True if len(s) > 0 else None)(timestamps)
+            missing_timestamps = task(
+                lambda timestamps_list: any(len(ts) > 0 for ts in timestamps_list)
+            )(timestamps)
 
-        SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt(
-            resource="test",
-            dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
-            exclude="dashboard_subsidio_sppo_v2",
-            _vars=dbt_vars,
-        ).set_upstream(task=send_discord_message)
+            SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt(
+                resource="test",
+                dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
+                exclude="dashboard_subsidio_sppo_v2 teto_viagens__viagens_remuneradas",
+                _vars=dbt_vars,
+            ).set_upstream(task=timestamps)
 
-        DATA_QUALITY_PRE = dbt_data_quality_checks(
-            dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_PRE,
-            checks_list=constants.SUBSIDIO_SPPO_PRE_CHECKS_LIST.value,
-            webhook_key="subsidio_data_check",
-            params=dbt_vars,
-        )
+            DATA_QUALITY_PRE = dbt_data_quality_checks(
+                dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_PRE,
+                checks_list=constants.SUBSIDIO_SPPO_PRE_CHECKS_LIST.value,
+                webhook_key="subsidio_data_check",
+                params=dbt_vars,
+            )
 
-        test_failed = check_fail(DATA_QUALITY_PRE)
-        skip_materialization = merge(missing_timestamps, test_failed)
+            test_failed = check_fail(DATA_QUALITY_PRE)
+            skip_materialization_check = task(lambda a, b: a or b)(missing_timestamps, test_failed)
 
+        with case(skip_pre_test, True):
+            skip_materialization_false = False
+
+        skip_materialization = merge(skip_materialization_check, skip_materialization_false)
         with case(skip_materialization, False):
             # 4. CALCULATE #
             date_in_range = check_date_in_range(
@@ -597,7 +605,7 @@ with Flow(
         SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt(
             resource="test",
             dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
-            exclude="dashboard_subsidio_sppo_v2",
+            exclude="dashboard_subsidio_sppo_v2 teto_viagens__viagens_remuneradas",
             _vars=dbt_vars,
         ).set_upstream(task=send_discord_message)
 
@@ -689,7 +697,7 @@ with Flow(
 
                     SUBSIDIO_SPPO_DATA_QUALITY_POS = run_dbt(
                         resource="test",
-                        dataset_id="viagens_remuneradas sumario_servico_dia_pagamento",  # noqa
+                        dataset_id=constants.SUBSIDIO_SPPO_V9_POS_CHECKS_DATASET_ID.value,  # noqa
                         _vars={
                             "date_range_start": date_intervals["first_range"]["start_date"],
                             "date_range_end": date_intervals["first_range"]["end_date"],
@@ -708,7 +716,7 @@ with Flow(
 
                     SUBSIDIO_SPPO_DATA_QUALITY_POS_2 = run_dbt(
                         resource="test",
-                        dataset_id="viagens_remuneradas sumario_faixa_servico_dia_pagamento",  # noqa
+                        dataset_id=constants.SUBSIDIO_SPPO_V14_POS_CHECKS_DATASET_ID.value,  # noqa
                         _vars={
                             "date_range_start": date_intervals["second_range"]["start_date"],
                             "date_range_end": date_intervals["second_range"]["end_date"],
@@ -731,7 +739,7 @@ with Flow(
                     with case(data_maior_ou_igual_v14, False):
                         SUBSIDIO_SPPO_DATA_QUALITY_POS_V9 = run_dbt(
                             resource="test",
-                            dataset_id="viagens_remuneradas sumario_servico_dia_pagamento",  # noqa
+                            dataset_id=constants.SUBSIDIO_SPPO_V9_POS_CHECKS_DATASET_ID.value,  # noqa
                             _vars=dbt_vars,
                         )
 
@@ -742,7 +750,7 @@ with Flow(
                     with case(data_maior_ou_igual_v14, True):
                         SUBSIDIO_SPPO_DATA_QUALITY_POS_V14 = run_dbt(
                             resource="test",
-                            dataset_id="viagem_classificada viagem_regularidade_temperatura viagens_remuneradas sumario_faixa_servico_dia_pagamento",  # noqa
+                            dataset_id=constants.SUBSIDIO_SPPO_V14_POS_CHECKS_DATASET_ID.value,  # noqa
                             _vars=dbt_vars,
                             exclude="aux_viagem_temperatura veiculo_regularidade_temperatura_dia",
                         )

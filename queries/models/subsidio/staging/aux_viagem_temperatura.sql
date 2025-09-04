@@ -8,7 +8,61 @@
 
 {% set incremental_filter %}
     data between date("{{var('date_range_start')}}") and date_add(date("{{ var('date_range_end') }}"), interval 1 day) and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+{% endset -%}
+
+{% set partition_filter %}
+    data between date("{{var('date_range_start')}}") and date("{{ var('date_range_end') }}") and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
 {% endset %}
+
+{% if execute %}
+    {% if is_incremental() %}
+        {% set columns = (
+            list_columns()
+            | reject(
+                "in",
+                [
+                    "indicadores",
+                    "versao",
+                    "datetime_ultima_atualizacao",
+                    "id_execucao_dbt",
+                ],
+            )
+            | list
+        ) + ["indicadores_str"] %}
+        {% set sha_column %}
+            sha256(
+                concat(
+                    {% for c in columns %}
+                        {% if c == 'indicadores_str' %}
+                            ifnull(
+                                regexp_replace(
+                                    cast({{ c }} as string),
+                                    r'"datetime_verificacao_regularidade":"[^"]*",',
+                                    ''
+                                ),
+                                'n/a'
+                            )
+                        {% else %}
+                            ifnull(cast({{ c }} as string), 'n/a')
+                        {% endif %}
+
+                        {% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                )
+            )
+        {% endset %}
+
+        {% set partitions_query %}
+            select distinct concat("'", data, "'") as data
+            from {{ ref("viagem_classificada") }}
+            where {{ partition_filter }}
+        {% endset %}
+
+        {% set partitions = run_query(partitions_query).columns[0].values() %}
+
+    {% else %} {% set sha_column = "cast(null as bytes)" %}
+    {% endif %}
+{% endif %}
 
 with
     viagens as (  -- Viagens realizadas no período de apuração
@@ -33,11 +87,7 @@ with
             modo
         from {{ ref("viagem_classificada") }}
         {# from `rj-smtr.subsidio.viagem_classificada` #}
-        where
-            data between date("{{var('date_range_start')}}") and date(
-                "{{var('date_range_end')}}"
-            )
-            and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+        where {{ partition_filter }}
     ),
     gps_validador as (  -- Dados base de GPS, temperatura, etc
         select distinct
@@ -275,6 +325,11 @@ with
                 else null
             end as percentual_temperatura_regular,
             case
+                when
+                    max(indicador_ar_condicionado)
+                    and percentual_temperatura_pos_tratamento_descartada = 1
+                    and percentual_temperatura_nula_zero_descartada < 1
+                then true
                 when max(indicador_ar_condicionado)
                 then (countif(classificacao_temperatura_regular) / count(*)) >= 0.8
                 else null
@@ -283,7 +338,7 @@ with
                 when max(indicador_ar_condicionado)
                 then current_datetime("America/Sao_Paulo")
                 else null
-            end as datetime_apuracao_subsidio,
+            end as datetime_verificacao_regularidade,
             indicador_temperatura_variacao_viagem,
             indicador_temperatura_transmitida_viagem,
             quantidade_pre_tratamento,
@@ -299,7 +354,25 @@ with
         left join agg_temperatura_viagem using (data, id_viagem)
         group by all
     ),
-    struct_indicadores as (  -- Estrutura indicadores em formato JSON
+    indicador_validador_agg as (
+        select
+            ieb.data,
+            ieb.id_viagem,
+            array_agg(
+                struct(
+                    ieb.id_validador,
+                    ieb.indicador_gps_servico_divergente,
+                    ieb.indicador_estado_equipamento_aberto,
+                    safe_cast(
+                        ieb.percentual_estado_equipamento_aberto as string
+                    ) as percentual_estado_equipamento_aberto
+                )
+                order by ieb.id_validador
+            ) as valores
+        from indicador_equipamento_bilhetagem ieb
+        group by ieb.data, ieb.id_viagem
+    ),
+    dados_novos as (  -- Estrutura indicadores em formato JSON sem datetime_verificacao_regularidade
         select
             v.data,
             v.id_viagem,
@@ -322,22 +395,22 @@ with
             to_json_string(
                 struct(
                     struct(
-                        p.datetime_apuracao_subsidio,
+                        p.datetime_verificacao_regularidade,
                         p.indicador_temperatura_regular_viagem as valor,
                         safe_cast(
                             p.percentual_temperatura_regular as string
                         ) as percentual_temperatura_regular
                     ) as indicador_temperatura_regular_viagem,
                     struct(
-                        p.datetime_apuracao_subsidio,
+                        p.datetime_verificacao_regularidade,
                         p.indicador_temperatura_variacao_viagem as valor
                     ) as indicador_temperatura_variacao_viagem,
                     struct(
-                        p.datetime_apuracao_subsidio,
+                        p.datetime_verificacao_regularidade,
                         p.indicador_temperatura_transmitida_viagem as valor
                     ) as indicador_temperatura_transmitida_viagem,
                     struct(
-                        p.datetime_apuracao_subsidio,
+                        p.datetime_verificacao_regularidade,
                         p.indicador_temperatura_pos_tratamento_descartada_viagem
                         as valor,
                         safe_cast(
@@ -345,64 +418,146 @@ with
                         ) as percentual_temperatura_pos_tratamento_descartada
                     ) as indicador_temperatura_pos_tratamento_descartada_viagem,
                     struct(
-                        p.datetime_apuracao_subsidio,
+                        p.datetime_verificacao_regularidade,
                         p.indicador_temperatura_nula_zero_viagem as valor,
                         safe_cast(
                             p.percentual_temperatura_nula_zero_descartada as string
                         ) as percentual_temperatura_nula_zero_descartada
                     ) as indicador_temperatura_nula_zero_viagem,
                     struct(
-                        current_datetime(
-                            "America/Sao_Paulo"
-                        ) as datetime_apuracao_subsidio,
-                        (
-                            select
-                                array_agg(
-                                    struct(
-                                        ieb.id_validador,
-                                        ieb.indicador_gps_servico_divergente,
-                                        ieb.indicador_estado_equipamento_aberto,
-                                        safe_cast(
-                                            ieb.percentual_estado_equipamento_aberto
-                                            as string
-                                        ) as percentual_estado_equipamento_aberto
-                                    )
-                                )
-                            from indicador_equipamento_bilhetagem ieb
-                            where ieb.data = v.data and ieb.id_viagem = v.id_viagem
-                        ) as valores
+                        p.datetime_verificacao_regularidade, iva.valores
                     ) as indicador_validador
                 )
             ) as indicadores_novos,
+            0 as priority
         from viagens as v
         left join percentual_indicadores_viagem as p using (data, id_viagem)
+        left join indicador_validador_agg iva using (data, id_viagem)
+    ),
+    indicadores_concatenados as (  -- Concatena indicadores antes da comparação SHA
+        select
+            * except (indicadores_str, indicadores_novos),
+            to_json_string(
+                (
+                    parse_json(
+                        concat(
+                            left(indicadores_str, length(indicadores_str) - 1),
+                            ',',
+                            substr(indicadores_novos, 2)
+                        )
+                    )
+                )
+            ) as indicadores_str
+        from dados_novos
+    ),
+    {% if is_incremental() %}
+        dados_atuais as (
+            select
+                * except (indicadores), to_json_string(indicadores) as indicadores_str,
+            from {{ this }}
+            {# from `rj-smtr`.`subsidio_staging`.`aux_viagem_temperatura` #}
+            where
+                {% if partitions | length > 0 %} data in ({{ partitions | join(", ") }})
+                {% else %} 1 = 0
+                {% endif %}
+        ),
+    {% endif %}
+    particoes_completas as (
+        select *
+        from indicadores_concatenados
+        {% if is_incremental() %}
+            union all by name
+
+            select
+                da.* except (versao, datetime_ultima_atualizacao, id_execucao_dbt),
+                1 as priority
+            from dados_atuais as da
+            inner join indicadores_concatenados using (data, id_viagem)  -- Dados atuais só são incluídos se ainda existem nos dados novos
+        {% endif %}
+    ),
+    sha_dados_novos as (
+        select *, {{ sha_column }} as sha_dado_novo
+        from particoes_completas
+        qualify row_number() over (partition by data, id_viagem order by priority) = 1
+    ),
+    sha_dados_atuais as (
+        {% if is_incremental() %}
+            select
+                data,
+                id_viagem,
+                {{ sha_column }} as sha_dado_atual,
+                datetime_ultima_atualizacao as datetime_ultima_atualizacao_atual,
+                id_execucao_dbt as id_execucao_dbt_atual
+            from dados_atuais
+        {% else %}
+            select
+                date(null) as data,
+                cast(null as string) as id_viagem,
+                cast(null as bytes) as sha_dado_atual,
+                datetime(null) as datetime_ultima_atualizacao_atual,
+                cast(null as string) as id_execucao_dbt_atual
+        {% endif %}
+    ),
+    sha_dados_completos as (
+        select n.*, a.* except (data, id_viagem)
+        from sha_dados_novos n
+        left join sha_dados_atuais a using (data, id_viagem)
+    ),
+    struct_indicadores as (  -- Define datetime_verificacao_atual
+        select
+            * except (
+                sha_dado_novo,
+                sha_dado_atual,
+                datetime_ultima_atualizacao_atual,
+                id_execucao_dbt_atual,
+                priority
+            ),
+            case
+                when sha_dado_atual is null or sha_dado_novo != sha_dado_atual
+                then current_datetime("America/Sao_Paulo")
+                else datetime_ultima_atualizacao_atual
+            end as datetime_verificacao_atual,
+            case
+                when sha_dado_atual is null or sha_dado_novo != sha_dado_atual
+                then '{{ invocation_id }}'
+                else id_execucao_dbt_atual
+            end as id_execucao_dbt
+        from sha_dados_completos
+    ),
+    colunas_controle as (
+        select
+            data,
+            id_viagem,
+            id_veiculo,
+            placa,
+            ano_fabricacao,
+            datetime_partida,
+            datetime_chegada,
+            modo,
+            tecnologia_apurada,
+            tecnologia_remunerada,
+            tipo_viagem,
+            quantidade_pre_tratamento,
+            quantidade_nula_zero,
+            quantidade_pos_tratamento,
+            parse_json(
+                regexp_replace(
+                    indicadores_str,
+                    r'"datetime_verificacao_regularidade":"[^"]*",',
+                    concat(
+                        '"datetime_verificacao_regularidade":"',
+                        datetime_verificacao_atual,
+                        '",'
+                    )
+                )
+            ) as indicadores,
+            servico,
+            sentido,
+            distancia_planejada,
+            '{{ var("version") }}' as versao,
+            datetime_verificacao_atual as datetime_ultima_atualizacao,
+            id_execucao_dbt
+        from struct_indicadores as s
     )
-select  -- Estrutura final do modelo auxiliar
-    s.data,
-    s.id_viagem,
-    s.id_veiculo,
-    s.placa,
-    s.ano_fabricacao,
-    s.datetime_partida,
-    s.datetime_chegada,
-    s.modo,
-    s.tecnologia_apurada,
-    s.tecnologia_remunerada,
-    s.tipo_viagem,
-    quantidade_pre_tratamento,
-    quantidade_nula_zero,
-    quantidade_pos_tratamento,
-    parse_json(
-        concat(
-            left(s.indicadores_str, length(s.indicadores_str) - 1),
-            ',',
-            substr(s.indicadores_novos, 2)
-        )
-    ) as indicadores,
-    s.servico,
-    s.sentido,
-    s.distancia_planejada,
-    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
-    "{{ var('version') }}" as versao,
-    '{{ invocation_id }}' as id_execucao_dbt
-from struct_indicadores as s
+select *
+from colunas_controle

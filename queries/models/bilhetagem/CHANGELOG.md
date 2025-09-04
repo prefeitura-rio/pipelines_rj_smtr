@@ -1,5 +1,45 @@
 # Changelog - bilhetagem
 
+## [3.2.12] - 2025-09-03
+
+### Adicionado
+
+- Adiciona teste `dbt_utils.expression_is_true__transacao_valor_ordem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/836)
+
+## [3.2.11] - 2025-09-01
+
+### Alterado
+
+- Filtra transações do tipo `Botoeira` no modelo `transacao_valor_ordem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/824)
+
+### Corrigido
+
+- Corrige tratamento das colunas `tipo_usuario` e `subtipo_usuario` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/824)
+
+## [3.2.10] - 2025-09-01
+
+### Alterado
+
+- Move modelos do dataset `br_rj_riodejaneiro_bilhetagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/822)
+
+## [3.2.9] - 2025-08-27
+
+### Alterado
+
+- Define valor das transações do RioCard como `null` para datas anteriores a `2025-08-02` no modelo `aux_passageiro_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/817)
+
+## [3.2.8] - 2025-08-27
+
+### Alterado
+
+- `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/812):
+  - Altera a fonte dos dados de cliente para o modelo `cliente_jae.sql`
+  - Altera classificação das colunas de subtipo do usuário para gratuidades de estudantes
+
+### Corrigido
+
+- Corrige gratuidades sendo com `tipo_usuario` pagante na `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/812)
+
 ## [3.2.7] - 2025-08-21
 
 ### Adicionado

@@ -1,5 +1,11 @@
 # Changelog - cadastro
 
+## [1.6.3] - 2025-08-27
+
+### Alterado
+
+- Adiciona conversão de datetime nas colunas `timestamp_captura` e `dt_cadastro` no modelo `staging_cliente.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/812)
+
 ## [1.6.2] - 2025-08-04
 
 ### Adicionado

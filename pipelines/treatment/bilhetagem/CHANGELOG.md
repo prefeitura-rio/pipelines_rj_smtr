@@ -1,5 +1,17 @@
 # Changelog - bilhetagem
 
+## [2.0.10] - 2025-09-03
+
+### Adicionado
+
+- Adiciona teste `dbt_utils.expression_is_true__transacao_valor_ordem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/836)
+
+## [2.0.9] - 2025-09-01
+
+### Removido
+
+- Move materialização do `gps_validador` para o dataset `monitoramento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/822)
+
 ## [2.0.8] - 2025-08-22
 
 ### Adicionado

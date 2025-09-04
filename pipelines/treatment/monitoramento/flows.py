@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de monitoramento
 
-DBT: 2025-08-20
+DBT: 2025-09-04
 """
 
 from copy import deepcopy
@@ -10,6 +10,7 @@ from datetime import time
 
 from pipelines.capture.cittati.constants import constants as cittati_constants
 from pipelines.capture.conecta.constants import constants as conecta_constants
+from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.capture.rioonibus.constants import (
     constants as rioonibus_source_constants,
 )
@@ -28,7 +29,7 @@ from pipelines.treatment.planejamento.constants import (
     constants as planejamento_constants,
 )
 from pipelines.treatment.templates.flows import create_default_materialization_flow
-from pipelines.utils.prefect import set_default_parameters
+from pipelines.utils.prefect import handler_notify_failure, set_default_parameters
 
 cron_every_hour_minute_6 = create_hourly_cron(minute=6)
 
@@ -185,4 +186,29 @@ VEICULO_DIA_MATERIALIZACAO = create_default_materialization_flow(
         wait_cadastro_veiculo,
     ],
     post_tests=constants.VEICULO_DIA_TEST.value,
+)
+
+MONITORAMENTO_TEMPERATURA_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="monitoramento_temperatura - materializacao",
+    selector=constants.MONITORAMENTO_TEMPERATURA_SELECTOR.value,
+    snapshot_selector=constants.SNAPSHOT_TEMPERATURA_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[constants.MONITORAMENTO_VEICULO_SELECTOR.value],
+    post_tests=constants.MONITORAMENTO_TEMPERATURA_TEST.value,
+)
+
+GPS_VALIDADOR_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="gps_validador - materializacao",
+    selector=constants.GPS_VALIDADOR_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[
+        cadastro_constants.CADASTRO_SELECTOR.value,
+        jae_constants.GPS_VALIDADOR_SOURCE.value,
+    ],
+    post_tests=constants.GPS_VALIDADOR_DAILY_TEST.value,
+    test_scheduled_time=time(1, 15, 0),
+)
+
+GPS_VALIDADOR_MATERIALIZACAO.state_handlers.append(
+    handler_notify_failure(webhook="alertas_bilhetagem")
 )
