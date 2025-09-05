@@ -54,6 +54,7 @@ from pipelines.schedules import (
 from pipelines.tasks import (
     add_days_to_date,
     check_fail,
+    get_run_env,
     get_scheduled_timestamp,
     log_discord,
     transform_task_state,
@@ -280,6 +281,7 @@ with Flow(
             ).set_upstream(task=SPPO_VEICULO_DIA_RUN_WAIT)
 
             timestamps = get_capture_gaps.map(
+                env=unmapped(get_run_env()),
                 table_id=table_ids_jae,
                 timestamp_captura_start=unmapped(timestamp_captura_start),
                 timestamp_captura_end=unmapped(timestamp_captura_end),

@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.2.9] - 2025-09-08
+
+### Adicionado
+
+- Adiciona argumento `env` na task `get_capture_gaps` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/848)
+
 ## [1.2.8] - 2025-09-01
 
 ### Adicionado
