@@ -7,7 +7,7 @@ models:
         data_type: date
         quote: true
       - name: id_viagem
-        description: "{{ doc('id_viagem') }}"
+        description: "{{ doc('id_viagem') }} [datetime partida em UTC]"
         data_type: string
         quote: true
       - name: datetime_partida
@@ -74,7 +74,7 @@ models:
         data_type: date
         quote: true
       - name: id_viagem
-        description: "{{ doc('id_viagem') }}"
+        description: "{{ doc('id_viagem') }} [datetime partida em UTC]"
         data_type: string
         quote: true
       - name: datetime_partida
