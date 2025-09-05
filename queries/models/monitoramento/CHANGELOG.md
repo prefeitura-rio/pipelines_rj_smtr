@@ -2,6 +2,12 @@
 
 ## [1.6.7] - 2025-09-01
 
+### Corrigido
+
+- Corrigido o calculo da km_apurada no modelo `monitoramento_servico_dia_v2` a partir de `2025-05-16` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/846)
+
+## [1.6.7] - 2025-09-01
+
 ### Alterado
 
 - Move modelos do dataset `br_rj_riodejaneiro_bilhetagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/822)
