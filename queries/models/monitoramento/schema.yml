@@ -7,7 +7,7 @@ models:
         data_type: date
         quote: true
       - name: id_viagem
-        description: "{{ doc('id_viagem') }}"
+        description: "{{ doc('id_viagem') }} [datetime partida em UTC]"
         data_type: string
         quote: true
       - name: datetime_partida
@@ -74,7 +74,7 @@ models:
         data_type: date
         quote: true
       - name: id_viagem
-        description: "{{ doc('id_viagem') }}"
+        description: "{{ doc('id_viagem') }} [datetime partida em UTC]"
         data_type: string
         quote: true
       - name: datetime_partida
@@ -155,6 +155,10 @@ models:
         quote: true
       - name: indicador_shape_invalido
         description: "Indica se o shape existe no GTFS no feed vigente durante a data da viagem"
+        data_type: boolean
+        quote: true
+      - name: indicador_dados_validos
+        description: "Indica se os dados essenciais para validação da viagem estão preenchidos corretamente"
         data_type: boolean
         quote: true
       - name: indicador_trajeto_alternativo

@@ -1,5 +1,16 @@
 # Changelog - monitoramento
 
+## [1.6.8] - 2025-09-05
+
+### Corrigido
+
+- Corrige coluna `timestamp_gps` para `datetime_gps` nos modelos `gps_viagem` e `gps_segmento_viagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/799)
+- Corrige filtro da `partitions_query` no modelo `viagem_informada_monitoramento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/799)
+
+### Adicionado
+
+- Cria `indicador_dados_validos` no modelo `viagem_validacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/799)
+=======
 ## [1.6.7] - 2025-09-01
 
 ### Alterado
