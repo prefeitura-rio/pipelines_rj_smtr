@@ -24,7 +24,7 @@
     {% if is_incremental() %}
         {% set partitions_query %}
             SELECT DISTINCT
-                CONCAT("'", DATE(data_viagem), "'") AS data_viagem
+                CONCAT("'", extract(date from datetime_partida), "'") AS data_viagem
             FROM
                 {{ staging_viagem_informada_rioonibus }}
             WHERE
@@ -33,7 +33,7 @@
             UNION DISTINCT
 
             SELECT DISTINCT
-                CONCAT("'", DATE(data_viagem), "'") AS data_viagem
+                CONCAT("'", extract(date from datetime_partida), "'") AS data_viagem
             FROM
                 {{ staging_viagem_informada_brt }}
             WHERE
@@ -60,7 +60,6 @@
 with
     staging_rioonibus as (
         select
-            data_viagem as data,
             id_viagem,
             datetime_partida,
             datetime_chegada,
@@ -78,7 +77,6 @@ with
     ),
     staging_brt as (
         select
-            data_viagem as data,
             id_viagem,
             datetime_partida,
             datetime_chegada,
@@ -107,7 +105,7 @@ with
     ),
     staging as (
         select
-            data,
+            extract(date from datetime_partida) as data,
             id_viagem,
             datetime_partida,
             datetime_chegada,
