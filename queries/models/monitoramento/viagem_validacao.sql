@@ -65,7 +65,8 @@ with
             service_ids,
             tipo_dia,
             feed_version,
-            feed_start_date
+            feed_start_date,
+            datetime_captura_viagem
         from {{ ref("gps_segmento_viagem") }}
         {# from `rj-smtr`.`monitoramento_staging`.`gps_segmento_viagem` #}
         where
@@ -91,7 +92,8 @@ with
             service_ids,
             tipo_dia,
             feed_version,
-            feed_start_date
+            feed_start_date,
+            datetime_captura_viagem
     ),
     indice as (
         select
@@ -127,7 +129,8 @@ with
             service_ids,
             tipo_dia,
             feed_version,
-            feed_start_date
+            feed_start_date,
+            datetime_captura_viagem
         from contagem
     ),
     viagens_campos_validos as (select * from indice where indicador_dados_validos),
