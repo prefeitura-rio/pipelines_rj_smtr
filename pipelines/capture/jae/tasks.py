@@ -751,7 +751,9 @@ def get_capture_gaps(
 
     primary_keys = params["primary_keys"]
     primary_keys = (
-        primary_keys[0] if len(primary_keys) == 1 else f"CONCAT({','.join(primary_keys)})"
+        primary_keys[0]
+        if len(primary_keys) == 1
+        else f"TO_JSON_STRING(STRUCT({', '.join(primary_keys)}))"
     )
 
     query_datalake = f"""

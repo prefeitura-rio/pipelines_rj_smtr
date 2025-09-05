@@ -316,70 +316,66 @@ def save_capture_check_results(env: str, results: pd.DataFrame):
         ]
     ]
 
-    log("salvando")
+    tmp_table = f"{dataset_id}.tmp_{table_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
 
     pandas_gbq.to_gbq(
         results,
-        f"{dataset_id}.tmp_{table_id}",
+        tmp_table,
         project_id=project_id,
         if_exists="replace",
     )
 
-    log("foi salvo!!")
-
     start_partition = results["timestamp_captura"].min().date().isoformat()
     end_partition = results["timestamp_captura"].max().date().isoformat()
 
-    log("dando merge")
+    try:
+        bd.read_sql(
+            query=f"""
+                MERGE {project_id}.{dataset_id}.{table_id} t
+                USING {tmp_table} s
+                ON
+                    t.data BETWEEN '{start_partition}' AND '{end_partition}'
+                    AND t.table_id = s.table_id
+                    AND t.timestamp_captura = DATETIME(s.timestamp_captura, 'America/Sao_Paulo')
+                WHEN MATCHED THEN
+                UPDATE SET
+                    total_datalake = total_datalake,
+                    total_jae = total_jae,
+                    indicador_captura_correta = s.indicador_captura_correta,
+                    datetime_ultima_atualizacao = CURRENT_DATETIME('America/Sao_Paulo')
+                WHEN
+                    NOT MATCHED
+                    AND DATETIME_DIFF(
+                        CURRENT_DATETIME('America/Sao_Paulo'),
+                        DATETIME(s.timestamp_captura, 'America/Sao_Paulo'),
+                        MINUTE
+                    ) > 300
+                THEN
+                INSERT (
+                    data,
+                    table_id,
+                    timestamp_captura,
+                    total_datalake,
+                    total_jae,
+                    indicador_captura_correta,
+                    datetime_ultima_atualizacao
+                )
+                VALUES (
+                    DATE(timestamp_captura),
+                    table_id,
+                    DATETIME(timestamp_captura, 'America/Sao_Paulo'),
+                    total_datalake,
+                    total_jae,
+                    indicador_captura_correta,
+                    CURRENT_DATETIME('America/Sao_Paulo')
+                )
+            """,
+            billing_project_id=project_id,
+        )
 
-    bd.read_sql(
-        query=f"""
-            MERGE {project_id}.{dataset_id}.{table_id} t
-            USING {project_id}.{dataset_id}.tmp_{table_id} s
-            ON
-                t.data BETWEEN '{start_partition}' AND '{end_partition}'
-                AND t.table_id = s.table_id
-                AND t.timestamp_captura = DATETIME(s.timestamp_captura, 'America/Sao_Paulo')
-            WHEN MATCHED THEN
-            UPDATE SET
-                indicador_captura_correta = s.indicador_captura_correta,
-                datetime_ultima_atualizacao = CURRENT_DATETIME('America/Sao_Paulo')
-            WHEN
-                NOT MATCHED
-                AND DATETIME_DIFF(
-                    CURRENT_DATETIME('America/Sao_Paulo'),
-                    DATETIME(s.timestamp_captura, 'America/Sao_Paulo'),
-                    MINUTE
-                ) > 300
-            THEN
-            INSERT (
-                data,
-                table_id,
-                timestamp_captura,
-                total_datalake,
-                total_jae,
-                indicador_captura_correta,
-                datetime_ultima_atualizacao
-            )
-            VALUES (
-                DATE(timestamp_captura),
-                table_id,
-                DATETIME(timestamp_captura, 'America/Sao_Paulo'),
-                total_datalake,
-                total_jae,
-                indicador_captura_correta,
-                CURRENT_DATETIME('America/Sao_Paulo')
-            )
-        """,
-        billing_project_id=project_id,
-    )
+    finally:
 
-    log("deu merge !!!")
-
-    log("deletando tmp")
-
-    bigquery.Client(project=project_id).delete_table(
-        f"{project_id}.{dataset_id}.tmp_{table_id}",
-        not_found_ok=True,
-    )
-    log("deletado")
+        bigquery.Client(project=project_id).delete_table(
+            tmp_table,
+            not_found_ok=True,
+        )
