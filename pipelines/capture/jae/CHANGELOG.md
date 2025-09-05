@@ -1,5 +1,15 @@
 # Changelog - source_jae
 
+## [2.4.0] - 2025-09-08
+
+### Adicionado
+- Salva resultados da verificação da captura do flow `verifica_captura` na tabela `source_jae.resultado_verificacao_captura_jae` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/848)
+- Adiciona checagem de captura da tabela `lancamento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/848)
+
+### Alterado
+- Muda lógica do delay na captura da tabela `lancamento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/848)
+- Muda logica das primary keys no flow `verifica_captura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/848)
+
 ## [2.3.6] - 2025-08-22
 
 ### Alterado
