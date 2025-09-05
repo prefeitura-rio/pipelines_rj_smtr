@@ -750,7 +750,9 @@ def get_capture_gaps(
     )
 
     primary_keys = params["primary_keys"]
-    primary_keys = primary_keys if len(primary_keys) == 1 else f"CONCAT({','.join(primary_keys)})"
+    primary_keys = (
+        primary_keys[0] if len(primary_keys) == 1 else f"CONCAT({','.join(primary_keys)})"
+    )
 
     query_datalake = f"""
     WITH contagens AS (
@@ -804,7 +806,7 @@ def get_capture_gaps(
     df_merge["indicador_captura_correta"] = df_merge["total_datalake"] == df_merge["total_jae"]
 
     timestamps = (
-        df_merge.loc[df_merge["indicador_captura_correta"]]
+        df_merge.loc[~df_merge["indicador_captura_correta"]]
         .sort_values(by=["timestamp_captura"])["timestamp_captura"]
         .dt.strftime("%Y-%m-%d %H:%M:%S")
         .tolist()

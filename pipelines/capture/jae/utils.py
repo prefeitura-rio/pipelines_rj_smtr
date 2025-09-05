@@ -6,6 +6,7 @@ from typing import Union
 import basedosdados as bd
 import pandas as pd
 import pandas_gbq
+from google.cloud import bigquery
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
@@ -315,6 +316,8 @@ def save_capture_check_results(env: str, results: pd.DataFrame):
         ]
     ]
 
+    log("salvando")
+
     pandas_gbq.to_gbq(
         results,
         f"{dataset_id}.tmp_{table_id}",
@@ -322,8 +325,12 @@ def save_capture_check_results(env: str, results: pd.DataFrame):
         if_exists="replace",
     )
 
+    log("foi salvo!!")
+
     start_partition = results["timestamp_captura"].min().date().isoformat()
     end_partition = results["timestamp_captura"].max().date().isoformat()
+
+    log("dando merge")
 
     bd.read_sql(
         query=f"""
@@ -367,7 +374,12 @@ def save_capture_check_results(env: str, results: pd.DataFrame):
         billing_project_id=project_id,
     )
 
-    bd.read_sql(
-        query=f"DROP TABLE {project_id}.{dataset_id}.tmp_{table_id}",
-        billing_project_id=project_id,
+    log("deu merge !!!")
+
+    log("deletando tmp")
+
+    bigquery.Client(project=project_id).delete_table(
+        f"{project_id}.{dataset_id}.tmp_{table_id}",
+        not_found_ok=True,
     )
+    log("deletado")
