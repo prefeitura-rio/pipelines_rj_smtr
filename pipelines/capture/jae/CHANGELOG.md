@@ -1,6 +1,6 @@
 # Changelog - source_jae
 
-## [2.3.6] - 2025-08-22
+## [2.4.0] - 2025-09-08
 
 ### Adicionado
 - Salva resultados da verificação da captura do flow `verifica_captura` na tabela `source_jae.resultado_verificacao_captura_jae` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/848)
