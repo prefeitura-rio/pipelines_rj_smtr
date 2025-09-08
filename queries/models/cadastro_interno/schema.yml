@@ -3,7 +3,7 @@ models:
     description: Tabela contendo os dados de cadastro dos clientes na Jaé
     columns:
       - name: id_cliente_particao
-        description: Identificador do cliente no tipo inteiro [particao] [protegido]
+        description: "{{ doc('id_cliente_particao') }} [particao] [protegido]"
         data_type: int64
         quote: true
         policy_tags:
@@ -65,6 +65,81 @@ models:
       - name: datetime_captura
         description: "{{ doc('datetime_captura') }}"
         data_type: datetime
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
+  - name: endereco_cliente_jae
+    description: Tabela contendo os dados de endereço dos clientes cadastrados na Jaé
+    columns:
+      - name: id_cliente_particao
+        description: "{{ doc('id_cliente_particao') }} [particao] [protegido]"
+        data_type: int64
+        quote: true
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+      - name: id_cliente
+        description: "{{ doc('id_cliente') }}"
+        data_type: string
+        quote: true
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+      - name: numero_sequencia_endereco
+        description: Sequencial do endereço no cadastro do cliente
+        data_type: string
+        quote: true
+      - name: tipo_endereco
+        description: Residencial ou comercial
+        data_type: string
+        quote: true
+      - name: cep
+        description: Número do CEP
+        data_type: string
+        quote: true
+      - name: logradouro
+        description: Logradouro do endereço
+        data_type: string
+        quote: true
+      - name: numero
+        description: Número do endereço
+        data_type: string
+        quote: true
+      - name: complemento
+        description: Complemento do endereço
+        data_type: string
+        quote: true
+      - name: bairro
+        description: Nome do bairro
+        data_type: string
+        quote: true
+      - name: cidade
+        description: Nome da cidade
+        data_type: string
+        quote: true
+      - name: uf
+        description: Sigla da UF
+        data_type: string
+        quote: true
+      - name: datetime_inclusao
+        description: Data e hora do cadastro do endereco no sistema da Jaé
+        data_type: datetime
+        quote: true
+      - name: datetime_inativacao
+        description: Data e hora da inativação do cadastro do endereco no sistema da Jaé
+        data_type: datetime
+        quote: true
+      - name: datetime_captura
+        description: "{{ doc('datetime_captura') }}"
+        data_type: string
         quote: true
       - name: versao
         description: "{{ doc('versao') }}"
