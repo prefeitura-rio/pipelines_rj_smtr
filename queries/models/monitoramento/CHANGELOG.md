@@ -10,6 +10,11 @@
 ### Adicionado
 
 - Cria `indicador_dados_validos` no modelo `viagem_validacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/799)
+- Adiciona coluna `datetime_captura_viagem` no modelo `gps_segmento_viagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/799)
+
+### Alterado
+
+- Altera lógica no modelo `viagem_informada_monitoramento` para particionar pela data do `datetime_partida` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/799)
 
 ## [1.6.7] - 2025-09-01
 
