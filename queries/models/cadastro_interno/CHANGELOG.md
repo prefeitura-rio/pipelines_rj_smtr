@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Cria modelo `endereco_cliente_jae.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/812)
+- Cria modelo `endereco_cliente_jae.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/854)
 
 ## [1.0.0] - 2025-08-27
 
