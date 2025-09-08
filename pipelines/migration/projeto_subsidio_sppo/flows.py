@@ -212,6 +212,17 @@ with Flow(
     # publish = Parameter("publish", False)
 
     run_dates = get_run_dates(start_date, end_date)
+    partitions = task(
+        lambda run_dates: ", ".join(
+            f"date({dt.year}, {dt.month}, {dt.day})"
+            for dt in [datetime.strptime(d["run_date"], "%Y-%m-%d") for d in run_dates]
+        )
+    )(run_dates)
+    dbt_vars = {
+        "date_range_start": start_date,
+        "date_range_end": end_date,
+        "partitions": partitions,
+    }
 
     # Rename flow run #
     rename_flow_run = rename_current_flow_run_now_time(
@@ -272,19 +283,6 @@ with Flow(
 
         # 3. PRE-DATA QUALITY CHECK #
         with case(skip_pre_test, False):
-
-            partitions = task(
-                lambda run_dates: ", ".join(
-                    f"date({dt.year}, {dt.month}, {dt.day})"
-                    for dt in [datetime.strptime(d["run_date"], "%Y-%m-%d") for d in run_dates]
-                )
-            )(run_dates)
-
-            dbt_vars = {
-                "date_range_start": start_date,
-                "date_range_end": end_date,
-                "partitions": partitions,
-            }
 
             timestamp_captura_start, timestamp_captura_end = jae_capture_check_get_ts_range(
                 timestamp=timestamp,
@@ -603,19 +601,6 @@ with Flow(
             #         SUBSIDIO_SPPO_DASHBOARD_RUN
             #     )
     with case(test_only, True):
-
-        partitions = task(
-            lambda run_dates: ", ".join(
-                f"date({dt.year}, {dt.month}, {dt.day})"
-                for dt in [datetime.strptime(d["run_date"], "%Y-%m-%d") for d in run_dates]
-            )
-        )(run_dates)
-
-        dbt_vars = {
-            "date_range_start": start_date,
-            "date_range_end": end_date,
-            "partitions": partitions,
-        }
 
         timestamp_captura_start, timestamp_captura_end = jae_capture_check_get_ts_range(
             timestamp=timestamp,
