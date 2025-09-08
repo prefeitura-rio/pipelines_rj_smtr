@@ -790,9 +790,9 @@ class constants(Enum):  # pylint: disable=c0103
                     "description": "Todas as viagens possuem `partidas_total_planejada` correspondente à OS"
                 },
             },
-            "viagens_remuneradas": {
-                "teto_viagens__viagens_remuneradas": {
-                    "description": "Todas as viagens foram corretamente identificadas dentro das regras de limite"
+            "temperatura_inmet": {
+                "test_completude__temperatura_inmet": {
+                    "description": "Há pelo menos uma temperatura não nula registrada em alguma das estações do Rio de Janeiro em cada uma das 24 horas do dia"  # noqa
                 },
             },
         }
