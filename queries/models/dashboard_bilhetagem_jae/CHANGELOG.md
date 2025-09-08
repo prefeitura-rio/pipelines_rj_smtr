@@ -1,5 +1,11 @@
 # Changelog - dashboard_bilhetagem_jae
 
+## [2.0.2] - 2025-08-28
+
+### Alterado
+
+- Muda a coluna `tipo_usuario` para "Não Identificado" quando o valor é nulo nos modelos `view_passageiro_hora.sql` e `view_passageiro_tile_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/817)
+
 ## [2.0.1] - 2025-08-04
 
 ### Adicionado

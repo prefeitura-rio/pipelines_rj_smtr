@@ -69,7 +69,7 @@ models:
   #   description: "View para os dados históricos capturados em staging com tratamento básico e conversão de valores"
   #   columns:
   #     - name: codigo
-  #       description: "{{ doc('codigo') }}"
+  #       description: "{{ doc('numero_veiculo') }}"
   #     - name: placa
   #       description: "{{ doc('placa') }}"
   #     - name: linha

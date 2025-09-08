@@ -2,6 +2,10 @@
 Consórcio ao qual o serviço pertence
 {% enddocs %}
 
+{% docs nome_consorcio %}
+Nome do consórcio
+{% enddocs %}
+
 {% docs id_veiculo %}
 Código identificador do veículo [número de ordem]
 {% enddocs %}
@@ -23,7 +27,7 @@ Distância do shape [trajeto] planejado (km)
 {% enddocs %}
 
 {% docs tipo_viagem_status %}
-Classificação do tipo de viagem
+Classificação do tipo de viagem conforme RESOLUÇÃO SMTR Nº 3843/2025
 {% enddocs %}
 
 {% docs servico %}
@@ -108,11 +112,17 @@ Flag de verificação se o ponto de GPS encontra-se até o limite de 'tamanho_bu
 
 {% docs status_veiculo_gps %}
 "Em Operação": Quando 'flag_em_movimento' é true e 'flag_trajeto_correto_hist' é true
+
 "Operando fora do trajeto": Quando 'flag_em_movimento' é true e 'flag_trajeto_correto_hist' é false
+
 "Parado": Quando 'flag_em_movimento' é false:
+
  - Se 'tipo_parada' não é nulo, o veículo é considerado "Parado" seguido pelo tipo de parada [ex.: "Parado terminal"]
+
  - Se 'tipo_parada' é nulo:
+
     - Se 'flag_trajeto_correto_hist' é true, o status é "Parado trajeto correto"
+
     - Se 'flag_trajeto_correto_hist' é false, o status é "Parado fora trajeto"
 {% enddocs %}
 
@@ -149,7 +159,7 @@ Tipo de pagamento utilizado
 {% enddocs %}
 
 {% docs tipo_dia %}
-Dia da semana - categorias: Dia Útil, Sábado, Domingo
+Dia da semana - categorias: Dia Útil, Sábado, Domingo e Ponto Facultativo
 {% enddocs %}
 
 {% docs faixa_horaria_inicio %}
@@ -214,9 +224,6 @@ Data final do feed [versão]
 
 {% docs tipo_servico %}
 Tipo de serviço da linha, conforme RDO [Relatório Diário de Operação]
-{% enddocs %}
-
-{% docs tipo_servico_jae %}
 {% enddocs %}
 
 {% docs ordem_servico %}
@@ -331,7 +338,7 @@ Classificação do Serviço: Diretão, Estação do BRT, Rodoviário, Troncal do
 Quantidade total de passageiros
 {% enddocs %}
 
-{% docs codigo %}
+{% docs numero_veiculo %}
 Número de ordem do veículo
 {% enddocs %}
 
@@ -660,6 +667,10 @@ Indica se o serviço indicado nos dados de GPS estava diferente do serviço info
 Taxa da conversão de Dólar para Real
 {% enddocs %}
 
+{% docs data_fim %}
+Data final do período de vigência dos demais atributos
+{% enddocs %}
+
 {% docs ano %}
 Ano
 {% enddocs %}
@@ -924,21 +935,23 @@ Datetime que o registro da realocação foi informado pela empresa operadora
 Linha de ônibus [serviço] realocada informada pela empresa operadora
 {% enddocs %}
 
-{% docs data_pagamento %}
-Data de pagamento
-{% enddocs %}
-
 {% docs data_operacao %}
 Data de operação
 {% enddocs %}
 
 {% docs status_veiculo %}
 Classificação, observados os demais parâmetros - Categorias:
+
   - Não licenciado - Veículo que operou, mas não é licenciado
+
   - Autuado por ar inoperante - Veículo que operou, foi licenciado com ar condicionado e foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado [023.II]
+
   - Autuado por segurança - Veículo que operou, foi licenciado, mas foi autuado por infração relacionada à segurança do veículo
+
   - Autuado por limpeza/equipamento - Veículo que operou, foi licenciado, mas foi autuado cumulativamente por infrações relacionadas à limpeza e equipamentos do veículo
+
   - Sem ar e não autuado - Veículo que operou, foi licenciado sem ar condicionado e não foi autuado
+
   - Com ar e não autuado - Veículo que operou, foi licenciado com ar condicionado e não foi autuado
 {% enddocs %}
 
@@ -948,6 +961,128 @@ Indicadores para caraterização do status do veículo
 
 {% docs posicao_veiculo_geo %}
 Coordenada geográfica [POINT] com a posição que o veículo se encontra, conforme 'longitude' e 'latitude' informadas pelo GPS [EPSG:4326 - WGS84]
+{% enddocs %}
+
+{% docs coluna %}
+Nome da coluna
+{% enddocs %}
+
+{% docs data_limite_defesa_previa %}
+Data limite para defesa prévia
+{% enddocs %}
+
+{% docs data_pagamento %}
+Data de pagamento
+{% enddocs %}
+
+{% docs data_ultima_atualizacao %}
+Data da última atualização
+{% enddocs %}
+
+{% docs datetime_processamento_viagem %}
+Data e hora do processamento da viagem
+{% enddocs %}
+
+{% docs especie_veiculo %}
+Espécie do veículo
+{% enddocs %}
+
+{% docs horario_inicio %}
+Horário inicial de funcionamento
+{% enddocs %}
+
+{% docs indicador_autuacao_equipamento %}
+Indicador se o veículo foi autuado por infração relacionada à inoperância ou mau funcionamento de equipamentos do veículo
+{% enddocs %}
+
+{% docs indicador_validador_sbd %}
+Indicador se o veículo se encontra com o novo validador do Sistema de Bilhetagem Digital [BD] instalado
+{% enddocs %}
+
+{% docs infracao %}
+Descrição da infração
+{% enddocs %}
+
+{% docs km_apurada_faixa %}
+Distância apurada para o serviço por faixa horária (km)
+{% enddocs %}
+
+{% docs km_apurada_licenciado_com_ar_n_autuado %}
+Quilometragem apurada de viagens de veículos com ar e não autuados
+{% enddocs %}
+
+{% docs km_apurada_n_vistoriado %}
+Distância apurada de viagens realizadas por veículo não vistoriado tempestivamente conforme calendário de vistoria (km)
+{% enddocs %}
+
+{% docs km_subsidiada_dia %}
+Distância subsidiada para o serviço por dia (km)
+{% enddocs %}
+
+{% docs ordem %}
+Ordem de prioridade de aplicação dos valores de remuneração
+{% enddocs %}
+
+{% docs perc_conformidade_distancia %}
+Razão da distância aferida pela distância teórica x 100
+{% enddocs %}
+
+{% docs processo_defesa_autuacao %}
+Número do processo de defesa prévia
+{% enddocs %}
+
+{% docs servico_informado %}
+Serviço informado pelo GPS do veículo
+{% enddocs %}
+
+{% docs shape_distance %}
+Extensão do shape
+{% enddocs %}
+
+{% docs status_veiculo_infracao %}
+CADASTRADA - Registrada no sistema sem guia de pagamento
+
+EM ABERTO - Com guia de pagamento e dentro do prazo de vencimento
+
+VENCIDA - Com guia de pagamento e fora do prazo de vencimento
+
+EM RECURSO - Possui Processo de Recurso aguardando julgamento
+
+PAGA - Com guia de pagamento efetivamente paga
+
+CANCELADA - Multa foi cancelada através de um Processo de Recurso
+{% enddocs %}
+
+{% docs subsidio_km %}
+Valor de subsídio de remuneração (R$/km)
+{% enddocs %}
+
+{% docs timestamp_captura_infracao %}
+Timestamp de captura dos dados de infração
+{% enddocs %}
+
+{% docs timestamp_captura_licenciamento %}
+Timestamp de captura dos dados de licenciamento
+{% enddocs %}
+
+{% docs timestamp_processamento %}
+Timestamp de processamento da realocação pela empresa operadora
+{% enddocs %}
+
+{% docs tipo_transacao_smtr %}
+Tipo de transação realizada no padrão usado pela SMTR [Tarifa Cheia, Integração e Gratuidade]
+{% enddocs %}
+
+{% docs uf_proprietario %}
+Estado do proprietário do veículo
+{% enddocs %}
+
+{% docs valor_infracao %}
+Valor monetário da autuação [100%] (R$)
+{% enddocs %}
+
+{% docs valor_total_apurado %}
+Valor total das viagens apuradas, subtraídas as penalidades [POF =< 60%] (R$)
 {% enddocs %}
 
 {% docs inicio_vigencia_tunel %}
@@ -960,6 +1095,10 @@ Data de fim da vigência do túnel
 
 {% docs id_execucao_dbt %}
 Identificador da execução do DBT que modificou o dado pela última vez
+{% enddocs %}
+
+{% docs km_apurada_sem_transacao %}
+Quilometragem apurada de viagens realizadas sem passageiro registrado
 {% enddocs %}
 
 {% docs datetime_transacao %}
@@ -1126,10 +1265,6 @@ Percentual de quilometragem apurada em relação à planejada do serviço ou POD
 Índice de Remuneração por Quilômetro [tarifário] (R$/km)
 {% enddocs %}
 
-{% docs subsidio_km %}
-Valor do subsídio por quilômetro (R$/km)
-{% enddocs %}
-
 {% docs tipo_recurso %}
 Tipo de recurso ou justificativa que motivou a exclusão daquele par data-serviço
 {% enddocs %}
@@ -1158,7 +1293,7 @@ Serviço apurado no subsídio
 Distância planejada para o serviço (km)
 {% enddocs %}
 
-{% docs data_fim %}
+{% docs data_fim_irk %}
 Data final do período para um determinado IRK
 {% enddocs %}
 
@@ -1236,4 +1371,28 @@ Indica se percentual_viagem_temperatura_pos_tratamento_descartada é maior que 5
 
 {% docs estado_equipamento %}
 Validador aberto ou fechado no momento da transmissão
+{% enddocs %}
+
+{% docs servico_cadastro %}
+Nome do serviço consolidado. Para linhas, é o nome curto da linha [ex: 010, 011SN]. E para estações, é o stop_code do GTFS ou o código interno da estação no banco de dados da Jaé. [Caso o registro não exista no GTFS, busca o serviço na base de dados da Jaé]
+{% enddocs %}
+
+{% docs descricao_servico_cadastro %}
+Nome completo do serviço consolidado. Para linhas é, primariamente o route_long_name da tabela routes do GTFS. Para estações é primariamente a coluna stop_name da tabela stops do GTFS. [Caso o registro não exista no GTFS, busca o serviço na base de dados da Jaé]
+{% enddocs %}
+
+{% docs tipo_documento_cliente %}
+Tipo do documento do cliente
+{% enddocs %}
+
+{% docs documento_cliente %}
+Número do documento do cliente
+{% enddocs %}
+
+{% docs nome_cliente %}
+Nome do cliente
+{% enddocs %}
+
+{% docs subtipo_usuario %}
+Subtipo do usuário que efetuou a transação sem dados relacionados à saúde [ex.: Ensino Básico Municipal]
 {% enddocs %}

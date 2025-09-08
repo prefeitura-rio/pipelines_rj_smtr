@@ -33,8 +33,12 @@ selectors:
             value: aux_viagem_temperatura
         - method: fqn
           value: viagens_remuneradas
-        - method: path
-          value: models/financeiro
+        - method: fqn
+          value: subsidio_faixa_servico_dia_tipo_viagem
+        - method: fqn
+          value: subsidio_penalidade_servico_faixa
+        - method: fqn
+          value: subsidio_sumario_servico_dia_pagamento
         - method: path
           value: models/dashboard_subsidio_sppo_v2
 
@@ -162,6 +166,8 @@ selectors:
           value: aux_servico_jae
         - method: fqn
           value: cadastro
+        - method: fqn
+          value: cliente_jae
 
   - name: transacao
     description: Materialização das tabelas de transação da bilhetagem
@@ -195,6 +201,8 @@ selectors:
           value: staging_lancamento
         - method: fqn
           value: recarga_jae
+        - method: fqn
+          value: transacao_gratuidade_estudante_municipal
 
   - name: integracao
     description: Materialização das tabelas de integracao da bilhetagem
@@ -241,13 +249,15 @@ selectors:
         - method: fqn
           value: aux_retorno_ordem_pagamento
         - method: fqn
-          value: ordem_pagamento_servico_operador_dia
+          value: bilhetagem_servico_operador_dia
+        - method: fqn
+          value: bilhetagem_consorcio_operador_dia
+        - method: fqn
+          value: bilhetagem_consorcio_dia
+        - method: fqn
+          value: bilhetagem_dia
         - method: fqn
           value: ordem_pagamento_consorcio_operador_dia
-        - method: fqn
-          value: ordem_pagamento_consorcio_dia
-        - method: fqn
-          value: ordem_pagamento_dia
 
   - name: passageiro_hora
     description: Materialização das tabelas agregadas de transação
@@ -325,10 +335,6 @@ selectors:
     definition:
       union:
         - method: fqn
-          value: snapshot_viagens_remuneradas
-        - method: fqn
-          value: snapshot_viagem_transacao
-        - method: fqn
           value: snapshot_viagem_completa
         - method: fqn
           value: snapshot_viagem_planejada
@@ -336,6 +342,10 @@ selectors:
   - name: snapshot_subsidio
     definition:
       union:
+        - method: fqn
+          value: snapshot_viagens_remuneradas
+        - method: fqn
+          value: snapshot_viagem_transacao
         - method: fqn
           value: snapshot_subsidio_faixa_servico_dia_tipo_viagem
         - method: fqn
@@ -369,17 +379,7 @@ selectors:
         - method: fqn
           value: autuacao_disciplinar_historico
         - method: fqn
-          value: temperatura_inmet
-        - method: fqn
-          value: viagem_classificada
-        - method: fqn
           value: aux_veiculo_gps_dia
-        - method: fqn
-          value: aux_viagem_temperatura
-        - method: fqn
-          value: aux_veiculo_falha_ar_condicionado
-        - method: fqn
-          value: veiculo_regularidade_temperatura_dia
         - method: fqn
           value: veiculo_dia
 
@@ -400,3 +400,29 @@ selectors:
           value: sppo_registro_agente_verao
         - method: fqn
           value: veiculo_dia
+
+  - name: monitoramento_temperatura
+    definition:
+      union:
+        - method: fqn
+          value: staging_temperatura_inmet
+        - method: fqn
+          value: temperatura_inmet
+        - method: fqn
+          value: viagem_classificada
+        - method: fqn
+          value: aux_viagem_temperatura
+        - method: fqn
+          value: aux_veiculo_falha_ar_condicionado
+        - method: fqn
+          value: veiculo_regularidade_temperatura_dia
+
+  - name: snapshot_temperatura
+    definition:
+      union:
+        - method: fqn
+          value: snapshot_veiculo_regularidade_temperatura_dia
+        - method: fqn
+          value: snapshot_viagem_regularidade_temperatura
+        - method: fqn
+          value: snapshot_temperatura_inmet

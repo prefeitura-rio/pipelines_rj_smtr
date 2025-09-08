@@ -59,7 +59,7 @@ models:
       - name: tecnologia
         description: "{{ doc('tecnologia') }}"
       - name: subsidio_km
-        description: "Valor de subsídio de remuneração (R$/km)"
+        description: "{{ doc('subsidio_km') }}"
         tests:
           - not_null:
               name: not_null__subsidio_km__valor_km_tipo_viagem
@@ -77,7 +77,7 @@ models:
               name: not_null__data_inicio__valor_km_tipo_viagem
               where: "data_inicio between date('{date_range_start}') and date('{date_range_end}') or data_fim between date('{date_range_start}') and date('{date_range_end}')"
       - name: data_fim
-        description: "Data final do período de vigência dos demais atributos"
+        description: "{{ doc('data_fim') }}"
       - name: indicador_penalidade_judicial
         description: "{{ doc('indicador_penalidade_judicial') }}"
       - name: legislacao

@@ -36,7 +36,7 @@ models:
       - name: tipo_dia
         description: "{{ doc('tipo_dia') }}"
       - name: horario_inicio
-        description: "Horário inicial de funcionamento"
+        description: "{{ doc('horario_inicio') }}"
       - name: horario_fim
         description: "Horário da última viagem"
       - name: partidas_ida_dia
@@ -239,7 +239,7 @@ models:
         data_type: date
         quote: true
       - name: tipo_dia
-        description: Tipo de dia, se dia útil, sábado, domingo ou ponto facultativo
+        description: "{{ doc('tipo_dia') }}"
         data_type: string
         quote: true
       - name: subtipo_dia

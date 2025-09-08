@@ -37,7 +37,7 @@ with
     ),
     tipo_transacao as (
         select chave as id_tipo_transacao, valor as tipo_transacao,
-        from `rj-smtr.br_rj_riodejaneiro_bilhetagem.dicionario`
+        from {{ ref("dicionario_bilhetagem") }}
         where id_tabela = "transacao" and coluna = "id_tipo_transacao"
     ),
     dados_novos as (
