@@ -1,5 +1,19 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.2.9] - 2025-09-08
+
+### Adicionado
+
+- Adiciona variável `partitions` no `dbt_vars` do flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/833)
+
+### Alterado
+
+- Padroniza upstream tasks no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/833)
+
+### Corrigido
+
+- Corrige lógica do `skip_materialization` no flow `subsidio_sppo_apuracao` para não materializar no test_only (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/833)
+
 ## [1.2.8] - 2025-09-01
 
 ### Adicionado
