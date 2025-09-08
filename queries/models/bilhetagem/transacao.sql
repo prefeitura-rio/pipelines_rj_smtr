@@ -428,16 +428,16 @@ with
                     )
                 then "Pagante"
                 when
-                    g.tipo_gratuidade = "Sênior"
-                    or t.tipo_transacao_jae = "Gratuidade operador sênior"
-                then "Idoso"
-                when t.tipo_transacao_jae = "Gratuidade operador estudante"
-                then "Estudante"
-                when
                     t.tipo_transacao_jae
                     in ("Gratuidade operador pcd", "Gratuidade acompanhante")
                     or g.tipo_gratuidade = "PCD"
                 then "Saúde"
+                when t.tipo_transacao_jae = "Gratuidade operador estudante"
+                then "Estudante"
+                when
+                    g.tipo_gratuidade = "Sênior"
+                    or t.tipo_transacao_jae = "Gratuidade operador sênior"
+                then "Idoso"
                 when tipo_transacao_jae like "Gratuidade operador%"
                 then "Operadora"
                 else g.tipo_gratuidade
@@ -476,10 +476,10 @@ with
                 then "DC"
             end as subtipo_usuario_protegido,
             case
-                when t.meio_pagamento_jae like "Cartão%"
-                then "Cartão"
                 when t.tipo_transacao_jae = "Botoeira"
                 then "Dinheiro"
+                when t.meio_pagamento_jae like "Cartão%"
+                then "Cartão"
                 else t.meio_pagamento_jae
             end as meio_pagamento
         from transacao_info_posterior t
