@@ -27,7 +27,8 @@ repos:
     hooks:
     - id: flake8
 
-# -   repo: https://github.com/tconbeer/sqlfmt
+- name: Run Gemini CLI
+  uses: google-github-actions/run-gemini-cli@v0.1.12# -   repo: https://github.com/tconbeer/sqlfmt
 #     rev: v0.23.2
 #     hooks:
 #     -   id: sqlfmt
