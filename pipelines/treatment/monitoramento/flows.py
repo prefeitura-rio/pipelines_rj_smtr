@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de monitoramento
 
-DBT: 2025-08-27
+DBT: 2025-09-04
 """
 
 from copy import deepcopy
@@ -186,6 +186,15 @@ VEICULO_DIA_MATERIALIZACAO = create_default_materialization_flow(
         wait_cadastro_veiculo,
     ],
     post_tests=constants.VEICULO_DIA_TEST.value,
+)
+
+MONITORAMENTO_TEMPERATURA_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="monitoramento_temperatura - materializacao",
+    selector=constants.MONITORAMENTO_TEMPERATURA_SELECTOR.value,
+    snapshot_selector=constants.SNAPSHOT_TEMPERATURA_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[constants.MONITORAMENTO_VEICULO_SELECTOR.value],
+    post_tests=constants.MONITORAMENTO_TEMPERATURA_TEST.value,
 )
 
 GPS_VALIDADOR_MATERIALIZACAO = create_default_materialization_flow(

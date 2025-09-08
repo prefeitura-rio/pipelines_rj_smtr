@@ -373,7 +373,7 @@ models:
         description: "{{ doc('datetime_processamento_transacao') }}"
         tests:
           - not_null:
-              name: not_null__datetime
+              name: not_null__datetime_processamento__transacao_riocard
       - name: datetime_captura
         description: "{{ doc('datetime_captura') }}"
       - name: modo
@@ -427,6 +427,8 @@ models:
       - name: id_transacao
         description: "{{ doc('id_transacao') }}"
         tests:
+          - unique:
+              name: unique__id_transacao__transacao_riocard
           - not_null:
               name: not_null__id_transacao__transacao_riocard
       - name: latitude
@@ -452,6 +454,8 @@ models:
             - data_ordem
             - id_transacao
           where: data_ordem in ({partitions})
+      - transacao_valor_ordem_completa:
+          name: transacao_valor_ordem_completa__transacao_valor_ordem
     columns:
       - name: data_ordem
         description: "{{ doc('data_transacao') }} [partição]"
@@ -500,7 +504,7 @@ models:
         tests:
           - not_null:
               name: not_null__id_servico_jae__transacao_valor_ordem
-              where: data_ordem in ({partitions}) and extract(year from data_ordem) > 2023
+              where: data_ordem in ({partitions}) and extract(year from data_transacao) > 2023
       - name: valor_transacao_rateio
         description: Valor da transação com o rateio [se houver] (R$)
         data_type: float64
