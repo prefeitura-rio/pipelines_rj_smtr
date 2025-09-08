@@ -6,6 +6,8 @@ Flows for projeto_subsidio_sppo
 DBT: 2025-09-04
 """
 
+from datetime import datetime
+
 from prefect import Parameter, case, task
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
@@ -270,7 +272,19 @@ with Flow(
 
         # 3. PRE-DATA QUALITY CHECK #
         with case(skip_pre_test, False):
-            dbt_vars = {"date_range_start": start_date, "date_range_end": end_date}
+
+            partitions = task(
+                lambda run_dates: ", ".join(
+                    f"date({dt.year}, {dt.month}, {dt.day})"
+                    for dt in [datetime.strptime(d["run_date"], "%Y-%m-%d") for d in run_dates]
+                )
+            )(run_dates)
+
+            dbt_vars = {
+                "date_range_start": start_date,
+                "date_range_end": end_date,
+                "partitions": partitions,
+            }
 
             timestamp_captura_start, timestamp_captura_end = jae_capture_check_get_ts_range(
                 timestamp=timestamp,
@@ -306,7 +320,8 @@ with Flow(
                 dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
                 exclude="dashboard_subsidio_sppo_v2 teto_viagens__viagens_remuneradas",
                 _vars=dbt_vars,
-            ).set_upstream(task=timestamps)
+                upstream_tasks=[timestamps],
+            )
 
             DATA_QUALITY_PRE = dbt_data_quality_checks(
                 dbt_logs=SUBSIDIO_SPPO_DATA_QUALITY_PRE,
@@ -321,7 +336,12 @@ with Flow(
         with case(skip_pre_test, True):
             skip_materialization_false = False
 
-        skip_materialization = merge(skip_materialization_check, skip_materialization_false)
+        with case(test_only, True):
+            skip_materialization = True
+
+        with case(test_only, False):
+            skip_materialization = merge(skip_materialization_check, skip_materialization_false)
+
         with case(skip_materialization, False):
             # 4. CALCULATE #
             date_in_range = check_date_in_range(
@@ -351,7 +371,8 @@ with Flow(
                         "date_range_start": date_intervals["first_range"]["start_date"],
                         "date_range_end": date_intervals["first_range"]["end_date"],
                     },
-                ).set_upstream(task=APURACAO_FIRST_RANGE_RUN)
+                    upstream_tasks=[APURACAO_FIRST_RANGE_RUN],
+                )
 
                 dbt_data_quality_checks(
                     dbt_logs=DATA_QUALITY_POS_FIRST_RANGE,
@@ -420,12 +441,14 @@ with Flow(
                         selector_name="apuracao_subsidio_v8",
                         _vars=_vars,
                     )
+
                     # POST-DATA QUALITY CHECK #
                     DATA_QUALITY_POS_V8 = run_dbt(
                         resource="test",
                         dataset_id="dashboard_subsidio_sppo",
                         _vars=dbt_vars,
-                    ).set_upstream(task=APURACAO_V8_RUN)
+                        upstream_tasks=[APURACAO_V8_RUN],
+                    )
 
                     dbt_data_quality_checks(
                         dbt_logs=DATA_QUALITY_POS_V8,
@@ -454,13 +477,13 @@ with Flow(
                         upstream_tasks=[_vars_v9],
                     )
                     # POST-DATA QUALITY CHECK #
-                    date_in_range = check_date_in_range(
+                    date_in_range_v14 = check_date_in_range(
                         _vars["start_date"],
                         _vars["end_date"],
                         constants.DATA_SUBSIDIO_V14_INICIO.value,
                     )
 
-                    with case(date_in_range, True):
+                    with case(date_in_range_v14, True):
                         date_intervals = split_date_range(
                             _vars["start_date"],
                             _vars["end_date"],
@@ -474,7 +497,8 @@ with Flow(
                                 "date_range_start": date_intervals["first_range"]["start_date"],
                                 "date_range_end": date_intervals["first_range"]["end_date"],
                             },
-                        ).set_upstream(task=APURACAO_V9_RUN)
+                            upstream_tasks=[APURACAO_V9_RUN],
+                        )
 
                         dbt_data_quality_checks(
                             dbt_logs=DATA_QUALITY_POS_V9_FIRST_RANGE,
@@ -493,7 +517,8 @@ with Flow(
                                 "date_range_start": date_intervals["second_range"]["start_date"],
                                 "date_range_end": date_intervals["second_range"]["end_date"],
                             },
-                        ).set_upstream(task=DATA_QUALITY_POS_V9_FIRST_RANGE)
+                            upstream_tasks=[DATA_QUALITY_POS_V9_FIRST_RANGE],
+                        )
 
                         dbt_data_quality_checks(
                             dbt_logs=DATA_QUALITY_POS_V9_SECOND_RANGE,
@@ -504,16 +529,18 @@ with Flow(
                                 "date_range_end": date_intervals["second_range"]["end_date"],
                             },
                         )
-                    with case(date_in_range, False):
+                    with case(date_in_range_v14, False):
                         data_maior_ou_igual_v14 = gte.run(
                             _vars["start_date"], constants.DATA_SUBSIDIO_V14_INICIO.value
                         )
+
                         with case(data_maior_ou_igual_v14, False):
                             DATA_QUALITY_POS_BEFORE_V14 = run_dbt(
                                 resource="test",
                                 dataset_id=constants.SUBSIDIO_SPPO_V9_POS_CHECKS_DATASET_ID.value,  # noqa
                                 _vars=dbt_vars,
-                            ).set_upstream(task=APURACAO_V9_RUN)
+                                upstream_tasks=[APURACAO_V9_RUN],
+                            )
 
                             DATA_QUALITY_POS_BEFORE_V14 = transform_task_state(
                                 DATA_QUALITY_POS_BEFORE_V14
@@ -524,7 +551,8 @@ with Flow(
                                 resource="test",
                                 dataset_id=constants.SUBSIDIO_SPPO_V14_POS_CHECKS_DATASET_ID.value,  # noqa
                                 _vars=dbt_vars,
-                            ).set_upstream(task=APURACAO_V9_RUN)
+                                upstream_tasks=[APURACAO_V9_RUN],
+                            )
 
                             DATA_QUALITY_POS_V14 = transform_task_state(DATA_QUALITY_POS_V14)
 
@@ -575,7 +603,19 @@ with Flow(
             #         SUBSIDIO_SPPO_DASHBOARD_RUN
             #     )
     with case(test_only, True):
-        dbt_vars = {"date_range_start": start_date, "date_range_end": end_date}
+
+        partitions = task(
+            lambda run_dates: ", ".join(
+                f"date({dt.year}, {dt.month}, {dt.day})"
+                for dt in [datetime.strptime(d["run_date"], "%Y-%m-%d") for d in run_dates]
+            )
+        )(run_dates)
+
+        dbt_vars = {
+            "date_range_start": start_date,
+            "date_range_end": end_date,
+            "partitions": partitions,
+        }
 
         timestamp_captura_start, timestamp_captura_end = jae_capture_check_get_ts_range(
             timestamp=timestamp,
