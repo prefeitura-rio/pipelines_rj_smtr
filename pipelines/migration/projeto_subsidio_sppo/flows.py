@@ -274,7 +274,7 @@ with Flow(
 
             timestamp_captura_start, timestamp_captura_end = jae_capture_check_get_ts_range(
                 timestamp=timestamp,
-                retroactive_days=0,
+                retroactive_days=7,
                 timestamp_captura_start=start_date_param,
                 timestamp_captura_end=add_days_to_date(date_str=end_date_param, days=7),
             ).set_upstream(task=SPPO_VEICULO_DIA_RUN_WAIT)
@@ -579,7 +579,7 @@ with Flow(
 
         timestamp_captura_start, timestamp_captura_end = jae_capture_check_get_ts_range(
             timestamp=timestamp,
-            retroactive_days=0,
+            retroactive_days=7,
             timestamp_captura_start=start_date_param,
             timestamp_captura_end=add_days_to_date(date_str=end_date_param, days=7),
         )
