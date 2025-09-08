@@ -7,7 +7,7 @@
             "data_type": "int64",
             "range": {"start": 0, "end": 1000000000, "interval": 100000},
         },
-        unique_key="id_cliente",
+        unique_key="id_cliente_sequencia",
     )
 }}
 
@@ -47,7 +47,7 @@
                 from {{ staging_endereco }}
                 where {{ incremental_filter }}
             ),
-            grupos as (select distinct div(id, 10000) as group_id from ids),
+            grupos as (select distinct div(id, 100000) as group_id from ids),
             identifica_grupos_continuos as (
                 select
                     group_id,
@@ -65,9 +65,9 @@
             distinct
             concat(
                 "id_cliente_particao between ",
-                min(group_id) over (partition by id_continuidade) * 10000,
+                min(group_id) over (partition by id_continuidade) * 100000,
                 " and ",
-                (max(group_id) over (partition by id_continuidade) + 1) * 10000 - 1
+                (max(group_id) over (partition by id_continuidade) + 1) * 100000 - 1
             )
         from grupos_continuos
     {% endset %}
@@ -89,6 +89,7 @@ with
     dados_novos as (
         select
             cast(e.cd_cliente as integer) as id_cliente_particao,
+            concat(e.cd_cliente, "-", e.nr_seq_endereco) as id_cliente_sequencia,
             e.cd_cliente as id_cliente,
             e.nr_seq_endereco as numero_sequencia_endereco,
             te.tipo_endereco,
@@ -117,8 +118,7 @@ with
         {% if is_incremental() and partitions | length > 0 %}
 
             select
-                id_cliente,
-                numero_sequencia_endereco,
+                id_cliente_sequencia,
                 {{ sha_column }} as sha_dado_atual,
                 datetime_ultima_atualizacao as datetime_ultima_atualizacao_atual,
                 id_execucao_dbt as id_execucao_dbt_atual
@@ -127,17 +127,16 @@ with
 
         {% else %}
             select
-                cast(null as string) as id_cliente,
-                cast(null as string) as numero_sequencia_endereco,
+                cast(null as string) as id_cliente_sequencia,
                 cast(null as bytes) as sha_dado_atual,
                 datetime(null) as datetime_ultima_atualizacao_atual,
                 cast(null as string) as id_execucao_dbt_atual
         {% endif %}
     ),
     sha_dados_completos as (
-        select n.*, a.* except (id_cliente, numero_sequencia_endereco)
+        select n.*, a.* except (id_cliente_sequencia)
         from sha_dados_novos n
-        left join sha_dados_atuais a using (id_cliente, numero_sequencia_endereco)
+        left join sha_dados_atuais a using (id_cliente_sequencia)
     ),
     cliente_colunas_controle as (
         select

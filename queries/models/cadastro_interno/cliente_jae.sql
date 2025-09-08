@@ -47,7 +47,7 @@
                 from {{ staging_cliente }}
                 where {{ incremental_filter }}
             ),
-            grupos as (select distinct div(id, 10000) as group_id from ids),
+            grupos as (select distinct div(id, 100000) as group_id from ids),
             identifica_grupos_continuos as (
                 select
                     group_id,
@@ -65,9 +65,9 @@
             distinct
             concat(
                 "id_cliente_particao between ",
-                min(group_id) over (partition by id_continuidade) * 10000,
+                min(group_id) over (partition by id_continuidade) * 100000,
                 " and ",
-                (max(group_id) over (partition by id_continuidade) + 1) * 10000 - 1
+                (max(group_id) over (partition by id_continuidade) + 1) * 100000 - 1
             )
         from grupos_continuos
     {% endset %}

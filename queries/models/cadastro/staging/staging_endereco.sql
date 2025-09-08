@@ -7,7 +7,7 @@
 
 select
     data,
-    safe_cast(nr_seq_endereco as string) as nr_seq_endereco,
+    replace(safe_cast(nr_seq_endereco as string), '.0', '') as nr_seq_endereco,
     timestamp_captura,
     replace(
         safe_cast(json_value(content, '$.CD_CLIENTE') as string), '.0', ''
