@@ -10,7 +10,7 @@
 ### Adicionado
 
 - Cria `indicador_dados_validos` no modelo `viagem_validacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/799)
-=======
+
 ## [1.6.7] - 2025-09-01
 
 ### Alterado
