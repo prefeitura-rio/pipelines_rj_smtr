@@ -258,7 +258,8 @@ with
             and v1.datetime_chegada > v2.datetime_partida
         qualify
             row_number() over (
-                partition by v1.id_viagem order by v2.datetime_captura_viagem desc, v2.datetime_partida
+                partition by v1.id_viagem
+                order by v2.datetime_captura_viagem desc, v2.datetime_partida
             )
             = 1
     ),
