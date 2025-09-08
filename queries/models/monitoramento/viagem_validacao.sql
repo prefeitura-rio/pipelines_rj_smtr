@@ -229,8 +229,20 @@ with
             v1.id_veiculo,
             v1.datetime_partida,
             v1.datetime_chegada,
+            v1.datetime_captura_viagem,
+            v2.id_viagem as id_viagem_sobreposta,
+            v2.datetime_captura_viagem as datetime_captura_viagem_sobreposta,
             case
-                when v2.id_viagem is not null then true else false
+                when v2.id_viagem is not null
+                then
+                    case
+                        when v1.datetime_captura_viagem = v2.datetime_captura_viagem
+                        then true
+                        when v1.datetime_captura_viagem < v2.datetime_captura_viagem
+                        then true
+                        else false
+                    end
+                else false
             end as indicador_viagem_sobreposta
         from viagens_velocidade_media v1
         left join
@@ -244,6 +256,11 @@ with
             and v1.id_viagem != v2.id_viagem
             and v1.datetime_partida < v2.datetime_chegada
             and v1.datetime_chegada > v2.datetime_partida
+        qualify
+            row_number() over (
+                partition by v1.id_viagem order by v2.datetime_captura_viagem desc, v2.datetime_partida
+            )
+            = 1
     ),
     viagens as (
         select
