@@ -29,8 +29,10 @@ with
         from {{ ref("staging_gps") }}
         where
             {{ partition_filter }}
-            and datetime_gps > "{{var('date_range_start')}}"
-            and datetime_gps <= "{{var('date_range_end')}}"
+            and datetime_gps
+            between datetime("{{ var('date_range_start') }}") and datetime(
+                "{{ var('date_range_end') }}"
+            )
     ),
     servicos_realocados as (
         select
