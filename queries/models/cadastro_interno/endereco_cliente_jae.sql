@@ -7,11 +7,11 @@
             "data_type": "int64",
             "range": {"start": 0, "end": 1000000000, "interval": 100000},
         },
-        unique_key="id_cliente",
+        unique_key="id_cliente_sequencia",
     )
 }}
 
-{% set staging_cliente = ref("staging_cliente") %}
+{% set staging_endereco = ref("staging_endereco") %}
 
 
 {% set incremental_filter %}
@@ -44,7 +44,7 @@
         with
             ids as (
                 select distinct cast(cd_cliente as integer) as id
-                from {{ staging_cliente }}
+                from {{ staging_endereco }}
                 where {{ incremental_filter }}
             ),
             grupos as (select distinct div(id, 100000) as group_id from ids),
@@ -81,35 +81,36 @@
 {% endif %}
 
 with
-    tipo_documento as (
-        select chave as cd_tipo_documento, valor as tipo_documento
+    tipo_endereco as (
+        select chave as cd_tipo_endereco, valor as tipo_endereco
         from {{ ref("dicionario_bilhetagem") }}
-        where id_tabela = "cliente" and coluna = "cd_tipo_documento"
+        where id_tabela = "endereco" and coluna = "cd_tipo_endereco"
     ),
     dados_novos as (
         select
-            cast(c.cd_cliente as integer) as id_cliente_particao,
-            c.cd_cliente as id_cliente,
-            c.nm_cliente as nome,
-            c.nm_cliente_social as nome_social,
-            case
-                when c.in_tipo_pessoa_fisica_juridica = "F"
-                then "Física"
-                when c.in_tipo_pessoa_fisica_juridica = "J"
-                then "Jurídica"
-            end as tipo_pessoa,
-            tdc.tipo_documento,
-            c.nr_documento as documento,
-            c.nr_documento_alternativo as documento_alternativo,
-            c.tx_email as email,
-            c.nr_telefone as telefone,
-            c.dt_cadastro as datetime_cadastro,
+            cast(e.cd_cliente as integer) as id_cliente_particao,
+            concat(e.cd_cliente, "-", e.nr_seq_endereco) as id_cliente_sequencia,
+            e.cd_cliente as id_cliente,
+            e.nr_seq_endereco as numero_sequencia_endereco,
+            te.tipo_endereco,
+            e.nr_cep as cep,
+            e.tx_logradouro as logradouro,
+            e.nr_logradouro as numero,
+            e.tx_complemento_logradouro as complemento,
+            e.nm_bairro as bairro,
+            e.nm_cidade as cidade,
+            e.sg_uf as uf,
+            e.dt_inclusao as datetime_inclusao,
+            e.dt_inativacao as datetime_inativacao,
             timestamp_captura as datetime_captura
-        from {{ staging_cliente }} c
-        left join tipo_documento tdc on c.cd_tipo_documento = tdc.cd_tipo_documento
+        from {{ staging_endereco }} e
+        left join tipo_endereco te using (cd_tipo_endereco)
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
         qualify
-            row_number() over (partition by id_cliente order by datetime_captura desc)
+            row_number() over (
+                partition by id_cliente, numero_sequencia_endereco
+                order by datetime_captura desc
+            )
             = 1
     ),
     sha_dados_novos as (select *, {{ sha_column }} as sha_dado_novo from dados_novos),
@@ -117,7 +118,7 @@ with
         {% if is_incremental() and partitions | length > 0 %}
 
             select
-                id_cliente,
+                id_cliente_sequencia,
                 {{ sha_column }} as sha_dado_atual,
                 datetime_ultima_atualizacao as datetime_ultima_atualizacao_atual,
                 id_execucao_dbt as id_execucao_dbt_atual
@@ -126,16 +127,16 @@ with
 
         {% else %}
             select
-                cast(null as string) as id_cliente,
+                cast(null as string) as id_cliente_sequencia,
                 cast(null as bytes) as sha_dado_atual,
                 datetime(null) as datetime_ultima_atualizacao_atual,
                 cast(null as string) as id_execucao_dbt_atual
         {% endif %}
     ),
     sha_dados_completos as (
-        select n.*, a.* except (id_cliente)
+        select n.*, a.* except (id_cliente_sequencia)
         from sha_dados_novos n
-        left join sha_dados_atuais a using (id_cliente)
+        left join sha_dados_atuais a using (id_cliente_sequencia)
     ),
     cliente_colunas_controle as (
         select

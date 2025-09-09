@@ -165,9 +165,19 @@ selectors:
         - method: fqn
           value: aux_servico_jae
         - method: fqn
-          value: cadastro
+          value: consorcios
         - method: fqn
           value: cliente_jae
+        - method: fqn
+          value: operadoras_contato
+        - method: fqn
+          value: operadoras
+        - method: fqn
+          value: servicos
+        - method: fqn
+          value: servico_operadora
+        - method: fqn
+          value: endereco_cliente_jae
 
   - name: transacao
     description: Materialização das tabelas de transação da bilhetagem
