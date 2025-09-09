@@ -334,6 +334,8 @@ with Flow("jae: verificacao captura") as verifica_captura:
 
     timestamp = get_scheduled_timestamp()
 
+    env = get_run_env()
+
     timestamp_captura_start, timestamp_captura_end = jae_capture_check_get_ts_range(
         timestamp=timestamp,
         retroactive_days=retroactive_days,
@@ -347,6 +349,7 @@ with Flow("jae: verificacao captura") as verifica_captura:
     )
 
     timestamps = get_capture_gaps.map(
+        env=unmapped(env),
         table_id=table_ids,
         timestamp_captura_start=unmapped(timestamp_captura_start),
         timestamp_captura_end=unmapped(timestamp_captura_end),
