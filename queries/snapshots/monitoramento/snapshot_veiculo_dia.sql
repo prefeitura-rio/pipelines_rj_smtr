@@ -3,7 +3,7 @@
     {{
         config(
             target_schema="monitoramento_staging",
-            unique_key= "concat(data,'-',id_veiculo,'-',placa)"
+            unique_key= "concat(data,'-',id_veiculo,'-',placa)",
             strategy="timestamp",
             updated_at="timestamp_ultima_atualizacao",
             invalidate_hard_deletes=True,
