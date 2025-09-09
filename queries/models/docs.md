@@ -1396,3 +1396,7 @@ Nome do cliente
 {% docs subtipo_usuario %}
 Subtipo do usuário que efetuou a transação sem dados relacionados à saúde [ex.: Ensino Básico Municipal]
 {% enddocs %}
+
+{% docs id_cliente_particao %}
+Identificador do cliente no tipo inteiro
+{% enddocs %}
