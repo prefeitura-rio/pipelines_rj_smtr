@@ -3,7 +3,10 @@ import os
 from datetime import datetime, timedelta
 from typing import Union
 
+import basedosdados as bd
 import pandas as pd
+import pandas_gbq
+from google.cloud import bigquery
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
@@ -182,10 +185,10 @@ def get_jae_timestamp_captura_count(
     )
     connection = create_engine(url)
     capture_delay_minutes = table_capture_params.get("capture_delay_minutes", {"0": 0})
-    capture_delay_timestamps = capture_delay_minutes.keys()
+    capture_delay_timestamps = [a for a in capture_delay_minutes.keys() if a != "0"]
 
-    if len(capture_delay_timestamps) == 1:
-        delay_query = f"{table_capture_params['capture_delay_minutes']['0']}"
+    if len(capture_delay_timestamps) == 0:
+        delay_query = f"{capture_delay_minutes['0']}"
     else:
         delay_query = "CASE\n"
         for t in [a for a in capture_delay_timestamps if a != "0"]:
@@ -198,7 +201,11 @@ def get_jae_timestamp_captura_count(
 
         delay_query += f"ELSE {capture_delay_minutes['0']}\nEND"
 
-    delay = max(*capture_delay_minutes.values()) if len(capture_delay_timestamps) > 0 else 0
+    delay = (
+        max(*capture_delay_minutes.values())
+        if len(capture_delay_timestamps) > 0
+        else capture_delay_minutes["0"]
+    )
 
     base_query_jae = f"""
         WITH timestamps_captura AS (
@@ -217,7 +224,7 @@ def get_jae_timestamp_captura_count(
                 date_trunc(
                     'minute', {timestamp_column}
                 ) AS datetime_truncado,
-                COUNT({source.primary_keys[0]}) AS total_jae
+                COUNT(1) AS total_jae
             FROM
                 dados_jae
             GROUP BY
@@ -279,3 +286,96 @@ def get_jae_timestamp_captura_count(
         jae_start_ts = jae_end_ts
 
     return pd.concat(jae_result)
+
+
+def save_capture_check_results(env: str, results: pd.DataFrame):
+    """
+    Salva os resultados da verificação de captura no BigQuery.
+
+    Args:
+        env (str): dev ou prod
+        results (pd.DataFrame): DataFrame contendo os resultados da verificação,
+            com as seguintes colunas obrigatórias:
+              - table_id (str): table_id no BigQuery
+              - timestamp_captura (datetime): Data e hora da captura
+              - total_datalake (int): Quantidade total de registros no datalake
+              - total_jae (int): Quantidade total de registros na Jaé
+              - indicador_captura_correta (bool): Se a quantidade de registros é a mesma
+    """
+    project_id = smtr_constants.PROJECT_NAME.value[env]
+    dataset_id = "source_jae"
+    table_id = "resultado_verificacao_captura_jae"
+
+    results = results[
+        [
+            "table_id",
+            "timestamp_captura",
+            "total_datalake",
+            "total_jae",
+            "indicador_captura_correta",
+        ]
+    ]
+
+    tmp_table = f"{dataset_id}.tmp_{table_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+    pandas_gbq.to_gbq(
+        results,
+        tmp_table,
+        project_id=project_id,
+        if_exists="replace",
+    )
+
+    start_partition = results["timestamp_captura"].min().date().isoformat()
+    end_partition = results["timestamp_captura"].max().date().isoformat()
+
+    try:
+        bd.read_sql(
+            query=f"""
+                MERGE {project_id}.{dataset_id}.{table_id} t
+                USING {tmp_table} s
+                ON
+                    t.data BETWEEN '{start_partition}' AND '{end_partition}'
+                    AND t.table_id = s.table_id
+                    AND t.timestamp_captura = DATETIME(s.timestamp_captura, 'America/Sao_Paulo')
+                WHEN MATCHED THEN
+                UPDATE SET
+                    total_datalake = s.total_datalake,
+                    total_jae = s.total_jae,
+                    indicador_captura_correta = s.indicador_captura_correta,
+                    datetime_ultima_atualizacao = CURRENT_DATETIME('America/Sao_Paulo')
+                WHEN
+                    NOT MATCHED
+                    AND DATETIME_DIFF(
+                        CURRENT_DATETIME('America/Sao_Paulo'),
+                        DATETIME(s.timestamp_captura, 'America/Sao_Paulo'),
+                        MINUTE
+                    ) > 300
+                THEN
+                INSERT (
+                    data,
+                    table_id,
+                    timestamp_captura,
+                    total_datalake,
+                    total_jae,
+                    indicador_captura_correta,
+                    datetime_ultima_atualizacao
+                )
+                VALUES (
+                    DATE(timestamp_captura),
+                    table_id,
+                    DATETIME(timestamp_captura, 'America/Sao_Paulo'),
+                    total_datalake,
+                    total_jae,
+                    indicador_captura_correta,
+                    CURRENT_DATETIME('America/Sao_Paulo')
+                )
+            """,
+            billing_project_id=project_id,
+        )
+
+    finally:
+
+        bigquery.Client(project=project_id).delete_table(
+            tmp_table,
+            not_found_ok=True,
+        )
