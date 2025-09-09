@@ -167,6 +167,8 @@ selectors:
         - method: fqn
           value: consorcios
         - method: fqn
+          value: cliente_jae
+        - method: fqn
           value: operadoras_contato
         - method: fqn
           value: operadoras
@@ -174,8 +176,6 @@ selectors:
           value: servicos
         - method: fqn
           value: servico_operadora
-        - method: fqn
-          value: cliente_jae
         - method: fqn
           value: endereco_cliente_jae
 
