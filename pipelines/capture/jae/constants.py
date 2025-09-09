@@ -219,12 +219,13 @@ class constants(Enum):  # pylint: disable=c0103
                     tipo_moeda tmo
                 ON tc.id_tipo_moeda = tmo.id
                 WHERE
-                    l.dt_lancamento >= timestamp '{start}' - INTERVAL '5 minutes'
-                    AND l.dt_lancamento < timestamp '{end}' - INTERVAL '5 minutes'
+                    l.dt_lancamento >= timestamp '{start}' - INTERVAL '{delay} minutes'
+                    AND l.dt_lancamento < timestamp '{end}' - INTERVAL '{delay} minutes'
                 ORDER BY l.dt_lancamento DESC
 
             """,
             "database": "financeiro_db",
+            "capture_delay_minutes": {"0": 5},
         },
         "linha": {
             "query": """
@@ -667,16 +668,25 @@ class constants(Enum):  # pylint: disable=c0103
             "source": TRANSACAO_SOURCE,
             "datalake_table": "rj-smtr.bilhetagem_staging.transacao",
             "timestamp_column": "data_processamento",
+            "primary_keys": TRANSACAO_SOURCE.primary_keys,
         },
         TRANSACAO_RIOCARD_TABLE_ID: {
             "source": TRANSACAO_RIOCARD_SOURCE,
             "datalake_table": "rj-smtr.bilhetagem_staging.transacao_riocard",
             "timestamp_column": "data_processamento",
+            "primary_keys": TRANSACAO_RIOCARD_SOURCE.primary_keys,
         },
         GPS_VALIDADOR_TABLE_ID: {
             "source": GPS_VALIDADOR_SOURCE,
             "datalake_table": "rj-smtr.monitoramento_staging.gps_validador",
             "timestamp_column": "data_tracking",
+            "primary_keys": GPS_VALIDADOR_SOURCE.primary_keys,
+        },
+        LANCAMENTO_TABLE_ID: {
+            "source": LANCAMENTO_SOURCE,
+            "datalake_table": "rj-smtr.bilhetagem_interno_staging.lancamento",
+            "timestamp_column": "dt_lancamento",
+            "primary_keys": ["id_lancamento", "id_conta"],
         },
     }
 
