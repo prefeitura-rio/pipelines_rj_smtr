@@ -123,7 +123,7 @@ with
                 datetime_ultima_atualizacao as datetime_ultima_atualizacao_atual,
                 id_execucao_dbt as id_execucao_dbt_atual
             from {{ this }}
-            where {{ partitions | join("\nor") }}
+            where {{ partitions | join("\nor ") }}
 
         {% else %}
             select
