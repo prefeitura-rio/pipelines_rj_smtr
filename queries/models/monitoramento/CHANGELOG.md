@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.6.8] - 2025-09-09
+
+### Corrigido
+
+- Corrige filtro no modelo `aux_gps_realocacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/857)
+
 ## [1.6.7] - 2025-09-01
 
 ### Corrigido
