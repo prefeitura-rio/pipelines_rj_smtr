@@ -8,7 +8,9 @@
 select
     data,
     replace(safe_cast(nr_seq_endereco as string), '.0', '') as nr_seq_endereco,
-    timestamp_captura,
+    datetime(
+        parse_timestamp('%Y-%m-%d %H:%M:%S%Ez', timestamp_captura), "America/Sao_Paulo"
+    ) as timestamp_captura,
     replace(
         safe_cast(json_value(content, '$.CD_CLIENTE') as string), '.0', ''
     ) as cd_cliente,

@@ -105,7 +105,6 @@ with
             c.nr_telefone as telefone,
             c.dt_cadastro as datetime_cadastro,
             timestamp_captura as datetime_captura
-
         from {{ staging_cliente }} c
         left join tipo_documento tdc on c.cd_tipo_documento = tdc.cd_tipo_documento
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}

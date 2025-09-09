@@ -89,7 +89,7 @@ models:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
       - name: id_cliente_sequencia
         description: "Identificador único do endereço [concatenação do id_cliente com numero_sequencia_endereco separado por '-'] [protegido]"
-        data_type: int64
+        data_type: string
         quote: true
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
@@ -145,7 +145,7 @@ models:
         quote: true
       - name: datetime_captura
         description: "{{ doc('datetime_captura') }}"
-        data_type: string
+        data_type: datetime
         quote: true
       - name: versao
         description: "{{ doc('versao') }}"
