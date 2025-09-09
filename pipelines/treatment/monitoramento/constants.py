@@ -110,6 +110,10 @@ class constants(Enum):  # pylint: disable=c0103
         incremental_delay_hours=24 * 7,
     )
 
+    SNAPSHOT_VEICULO_DIA_SELECTOR = DBTSelector(
+        name="snapshot_veiculo_dia",
+    )
+
     VEICULO_DIA_CHECKS_LIST = {
         "veiculo_dia": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
