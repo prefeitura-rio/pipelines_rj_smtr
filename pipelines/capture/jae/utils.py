@@ -339,8 +339,8 @@ def save_capture_check_results(env: str, results: pd.DataFrame):
                     AND t.timestamp_captura = DATETIME(s.timestamp_captura, 'America/Sao_Paulo')
                 WHEN MATCHED THEN
                 UPDATE SET
-                    total_datalake = total_datalake,
-                    total_jae = total_jae,
+                    total_datalake = s.total_datalake,
+                    total_jae = s.total_jae,
                     indicador_captura_correta = s.indicador_captura_correta,
                     datetime_ultima_atualizacao = CURRENT_DATETIME('America/Sao_Paulo')
                 WHEN
