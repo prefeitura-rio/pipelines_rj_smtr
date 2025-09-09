@@ -56,6 +56,7 @@ from pipelines.schedules import (
 from pipelines.tasks import (
     add_days_to_date,
     check_fail,
+    get_run_env,
     get_scheduled_timestamp,
     log_discord,
     transform_task_state,
@@ -247,6 +248,7 @@ with Flow(
     _vars = get_join_dict(dict_list=dates, new_dict=dataset_sha)[0]
 
     timestamp = get_scheduled_timestamp()
+    env = get_run_env()
 
     # 2. MATERIALIZE DATA #
     with case(test_only, False):
@@ -292,6 +294,7 @@ with Flow(
             ).set_upstream(task=SPPO_VEICULO_DIA_RUN_WAIT)
 
             timestamps = get_capture_gaps.map(
+                env=unmapped(env),
                 table_id=table_ids_jae,
                 timestamp_captura_start=unmapped(timestamp_captura_start),
                 timestamp_captura_end=unmapped(timestamp_captura_end),
@@ -610,6 +613,7 @@ with Flow(
         )
 
         timestamps = get_capture_gaps.map(
+            env=env,
             table_id=table_ids_jae,
             timestamp_captura_start=unmapped(timestamp_captura_start),
             timestamp_captura_end=unmapped(timestamp_captura_end),
