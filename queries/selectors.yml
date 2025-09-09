@@ -376,6 +376,8 @@ selectors:
           value: snapshot_autuacao_disciplinar_historico
         - method: fqn
           value: snapshot_veiculo_fiscalizacao_lacre
+        - method: fqn
+          value: snapshot_veiculo_dia
 
   - name: monitoramento_veiculo
     definition:
@@ -400,6 +402,16 @@ selectors:
           value: staging_licenciamento_stu
         - method: fqn
           value: veiculo_licenciamento_dia
+
+  - name: snapshot_cadastro_veiculo
+    definition:
+      method: fqn
+      value: snapshot_veiculo_licenciamento_dia
+
+  - name: snapshot_veiculo_dia
+    definition:
+      method: fqn
+      value: snapshot_veiculo_dia
 
   - name: veiculo_dia
     definition:
