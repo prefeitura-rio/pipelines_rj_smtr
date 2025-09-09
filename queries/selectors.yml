@@ -376,8 +376,6 @@ selectors:
           value: snapshot_autuacao_disciplinar_historico
         - method: fqn
           value: snapshot_veiculo_fiscalizacao_lacre
-        - method: fqn
-          value: snapshot_veiculo_dia
 
   - name: monitoramento_veiculo
     definition:
