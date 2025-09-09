@@ -109,7 +109,7 @@ class constants(Enum):  # pylint: disable=c0103
         initial_datetime=datetime(2025, 6, 23, 0, 0, 0),
         incremental_delay_hours=24 * 7,
     )
-    
+
     SNAPSHOT_VEICULO_DIA_SELECTOR = DBTSelector(
         name="snapshot_veiculo_dia",
     )
