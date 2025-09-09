@@ -1,0 +1,3 @@
+name: Run Gemini CLI
+uses: google-github-actions/run-gemini-cli@v0.1.12
+on: on
