@@ -3,7 +3,7 @@
     {{
         config(
             target_schema="cadastro_staging",
-            unique_key="concat(data,'-', data_processamento, '-', id_veiculo,'-',placa)",
+            unique_key="concat(data,'-', data_processamento, '-', id_veiculo,'-',ifnull(placa, ''))",
             strategy="timestamp",
             updated_at="timestamp_ultima_atualizacao",
             invalidate_hard_deletes=True,
