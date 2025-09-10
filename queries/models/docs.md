@@ -1393,10 +1393,74 @@ Número do documento do cliente
 Nome do cliente
 {% enddocs %}
 
+{% docs nome_social_cliente %}
+Nome social do cliente
+{% enddocs %}
+
 {% docs subtipo_usuario %}
 Subtipo do usuário que efetuou a transação sem dados relacionados à saúde [ex.: Ensino Básico Municipal]
 {% enddocs %}
 
 {% docs id_cliente_particao %}
 Identificador do cliente no tipo inteiro
+{% enddocs %}
+
+{% docs cpf_particao %}
+Número do CPF no tipo inteiro
+{% enddocs %}
+
+{% docs telefone_cliente %}
+Número do telefone do cliente
+{% enddocs %}
+
+{% docs datetime_cadastro_cliente %}
+Data e hora do cadastro do cliente no sistema da Jaé
+{% enddocs %}
+
+{% docs numero_sequencia_endereco_cliente %}
+Sequencial do endereço na base da Jaé
+{% enddocs %}
+
+{% docs id_cliente_sequencia %}
+Identificador único do endereço [concatenação do id_cliente com numero_sequencia_endereco separado por '-']
+{% enddocs %}
+
+{% docs tipo_endereco_cliente %}
+Residencial ou comercial
+{% enddocs %}
+
+{% docs cep %}
+Número do CEP
+{% enddocs %}
+
+{% docs logradouro %}
+Logradouro do endereço
+{% enddocs %}
+
+{% docs numero_endereco %}
+Número do endereço
+{% enddocs %}
+
+{% docs complemento_endereco %}
+Complemento do endereço
+{% enddocs %}
+
+{% docs bairro %}
+Nome do bairro
+{% enddocs %}
+
+{% docs cidade %}
+Nome da cidade
+{% enddocs %}
+
+{% docs uf %}
+Sigla da UF
+{% enddocs %}
+
+{% docs datetime_inclusao_endereco_jae %}
+Data e hora do cadastro do endereco no sistema da Jaé
+{% enddocs %}
+
+{% docs datetime_inativacao_endereco_jae %}
+Data e hora da inativação do cadastro do endereco no sistema da Jaé
 {% enddocs %}
