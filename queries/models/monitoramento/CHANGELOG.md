@@ -1,6 +1,6 @@
 # Changelog - monitoramento
 
-## [1.6.8] - 2025-09-05
+## [1.6.9] - 2025-09-10
 
 ### Corrigido
 
@@ -15,6 +15,12 @@
 ### Alterado
 
 - Altera lógica no modelo `viagem_informada_monitoramento` para particionar pela data do `datetime_partida` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/799)
+
+## [1.6.8] - 2025-09-09
+
+### Corrigido
+
+- Corrige filtro no modelo `aux_gps_realocacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/857)
 
 ## [1.6.7] - 2025-09-01
 
