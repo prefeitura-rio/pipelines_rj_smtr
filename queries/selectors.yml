@@ -178,6 +178,10 @@ selectors:
           value: servico_operadora
         - method: fqn
           value: endereco_cliente_jae
+        - method: fqn
+          value: cliente_cpf_jae
+        - method: fqn
+          value: endereco_cliente_cpf_jae
 
   - name: transacao
     description: Materialização das tabelas de transação da bilhetagem
