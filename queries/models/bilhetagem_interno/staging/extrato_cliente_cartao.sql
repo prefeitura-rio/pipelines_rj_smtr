@@ -4,7 +4,8 @@ with
             l.id_conta,
             l.cd_cliente as id_cliente,
             j.nome as nome_cliente,
-            j.documento as nome_documento,
+            j.documento as nr_documento,
+            j.tipo_documento,
             l.id_lancamento,
             l.dt_lancamento as data_lancamento,
             l.vl_lancamento as valor_lancamento,
@@ -23,7 +24,6 @@ with
                 regexp_contains(l.id_conta, r'^2\.2\.1\.[A-Za-z0-9]+\.(1|2|6)$')
                 or regexp_contains(l.id_conta, r'^2\.2\.3\.[A-Za-z0-9]+\.1$')
             )
-        -- and data = '2025-09-05'
         qualify
             row_number() over (
                 partition by l.id_lancamento, l.id_conta
