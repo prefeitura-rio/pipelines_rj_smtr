@@ -180,6 +180,7 @@ wait_cadastro_veiculo.incremental_delay_hours = (
 VEICULO_DIA_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="veiculo_dia - materializacao",
     selector=constants.VEICULO_DIA_SELECTOR.value,
+    snapshot_selector=constants.SNAPSHOT_VEICULO_DIA_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[
         wait_monitoramento_veiculo,
