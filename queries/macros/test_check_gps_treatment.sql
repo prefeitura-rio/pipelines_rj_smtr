@@ -40,22 +40,18 @@
             select data, {{ timestamp }}, latitude, longitude
             from {{ registros }}
             where
-                {% if "gps_sppo" in model %}
-                    data between date("{{ var('date_range_start') }}") and date(
-                        "{{ var('date_range_end') }}"
-                    )
-                {% else %}
+                (
                     {{
                         generate_date_hour_partition_filter(
                             var("date_range_start"),
                             add_to_datetime(var("date_range_end"), seconds=1),
                         )
                     }}
-                    and datetime_gps
-                    between datetime("{{ var('date_range_start') }}") and datetime(
-                        "{{ var('date_range_end') }}"
-                    )
-                {% endif %}
+                )
+                and {{ timestamp }}
+                between datetime("{{ var('date_range_start') }}") and datetime(
+                    "{{ var('date_range_end') }}"
+                )
             qualify
                 row_number() over (
                     partition by {{ ordem }}, {{ timestamp }}, {{ linha }}
@@ -79,11 +75,22 @@
                 -- `rj-smtr.br_rj_riodejaneiro_onibus_gps.sppo_aux_registros_filtrada`
                 {{ aux_filtrada }}
             where
-                {% if "gps_sppo" in model %} data
-                {% else %} extract(date from datetime_gps)
-                {% endif %} between date("{{ var('date_range_start') }}") and date(
-                    "{{ var('date_range_end') }}"
-                )
+                {% if "gps_sppo" in model %}
+                    data between date("{{ var('date_range_start') }}") and date(
+                        "{{ add_to_datetime(var('date_range_end'), seconds=1) }}"
+                    )
+                    and timestamp_gps
+                    between datetime("{{ var('date_range_start') }}") and datetime(
+                        "{{ var('date_range_end') }}"
+                    )
+                {% else %}
+                    extract(
+                        date
+                        from datetime_gps
+                    ) between date("{{ var('date_range_start') }}") and date(
+                        "{{ var('date_range_end') }}"
+                    )
+                {% endif %}
             group by 1, 2
         ),
         gps_sppo as (
