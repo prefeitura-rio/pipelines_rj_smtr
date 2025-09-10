@@ -79,18 +79,12 @@
                     data between date("{{ var('date_range_start') }}") and date(
                         "{{ add_to_datetime(var('date_range_end'), seconds=1) }}"
                     )
-                    and timestamp_gps
-                    between datetime("{{ var('date_range_start') }}") and datetime(
-                        "{{ var('date_range_end') }}"
-                    )
-                {% else %}
-                    extract(
-                        date
-                        from datetime_gps
-                    ) between date("{{ var('date_range_start') }}") and date(
-                        "{{ var('date_range_end') }}"
-                    )
+                    and
                 {% endif %}
+                {{ timestamp }}
+                between datetime("{{ var('date_range_start') }}") and datetime(
+                    "{{ var('date_range_end') }}"
+                )
             group by 1, 2
         ),
         gps_sppo as (
