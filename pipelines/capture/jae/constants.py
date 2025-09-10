@@ -473,6 +473,52 @@ class constants(Enum):  # pylint: disable=c0103
             "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
             "capture_flow": "auxiliar",
         },
+        "estudante": {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    estudante
+                /*WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'*/
+            """,
+            "database": "gratuidade_db",
+            "primary_keys": [],
+            "capture_flow": "auxiliar",
+            "file_chunk_size": 20000,
+            "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
+        },
+        "escola": {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    escola
+                /*WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'*/
+            """,
+            "database": "gratuidade_db",
+            "primary_keys": ["codigo_escola"],
+            "capture_flow": "auxiliar",
+            "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
+        },
+        "cre": {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    cre
+                /*WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'*/
+            """,
+            "database": "gratuidade_db",
+            "primary_keys": ["id"],
+            "capture_flow": "auxiliar",
+            "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
+        },
         "ordem_ressarcimento": {
             "query": """
                 SELECT
@@ -624,6 +670,7 @@ class constants(Enum):  # pylint: disable=c0103
             partition_date_only=v.get("partition_date_only", True),
             max_recaptures=v.get("max_recaptures", 60),
             raw_filetype=v.get("raw_filetype", "json"),
+            file_chunk_size=v.get("file_chunk_size"),
         )
         for k, v in JAE_TABLE_CAPTURE_PARAMS.items()
         if v.get("capture_flow") == "auxiliar"
