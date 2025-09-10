@@ -1,8 +1,14 @@
 {{ config(materialized="ephemeral") }}
 
-{% set partition_filter %}
-    ({{ generate_date_hour_partition_filter(var('date_range_start'), var('date_range_end')) }})
-{% endset %}
+{% if "23:59:59" in var("date_range_end") %}
+    {% set partition_filter %}
+        ({{ generate_date_hour_partition_filter(var('date_range_start'), add_to_datetime(var("date_range_end"), seconds=1)) }})
+    {% endset %}
+{% else %}
+    {% set partition_filter %}
+        ({{ generate_date_hour_partition_filter(var('date_range_start'), var('date_range_end')) }})
+    {% endset %}
+{% endif %}
 
 -- 1. Filtra realocações válidas dentro do intervalo de GPS avaliado
 with
