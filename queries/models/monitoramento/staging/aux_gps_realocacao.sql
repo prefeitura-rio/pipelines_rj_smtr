@@ -20,7 +20,9 @@ with
             end as datetime_saida
         from {{ ref("staging_realocacao") }}
         where
-            {{ partition_filter }}
+            data between date('{{ var("date_range_start") }}') and date(
+                '{{ var("date_range_end") }}'
+            )
             -- Realocação deve acontecer após o registro de GPS e até 1 hora depois
             and datetime_diff(datetime_operacao, datetime_entrada, minute)
             between 0 and 60
@@ -45,19 +47,20 @@ with
             g.* except (servico),
             g.servico as servico_gps,
             r.servico as servico_realocado,
-            r.datetime_operacao as datetime_realocado
+            r.datetime_operacao as datetime_realocado,
+            r.datetime_captura as datetime_captura_realocacao,
         from gps g
         inner join
             realocacao r
             on g.id_veiculo = r.id_veiculo
-            and g.servico != r.servico
             and g.datetime_gps between r.datetime_entrada and r.datetime_saida
     ),
     gps_com_realocacao as (
         select
             g.* except (servico),
             coalesce(s.servico_realocado, g.servico) as servico,
-            s.datetime_realocado
+            s.datetime_realocado,
+            s.datetime_captura_realocacao
         from gps g
         left join servicos_realocados s using (id_veiculo, datetime_gps)
     )
@@ -69,7 +72,7 @@ from
             *,
             row_number() over (
                 partition by id_veiculo, datetime_gps
-                order by datetime_captura desc, datetime_realocado desc
+                order by datetime_captura_realocacao desc, datetime_realocado desc
             ) as rn
         from gps_com_realocacao
     )
