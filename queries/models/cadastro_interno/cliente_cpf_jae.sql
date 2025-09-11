@@ -15,7 +15,7 @@ select
     cast(documento as integer) as cpf_particao,
     documento as cpf,
     * except (
-        documento
+        documento,
         nome_social,
         id_cliente_particao,
         documento_alternativo,

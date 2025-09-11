@@ -95,7 +95,7 @@ with
             te.tipo_endereco,
             e.nr_cep as cep,
             e.tx_logradouro as logradouro,
-            if(trim(e.nr_logradouro) == '', null, e.nr_logradouro) as numero,
+            nullif(trim(e.nr_logradouro), '') as numero,
             e.tx_complemento_logradouro as complemento,
             e.nm_bairro as bairro,
             e.nm_cidade as cidade,
