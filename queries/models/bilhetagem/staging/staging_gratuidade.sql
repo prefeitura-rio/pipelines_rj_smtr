@@ -6,7 +6,7 @@
 
 select
     data,
-    safe_cast(id as string) as id,
+    replace(safe_cast(id as string), '.0', '') as id,
     datetime(
         parse_timestamp('%Y-%m-%d %H:%M:%S%Ez', timestamp_captura), "America/Sao_Paulo"
     ) as timestamp_captura,

@@ -22,7 +22,7 @@ select
     ) as cd_cliente,
     datetime(
         parse_timestamp(
-            '%Y-%m-%dT%H:%M:%S%Ez',
+            '%Y-%m-%dT%H:%M:%E6S%Ez',
             safe_cast(json_value(content, '$.data_inclusao') as string)
         ),
         'America/Sao_Paulo'

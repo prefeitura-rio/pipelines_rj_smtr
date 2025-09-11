@@ -20,25 +20,6 @@
 
 -- busca quais partições serão atualizadas pelas capturas
 {% if execute and is_incremental() %}
-    {% set columns = (
-        list_columns()
-        | reject(
-            "in",
-            ["versao", "datetime_ultima_atualizacao", "id_execucao_dbt"],
-        )
-        | list
-    ) %}
-    {% set sha_column %}
-        sha256(
-            concat(
-                {% for c in columns %}
-                    ifnull(cast({{ c }} as string), 'n/a')
-                    {% if not loop.last %}, {% endif %}
-
-                {% endfor %}
-            )
-        )
-    {% endset %}
     {% set partitions_query %}
         with
             ids as (
@@ -63,7 +44,7 @@
         select
             distinct
             concat(
-                "id_cliente_particao between ",
+                "id_cliente between ",
                 min(group_id) over (partition by id_continuidade) * 10000,
                 " and ",
                 (max(group_id) over (partition by id_continuidade) + 1) * 10000 - 1
@@ -73,14 +54,15 @@
 
     {% set partitions = run_query(partitions_query).columns[0].values() %}
 
-{% else %}
-    {% set sha_column %}
-        cast(null as bytes)
-    {% endset %}
 {% endif %}
 
 
 with
+    rede_ensino as (
+        select chave as id_rede_ensino, valor as rede_ensino
+        from {{ ref("dicionario_bilhetagem") }}
+        where id_tabela = "estudante" and coluna = "id_rede_ensino"
+    ),
     estudante as (
         select distinct
             cast(cast(estd.cd_cliente as float64) as int64) as id_cliente,
@@ -89,11 +71,13 @@ with
             codigo_escola,
             esc.descricao as nome_escola,
             esc.id_rede_ensino,
+            re.rede_ensino,
             esc.id_cre as id_cre_escola,
-            estd.data_inclusao,
+            estd.data_inclusao as datetime_inclusao,
             estd.timestamp_captura as datetime_captura
         from {{ staging_estudante }} estd
         left join {{ ref("staging_escola") }} esc using (codigo_escola)
+        left join rede_ensino re using (id_rede_ensino)
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
 
     ),
@@ -108,8 +92,9 @@ with
                 nome,
                 codigo_escola,
                 id_rede_ensino,
+                rede_ensino,
                 id_cre_escola,
-                data_inclusao,
+                datetime_inclusao,
                 datetime_captura,
                 1 as priority
             from {{ this }}
@@ -117,26 +102,61 @@ with
         {% endif %}
 
     ),
-    inicio_fim_validade as (select *,)
     dados_completos_deduplicados as (
-        select *
+        select * except (priority)
         from dados_completos
         qualify
             row_number() over (
-                partition by id_cliente, numero_matricula, codigo_escola
-                order by timestamp_captura desc, priority
+                partition by id_cliente, datetime_inclusao
+                order by datetime_captura desc, priority
             )
             = 1
+    ),
+    lag_datas as (
+        select
+            *,
+            lag(datetime_inclusao) over (
+                partition by id_cliente order by datetime_inclusao
+            ) as datetime_inclusao_anterior,
+            lag(datetime_captura) over (
+                partition by id_cliente order by datetime_inclusao
+            ) as datetime_captura_anterior
+        from dados_completos_deduplicados
+    ),
+    inicio_validade as (
+        select
+            * except (datetime_inclusao_anterior, datetime_captura_anterior),
+            case
+                when
+                    datetime_inclusao_anterior is null
+                    or datetime_inclusao_anterior != datetime_inclusao
+                then datetime_inclusao
+                else datetime_captura_anterior
+            end as datetime_inicio_validade
+        from lag_datas
+    ),
+    fim_validade as (
+        select
+            *,
+            lead(datetime_inicio_validade) over (
+                partition by id_cliente order by datetime_inicio_validade
+            ) as datetime_fim_validade
+        from inicio_validade
     )
 select
     id_cliente,
-    id_gratuidade,
-    tipo_gratuidade,
-    deficiencia_permanente,
+    row_number() over (
+        partition by id_cliente order by datetime_inicio_validade
+    ) as sequencia_cliente_estudante,
+    numero_matricula,
+    nome,
+    codigo_escola,
+    nome_escola,
+    id_rede_ensino,
     rede_ensino,
-    data_inicio_validade,
-    lead(data_inicio_validade) over (
-        partition by id_cliente order by data_inicio_validade
-    ) as data_fim_validade,
-    timestamp_captura
-from gratuidade_deduplicada
+    id_cre_escola,
+    datetime_inicio_validade,
+    datetime_fim_validade,
+    datetime_inclusao,
+    datetime_captura
+from fim_validade
