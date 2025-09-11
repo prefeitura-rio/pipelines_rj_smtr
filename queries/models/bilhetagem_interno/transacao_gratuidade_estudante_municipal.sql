@@ -20,6 +20,7 @@ select
     t.subtipo_usuario
 from {{ ref("transacao") }} t
 join {{ ref("cliente_jae") }} c using (id_cliente)
+join {{ ref("estudante") }} e using (id_cliente)
 where
     t.tipo_transacao_jae in ('Gratuidade', 'Integração gratuidade')
     and t.tipo_usuario = "Estudante"

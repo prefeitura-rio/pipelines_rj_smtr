@@ -58,11 +58,6 @@
 
 
 with
-    rede_ensino as (
-        select chave as id_rede_ensino, valor as rede_ensino
-        from {{ ref("dicionario_bilhetagem") }}
-        where id_tabela = "estudante" and coluna = "id_rede_ensino"
-    ),
     estudante as (
         select distinct
             cast(cast(estd.cd_cliente as float64) as int64) as id_cliente,
@@ -76,8 +71,9 @@ with
             estd.data_inclusao as datetime_inclusao,
             estd.timestamp_captura as datetime_captura
         from {{ staging_estudante }} estd
-        left join {{ ref("staging_escola") }} esc using (codigo_escola)
-        left join rede_ensino re using (id_rede_ensino)
+        left join
+            {{ ref("aux_escola_rede_ensino_atualizado") }} esc using (codigo_escola)
+        left join {{ ref("staging_cre") }} cre on cre.id = esc.id_cre
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
 
     ),

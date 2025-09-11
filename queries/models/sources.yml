@@ -441,3 +441,11 @@ sources:
 
     tables:
       - name: meteorologia
+
+  - name: br_inep_censo_educacao_superior
+    database: basedosdados
+
+    tables:
+      - name: curso
+      - name: ies
+      - name: dicionario

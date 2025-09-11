@@ -457,21 +457,6 @@ class constants(Enum):  # pylint: disable=c0103
             "capture_flow": "auxiliar",
             "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
         },
-        "cre": {
-            "query": """
-                SELECT
-                    *
-                FROM
-                    cre
-                /*WHERE
-                    data_inclusao BETWEEN '{start}'
-                    AND '{end}'*/
-            """,
-            "database": "gratuidade_db",
-            "primary_keys": ["id"],
-            "capture_flow": "auxiliar",
-            "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
-        },
         "laudo_pcd": {
             "query": """
                 SELECT
