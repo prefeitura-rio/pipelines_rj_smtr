@@ -309,59 +309,12 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "gratuidade": {
             "query": """
-                with cte_laudo_pdc AS (
-                    SELECT
-                        cd_cliente,
-                        data_inclusao AS data_inicio_validade,
-                        LEAD(data_inclusao) OVER(
-                            PARTITION BY cd_cliente ORDER BY data_inclusao
-                        ) AS data_fim_validade,
-                        deficiencia_permanente
-                    FROM laudo_pcd
-                ),
-                cte_estudante AS (
-                    SELECT
-                        cd_cliente,
-                        data_inclusao AS data_inicio_validade,
-                        LEAD(data_inclusao) OVER(
-                            PARTITION BY cd_cliente ORDER BY data_inclusao
-                        ) AS data_fim_validade,
-                        codigo_escola
-                    FROM estudante
-                )
                 SELECT
-                    g.*,
-                    t.descricao AS tipo_gratuidade,
-                    lp.data_inicio_validade,
-                    lp.data_fim_validade,
-                    lp.deficiencia_permanente,
-                    re.descricao AS rede_ensino
+                    *
                 FROM
-                    gratuidade g
-                LEFT JOIN
-                    tipo_gratuidade t
-                ON
-                    g.id_tipo_gratuidade = t.id
-                LEFT JOIN
-                    cte_laudo_pdc lp
-                ON
-                    g.cd_cliente = lp.cd_cliente
-                    AND g.data_inclusao >= lp.data_inicio_validade
-                    AND (g.data_inclusao < lp.data_fim_validade OR lp.data_fim_validade IS NULL)
-                LEFT JOIN
-                    cte_estudante e
-                ON
-                    g.cd_cliente = e.cd_cliente
-                    AND g.data_inclusao >= e.data_inicio_validade
-                    AND (g.data_inclusao < e.data_fim_validade OR e.data_fim_validade IS NULL)
-                LEFT JOIN
-                    escola ec
-                USING(codigo_escola)
-                LEFT JOIN
-                    rede_ensino re
-                ON ec.id_rede_ensino = re.id
+                    gratuidade
                 WHERE
-                    g.data_inclusao BETWEEN '{start}'
+                    data_inclusao BETWEEN '{start}'
                     AND '{end}'
             """,
             "database": "gratuidade_db",
@@ -517,6 +470,22 @@ class constants(Enum):  # pylint: disable=c0103
             "database": "gratuidade_db",
             "primary_keys": ["id"],
             "capture_flow": "auxiliar",
+            "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
+        },
+        "laudo_pcd": {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    laudo_pcd
+                /*WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'*/
+            """,
+            "database": "gratuidade_db",
+            "primary_keys": ["id"],
+            "capture_flow": "auxiliar",
+            "file_chunk_size": 20000,
             "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
         },
         "ordem_ressarcimento": {

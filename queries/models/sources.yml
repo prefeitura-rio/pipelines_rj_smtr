@@ -197,6 +197,7 @@ sources:
       - name: estudante
       - name: escola
       - name: cre
+      - name: laudo_pcd
 
 
   - name: source_jae
