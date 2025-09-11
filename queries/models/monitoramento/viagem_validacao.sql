@@ -121,11 +121,14 @@ with
             indicador_servico_divergente,
             indicador_shape_invalido,
             (
+                id_viagem is not null
+                and datetime_partida is not null
+                and datetime_chegada is not null
                 shape_id is not null
                 and route_id is not null
                 and id_veiculo is not null
                 and id_veiculo != ""
-            ) as indicador_dados_validos,
+            ) as indicador_campos_obrigatorios,
             service_ids,
             tipo_dia,
             feed_version,
@@ -133,7 +136,9 @@ with
             datetime_captura_viagem
         from contagem
     ),
-    viagens_campos_validos as (select * from indice where indicador_dados_validos),
+    viagens_campos_obrigatorios as (
+        select * from indice where indicador_campos_obrigatorios
+    ),
     trips as (
         select distinct
             feed_start_date,
@@ -156,7 +161,7 @@ with
                 join unnest(t.service_ids) as service_id using (service_id)
             )
             > 0 as indicador_servico_planejado_gtfs
-        from viagens_campos_validos v
+        from viagens_campos_obrigatorios v
         left join trips t using (feed_start_date, feed_version, route_id)
     ),
     servico_planejado as (
@@ -290,11 +295,11 @@ with
             vm.indicador_servico_planejado_os,
             vm.indicador_servico_divergente,
             vm.indicador_shape_invalido,
-            vm.indicador_dados_validos,
+            vm.indicador_campos_obrigatorios,
             vm.indicador_trajeto_alternativo,
             vm.indicador_acima_velocidade_max,
             (
-                vm.indicador_dados_validos and not vm.indicador_shape_invalido
+                vm.indicador_campos_obrigatorios and not vm.indicador_shape_invalido
                 -- fmt: off
                 and vm.quantidade_segmentos_validos >= vm.quantidade_segmentos_necessarios
                 -- fmt: on
@@ -318,9 +323,9 @@ with
 
         full outer union all by name
 
-        select *, indicador_dados_validos as indicador_viagem_valida
+        select *, indicador_campos_obrigatorios as indicador_viagem_valida
         from indice
-        where not indicador_dados_validos
+        where not indicador_campos_obrigatorios
     ),
     -- fmt: on
     filtro_desvio as (
@@ -379,7 +384,7 @@ select
     indicador_servico_planejado_os,
     indicador_servico_divergente,
     indicador_shape_invalido,
-    indicador_dados_validos,
+    indicador_campos_obrigatorios,
     indicador_trajeto_alternativo,
     indicador_acima_velocidade_max,
     indicador_viagem_valida,

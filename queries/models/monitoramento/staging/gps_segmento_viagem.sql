@@ -26,9 +26,7 @@
 {% endif %}
 
 {% set incremental_filter %}
-    data between
-        date('{{ var("date_range_start") }}')
-        and date('{{ var("date_range_end") }}')
+    data between date('{{ var("date_range_start") }}') and date('{{ var("date_range_end") }}')
 {% endset %}
 
 {% set calendario = ref("calendario") %}

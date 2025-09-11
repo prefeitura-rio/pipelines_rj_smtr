@@ -9,9 +9,7 @@
 
 
 {% set incremental_filter %}
-    date(data)
-    between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
-    and data_viagem is not null
+    date(data) between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
 {% endset %}
 
 {% set staging_viagem_informada_rioonibus = ref("staging_viagem_informada_rioonibus") %}
@@ -23,31 +21,75 @@
 {% if execute %}
     {% if is_incremental() %}
         {% set partitions_query %}
-            SELECT DISTINCT
-                CONCAT("'", extract(date from datetime_partida), "'") AS data_viagem
-            FROM
-                {{ staging_viagem_informada_rioonibus }}
-            WHERE
-                {{ incremental_filter }}
+            select distinct
+                concat(
+                    "'",
+                    coalesce(
+                        extract(date from datetime_partida),
+                        extract(
+                            date
+                            from
+                                datetime(
+                                    timestamp(
+                                        safe.parse_datetime(
+                                            '%Y%m%d%H%M%S',
+                                            split(id_viagem, '_')[
+                                                safe_offset(array_length(split(id_viagem, '_')) - 1)
+                                            ]
+                                        )
+                                    ),
+                                    'America/Sao_Paulo'
+                                )
+                        ),
+                        "3000-01-01"
+                    ),
+                    "'"
+                ) as data_viagem
+            from {{ staging_viagem_informada_rioonibus }}
+            where {{ incremental_filter }}
 
-            UNION DISTINCT
+            union distinct
 
-            SELECT DISTINCT
-                CONCAT("'", extract(date from datetime_partida), "'") AS data_viagem
-            FROM
-                {{ staging_viagem_informada_brt }}
-            WHERE
-                {{ incremental_filter }}
-
+            select distinct
+                concat(
+                    "'",
+                    coalesce(
+                        extract(date from datetime_partida),
+                        extract(
+                            date
+                            from
+                                datetime(
+                                    timestamp(
+                                        safe.parse_datetime(
+                                            '%Y%m%d%H%M%S',
+                                            split(id_viagem, '_')[
+                                                safe_offset(array_length(split(id_viagem, '_')) - 1)
+                                            ]
+                                        )
+                                    ),
+                                    'America/Sao_Paulo'
+                                )
+                        ),
+                        "3000-01-01"
+                    ),
+                    "'"
+                ) as data_viagem
+            from {{ staging_viagem_informada_brt }}
+            where {{ incremental_filter }}
         {% endset %}
 
-        {% set partitions = run_query(partitions_query).columns[0].values() %}
+        {% set partitions = (
+            run_query(partitions_query).columns[0].values()
+            | select
+            | list
+            | sort
+        ) %}
 
         {% if partitions | length > 0 %}
             {% set gtfs_feeds_query %}
-            select distinct concat("'", feed_start_date, "'") as feed_start_date
-            from {{ calendario }}
-            where data in ({{ partitions | join(", ") }})
+                select distinct concat("'", feed_start_date, "'") as feed_start_date
+                from {{ calendario }}
+                where data in ({{ partitions | join(", ") }})
             {% endset %}
 
             {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
@@ -71,7 +113,7 @@ with
             sentido,
             fornecedor as fonte_gps,
             datetime_processamento,
-            timestamp_captura as datetime_captura
+            datetime_captura
         from {{ staging_viagem_informada_rioonibus }}
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
@@ -88,7 +130,7 @@ with
             sentido,
             "brt" as fonte_gps,
             datetime_processamento,
-            timestamp_captura as datetime_captura
+            datetime_captura
         from {{ staging_viagem_informada_brt }}
         where
             {% if is_incremental() %} {{ incremental_filter }} and {% endif %}

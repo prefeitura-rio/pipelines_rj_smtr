@@ -14,9 +14,7 @@
 
 {% set incremental_filter %}
     {% if is_incremental() %}
-        data between date_sub(
-            date('{{ var("date_range_start") }}'), interval 1 day
-        ) and date_add(date('{{ var("date_range_end") }}'), interval 1 day)
+        data between date('{{ var("date_range_start") }}') and date('{{ var("date_range_end") }}')
     {% else %} data >= date('{{ var("data_inicial_gps_validacao_viagem") }}')
     {% endif %}
 {% endset %}
@@ -36,14 +34,10 @@ with
             servico,
             sentido,
             fonte_gps
-        from {{ ref("viagem_informada_monitoramento") }}
-        {# from `rj-smtr.monitoramento.viagem_informada` #}
-        {% if is_incremental() %}
-            where
-                data between date('{{ var("date_range_start") }}') and date(
-                    '{{ var("date_range_end") }}'
-                )
-        {% endif %}
+        from
+            {{ ref("viagem_informada_monitoramento") }}
+            {# from `rj-smtr.monitoramento.viagem_informada` #}
+            {% if is_incremental() %} {{ incremental_filter }} {% endif %}
     ),
     gps_conecta as (
         select data, datetime_gps, servico, id_veiculo, latitude, longitude
