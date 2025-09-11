@@ -13,8 +13,15 @@
 
 select
     cast(documento as integer) as cpf_particao,
+    documento as cpf,
     * except (
-        id_cliente_particao, documento_alternativo, email, tipo_documento, tipo_pessoa
+        documento
+        nome_social,
+        id_cliente_particao,
+        documento_alternativo,
+        email,
+        tipo_documento,
+        tipo_pessoa
     )
 from {{ cliente_jae }}
 where tipo_documento = 'CPF'
