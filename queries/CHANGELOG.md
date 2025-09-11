@@ -2,6 +2,12 @@
 
 ## [1.0.9] - 2025-09-02
 
+### Alterado
+
+- Altera selector `apuracao_subsidio_v8` adicionando oo modelo `percentual_operacao_faixa_horaria` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/811)
+
+## [1.0.9] - 2025-09-02
+
 ### Adicionado
 
 - Cria selector `snapshot_temperatura` e `monitoramento_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/811)

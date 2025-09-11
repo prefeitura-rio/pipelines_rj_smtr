@@ -86,8 +86,8 @@ with
             servico,
             sentido,
             distancia_planejada
-        -- from {{ ref("viagem_classificada") }}
-         from `rj-smtr-dev.victor__subsidio.viagem_classificada`
+        from {{ ref("viagem_classificada") }}
+        -- from `rj-smtr-dev.victor__subsidio.viagem_classificada`
         where
             data
             between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
