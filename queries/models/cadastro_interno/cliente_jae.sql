@@ -122,6 +122,7 @@ with
                         and substr(c.nr_telefone, 3)
                         = repeat(substr(c.nr_telefone, 3, 1), length(c.nr_telefone) - 2)
                     )
+
                     -- Outros padrões específicos conhecidos como inválidos
                     or c.nr_telefone
                     in ('2190000000', '0099999999', '9199999999', '21900000000', '21')
