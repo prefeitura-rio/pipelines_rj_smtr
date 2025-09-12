@@ -12,6 +12,8 @@ selectors:
         - method: fqn
           value: monitoramento_sumario_servico_dia_historico
         - method: fqn
+          value: percentual_operacao_faixa_horaria
+        - method: fqn
           value: monitoramento_sumario_servico_dia_tipo_viagem_historico
 
   - name: apuracao_subsidio_v9

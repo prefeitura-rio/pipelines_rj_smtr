@@ -3,23 +3,6 @@
 {{ config(materialized="ephemeral") }}
 
 with
-    subsidio_faixa_agg as (
-        select
-            data,
-            faixa_horaria_inicio,
-            faixa_horaria_fim,
-            tipo_dia,
-            consorcio,
-            servico,
-            sum(km_apurada_faixa) as km_apurada_faixa
-        from {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
-        -- from rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem
-        where
-            data
-            between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
-        group by
-            data, tipo_dia, consorcio, servico, faixa_horaria_inicio, faixa_horaria_fim
-    ),
     sumario_faixa_servico_dia as (
         select
             sdp.data,
@@ -27,21 +10,12 @@ with
             sdp.consorcio,
             sdp.servico,
             sum(sdp.viagens_faixa) as viagens_dia,
-            sum(sfa.km_apurada_faixa) as km_apurada,
+            sum(sdp.km_apurada_faixa) as km_apurada,
             sum(sdp.km_planejada_faixa) as km_planejada_dia,
             sum(sdp.valor_a_pagar) as valor_a_pagar,
             sum(sdp.valor_penalidade) as valor_penalidade
         from {{ ref("sumario_faixa_servico_dia_pagamento") }} as sdp
         -- `rj-smtr.dashboard_subsidio_sppo_v2.sumario_faixa_servico_dia_pagamento`
-        left join
-            subsidio_faixa_agg as sfa using (
-                data,
-                servico,
-                faixa_horaria_inicio,
-                faixa_horaria_fim,
-                tipo_dia,
-                consorcio
-            )
         where
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
@@ -56,26 +30,16 @@ with
                 sdp.consorcio,
                 servico,
                 sdp.viagens_dia,
-                sum(km_apurada_faixa) as km_apurada,
+                km_apurada_dia as km_apurada,
                 km_planejada_dia,
                 valor_a_pagar,
                 valor_penalidade
             from {{ ref("subsidio_sumario_servico_dia_pagamento") }} as sdp
-            left join subsidio_faixa_agg using (data, servico)
             where
                 data between date("{{ var('start_date') }}") and date(
                     "{{ var('end_date') }}"
                 )
                 and data < date("{{ var('DATA_SUBSIDIO_V14_INICIO') }}")
-            group by
-                data,
-                tipo_dia,
-                consorcio,
-                servico,
-                viagens_dia,
-                km_planejada_dia,
-                valor_a_pagar,
-                valor_penalidade
         ),
     {% endif %}
     valores_subsidio as (
@@ -112,11 +76,9 @@ with
         left join planejada as p using (data, servico, consorcio)
         where
             data >= date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}")
-            {% if is_incremental() %}
-                and data between date("{{ var('start_date') }}") and date_add(
-                    date("{{ var('end_date') }}"), interval 1 day
-                )
-            {% endif %}
+            and data between date("{{ var('start_date') }}") and date_add(
+                date("{{ var('end_date') }}"), interval 1 day
+            )
     )
 select
     data,
