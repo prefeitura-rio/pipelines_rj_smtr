@@ -34,10 +34,9 @@ with
             servico,
             sentido,
             fonte_gps
-        from
-            {{ ref("viagem_informada_monitoramento") }}
-            {# from `rj-smtr.monitoramento.viagem_informada` #}
-            {% if is_incremental() %} {{ incremental_filter }} {% endif %}
+        from {{ ref("viagem_informada_monitoramento") }}
+        {# from `rj-smtr.monitoramento.viagem_informada` #}
+        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
     ),
     gps_conecta as (
         select data, datetime_gps, servico, id_veiculo, latitude, longitude
