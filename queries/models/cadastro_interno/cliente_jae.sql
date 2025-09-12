@@ -102,7 +102,33 @@ with
             c.nr_documento as documento,
             c.nr_documento_alternativo as documento_alternativo,
             c.tx_email as email,
-            c.nr_telefone as telefone,
+            case
+                when
+                    -- Nulo ou vazio
+                    c.nr_telefone is null
+                    or trim(c.nr_telefone) = ''
+
+                    -- Quantidade de dígitos inválida
+                    or length(c.nr_telefone) < 8
+
+                    -- Composto por um único dígito repetido
+                    or c.nr_telefone
+                    = repeat(substr(c.nr_telefone, 1, 1), length(c.nr_telefone))
+
+                    -- Começa com '21' e o restante é um único dígito repetido
+                    or (
+                        starts_with(c.nr_telefone, '21')
+                        and length(c.nr_telefone) > 2
+                        and substr(c.nr_telefone, 3)
+                        = repeat(substr(c.nr_telefone, 3, 1), length(c.nr_telefone) - 2)
+                    )
+
+                    -- Outros padrões específicos conhecidos como inválidos
+                    or c.nr_telefone
+                    in ('2190000000', '0099999999', '9199999999', '21900000000', '21')
+                then null
+                else trim(c.nr_telefone)
+            end as telefone,
             c.dt_cadastro as datetime_cadastro,
             timestamp_captura as datetime_captura
         from {{ staging_cliente }} c
