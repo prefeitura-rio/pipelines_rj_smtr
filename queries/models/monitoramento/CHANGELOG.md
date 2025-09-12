@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.6.9] - 2025-09-10
+
+### Alterado
+
+- Altera `partition_filter` no modelo `aux_gps_realocacao` para teste diário do GPS (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/869)
+
 ## [1.6.8] - 2025-09-09
 
 ### Corrigido
