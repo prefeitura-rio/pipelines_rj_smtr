@@ -44,6 +44,9 @@
 {% endif %}
 
 with
+    /*
+    Dados do calendário com informações sobre feeds do GTFS, tipos de dia e service_ids
+    */
     calendario as (
         select *
         from {{ calendario }}
@@ -51,6 +54,9 @@ with
             where {{ incremental_filter }}
         {% endif %}
     ),
+    /*
+    Relacionamento entre dados do GPS das viagens e feed do GTFS
+    */
     gps_viagem as (
         select
             data,
@@ -71,6 +77,9 @@ with
             where {{ incremental_filter }}
         {% endif %}
     ),
+    /*
+    Dados dos segmentos dos shapes
+    */
     segmento as (
         select
             feed_version,
@@ -89,6 +98,9 @@ with
             where feed_start_date in ({{ gtfs_feeds | join(", ") }})
         {% endif %}
     ),
+    /*
+    Identificação de viagens com serviço divergente entre GPS e viagem informada
+    */
     servico_divergente as (
         select
             id_viagem,
@@ -96,6 +108,9 @@ with
         from gps_viagem
         group by 1
     ),
+    /*
+    Contagem de registros de GPS por segmento da viagem, aplicando regras de vigência para túneis e filtra apenas quando serviços coincidem
+    */
     gps_servico_segmento as (
         select g.id_viagem, g.shape_id, s.id_segmento, count(*) as quantidade_gps
         from gps_viagem g
@@ -123,10 +138,9 @@ with
         where g.servico_gps = g.servico_viagem
         group by all
     ),
-    gps_segmento as (
-        select id_viagem, g.shape_id, g.id_segmento, g.quantidade_gps,
-        from gps_servico_segmento g
-    ),
+    /*
+    Relacionamento das viagens com dados do feed do GTFS, tipo de dia e service_ids
+    */
     viagem as (
         select
             data,
@@ -156,6 +170,9 @@ with
             where {{ incremental_filter }}
         {% endif %}
     ),
+    /*
+    Relacionamento das viagens com os segmentos, aplicando regras de vigência para túneis
+    */
     viagem_segmento as (
         select
             v.data,
@@ -223,7 +240,7 @@ select
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
 from viagem_segmento v
-left join gps_segmento g using (id_viagem, shape_id, id_segmento)
+left join gps_servico_segmento g using (id_viagem, shape_id, id_segmento)
 left join servico_divergente s using (id_viagem)
 {% if not is_incremental() and var("tipo_materializacao") != "monitoramento" %}
     where v.data <= date_sub(current_date("America/Sao_Paulo"), interval 2 day)
