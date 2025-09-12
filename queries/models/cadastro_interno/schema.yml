@@ -92,7 +92,7 @@ models:
         data_type: string
         quote: true
         policy_tags:
-          - 'projects/rj-smtr/locations/us/taxonomies/3022745664175989584/policyTags/1799822095924326214'
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
       - name: nome
         description: "{{ doc('nome_cliente') }} [protegido]"
         data_type: string
@@ -156,6 +156,8 @@ models:
         description: "{{ doc('numero_sequencia_endereco_cliente') }}"
         data_type: string
         quote: true
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
       - name: tipo_endereco
         description: "{{ doc('tipo_endereco_cliente') }}"
         data_type: string
@@ -232,17 +234,19 @@ models:
         data_type: string
         quote: true
         policy_tags:
-          - 'projects/rj-smtr/locations/us/taxonomies/3022745664175989584/policyTags/1799822095924326214'
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
       - name: id_cliente
         description: "{{ doc('id_cliente') }}"
         data_type: string
         quote: true
         policy_tags:
-          - 'projects/rj-smtr/locations/us/taxonomies/3022745664175989584/policyTags/1799822095924326214'
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
       - name: numero_sequencia_endereco
         description: "{{ doc('numero_sequencia_endereco_cliente') }}"
         data_type: string
         quote: true
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/3022745664175989584/policyTags/1799822095924326214'
       - name: tipo_endereco
         description: "{{ doc('tipo_endereco_cliente') }}"
         data_type: string
