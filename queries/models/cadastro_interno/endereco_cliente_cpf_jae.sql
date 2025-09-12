@@ -38,7 +38,10 @@
 
 {% endif %}
 
-select cast(c.documento as integer) as cpf_particao, e.* except (id_cliente_particao)
+select
+    cast(c.documento as integer) as cpf_particao,
+    c.documento as cpf,
+    e.* except (id_cliente_particao)
 from {{ endereco_cliente_jae }} e
 join {{ ref("cliente_jae") }} c using (id_cliente_particao)
 where
