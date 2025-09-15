@@ -1,6 +1,6 @@
 # Changelog - monitoramento
 
-## [1.6.9] - 2025-09-11
+## [1.6.9] - 2025-09-15
 
 ### Corrigido
 
