@@ -1400,3 +1400,7 @@ Subtipo do usuário que efetuou a transação sem dados relacionados à saúde [
 {% docs id_cliente_particao %}
 Identificador do cliente no tipo inteiro
 {% enddocs %}
+
+{% docs id_cre_escola %}
+Identificador da Coordenadoria Regional de Educação
+{% enddocs %}
