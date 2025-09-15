@@ -310,9 +310,12 @@ class constants(Enum):  # pylint: disable=c0103
         "gratuidade": {
             "query": """
                 SELECT
-                    *
+                    *,
+                    t.descricao AS tipo_gratuidade,
                 FROM
-                    gratuidade
+                    gratuidade g
+                LEFT JOIN
+                    tipo_gratuidade t
                 WHERE
                     data_inclusao BETWEEN '{start}'
                     AND '{end}'
