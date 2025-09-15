@@ -26,21 +26,6 @@ select
     safe_cast(
         json_value(content, '$.id_tipo_gratuidade') as string
     ) as id_tipo_gratuidade,
-    safe_cast(json_value(content, '$.tipo_gratuidade') as string) as tipo_gratuidade,
-    case
-        when
-            safe_cast(json_value(content, '$.deficiencia_permanente') as float64)
-            is null
-        then cast(json_value(content, '$.deficiencia_permanente') as bool)
-        else
-            cast(
-                cast(
-                    cast(
-                        json_value(content, '$.deficiencia_permanente') as float64
-                    ) as integer
-                ) as bool
-            )
-    end as deficiencia_permanente,
-    safe_cast(json_value(content, '$.rede_ensino') as string) as rede_ensino,
+    safe_cast(json_value(content, '$.tipo_gratuidade') as string) as tipo_gratuidade
 
 from {{ source("source_jae", "gratuidade") }}
