@@ -13,7 +13,7 @@ with
         from {{ ref("aux_ordem_servico_diaria_v1") }}
         where data < "{{ var('data_inicio_trips_shapes') }}"
 
-        union all
+        full outer union all by name
 
         select *
         from {{ ref("aux_ordem_servico_diaria_v2") }}
@@ -22,11 +22,17 @@ with
             between "{{ var('data_inicio_trips_shapes') }}"
             and '{{var("DATA_GTFS_V2_INICIO") }}'
 
-        union all
+        full outer union all by name
 
         select *
         from {{ ref("aux_ordem_servico_diaria_v3") }}
         where data > '{{var("DATA_GTFS_V2_INICIO") }}'
+
+        full outer union all by name
+
+        select *
+        from {{ ref("aux_ordem_servico_diaria_v4") }}
+        where data > '{{var("DATA_GTFS_V4_INICIO") }}'
     )
 select *
 from ordem_servico_diaria
