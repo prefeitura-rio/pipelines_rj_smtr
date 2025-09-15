@@ -67,14 +67,6 @@ with
 
     ),
     viagem as (
-
-        select *
-        from
-            viagem_completa
-
-        -- fmt: off
-        full outer union all by name
-        -- fmt: on
         select
             data,
             id_viagem,
@@ -97,6 +89,11 @@ with
             )
             and data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
             and data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+        -- fmt: off
+        full outer union all by name
+        -- fmt: on
+        select *
+        from viagem_completa
     ),
     -- Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
     -- limitada pela viagem anterior

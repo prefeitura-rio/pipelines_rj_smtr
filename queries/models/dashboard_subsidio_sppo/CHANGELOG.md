@@ -5,7 +5,7 @@
 ### Corrigido
 
 - Corrigido modelo `sumario_servico_dia` para datas antes de `2023-09-16` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/790)
-- Corrigido a utilização dos modelos `sumario__dia` e `sumario_servico_dia` no modelo `sumario_servico_dia_historico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/790)
+- Corrigida a utilização dos modelos `sumario_dia` e `sumario_servico_dia` no modelo `sumario_servico_dia_historico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/790)
 
 ## [8.0.1] - 2025-08-08
 
