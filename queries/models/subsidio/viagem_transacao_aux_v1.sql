@@ -68,7 +68,9 @@ with
     ),
     viagem as (
 
-        select * from viagem_completa
+        select *
+        from
+            viagem_completa
 
         -- fmt: off
         full outer union all by name
