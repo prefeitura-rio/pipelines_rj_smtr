@@ -2,6 +2,7 @@
     config(
         materialized="incremental",
         incremental_strategy="merge",
+        unique_key="id_unico",
         partition_by={
             "field": "id_cliente",
             "data_type": "int64",
@@ -25,7 +26,7 @@
             ids as (
                 select distinct cast(cd_cliente as integer) as id
                 from {{ staging_estudante }}
-                where {{ incremental_filter }}
+                where cd_cliente is not null and ({{ incremental_filter }})
             ),
             grupos as (select distinct div(id, 10000) as group_id from ids),
             identifica_grupos_continuos as (
@@ -64,17 +65,17 @@ with
             estd.numero_matricula,
             estd.nome,
             codigo_escola,
-            esc.descricao as nome_escola,
-            esc.id_rede_ensino,
-            re.rede_ensino,
+            esc.nome as nome_escola,
+            esc.rede_ensino,
             esc.id_cre as id_cre_escola,
             estd.data_inclusao as datetime_inclusao,
             estd.timestamp_captura as datetime_captura
         from {{ staging_estudante }} estd
         left join
             {{ ref("aux_escola_rede_ensino_atualizado") }} esc using (codigo_escola)
-        left join {{ ref("staging_cre") }} cre on cre.id = esc.id_cre
-        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
+        where
+            cd_cliente is not null
+            {% if is_incremental() %} and ({{ incremental_filter }}) {% endif %}
 
     ),
     dados_completos as (
@@ -87,7 +88,7 @@ with
                 numero_matricula,
                 nome,
                 codigo_escola,
-                id_rede_ensino,
+                nome_escola,
                 rede_ensino,
                 id_cre_escola,
                 datetime_inclusao,
@@ -140,6 +141,7 @@ with
         from inicio_validade
     )
 select
+    concat(id_cliente, '-', datetime_inclusao) as id_unico,
     id_cliente,
     row_number() over (
         partition by id_cliente order by datetime_inicio_validade
@@ -148,7 +150,6 @@ select
     nome,
     codigo_escola,
     nome_escola,
-    id_rede_ensino,
     rede_ensino,
     id_cre_escola,
     datetime_inicio_validade,

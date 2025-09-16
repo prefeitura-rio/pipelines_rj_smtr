@@ -189,17 +189,6 @@ sources:
     tables:
       - name: viagem_informada
 
-  - name: source_jae_dev
-    database: rj-smtr-dev
-    schema: source_jae
-
-    tables:
-      - name: estudante
-      - name: escola
-      - name: cre
-      - name: laudo_pcd
-
-
   - name: source_jae
     database: rj-smtr-staging
 
@@ -293,6 +282,9 @@ sources:
       - name: linha_tarifa
       - name: transacao_retificada
       - name: lancamento
+      - name: estudante
+      - name: escola
+      - name: laudo_pcd
 
   - name: source_sonda
     database: rj-smtr-staging

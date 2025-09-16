@@ -7,6 +7,7 @@
             "data_type": "int64",
             "range": {"start": 0, "end": 100000000, "interval": 10000},
         },
+        unique_key="id_unico",
     )
 }}
 
@@ -126,11 +127,12 @@ with
         from inicio_validade
     )
 select
+    concat(id_cliente, '-', datetime_inclusao) as id_unico,
     id_cliente,
     row_number() over (
         partition by id_cliente order by datetime_inicio_validade
     ) as sequencia_cliente_laudo,
-    laudo_pcd,
+    deficiencia_permanente,
     datetime_inicio_validade,
     datetime_fim_validade,
     datetime_inclusao,

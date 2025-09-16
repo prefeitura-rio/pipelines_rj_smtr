@@ -14,7 +14,7 @@ select
     replace(safe_cast(json_value(content, '$.id_cre') as string), '.0', '') as id_cre,
     datetime(
         parse_timestamp(
-            '%Y-%m-%dT%H:%M:%S%Ez',
+            '%Y-%m-%dT%H:%M:%E6S%Ez',
             safe_cast(json_value(content, '$.data_inclusao') as string)
         ),
         'America/Sao_Paulo'
@@ -25,6 +25,6 @@ select
     replace(
         safe_cast(json_value(content, '$.id_escola') as string), '.0', ''
     ) as id_escola
-from {{ source("source_jae_dev", "escola") }}
+from {{ source("source_jae", "escola") }}
 qualify
     row_number() over (partition by codigo_escola order by timestamp_captura desc) = 1

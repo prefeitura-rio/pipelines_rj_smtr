@@ -81,8 +81,8 @@ select
     ) as data_inclusao,
     replace(
         safe_cast(json_value(content, '$.id_tipo_doenca') as string), '.0', ''
-    ) as id_tipo_doenca
+    ) as id_tipo_doenca,
     safe_cast(
         json_value(content, '$.codigo_uap_tratamento') as string
     ) as codigo_uap_tratamento
-from {{ source("source_jae_dev", "estudante") }}
+from {{ source("source_jae", "laudo_pcd") }}

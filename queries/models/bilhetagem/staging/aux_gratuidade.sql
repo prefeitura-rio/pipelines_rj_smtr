@@ -64,7 +64,7 @@ with
             cast(cd_cliente as int64) as id_cliente,
             id as id_gratuidade,
             tipo_gratuidade,
-            data_inclusao as datatetime_inicio_validade,
+            data_inclusao as datetime_inicio_validade,
             timestamp_captura as datetime_captura,
             0 as priority
         from {{ staging_gratuidade }}
@@ -96,9 +96,10 @@ select
     id_cliente,
     id_gratuidade,
     concat(id_cliente, '_', id_gratuidade) as id_cliente_gratuidade,
-    datatetime_inicio_validade,
-    lead(datatetime_inicio_validade) over (
-        partition by id_cliente order by datatetime_inicio_validade
+    tipo_gratuidade,
+    datetime_inicio_validade,
+    lead(datetime_inicio_validade) over (
+        partition by id_cliente order by datetime_inicio_validade
     ) as datetime_fim_validade,
     datetime_captura
 from gratuidade_deduplicada

@@ -34,4 +34,4 @@ select
     parse_date(
         '%Y-%m-%d', safe_cast(json_value(content, '$.data_fim_curso') as string)
     ) as data_fim_curso,
-from {{ source("source_jae_dev", "estudante") }}
+from {{ source("source_jae", "estudante") }}
