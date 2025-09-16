@@ -435,14 +435,13 @@ class constants(Enum):  # pylint: disable=c0103
                     *
                 FROM
                     estudante
-                /*WHERE
+                WHERE
                     data_inclusao BETWEEN '{start}'
-                    AND '{end}'*/
+                    AND '{end}'
             """,
             "database": "gratuidade_db",
             "primary_keys": [],
             "capture_flow": "auxiliar",
-            "file_chunk_size": 20000,
             "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
         },
         "escola": {
@@ -451,9 +450,9 @@ class constants(Enum):  # pylint: disable=c0103
                     *
                 FROM
                     escola
-                /*WHERE
+                WHERE
                     data_inclusao BETWEEN '{start}'
-                    AND '{end}'*/
+                    AND '{end}'
             """,
             "database": "gratuidade_db",
             "primary_keys": ["codigo_escola"],
@@ -466,14 +465,13 @@ class constants(Enum):  # pylint: disable=c0103
                     *
                 FROM
                     laudo_pcd
-                /*WHERE
+                WHERE
                     data_inclusao BETWEEN '{start}'
-                    AND '{end}'*/
+                    AND '{end}'
             """,
             "database": "gratuidade_db",
             "primary_keys": ["id"],
             "capture_flow": "auxiliar",
-            "file_chunk_size": 20000,
             "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
         },
         "ordem_ressarcimento": {
