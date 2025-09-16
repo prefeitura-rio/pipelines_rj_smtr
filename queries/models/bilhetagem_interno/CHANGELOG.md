@@ -1,5 +1,12 @@
 # Changelog - bilhetagem_interno
 
+## [1.1.3] - 2025-09-16
+
+### Adicionado
+
+- Adiciona a coluna `id_cre_escola` no modelo `transacao_gratuidade_estudante_municipal.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/875)
+
+
 ## [1.1.2] - 2025-08-27
 
 ### Alterado
