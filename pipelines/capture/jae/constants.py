@@ -445,6 +445,7 @@ class constants(Enum):  # pylint: disable=c0103
             "primary_keys": [],
             "capture_flow": "auxiliar",
             "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
+            "first_timestamp": datetime(2025, 9, 16, 0, 0, 0),
         },
         "escola": {
             "query": """
@@ -460,6 +461,7 @@ class constants(Enum):  # pylint: disable=c0103
             "primary_keys": ["codigo_escola"],
             "capture_flow": "auxiliar",
             "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
+            "first_timestamp": datetime(2025, 9, 16, 0, 0, 0),
         },
         "laudo_pcd": {
             "query": """
@@ -475,6 +477,7 @@ class constants(Enum):  # pylint: disable=c0103
             "primary_keys": ["id"],
             "capture_flow": "auxiliar",
             "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
+            "first_timestamp": datetime(2025, 9, 16, 0, 0, 0),
         },
         "ordem_ressarcimento": {
             "query": """
@@ -618,7 +621,7 @@ class constants(Enum):  # pylint: disable=c0103
         SourceTable(
             source_name=JAE_SOURCE_NAME,
             table_id=k,
-            first_timestamp=datetime(2024, 1, 7, 0, 0, 0),
+            first_timestamp=v.get("first_timestamp", datetime(2024, 1, 7, 0, 0, 0)),
             schedule_cron=create_hourly_cron(),
             primary_keys=v["primary_keys"],
             pretreatment_reader_args=v.get("pre_treatment_reader_args"),
