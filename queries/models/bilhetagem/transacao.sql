@@ -111,10 +111,10 @@ with
             cast(id_cliente as string) as id_cliente,
             tipo_gratuidade,
             rede_ensino,
-            cre,
+            id_cre_escola,
             deficiencia_permanente,
-            data_inicio_validade,
-            data_fim_validade
+            datetime_inicio_validade,
+            datetime_fim_validade
         from {{ ref("aux_gratuidade_info") }}
     ),
     tipo_pagamento as (
@@ -463,7 +463,7 @@ with
                 then concat("Ensino Básico ", split(g.rede_ensino, " - ")[0])
             end as subtipo_usuario,
             case
-                when tipo_transacao_jae = "Gratuidade acompanhante"
+                when t.tipo_transacao_jae = "Gratuidade acompanhante"
                 then "Acompanhante"
                 when
                     t.tipo_transacao_jae != "Gratuidade"
@@ -492,10 +492,10 @@ with
         left join
             gratuidade g
             on t.id_cliente = g.id_cliente
-            and t.datetime_transacao >= g.data_inicio_validade
+            and t.datetime_transacao >= g.datetime_inicio_validade
             and (
-                t.datetime_transacao < g.data_fim_validade
-                or g.data_fim_validade is null
+                t.datetime_transacao < g.datetime_fim_validade
+                or g.datetime_fim_validade is null
             )
     ),
     transacao_colunas_ordenadas as (
