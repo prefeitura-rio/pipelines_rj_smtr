@@ -111,10 +111,11 @@ with
             cast(id_cliente as string) as id_cliente,
             tipo_gratuidade,
             rede_ensino,
+            cre,
             deficiencia_permanente,
             data_inicio_validade,
             data_fim_validade
-        from {{ ref("aux_gratuidade") }}
+        from {{ ref("aux_gratuidade_info") }}
     ),
     tipo_pagamento as (
         select chave as id_tipo_pagamento, valor as tipo_pagamento
@@ -454,7 +455,9 @@ with
 
                     )
                 then null
-                when g.tipo_gratuidade = "Estudante" and g.rede_ensino = "Universidade"
+                when
+                    g.tipo_gratuidade = "Estudante"
+                    and g.rede_ensino like "Universidade%"
                 then "Ensino Superior"
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino is not null
                 then concat("Ensino Básico ", split(g.rede_ensino, " - ")[0])
@@ -466,8 +469,10 @@ with
                     t.tipo_transacao_jae != "Gratuidade"
                     and t.produto_jae != "Conta Jaé Gratuidade"
                 then null
-                when g.tipo_gratuidade = "Estudante" and g.rede_ensino = "Universidade"
-                then "Ensino Superior"
+                when
+                    g.tipo_gratuidade = "Estudante"
+                    and g.rede_ensino like "Universidade%"
+                then concat("Ensino Superior ", g.rede_ensino)
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino is not null
                 then concat("Ensino Básico ", split(g.rede_ensino, " - ")[0])
                 when g.tipo_gratuidade = "PCD" and g.deficiencia_permanente
@@ -481,7 +486,8 @@ with
                 when t.meio_pagamento_jae like "Cartão%"
                 then "Cartão"
                 else t.meio_pagamento_jae
-            end as meio_pagamento
+            end as meio_pagamento,
+            g.id_cre_escola
         from transacao_info_posterior t
         left join
             gratuidade g
@@ -530,6 +536,7 @@ with
             subtipo_usuario_protegido,
             meio_pagamento,
             meio_pagamento_jae,
+            id_cre_escola,
             latitude,
             longitude,
             geo_point_transacao,
