@@ -316,6 +316,8 @@ class constants(Enum):  # pylint: disable=c0103
                     gratuidade g
                 LEFT JOIN
                     tipo_gratuidade t
+                ON
+                    g.id_tipo_gratuidade = t.id
                 WHERE
                     data_inclusao BETWEEN '{start}'
                     AND '{end}'
