@@ -514,7 +514,23 @@ with
                         iv.indicador_temperatura_transmitida_viagem as valor
                     ) as indicador_temperatura_transmitida_viagem,
                     struct(
-                        iv.datetime_verificacao_regularidade, valores
+                        iv.datetime_verificacao_regularidade,
+                        iv.indicador_temperatura_pos_tratamento_descartada_viagem
+                        as valor,
+                        safe_cast(
+                            iv.percentual_temperatura_pos_tratamento_descartada
+                            as string
+                        ) as percentual_temperatura_pos_tratamento_descartada
+                    ) as indicador_temperatura_pos_tratamento_descartada_viagem,
+                    struct(
+                        iv.datetime_verificacao_regularidade,
+                        iv.indicador_temperatura_zero_viagem as valor,
+                        safe_cast(
+                            iv.percentual_temperatura_zero_descartada as string
+                        ) as percentual_temperatura_zero_descartada
+                    ) as indicador_temperatura_zero_viagem,
+                    struct(
+                        iv.datetime_verificacao_regularidade, iva.valores
                     ) as indicador_validador
                 )
             ) as indicadores_novos,
