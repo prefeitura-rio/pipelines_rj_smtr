@@ -1,5 +1,13 @@
 # Changelog - source_jae
 
+## [2.5.0] - 2025-09-16
+
+### Adicionado
+- Cria captura das tabelas `escola`, `estudante` e `laudo_pcd` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/875)
+
+### Alterado
+- Altera query da captura da tabela `gratuidade`, removendo os joins com as tabelas `escola`, `estudante` e `laudo_pcd` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/875)
+
 ## [2.4.0] - 2025-09-08
 
 ### Adicionado
