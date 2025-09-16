@@ -20,7 +20,7 @@
             vt.data >= date('{{ var("DATA_SUBSIDIO_V20_INICIO") }}')
             and coalesce(vr.indicador_falha_recorrente, false)
         )
-        or vt.indicador_temperatura_nula_zero_viagem
+        or vt.indicador_temperatura_zero_viagem
         or not vt.indicador_temperatura_transmitida_viagem
         or not vt.indicador_temperatura_regular_viagem
     )
@@ -58,9 +58,9 @@ with
             ) as indicador_temperatura_pos_tratamento_descartada_viagem,
             safe_cast(
                 json_value(
-                    indicadores, '$.indicador_temperatura_nula_zero_viagem.valor'
+                    indicadores, '$.indicador_temperatura_zero_viagem.valor'
                 ) as bool
-            ) as indicador_temperatura_nula_zero_viagem,
+            ) as indicador_temperatura_zero_viagem,
             safe_cast(
                 json_value(
                     indicadores, '$.indicador_temperatura_regular_viagem.valor'
