@@ -3,6 +3,7 @@
         materialized="incremental",
         partition_by={"field": "data", "data_type": "date", "granularity": "day"},
         incremental_strategy="insert_overwrite",
+        alias="aux_viagem_temperatura_teste",
     )
 }}
 
@@ -203,8 +204,9 @@ with
             count(*) as quantidade_pre_tratamento,
             countif(temperatura is null) as quantidade_nula,
             countif(temperatura = 0) as quantidade_zero,
-            countif(temperatura > 0) > 0 as indicador_temperatura_transmitida_viagem,
-            count(distinct temperatura) > 1 as indicador_temperatura_variacao_viagem
+            countif(temperatura != 0) > 0 as indicador_temperatura_transmitida_viagem,
+            count(distinct case when temperatura != 0 then temperatura end)
+            > 1 as indicador_temperatura_variacao_viagem
         from gps_validador_viagem
         where indicador_ar_condicionado
         group by 1, 2, 3
@@ -374,8 +376,11 @@ with
             > 50 as indicador_temperatura_pos_tratamento_descartada_viagem,
             percentual_temperatura_zero_descartada
             = 100 as indicador_temperatura_zero_viagem,
+            percentual_temperatura_nula_descartada
+            = 100 as indicador_temperatura_nula_viagem
         from classificacao_temperatura
         left join agg_temperatura_viagem using (data, id_viagem, id_validador)
+        where id_validador is not null
         group by all
     ),
     indicador_regularidade as (  -- Calcula indicador_regularidade_temperatura para selecionar 1 validador
@@ -398,6 +403,7 @@ with
             percentual_temperatura_pos_tratamento_descartada,
             indicador_temperatura_pos_tratamento_descartada_viagem,
             indicador_temperatura_zero_viagem,
+            indicador_temperatura_nula_viagem,
             (
                 not indicador_temperatura_zero_viagem
                 and indicador_temperatura_transmitida_viagem
@@ -419,14 +425,17 @@ with
                     ) as percentual_estado_equipamento_aberto,
                     indicador_temperatura_transmitida_viagem,
                     indicador_temperatura_variacao_viagem,
-                    percentual_temperatura_nula_descartada,
+                    indicador_temperatura_nula_viagem,
+                    safe_cast(
+                        percentual_temperatura_nula_descartada as string
+                    ) as percentual_temperatura_nula_descartada,
                     indicador_temperatura_zero_viagem,
                     safe_cast(
-                        piv.percentual_temperatura_zero_descartada as string
+                        percentual_temperatura_zero_descartada as string
                     ) as percentual_temperatura_zero_descartada,
                     indicador_temperatura_pos_tratamento_descartada_viagem,
                     safe_cast(
-                        piv.percentual_temperatura_pos_tratamento_descartada as string
+                        percentual_temperatura_pos_tratamento_descartada as string
                     ) as percentual_temperatura_pos_tratamento_descartada,
                     percentual_temperatura_regular,
                     indicador_temperatura_regular_viagem,
@@ -465,7 +474,8 @@ with
             percentual_temperatura_zero_descartada,
             percentual_temperatura_pos_tratamento_descartada,
             indicador_temperatura_pos_tratamento_descartada_viagem,
-            indicador_temperatura_zero_viagem
+            indicador_temperatura_zero_viagem,
+            indicador_temperatura_nula_viagem
         from indicador_regularidade
         qualify
             row_number() over (
@@ -522,6 +532,13 @@ with
                             as string
                         ) as percentual_temperatura_pos_tratamento_descartada
                     ) as indicador_temperatura_pos_tratamento_descartada_viagem,
+                    struct(
+                        iv.datetime_verificacao_regularidade,
+                        iv.indicador_temperatura_nula_viagem as valor,
+                        safe_cast(
+                            iv.percentual_temperatura_nula_descartada as string
+                        ) as percentual_temperatura_nula_descartada
+                    ) as indicador_temperatura_nula_viagem,
                     struct(
                         iv.datetime_verificacao_regularidade,
                         iv.indicador_temperatura_zero_viagem as valor,

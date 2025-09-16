@@ -12,6 +12,7 @@
 
 {% set condicao_veiculo %}
     (vt.ano_fabricacao <= 2019 or vt.data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}'))
+    and not indicador_temperatura_nula_viagem
 {% endset %}
 
 {% set condicao_ar_inoperante %}
@@ -61,6 +62,11 @@ with
                     indicadores, '$.indicador_temperatura_zero_viagem.valor'
                 ) as bool
             ) as indicador_temperatura_zero_viagem,
+            safe_cast(
+                json_value(
+                    indicadores, '$.indicador_temperatura_nula_viagem.valor'
+                ) as bool
+            ) as indicador_temperatura_nula_viagem,
             safe_cast(
                 json_value(
                     indicadores, '$.indicador_temperatura_regular_viagem.valor'
