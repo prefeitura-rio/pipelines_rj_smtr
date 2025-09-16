@@ -194,7 +194,8 @@ with
             id_cre_escola,
             cast(null as bool) as deficiencia_permanente,
             datetime_inicio_validade_gratuidade as datetime_inicio_validade,
-            datetime_fim_validade_gratuidade as datetime_fim_validade
+            datetime_fim_validade_gratuidade as datetime_fim_validade,
+            0 as priority
         from gratuidade_estudante_fim_validade
 
         union all
@@ -210,7 +211,8 @@ with
             cast(null as string) as id_cre_escola,
             deficiencia_permanente,
             datetime_inicio_validade_gratuidade as datetime_inicio_validade,
-            datetime_fim_validade_gratuidade as datetime_fim_validade
+            datetime_fim_validade_gratuidade as datetime_fim_validade,
+            1 as priority
         from gratuidade_saude_fim_validade
 
         union all
@@ -226,17 +228,18 @@ with
             cast(null as string) as id_cre_escola,
             cast(null as bool) as deficiencia_permanente,
             datetime_inicio_validade_gratuidade as datetime_inicio_validade,
-            datetime_fim_validade_gratuidade as datetime_fim_validade
+            datetime_fim_validade_gratuidade as datetime_fim_validade,
+            2 as priority
         from outras_gratuidades
     ),
     gratuidade_filtrada as (
         select
-            concat(id_cliente_gratuidade, '-', datetime_inicio_validade) as id_unico, *
+            concat(id_cliente_gratuidade, '-', datetime_inicio_validade) as id_unico,
+            * except (priority)
         from union_gratuidade
         qualify
             row_number() over (
-                partition by id_cliente, datetime_inicio_validade
-                order by tipo_gratuidade
+                partition by id_cliente, datetime_inicio_validade order by priority
             )
             = 1
     ),
