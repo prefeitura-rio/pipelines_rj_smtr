@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.6.9] - 2025-09-15
+
+### Corrigido
+
+- Corrigido o modelo `monitoramento_servico_dia_v2` para a apuração por sentido (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/790)
+
 ## [1.6.8] - 2025-09-09
 
 ### Corrigido
