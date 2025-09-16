@@ -1,5 +1,18 @@
 # Changelog - subsidio
 
+## [2.1.6] - 2025-09-16
+
+### Alterado
+
+- Altera nome do indicador `indicador_temperatura_nula_zero_viagem` para criar `indicador_temperatura_zero_viagem` e `indicador_temperatura_nula_viagem`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+- Altera lógica das CTEs para o nível de agregação do validador por viagem (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+- Altera colunas percentuais adicionando uma multiplicação por 100 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+- Altera coluna `quantidade_nula_zero` separando em `quantidade_nula` e `quantidade_zero` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+
+### Corrigido
+
+- Corrige CTE `classificacao_temperatura` adicionando maior ou igual na diferença da temperatura externa pela interna (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+
 ## [2.1.5] - 2025-09-15
 
 ### Corrigido
