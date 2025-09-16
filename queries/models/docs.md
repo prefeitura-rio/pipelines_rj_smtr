@@ -1405,6 +1405,10 @@ Subtipo do usuário que efetuou a transação sem dados relacionados à saúde [
 Identificador do cliente no tipo inteiro
 {% enddocs %}
 
+{% docs id_cre_escola %}
+Identificador da Coordenadoria Regional de Educação
+{% enddocs %}
+
 {% docs cpf_particao %}
 Número do CPF no tipo inteiro
 {% enddocs %}

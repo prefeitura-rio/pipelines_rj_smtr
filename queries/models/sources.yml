@@ -282,6 +282,9 @@ sources:
       - name: linha_tarifa
       - name: transacao_retificada
       - name: lancamento
+      - name: estudante
+      - name: escola
+      - name: laudo_pcd
 
   - name: source_sonda
     database: rj-smtr-staging
@@ -430,3 +433,11 @@ sources:
 
     tables:
       - name: meteorologia
+
+  - name: br_inep_censo_educacao_superior
+    database: basedosdados
+
+    tables:
+      - name: curso
+      - name: ies
+      - name: dicionario

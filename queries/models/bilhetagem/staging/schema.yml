@@ -1,0 +1,11 @@
+models:
+  - name: aux_gratuidade
+    columns:
+      - name: id_cliente
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+        data_type: string
+      - name: id_cliente_gratuidade
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+        data_type: string
