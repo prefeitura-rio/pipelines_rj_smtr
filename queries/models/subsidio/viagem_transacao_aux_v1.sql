@@ -63,7 +63,37 @@ with
             between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
                 "{{ var('end_date') }}"
             )
+            and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
+
+    ),
+    viagem as (
+        select
+            data,
+            id_viagem,
+            id_veiculo,
+            datetime_partida,
+            datetime_chegada,
+            modo,
+            tecnologia_apurada,
+            tecnologia_remunerada,
+            tipo_viagem,
+            servico,
+            sentido,
+            distancia_planejada
+        from {{ ref("viagem_classificada") }}
+        -- from `rj-smtr-dev.victor__subsidio.viagem_classificada`
+        where
+            data
+            between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
+                "{{ var('end_date') }}"
+            )
+            and data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
             and data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+        -- fmt: off
+        full outer union all by name
+        -- fmt: on
+        select *
+        from viagem_completa
     ),
     -- Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
     -- limitada pela viagem anterior
@@ -102,7 +132,7 @@ with
                         )
                     )
             end as datetime_partida_com_tolerancia
-        from viagem_completa as v
+        from viagem as v
     ),
     -- Considera apenas as viagens realizadas no período de apuração
     viagem_com_tolerancia as (
@@ -237,7 +267,7 @@ with
             e.longitude,
             v.servico,
             e.servico_jae,
-        from viagem_completa as v
+        from viagem as v
         left join
             estado_equipamento_aux as e
             on e.id_veiculo = substr(v.id_veiculo, 2)
@@ -368,6 +398,7 @@ select
     end as tipo_viagem,
     v.modo,
     v.tecnologia_apurada,
+    v.tecnologia_remunerada,
     v.sentido,
     v.distancia_planejada,
     any_value(eep.quantidade_transacao) as quantidade_transacao,
