@@ -311,7 +311,7 @@ class constants(Enum):  # pylint: disable=c0103
             "query": """
                 SELECT
                     *,
-                    t.descricao AS tipo_gratuidade,
+                    t.descricao AS tipo_gratuidade
                 FROM
                     gratuidade g
                 LEFT JOIN
