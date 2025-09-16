@@ -27,12 +27,13 @@ with
         select *
         from {{ ref("aux_ordem_servico_diaria_v3") }}
         where data > '{{var("DATA_GTFS_V2_INICIO") }}'
+        and data < '{{var("DATA_GTFS_V4_INICIO") }}'
 
         full outer union all by name
 
         select *
         from {{ ref("aux_ordem_servico_diaria_v4") }}
-        where data > '{{var("DATA_GTFS_V4_INICIO") }}'
+        where data >= '{{var("DATA_GTFS_V4_INICIO") }}'
     )
 select *
 from ordem_servico_diaria
