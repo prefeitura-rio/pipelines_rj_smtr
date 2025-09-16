@@ -244,6 +244,11 @@ models:
               where: tipo_transacao_jae != 'Gratuidade operadora' and data in ({partitions})
         data_type: string
         quote: true
+      - name: id_cre_escola
+        description: "{{ doc('id_cre_escola') }} do cliente [protegido]"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+        data_type: string
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
