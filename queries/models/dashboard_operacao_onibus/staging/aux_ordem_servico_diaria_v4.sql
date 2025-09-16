@@ -10,7 +10,7 @@ with
         from {{ ref("ordem_servico_trips_shapes_gtfs") }}
     ),
     viagens as (
-        select distinct
+        select
             feed_start_date,
             tipo_os,
             servico,
