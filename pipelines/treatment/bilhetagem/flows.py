@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de bilhetagem
 
-DBT: 2025-09-08
+DBT: 2025-09-16
 """
 from datetime import time
 
@@ -25,7 +25,11 @@ TRANSACAO_MATERIALIZACAO = create_default_materialization_flow(
         constants.INTEGRACAO_SELECTOR.value,
         jae_constants.LANCAMENTO_SOURCE.value,
     ]
-    + [s for s in jae_constants.JAE_AUXILIAR_SOURCES.value if s.table_id in ["gratuidade"]],
+    + [
+        s
+        for s in jae_constants.JAE_AUXILIAR_SOURCES.value
+        if s.table_id in ["gratuidade", "escola", "laudo_pcd", "estudante"]
+    ],
     post_tests=constants.TRANSACAO_DAILY_TEST.value,
     test_scheduled_time=time(11, 15, 0),
 )
