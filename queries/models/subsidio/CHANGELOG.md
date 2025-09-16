@@ -1,5 +1,13 @@
 # Changelog - subsidio
 
+## [2.1.5] - 2025-09-15
+
+### Corrigido
+
+- Corrigida a data de inicio da tecnologia_remunerada no modelo `viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/790)
+- Corrigida a coluna tecnologia_remunerada no modelo `viagem_transacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/790)
+- Corrigida o modelo `viagem_transacao_aux_v1` para datas anteriores a `2025-04-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/790)
+
 ## [2.1.4] - 2025-09-02
 
 ### Alterado
@@ -21,7 +29,7 @@
 
 ### Alterado
 
-- Altera lógica para considerar `indicador_falha_recorrente` após `DATA_SUBSIDIO_V20_INICIO` no modelo `viagem_regularidade_temperatura`, alteração referente ao Processo.rio `MTR-CAP-2025/25179` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/788)
+- Altera lógica para considerar `indicador_falha_recorrente` após `DATA_SUBSIDIO_V20_INICIO` no modelo `viagem_regularidade_temperatura`, alteração referente ao Processo.rio `MTR-CAP-2025/25179` e `MTR-MEM-2025/02246` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/788)
 
 ## [2.1.1] - 2025-08-14
 
