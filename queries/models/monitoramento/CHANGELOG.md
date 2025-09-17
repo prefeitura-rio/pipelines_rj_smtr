@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Alterado o modelo `veiculo_fiscalizacao_lacre`  para considerar atualizações de lacres anteriores ao início da tabela caso a coluna `datetime_ultima_atualizacao_fonte` seja superior a `2024-04-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/880)
+- Alterado o modelo `veiculo_fiscalizacao_lacre` para considerar atualizações de lacres anteriores ao início da tabela caso a coluna `datetime_ultima_atualizacao_fonte` seja superior a `2024-04-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/880)
 
 ### Adicionado
 
