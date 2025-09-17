@@ -57,6 +57,10 @@ with
                     data between "2025-08-01" and "2025-08-18" -- Excessão para falha do arquivo de licenciamento no ftp
                     and data_processamento between "2025-08-01" and "2025-08-26"
                 )
+                or (
+                    data between "2025-09-01" and "2025-09-18" -- Excessão para lacres adicionados após o prazo em 2025-09-Q1
+                    and data_processamento between "2025-09-01" and "2025-09-18"
+                )
             )
             {% if is_incremental() %}
                 and data between date("{{ var('date_range_start') }}") and date(

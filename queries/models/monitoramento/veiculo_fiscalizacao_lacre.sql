@@ -68,32 +68,43 @@ with
 
         {% if is_incremental() and partitions | length > 0 %}
 
-            {% set max_data_query %}
+                {% set max_data_query %}
                 select max(data) as max_data
                 from {{ staging_veiculo_fiscalizacao_lacre }}
-            {% endset %}
-            {% set max_data = run_query(max_data_query).columns[0].values()[0] %}
+                {% endset %}
+                {% set max_data = run_query(max_data_query).columns[0].values()[0] %}
 
             union all
 
             select * except (versao)
             from {{ this }} as historico
-            where data_inicio_lacre in ({{ partitions | join(", ") }})
-            and exists (
-                select 1
-                from {{ staging_veiculo_fiscalizacao_lacre }} as s
-                where
-                    s.data = date('{{ max_data }}')
-                    and s.n_o_de_ordem = historico.id_veiculo
-                    and s.placa = historico.placa
-                    and s.data_do_lacre = historico.data_inicio_lacre
-                    and regexp_contains(s.no_do_auto, r'/')
-                    and concat(
-                        rpad(regexp_replace(substring(s.no_do_auto, 1, 2), r'\W', ''), 2),
-                        '-',
-                        lpad(regexp_replace(substring(s.no_do_auto, 3), r'\W', ''), 8, '0')
-                    ) = historico.id_auto_infracao
-            )
+            where
+                data_inicio_lacre in ({{ partitions | join(", ") }})
+                and exists (
+                    select 1
+                    from {{ staging_veiculo_fiscalizacao_lacre }} as s
+                    where
+                        s.data = date('{{ max_data }}')
+                        and s.n_o_de_ordem = historico.id_veiculo
+                        and s.placa = historico.placa
+                        and s.data_do_lacre = historico.data_inicio_lacre
+                        and regexp_contains(s.no_do_auto, r'/')
+                        and concat(
+                            rpad(
+                                regexp_replace(
+                                    substring(s.no_do_auto, 1, 2), r'\W', ''
+                                ),
+                                2
+                            ),
+                            '-',
+                            lpad(
+                                regexp_replace(substring(s.no_do_auto, 3), r'\W', ''),
+                                8,
+                                '0'
+                            )
+                        )
+                        = historico.id_auto_infracao
+                )
 
         {% endif %}
     ),
@@ -136,20 +147,32 @@ with
                 from particoes_completas
                 group by all
             )
+    ),
+    dados_completos as (
+        select
+            p.* except (datetime_ultima_atualizacao, id_execucao_dbt),
+            a.datetime_ultima_atualizacao,
+            '{{ var("version") }}' as versao,
+            a.id_execucao_dbt
+        from particoes_completas p
+        join
+            aux_datetime_ultima_atualizacao a using (
+                id_veiculo, placa, data_inicio_lacre
+            )
+        qualify
+            row_number() over (
+                partition by data_inicio_lacre, id_veiculo, placa, id_auto_infracao
+                order by datetime_ultima_atualizacao_fonte desc
+            )
+            = 1
     )
-select
-    p.* except (datetime_ultima_atualizacao, id_execucao_dbt),
-    a.datetime_ultima_atualizacao,
-    '{{ var("version") }}' as versao,
-    a.id_execucao_dbt
-from particoes_completas p
-join aux_datetime_ultima_atualizacao a using (id_veiculo, placa, data_inicio_lacre)
+select *
+from dados_completos
 where
     data_fim_lacre > '{{ var("data_final_veiculo_arquitetura_1") }}'
     or data_fim_lacre is null
-qualify
-    row_number() over (
-        partition by data_inicio_lacre, id_veiculo, placa, id_auto_infracao
-        order by datetime_ultima_atualizacao_fonte desc
+    or (
+        data_fim_lacre <= '{{ var("data_final_veiculo_arquitetura_1") }}'
+        and date(datetime_ultima_atualizacao_fonte)
+        > '{{ var("data_final_veiculo_arquitetura_1") }}'
     )
-    = 1
