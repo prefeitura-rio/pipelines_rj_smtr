@@ -1,5 +1,12 @@
 # Changelog - planejamento
 
+## [1.5.0] - 2025-09-17
+
+### Alterado
+
+- Altera valor da integração de 0 para 4.7 no modelo `matriz_integracao.sql` e `aux_matriz_integracao_modo.sql`
+- Renomeia coluna `valor_transacao` para `valor_integracao` no modelo `matriz_integracao.sql` e `aux_matriz_integracao_modo.sql`
+
 ## [1.4.10] - 2025-08-19
 
 ### Adicionado

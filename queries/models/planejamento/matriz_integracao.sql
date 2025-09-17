@@ -51,7 +51,7 @@ with
                 trim(tabela_gtfs_destino) = '', null, trim(tabela_gtfs_destino)
             ) as tabela_gtfs_destino,
             cast(tempo_integracao_minutos as float64) as tempo_integracao_minutos,
-            cast(0 as numeric) as valor_transacao,
+            cast(4.7 as numeric) as valor_integracao,
             'Transferência' as tipo_integracao,
             true as indicador_integracao
         from {{ source("source_smtr", "matriz_transferencia") }}
@@ -84,7 +84,7 @@ with
                 trim(tabela_gtfs_destino) = '', null, trim(tabela_gtfs_destino)
             ) as tabela_gtfs_destino,
             cast(tempo_integracao_minutos as float64) as tempo_integracao_minutos,
-            cast(valor_transacao as numeric) as valor_transacao,
+            cast(valor_integracao as numeric) as valor_integracao,
             tipo_integracao,
             cast(indicador_integracao as bool) as indicador_integracao
         from {{ source("source_smtr", "matriz_integracao_excecao") }}
@@ -103,7 +103,7 @@ with
             id_servico_gtfs_destino,
             tabela_gtfs_destino,
             tempo_integracao_minutos,
-            valor_transacao,
+            valor_integracao,
             tipo_integracao,
             indicador_integracao
         from {{ ref("aux_matriz_integracao_modo") }}
@@ -142,7 +142,7 @@ select
     sd.servico as servico_destino,
     sd.descricao_servico as descricao_servico_destino,
     m.tempo_integracao_minutos,
-    m.valor_transacao,
+    m.valor_integracao,
     m.tipo_integracao,
     m.indicador_integracao,
     '{{ var("version") }}' as versao
