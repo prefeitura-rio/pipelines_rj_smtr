@@ -1,5 +1,11 @@
 # Changelog - cadastro_interno
 
+## [1.2.1] - 2025-09-17
+
+### Alterado
+
+- Altera número de partições dos modelos `endereco_cliente_cpf_jae.sql` e `cliente_cpf_jae.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/878)
+
 ## [1.2.1] - 2025-09-11
 
 ### Adicionado
