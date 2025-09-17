@@ -113,6 +113,7 @@ with
             id_veiculo,
             placa,
             data_inicio_lacre,
+            id_auto_infracao,
             case
                 when
                     array_length(atualizacoes) = 1
@@ -135,6 +136,7 @@ with
                     id_veiculo,
                     placa,
                     data_inicio_lacre,
+                    id_auto_infracao,
                     array_agg(
                         struct(
                             datetime_ultima_atualizacao_fonte
@@ -157,7 +159,7 @@ with
         from particoes_completas p
         join
             aux_datetime_ultima_atualizacao a using (
-                id_veiculo, placa, data_inicio_lacre
+                id_veiculo, placa, data_inicio_lacre, id_auto_infracao
             )
         qualify
             row_number() over (
