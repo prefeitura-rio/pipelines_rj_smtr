@@ -325,7 +325,7 @@ with
                         )
                         or (
                             data >= date('{{ var("DATA_SUBSIDIO_V12_INICIO") }}')
-                            and data < date('{{ var("DATA_SUBSIDIO_V20_INICIO") }}')
+                            and data < date('{{ var("DATA_SUBSIDIO_V99_INICIO") }}')
                             and (
                                 (
                                     quantidade_transacao_riocard = 0
@@ -389,7 +389,7 @@ select
             or va.tipo_viagem = "Manter tipo viagem"
         then v.tipo_viagem
         when
-            v.data < date('{{ var("DATA_SUBSIDIO_V20_INICIO") }}')
+            v.data < date('{{ var("DATA_SUBSIDIO_V99_INICIO") }}')
             and va.tipo_viagem = "Sem transação"
             and not va.indicador_sem_transacao
             and va.indicador_estado_equipamento_aberto
