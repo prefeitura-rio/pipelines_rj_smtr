@@ -12,18 +12,7 @@
 
 {% set condicao_veiculo %}
     (vt.ano_fabricacao <= 2019 or vt.data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}'))
-{% endset %}
-
-{% set condicao_ar_inoperante %}
-    (
-        (
-            vt.data >= date('{{ var("DATA_SUBSIDIO_V20_INICIO") }}')
-            and coalesce(vr.indicador_falha_recorrente, false)
-        )
-        or vt.indicador_temperatura_nula_zero_viagem
-        or not vt.indicador_temperatura_transmitida_viagem
-        or not vt.indicador_temperatura_regular_viagem
-    )
+    and not vt.indicador_temperatura_nula_viagem
 {% endset %}
 
 with
@@ -58,9 +47,14 @@ with
             ) as indicador_temperatura_pos_tratamento_descartada_viagem,
             safe_cast(
                 json_value(
-                    indicadores, '$.indicador_temperatura_nula_zero_viagem.valor'
+                    indicadores, '$.indicador_temperatura_zero_viagem.valor'
                 ) as bool
-            ) as indicador_temperatura_nula_zero_viagem,
+            ) as indicador_temperatura_zero_viagem,
+            safe_cast(
+                json_value(
+                    indicadores, '$.indicador_temperatura_nula_viagem.valor'
+                ) as bool
+            ) as indicador_temperatura_nula_viagem,
             safe_cast(
                 json_value(
                     indicadores, '$.indicador_temperatura_regular_viagem.valor'
@@ -100,13 +94,32 @@ with
                         "Licenciado sem ar e não autuado"
                     )
                 then vt.tipo_viagem
-                when {{ condicao_veiculo }} and {{ condicao_ar_inoperante }}
+                when
+                    {{ condicao_veiculo }}
+                    and (
+                        (
+                            vt.data >= date('{{ var("DATA_SUBSIDIO_V20_INICIO") }}')
+                            and coalesce(vr.indicador_falha_recorrente, false)
+                        )
+                        or vt.indicador_temperatura_zero_viagem
+                        or not vt.indicador_temperatura_transmitida_viagem
+                        or not vt.indicador_temperatura_regular_viagem
+                    )
                 then "Detectado com ar inoperante"
                 else vt.tipo_viagem
             end as tipo_viagem,
             case
                 when {{ condicao_veiculo }}
-                then not {{ condicao_ar_inoperante }}
+                then
+                    (
+                        (
+                            vt.data >= date('{{ var("DATA_SUBSIDIO_V20_INICIO") }}')
+                            and not coalesce(vr.indicador_falha_recorrente, false)
+                        )
+                        and not vt.indicador_temperatura_zero_viagem
+                        and vt.indicador_temperatura_transmitida_viagem
+                        and vt.indicador_temperatura_regular_viagem
+                    )
                 else null
             end as indicador_regularidade_ar_condicionado_viagem,
             indicador_falha_recorrente,

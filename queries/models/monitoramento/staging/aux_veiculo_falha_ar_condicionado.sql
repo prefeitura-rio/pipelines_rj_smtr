@@ -85,26 +85,30 @@ with
             max(
                 indicador_temperatura_transmitida_viagem
             ) as indicador_temperatura_transmitida_veiculo,
-            1 - trunc(
-                coalesce(
-                    safe_divide(
-                        sum(quantidade_pos_tratamento), sum(quantidade_pre_tratamento)
-                    ),
-                    0
-                ),
+            trunc(
+                (
+                    1 - coalesce(
+                        safe_divide(
+                            sum(quantidade_pos_tratamento),
+                            sum(quantidade_pre_tratamento)
+                        ),
+                        0
+                    )
+                )
+                * 100,
                 2
             ) as percentual_temperatura_pos_tratamento_descartada,
             trunc(
                 coalesce(
                     safe_divide(
                         countif(
-                            percentual_temperatura_pos_tratamento_descartada_viagem
-                            > 0.5
+                            percentual_temperatura_pos_tratamento_descartada_viagem > 50
                         ),
                         count(id_viagem)
                     ),
                     0
-                ),
+                )
+                * 100,
                 2
             ) as percentual_viagem_temperatura_pos_tratamento_descartada,
             max(
@@ -127,10 +131,10 @@ with
             indicador_temperatura_transmitida_veiculo,
             percentual_temperatura_pos_tratamento_descartada,
             percentual_temperatura_pos_tratamento_descartada
-            > 0.5 as indicador_temperatura_descartada_veiculo,
+            > 50 as indicador_temperatura_descartada_veiculo,
             percentual_viagem_temperatura_pos_tratamento_descartada,
             percentual_viagem_temperatura_pos_tratamento_descartada
-            > 0.5 as indicador_viagem_temperatura_descartada_veiculo
+            > 50 as indicador_viagem_temperatura_descartada_veiculo
         from agg_viagem_temperatura
     ),
     {% if is_incremental() %}
