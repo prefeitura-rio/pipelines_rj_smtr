@@ -329,6 +329,7 @@ with
             on f.data = i.data
             and f.id_viagem = i.id_viagem
             and f.datetime_gps = i.datetime_gps
+            and f.id_validador = i.id_validador
         left join
             temperatura_inmet as e
             on e.data = extract(date from i.datetime_gps)
