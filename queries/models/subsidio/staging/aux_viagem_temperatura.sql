@@ -440,8 +440,6 @@ with
                     ) as percentual_temperatura_pos_tratamento_descartada,
                     percentual_temperatura_regular,
                     indicador_temperatura_regular_viagem,
-                    indicador_temperatura_variacao_viagem,
-                    indicador_temperatura_transmitida_viagem,
                     quantidade_pre_tratamento,
                     quantidade_nula,
                     quantidade_zero,
