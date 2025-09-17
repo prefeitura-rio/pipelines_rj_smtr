@@ -8,7 +8,7 @@
 
 ### Adicionado
 
-- Adicionada excessão para lacres adicionados após o prazo entre `2025-09-01` e `2025-09-18` no modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/880)
+- Adicionada exceção para lacres adicionados após o prazo entre `2025-09-01` e `2025-09-18` no modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/880)
 
 ## [1.6.9] - 2025-09-15
 
