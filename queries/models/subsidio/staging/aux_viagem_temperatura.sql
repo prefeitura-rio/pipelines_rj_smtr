@@ -328,6 +328,7 @@ with
             temperatura_filtrada_total as f
             on f.data = i.data
             and f.id_viagem = i.id_viagem
+            and f.datetime_gps = i.datetime_gps
         left join
             temperatura_inmet as e
             on e.data = extract(date from i.datetime_gps)
