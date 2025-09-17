@@ -1,5 +1,15 @@
 # Changelog - monitoramento
 
+## [1.7.0] - 2025-09-17
+
+### Alterado
+
+- Alterado omodelo `veiculo_fiscalizacao_lacre`  para considerar atualizações de lacres anteriores ao inicio da tabela caso a coluna `datetime_ultima_atualizacao_fonte` seja superior a `2024-04-01`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/880)
+
+### Adicionado
+
+- Adicionada excessão para lacres adicionados após o prazo entre `2025-09-01` e `2025-09-18` no modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/880)
+
 ## [1.6.9] - 2025-09-15
 
 ### Corrigido
