@@ -376,8 +376,8 @@ models:
         description: Nome completo consolidado do serviço da perna de origem. Para linhas é, primariamente o route_long_name da tabela routes do GTFS. Para estações é primariamente a coluna stop_name da tabela stops do GTFS. (Caso o registro não exista no GTFS, busca o nome do serviço na base de dados da Jaé)
         data_type: string
         quote: true
-      - name: valor_transacao
-        description: Valor que deve ser cobrado pela transação na perna de destino
+      - name: valor_integracao
+        description: Valor total da integração [R$]
         data_type: numeric
         quote: true
       - name: tipo_integracao
