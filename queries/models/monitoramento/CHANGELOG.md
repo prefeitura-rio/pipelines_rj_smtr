@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.7.0] - 2025-09-17
+
+### Corrigido
+
+- Corrigido os percentuais no `aux_veiculo_falha_ar_condicionado` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+
 ## [1.6.9] - 2025-09-15
 
 ### Corrigido

@@ -12,9 +12,9 @@
                 id_viagem,
                 safe_cast(
                     json_value(
-                        indicadores, '$.indicador_temperatura_nula_zero_viagem.valor'
+                        indicadores, '$.indicador_temperatura_zero_viagem.valor'
                     ) as bool
-                ) as indicador_temperatura_nula_zero_viagem,
+                ) as indicador_temperatura_zero_viagem,
                 safe_cast(
                     json_value(
                         indicadores, '$.indicador_temperatura_transmitida_viagem.valor'
@@ -62,7 +62,7 @@
                 i.ano_fabricacao,
                 i.indicador_ar_condicionado,
                 i.indicador_regularidade_ar_condicionado_viagem,
-                t.indicador_temperatura_nula_zero_viagem,
+                t.indicador_temperatura_zero_viagem,
                 t.indicador_temperatura_transmitida_viagem,
                 t.indicador_temperatura_regular_viagem,
                 v.indicador_falha_recorrente
@@ -92,7 +92,7 @@
                     )
                     and indicador_ar_condicionado
                     and not indicador_falha_recorrente
-                    and not indicador_temperatura_nula_zero_viagem
+                    and not indicador_temperatura_zero_viagem
                     and indicador_temperatura_transmitida_viagem
                     and indicador_temperatura_regular_viagem
                     and not indicador_regularidade_ar_condicionado_viagem
@@ -116,7 +116,7 @@
                     )
                     and (
                         indicador_falha_recorrente
-                        or indicador_temperatura_nula_zero_viagem
+                        or indicador_temperatura_zero_viagem
                         or not indicador_temperatura_transmitida_viagem
                         or not indicador_temperatura_regular_viagem
                     )
