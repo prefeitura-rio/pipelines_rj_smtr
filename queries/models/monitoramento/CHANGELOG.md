@@ -10,6 +10,10 @@
 
 - Adicionada exceção para lacres adicionados após o prazo entre `2025-09-01` e `2025-09-18` no modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/880)
 
+### Corrigido
+
+- Corrigido os percentuais no `aux_veiculo_falha_ar_condicionado` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+
 ## [1.6.9] - 2025-09-15
 
 ### Corrigido
