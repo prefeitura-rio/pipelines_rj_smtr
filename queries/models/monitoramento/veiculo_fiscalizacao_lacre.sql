@@ -167,14 +167,23 @@ with
                 order by datetime_ultima_atualizacao_fonte desc
             )
             = 1
+    ),
+    lacre_atualizado as (
+        select dc.*
+        from {{ this }} as da
+        inner join
+            dados_completos as dc using (
+                id_veiculo, placa, data_inicio_lacre, id_auto_infracao
+            )
+        where
+            da.data_fim_lacre is distinct from dc.data_fim_lacre
+            and dc.data_fim_lacre <= '{{ var("data_final_veiculo_arquitetura_1") }}'
     )
 select *
 from dados_completos
 where
     data_fim_lacre > '{{ var("data_final_veiculo_arquitetura_1") }}'
     or data_fim_lacre is null
-    or (
-        data_fim_lacre <= '{{ var("data_final_veiculo_arquitetura_1") }}'
-        and date(datetime_ultima_atualizacao_fonte)
-        > '{{ var("data_final_veiculo_arquitetura_1") }}'
-    )
+union all by name
+select *
+from lacre_atualizado

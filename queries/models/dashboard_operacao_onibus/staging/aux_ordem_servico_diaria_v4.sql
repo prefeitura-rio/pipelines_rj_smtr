@@ -17,7 +17,7 @@ with
             vista,
             consorcio,
             tipo_dia,
-            sentido,
+            left(sentido, 1) as sentido,
             sum(partidas) as viagens_planejadas,
         from {{ ref("ordem_servico_faixa_horaria_sentido") }}
         group by all
