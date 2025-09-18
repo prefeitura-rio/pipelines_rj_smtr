@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import os
-
+import yaml
 from google.cloud import bigquery
 
 
@@ -66,6 +66,88 @@ def atualizar_descricao_tabela(client, projeto, schema, nome, descricao_tabela, 
     client.update_table(tabela, ["description", "schema"])
 
 
+def propagate_labels(manifest, client):
+    ALLOWED_RESOURCE_TYPES = {"model", "source"}
+
+    with open("queries/tag_propagation_allowlist.yml", "r", encoding="utf-8") as f:
+        allowlist_yaml = yaml.safe_load(f)
+
+    allowlist = set(allowlist_yaml.get("tags-allowlist", []))
+
+    nodes = manifest.get("nodes", {})
+    sources = manifest.get("sources", {})
+    tags_by_node = {}
+    for dct in [nodes, sources]:
+        for node, data in dct.items():
+            if data["resource_type"] not in ALLOWED_RESOURCE_TYPES:
+                continue
+            if "tags" in data:
+                filtered_tags = {t for t in data["tags"] if t in allowlist}
+                tags_by_node[node] = filtered_tags
+            else:
+                tags_by_node[node] = set()
+
+    def dfs(node, inherited_tags):
+        if node in sources:
+            return
+
+        for dep in nodes[node].get("depends_on", {}).get("nodes", []):
+
+            if dep not in tags_by_node:
+                continue
+            before = tags_by_node[dep].copy()
+            tags_by_node[dep].update(set(t for t in inherited_tags if t in allowlist))
+
+            if tags_by_node[dep] != before:
+                dfs(dep, tags_by_node[dep])
+
+    for node in tags_by_node:
+        dfs(node, tags_by_node[node])
+
+    for node, tags in tags_by_node.items():
+        if node in nodes:
+            data = nodes[node]
+        else:
+            data = sources[node]
+
+        if data.get("config", {}).get("materialized") == "ephemeral":
+            continue
+        if "intermediate" in node.lower():
+            continue
+
+        database = data.get("database")
+        schema = data.get("schema")
+        table_name = data.get("alias") or data.get("name")
+
+        if not tags:
+            continue
+
+        if not (database and schema and table_name):
+            continue
+
+        if database != "rj-smtr":
+            continue
+
+        full_id = f"{database}.{schema}.{table_name}"
+
+        try:
+            table = client.get_table(full_id)
+        except Exception as e:
+            print(f"{full_id} não encontrada: {e}")
+            continue
+
+        labels = table.labels or {}
+        for t in tags:
+            labels[t] = "true"
+        table.labels = labels
+
+        try:
+            client.update_table(table, ["labels"])
+            print(f"Atualizado {full_id} com tags: {sorted(tags)}")
+        except Exception as e:
+            print(f"Erro atualizando {full_id}: {e}")
+
+
 def main():
     credentials = json.loads(os.getenv("BQ_AUTH_SA"))
     client = bigquery.Client.from_service_account_info(credentials, project="rj-smtr")
@@ -85,6 +167,8 @@ def main():
             )
         except Exception as e:
             print(f"Error: {modelo['table_name']}: {e}")
+
+    propagate_labels(manifest, client)
 
 
 if __name__ == "__main__":
