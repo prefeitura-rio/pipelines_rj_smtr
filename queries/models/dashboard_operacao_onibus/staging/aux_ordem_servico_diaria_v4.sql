@@ -17,19 +17,12 @@ with
             vista,
             consorcio,
             tipo_dia,
-            sentido,
+            left(sentido, 1) as sentido,
             sum(partidas) as viagens_planejadas,
         from {{ ref("ordem_servico_faixa_horaria_sentido") }}
         group by all
     )
-select
-    data,
-    tipo_dia,
-    servico,
-    vista,
-    consorcio,
-    sentido,
-    viagens_planejadas,
+select data, tipo_dia, servico, vista, consorcio, sentido, viagens_planejadas,
 from calendario
 left join viagens using (feed_start_date, tipo_dia, tipo_os)
 left join ordem_servico_trips_shapes using (feed_start_date, servico, tipo_os, sentido)
