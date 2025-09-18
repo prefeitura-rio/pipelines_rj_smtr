@@ -58,8 +58,8 @@ with
                     and data_processamento between "2025-08-01" and "2025-08-26"
                 )
                 or (
-                    data between "2025-09-01" and "2025-09-18"  -- Exceção para lacres adicionados após o prazo em 2025-09-Q1
-                    and data_processamento between "2025-09-01" and "2025-09-18"
+                    data between "2025-09-01" and "2025-09-19"  -- Exceção para lacres adicionados após o prazo em 2025-09-Q1
+                    and data_processamento between "2025-09-01" and "2025-09-19"
                 )
             )
             {% if is_incremental() %}
