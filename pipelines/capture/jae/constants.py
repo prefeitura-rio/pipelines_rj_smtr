@@ -309,59 +309,17 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "gratuidade": {
             "query": """
-                with cte_laudo_pdc AS (
-                    SELECT
-                        cd_cliente,
-                        data_inclusao AS data_inicio_validade,
-                        LEAD(data_inclusao) OVER(
-                            PARTITION BY cd_cliente ORDER BY data_inclusao
-                        ) AS data_fim_validade,
-                        deficiencia_permanente
-                    FROM laudo_pcd
-                ),
-                cte_estudante AS (
-                    SELECT
-                        cd_cliente,
-                        data_inclusao AS data_inicio_validade,
-                        LEAD(data_inclusao) OVER(
-                            PARTITION BY cd_cliente ORDER BY data_inclusao
-                        ) AS data_fim_validade,
-                        codigo_escola
-                    FROM estudante
-                )
                 SELECT
-                    g.*,
-                    t.descricao AS tipo_gratuidade,
-                    lp.data_inicio_validade,
-                    lp.data_fim_validade,
-                    lp.deficiencia_permanente,
-                    re.descricao AS rede_ensino
+                    *,
+                    t.descricao AS tipo_gratuidade
                 FROM
                     gratuidade g
                 LEFT JOIN
                     tipo_gratuidade t
                 ON
                     g.id_tipo_gratuidade = t.id
-                LEFT JOIN
-                    cte_laudo_pdc lp
-                ON
-                    g.cd_cliente = lp.cd_cliente
-                    AND g.data_inclusao >= lp.data_inicio_validade
-                    AND (g.data_inclusao < lp.data_fim_validade OR lp.data_fim_validade IS NULL)
-                LEFT JOIN
-                    cte_estudante e
-                ON
-                    g.cd_cliente = e.cd_cliente
-                    AND g.data_inclusao >= e.data_inicio_validade
-                    AND (g.data_inclusao < e.data_fim_validade OR e.data_fim_validade IS NULL)
-                LEFT JOIN
-                    escola ec
-                USING(codigo_escola)
-                LEFT JOIN
-                    rede_ensino re
-                ON ec.id_rede_ensino = re.id
                 WHERE
-                    g.data_inclusao BETWEEN '{start}'
+                    data_inclusao BETWEEN '{start}'
                     AND '{end}'
             """,
             "database": "gratuidade_db",
@@ -472,6 +430,54 @@ class constants(Enum):  # pylint: disable=c0103
             ],
             "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
             "capture_flow": "auxiliar",
+        },
+        "estudante": {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    estudante
+                WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'
+            """,
+            "database": "gratuidade_db",
+            "primary_keys": [],
+            "capture_flow": "auxiliar",
+            "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
+            "first_timestamp": datetime(2025, 9, 16, 0, 0, 0),
+        },
+        "escola": {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    escola
+                WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'
+            """,
+            "database": "gratuidade_db",
+            "primary_keys": ["codigo_escola"],
+            "capture_flow": "auxiliar",
+            "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
+            "first_timestamp": datetime(2025, 9, 16, 0, 0, 0),
+        },
+        "laudo_pcd": {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    laudo_pcd
+                WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'
+            """,
+            "database": "gratuidade_db",
+            "primary_keys": ["id"],
+            "capture_flow": "auxiliar",
+            "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
+            "first_timestamp": datetime(2025, 9, 16, 0, 0, 0),
         },
         "ordem_ressarcimento": {
             "query": """
@@ -615,7 +621,7 @@ class constants(Enum):  # pylint: disable=c0103
         SourceTable(
             source_name=JAE_SOURCE_NAME,
             table_id=k,
-            first_timestamp=datetime(2024, 1, 7, 0, 0, 0),
+            first_timestamp=v.get("first_timestamp", datetime(2024, 1, 7, 0, 0, 0)),
             schedule_cron=create_hourly_cron(),
             primary_keys=v["primary_keys"],
             pretreatment_reader_args=v.get("pre_treatment_reader_args"),
@@ -624,6 +630,7 @@ class constants(Enum):  # pylint: disable=c0103
             partition_date_only=v.get("partition_date_only", True),
             max_recaptures=v.get("max_recaptures", 60),
             raw_filetype=v.get("raw_filetype", "json"),
+            file_chunk_size=v.get("file_chunk_size"),
         )
         for k, v in JAE_TABLE_CAPTURE_PARAMS.items()
         if v.get("capture_flow") == "auxiliar"

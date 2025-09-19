@@ -117,3 +117,5 @@ models:
         quote: true
       - name: subtipo_usuario
         description: "{{ doc('subtipo_usuario') }}"
+      - name: id_cre_escola
+        description: "{{ doc('id_cre_escola') }} do cliente"
