@@ -22,6 +22,20 @@ from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import convert_timezone
 
 
+def get_capture_delay_minutes(capture_delay_minutes: dict[str, int], timestamp: datetime) -> int:
+    delay_timestamps = (
+        convert_timezone(timestamp=datetime.fromisoformat(a))
+        for a in capture_delay_minutes.keys()
+        if a != "0"
+    )
+    delay = capture_delay_minutes["0"]
+    for t in delay_timestamps:
+        if timestamp >= t:
+            delay = capture_delay_minutes[t.strftime("%Y-%m-%d %H:%M:%S")]
+
+    return delay
+
+
 def create_billingpay_backup_filepath(
     table_name: str,
     database_name: str,

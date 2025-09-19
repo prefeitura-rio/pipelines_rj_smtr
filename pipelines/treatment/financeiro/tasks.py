@@ -143,7 +143,6 @@ def get_ordem_pagamento_modified_partitions(
         test_name = "dbt_expectations.expect_column_max_to_be_between__data_ordem__bilhetagem_consorcio_operador_dia"  # noqa
 
     log(f"partições = {partitions}")
-    print(test_name)
 
     return {
         "partitions": ", ".join([f"date({p.year}, {p.month}, {p.day})" for p in partitions])

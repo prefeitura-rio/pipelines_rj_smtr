@@ -20,6 +20,7 @@ from pipelines.capture.jae.tasks import (
     create_database_error_discord_message,
     create_jae_general_extractor,
     create_non_filtered_discord_message,
+    create_ressarcimento_db_extractor,
     get_capture_gaps,
     get_end_value_historic_table,
     get_jae_db_config,
@@ -124,7 +125,7 @@ CAPTURA_INTEGRACAO.run_config = KubernetesRun(
 CAPTURA_ORDEM_PAGAMENTO = create_default_capture_flow(
     flow_name="jae: ordem_pagamento - captura",
     source=constants.ORDEM_PAGAMENTO_SOURCES.value,
-    create_extractor_task=create_jae_general_extractor,
+    create_extractor_task=create_ressarcimento_db_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     get_raw_max_retries=0,
 )
