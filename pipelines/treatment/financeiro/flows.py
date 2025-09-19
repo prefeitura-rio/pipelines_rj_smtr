@@ -15,15 +15,21 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 )
 
 from pipelines.capture.jae.constants import constants as jae_constants
+from pipelines.capture.jae.flows import CAPTURA_ORDEM_PAGAMENTO
 from pipelines.constants import constants as smtr_constants
 from pipelines.schedules import every_day_hour_nine
-from pipelines.tasks import get_run_env, get_scheduled_timestamp
+from pipelines.tasks import get_run_env, get_scheduled_timestamp, run_subflow
+from pipelines.treatment.bilhetagem.flows import (
+    INTEGRACAO_MATERIALIZACAO,
+    TRANSACAO_ORDEM_MATERIALIZACAO,
+)
 from pipelines.treatment.cadastro.constants import constants as cadastro_constants
 from pipelines.treatment.financeiro.constants import constants
 from pipelines.treatment.financeiro.tasks import (
     get_ordem_pagamento_modified_partitions,
     get_ordem_quality_check_end_datetime,
     get_ordem_quality_check_start_datetime,
+    raise_quality_check_error,
     set_redis_quality_check_datetime,
 )
 from pipelines.treatment.templates.flows import create_default_materialization_flow
@@ -105,13 +111,15 @@ with Flow(
         additional_mentions=["devs_smtr"],
     )
 
-    set_redis_quality_check_datetime(
+    set_redis = set_redis_quality_check_datetime(
         env=env,
         dataset_id=DATASET_ID,
         table_id=TABLE_ID,
         end_datetime=end_datetime,
         upstream_tasks=[notify_discord],
     )
+
+    raise_quality_check_error(quality_check_message=notify_discord, upstream_tasks=[set_redis])
 
 ordem_pagamento_quality_check.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 ordem_pagamento_quality_check.run_config = KubernetesRun(
@@ -124,5 +132,40 @@ ordem_pagamento_quality_check.state_handlers = [
 ]
 ordem_pagamento_quality_check.schedule = every_day_hour_nine
 
+with Flow(name="financeiro_bilhetagem - captura e tratamento de ordem atrasada") as ordem_atrasada:
+    timestamp = TypedParameter(
+        name="timestamp",
+        default=None,
+        accepted_types=(NoneType, str),
+    )
 
-# ordem pagamento
+    env = get_run_env()
+    timestamp = get_scheduled_timestamp(timestamp=timestamp)
+
+    run_capture = run_subflow(
+        flow_name=CAPTURA_ORDEM_PAGAMENTO.name,
+        parameters=[
+            {"table_id": s.table_id, "timestamp": timestamp, "recapture": False}
+            for s in jae_constants.ORDEM_PAGAMENTO_SOURCES.value
+        ],
+        maximum_parallelism=3,
+    )
+
+    run_materializacao_financeiro_bilhetagem = run_subflow(
+        flow_name=FINANCEIRO_BILHETAGEM_MATERIALIZACAO.name, upstream_tasks=[run_capture]
+    )
+
+    run_ordem_quality_check = run_subflow(
+        flow_name=ordem_pagamento_quality_check.name,
+        upstream_tasks=[run_materializacao_financeiro_bilhetagem],
+    )
+
+    run_materializacao_transacao_ordem = run_subflow(
+        flow_name=TRANSACAO_ORDEM_MATERIALIZACAO.name,
+        upstream_tasks=[run_ordem_quality_check],
+    )
+
+    run_materializacao_integracao = run_subflow(
+        flow_name=INTEGRACAO_MATERIALIZACAO.name,
+        upstream_tasks=[run_materializacao_transacao_ordem],
+    )

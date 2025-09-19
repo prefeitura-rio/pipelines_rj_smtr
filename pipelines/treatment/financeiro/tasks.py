@@ -189,3 +189,9 @@ def set_redis_quality_check_datetime(
         ):
             content["last_run_timestamp"] = value
             redis_client.set(redis_key, content)
+
+
+@task
+def raise_quality_check_error(quality_check_message: str):
+    if ":red_circle:" in quality_check_message:
+        raise ValueError("O teste falhou")

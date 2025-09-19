@@ -172,6 +172,7 @@ with Flow("jae: backup dados BillingPay") as backup_billingpay:
 
     database_name = Parameter(name="database_name")
     end_datetime = Parameter(name="end_datetime", default=None)
+    incremental_only = Parameter(name="end_datetime", default=False)
 
     env = get_run_env()
 
@@ -230,10 +231,12 @@ backup_billingpay.run_config = KubernetesRun(
 )
 backup_billingpay.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
+multiple_execution_dbs = ["processador_transacao_db", "financeiro_db", "midia_db"]
+
 backup_billingpay.schedule = Schedule(
     [
         IntervalClock(
-            interval=timedelta(days=1),
+            interval=timedelta(hours=6) if db in multiple_execution_dbs else timedelta(days=1),
             start_date=datetime(2021, 1, 1, 0, 0, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value))
             + timedelta(minutes=30 * idx),
             labels=[

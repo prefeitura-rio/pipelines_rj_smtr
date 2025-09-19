@@ -854,9 +854,10 @@ def get_capture_gaps(
     save_capture_check_results(env=env, results=df_merge)
 
     if len(timestamps) > 0:
+        ts_log = [f'"{t}",' for t in timestamps]
         log(
             "[{table_id}] Os seguintes timestamps estão divergentes:\n{timestamps_str}".format(
-                table_id=table_id, timestamps_str="\n".join(timestamps)
+                table_id=table_id, timestamps_str="\n".join(ts_log)
             )
         )
     else:
