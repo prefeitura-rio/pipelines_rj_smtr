@@ -1,11 +1,32 @@
 # Changelog - subsidio
 
+## [2.1.6] - 2025-09-17
+
+### Alterado
+
+- Altera nome do indicador `indicador_temperatura_nula_zero_viagem` para criar `indicador_temperatura_zero_viagem` e `indicador_temperatura_nula_viagem`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+- Altera lógica das CTEs para o nível de agregação do validador por viagem (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+- Altera colunas percentuais adicionando uma multiplicação por 100 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+- Altera coluna `quantidade_nula_zero` separando em `quantidade_nula` e `quantidade_zero` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+
+### Corrigido
+
+- Corrige CTE `classificacao_temperatura` adicionando maior ou igual na diferença da temperatura externa pela interna (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+
+## [2.1.5] - 2025-09-15
+
+### Corrigido
+
+- Corrigida a data de inicio da tecnologia_remunerada no modelo `viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/790)
+- Corrigida a coluna tecnologia_remunerada no modelo `viagem_transacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/790)
+- Corrigida o modelo `viagem_transacao_aux_v1` para datas anteriores a `2025-04-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/790)
+
 ## [2.1.4] - 2025-09-02
 
 ### Alterado
 
 - Altera lógica da cte `particoes_completas` no modelo `aux_viagem_temperatura` adicionando um inner join para materializar os dados atuais somente se ainda existirem nos dados novos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/835)
-- Alterado lógica dos modelos `viagem_transacao_aux_v1` e `viagem_transacao_aux_v2` trocando a `DATA_SUBSIDIO_V18_INICIO` pela `DATA_SUBSIDIO_V20_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/829)
+- Alterado lógica dos modelos `viagem_transacao_aux_v1` e `viagem_transacao_aux_v2` trocando a `DATA_SUBSIDIO_V18_INICIO` pela `DATA_SUBSIDIO_V99_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/829)
 
 ## [2.1.3] - 2025-08-19
 
@@ -15,13 +36,13 @@
 
 ### Alterado
 
-- Altera lógica para classificar viagens como `Sem transação`, `Validador fechado` e `Validador associado incorretamente` após `DATA_SUBSIDIO_V20_INICIO` no modelo `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/796)
+- Altera lógica para classificar viagens como `Sem transação`, `Validador fechado` e `Validador associado incorretamente` após `DATA_SUBSIDIO_V99_INICIO` no modelo `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/796)
 
 ## [2.1.2] - 2025-08-15
 
 ### Alterado
 
-- Altera lógica para considerar `indicador_falha_recorrente` após `DATA_SUBSIDIO_V20_INICIO` no modelo `viagem_regularidade_temperatura`, alteração referente ao Processo.rio `MTR-CAP-2025/25179` e `MTR-MEM-2025/02246` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/788)
+- Altera lógica para considerar `indicador_falha_recorrente` após `DATA_SUBSIDIO_V99_INICIO` no modelo `viagem_regularidade_temperatura`, alteração referente ao Processo.rio `MTR-CAP-2025/25179` e `MTR-MEM-2025/02246` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/788)
 
 ## [2.1.1] - 2025-08-14
 

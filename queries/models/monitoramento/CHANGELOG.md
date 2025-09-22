@@ -1,10 +1,22 @@
 # Changelog - monitoramento
 
-## [1.6.9] - 2025-09-10
+## [1.7.1] - 2025-09-22
 
 ### Alterado
 
 - Altera `partition_filter` no modelo `aux_gps_realocacao` para teste diário do GPS (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/869)
+
+## [1.7.0] - 2025-09-17
+
+### Corrigido
+
+- Corrigido os percentuais no `aux_veiculo_falha_ar_condicionado` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+
+## [1.6.9] - 2025-09-15
+
+### Corrigido
+
+- Corrigido o modelo `monitoramento_servico_dia_v2` para a apuração por sentido (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/790)
 
 ## [1.6.8] - 2025-09-09
 
