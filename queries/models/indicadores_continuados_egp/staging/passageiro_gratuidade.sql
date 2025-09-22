@@ -31,7 +31,7 @@ SELECT
 FROM
   consorcio AS c
 LEFT JOIN
-  {{ source("br_rj_riodejaneiro_rdo", "rdo40_tratado") }} AS rdo
+  {{ ref("rdo40_tratado") }} AS rdo
 ON
   rdo.termo = c.id_consorcio
 WHERE

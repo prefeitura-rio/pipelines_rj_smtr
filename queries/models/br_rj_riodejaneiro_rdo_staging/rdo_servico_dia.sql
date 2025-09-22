@@ -5,7 +5,7 @@
 }}
 
 with
-    consorcios as (select id_consorcio, consorcio from `rj-smtr.cadastro.consorcios`),
+    consorcios as (select id_consorcio, consorcio from {{ ref("consorcios") }}),
     rdo as (
         select
             ano,
@@ -74,7 +74,7 @@ with
                 + receita_cartoes_perna_unica_e_demais
                 + receita_especie
             ) as receita_tarifaria_total
-        from {{ source("br_rj_riodejaneiro_rdo", "rdo40_tratado") }} rdo
+        from {{ ref("rdo40_tratado") }} rdo
         left join consorcios cs on rdo.termo = cs.id_consorcio
         group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
     ),
