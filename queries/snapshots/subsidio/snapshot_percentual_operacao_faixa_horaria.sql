@@ -2,8 +2,8 @@
 
     {{
         config(
-            target_schema="subsidio_staging",
-            unique_key="concat(data, '-', faixa_horaria_inicio, '-', servico)",
+            target_schema="subsidio_staging", 
+            unique_key="concat(data, '-', faixa_horaria_inicio, '-', servico, if(sentido is not null, concat('-', sentido), ''))",
             strategy="timestamp",
             updated_at="timestamp_ultima_atualizacao",
             invalidate_hard_deletes=True,
