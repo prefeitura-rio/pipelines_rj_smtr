@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # import os
-from queries.dev.utils import run_dbt_tests, run_dbt_selector, run_dbt
 
+from queries.dev.utils import run_dbt_model
 
-run_dbt(
-    selector_name="snapshot_subsidio",
-    resource="snapshot",
-    flags = "--target dev --defer --state target-base --favor-state",
+# Veja os parâmetros disponíveis da função run_dbt_model em util.py
 
+run_dbt_model(
+    dataset_id="example",
+    table_id="my_first_dbt_model",
 )
