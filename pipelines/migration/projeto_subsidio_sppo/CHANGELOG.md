@@ -1,6 +1,12 @@
 # Changelog - projeto_subsidio_sppo
 
-## [1.2.10] - 2025-09-10
+## [1.3.1] - 2025-09-22
+
+### Corrigido
+
+- Corrigido o argumento `env` na task `get_capture_gaps` no caso de test only (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/885)
+
+## [1.3.0] - 2025-09-10
 
 ### Adicionado
 
