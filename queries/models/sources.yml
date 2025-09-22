@@ -89,6 +89,7 @@ sources:
       - name: rho_registros_sppo
       - name: rho_registros_stpl
       - name: rdo_registros_stpl
+      - name: rdo_servico_dia
       - name: dicionario
 
   - name: br_rj_riodejaneiro_rdo
@@ -98,6 +99,12 @@ sources:
       - name: rdo40_tratado
       - name: rdo40_registros_sppo
 
+  - name: dashboard_bilhetagem_jae
+    database: rj-smtr
+    
+    tables:
+      - name: ultimo_datetime_captura_confiavel
+      
   - name: projeto_subsidio_sppo_encontro_contas
     database: rj-smtr
     tables:
