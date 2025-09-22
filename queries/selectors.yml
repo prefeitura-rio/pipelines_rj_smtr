@@ -372,20 +372,20 @@ selectors:
   - name: snapshot_subsidio
     definition:
       union:
-        - method: fqn
-          value: snapshot_viagens_remuneradas
-        - method: fqn
-          value: snapshot_viagem_transacao
+        # - method: fqn
+        #   value: snapshot_viagens_remuneradas
+        # - method: fqn
+        #   value: snapshot_viagem_transacao
         - method: fqn
           value: snapshot_subsidio_faixa_servico_dia_tipo_viagem
-        - method: fqn
-          value: snapshot_percentual_operacao_faixa_horaria
-        - method: fqn
-          value: snapshot_subsidio_penalidade_servico_faixa
-        - method: fqn
-          value: snapshot_subsidio_sumario_servico_dia_pagamento
-        - method: fqn
-          value: snapshot_sumario_faixa_servico_dia_pagamento
+        # - method: fqn
+        #   value: snapshot_percentual_operacao_faixa_horaria
+        # - method: fqn
+        #   value: snapshot_subsidio_penalidade_servico_faixa
+        # - method: fqn
+        #   value: snapshot_subsidio_sumario_servico_dia_pagamento
+        # - method: fqn
+        #   value: snapshot_sumario_faixa_servico_dia_pagamento
 
   - name: snapshot_veiculo
     definition:
