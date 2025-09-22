@@ -4,7 +4,7 @@
 
 ## [1.0.1] - 2025-09-22
 
-### Adicionado
+### Alterado
 
 - Altera snapshots (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/883):
   - `snapshot_subsidio_penalidade_servico_faixa.sql`
