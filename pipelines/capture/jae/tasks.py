@@ -99,11 +99,9 @@ def create_ressarcimento_db_extractor(source: SourceTable, timestamp: datetime):
     credentials = get_secret(constants.JAE_SECRET_PATH.value)
     params = constants.JAE_TABLE_CAPTURE_PARAMS.value[source.table_id]
 
-    start = source.get_last_scheduled_timestamp(timestamp=timestamp).astimezone(tz=timezone("UTC"))
     end = timestamp.astimezone(tz=timezone("UTC"))
-
-    end = timestamp.astimezone(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S")
-    start = end - timedelta(days=1).strftime("%Y-%m-%d %H:%M:%S")
+    start = (end - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
+    end = end.strftime("%Y-%m-%d %H:%M:%S")
 
     capture_delay_minutes = params.get("capture_delay_minutes", {"0": 0})
 
