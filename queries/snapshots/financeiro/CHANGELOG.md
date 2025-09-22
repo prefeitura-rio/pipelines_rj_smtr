@@ -8,7 +8,6 @@
 
 - Altera snapshots (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/883):
   - `snapshot_subsidio_penalidade_servico_faixa.sql`
-  - `snapshot_subsidio_sumario_servico_dia_pagamento.sql`
   - `snapshot_subsidio_faixa_servico_dia_tipo_viagem.sql`
 
 

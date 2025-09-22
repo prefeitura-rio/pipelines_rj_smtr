@@ -3,7 +3,7 @@
     {{
         config(
             target_schema="dashboard_subsidio_sppo_v2_staging",
-            unique_key="concat(data, '-', faixa_horaria_inicio, '-', servico, if(sentido is not null, concat('-', sentido), ''))",
+            unique_key="concat(data, '-', faixa_horaria_inicio, '-', servico, ifnull(concat('-', cast(sentido as string)), ''))",
             strategy="timestamp",
             updated_at="timestamp_ultima_atualizacao",
             invalidate_hard_deletes=True,

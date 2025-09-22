@@ -1,6 +1,6 @@
 # Changelog - snapshots/dashboard_subsidio_sppo_v2
 
-## [1.0.1] - 2025-05-08
+## [1.0.1] - 2025-09-22
 
 ### Alterado
 
