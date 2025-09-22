@@ -49,10 +49,10 @@ SELECT
   c.id_processo
 FROM consorcio c
 LEFT JOIN
-  {{ source("cadastro_staging","consorcio_modo") }} AS cm
+  {{ ref("consorcio_modo") }} AS cm
 USING (id_consorcio)
 LEFT JOIN
-  {{ source("cadastro","modos") }} AS m
+  {{ ref("modos") }} AS m
 ON
   m.id_modo = cm.id_modo
   AND cm.fonte_id_modo = m.fonte

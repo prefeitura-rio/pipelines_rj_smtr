@@ -29,7 +29,7 @@ with
         left join
             {{ ref("staging_conta_bancaria") }} as cb on ot.cd_cliente = cb.cd_cliente
         join
-            {{ source("cadastro", "modos") }} m
+            {{ ref("modos") }} m
             on ot.cd_tipo_modal = m.id_modo
             and m.fonte = "jae"
     ),
@@ -80,7 +80,7 @@ with
                 from stu_pessoa_fisica
             ) s
         join
-            {{ source("cadastro", "modos") }} m
+            {{ ref("modos") }} m
             on s.id_modo = m.id_modo
             and m.fonte = "stu"
     ),

@@ -1,3 +1,1 @@
-select *
-from {{ source("cadastro", "modos") }}
-;
+select * from {{ source("cadastro", "modos") }}

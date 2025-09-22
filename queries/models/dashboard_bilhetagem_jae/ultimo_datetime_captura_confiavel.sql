@@ -3,7 +3,7 @@ with
         select
             timestamp_captura,
             min(indicador_captura_correta) as indicador_captura_correta
-        from `rj-smtr-staging.source_jae.resultado_verificacao_captura_jae`
+        from {{ source("source_jae", "resultado_verificacao_captura_jae") }}
         where table_id in ('transacao', 'transacao_riocard')
         group by 1
     ),

@@ -71,13 +71,13 @@ sources:
       - name: recursos_sppo_servico_dia_pago
 
   - name: cadastro
-    database: rj-smtr
+    database: rj-smtr-staging
 
     tables:
       - name: modos
 
   - name: cadastro_staging
-    database: rj-smtr
+    database: rj-smtr-staging
 
     tables:
       - name: consorcio_modo
@@ -98,12 +98,6 @@ sources:
     tables:
       - name: rdo40_tratado
       - name: rdo40_registros_sppo
-
-  - name: dashboard_bilhetagem_jae
-    database: rj-smtr
-    
-    tables:
-      - name: ultimo_datetime_captura_confiavel
       
   - name: projeto_subsidio_sppo_encontro_contas
     database: rj-smtr
@@ -292,6 +286,7 @@ sources:
       - name: estudante
       - name: escola
       - name: laudo_pcd
+      - name: resultado_verificacao_captura_jae
 
   - name: source_sonda
     database: rj-smtr-staging
