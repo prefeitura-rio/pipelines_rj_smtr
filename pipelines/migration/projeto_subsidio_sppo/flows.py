@@ -3,7 +3,7 @@
 """
 Flows for projeto_subsidio_sppo
 
-DBT: 2025-09-17
+DBT: 2025-09-23
 """
 
 from datetime import datetime
@@ -566,7 +566,7 @@ with Flow(
                             params=dbt_vars,
                         )
             RUN_APURACAO_V9 = merge(APURACAO_SECOND_RANGE, APURACAO_V9_RUN)
-# Alteração realizada para corrigir snapshots do selector snapshot_subsidio incluindo o sentido
+
             RUN_SNAPSHOTS = run_dbt(
                 resource="snapshot",
                 selector_name="snapshot_subsidio",
