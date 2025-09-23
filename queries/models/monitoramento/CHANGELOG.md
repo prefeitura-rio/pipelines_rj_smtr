@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.7.1] - 2025-09-23
+
+### Alterado
+
+- Remove teste notnull da temperatura da temperatura inmet (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/890)
+
 ## [1.7.0] - 2025-09-17
 
 ### Corrigido
