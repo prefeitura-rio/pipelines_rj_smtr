@@ -209,7 +209,6 @@ with Flow(
         default=["transacao", "transacao_riocard", "gps_validador"],
     )
 
-    # Retira LANCAMENTO_TABLE_ID do teste de captura JAE do subsídio!
     # publish = Parameter("publish", False)
     run_dates = get_run_dates(start_date, end_date)
     partitions = task(

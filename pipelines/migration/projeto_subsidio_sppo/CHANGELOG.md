@@ -2,7 +2,7 @@
 
 ## [1.3.2] - 2025-09-23
 
-### Alterado
+### Removido
 
 - Remove a chave `LANCAMENTO_TABLE_ID` do parâmetro `table_ids_jae` no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/888)
 
