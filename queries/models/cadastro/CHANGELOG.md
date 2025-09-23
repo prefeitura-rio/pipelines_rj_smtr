@@ -1,5 +1,11 @@
 # Changelog - cadastro
 
+## [1.6.4] - 2025-09-23
+
+### Adicionado
+
+- Adiciona modelos `modos.sql` e `aux_consorcio_modo.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/866)
+
 ## [1.6.3] - 2025-08-27
 
 ### Alterado

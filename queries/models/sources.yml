@@ -84,7 +84,6 @@ sources:
       - name: rho_registros_sppo
       - name: rho_registros_stpl
       - name: rdo_registros_stpl
-      - name: rdo_servico_dia
       - name: dicionario
       - name: rdo5_registros_stpl
       - name: rdo5_registros_sppo

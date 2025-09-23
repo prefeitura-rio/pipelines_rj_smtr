@@ -1,5 +1,11 @@
 # Changelog - queries
 
+## [1.1.1] - 2025-09-23
+
+### Alterado
+
+- Altera selector `cadastro` adicionando os modelos de view `consorcio_modo` e `modos` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/866)
+
 ## [1.1.0] - 2025-09-15
 
 ### Alterado
