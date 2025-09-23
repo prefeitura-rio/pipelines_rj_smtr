@@ -1,10 +1,16 @@
 # Changelog - projeto_subsidio_sppo
 
-## [1.3.1] - 2025-09-23
+## [1.3.2] - 2025-09-23
 
 ### Alterado
 
 - Retira `LANCAMENTO_TABLE_ID` do teste de captura JAE do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/888)
+
+## [1.3.1] - 2025-09-22
+
+### Corrigido
+
+- Corrigido o argumento `env` na task `get_capture_gaps` no caso de test only (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/885)
 
 ## [1.3.0] - 2025-09-10
 
