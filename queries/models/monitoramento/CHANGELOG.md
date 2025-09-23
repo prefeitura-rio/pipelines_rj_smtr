@@ -2,7 +2,7 @@
 
 ## [1.7.1] - 2025-09-23
 
-### Alterado
+### Removido
 
 - Remove teste notnull de temperatura da temperatura inmet do modelo `test_completude_temperatura_inmet.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/890)
 
