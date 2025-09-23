@@ -212,7 +212,7 @@ with Flow(
             for t in jae_constants.CHECK_CAPTURE_PARAMS.value.keys()
             if t != jae_constants.LANCAMENTO_TABLE_ID
         ],
-    )  # Retira LANCAMENTO_TABLE_ID do teste de captura JAE do subsídio
+    )  # Retira LANCAMENTO_TABLE_ID do teste de captura JAE do subsídio!
     # publish = Parameter("publish", False)
     run_dates = get_run_dates(start_date, end_date)
     partitions = task(
