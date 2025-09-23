@@ -2,10 +2,10 @@
 
 ## [1.3.2] - 2025-09-23
 
-### Removido
+### Alterado
 
-- Remove a chave `LANCAMENTO_TABLE_ID` do parâmetro `table_ids_jae` no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/888)
 - Altera o default de table_ids_jae foi alterado para ["transacao","transacao_riocard","gps_validador"] em pipelines/migration/projeto_subsidio_sppo/flows.py (param table_ids_jae) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/888)
+- Remove `LANCAMENTO_TABLE_ID` do parâmetro `table_ids_jae` no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/888)
 
 ## [1.3.1] - 2025-09-22
 
