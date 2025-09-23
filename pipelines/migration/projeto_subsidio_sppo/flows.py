@@ -616,7 +616,7 @@ with Flow(
         )
 
         timestamps = get_capture_gaps.map(
-            env=env,
+            env=unmapped(env),
             table_id=table_ids_jae,
             timestamp_captura_start=unmapped(timestamp_captura_start),
             timestamp_captura_end=unmapped(timestamp_captura_end),
