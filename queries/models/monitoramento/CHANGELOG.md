@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.7.1] - 2025-09-23
+
+### Removido
+
+- Remove teste `not_null` da coluna temperatura no modelo `temperatura_inmet` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/890)
+
 ## [1.7.0] - 2025-09-17
 
 ### Alterado
