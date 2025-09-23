@@ -1,1 +1,1 @@
-select * from from {{ source("br_rj_riodejaneiro_rdo", "rdo40_tratado") }}
+select * from {{ source("br_rj_riodejaneiro_rdo", "rdo40_tratado") }}

@@ -52,4 +52,4 @@ select
     safe_cast(ano as int64) ano,
     safe_cast(mes as int64) mes,
     safe_cast(dia as int64) dia
-from `rj-smtr-staging.br_rj_riodejaneiro_rdo_staging.rdo5_registros` as t
+from {{ source("br_rj_riodejaneiro_rdo_staging", "rdo5_registros") }} as t

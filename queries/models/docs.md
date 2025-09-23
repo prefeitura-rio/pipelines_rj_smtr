@@ -1468,3 +1468,19 @@ Data e hora do cadastro do endereco no sistema da Jaé
 {% docs datetime_inativacao_endereco_jae %}
 Data e hora da inativação do cadastro do endereco no sistema da Jaé
 {% enddocs %}
+
+{% docs ano_transacao %}
+Ano das transações
+{% enddocs %}
+
+{% docs mes_transacao %}
+Mês das transações
+{% enddocs %}
+
+{% docs dia_transacao %}
+Dia das transações
+{% enddocs %}
+
+{% docs data_transacao %}
+Data das transações
+{% enddocs %}

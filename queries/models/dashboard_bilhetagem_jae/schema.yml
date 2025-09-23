@@ -126,3 +126,8 @@ models:
         description: "Tempo em minutos entre a trasação atual e a próxima transação da integração"
       - name: versao
         description: "{{ doc('versao') }}"
+  - name: ultimo_datetime_captura_confiavel
+    description:
+    columns:
+      - name: datetime_confiavel
+        description: Datetime da última captura validada

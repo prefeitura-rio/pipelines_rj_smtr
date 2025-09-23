@@ -365,3 +365,21 @@ models:
         description: "{{ doc('id_execucao_dbt') }}"
         data_type: string
         quote: true
+  - name: modos
+    description: 
+    columns:
+      - name: id_modo
+        description: Identificador 
+      - name: modo
+        description: "{{ doc('modo') }}"
+      - name: fonte
+        description: Fonte de origem dos dados
+  - name: consorcio_modo
+    description: 
+    columns:
+      - name: id_consorcio
+        description: Identificador 
+      - name: id_modo
+        description: Identificador 
+      - name: fonte_id_modo
+        description: Fonte de origem dos dados

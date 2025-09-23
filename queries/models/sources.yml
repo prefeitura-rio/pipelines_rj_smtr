@@ -70,17 +70,12 @@ sources:
       - name: recursos_sppo_servico_dia_avaliacao
       - name: recursos_sppo_servico_dia_pago
 
-  - name: cadastro
-    database: rj-smtr-staging
-
-    tables:
-      - name: modos
-
   - name: cadastro_staging
     database: rj-smtr-staging
 
     tables:
       - name: consorcio_modo
+      - name: modos
 
   - name: br_rj_riodejaneiro_rdo_staging
     database: rj-smtr-staging
@@ -91,13 +86,15 @@ sources:
       - name: rdo_registros_stpl
       - name: rdo_servico_dia
       - name: dicionario
+      - name: rdo5_registros_stpl
+      - name: rdo5_registros_sppo
+      - name: rdo5_registros
       - name: rdo40_tratado
 
   - name: br_rj_riodejaneiro_rdo
     database: rj-smtr
 
     tables:
-      - name: rdo40_tratado
       - name: rdo40_registros_sppo
       
   - name: projeto_subsidio_sppo_encontro_contas
