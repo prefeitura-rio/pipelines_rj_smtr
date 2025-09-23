@@ -4,7 +4,7 @@
 
 ### Removido
 
-- Remove teste notnull de temperatura da temperatura inmet (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/890)
+- Remove teste `not_null` da coluna temperatura no modelo `temperatura_inmet` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/890)
 
 ## [1.7.0] - 2025-09-17
 
