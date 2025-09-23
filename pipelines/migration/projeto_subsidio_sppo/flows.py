@@ -213,6 +213,7 @@ with Flow(
         if t != jae_constants.LANCAMENTO_TABLE_ID
     ],
 )
+    
    # publish = Parameter("publish", False)
     run_dates = get_run_dates(start_date, end_date)
     partitions = task(
