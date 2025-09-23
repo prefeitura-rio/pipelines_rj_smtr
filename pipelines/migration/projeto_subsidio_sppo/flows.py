@@ -24,7 +24,6 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
 )
 
-from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.capture.jae.tasks import (
     create_capture_check_discord_message,
     get_capture_gaps,
@@ -207,11 +206,7 @@ with Flow(
     skip_pre_test = Parameter("skip_pre_test", default=False)
     table_ids_jae = Parameter(
         name="table_ids_jae",
-        default=[
-            "transacao",
-            "transacao_riocard",
-            "gps_validador"
-        ],
+        default=["transacao", "transacao_riocard", "gps_validador"],
     )
 
     # Retira LANCAMENTO_TABLE_ID do teste de captura JAE do subsídio!
