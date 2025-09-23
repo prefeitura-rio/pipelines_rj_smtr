@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Altera data do flow de captura inMET (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/890)
+- Altera data do flow de captura INMET (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/890)
 
 ## [1.0.0] - 2025-08-27
 
