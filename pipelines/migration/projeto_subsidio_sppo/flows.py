@@ -209,9 +209,11 @@ with Flow(
     table_ids_jae = Parameter(
     name="table_ids_jae",
     default=[
-        tab for tab in jae_constants.CHECK_CAPTURE_PARAMS.value.keys()
-        if tab != "LANCAMENTO_TABLE_ID"],)
-    # publish = Parameter("publish", False)
+        t for t in jae_constants.CHECK_CAPTURE_PARAMS.value.keys()
+        if t != jae_constants.LANCAMENTO_TABLE_ID
+    ],
+)
+   # publish = Parameter("publish", False)
 
     run_dates = get_run_dates(start_date, end_date)
     partitions = task(
