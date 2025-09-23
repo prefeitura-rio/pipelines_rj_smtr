@@ -3,7 +3,7 @@
     {{
         config(
             target_schema="financeiro_staging",
-            unique_key="concat(data, '-', faixa_horaria_inicio, '-', servico, '-', tipo_viagem, ifnull(concat(cast(sentido as string)), ''))",
+            unique_key="concat(data, '-', faixa_horaria_inicio, '-', servico, '-', tipo_viagem, ifnull(concat('-', (cast(sentido as string)), ''))",
             strategy="timestamp",
             updated_at="timestamp_ultima_atualizacao",
             invalidate_hard_deletes=True,
