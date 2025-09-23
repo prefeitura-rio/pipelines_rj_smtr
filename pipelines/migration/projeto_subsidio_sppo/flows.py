@@ -207,9 +207,10 @@ with Flow(
     test_only = Parameter("test_only", False)
     skip_pre_test = Parameter("skip_pre_test", default=False)
     table_ids_jae = Parameter(
-        name="table_ids_jae",
-        default=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys()),
-    )
+    name="table_ids_jae",
+    default=[
+        tab for tab in jae_constants.CHECK_CAPTURE_PARAMS.value.keys()
+        if tab != "LANCAMENTO_TABLE_ID"],)
     # publish = Parameter("publish", False)
 
     run_dates = get_run_dates(start_date, end_date)
