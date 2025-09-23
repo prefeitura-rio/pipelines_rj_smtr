@@ -49,7 +49,7 @@ SELECT
   c.id_processo
 FROM consorcio c
 LEFT JOIN
-  {{ ref("consorcio_modo") }} AS cm
+  {{ ref("aux_consorcio_modo") }} AS cm
 USING (id_consorcio)
 LEFT JOIN
   {{ ref("modos") }} AS m

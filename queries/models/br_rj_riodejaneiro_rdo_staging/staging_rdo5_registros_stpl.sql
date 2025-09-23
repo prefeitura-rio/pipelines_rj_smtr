@@ -1,3 +1,8 @@
+{{
+    config(
+        alias="rdo_5_registros_stpl",
+    )
+}}
 with
     rdo as (
         select

@@ -50,13 +50,13 @@ models:
       total de passageiros
     columns:
       - name: data
-        description: "{{ doc('data_transacao') }}"
+        description: Data das transações
       - name: ano
-        description: "{{ doc('ano_transacao') }}"
+        description: Ano das transações
       - name: mes
-        description: "{{ doc('mes_transacao') }}"
+        description: Mês das transações
       - name: dia
-        description: "{{ doc('dia_transacao') }}"
+        description: Dia das transações
       - name: id_consorcio
         description: "{{ doc('id_consorcio') }}"
       - name: consorcio
@@ -123,78 +123,6 @@ models:
         description: "{{ doc('class_servico') }}"
       - name: qtd_passageiros_total
         description: "{{ doc('qtd_passageiros_total') }}"
-  - name: rdo40_tratado
-    description: Tabela tratada do Resumo Diário de Operação RDO40
-    columns:
-      - name: data
-        description: "{{ doc('data_transacao') }}"
-      - name: termo
-        description:
-      - name: linha
-        description: "{{ doc('linha') }}"
-      - name: tipo_servico
-        description: "{{ doc('tipo_servico') }}"
-      - name: ordem_servico
-        description: "{{ doc('ordem_servico') }}"
-      - name: codigo_veiculo
-        description: "{{ doc('codigo_veiculo') }}"
-      - name: ano
-        description: "{{ doc('ano_transacao') }}"
-      - name: mes
-        description: "{{ doc('mes_transacao') }}"
-      - name: dia
-        description: "{{ doc('dia_transacao') }}"
-      - name: tarifa_codigo
-        description: "{{ doc('tarifa_codigo') }}"
-      - name: tarifa_valor
-        description: "{{ doc('tarifa_valor') }}"
-      - name: frota_determinada
-        description: "{{ doc('frota_determinada') }}"
-      - name: frota_licenciada
-        description: "{{ doc('frota_licenciada') }}"
-      - name: frota_operante
-        description: "{{ doc('frota_operante') }}"
-      - name: qtd_viagens
-        description: "{{ doc('qtd_viagens') }}"
-      - name: qtd_km_cobertos
-        description: "{{ doc('qtd_km_cobertos') }}"
-      - name: qtd_grt_idoso
-        description: "{{ doc('qtd_grt_idoso') }}"
-      - name: qtd_grt_especial
-        description: "{{ doc('qtd_grt_especial') }}"
-      - name: qtd_grt_estud_federal
-        description: "{{ doc('qtd_grt_estud_federal') }}"
-      - name: qtd_grt_estud_estadual
-        description: "{{ doc('qtd_grt_estud_estadual') }}"
-      - name: qtd_grt_estud_municipal
-        description: "{{ doc('qtd_grt_estud_municipal') }}"
-      - name: qtd_grt_rodoviario
-        description: "{{ doc('qtd_grt_rodoviario') }}"
-      - name: qtd_buc_1_perna
-        description: "{{ doc('qtd_buc_1_perna') }}"
-      - name: qtd_buc_2_perna_integracao
-        description: "{{ doc('qtd_buc_2_perna_integracao') }}"
-      - name: receita_buc
-        description: "{{ doc('receita_buc') }}"
-      - name: qtd_buc_supervia_1_perna
-        description: "{{ doc('qtd_buc_supervia_1_perna') }}"
-      - name: qtd_buc_supervia_2_perna_integracao
-        description: "{{ doc('qtd_buc_supervia_2_perna_integracao') }}"
-      - name: receita_buc_supervia
-        description: "{{ doc('receita_buc_supervia') }}"
-      - name: qtd_cartoes_perna_unica_e_demais
-        description: "{{ doc('qtd_cartoes_perna_unica_e_demais') }}"
-      - name: receita_cartoes_perna_unica_e_demais
-        description: "{{ doc('receita_cartoes_perna_unica_e_demais') }}"
-      - name: qtd_pagamentos_especie
-        description: "{{ doc('qtd_pagamentos_especie') }}"
-      - name: receita_especie
-        description: "{{ doc('receita_especie') }}"
-      - name: qtd_grt_passe_livre_universitario
-        description: "{{ doc('qtd_grt_passe_livre_universitario') }}"
-      - name: class_servico
-        description: "{{ doc('class_servico') }}"
-
   - name: rdo_registros_stpl
     columns:
       - name: data_transacao

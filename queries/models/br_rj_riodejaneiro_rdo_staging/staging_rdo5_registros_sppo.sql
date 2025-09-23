@@ -1,3 +1,8 @@
+{{
+    config(
+        alias="rdo5_registros_sppo",
+    )
+}}
 select
     safe_cast(operadora as string) operadora,
     safe_cast(linha as string) linha,
