@@ -12,7 +12,7 @@ from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
 from sqlalchemy import create_engine
 
-from pipelines.capture.jae.constants import constants
+from pipelines.capture.jae.constants import JAE_SOURCE_NAME, constants
 from pipelines.constants import constants as smtr_constants
 from pipelines.utils.database import create_database_url
 from pipelines.utils.extractors.db import get_raw_db
@@ -317,9 +317,8 @@ def save_capture_check_results(env: str, results: pd.DataFrame):
               - indicador_captura_correta (bool): Se a quantidade de registros é a mesma
     """
     project_id = smtr_constants.PROJECT_NAME.value[env]
-    dataset_id = "source_jae"
-    table_id = "resultado_verificacao_captura_jae"
-
+    dataset_id = f"source_{JAE_SOURCE_NAME}"
+    table_id = constants.RESULTADO_VERIFICACAO_CAPTURA_TABLE_ID.value
     results = results[
         [
             "table_id",

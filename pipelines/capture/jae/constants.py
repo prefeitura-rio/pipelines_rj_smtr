@@ -96,6 +96,7 @@ class constants(Enum):  # pylint: disable=c0103
     JAE_SECRET_PATH = "smtr_jae_access_data"
     JAE_PRIVATE_BUCKET_NAMES = {"prod": "rj-smtr-jae-private", "dev": "rj-smtr-dev-private"}
     ALERT_WEBHOOK = "alertas_bilhetagem"
+    RESULTADO_VERIFICACAO_CAPTURA_TABLE_ID = "resultado_verificacao_captura_jae"
 
     JAE_AUXILIAR_CAPTURE_PARAMS = {}
 

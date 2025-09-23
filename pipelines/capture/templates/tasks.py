@@ -87,6 +87,7 @@ def get_capture_timestamps(
     timestamp: datetime,
     recapture: bool,
     recapture_days: int,
+    recapture_timestamps: list[str],
 ) -> list[datetime]:
     """
     Retorna os timestamps que serão capturados pelo flow
@@ -102,6 +103,9 @@ def get_capture_timestamps(
         list[datetime]: Lista de datetimes para executar a captura
     """
     if recapture:
+        if recapture_timestamps:
+            return recapture_timestamps
+
         return source.get_uncaptured_timestamps(
             timestamp=timestamp,
             retroactive_days=recapture_days,
