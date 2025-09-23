@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.3.2] - 2025-09-23
+
+### Alterado
+
+- Altera o default do parâmetro `table_ids_jae` para ["transacao","transacao_riocard","gps_validador"] no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/888)
+
 ## [1.3.1] - 2025-09-22
 
 ### Corrigido
