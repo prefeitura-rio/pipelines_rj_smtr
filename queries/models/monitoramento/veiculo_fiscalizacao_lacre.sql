@@ -84,7 +84,10 @@ with
                     select 1
                     from {{ staging_veiculo_fiscalizacao_lacre }} as s
                     where
-                        s.data = date('{{ max_data }}')
+                        s.data
+                        = {% if is_incremental() %} date("{{var('date_range_end')}}")
+                        {% else %} date('{{ max_data }}')
+                        {% endif %}
                         and s.n_o_de_ordem = historico.id_veiculo
                         and s.placa = historico.placa
                         and s.data_do_lacre = historico.data_inicio_lacre
