@@ -1,12 +1,12 @@
 # Changelog - projeto_subsidio_sppo
 
-## [1.3.1] - 2025-09-23
+## [1.3.2] - 2025-09-23
 
 ### Alterado
 
 - Retira `LANCAMENTO_TABLE_ID` no flow do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/888)
 
-## [1.2.10] - 2025-09-10
+## [1.3.1] - 2025-09-10
 
 ### Adicionado
 
