@@ -214,7 +214,6 @@ with Flow(
     ],
 )
    # publish = Parameter("publish", False)
-
     run_dates = get_run_dates(start_date, end_date)
     partitions = task(
         lambda run_dates: ", ".join(
