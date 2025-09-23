@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Retira tabela `LANCAMENTO_TABLE_ID` no flow do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/888)
+- Retira `LANCAMENTO_TABLE_ID` no flow do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/888)
 
 ## [1.2.10] - 2025-09-10
 
