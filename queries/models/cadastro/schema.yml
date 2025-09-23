@@ -81,7 +81,7 @@ models:
     description: "Tabela com dados unificados de consorcios"
     columns:
       - name: id_consorcio
-        description: "Identificador único do consórcio, podendo ser o código de permissionário ou código da Jaé"
+        description: "{{ doc('id_consorcio') }}"
       - name: consorcio
         description: "{{ doc('nome_consorcio') }}"
       - name: modo
@@ -135,7 +135,7 @@ models:
     description: "Tabela com a relação entre serviço, consorcio e operadora de transporte de acordo com a base da Jaé"
     columns:
       - name: id_consorcio
-        description: "Identificador único do consórcio, podendo ser o código de permissionário ou código da Jaé"
+        description: "{{ doc('id_consorcio') }}"
         data_type: string
       - name: consorcio
         description: "{{ doc('consorcio') }}"
@@ -366,7 +366,7 @@ models:
         data_type: string
         quote: true
   - name: modos
-    description: 
+    description: Tabela dos tipos de transporte
     columns:
       - name: id_modo
         description: Identificador 
@@ -375,10 +375,10 @@ models:
       - name: fonte
         description: Fonte de origem dos dados
   - name: consorcio_modo
-    description: 
+    description: Tabela de relacionamento entre consórcios e modos de transporte
     columns:
       - name: id_consorcio
-        description: Identificador 
+        description: "{{ doc('id_consorcio') }}"
       - name: id_modo
         description: Identificador 
       - name: fonte_id_modo

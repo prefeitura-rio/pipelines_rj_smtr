@@ -124,10 +124,10 @@ models:
       - name: qtd_passageiros_total
         description: "{{ doc('qtd_passageiros_total') }}"
   - name: rdo40_tratado
-    description: 
+    description: Tabela tratada do Resumo Diário de Operação RDO40
     columns:
       - name: data
-        description:  "{{ doc('data_transacao') }}"
+        description: "{{ doc('data_transacao') }}"
       - name: termo
         description:
       - name: linha

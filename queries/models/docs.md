@@ -1484,3 +1484,7 @@ Dia das transações
 {% docs data_transacao %}
 Data das transações
 {% enddocs %}
+
+{% docs id_consorcio %}
+Identificador único do consórcio, podendo ser o código de permissionário ou código da Jaé
+{% enddocs %}
