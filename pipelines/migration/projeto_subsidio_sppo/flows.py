@@ -97,7 +97,6 @@ with Flow(
         run_dates_remat = get_run_dates(date_range_start, date_range_end)
 
     with case(rematerialization, False):
-
         with case(second_run, True):
             run_dates_true = [{"run_date": get_posterior_date(1)}]
 
@@ -207,13 +206,14 @@ with Flow(
     test_only = Parameter("test_only", False)
     skip_pre_test = Parameter("skip_pre_test", default=False)
     table_ids_jae = Parameter(
-    name="table_ids_jae",
-    default=[
-        t for t in jae_constants.CHECK_CAPTURE_PARAMS.value.keys()
-        if t != jae_constants.LANCAMENTO_TABLE_ID
-            ],
-)# Retira LANCAMENTO_TABLE_ID do teste de captura JAE do subsídio
-   # publish = Parameter("publish", False)
+        name="table_ids_jae",
+        default=[
+            t
+            for t in jae_constants.CHECK_CAPTURE_PARAMS.value.keys()
+            if t != jae_constants.LANCAMENTO_TABLE_ID
+        ],
+    )  # Retira LANCAMENTO_TABLE_ID do teste de captura JAE do subsídio
+    # publish = Parameter("publish", False)
     run_dates = get_run_dates(start_date, end_date)
     partitions = task(
         lambda run_dates: ", ".join(
@@ -287,7 +287,6 @@ with Flow(
 
         # 3. PRE-DATA QUALITY CHECK #
         with case(skip_pre_test, False):
-
             timestamp_captura_start, timestamp_captura_end = jae_capture_check_get_ts_range(
                 timestamp=timestamp,
                 retroactive_days=7,
@@ -606,7 +605,6 @@ with Flow(
             #         SUBSIDIO_SPPO_DASHBOARD_RUN
             #     )
     with case(test_only, True):
-
         timestamp_captura_start, timestamp_captura_end = jae_capture_check_get_ts_range(
             timestamp=timestamp,
             retroactive_days=7,
