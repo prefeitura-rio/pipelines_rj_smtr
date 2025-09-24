@@ -10,8 +10,7 @@ from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.tasks.control_flow import ifelse
 from prefect.tasks.core.constants import Constant
-from prefect.tasks.core.operators import Equal
-from prefect.utilities.collections import DotDict
+from prefect.tasks.core.operators import Equal, GetItem
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
@@ -125,14 +124,14 @@ with Flow(
         )
         upstream_tasks = [run_recapture]
 
-    materialization_params = DotDict(
-        init_dict=create_gap_materialization_params(gaps=gaps, upstream_tasks=run_recapture)
+    materialization_params = create_gap_materialization_params(
+        gaps=gaps, upstream_tasks=run_recapture
     )
 
     selectors = constants.CAPTURE_GAP_SELECTORS.value
     upstream_tasks = None
     for k, v in selectors.items():
-        params = materialization_params.get(k)
+        params = GetItem().run(materialization_params, k, None)
         run_rematerialize = ifelse(
             Equal().run(params, None),
             run_subflow(
