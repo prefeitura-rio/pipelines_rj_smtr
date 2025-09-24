@@ -29,7 +29,6 @@ from pipelines.treatment.financeiro.tasks import (
     get_ordem_pagamento_modified_partitions,
     get_ordem_quality_check_end_datetime,
     get_ordem_quality_check_start_datetime,
-    raise_quality_check_error,
     set_redis_quality_check_datetime,
 )
 from pipelines.treatment.templates.flows import create_default_materialization_flow
@@ -119,7 +118,7 @@ with Flow(
         upstream_tasks=[notify_discord],
     )
 
-    raise_quality_check_error(quality_check_message=notify_discord, upstream_tasks=[set_redis])
+    ordem_pagamento_quality_check.set_reference_tasks([set_redis, notify_discord])
 
 ordem_pagamento_quality_check.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 ordem_pagamento_quality_check.run_config = KubernetesRun(

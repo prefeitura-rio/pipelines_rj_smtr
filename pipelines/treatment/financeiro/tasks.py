@@ -5,6 +5,7 @@ from typing import Optional
 
 import basedosdados as bd
 from prefect import task
+from prefect.triggers import all_finished
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
@@ -152,6 +153,7 @@ def get_ordem_pagamento_modified_partitions(
 @task(
     max_retries=smtr_constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=smtr_constants.RETRY_DELAY.value),
+    trigger=all_finished,
 )
 def set_redis_quality_check_datetime(
     env: str,
@@ -189,9 +191,3 @@ def set_redis_quality_check_datetime(
         ):
             content["last_run_timestamp"] = value
             redis_client.set(redis_key, content)
-
-
-@task
-def raise_quality_check_error(quality_check_message: str):
-    if ":red_circle:" in quality_check_message:
-        raise ValueError("O teste falhou")
