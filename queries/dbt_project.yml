@@ -414,7 +414,13 @@ models:
       staging:
         +schema: financeiro_staging
         +materialized: view
-
+    financeiro_interno:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: financeiro_interno
+      staging:
+        +schema: financeiro_interno_staging
+        +materialized: view
     dashboard_subsidio_sppo_v2:
       +materialized: view
       +schema: dashboard_subsidio_sppo_v2

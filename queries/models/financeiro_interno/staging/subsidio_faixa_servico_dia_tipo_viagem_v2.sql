@@ -1,8 +1,4 @@
-{{
-    config(
-        materialized="ephemeral"
-    )
-}}
+{{ config(materialized="ephemeral") }}
 
 with
     subsidio_faixa_dia as (
@@ -13,6 +9,7 @@ with
             faixa_horaria_fim,
             consorcio,
             servico,
+            sentido,
             pof
         from {{ ref("percentual_operacao_faixa_horaria") }}
         -- from `rj-smtr.subsidio.percentual_operacao_faixa_horaria`
@@ -24,6 +21,7 @@ with
         select
             data,
             servico,
+            sentido,
             case
                 when tipo_viagem = "Nao licenciado"
                 then "Não licenciado"
@@ -75,7 +73,12 @@ with
     ),
     viagem as (
         select
-            data, servico_realizado as servico, id_veiculo, id_viagem, datetime_partida
+            data,
+            servico_realizado as servico,
+            sentido,
+            id_veiculo,
+            id_viagem,
+            datetime_partida
         from {{ ref("viagem_completa") }}
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         where
@@ -86,6 +89,7 @@ with
         select
             v.data,
             v.servico,
+            v.sentido,
             v.id_viagem,
             v.datetime_partida,
             coalesce(ia.indicador_ar_condicionado, false) as indicador_ar_condicionado
@@ -100,6 +104,7 @@ with
             sfd.faixa_horaria_fim,
             sfd.consorcio,
             sfd.servico,
+            sfd.sentido,
             sfd.pof,
             coalesce(s.tipo_viagem, "Sem viagem apurada") as tipo_viagem,
             s.tecnologia_apurada,
@@ -119,12 +124,14 @@ with
             ar_viagem as av
             on sfd.data = av.data
             and sfd.servico = av.servico
+            and sfd.sentido = av.sentido
             and av.datetime_partida
             between sfd.faixa_horaria_inicio and sfd.faixa_horaria_fim
         left join
             servico_km_apuracao as s
             on sfd.data = s.data
             and sfd.servico = s.servico
+            and sfd.sentido = s.sentido
             and s.id_viagem = av.id_viagem
     )
 select
@@ -134,6 +141,7 @@ select
     faixa_horaria_fim,
     consorcio,
     servico,
+    sentido,
     indicador_ar_condicionado,
     indicador_penalidade_judicial,
     indicador_viagem_dentro_limite,
@@ -206,6 +214,7 @@ group by
     faixa_horaria_fim,
     consorcio,
     servico,
+    sentido,
     indicador_ar_condicionado,
     indicador_penalidade_judicial,
     indicador_viagem_dentro_limite,
