@@ -29,7 +29,7 @@ def get_gaps_from_result_table(
     query = f"""
         select
             table_id,
-            format_datetime(timestamp_captura, '%Y-%m-%d %H:%M:%S') as timestamp_captura
+            format_datetime('%Y-%m-%d %H:%M:%S', timestamp_captura) as timestamp_captura
         from
             {project_id}.{dataset_id}.{jae_constants.RESULTADO_VERIFICACAO_CAPTURA_TABLE_ID.value}
         where
