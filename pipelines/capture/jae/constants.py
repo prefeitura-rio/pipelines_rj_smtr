@@ -494,7 +494,7 @@ class constants(Enum):  # pylint: disable=c0103
             "database": "ressarcimento_db",
             "primary_keys": ["id"],
             "capture_flow": "ordem_pagamento",
-            "pretreat_funcs": raise_if_column_isna(column_name="id_ordem_pagamento"),
+            "pretreat_funcs": [raise_if_column_isna(column_name="id_ordem_pagamento")],
         },
         "ordem_pagamento": {
             "query": """
@@ -551,7 +551,7 @@ class constants(Enum):  # pylint: disable=c0103
             "database": "ressarcimento_db",
             "primary_keys": ["id"],
             "capture_flow": "ordem_pagamento",
-            "pretreat_funcs": raise_if_column_isna(column_name="id_ordem_pagamento"),
+            "pretreat_funcs": [raise_if_column_isna(column_name="id_ordem_pagamento")],
         },
         "linha_sem_ressarcimento": {
             "query": """
