@@ -16,6 +16,16 @@ def get_gaps_from_result_table(
     project_id = smtr_constants.PROJECT_NAME.value[env]
     dataset_id = f"source_{JAE_SOURCE_NAME}"
     result = {}
+    date_filter = (
+        f"""
+        and data between date('{timestamp_start}') and date('{timestamp_end}')
+        and
+            timestamp_captura
+            between datetime('{timestamp_start}') and datetime('{timestamp_end}')
+    """
+        if timestamp_start is not None and timestamp_end is not None
+        else ""
+    )
     query = f"""
         select
             table_id,
@@ -23,12 +33,9 @@ def get_gaps_from_result_table(
         from
             {project_id}.{dataset_id}.{jae_constants.RESULTADO_VERIFICACAO_CAPTURA_TABLE_ID.value}
         where
-            data between date('{timestamp_start}') and date('{timestamp_end}')
-            and
-                timestamp_captura
-                between datetime('{timestamp_start}') and datetime('{timestamp_end}')
-            and not indicador_captura_correta
+            not indicador_captura_correta
             and table_id in ({', '.join([f"'{t}'" for t in table_ids])})
+            {date_filter}
         """
     df_bq = pandas_gbq.read_gbq(query, project_id=project_id)
     for table_id in table_ids:

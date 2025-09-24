@@ -96,7 +96,7 @@ ordem_atrasada.state_handlers = [
 
 
 with Flow(
-    name="jae: timestamps com divergentes - recaptura/tratamento"
+    name="jae: timestamps divergentes - recaptura/tratamento"
 ) as timestamp_divergente_jae_recaptura:
 
     timestamp_start = TypedParameter(
