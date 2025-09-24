@@ -369,7 +369,7 @@ models:
     description: Tabela dos tipos de transporte
     columns:
       - name: id_modo
-        description: Identificador 
+        description: Identificador
       - name: modo
         description: "{{ doc('modo') }}"
       - name: fonte
