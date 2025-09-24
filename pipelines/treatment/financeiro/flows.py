@@ -168,3 +168,13 @@ with Flow(name="financeiro_bilhetagem - captura e tratamento de ordem atrasada")
         flow_name=INTEGRACAO_MATERIALIZACAO.name,
         upstream_tasks=[run_materializacao_transacao_ordem],
     )
+
+ordem_atrasada.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
+ordem_atrasada.run_config = KubernetesRun(
+    image=smtr_constants.DOCKER_IMAGE.value,
+    labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
+)
+ordem_atrasada.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+]
