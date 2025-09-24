@@ -20,7 +20,12 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.capture.jae.flows import CAPTURA_ORDEM_PAGAMENTO
 from pipelines.constants import constants as smtr_constants
-from pipelines.tasks import get_run_env, get_scheduled_timestamp, run_subflow
+from pipelines.tasks import (
+    get_run_env,
+    get_scheduled_timestamp,
+    parse_timestamp_to_string,
+    run_subflow,
+)
 from pipelines.treatment.bilhetagem.flows import (
     INTEGRACAO_MATERIALIZACAO,
     TRANSACAO_ORDEM_MATERIALIZACAO,
@@ -48,7 +53,13 @@ with Flow(name="financeiro_bilhetagem: ordem atrasada - captura/tratamento") as 
     run_capture = run_subflow(
         flow_name=CAPTURA_ORDEM_PAGAMENTO.name,
         parameters=[
-            {"table_id": s.table_id, "timestamp": timestamp, "recapture": False}
+            {
+                "table_id": s.table_id,
+                "timestamp": parse_timestamp_to_string(
+                    timestamp=timestamp, pattern="%Y-%m-%d %H:%M:%S"
+                ),
+                "recapture": False,
+            }
             for s in jae_constants.ORDEM_PAGAMENTO_SOURCES.value
         ],
         maximum_parallelism=3,
