@@ -195,9 +195,7 @@ with
             valor_transacao
         from transacao_staging as t
         left join
-            {{ source("cadastro", "modos") }} m
-            on t.id_tipo_modal = m.id_modo
-            and m.fonte = "jae"
+            {{ ref("modos") }} m on t.id_tipo_modal = m.id_modo and m.fonte = "jae"
         left join {{ ref("operadoras") }} do on t.cd_operadora = do.id_operadora_jae
         left join {{ ref("consorcios") }} dc on t.cd_consorcio = dc.id_consorcio_jae
         left join
