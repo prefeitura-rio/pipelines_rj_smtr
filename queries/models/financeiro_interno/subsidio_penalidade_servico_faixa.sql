@@ -13,7 +13,7 @@ with
         where data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
          --fmt:off
          full outer union all by name
-        --fmt:on       
+        --fmt:on
         select *
         from {{ ref("subsidio_penalidade_servico_faixa_v1") }}
         where data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
