@@ -176,9 +176,7 @@ with
             as id_ordem_pagamento_consorcio_operador_dia
         from integracao_melt i
         left join
-            {{ ref("modos") }} m
-            on i.id_tipo_modal = m.id_modo
-            and m.fonte = "jae"
+            {{ ref("modos") }} m on i.id_tipo_modal = m.id_modo and m.fonte = "jae"
         left join {{ ref("operadoras") }} do on i.id_operadora = do.id_operadora_jae
         {# `rj-smtr.cadastro.operadoras` do on i.id_operadora = do.id_operadora_jae #}
         left join {{ ref("consorcios") }} dc on i.id_consorcio = dc.id_consorcio_jae

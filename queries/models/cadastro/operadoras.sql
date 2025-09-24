@@ -28,10 +28,7 @@ with
         join {{ ref("cliente_jae") }} as c on ot.cd_cliente = c.id_cliente
         left join
             {{ ref("staging_conta_bancaria") }} as cb on ot.cd_cliente = cb.cd_cliente
-        join
-            {{ ref("modos") }} m
-            on ot.cd_tipo_modal = m.id_modo
-            and m.fonte = "jae"
+        join {{ ref("modos") }} m on ot.cd_tipo_modal = m.id_modo and m.fonte = "jae"
     ),
     stu_pessoa_juridica as (
         select
@@ -79,10 +76,7 @@ with
                 select *
                 from stu_pessoa_fisica
             ) s
-        join
-            {{ ref("modos") }} m
-            on s.id_modo = m.id_modo
-            and m.fonte = "stu"
+        join {{ ref("modos") }} m on s.id_modo = m.id_modo and m.fonte = "stu"
     ),
     cadastro as (
         select
