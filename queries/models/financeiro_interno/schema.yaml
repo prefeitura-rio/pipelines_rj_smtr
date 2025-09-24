@@ -118,4 +118,3 @@ models:
         description: "{{ doc('id_execucao_dbt') }}"
       - name: sentido
         description: "{{ doc('sentido') }}"
-  
