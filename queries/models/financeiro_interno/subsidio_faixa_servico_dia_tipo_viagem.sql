@@ -19,4 +19,3 @@ with
     )
 select *, '{{ invocation_id }}' as id_execucao_dbt
 from subsidio_faixa_servico_dia_tipo_viagem
-    
