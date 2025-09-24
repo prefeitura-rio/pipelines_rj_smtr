@@ -3,7 +3,7 @@
 """
 Flows for projeto_subsidio_sppo
 
-DBT: 2025-09-17
+DBT: 2025-09-23
 """
 
 from datetime import datetime
@@ -24,7 +24,6 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
 )
 
-from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.capture.jae.tasks import (
     create_capture_check_discord_message,
     get_capture_gaps,
@@ -97,7 +96,6 @@ with Flow(
         run_dates_remat = get_run_dates(date_range_start, date_range_end)
 
     with case(rematerialization, False):
-
         with case(second_run, True):
             run_dates_true = [{"run_date": get_posterior_date(1)}]
 
@@ -208,10 +206,10 @@ with Flow(
     skip_pre_test = Parameter("skip_pre_test", default=False)
     table_ids_jae = Parameter(
         name="table_ids_jae",
-        default=list(jae_constants.CHECK_CAPTURE_PARAMS.value.keys()),
+        default=["transacao", "transacao_riocard", "gps_validador"],
     )
-    # publish = Parameter("publish", False)
 
+    # publish = Parameter("publish", False)
     run_dates = get_run_dates(start_date, end_date)
     partitions = task(
         lambda run_dates: ", ".join(
@@ -285,7 +283,6 @@ with Flow(
 
         # 3. PRE-DATA QUALITY CHECK #
         with case(skip_pre_test, False):
-
             timestamp_captura_start, timestamp_captura_end = jae_capture_check_get_ts_range(
                 timestamp=timestamp,
                 retroactive_days=7,
@@ -604,7 +601,6 @@ with Flow(
             #         SUBSIDIO_SPPO_DASHBOARD_RUN
             #     )
     with case(test_only, True):
-
         timestamp_captura_start, timestamp_captura_end = jae_capture_check_get_ts_range(
             timestamp=timestamp,
             retroactive_days=7,
@@ -613,7 +609,7 @@ with Flow(
         )
 
         timestamps = get_capture_gaps.map(
-            env=env,
+            env=unmapped(env),
             table_id=table_ids_jae,
             timestamp_captura_start=unmapped(timestamp_captura_start),
             timestamp_captura_end=unmapped(timestamp_captura_end),

@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Flows de captura dos dados do INMET"""
+"""
+Flows de captura dos dados do INMET
+
+DBT: 2025-09-23
+"""
 from pipelines.capture.inmet.constants import constants
 from pipelines.capture.inmet.tasks import create_temperatura_extractor
 from pipelines.capture.templates.flows import create_default_capture_flow
