@@ -8,9 +8,9 @@ from types import NoneType
 
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
-from prefect.tasks.control_flow import ifelse
+from prefect.tasks.control_flow import case, merge
 from prefect.tasks.core.constants import Constant
-from prefect.tasks.core.operators import Equal, GetItem
+from prefect.tasks.core.operators import GetItem, NotEqual
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
@@ -122,41 +122,47 @@ with Flow(
         timestamp_end=timestamp_end,
     )
 
-    upstream_tasks = None
-    tasks = []
+    upstream_task = gaps
     for k, v in tables.items():
 
-        tasks.append(
-            ifelse(
-                gaps[k]["flag_has_gaps"].is_equal(True),
-                run_subflow(
-                    flow_name=v,
-                    parameters={"recapture": True, "recapture_timestamps": gaps[k]["timestamps"]},
-                    upstream_tasks=None if len(tasks) == 0 else tasks,
-                ),
-                Constant(
-                    value=None,
-                    name="run_recapture_false",
-                ),
+        with case(gaps[k]["flag_has_gaps"].is_equal(True), True):
+            run_recapture_true = run_subflow(
+                flow_name=v,
+                parameters={"recapture": True, "recapture_timestamps": gaps[k]["timestamps"]},
             )
-        )
 
-    materialization_params = create_gap_materialization_params(gaps=gaps, upstream_tasks=tasks)
+        with case(gaps[k]["flag_has_gaps"].is_equal(True), False):
+            run_recapture_false = Constant(
+                value=None,
+                name="run_recapture_false",
+            )
+
+        run_recapture = merge(run_recapture_true, run_recapture_false)
+
+        run_recapture.set_upstream(upstream_task)
+        upstream_task = run_recapture
+
+    materialization_params = create_gap_materialization_params(
+        gaps=gaps, upstream_tasks=[upstream_task]
+    )
 
     selectors = constants.CAPTURE_GAP_SELECTORS.value
 
+    upstream_task = materialization_params
     for k, v in selectors.items():
         params = GetItem().run(task_result=materialization_params, key=k, default=None)
-        run_rematerialize = ifelse(
-            Equal().run(params, None),
-            Constant(value=None, name="run_rematerialize_false"),
-            run_subflow(
+        with case(NotEqual().run(params, None), True):
+            run_rematerialize_true = run_subflow(
                 flow_name=v["flow_name"],
                 parameters=params,
-                upstream_tasks=upstream_tasks,
-            ),
-        )
-        upstream_tasks = [run_rematerialize]
+            )
+
+        with case(NotEqual().run(params, None), False):
+            run_rematerialize_false = Constant(value=None, name="run_rematerialize_false")
+
+        run_rematerialize = merge(run_rematerialize_true, run_rematerialize_false)
+        run_rematerialize.set_upstream(upstream_task)
+        upstream_task = run_rematerialize
 
 
 timestamp_divergente_jae_recaptura.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
