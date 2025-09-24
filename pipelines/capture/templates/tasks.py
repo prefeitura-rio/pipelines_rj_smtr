@@ -21,7 +21,11 @@ from pipelines.utils.fs import (
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.prefect import rename_current_flow_run
 from pipelines.utils.pretreatment import transform_to_nested_structure
-from pipelines.utils.utils import create_timestamp_captura, data_info_str
+from pipelines.utils.utils import (
+    convert_timezone,
+    create_timestamp_captura,
+    data_info_str,
+)
 
 ############################
 # Flow Configuration Tasks #
@@ -104,7 +108,7 @@ def get_capture_timestamps(
     """
     if recapture:
         if recapture_timestamps:
-            return recapture_timestamps
+            return [convert_timezone(t) for t in recapture_timestamps]
 
         return source.get_uncaptured_timestamps(
             timestamp=timestamp,
