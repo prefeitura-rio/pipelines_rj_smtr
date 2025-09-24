@@ -137,7 +137,6 @@ with Flow(
                 Constant(
                     value=None,
                     name="run_recapture_false",
-                    upstream_tasks=None if len(tasks) == 0 else tasks,
                 ),
             )
         )
