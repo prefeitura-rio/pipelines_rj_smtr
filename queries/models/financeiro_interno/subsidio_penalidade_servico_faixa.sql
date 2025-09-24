@@ -10,7 +10,8 @@ with
     subsidio_penalidade_servico_faixa as (
         select *
         from {{ ref("subsidio_penalidade_servico_faixa_v2") }}
-        where data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+        where
+            data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
          --fmt:off
          full outer union all by name
         --fmt:on
