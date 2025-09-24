@@ -88,7 +88,6 @@ sources:
       - name: rdo5_registros_stpl
       - name: rdo5_registros_sppo
       - name: rdo5_registros
-      - name: rdo40_tratado
 
   - name: br_rj_riodejaneiro_rdo
     database: rj-smtr

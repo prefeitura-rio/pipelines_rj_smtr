@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona modelos `modos.sql` e `aux_consorcio_modo.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/866)
+- Adiciona modelos `modos.sql` e `aux_consorcio_modo.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/886)
 
 ## [1.6.3] - 2025-08-27
 

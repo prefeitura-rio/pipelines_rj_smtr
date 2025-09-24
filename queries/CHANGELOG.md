@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Altera selector `cadastro` adicionando os modelos de view `consorcio_modo` e `modos` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/866)
+- Altera selector `cadastro` adicionando os modelos de view `consorcio_modo` e `modos` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/886)
 
 ## [1.1.0] - 2025-09-15
 

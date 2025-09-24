@@ -185,7 +185,7 @@ selectors:
         - method: fqn
           value: endereco_cliente_cpf_jae
         - method: fqn
-          value: modo_consorcio
+          value: consorcio_modo
         - method: fqn
           value: modos
 

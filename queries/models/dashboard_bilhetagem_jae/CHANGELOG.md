@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Cria o modelo da view `ultimo_datetime_captura_confiavel.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/817)
+- Cria o modelo da view `ultimo_datetime_captura_confiavel.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/886)
 ## [2.0.2] - 2025-08-28
 
 ### Alterado

@@ -1468,7 +1468,3 @@ Data e hora do cadastro do endereco no sistema da Jaé
 {% docs datetime_inativacao_endereco_jae %}
 Data e hora da inativação do cadastro do endereco no sistema da Jaé
 {% enddocs %}
-
-{% docs id_consorcio %}
-Identificador único do consórcio, podendo ser o código de permissionário ou código da Jaé
-{% enddocs %}
