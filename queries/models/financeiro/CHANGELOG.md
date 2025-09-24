@@ -1,6 +1,6 @@
 # Changelog - financeiro
 
-## [1.1.1] - 2025-09-23
+## [1.1.1] - 2025-09-24
 
 ### Alterado
 
