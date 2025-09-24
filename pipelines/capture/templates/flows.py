@@ -103,7 +103,7 @@ def create_default_capture_flow(
 
         recapture_timestamps = TypedParameter(
             name="recapture_timestamps",
-            default=False,
+            default=None,
             accepted_types=(NoneType, list),
         )
 

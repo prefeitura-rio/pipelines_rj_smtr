@@ -12,7 +12,7 @@ from pipelines.treatment.bilhetagem_processos_manuais.constants import constants
 @task
 def get_gaps_from_result_table(
     env: str, table_ids: list[str], timestamp_start: str, timestamp_end: str
-) -> dict[list[str], bool]:
+) -> dict:
     project_id = smtr_constants.PROJECT_NAME.value[env]
     dataset_id = f"source_{JAE_SOURCE_NAME}"
     result = {}
@@ -21,7 +21,7 @@ def get_gaps_from_result_table(
             table_id,
             format_datetime(timestamp_captura, '%Y-%m-%d %H:%M:%S') as timestamp_captura
         from
-            {project_id}.{dataset_id}.{jae_constants.RESULTADO_VERIFICACAO_CAPTURA_TABLE_ID.name}
+            {project_id}.{dataset_id}.{jae_constants.RESULTADO_VERIFICACAO_CAPTURA_TABLE_ID.value}
         where
             data between date('{timestamp_start}') and date('{timestamp_end}')
             and
@@ -41,12 +41,12 @@ def get_gaps_from_result_table(
 
 
 @task
-def create_gap_materialization_params(gaps: dict[list[str], bool]) -> dict:
+def create_gap_materialization_params(gaps: dict) -> dict:
     result = {}
     for k, v in constants.CAPTURE_GAP_SELECTORS.value.items():
         ts_list = []
 
-        if any([gaps[a]["flag_has_gaps"] for a in v["capture_tables"]]):
+        if any(gaps[a]["flag_has_gaps"] for a in v["capture_tables"]):
             for t in v["capture_tables"]:
                 ts_list = ts_list + gaps[t]["timestamps"]
 

@@ -172,7 +172,6 @@ with Flow("jae: backup dados BillingPay") as backup_billingpay:
 
     database_name = Parameter(name="database_name")
     end_datetime = Parameter(name="end_datetime", default=None)
-    incremental_only = Parameter(name="end_datetime", default=False)
 
     env = get_run_env()
 
