@@ -61,3 +61,6 @@ def raise_if_column_isna(column_name: str):
     def func(data: pd.DataFrame, timestamp: datetime, primary_keys: list):
         if not data[data[column_name].isna()].empty:
             raise ValueError(f"A coluna {column_name} está nula")
+        return data
+
+    return func
