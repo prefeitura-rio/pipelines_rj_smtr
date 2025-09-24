@@ -127,7 +127,7 @@ models:
       - name: versao
         description: "{{ doc('versao') }}"
   - name: ultimo_datetime_captura_confiavel
-    description:
+    description: Tabela do horário de última atualização de captura válida
     columns:
       - name: datetime_confiavel
         description: Datetime da última captura validada
