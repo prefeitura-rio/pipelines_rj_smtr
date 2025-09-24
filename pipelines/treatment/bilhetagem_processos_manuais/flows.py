@@ -126,7 +126,7 @@ with Flow(
         upstream_tasks = [run_recapture]
 
     materialization_params = DotDict(
-        create_gap_materialization_params(gaps=gaps, upstream_tasks=run_recapture)
+        init_dict=create_gap_materialization_params(gaps=gaps, upstream_tasks=run_recapture)
     )
 
     selectors = constants.CAPTURE_GAP_SELECTORS.value
