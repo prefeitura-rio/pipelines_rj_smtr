@@ -131,7 +131,7 @@ with Flow(
     selectors = constants.CAPTURE_GAP_SELECTORS.value
     upstream_tasks = None
     for k, v in selectors.items():
-        params = GetItem().run(materialization_params, k, None)
+        params = GetItem().run(task_result=materialization_params, key=k, default=None)
         run_rematerialize = ifelse(
             Equal().run(params, None),
             run_subflow(
