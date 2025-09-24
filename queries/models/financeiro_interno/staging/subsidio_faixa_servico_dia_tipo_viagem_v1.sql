@@ -1,8 +1,4 @@
-{{
-    config(
-        materialized="ephemeral"
-    )
-}}
+{{ config(materialized="ephemeral") }}
 
 with
     subsidio_faixa_dia as (

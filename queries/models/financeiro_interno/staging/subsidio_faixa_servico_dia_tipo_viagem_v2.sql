@@ -1,8 +1,4 @@
-{{
-    config(
-        materialized="ephemeral"
-    )
-}}
+{{ config(materialized="ephemeral") }}
 
 with
     subsidio_faixa_dia as (
@@ -77,7 +73,12 @@ with
     ),
     viagem as (
         select
-            data, servico_realizado as servico, sentido, id_veiculo, id_viagem, datetime_partida
+            data,
+            servico_realizado as servico,
+            sentido,
+            id_veiculo,
+            id_viagem,
+            datetime_partida
         from {{ ref("viagem_completa") }}
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         where
