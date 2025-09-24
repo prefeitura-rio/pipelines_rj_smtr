@@ -123,34 +123,39 @@ with Flow(
     )
 
     upstream_tasks = None
+    tasks = []
     for k, v in tables.items():
-        run_recapture = ifelse(
-            gaps[k]["flag_has_gaps"].is_equal(True),
-            run_subflow(
-                flow_name=v,
-                parameters={"recapture": True, "recapture_timestamps": gaps[k]["timestamps"]},
-                upstream_tasks=upstream_tasks,
-            ),
-            Constant(value=None, name="run_recapture_false"),
-        )
-        upstream_tasks = [run_recapture]
 
-    materialization_params = create_gap_materialization_params(
-        gaps=gaps, upstream_tasks=run_recapture
-    )
+        tasks.append(
+            ifelse(
+                gaps[k]["flag_has_gaps"].is_equal(True),
+                run_subflow(
+                    flow_name=v,
+                    parameters={"recapture": True, "recapture_timestamps": gaps[k]["timestamps"]},
+                    upstream_tasks=None if len(tasks) == 0 else tasks,
+                ),
+                Constant(
+                    value=None,
+                    name="run_recapture_false",
+                    upstream_tasks=None if len(tasks) == 0 else tasks,
+                ),
+            )
+        )
+
+    materialization_params = create_gap_materialization_params(gaps=gaps, upstream_tasks=tasks)
 
     selectors = constants.CAPTURE_GAP_SELECTORS.value
-    upstream_tasks = None
+
     for k, v in selectors.items():
         params = GetItem().run(task_result=materialization_params, key=k, default=None)
         run_rematerialize = ifelse(
             Equal().run(params, None),
+            Constant(value=None, name="run_rematerialize_false"),
             run_subflow(
                 flow_name=v["flow_name"],
                 parameters=params,
                 upstream_tasks=upstream_tasks,
             ),
-            Constant(value=None, name="run_rematerialize_false"),
         )
         upstream_tasks = [run_rematerialize]
 
