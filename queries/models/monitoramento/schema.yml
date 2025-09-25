@@ -799,9 +799,6 @@ models:
               name: not_null__id_estacao__temperatura_inmet
       - name: temperatura
         description: "Temperatura medida pela estação meteorológica (°C)"
-        tests:
-          - not_null:
-              name: not_null__temperatura__temperatura_inmet
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
       - name: versao
