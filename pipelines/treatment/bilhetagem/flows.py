@@ -68,9 +68,7 @@ INTEGRACAO_MATERIALIZACAO.schedule = Schedule(
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
             ],
             parameter_defaults={"fallback_run": True},
-        )
-    ]
-    + [
+        ),
         IntervalClock(
             interval=timedelta(days=1),
             start_date=datetime(
@@ -80,7 +78,7 @@ INTEGRACAO_MATERIALIZACAO.schedule = Schedule(
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
             ],
             parameter_defaults={"fallback_run": True},
-        )
+        ),
     ]
 )
 
@@ -106,6 +104,32 @@ TRANSACAO_ORDEM_MATERIALIZACAO = create_default_materialization_flow(
 
 TRANSACAO_ORDEM_MATERIALIZACAO.state_handlers.append(
     handler_notify_failure(webhook="alertas_bilhetagem")
+)
+
+TRANSACAO_ORDEM_MATERIALIZACAO.schedule = Schedule(
+    TRANSACAO_ORDEM_MATERIALIZACAO.schedule.clocks
+    + [
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(
+                2022, 11, 30, 10, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+            ),
+            labels=[
+                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+            parameter_defaults={"fallback_run": True},
+        ),
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(
+                2022, 11, 30, 12, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+            ),
+            labels=[
+                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+            parameter_defaults={"fallback_run": True},
+        ),
+    ]
 )
 
 TRANSACAO_VALOR_ORDEM_MATERIALIZACAO = create_default_materialization_flow(

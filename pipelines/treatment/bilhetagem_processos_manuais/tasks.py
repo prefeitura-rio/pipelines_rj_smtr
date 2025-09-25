@@ -16,7 +16,7 @@ def create_transacao_ordem_capture_params(timestamp: str) -> dict:
     return {
         "timestamp": jae_constants.TRANSACAO_ORDEM_SOURCE.value.get_last_scheduled_timestamp(
             timestamp=timestamp
-        ).strftime("%Y-%m%s %H:%M:%S"),
+        ).strftime("%Y-%m-%d %H:%M:%S"),
         "recapture": False,
     }
 

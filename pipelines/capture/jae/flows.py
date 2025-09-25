@@ -122,9 +122,7 @@ CAPTURA_INTEGRACAO.schedule = Schedule(
             labels=[
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
             ],
-        )
-    ]
-    + [
+        ),
         IntervalClock(
             interval=timedelta(days=1),
             start_date=datetime(
@@ -133,7 +131,7 @@ CAPTURA_INTEGRACAO.schedule = Schedule(
             labels=[
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
             ],
-        )
+        ),
     ]
 )
 
@@ -175,9 +173,7 @@ CAPTURA_TRANSACAO_ORDEM.schedule = Schedule(
             labels=[
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
             ],
-        )
-    ]
-    + [
+        ),
         IntervalClock(
             interval=timedelta(days=1),
             start_date=datetime(
@@ -186,7 +182,7 @@ CAPTURA_TRANSACAO_ORDEM.schedule = Schedule(
             labels=[
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
             ],
-        )
+        ),
     ]
 )
 # CAPTURA_TRANSACAO_ORDEM.run_config = KubernetesRun(
