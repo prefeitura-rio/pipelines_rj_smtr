@@ -5,7 +5,7 @@ from typing import Any, Dict, Type, Union
 
 import prefect
 from prefect import unmapped
-from prefect.backend.flow_run import FlowRunView, FlowView, watch_flow_run
+from prefect.backend.flow_run import FlowRunView, watch_flow_run  # , FlowView
 from prefect.client import Client
 from prefect.engine.state import Skipped, State
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
@@ -131,27 +131,28 @@ def create_subflow_run(
     """
     )
 
-    flow = FlowView.from_flow_name(flow_name, project_name=project_name)
+    # flow = FlowView.from_flow_name(flow_name, project_name=project_name)
 
-    client = prefect.Client()
+    # client = prefect.Client()
 
-    flow_run_id = client.create_flow_run(
-        flow_id=flow.flow_id,
-        parameters=parameters,
-        labels=labels,
-        idempotency_key=idempotency_key,
-    )
+    # flow_run_id = client.create_flow_run(
+    #     flow_id=flow.flow_id,
+    #     parameters=parameters,
+    #     labels=labels,
+    #     idempotency_key=idempotency_key,
+    # )
 
     # try:
     #     prefect.context["_subflow_ids"].append(flow_run_id)
     # except KeyError:
     #     prefect.context["_subflow_ids"] = [flow_run_id]
 
-    run_url = constants.FLOW_RUN_URL_PATTERN.value.format(run_id=flow_run_id)
+    # run_url = constants.FLOW_RUN_URL_PATTERN.value.format(run_id=flow_run_id)
 
-    log(f"Created flow run: {run_url}")
+    # log(f"Created flow run: {run_url}")
 
-    return flow_run_id
+    # return flow_run_id
+    return ""
 
 
 def wait_subflow_run(flow_run_id: str) -> FlowRunView:

@@ -13,7 +13,9 @@ from pytz import timezone
 
 from pipelines.constants import constants
 from pipelines.utils.discord import send_discord_message
-from pipelines.utils.prefect import FailedSubFlow, create_subflow_run, wait_subflow_run
+
+# from pipelines.utils.prefect import FailedSubFlow, create_subflow_run, wait_subflow_run
+from pipelines.utils.prefect import create_subflow_run
 from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import convert_timezone
 
@@ -186,7 +188,7 @@ def run_subflow(
     if idempotency_key and map_index is not None:
         idempotency_key += f"-{map_index}"
 
-    flow_run_results = []
+    # flow_run_results = []
 
     for idx, param_list in enumerate(parameters):
         if not isinstance(param_list, list):
@@ -203,21 +205,23 @@ def run_subflow(
             for sub_idx, params in enumerate(param_list)
         ]
 
-        for run_id in runs_ids:
-            result = wait_subflow_run(flow_run_id=run_id)
-            flow_run_results.append(result)
+        return runs_ids
 
-    failed_message = "The following runs failed:"
-    flag_failed_runs = False
-    for res in flow_run_results:
-        if res.state.is_failed():
-            flag_failed_runs = True
-            failed_message += "\n" + constants.FLOW_RUN_URL_PATTERN.value.format(
-                run_id=res.flow_run_id
-            )
+        # for run_id in runs_ids:
+        #     result = wait_subflow_run(flow_run_id=run_id)
+        #     flow_run_results.append(result)
 
-    if flag_failed_runs:
-        raise FailedSubFlow(failed_message)
+    # failed_message = "The following runs failed:"
+    # flag_failed_runs = False
+    # for res in flow_run_results:
+    #     if res.state.is_failed():
+    #         flag_failed_runs = True
+    #         failed_message += "\n" + constants.FLOW_RUN_URL_PATTERN.value.format(
+    #             run_id=res.flow_run_id
+    #         )
+
+    # if flag_failed_runs:
+    #     raise FailedSubFlow(failed_message)
 
 
 @task(trigger=all_finished)
