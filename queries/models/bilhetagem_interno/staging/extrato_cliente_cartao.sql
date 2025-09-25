@@ -1,8 +1,89 @@
-with
-    extrato_cliente as (
+{{
+    config(
+        materialized="incremental",
+        incremental_strategy="merge",
+        partition_by={
+            "field": "id_conta",
+            "data_type": "int64",
+            "range": {"start": 0, "end": 1000000000, "interval": 100000},
+        },
+        unique_key="id_lancamento_particao",
+    )
+}}
+
+{% set staging_lancamento = ref("staging_lancamento") %}
+
+{% set incremental_filter %}
+    data between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
+    and timestamp_captura between datetime("{{var('date_range_start')}}") and datetime("{{var('date_range_end')}}")
+{% endset %}
+
+{% if execute and is_incremental() %}
+    {% set columns = (
+        list_columns()
+        | reject(
+            "in",
+            ["versao", "datetime_ultima_atualizacao", "id_execucao_dbt"],
+        )
+        | list
+    ) %}
+    {% set sha_column %}
+        sha256(
+            concat(
+                {% for c in columns %}
+                    ifnull(cast({{ c }} as string), 'n/a')
+                    {% if not loop.last %}, {% endif %}
+
+                {% endfor %}
+            )
+        )
+    {% endset %}
+    {% set partitions_query %}
+        with
+            ids as (
+                select distinct cast(id_conta as integer) as id
+                from {{ staging_lancamento }}
+                where {{ incremental_filter }}
+            ),
+            grupos as (select distinct div(id, 100000) as group_id from ids),
+            identifica_grupos_continuos as (
+                select
+                    group_id,
+                    if(
+                        lag(group_id) over (order by group_id) = group_id - 1, 0, 1
+                    ) as id_continuidade
+                from grupos
+            ),
+            grupos_continuos as (
+                select
+                    group_id, sum(id_continuidade) over (order by group_id) as id_continuidade
+                from identifica_grupos_continuos
+            )
         select
-            l.id_conta,
+            distinct
+            concat(
+                "id_conta between ",
+                min(group_id) over (partition by id_continuidade) * 100000,
+                " and ",
+                (max(group_id) over (partition by id_continuidade) + 1) * 100000 - 1
+            )
+        from grupos_continuos
+    {% endset %}
+
+    {% set partitions = run_query(partitions_query).columns[0].values() %}
+
+{% else %}
+    {% set sha_column %}
+        cast(null as bytes)
+    {% endset %}
+{% endif %}
+
+with
+    dados_novos as (
+        select
+            cast(l.id_conta as string) as id_conta,
             l.cd_cliente as id_cliente,
+            concat(l.id_lancamento, l.id_conta) as id_lancamento_particao,
             j.nome as nome_cliente,
             j.documento as nr_documento,
             j.tipo_documento,
@@ -16,9 +97,8 @@ with
                 then split(l.id_conta, ".")[offset(3)]
             end as nr_logico_midia
         from {{ ref("staging_lancamento") }} as l
-        -- from `rj-smtr-dev.adriano__bilhetagem_interno_staging.lancamento` 
-        left join
-            `rj-smtr.cadastro_interno.cliente_jae` j on j.id_cliente = l.cd_cliente
+        -- from `rj-smtr-dev.adriano__bilhetagem_interno_staging.lancamento`
+        left join {{ ref("cliente_jae") }} j on j.id_cliente = l.cd_cliente
         where
             (
                 regexp_contains(l.id_conta, r'^2\.2\.1\.[A-Za-z0-9]+\.(1|2|6)$')
@@ -30,6 +110,51 @@ with
                 order by l.timestamp_captura desc
             )
             = 1
+    ) sha_dados_novos as (select *, {{ sha_column }} as sha_dado_novo from dados_novos),
+    sha_dados_atuais as (
+        {% if is_incremental() and partitions | length > 0 %}
+
+            select
+                id_lancamento_particao,
+                {{ sha_column }} as sha_dado_atual,
+                datetime_ultima_atualizacao as datetime_ultima_atualizacao_atual,
+                id_execucao_dbt as id_execucao_dbt_atual
+            from {{ this }}
+            where {{ partitions | join("\nor ") }}
+
+        {% else %}
+            select
+                cast(null as string) as id_lancamento_particao,
+                cast(null as bytes) as sha_dado_atual,
+                datetime(null) as datetime_ultima_atualizacao_atual,
+                cast(null as string) as id_execucao_dbt_atual
+        {% endif %}
+    ),
+    sha_dados_completos as (
+        select n.*, a.* except (id_lancamento_particao)
+        from sha_dados_novos n
+        left join sha_dados_atuais a using (id_lancamento_particao)
+    ),
+    extrato_colunas_controle as (
+        select
+            * except (
+                sha_dado_novo,
+                sha_dado_atual,
+                datetime_ultima_atualizacao_atual,
+                id_execucao_dbt_atual
+            ),
+            '{{ var("version") }}' as versao,
+            case
+                when sha_dado_atual is null or sha_dado_novo != sha_dado_atual
+                then current_datetime("America/Sao_Paulo")
+                else datetime_ultima_atualizacao_atual
+            end as datetime_ultima_atualizacao,
+            case
+                when sha_dado_atual is null or sha_dado_novo != sha_dado_atual
+                then '{{ invocation_id }}'
+                else id_execucao_dbt_atual
+            end as id_execucao_dbt
+        from sha_dados_completos
     )
 select *
-from extrato_cliente
+from extrato_colunas_controle
