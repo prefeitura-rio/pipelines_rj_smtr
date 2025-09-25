@@ -113,6 +113,30 @@ CAPTURA_INTEGRACAO = create_default_capture_flow(
 )
 set_default_parameters(CAPTURA_INTEGRACAO, {"recapture": True})
 
+CAPTURA_INTEGRACAO.schedule = Schedule(
+    CAPTURA_INTEGRACAO.schedule.clocks
+    + [
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(2022, 11, 30, 7, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)),
+            labels=[
+                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        )
+    ]
+    + [
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(
+                2022, 11, 30, 10, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+            ),
+            labels=[
+                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        )
+    ]
+)
+
 CAPTURA_INTEGRACAO.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
@@ -140,6 +164,31 @@ CAPTURA_TRANSACAO_ORDEM = create_default_capture_flow(
 )
 set_default_parameters(CAPTURA_TRANSACAO_ORDEM, {"recapture": True})
 
+CAPTURA_TRANSACAO_ORDEM.schedule = Schedule(
+    CAPTURA_TRANSACAO_ORDEM.schedule.clocks
+    + [
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(
+                2022, 11, 30, 10, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+            ),
+            labels=[
+                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        )
+    ]
+    + [
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(
+                2022, 11, 30, 12, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+            ),
+            labels=[
+                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        )
+    ]
+)
 # CAPTURA_TRANSACAO_ORDEM.run_config = KubernetesRun(
 #     image=smtr_constants.DOCKER_IMAGE.value,
 #     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],

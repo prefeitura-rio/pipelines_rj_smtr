@@ -45,6 +45,18 @@ from prefeitura_rio.pipelines_utils.io import get_root_path
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
+def test_fallback_run(
+    env: str, fallback_run: bool, timestamp: datetime, selector: DBTSelector
+) -> bool:
+    if fallback_run:
+        return not selector.is_up_to_date(env=env, timestamp=timestamp)
+    return True
+
+
+@task(
+    max_retries=constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
+)
 def rename_materialization_flow(
     selector: DBTSelector,
     timestamp: datetime,

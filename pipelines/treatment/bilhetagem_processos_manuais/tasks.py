@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 
 import pandas_gbq
 from prefect import task
-from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.capture.jae.constants import JAE_SOURCE_NAME
 from pipelines.capture.jae.constants import constants as jae_constants
@@ -90,7 +89,5 @@ def create_verify_capture_params(gaps: dict) -> list[dict]:
         last_date = d
     param["timestamp_captura_end"] = last_date.strftime("%Y-%m-%d 23:59:59")
     params.append(param)
-
-    log(params)
 
     return params

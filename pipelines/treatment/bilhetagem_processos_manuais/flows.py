@@ -18,7 +18,7 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 )
 
 from pipelines.capture.jae.constants import constants as jae_constants
-from pipelines.capture.jae.flows import CAPTURA_ORDEM_PAGAMENTO
+from pipelines.capture.jae.flows import CAPTURA_ORDEM_PAGAMENTO, verifica_captura
 from pipelines.constants import constants as smtr_constants
 from pipelines.tasks import (
     get_run_env,
@@ -166,13 +166,13 @@ with Flow(
         run_rematerialize = merge(run_rematerialize_true, run_rematerialize_false)
         upstream_task = run_rematerialize
 
-    params = create_verify_capture_params(gaps=gaps, upstream_tasks=[upstream_task])
+    verify_capture_params = create_verify_capture_params(gaps=gaps, upstream_tasks=[upstream_task])
 
-    # run_subflow(
-    #     flow_name=verifica_captura.name,
-    #     parameters=params,
-    #     upstream_tasks=[upstream_task],
-    # )
+    run_subflow(
+        flow_name=verifica_captura.name,
+        parameters=verify_capture_params,
+        upstream_tasks=[upstream_task],
+    )
 
 timestamp_divergente_jae_recaptura.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 timestamp_divergente_jae_recaptura.run_config = KubernetesRun(

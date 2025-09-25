@@ -4,7 +4,11 @@ Flows de tratamento dos dados de bilhetagem
 
 DBT: 2025-09-16a
 """
-from datetime import time
+from datetime import datetime, time, timedelta
+
+from prefect.schedules import Schedule
+from prefect.schedules.clocks import IntervalClock
+from pytz import timezone
 
 from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.constants import constants as smtr_constants
@@ -50,6 +54,34 @@ INTEGRACAO_MATERIALIZACAO = create_default_materialization_flow(
 
 INTEGRACAO_MATERIALIZACAO.state_handlers.append(
     handler_notify_failure(webhook="alertas_bilhetagem")
+)
+
+INTEGRACAO_MATERIALIZACAO.schedule = Schedule(
+    INTEGRACAO_MATERIALIZACAO.schedule.clocks
+    + [
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(
+                2022, 11, 30, 10, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+            ),
+            labels=[
+                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+            parameter_defaults={"fallback_run": True},
+        )
+    ]
+    + [
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(
+                2022, 11, 30, 12, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+            ),
+            labels=[
+                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+            parameter_defaults={"fallback_run": True},
+        )
+    ]
 )
 
 PASSAGEIRO_HORA_MATERIALIZACAO = create_default_materialization_flow(
