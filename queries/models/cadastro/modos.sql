@@ -1,1 +1,8 @@
-select * from {{ source("cadastro_staging", "modos") }}
+{{
+    config(
+        materialized="table",
+    )
+}}
+
+select *
+from {{ source("cadastro_staging", "modos") }}
