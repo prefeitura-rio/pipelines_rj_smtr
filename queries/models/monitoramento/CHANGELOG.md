@@ -9,7 +9,7 @@
 
 ### Adicionado
 
-- Cria `indicador_dados_validos` no modelo `viagem_validacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/799)
+- Cria `indicador_campos_obrigatorios` no modelo `viagem_validacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/799)
 - Adiciona coluna `datetime_captura_viagem` no modelo `gps_segmento_viagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/799)
 
 ### Alterado
