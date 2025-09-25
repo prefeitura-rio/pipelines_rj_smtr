@@ -40,7 +40,16 @@
             select data, {{ timestamp }}, latitude, longitude
             from {{ registros }}
             where
-                data between date("{{ var('date_range_start') }}") and date(
+                (
+                    {{
+                        generate_date_hour_partition_filter(
+                            var("date_range_start"),
+                            add_to_datetime(var("date_range_end"), seconds=1),
+                        )
+                    }}
+                )
+                and {{ timestamp }}
+                between datetime("{{ var('date_range_start') }}") and datetime(
                     "{{ var('date_range_end') }}"
                 )
             qualify
@@ -66,7 +75,14 @@
                 -- `rj-smtr.br_rj_riodejaneiro_onibus_gps.sppo_aux_registros_filtrada`
                 {{ aux_filtrada }}
             where
-                data between date("{{ var('date_range_start') }}") and date(
+                {% if "gps_sppo" in model %}
+                    data between date("{{ var('date_range_start') }}") and date(
+                        "{{ add_to_datetime(var('date_range_end'), seconds=1) }}"
+                    )
+                    and
+                {% endif %}
+                {{ timestamp }}
+                between datetime("{{ var('date_range_start') }}") and datetime(
                     "{{ var('date_range_end') }}"
                 )
             group by 1, 2
