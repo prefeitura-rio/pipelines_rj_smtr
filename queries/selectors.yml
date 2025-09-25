@@ -184,6 +184,10 @@ selectors:
           value: cliente_cpf_jae
         - method: fqn
           value: endereco_cliente_cpf_jae
+        - method: fqn
+          value: aux_consorcio_modo
+        - method: fqn
+          value: modos
 
   - name: transacao
     description: Materialização das tabelas de transação da bilhetagem
