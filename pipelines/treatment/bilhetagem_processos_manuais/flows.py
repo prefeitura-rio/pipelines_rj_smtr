@@ -18,7 +18,11 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 )
 
 from pipelines.capture.jae.constants import constants as jae_constants
-from pipelines.capture.jae.flows import CAPTURA_ORDEM_PAGAMENTO, verifica_captura
+from pipelines.capture.jae.flows import (
+    CAPTURA_ORDEM_PAGAMENTO,
+    CAPTURA_TRANSACAO_ORDEM,
+    verifica_captura,
+)
 from pipelines.constants import constants as smtr_constants
 from pipelines.tasks import (
     get_run_env,
@@ -33,6 +37,7 @@ from pipelines.treatment.bilhetagem.flows import (
 from pipelines.treatment.bilhetagem_processos_manuais.constants import constants
 from pipelines.treatment.bilhetagem_processos_manuais.tasks import (
     create_gap_materialization_params,
+    create_transacao_ordem_capture_params,
     create_verify_capture_params,
     get_gaps_from_result_table,
 )
@@ -75,14 +80,24 @@ with Flow(name="financeiro_bilhetagem: ordem atrasada - captura/tratamento") as 
         upstream_tasks=[run_materializacao_financeiro_bilhetagem],
     )
 
-    run_materializacao_transacao_ordem = run_subflow(
-        flow_name=TRANSACAO_ORDEM_MATERIALIZACAO.name,
+    run_materializacao_integracao = run_subflow(
+        flow_name=INTEGRACAO_MATERIALIZACAO.name,
         upstream_tasks=[run_ordem_quality_check],
     )
 
-    run_materializacao_integracao = run_subflow(
-        flow_name=INTEGRACAO_MATERIALIZACAO.name,
-        upstream_tasks=[run_materializacao_transacao_ordem],
+    transacao_ordem_capture_params = create_transacao_ordem_capture_params(
+        timestamp=timestamp,
+        upstream_tasks=[run_materializacao_integracao],
+    )
+
+    run_captura_transacao_ordem = run_subflow(
+        flow_name=CAPTURA_TRANSACAO_ORDEM.name,
+        parameters=transacao_ordem_capture_params,
+    )
+
+    run_materializacao_transacao_ordem = run_subflow(
+        flow_name=TRANSACAO_ORDEM_MATERIALIZACAO.name,
+        upstream_tasks=[run_captura_transacao_ordem],
     )
 
 
@@ -95,7 +110,6 @@ ordem_atrasada.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
 ]
-
 
 with Flow(
     name="jae: timestamps divergentes - recaptura/tratamento"

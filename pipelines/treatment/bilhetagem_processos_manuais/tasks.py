@@ -12,8 +12,21 @@ from pipelines.treatment.bilhetagem_processos_manuais.constants import constants
 
 
 @task
+def create_transacao_ordem_capture_params(timestamp: str) -> dict:
+    return {
+        "timestamp": jae_constants.TRANSACAO_ORDEM_SOURCE.value.get_last_scheduled_timestamp(
+            timestamp=timestamp
+        ).strftime("%Y-%m%s %H:%M:%S"),
+        "recapture": False,
+    }
+
+
+@task
 def get_gaps_from_result_table(
-    env: str, table_ids: list[str], timestamp_start: str, timestamp_end: str
+    env: str,
+    table_ids: list[str],
+    timestamp_start: str,
+    timestamp_end: str,
 ) -> dict:
     project_id = smtr_constants.PROJECT_NAME.value[env]
     dataset_id = f"source_{JAE_SOURCE_NAME}"
