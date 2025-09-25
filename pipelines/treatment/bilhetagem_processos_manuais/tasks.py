@@ -71,7 +71,9 @@ def create_gap_materialization_params(gaps: dict) -> dict:
 @task
 def create_verify_capture_params(gaps: dict) -> list[dict]:
     dates = sorted(
-        list(set([datetime.fromisoformat(v["timestamps"]).date() for v in gaps.values()]))
+        list(
+            set([datetime.fromisoformat(t).date() for v in gaps.values() for t in v["timestamps"]])
+        )
     )
 
     params = []
