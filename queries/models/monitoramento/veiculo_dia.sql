@@ -59,7 +59,7 @@ with
                 )
                 or (
                     data between "2025-09-01" and "2025-09-19"  -- Exceção para lacres adicionados após o prazo em 2025-09-Q1
-                    and data_processamento between "2025-09-01" and "2025-09-19"
+                    and data_processamento between "2025-09-01" and "2025-09-25"
                 )
             )
             {% if is_incremental() %}
