@@ -108,7 +108,7 @@ def get_capture_timestamps(
     """
     if recapture:
         if recapture_timestamps:
-            return [convert_timezone(t) for t in recapture_timestamps]
+            return [convert_timezone(datetime.fromisoformat(t)) for t in recapture_timestamps]
 
         return source.get_uncaptured_timestamps(
             timestamp=timestamp,
