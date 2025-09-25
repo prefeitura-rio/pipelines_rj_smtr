@@ -26,9 +26,7 @@
 {% endif %}
 
 {% set incremental_filter %}
-    data between
-        date('{{ var("date_range_start") }}')
-        and date('{{ var("date_range_end") }}')
+    data between date('{{ var("date_range_start") }}') and date('{{ var("date_range_end") }}')
 {% endset %}
 
 {% set calendario = ref("calendario") %}
@@ -46,6 +44,9 @@
 {% endif %}
 
 with
+    /*
+    Dados do calendário com informações sobre feeds do GTFS, tipos de dia e service_ids
+    */
     calendario as (
         select *
         from {{ calendario }}
@@ -53,6 +54,9 @@ with
             where {{ incremental_filter }}
         {% endif %}
     ),
+    /*
+    Relacionamento entre dados do GPS das viagens e feed do GTFS
+    */
     gps_viagem as (
         select
             data,
@@ -61,7 +65,7 @@ with
             gv.geo_point_gps,
             gv.servico_viagem,
             gv.servico_gps,
-            gv.timestamp_gps,
+            gv.datetime_gps,
             c.feed_version,
             c.feed_start_date
         {% if var("tipo_materializacao") == "monitoramento" %}
@@ -73,6 +77,9 @@ with
             where {{ incremental_filter }}
         {% endif %}
     ),
+    /*
+    Dados dos segmentos dos shapes
+    */
     segmento as (
         select
             feed_version,
@@ -91,6 +98,9 @@ with
             where feed_start_date in ({{ gtfs_feeds | join(", ") }})
         {% endif %}
     ),
+    /*
+    Identificação de viagens com serviço divergente entre GPS e viagem informada
+    */
     servico_divergente as (
         select
             id_viagem,
@@ -98,6 +108,9 @@ with
         from gps_viagem
         group by 1
     ),
+    /*
+    Contagem de registros de GPS por segmento da viagem, aplicando regras de vigência para túneis e filtra apenas quando serviços coincidem
+    */
     gps_servico_segmento as (
         select g.id_viagem, g.shape_id, s.id_segmento, count(*) as quantidade_gps
         from gps_viagem g
@@ -125,10 +138,9 @@ with
         where g.servico_gps = g.servico_viagem
         group by all
     ),
-    gps_segmento as (
-        select id_viagem, g.shape_id, g.id_segmento, g.quantidade_gps,
-        from gps_servico_segmento g
-    ),
+    /*
+    Relacionamento das viagens com dados do feed do GTFS, tipo de dia e service_ids
+    */
     viagem as (
         select
             data,
@@ -145,16 +157,22 @@ with
             c.service_ids,
             c.tipo_dia,
             c.feed_start_date,
-            c.feed_version
+            c.feed_version,
         {% if var("tipo_materializacao") == "monitoramento" %}
+                v.datetime_ultima_atualizacao as datetime_captura_viagem
             from {{ ref("viagem_inferida") }} v
-        {% else %} from {{ ref("viagem_informada_monitoramento") }} v
+        {% else %}
+                v.datetime_captura as datetime_captura_viagem
+            from {{ ref("viagem_informada_monitoramento") }} v
         {% endif %}
         join calendario c using (data)
         {% if is_incremental() or var("tipo_materializacao") == "monitoramento" %}
             where {{ incremental_filter }}
         {% endif %}
     ),
+    /*
+    Relacionamento das viagens com os segmentos, aplicando regras de vigência para túneis
+    */
     viagem_segmento as (
         select
             v.data,
@@ -173,7 +191,8 @@ with
             v.service_ids,
             v.tipo_dia,
             v.feed_version,
-            v.feed_start_date
+            v.feed_start_date,
+            v.datetime_captura_viagem
         from viagem v
         left join
             segmento s
@@ -217,10 +236,11 @@ select
     v.feed_start_date,
     v.service_ids,
     v.tipo_dia,
+    v.datetime_captura_viagem,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
 from viagem_segmento v
-left join gps_segmento g using (id_viagem, shape_id, id_segmento)
+left join gps_servico_segmento g using (id_viagem, shape_id, id_segmento)
 left join servico_divergente s using (id_viagem)
 {% if not is_incremental() and var("tipo_materializacao") != "monitoramento" %}
     where v.data <= date_sub(current_date("America/Sao_Paulo"), interval 2 day)
