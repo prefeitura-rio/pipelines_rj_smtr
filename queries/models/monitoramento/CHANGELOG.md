@@ -8,6 +8,14 @@
 
 ## [1.7.0] - 2025-09-17
 
+### Alterado
+
+- Alterado o modelo `veiculo_fiscalizacao_lacre` para considerar atualizações de lacres anteriores ao início da tabela caso a coluna `datetime_ultima_atualizacao_fonte` seja superior a `2024-04-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/880)
+
+### Adicionado
+
+- Adicionada exceção para lacres adicionados após o prazo entre `2025-09-01` e `2025-09-18` no modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/880)
+
 ### Corrigido
 
 - Corrigido os percentuais no `aux_veiculo_falha_ar_condicionado` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
@@ -68,7 +76,7 @@
 
 ### Adicionado
 
-- Adicionada excessão para lacres adicionados após o prazo entre `2025-07-16` e `2025-07-31` no modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/785)
+- Adicionada exceção para lacres adicionados após o prazo entre `2025-07-16` e `2025-07-31` no modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/785)
 
 ### Corrigido
 
