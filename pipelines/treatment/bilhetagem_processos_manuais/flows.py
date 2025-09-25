@@ -33,6 +33,7 @@ from pipelines.treatment.bilhetagem.flows import (
 from pipelines.treatment.bilhetagem_processos_manuais.constants import constants
 from pipelines.treatment.bilhetagem_processos_manuais.tasks import (
     create_gap_materialization_params,
+    create_verify_capture_params,
     get_gaps_from_result_table,
 )
 from pipelines.treatment.financeiro.flows import (
@@ -84,6 +85,7 @@ with Flow(name="financeiro_bilhetagem: ordem atrasada - captura/tratamento") as 
         upstream_tasks=[run_materializacao_transacao_ordem],
     )
 
+
 ordem_atrasada.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 ordem_atrasada.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
@@ -129,6 +131,7 @@ with Flow(
             run_recapture_true = run_subflow(
                 flow_name=v,
                 parameters={"recapture": True, "recapture_timestamps": gaps[k]["timestamps"]},
+                upstream_tasks=[upstream_task],
             )
 
         with case(gaps[k]["flag_has_gaps"].is_equal(True), False):
@@ -139,7 +142,6 @@ with Flow(
 
         run_recapture = merge(run_recapture_true, run_recapture_false)
 
-        run_recapture.set_upstream(upstream_task)
         upstream_task = run_recapture
 
     materialization_params = create_gap_materialization_params(
@@ -155,15 +157,22 @@ with Flow(
             run_rematerialize_true = run_subflow(
                 flow_name=v["flow_name"],
                 parameters=params,
+                upstream_tasks=[upstream_task],
             )
 
         with case(NotEqual().run(params, None), False):
             run_rematerialize_false = Constant(value=None, name="run_rematerialize_false")
 
         run_rematerialize = merge(run_rematerialize_true, run_rematerialize_false)
-        run_rematerialize.set_upstream(upstream_task)
         upstream_task = run_rematerialize
 
+    params = create_verify_capture_params(gaps=gaps, upstream_tasks=[upstream_task])
+
+    # run_subflow(
+    #     flow_name=verifica_captura.name,
+    #     parameters=params,
+    #     upstream_tasks=[upstream_task],
+    # )
 
 timestamp_divergente_jae_recaptura.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 timestamp_divergente_jae_recaptura.run_config = KubernetesRun(

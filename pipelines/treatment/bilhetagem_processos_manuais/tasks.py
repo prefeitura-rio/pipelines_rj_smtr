@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 """Tasks para os processos manuais de bilhetagem"""
+from datetime import datetime, timedelta
+
 import pandas_gbq
 from prefect import task
+from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.capture.jae.constants import JAE_SOURCE_NAME
 from pipelines.capture.jae.constants import constants as jae_constants
@@ -63,3 +66,29 @@ def create_gap_materialization_params(gaps: dict) -> dict:
             }
 
     return result
+
+
+@task
+def create_verify_capture_params(gaps: dict) -> list[dict]:
+    dates = sorted(
+        list(set([datetime.fromisoformat(v["timestamps"]).date() for v in gaps.values()]))
+    )
+
+    params = []
+    param = {}
+    last_date = None
+    for d in dates:
+        if last_date is None:
+            param = {"timestamp_captura_start": d.strftime("%Y-%m-%d 00:00:00")}
+        elif last_date != d - timedelta(days=1):
+            param["timestamp_captura_end"] = last_date.strftime("%Y-%m-%d 23:59:59")
+            params.append(param)
+            param = {"timestamp_captura_start": d.strftime("%Y-%m-%d 00:00:00")}
+
+        last_date = d
+    param["timestamp_captura_end"] = last_date.strftime("%Y-%m-%d 23:59:59")
+    params.append(param)
+
+    log(params)
+
+    return params
