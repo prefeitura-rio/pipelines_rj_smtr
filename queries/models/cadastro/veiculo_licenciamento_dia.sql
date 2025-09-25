@@ -152,8 +152,10 @@ with
             indicador_elevador,
             indicador_usb,
             indicador_wifi,
-            lag(date(data)) over (win) as ultima_data,
-            min(date(data)) over (win) as primeira_data,
+            lag(date(data)) over (
+                partition by id_veiculo, placa order by data
+            ) as ultima_data,
+            min(date(data)) over (order by data) as primeira_data,
             date(data) as data_arquivo_fonte
         from {{ ref("staging_licenciamento_stu") }}
         where
@@ -163,7 +165,6 @@ with
                     "{{ var('date_range_end') }}"
                 )
             {% endif %}
-        window win as (partition by data, id_veiculo, placa order by data)
     ),
     datas_faltantes as (
         select distinct
@@ -212,10 +213,19 @@ with
     ),
     dados_novos as (
         select *
-        from inicio_vinculo_preenchido
-        union all
-        select *
-        from licenciamento_datas_preenchidas
+        from
+            (
+                select *
+                from inicio_vinculo_preenchido
+                union all
+                select *
+                from licenciamento_datas_preenchidas
+            )
+        qualify
+            row_number() over (
+                partition by data, id_veiculo order by data_inicio_vinculo desc
+            )
+            = 1
     ),
     {% if is_incremental() %}
         dados_atuais as (
