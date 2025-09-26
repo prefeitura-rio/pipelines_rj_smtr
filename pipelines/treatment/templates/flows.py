@@ -27,6 +27,7 @@ from pipelines.treatment.templates.tasks import (
     run_dbt,
     save_materialization_datetime_redis,
     setup_dbt_test,
+    test_fallback_run,
     wait_data_sources,
 )
 from pipelines.treatment.templates.utils import DBTSelector, DBTTest
@@ -99,135 +100,150 @@ def create_default_materialization_flow(
             accepted_types=(dict, NoneType),
         )
 
+        fallback_run = TypedParameter(
+            name="fallback_run",
+            default=False,
+            accepted_types=bool,
+        )
+
         env = get_run_env()
 
         timestamp = get_scheduled_timestamp()
 
-        datetime_start = get_datetime_start(
+        run = test_fallback_run(
             env=env,
-            selector=selector,
-            datetime_start=datetime_start,
-        )
-
-        datetime_end = get_datetime_end(
-            selector=selector,
+            fallback_run=fallback_run,
             timestamp=timestamp,
-            datetime_end=datetime_end,
-        )
-
-        complete_sources = wait_data_sources(
-            env=env,
-            datetime_start=datetime_start,
-            datetime_end=datetime_end,
-            data_sources=wait,
-            skip=skip_source_check,
-        )
-
-        rename_flow_run = rename_materialization_flow(
             selector=selector,
-            timestamp=timestamp,
-            datetime_start=datetime_start,
-            datetime_end=datetime_end,
         )
 
-        repo_version = get_repo_version(upstream_tasks=[rename_flow_run])
+        with case(run, True):
 
-        dbt_run_vars = create_dbt_run_vars(
-            datetime_start=datetime_start,
-            datetime_end=datetime_end,
-            repo_version=repo_version,
-            additional_vars=additional_vars,
-        )
-
-        if pre_tests:
-            run_pre_test, pre_test_vars = setup_dbt_test(
-                timestamp,
-                test_scheduled_time,
-                dbt_run_vars,
-                pre_tests,
-                upstream_tasks=[complete_sources],
+            datetime_start = get_datetime_start(
+                env=env,
+                selector=selector,
+                datetime_start=datetime_start,
             )
 
-            with case(run_pre_test, True):
-                dbt_pre_test = run_dbt(
-                    resource="test",
-                    test_name=pre_tests["test_name"],
-                    dataset_id=pre_tests["dataset_id"],
-                    table_id=pre_tests["table_id"],
-                    model=pre_tests["model"],
-                    exclude=pre_tests["exclude"],
-                    flags=flags,
-                    _vars=pre_test_vars,
-                    upstream_tasks=[run_pre_test],
-                )
-                notify_pre_test = dbt_data_quality_checks(
-                    dbt_logs=dbt_pre_test,
-                    checks_list=pre_tests["checks_list"],
-                    params=pre_test_vars,
-                )
-                wait_pre_test = notify_pre_test
+            datetime_end = get_datetime_end(
+                selector=selector,
+                timestamp=timestamp,
+                datetime_end=datetime_end,
+            )
 
-            with case(run_pre_test, False):
+            complete_sources = wait_data_sources(
+                env=env,
+                datetime_start=datetime_start,
+                datetime_end=datetime_end,
+                data_sources=wait,
+                skip=skip_source_check,
+            )
+
+            rename_flow_run = rename_materialization_flow(
+                selector=selector,
+                timestamp=timestamp,
+                datetime_start=datetime_start,
+                datetime_end=datetime_end,
+            )
+
+            repo_version = get_repo_version(upstream_tasks=[rename_flow_run])
+
+            dbt_run_vars = create_dbt_run_vars(
+                datetime_start=datetime_start,
+                datetime_end=datetime_end,
+                repo_version=repo_version,
+                additional_vars=additional_vars,
+            )
+
+            if pre_tests:
+                run_pre_test, pre_test_vars = setup_dbt_test(
+                    timestamp,
+                    test_scheduled_time,
+                    dbt_run_vars,
+                    pre_tests,
+                    upstream_tasks=[complete_sources],
+                )
+
+                with case(run_pre_test, True):
+                    dbt_pre_test = run_dbt(
+                        resource="test",
+                        test_name=pre_tests["test_name"],
+                        dataset_id=pre_tests["dataset_id"],
+                        table_id=pre_tests["table_id"],
+                        model=pre_tests["model"],
+                        exclude=pre_tests["exclude"],
+                        flags=flags,
+                        _vars=pre_test_vars,
+                        upstream_tasks=[run_pre_test],
+                    )
+                    notify_pre_test = dbt_data_quality_checks(
+                        dbt_logs=dbt_pre_test,
+                        checks_list=pre_tests["checks_list"],
+                        params=pre_test_vars,
+                    )
+                    wait_pre_test = notify_pre_test
+
+                with case(run_pre_test, False):
+                    wait_pre_test = complete_sources
+            else:
                 wait_pre_test = complete_sources
-        else:
-            wait_pre_test = complete_sources
 
-        dbt_run = run_dbt(
-            resource="model",
-            selector_name=selector.name,
-            flags=flags,
-            _vars=dbt_run_vars,
-            upstream_tasks=[wait_pre_test],
-        )
-
-        if post_tests:
-            run_post_test, post_test_vars = setup_dbt_test(
-                timestamp,
-                test_scheduled_time,
-                dbt_run_vars,
-                post_tests,
-                upstream_tasks=[dbt_run],
-            )
-
-            with case(run_post_test, True):
-                dbt_post_test = run_dbt(
-                    resource="test",
-                    test_name=post_tests["test_name"],
-                    dataset_id=post_tests["dataset_id"],
-                    table_id=post_tests["table_id"],
-                    model=post_tests["model"],
-                    exclude=post_tests["exclude"],
-                    flags=flags,
-                    _vars=post_test_vars,
-                    upstream_tasks=[run_post_test],
-                )
-                notify_post_test = dbt_data_quality_checks(
-                    dbt_logs=dbt_post_test,
-                    checks_list=post_tests["checks_list"],
-                    params=post_test_vars,
-                )
-                wait_post_test = notify_post_test
-
-            with case(run_post_test, False):
-                wait_post_test = dbt_run
-        else:
-            wait_post_test = dbt_run
-
-        if snapshot_selector:
-            dbt_snapshot = run_dbt(
-                resource="snapshot",
-                selector_name=snapshot_selector.name,
+            dbt_run = run_dbt(
+                resource="model",
+                selector_name=selector.name,
                 flags=flags,
                 _vars=dbt_run_vars,
-                upstream_tasks=[wait_post_test],
+                upstream_tasks=[wait_pre_test],
             )
-            wait_dbt = dbt_snapshot
-        else:
-            wait_dbt = wait_post_test
 
-        save_materialization_datetime_redis(
-            env=env, selector=selector, value=datetime_end, upstream_tasks=[wait_dbt]
-        )
+            if post_tests:
+                run_post_test, post_test_vars = setup_dbt_test(
+                    timestamp,
+                    test_scheduled_time,
+                    dbt_run_vars,
+                    post_tests,
+                    upstream_tasks=[dbt_run],
+                )
+
+                with case(run_post_test, True):
+                    dbt_post_test = run_dbt(
+                        resource="test",
+                        test_name=post_tests["test_name"],
+                        dataset_id=post_tests["dataset_id"],
+                        table_id=post_tests["table_id"],
+                        model=post_tests["model"],
+                        exclude=post_tests["exclude"],
+                        flags=flags,
+                        _vars=post_test_vars,
+                        upstream_tasks=[run_post_test],
+                    )
+                    notify_post_test = dbt_data_quality_checks(
+                        dbt_logs=dbt_post_test,
+                        checks_list=post_tests["checks_list"],
+                        params=post_test_vars,
+                    )
+                    wait_post_test = notify_post_test
+
+                with case(run_post_test, False):
+                    wait_post_test = dbt_run
+            else:
+                wait_post_test = dbt_run
+
+            if snapshot_selector:
+                dbt_snapshot = run_dbt(
+                    resource="snapshot",
+                    selector_name=snapshot_selector.name,
+                    flags=flags,
+                    _vars=dbt_run_vars,
+                    upstream_tasks=[wait_post_test],
+                )
+                wait_dbt = dbt_snapshot
+            else:
+                wait_dbt = wait_post_test
+
+            save_materialization_datetime_redis(
+                env=env, selector=selector, value=datetime_end, upstream_tasks=[wait_dbt]
+            )
 
     default_materialization_flow.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
     default_materialization_flow.run_config = KubernetesRun(

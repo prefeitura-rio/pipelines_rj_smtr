@@ -5,6 +5,7 @@ from typing import Optional
 
 import basedosdados as bd
 from prefect import task
+from prefect.triggers import all_finished
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
@@ -143,7 +144,6 @@ def get_ordem_pagamento_modified_partitions(
         test_name = "dbt_expectations.expect_column_max_to_be_between__data_ordem__bilhetagem_consorcio_operador_dia"  # noqa
 
     log(f"partições = {partitions}")
-    print(test_name)
 
     return {
         "partitions": ", ".join([f"date({p.year}, {p.month}, {p.day})" for p in partitions])
@@ -153,6 +153,7 @@ def get_ordem_pagamento_modified_partitions(
 @task(
     max_retries=smtr_constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=smtr_constants.RETRY_DELAY.value),
+    trigger=all_finished,
 )
 def set_redis_quality_check_datetime(
     env: str,

@@ -65,7 +65,10 @@
             where
                 table_name = "{{ transacao_ordem.identifier }}"
                 and partition_id != "__NULL__"
-                and datetime(last_modified_time, "America/Sao_Paulo") between datetime("{{var('date_range_start')}}") and (datetime("{{var('date_range_end')}}"))
+                and
+                    datetime(last_modified_time, "America/Sao_Paulo")
+                    between datetime_add(datetime("{{var('date_range_start')}}"), interval 1 hour)
+                    and datetime_add(datetime("{{var('date_range_end')}}"), interval 1 hour)
 
             union distinct
 
@@ -76,7 +79,10 @@
             where
                 table_name = "{{ transacao_retificada.identifier }}"
                 and partition_id != "__NULL__"
-                and datetime(last_modified_time, "America/Sao_Paulo") between datetime("{{var('date_range_start')}}") and (datetime("{{var('date_range_end')}}"))
+                and
+                    datetime(last_modified_time, "America/Sao_Paulo")
+                    between datetime_add(datetime("{{var('date_range_start')}}"), interval 1 hour)
+                    and datetime_add(datetime("{{var('date_range_end')}}"), interval 1 hour)
 
     {% endset %}
 
