@@ -3,10 +3,11 @@
         materialized="incremental",
         incremental_strategy="merge",
         partition_by={
-            "field": "id_conta",
-            "data_type": "int64",
-            "range": {"start": 0, "end": 1000000000, "interval": 100000},
+            "field": "datetime_captura",
+            "data_type": "datetime",
+            "granularity": "day",
         },
+        cluster_by=["id_conta"],
         unique_key="id_lancamento_particao",
     )
 }}
@@ -38,39 +39,6 @@
             )
         )
     {% endset %}
-    {% set partitions_query %}
-        with
-            ids as (
-                select distinct cast(id_conta as integer) as id
-                from {{ staging_lancamento }}
-                where {{ incremental_filter }}
-            ),
-            grupos as (select distinct div(id, 100000) as group_id from ids),
-            identifica_grupos_continuos as (
-                select
-                    group_id,
-                    if(
-                        lag(group_id) over (order by group_id) = group_id - 1, 0, 1
-                    ) as id_continuidade
-                from grupos
-            ),
-            grupos_continuos as (
-                select
-                    group_id, sum(id_continuidade) over (order by group_id) as id_continuidade
-                from identifica_grupos_continuos
-            )
-        select
-            distinct
-            concat(
-                "id_conta between ",
-                min(group_id) over (partition by id_continuidade) * 100000,
-                " and ",
-                (max(group_id) over (partition by id_continuidade) + 1) * 100000 - 1
-            )
-        from grupos_continuos
-    {% endset %}
-
-    {% set partitions = run_query(partitions_query).columns[0].values() %}
 
 {% else %}
     {% set sha_column %}
@@ -81,9 +49,11 @@
 with
     dados_novos as (
         select
+            l.timestamp_captura as datetime_captura,
+            datetime(datetime_captura) as data,
             cast(l.id_conta as string) as id_conta,
             l.cd_cliente as id_cliente,
-            concat(l.id_lancamento, l.id_conta) as id_lancamento_particao,
+            concat(cast(l.id_lancamento as string), "-",cast(l.id_conta as string)) as id_lancamento_particao,
             j.nome as nome_cliente,
             j.documento as nr_documento,
             j.tipo_documento,
@@ -91,7 +61,6 @@ with
             l.dt_lancamento as data_lancamento,
             l.vl_lancamento as valor_lancamento,
             l.ds_tipo_movimento as tipo_movimento,
-            l.timestamp_captura as datetime_captura,
             case
                 when regexp_contains(l.id_conta, r'^2\.2\.3\.[A-Za-z0-9]+\.1$')
                 then split(l.id_conta, ".")[offset(3)]
@@ -119,8 +88,8 @@ with
                 {{ sha_column }} as sha_dado_atual,
                 datetime_ultima_atualizacao as datetime_ultima_atualizacao_atual,
                 id_execucao_dbt as id_execucao_dbt_atual
-            from {{ this }}
-            where {{ partitions | join("\nor ") }}
+            from {{ this }} as t
+            join dados_novos as n using (id_lancamento_particao)
 
         {% else %}
             select
