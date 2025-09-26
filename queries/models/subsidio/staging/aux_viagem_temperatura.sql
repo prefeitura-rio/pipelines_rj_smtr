@@ -473,7 +473,12 @@ with
             )
         group by data, id_viagem
     ),
-    indicadores_validador as (  -- Seleciona validador por indicador_regularidade_temperatura desc e id_validador asc
+    /*
+    Seleciona validador por indicador_regularidade_temperatura desc, indicador_regularidade_temperatura desc,
+    percentual_temperatura_regular desc, quantidade_pos_tratamento desc, indicador_temperatura_transmitida_viagem desc 
+    e id_validador asc
+    */
+    indicadores_validador as (  
         select
             data,
             id_veiculo,
@@ -498,7 +503,12 @@ with
         qualify
             row_number() over (
                 partition by data, id_viagem
-                order by indicador_regularidade_temperatura desc, id_validador
+                order by
+                    indicador_regularidade_temperatura desc,
+                    percentual_temperatura_regular desc,
+                    quantidade_pos_tratamento desc,
+                    indicador_temperatura_transmitida_viagem desc,
+                    id_validador asc
             )
             = 1
     ),
