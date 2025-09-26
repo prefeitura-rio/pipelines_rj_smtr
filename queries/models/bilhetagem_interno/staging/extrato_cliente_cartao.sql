@@ -50,7 +50,7 @@ with
     dados_novos as (
         select
             l.timestamp_captura as datetime_captura,
-            datetime(datetime_captura) as data,
+            datetime(l.datetime_captura) as data,
             cast(l.id_conta as string) as id_conta,
             l.cd_cliente as id_cliente,
             concat(
@@ -83,7 +83,7 @@ with
             = 1
     ) sha_dados_novos as (select *, {{ sha_column }} as sha_dado_novo from dados_novos),
     sha_dados_atuais as (
-        {% if is_incremental() and partitions | length > 0 %}
+        {% if is_incremental() %}
 
             select
                 id_lancamento_particao,
