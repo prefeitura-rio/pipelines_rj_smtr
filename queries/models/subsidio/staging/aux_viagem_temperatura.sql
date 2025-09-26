@@ -345,7 +345,15 @@ with
                 when max(indicador_ar_condicionado)
                 then
                     trunc(
-                        (countif(classificacao_temperatura_regular) / count(*)) * 100, 2
+                        coalesce(
+                            safe_divide(
+                                countif(classificacao_temperatura_regular),
+                                quantidade_pos_tratamento
+                            ),
+                            0
+                        )
+                        * 100,
+                        2
                     )
                 else null
             end as percentual_temperatura_regular,
@@ -356,7 +364,18 @@ with
                     and percentual_temperatura_zero_descartada < 100
                 then true
                 when max(indicador_ar_condicionado)
-                then (countif(classificacao_temperatura_regular) / count(*) * 100) >= 80
+                then
+                    (
+                        coalesce(
+                            safe_divide(
+                                countif(classificacao_temperatura_regular),
+                                quantidade_pos_tratamento
+                            ),
+                            0
+                        )
+                        * 100
+                    )
+                    >= 80
                 else null
             end as indicador_temperatura_regular_viagem,
             case
