@@ -473,7 +473,7 @@ with
             )
         group by data, id_viagem
     ),
-    /*  
+    /*
         Seleciona validador por:
         indicador_regularidade_temperatura desc,
         percentual_temperatura_regular desc,
