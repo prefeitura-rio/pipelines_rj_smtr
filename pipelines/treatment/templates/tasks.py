@@ -48,6 +48,26 @@ from prefeitura_rio.pipelines_utils.io import get_root_path
 def test_fallback_run(
     env: str, fallback_run: bool, timestamp: datetime, selector: DBTSelector
 ) -> bool:
+    """
+    Determina se a materialização deve ser executada.
+
+    Caso `fallback_run` seja verdadeiro, a função verifica se o `selector`
+    está atualizado para o ambiente e timestamp informados. Se não estiver atualizado,
+    retorna `True` indicando que o fallback deve ser executado. Caso contrário,
+    retorna `False`.
+    Se `fallback_run` for falso, a função sempre retorna `True`.
+
+    Args:
+        env (str): dev ou prod
+        fallback_run (bool): Indica se a run é de fallback ou não
+        timestamp (datetime): Timestamp de referência para a verificação de atualização
+        selector (DBTSelector): Objeto responsável por verificar se os dados estão atualizados
+
+    Returns:
+        bool:
+            - `True` se a materialização deve ser executada
+            - `False` caso contrário
+    """
     if fallback_run:
         return not selector.is_up_to_date(env=env, timestamp=timestamp)
     return True
@@ -762,17 +782,17 @@ def run_dbt(
         run_command += f' --profiles-dir "{queries_dir}/dev"'
 
     log(f"Running dbt with command: {run_command}")
-    # dbt_task = DbtShellTask(
-    #     profiles_dir=queries_dir,
-    #     helper_script=f'cd "{queries_dir}"',
-    #     log_stderr=True,
-    #     return_all=True,
-    #     command=run_command,
-    # )
-    # dbt_logs = dbt_task.run()
-    return ""
-    # log("\n".join(dbt_logs))
-    # return "\n".join(dbt_logs)
+    dbt_task = DbtShellTask(
+        profiles_dir=queries_dir,
+        helper_script=f'cd "{queries_dir}"',
+        log_stderr=True,
+        return_all=True,
+        command=run_command,
+    )
+    dbt_logs = dbt_task.run()
+
+    log("\n".join(dbt_logs))
+    return "\n".join(dbt_logs)
 
 
 @task(nout=2)

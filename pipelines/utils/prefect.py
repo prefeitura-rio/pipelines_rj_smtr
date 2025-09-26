@@ -142,11 +142,6 @@ def create_subflow_run(
         idempotency_key=idempotency_key,
     )
 
-    try:
-        prefect.context["_subflow_ids"].append(flow_run_id)
-    except KeyError:
-        prefect.context["_subflow_ids"] = [flow_run_id]
-
     run_url = constants.FLOW_RUN_URL_PATTERN.value.format(run_id=flow_run_id)
 
     log(f"Created flow run: {run_url}")

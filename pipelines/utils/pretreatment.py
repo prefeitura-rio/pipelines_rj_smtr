@@ -2,6 +2,7 @@
 """Functions to pretreat data"""
 import re
 from datetime import datetime
+from typing import Callable
 
 import pandas as pd
 from prefeitura_rio.pipelines_utils.logging import log
@@ -57,7 +58,21 @@ def strip_string_columns(data: pd.DataFrame) -> pd.DataFrame:
     return data
 
 
-def raise_if_column_isna(column_name: str):
+def raise_if_column_isna(
+    column_name: str,
+) -> Callable[[pd.DataFrame, datetime, list], pd.DataFrame]:
+    """
+    Cria uma função de validação que lança um erro caso a coluna especificada contenha valores nulos
+
+    Args:
+        column_name (str): Nome da coluna a ser validada
+
+    Returns:
+        Callable[[pd.DataFrame, datetime, list], pd.DataFrame]:
+        Uma função que recebe um DataFrame, um timestamp e chaves primárias,
+        validando a coluna especificada
+    """
+
     def func(data: pd.DataFrame, timestamp: datetime, primary_keys: list):
         if not data[data[column_name].isna()].empty:
             raise ValueError(f"A coluna {column_name} está nula")

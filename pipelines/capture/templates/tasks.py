@@ -102,6 +102,7 @@ def get_capture_timestamps(
         recapture (bool): Se a execução é uma recaptura ou não
         recapture_days (int): A quantidade de dias que serão considerados para achar datas
             a serem recapturadas
+        recapture_timestamps (list[str]): Lista manual de timestamps a serem recapturadas
 
     Returns:
         list[datetime]: Lista de datetimes para executar a captura

@@ -28,6 +28,20 @@ def get_gaps_from_result_table(
     timestamp_start: str,
     timestamp_end: str,
 ) -> dict:
+    """
+    Obtém informações sobre timestamps com dados divergentes na captura da Jaé
+
+    Args:
+        env (str): dev ou prod
+        table_ids (list[str]): Lista de tabelas capturadas a serem verificadas
+        timestamp_start (str): Timestamp inicial no formato `YYYY-MM-DD HH:MM:SS`
+        timestamp_end (str): Timestamp final no formato `YYYY-MM-DD HH:MM:SS`
+
+    Returns:
+        dict: Dicionário onde cada chave é um `table_id` e o valor é outro dicionário com:
+            - `"timestamps"` (list[str]): Lista de timestamps das falhas de captura
+            - `"flag_has_gaps"` (bool): Indica se houve lacunas de captura
+    """
     project_id = smtr_constants.PROJECT_NAME.value[env]
     dataset_id = f"source_{JAE_SOURCE_NAME}"
     result = {}
@@ -64,6 +78,19 @@ def get_gaps_from_result_table(
 
 @task
 def create_gap_materialization_params(gaps: dict) -> dict:
+    """
+    Cria parâmetros de materialização a partir das falhas de captura identificadas
+
+    Args:
+        gaps (dict): Dicionário com informações de gaps por tabela, no formato:
+            {
+                "table_id": {
+                    "timestamps": list[str],
+                    "flag_has_gaps": bool
+                },
+                ...
+            }
+    """
     result = {}
     for k, v in constants.CAPTURE_GAP_SELECTORS.value.items():
         ts_list = []
@@ -82,6 +109,22 @@ def create_gap_materialization_params(gaps: dict) -> dict:
 
 @task
 def create_verify_capture_params(gaps: dict) -> list[dict]:
+    """
+    Gera intervalos de parâmetros para verificação de captura com base em datas de gaps.
+
+    Args:
+        gaps (dict): Dicionário com informações de gaps por tabela, no formato:
+            {
+                "table_id": {
+                    "timestamps": list[str],  # Timestamps ISO em string
+                    "flag_has_gaps": bool
+                },
+                ...
+            }
+
+    Returns:
+        list[dict]: Lista de parâmetros a serem executados
+    """
     dates = sorted(
         list(
             set([datetime.fromisoformat(t).date() for v in gaps.values() for t in v["timestamps"]])

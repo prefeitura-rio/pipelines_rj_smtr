@@ -35,7 +35,7 @@ TRANSACAO_MATERIALIZACAO = create_default_materialization_flow(
         if s.table_id in ["gratuidade", "escola", "laudo_pcd", "estudante"]
     ],
     post_tests=constants.TRANSACAO_DAILY_TEST.value,
-    test_scheduled_time=time(11, 15, 0),
+    test_scheduled_time=time(12, 0, 0),
 )
 
 TRANSACAO_MATERIALIZACAO.state_handlers.append(handler_notify_failure(webhook="alertas_bilhetagem"))
