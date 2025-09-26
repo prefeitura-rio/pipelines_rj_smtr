@@ -53,7 +53,9 @@ with
             datetime(datetime_captura) as data,
             cast(l.id_conta as string) as id_conta,
             l.cd_cliente as id_cliente,
-            concat(cast(l.id_lancamento as string), "-",cast(l.id_conta as string)) as id_lancamento_particao,
+            concat(
+                cast(l.id_lancamento as string), "-", cast(l.id_conta as string)
+            ) as id_lancamento_particao,
             j.nome as nome_cliente,
             j.documento as nr_documento,
             j.tipo_documento,
