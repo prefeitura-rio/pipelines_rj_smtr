@@ -4,11 +4,11 @@
 
 ### Alterado
 
-- Altera criterios para seleção do id_validador no modelo `aux_viagem_temperatura`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/901)
+- Altera critérios para seleção do id_validador no modelo `aux_viagem_temperatura`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/902)
 
 ### Corrigido
 
-- Corrige o calculo de percentual de temperatura regular no modelo `aux_viagem_temperatura`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/901)
+- Corrige o cálculo de percentual de temperatura regular no modelo `aux_viagem_temperatura`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/902)
 
 ## [2.1.6] - 2025-09-17
 

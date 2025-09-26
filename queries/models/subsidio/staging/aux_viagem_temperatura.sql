@@ -473,12 +473,15 @@ with
             )
         group by data, id_viagem
     ),
-    /*
-    Seleciona validador por indicador_regularidade_temperatura desc, indicador_regularidade_temperatura desc,
-    percentual_temperatura_regular desc, quantidade_pos_tratamento desc, indicador_temperatura_transmitida_viagem desc 
-    e id_validador asc
+    /*  
+        Seleciona validador por:
+        indicador_regularidade_temperatura desc,
+        percentual_temperatura_regular desc,
+        quantidade_pos_tratamento desc,
+        indicador_temperatura_transmitida_viagem desc,
+        id_validador asc
     */
-    indicadores_validador as (  
+    indicadores_validador as (
         select
             data,
             id_veiculo,
