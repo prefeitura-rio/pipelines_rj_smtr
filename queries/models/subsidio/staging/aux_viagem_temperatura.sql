@@ -345,7 +345,15 @@ with
                 when max(indicador_ar_condicionado)
                 then
                     trunc(
-                        (countif(classificacao_temperatura_regular) / count(*)) * 100, 2
+                        coalesce(
+                            safe_divide(
+                                countif(classificacao_temperatura_regular),
+                                quantidade_pos_tratamento
+                            ),
+                            0
+                        )
+                        * 100,
+                        2
                     )
                 else null
             end as percentual_temperatura_regular,
@@ -356,7 +364,18 @@ with
                     and percentual_temperatura_zero_descartada < 100
                 then true
                 when max(indicador_ar_condicionado)
-                then (countif(classificacao_temperatura_regular) / count(*) * 100) >= 80
+                then
+                    (
+                        coalesce(
+                            safe_divide(
+                                countif(classificacao_temperatura_regular),
+                                quantidade_pos_tratamento
+                            ),
+                            0
+                        )
+                        * 100
+                    )
+                    >= 80
                 else null
             end as indicador_temperatura_regular_viagem,
             case
@@ -454,7 +473,15 @@ with
             )
         group by data, id_viagem
     ),
-    indicadores_validador as (  -- Seleciona validador por indicador_regularidade_temperatura desc e id_validador asc
+    /*
+        Seleciona validador por:
+        indicador_regularidade_temperatura desc,
+        percentual_temperatura_regular desc,
+        quantidade_pos_tratamento desc,
+        indicador_temperatura_transmitida_viagem desc,
+        id_validador asc
+    */
+    indicadores_validador as (
         select
             data,
             id_veiculo,
@@ -479,7 +506,12 @@ with
         qualify
             row_number() over (
                 partition by data, id_viagem
-                order by indicador_regularidade_temperatura desc, id_validador
+                order by
+                    indicador_regularidade_temperatura desc,
+                    percentual_temperatura_regular desc,
+                    quantidade_pos_tratamento desc,
+                    indicador_temperatura_transmitida_viagem desc,
+                    id_validador asc
             )
             = 1
     ),
