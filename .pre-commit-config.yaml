@@ -27,7 +27,6 @@ repos:
     hooks:
     - id: flake8
 
-# -   repo: https://github.com/tconbeer/sqlfmt
 #     rev: v0.23.2
 #     hooks:
 #     -   id: sqlfmt
