@@ -12,26 +12,23 @@ with
             case when ot.cd_tipo_modal = '3' then 'Ônibus' else m.modo end as modo_join,
             ot.in_situacao_atividade,
             case
-                when c.in_tipo_pessoa_fisica_juridica = 'F'
+                when c.tipo_pessoa = 'Física'
                 then 'CPF'
-                when c.in_tipo_pessoa_fisica_juridica = 'J'
+                when c.tipo_pessoa = 'Jurídica'
                 then 'CNPJ'
             end as tipo_documento,
-            c.nr_documento,
-            c.nm_cliente,
+            c.documento as nr_documento,
+            c.nome as nm_cliente,
             cb.cd_agencia,
             cb.cd_tipo_conta,
             cb.nm_banco,
             cb.nr_banco,
             cb.nr_conta
         from {{ ref("staging_operadora_transporte") }} as ot
-        join {{ ref("staging_cliente") }} as c on ot.cd_cliente = c.cd_cliente
+        join {{ ref("cliente_jae") }} as c on ot.cd_cliente = c.id_cliente
         left join
             {{ ref("staging_conta_bancaria") }} as cb on ot.cd_cliente = cb.cd_cliente
-        join
-            {{ source("cadastro", "modos") }} m
-            on ot.cd_tipo_modal = m.id_modo
-            and m.fonte = "jae"
+        join {{ ref("modos") }} m on ot.cd_tipo_modal = m.id_modo and m.fonte = "jae"
     ),
     stu_pessoa_juridica as (
         select
@@ -79,10 +76,7 @@ with
                 select *
                 from stu_pessoa_fisica
             ) s
-        join
-            {{ source("cadastro", "modos") }} m
-            on s.id_modo = m.id_modo
-            and m.fonte = "stu"
+        join {{ ref("modos") }} m on s.id_modo = m.id_modo and m.fonte = "stu"
     ),
     cadastro as (
         select

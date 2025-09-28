@@ -1,5 +1,54 @@
 # Changelog - monitoramento
 
+## [1.7.2] - 2025-09-25
+
+### Corrigido
+
+- Corrige coluna `timestamp_gps` para `datetime_gps` nos modelos `gps_viagem` e `gps_segmento_viagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/799)
+- Corrige filtro da `partitions_query` no modelo `viagem_informada_monitoramento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/799)
+
+### Adicionado
+
+- Cria `indicador_campos_obrigatorios` no modelo `viagem_validacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/799)
+- Adiciona coluna `datetime_captura_viagem` no modelo `gps_segmento_viagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/799)
+
+### Alterado
+
+- Altera lógica no modelo `viagem_informada_monitoramento` para particionar pela data do `datetime_partida` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/799)
+- Altera `partition_filter` no modelo `aux_gps_realocacao` para teste diário do GPS (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/869)
+
+## [1.7.1] - 2025-09-23
+
+### Removido
+
+- Remove teste `not_null` da coluna temperatura no modelo `temperatura_inmet` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/890)
+
+## [1.7.0] - 2025-09-17
+
+### Alterado
+
+- Alterado o modelo `veiculo_fiscalizacao_lacre` para considerar atualizações de lacres anteriores ao início da tabela caso a coluna `datetime_ultima_atualizacao_fonte` seja superior a `2024-04-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/880)
+
+### Adicionado
+
+- Adicionada exceção para lacres adicionados após o prazo entre `2025-09-01` e `2025-09-18` no modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/880)
+
+### Corrigido
+
+- Corrigido os percentuais no `aux_veiculo_falha_ar_condicionado` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+
+## [1.6.9] - 2025-09-15
+
+### Corrigido
+
+- Corrigido o modelo `monitoramento_servico_dia_v2` para a apuração por sentido (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/790)
+
+## [1.6.8] - 2025-09-09
+
+### Corrigido
+
+- Corrige filtro no modelo `aux_gps_realocacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/857)
+
 ## [1.6.7] - 2025-09-01
 
 ### Alterado
@@ -44,7 +93,7 @@
 
 ### Adicionado
 
-- Adicionada excessão para lacres adicionados após o prazo entre `2025-07-16` e `2025-07-31` no modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/785)
+- Adicionada exceção para lacres adicionados após o prazo entre `2025-07-16` e `2025-07-31` no modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/785)
 
 ### Corrigido
 

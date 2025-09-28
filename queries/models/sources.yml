@@ -70,17 +70,12 @@ sources:
       - name: recursos_sppo_servico_dia_avaliacao
       - name: recursos_sppo_servico_dia_pago
 
-  - name: cadastro
-    database: rj-smtr
-
-    tables:
-      - name: modos
-
   - name: cadastro_staging
-    database: rj-smtr
+    database: rj-smtr-staging
 
     tables:
       - name: consorcio_modo
+      - name: modos
 
   - name: br_rj_riodejaneiro_rdo_staging
     database: rj-smtr-staging
@@ -90,6 +85,9 @@ sources:
       - name: rho_registros_stpl
       - name: rdo_registros_stpl
       - name: dicionario
+      - name: rdo5_registros_stpl
+      - name: rdo5_registros_sppo
+      - name: rdo5_registros
 
   - name: br_rj_riodejaneiro_rdo
     database: rj-smtr
@@ -282,6 +280,10 @@ sources:
       - name: linha_tarifa
       - name: transacao_retificada
       - name: lancamento
+      - name: estudante
+      - name: escola
+      - name: laudo_pcd
+      - name: resultado_verificacao_captura_jae
 
   - name: source_sonda
     database: rj-smtr-staging
@@ -430,3 +432,11 @@ sources:
 
     tables:
       - name: meteorologia
+
+  - name: br_inep_censo_educacao_superior
+    database: basedosdados
+
+    tables:
+      - name: curso
+      - name: ies
+      - name: dicionario

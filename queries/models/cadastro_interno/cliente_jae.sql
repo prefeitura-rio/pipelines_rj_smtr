@@ -47,7 +47,7 @@
                 from {{ staging_cliente }}
                 where {{ incremental_filter }}
             ),
-            grupos as (select distinct div(id, 10000) as group_id from ids),
+            grupos as (select distinct div(id, 100000) as group_id from ids),
             identifica_grupos_continuos as (
                 select
                     group_id,
@@ -65,9 +65,9 @@
             distinct
             concat(
                 "id_cliente_particao between ",
-                min(group_id) over (partition by id_continuidade) * 10000,
+                min(group_id) over (partition by id_continuidade) * 100000,
                 " and ",
-                (max(group_id) over (partition by id_continuidade) + 1) * 10000 - 1
+                (max(group_id) over (partition by id_continuidade) + 1) * 100000 - 1
             )
         from grupos_continuos
     {% endset %}
@@ -102,10 +102,35 @@ with
             c.nr_documento as documento,
             c.nr_documento_alternativo as documento_alternativo,
             c.tx_email as email,
-            c.nr_telefone as telefone,
+            case
+                when
+                    -- Nulo ou vazio
+                    c.nr_telefone is null
+                    or trim(c.nr_telefone) = ''
+
+                    -- Quantidade de dígitos inválida
+                    or length(c.nr_telefone) < 8
+
+                    -- Composto por um único dígito repetido
+                    or c.nr_telefone
+                    = repeat(substr(c.nr_telefone, 1, 1), length(c.nr_telefone))
+
+                    -- Começa com '21' e o restante é um único dígito repetido
+                    or (
+                        starts_with(c.nr_telefone, '21')
+                        and length(c.nr_telefone) > 2
+                        and substr(c.nr_telefone, 3)
+                        = repeat(substr(c.nr_telefone, 3, 1), length(c.nr_telefone) - 2)
+                    )
+
+                    -- Outros padrões específicos conhecidos como inválidos
+                    or c.nr_telefone
+                    in ('2190000000', '0099999999', '9199999999', '21900000000', '21')
+                then null
+                else trim(c.nr_telefone)
+            end as telefone,
             c.dt_cadastro as datetime_cadastro,
             timestamp_captura as datetime_captura
-
         from {{ staging_cliente }} c
         left join tipo_documento tdc on c.cd_tipo_documento = tdc.cd_tipo_documento
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
@@ -123,7 +148,7 @@ with
                 datetime_ultima_atualizacao as datetime_ultima_atualizacao_atual,
                 id_execucao_dbt as id_execucao_dbt_atual
             from {{ this }}
-            where {{ partitions | join("\nor") }}
+            where {{ partitions | join("\nor ") }}
 
         {% else %}
             select

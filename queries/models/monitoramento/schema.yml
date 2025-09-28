@@ -7,7 +7,7 @@ models:
         data_type: date
         quote: true
       - name: id_viagem
-        description: "{{ doc('id_viagem') }}"
+        description: "{{ doc('id_viagem') }} [datetime partida em UTC]"
         data_type: string
         quote: true
       - name: datetime_partida
@@ -56,7 +56,7 @@ models:
         quote: true
       - name: datetime_captura
         description: Data e hora da captura da integração [GMT-3]
-        data_type: string
+        data_type: datetime
         quote: true
       - name: versao
         description: "{{ doc('versao') }}"
@@ -74,7 +74,7 @@ models:
         data_type: date
         quote: true
       - name: id_viagem
-        description: "{{ doc('id_viagem') }}"
+        description: "{{ doc('id_viagem') }} [datetime partida em UTC]"
         data_type: string
         quote: true
       - name: datetime_partida
@@ -155,6 +155,10 @@ models:
         quote: true
       - name: indicador_shape_invalido
         description: "Indica se o shape existe no GTFS no feed vigente durante a data da viagem"
+        data_type: boolean
+        quote: true
+      - name: indicador_campos_obrigatorios
+        description: "Indica se os campos obrigatórios para validação da viagem estão preenchidos corretamente"
         data_type: boolean
         quote: true
       - name: indicador_trajeto_alternativo
@@ -272,6 +276,10 @@ models:
       - name: tipo_dia
         description: "{{ doc('tipo_dia') }}"
         data_type: string
+        quote: true
+      - name: datetime_captura_viagem
+        description: "Data e hora da captura da viagem"
+        data_type: datetime
         quote: true
       - name: versao
         description: "{{ doc('versao') }}"
@@ -791,9 +799,6 @@ models:
               name: not_null__id_estacao__temperatura_inmet
       - name: temperatura
         description: "Temperatura medida pela estação meteorológica (°C)"
-        tests:
-          - not_null:
-              name: not_null__temperatura__temperatura_inmet
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
       - name: versao

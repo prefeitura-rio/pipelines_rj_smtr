@@ -17,7 +17,8 @@ select
     t.tipo_transacao,
     t.tipo_transacao_jae,
     t.tipo_usuario,
-    t.subtipo_usuario
+    t.subtipo_usuario,
+    t.id_cre_escola
 from {{ ref("transacao") }} t
 join {{ ref("cliente_jae") }} c using (id_cliente)
 where

@@ -2,7 +2,7 @@
 """
 Valores constantes gerais para pipelines da rj-smtr
 
-DBT 2025-06-02
+DBT 2025-09-12
 """
 
 from enum import Enum

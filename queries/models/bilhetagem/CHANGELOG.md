@@ -1,5 +1,30 @@
 # Changelog - bilhetagem
 
+## [3.3.0] - 2025-09-16
+
+### Adicionado
+
+- Cria os modelos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/875):
+  - `staging_escola.sql`
+  - `staging_estudante.sql`
+  - `staging_laudo_pcd.sql`
+  - `aux_escola_rede_ensino_atualizado.sql`
+  - `aux_estudante.sql`
+  - `aux_laudo_pcd.sql`
+  - `aux_gratuidade_info.sql`
+
+- Adiciona a coluna `id_cre_escola` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/875)
+
+- Adiciona transações de `TEC` no modelo `aux_passageiro_hora.sql`
+
+### Alterado
+
+- Altera fonte dos dados de gratuidade no modelo `transacao.sql` para `aux_gratuidade_info` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/875)
+
+### Removido
+
+- Remove colunas de estudante e laudo pcd dos modelos `staging_gratuidade.sql` e `aux_gratuidade.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/875)
+
 ## [3.2.12] - 2025-09-03
 
 ### Adicionado
