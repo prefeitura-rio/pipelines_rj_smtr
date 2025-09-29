@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrige a data de inicio da verificação do `indicador_falha_recorrente` no modelo `viagem_regularidade_temperatura`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/904)
+- Corrige a data de início da verificação do `indicador_falha_recorrente` no modelo `viagem_regularidade_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/904)
 
 - Corrige o teste `test_check_regularidade_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/904)
 
