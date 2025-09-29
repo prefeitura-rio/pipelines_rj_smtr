@@ -113,8 +113,11 @@ with
                 then
                     (
                         (
-                            vt.data >= date('{{ var("DATA_SUBSIDIO_V20_INICIO") }}')
-                            and not coalesce(vr.indicador_falha_recorrente, false)
+                            vt.data < date('{{ var("DATA_SUBSIDIO_V20_INICIO") }}')
+                            or (
+                                vt.data >= date('{{ var("DATA_SUBSIDIO_V20_INICIO") }}')
+                                and not coalesce(vr.indicador_falha_recorrente, false)
+                            )
                         )
                         and not vt.indicador_temperatura_zero_viagem
                         and vt.indicador_temperatura_transmitida_viagem
