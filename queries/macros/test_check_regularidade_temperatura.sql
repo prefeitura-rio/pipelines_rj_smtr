@@ -91,11 +91,12 @@
                         or data >= date("{{ var('DATA_SUBSIDIO_V19_INICIO') }}")
                     )
                     and indicador_ar_condicionado
-                    and not indicador_falha_recorrente
+                    and (data < date("{{ var('DATA_SUBSIDIO_V20_INICIO') }}") or ( data >= date("{{ var('DATA_SUBSIDIO_V20_INICIO') }}")
+                            and not coalesce(indicador_falha_recorrente, false)))
                     and not indicador_temperatura_zero_viagem
                     and indicador_temperatura_transmitida_viagem
                     and indicador_temperatura_regular_viagem
-                    and not indicador_regularidade_ar_condicionado_viagem
+                    and not coalesce(indicador_regularidade_ar_condicionado_viagem, false)
                 )
         ),
         teste_2_falha as (
@@ -115,12 +116,13 @@
                         or data >= date("{{ var('DATA_SUBSIDIO_V19_INICIO') }}")
                     )
                     and (
-                        indicador_falha_recorrente
+                        (data < date("{{ var('DATA_SUBSIDIO_V20_INICIO') }}") or ( data >= date("{{ var('DATA_SUBSIDIO_V20_INICIO') }}")
+                            and coalesce(indicador_falha_recorrente, false)))
                         or indicador_temperatura_zero_viagem
                         or not indicador_temperatura_transmitida_viagem
                         or not indicador_temperatura_regular_viagem
                     )
-                    and indicador_regularidade_ar_condicionado_viagem
+                    and  coalesce(indicador_regularidade_ar_condicionado_viagem, false)
                 )
         ),
         teste_3_falha as (
