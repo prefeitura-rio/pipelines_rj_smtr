@@ -168,7 +168,7 @@ CAPTURA_TRANSACAO_ORDEM.schedule = Schedule(
         IntervalClock(
             interval=timedelta(days=1),
             start_date=datetime(
-                2022, 11, 30, 10, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+                2022, 11, 30, 12, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
             ),
             labels=[
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
@@ -177,7 +177,7 @@ CAPTURA_TRANSACAO_ORDEM.schedule = Schedule(
         IntervalClock(
             interval=timedelta(days=1),
             start_date=datetime(
-                2022, 11, 30, 12, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+                2022, 11, 30, 14, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
             ),
             labels=[
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,

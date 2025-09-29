@@ -113,7 +113,7 @@ with Flow(
         upstream_tasks=[notify_discord],
     )
 
-    ordem_pagamento_quality_check.set_reference_tasks([set_redis, notify_discord])
+    ordem_pagamento_quality_check.set_reference_tasks([set_redis, notify_discord, test_result])
 
 ordem_pagamento_quality_check.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 ordem_pagamento_quality_check.run_config = KubernetesRun(
