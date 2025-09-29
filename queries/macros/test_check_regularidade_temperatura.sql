@@ -123,10 +123,11 @@
                         or data >= date("{{ var('DATA_SUBSIDIO_V19_INICIO') }}")
                     )
                     and (
-                        (
-                            data >= date("{{ var('DATA_SUBSIDIO_V20_INICIO') }}")
-                            and coalesce(indicador_falha_recorrente, false)
-                        )
+                        data < date("{{ var('DATA_SUBSIDIO_V20_INICIO') }}")
+                        or data >= date("{{ var('DATA_SUBSIDIO_V20_INICIO') }}")
+                        and coalesce(indicador_falha_recorrente, false)
+                    )
+                    and (
                         or indicador_temperatura_zero_viagem
                         or not indicador_temperatura_transmitida_viagem
                         or not indicador_temperatura_regular_viagem
