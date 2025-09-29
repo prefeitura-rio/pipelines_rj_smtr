@@ -126,18 +126,22 @@ with
                     > e.datetime_inicio_validade_estudante
                 then g.datetime_inicio_validade_gratuidade
                 else e.datetime_inicio_validade_estudante
-            end as datetime_inicio_validade_gratuidade
+            end as datetime_inicio_validade_gratuidade,
+            datetime_fim_validade_gratuidade
         from gratuidade g
         left join estudante e using (id_cliente)
         where g.tipo_gratuidade = 'Estudante'
     ),
     gratuidade_estudante_fim_validade as (
         select
-            *,
+            * except (datetime_fim_validade_gratuidade),
             lead(datetime_inicio_validade_gratuidade) over (
                 partition by id_cliente order by datetime_inicio_validade_gratuidade
             ) as datetime_fim_validade_gratuidade
         from gratuidade_estudante
+        where
+            datetime_inicio_validade_gratuidade < datetime_fim_validade_gratuidade
+            or datetime_fim_validade_gratuidade is null
         qualify
             datetime_inicio_validade_gratuidade != datetime_fim_validade_gratuidade
             or datetime_fim_validade_gratuidade is null
@@ -155,18 +159,22 @@ with
                     > l.datetime_inicio_validade_saude
                 then g.datetime_inicio_validade_gratuidade
                 else l.datetime_inicio_validade_saude
-            end as datetime_inicio_validade_gratuidade
+            end as datetime_inicio_validade_gratuidade,
+            datetime_fim_validade_gratuidade
         from gratuidade g
         left join laudo_pcd l using (id_cliente)
         where g.tipo_gratuidade = 'PCD'
     ),
     gratuidade_saude_fim_validade as (
         select
-            *,
+            * except (datetime_fim_validade_gratuidade),
             lead(datetime_inicio_validade_gratuidade) over (
                 partition by id_cliente order by datetime_inicio_validade_gratuidade
             ) as datetime_fim_validade_gratuidade
         from gratuidade_saude
+        where
+            datetime_inicio_validade_gratuidade < datetime_fim_validade_gratuidade
+            or datetime_fim_validade_gratuidade is null
         qualify
             datetime_inicio_validade_gratuidade != datetime_fim_validade_gratuidade
             or datetime_fim_validade_gratuidade is null
