@@ -1,5 +1,13 @@
 # Changelog - subsidio
 
+## [2.1.8] - 2025-09-29
+
+### Corrigido
+
+- Corrige a data de inicio da verificação do `indicador_falha_recorrente` no modelo `viagem_regularidade_temperatura`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/904)
+
+- Corrige o teste `test_check_regularidade_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/904)
+
 ## [2.1.7] - 2025-09-26
 
 ### Alterado
