@@ -1,21 +1,19 @@
 {{
     config(
         materialized="incremental",
-        incremental_strategy="merge",
+        incremental_strategy="insert_overwrite",
         partition_by={
-            "field": "datetime_captura",
-            "data_type": "datetime",
+            "field": "data",
+            "data_type": "date",
             "granularity": "day",
         },
-        cluster_by=["id_conta"],
-        unique_key="id_lancamento_particao",
     )
 }}
 
 {% set staging_lancamento = ref("staging_lancamento") %}
 
 {% set incremental_filter %}
-    data between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
+    ({{ generate_date_hour_partition_filter(var('date_range_start'), var('date_range_end')) }})
     and timestamp_captura between datetime("{{var('date_range_start')}}") and datetime("{{var('date_range_end')}}")
 {% endset %}
 
@@ -40,6 +38,16 @@
         )
     {% endset %}
 
+    {% set lancamento_partitions_query %}
+        select distinct concat("'", date(dt_lancamento), "'") as dt_lancamento
+        from {{ staging_lancamento }}
+        where {{ incremental_filter }}
+    {% endset %}
+
+    {% set lancamento_partitions = (
+        run_query(lancamento_partitions_query).columns[0].values()
+    ) %}
+
 {% else %}
     {% set sha_column %}
         cast(null as bytes)
@@ -49,62 +57,95 @@
 with
     dados_novos as (
         select
-            l.timestamp_captura as datetime_captura,
-            datetime(l.datetime_captura) as data,
+            date(l.dt_lancamento) as data,
+            l.dt_lancamento as datetime_lancamento,
             cast(l.id_conta as string) as id_conta,
-            l.cd_cliente as id_cliente,
-            concat(
-                cast(l.id_lancamento as string), "-", cast(l.id_conta as string)
-            ) as id_lancamento_particao,
-            j.nome as nome_cliente,
-            j.documento as nr_documento,
-            j.tipo_documento,
-            l.id_lancamento,
-            l.dt_lancamento as data_lancamento,
-            l.vl_lancamento as valor_lancamento,
-            l.ds_tipo_movimento as tipo_movimento,
             case
                 when regexp_contains(l.id_conta, r'^2\.2\.3\.[A-Za-z0-9]+\.1$')
                 then split(l.id_conta, ".")[offset(3)]
-            end as nr_logico_midia
+            end as nr_logico_midia,
+            l.id_lancamento,
+            l.cd_cliente as id_cliente,
+            j.nome as nome_cliente,
+            j.documento as documento_cliente,
+            j.tipo_documento as tipo_documento_cliente,
+            l.ds_tipo_movimento as tipo_movimento,
+            l.vl_lancamento as valor_lancamento,
+            l.timestamp_captura as datetime_captura,
         from {{ ref("staging_lancamento") }} as l
         -- from `rj-smtr-dev.adriano__bilhetagem_interno_staging.lancamento`
         left join {{ ref("cliente_jae") }} j on j.id_cliente = l.cd_cliente
+        -- left join  `rj-smtr.cadastro_interno.cliente_jae` j on j.id_cliente =
+        -- l.cd_cliente
         where
             (
                 regexp_contains(l.id_conta, r'^2\.2\.1\.[A-Za-z0-9]+\.(1|2|6)$')
                 or regexp_contains(l.id_conta, r'^2\.2\.3\.[A-Za-z0-9]+\.1$')
             )
+            {% if is_incremental() %} and {{ incremental_filter }}
+            {% else %} and data = "2025-09-24"
+            {% endif %}
         qualify
             row_number() over (
-                partition by l.id_lancamento, l.id_conta
-                order by l.timestamp_captura desc
+                partition by l.id_lancamento, l.id_conta order by datetime_captura desc
             )
             = 1
-    ) sha_dados_novos as (select *, {{ sha_column }} as sha_dado_novo from dados_novos),
+    ),
+    {% if is_incremental() %}
+
+        dados_atuais as (
+            select *
+            from {{ this }}
+            where
+                {% if lancamento_partitions | length > 0 %}
+                    data in ({{ lancamento_partitions | join(", ") }})
+                {% else %} false
+                {% endif %}
+
+        ),
+    {% endif %}
+    particoes_completas as (
+        select *, 0 as priority
+        from dados_novos
+
+        {% if is_incremental() %}
+            union all
+
+            select
+                * except (versao, datetime_ultima_atualizacao, id_execucao_dbt),
+                1 as priority
+            from dados_atuais
+
+        {% endif %}
+    ),
+    sha_dados_novos as (
+        select *, {{ sha_column }} as sha_dado_novo from particoes_completas
+    ),
     sha_dados_atuais as (
         {% if is_incremental() %}
 
             select
-                id_lancamento_particao,
+                id_lancamento,
+                id_conta,
                 {{ sha_column }} as sha_dado_atual,
                 datetime_ultima_atualizacao as datetime_ultima_atualizacao_atual,
                 id_execucao_dbt as id_execucao_dbt_atual
-            from {{ this }} as t
-            join dados_novos as n using (id_lancamento_particao)
+            from dados_atuais as t
+            join dados_novos as n using (id_lancamento, id_conta)
 
         {% else %}
             select
-                cast(null as string) as id_lancamento_particao,
+                cast(null as string) as id_lancamento,
+                cast(null as string) as id_conta,
                 cast(null as bytes) as sha_dado_atual,
                 datetime(null) as datetime_ultima_atualizacao_atual,
                 cast(null as string) as id_execucao_dbt_atual
         {% endif %}
     ),
     sha_dados_completos as (
-        select n.*, a.* except (id_lancamento_particao)
+        select n.*, a.* except (id_lancamento, id_conta)
         from sha_dados_novos n
-        left join sha_dados_atuais a using (id_lancamento_particao)
+        left join sha_dados_atuais a using (id_lancamento, id_conta)
     ),
     extrato_colunas_controle as (
         select
