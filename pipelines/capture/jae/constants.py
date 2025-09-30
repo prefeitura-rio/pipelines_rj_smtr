@@ -742,6 +742,8 @@ class constants(Enum):  # pylint: disable=c0103
                 "estudante_11072025",
                 "temp_cliente_02082025",
                 "temp_requisicao_pedido_ticketeira",
+                "temp_estudante_27082025",
+                "temp_pedido_VT_12092025",
             ],
             "filter": {
                 "ITEM_PEDIDO": ["DT_INCLUSAO"],
@@ -912,6 +914,9 @@ class constants(Enum):  # pylint: disable=c0103
                 "estudante_universitario_25032025",
                 "estudante_universitario_25042025",
                 "estudante_universitario_12032025",
+                "estudante_seeduc_27062025",
+                "estudante_seeduc_07082025",
+                "estudante_universitario_10092025",
             ],
             "filter": {
                 "lancamento_conta_gratuidade": ["data_inclusao"],
@@ -1034,6 +1039,11 @@ class constants(Enum):  # pylint: disable=c0103
                 "temp_estudante_cpfduplicado_13032025",
                 "temp_estudante_cpfduplicado_14032025",
                 "temp_estudante_cpfduplicado_17032025",
+                "temp_midias_gratuidade_utilizacao_0107a1208",
+                "temp_midia_limbo_nv",
+                "temp_midia_limbo_09072025",
+                "temp_uids_01",
+                "temp_cartoes_duplicados_14082025",
             ],
             "filter": {
                 "midia_evento": ["dt_inclusao"],
