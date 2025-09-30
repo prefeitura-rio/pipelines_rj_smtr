@@ -3,7 +3,6 @@
 {% if var("tipo_materializacao") == "monitoramento" %} {% set interval_minutes = 120 %}
 {% elif var("tipo_materializacao") == "subsidio" %} {% set interval_minutes = 30 %}
 {% endif %}
-
 data between date("{{ var('start_date') }}") and date_add(
     date("{{ var('end_date') }}"), interval 1 day
 )
