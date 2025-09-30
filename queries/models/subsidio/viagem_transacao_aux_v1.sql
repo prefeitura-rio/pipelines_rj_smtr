@@ -4,8 +4,10 @@
 {% elif var("tipo_materializacao") == "subsidio" %} {% set interval_minutes = 30 %}
 {% endif %}
 
-    data between date("{{ var('start_date') }}") and date_add(date("{{ var('end_date') }}"), interval 1 day)
-    and data <= date_add(date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}"), interval 1 day)
+data between date("{{ var('start_date') }}") and date_add(
+    date("{{ var('end_date') }}"), interval 1 day
+)
+and data <= date_add(date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}"), interval 1 day)
 
 with
     -- Transações Jaé
@@ -14,8 +16,7 @@ with
         from {{ ref("transacao") }}
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
         where
-           date(datetime_processamento) - date(datetime_transacao)
-            <= interval 6 day
+            date(datetime_processamento) - date(datetime_transacao) <= interval 6 day
             and modo = "Ônibus"
     ),
     -- Transações RioCard
@@ -24,8 +25,7 @@ with
         from {{ ref("transacao_riocard") }}
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard`
         where
-            date(datetime_processamento) - date(datetime_transacao)
-            <= interval 6 day
+            date(datetime_processamento) - date(datetime_transacao) <= interval 6 day
             and modo = "Ônibus"
     ),
     -- Status dos veículos
@@ -187,11 +187,11 @@ with
         from {{ ref("gps_validador") }}
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador`
         where
-                    data < date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
-                    and (latitude != 0 or longitude != 0)
-                
-                or data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
-            
+            data < date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
+            and (latitude != 0 or longitude != 0)
+
+            or data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
+
             and date(datetime_captura) - date(datetime_gps) <= interval 6 day
             and modo = "Ônibus"
     ),
