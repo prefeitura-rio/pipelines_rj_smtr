@@ -1,8 +1,4 @@
-{{
-    config(
-        materialized="ephemeral"
-    )
-}}
+{{ config(materialized="ephemeral") }}
 
 {%- if execute -%}
     {%- set results = generate_km_columns() -%}
@@ -40,12 +36,9 @@
     {%- endfor -%}
 {%- endif -%}
 
-{% set incremental_filter %}
-    data between
-        date('{{ var("start_date") }}')
-        and date('{{ var("end_date") }}')
-    and data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
-{% endset %}
+
+data between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+and data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
 
 with
     subsidio_faixa as (
@@ -61,8 +54,7 @@ with
             km_planejada_faixa,
             pof
         from {{ ref("percentual_operacao_faixa_horaria") }}
-        -- from `rj-smtr.subsidio.percentual_operacao_faixa_horaria`
-        where {{ incremental_filter }}
+    -- from `rj-smtr.subsidio.percentual_operacao_faixa_horaria`
     ),
     penalidade as (
         select
@@ -74,8 +66,7 @@ with
             faixa_horaria_fim,
             valor_penalidade
         from {{ ref("subsidio_penalidade_servico_faixa") }}
-        -- from `rj-smtr.financeiro.subsidio_penalidade_servico_faixa`
-        where {{ incremental_filter }}
+    -- from `rj-smtr.financeiro.subsidio_penalidade_servico_faixa`
     ),
     subsidio_parametros as (
         select distinct
@@ -148,7 +139,12 @@ with
         -- from `rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem` as s
         left join
             penalidade as p using (
-                data, tipo_dia, faixa_horaria_inicio, faixa_horaria_fim, servico, sentido
+                data,
+                tipo_dia,
+                faixa_horaria_inicio,
+                faixa_horaria_fim,
+                servico,
+                sentido
             )
         left join
             subsidio_parametros as sp
@@ -168,7 +164,7 @@ with
                     and sp.tecnologia is null
                 )
             )
-        where {{ incremental_filter }}
+
         group by
             data,
             tipo_dia,
@@ -203,8 +199,7 @@ with
                     end as tipo_viagem_tecnologia,
                     km_apurada_faixa
                 from {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
-                -- from `rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem`
-                where {{ incremental_filter }}
+            -- from `rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem`
             ) pivot (
                 sum(km_apurada_faixa) as km_apurada for tipo_viagem_tecnologia in (
                     {%- for tipo in tipos %}
@@ -264,9 +259,21 @@ select
 from subsidio_faixa as s
 left join
     subsidio_faixa_agg as agg using (
-        data, tipo_dia, faixa_horaria_inicio, faixa_horaria_fim, consorcio, servico, sentido
+        data,
+        tipo_dia,
+        faixa_horaria_inicio,
+        faixa_horaria_fim,
+        consorcio,
+        servico,
+        sentido
     )
 left join
     pivot_data as pd using (
-        data, tipo_dia, faixa_horaria_inicio, faixa_horaria_fim, consorcio, servico, sentido
+        data,
+        tipo_dia,
+        faixa_horaria_inicio,
+        faixa_horaria_fim,
+        consorcio,
+        servico,
+        sentido
     )

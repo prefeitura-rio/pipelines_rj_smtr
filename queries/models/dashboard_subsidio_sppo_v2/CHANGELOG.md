@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo_v2
 
+## [1.1.2] - 2025-09-30
+
+### Alterado
+
+- Ajusta os modelos efêmeros `sumario_faixa_servico_pagamento_v1` e `sumario_faixa_servico_pagamento_v2` removendo o trecho `is incremental`.(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
 ## [1.1.1] - 2025-08-07
 
 ### Alterado

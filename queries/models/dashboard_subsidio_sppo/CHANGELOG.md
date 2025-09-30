@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [8.0.3] - 2025-09-30
+
+### Alterado
+
+- Ajusta os modelos efêmeros `viagens_remuneradas_v1` e `viagens_remuneradas_v2` removendo o trecho `is incremental`.(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
 ## [8.0.2] - 2025-09-15
 
 ### Corrigido

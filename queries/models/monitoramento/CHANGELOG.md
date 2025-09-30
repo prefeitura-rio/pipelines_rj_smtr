@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.7.3] - 2025-09-30
+
+### Alterado
+
+- Ajusta o modelo efêmero `monitoramento_servico_dia` removendo o trecho `is incremental`.(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
 ## [1.7.2] - 2025-09-25
 
 ### Corrigido
