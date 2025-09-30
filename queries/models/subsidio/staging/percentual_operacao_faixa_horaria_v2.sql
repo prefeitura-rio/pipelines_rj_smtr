@@ -1,8 +1,5 @@
 {{ config(materialized="ephemeral") }}
 
-data between greatest(
-    date("{{var('start_date')}}"), date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
-) and date("{{ var('end_date') }}")
 
 with
     -- 1. Viagens planejadas
