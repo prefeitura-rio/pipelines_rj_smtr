@@ -41,8 +41,8 @@ with
     data_versao_efetiva as (
         select data, tipo_dia, tipo_os, feed_start_date
         from {{ ref("subsidio_data_versao_efetiva") }}
-        -- from `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
-        -- (alterar também query no bloco execute)
+    -- from `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
+    -- (alterar também query no bloco execute)
     ),
     -- Parâmetros de subsídio
     subsidio_parametros as (
@@ -70,9 +70,8 @@ with
     ),
     -- Viagens com quantidades de transações
     viagem_transacao as (
-        select *
-        from {{ ref("viagem_transacao") }}
-        -- from `rj-smtr.subsidio.viagem_transacao`
+        select * from {{ ref("viagem_transacao") }}
+    -- from `rj-smtr.subsidio.viagem_transacao`
     ),
     -- Apuração de km realizado e Percentual de Operação por Faixa Horária (POF)
     servico_faixa_km_apuracao as (
