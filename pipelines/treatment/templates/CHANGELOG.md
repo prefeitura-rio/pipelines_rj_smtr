@@ -1,5 +1,13 @@
 # Changelog - treatment
 
+## [1.2.0] - 2025-09-29
+
+### Adicionado
+
+- Adiciona parâmetro `fallback_run` no flow genérico (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+- Cria condicional para execução com base no parâmetro `fallback_run` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+- Cria task `test_fallback_run` para determinar se a materialização deve ser executada (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+
 ## [1.1.9] - 2025-08-19
 
 ### Alterado
