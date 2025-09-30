@@ -1,5 +1,18 @@
 # Changelog - bilhetagem
 
+## [2.0.11] - 2025-09-29
+
+### Adicionado
+
+- Adiciona execuções de fallback nos flows `INTEGRACAO_MATERIALIZACAO` e `TRANSACAO_ORDEM_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+
+### Alterado
+
+- Altera materialização da integracao de 8:00 para 10:30 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+- Altera materialização da transacao_ordem de 9:00 para 11:00 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+- Altera materialização da TRANSACAO_VALOR_ORDEM_SELECTOR de 11:30 para 12:00 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+- Altera teste da transacao de 11:15 para 12:00 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+
 ## [2.0.10] - 2025-09-03
 
 ### Adicionado

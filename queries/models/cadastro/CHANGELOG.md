@@ -1,5 +1,11 @@
 # Changelog - cadastro
 
+## [1.6.5] - 2025-09-29
+
+### Alterado
+
+- Altera fonte dos dados de servico da Jaé dos modelos `servicos.sql` e `servico_operadora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+
 ## [1.6.4] - 2025-09-23
 
 ### Adicionado
