@@ -6,7 +6,7 @@ with
         from {{ ref("aux_servico_jae") }}
         qualify
             row_number() over (
-                partition by id_servico_jae order by timestamp_captura desc
+                partition by id_servico_jae order by datetime_inicio_validade desc
             )
             = 1
     )
