@@ -16,6 +16,7 @@ from sqlalchemy import DATE, DATETIME, TIMESTAMP, create_engine, inspect
 from pipelines.capture.jae.constants import constants
 from pipelines.capture.jae.utils import (
     create_billingpay_backup_filepath,
+    get_capture_delay_minutes,
     get_jae_timestamp_captura_count,
     get_redis_last_backup,
     get_table_data_backup_billingpay,
@@ -65,21 +66,55 @@ def create_jae_general_extractor(source: SourceTable, timestamp: datetime):
     end = end.strftime("%Y-%m-%d %H:%M:%S")
     capture_delay_minutes = params.get("capture_delay_minutes", {"0": 0})
 
-    delay_timestamps = (
-        convert_timezone(timestamp=datetime.fromisoformat(a))
-        for a in capture_delay_minutes.keys()
-        if a != "0"
+    delay = get_capture_delay_minutes(
+        capture_delay_minutes=capture_delay_minutes, timestamp=timestamp
     )
-    delay = capture_delay_minutes["0"]
-    for t in delay_timestamps:
-        if timestamp >= t:
-            delay = capture_delay_minutes[t.strftime("%Y-%m-%d %H:%M:%S")]
 
     query = params["query"].format(
         start=start,
         end=end,
         delay=delay,
     )
+    database_name = params["database"]
+    database = constants.JAE_DATABASE_SETTINGS.value[database_name]
+    general_func_arguments = {
+        "query": query,
+        "engine": database["engine"],
+        "host": database["host"],
+        "user": credentials["user"],
+        "password": credentials["password"],
+        "database": database_name,
+        "max_retries": 3,
+    }
+    if source.file_chunk_size is not None:
+        return partial(
+            get_raw_db_paginated, page_size=source.file_chunk_size, **general_func_arguments
+        )
+    return partial(get_raw_db, **general_func_arguments)
+
+
+@task
+def create_ressarcimento_db_extractor(source: SourceTable, timestamp: datetime):
+    """Cria a extração de tabelas do ressarcimento_db da Jaé"""
+    credentials = get_secret(constants.JAE_SECRET_PATH.value)
+    params = constants.JAE_TABLE_CAPTURE_PARAMS.value[source.table_id]
+
+    end = timestamp.astimezone(tz=timezone("UTC"))
+    start = (end - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
+    end = end.strftime("%Y-%m-%d %H:%M:%S")
+
+    capture_delay_minutes = params.get("capture_delay_minutes", {"0": 0})
+
+    delay = get_capture_delay_minutes(
+        capture_delay_minutes=capture_delay_minutes, timestamp=timestamp
+    )
+
+    query = params["query"].format(
+        start=start,
+        end=end,
+        delay=delay,
+    )
+
     database_name = params["database"]
     database = constants.JAE_DATABASE_SETTINGS.value[database_name]
     general_func_arguments = {
@@ -817,9 +852,10 @@ def get_capture_gaps(
     save_capture_check_results(env=env, results=df_merge)
 
     if len(timestamps) > 0:
+        ts_log = [f'"{t}",' for t in timestamps]
         log(
             "[{table_id}] Os seguintes timestamps estão divergentes:\n{timestamps_str}".format(
-                table_id=table_id, timestamps_str="\n".join(timestamps)
+                table_id=table_id, timestamps_str="\n".join(ts_log)
             )
         )
     else:
