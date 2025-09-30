@@ -10,14 +10,15 @@
     )
 }}
 
-{% set staging_lancamento = ref("staging_lancamento") %}
 
 {% set incremental_filter %}
     ({{ generate_date_hour_partition_filter(var('date_range_start'), var('date_range_end')) }})
     and timestamp_captura between datetime("{{var('date_range_start')}}") and datetime("{{var('date_range_end')}}")
 {% endset %}
 
-{% if execute and is_incremental() %}
+{% set staging_lancamento = ref("staging_lancamento") %}
+
+{% if is_incremental() %}
     {% set columns = (
         list_columns()
         | reject(
@@ -71,7 +72,7 @@ with
             j.tipo_documento as tipo_documento_cliente,
             l.ds_tipo_movimento as tipo_movimento,
             l.vl_lancamento as valor_lancamento,
-            l.timestamp_captura as datetime_captura,
+            l.timestamp_captura as datetime_captura
         from {{ ref("staging_lancamento") }} as l
         -- from `rj-smtr-dev.adriano__bilhetagem_interno_staging.lancamento`
         left join {{ ref("cliente_jae") }} j on j.id_cliente = l.cd_cliente
@@ -82,9 +83,7 @@ with
                 regexp_contains(l.id_conta, r'^2\.2\.1\.[A-Za-z0-9]+\.(1|2|6)$')
                 or regexp_contains(l.id_conta, r'^2\.2\.3\.[A-Za-z0-9]+\.1$')
             )
-            {% if is_incremental() %} and {{ incremental_filter }}
-            {% else %} and data = "2025-09-24"
-            {% endif %}
+            {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
         qualify
             row_number() over (
                 partition by l.id_lancamento, l.id_conta order by datetime_captura desc
@@ -99,7 +98,7 @@ with
             where
                 {% if lancamento_partitions | length > 0 %}
                     data in ({{ lancamento_partitions | join(", ") }})
-                {% else %} false
+                {% else %} 1 = 0
                 {% endif %}
 
         ),
@@ -119,7 +118,14 @@ with
         {% endif %}
     ),
     sha_dados_novos as (
-        select *, {{ sha_column }} as sha_dado_novo from particoes_completas
+        select *, {{ sha_column }} as sha_dado_novo
+        from particoes_completas
+        qualify
+            row_number() over (
+                partition by id_lancamento, id_conta
+                order by priority, datetime_lancamento desc
+            )
+            = 1
     ),
     sha_dados_atuais as (
         {% if is_incremental() %}
@@ -130,8 +136,7 @@ with
                 {{ sha_column }} as sha_dado_atual,
                 datetime_ultima_atualizacao as datetime_ultima_atualizacao_atual,
                 id_execucao_dbt as id_execucao_dbt_atual
-            from dados_atuais as t
-            join dados_novos as n using (id_lancamento, id_conta)
+            from dados_atuais
 
         {% else %}
             select
@@ -153,7 +158,8 @@ with
                 sha_dado_novo,
                 sha_dado_atual,
                 datetime_ultima_atualizacao_atual,
-                id_execucao_dbt_atual
+                id_execucao_dbt_atual,
+                priority
             ),
             '{{ var("version") }}' as versao,
             case
