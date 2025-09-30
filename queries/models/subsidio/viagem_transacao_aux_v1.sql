@@ -186,11 +186,11 @@ with
         from {{ ref("gps_validador") }}
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador`
         where
-            (data < date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
-            and (latitude != 0 or longitude != 0)
-
-            or data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}"))
-
+            (
+                data < date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
+                and (latitude != 0 or longitude != 0)
+                or data >= date("{{ var('DATA_SUBSIDIO_V12_INICIO') }}")
+            )
             and date(datetime_captura) - date(datetime_gps) <= interval 6 day
             and modo = "Ônibus"
     ),
