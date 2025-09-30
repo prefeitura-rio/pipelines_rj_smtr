@@ -12,6 +12,7 @@ from pipelines.schedules import (
     create_minute_cron,
 )
 from pipelines.utils.gcp.bigquery import SourceTable
+from pipelines.utils.pretreatment import raise_if_column_isna
 
 JAE_SOURCE_NAME = "jae"
 
@@ -95,6 +96,7 @@ class constants(Enum):  # pylint: disable=c0103
     JAE_SECRET_PATH = "smtr_jae_access_data"
     JAE_PRIVATE_BUCKET_NAMES = {"prod": "rj-smtr-jae-private", "dev": "rj-smtr-dev-private"}
     ALERT_WEBHOOK = "alertas_bilhetagem"
+    RESULTADO_VERIFICACAO_CAPTURA_TABLE_ID = "resultado_verificacao_captura_jae"
 
     JAE_AUXILIAR_CAPTURE_PARAMS = {}
 
@@ -492,6 +494,7 @@ class constants(Enum):  # pylint: disable=c0103
             "database": "ressarcimento_db",
             "primary_keys": ["id"],
             "capture_flow": "ordem_pagamento",
+            "pretreat_funcs": [raise_if_column_isna(column_name="id_ordem_pagamento")],
         },
         "ordem_pagamento": {
             "query": """
@@ -548,6 +551,7 @@ class constants(Enum):  # pylint: disable=c0103
             "database": "ressarcimento_db",
             "primary_keys": ["id"],
             "capture_flow": "ordem_pagamento",
+            "pretreat_funcs": [raise_if_column_isna(column_name="id_ordem_pagamento")],
         },
         "linha_sem_ressarcimento": {
             "query": """
@@ -641,7 +645,7 @@ class constants(Enum):  # pylint: disable=c0103
             source_name=JAE_SOURCE_NAME,
             table_id=k,
             first_timestamp=datetime(2024, 12, 30, 0, 0, 0),
-            schedule_cron=create_daily_cron(hour=8),
+            schedule_cron=create_daily_cron(hour=10),
             primary_keys=v["primary_keys"],
             pretreatment_reader_args=v.get("pretreatment_reader_args"),
             pretreat_funcs=v.get("pretreat_funcs"),
@@ -658,7 +662,7 @@ class constants(Enum):  # pylint: disable=c0103
         source_name=JAE_SOURCE_NAME,
         table_id=TRANSACAO_ORDEM_TABLE_ID,
         first_timestamp=datetime(2024, 11, 21, 0, 0, 0),
-        schedule_cron=create_daily_cron(hour=8),
+        schedule_cron=create_daily_cron(hour=10),
         partition_date_only=True,
         max_recaptures=5,
         primary_keys=[

@@ -150,7 +150,7 @@ def flow_log(msg, level: str = "info"):
 @task
 def run_subflow(
     flow_name: str,
-    parameters: Union[list[dict], dict],
+    parameters: Union[list[dict], dict] = None,
     project_name: str = None,
     labels: list[str] = None,
     maximum_parallelism: int = None,

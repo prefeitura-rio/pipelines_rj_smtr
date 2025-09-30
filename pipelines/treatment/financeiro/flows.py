@@ -16,7 +16,7 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 
 from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.constants import constants as smtr_constants
-from pipelines.schedules import every_day_hour_nine
+from pipelines.schedules import every_day_hour_ten_fifteen
 from pipelines.tasks import get_run_env, get_scheduled_timestamp
 from pipelines.treatment.cadastro.constants import constants as cadastro_constants
 from pipelines.treatment.financeiro.constants import constants
@@ -105,13 +105,15 @@ with Flow(
         additional_mentions=["devs_smtr"],
     )
 
-    set_redis_quality_check_datetime(
+    set_redis = set_redis_quality_check_datetime(
         env=env,
         dataset_id=DATASET_ID,
         table_id=TABLE_ID,
         end_datetime=end_datetime,
         upstream_tasks=[notify_discord],
     )
+
+    ordem_pagamento_quality_check.set_reference_tasks([set_redis, notify_discord, test_result])
 
 ordem_pagamento_quality_check.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 ordem_pagamento_quality_check.run_config = KubernetesRun(
@@ -122,7 +124,4 @@ ordem_pagamento_quality_check.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
 ]
-ordem_pagamento_quality_check.schedule = every_day_hour_nine
-
-
-# ordem pagamento
+ordem_pagamento_quality_check.schedule = every_day_hour_ten_fifteen
