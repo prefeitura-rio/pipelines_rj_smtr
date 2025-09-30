@@ -31,7 +31,7 @@ with
             datetime_partida,
             distancia_planejada
         from {{ ref("viagem_transacao") }}
-        -- from `rj-smtr.subsidio.viagem_transacao`
+    -- from `rj-smtr.subsidio.viagem_transacao`
     ),
     -- 3. Apuração de km realizado e Percentual de Operação por faixa
     servico_km_apuracao as (
