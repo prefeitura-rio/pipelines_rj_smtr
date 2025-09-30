@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Ajusta os modelos efêmeros `sumario_faixa_servico_pagamento_v1` e `sumario_faixa_servico_pagamento_v2` removendo o trecho `is incremental`.(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Ajusta os modelos efêmeros `sumario_faixa_servico_pagamento_v1` e `sumario_faixa_servico_pagamento_v2` removendo o trecho `is incremental`.(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/907)
 
 ## [1.1.1] - 2025-08-07
 
