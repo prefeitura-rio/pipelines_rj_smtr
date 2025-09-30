@@ -19,7 +19,7 @@ class constants(Enum):  # pylint: disable=c0103
 
     FINANCEIRO_BILHETAGEM_SELECTOR = DBTSelector(
         name="financeiro_bilhetagem",
-        schedule_cron=create_daily_cron(hour=10, minute=15),
+        schedule_cron=create_daily_cron(hour=10, minute=5),
         initial_datetime=datetime(2025, 3, 26, 0, 0, 0),
     )
 
