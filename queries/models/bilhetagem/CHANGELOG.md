@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [3.3.1] - 2025-09-29
+
+### Alterado
+
+- Altera janela de tempo para ler partições modificadas da transacao_ordem e transacao_retificada no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+
 ## [3.3.0] - 2025-09-16
 
 ### Adicionado

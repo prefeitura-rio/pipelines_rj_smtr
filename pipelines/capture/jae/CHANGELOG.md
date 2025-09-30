@@ -1,5 +1,15 @@
 # Changelog - source_jae
 
+## [3.0.0] - 2025-09-29
+
+### Adicionado
+- Adiciona schedules adicionais para fallback nos flows `CAPTURA_TRANSACAO_ORDEM` e `CAPTURA_INTEGRACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+- Adiciona função `raise_if_column_isna(column_name="id_ordem_pagamento")` no pretratamento da captura das tabelas `ordem_rateio` e `ordem_ressarcimento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+
+### Alterado
+- Altera captura das tabelas do ressarcimento_db e da transacao_ordem de 8:00 para 10:00 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+- Altera timedelta do schedule do backup dos bancos mais pesados (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+
 ## [2.5.0] - 2025-09-16
 
 ### Adicionado
