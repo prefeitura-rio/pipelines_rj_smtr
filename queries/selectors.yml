@@ -239,6 +239,8 @@ selectors:
           value: recarga_jae
         - method: fqn
           value: transacao_gratuidade_estudante_municipal
+        - method: sqn
+          value: extrato_cliente_cartao
 
   - name: integracao
     description: Materialização das tabelas de integracao da bilhetagem

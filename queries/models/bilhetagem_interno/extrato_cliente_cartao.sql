@@ -74,10 +74,7 @@ with
             l.vl_lancamento as valor_lancamento,
             l.timestamp_captura as datetime_captura
         from {{ ref("staging_lancamento") }} as l
-        -- from `rj-smtr-dev.adriano__bilhetagem_interno_staging.lancamento`
         left join {{ ref("cliente_jae") }} j on j.id_cliente = l.cd_cliente
-        -- left join  `rj-smtr.cadastro_interno.cliente_jae` j on j.id_cliente =
-        -- l.cd_cliente
         where
             (
                 regexp_contains(l.id_conta, r'^2\.2\.1\.[A-Za-z0-9]+\.(1|2|6)$')
