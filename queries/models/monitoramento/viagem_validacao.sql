@@ -130,6 +130,7 @@ with
                 id_viagem is not null
                 and datetime_partida is not null
                 and datetime_chegada is not null
+                and datetime_chegada > datetime_partida
                 and shape_id is not null
                 and route_id is not null
                 and id_veiculo is not null
@@ -224,7 +225,7 @@ with
             spu.extensao as distancia_planejada,
             spu.indicador_trajeto_alternativo,
             -- fmt: off
-            spu.extensao*60/(datetime_diff(datetime_chegada, datetime_partida, minute) + 1) as velocidade_media,
+            safe_divide(spu.extensao*3600, datetime_diff(datetime_chegada, datetime_partida, second)) as velocidade_media,
             -- fmt: on
             case
                 when spu.quilometragem is not null and spu.quilometragem > 0
