@@ -239,7 +239,12 @@ selectors:
           value: recarga_jae
         - method: fqn
           value: transacao_gratuidade_estudante_municipal
-        - method: sqn
+
+  - name: extrato_cliente_cartao
+    description: Materialização da tabela de extrato do cliente
+    definition:
+      union:
+        - method: fqn
           value: extrato_cliente_cartao
 
   - name: integracao
