@@ -15,10 +15,9 @@
     {{- log(feed_start_dates, info=True) -}}
 {% endif -%}
 
-data between greatest(
-    date("{{var('start_date')}}"), date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
-) and date("{{ var('end_date') }}")
-
+{% set incremental_filter %}
+    data between greatest(date("{{var('start_date')}}"), date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}"))  and date("{{ var('end_date') }}")
+{% endset %}
 with
     -- Viagens planejadas (agrupadas por data e serviço)
     planejado as (
@@ -35,14 +34,16 @@ with
         from {{ ref("viagem_planejada") }}
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
         where
-            (distancia_total_planejada > 0 or distancia_total_planejada is null)
+            {{ incremental_filter }}
+            and (distancia_total_planejada > 0 or distancia_total_planejada is null)
             and (id_tipo_trajeto = 0 or id_tipo_trajeto is null)
     ),
     data_versao_efetiva as (
         select data, tipo_dia, tipo_os, feed_start_date
         from {{ ref("subsidio_data_versao_efetiva") }}
-    -- from `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
-    -- (alterar também query no bloco execute)
+        -- from `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
+        -- (alterar também query no bloco execute)
+        where {{ incremental_filter }}
     ),
     -- Parâmetros de subsídio
     subsidio_parametros as (
@@ -70,8 +71,10 @@ with
     ),
     -- Viagens com quantidades de transações
     viagem_transacao as (
-        select * from {{ ref("viagem_transacao") }}
-    -- from `rj-smtr.subsidio.viagem_transacao`
+        select *
+        from {{ ref("viagem_transacao") }}
+        -- from `rj-smtr.subsidio.viagem_transacao`
+        where {{ incremental_filter }}
     ),
     -- Apuração de km realizado e Percentual de Operação por Faixa Horária (POF)
     servico_faixa_km_apuracao as (
@@ -86,6 +89,7 @@ with
             km_planejada_faixa as km_planejada,
             pof
         from {{ ref("percentual_operacao_faixa_horaria") }}
+        where {{ incremental_filter }}
     ),
     viagem_km_tipo as (
         select distinct

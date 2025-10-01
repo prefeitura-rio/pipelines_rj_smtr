@@ -1,11 +1,5 @@
 # Changelog - subsidio
 
-## [2.1.9] - 2025-09-30
-
-### Alterado
-
-- Ajusta os modelos efêmeros `viagem_transacao_aux_v1`, `percentual_operacao_faixa_horaria_v1` e `percentual_operacao_faixa_horaria_v2` removendo o trecho `is incremental`.(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/907)
-
 ## [2.1.8] - 2025-09-29
 
 ### Corrigido

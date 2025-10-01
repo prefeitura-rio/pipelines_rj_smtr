@@ -1,6 +1,7 @@
 {{ config(materialized="ephemeral") }}
-
-
+{% set incremental_filter %}
+    data between greatest(date("{{var('start_date')}}"), date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")) and date("{{ var('end_date') }}")
+{% endset %}
 with
     -- 1. Viagens planejadas
     planejado as (
@@ -15,7 +16,7 @@ with
             distancia_total_planejada as km_planejada
         from {{ ref("viagem_planejada") }}
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
-        where distancia_total_planejada > 0
+        where {{ incremental_filter }} and distancia_total_planejada > 0
     ),
     -- 2. Viagens realizadas
     viagem as (
@@ -28,7 +29,8 @@ with
             datetime_partida,
             distancia_planejada
         from {{ ref("viagem_transacao") }}
-    -- from `rj-smtr.subsidio.viagem_transacao`
+        -- from `rj-smtr.subsidio.viagem_transacao`
+        where {{ incremental_filter }}
     ),
     -- 3. Apuração de km realizado e Percentual de Operação por faixa
     servico_km_apuracao as (

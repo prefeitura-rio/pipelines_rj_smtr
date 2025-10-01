@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Ajusta o modelo efêmero `monitoramento_servico_dia` removendo o trecho `is incremental`.(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/907)
+- Ajusta o modelo efêmero `monitoramento_servico_dia` removendo o trecho `incremental`.(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/907)
 
 ## [1.7.2] - 2025-09-25
 

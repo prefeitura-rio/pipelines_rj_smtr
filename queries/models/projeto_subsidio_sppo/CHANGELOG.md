@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Ajusta o modelo efêmero `viagem_planejada_v1` removendo o trecho `is incremental`.(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/907)
+- Ajusta o modelo efêmero `viagem_planejada_v1` removendo o trecho `incremental`.(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/907)
 
 
 ## [9.3.4] - 2025-08-13
