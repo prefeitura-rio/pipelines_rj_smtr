@@ -101,6 +101,12 @@ def create_default_capture_flow(
             accepted_types=bool,
         )
 
+        recapture_timestamps = TypedParameter(
+            name="recapture_timestamps",
+            default=None,
+            accepted_types=(NoneType, list),
+        )
+
         # Preparar execução #
 
         timestamp = get_scheduled_timestamp(timestamp=timestamp)
@@ -118,6 +124,7 @@ def create_default_capture_flow(
             timestamp=timestamp,
             recapture=recapture,
             recapture_days=recapture_days,
+            recapture_timestamps=recapture_timestamps,
         )
 
         rename_capture_flow(
