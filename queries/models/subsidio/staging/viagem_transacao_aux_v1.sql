@@ -6,7 +6,7 @@
 
 {% set incremental_filter %}
     data between date("{{ var('start_date') }}") and date_add(date("{{ var('end_date') }}"), interval 1 day)
-    and data <= date_add(date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}"), interval 1 day)
+and data <= date_add(date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}"), interval 1 day)
 {% endset %}
 
 with
