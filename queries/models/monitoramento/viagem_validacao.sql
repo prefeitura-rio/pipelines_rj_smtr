@@ -225,7 +225,7 @@ with
             spu.extensao as distancia_planejada,
             spu.indicador_trajeto_alternativo,
             -- fmt: off
-            spu.extensao*60/(datetime_diff(datetime_chegada, datetime_partida, minute) + 1) as velocidade_media,
+            safe_divide(spu.extensao*60, datetime_diff(datetime_chegada, datetime_partida, minute)) as velocidade_media,
             -- fmt: on
             case
                 when spu.quilometragem is not null and spu.quilometragem > 0
