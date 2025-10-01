@@ -27,7 +27,6 @@ TRANSACAO_MATERIALIZACAO = create_default_materialization_flow(
         jae_constants.TRANSACAO_SOURCE.value,
         jae_constants.TRANSACAO_RIOCARD_SOURCE.value,
         constants.INTEGRACAO_SELECTOR.value,
-        jae_constants.LANCAMENTO_SOURCE.value,
     ]
     + [
         s
