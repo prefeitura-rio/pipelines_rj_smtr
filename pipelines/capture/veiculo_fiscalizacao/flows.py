@@ -12,7 +12,7 @@ CAPTURA_VEICULO_LACRE = create_default_capture_flow(
     flow_name="veiculo_fiscalizacao: veiculo_fiscalizacao_lacre - captura",
     source=constants.VEICULO_LACRE_SOURCE.value,
     create_extractor_task=create_veiculo_fiscalizacao_lacre_extractor,
-    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    agent_label=smtr_constants.RJ_SMTR_DEV_AGENT_LABEL.value,
     recapture_days=7,
 )
 set_default_parameters(CAPTURA_VEICULO_LACRE, {"recapture": True})
