@@ -95,11 +95,7 @@ with
             (
                 select *
                 from {{ ref("subsidio_quadro_horario") }}
-                {% if is_incremental() %}
-                    where
-                        data_versao
-                        in (select data_versao_frequencies from data_efetiva)
-                {% endif %}
+                where data_versao in (select data_versao_frequencies from data_efetiva)
             ) p
             on e.data_versao_frequencies = p.data_versao
             and e.tipo_dia = p.tipo_dia
@@ -113,9 +109,7 @@ with
             (
                 select *
                 from {{ ref("subsidio_trips_desaninhada") }}
-                {% if is_incremental() %}
-                    where data_versao in (select data_versao_trips from data_efetiva)
-                {% endif %}
+                where data_versao in (select data_versao_trips from data_efetiva)
             ) t
         inner join data_efetiva e on t.data_versao = e.data_versao_trips
     ),
@@ -169,9 +163,7 @@ with
             (
                 select *
                 from {{ ref("subsidio_shapes_geom") }}
-                {% if is_incremental() %}
-                    where data_versao in (select data_versao_shapes from data_efetiva)
-                {% endif %}
+                where data_versao in (select data_versao_shapes from data_efetiva)
             ) s
             on s.data_versao = e.data_versao_shapes
     )
