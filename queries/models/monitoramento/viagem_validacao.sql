@@ -130,6 +130,7 @@ with
                 id_viagem is not null
                 and datetime_partida is not null
                 and datetime_chegada is not null
+                and datetime_chegada > datetime_partida
                 and shape_id is not null
                 and route_id is not null
                 and id_veiculo is not null
