@@ -3,7 +3,7 @@
 """
 Flows for projeto_subsidio_sppo
 
-DBT: 2025-09-29
+DBT: 2025-10-01
 """
 
 from datetime import datetime
