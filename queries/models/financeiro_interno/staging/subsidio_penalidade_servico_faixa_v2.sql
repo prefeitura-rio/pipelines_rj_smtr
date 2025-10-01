@@ -1,8 +1,4 @@
-{{
-    config(
-        materialized="ephemeral"
-    )
-}}
+{{ config(materialized="ephemeral") }}
 
 with
     subsidio_dia as (
@@ -11,6 +7,7 @@ with
             tipo_dia,
             consorcio,
             servico,
+            sentido,
             faixa_horaria_inicio,
             faixa_horaria_fim,
             case
@@ -25,10 +22,10 @@ with
                 select
                     *,
                     min(pof) over (
-                        partition by data, tipo_dia, consorcio, servico
+                        partition by data, tipo_dia, consorcio, servico, sentido
                     ) as min_pof,
                     row_number() over (
-                        partition by data, tipo_dia, consorcio, servico
+                        partition by data, tipo_dia, consorcio, servico, sentido
                         order by pof, faixa_horaria_inicio
                     ) as rn
                 from {{ ref("percentual_operacao_faixa_horaria") }}
@@ -56,6 +53,7 @@ select
     s.tipo_dia,
     s.consorcio,
     s.servico,
+    s.sentido,
     faixa_horaria_inicio,
     faixa_horaria_fim,
     safe_cast(coalesce(pe.valor_penalidade, 0) as numeric) as valor_penalidade,
