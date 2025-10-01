@@ -22,7 +22,7 @@ with
         select
             data, servico, id_viagem, tipo_viagem, datetime_partida, distancia_planejada
         from {{ ref("viagem_transacao") }}
-    -- from `rj-smtr.subsidio.viagem_transacao`
+        -- from `rj-smtr.subsidio.viagem_transacao`
         where {{ incremental_filter }}
     ),
     -- 3. Apuração de km realizado e Percentual de Operação por faixa
