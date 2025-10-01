@@ -1,10 +1,10 @@
 # Changelog - projeto_subsidio_sppo
 
-## [9.3.5] - 2025-09-30
+## [9.3.5] - 2025-10-01
 
-### Alterado
+### Removido
 
-- Ajusta o modelo efêmero `viagem_planejada_v1` removendo o trecho `incremental`.(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/907)
+- Ajusta o modelo efêmero `viagem_planejada_v1` removendo a macro `is_incremental`.(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/907)
 
 
 ## [9.3.4] - 2025-08-13
