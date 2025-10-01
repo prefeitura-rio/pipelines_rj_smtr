@@ -1,8 +1,4 @@
-{{
-    config(
-        materialized="ephemeral"
-    )
-}}
+{{ config(materialized="ephemeral") }}
 
 {%- if execute -%}
     {%- set results = generate_km_columns() -%}
@@ -44,7 +40,7 @@
     data between
         date('{{ var("start_date") }}')
         and date('{{ var("end_date") }}')
-    and data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
+and data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
 {% endset %}
 
 with
