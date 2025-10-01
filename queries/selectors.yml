@@ -66,6 +66,8 @@ selectors:
           value: gps_segmento_viagem
         - method: fqn
           value: viagem_validacao
+        - method: fqn
+          value: viagem_valida
 
   - name: planejamento_diario
     description: Materialização das tabelas de planejamento que devem rodar diariamente
