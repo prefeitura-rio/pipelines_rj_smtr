@@ -30,22 +30,22 @@ class DBTSelector:
 
     Args:
         name (str): nome do seletor no DBT
-        schedule_cron (str): expressão cron que representa a frequência com que o seletor
+        schedule_cron (str, optional): expressão cron que representa a frequência com que o seletor
             é executado
-        initial_datetime (datetime): primeiro datetime que o selector deve ser executado (é usado
-            na criação da primeira variável date_range_start)
+        initial_datetime (datetime, optional): primeiro datetime que o selector deve ser executado
+            (é usado na criação da primeira variável date_range_start)
         incremental_delay_hours (int): quantidade de horas que serão subtraídas do horário atual
             ao criar a variável date_range_end
-        redis_key_suffix (str): sufixo para diferenciar redis_keys de selectores com mesmo nome
+        redis_key_suffix (str, optional): sufixo para diferenciar redis_keys de selectores
     """
 
     def __init__(
         self,
         name: str,
-        initial_datetime: datetime = None,
-        schedule_cron: str = None,
+        initial_datetime: Optional[datetime] = None,
+        schedule_cron: Optional[str] = None,
         incremental_delay_hours: int = 0,
-        redis_key_suffix: str = None,
+        redis_key_suffix: Optional[str] = None,
     ):
         self.name = name
         self.schedule_cron = schedule_cron
