@@ -12,9 +12,9 @@ select
 from {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }}
 -- `rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem`
 where
-    data >= date("{{ var(" data_subsidio_v9_inicio ") }}")
+    data >= date('{{ var("DATA_SUBSIDIO_V9_INICIO") }}')
     and tipo_viagem != "Sem viagem apurada"
-    and data between date("{{ var(" start_date ") }}") and date_add(
-        date("{{ var(" end_date ") }}"), interval 1 day
+    and data between date('{{ var("start_date") }}') and date_add(
+        date('{{ var("end_date") }}'), interval 1 day
     )
 group by data, tipo_dia, consorcio, servico, tipo_viagem, indicador_ar_condicionado
