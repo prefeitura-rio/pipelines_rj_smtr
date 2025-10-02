@@ -1,5 +1,20 @@
 # Changelog - monitoramento
 
+## [1.7.3] - 2025-10-01
+
+### Adicionado
+
+- Cria modelo `viagem_valida` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/910)
+
+### Corrigido
+
+- Corrige `indicador_campos_obrigatorios` no modelo `viagem_validacao` para invalidar viagens com `datetime_partida` maior que  `datetime_chegada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/910)
+- Corrige divisão por 0 no cálculo da `velocidade_media` no modelo `viagem_validacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/910)
+
+### Removido
+
+- Ajusta o modelo efêmero `monitoramento_servico_dia` removendo a macro `is_incremental`.(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/907)
+
 ## [1.7.2] - 2025-09-25
 
 ### Corrigido
