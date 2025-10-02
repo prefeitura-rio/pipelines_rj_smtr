@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.2.9] - 2025-10-02
+
+### Adicionado
+
+- Cria selector para cada fonte de GPS (conecta, cittati, zirix) para os modelos `gps` e `gps_15_minutos` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/916)
+
 ## [1.2.8] - 2025-09-02
 
 ### Adicionado
