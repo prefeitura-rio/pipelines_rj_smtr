@@ -126,43 +126,53 @@ models:
         description: "{{ doc('data') }} [partição]"
         data_type: date
       - name: datetime_lancamento
-        description: "{{ doc('data_transacao') }}"
+        description: Datetime de lançamento do registro de extrato
         data_type: datetime
       - name: id_conta
-        description: "{{ doc('data_transacao') }}"
+        description: Identificador único da conta de cliente
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
         data_type: string
       - name: nr_logico_midia
-        description: "{{ doc('data_transacao') }}"
+        description: "{{ doc('hash_cartao') }}"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
         data_type: string
       - name: id_lancamento
-        description: "{{ doc('data_transacao') }}"
+        description:
         data_type: string
       - name: id_cliente
-        description: "{{ doc('data_transacao') }}"
+        description: "{{ doc('id_cliente') }}"
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
         data_type: string
       - name: nome_cliente
-        description: "{{ doc('data_transacao') }}"
+        description: "{{ doc('nome_cliente') }}"
         data_type: string
       - name: documento_cliente
-        description: "{{ doc('data_transacao') }}"
+        description: "{{ doc('documento_cliente') }}"
         data_type: string
       - name: tipo_documento_cliente
-        description: "{{ doc('data_transacao') }}"
+        description: "{{ doc('tipo_documento_cliente') }}"
         data_type: string
       - name: tipo_movimento
-        description: "{{ doc('data_transacao') }}"
+        description: Tipo de movimentação do lançamento
         data_type: string
       - name: valor_lancamento
-        description: "{{ doc('data_transacao') }}"
+        description: Valor da lançamento efetuado
         data_type: int64
       - name: datetime_captura
-        description: "{{ doc('data_transacao') }}"
+        description: "{{ doc('datetime_captura') }}"
         data_type: datetime
       - name: versao
-        description: "{{ doc('data_transacao') }}"
+        description: "{{ doc('versao') }}"
         data_type: string
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
 
