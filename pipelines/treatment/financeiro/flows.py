@@ -83,6 +83,7 @@ with Flow(
     )
 
     dbt_vars, test_name = get_ordem_pagamento_modified_partitions(
+        env=env,
         start_datetime=start_datetime,
         end_datetime=end_datetime,
         partitions=partitions,
