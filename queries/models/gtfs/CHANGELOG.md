@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.2.7] - 2025-10-02
+
+### Removido
+
+- Ajusta o modelo efêmero `ordem_servico_sentido_atualizado_aux_gtfs` removendo a macro `is_incremental`.(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/913)
+
 ## [1.2.6] - 2025-08-08
 
 ### Alterado

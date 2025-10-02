@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.7.4] - 2025-10-02
+
+### Removido
+
+- Ajusta os modelos efêmeros `monitoramento_servico_dia_tipo_viagem` e `monitoramento_servico_dia_tipo_viagem_v2` removendo a macro `is_incremental`.(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/913)
+
 ## [1.7.3] - 2025-10-01
 
 ### Adicionado
