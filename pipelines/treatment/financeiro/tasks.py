@@ -3,7 +3,7 @@
 from datetime import date, datetime, timedelta
 from typing import Optional
 
-import basedosdados as bd
+import pandas_gbq
 from prefect import task
 from prefect.triggers import all_finished
 from prefeitura_rio.pipelines_utils.logging import log
@@ -98,6 +98,7 @@ def get_ordem_quality_check_end_datetime(
     nout=2,
 )
 def get_ordem_pagamento_modified_partitions(
+    env: str,
     start_datetime: Optional[datetime],
     end_datetime: Optional[datetime],
     partitions: Optional[list],
@@ -134,7 +135,11 @@ def get_ordem_pagamento_modified_partitions(
 
         log(f"executando query:\n{sql}")
 
-        partitions = bd.read_sql(sql)["data_ordem"].to_list()
+        partitions = pandas_gbq.read_gbq(
+            sql,
+            project_id=smtr_constants.PROJECT_NAME.value[env],
+        )["data_ordem"].to_list()
+
     else:
         partitions = [date.fromisoformat(p) for p in partitions]
 

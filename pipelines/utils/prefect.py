@@ -3,6 +3,7 @@
 import time
 from typing import Any, Dict, Type, Union
 
+import basedosdados as bd
 import prefect
 from prefect import unmapped
 from prefect.backend.flow_run import FlowRunView, FlowView, watch_flow_run
@@ -51,6 +52,8 @@ def run_local(flow: prefect.Flow, parameters: Dict[str, Any] = None):
     flow.run_config = None
     flow.schedule = None
     flow.state_handlers = []
+
+    bd.config.from_file = False
 
     # Run flow
     return flow.run(parameters=parameters) if parameters else flow.run()

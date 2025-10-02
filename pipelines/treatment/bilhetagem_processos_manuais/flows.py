@@ -56,6 +56,18 @@ with Flow(name="financeiro_bilhetagem: ordem atrasada - captura/tratamento") as 
 
     timestamp = get_scheduled_timestamp(timestamp=timestamp)
 
+    run_recapture = run_subflow(
+        flow_name=CAPTURA_ORDEM_PAGAMENTO.name,
+        parameters=[
+            {
+                "table_id": s.table_id,
+                "recapture": True,
+            }
+            for s in jae_constants.ORDEM_PAGAMENTO_SOURCES.value
+        ],
+        maximum_parallelism=3,
+    )
+
     run_capture = run_subflow(
         flow_name=CAPTURA_ORDEM_PAGAMENTO.name,
         parameters=[
@@ -69,6 +81,7 @@ with Flow(name="financeiro_bilhetagem: ordem atrasada - captura/tratamento") as 
             for s in jae_constants.ORDEM_PAGAMENTO_SOURCES.value
         ],
         maximum_parallelism=3,
+        upstream_tasks=[run_recapture],
     )
 
     run_materializacao_financeiro_bilhetagem = run_subflow(

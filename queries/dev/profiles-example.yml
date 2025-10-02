@@ -3,12 +3,11 @@ queries:
   outputs:
     dev:
       type: bigquery
-      method: service-account
+      method: oauth
       project: rj-smtr-dev
       dataset: dbt
       location: US
       threads: 1
-      keyfile: # caminho/para/sua/credencial.json
       priority: interactive
       job_retries: 1
 
@@ -17,10 +16,6 @@ queries:
       dataproc_region: us-central1
       submission_method: serverless
       dataproc_batch:
-        environment_config:
-          execution_config:
-            service_account: # sua-conta-de-servico
-
         runtime_config:
           properties:
             spark.executor.instances: "2"
@@ -28,12 +23,11 @@ queries:
             spark.driver.memoryOverhead: 1g
     hmg:
       type: bigquery
-      method: service-account
+      method: oauth
       project: rj-smtr-dev
       dataset: dbt
       location: US
       threads: 1
-      keyfile: # caminho/para/sua/credencial.json
       priority: interactive
       job_retries: 1
 
@@ -42,10 +36,6 @@ queries:
       dataproc_region: us-central1
       submission_method: serverless
       dataproc_batch:
-        environment_config:
-          execution_config:
-            service_account: # sua-conta-de-servico
-
         runtime_config:
           properties:
             spark.executor.instances: "2"
@@ -53,22 +43,17 @@ queries:
             spark.driver.memoryOverhead: 1g
     prod:
       type: bigquery
-      method: service-account
+      method: oauth
       project: rj-smtr
       dataset: dbt
       location: US
       threads: 1
-      keyfile: # caminho/para/sua/credencial.json
 
       # for dbt Python models to be run on Dataproc Serverless
       gcs_bucket: rj-smtr
       dataproc_region: us-central1
       submission_method: serverless
       dataproc_batch:
-        environment_config:
-          execution_config:
-            service_account: # sua-conta-de-servico
-
         runtime_config:
           properties:
             spark.executor.instances: "2"
