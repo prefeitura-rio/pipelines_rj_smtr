@@ -30,12 +30,10 @@ with
                     ) as rn
                 from {{ ref("percentual_operacao_faixa_horaria") }}
                 -- from `rj-smtr.subsidio.percentual_operacao_faixa_horaria`
-                {% if is_incremental() %}
                     where
                         data between date('{{ var("start_date") }}') and date(
                             '{{ var("end_date") }}'
                         )
-                {% endif %}
             )
     ),
     penalidade as (

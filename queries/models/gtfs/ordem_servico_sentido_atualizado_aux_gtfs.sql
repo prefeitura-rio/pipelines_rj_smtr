@@ -34,9 +34,7 @@ with
             horario_inicio as inicio_periodo,
             horario_fim as fim_periodo
         from {{ ref("aux_ordem_servico_diaria") }}
-        {% if is_incremental() -%}
-            where feed_start_date = '{{ var("data_versao_gtfs") }}'
-        {%- endif %}
+        where feed_start_date = '{{ var("data_versao_gtfs") }}'
     ),
     -- 3. Despivota ordem de serviço por sentido
     ordem_servico_sentido as (
