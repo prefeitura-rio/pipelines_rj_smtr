@@ -136,7 +136,7 @@ class BQTable(GCPBase):
             {kind}({field_name})
         FROM {self.table_full_name}
         """
-        result = pandas_gbq.read_gbq(query, project_id=constants.PROJECT_NAME.value(self.env))
+        result = pandas_gbq.read_gbq(query, project_id=constants.PROJECT_NAME.value[self.env])
 
         return result.iloc[0][0]
 
