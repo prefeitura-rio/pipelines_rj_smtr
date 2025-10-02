@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 from functools import partial
 from typing import Optional
 
-import basedosdados as bd
 import pandas as pd
+import pandas_gbq
 import prefect
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
@@ -830,7 +830,11 @@ def get_capture_gaps(
     """
 
     log(f"Executando query\n{query_datalake}")
-    df_datalake = bd.read_sql(query=query_datalake, from_file=True)
+
+    df_datalake = pandas_gbq.read_gbq(
+        query_datalake,
+        project_id=smtr_constants.PROJECT_NAME.value[env],
+    )
 
     df_datalake["timestamp_captura"] = df_datalake["timestamp_captura"].dt.tz_localize(
         smtr_constants.TIMEZONE.value

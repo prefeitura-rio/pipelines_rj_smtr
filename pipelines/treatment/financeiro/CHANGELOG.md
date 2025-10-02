@@ -1,5 +1,11 @@
 # Changelog - financeiro
 
+## [2.0.7] - 2025-10-02
+
+### Alterado
+
+- Substitui função de leitura do BigQuery da BD pela do pandas_gbq (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/918)
+
 ## [2.0.6] - 2025-09-29
 
 ### Alterado
