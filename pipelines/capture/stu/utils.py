@@ -134,8 +134,8 @@ def extract_stu_data(source: SourceTable, timestamp: datetime) -> List[dict]:
     log(f"Buscando dados de hoje ({hoje_str}) e ontem ({ontem_str})")
 
     # Lista todos os blobs no prefixo
-    prefix = f"ingestion/source_{STU_SOURCE_NAME}/{source.table_id}/"
-    blobs = List(st.bucket.list_blobs(prefix=prefix))
+    prefix = f"ingestion/source_{STU_SOURCE_NAME}/stu_{source.table_id}/"
+    blobs = list(st.bucket.list_blobs(prefix=prefix))
 
     log(f"Total de {len(blobs)} blobs encontrados no prefixo {prefix}")
 
