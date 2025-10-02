@@ -124,55 +124,38 @@ models:
     columns:
       - name: data
         description: "{{ doc('data') }} [partição]"
-        data_type: date
       - name: datetime_lancamento
         description: Datetime de lançamento do registro de extrato
-        data_type: datetime
       - name: id_conta
-        description: Identificador único da conta de cliente
+        description: Identificador único da conta que recebeu a transferência
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
-        data_type: string
       - name: nr_logico_midia
         description: "{{ doc('hash_cartao') }}"
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
-        data_type: string
       - name: id_lancamento
-        description:
-        data_type: string
+        description: Identificador único do lançamento da transferência
       - name: id_cliente
         description: "{{ doc('id_cliente') }}"
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
-        data_type: string
       - name: nome_cliente
         description: "{{ doc('nome_cliente') }}"
-        data_type: string
       - name: documento_cliente
         description: "{{ doc('documento_cliente') }}"
-        data_type: string
       - name: tipo_documento_cliente
         description: "{{ doc('tipo_documento_cliente') }}"
-        data_type: string
       - name: tipo_movimento
         description: Tipo de movimentação do lançamento
-        data_type: string
       - name: valor_lancamento
         description: Valor da lançamento efetuado
-        data_type: int64
       - name: datetime_captura
         description: "{{ doc('datetime_captura') }}"
-        data_type: datetime
       - name: versao
         description: "{{ doc('versao') }}"
-        data_type: string
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
-        data_type: datetime
-        quote: true
       - name: id_execucao_dbt
         description: "{{ doc('id_execucao_dbt') }}"
-        data_type: string
-        quote: true
 
