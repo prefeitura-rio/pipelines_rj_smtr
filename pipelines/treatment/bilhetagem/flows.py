@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de bilhetagem
 
-DBT: 2025-09-29
+DBT: 2025-10-01
 """
 from datetime import datetime, time, timedelta
 
@@ -27,7 +27,6 @@ TRANSACAO_MATERIALIZACAO = create_default_materialization_flow(
         jae_constants.TRANSACAO_SOURCE.value,
         jae_constants.TRANSACAO_RIOCARD_SOURCE.value,
         constants.INTEGRACAO_SELECTOR.value,
-        jae_constants.LANCAMENTO_SOURCE.value,
     ]
     + [
         s
@@ -142,4 +141,14 @@ TRANSACAO_VALOR_ORDEM_MATERIALIZACAO = create_default_materialization_flow(
         constants.INTEGRACAO_SELECTOR.value,
     ],
     post_tests=constants.TRANSACAO_VALOR_ORDEM_DAILY_TEST.value,
+)
+
+EXTRATO_CLIENTE_CARTAO_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="extrato_cliente_cartao - materializacao",
+    selector=constants.EXTRATO_CLIENTE_CARTAO_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[
+        cadastro_constants.CADASTRO_SELECTOR.value,
+        jae_constants.LANCAMENTO_SOURCE.value,
+    ],
 )

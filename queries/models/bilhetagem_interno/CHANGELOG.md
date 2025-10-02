@@ -1,5 +1,16 @@
 # Changelog - bilhetagem_interno
 
+
+## [1.1.4] - 2025-09-22
+
+### Adicionado
+
+- Cria modelo `extrato_cliente_cartao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/855)
+
+### Alterado
+
+- Altera o tratamento da coluna cd_cliente do modelo `staging_lancamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/855)
+
 ## [1.1.3] - 2025-09-16
 
 ### Adicionado
