@@ -130,7 +130,7 @@ models:
         description: Identificador único da conta que recebeu a transferência
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
-      - name: nr_logico_midia
+      - name: hash_cartao
         description: "{{ doc('hash_cartao') }}"
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'

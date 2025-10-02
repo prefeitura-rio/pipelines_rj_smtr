@@ -64,7 +64,7 @@ with
             case
                 when regexp_contains(l.id_conta, r'^2\.2\.3\.[A-Za-z0-9]+\.1$')
                 then split(l.id_conta, ".")[offset(3)]
-            end as nr_logico_midia,
+            end as hash_cartao,
             l.id_lancamento,
             l.cd_cliente as id_cliente,
             j.nome as nome_cliente,
