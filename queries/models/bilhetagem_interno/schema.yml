@@ -119,3 +119,50 @@ models:
         description: "{{ doc('subtipo_usuario') }}"
       - name: id_cre_escola
         description: "{{ doc('id_cre_escola') }} do cliente"
+  - name: extrato_cliente_cartao
+    description: Tabela de extrato do cliente
+    columns:
+      - name: data
+        description: "{{ doc('data') }} [partição]"
+        data_type: date
+      - name: datetime_lancamento
+        description: "{{ doc('data_transacao') }}"
+        data_type: datetime
+      - name: id_conta
+        description: "{{ doc('data_transacao') }}"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+        data_type: string
+      - name: nr_logico_midia
+        description: "{{ doc('data_transacao') }}"
+        data_type: string
+      - name: id_lancamento
+        description: "{{ doc('data_transacao') }}"
+        data_type: string
+      - name: id_cliente
+        description: "{{ doc('data_transacao') }}"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+        data_type: string
+      - name: nome_cliente
+        description: "{{ doc('data_transacao') }}"
+        data_type: string
+      - name: documento_cliente
+        description: "{{ doc('data_transacao') }}"
+        data_type: string
+      - name: tipo_documento_cliente
+        description: "{{ doc('data_transacao') }}"
+        data_type: string
+      - name: tipo_movimento
+        description: "{{ doc('data_transacao') }}"
+        data_type: string
+      - name: valor_lancamento
+        description: "{{ doc('data_transacao') }}"
+        data_type: int64
+      - name: datetime_captura
+        description: "{{ doc('data_transacao') }}"
+        data_type: datetime
+      - name: versao
+        description: "{{ doc('data_transacao') }}"
+        data_type: string
+

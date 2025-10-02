@@ -243,8 +243,6 @@ selectors:
         - method: fqn
           value: extrato_cliente_cartao
         - method: fqn
-          value: recarga_jae
-        - method: fqn
           value: staging_lancamento
 
   - name: integracao
