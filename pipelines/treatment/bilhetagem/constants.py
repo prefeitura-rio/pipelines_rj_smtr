@@ -112,3 +112,10 @@ class constants(Enum):  # pylint: disable=c0103
         checks_list=TRANSACAO_VALOR_ORDEM_POST_CHECKS_LIST,
         truncate_date=True,
     )
+
+    EXTRATO_CLIENTE_CARTAO_SELECTOR = DBTSelector(
+        name="extrato_cliente_cartao",
+        schedule_cron=create_hourly_cron(minute=15),
+        initial_datetime=datetime(2025, 10, 1, 0, 0, 0),
+        incremental_delay_hours=1,
+    )
