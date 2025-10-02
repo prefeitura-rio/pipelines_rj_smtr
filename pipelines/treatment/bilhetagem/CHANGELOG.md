@@ -9,7 +9,7 @@
 
 ### Removido
 
-- Remove o modelo `recarga_jae.sql` do selector de transacao e extrato (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/855)
+- Remove modelo `recarga_jae.sql` do selector de transacao e extrato (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/855)
 
 ## [2.0.11] - 2025-09-29
 
