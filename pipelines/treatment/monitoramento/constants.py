@@ -32,11 +32,28 @@ class constants(Enum):  # pylint: disable=c0103
         incremental_delay_hours=48,
     )
 
-    GPS_SELECTOR = DBTSelector(
+    GPS_CONECTA_SELECTOR = DBTSelector(
         name="gps",
         schedule_cron=create_hourly_cron(minute=6),
         initial_datetime=datetime(2025, 5, 27, 0, 0, 0),
         incremental_delay_hours=1,
+        redis_key_suffix="conecta",
+    )
+
+    GPS_CITTATI_SELECTOR = DBTSelector(
+        name="gps",
+        schedule_cron=create_hourly_cron(minute=6),
+        initial_datetime=datetime(2025, 5, 27, 0, 0, 0),
+        incremental_delay_hours=1,
+        redis_key_suffix="cittati",
+    )
+
+    GPS_ZIRIX_SELECTOR = DBTSelector(
+        name="gps",
+        schedule_cron=create_hourly_cron(minute=6),
+        initial_datetime=datetime(2025, 5, 27, 0, 0, 0),
+        incremental_delay_hours=1,
+        redis_key_suffix="zirix",
     )
 
     GPS_POST_CHECKS_LIST = {
@@ -59,10 +76,25 @@ class constants(Enum):  # pylint: disable=c0103
         truncate_date=True,
     )
 
-    GPS_15_MINUTOS_SELECTOR = DBTSelector(
+    GPS_15_MINUTOS_CONECTA_SELECTOR = DBTSelector(
         name="gps_15_minutos",
         schedule_cron=create_minute_cron(minute=15),
         initial_datetime=datetime(2025, 5, 27, 0, 0, 0),
+        redis_key_suffix="conecta",
+    )
+
+    GPS_15_MINUTOS_CITTATI_SELECTOR = DBTSelector(
+        name="gps_15_minutos",
+        schedule_cron=create_minute_cron(minute=15),
+        initial_datetime=datetime(2025, 5, 27, 0, 0, 0),
+        redis_key_suffix="cittati",
+    )
+
+    GPS_15_MINUTOS_ZIRIX_SELECTOR = DBTSelector(
+        name="gps_15_minutos",
+        schedule_cron=create_minute_cron(minute=15),
+        initial_datetime=datetime(2025, 5, 27, 0, 0, 0),
+        redis_key_suffix="zirix",
     )
 
     MONITORAMENTO_VEICULO_SELECTOR = DBTSelector(
