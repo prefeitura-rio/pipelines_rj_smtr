@@ -36,6 +36,7 @@ class DBTSelector:
             na criação da primeira variável date_range_start)
         incremental_delay_hours (int): quantidade de horas que serão subtraídas do horário atual
             ao criar a variável date_range_end
+        redis_key_suffix (str): sufixo para diferenciar redis_keys de selectores com mesmo nome
     """
 
     def __init__(
@@ -44,14 +45,31 @@ class DBTSelector:
         initial_datetime: datetime = None,
         schedule_cron: str = None,
         incremental_delay_hours: int = 0,
+        redis_key_suffix: str = None,
     ):
         self.name = name
         self.schedule_cron = schedule_cron
         self.incremental_delay_hours = incremental_delay_hours
         self.initial_datetime = initial_datetime
+        self.redis_key_suffix = redis_key_suffix
 
     def __getitem__(self, key):
         return self.__dict__[key]
+
+    def _get_redis_key(self, env: str) -> str:
+        """
+        Gera a chave do Redis para o selector
+
+        Args:
+            env (str): prod ou dev
+
+        Returns:
+            str: chave do Redis
+        """
+        redis_key = f"{env}.selector_{self.name}"
+        if self.redis_key_suffix:
+            return f"{redis_key}_{self.redis_key_suffix}"
+        return redis_key
 
     def get_last_materialized_datetime(self, env: str) -> Optional[datetime]:
         """
@@ -63,7 +81,7 @@ class DBTSelector:
         Returns:
             datetime: a data vinda do Redis
         """
-        redis_key = f"{env}.selector_{self.name}"
+        redis_key = self._get_redis_key(env)
         redis_client = get_redis_client()
         content = redis_client.get(redis_key)
         if content is None:
@@ -133,7 +151,7 @@ class DBTSelector:
             timestamp (datetime): data a ser salva no Redis
         """
         value = timestamp.strftime(constants.MATERIALIZATION_LAST_RUN_PATTERN.value)
-        redis_key = f"{env}.selector_{self.name}"
+        redis_key = self._get_redis_key(env)
         log(f"Saving timestamp {value} on key: {redis_key}")
         redis_client = get_redis_client()
         content = redis_client.get(redis_key)
