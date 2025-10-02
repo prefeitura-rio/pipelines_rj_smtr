@@ -1,5 +1,16 @@
 # Changelog - bilhetagem
 
+## [2.0.12] - 2025-10-02
+
+### Adicionado
+
+- Adiciona novo selector `EXTRATO_CLIENTE_CARTAO_SELECTOR` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/855)
+- Adiciona novo flow `EXTRATO_CLIENTE_CARTAO_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/855)
+
+### Removido
+
+- Remove modelo `recarga_jae.sql` do selector de transacao e extrato (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/855)
+
 ## [2.0.11] - 2025-09-29
 
 ### Adicionado
