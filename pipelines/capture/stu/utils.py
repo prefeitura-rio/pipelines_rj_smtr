@@ -21,7 +21,6 @@ def processa_dados(st: Storage, blobs: List, date_str: str) -> pd.DataFrame:
         st: Objeto Storage configurado
         blobs: Lista de blobs disponíveis no bucket
         date_str: Data no formato YYYY_MM_DD
-        table_id: ID da tabela sendo processada
 
     Returns:
         pd.DataFrame: Dados processados da data especificada
@@ -102,7 +101,7 @@ def compara_dataframes(df_hoje: pd.DataFrame, df_ontem: pd.DataFrame) -> pd.Data
     return new_records
 
 
-def extract_stu_data(source: SourceTable, timestamp: datetime) -> List[dict]:
+def extract_stu_data(source: SourceTable, timestamp: datetime) -> pd.DataFrame:
     """
     Extrai dados do STU a partir dos arquivos do Airbyte no GCS.
 
@@ -161,7 +160,4 @@ def extract_stu_data(source: SourceTable, timestamp: datetime) -> List[dict]:
 
     log(f"Total de registros novos/alterados: {len(new_records)}")
 
-    # Converte para lista de dicts (formato esperado pelo flow)
-    result = new_records.to_dict(orient="records")
-
-    return result
+    return new_records
