@@ -2,7 +2,7 @@
 """Funções auxiliares para captura de dados do STU"""
 import json
 from datetime import datetime, timedelta
-from io import BytesIO
+from io import StringIO
 from typing import List
 
 import pandas as pd
@@ -13,12 +13,11 @@ from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.gcp.storage import Storage
 
 
-def processa_dados(st: Storage, blobs: List, date_str: str) -> pd.DataFrame:
+def processa_dados(blobs: List, date_str: str) -> pd.DataFrame:
     """
     Carrega e processa dados de uma data específica do bucket.
 
     Args:
-        st: Objeto Storage configurado
         blobs: Lista de blobs disponíveis no bucket
         date_str: Data no formato YYYY_MM_DD
 
@@ -27,7 +26,7 @@ def processa_dados(st: Storage, blobs: List, date_str: str) -> pd.DataFrame:
     """
     # Filtra arquivos da data específica
     files = [
-        blob.name.split("/")[-1]
+        blob
         for blob in blobs
         if blob.name.split("/")[-1].startswith(date_str) and blob.name.endswith(".csv")
     ]
@@ -39,11 +38,16 @@ def processa_dados(st: Storage, blobs: List, date_str: str) -> pd.DataFrame:
     log(f"Processando {len(files)} arquivos para {date_str}")
 
     aux_df = []
-    for filename in files:
+    for file in files:
         try:
-            # Lê o arquivo do bucket
-            file_bytes = st.get_blob_bytes(mode="ingestion", filename=filename)
-            df = pd.read_csv(BytesIO(file_bytes), dtype=str)
+            filename = file.name.split("/")[-1]
+            log(f"Lendo arquivo: {filename}")
+
+            # Lê direto do blob
+            csv_string = file.download_as_text()
+
+            # Converte string para DataFrame
+            df = pd.read_csv(StringIO(csv_string), dtype=str)
 
             # Processa a coluna _airbyte_data que contém JSON
             if "_airbyte_data" in df.columns:
@@ -53,7 +57,7 @@ def processa_dados(st: Storage, blobs: List, date_str: str) -> pd.DataFrame:
                 log(f"Arquivo {filename} não contém coluna _airbyte_data")
 
         except Exception as e:
-            log(f"Erro ao processar arquivo {filename}: {str(e)}", level="error")
+            log(f"Erro ao processar arquivo {file.name}: {str(e)}", level="error")
             continue
 
     if not aux_df:
@@ -139,7 +143,7 @@ def extract_stu_data(source: SourceTable, timestamp: datetime) -> pd.DataFrame:
     log(f"Total de {len(blobs)} blobs encontrados no prefixo {prefix}")
 
     # Carrega dados de hoje
-    df_hoje = processa_dados(st, blobs, hoje_str)
+    df_hoje = processa_dados(blobs, hoje_str)
     log(f"Registros de hoje: {len(df_hoje)}")
 
     if df_hoje.empty:
@@ -147,7 +151,7 @@ def extract_stu_data(source: SourceTable, timestamp: datetime) -> pd.DataFrame:
         return []
 
     # Carrega dados de ontem para comparação
-    df_ontem = processa_dados(st, blobs, ontem_str)
+    df_ontem = processa_dados(blobs, ontem_str)
     log(f"Registros de ontem: {len(df_ontem)}")
 
     # Identifica novos registros ou alterados
