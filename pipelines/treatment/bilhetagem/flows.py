@@ -61,7 +61,7 @@ INTEGRACAO_MATERIALIZACAO.schedule = Schedule(
         IntervalClock(
             interval=timedelta(days=1),
             start_date=datetime(
-                2022, 11, 30, 12, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+                2022, 11, 30, 12, 15, tzinfo=timezone(smtr_constants.TIMEZONE.value)
             ),
             labels=[
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
@@ -71,7 +71,7 @@ INTEGRACAO_MATERIALIZACAO.schedule = Schedule(
         IntervalClock(
             interval=timedelta(days=1),
             start_date=datetime(
-                2022, 11, 30, 14, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+                2022, 11, 30, 14, 15, tzinfo=timezone(smtr_constants.TIMEZONE.value)
             ),
             labels=[
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
@@ -111,7 +111,7 @@ TRANSACAO_ORDEM_MATERIALIZACAO.schedule = Schedule(
         IntervalClock(
             interval=timedelta(days=1),
             start_date=datetime(
-                2022, 11, 30, 13, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+                2022, 11, 30, 13, 15, tzinfo=timezone(smtr_constants.TIMEZONE.value)
             ),
             labels=[
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
@@ -121,7 +121,7 @@ TRANSACAO_ORDEM_MATERIALIZACAO.schedule = Schedule(
         IntervalClock(
             interval=timedelta(days=1),
             start_date=datetime(
-                2022, 11, 30, 16, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+                2022, 11, 30, 16, 15, tzinfo=timezone(smtr_constants.TIMEZONE.value)
             ),
             labels=[
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
