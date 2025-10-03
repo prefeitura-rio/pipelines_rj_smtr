@@ -1,7 +1,11 @@
 {{
     config(
         materialized="incremental",
-        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+        partition_by={
+            "field": "data_ordem",
+            "data_type": "date",
+            "granularity": "day",
+        },
         incremental_strategy="insert_overwrite",
     )
 }}
@@ -12,8 +16,8 @@
 {% set transacao_filter %}
     id_ordem_pagamento_consorcio_operador_dia is not null
     and modo = 'Van'
-    and t.consorcio in ('STPC', 'STPL', 'TEC')
-    and t.valor_pagamento > 0
+    and consorcio in ('STPC', 'STPL', 'TEC')
+    and valor_pagamento > 0
 {% endset %}
 
 -- busca quais partições serão atualizadas pelas capturas
@@ -86,20 +90,19 @@ with
             consorcio,
             tipo_transacao_jae as tipo_transacao,
             meio_pagamento_jae as tipo_pagamento,
-            round(t.valor_pagamento, 2) valor_pagamento,
-            round(t.valor_transacao, 2) valor_transacao,
+            round(valor_pagamento, 2) valor_pagamento,
+            round(valor_transacao, 2) valor_transacao,
             id_ordem_pagamento,
             id_ordem_pagamento_consorcio_operador_dia
         from {{ ref("transacao") }}
         where
-            {{ transacao_filter }}
             {% if is_incremental() %}
-                and {% if transacao_partitions | length > 0 %}
+                {% if transacao_partitions | length > 0 %}
                     data in ({{ transacao_partitions | join(", ") }})
                 {% else %} false
                 {% endif %}
-            {% else %} data >= {{ var("data_inicial_transacao") }}
-            {% endif %}
+            {% else %} data >= '{{ var("data_inicial_transacao") }}'
+            {% endif %} and {{ transacao_filter }}
     ),
     {% if is_incremental() %}
 

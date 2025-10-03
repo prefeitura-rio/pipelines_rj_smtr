@@ -221,7 +221,7 @@ with
             on t.cd_linha = lsr.id_linha
         where
             lsr.id_linha is null
-            and date(data_transacao) >= {{ var("data_inicial_transacao") }}
+            and date(data_transacao) >= '{{ var("data_inicial_transacao") }}'
     ),
     {% if is_incremental() %}
         transacao_atual as (
