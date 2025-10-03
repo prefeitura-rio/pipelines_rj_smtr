@@ -188,6 +188,7 @@ vars:
   rho_sppo_start_date: "2021-03-01"
 
   ### Bilhetagem ###
+  data_inicial_transacao: "2023-07-17"
   var_percentual_tarifa_cbd: 0.04
   quantidade_integracoes_max: 5
   colunas_integracao: {

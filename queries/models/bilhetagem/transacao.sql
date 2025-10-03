@@ -219,7 +219,9 @@ with
         left join
             {{ ref("staging_linha_sem_ressarcimento") }} lsr
             on t.cd_linha = lsr.id_linha
-        where lsr.id_linha is null and date(data_transacao) >= "2023-07-17"
+        where
+            lsr.id_linha is null
+            and date(data_transacao) >= {{ var("data_inicial_transacao") }}
     ),
     {% if is_incremental() %}
         transacao_atual as (

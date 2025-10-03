@@ -2,8 +2,11 @@ version: 2
 
 models:
   - name: transacao_cct
-    description: "Transações para apuração do CCT."
+    description: "Transações para o aplicativo da CCT"
     columns:
+      - name: data_ordem
+        description: "{{ doc('data_ordem') }} [particao]"
+        data_type: date
       - name: id_transacao
         description: "{{ doc('id_transacao') }}"
       - name: data
@@ -13,12 +16,22 @@ models:
       - name: consorcio
         description: "{{ doc('consorcio') }}"
       - name: tipo_transacao
-        description: "{{ doc('tipo_transacao') }}"
+        description: "{{ doc('tipo_transacao_jae') }}"
+      - name: tipo_pagamento
+        description: "{{ doc('meio_pagamento_jae') }}"
       - name: valor_pagamento
         description: "{{ doc('valor_pagamento') }}"
+      - name: valor_transacao
+        description: "{{ doc('valor_transacao') }}"
       - name: id_ordem_pagamento
         description: "{{ doc('id_ordem_pagamento') }}"
       - name: id_ordem_pagamento_consorcio_operador_dia
         description: "{{ doc('id_ordem_pagamento_consorcio_operador_dia') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
