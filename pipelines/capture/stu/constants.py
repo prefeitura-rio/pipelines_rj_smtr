@@ -10,7 +10,7 @@ from pipelines.schedules import create_daily_cron
 from pipelines.utils.gcp.bigquery import SourceTable
 
 STU_SOURCE_NAME = "stu"
-STU_PRIVATE_BUCKET_NAMES = {"prod": "rj-smtr-dev-airbyte", "dev": "rj-smtr-dev-airbyte"}
+STU_PRIVATE_BUCKET_NAMES = {"prod": "rj-smtr-stu-private", "dev": "rj-smtr-dev-airbyte"}
 
 
 class constants(Enum):  # pylint: disable=c0103
@@ -18,27 +18,79 @@ class constants(Enum):  # pylint: disable=c0103
     Valores constantes para captura de dados do STU
     """
 
-    STU_VISTORIA_TABLE_ID = "vistoria"
-    STU_PF_TABLE_ID = "pessoa_fisica"
-    STU_PJ_TABLE_ID = "pessoa_juridica"
+    STU_COMBUSTIVEL_TABLE_ID = "combustivel"
+    STU_CONTROLE_PROCESSO_TABLE_ID = "controle_processo"
+    STU_DARM_APROPRIACAO_TABLE_ID = "darm_apropriacao"
+    STU_MOD_CARROCERIA_TABLE_ID = "mod_carroceria"
+    STU_MOD_CHASSI_TABLE_ID = "mod_chassi"
+    STU_MULTA_TABLE_ID = "multa"
     STU_PERMISSAO_TABLE_ID = "permissao"
+    STU_PESSOA_FISICA_TABLE_ID = "pessoa_fisica"
+    STU_PESSOA_JURIDICA_TABLE_ID = "pessoa_juridica"
+    STU_PLANTA_TABLE_ID = "planta"
+    STU_TALONARIO_TABLE_ID = "talonario"
+    STU_TIPO_DE_PERMISSAO_TABLE_ID = "tipo_de_permissao"
+    STU_TIPO_DE_PERMISSIONARIO_TABLE_ID = "tipo_de_permissionario"
+    STU_TIPO_DE_TRANSPORTE_TABLE_ID = "tipo_de_transporte"
+    STU_TIPO_DE_VEICULO_TABLE_ID = "tipo_de_veiculo"
+    STU_VEICULO_TABLE_ID = "veiculo"
+    STU_VEICULO_ATIVO_TABLE_ID = "veiculo_ativo"
+    STU_VISTORIA_TABLE_ID = "vistoria"
 
     STU_TABLE_CAPTURE_PARAMS = {
-        STU_VISTORIA_TABLE_ID: {
-            "primary_keys": ["id_vistoria", "anoexe"],
-            "first_timestamp": datetime(2025, 10, 3, 0, 0, 0),
+        STU_COMBUSTIVEL_TABLE_ID: {
+            "primary_keys": ["cod_combustivel"],
         },
-        STU_PF_TABLE_ID: {
-            "primary_keys": ["ratr"],
-            "first_timestamp": datetime(2025, 10, 3, 0, 0, 0),
+        STU_CONTROLE_PROCESSO_TABLE_ID: {
+            "primary_keys": ["id"],
         },
-        STU_PJ_TABLE_ID: {
-            "primary_keys": ["cgc"],
-            "first_timestamp": datetime(2025, 10, 3, 0, 0, 0),
+        STU_DARM_APROPRIACAO_TABLE_ID: {
+            "primary_keys": ["codrec", "anodarm", "darm", "Emissao"],
+        },
+        STU_MOD_CARROCERIA_TABLE_ID: {
+            "primary_keys": ["cod_mod_carroceria"],
+        },
+        STU_MOD_CHASSI_TABLE_ID: {
+            "primary_keys": ["cod_fab_chassi"],
+        },
+        STU_MULTA_TABLE_ID: {
+            "primary_keys": ["serie", "cm"],
         },
         STU_PERMISSAO_TABLE_ID: {
             "primary_keys": ["tptran", "tpperm", "termo", "dv"],
-            "first_timestamp": datetime(2025, 10, 3, 0, 0, 0),
+        },
+        STU_PESSOA_FISICA_TABLE_ID: {
+            "primary_keys": ["ratr"],
+        },
+        STU_PESSOA_JURIDICA_TABLE_ID: {
+            "primary_keys": ["cgc"],
+        },
+        STU_PLANTA_TABLE_ID: {
+            "primary_keys": ["planta"],
+        },
+        STU_TALONARIO_TABLE_ID: {
+            "primary_keys": ["serie", "cm"],
+        },
+        STU_TIPO_DE_PERMISSAO_TABLE_ID: {
+            "primary_keys": ["tptran", "tpperm"],
+        },
+        STU_TIPO_DE_PERMISSIONARIO_TABLE_ID: {
+            "primary_keys": ["tpperm"],
+        },
+        STU_TIPO_DE_TRANSPORTE_TABLE_ID: {
+            "primary_keys": ["tptran"],
+        },
+        STU_TIPO_DE_VEICULO_TABLE_ID: {
+            "primary_keys": ["tpveic"],
+        },
+        STU_VEICULO_TABLE_ID: {
+            "primary_keys": ["placa"],
+        },
+        STU_VEICULO_ATIVO_TABLE_ID: {
+            "primary_keys": ["placa"],
+        },
+        STU_VISTORIA_TABLE_ID: {
+            "primary_keys": ["id_vistoria", "anoexe"],
         },
     }
 
@@ -46,7 +98,7 @@ class constants(Enum):  # pylint: disable=c0103
         SourceTable(
             source_name=STU_SOURCE_NAME,
             table_id=k,
-            first_timestamp=v.get("first_timestamp"),
+            first_timestamp=v.get("first_timestamp", datetime(2025, 10, 6, 0, 0, 0)),
             schedule_cron=create_daily_cron(hour=8),
             primary_keys=v["primary_keys"],
             pretreatment_reader_args=v.get("pretreatment_reader_args"),
