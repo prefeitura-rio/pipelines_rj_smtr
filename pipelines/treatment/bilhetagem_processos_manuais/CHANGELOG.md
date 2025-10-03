@@ -1,5 +1,15 @@
 # Changelog - bilhetagem_processos_manuais
 
+## [1.2.0] - 2025-10-03
+
+### Adicionado
+
+- Adiciona tabela extrato na rematerialização de gaps
+
+### Alterado
+
+- Faz a recaptura de gaps em chunks de 20 timestamps
+
 ## [1.0.1] - 2025-10-02
 
 ### Adicionado
