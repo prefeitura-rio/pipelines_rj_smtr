@@ -366,7 +366,7 @@ def save_capture_check_results(env: str, results: pd.DataFrame):
 
     try:
         pandas_gbq.read_gbq(
-            query=f"""
+            f"""
                 MERGE {project_id}.{dataset_id}.{table_id} t
                 USING {tmp_table} s
                 ON
