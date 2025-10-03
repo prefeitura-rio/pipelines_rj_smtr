@@ -75,10 +75,8 @@ def get_gaps_from_result_table(
         result[table_id] = {
             "timestamps": timestamps,
             "recapture_params": [
-                [
-                    {"recapture": True, "recapture_timestamps": timestamps[i : i + 20]}  # noqa
-                    for i in range(0, len(timestamps), 20)
-                ]
+                {"recapture": True, "recapture_timestamps": timestamps[i : i + 20]}  # noqa
+                for i in range(0, len(timestamps), 20)
             ],
             "flag_has_gaps": not df.empty,
         }
