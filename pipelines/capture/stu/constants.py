@@ -28,18 +28,18 @@ class constants(Enum):  # pylint: disable=c0103
             "primary_keys": ["id_vistoria", "anoexe"],
             "first_timestamp": datetime(2025, 10, 3, 0, 0, 0),
         },
-        # STU_PF_TABLE_ID: {
-        #     "primary_keys": ["ratr"],
-        #     "first_timestamp": datetime(2025, 10, 6, 0, 0, 0),
-        # },
-        # STU_PJ_TABLE_ID: {
-        #     "primary_keys": ["cgc"],
-        #     "first_timestamp": datetime(2025, 10, 6, 0, 0, 0),
-        # },
-        # STU_PERMISSAO_TABLE_ID: {
-        #     "primary_keys": ["tptran", "tpperm", "termo", "dv"],
-        #     "first_timestamp": datetime(2025, 10, 6, 0, 0, 0),
-        # },
+        STU_PF_TABLE_ID: {
+            "primary_keys": ["ratr"],
+            "first_timestamp": datetime(2025, 10, 3, 0, 0, 0),
+        },
+        STU_PJ_TABLE_ID: {
+            "primary_keys": ["cgc"],
+            "first_timestamp": datetime(2025, 10, 3, 0, 0, 0),
+        },
+        STU_PERMISSAO_TABLE_ID: {
+            "primary_keys": ["tptran", "tpperm", "termo", "dv"],
+            "first_timestamp": datetime(2025, 10, 3, 0, 0, 0),
+        },
     }
 
     STU_SOURCES = [
