@@ -117,7 +117,7 @@ def extract_stu_data(source: SourceTable, timestamp: datetime) -> pd.DataFrame:
         timestamp: Timestamp de referência da captura
 
     Returns:
-        List[dict]: Lista de registros novos/alterados no formato JSON
+        pd.DataFrame: DataFrame com os registros novos/alterados
     """
     log(f"Iniciando extração do STU para tabela {source.table_id}")
 
@@ -129,12 +129,14 @@ def extract_stu_data(source: SourceTable, timestamp: datetime) -> pd.DataFrame:
     )
 
     hoje = timestamp
-    ontem = hoje - timedelta(days=1)
-
     hoje_str = hoje.strftime("%Y_%m_%d")
-    ontem_str = ontem.strftime("%Y_%m_%d")
 
-    log(f"Buscando dados de hoje ({hoje_str}) e ontem ({ontem_str})")
+    # Verifica se é primeira execução
+    first_run = (
+        source.first_timestamp is not None and timestamp.date() == source.first_timestamp.date()
+    )
+
+    log(f"Buscando dados de hoje ({hoje_str})")
 
     # Lista todos os blobs no prefixo
     prefix = f"ingestion/source_{STU_SOURCE_NAME}/stu_{source.table_id}/"
@@ -148,9 +150,16 @@ def extract_stu_data(source: SourceTable, timestamp: datetime) -> pd.DataFrame:
 
     if df_hoje.empty:
         log("Nenhum dado encontrado para hoje")
-        return []
+        return pd.DataFrame()
+
+    if first_run:
+        return df_hoje
+
+    ontem = hoje - timedelta(days=1)
+    ontem_str = ontem.strftime("%Y_%m_%d")
 
     # Carrega dados de ontem para comparação
+    log(f"Buscando dados de ontem ({ontem_str})")
     df_ontem = processa_dados(blobs, ontem_str)
     log(f"Registros de ontem: {len(df_ontem)}")
 
