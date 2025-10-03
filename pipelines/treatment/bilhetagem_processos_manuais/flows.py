@@ -157,7 +157,7 @@ with Flow(
         with case(gaps[k]["flag_has_gaps"].is_equal(True), True):
             run_recapture_true = run_subflow(
                 flow_name=v,
-                parameters={"recapture": True, "recapture_timestamps": gaps[k]["timestamps"]},
+                parameters=gaps[k]["recapture_params"],
                 upstream_tasks=[upstream_task],
             )
 
