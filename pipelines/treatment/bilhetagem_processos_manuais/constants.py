@@ -11,7 +11,10 @@ from pipelines.capture.jae.flows import (
     CAPTURA_TRANSACAO,
     CAPTURA_TRANSACAO_RIOCARD,
 )
-from pipelines.treatment.bilhetagem.flows import TRANSACAO_MATERIALIZACAO
+from pipelines.treatment.bilhetagem.flows import (
+    EXTRATO_CLIENTE_CARTAO_MATERIALIZACAO,
+    TRANSACAO_MATERIALIZACAO,
+)
 from pipelines.treatment.monitoramento.flows import GPS_VALIDADOR_MATERIALIZACAO
 
 
@@ -35,5 +38,9 @@ class constants(Enum):  # pylint: disable=c0103
         "gps_validador": {
             "flow_name": GPS_VALIDADOR_MATERIALIZACAO.name,
             "capture_tables": ["gps_validador"],
+        },
+        "extrato_cliente_cartao": {
+            "flow_name": EXTRATO_CLIENTE_CARTAO_MATERIALIZACAO.name,
+            "capture_tables": ["lancamento"],
         },
     }
