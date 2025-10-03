@@ -26,15 +26,19 @@ class constants(Enum):  # pylint: disable=c0103
     STU_TABLE_CAPTURE_PARAMS = {
         STU_VISTORIA_TABLE_ID: {
             "primary_keys": ["id_vistoria", "anoexe"],
+            "first_timestamp": datetime(2025, 10, 3, 0, 0, 0),
         },
         # STU_PF_TABLE_ID: {
         #     "primary_keys": ["ratr"],
+        #     "first_timestamp": datetime(2025, 10, 6, 0, 0, 0),
         # },
         # STU_PJ_TABLE_ID: {
         #     "primary_keys": ["cgc"],
+        #     "first_timestamp": datetime(2025, 10, 6, 0, 0, 0),
         # },
         # STU_PERMISSAO_TABLE_ID: {
         #     "primary_keys": ["tptran", "tpperm", "termo", "dv"],
+        #     "first_timestamp": datetime(2025, 10, 6, 0, 0, 0),
         # },
     }
 
@@ -42,13 +46,13 @@ class constants(Enum):  # pylint: disable=c0103
         SourceTable(
             source_name=STU_SOURCE_NAME,
             table_id=k,
-            first_timestamp=datetime(2025, 10, 1, 0, 0, 0),
+            first_timestamp=v.get("first_timestamp"),
             schedule_cron=create_daily_cron(hour=8),
             primary_keys=v["primary_keys"],
             pretreatment_reader_args=v.get("pretreatment_reader_args"),
             pretreat_funcs=v.get("pretreat_funcs"),
-            bucket_names=v.get("bucket_names", STU_PRIVATE_BUCKET_NAMES),
-            partition_date_only=v.get("partition_date_only", True),
+            bucket_names=STU_PRIVATE_BUCKET_NAMES,
+            partition_date_only=True,
             max_recaptures=v.get("max_recaptures", 2),
             raw_filetype=v.get("raw_filetype", "csv"),
         )
