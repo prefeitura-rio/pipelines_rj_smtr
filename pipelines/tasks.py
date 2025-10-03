@@ -19,7 +19,7 @@ from pipelines.utils.utils import convert_timezone
 
 
 @task(trigger=all_finished)
-def task_value_is_none(task_value: Union[Any, None]) -> bool:
+def check_run_dbt_fail(task_value: Union[Any, None]) -> bool:
     """Testa se o valor retornado por uma Task é None
 
     Args:
@@ -28,7 +28,8 @@ def task_value_is_none(task_value: Union[Any, None]) -> bool:
     Returns:
         bool: Se o valor é None ou não
     """
-    return task_value is None
+    log(task_value)
+    return "Completed successfully" in task_value
 
 
 @task
@@ -258,8 +259,8 @@ def log_discord(message: str, key: str, dados_tag: bool = False):
         message = (
             message + f" - <@&{constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>\n"
         )
-    url = get_secret(secret_path=constants.WEBHOOKS_SECRET_PATH.value)[key]
-    send_discord_message(message=message, webhook_url=url)
+    # url = get_secret(secret_path=constants.WEBHOOKS_SECRET_PATH.value)[key]
+    log(message)
 
 
 @task

@@ -52,7 +52,7 @@ from pipelines.tasks import (
     log_discord,
     parse_timestamp_to_string,
     remove_key_from_dict,
-    task_value_is_none,
+    check_run_dbt_fail,
 )
 from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt
 
@@ -257,7 +257,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                      servico_planejado_faixa_horaria",
         ).set_upstream(task=wait_captura)
 
-        run_dbt_failed = task_value_is_none(wait_run_dbt_model)
+        run_dbt_failed = check_run_dbt_fail(wait_run_dbt_model)
 
         with case(run_dbt_failed, False):
             log_discord(
