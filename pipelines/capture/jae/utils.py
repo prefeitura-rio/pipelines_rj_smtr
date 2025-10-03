@@ -3,7 +3,6 @@ import os
 from datetime import datetime, timedelta
 from typing import Union
 
-import basedosdados as bd
 import pandas as pd
 import pandas_gbq
 from google.cloud import bigquery
@@ -366,8 +365,8 @@ def save_capture_check_results(env: str, results: pd.DataFrame):
     end_partition = results["timestamp_captura"].max().date().isoformat()
 
     try:
-        bd.read_sql(
-            query=f"""
+        pandas_gbq.read_gbq(
+            f"""
                 MERGE {project_id}.{dataset_id}.{table_id} t
                 USING {tmp_table} s
                 ON
@@ -407,7 +406,7 @@ def save_capture_check_results(env: str, results: pd.DataFrame):
                     CURRENT_DATETIME('America/Sao_Paulo')
                 )
             """,
-            billing_project_id=project_id,
+            project_id=project_id,
         )
 
     finally:

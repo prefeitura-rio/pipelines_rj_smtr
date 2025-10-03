@@ -119,3 +119,43 @@ models:
         description: "{{ doc('subtipo_usuario') }}"
       - name: id_cre_escola
         description: "{{ doc('id_cre_escola') }} do cliente"
+  - name: extrato_cliente_cartao
+    description: Tabela de extrato do cliente
+    columns:
+      - name: data
+        description: "{{ doc('data') }} [partição]"
+      - name: datetime_lancamento
+        description: Datetime de lançamento do registro de extrato
+      - name: id_conta
+        description: Identificador único da conta que recebeu a transferência
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+      - name: hash_cartao
+        description: "{{ doc('hash_cartao') }}"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+      - name: id_lancamento
+        description: Identificador único do lançamento da transferência
+      - name: id_cliente
+        description: "{{ doc('id_cliente') }}"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
+      - name: nome_cliente
+        description: "{{ doc('nome_cliente') }}"
+      - name: documento_cliente
+        description: "{{ doc('documento_cliente') }}"
+      - name: tipo_documento_cliente
+        description: "{{ doc('tipo_documento_cliente') }}"
+      - name: tipo_movimento
+        description: Tipo de movimentação do lançamento
+      - name: valor_lancamento
+        description: Valor da lançamento efetuado
+      - name: datetime_captura
+        description: "{{ doc('datetime_captura') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+
