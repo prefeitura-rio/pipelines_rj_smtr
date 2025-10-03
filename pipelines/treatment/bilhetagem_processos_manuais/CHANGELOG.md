@@ -4,11 +4,11 @@
 
 ### Adicionado
 
-- Adiciona tabela extrato na rematerialização de gaps
+- Adiciona tabela extrato na rematerialização de gaps (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/924)
 
 ### Alterado
 
-- Faz a recaptura de gaps em chunks de 20 timestamps
+- Faz a recaptura de gaps em chunks de 20 timestamps (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/924)
 
 ## [1.0.1] - 2025-10-02
 
