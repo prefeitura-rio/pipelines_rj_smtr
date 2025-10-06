@@ -44,6 +44,7 @@ select
     vv.distancia_planejada,
     vv.feed_start_date,
     '{{ var("version") }}' as versao,
-    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+    '{{ invocation_id }}' as id_execucao_dbt
 from viagem_valida as vv
 left join veiculo as ve using (data, id_veiculo)
