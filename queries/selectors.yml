@@ -71,7 +71,7 @@ selectors:
           value: viagem_validacao
         - method: fqn
           value: viagem_valida
-        - method:
+        - method: fqn
           value: dicionario_monitoramento
 
   - name: planejamento_diario
