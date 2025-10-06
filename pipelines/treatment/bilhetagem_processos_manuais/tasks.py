@@ -67,11 +67,17 @@ def get_gaps_from_result_table(
             and table_id in ({', '.join([f"'{t}'" for t in table_ids])})
             {date_filter}
         """
+
     df_bq = pandas_gbq.read_gbq(query, project_id=project_id)
     for table_id in table_ids:
         df = df_bq[df_bq["table_id"] == table_id]
+        timestamps = df["timestamp_captura"].to_list()
         result[table_id] = {
-            "timestamps": df["timestamp_captura"].to_list(),
+            "timestamps": timestamps,
+            "recapture_params": [
+                {"recapture": True, "recapture_timestamps": timestamps[i : i + 20]}  # noqa
+                for i in range(0, len(timestamps), 20)
+            ],
             "flag_has_gaps": not df.empty,
         }
     return result
@@ -104,6 +110,8 @@ def create_gap_materialization_params(gaps: dict) -> dict:
                 "initial_datetime": min(ts_list),
                 "end_datetime": max(ts_list),
             }
+        else:
+            result[k] = None
 
     return result
 

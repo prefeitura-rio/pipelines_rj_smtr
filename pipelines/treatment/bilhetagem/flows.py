@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de bilhetagem
 
-DBT: 2025-09-29
+DBT: 2025-10-01
 """
 from datetime import datetime, time, timedelta
 
@@ -27,7 +27,6 @@ TRANSACAO_MATERIALIZACAO = create_default_materialization_flow(
         jae_constants.TRANSACAO_SOURCE.value,
         jae_constants.TRANSACAO_RIOCARD_SOURCE.value,
         constants.INTEGRACAO_SELECTOR.value,
-        jae_constants.LANCAMENTO_SOURCE.value,
     ]
     + [
         s
@@ -62,7 +61,7 @@ INTEGRACAO_MATERIALIZACAO.schedule = Schedule(
         IntervalClock(
             interval=timedelta(days=1),
             start_date=datetime(
-                2022, 11, 30, 12, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+                2022, 11, 30, 12, 15, tzinfo=timezone(smtr_constants.TIMEZONE.value)
             ),
             labels=[
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
@@ -72,7 +71,7 @@ INTEGRACAO_MATERIALIZACAO.schedule = Schedule(
         IntervalClock(
             interval=timedelta(days=1),
             start_date=datetime(
-                2022, 11, 30, 14, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+                2022, 11, 30, 14, 15, tzinfo=timezone(smtr_constants.TIMEZONE.value)
             ),
             labels=[
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
@@ -112,7 +111,7 @@ TRANSACAO_ORDEM_MATERIALIZACAO.schedule = Schedule(
         IntervalClock(
             interval=timedelta(days=1),
             start_date=datetime(
-                2022, 11, 30, 13, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+                2022, 11, 30, 13, 15, tzinfo=timezone(smtr_constants.TIMEZONE.value)
             ),
             labels=[
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
@@ -122,7 +121,7 @@ TRANSACAO_ORDEM_MATERIALIZACAO.schedule = Schedule(
         IntervalClock(
             interval=timedelta(days=1),
             start_date=datetime(
-                2022, 11, 30, 16, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+                2022, 11, 30, 16, 15, tzinfo=timezone(smtr_constants.TIMEZONE.value)
             ),
             labels=[
                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
@@ -142,4 +141,14 @@ TRANSACAO_VALOR_ORDEM_MATERIALIZACAO = create_default_materialization_flow(
         constants.INTEGRACAO_SELECTOR.value,
     ],
     post_tests=constants.TRANSACAO_VALOR_ORDEM_DAILY_TEST.value,
+)
+
+EXTRATO_CLIENTE_CARTAO_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="extrato_cliente_cartao - materializacao",
+    selector=constants.EXTRATO_CLIENTE_CARTAO_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[
+        cadastro_constants.CADASTRO_SELECTOR.value,
+        jae_constants.LANCAMENTO_SOURCE.value,
+    ],
 )
