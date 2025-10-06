@@ -1,5 +1,4 @@
 {% test consistencia_indicadores_temperatura(model) %}
-
     with
         indicadores as (
             select
@@ -128,7 +127,6 @@ então não tem como ter temperatura transmitida como true */
                     and indicador_temperatura_nula_viagem = true
                 )
         )
-
     select
         i.data,
         i.id_viagem,
