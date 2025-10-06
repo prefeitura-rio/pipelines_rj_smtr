@@ -39,7 +39,8 @@ def check_run_dbt_success(task_value: Union[Any, None]) -> bool:
          task_value (Union[Any, None]): Logs retornados pela execução do DBT
 
     Returns:
-        bool: True se a execução foi bem-sucedida (contém "Completed successfully"), False caso contrário
+        bool: True se a execução foi bem-sucedida (contém "Completed successfully"),
+        False caso contrário
     """
     log(task_value)
     return "Completed successfully" in task_value
