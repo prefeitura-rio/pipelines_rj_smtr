@@ -175,6 +175,24 @@ every_day_hour_five = Schedule(
         ),
     ]
 )
+every_day_hour_five_and_hour_fourteen = Schedule(
+    clocks=[
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(2022, 11, 30, 5, 0, tzinfo=timezone(constants.TIMEZONE.value)),
+            labels=[
+                emd_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        ),
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(2022, 11, 30, 14, 0, tzinfo=timezone(constants.TIMEZONE.value)),
+            labels=[
+                emd_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        ),
+    ]
+)
 
 every_5_minutes = Schedule(
     clocks=[
@@ -217,6 +235,19 @@ every_day_hour_seven_minute_five = Schedule(
         IntervalClock(
             interval=timedelta(days=1),
             start_date=datetime(2022, 11, 30, 7, 5, tzinfo=timezone(constants.TIMEZONE.value)),
+            labels=[
+                emd_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        ),
+    ]
+)
+
+
+every_day_hour_ten_fifteen = Schedule(
+    clocks=[
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(2022, 11, 30, 10, 15, tzinfo=timezone(constants.TIMEZONE.value)),
             labels=[
                 emd_constants.RJ_SMTR_AGENT_LABEL.value,
             ],

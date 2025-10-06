@@ -1,5 +1,179 @@
 # Changelog - bilhetagem
 
+## [3.3.1] - 2025-09-29
+
+### Alterado
+
+- Altera janela de tempo para ler partições modificadas da transacao_ordem e transacao_retificada no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+
+## [3.3.0] - 2025-09-16
+
+### Adicionado
+
+- Cria os modelos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/875):
+  - `staging_escola.sql`
+  - `staging_estudante.sql`
+  - `staging_laudo_pcd.sql`
+  - `aux_escola_rede_ensino_atualizado.sql`
+  - `aux_estudante.sql`
+  - `aux_laudo_pcd.sql`
+  - `aux_gratuidade_info.sql`
+
+- Adiciona a coluna `id_cre_escola` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/875)
+
+- Adiciona transações de `TEC` no modelo `aux_passageiro_hora.sql`
+
+### Alterado
+
+- Altera fonte dos dados de gratuidade no modelo `transacao.sql` para `aux_gratuidade_info` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/875)
+
+### Removido
+
+- Remove colunas de estudante e laudo pcd dos modelos `staging_gratuidade.sql` e `aux_gratuidade.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/875)
+
+## [3.2.12] - 2025-09-03
+
+### Adicionado
+
+- Adiciona teste `dbt_utils.expression_is_true__transacao_valor_ordem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/836)
+
+## [3.2.11] - 2025-09-01
+
+### Alterado
+
+- Filtra transações do tipo `Botoeira` no modelo `transacao_valor_ordem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/824)
+
+### Corrigido
+
+- Corrige tratamento das colunas `tipo_usuario` e `subtipo_usuario` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/824)
+
+## [3.2.10] - 2025-09-01
+
+### Alterado
+
+- Move modelos do dataset `br_rj_riodejaneiro_bilhetagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/822)
+
+## [3.2.9] - 2025-08-27
+
+### Alterado
+
+- Define valor das transações do RioCard como `null` para datas anteriores a `2025-08-02` no modelo `aux_passageiro_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/817)
+
+## [3.2.8] - 2025-08-27
+
+### Alterado
+
+- `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/812):
+  - Altera a fonte dos dados de cliente para o modelo `cliente_jae.sql`
+  - Altera classificação das colunas de subtipo do usuário para gratuidades de estudantes
+
+### Corrigido
+
+- Corrige gratuidades sendo com `tipo_usuario` pagante na `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/812)
+
+## [3.2.7] - 2025-08-21
+
+### Adicionado
+
+- Adiciona coluna `subtipo_usuario_protegido` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/804)
+
+### Alterado
+
+- Altera `tipo_usuario` PCD para Saúde no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/804)
+- Remove subtipo quando a transação não for gratuidade no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/804)
+
+
+## [3.2.6] - 2025-08-20
+
+### Adicionado
+
+- Adiciona testes not_null nos modelos de `bilhetagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/783):
+  - `transacao.sql`
+  - `transacao_riocard.sql`
+  - `transacao_valor_ordem.sql`
+  - `transacao_retificada.sql`
+  - `integracao.sql`
+  - `passageiro_hora.sql`
+  - `passageiro_tile_hora.sql`
+
+- Adiciona testes unique nos modelos de `bilhetagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/783):
+  - `transacao.sql`
+  - `gps_validador.sql`
+  - `gps_validador_van.sql`
+
+- Adiciona testes not_null nos modelos de `br_rj_riodejaneiro_bilhetagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/783):
+  - `gps_validador.sql`
+  - `gps_validador_van.sql`
+
+### Alterado
+
+- Ajusta a coluna `tipo_transacao`, `produto` e `tipo_usuario` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/783)
+
+## [3.2.5] - 2025-08-07
+
+### Alterado
+
+- Ajusta a coluna `tipo_transacao` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/768)
+
+## [3.2.4] - 2025-08-04
+
+### Alterado
+
+- Trata dados de id inteiro nos modelos de staging da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/755)
+- Altera tabela com informações de serviço da Jaé nos modelos `transacao.sql` e `transacao_riocard.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/755)
+
+## [3.2.3] - 2025-08-04
+
+### Adicionado
+
+- Adiciona a coluna `valor_pagamento` no modelo `aux_passageiro_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/742)
+- Adiciona a coluna `valor_total_transacao` no modelo `passageiro_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/742)
+
+## [3.2.2] - 2025-08-03
+
+### Alterado
+
+- Inclui modo `Metrô` no modelo `aux_passageiro_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/751)
+
+## [3.2.1] - 2025-07-30
+
+### Removido
+
+- Remove filtro `timestamp_captura` no modelo `aux_transacao_id_ordem_pagamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/740)
+
+## [3.2.0] - 2025-07-03
+
+### Adicionado
+
+- Cria modelos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/505):
+   `aux_transacao_particao.sql`
+   `dicionario_bilhetagem.sql`
+   `integracao.sql`
+   `passageiro_hora.sql`
+   `passageiro_tile_hora.sql`
+   `transacao_riocard.sql`
+   `transacao.sql`
+
+- Move modelos do dataset `br_rj_riodejaneiro_bilhetagem_staging` para `bilhetagem_staging` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/505):
+  - `aux_gratuidade.sql`
+  - `aux_passageiro_hora.sql`
+  - `staging_gratuidade.sql`
+  - `staging_integracao_transacao.sql`
+  - `staging_produto.sql`
+  - `staging_transacao_ordem.sql`
+  - `staging_transacao_riocard.sql`
+  - `staging_transacao.sql`
+
+## [3.1.1] - 2025-07-03
+
+### Adicionado
+
+- Cria modelos `staging_transacao_retificada.sql` e `transacao_retificada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/658)
+
+### Alterado
+
+- Remove ordens incorretas do modelo `transacao_valor_ordem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/658)
+
 ## [3.1.0] - 2025-02-04
 
 ### Adicionado

@@ -1,5 +1,21 @@
 # Changelog - dashboard_operacao_onibus
 
+## [1.0.4] - 2025-09-18
+
+### Corrigido
+
+- Corrige a coluna `sentido` no modelo `aux_ordem_servico_diaria_v4` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/880)
+
+## [1.0.3] - 2025-09-16
+
+### Adicionado
+
+- Cria modelo `aux_ordem_servico_diaria_v4` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/873)
+
+### Alterado
+
+- Altera modelo `ordem_servico_diaria` para incluir os dados mais recentes (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/873)
+
 ## [1.0.2] - 2025-06-10
 
 ### Adicionado

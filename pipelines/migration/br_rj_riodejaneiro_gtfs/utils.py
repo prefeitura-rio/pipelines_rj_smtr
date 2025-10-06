@@ -493,9 +493,21 @@ def processa_ordem_servico_faixa_horaria(
         "{metrica} entre {intervalo} — {dia}",
         "{metrica} entre {intervalo} - {dia}",
         "{metrica} entre {intervalo} ({dia})",
+        "{metrica} {intervalo} - {dia}",
     ]
 
-    if data_versao_gtfs >= "2024-11-06":
+    if data_versao_gtfs < constants.DATA_GTFS_V3_INICIO.value:
+        intervalos = [
+            "00h e 03h",
+            "03h e 12h",
+            "12h e 21h",
+            "21h e 24h",
+            "24h e 03h (dia seguinte)",
+        ]
+    elif (
+        data_versao_gtfs >= constants.DATA_GTFS_V3_INICIO.value
+        and data_versao_gtfs < constants.DATA_GTFS_V4_INICIO.value
+    ):
         intervalos = [
             "00h e 03h",
             "03h e 06h",
@@ -509,11 +521,20 @@ def processa_ordem_servico_faixa_horaria(
         ]
     else:
         intervalos = [
-            "00h e 03h",
-            "03h e 12h",
-            "12h e 21h",
-            "21h e 24h",
-            "24h e 03h (dia seguinte)",
+            "00h à 01h",
+            "01h à 02h",
+            "02h à 03h",
+            "03h à 04h",
+            "04h à 05h",
+            "05h à 06h",
+            "06h à 09h",
+            "09h à 12h",
+            "12h à 15h",
+            "15h à 18h",
+            "18h à 21h",
+            "21h à 22h",
+            "22h à 23h",
+            "23h à 24h",
         ]
 
     fh_columns = {
@@ -525,6 +546,7 @@ def processa_ordem_servico_faixa_horaria(
                     "partidas"
                     if metrica == "Partidas"
                     and data_versao_gtfs < constants.DATA_GTFS_V2_INICIO.value
+                    or data_versao_gtfs >= constants.DATA_GTFS_V4_INICIO.value
                     else ("partidas_ida" if metrica == "Partidas Ida" else "partidas_volta")
                 )
             )
@@ -536,7 +558,15 @@ def processa_ordem_servico_faixa_horaria(
         for formato in formatos
     }
 
-    if data_versao_gtfs >= constants.DATA_GTFS_V2_INICIO.value:
+    if data_versao_gtfs >= constants.DATA_GTFS_V4_INICIO.value:
+        fh_columns["Serviço"] = "servico"
+        fh_columns["Consórcio"] = "consorcio"
+        fh_columns["tipo_os"] = "tipo_os"
+        fh_columns["Sentido"] = "sentido"
+        fh_columns["Extensão"] = "extensao"
+        fh_columns["Vista"] = "vista"
+        columns = fh_columns.copy()
+    elif data_versao_gtfs >= constants.DATA_GTFS_V2_INICIO.value:
         columns.update(fh_columns)
     else:
         fh_columns["Serviço"] = "servico"
@@ -591,12 +621,14 @@ def processa_ordem_servico_faixa_horaria(
     no_duplicate_columns = len(columns_in_dataframe) == len(ordem_servico_faixa_horaria.columns)
 
     log(
-        f"All columns present: {all_columns_present}/"
-        f"No duplicate columns: {no_duplicate_columns}/"
+        f"All columns present: {all_columns_present}\n"
+        f"No duplicate columns: {no_duplicate_columns}\n"
         f"Missing columns: {missing_columns}"
     )
 
     if not all_columns_present or not no_duplicate_columns:
+        log(columns_in_values.difference(columns_in_dataframe))
+        log(columns_in_dataframe.difference(columns_in_values))
         raise Exception("Missing or duplicated columns in ordem_servico_faixa_horaria")
 
     local_file_path = list(filter(lambda x: "ordem_servico_faixa_horaria" in x, local_filepath))[0]

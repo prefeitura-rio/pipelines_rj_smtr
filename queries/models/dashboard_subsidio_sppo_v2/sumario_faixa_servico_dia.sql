@@ -1,14 +1,10 @@
-{% if var("start_date") >= var("DATA_SUBSIDIO_V14_INICIO") %}
-    {{ config(enabled=false) }}
-{% else %}
-    {{
-        config(
-            materialized="incremental",
-            partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-            incremental_strategy="insert_overwrite",
-        )
-    }}
-{% endif %}
+{{
+    config(
+        materialized="incremental",
+        partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+        incremental_strategy="insert_overwrite",
+    )
+}}
 
 with
     subsidio_faixa as (
@@ -22,8 +18,8 @@ with
             viagens_faixa,
             km_planejada_faixa,
             pof
-        from {{ ref("subsidio_faixa_servico_dia") }}
-        -- from `rj-smtr.financeiro_staging.subsidio_faixa_servico_dia`
+        from {{ ref("percentual_operacao_faixa_horaria") }}
+        -- from `rj-smtr.subsidio.percentual_operacao_faixa_horaria`
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
@@ -128,3 +124,4 @@ left join
     pivot_data as pd using (
         data, tipo_dia, faixa_horaria_inicio, faixa_horaria_fim, consorcio, servico
     )
+where data < date("{{ var('DATA_SUBSIDIO_V14_INICIO') }}")

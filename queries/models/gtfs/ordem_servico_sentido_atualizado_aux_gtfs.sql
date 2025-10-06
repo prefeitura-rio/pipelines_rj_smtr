@@ -32,7 +32,7 @@ with
         select
             * except (horario_inicio, horario_fim),
             horario_inicio as inicio_periodo,
-            horario_fim as fim_periodo,
+            horario_fim as fim_periodo
         from {{ ref("aux_ordem_servico_diaria") }}
         {% if is_incremental() -%}
             where feed_start_date = '{{ var("data_versao_gtfs") }}'
@@ -60,5 +60,7 @@ where
             feed_start_date < '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
             and (distancia_total_planejada != 0 and (partidas != 0 or partidas is null))
         )
-        or feed_start_date >= '{{ var("DATA_SUBSIDIO_V9_INICIO") }}'
+        or feed_start_date between '{{ var("DATA_SUBSIDIO_V9_INICIO") }}' and date_sub(
+            '{{ var("DATA_GTFS_V4_INICIO") }}', interval 1 day
+        )
     )

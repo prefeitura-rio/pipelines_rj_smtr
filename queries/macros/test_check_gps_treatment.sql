@@ -40,7 +40,16 @@
             select data, {{ timestamp }}, latitude, longitude
             from {{ registros }}
             where
-                data between date("{{ var('date_range_start') }}") and date(
+                (
+                    {{
+                        generate_date_hour_partition_filter(
+                            var("date_range_start"),
+                            add_to_datetime(var("date_range_end"), seconds=1),
+                        )
+                    }}
+                )
+                and {{ timestamp }}
+                between datetime("{{ var('date_range_start') }}") and datetime(
                     "{{ var('date_range_end') }}"
                 )
             qualify
@@ -66,7 +75,14 @@
                 -- `rj-smtr.br_rj_riodejaneiro_onibus_gps.sppo_aux_registros_filtrada`
                 {{ aux_filtrada }}
             where
-                data between date("{{ var('date_range_start') }}") and date(
+                {% if "gps_sppo" in model %}
+                    data between date("{{ var('date_range_start') }}") and date(
+                        "{{ add_to_datetime(var('date_range_end'), seconds=1) }}"
+                    )
+                    and
+                {% endif %}
+                {{ timestamp }}
+                between datetime("{{ var('date_range_start') }}") and datetime(
                     "{{ var('date_range_end') }}"
                 )
             group by 1, 2
@@ -100,7 +116,7 @@
                         or q_gps_raw is null
                         or q_gps_filtrada is null
                         or q_gps_treated is null  -- Hipótese de perda de dados no tratamento
-                        or (q_gps_raw <= q_gps_filtrada)
+                        or (q_gps_raw < q_gps_filtrada)
                         or (q_gps_filtrada < q_gps_treated)  -- Hipótese de duplicação de dados
                         or (coalesce(safe_divide(q_gps_filtrada, q_gps_raw), 0) < 0.96)  -- Hipótese de perda de dados no tratamento (superior a 3%)
                         or (

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Module containing general purpose tasks"""
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Union
 
 import prefect
@@ -150,7 +150,7 @@ def flow_log(msg, level: str = "info"):
 @task
 def run_subflow(
     flow_name: str,
-    parameters: Union[list[dict], dict],
+    parameters: Union[list[dict], dict] = None,
     project_name: str = None,
     labels: list[str] = None,
     maximum_parallelism: int = None,
@@ -168,7 +168,8 @@ def run_subflow(
             se não for especificado, são utilizadas as labels do flow atual
         maximum_parallelism (int): Número máximo de runs a serem executadas de uma vez
     """
-
+    if parameters is None:
+        parameters = [{}]
     if not isinstance(parameters, (dict, list)):
         raise ValueError("parameters must be a list or a dict")
 
@@ -276,3 +277,26 @@ def remove_key_from_dict(data: dict, key: str) -> dict:
     data_copy = data.copy()
     data_copy.pop(key, None)
     return data_copy
+
+
+@task
+def add_days_to_date(
+    date_str: str, days: int = 1, pattern: str = constants.DATE_PATTERN.value
+) -> str:
+    """
+    Adiciona `days` a uma data em formato string.
+
+    Args:
+        date_str (str): Data no formato especificado (default: "YYYY-MM-DD").
+        days (int): Número de dias a adicionar (pode ser negativo).
+        pattern (str): Formato da data (default: "%Y-%m-%d").
+
+    Returns:
+        str: Nova data como string.
+    """
+    if date_str is None:
+        return None
+
+    dt = datetime.strptime(date_str, pattern)
+    new_dt = dt + timedelta(days=days)
+    return new_dt.strftime(pattern)

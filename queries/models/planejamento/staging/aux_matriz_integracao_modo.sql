@@ -14,6 +14,8 @@ with
             modo,
             tempo_integracao_minutos
         from {{ ref("matriz_reparticao_tarifaria") }}, unnest(sequencia_modo) as modo
+        where integracao not like "%Metrô%"
+
     ),
     modos_origem_destino as (
         select
@@ -42,7 +44,7 @@ select
     cast(null as string) as id_servico_gtfs_destino,
     cast(null as string) as tabela_gtfs_destino,
     tempo_integracao_minutos,
-    cast(0 as numeric) as valor_transacao,
+    cast(4.7 as numeric) as valor_integracao,
     'Integração' as tipo_integracao,
     true as indicador_integracao
 from modos_origem_destino

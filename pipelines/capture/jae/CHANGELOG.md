@@ -1,5 +1,116 @@
 # Changelog - source_jae
 
+## [3.0.1] - 2025-10-02
+
+### Alterado
+- Substitui função de leitura do BigQuery da BD pela do pandas_gbq (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/918)
+
+## [3.0.0] - 2025-09-29
+
+### Adicionado
+- Adiciona schedules adicionais para fallback nos flows `CAPTURA_TRANSACAO_ORDEM` e `CAPTURA_INTEGRACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+- Adiciona função `raise_if_column_isna(column_name="id_ordem_pagamento")` no pretratamento da captura das tabelas `ordem_rateio` e `ordem_ressarcimento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+
+### Alterado
+- Altera captura das tabelas do ressarcimento_db e da transacao_ordem de 8:00 para 10:00 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+- Altera timedelta do schedule do backup dos bancos mais pesados (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+
+## [2.5.0] - 2025-09-16
+
+### Adicionado
+- Cria captura das tabelas `escola`, `estudante` e `laudo_pcd` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/875)
+
+### Alterado
+- Altera query da captura da tabela `gratuidade`, removendo os joins com as tabelas `escola`, `estudante` e `laudo_pcd` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/875)
+
+## [2.4.0] - 2025-09-08
+
+### Adicionado
+- Salva resultados da verificação da captura do flow `verifica_captura` na tabela `source_jae.resultado_verificacao_captura_jae` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/848)
+- Adiciona checagem de captura da tabela `lancamento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/848)
+
+### Alterado
+- Muda lógica do delay na captura da tabela `lancamento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/848)
+- Muda logica das primary keys no flow `verifica_captura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/848)
+
+## [2.3.6] - 2025-08-22
+
+### Alterado
+- Aumenta memória nos flows `CAPTURA_INTEGRACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/807)
+
+## [2.3.5] - 2025-08-11
+
+### Alterado
+
+- Altera schedules das capturas das ordens de pagamento e da transacao_ordem (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/781)
+
+## [2.3.4] - 2025-08-05
+
+### Alterado
+- Aumenta memória nos flows `CAPTURA_INTEGRACAO`, `CAPTURA_TRANSACAO_ORDEM` e `verifica_captura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/759)
+
+## [2.3.3] - 2025-08-04
+
+### Removido
+
+- Remove filtro da captura da tabela linha (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/755)
+
+
+## [2.3.2] - 2025-07-31
+
+### Alterado
+
+- Altera schedules das capturas das ordens de pagamento e da transacao_ordem (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/743)
+- Altera chunk_size da captura da transacao_ordem (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/743)
+
+## [2.3.1] - 2025-07-30
+
+### Alterado
+
+- Altera schedules das capturas das ordens de pagamento e da transacao_ordem (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/740)
+
+## [2.3.0] - 2025-07-29
+
+### Adicionado
+
+- Cria flow `CAPTURA_LANCAMENTO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/735)
+
+## [2.2.0] - 2025-07-28
+
+### Adicionado
+
+- Cria flow `verifica_captura` para checagem de completude dos dados capturados em relação ao DB da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/733)
+
+### Alterado
+
+- Altera lógica de definição do delay de captura dos dados da Jaé, para criar compatibilidade entre versões (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/733)
+
+## [2.1.6] - 2025-07-09
+
+### Alterado
+
+- Altera IP do banco `principal_db` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/679)
+
+## [2.1.5] - 2025-07-07
+
+### Alterado
+
+- Refatora captura da tabela `integracao_transacao` para utilizar paginação (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/664)
+
+## [2.1.4] - 2025-07-03
+
+### Adicionado
+
+- Cria flow `CAPTURA_TRANSACAO_RETIFICADA` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/658)
+
+## [2.0.4] - 2025-07-02
+
+### Alterado
+- Altera IP do banco `principal_db` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/655)
+- Adiciona tabelas `estudante_seeduc_25032025`, `estudante_24062025`, `estudante_20062025` e `producao_20250617081705_02_VT` no exclude do backup da billing pay (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/655)
+
+### Alterado
+
 ## [2.0.3] - 2025-04-28
 
 ### Alterado

@@ -3,7 +3,7 @@ import time
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Union
 
-import basedosdados as bd
+import pandas_gbq
 import prefect
 import requests
 from prefect import task
@@ -39,6 +39,38 @@ except ImportError:
     base_assert_dependencies(["prefect"], extras=["pipelines"])
 
 from prefeitura_rio.pipelines_utils.io import get_root_path
+
+
+@task(
+    max_retries=constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
+)
+def test_fallback_run(
+    env: str, fallback_run: bool, timestamp: datetime, selector: DBTSelector
+) -> bool:
+    """
+    Determina se a materialização deve ser executada.
+
+    Caso `fallback_run` seja verdadeiro, a função verifica se o `selector`
+    está atualizado para o ambiente e timestamp informados. Se não estiver atualizado,
+    retorna `True` indicando que o fallback deve ser executado. Caso contrário,
+    retorna `False`.
+    Se `fallback_run` for falso, a função sempre retorna `True`.
+
+    Args:
+        env (str): dev ou prod
+        fallback_run (bool): Indica se a run é de fallback ou não
+        timestamp (datetime): Timestamp de referência para a verificação de atualização
+        selector (DBTSelector): Objeto responsável por verificar se os dados estão atualizados
+
+    Returns:
+        bool:
+            - `True` se a materialização deve ser executada
+            - `False` caso contrário
+    """
+    if fallback_run:
+        return not selector.is_up_to_date(env=env, timestamp=timestamp)
+    return True
 
 
 @task(
@@ -273,12 +305,16 @@ def run_dbt_selector(
         if isinstance(_vars, list):
             vars_dict = {}
             for elem in _vars:
+                elem["flow_name"] = prefect.context.flow_name
                 vars_dict.update(elem)
-            vars_str = f'"{vars_dict}"'
-            run_command += f" --vars {vars_str}"
+            _vars = vars_dict
         else:
-            vars_str = f'"{_vars}"'
-            run_command += f" --vars {vars_str}"
+            _vars["flow_name"] = prefect.context.flow_name
+    else:
+        _vars = {"flow_name": prefect.context.flow_name}
+
+    vars_str = f'"{_vars}"'
+    run_command += f" --vars {vars_str}"
 
     if flags:
         run_command += f" {flags}"
@@ -316,6 +352,7 @@ def save_materialization_datetime_redis(env: str, selector: DBTSelector, value: 
 
 @task
 def run_data_quality_checks(
+    env: str,
     data_quality_checks: list[DataQualityCheckArgs],
     initial_timestamp: datetime,
 ):
@@ -346,7 +383,7 @@ def run_data_quality_checks(
         if partition_column_name is None:
             row_filters = "1=1"
         else:
-            partitions = bd.read_sql(
+            partitions = pandas_gbq.read_gbq(
                 f"""
             SELECT
                 PARSE_DATE('%Y%m%d', partition_id) AS partition_date
@@ -359,7 +396,7 @@ def run_data_quality_checks(
                     DATE(last_modified_time, "America/Sao_Paulo") >=
                     DATE('{initial_timestamp.date().isoformat()}')
             """,
-                billing_project_id="rj-smtr-dev",
+                project_id=constants.PROJECT_NAME.value[env],
             )["partition_date"].to_list()
 
             partitions = [f"'{p}'" for p in partitions]
@@ -470,12 +507,16 @@ def run_dbt_tests(
         if isinstance(_vars, list):
             vars_dict = {}
             for elem in _vars:
+                elem["flow_name"] = prefect.context.flow_name
                 vars_dict.update(elem)
-            vars_str = f'"{vars_dict}"'
-            run_command += f" --vars {vars_str}"
+            _vars = vars_dict
         else:
-            vars_str = f'"{_vars}"'
-            run_command += f" --vars {vars_str}"
+            _vars["flow_name"] = prefect.context.flow_name
+    else:
+        _vars = {"flow_name": prefect.context.flow_name}
+
+    vars_str = f'"{_vars}"'
+    run_command += f" --vars {vars_str}"
 
     if flags:
         run_command += f" {flags}"
@@ -690,27 +731,29 @@ def run_dbt(
 
     run_command = f"dbt {dbt_command}"
 
-    if resource in ["model", "snapshot"]:
-        if not selector_name:
-            raise ValueError(f"selector_name is required for resource type: {resource}")
-        run_command += f" --selector {selector_name}"
-    elif resource == "test":
-        run_command += " --select "
-
-        if test_name:
-            run_command += test_name
+    if any(
+        param is not None
+        for param in [selector_name, dataset_id, table_id, model, upstream, downstream, test_name]
+    ):
+        if selector_name:
+            run_command += f" --selector {selector_name}"
         else:
-            if not model and dataset_id:
-                model = dataset_id
-                if table_id:
-                    model += f".{table_id}"
+            run_command += " --select "
 
-            if model:
-                if upstream:
-                    run_command += "+"
-                run_command += model
-                if downstream:
-                    run_command += "+"
+            if test_name:
+                run_command += test_name
+            else:
+                if not model and dataset_id:
+                    model = dataset_id
+                    if table_id:
+                        model += f".{table_id}"
+
+                if model:
+                    if upstream:
+                        run_command += "+"
+                    run_command += model
+                    if downstream:
+                        run_command += "+"
 
     if exclude:
         run_command += f" --exclude {exclude}"
@@ -719,12 +762,16 @@ def run_dbt(
         if isinstance(_vars, list):
             vars_dict = {}
             for elem in _vars:
+                elem["flow_name"] = prefect.context.flow_name
                 vars_dict.update(elem)
-            vars_str = f'"{vars_dict}"'
-            run_command += f" --vars {vars_str}"
+            _vars = vars_dict
         else:
-            vars_str = f'"{_vars}"'
-            run_command += f" --vars {vars_str}"
+            _vars["flow_name"] = prefect.context.flow_name
+    else:
+        _vars = {"flow_name": prefect.context.flow_name}
+
+    vars_str = f'"{_vars}"'
+    run_command += f" --vars {vars_str}"
 
     if flags:
         run_command += f" {flags}"

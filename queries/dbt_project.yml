@@ -19,11 +19,12 @@ clean-targets:
 vars:
   ### Date default variables ###
   date_range_start: "2022-01-01T00:00:00"
-  date_range_end: "2022-01-01T01:00:00"
+  date_range_end: "2022-01-02T01:00:00"
   start_date: "2022-01-01T01:00:00"
   end_date: "2022-01-01T01:00:00"
   run_date: "2022-01-01T01:00:00"
   partitions: ""
+  flow_name: ""
 
   ### Version default variable (replaced on deploy) ###
   version: ""
@@ -96,6 +97,7 @@ vars:
   ## GTFS
   data_versao_gtfs: "2024-12-31" # fixada última data disponível
   DATA_GTFS_V2_INICIO: "2025-04-30"
+  DATA_GTFS_V4_INICIO: "2025-07-16"
 
   ### Subsídio SPPO (Ônibus) ###
   buffer: 500 # distância em metros para buffer
@@ -113,6 +115,8 @@ vars:
   frequencies_version: "YYYY-MM-DD"
   tipo_materializacao: "subsidio"
   data_inicio_trips_shapes: "2023-04-01"
+  data_inclusao_autuacao_disciplinar: "2025-07-10"
+  data_processamento_veiculo_licenciamento_dia: ["'2025-07-10'", "'2025-07-24'"]
   # Feature penalidade de autuação por inoperância do ar condicionado (DECRETO RIO 51940/2023)
   DATA_SUBSIDIO_V2_INICIO: "2023-01-16"
   # Feature penalidade de autuação por segurança e limpeza/equipamento (DECRETO RIO 52820/2023)
@@ -143,10 +147,20 @@ vars:
   DATA_SUBSIDIO_V13_INICIO: "2025-01-01"
   # Feature Apuração por tecnologia e penalidade por faixa horária (DECRETO 55631/2025)
   DATA_SUBSIDIO_V14_INICIO: "2025-01-05"
-  # ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629)
+  # ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629) e RESOLUÇÃO SMTR 3843/2025
   DATA_SUBSIDIO_V15_INICIO: "2025-04-01"
-  # Feature Não pagamento de tecnologia inferior à mínima permitida [ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629)]
-  DATA_SUBSIDIO_V15A_INICIO: "2025-07-01"
+  # Feature Não pagamento de tecnologia inferior à mínima permitida [ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629) e RESOLUÇÃO SMTR 3843/2025]
+  DATA_SUBSIDIO_V16_INICIO: "2025-07-01"
+  # Feature regularidade temperatura [ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629) e RESOLUÇÃO SMTR 3857/2025]
+  DATA_SUBSIDIO_V17_INICIO: "2025-07-16"
+  # Feature validadores e transações Jaé [ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629), RESOLUÇÃO SMTR 3843/2025 e RESOLUÇÃO SMTR 3858/2025]
+  DATA_SUBSIDIO_V18_INICIO: "2025-08-01"
+  # Feature Não pagamento de viagens licenciadas sem ar condicionado [ACORDO JUDICIAL NOS AUTOS DA ACP 0045547-94.2019.8.19.0001 (FLS. 24567-24629) e RESOLUÇÃO SMTR 3843/2025]
+  DATA_SUBSIDIO_V19_INICIO: "2025-11-01"
+  # Feature Inciso IV Climatização
+  DATA_SUBSIDIO_V20_INICIO: "2025-08-16"
+  # Feature Associação de servicos corretamente (email da SUBTT do dia 2025-07-31 às 18:10)
+  DATA_SUBSIDIO_V99_INICIO: "3000-01-01"
 
   # Recursos #
   recurso_staging: "rj-smtr-staging.projeto_subsidio_sppo_staging.recurso"
@@ -208,6 +222,27 @@ vars:
 
   ### Encontro de Contas ###
   encontro_contas_modo: ""
+  # Datas que serão desconsideradas no encontro de contas juntamente com o motivo
+  encontro_contas_datas_excecoes: {
+    "'2024-10-06'": "'Eleições 2024'",
+    "'2024-02-09'": "'Carnaval 2024'",
+    "'2024-02-10'": "'Carnaval 2024'",
+    "'2024-02-11'": "'Carnaval 2024'",
+    "'2024-02-12'": "'Carnaval 2024'",
+    "'2024-02-13'": "'Carnaval 2024'",
+    "'2024-02-14'": "'Carnaval 2024'",
+    "'2025-02-28'": "'Carnaval 2025'",
+    "'2025-03-01'": "'Carnaval 2025'",
+    "'2025-03-02'": "'Carnaval 2025'",
+    "'2025-03-03'": "'Carnaval 2025'",
+    "'2025-03-04'": "'Carnaval 2025'",
+    "'2025-03-05'": "'Carnaval 2025'",
+    "'2025-03-07'": "'Carnaval 2025'",
+    "'2025-03-08'": "'Carnaval 2025'",
+    "'2025-03-09'": "'Carnaval 2025'"
+  }
+  # Versões
+  encontro_contas_datas_v2_inicio: "2024-01-01"
 
   ### Viagens 2.0 ###
 
@@ -224,8 +259,17 @@ vars:
   ### Planejamento ###
   feed_inicial_viagem_planejada: "2024-09-29"
 
+  ### Infraestrutura ###
+  data_inicial_logs_bigquery: "2024-09-30"
+  data_inicial_custo_cloud: "2024-10-01"
+  data_final_valor_bq_manual: "2025-03-21"
+
+
+
   ### Monitoramento ###
-  data_inicial_veiculo_fiscalizacao_lacre: "2025-03-31"
+  data_final_veiculo_arquitetura_1: "2025-03-31"
+
+query-comment: "{{ query_comment(node) }}"
 
 tests:
   rj_smtr:
@@ -234,6 +278,8 @@ tests:
       where: "data between date('{date_range_start}') and date('{date_range_end}') and data < date('{DATA_SUBSIDIO_V9_INICIO}')"
     dashboard_subsidio_sppo_v2:
       where: "data between date('{date_range_start}') and date('{date_range_end}') and data < date('{DATA_SUBSIDIO_V14_INICIO}')"
+    bilhetagem:
+      where: "data in ({partitions})"
 
 snapshots:
   +persist_docs:
@@ -287,9 +333,6 @@ models:
     br_rj_riodejaneiro_bilhetagem:
       +materialized: incremental
       +schema: br_rj_riodejaneiro_bilhetagem
-    br_rj_riodejaneiro_bilhetagem_staging:
-      +materialized: view
-      +schema: br_rj_riodejaneiro_bilhetagem_staging
     dashboard_bilhetagem_implantacao_jae:
       +materialized: table
       +schema: dashboard_bilhetagem_implantacao_jae
@@ -299,6 +342,9 @@ models:
     br_rj_riodejaneiro_stu:
       +materialized: view
       +schema: br_rj_riodejaneiro_stu
+    projeto_app_cct:
+      +materialized: view
+      +schema: projeto_app_cct
     cadastro:
       +schema: cadastro
       staging:
@@ -321,11 +367,25 @@ models:
         +incremental_strategy: insert_overwrite
         +schema: indicadores_continuados_egp_staging
     projeto_subsidio_sppo_encontro_contas:
-      +materialized: table
-      +schema: projeto_subsidio_sppo_encontro_contas
-      staging:
-        +materialized: view
-        +schema: projeto_subsidio_sppo_encontro_contas_staging
+      v1:
+        +materialized: table
+        +schema: projeto_subsidio_sppo_encontro_contas
+        +enabled: false
+        staging:
+          +materialized: view
+          +schema: projeto_subsidio_sppo_encontro_contas_staging
+      v2:
+        +materialized: incremental
+        +incremental_strategy: insert_overwrite
+        +schema: projeto_subsidio_sppo_encontro_contas_v2
+        +description: "Encontro de Contas SPPO [Serviço Público de Transporte de Passageiros por Ônibus] de 2024-01-01 a 2025-03-31 [Processo.Rio MTR-PRO-2025/18086]"
+        +partition_by:
+          field: "data"
+          data_type: "date"
+          granularity: "day"
+        staging:
+          +materialized: view
+          +schema: projeto_subsidio_sppo_encontro_contas_staging_v2
     dashboard_controle_vinculo_jae_riocard:
       +materialized: incremental
       +schema: dashboard_controle_vinculo_jae_riocard
@@ -352,9 +412,15 @@ models:
       +incremental_strategy: insert_overwrite
       +schema: financeiro
       staging:
-        +materialized: incremental
-        +incremental_strategy: insert_overwrite
         +schema: financeiro_staging
+        +materialized: view
+    financeiro_interno:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: financeiro_interno
+      staging:
+        +schema: financeiro_interno_staging
+        +materialized: view
     dashboard_subsidio_sppo_v2:
       +materialized: view
       +schema: dashboard_subsidio_sppo_v2
@@ -362,6 +428,8 @@ models:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
       +schema: subsidio
+      staging:
+        +schema: subsidio_staging
     catalogo:
       +materialized: view
       +schema: catalogo
@@ -396,6 +464,13 @@ models:
       staging:
         +materialized: view
         +schema: bilhetagem_staging
+    bilhetagem_interno:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: bilhetagem_interno
+      staging:
+        +materialized: view
+        +schema: bilhetagem_interno_staging
     datario:
       +materialized: view
       +schema: datario
@@ -416,3 +491,15 @@ models:
       +schema: monitoramento_interno
       staging:
         +schema: monitoramento_interno_staging
+    infraestrutura:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: infraestrutura
+      staging:
+        +schema: infraestrutura_staging
+    cadastro_interno:
+      +materialized: incremental
+      +schema: cadastro_interno
+      staging:
+        +materialized: view
+        +schema: cadastro_interno_staging

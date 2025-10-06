@@ -2,7 +2,7 @@
 """
 Valores constantes gerais para pipelines da rj-smtr
 
-DBT 2025-05-29 1
+DBT 2025-09-12
 """
 
 from enum import Enum
@@ -54,6 +54,7 @@ class constants(Enum):  # pylint: disable=c0103
     # PATTERNS #
     FILENAME_PATTERN = "%Y-%m-%d-%H-%M-%S"
     MATERIALIZATION_LAST_RUN_PATTERN = "%Y-%m-%dT%H:%M:%S"
+    DATE_PATTERN = "%Y-%m-%d"
     FLOW_RUN_URL_PATTERN = "https://pipelines.dados.rio/smtr/flow-run/{run_id}"
 
     # URLS #
@@ -212,6 +213,8 @@ class constants(Enum):  # pylint: disable=c0103
 
     # GTFS
     DATA_GTFS_V2_INICIO = "2025-04-30"
+    DATA_GTFS_V3_INICIO = "2024-11-06"
+    DATA_GTFS_V4_INICIO = "2025-07-16"
     GTFS_CONTROLE_OS_URL = "https://docs.google.com/spreadsheets/d/\
 1Jn7fmaDOhuHMdMqHo5SGWHCRuerXNWJRmhRjnHxJ9O4\
 /pub?gid=0&single=true&output=csv"

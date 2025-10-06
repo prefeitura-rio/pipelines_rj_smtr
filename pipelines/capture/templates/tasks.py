@@ -2,6 +2,7 @@
 """
 Tasks for rj_smtr
 """
+import os
 from copy import deepcopy
 from datetime import datetime, timedelta
 from typing import Callable
@@ -20,7 +21,11 @@ from pipelines.utils.fs import (
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.prefect import rename_current_flow_run
 from pipelines.utils.pretreatment import transform_to_nested_structure
-from pipelines.utils.utils import create_timestamp_captura, data_info_str
+from pipelines.utils.utils import (
+    convert_timezone,
+    create_timestamp_captura,
+    data_info_str,
+)
 
 ############################
 # Flow Configuration Tasks #
@@ -86,6 +91,7 @@ def get_capture_timestamps(
     timestamp: datetime,
     recapture: bool,
     recapture_days: int,
+    recapture_timestamps: list[str],
 ) -> list[datetime]:
     """
     Retorna os timestamps que serão capturados pelo flow
@@ -96,11 +102,15 @@ def get_capture_timestamps(
         recapture (bool): Se a execução é uma recaptura ou não
         recapture_days (int): A quantidade de dias que serão considerados para achar datas
             a serem recapturadas
+        recapture_timestamps (list[str]): Lista manual de timestamps a serem recapturadas
 
     Returns:
         list[datetime]: Lista de datetimes para executar a captura
     """
     if recapture:
+        if recapture_timestamps:
+            return [convert_timezone(datetime.fromisoformat(t)) for t in recapture_timestamps]
+
         return source.get_uncaptured_timestamps(
             timestamp=timestamp,
             retroactive_days=recapture_days,
@@ -169,7 +179,7 @@ def create_filepaths(source: SourceTable, partition: str, timestamp: datetime) -
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
-def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str):
+def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str, source: SourceTable):
     """
     Faz a extração dos dados raw e salva localmente
 
@@ -181,10 +191,20 @@ def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str):
                 "source": source/caminho/para/salvar/arquivo.extensao
             }
         raw_filetype (str): tipo de dado raw
+        source (SourceTable): Objeto representando a fonte de dados capturados
     """
-    data = data_extractor()
-    print("---------------------------" + filepaths["raw"])
-    save_local_file(filepath=filepaths["raw"], filetype=raw_filetype, data=data)
+    raw_filepath = filepaths["raw"]
+
+    if source.file_chunk_size is not None:
+        raw_filepaths = data_extractor(raw_filepath=raw_filepath)
+    else:
+        data = data_extractor()
+        base_path, ext = os.path.splitext(raw_filepath)
+        filepath = f"{base_path}_0{ext}"
+        save_local_file(filepath=filepath, filetype=raw_filetype, data=data)
+        raw_filepaths = [filepath]
+
+    return raw_filepaths
 
 
 ################
@@ -196,20 +216,17 @@ def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str):
     max_retries=constants.MAX_RETRIES.value,
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
-def upload_raw_file_to_gcs(source: SourceTable, filepaths: dict, partition: str):
+def upload_raw_file_to_gcs(source: SourceTable, raw_filepaths: list[str], partition: str):
     """
     Sobe o arquivo raw para o GCS
 
     Args:
         source (SourceTable): Objeto representando a fonte de dados capturados
-        filepaths (dict): Dicionário no formato:
-            {
-                "raw": raw/caminho/para/salvar/arquivo.extensao,
-                "source": source/caminho/para/salvar/arquivo.extensao
-            }
+        raw_filepaths (list): Lista de caminhos para ler os dados raw
         partition (str): Partição Hive
     """
-    source.upload_raw_file(raw_filepath=filepaths["raw"], partition=partition)
+    for filepath in raw_filepaths:
+        source.upload_raw_file(raw_filepath=filepath, partition=partition)
 
 
 @task(
@@ -248,7 +265,8 @@ def upload_source_data_to_gcs(source: SourceTable, partition: str, filepaths: di
     retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
 )
 def transform_raw_to_nested_structure(
-    filepaths: dict,
+    raw_filepaths: list[str],
+    filepaths: dict[str],
     timestamp: datetime,
     primary_keys: list[str],
     reader_args: dict,
@@ -258,7 +276,7 @@ def transform_raw_to_nested_structure(
     Task para aplicar pre-tratamentos e transformar os dados para o formato aninhado
 
     Args:
-        raw_filepath (str): Caminho para ler os dados raw
+        raw_filepaths (list): Lista de caminhos para ler os dados raw
         source_filepath (str): Caminho para salvar os dados tratados
         timestamp (datetime): A timestamp da execução do Flow
         primary_keys (list): Lista de primary keys da tabela
@@ -271,32 +289,34 @@ def transform_raw_to_nested_structure(
                 primary_keys (list[str])
             e retornar um pd.DataFrame
     """
-    data = read_raw_data(filepath=filepaths["raw"], reader_args=reader_args)
+    csv_mode = "w"
+    for raw_filepath in raw_filepaths:
+        data = read_raw_data(filepath=raw_filepath, reader_args=reader_args)
 
-    if data.empty:
-        log("Empty dataframe, skipping transformation...")
-        data = pd.DataFrame()
-    else:
-        log(f"Raw data:\n{data_info_str(data)}", level="info")
+        if data.empty:
+            log("Empty dataframe, skipping transformation...")
+            data = pd.DataFrame()
+        else:
+            log(f"Raw data:\n{data_info_str(data)}", level="info")
 
-        data_columns_len = len(data.columns)
-        captura = create_timestamp_captura(timestamp=datetime.now())
-        data["_datetime_execucao_flow"] = captura
+            data_columns_len = len(data.columns)
+            captura = create_timestamp_captura(timestamp=datetime.now())
+            data["_datetime_execucao_flow"] = captura
 
-        for step in pretreat_funcs:
-            data = step(data=data, timestamp=timestamp, primary_keys=primary_keys)
+            for step in pretreat_funcs:
+                data = step(data=data, timestamp=timestamp, primary_keys=primary_keys)
 
-        if len(primary_keys) < data_columns_len:
-            data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
+            if len(primary_keys) < data_columns_len:
+                data = transform_to_nested_structure(data=data, primary_keys=primary_keys)
 
-        timestamp = create_timestamp_captura(timestamp=timestamp)
-        data["timestamp_captura"] = timestamp
+            data["timestamp_captura"] = create_timestamp_captura(timestamp=timestamp)
 
-    log(
-        f"Finished nested structure! Data: \n{data_info_str(data)}",
-        level="info",
-    )
+        log(
+            f"Finished nested structure! Data: \n{data_info_str(data)}",
+            level="info",
+        )
 
-    source_filepath = filepaths["source"]
-    save_local_file(filepath=source_filepath, filetype="csv", data=data)
-    log(f"Data saved in {source_filepath}")
+        source_filepath = filepaths["source"]
+        save_local_file(filepath=source_filepath, filetype="csv", data=data, csv_mode=csv_mode)
+        csv_mode = "a"
+        log(f"Data saved in {source_filepath}")

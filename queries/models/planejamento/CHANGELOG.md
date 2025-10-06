@@ -1,5 +1,41 @@
 # Changelog - planejamento
 
+## [1.5.0] - 2025-09-17
+
+### Alterado
+
+- Altera valor da integração de 0 para 4.7 no modelo `matriz_integracao.sql` e `aux_matriz_integracao_modo.sql`
+- Renomeia coluna `valor_transacao` para `valor_integracao` no modelo `matriz_integracao.sql` e `aux_matriz_integracao_modo.sql`
+
+## [1.4.10] - 2025-08-19
+
+### Adicionado
+
+- Adiciona filtro para dados do metrô no modelo `aux_matriz_integracao_modo.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/793)
+
+## [1.4.9] - 2025-07-22
+
+### Alterado
+
+- Alterados o `tipo_dia` no modelo `aux_calendario_manual.sql` de `2025-07-04` e `2025-07-07` -> `Ponto facultativo` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/718)
+
+## [1.4.8] - 2025-07-08
+
+### Alterado
+
+- Alterados o `tipo_dia` no modelo `aux_calendario_manual.sql` de `2025-06-19` -> `Domingo` e `2025-06-20` -> `Ponto facultativo` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/671)
+
+## [1.4.7] - 2025-06-24
+
+### Adicionado
+
+- Cria modelo `tuneis` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/617)
+
+### Alterado
+
+- Altera referência da CTE `tunel` no modelo `segmento_shape` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/617)
+- Altera lógica do modelo `segmento_shape` para considerar vigência da camada dos túneis (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/617)
+
 ## [1.4.6] - 2025-06-09
 
 ### Alterado

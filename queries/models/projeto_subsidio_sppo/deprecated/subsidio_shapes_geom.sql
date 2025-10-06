@@ -1,3 +1,4 @@
+-- depends_on: {{ ref('subsidio_data_versao_efetiva') }}
 {{ config(
     materialized='incremental',
         partition_by={
@@ -9,13 +10,13 @@
     incremental_strategy='insert_overwrite'
 )
 }}
-
-with data_versao as (
-    select data_versao_shapes
-    from {{ ref("subsidio_data_versao_efetiva") }}
-    where data between date_sub("{{ var("run_date") }}", interval 1 day) and date("{{ var("run_date") }}")
-),
-contents as (
+{% if is_incremental() and execute %}
+  {% set run_date_str = "'" ~ var('run_date') ~ "'" %}
+  {% set query = "SELECT COALESCE(data_versao_shapes, feed_start_date) FROM " ~ ref('subsidio_data_versao_efetiva') ~ " WHERE data BETWEEN DATE_SUB(DATE(" ~ run_date_str ~ "), INTERVAL 1 DAY) AND DATE(" ~ run_date_str ~ ")" %}
+  {% set result = run_query(query) %}
+  {% set data_versao_shapes = result.columns[0].values() %}
+{% endif %}
+with contents as (
     SELECT
         shape_id,
         ST_GEOGPOINT(
@@ -28,7 +29,7 @@ contents as (
         {{ var("subsidio_shapes") }} s
     {% if is_incremental() %}
     WHERE
-        data_versao in (select data_versao_shapes from data_versao)
+        data_versao in ("{{ data_versao_shapes | join('", "') }}")
     {% endif %}
 ),
 pts as (

@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo_encontro_contas
 
+## [2.0.0] - 2025-07-15
+
+### Adicionado
+
+- Adicionada versão 2.0 dos modelos para o cálculo do Encontro de Contas do SPPO [Serviço Público de Transporte de Passageiros por Ônibus] com base no Processo.Rio MTR-PRO-2025/18086 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/511)
+
 ## [1.0.5] - 2025-05-13
 
 ### Corrigido

@@ -1,28 +1,31 @@
-{{
-    config(
-        materialized='table',
-        tags=['geolocalizacao']
-    )
-}}
+{{ config(materialized="table", tags=["geolocalizacao"]) }}
 
-SELECT
-    g.id_servico AS id_servico_gtfs,
-    j.cd_linha AS id_servico_jae,
-    COALESCE(g.servico, j.nr_linha) AS servico,
-    g.servico AS servico_gtfs,
-    j.nr_linha AS servico_jae,
-    COALESCE(g.descricao_servico, j.nm_linha) AS descricao_servico,
-    g.descricao_servico AS descricao_servico_gtfs,
-    j.nm_linha AS descricao_servico_jae,
+with
+    linha_jae as (
+        select *
+        from {{ ref("aux_servico_jae") }}
+        qualify
+            row_number() over (
+                partition by id_servico_jae order by datetime_inicio_validade desc
+            )
+            = 1
+    )
+select
+    g.id_servico as id_servico_gtfs,
+    j.id_servico_jae,
+    coalesce(g.servico, j.servico_jae) as servico,
+    g.servico as servico_gtfs,
+    j.servico_jae,
+    coalesce(g.descricao_servico, j.descricao_servico_jae) as descricao_servico,
+    g.descricao_servico as descricao_servico_gtfs,
+    j.descricao_servico_jae,
     g.latitude,
     g.longitude,
     g.tabela_origem_gtfs,
-    COALESCE(g.inicio_vigencia, DATE(j.datetime_inclusao)) AS data_inicio_vigencia,
-    g.fim_vigencia AS data_fim_vigencia,
+    coalesce(g.inicio_vigencia, date(j.datetime_inclusao)) as data_inicio_vigencia,
+    g.fim_vigencia as data_fim_vigencia,
     '{{ var("version") }}' as versao
-FROM
-    {{ ref("staging_linha") }} j
-FULL OUTER JOIN
+from linha_jae j
+full outer join
     {{ ref("aux_servicos_gtfs") }} g
-ON
-    COALESCE(j.gtfs_route_id, j.gtfs_stop_id) = g.id_servico
+    on coalesce(j.gtfs_route_id, j.gtfs_stop_id) = g.id_servico

@@ -7,8 +7,7 @@
 }}
 
 {% set incremental_filter %}
-  DATE(data) BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
-  AND timestamp_captura BETWEEN DATETIME("{{var('date_range_start')}}") AND DATETIME("{{var('date_range_end')}}")
+    DATE(data) BETWEEN DATE("{{var('date_range_start')}}") AND DATE("{{var('date_range_end')}}")
 {% endset %}
 
 {% set transacao_ordem = ref("staging_transacao_ordem") %}
@@ -56,7 +55,7 @@ with
             s.datetime_captura
         from staging s
         join
-            {{ ref("ordem_pagamento_servico_operador_dia") }} o using (
+            {{ ref("bilhetagem_servico_operador_dia") }} o using (
                 id_ordem_pagamento_servico_operador_dia
             )
     ),

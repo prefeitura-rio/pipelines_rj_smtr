@@ -727,6 +727,7 @@ with Flow(
             ],
             initial_timestamp=timestamp,
             upstream_tasks=[wait_materializacao],
+            env="prod",
         )
 
     bilhetagem_ordem_pagamento_captura_tratamento.set_reference_tasks(

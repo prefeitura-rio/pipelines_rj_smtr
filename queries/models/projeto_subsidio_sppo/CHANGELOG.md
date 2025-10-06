@@ -1,5 +1,80 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.3.5] - 2025-10-01
+
+### Removido
+
+- Ajusta o modelo efêmero `viagem_planejada_v1` removendo a macro `is_incremental`.(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/907)
+
+
+## [9.3.4] - 2025-08-13
+
+### Adicionado
+
+- Adicionado o teste `check_partidas_planejadas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/784)
+
+## [9.3.3] - 2025-08-07
+
+### Alterado
+
+- Adicionado coluna de controle no modelo `viagem_planejada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+
+## [9.3.2] - 2025-07-24
+
+### Corrigido
+
+- Corrigida a data final da soma de quilometragem planejada para o dia seguinte no modelo `viagem_planejada_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/721)
+
+## [9.3.1] - 2025-07-23
+
+### Corrigido
+
+- Corrigido o modelo `viagem_planejada.sql` para não utilizar o modelo `viagem_planejada_v1.sql` antes de `2024-04-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/719)
+
+## [9.3.0] - 2025-07-21
+
+### Alterado
+
+- Alterado o modelo `viagem_planejada.sql` para não somar as distâncias planejadas do dia anterior entre 24h e 03h após `2025-07-16` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/713)
+
+- Refatorado o modelo `viagem_planejada.sql` para utilizar versionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/713)
+
+## [9.2.9] - 2025-07-10
+
+### Corrigido
+
+- Corrigido o agrupamento do select final no modelo `viagem_transacao_aux.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/691)
+
+## [9.2.8] - 2025-07-10
+
+### Corrigido
+
+- Corrigidos data de inicio dos testes das colunas `feed_start_date`, `id_tipo_trajeto`, `feed_version` e `partidas_total_planejada` no modelo `viagem_planejada.sql` para a partir de `2024-04-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
+## [9.2.7] - 2025-07-02
+
+### Adicionado
+
+- Adicionada coluna `feed_start_date` no modelo `viagem_planejada.sql` para o período anterior a `2024-04-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/656)
+
+## [9.2.6] - 2025-06-25
+
+### Alterado
+
+- Alterado o modelo `viagem_planejada.sql` para adicionar exceções que mapeiam os serviços `864` → `LECD122` e `LECD108` → `LECD112` na faixa horária das 00h às 03h do dia `2025-06-01` [Processo.Rio MTR-PRO-2025/06098] (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/646)
+
+## [9.2.5] - 2025-06-12
+
+### Adicionado
+
+- Adicionadas colunas faltantes no modelo `viagem_planejada.sql` para o periodo anterior a `2024-04-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
+
+### Corrigido
+
+- Corrigido o modelo `subsidio_shapes_geom.sql` para utilizar o particionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
+
+- Corrigido o modelo `viagem_completa.sql` para utilizar a coluna `data_versao_shapes` quando `feed_start_date` for nulo (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/590)
+
 ## [9.2.4] - 2025-05-29
 
 ### Adicionado
@@ -22,7 +97,7 @@
 
 ### Alterado
 
-- Muda lógica do modelo `subsidio_data_versao_efetiva.sql` para pegar as excessões manuais da tabela `aux_calendario_manual` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/480)
+- Muda lógica do modelo `subsidio_data_versao_efetiva.sql` para pegar as exceções manuais da tabela `aux_calendario_manual` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/480)
 
 ## [9.2.0] - 2025-03-07
 

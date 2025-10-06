@@ -1,5 +1,79 @@
 # Changelog - bilhetagem
 
+## [3.0.4] - 2025-09-01
+
+### Alterado
+
+- Move modelos do dataset `br_rj_riodejaneiro_bilhetagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/822)
+
+## [3.0.3] - 2025-08-21
+
+### Adicionado
+
+- Adiciona colunas de controle e `id_operadora_jae` nos modelos `gps_validador.sql` e `gps_validador_van.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/803)
+
+### Alterado
+
+- Altera incremental strategy dos modelos `gps_validador.sql` e `gps_validador_van.sql` para `insert-overwrite` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/803)
+
+
+## [3.0.2] - 2025-08-04
+
+### Alterado
+
+- Trata dados de id inteiro nos modelos de staging da Jaé (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/755)
+- Altera tabela com informações de serviço da Jaé nos modelos `gps_validador_aux.sql` e `ordem_pagamento_servico_operador_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/755)
+
+## [3.0.1] - 2025-07-30
+
+### Alterado
+
+- Considera a primeira captura das ordens de pagamento nos modelos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/740):
+  - `staging_ordem_pagamento_consorcio_operadora.sql`
+  - `staging_ordem_pagamento_consorcio.sql`
+  - `staging_ordem_pagamento.sql`
+  - `staging_ordem_rateio.sql`
+  - `staging_ordem_ressarcimento.sql`
+
+## [3.0.0] - 2025-07-03
+
+### Adicionado
+
+- Cria modelo `view_transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/505)
+
+### Removido
+
+- Remove modelos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/505):
+  - `dicionario.sql`
+  - `passageiros_hora.sql`
+  - `passageiros_tile_hora.sql`
+  - `transacao.sql`
+  - `transacao_riocard.sql`
+  - `integracao.sql`
+
+- Move modelos do dataset `br_rj_riodejaneiro_bilhetagem_staging` para `bilhetagem_staging` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/505):
+  - `aux_gratuidade.sql`
+  - `aux_passageiro_hora.sql`
+  - `staging_gratuidade.sql`
+  - `staging_integracao_transacao.sql`
+  - `staging_produto.sql`
+  - `staging_transacao_ordem.sql`
+  - `staging_transacao_riocard.sql`
+  - `staging_transacao.sql`
+
+- Move modelos do dataset `br_rj_riodejaneiro_bilhetagem_staging` para `cadastro_staging` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/505):
+  - `staging_cliente.sql`
+  - `staging_consorcio.sql`
+  - `staging_conta_bancaria.sql`
+  - `staging_contato_pessoa_juridica.sql`
+  - `staging_endereco.sql`
+  - `staging_linha_consorcio_operadora_transporte.sql`
+  - `staging_linha_consorcio.sql`
+  - `staging_linha_sem_ressarcimento.sql`
+  - `staging_linha_tarifa.sql`
+  - `staging_linha.sql`
+  - `staging_operadora_transporte.sql`
+
 ## [2.2.1] - 2025-04-04
 
 ### Corrigido

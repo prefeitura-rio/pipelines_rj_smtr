@@ -1,5 +1,134 @@
 # Changelog - subsidio
 
+## [2.1.8] - 2025-09-29
+
+### Corrigido
+
+- Corrige a data de início da verificação do `indicador_falha_recorrente` no modelo `viagem_regularidade_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/904)
+
+- Corrige o teste `test_check_regularidade_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/904)
+
+## [2.1.7] - 2025-09-26
+
+### Alterado
+
+- Altera critérios para seleção do id_validador no modelo `aux_viagem_temperatura`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/902)
+
+### Corrigido
+
+- Corrige o cálculo de percentual de temperatura regular no modelo `aux_viagem_temperatura`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/902)
+
+## [2.1.6] - 2025-09-17
+
+### Alterado
+
+- Altera nome do indicador `indicador_temperatura_nula_zero_viagem` para criar `indicador_temperatura_zero_viagem` e `indicador_temperatura_nula_viagem`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+- Altera lógica das CTEs para o nível de agregação do validador por viagem (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+- Altera colunas percentuais adicionando uma multiplicação por 100 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+- Altera coluna `quantidade_nula_zero` separando em `quantidade_nula` e `quantidade_zero` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+
+### Corrigido
+
+- Corrige CTE `classificacao_temperatura` adicionando maior ou igual na diferença da temperatura externa pela interna (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/874)
+
+## [2.1.5] - 2025-09-15
+
+### Corrigido
+
+- Corrigida a data de inicio da tecnologia_remunerada no modelo `viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/790)
+- Corrigida a coluna tecnologia_remunerada no modelo `viagem_transacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/790)
+- Corrigida o modelo `viagem_transacao_aux_v1` para datas anteriores a `2025-04-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/790)
+
+## [2.1.4] - 2025-09-02
+
+### Alterado
+
+- Altera lógica da cte `particoes_completas` no modelo `aux_viagem_temperatura` adicionando um inner join para materializar os dados atuais somente se ainda existirem nos dados novos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/835)
+- Alterado lógica dos modelos `viagem_transacao_aux_v1` e `viagem_transacao_aux_v2` trocando a `DATA_SUBSIDIO_V18_INICIO` pela `DATA_SUBSIDIO_V99_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/829)
+
+## [2.1.3] - 2025-08-19
+
+### Adicionado
+
+- Adiciona lógica das colunas de controle no modelo `aux_viagem_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/796)
+
+### Alterado
+
+- Altera lógica para classificar viagens como `Sem transação`, `Validador fechado` e `Validador associado incorretamente` após `DATA_SUBSIDIO_V99_INICIO` no modelo `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/796)
+
+## [2.1.2] - 2025-08-15
+
+### Alterado
+
+- Altera lógica para considerar `indicador_falha_recorrente` após `DATA_SUBSIDIO_V99_INICIO` no modelo `viagem_regularidade_temperatura`, alteração referente ao Processo.rio `MTR-CAP-2025/25179` e `MTR-MEM-2025/02246` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/788)
+
+## [2.1.1] - 2025-08-14
+
+### Alterado
+
+- Refatora modelos `aux_viagem_temperatura` e `viagem_regularidade_temperatura`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/787)
+
+## [2.1.0] - 2025-08-11
+
+### Corrigido
+
+- Corrigida a coluna `tecnologia_remunerada` nos modelos `viagem_transacao` e `viagem_transacao_aux_v1` assim como a data limite do modelo `viagem_transacao_aux_v1` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/782)
+
+## [2.0.9] - 2025-08-08
+
+### Alterado
+
+- Altera a data para regra de `Validador associado incorretamente` nos modelos `viagem_transacao_aux_v2` `viagem_transacao_aux_v1` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/769)
+
+## [2.0.8] - 2025-08-07
+
+### Alterado
+
+- Alterado o modelo `percentual_operacao_faixa_horaria` para apuração por sentido e utilização do versionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+
+## [2.0.7] - 2025-07-31
+
+### Adicionado
+
+- Cria modelos `aux_viagem_temperatura`, `viagem_transacao_aux_v1`, `viagem_transacao_aux_v2` e `viagem_regularidade_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+- Adiciona testes para os modelos `aux_viagem_temperatura` e `viagem_regularidade_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+- Adiciona as colunas `placa` e `ano_fabricacao` no modelo `viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+
+### Alterado
+
+- Altera o modelo `viagem_transacao` para utilizar os modelos `viagem_transacao_aux_v1` e `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+- Altera testes do modelo `viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+
+## [2.0.6] - 2025-07-03
+
+### Adicionado
+
+- Cria modelo `viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/649)
+- Adiciona as colunas `modo`, `tecnologia_apurada`, `tecnologia_remunerada` e `sentido` no modelo `viagem_transacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/649)
+
+### Alterado
+
+- Refatora a coluna `id_validador` para incluir a lista de validadores que classificaram a viagem no modelo `viagem_transacao_aux` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/649)
+
+## [2.0.5] - 2025-06-27
+
+### Corrigido
+
+- Corrigido a coluna `id_validador` e o agrupamento do estado do equipamento no modelo `viagem_transacao_aux.sql`  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/648)
+
+## [2.0.4] - 2025-06-25
+
+### Alterado
+
+- Altera fonte dos dados de veículo para `aux_veiculo_dia_consolidada` no modelo `viagem_transacao_aux.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/632)
+
+## [2.0.3] - 2025-06-24
+
+# Adicionado
+
+- Cria modelos `percentual_operacao_faixa_horaria` e `servico_contrato_abreviado`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/624)
+- Adiciona lógica para novos tipos de viagem conforme termos da [RESOLUÇÃO SMTR Nº 3843/2025](https://doweb.rio.rj.gov.br/portal/visualizacoes/pdf/7371/#/p:14/e:7371) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/624)
+
 ## [2.0.2] - 2025-01-21
 
 # Adicionado

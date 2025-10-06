@@ -1,5 +1,21 @@
 # Changelog - capture
 
+## [1.2.0] - 2025-09-29
+
+### Adicionado
+
+- Cria novo parâmetro `recapture_timestamps` no flow genérico (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+
+### Alterado
+
+- Altera task `get_capture_timestamps` para utilizar o novo parâmetro `recapture_timestamps` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+
+## [1.1.3] - 2025-07-07
+
+### Alterado
+
+- Refatora flow de captura genérico e as tasks `get_raw_data`, `upload_raw_file_to_gcs` e `transform_raw_to_nested_structure` para suportar captura por chunks (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/664)
+
 ## [1.1.2] - 2025-05-09
 
 ### Alterado
