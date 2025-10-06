@@ -1,5 +1,11 @@
 # Changelog - subsidio
 
+## [2.1.9] - 2025-10-06
+
+### Adicionado
+
+- Adicionado o modelo de dicionário `dicionario_subsidio` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/926)
+
 ## [2.1.8] - 2025-09-29
 
 ### Corrigido

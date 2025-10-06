@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [3.3.2] - 2025-10-06
+
+### Adicionado
+
+- Adicionado o modelo de dicionário `dicionario_bilhetagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/926)
+
 ## [3.3.1] - 2025-09-29
 
 ### Alterado
