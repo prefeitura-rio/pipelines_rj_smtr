@@ -88,7 +88,6 @@ então não tem como ter temperatura transmitida como true */
                     and indicador_temperatura_transmitida_viagem = true
                 )
         ),
-
         /* count(distinct case when temperatura != 0 then temperatura end) > 1 as indicador_temperatura_variacao_viagem*/
         indicador_temperatura_variacao_viagem as (
             select *
