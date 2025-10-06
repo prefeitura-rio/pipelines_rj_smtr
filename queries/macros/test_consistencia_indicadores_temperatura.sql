@@ -61,7 +61,7 @@
                         indicadores,
                         '$.indicador_validador.percentual_temperatura_zero_descartada'
                     ) as numeric
-                ) as percentual_temperatura_zero_descartada,
+                ) as percentual_temperatura_zero_descartada
             from `rj-smtr.subsidio_staging.aux_viagem_temperatura`
         ),
         /* countif(temperatura != 0) > 0 as indicador_temperatura_transmitida_viagem
