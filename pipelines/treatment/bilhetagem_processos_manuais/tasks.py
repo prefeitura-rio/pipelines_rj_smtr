@@ -110,6 +110,8 @@ def create_gap_materialization_params(gaps: dict) -> dict:
                 "initial_datetime": min(ts_list),
                 "end_datetime": max(ts_list),
             }
+        else:
+            result[k] = None
 
     return result
 
