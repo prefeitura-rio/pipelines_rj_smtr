@@ -260,8 +260,8 @@ def log_discord(message: str, key: str, dados_tag: bool = False):
         message = (
             message + f" - <@&{constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>\n"
         )
-    # url = get_secret(secret_path=constants.WEBHOOKS_SECRET_PATH.value)[key]
-    log(message)
+    url = get_secret(secret_path=constants.WEBHOOKS_SECRET_PATH.value)[key]
+    send_discord_message(message=message, webhook_url=url)
 
 
 @task
