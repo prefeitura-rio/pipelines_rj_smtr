@@ -19,6 +19,19 @@ from pipelines.utils.utils import convert_timezone
 
 
 @task(trigger=all_finished)
+def task_value_is_none(task_value: Union[Any, None]) -> bool:
+    """Testa se o valor retornado por uma Task é None
+
+    Args:
+        task_value (Union[Any, None]): Valor retornado por uma Task
+
+    Returns:
+        bool: Se o valor é None ou não
+    """
+    return task_value is None
+
+
+@task(trigger=all_finished)
 def check_run_dbt_fail(task_value: Union[Any, None]) -> bool:
     """Testa se o valor retornado por uma Task é None
 
