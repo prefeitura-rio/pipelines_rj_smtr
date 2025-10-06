@@ -45,7 +45,7 @@ with
             subsidio_km,
             subsidio_km_teto,
             valor_glosado_tecnologia,
-            indicador_penalidade_tecnologia
+            indicador_penalidade_tecnologia,
             indicador_penalidade_judicial,
             indicador_viagem_dentro_limite
         {# from {{ ref("viagens_remuneradas") }} #}
@@ -101,7 +101,7 @@ with
     {# and data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
     union all
         select data, servico, id_veiculo, id_viagem, datetime_partida
-        from {{ ref("viagem_valida") }}
+        {# from {{ ref("viagem_valida") }} #}
         from `rj-smtr.monitoramento.viagem_valida`
         where
             data

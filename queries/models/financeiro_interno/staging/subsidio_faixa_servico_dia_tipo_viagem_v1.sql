@@ -130,23 +130,71 @@ select
     faixa_horaria_fim,
     consorcio,
     servico,
-    modo,
     indicador_ar_condicionado,
     indicador_penalidade_judicial,
     indicador_viagem_dentro_limite,
     tipo_viagem,
     tecnologia_apurada,
     tecnologia_remunerada,
-    coalesce(count(id_viagem), 0) as viagens_faixa,
-    coalesce(sum(km_apurada), 0) as km_apurada_faixa,
-    coalesce(sum(km_subsidiada), 0) as km_subsidiada_faixa,
-    coalesce(sum(valor_apurado), 0) as valor_apurado,
-    coalesce(sum(valor_glosado_tecnologia), 0) as valor_glosado_tecnologia,
-    coalesce(sum(valor_acima_limite), 0) as valor_acima_limite,
-    coalesce(sum(valor_sem_glosa), 0) as valor_total_sem_glosa,
+    safe_cast(coalesce(count(id_viagem), 0) as int64) as viagens_faixa,
+    safe_cast(coalesce(sum(distancia_planejada), 0) as numeric) as km_apurada_faixa,
+    safe_cast(
+        coalesce(
+            sum(
+                if(
+                    indicador_viagem_dentro_limite = true
+                    and pof >= 80
+                    and subsidio_km > 0,
+                    distancia_planejada,
+                    0
+                )
+            ),
+            0
+        ) as numeric
+    ) as km_subsidiada_faixa,
+    safe_cast(
+        sum(
+            if(
+                indicador_viagem_dentro_limite = true and pof >= 80,
+                distancia_planejada * subsidio_km,
+                0
+            )
+        ) as numeric
+    ) as valor_apurado,
+    safe_cast(sum(valor_glosado_tecnologia) as numeric) as valor_glosado_tecnologia,
+    safe_cast(
+        - coalesce(
+            sum(
+                if(
+                    indicador_viagem_dentro_limite = true,
+                    0,
+                    distancia_planejada * subsidio_km
+                )
+            ),
+            0
+        ) as numeric
+    ) as valor_acima_limite,
+    safe_cast(
+        sum(
+            if(
+                pof >= 80 and tipo_viagem != "Não licenciado",
+                distancia_planejada * subsidio_km_teto,
+                0
+            )
+        ) - coalesce(
+            sum(
+                if(
+                    indicador_viagem_dentro_limite = true,
+                    0,
+                    distancia_planejada * subsidio_km
+                )
+            ),
+            0
+        ) as numeric
+    ) as valor_total_sem_glosa,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
-from viagem_remunerada
+from subsidio_servico_ar
 group by
     data,
     tipo_dia,
@@ -154,7 +202,6 @@ group by
     faixa_horaria_fim,
     consorcio,
     servico,
-    modo,
     indicador_ar_condicionado,
     indicador_penalidade_judicial,
     indicador_viagem_dentro_limite,
