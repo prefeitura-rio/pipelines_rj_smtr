@@ -31,6 +31,21 @@ def task_value_is_none(task_value: Union[Any, None]) -> bool:
     return task_value is None
 
 
+@task(trigger=all_finished)
+def check_run_dbt_success(task_value: Union[Any, None]) -> bool:
+    """Verifica se a execução do DBT falhou
+
+    Args:
+         task_value (Union[Any, None]): Logs retornados pela execução do DBT
+
+    Returns:
+        bool: True se a execução foi bem-sucedida (contém "Completed successfully"),
+        False caso contrário
+    """
+    log(task_value)
+    return "Completed successfully" in task_value
+
+
 @task
 def get_current_timestamp(
     truncate_minute: bool = True,
