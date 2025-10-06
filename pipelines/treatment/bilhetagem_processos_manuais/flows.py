@@ -10,7 +10,7 @@ from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.tasks.control_flow import case, merge
 from prefect.tasks.core.constants import Constant
-from prefect.tasks.core.operators import GetItem, NotEqual
+from prefect.tasks.core.operators import NotEqual
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
@@ -56,6 +56,18 @@ with Flow(name="financeiro_bilhetagem: ordem atrasada - captura/tratamento") as 
 
     timestamp = get_scheduled_timestamp(timestamp=timestamp)
 
+    run_recapture = run_subflow(
+        flow_name=CAPTURA_ORDEM_PAGAMENTO.name,
+        parameters=[
+            {
+                "table_id": s.table_id,
+                "recapture": True,
+            }
+            for s in jae_constants.ORDEM_PAGAMENTO_SOURCES.value
+        ],
+        maximum_parallelism=3,
+    )
+
     run_capture = run_subflow(
         flow_name=CAPTURA_ORDEM_PAGAMENTO.name,
         parameters=[
@@ -69,6 +81,7 @@ with Flow(name="financeiro_bilhetagem: ordem atrasada - captura/tratamento") as 
             for s in jae_constants.ORDEM_PAGAMENTO_SOURCES.value
         ],
         maximum_parallelism=3,
+        upstream_tasks=[run_recapture],
     )
 
     run_materializacao_financeiro_bilhetagem = run_subflow(
@@ -144,7 +157,7 @@ with Flow(
         with case(gaps[k]["flag_has_gaps"].is_equal(True), True):
             run_recapture_true = run_subflow(
                 flow_name=v,
-                parameters={"recapture": True, "recapture_timestamps": gaps[k]["timestamps"]},
+                parameters=gaps[k]["recapture_params"],
                 upstream_tasks=[upstream_task],
             )
 
@@ -166,7 +179,7 @@ with Flow(
 
     upstream_task = materialization_params
     for k, v in selectors.items():
-        params = GetItem().run(task_result=materialization_params, key=k, default=None)
+        params = materialization_params[k]
         with case(NotEqual().run(params, None), True):
             run_rematerialize_true = run_subflow(
                 flow_name=v["flow_name"],

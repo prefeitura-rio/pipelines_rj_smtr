@@ -3,7 +3,7 @@ import time
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Union
 
-import basedosdados as bd
+import pandas_gbq
 import prefect
 import requests
 from prefect import task
@@ -352,6 +352,7 @@ def save_materialization_datetime_redis(env: str, selector: DBTSelector, value: 
 
 @task
 def run_data_quality_checks(
+    env: str,
     data_quality_checks: list[DataQualityCheckArgs],
     initial_timestamp: datetime,
 ):
@@ -382,7 +383,7 @@ def run_data_quality_checks(
         if partition_column_name is None:
             row_filters = "1=1"
         else:
-            partitions = bd.read_sql(
+            partitions = pandas_gbq.read_gbq(
                 f"""
             SELECT
                 PARSE_DATE('%Y%m%d', partition_id) AS partition_date
@@ -395,7 +396,7 @@ def run_data_quality_checks(
                     DATE(last_modified_time, "America/Sao_Paulo") >=
                     DATE('{initial_timestamp.date().isoformat()}')
             """,
-                billing_project_id="rj-smtr-dev",
+                project_id=constants.PROJECT_NAME.value[env],
             )["partition_date"].to_list()
 
             partitions = [f"'{p}'" for p in partitions]
