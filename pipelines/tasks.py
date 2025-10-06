@@ -32,14 +32,14 @@ def task_value_is_none(task_value: Union[Any, None]) -> bool:
 
 
 @task(trigger=all_finished)
-def check_run_dbt_fail(task_value: Union[Any, None]) -> bool:
-    """Testa se o valor retornado por uma Task é None
+def check_run_dbt_success(task_value: Union[Any, None]) -> bool:
+    """Verifica se a execução do DBT falhou
 
     Args:
-        task_value (Union[Any, None]): Valor retornado por uma Task
+         task_value (Union[Any, None]): Logs retornados pela execução do DBT
 
     Returns:
-        bool: Se o valor é None ou não
+        bool: True se a execução foi bem-sucedida (contém "Completed successfully"), False caso contrário
     """
     log(task_value)
     return "Completed successfully" in task_value

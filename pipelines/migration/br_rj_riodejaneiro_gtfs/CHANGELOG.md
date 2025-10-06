@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrige checagem de falha da materialização do GTFS no flow `gtfs_captura_nova` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/715)
+- Corrige checagem de falha da materialização do GTFS no flow `gtfs_captura_nova` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/922)
 
 ## [1.2.5] - 2025-07-21
 
