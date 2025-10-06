@@ -4,14 +4,7 @@
             select
                 data,
                 id_viagem,
-                quantidade_pre_tr
-                / home
-                / duartejanaina
-                / prefeitura_rio
-                / pipelines_rj_smtr
-                / queries
-                / macros
-                / test_consistencia_indicadores_temperatura.sqlatamento,
+                quantidade_pre_tratamento,
                 quantidade_nula,
                 quantidade_zero,
                 quantidade_pos_tratamento,
@@ -71,8 +64,8 @@
                 ) as percentual_temperatura_zero_descartada,
             from `rj-smtr.subsidio_staging.aux_viagem_temperatura`
         ),
-        /* countif(temperatura != 0) > 0 as indicador_temperatura_transmitida_viagem, */
-        /* Se q quantidade pré-tratamento for zero ou pós for zero, 
+        /* countif(temperatura != 0) > 0 as indicador_temperatura_transmitida_viagem
+        * Se q quantidade pré-tratamento for zero ou pós for zero,
 então não tem como ter temperatura transmitida como true */
         indicador_temperatura_transmitida_viagem as (
             select *
