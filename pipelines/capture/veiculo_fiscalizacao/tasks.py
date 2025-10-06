@@ -36,9 +36,9 @@ def create_veiculo_fiscalizacao_lacre_extractor(
             f"ultima_atualizacao <= '{timestamp_str}')"
         )
 
-        return partial(
-            get_google_sheet_xlsx,
-            spread_sheet_id=constants.VEICULO_LACRE_SHEET_ID.value,
-            sheet_name=constants.VEICULO_LACRE_SHEET_NAME.value,
-            filter_expr=filter_expr,
-        )
+    return partial(
+        get_google_sheet_xlsx,
+        spread_sheet_id=constants.VEICULO_LACRE_SHEET_ID.value,
+        sheet_name=constants.VEICULO_LACRE_SHEET_NAME.value,
+        filter_expr=filter_expr,
+    )
