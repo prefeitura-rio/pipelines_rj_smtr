@@ -14,7 +14,6 @@ SAFE_CAST(JSON_VALUE(indicadores, '$.indicador_validador.percentual_temperatura_
 SAFE_CAST(JSON_VALUE(indicadores, '$.indicador_validador.percentual_temperatura_pos_tratamento_descartada') AS NUMERIC) AS percentual_temperatura_pos_tratamento_descartada,
 SAFE_CAST(JSON_VALUE(indicadores, '$.indicador_validador.percentual_temperatura_zero_descartada') AS NUMERIC) AS percentual_temperatura_zero_descartada,
  from `rj-smtr.subsidio_staging.aux_viagem_temperatura`),
-
 /* countif(temperatura != 0) > 0 as indicador_temperatura_transmitida_viagem, */
 /* Se q quantidade pré-tratamento for zero ou pós for zero, 
 então não tem como ter temperatura transmitida como true */
@@ -52,7 +51,6 @@ SELECT
     CASE WHEN t.id_viagem IS NOT NULL THEN TRUE ELSE FALSE END AS inconsistencia_temp_transmitida,
     CASE WHEN v.id_viagem IS NOT NULL THEN TRUE ELSE FALSE END AS inconsistencia_temp_variacao,
     CASE WHEN p.id_viagem IS NOT NULL THEN TRUE ELSE FALSE END AS inconsistencia_percentuais
-
 FROM indicadores i
 LEFT JOIN indicador_temperatura_transmitida_viagem t USING (id_viagem, data)
 LEFT JOIN indicador_temperatura_variacao_viagem v USING (id_viagem, data)
@@ -61,7 +59,6 @@ WHERE t.id_viagem IS NOT NULL
    OR v.id_viagem IS NOT NULL 
    OR p.id_viagem IS NOT NULL
 {%- endtest %}
-
 
 
 
