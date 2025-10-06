@@ -137,4 +137,4 @@ então não tem como ter temperatura transmitida como true */
     left join indicador_temperatura_variacao_viagem v using (id_viagem, data)
     left join temperatura_perc p using (id_viagem, data)
     where t.id_viagem is not null or v.id_viagem is not null or p.id_viagem is not null
-{%- endtest %},
+{%- endtest %}
