@@ -783,17 +783,17 @@ def run_dbt(
         run_command += f' --profiles-dir "{queries_dir}/dev"'
 
     log(f"Running dbt with command: {run_command}")
-    # dbt_task = DbtShellTask(
-    #     profiles_dir=queries_dir,
-    #     helper_script=f'cd "{queries_dir}"',
-    #     log_stderr=True,
-    #     return_all=True,
-    #     command=run_command,
-    # )
-    # dbt_logs = dbt_task.run()
+    dbt_task = DbtShellTask(
+        profiles_dir=queries_dir,
+        helper_script=f'cd "{queries_dir}"',
+        log_stderr=True,
+        return_all=True,
+        command=run_command,
+    )
+    dbt_logs = dbt_task.run()
 
-    # log("\n".join(dbt_logs))
-    # return "\n".join(dbt_logs)
+    log("\n".join(dbt_logs))
+    return "\n".join(dbt_logs)
 
 
 @task(nout=2)
