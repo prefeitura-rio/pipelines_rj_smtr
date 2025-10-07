@@ -222,6 +222,8 @@ def run_subflow(
             for sub_idx, params in enumerate(param_list)
         ]
 
+        log(runs_ids)
+
         for run_id in runs_ids:
             result = wait_subflow_run(flow_run_id=run_id)
             flow_run_results.append(result)
