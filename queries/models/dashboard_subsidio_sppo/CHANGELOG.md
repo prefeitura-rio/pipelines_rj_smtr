@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Alterado o modelo `viagens_remuneradas_v2` para adicionar uma exceção para o limite de viagens dos servicos `161`, `LECD110`, `583`, `584` e `109` de acordo com o Processo.rio MTR-OFI-2025/06240 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Alterado o modelo `viagens_remuneradas_v2` para adicionar uma exceção para o limite de viagens dos servicos `161`, `LECD110`, `583`, `584` e `109` de acordo com o Processo.rio MTR-OFI-2025/06240 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/936)
 
 ## [8.0.3] - 2025-10-06
 
