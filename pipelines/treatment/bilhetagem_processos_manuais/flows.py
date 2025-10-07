@@ -179,7 +179,7 @@ with Flow(
     upstream_task = materialization_params
     for k, v in selectors.items():
         params = materialization_params[k]
-        with case(NotEqual().run(params, None), True):
+        with case(params.is_not_equal(None), True):
             run_rematerialize_true = run_subflow(
                 flow_name=v["flow_name"],
                 parameters=params,
