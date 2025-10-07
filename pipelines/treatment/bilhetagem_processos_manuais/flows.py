@@ -10,8 +10,7 @@ from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.tasks.control_flow import case, merge
 from prefect.tasks.core.constants import Constant
-
-# from prefect.tasks.core.operators import NotEqual
+from prefect.tasks.core.operators import NotEqual
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
@@ -35,8 +34,9 @@ from pipelines.treatment.bilhetagem.flows import (
 )
 from pipelines.treatment.bilhetagem_processos_manuais.constants import constants
 
-# create_gap_materialization_params,; create_verify_capture_params,
+# ,; create_verify_capture_params,
 from pipelines.treatment.bilhetagem_processos_manuais.tasks import (
+    create_gap_materialization_params,
     create_transacao_ordem_capture_params,
     get_gaps_from_result_table,
 )
@@ -170,27 +170,27 @@ with Flow(
 
         upstream_task = run_recapture
 
-    # materialization_params = create_gap_materialization_params(
-    #     gaps=gaps, upstream_tasks=[upstream_task]
-    # )
+    materialization_params = create_gap_materialization_params(
+        gaps=gaps, upstream_tasks=[upstream_task]
+    )
 
-    # selectors = constants.CAPTURE_GAP_SELECTORS.value
+    selectors = constants.CAPTURE_GAP_SELECTORS.value
 
-    # upstream_task = materialization_params
-    # for k, v in selectors.items():
-    #     params = materialization_params[k]
-    #     with case(NotEqual().run(params, None), True):
-    #         run_rematerialize_true = run_subflow(
-    #             flow_name=v["flow_name"],
-    #             parameters=params,
-    #             upstream_tasks=[upstream_task],
-    #         )
+    upstream_task = materialization_params
+    for k, v in selectors.items():
+        params = materialization_params[k]
+        with case(NotEqual().run(params, None), True):
+            run_rematerialize_true = run_subflow(
+                flow_name=v["flow_name"],
+                parameters=params,
+                upstream_tasks=[upstream_task],
+            )
 
-    #     with case(NotEqual().run(params, None), False):
-    #         run_rematerialize_false = Constant(value=None, name="run_rematerialize_false")
+        with case(NotEqual().run(params, None), False):
+            run_rematerialize_false = Constant(value=None, name="run_rematerialize_false")
 
-    #     run_rematerialize = merge(run_rematerialize_true, run_rematerialize_false)
-    #     upstream_task = run_rematerialize
+        run_rematerialize = merge(run_rematerialize_true, run_rematerialize_false)
+        upstream_task = run_rematerialize
 
     # verify_capture_params =
     # create_verify_capture_params(gaps=gaps, upstream_tasks=[upstream_task])
