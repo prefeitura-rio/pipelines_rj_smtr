@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.7.4] - 2025-10-06
+
+### Adicionado
+
+- Adicionado o modelo de dicionário `dicionario_monitoramento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/926)
+
 ## [1.7.3] - 2025-10-01
 
 ### Adicionado
