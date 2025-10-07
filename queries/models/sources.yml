@@ -299,6 +299,7 @@ sources:
       - name: matriz_reparticao_tarifaria
       - name: matriz_transferencia
       - name: matriz_integracao_excecao
+      - name: dicionario_subsidio
 
   - name: subsidio_staging
     database: rj-smtr
