@@ -18,9 +18,11 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 )
 
 from pipelines.capture.jae.constants import constants as jae_constants
-
-# verifica_captura,
-from pipelines.capture.jae.flows import CAPTURA_ORDEM_PAGAMENTO, CAPTURA_TRANSACAO_ORDEM
+from pipelines.capture.jae.flows import (
+    CAPTURA_ORDEM_PAGAMENTO,
+    CAPTURA_TRANSACAO_ORDEM,
+    verifica_captura,
+)
 from pipelines.constants import constants as smtr_constants
 from pipelines.tasks import (
     get_run_env,
@@ -33,11 +35,10 @@ from pipelines.treatment.bilhetagem.flows import (
     TRANSACAO_ORDEM_MATERIALIZACAO,
 )
 from pipelines.treatment.bilhetagem_processos_manuais.constants import constants
-
-# ,; create_verify_capture_params,
 from pipelines.treatment.bilhetagem_processos_manuais.tasks import (
     create_gap_materialization_params,
     create_transacao_ordem_capture_params,
+    create_verify_capture_params,
     get_gaps_from_result_table,
 )
 from pipelines.treatment.financeiro.flows import (
@@ -192,14 +193,13 @@ with Flow(
         run_rematerialize = merge(run_rematerialize_true, run_rematerialize_false)
         upstream_task = run_rematerialize
 
-    # verify_capture_params =
-    # create_verify_capture_params(gaps=gaps, upstream_tasks=[upstream_task])
+    verify_capture_params = create_verify_capture_params(gaps=gaps, upstream_tasks=[upstream_task])
 
-    # run_subflow(
-    #     flow_name=verifica_captura.name,
-    #     parameters=verify_capture_params,
-    #     upstream_tasks=[upstream_task],
-    # )
+    run_subflow(
+        flow_name=verifica_captura.name,
+        parameters=verify_capture_params,
+        upstream_tasks=[upstream_task],
+    )
 
 timestamp_divergente_jae_recaptura.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 timestamp_divergente_jae_recaptura.run_config = KubernetesRun(
