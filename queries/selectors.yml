@@ -66,6 +66,8 @@ selectors:
           value: gps_segmento_viagem
         - method: fqn
           value: viagem_validacao
+        - method: fqn
+          value: viagem_valida
 
   - name: planejamento_diario
     description: Materialização das tabelas de planejamento que devem rodar diariamente
@@ -232,11 +234,16 @@ selectors:
         - method: fqn
           value: view_transacao
         - method: fqn
-          value: staging_lancamento
-        - method: fqn
-          value: recarga_jae
-        - method: fqn
           value: transacao_gratuidade_estudante_municipal
+
+  - name: extrato_cliente_cartao
+    description: Materialização da tabela de extrato do cliente
+    definition:
+      union:
+        - method: fqn
+          value: extrato_cliente_cartao
+        - method: fqn
+          value: staging_lancamento
 
   - name: integracao
     description: Materialização das tabelas de integracao da bilhetagem

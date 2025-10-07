@@ -31,6 +31,21 @@ def task_value_is_none(task_value: Union[Any, None]) -> bool:
     return task_value is None
 
 
+@task(trigger=all_finished)
+def check_run_dbt_success(task_value: Union[Any, None]) -> bool:
+    """Verifica se a execução do DBT falhou
+
+    Args:
+         task_value (Union[Any, None]): Logs retornados pela execução do DBT
+
+    Returns:
+        bool: True se a execução foi bem-sucedida (contém "Completed successfully"),
+        False caso contrário
+    """
+    log(task_value)
+    return "Completed successfully" in task_value
+
+
 @task
 def get_current_timestamp(
     truncate_minute: bool = True,
@@ -150,7 +165,7 @@ def flow_log(msg, level: str = "info"):
 @task
 def run_subflow(
     flow_name: str,
-    parameters: Union[list[dict], dict],
+    parameters: Union[list[dict], dict] = None,
     project_name: str = None,
     labels: list[str] = None,
     maximum_parallelism: int = None,
@@ -168,7 +183,8 @@ def run_subflow(
             se não for especificado, são utilizadas as labels do flow atual
         maximum_parallelism (int): Número máximo de runs a serem executadas de uma vez
     """
-
+    if parameters is None:
+        parameters = [{}]
     if not isinstance(parameters, (dict, list)):
         raise ValueError("parameters must be a list or a dict")
 

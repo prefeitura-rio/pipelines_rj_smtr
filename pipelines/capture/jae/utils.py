@@ -3,7 +3,6 @@ import os
 from datetime import datetime, timedelta
 from typing import Union
 
-import basedosdados as bd
 import pandas as pd
 import pandas_gbq
 from google.cloud import bigquery
@@ -12,7 +11,7 @@ from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 from pytz import timezone
 from sqlalchemy import create_engine
 
-from pipelines.capture.jae.constants import constants
+from pipelines.capture.jae.constants import JAE_SOURCE_NAME, constants
 from pipelines.constants import constants as smtr_constants
 from pipelines.utils.database import create_database_url
 from pipelines.utils.extractors.db import get_raw_db
@@ -20,6 +19,44 @@ from pipelines.utils.fs import get_data_folder_path, save_local_file
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import convert_timezone
+
+
+def get_capture_delay_minutes(capture_delay_minutes: dict[str, int], timestamp: datetime) -> int:
+    """
+    Retorna a quantidade de minutos a ser subtraído do inicio e fim do filtro de captura
+    para um determinado timestamp
+
+    Args:
+        capture_delay_minutes (dict[str, int]):
+            Dicionário que mapeia timestamps em formato string ISO
+            (`"%Y-%m-%d %H:%M:%S"`) para valores de delay em minutos.
+            A chave `"0"` representa o primeiro delay
+        timestamp (datetime):
+            Timestamp de captura para o qual se deseja calcular o atraso.
+
+    Returns:
+        int: O atraso em minutos correspondente ao `timestamp`.
+
+    Example:
+        >>> capture_delay_minutes = {
+        ...     "0": 5,
+        ...     "2025-09-25 12:00:00": 10,
+        ...     "2025-09-26 09:00:00": 15,
+        ... }
+        >>> get_capture_delay_minutes(capture_delay_minutes, datetime(2025, 9, 26, 10, 0))
+        15
+    """
+    delay_timestamps = (
+        convert_timezone(timestamp=datetime.fromisoformat(a))
+        for a in capture_delay_minutes.keys()
+        if a != "0"
+    )
+    delay = capture_delay_minutes["0"]
+    for t in delay_timestamps:
+        if timestamp >= t:
+            delay = capture_delay_minutes[t.strftime("%Y-%m-%d %H:%M:%S")]
+
+    return delay
 
 
 def create_billingpay_backup_filepath(
@@ -303,9 +340,8 @@ def save_capture_check_results(env: str, results: pd.DataFrame):
               - indicador_captura_correta (bool): Se a quantidade de registros é a mesma
     """
     project_id = smtr_constants.PROJECT_NAME.value[env]
-    dataset_id = "source_jae"
-    table_id = "resultado_verificacao_captura_jae"
-
+    dataset_id = f"source_{JAE_SOURCE_NAME}"
+    table_id = constants.RESULTADO_VERIFICACAO_CAPTURA_TABLE_ID.value
     results = results[
         [
             "table_id",
@@ -329,8 +365,8 @@ def save_capture_check_results(env: str, results: pd.DataFrame):
     end_partition = results["timestamp_captura"].max().date().isoformat()
 
     try:
-        bd.read_sql(
-            query=f"""
+        pandas_gbq.read_gbq(
+            f"""
                 MERGE {project_id}.{dataset_id}.{table_id} t
                 USING {tmp_table} s
                 ON
@@ -370,7 +406,7 @@ def save_capture_check_results(env: str, results: pd.DataFrame):
                     CURRENT_DATETIME('America/Sao_Paulo')
                 )
             """,
-            billing_project_id=project_id,
+            project_id=project_id,
         )
 
     finally:

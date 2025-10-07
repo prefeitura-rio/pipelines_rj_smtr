@@ -3,7 +3,7 @@ import time
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Union
 
-import basedosdados as bd
+import pandas_gbq
 import prefect
 import requests
 from prefect import task
@@ -39,6 +39,38 @@ except ImportError:
     base_assert_dependencies(["prefect"], extras=["pipelines"])
 
 from prefeitura_rio.pipelines_utils.io import get_root_path
+
+
+@task(
+    max_retries=constants.MAX_RETRIES.value,
+    retry_delay=timedelta(seconds=constants.RETRY_DELAY.value),
+)
+def test_fallback_run(
+    env: str, fallback_run: bool, timestamp: datetime, selector: DBTSelector
+) -> bool:
+    """
+    Determina se a materialização deve ser executada.
+
+    Caso `fallback_run` seja verdadeiro, a função verifica se o `selector`
+    está atualizado para o ambiente e timestamp informados. Se não estiver atualizado,
+    retorna `True` indicando que o fallback deve ser executado. Caso contrário,
+    retorna `False`.
+    Se `fallback_run` for falso, a função sempre retorna `True`.
+
+    Args:
+        env (str): dev ou prod
+        fallback_run (bool): Indica se a run é de fallback ou não
+        timestamp (datetime): Timestamp de referência para a verificação de atualização
+        selector (DBTSelector): Objeto responsável por verificar se os dados estão atualizados
+
+    Returns:
+        bool:
+            - `True` se a materialização deve ser executada
+            - `False` caso contrário
+    """
+    if fallback_run:
+        return not selector.is_up_to_date(env=env, timestamp=timestamp)
+    return True
 
 
 @task(
@@ -320,6 +352,7 @@ def save_materialization_datetime_redis(env: str, selector: DBTSelector, value: 
 
 @task
 def run_data_quality_checks(
+    env: str,
     data_quality_checks: list[DataQualityCheckArgs],
     initial_timestamp: datetime,
 ):
@@ -350,7 +383,7 @@ def run_data_quality_checks(
         if partition_column_name is None:
             row_filters = "1=1"
         else:
-            partitions = bd.read_sql(
+            partitions = pandas_gbq.read_gbq(
                 f"""
             SELECT
                 PARSE_DATE('%Y%m%d', partition_id) AS partition_date
@@ -363,7 +396,7 @@ def run_data_quality_checks(
                     DATE(last_modified_time, "America/Sao_Paulo") >=
                     DATE('{initial_timestamp.date().isoformat()}')
             """,
-                billing_project_id="rj-smtr-dev",
+                project_id=constants.PROJECT_NAME.value[env],
             )["partition_date"].to_list()
 
             partitions = [f"'{p}'" for p in partitions]

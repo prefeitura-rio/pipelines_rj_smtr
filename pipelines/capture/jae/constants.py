@@ -12,6 +12,7 @@ from pipelines.schedules import (
     create_minute_cron,
 )
 from pipelines.utils.gcp.bigquery import SourceTable
+from pipelines.utils.pretreatment import raise_if_column_isna
 
 JAE_SOURCE_NAME = "jae"
 
@@ -95,6 +96,7 @@ class constants(Enum):  # pylint: disable=c0103
     JAE_SECRET_PATH = "smtr_jae_access_data"
     JAE_PRIVATE_BUCKET_NAMES = {"prod": "rj-smtr-jae-private", "dev": "rj-smtr-dev-private"}
     ALERT_WEBHOOK = "alertas_bilhetagem"
+    RESULTADO_VERIFICACAO_CAPTURA_TABLE_ID = "resultado_verificacao_captura_jae"
 
     JAE_AUXILIAR_CAPTURE_PARAMS = {}
 
@@ -492,6 +494,7 @@ class constants(Enum):  # pylint: disable=c0103
             "database": "ressarcimento_db",
             "primary_keys": ["id"],
             "capture_flow": "ordem_pagamento",
+            "pretreat_funcs": [raise_if_column_isna(column_name="id_ordem_pagamento")],
         },
         "ordem_pagamento": {
             "query": """
@@ -548,6 +551,7 @@ class constants(Enum):  # pylint: disable=c0103
             "database": "ressarcimento_db",
             "primary_keys": ["id"],
             "capture_flow": "ordem_pagamento",
+            "pretreat_funcs": [raise_if_column_isna(column_name="id_ordem_pagamento")],
         },
         "linha_sem_ressarcimento": {
             "query": """
@@ -641,7 +645,7 @@ class constants(Enum):  # pylint: disable=c0103
             source_name=JAE_SOURCE_NAME,
             table_id=k,
             first_timestamp=datetime(2024, 12, 30, 0, 0, 0),
-            schedule_cron=create_daily_cron(hour=8),
+            schedule_cron=create_daily_cron(hour=10),
             primary_keys=v["primary_keys"],
             pretreatment_reader_args=v.get("pretreatment_reader_args"),
             pretreat_funcs=v.get("pretreat_funcs"),
@@ -658,7 +662,7 @@ class constants(Enum):  # pylint: disable=c0103
         source_name=JAE_SOURCE_NAME,
         table_id=TRANSACAO_ORDEM_TABLE_ID,
         first_timestamp=datetime(2024, 11, 21, 0, 0, 0),
-        schedule_cron=create_daily_cron(hour=8),
+        schedule_cron=create_daily_cron(hour=10),
         partition_date_only=True,
         max_recaptures=5,
         primary_keys=[
@@ -738,6 +742,8 @@ class constants(Enum):  # pylint: disable=c0103
                 "estudante_11072025",
                 "temp_cliente_02082025",
                 "temp_requisicao_pedido_ticketeira",
+                "temp_estudante_27082025",
+                "temp_pedido_VT_12092025",
             ],
             "filter": {
                 "ITEM_PEDIDO": ["DT_INCLUSAO"],
@@ -908,6 +914,9 @@ class constants(Enum):  # pylint: disable=c0103
                 "estudante_universitario_25032025",
                 "estudante_universitario_25042025",
                 "estudante_universitario_12032025",
+                "estudante_seeduc_27062025",
+                "estudante_seeduc_07082025",
+                "estudante_universitario_10092025",
             ],
             "filter": {
                 "lancamento_conta_gratuidade": ["data_inclusao"],
@@ -1030,6 +1039,11 @@ class constants(Enum):  # pylint: disable=c0103
                 "temp_estudante_cpfduplicado_13032025",
                 "temp_estudante_cpfduplicado_14032025",
                 "temp_estudante_cpfduplicado_17032025",
+                "temp_midias_gratuidade_utilizacao_0107a1208",
+                "temp_midia_limbo_nv",
+                "temp_midia_limbo_09072025",
+                "temp_uids_01",
+                "temp_cartoes_duplicados_14082025",
             ],
             "filter": {
                 "midia_evento": ["dt_inclusao"],

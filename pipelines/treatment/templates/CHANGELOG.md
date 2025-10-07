@@ -1,5 +1,25 @@
 # Changelog - treatment
 
+## [1.2.2] - 2025-10-02
+
+### Alterado
+
+- Substitui função de leitura do BigQuery da BD pela do pandas_gbq (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/918)
+
+## [1.2.1] - 2025-10-02
+
+### Adicionado
+
+- Adiciona parâmetro `redis_key_suffix` no `DBTSelector` para diferenciar selectors com mesmo nome mas fontes de dados distintas (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/916)
+
+## [1.2.0] - 2025-09-29
+
+### Adicionado
+
+- Adiciona parâmetro `fallback_run` no flow genérico (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+- Cria condicional para execução com base no parâmetro `fallback_run` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+- Cria task `test_fallback_run` para determinar se a materialização deve ser executada (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/892)
+
 ## [1.1.9] - 2025-08-19
 
 ### Alterado

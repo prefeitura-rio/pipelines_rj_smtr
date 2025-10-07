@@ -4,9 +4,11 @@
 with
     linha_jae as (
         select *
-        from {{ ref("staging_linha") }}
+        from {{ ref("aux_servico_jae") }}
         qualify
-            row_number() over (partition by cd_linha order by timestamp_captura desc)
+            row_number() over (
+                partition by id_servico_jae order by datetime_inicio_validade desc
+            )
             = 1
     ),
     tratado as (
@@ -17,8 +19,8 @@ with
             o.id_operadora,
             o.operadora,
             lco.cd_linha as id_servico_jae,
-            l.nr_linha as servico_jae,
-            l.nm_linha as descricao_servico_jae,
+            l.servico_jae,
+            l.descricao_servico_jae,
             coalesce(l.gtfs_route_id, l.gtfs_stop_id) as id_servico_gtfs,
             case
                 when l.gtfs_route_id is not null
@@ -48,7 +50,7 @@ with
             {{ ref("operadoras") }} o
             on lco.cd_operadora_transporte = o.id_operadora_jae
         join {{ ref("consorcios") }} c on lco.cd_consorcio = c.id_consorcio_jae
-        join linha_jae l on lco.cd_linha = l.cd_linha
+        join linha_jae l on lco.cd_linha = l.id_servico_jae
         left join {{ ref("aux_linha_tarifa") }} lt on lco.cd_linha = lt.cd_linha
         where
             (

@@ -1,8 +1,4 @@
-{{
-    config(
-        materialized="ephemeral"
-    )
-}}
+{{ config(materialized="ephemeral") }}
 
 {%- if execute -%}
     {%- set results = generate_km_columns() -%}
@@ -44,7 +40,7 @@
     data between
         date('{{ var("start_date") }}')
         and date('{{ var("end_date") }}')
-    and data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
+and data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
 {% endset %}
 
 with
@@ -148,7 +144,12 @@ with
         -- from `rj-smtr.financeiro.subsidio_faixa_servico_dia_tipo_viagem` as s
         left join
             penalidade as p using (
-                data, tipo_dia, faixa_horaria_inicio, faixa_horaria_fim, servico, sentido
+                data,
+                tipo_dia,
+                faixa_horaria_inicio,
+                faixa_horaria_fim,
+                servico,
+                sentido
             )
         left join
             subsidio_parametros as sp
@@ -264,9 +265,21 @@ select
 from subsidio_faixa as s
 left join
     subsidio_faixa_agg as agg using (
-        data, tipo_dia, faixa_horaria_inicio, faixa_horaria_fim, consorcio, servico, sentido
+        data,
+        tipo_dia,
+        faixa_horaria_inicio,
+        faixa_horaria_fim,
+        consorcio,
+        servico,
+        sentido
     )
 left join
     pivot_data as pd using (
-        data, tipo_dia, faixa_horaria_inicio, faixa_horaria_fim, consorcio, servico, sentido
+        data,
+        tipo_dia,
+        faixa_horaria_inicio,
+        faixa_horaria_fim,
+        consorcio,
+        servico,
+        sentido
     )
