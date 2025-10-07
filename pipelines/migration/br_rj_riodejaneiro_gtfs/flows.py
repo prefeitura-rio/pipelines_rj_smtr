@@ -48,11 +48,11 @@ from pipelines.migration.tasks import (
 from pipelines.schedules import every_5_minutes
 from pipelines.tasks import (
     check_fail,
+    check_run_dbt_success,
     get_scheduled_timestamp,
     log_discord,
     parse_timestamp_to_string,
     remove_key_from_dict,
-    check_run_dbt_success,
 )
 from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt
 
