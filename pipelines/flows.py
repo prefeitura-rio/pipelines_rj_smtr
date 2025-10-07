@@ -2,6 +2,7 @@
 """
 Imports all flows for every project so we can register all of them.
 """
+from pipelines.capture.cct.flows import *  # noqa
 from pipelines.capture.cittati.flows import *  # noqa
 from pipelines.capture.conecta.flows import *  # noqa
 from pipelines.capture.inmet.flows import *  # noqa
