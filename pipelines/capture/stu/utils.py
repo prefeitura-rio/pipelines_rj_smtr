@@ -13,6 +13,42 @@ from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.gcp.storage import Storage
 
 
+def remove_arquivos(blobs: List, date: datetime, days: int = 30) -> None:
+    """
+    Remove arquivos do bucket.
+
+    Args:
+        blobs: Lista de blobs disponíveis no bucket
+        date: Data de referência
+        days: Número de dias a subtrair da data de referência
+    """
+    files_to_delete = []
+    cutoff_date = date - timedelta(days=days)
+    cutoff_date_str = cutoff_date.strftime("%Y_%m_%d")
+
+    for blob in blobs:
+        try:
+            filename = blob.name.split("/")[-1]
+
+            if cutoff_date_str in filename and filename.endswith(".csv"):
+                files_to_delete.append(blob)
+
+        except Exception as e:
+            log(f"Erro ao processar arquivo {blob.name}: {str(e)}", level="warning")
+            continue
+
+    if files_to_delete:
+        for blob in files_to_delete:
+            try:
+                log(f"Deletando arquivo: {blob.name}")
+                blob.delete()
+            except Exception as e:
+                log(f"Erro ao deletar arquivo {blob.name}: {str(e)}", level="error")
+        log(f"Deletados {len(files_to_delete)} arquivos com sucesso")
+    else:
+        log("Nenhum arquivo antigo encontrado para deletar")
+
+
 def processa_dados(blobs: List, date_str: str) -> pd.DataFrame:
     """
     Carrega e processa dados de uma data específica do bucket.
@@ -172,5 +208,9 @@ def extract_stu_data(source: SourceTable, timestamp: datetime) -> pd.DataFrame:
         new_records = compara_dataframes(df_hoje, df_ontem)
 
     log(f"Total de registros novos/alterados: {len(new_records)}")
+
+    # Remove arquivos antigos (30 dias)
+    log("Iniciando limpeza de arquivos antigos...")
+    remove_arquivos(blobs=blobs, date=hoje, days=30)
 
     return new_records
