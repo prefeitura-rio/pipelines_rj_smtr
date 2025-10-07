@@ -27,11 +27,11 @@ class constants(Enum):  # pylint: disable=c0103
                     *
                 FROM
                     ordem_pagamento
-                WHERE
+                /*WHERE
                     createdAt BETWEEN '{start}'
                     AND '{end}'
                     OR updatedAt BETWEEN '{start}'
-                    AND '{end}'
+                    AND '{end}'*/
             """,
             "primary_keys": ["id"],
             "capture_flow": "pagamento",
@@ -42,11 +42,11 @@ class constants(Enum):  # pylint: disable=c0103
                     *
                 FROM
                     ordem_pagamento_agrupado
-                WHERE
+                /*WHERE
                     createdAt BETWEEN '{start}'
                     AND '{end}'
                     OR updatedAt BETWEEN '{start}'
-                    AND '{end}'
+                    AND '{end}'*/
             """,
             "primary_keys": ["id"],
             "capture_flow": "pagamento",
@@ -60,11 +60,11 @@ class constants(Enum):  # pylint: disable=c0103
                 JOIN
                     detalhe_a da
                 ON da."ordemPagamentoAgrupadoHistoricoId" = oph.id
-                WHERE
+                /*WHERE
                     da.createdAt BETWEEN '{start}'
                     AND '{end}'
                     OR da.updatedAt BETWEEN '{start}'
-                    AND '{end}'
+                    AND '{end}'*/
             """,
             "primary_keys": ["id"],
             "capture_flow": "pagamento",
@@ -75,11 +75,11 @@ class constants(Enum):  # pylint: disable=c0103
                     *
                 FROM
                     detalhe_a
-                WHERE
+                /*WHERE
                     createdAt BETWEEN '{start}'
                     AND '{end}'
                     OR updatedAt BETWEEN '{start}'
-                    AND '{end}'
+                    AND '{end}'*/
             """,
             "primary_keys": ["id"],
             "capture_flow": "pagamento",
@@ -110,13 +110,13 @@ class constants(Enum):  # pylint: disable=c0103
                     bloqueado
                 FROM
                     user
-                WHERE
+                /*WHERE
                     createdAt BETWEEN '{start}'
                     AND '{end}'
                     OR updatedAt BETWEEN '{start}'
                     AND '{end}'
                     OR deletedAt BETWEEN '{start}'
-                    AND '{end}'
+                    AND '{end}'*/
             """,
             "primary_keys": ["id"],
             "capture_flow": "pagamento",
