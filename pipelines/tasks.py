@@ -168,6 +168,7 @@ def run_subflow(
             se não for especificado, são utilizadas as labels do flow atual
         maximum_parallelism (int): Número máximo de runs a serem executadas de uma vez
     """
+    log(parameters)
     if parameters is None:
         parameters = [{}]
     if not isinstance(parameters, (dict, list)):
