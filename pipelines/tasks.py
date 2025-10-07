@@ -207,7 +207,6 @@ def run_subflow(
     for idx, param_list in enumerate(parameters):
         if not isinstance(param_list, list):
             param_list = [param_list]
-        log(param_list)
 
         runs_ids = [
             create_subflow_run(
