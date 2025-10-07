@@ -43,6 +43,9 @@ selectors:
           value: subsidio_sumario_servico_dia_pagamento
         - method: path
           value: models/dashboard_subsidio_sppo_v2
+        - method: fqn
+          value: dicionario_dashboard_subsidio_sppo
+
 
   - name: viagem_informada
     description: Materialização da tabela de viagens informadas
@@ -68,6 +71,8 @@ selectors:
           value: viagem_validacao
         - method: fqn
           value: viagem_valida
+        - method: fqn
+          value: dicionario_monitoramento
 
   - name: planejamento_diario
     description: Materialização das tabelas de planejamento que devem rodar diariamente
@@ -467,6 +472,8 @@ selectors:
           value: aux_veiculo_falha_ar_condicionado
         - method: fqn
           value: veiculo_regularidade_temperatura_dia
+        - method: fqn
+          value: dicionario_subsidio
 
   - name: snapshot_temperatura
     definition:
