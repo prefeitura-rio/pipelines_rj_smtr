@@ -175,7 +175,7 @@ select
     case
         when
             v.data = date('2025-09-16')
-            and v.servico in ("161", "LECD110", "583", "584", "109") -- Processo.rio MTR-OFI-2025/06240
+            and v.servico in ("161", "LECD110", "583", "584", "109")  -- Processo.rio MTR-OFI-2025/06240
         then true
         when
             v.data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
