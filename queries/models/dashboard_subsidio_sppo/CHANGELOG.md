@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [8.0.3] - 2025-10-06
+
+### Adicionado
+
+- Adicionado o modelo de dicionário `dicionario_dashboard_subsidio_sppo` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/926)
+
 ## [8.0.2] - 2025-09-15
 
 ### Corrigido

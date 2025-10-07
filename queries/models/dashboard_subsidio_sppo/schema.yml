@@ -706,3 +706,17 @@ models:
         description: "{{ doc('id_execucao_dbt') }}"
       - name: sentido
         description: "{{ doc('sentido') }}"
+
+  - name: dicionario_dashboard_subsidio_sppo
+    description: "Dicionário dos dados do Subsídio SPPO"
+    columns:
+      - name: chave
+        description: "Chave"
+      - name: cobertura_temporal
+        description: "{{ doc('cobertura_temporal') }}"
+      - name: id_tabela
+        description: "Nome da tabela"
+      - name: coluna
+        description: "{{ doc('column_name') }}"
+      - name: valor
+        description: "Valor"
