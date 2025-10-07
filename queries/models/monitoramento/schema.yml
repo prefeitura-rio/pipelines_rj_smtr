@@ -1061,6 +1061,20 @@ models:
         description: "{{ doc('id_execucao_dbt') }}"
         data_type: string
         quote: true
+
+  - name: dicionario_monitoramento
+    description: "Dicionário dos dados de Monitoramento"
+    columns:
+      - name: chave
+        description: "Chave"
+      - name: cobertura_temporal
+        description: "{{ doc('cobertura_temporal') }}"
+      - name: id_tabela
+        description: "Nome da tabela"
+      - name: coluna
+        description: "{{ doc('column_name') }}"
+      - name: valor
+        description: "Valor"
   - name: viagem_valida
     description: "Tabela filtrada contendo apenas viagens informadas válidas conforme os parâmetros definidos"
     columns:
