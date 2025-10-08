@@ -101,6 +101,8 @@ select
         "America/Sao_Paulo"
     ) as retornodatetime,
     replace(
-        safe_cast(json_value(content, '$.ordemPagamentoAgrupadoId') as string), ".0", ""
-    ) as ordempagamentoagrupadoid
+        safe_cast(json_value(content, '$.ordemPagamentoAgrupadoHistoricoId') as string),
+        ".0",
+        ""
+    ) as ordempagamentoagrupadohistoricoid
 from {{ source("source_cct", "detalhe_a") }}
