@@ -441,3 +441,13 @@ sources:
       - name: curso
       - name: ies
       - name: dicionario
+
+  - name: source_cct
+    database: rj-smtr-dev
+
+    tables:
+      - name: ordem_pagamento
+      - name: ordem_pagamento_agrupado
+      - name: ordem_pagamento_agrupado_historico
+      - name: user
+      - name: detalhe_a
