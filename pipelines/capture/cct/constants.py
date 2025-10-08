@@ -28,9 +28,9 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     ordem_pagamento
                 /*WHERE
-                    createdAt BETWEEN '{start}'
+                    "createdAt" BETWEEN '{start}'
                     AND '{end}'
-                    OR updatedAt BETWEEN '{start}'
+                    OR "updatedAt" BETWEEN '{start}'
                     AND '{end}'*/
             """,
             "primary_keys": ["id"],
@@ -43,9 +43,9 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     ordem_pagamento_agrupado
                 /*WHERE
-                    createdAt BETWEEN '{start}'
+                    "createdAt" BETWEEN '{start}'
                     AND '{end}'
-                    OR updatedAt BETWEEN '{start}'
+                    OR "updatedAt" BETWEEN '{start}'
                     AND '{end}'*/
             """,
             "primary_keys": ["id"],
@@ -61,9 +61,9 @@ class constants(Enum):  # pylint: disable=c0103
                     detalhe_a da
                 ON da."ordemPagamentoAgrupadoHistoricoId" = oph.id
                 /*WHERE
-                    da.createdAt BETWEEN '{start}'
+                    da."createdAt" BETWEEN '{start}'
                     AND '{end}'
-                    OR da.updatedAt BETWEEN '{start}'
+                    OR da."updatedAt" BETWEEN '{start}'
                     AND '{end}'*/
             """,
             "primary_keys": ["id"],
@@ -76,9 +76,9 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     detalhe_a
                 /*WHERE
-                    createdAt BETWEEN '{start}'
+                    "createdAt" BETWEEN '{start}'
                     AND '{end}'
-                    OR updatedAt BETWEEN '{start}'
+                    OR "updatedAt" BETWEEN '{start}'
                     AND '{end}'*/
             """,
             "primary_keys": ["id"],
@@ -87,35 +87,35 @@ class constants(Enum):  # pylint: disable=c0103
         "user": {
             "query": """
                 SELECT
-                    id,
-                    email,
-                    provider,
-                    socialId,
-                    fullName,
-                    firstName,
-                    lastName,
-                    createdAt,
-                    updatedAt,
-                    deletedAt,
-                    permitCode,
-                    cpfCnpj,
-                    bankCode,
-                    bankAgency,
-                    bankAccont,
-                    bankAccontDigit,
-                    phone,
-                    isSgtuBlocked,
-                    passValidatorId,
-                    previousBankCode,
-                    bloqueado
+                    "id",
+                    "email",
+                    "provider",
+                    "socialId",
+                    "fullName",
+                    "firstName",
+                    "lastName",
+                    "createdAt",
+                    "updatedAt",
+                    "deletedAt",
+                    "permitCode",
+                    "cpfCnpj",
+                    "bankCode",
+                    "bankAgency",
+                    "bankAccont",
+                    "bankAccontDigit",
+                    "phone",
+                    "isSgtuBlocked",
+                    "passValidatorId",
+                    "previousBankCode",
+                    "bloqueado"
                 FROM
-                    user
+                    public."user"
                 /*WHERE
-                    createdAt BETWEEN '{start}'
+                    "createdAt" BETWEEN '{start}'
                     AND '{end}'
-                    OR updatedAt BETWEEN '{start}'
+                    OR "updatedAt" BETWEEN '{start}'
                     AND '{end}'
-                    OR deletedAt BETWEEN '{start}'
+                    OR "deletedAt" BETWEEN '{start}'
                     AND '{end}'*/
             """,
             "primary_keys": ["id"],
