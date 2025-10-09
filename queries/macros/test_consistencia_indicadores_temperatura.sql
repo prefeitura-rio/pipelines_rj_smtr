@@ -248,6 +248,7 @@ select
     dd.inconsistencia_descarte_pos,
     iz.inconsistencia_temperatura_zero,
     cv.inconsistencia_condicao_veiculo,
+    cv.inconsistencia_temperatura_nula
     fr.falha_recorrente_inconsistencia
 from indicadores i
 left join indicador_temperatura_transmitida_viagem tt using (data, id_viagem)
