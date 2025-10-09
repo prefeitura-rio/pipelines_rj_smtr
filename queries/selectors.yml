@@ -499,3 +499,5 @@ selectors:
           value: staging_ordem_pagamento_cct
         - method: fqn
           value: staging_user_cct
+        - method: fqn
+          value: dicionario_financeiro
