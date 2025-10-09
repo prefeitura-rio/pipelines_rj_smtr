@@ -1,6 +1,6 @@
 # Changelog - source_stu
 
-## [1.0.0] - 2025-10-06
+## [1.0.0] - 2025-10-09
 
 ### Adicionado
 

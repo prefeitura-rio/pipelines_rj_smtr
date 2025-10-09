@@ -101,9 +101,6 @@ def processa_dados(blobs: List, date_str: str) -> pd.DataFrame:
 
     result = pd.concat(aux_df, ignore_index=True)
 
-    # Remove duplicatas baseado em todas as colunas
-    result = result.drop_duplicates()
-
     log(f"Total de {len(result)} registros únicos carregados para {date_str}")
 
     return result
@@ -122,18 +119,21 @@ def compara_dataframes(df_hoje: pd.DataFrame, df_ontem: pd.DataFrame) -> pd.Data
     Returns:
         pd.DataFrame: Registros que são novos ou foram alterados
     """
-    # Garante que as colunas estejam na mesma ordem
-    common_columns = [col for col in df_hoje.columns if col in df_ontem.columns]
+    # Verifica se há novas colunas em df_hoje que não existem em df_ontem
+    new_columns = set(df_hoje.columns) - set(df_ontem.columns)
 
+    if new_columns:
+        log(f"Novas colunas detectadas: {new_columns} - retornando todos os registros")
+        return df_hoje
+
+    # Garante que as colunas sejam as mesmas
+    common_columns = [col for col in df_hoje.columns if col in df_ontem.columns]
     if not common_columns:
         log("Nenhuma coluna em comum entre hoje e ontem - retornando todos os registros")
         return df_hoje
 
-    df_hoje = df_hoje[common_columns]
-    df_ontem = df_ontem[common_columns]
-
     # Faz merge para identificar diferenças
-    merged = df_hoje.merge(df_ontem, on=common_columns, how="left", indicator=True)
+    merged = df_hoje.merge(df_ontem, how="left", indicator=True)
 
     # Filtra apenas registros que não existiam ontem (left_only)
     new_records = merged[merged["_merge"] == "left_only"].drop("_merge", axis=1)
