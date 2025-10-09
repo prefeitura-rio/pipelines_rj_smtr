@@ -484,3 +484,20 @@ selectors:
           value: snapshot_viagem_regularidade_temperatura
         - method: fqn
           value: snapshot_temperatura_inmet
+
+  - name: pagamento_cct
+    description: Materialização dos dados de pagamento da CCT
+    definition:
+      union:
+        - method: fqn
+          value: staging_detalhe_a_cct
+        - method: fqn
+          value: staging_ordem_pagamento_agrupado_cct
+        - method: fqn
+          value: staging_ordem_pagamento_agrupado_historico_cct
+        - method: fqn
+          value: staging_ordem_pagamento_cct
+        - method: fqn
+          value: staging_user_cct
+        - method: fqn
+          value: dicionario_financeiro
