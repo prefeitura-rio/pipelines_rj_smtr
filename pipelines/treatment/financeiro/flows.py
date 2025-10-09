@@ -14,6 +14,7 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
 )
 
+from pipelines.capture.cct.constants import constants as cct_constants
 from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.constants import constants as smtr_constants
 from pipelines.schedules import every_day_hour_ten_fifteen
@@ -42,6 +43,13 @@ FINANCEIRO_BILHETAGEM_MATERIALIZACAO = create_default_materialization_flow(
 
 FINANCEIRO_BILHETAGEM_MATERIALIZACAO.state_handlers.append(
     handler_notify_failure(webhook="alertas_bilhetagem")
+)
+
+PAGAMENTO_CCT_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="pagamento_cct - materializacao",
+    selector=constants.PAGAMENTO_CCT_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=cct_constants.PAGAMENTO_SOURCES.value,
 )
 
 with Flow(
