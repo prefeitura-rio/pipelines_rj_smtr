@@ -66,6 +66,10 @@ models:
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
         quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
   - name: viagem_validacao
     description: "Tabela que informa se a viagem informada está ou não válida de acordo com os parâmetros definidos"
     columns:
@@ -192,6 +196,10 @@ models:
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
         quote: true
 
   - name: gps_segmento_viagem
@@ -1045,6 +1053,91 @@ models:
         description: "Versão do Software do validador"
       - name: versao
         description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
+
+  - name: dicionario_monitoramento
+    description: "Dicionário dos dados de Monitoramento"
+    columns:
+      - name: chave
+        description: "Chave"
+      - name: cobertura_temporal
+        description: "{{ doc('cobertura_temporal') }}"
+      - name: id_tabela
+        description: "Nome da tabela"
+      - name: coluna
+        description: "{{ doc('column_name') }}"
+      - name: valor
+        description: "Valor"
+  - name: viagem_valida
+    description: "Tabela filtrada contendo apenas viagens informadas válidas conforme os parâmetros definidos"
+    columns:
+      - name: data
+        description: "{{ doc('data_viagem') }} [partição]"
+        data_type: date
+        quote: true
+      - name: id_viagem
+        description: "{{ doc('id_viagem') }} [datetime partida em UTC]"
+        data_type: string
+        quote: true
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+        data_type: string
+        quote: true
+      - name: placa
+        description: "{{ doc('placa') }}"
+        data_type: string
+        quote: true
+      - name: ano_fabricacao
+        description: "{{ doc('ano_fabricacao') }}"
+        data_type: int64
+        quote: true
+      - name: datetime_partida
+        description: "{{ doc('datetime_partida') }}"
+        data_type: datetime
+        quote: true
+      - name: datetime_chegada
+        description: "{{ doc('datetime_chegada') }}"
+        data_type: datetime
+        quote: true
+      - name: modo
+        description: "{{ doc('modo') }}"
+        data_type: string
+        quote: true
+      - name: tecnologia_apurada
+        description: "{{ doc('tecnologia') }}"
+        data_type: string
+        quote: true
+      - name: tipo_viagem
+        description: "{{ doc('tipo_viagem_status') }}"
+        data_type: string
+        quote: true
+      - name: servico
+        description: "{{ doc('servico') }}"
+        data_type: string
+        quote: true
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+        data_type: string
+        quote: true
+      - name: distancia_planejada
+        description: "{{ doc('distancia_planejada') }}"
+        data_type: float64
+        quote: true
+      - name: feed_start_date
+        description: "{{ doc('feed_start_date') }}"
+        data_type: date
+        quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime

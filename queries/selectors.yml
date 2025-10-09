@@ -43,6 +43,9 @@ selectors:
           value: subsidio_sumario_servico_dia_pagamento
         - method: path
           value: models/dashboard_subsidio_sppo_v2
+        - method: fqn
+          value: dicionario_dashboard_subsidio_sppo
+
 
   - name: viagem_informada
     description: Materialização da tabela de viagens informadas
@@ -66,6 +69,10 @@ selectors:
           value: gps_segmento_viagem
         - method: fqn
           value: viagem_validacao
+        - method: fqn
+          value: viagem_valida
+        - method: fqn
+          value: dicionario_monitoramento
 
   - name: planejamento_diario
     description: Materialização das tabelas de planejamento que devem rodar diariamente
@@ -232,11 +239,16 @@ selectors:
         - method: fqn
           value: view_transacao
         - method: fqn
-          value: staging_lancamento
-        - method: fqn
-          value: recarga_jae
-        - method: fqn
           value: transacao_gratuidade_estudante_municipal
+
+  - name: extrato_cliente_cartao
+    description: Materialização da tabela de extrato do cliente
+    definition:
+      union:
+        - method: fqn
+          value: extrato_cliente_cartao
+        - method: fqn
+          value: staging_lancamento
 
   - name: integracao
     description: Materialização das tabelas de integracao da bilhetagem
@@ -460,6 +472,8 @@ selectors:
           value: aux_veiculo_falha_ar_condicionado
         - method: fqn
           value: veiculo_regularidade_temperatura_dia
+        - method: fqn
+          value: dicionario_subsidio
 
   - name: snapshot_temperatura
     definition:
@@ -470,3 +484,20 @@ selectors:
           value: snapshot_viagem_regularidade_temperatura
         - method: fqn
           value: snapshot_temperatura_inmet
+
+  - name: pagamento_cct
+    description: Materialização dos dados de pagamento da CCT
+    definition:
+      union:
+        - method: fqn
+          value: staging_detalhe_a_cct
+        - method: fqn
+          value: staging_ordem_pagamento_agrupado_cct
+        - method: fqn
+          value: staging_ordem_pagamento_agrupado_historico_cct
+        - method: fqn
+          value: staging_ordem_pagamento_cct
+        - method: fqn
+          value: staging_user_cct
+        - method: fqn
+          value: dicionario_financeiro

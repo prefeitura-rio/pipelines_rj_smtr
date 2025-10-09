@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de monitoramento
 
-DBT: 2025-09-25
+DBT 2025-10-07
 """
 
 from copy import deepcopy
@@ -19,9 +19,6 @@ from pipelines.capture.veiculo_fiscalizacao.constants import (
 )
 from pipelines.capture.zirix.constants import constants as zirix_constants
 from pipelines.constants import constants as smtr_constants
-from pipelines.migration.br_rj_riodejaneiro_onibus_gps_zirix.constants import (
-    constants as gps_zirix_constants,
-)
 from pipelines.schedules import create_hourly_cron
 from pipelines.treatment.cadastro.constants import constants as cadastro_constants
 from pipelines.treatment.monitoramento.constants import constants
@@ -55,22 +52,9 @@ VIAGEM_VALIDACAO_MATERIALIZACAO = create_default_materialization_flow(
     wait=[
         wait_viagem_informada,
         planejamento_constants.PLANEJAMENTO_DIARIO_SELECTOR.value,
-        {
-            "redis_key": f"{smtr_constants.GPS_SPPO_DATASET_ID.value}\
-.{smtr_constants.GPS_SPPO_TREATED_TABLE_ID.value}",
-            "dict_key": "last_run_timestamp",
-            "datetime_format": "%Y-%m-%dT%H:%M:%S",
-            "delay_hours": smtr_constants.GPS_SPPO_MATERIALIZE_DELAY_HOURS.value,
-            "schedule_cron": cron_every_hour_minute_6,
-        },
-        {
-            "redis_key": f"{gps_zirix_constants.GPS_SPPO_ZIRIX_RAW_DATASET_ID.value}\
-.{smtr_constants.GPS_SPPO_TREATED_TABLE_ID.value}",
-            "dict_key": "last_run_timestamp",
-            "datetime_format": "%Y-%m-%dT%H:%M:%S",
-            "delay_hours": smtr_constants.GPS_SPPO_MATERIALIZE_DELAY_HOURS.value,
-            "schedule_cron": cron_every_hour_minute_6,
-        },
+        constants.GPS_CONECTA_SELECTOR.value,
+        constants.GPS_CITTATI_SELECTOR.value,
+        constants.GPS_ZIRIX_SELECTOR.value,
     ],
 )
 
@@ -78,7 +62,7 @@ GPS_TEST_SCHEDULE_TIME = time(2, 6, 0)
 
 GPS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps conecta - materializacao",
-    selector=constants.GPS_SELECTOR.value,
+    selector=constants.GPS_CONECTA_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[
         conecta_constants.CONECTA_REGISTROS_SOURCE.value,
@@ -92,7 +76,7 @@ set_default_parameters(GPS_CONECTA_MATERIALIZACAO, {"additional_vars": gps_vars_
 
 GPS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps cittati - materializacao",
-    selector=constants.GPS_SELECTOR.value,
+    selector=constants.GPS_CITTATI_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[
         cittati_constants.CITTATI_REGISTROS_SOURCE.value,
@@ -106,7 +90,7 @@ set_default_parameters(GPS_CITTATI_MATERIALIZACAO, {"additional_vars": gps_vars_
 
 GPS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps zirix - materializacao",
-    selector=constants.GPS_SELECTOR.value,
+    selector=constants.GPS_ZIRIX_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[
         zirix_constants.ZIRIX_REGISTROS_SOURCE.value,
@@ -120,7 +104,7 @@ set_default_parameters(GPS_ZIRIX_MATERIALIZACAO, {"additional_vars": gps_vars_zi
 
 GPS_15_MINUTOS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps_15_minutos conecta - materializacao",
-    selector=constants.GPS_15_MINUTOS_SELECTOR.value,
+    selector=constants.GPS_15_MINUTOS_CONECTA_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[
         conecta_constants.CONECTA_REGISTROS_SOURCE.value,
@@ -134,7 +118,7 @@ set_default_parameters(
 
 GPS_15_MINUTOS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps_15_minutos cittati - materializacao",
-    selector=constants.GPS_15_MINUTOS_SELECTOR.value,
+    selector=constants.GPS_15_MINUTOS_CITTATI_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[
         cittati_constants.CITTATI_REGISTROS_SOURCE.value,
@@ -148,7 +132,7 @@ set_default_parameters(
 
 GPS_15_MINUTOS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps_15_minutos zirix - materializacao",
-    selector=constants.GPS_15_MINUTOS_SELECTOR.value,
+    selector=constants.GPS_15_MINUTOS_ZIRIX_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[
         zirix_constants.ZIRIX_REGISTROS_SOURCE.value,

@@ -20,6 +20,7 @@ from pipelines.capture.jae.tasks import (
     create_database_error_discord_message,
     create_jae_general_extractor,
     create_non_filtered_discord_message,
+    create_ressarcimento_db_extractor,
     get_capture_gaps,
     get_end_value_historic_table,
     get_jae_db_config,
@@ -112,6 +113,28 @@ CAPTURA_INTEGRACAO = create_default_capture_flow(
 )
 set_default_parameters(CAPTURA_INTEGRACAO, {"recapture": True})
 
+CAPTURA_INTEGRACAO.schedule = Schedule(
+    CAPTURA_INTEGRACAO.schedule.clocks
+    + [
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(2022, 11, 30, 7, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)),
+            labels=[
+                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        ),
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(
+                2022, 11, 30, 10, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+            ),
+            labels=[
+                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        ),
+    ]
+)
+
 CAPTURA_INTEGRACAO.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
@@ -124,7 +147,7 @@ CAPTURA_INTEGRACAO.run_config = KubernetesRun(
 CAPTURA_ORDEM_PAGAMENTO = create_default_capture_flow(
     flow_name="jae: ordem_pagamento - captura",
     source=constants.ORDEM_PAGAMENTO_SOURCES.value,
-    create_extractor_task=create_jae_general_extractor,
+    create_extractor_task=create_ressarcimento_db_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     get_raw_max_retries=0,
 )
@@ -139,14 +162,29 @@ CAPTURA_TRANSACAO_ORDEM = create_default_capture_flow(
 )
 set_default_parameters(CAPTURA_TRANSACAO_ORDEM, {"recapture": True})
 
-# CAPTURA_TRANSACAO_ORDEM.run_config = KubernetesRun(
-#     image=smtr_constants.DOCKER_IMAGE.value,
-#     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
-#     cpu_limit="1000m",
-#     memory_limit="4600Mi",
-#     cpu_request="500m",
-#     memory_request="1000Mi",
-# )
+CAPTURA_TRANSACAO_ORDEM.schedule = Schedule(
+    CAPTURA_TRANSACAO_ORDEM.schedule.clocks
+    + [
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(
+                2022, 11, 30, 12, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+            ),
+            labels=[
+                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        ),
+        IntervalClock(
+            interval=timedelta(days=1),
+            start_date=datetime(
+                2022, 11, 30, 14, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+            ),
+            labels=[
+                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+            ],
+        ),
+    ]
+)
 
 with Flow("jae: verifica ip do banco de dados") as verificacao_ip:
     success, failed_connections = test_jae_databases_connections()
@@ -229,10 +267,12 @@ backup_billingpay.run_config = KubernetesRun(
 )
 backup_billingpay.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
+multiple_execution_dbs = ["processador_transacao_db", "financeiro_db", "midia_db"]
+
 backup_billingpay.schedule = Schedule(
     [
         IntervalClock(
-            interval=timedelta(days=1),
+            interval=timedelta(hours=6) if db in multiple_execution_dbs else timedelta(days=1),
             start_date=datetime(2021, 1, 1, 0, 0, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value))
             + timedelta(minutes=30 * idx),
             labels=[

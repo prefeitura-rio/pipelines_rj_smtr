@@ -298,6 +298,7 @@ sources:
       - name: matriz_reparticao_tarifaria
       - name: matriz_transferencia
       - name: matriz_integracao_excecao
+      - name: dicionario_subsidio
 
   - name: subsidio_staging
     database: rj-smtr
@@ -439,4 +440,15 @@ sources:
     tables:
       - name: curso
       - name: ies
+      - name: dicionario
+
+  - name: source_cct
+    database: rj-smtr-staging
+
+    tables:
+      - name: ordem_pagamento
+      - name: ordem_pagamento_agrupado
+      - name: ordem_pagamento_agrupado_historico
+      - name: user
+      - name: detalhe_a
       - name: dicionario

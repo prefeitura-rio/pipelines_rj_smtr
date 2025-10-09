@@ -48,11 +48,11 @@ from pipelines.migration.tasks import (
 from pipelines.schedules import every_5_minutes
 from pipelines.tasks import (
     check_fail,
+    check_run_dbt_success,
     get_scheduled_timestamp,
     log_discord,
     parse_timestamp_to_string,
     remove_key_from_dict,
-    task_value_is_none,
 )
 from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt
 
@@ -257,14 +257,14 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                      servico_planejado_faixa_horaria",
         ).set_upstream(task=wait_captura)
 
-        run_dbt_failed = task_value_is_none(wait_run_dbt_model)
+        run_dbt_success = check_run_dbt_success(wait_run_dbt_model)
 
-        with case(run_dbt_failed, False):
+        with case(run_dbt_success, False):
             log_discord(
                 "Falha na materialização dos dados do GTFS " + data_versao_gtfs, "gtfs", True
             )
 
-        with case(run_dbt_failed, True):
+        with case(run_dbt_success, True):
             log_discord(
                 "Captura e materialização do GTFS " + data_versao_gtfs + " finalizada com sucesso!",
                 "gtfs",
