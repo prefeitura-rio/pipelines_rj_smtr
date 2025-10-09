@@ -443,7 +443,7 @@ sources:
       - name: dicionario
 
   - name: source_cct
-    database: rj-smtr-dev
+    database: rj-smtr-staging
 
     tables:
       - name: ordem_pagamento
