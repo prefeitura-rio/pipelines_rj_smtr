@@ -127,7 +127,7 @@ class constants(Enum):  # pylint: disable=c0103
         SourceTable(
             source_name=CCT_SOURCE_NAME,
             table_id=k,
-            first_timestamp=v.get("first_timestamp", datetime(2024, 1, 9, 0, 0, 0)),
+            first_timestamp=v.get("first_timestamp", datetime(2025, 10, 9, 0, 0, 0)),
             schedule_cron=create_daily_cron(hour=0),
             primary_keys=v["primary_keys"],
             pretreatment_reader_args=v.get("pre_treatment_reader_args"),
