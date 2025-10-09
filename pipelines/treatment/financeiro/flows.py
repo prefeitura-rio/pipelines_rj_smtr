@@ -46,7 +46,7 @@ FINANCEIRO_BILHETAGEM_MATERIALIZACAO.state_handlers.append(
 )
 
 PAGAMENTO_CCT_MATERIALIZACAO = create_default_materialization_flow(
-    flow_name="financeiro_bilhetagem - materializacao",
+    flow_name="pagamento_cct - materializacao",
     selector=constants.PAGAMENTO_CCT_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=cct_constants.PAGAMENTO_SOURCES.value,
