@@ -1,5 +1,17 @@
 # Changelog - financeiro
 
+## [1.2.0] - 2025-10-09
+
+### Adicionado
+
+- Cria modelos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/934):
+  - `staging_detalhe_a_cct.sql`
+  - `staging_ordem_pagamento_agrupado_cct.sql`
+  - `staging_ordem_pagamento_agrupado_historico_cct.sql`
+  - `staging_ordem_pagamento_cct.sql`
+  - `staging_user_cct.sql`
+  - `dicionario_financeiro.sql`
+
 ## [1.1.1] - 2025-09-24
 
 ### Alterado

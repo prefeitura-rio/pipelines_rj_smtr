@@ -242,3 +242,16 @@ models:
         description: "Valor total das transações realizadas calculada pela captura de transações (R$)"
       - name: versao
         description: "{{ doc('versao') }}"
+  - name: dicionario_financeiro
+    description: "Dicionário dos dados financeiros"
+    columns:
+      - name: chave
+        description: "Chave"
+      - name: cobertura_temporal
+        description: "{{ doc('cobertura_temporal') }}"
+      - name: id_tabela
+        description: "Nome da tabela"
+      - name: coluna
+        description: "{{ doc('column_name') }}"
+      - name: valor
+        description: "Valor"

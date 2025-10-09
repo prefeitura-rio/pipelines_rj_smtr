@@ -31,3 +31,9 @@ class constants(Enum):  # pylint: disable=c0103
             },
         }
     }
+
+    PAGAMENTO_CCT_SELECTOR = DBTSelector(
+        name="pagamento_cct",
+        schedule_cron=create_daily_cron(hour=0, minute=30),
+        initial_datetime=datetime(2025, 10, 8, 0, 0, 0),
+    )
