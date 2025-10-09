@@ -10,7 +10,7 @@ from pipelines.schedules import create_daily_cron
 from pipelines.utils.gcp.bigquery import SourceTable
 
 CCT_SOURCE_NAME = "cct"
-CCT_PRIVATE_BUCKET_NAMES = {"prod": "rj-smtr-jae-private", "dev": "rj-smtr-dev-private"}
+CCT_PRIVATE_BUCKET_NAMES = {"prod": "rj-smtr-cct-private", "dev": "rj-smtr-dev-private"}
 
 
 class constants(Enum):  # pylint: disable=c0103
