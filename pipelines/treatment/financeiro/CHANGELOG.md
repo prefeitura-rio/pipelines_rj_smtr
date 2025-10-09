@@ -1,5 +1,11 @@
 # Changelog - financeiro
 
+## [2.1.0] - 2025-10-09
+
+### Adicionado
+
+- Cria flow `PAGAMENTO_CCT_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/934)
+
 ## [2.0.7] - 2025-10-02
 
 ### Alterado
