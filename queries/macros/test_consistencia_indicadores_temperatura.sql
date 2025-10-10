@@ -188,12 +188,12 @@
                                 (
                                     i.ano_fabricacao <= 2019
                                     and data
-                                    >= date('{{ var('DATA_SUBSIDIO_V17_INICIO') }}')
+                                    >= date('{{ var(' data_subsidio_v17_inicio ') }}')
                                 )
                                 or (
                                     i.ano_fabricacao > 2019
                                     and data
-                                    >= date('{{ var('DATA_SUBSIDIO_V19_INICIO') }}')
+                                    >= date('{{ var(' data_subsidio_v19_inicio ') }}')
                                 )
                             )
                             and i.indicador_regularidade_ar_condicionado_viagem = false
