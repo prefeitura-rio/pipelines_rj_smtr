@@ -88,6 +88,8 @@ def processa_dados(blobs: List, date_str: str) -> pd.DataFrame:
             # Processa a coluna _airbyte_data que contém JSON
             if "_airbyte_data" in df.columns:
                 data = pd.json_normalize(df["_airbyte_data"].apply(json.loads))
+                # Remove caracteres invisíveis
+                data = data.replace({r"[\x00-\x1F\x7F]": ""}, regex=True)
                 aux_df.append(data)
             else:
                 log(f"Arquivo {filename} não contém coluna _airbyte_data")
