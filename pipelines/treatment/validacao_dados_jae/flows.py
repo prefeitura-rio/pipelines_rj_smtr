@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados da validação dos dados da Jaé
 
-DBT 2025-08-22
+DBT 2025-10-09
 """
 
 from pipelines.constants import constants as smtr_constants
