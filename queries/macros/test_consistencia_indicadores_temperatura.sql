@@ -1,5 +1,4 @@
 {% test consistencia_indicadores_temperatura(model) -%}
-
     with
         indicadores as (
             select
