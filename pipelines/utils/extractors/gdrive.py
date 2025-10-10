@@ -2,7 +2,6 @@
 """Module to get data from Google Drive"""
 import os
 from typing import Optional
-
 import pandas as pd
 from google.oauth2 import service_account
 from google.auth.transport.requests import Request
@@ -12,6 +11,7 @@ from googleapiclient.discovery import build
 
 from pipelines.utils.pretreatment import normalize_text
 
+
 def get_google_sheet_xlsx(
     spread_sheet_id: str,
     sheet_name: str,
@@ -20,7 +20,7 @@ def get_google_sheet_xlsx(
     SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
     creds = service_account.Credentials.from_service_account_file(
         filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
-        scopes= SCOPES,
+        scopes=SCOPES,
     )
     # creds = None
     # The file token.json stores the user's access and refresh tokens, and is
