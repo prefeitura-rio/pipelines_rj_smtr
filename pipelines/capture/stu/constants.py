@@ -42,7 +42,7 @@ class constants(Enum):  # pylint: disable=c0103
             "primary_keys": ["cod_combustivel"],
         },
         STU_CONTROLE_PROCESSO_TABLE_ID: {
-            "primary_keys": ["id"],
+            "primary_keys": ["Id"],
         },
         STU_DARM_APROPRIACAO_TABLE_ID: {
             "primary_keys": ["codrec", "anodarm", "darm", "Emissao"],
