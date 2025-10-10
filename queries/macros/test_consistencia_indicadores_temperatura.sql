@@ -122,7 +122,7 @@
                         quantidade_pre_tratamento = 0
                         and indicador_temperatura_transmitida_viagem = true
                     then
-                        "Nenhuma temperatura foi transmitida no indicador_temperatura_transmitida_viagem"
+                        'Nenhuma temperatura foi transmitida no indicador_temperatura_transmitida_viagem'
                 end as temperatura_nao_transmitida,
 
                 case
@@ -130,7 +130,7 @@
                         quantidade_pre_tratamento = quantidade_zero
                         and indicador_temperatura_transmitida_viagem = true
                     then
-                        "Todas temperaturas transmitidas foram iguais a zero no indicador_temperatura_transmitida_viagem"
+                        'Todas temperaturas transmitidas foram iguais a zero no indicador_temperatura_transmitida_viagem'
                 end as todas_temperaturas_transmitidas_iguais_zero
             from indicadores
         ),
@@ -143,7 +143,7 @@
                         quantidade_pre_tratamento = quantidade_zero
                         and indicador_temperatura_variacao_viagem = true
                     then
-                        "Todas temperaturas iguais a zero no indicador_temperatura_variacao_viagem"
+                        'Todas temperaturas iguais a zero no indicador_temperatura_variacao_viagem'
                 end as todas_temperaturas_zero
             from indicadores
 
@@ -158,7 +158,7 @@
                         and i.indicador_temperatura_pos_tratamento_descartada_viagem
                         = true
                     then
-                        "Falha na temperatura descartada pós tratamento no indicador_temperatura_pos_tratamento_descartada_viagem"
+                        'Falha na temperatura descartada pós tratamento no indicador_temperatura_pos_tratamento_descartada_viagem'
                 end as inconsistencia_descarte_pos
             from percentuais p
             left join indicadores i using (data, id_viagem)
@@ -172,7 +172,7 @@
                         p.test_percentual_temperatura_zero_descartada < 100
                         and i.indicador_temperatura_zero_viagem = true
                     then
-                        "Falha na temperatura zero descartada no indicador_temperatura_zero_viagem"
+                        'Falha na temperatura zero descartada no indicador_temperatura_zero_viagem'
                 end as inconsistencia_temperatura_zero
             from percentuais p
             left join indicadores i using (data, id_viagem)
@@ -188,18 +188,18 @@
                                 (
                                     i.ano_fabricacao <= 2019
                                     and data
-                                    >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
+                                    >= date('{{ var('DATA_SUBSIDIO_V17_INICIO') }}')
                                 )
                                 or (
                                     i.ano_fabricacao > 2019
                                     and data
-                                    >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}')
+                                    >= date('{{ var('DATA_SUBSIDIO_V19_INICIO') }}')
                                 )
                             )
                             and i.indicador_regularidade_ar_condicionado_viagem = false
                         )
                     then
-                        "Veículo dentro do período de aplicação da Resolução (Art. 2º-E) não deve ser glosado por climatização"
+                        'Veículo dentro do período de aplicação da Resolução (Art. 2º-E) não deve ser glosado por climatização'
                 end as inconsistencia_condicao_veiculo,
 
                 case
@@ -207,7 +207,7 @@
                         p.test_percentual_temperatura_nula_descartada = 100
                         and i.indicador_regularidade_ar_condicionado_viagem is not null
                     then
-                        "Indicador_regularidade_ar_condicionado_viagem deveria ser nulo, 100% das temperaturas foram nulas"
+                        'Indicador_regularidade_ar_condicionado_viagem deveria ser nulo, 100% das temperaturas foram nulas'
                 end as inconsistencia_temperatura_nula
             from indicadores i
             left join percentuais p using (data, id_viagem)
@@ -237,7 +237,7 @@
                     when
                         quantidade_dia_falha_operacional < 6
                         and indicador_falha_recorrente = true
-                    then "Falha recorrente incorreta"
+                    then 'Falha recorrente incorreta'
                 end as falha_recorrente_inconsistencia
             from falha_recorrente
         )
