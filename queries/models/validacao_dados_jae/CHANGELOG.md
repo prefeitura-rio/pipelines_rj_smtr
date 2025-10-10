@@ -1,5 +1,11 @@
 # Changelog - validacao_dados_jae
 
+## [3.0.2] - 2025-10-09
+
+### Alterado
+
+- Altera regra da coluna `modo` do modelo `aux_transacao_filtro_integracao_calculada` adicionando `BRT ESP` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/822)
+
 ## [3.0.1] - 2025-09-01
 
 ### Alterado
