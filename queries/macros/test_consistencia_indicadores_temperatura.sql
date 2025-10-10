@@ -77,7 +77,6 @@
                 ) as indicador_falha_recorrente
 
             from `rj-smtr.subsidio.viagem_regularidade_temperatura`
-            where data = "2025-09-01"
         ),
 
         percentuais as (
