@@ -1,3 +1,5 @@
+{% test consistencia_indicadores_temperatura(model) -%}
+
 with
     indicadores as (
         select
@@ -267,4 +269,4 @@ where
     or cv.inconsistencia_condicao_veiculo is not null
     or cv.inconsistencia_temperatura_nula is not null
     or fr.falha_recorrente_inconsistencia is not null
-;
+    {%- endtest %}
