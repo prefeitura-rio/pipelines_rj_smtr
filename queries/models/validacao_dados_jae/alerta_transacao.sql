@@ -122,7 +122,7 @@ with
         qualify quantidade_transacao >= 5
         window
             win as (
-                partition by cliente_cartao
+                partition by cliente_cartao, id_operadora, id_validador
                 order by unix_seconds(timestamp(datetime_transacao))
                 range between 600 preceding and current row
             )
