@@ -24,3 +24,9 @@ VALIDACAO_DADOS_JAE_MATERIALIZACAO = create_default_materialization_flow(
 VALIDACAO_DADOS_JAE_MATERIALIZACAO.state_handlers.append(
     handler_notify_failure(webhook="alertas_bilhetagem")
 )
+
+ALERTA_TRANSACAO_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="alerta_transacao - materializacao",
+    selector=constants.ALERTA_TRANSACAO_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+)
