@@ -63,8 +63,7 @@ models:
         description: "{{ doc('id_consorcio') }}"
       - name: consorcio
         description: "{{ doc('consorcio') }}"
-      - name: id_operadora
-        description: "{{ doc('id_operadora') }}"
+
       - name: operadora
         description: "{{ doc('operadora') }}"
       - name: id_servico_jae
@@ -251,5 +250,48 @@ models:
         quote: true
       - name: id_execucao_dbt
         description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
+  - name: alerta_transacao
+    description: Tabela contendo transações suspeitas de Van
+    columns:
+      - name: data
+        description: "{{ doc('data_transacao') }} [partição]"
+        data_type: date
+        quote: true
+      - name: id_operadora
+        description: "{{ doc('id_operadora') }}"
+      - name: documento_operadora
+        description: "{{ doc('documento_operadora') }} [protegido]"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/388050497607535163/policyTags/3935188996031375059'
+      - name: id_validador
+        description: "{{ doc('id_validador') }}"
+      - name: placa
+        description: "{{ doc('placa') }}"
+      - name: cliente_cartao
+        description: "id_cliente ou hash_cartao [protegido]"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/3266350367297582691'
+      - name: datetime_inicio_intervalo
+        description: Data e hora da primeira transação do agrupamento [GMT-3]
+        data_type: datetime
+        quote: true
+      - name: datetime_fim_intervalo
+        description: Data e hora da última transação do agrupamento [GMT-3]
+        data_type: datetime
+        quote: true
+      - name: quantidade_transacao
+        description: Quantidade de transações
+        data_type: int64
+        quote: true
+      - name: ids_transacao
+        description: Array com os ids das transações do agrupamento
+      - name: latitude_ultima_transacao
+        description: Latitude da última transação do agrupamento [WGS84]
+      - name: longitude_ultima_transacao
+        description: Longitude da última transação do agrupamento [WGS84]
+      - name: versao
+        description: "{{ doc('versao') }}"
         data_type: string
         quote: true
