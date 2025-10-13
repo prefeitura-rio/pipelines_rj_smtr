@@ -116,7 +116,7 @@ with
             ) over (win) as transacoes
         from transacao_cliente_cartao t
         left join
-            `rj-smtr-dev.botelho__cadastro.operador_van_v2` ov
+            {{ source("cadastro_staging", "operador_van_v2") }} ov
             on t.documento_operadora = ov.cpf
         where modo = 'Van'
         qualify quantidade_transacao >= 5
