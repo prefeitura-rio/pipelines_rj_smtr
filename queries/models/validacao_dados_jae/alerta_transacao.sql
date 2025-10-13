@@ -157,7 +157,7 @@ with
                 when ultima_lat_long_valida is not null
                 then ultima_lat_long_valida.longitude
                 else 0.0
-            end as latitude_ultima_transacao,
+            end as longitude_ultima_transacao,
             "{{ var('version') }}" as versao,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
             '{{ invocation_id }}' as id_execucao_dbt
