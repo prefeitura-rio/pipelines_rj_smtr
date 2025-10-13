@@ -24,5 +24,5 @@ class constants(Enum):  # pylint: disable=c0103
     ALERTA_TRANSACAO_SELECTOR = DBTSelector(
         name="alerta_transacao",
         schedule_cron=create_minute_cron(minute=10),
-        initial_datetime=datetime(2025, 10, 13, 0, 0, 0),
+        initial_datetime=datetime(2025, 10, 13, 10, 0, 0),
     )

@@ -261,6 +261,8 @@ models:
         quote: true
       - name: id_operadora
         description: "{{ doc('id_operadora') }}"
+      - name: permissao
+        description: Número de permissionário do operador
       - name: documento_operadora
         description: "{{ doc('documento_operadora') }} [protegido]"
         policy_tags:
@@ -293,5 +295,13 @@ models:
         description: Longitude da última transação do agrupamento [WGS84]
       - name: versao
         description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
         data_type: string
         quote: true
