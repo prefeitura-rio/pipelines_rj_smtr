@@ -154,7 +154,7 @@
                 *,
                 case
                     when
-                        p.test_percentual_temperatura_pos_tratamento_descartada > 50
+                        p.test_percentual_temperatura_pos_tratamento_descartada < 50
                         and i.indicador_temperatura_pos_tratamento_descartada_viagem
                         = true
                     then
@@ -187,19 +187,14 @@
                             (
                                 (
                                     i.ano_fabricacao <= 2019
-                                    and data
-                                    >= date('{{ var(' data_subsidio_v17_inicio ') }}')
+                                    or data
+                                    >= date('{{ var(' data_subsidio_v19_inicio ') }}') and
+                                    i.indicador_regularidade_ar_condicionado_viagem is null
                                 )
-                                or (
-                                    i.ano_fabricacao > 2019
-                                    and data
-                                    >= date('{{ var(' data_subsidio_v19_inicio ') }}')
-                                )
-                            )
-                            and i.indicador_regularidade_ar_condicionado_viagem = false
+                               
                         )
                     then
-                        'Veículo dentro do período de aplicação da Resolução (Art. 2º-E) não deve ser glosado por climatização'
+                         'Veículo dentro do período de aplicação da Resolução (Art. 2º-E)'
                 end as inconsistencia_condicao_veiculo,
 
                 case
