@@ -11,22 +11,23 @@
 -- depends_on: {{ ref('transacao') }}
 with
     transacao_staging as (
-        date(data_transacao) as data,
-        id as id_transacao,
-        data_transacao as datetime_transacao,
-        m.modo,
-        o.id_operadora,
-        o.documento as documento_operadora,
-        case
-            when t.id_cliente is null or t.id_cliente = "733"
-            then "Não Cadastrado"
-            else "Cadastrado"
-        end as cadastro_cliente,
-        sha256(id_cliente) as hash_cliente,
-        pan_hash as hash_cartao,
-        latitude_trx as latitude,
-        longitude_trx as longitude,
-        numero_serie_validador as id_validador,
+        select
+            date(data_transacao) as data,
+            id as id_transacao,
+            data_transacao as datetime_transacao,
+            m.modo,
+            o.id_operadora,
+            o.documento as documento_operadora,
+            case
+                when t.id_cliente is null or t.id_cliente = "733"
+                then "Não Cadastrado"
+                else "Cadastrado"
+            end as cadastro_cliente,
+            sha256(id_cliente) as hash_cliente,
+            pan_hash as hash_cartao,
+            latitude_trx as latitude,
+            longitude_trx as longitude,
+            numero_serie_validador as id_validador,
         from {{ ref("staging_transacao") }} t
         join {{ ref("operadoras") }} o on t.cd_operadora = o.id_operadora_jae
         left join
@@ -92,7 +93,7 @@ with
             (
                 cadastro_cliente = 'Cadastrado', to_base64(hash_cliente), hash_cartao
             ) as cliente_cartao,
-        from transacao_staging
+        from transacao_deduplicada
     ),
     transacao_intervalo as (
         select
@@ -185,7 +186,12 @@ with
         from particao_completa
         qualify
             row_number() over (
-                partition by id_operadora, cliente_cartao, datetime_inicio_intervalo
+                partition by
+                    id_operadora,
+                    cliente_cartao,
+                    id_validador,
+                    ids_transacao[offset(0)],
+                    datetime_inicio_intervalo
                 order by priority
             )
             = 1
