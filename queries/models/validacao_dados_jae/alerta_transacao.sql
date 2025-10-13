@@ -39,7 +39,7 @@ with
                     )
                 }}
             )
-            and data between date(
+            and date(data_transacao) between date(
                 datetime_sub(
                     datetime("{{ var('date_range_start') }}"), interval 5 minute
                 )
