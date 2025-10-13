@@ -2,9 +2,11 @@
 """Module to get data from Google Drive"""
 import os
 from typing import Optional
+
 import pandas as pd
-from google.oauth2 import service_account
 from googleapiclient.discovery import build
+from google.oauth2 import service_account
+
 from pipelines.utils.pretreatment import normalize_text
 
 # from google.auth.transport.requests import Request
