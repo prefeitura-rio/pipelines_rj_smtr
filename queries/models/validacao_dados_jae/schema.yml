@@ -270,7 +270,7 @@ models:
       - name: placa
         description: "{{ doc('placa') }}"
       - name: cliente_cartao
-        description: "id_cliente ou hash_cartao [protegido]"
+        description: "hash_cliente ou hash_cartao [protegido]"
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/3266350367297582691'
       - name: datetime_inicio_intervalo
