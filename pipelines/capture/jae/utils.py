@@ -397,7 +397,7 @@ def save_capture_check_results(env: str, results: pd.DataFrame):
                     datetime_ultima_atualizacao
                 )
                 VALUES (
-                    DATE(timestamp_captura),
+                    DATE(DATETIME(timestamp_captura, 'America/Sao_Paulo')),
                     table_id,
                     DATETIME(timestamp_captura, 'America/Sao_Paulo'),
                     total_datalake,
