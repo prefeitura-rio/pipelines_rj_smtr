@@ -1,10 +1,15 @@
 {% test test_consistencia_indicadores_temperatura(model) -%}
     -- depends_on: {{ ref('aux_viagem_temperatura') }}
+    {% set incremental_filter %}
+    data between date("{{var('start_date')}}") and date("{{ var('end_date') }}") and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+    {% endset %}
+
     with
 
         validador as (
             select data, id_viagem, id_validador
             from {{ ref("aux_viagem_temperatura") }}
+            where {{ incremental_filter }}
         ),
         indicadores as (
             select
@@ -68,6 +73,7 @@
                 unnest(
                     json_query_array(indicadores, '$.indicador_validador.valores')
                 ) as validador
+            where {{ incremental_filter }}
         ),
 
         percentuais as (
