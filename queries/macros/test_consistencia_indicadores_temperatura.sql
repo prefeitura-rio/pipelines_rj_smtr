@@ -1,5 +1,5 @@
 {% test test_consistencia_indicadores_temperatura(model) -%}
---depends_on: {{ ref('aux_viagem_temperatura') }}
+    -- depends_on: {{ ref('aux_viagem_temperatura') }}
     with
 
         validador as (
@@ -63,7 +63,7 @@
                         indicadores, '$.indicador_falha_recorrente.valor'
                     ) as bool
                 ) as indicador_falha_recorrente
-            from {{model}}
+            from {{ model }}
             left join
                 unnest(
                     json_query_array(indicadores, '$.indicador_validador.valores')
