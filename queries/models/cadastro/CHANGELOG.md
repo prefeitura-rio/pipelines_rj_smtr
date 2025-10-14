@@ -1,5 +1,11 @@
 # Changelog - cadastro
 
+## [1.6.6] - 2025-10-14
+
+### Corrigido
+
+- Corrigir tratamento de data inicial retroativa no modelo `veiculo_licenciamento_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/939)
+
 ## [1.6.5] - 2025-09-29
 
 ### Alterado
