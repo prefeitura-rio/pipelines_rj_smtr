@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import os
+
 import yaml
 from google.cloud import bigquery
 
