@@ -1,6 +1,4 @@
 {% test test_consistencia_indicadores_temperatura(model) -%}
-    -- depends_on: {{ ref('aux_viagem_temperatura') }}
-    -- depends_on: {{ ref('veiculo_regularidade_temperatura_dia') }}
     {% set incremental_filter %}
     data between date("{{var('start_date')}}") and date("{{ var('end_date') }}") and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
     {% endset %}
