@@ -541,7 +541,7 @@ models:
         description: "{{ doc('versao') }}"
         data_type: string
         quote: true
-  - name: tunel
+  - name: tuneis
     description: "Tabela contendo os túneis do município do Rio de Janeiro"
     columns:
       - name: inicio_vigencia
