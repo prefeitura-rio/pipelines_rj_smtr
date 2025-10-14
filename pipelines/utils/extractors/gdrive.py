@@ -1,15 +1,41 @@
 # -*- coding: utf-8 -*-
 """Module to get data from Google Drive"""
 import os
-from typing import Optional
+from typing import List, Optional
+
 import pandas as pd
-from googleapiclient.discovery import build
+from google.auth import default
 from google.oauth2 import service_account
+from googleapiclient.discovery import build
+
 from pipelines.utils.prefect import flow_is_running_local
 from pipelines.utils.pretreatment import normalize_text
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
+
+
+def get_google_drive_service(service_name: str, version: str, scopes: Optional[List[str]] = None):
+    """
+    Retorna um serviço do Google Sheets configurado com as credenciais apropriadas.
+
+    Args:
+        service_name: Nome do serviço Google (ex: 'sheets', 'drive', 'bigquery')
+        version: Versão da API (ex: 'v4', 'v3')
+        scopes: Lista de escopos de permissão. Se None, usa drive.readonly por padrão.
+
+    Returns:
+        Resource: Serviço do Google Sheets API
+    """
+
+    if scopes is None:
+        scopes = ["https://www.googleapis.com/auth/drive.readonly"]
+
+    if flow_is_running_local():
+        creds, _ = default(scopes=scopes)
+    else:
+        creds = service_account.Credentials.from_service_account_file(
+            filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"], scopes=scopes
+        )
+
+    return build(service_name, version, credentials=creds)
 
 
 def get_google_sheet_xlsx(
@@ -17,27 +43,8 @@ def get_google_sheet_xlsx(
     sheet_name: str,
     filter_expr: Optional[str] = None,
 ) -> pd.DataFrame:
-    SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
-    
-    creds = None
-    if flow_is_running_local():
-        if os.path.exists("token.json"):
-            creds = Credentials.from_authorized_user_file("token.json", SCOPES)
-        # If there are no (valid) credentials available, let the user log in.
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file("cliente_oauth_gdrive.json", SCOPES)
-                creds = flow.run_local_server(port=0)
-                # Save the credentials for the next run
-            with open("token.json", "w") as token:
-                token.write(creds.to_json())
-    else:      
-        creds = service_account.Credentials.from_service_account_file(
-            filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
-            scopes=SCOPES)  
-    drive_service = build("sheets", "v4", credentials=creds)
+
+    drive_service = get_google_drive_service(service_name="sheets", version="v4")
 
     file = (
         drive_service.spreadsheets()

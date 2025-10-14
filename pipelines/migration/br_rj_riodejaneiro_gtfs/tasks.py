@@ -3,14 +3,11 @@
 Tasks for gtfs
 """
 import io
-import os
 import zipfile
 from datetime import datetime
 
 import openpyxl as xl
 import pandas as pd
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
@@ -26,6 +23,7 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.utils import (
     processa_ordem_servico_trajeto_alternativo,
 )
 from pipelines.migration.utils import get_upload_storage_blob, save_raw_local_func
+from pipelines.utils.extractors.gdrive import get_google_drive_service
 
 
 @task
@@ -200,14 +198,8 @@ def get_raw_gtfs_files(
     else:
         log("Baixando arquivos através do Google Drive")
 
-        # Autenticar usando o arquivo de credenciais
-        credentials = service_account.Credentials.from_service_account_file(
-            filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
-            scopes=["https://www.googleapis.com/auth/drive.readonly"],
-        )
-
         # Criar o serviço da API Google Drive e Google Sheets
-        drive_service = build("drive", "v3", credentials=credentials)
+        drive_service = get_google_drive_service(service_name="drive", version="v3")
 
         # Baixa planilha de OS
         file_link = os_control["Link da OS"]
