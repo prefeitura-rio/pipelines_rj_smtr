@@ -84,7 +84,11 @@ with
         qualify
             row_number() over (
                 partition by
-                    ifnull(l.id_lancamento, string(l.dt_lancamento)), l.id_conta
+                    ifnull(
+                        l.id_lancamento,
+                        concat(string(l.dt_lancamento), '_', l.id_movimento)
+                    ),
+                    l.id_conta
                 order by datetime_captura desc
             )
             = 1
