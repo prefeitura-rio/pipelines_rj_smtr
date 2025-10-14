@@ -541,3 +541,58 @@ models:
         description: "{{ doc('versao') }}"
         data_type: string
         quote: true
+  - name: tunel
+    description: "Tabela contendo os túneis do município do Rio de Janeiro"
+    columns:
+      - name: inicio_vigencia
+        description: "Data de inicio da vigência das informações do túnel"
+      - name: fim_vigencia
+        description: "Data de fim da vigência das informações do túnel"
+      - name: id_logradouro
+        description: "Código oficial do logradouro dado pela Prefeitura do Rio de Janeiro"
+      - name: bairro
+        description: "Nome do bairro onde está localizado o trecho do túnel. Um trecho pode passar por vários bairros. Este atributo indica um dos bairros contendo o trecho"
+      - name: nome_parcial
+        description: "Nome parcial do túnel"
+      - name: nome_completo
+        description: "Nome completo do túnel"
+      - name: id_trecho
+        description: "Identificador único do trecho no banco de dados"
+      - name: id_tipo
+        description: "Código do tipo do logradouro dado pela prefeitura do Rio de Janeiro"
+      - name: tipo_logradouro
+        description: "Tipo do logradouro por extenso"
+      - name: tipo_logradouro_abreviado
+        description: "Tipo do logradouro abreviado"
+      - name: id_nobreza
+        description: "Código do tipo de nobreza do nome do logradouro dado pela prefeitura do Rio de Janeiro"
+      - name: nobreza
+        description: "Tipo de nobreza do nome do logradouro"
+      - name: preposicao
+        description: "Preposicao do nome do logradouro"
+      - name: nome_mapa
+        description: "Nome completo do logradouro abreviado para rótulo em mapas"
+      - name: id_bairro
+        description: "Código do bairro, dado pela prefeitura do Rio de Janeiro, do trecho de logradouro"
+      - name: inicio_numero_porta_par
+        description: "Numeração inicial do lado par do trecho de logradouro"
+      - name: final_numero_porta_par
+        description: "Numeração final do lado par do trecho de logradouro"
+      - name: inicio_numero_porta_impar
+        description: "Numeração inicial do lado ímpar do trecho de logradouro"
+      - name: final_numero_porta_impar
+        description: "Numeração final do lado ímpar do trecho de logradouro"
+      - name: hierarquia
+        description: "Hierarquia viária do trecho de logradouro"
+      - name: oneway
+        description: "Sentido do logradouro"
+      - name: tipo_trecho
+        description: "Tipologia do trecho de logradouro"
+      - name: objectid
+        description: "objectid"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: geometry_wkt
+        description: "Geometria do túnel em formato WKT"
+      - name: geometry
+        description: "Geometria do túnel em formato geográfico"
