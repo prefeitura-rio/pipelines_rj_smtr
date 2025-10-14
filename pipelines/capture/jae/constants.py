@@ -695,7 +695,6 @@ class constants(Enum):  # pylint: disable=c0103
             "source": LANCAMENTO_SOURCE,
             "datalake_table": "rj-smtr.bilhetagem_interno_staging.lancamento",
             "timestamp_column": "dt_lancamento",
-            "primary_keys": ["ifnull(id_lancamento, string(dt_lancamento))", "id_conta"],
         },
     }
 
