@@ -1,5 +1,9 @@
 # Changelog - projeto_subsidio_sppo
 
+### Adicionado
+
+- Adiciona testes dos indicadores do modelo `viagem_regularidade_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/928)
+
 ## [1.3.2] - 2025-09-23
 
 ### Alterado

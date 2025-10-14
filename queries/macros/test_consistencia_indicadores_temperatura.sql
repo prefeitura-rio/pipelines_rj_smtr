@@ -1,9 +1,10 @@
-{% test consistencia_indicadores_temperatura(model) -%}
+{% test test_consistencia_indicadores_temperatura(model) -%}
+--depends_on: {{ ref('aux_viagem_temperatura') }}
     with
 
         validador as (
             select data, id_viagem, id_validador
-            from `rj-smtr.subsidio_staging.aux_viagem_temperatura`
+            from {{ ref("aux_viagem_temperatura") }}
         ),
         indicadores as (
             select
@@ -62,7 +63,7 @@
                         indicadores, '$.indicador_falha_recorrente.valor'
                     ) as bool
                 ) as indicador_falha_recorrente
-            from `rj-smtr.subsidio.viagem_regularidade_temperatura`
+            from {{model}}
             left join
                 unnest(
                     json_query_array(indicadores, '$.indicador_validador.valores')
