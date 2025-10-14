@@ -83,7 +83,9 @@ with
             {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
         qualify
             row_number() over (
-                partition by l.id_lancamento, l.id_conta order by datetime_captura desc
+                partition by
+                    ifnull(l.id_lancamento, string(l.dt_lancamento)), l.id_conta
+                order by datetime_captura desc
             )
             = 1
     ),
