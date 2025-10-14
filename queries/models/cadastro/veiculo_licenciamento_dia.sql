@@ -223,7 +223,8 @@ with
             )
         qualify
             row_number() over (
-                partition by data, id_veiculo order by data_inicio_vinculo desc
+                partition by data, id_veiculo
+                order by data_inicio_vinculo desc, data_arquivo_fonte asc
             )
             = 1
     ),
