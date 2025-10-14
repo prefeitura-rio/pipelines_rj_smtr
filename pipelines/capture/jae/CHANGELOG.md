@@ -5,12 +5,7 @@
 ### Alterado
 
 - Altera lógica da task `get_capture_gaps` para executar a contagem de registros do datalake quando a tabela não possui o parametro `primary_keys` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/949)
-- Altera primary key da verificação de captura da tabela `lancamento` para `["ifnull(id_lancamento, concat(string(dt_lancamento), '_', id_movimento)","id_conta"]` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/949)
-
-### Removido
-
-- Remove primary keys da verificação de captura da tabela `lancamento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/949)
-
+- Altera primary key da verificação de captura da tabela `lancamento` para `["ifnull(id_lancamento, concat(string(dt_lancamento), '_', id_movimento))","id_conta"]` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/949)
 
 ## [3.0.2] - 2025-10-14
 
