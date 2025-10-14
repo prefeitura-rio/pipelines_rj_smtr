@@ -4,8 +4,8 @@
 
 ### Adicionado
 
-- Adiciona alias no modelo `tuneis` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
-- Adiciona descrição das colunas para o modelo `tuneis` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Adiciona alias no modelo `tuneis` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/950)
+- Adiciona descrição das colunas para o modelo `tuneis` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/950)
 
 ## [1.5.0] - 2025-09-17
 
