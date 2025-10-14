@@ -23,7 +23,7 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.utils import (
     processa_ordem_servico_trajeto_alternativo,
 )
 from pipelines.migration.utils import get_upload_storage_blob, save_raw_local_func
-from pipelines.utils.extractors.gdrive import get_google_drive_service
+from pipelines.utils.extractors.gdrive import get_google_api_service
 
 
 @task
@@ -199,7 +199,7 @@ def get_raw_gtfs_files(
         log("Baixando arquivos através do Google Drive")
 
         # Criar o serviço da API Google Drive e Google Sheets
-        drive_service = get_google_drive_service(service_name="drive", version="v3")
+        drive_service = get_google_api_service(service_name="drive", version="v3")
 
         # Baixa planilha de OS
         file_link = os_control["Link da OS"]
