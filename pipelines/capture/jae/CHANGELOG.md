@@ -1,5 +1,15 @@
 # Changelog - source_jae
 
+## [3.0.2] - 2025-10-14
+
+### Alterado
+
+- Altera primary key da verificação de captura da tabela `lancamento` para `["ifnull(id_lancamento, string(dt_lancamento))", "id_conta"]` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/948)
+
+### Corrigido
+
+- Corrige timezone da coluna data da tabela `resultado_verificacao_captura_jae` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/948)
+
 ## [3.0.1] - 2025-10-02
 
 ### Alterado
