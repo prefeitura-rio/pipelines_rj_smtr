@@ -34,7 +34,7 @@ def upload_files_postgres(quantidade_arquivos: int, timestamp=str):
 
     df_list = []
     df_length = 0
-    for i in range(quantidade_arquivos + 1):
+    for i in range(quantidade_arquivos):
 
         file_name = f"{base_file_name}-{str(i).rjust(12, '0')}.csv"
         log(f"Lendo arquivo: {file_name}")
@@ -68,6 +68,7 @@ def upload_files_postgres(quantidade_arquivos: int, timestamp=str):
                 tmp_table_name,
                 con=connection,
                 if_exists="append",
+                method="multi",
             )
             log("Dados adicionados")
 
@@ -91,6 +92,7 @@ def upload_files_postgres(quantidade_arquivos: int, timestamp=str):
         tmp_table_name,
         con=connection,
         if_exists="append",
+        method="multi",
     )
 
     log("Dados adicionados")
