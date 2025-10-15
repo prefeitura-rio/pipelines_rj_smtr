@@ -5,6 +5,7 @@ from datetime import datetime
 
 import pandas as pd
 from prefect import task
+from prefeitura_rio.pipelines_utils.logging import log
 from pytz import timezone
 from sqlalchemy import create_engine
 
@@ -34,13 +35,18 @@ def upload_files_postgres(quantidade_arquivos: int, timestamp=str):
     df_list = []
     df_length = 0
     for i in range(quantidade_arquivos + 1):
+
         file_name = f"{base_file_name}-{str(i).rjust(12, '0')}.csv"
+        log(f"Lendo arquivo: {file_name}")
         df = pd.read_csv(file_name)
 
         df_list.append(df)
         df_length += len(df)
 
+        log(f"df_length = {df_length}")
+
         if df_length >= 200_000:
+            log("Escrevendo dados no postgres...")
             df_concat = pd.concat(df_list)
 
             df_concat["data"] = pd.to_datetime(df_concat.data)
@@ -58,11 +64,14 @@ def upload_files_postgres(quantidade_arquivos: int, timestamp=str):
             df_list = []
             df_length = 0
 
-            df.to_sql(
+            df_concat.to_sql(
                 tmp_table_name,
                 con=connection,
                 if_exists="append",
             )
+            log("Dados adicionados")
+
+    log("Escrevendo dados no postgres...")
 
     df_concat = pd.concat(df_list)
 
@@ -78,8 +87,10 @@ def upload_files_postgres(quantidade_arquivos: int, timestamp=str):
         "id_ordem_pagamento_consorcio_operador_dia"
     ].astype(int)
 
-    df.to_sql(
+    df_concat.to_sql(
         tmp_table_name,
         con=connection,
         if_exists="append",
     )
+
+    log("Dados adicionados")
