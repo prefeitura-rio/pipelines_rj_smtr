@@ -1,96 +1,80 @@
 # -*- coding: utf-8 -*-
 """Tasks para exportação das transações do BQ para o Postgres"""
-
-from datetime import datetime
-
-import pandas as pd
+import psycopg2
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
-from pytz import timezone
-from sqlalchemy import create_engine
 
+from pipelines.capture.cct.constants import CCT_PRIVATE_BUCKET_NAMES
 from pipelines.capture.cct.constants import constants as cct_constants
 from pipelines.upload_transacao_cct.constants import constants
-from pipelines.utils.database import create_database_url
+from pipelines.utils.gcp.storage import Storage
 from pipelines.utils.secret import get_secret
 
 
-@task
-def upload_files_postgres(quantidade_arquivos: int, timestamp=str):
-    timestamp = datetime.fromisoformat(timestamp).strftime("%Y-%m-%d-%H-%M")
-    base_file_name = f"gs://rj-smtr-cct-private/upload/transacao_cct/{timestamp}"
-    tmp_table_name = f"tmp__{constants.TRANSACAO_POSTGRES_TABLE_NAME.value}"
-
+def copy_gcs_to_postgres(blob_name, table_name):
+    storage = Storage(env="prod", dataset_id="transacao_cct", bucket_names=CCT_PRIVATE_BUCKET_NAMES)
+    bucket = storage.bucket
+    blob = bucket.blob(blob_name)
     credentials = get_secret(cct_constants.CCT_SECRET_PATH.value)
-
-    url = create_database_url(
-        engine="postgresql",
+    with psycopg2.connect(
         host=credentials["host"],
         user=credentials["user"],
         password=credentials["password"],
         database=credentials["dbname"],
-    )
-    connection = create_engine(url)
+    ) as conn:
+        with conn.cursor() as cur:
+            sql = f"""
+                COPY {table_name}
+                FROM STDIN WITH CSV HEADER
+            """
+            with blob.open("r") as f:  # stream direto do GCS
+                cur.copy_expert(sql, f)
+        conn.commit()
 
-    df_list = []
-    df_length = 0
-    for i in range(quantidade_arquivos):
 
-        file_name = f"{base_file_name}-{str(i).rjust(12, '0')}.csv"
-        log(f"Lendo arquivo: {file_name}")
-        df = pd.read_csv(file_name)
+@task
+def upload_files_postgres():
+    storage = Storage(env="prod", dataset_id="transacao_cct", bucket_names=CCT_PRIVATE_BUCKET_NAMES)
+    bucket = storage.bucket
+    blobs = bucket.list_blobs(prefix="upload/transacao_cct/")
 
-        df_list.append(df)
-        df_length += len(df)
+    tmp_table_name = f"tmp__{constants.TRANSACAO_POSTGRES_TABLE_NAME.value}"
 
-        log(f"df_length = {df_length}")
+    credentials = get_secret(cct_constants.CCT_SECRET_PATH.value)
 
-        if df_length >= 100_000:
-            log("Tratando DF...")
-            df_concat = pd.concat(df_list)
+    with psycopg2.connect(
+        host=credentials["host"],
+        user=credentials["user"],
+        password=credentials["password"],
+        database=credentials["dbname"],
+    ) as conn:
+        with conn.cursor() as cur:
+            sql = f"""
+                CREATE TABLE IF NOT EXISTS public.{tmp_table_name}
+                (
+                    id_transacao character varying(60),
+                    data date,
+                    datetime_transacao timestamp without time zone,
+                    consorcio character varying(20),
+                    tipo_transacao character varying(50),
+                    valor_pagamento numeric(13,5),
+                    id_ordem_pagamento integer,
+                    id_ordem_pagamento_consorcio_operador_dia integer,
+                    datetime_ultima_atualizacao timestamp without time zone
+                )
+            """
+            log("Criando tabela temporária")
+            cur.execute(sql)
+            conn.commit()
+            log("Tabela temporária criada")
 
-            df_concat["data"] = pd.to_datetime(df_concat.data)
-            df_concat["datetime_transacao"] = pd.to_datetime(
-                df_concat.datetime_transacao, format="mixed"
-            ).dt.tz_localize(timezone("America/Sao_Paulo"))
-            df_concat["datetime_ultima_atualizacao"] = pd.to_datetime(
-                df_concat["datetime_ultima_atualizacao"]
-            ).dt.tz_localize(timezone("America/Sao_Paulo"))
-            df_concat["id_ordem_pagamento"] = df_concat["id_ordem_pagamento"].astype(int)
-            df_concat["id_ordem_pagamento_consorcio_operador_dia"] = df_concat[
-                "id_ordem_pagamento_consorcio_operador_dia"
-            ].astype(int)
-
-            df_list = []
-            df_length = 0
-            log("Escrevendo dados no postgres...")
-            df_concat.to_sql(
-                tmp_table_name,
-                con=connection,
-                if_exists="append",
-            )
-            log("Dados adicionados")
-
-    log("Tratando DF...")
-
-    df_concat = pd.concat(df_list)
-
-    df_concat["data"] = pd.to_datetime(df_concat.data)
-    df_concat["datetime_transacao"] = pd.to_datetime(
-        df_concat.datetime_transacao, format="mixed"
-    ).dt.tz_localize(timezone("America/Sao_Paulo"))
-    df_concat["datetime_ultima_atualizacao"] = pd.to_datetime(
-        df_concat["datetime_ultima_atualizacao"]
-    ).dt.tz_localize(timezone("America/Sao_Paulo"))
-    df_concat["id_ordem_pagamento"] = df_concat["id_ordem_pagamento"].astype(int)
-    df_concat["id_ordem_pagamento_consorcio_operador_dia"] = df_concat[
-        "id_ordem_pagamento_consorcio_operador_dia"
-    ].astype(int)
-    log("Escrevendo dados no postgres...")
-    df_concat.to_sql(
-        tmp_table_name,
-        con=connection,
-        if_exists="append",
-    )
-
-    log("Dados adicionados")
+            for blob in blobs:
+                log(f"Copiando arquivo {blob.name} para o Postgres")
+                sql = f"""
+                    COPY {tmp_table_name}
+                    FROM STDIN WITH CSV HEADER
+                """
+                with blob.open("r") as f:
+                    cur.copy_expert(sql, f)
+                conn.commit()
+                log("Cópia completa")
