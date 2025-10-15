@@ -49,6 +49,7 @@ def upload_files_postgres():
         database=credentials["dbname"],
     ) as conn:
         with conn.cursor() as cur:
+            cur.execute(f"DROP TABLE IF EXISTS public.{tmp_table_name}")
             sql = f"""
                 CREATE TABLE IF NOT EXISTS public.{tmp_table_name}
                 (
@@ -71,7 +72,7 @@ def upload_files_postgres():
             for blob in blobs:
                 log(f"Copiando arquivo {blob.name} para o Postgres")
                 sql = f"""
-                    COPY {tmp_table_name}
+                    COPY {constants.TRANSACAO_POSTGRES_TABLE_NAME.value}
                     FROM STDIN WITH CSV HEADER
                 """
                 with blob.open("r") as f:
