@@ -5,6 +5,7 @@ Tasks for gtfs
 import io
 import zipfile
 from datetime import datetime
+from functools import partial
 
 import openpyxl as xl
 import pandas as pd
@@ -22,8 +23,14 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.utils import (
     processa_ordem_servico_faixa_horaria,
     processa_ordem_servico_trajeto_alternativo,
 )
-from pipelines.migration.utils import get_upload_storage_blob, save_raw_local_func
+from pipelines.migration.utils import (
+    create_bq_external_table,
+    get_upload_storage_blob,
+    save_raw_local_func,
+)
 from pipelines.utils.extractors.gdrive import get_google_api_service
+from pipelines.utils.gcp.bigquery import BQTable
+from pipelines.utils.gcp.storage import Storage
 
 
 @task
@@ -262,3 +269,47 @@ def get_raw_gtfs_files(
                 raw_filepaths.append(raw_file_path)
 
     return raw_filepaths, list(dict_gtfs.values())
+
+
+@task
+def upload_raw_data_to_gcs(
+    env: str, table_id: str, raw_filepath: str, dataset_id: str, partitions: list
+):
+
+    Storage(env=env, dataset_id=dataset_id, table_id=table_id).upload_file(
+        mode="raw",
+        filepath=raw_filepath,
+        partition=partitions,
+    )
+
+
+@task
+def upload_staging_data_to_gcs(
+    env: str, table_id: str, staging_filepath: str, dataset_id: str, partitions: list
+):
+
+    dataset_id = f"{dataset_id}_staging" if env == "dev" else dataset_id
+    tb_obj = BQTable(env=env, dataset_id=dataset_id, table_id=table_id)
+
+    create_func = partial(
+        create_bq_external_table,
+        table_obj=tb_obj,
+        path=staging_filepath.split(partitions)[0],
+        bucket_name=tb_obj.bucket_name,
+    )
+
+    append_func = partial(
+        Storage(env=env, dataset_id=dataset_id, table_id=table_id).upload_file,
+        mode="staging",
+        filepath=staging_filepath,
+        partition=partitions,
+    )
+
+    if not tb_obj.exists():
+        log(f"Tabela {tb_obj.table_full_name} não existe. Criando tabela...")
+        create_func()
+        log(f"Tabela {tb_obj.table_full_name} criada com sucesso.")
+    else:
+        log(f"Tabela {tb_obj.table_full_name} já existe.")
+        append_func()
+        log(f"Tabela {tb_obj.table_full_name} atualizada com sucesso.")
