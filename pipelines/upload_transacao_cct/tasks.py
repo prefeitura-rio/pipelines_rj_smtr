@@ -50,6 +50,7 @@ def upload_files_postgres():
     ) as conn:
         with conn.cursor() as cur:
             cur.execute(f"DROP TABLE IF EXISTS public.{tmp_table_name}")
+            cur.execute(f"TRUNCATE TABLE public.{constants.TRANSACAO_POSTGRES_TABLE_NAME.value}")
             sql = f"""
                 CREATE TABLE IF NOT EXISTS public.{tmp_table_name}
                 (
