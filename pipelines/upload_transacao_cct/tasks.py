@@ -45,8 +45,8 @@ def upload_files_postgres(quantidade_arquivos: int, timestamp=str):
 
         log(f"df_length = {df_length}")
 
-        if df_length >= 200_000:
-            log("Escrevendo dados no postgres...")
+        if df_length >= 100_000:
+            log("Tratando DF...")
             df_concat = pd.concat(df_list)
 
             df_concat["data"] = pd.to_datetime(df_concat.data)
@@ -63,16 +63,15 @@ def upload_files_postgres(quantidade_arquivos: int, timestamp=str):
 
             df_list = []
             df_length = 0
-
+            log("Escrevendo dados no postgres...")
             df_concat.to_sql(
                 tmp_table_name,
                 con=connection,
                 if_exists="append",
-                method="multi",
             )
             log("Dados adicionados")
 
-    log("Escrevendo dados no postgres...")
+    log("Tratando DF...")
 
     df_concat = pd.concat(df_list)
 
@@ -87,12 +86,11 @@ def upload_files_postgres(quantidade_arquivos: int, timestamp=str):
     df_concat["id_ordem_pagamento_consorcio_operador_dia"] = df_concat[
         "id_ordem_pagamento_consorcio_operador_dia"
     ].astype(int)
-
+    log("Escrevendo dados no postgres...")
     df_concat.to_sql(
         tmp_table_name,
         con=connection,
         if_exists="append",
-        method="multi",
     )
 
     log("Dados adicionados")
