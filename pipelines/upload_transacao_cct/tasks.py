@@ -17,7 +17,7 @@ def upload_files_postgres():
     file_name = "gs://rj-smtr-cct-private/upload/transacao_cct/2025-10-14-15-42-000000000000.csv"
     df = pd.read_csv(file_name)
     df["data"] = pd.to_datetime(df.data)
-    df["datetime_transacao"] = pd.to_datetime(df.datetime_transacao).dt.tz_localize(
+    df["datetime_transacao"] = pd.to_datetime(df.datetime_transacao, format="mixed").dt.tz_localize(
         timezone("America/Sao_Paulo")
     )
     df["datetime_ultima_atualizacao"] = pd.to_datetime(
