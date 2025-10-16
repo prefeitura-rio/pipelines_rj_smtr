@@ -591,7 +591,7 @@ def processa_ordem_servico_faixa_horaria(
 
         for col in df.columns:
             if "quilometragem" in col or "viagens" in col or "partidas" in col:
-                df[col] = df[col].astype(str).replace("—", 0)
+                df[col] = df[col].astype(str).replace(["—", "-"], 0)
             if "quilometragem" in col or "viagens" in col:
                 df[col] = df[col].astype(str).apply(convert_to_float).astype(float)
             if "extensao" in col:
