@@ -273,7 +273,7 @@ def get_raw_gtfs_files(
 
 @task
 def upload_raw_data_to_gcs(
-    env: str, table_id: str, raw_filepath: str, dataset_id: str, partitions: list
+    env: str, table_id: str, raw_filepath: str, dataset_id: str, partitions: str
 ):
 
     Storage(env=env, dataset_id=dataset_id, table_id=table_id).upload_file(
@@ -285,16 +285,15 @@ def upload_raw_data_to_gcs(
 
 @task
 def upload_staging_data_to_gcs(
-    env: str, table_id: str, staging_filepath: str, dataset_id: str, partitions: list
+    env: str, table_id: str, staging_filepath: str, dataset_id: str, partitions: str
 ):
 
-    dataset_id = f"{dataset_id}_staging" if env == "dev" else dataset_id
     tb_obj = BQTable(env=env, dataset_id=dataset_id, table_id=table_id)
 
     create_func = partial(
         create_bq_external_table,
         table_obj=tb_obj,
-        path=staging_filepath.split(partitions)[0],
+        path=staging_filepath,
         bucket_name=tb_obj.bucket_name,
     )
 
