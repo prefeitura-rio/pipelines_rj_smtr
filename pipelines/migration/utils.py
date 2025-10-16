@@ -6,6 +6,7 @@ General purpose functions for rj_smtr
 
 import io
 import json
+import os
 import time
 import traceback
 import zipfile
@@ -38,6 +39,8 @@ from pytz import timezone
 
 from pipelines.constants import constants
 from pipelines.utils.discord import send_discord_message
+from pipelines.utils.gcp.bigquery import BQTable, Dataset
+from pipelines.utils.gcp.storage import Storage as GCPStorage
 from pipelines.utils.implicit_ftp import ImplicitFtpTls
 from pipelines.utils.secret import get_secret
 
@@ -96,7 +99,7 @@ def create_bq_table_schema(
     return schema
 
 
-def create_bq_external_table(table_obj: Table, path: str, bucket_name: str):
+def create_bq_external_table(table_obj: Union[Table, BQTable], path: str, bucket_name: str):
     """Creates an BigQuery External table based on sample data
 
     Args:
@@ -105,36 +108,56 @@ def create_bq_external_table(table_obj: Table, path: str, bucket_name: str):
         bucket_name (str, Optional): The bucket name where the data is located
     """
 
-    Storage(
-        dataset_id=table_obj.dataset_id,
-        table_id=table_obj.table_id,
-        bucket_name=bucket_name,
-    ).upload(
-        path=path,
-        mode="staging",
-        if_exists="replace",
-    )
+    if isinstance(table_obj, Table):
+        Storage(
+            dataset_id=table_obj.dataset_id,
+            table_id=table_obj.table_id,
+            bucket_name=bucket_name,
+        ).upload(
+            path=path,
+            mode="staging",
+            if_exists="replace",
+        )
+        table_full_name = table_obj.table_full_name["staging"]
+        project_name = table_obj.client["bigquery_prod"].project
+        prod_table_name = table_obj.table_full_name["prod"].replace(
+            project_name, f"{project_name}.{bucket_name}", 1
+        )
+        bq_client = table_obj.client["bigquery_staging"]
+    else:
+        dataset_id = table_obj.dataset_id.removesuffix("_staging")
+        partition = next((p for p in path.split(os.sep) if "=" in p), None)
 
-    bq_table = bigquery.Table(table_obj.table_full_name["staging"])
-    project_name = table_obj.client["bigquery_prod"].project
-    table_full_name = table_obj.table_full_name["prod"].replace(
-        project_name, f"{project_name}.{bucket_name}", 1
-    )
-    bq_table.description = f"staging table for `{table_full_name}`"
+        GCPStorage(
+            env=table_obj.env,
+            dataset_id=dataset_id,
+            table_id=table_obj.table_id,
+        ).upload_file(
+            filepath=path,
+            mode="staging",
+            partition=partition,
+        )
 
+        dataset_obj = Dataset(dataset_id=table_obj.dataset_id, env=table_obj.env)
+        dataset_obj.create()
+
+        table_full_name = table_obj.table_full_name
+        prod_table_name = table_full_name.replace(table_obj.dataset_id, dataset_id, 1)
+        bq_client = table_obj.client("bigquery")
+
+    bq_table = bigquery.Table(table_full_name)
+    bq_table.description = f"staging table for `{prod_table_name}`"
     bq_table.external_data_configuration = Datatype(
         dataset_id=table_obj.dataset_id,
         table_id=table_obj.table_id,
-        schema=create_bq_table_schema(
-            data_sample_path=path,
-        ),
+        schema=create_bq_table_schema(data_sample_path=path),
         mode="staging",
         bucket_name=bucket_name,
         partitioned=True,
         biglake_connection_id=None,
     ).external_config
 
-    table_obj.client["bigquery_staging"].create_table(bq_table)
+    bq_client.create_table(bq_table)
 
 
 def create_or_append_table(
