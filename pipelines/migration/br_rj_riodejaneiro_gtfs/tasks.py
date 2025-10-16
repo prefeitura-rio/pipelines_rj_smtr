@@ -3,14 +3,12 @@
 Tasks for gtfs
 """
 import io
-import os
 import zipfile
 from datetime import datetime
+from functools import partial
 
 import openpyxl as xl
 import pandas as pd
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
@@ -25,7 +23,14 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.utils import (
     processa_ordem_servico_faixa_horaria,
     processa_ordem_servico_trajeto_alternativo,
 )
-from pipelines.migration.utils import get_upload_storage_blob, save_raw_local_func
+from pipelines.migration.utils import (
+    create_bq_external_table,
+    get_upload_storage_blob,
+    save_raw_local_func,
+)
+from pipelines.utils.extractors.gdrive import get_google_api_service
+from pipelines.utils.gcp.bigquery import BQTable
+from pipelines.utils.gcp.storage import Storage
 
 
 @task
@@ -200,14 +205,8 @@ def get_raw_gtfs_files(
     else:
         log("Baixando arquivos através do Google Drive")
 
-        # Autenticar usando o arquivo de credenciais
-        credentials = service_account.Credentials.from_service_account_file(
-            filename=os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
-            scopes=["https://www.googleapis.com/auth/drive.readonly"],
-        )
-
         # Criar o serviço da API Google Drive e Google Sheets
-        drive_service = build("drive", "v3", credentials=credentials)
+        drive_service = get_google_api_service(service_name="drive", version="v3")
 
         # Baixa planilha de OS
         file_link = os_control["Link da OS"]
@@ -270,3 +269,46 @@ def get_raw_gtfs_files(
                 raw_filepaths.append(raw_file_path)
 
     return raw_filepaths, list(dict_gtfs.values())
+
+
+@task
+def upload_raw_data_to_gcs(
+    env: str, table_id: str, raw_filepath: str, dataset_id: str, partitions: str
+):
+
+    Storage(env=env, dataset_id=dataset_id, table_id=table_id).upload_file(
+        mode="raw",
+        filepath=raw_filepath,
+        partition=partitions,
+    )
+
+
+@task
+def upload_staging_data_to_gcs(
+    env: str, table_id: str, staging_filepath: str, dataset_id: str, partitions: str
+):
+    dataset_id_staging = f"{dataset_id}_staging"
+    tb_obj = BQTable(env=env, dataset_id=dataset_id_staging, table_id=table_id)
+
+    create_func = partial(
+        create_bq_external_table,
+        table_obj=tb_obj,
+        path=staging_filepath,
+        bucket_name=tb_obj.bucket_name,
+    )
+
+    append_func = partial(
+        Storage(env=env, dataset_id=dataset_id, table_id=table_id).upload_file,
+        mode="staging",
+        filepath=staging_filepath,
+        partition=partitions,
+    )
+
+    if not tb_obj.exists():
+        log(f"Tabela {tb_obj.table_full_name} não existe. Criando tabela...")
+        create_func()
+        log(f"Tabela {tb_obj.table_full_name} criada com sucesso.")
+    else:
+        log(f"Tabela {tb_obj.table_full_name} já existe.")
+        append_func()
+        log(f"Tabela {tb_obj.table_full_name} atualizada com sucesso.")
