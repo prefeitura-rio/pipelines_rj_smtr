@@ -12,3 +12,7 @@ class constants(Enum):  # pylint: disable=c0103
     """
 
     TRANSACAO_POSTGRES_TABLE_NAME = "transacao_bigquery"
+    REDIS_KEY = "cct_upload_transacao_bigquery"
+    LAST_UPLOAD_TIMESTAMP_KEY_NAME = "last_upload_timestamp"
+    TRANSACAO_CCT_FOLDER = "transacao_cct"
+    EXPORT_GCS_PREFIX = f"upload/{TRANSACAO_CCT_FOLDER}"
