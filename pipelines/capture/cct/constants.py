@@ -18,7 +18,9 @@ class constants(Enum):  # pylint: disable=c0103
     Valores constantes para captura de dados da CCT
     """
 
-    CCT_SECRET_PATH = "cct_db_hmg"
+    CCT_SECRET_PATH = "cct_db"
+
+    CCT_HMG_SECRET_PATH = "cct_db_hmg"
 
     CCT_TABLE_CAPTURE_PARAMS = {
         "ordem_pagamento": {
