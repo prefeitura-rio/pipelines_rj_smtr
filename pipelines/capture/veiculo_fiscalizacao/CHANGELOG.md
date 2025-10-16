@@ -1,5 +1,11 @@
 # Changelog - veiculo_fiscalizacao
 
+## [1.0.2] - 2025-10-16
+
+### Alterado
+
+- Removido o filtro da captura dos dados da planilha de lacre de veículos na `create_veiculo_fiscalizacao_lacre_extractor` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/912)
+
 ## [1.0.1] - 2025-07-08
 
 ### Alterado
