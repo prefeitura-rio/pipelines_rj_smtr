@@ -39,7 +39,7 @@ from pytz import timezone
 
 from pipelines.constants import constants
 from pipelines.utils.discord import send_discord_message
-from pipelines.utils.gcp.bigquery import BQTable
+from pipelines.utils.gcp.bigquery import BQTable, Dataset
 from pipelines.utils.gcp.storage import Storage as GCPStorage
 from pipelines.utils.implicit_ftp import ImplicitFtpTls
 from pipelines.utils.secret import get_secret
@@ -137,8 +137,12 @@ def create_bq_external_table(table_obj: Union[Table, BQTable], path: str, bucket
             mode="staging",
             partition=partition,
         )
-        table_full_name = table_obj.table_full_name.replace(table_obj.dataset_id, dataset_id, 1)
-        prod_table_name = table_full_name
+
+        dataset_obj = Dataset(dataset_id=table_obj.dataset_id, env=table_obj.env)
+        dataset_obj.create()
+
+        table_full_name = table_obj.table_full_name
+        prod_table_name = table_full_name.replace(table_obj.dataset_id, dataset_id, 1)
         bq_client = table_obj.client("bigquery")
 
     bq_table = bigquery.Table(table_full_name)

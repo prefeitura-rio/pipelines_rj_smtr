@@ -287,8 +287,8 @@ def upload_raw_data_to_gcs(
 def upload_staging_data_to_gcs(
     env: str, table_id: str, staging_filepath: str, dataset_id: str, partitions: str
 ):
-
-    tb_obj = BQTable(env=env, dataset_id=dataset_id, table_id=table_id)
+    _dataset_id = f"{dataset_id}_staging" if env == "dev" else dataset_id
+    tb_obj = BQTable(env=env, dataset_id=_dataset_id, table_id=table_id)
 
     create_func = partial(
         create_bq_external_table,
