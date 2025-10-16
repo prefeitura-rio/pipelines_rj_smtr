@@ -50,19 +50,18 @@ def upload_files_postgres():
     ) as conn:
         with conn.cursor() as cur:
             cur.execute(f"DROP TABLE IF EXISTS public.{tmp_table_name}")
-            cur.execute(f"TRUNCATE TABLE public.{constants.TRANSACAO_POSTGRES_TABLE_NAME.value}")
             sql = f"""
                 CREATE TABLE IF NOT EXISTS public.{tmp_table_name}
                 (
                     id_transacao character varying(60),
                     data date,
-                    datetime_transacao timestamp without time zone,
+                    datetime_transacao timestamp,
                     consorcio character varying(20),
                     tipo_transacao character varying(50),
                     valor_pagamento numeric(13,5),
                     id_ordem_pagamento integer,
                     id_ordem_pagamento_consorcio_operador_dia integer,
-                    datetime_ultima_atualizacao timestamp without time zone
+                    datetime_ultima_atualizacao timestamp
                 )
             """
             log("Criando tabela temporária")
@@ -73,7 +72,7 @@ def upload_files_postgres():
             for blob in blobs:
                 log(f"Copiando arquivo {blob.name} para o Postgres")
                 sql = f"""
-                    COPY {constants.TRANSACAO_POSTGRES_TABLE_NAME.value}
+                    COPY {tmp_table_name}
                     FROM STDIN WITH CSV HEADER
                 """
                 with blob.open("r") as f:
