@@ -76,6 +76,7 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
     upload = upload_files_postgres(
         env=env,
         full_refresh=full_refresh,
+        upstream_tasks=[export_bigquery],
     )
 
     save_upload_timestamp_redis(
