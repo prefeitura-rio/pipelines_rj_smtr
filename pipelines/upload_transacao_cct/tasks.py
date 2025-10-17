@@ -237,7 +237,7 @@ def upload_files_postgres(
 
             sql = f"""
                 CREATE INDEX
-                public.idx_transacao_id_ordem
+                idx_transacao_id_ordem
                 ON public.{table_name} (id_ordem_pagamento_consorcio_operador_dia)
             """
             log("Recriando índice tabela final")
