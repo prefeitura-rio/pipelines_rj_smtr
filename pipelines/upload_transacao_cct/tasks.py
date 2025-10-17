@@ -210,18 +210,17 @@ def upload_files_postgres(
                 log("Deletando índice da tabela temporária")
                 cur.execute(sql)
 
+                log(f"Copiando arquivo {blob.name} para a tabela temporária")
+                sql = f"""
+                    COPY public.{tmp_table_name}
+                    FROM STDIN WITH CSV HEADER
+                """
+
+                with blob.open("r") as f:
+                    cur.copy_expert(sql, f)
+                log("Cópia completa")
+
                 if not full_refresh:
-
-                    log(f"Copiando arquivo {blob.name} para a tabela temporária")
-                    sql = f"""
-                        COPY public.{tmp_table_name}
-                        FROM STDIN WITH CSV HEADER
-                    """
-
-                    with blob.open("r") as f:
-                        cur.copy_expert(sql, f)
-                    log("Cópia completa")
-
                     sql = f"""
                         CREATE INDEX idx_tmp_id_transacao
                         ON public.{tmp_table_name} (id_transacao)
@@ -238,10 +237,10 @@ def upload_files_postgres(
                     cur.execute(sql)
                     log(f"{cur.rowcount} linhas deletadas")
 
-                log(f"Copiando arquivo {blob.name} para a tabela final")
+                log("Copiando para a tabela final")
                 sql = f"""
                     COPY public.{table_name}
-                    FROM STDIN WITH CSV HEADER
+                    FROM public.{tmp_table_name}
                 """
                 with blob.open("r") as f:
                     cur.copy_expert(sql, f)
