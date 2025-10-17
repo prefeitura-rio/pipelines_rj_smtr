@@ -23,7 +23,8 @@
     {% set columns = (
         list_columns()
         | reject(
-            "in"["versao", "datetime_ultima_atualizacao", "id_execucao_dbt"],
+            "in",
+            ["versao", "datetime_ultima_atualizacao", "id_execucao_dbt"],
         )
         | list
     ) %}
@@ -40,7 +41,7 @@
     {% endset %}
 
     {% set data_partitions_query %}
-            select distinct concat("'", date(datetime_transacao),  "'" as datatime_transacao)
+            select distinct concat("'", date(datetime_transacao),  "'") as datatime_transacao
             from {{ transacao }}
             where {{ incremental_filter }}
     {% endset %}
@@ -51,7 +52,7 @@
     {% set sha_column %}
         cast(null as bytes)
     {% endset %}
-{% endset %}
+{% endif %}
 
     with
         dados_novos as (
@@ -79,7 +80,7 @@
                 t.tipo_transacao_jae in ('Gratuidade', 'Integração gratuidade')
                 and t.tipo_usuario = "Estudante"
                 and t.subtipo_usuario = 'Ensino Básico Municipal'
-        {% if is_incremental() %} and {{ incremental_filter }} {% end if %}
+        {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
     qualify
             row_number() over (partition by id_transacao order by datetime_transacao) = 1
     ),

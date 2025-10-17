@@ -119,6 +119,15 @@ models:
         description: "{{ doc('subtipo_usuario') }}"
       - name: id_cre_escola
         description: "{{ doc('id_cre_escola') }} do cliente"
+      - name: nome_escola
+        description: Nome da escola
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao ') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt ') }}"
+
   - name: extrato_cliente_cartao
     description: Tabela de extrato do cliente
     columns:
