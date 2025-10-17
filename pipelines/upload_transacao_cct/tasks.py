@@ -206,24 +206,26 @@ def upload_files_postgres(
                 log("Truncando tabela temporária")
                 cur.execute(f"TRUNCATE TABLE public.{tmp_table_name}")
 
-                log(f"Copiando arquivo {blob.name} para a tabela temporária")
-                sql = f"""
-                    COPY public.{tmp_table_name}
-                    FROM STDIN WITH CSV HEADER
-                """
+                if not full_refresh:
 
-                with blob.open("r") as f:
-                    cur.copy_expert(sql, f)
-                log("Cópia completa")
+                    log(f"Copiando arquivo {blob.name} para a tabela temporária")
+                    sql = f"""
+                        COPY public.{tmp_table_name}
+                        FROM STDIN WITH CSV HEADER
+                    """
 
-                sql = f"""
-                    DELETE FROM public.{table_name} t
-                    USING public.{tmp_table_name} s
-                    WHERE t.id_transacao = s.id_transacao
-                """
-                log("Deletando registros da tabela final")
-                cur.execute(sql)
-                log(f"{cur.rowcount} linhas deletadas")
+                    with blob.open("r") as f:
+                        cur.copy_expert(sql, f)
+                    log("Cópia completa")
+
+                    sql = f"""
+                        DELETE FROM public.{table_name} t
+                        USING public.{tmp_table_name} s
+                        WHERE t.id_transacao = s.id_transacao
+                    """
+                    log("Deletando registros da tabela final")
+                    cur.execute(sql)
+                    log(f"{cur.rowcount} linhas deletadas")
 
                 log(f"Copiando arquivo {blob.name} para a tabela final")
                 sql = f"""
