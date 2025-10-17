@@ -167,7 +167,7 @@ def upload_files_postgres(
 
         with conn.cursor() as cur:
 
-            sql = "DROP INDEX IF EXISTS idx_transacao_id_ordem"
+            sql = "DROP INDEX IF EXISTS public.idx_transacao_id_ordem"
             log("Deletando índice tabela final")
             cur.execute(sql)
             log("Índice deletado")
@@ -181,6 +181,7 @@ def upload_files_postgres(
                     consorcio character varying(20),
                     tipo_transacao character varying(50),
                     valor_pagamento numeric(13,5),
+                    data_ordem date,
                     id_ordem_pagamento integer,
                     id_ordem_pagamento_consorcio_operador_dia integer,
                     datetime_ultima_atualizacao timestamp
@@ -215,7 +216,7 @@ def upload_files_postgres(
                 """
                 log("Deletando registros da tabela final")
                 cur.execute(sql)
-                print(f"{cur.rowcount} linhas deletadas")
+                log(f"{cur.rowcount} linhas deletadas")
 
                 log(f"Copiando arquivo {blob.name} para a tabela final")
                 sql = f"""
@@ -236,7 +237,7 @@ def upload_files_postgres(
 
             sql = f"""
                 CREATE INDEX
-                idx_transacao_id_ordem
+                public.idx_transacao_id_ordem
                 ON public.{table_name} (id_ordem_pagamento_consorcio_operador_dia)
             """
             log("Recriando índice tabela final")
