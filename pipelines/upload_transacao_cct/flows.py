@@ -82,7 +82,7 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
         env=env,
         timestamp=timestamp,
         data_ordem_start=data_ordem_start,
-        upstream_tasks=[export_bigquery],
+        upstream_tasks=[upload],
     )
 
 
