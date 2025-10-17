@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados da validação dos dados da Jaé
 
-DBT 2025-10-13
+DBT 2025-10-17
 """
 
 from pipelines.constants import constants as smtr_constants
@@ -29,4 +29,5 @@ ALERTA_TRANSACAO_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="alerta_transacao - materializacao",
     selector=constants.ALERTA_TRANSACAO_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    generate_schedule=False,
 )
