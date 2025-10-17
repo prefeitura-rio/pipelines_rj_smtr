@@ -5,7 +5,6 @@ from typing import Optional
 
 import pandas_gbq
 import psycopg2
-from google.cloud.storage.blob import Blob
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
@@ -138,20 +137,8 @@ def export_data_from_bq_to_gcs(
 
 
 @task
-def get_export_blobs(env: str) -> list[Blob]:
-    storage = Storage(
-        env=env,
-        dataset_id="transacao_cct",
-        bucket_names=CCT_PRIVATE_BUCKET_NAMES,
-    )
-
-    return list(storage.bucket.list_blobs(prefix=f"{constants.EXPORT_GCS_PREFIX.value}/"))
-
-
-@task
 def upload_files_postgres(
     env: str,
-    blobs: list[Blob],
     full_refresh: bool,
 ):
     table_name = constants.TRANSACAO_POSTGRES_TABLE_NAME.value
@@ -163,6 +150,12 @@ def upload_files_postgres(
         if env == "prod"
         else get_secret(cct_constants.CCT_HMG_SECRET_PATH.value)
     )
+
+    blobs = Storage(
+        env=env,
+        dataset_id="transacao_cct",
+        bucket_names=CCT_PRIVATE_BUCKET_NAMES,
+    ).bucket.list_blobs(prefix=f"{constants.EXPORT_GCS_PREFIX.value}/")
 
     with psycopg2.connect(
         host=credentials["host"],

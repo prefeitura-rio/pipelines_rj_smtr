@@ -19,7 +19,6 @@ from pipelines.tasks import get_run_env, get_scheduled_timestamp
 from pipelines.upload_transacao_cct.tasks import (
     export_data_from_bq_to_gcs,
     full_refresh_delete_all_files,
-    get_export_blobs,
     get_start_datetime,
     save_upload_timestamp_redis,
     upload_files_postgres,
@@ -74,11 +73,8 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
         upstream_tasks=[full_refresh_delete],
     )
 
-    blobs = get_export_blobs(env=env, upstream_tasks=[export_bigquery])
-
     upload = upload_files_postgres(
         env=env,
-        blobs=blobs,
         full_refresh=full_refresh,
     )
 
