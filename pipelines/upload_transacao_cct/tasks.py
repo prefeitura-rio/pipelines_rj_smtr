@@ -84,8 +84,8 @@ def export_data_from_bq_to_gcs(
 
     export_filter = "true"
 
-    start_ts = start_datetime.strftime("%Y-%M-%d %H:%M%S")
-    end_ts = timestamp.strftime("%Y-%M-%d %H:%M%S")
+    start_ts = start_datetime.strftime("%Y-%M-%d %H:%M:%S")
+    end_ts = timestamp.strftime("%Y-%M-%d %H:%M:%S")
 
     if not full_refresh and data_ordem_start is None:
         modified_partitions = get_modified_partitions(
