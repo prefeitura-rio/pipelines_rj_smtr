@@ -59,7 +59,7 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
     full_refresh_delete = ifelse(
         full_refresh.is_equal(True),
         full_refresh_delete_all_files(env=env),
-        Constant(None, value="delete_all_false"),
+        Constant(None, name="delete_all_false"),
     )
 
     export_bigquery = export_data_from_bq_to_gcs(
