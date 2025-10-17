@@ -5,7 +5,7 @@ from types import NoneType
 
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
-from prefect.tasks.control_flow import ifelse
+from prefect.tasks.control_flow import case, merge
 from prefect.tasks.core.constants import Constant
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
@@ -16,12 +16,13 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 
 from pipelines.constants import constants as smtr_constants
 from pipelines.tasks import get_run_env, get_scheduled_timestamp
-
-# upload_files_postgres,; get_export_blobs,; save_upload_timestamp_redis,
 from pipelines.upload_transacao_cct.tasks import (
     export_data_from_bq_to_gcs,
     full_refresh_delete_all_files,
+    get_export_blobs,
     get_start_datetime,
+    save_upload_timestamp_redis,
+    upload_files_postgres,
 )
 from pipelines.utils.prefect import TypedParameter
 
@@ -49,18 +50,19 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
 
     timestamp = get_scheduled_timestamp()
 
-    start_datetime = get_start_datetime(
+    start_datetime, full_refresh = get_start_datetime(
         env=env,
         full_refresh=full_refresh,
         data_ordem_start=data_ordem_start,
         data_ordem_end=data_ordem_end,
     )
 
-    full_refresh_delete = ifelse(
-        full_refresh.is_equal(True),
-        full_refresh_delete_all_files(env=env),
-        Constant(None, name="delete_all_false"),
-    )
+    with case(full_refresh.is_equal(True), True):
+        full_refresh_delete_true = full_refresh_delete_all_files(env=env)
+    with case(full_refresh.is_equal(True), False):
+        full_refresh_delete_false = Constant(None, name="delete_all_false")
+
+    full_refresh_delete = merge(full_refresh_delete_true, full_refresh_delete_false)
 
     export_bigquery = export_data_from_bq_to_gcs(
         env=env,
@@ -72,20 +74,20 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
         upstream_tasks=[full_refresh_delete],
     )
 
-    # blobs = get_export_blobs(env=env, upstream_tasks=[export_bigquery])
+    blobs = get_export_blobs(env=env, upstream_tasks=[export_bigquery])
 
-    # upload = upload_files_postgres(
-    #     env=env,
-    #     blobs=blobs,
-    #     full_refresh=full_refresh,
-    # )
+    upload = upload_files_postgres(
+        env=env,
+        blobs=blobs,
+        full_refresh=full_refresh,
+    )
 
-    # save_upload_timestamp_redis(
-    #     env=env,
-    #     timestamp=timestamp,
-    #     data_ordem_start=data_ordem_start,
-    #     upstream_tasks=[upload],
-    # )
+    save_upload_timestamp_redis(
+        env=env,
+        timestamp=timestamp,
+        data_ordem_start=data_ordem_start,
+        upstream_tasks=[export_bigquery],
+    )
 
 
 upload_transacao_cct.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)

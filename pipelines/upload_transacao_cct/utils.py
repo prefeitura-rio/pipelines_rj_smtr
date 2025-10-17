@@ -2,6 +2,8 @@
 import pandas_gbq
 from prefeitura_rio.pipelines_utils.logging import log
 
+from pipelines.upload_transacao_cct.constants import constants
+
 
 def get_modified_partitions(
     project_id: str,
@@ -32,7 +34,7 @@ def get_modified_partitions(
         SELECT
             DISTINCT CONCAT("'", data, "'") AS particao
         FROM
-            rj-smtr.projeto_app_cct.transacao_cct
+            {project_id}.{constants.TRANSACAO_CCT_VIEW_NAME.value}
         WHERE
         data IN ({', '.join(modified_partitions)})
         AND datetime_ultima_atualizacao
@@ -70,15 +72,13 @@ def get_partition_using_data_ordem(
 
     sql = f"""
         SELECT
-            DISTINCT CONCAT("'", t.data, "'") AS particao
+            DISTINCT CONCAT("'", data, "'") AS particao
         FROM
-            rj-smtr.projeto_app_cct.transacao_cct t
-        JOIN
-            rj-smtr.financeiro.bilhetagem_consorcio_operador_dia o
-        USING(id_ordem_pagamento_consorcio_operador_dia)
+            {project_id}.{constants.TRANSACAO_CCT_VIEW_NAME.value}
+
         WHERE
-        t.data IN ({', '.join(partitions)})
-        AND o.data_ordem BETWEEN "{data_ordem_start}" AND "{data_ordem_end}"
+        data IN ({', '.join(partitions)})
+        AND data_ordem BETWEEN "{data_ordem_start}" AND "{data_ordem_end}"
     """
 
     log(f"Executando query:\n{sql}")

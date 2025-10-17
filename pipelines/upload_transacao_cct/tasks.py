@@ -23,27 +23,30 @@ from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import convert_timezone
 
 
-@task
+@task(nout=2)
 def get_start_datetime(
     env: str,
     full_refresh: bool,
     data_ordem_start: str,
     data_ordem_end: str,
-) -> Optional[datetime]:
+) -> tuple[Optional[datetime], bool]:
     if (data_ordem_start is None) != (data_ordem_end is None):
         raise ValueError("Filtro de data ordem com inicio ou fim nulo")
 
+    start_datetime = None
     if not full_refresh and data_ordem_start is None:
-        redis_client = get_redis_client()
+        redis_client = get_redis_client(host="localhost")
         content = redis_client.get(f"{env}.{constants.REDIS_KEY.value}")
-        if content is not None:
-            return convert_timezone(
+        if content is None:
+            full_refresh = True
+        else:
+            start_datetime = convert_timezone(
                 timestamp=datetime.fromisoformat(
                     content[constants.LAST_UPLOAD_TIMESTAMP_KEY_NAME.value]
                 )
             )
 
-    return None
+    return start_datetime, full_refresh
 
 
 @task
@@ -70,51 +73,50 @@ def export_data_from_bq_to_gcs(
 ):
     project_id = smtr_constants.PROJECT_NAME.value[env]
 
-    transacao_select = """
-        SELECT
-            {cols}
-        FROM
-            rj-smtr.projeto_app_cct.transacao_cct
-        WHERE
-            {export_filter}
-        LIMIT {count}
-    """
-
     file_name = f"{timestamp.strftime('%Y-%m-%d-%H-%M-%S')}-*.csv"
 
     export_filter = "true"
 
-    start_ts = start_datetime.strftime("%Y-%M-%d %H:%M:%S")
-    end_ts = timestamp.strftime("%Y-%M-%d %H:%M:%S")
+    end_ts = timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
-    if not full_refresh and data_ordem_start is None:
-        modified_partitions = get_modified_partitions(
-            project_id=env,
-            start_ts=start_ts,
-            end_ts=end_ts,
-        )
-        export_filter = f"""
-        data IN ({', '.join(modified_partitions)})
-        AND datetime_ultima_atualizacao
-            BETWEEN DATETIME("{start_ts}")
-            AND DATETIME("{end_ts}")
-        """
-    elif full_refresh:
+    if full_refresh:
         export_filter = f"datetime_ultima_atualizacao <= DATETIME('{end_ts}')"
     else:
-        partitions = get_partition_using_data_ordem(
-            project_id=project_id,
-            data_ordem_start=data_ordem_start,
-            data_ordem_end=data_ordem_end,
-        )
-        export_filter = f"""
-        data IN ({', '.join(partitions)})
-        AND data_ordem
-            BETWEEN "{data_ordem_start}"
-            AND "{data_ordem_end}"
-        """
+        if data_ordem_start is None:
+            start_ts = start_datetime.strftime("%Y-%m-%d %H:%M:%S")
+            modified_partitions = get_modified_partitions(
+                project_id=project_id,
+                start_ts=start_ts,
+                end_ts=end_ts,
+            )
+            export_filter = f"""
+            data IN ({', '.join(modified_partitions)})
+            AND datetime_ultima_atualizacao
+                BETWEEN DATETIME("{start_ts}")
+                AND DATETIME("{end_ts}")
+            """
+        else:
+            partitions = get_partition_using_data_ordem(
+                project_id=project_id,
+                data_ordem_start=data_ordem_start,
+                data_ordem_end=data_ordem_end,
+            )
+            export_filter = f"""
+            data IN ({', '.join(partitions)})
+            AND data_ordem
+                BETWEEN "{data_ordem_start}"
+                AND "{data_ordem_end}"
+            """
 
-    transacao_select = transacao_select.format(export_filter=export_filter)
+    transacao_select = f"""
+        SELECT
+            {{cols}}
+        FROM
+            {project_id}.{constants.TRANSACAO_CCT_VIEW_NAME.value}
+        WHERE
+            {export_filter}
+        LIMIT {{count}}
+    """
 
     sql = transacao_select.format(cols="count(1) as ct", count=1)
     log(f"Executando query:\n{sql}")
@@ -239,10 +241,10 @@ def upload_files_postgres(
             cur.execute(f"DROP TABLE IF EXISTS public.{tmp_table_name}")
             log("Tabela temporária deletada")
 
-            sql = """
+            sql = f"""
                 CREATE INDEX
                 idx_transacao_id_ordem
-                ON public.transacao_bigquery (id_ordem_pagamento_consorcio_operador_dia)
+                ON public.{table_name} (id_ordem_pagamento_consorcio_operador_dia)
             """
             log("Recriando índice tabela final")
             cur.execute(sql)
@@ -262,7 +264,7 @@ def save_upload_timestamp_redis(
 
     value = timestamp.isoformat()
     redis_key = f"{env}.{constants.REDIS_KEY.value}"
-    redis_client = get_redis_client()
+    redis_client = get_redis_client(host="localhost")
     content = redis_client.get(redis_key)
 
     log(f"Salvando timestamp {value} na chave: {redis_key}")

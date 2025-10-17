@@ -16,3 +16,4 @@ class constants(Enum):  # pylint: disable=c0103
     LAST_UPLOAD_TIMESTAMP_KEY_NAME = "last_upload_timestamp"
     TRANSACAO_CCT_FOLDER = "transacao_cct"
     EXPORT_GCS_PREFIX = f"upload/{TRANSACAO_CCT_FOLDER}"
+    TRANSACAO_CCT_VIEW_NAME = "projeto_app_cct.transacao_cct"
