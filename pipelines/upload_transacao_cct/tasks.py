@@ -237,10 +237,10 @@ def upload_files_postgres(
                     cur.execute(sql)
                     log(f"{cur.rowcount} linhas deletadas")
 
-                log("Copiando para a tabela final")
+                log(f"Copiando arquivo {blob.name} para a tabela final")
                 sql = f"""
                     COPY public.{table_name}
-                    FROM public.{tmp_table_name}
+                    FROM STDIN WITH CSV HEADER
                 """
                 with blob.open("r") as f:
                     cur.copy_expert(sql, f)
