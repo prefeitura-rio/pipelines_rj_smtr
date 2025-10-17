@@ -54,43 +54,41 @@
     {% endset %}
 {% endif %}
 
-    with
-        dados_novos as (
-            select
-                t.data,
-                t.hora,
-                t.datetime_transacao,
-                t.id_transacao,
-                t.modo,
-                t.tipo_documento_cliente,
-                t.documento_cliente,
-                c.nome as nome_cliente,
-                t.tipo_transacao,
-                t.tipo_transacao_jae,
-                t.tipo_usuario,
-                t.subtipo_usuario,
-                t.meio_pagamento,
-                t.meio_pagamento_jae,
-                t.id_cre_escola,
-                a.nome_escola
-            from {{ ref("transacao") }} t
-            join {{ ref("cliente_jae") }} c using (id_cliente)
-            join {{ ref("aux_gratuidade_info") }} a using (id_cliente)
-            where
-                t.tipo_transacao_jae in ('Gratuidade', 'Integração gratuidade')
-                and t.tipo_usuario = "Estudante"
-                and t.subtipo_usuario = 'Ensino Básico Municipal'
-        {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
-    qualify
-            row_number() over (partition by id_transacao order by datetime_transacao) = 1
+with
+    dados_novos as (
+        select
+            t.data,
+            t.hora,
+            t.datetime_transacao,
+            t.id_transacao,
+            t.modo,
+            t.tipo_documento_cliente,
+            t.documento_cliente,
+            c.nome as nome_cliente,
+            t.tipo_transacao,
+            t.tipo_transacao_jae,
+            t.tipo_usuario,
+            t.subtipo_usuario,
+            t.meio_pagamento,
+            t.meio_pagamento_jae,
+            t.id_cre_escola,
+            a.nome_escola
+        from {{ ref("transacao") }} t
+        join {{ ref("cliente_jae") }} c on t.id_cliente = c.id_cliente
+        join
+            {{ ref("aux_gratuidade_info") }} a
+            on cast(a.id_cliente as string) = t.id_cliente
+        where
+            t.tipo_transacao_jae in ('Gratuidade', 'Integração gratuidade')
+            and t.tipo_usuario = "Estudante"
+            and t.subtipo_usuario = 'Ensino Básico Municipal'
+            {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
     ),
 
     {% if is_incremental() %}
-    dados_atuais as (
-        select *
-        from {{ this }}
-        where data in ({{ data_partitions | join(", ") }})
-    ),
+        dados_atuais as (
+            select * from {{ this }} where data in ({{ data_partitions | join(", ") }})
+        ),
     {% endif %}
     particoes_completas as (
         select *, 0 as priority
@@ -100,7 +98,7 @@
             union all
 
             select
-                * except(versao, datetime_ultima_atualizacao, id_execucao_dbt),
+                * except (versao, datetime_ultima_atualizacao, id_execucao_dbt),
                 1 as priority
             from dados_atuais
 
@@ -110,7 +108,10 @@
         select *, {{ sha_column }} as sha_dado_novo
         from particoes_completas
         qualify
-            row_number() over (partition by id_transacao order by datetime_transacao desc) = 1
+            row_number() over (
+                partition by id_transacao order by datetime_transacao desc
+            )
+            = 1
     ),
     sha_dados_atuais as (
         {% if is_incremental() %}
@@ -125,19 +126,19 @@
         {% else %}
             select
                 cast(null as string) as id_transacao,
-                cast(null as string) as sha_dado_atual,
+                cast(null as bytes) as sha_dado_atual,
                 datetime(null) as datetime_ultima_atualizacao_atual,
                 cast(null as string) as id_execucao_dbt_atual
         {% endif %}
     ),
     sha_dados_completos as (
-        select n.*, a.* except(id_transacao)
+        select n.*, a.* except (id_transacao)
         from sha_dados_novos n
-        left join sha_dados_atuais a using(id_transacao)
+        left join sha_dados_atuais a using (id_transacao)
     ),
     transacao_gratuidade_estudante_municipal_controle as (
         select
-            * except(
+            * except (
                 sha_dado_novo,
                 sha_dado_atual,
                 datetime_ultima_atualizacao_atual,
