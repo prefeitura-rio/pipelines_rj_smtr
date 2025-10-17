@@ -124,9 +124,9 @@ models:
       - name: versao
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
-        description: "{{ doc('datetime_ultima_atualizacao ') }}"
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
       - name: id_execucao_dbt
-        description: "{{ doc('id_execucao_dbt ') }}"
+        description: "{{ doc('id_execucao_dbt') }}"
 
   - name: extrato_cliente_cartao
     description: Tabela de extrato do cliente
