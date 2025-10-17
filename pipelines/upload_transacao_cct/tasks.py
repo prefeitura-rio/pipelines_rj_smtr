@@ -229,6 +229,7 @@ def upload_files_postgres(
                     log("Deletando registros da tabela final")
                     cur.execute(sql)
                     log(f"{cur.rowcount} linhas deletadas")
+                    conn.commit()
 
                 log(f"Copiando arquivo {blob.name} para a tabela final")
                 sql = f"""
