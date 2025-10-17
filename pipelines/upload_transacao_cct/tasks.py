@@ -35,7 +35,7 @@ def get_start_datetime(
 
     start_datetime = None
     if not full_refresh and data_ordem_start is None:
-        redis_client = get_redis_client(host="localhost")
+        redis_client = get_redis_client()
         content = redis_client.get(f"{env}.{constants.REDIS_KEY.value}")
         if content is None:
             full_refresh = True
@@ -264,7 +264,7 @@ def save_upload_timestamp_redis(
 
     value = timestamp.isoformat()
     redis_key = f"{env}.{constants.REDIS_KEY.value}"
-    redis_client = get_redis_client(host="localhost")
+    redis_client = get_redis_client()
     content = redis_client.get(redis_key)
 
     log(f"Salvando timestamp {value} na chave: {redis_key}")
