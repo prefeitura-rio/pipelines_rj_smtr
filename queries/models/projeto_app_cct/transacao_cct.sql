@@ -5,6 +5,7 @@ select
     consorcio,
     tipo_transacao,
     valor_pagamento,
+    data_ordem,
     id_ordem_pagamento,
     id_ordem_pagamento_consorcio_operador_dia,
     datetime_ultima_atualizacao
