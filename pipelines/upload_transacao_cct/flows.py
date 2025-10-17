@@ -5,9 +5,8 @@ from types import NoneType
 
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
-
-# from prefect.tasks.control_flow import case, merge
-# from prefect.tasks.core.constants import Constant
+from prefect.tasks.control_flow import case, merge
+from prefect.tasks.core.constants import Constant
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
@@ -17,9 +16,9 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 
 from pipelines.constants import constants as smtr_constants
 from pipelines.tasks import get_run_env, get_scheduled_timestamp
-
-# export_data_from_bq_to_gcs,; full_refresh_delete_all_files,
 from pipelines.upload_transacao_cct.tasks import (
+    export_data_from_bq_to_gcs,
+    full_refresh_delete_all_files,
     get_start_datetime,
     save_upload_timestamp_redis,
     upload_files_postgres,
@@ -57,27 +56,27 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
         data_ordem_end=data_ordem_end,
     )
 
-    # with case(full_refresh.is_equal(True), True):
-    #     full_refresh_delete_true = full_refresh_delete_all_files(env=env)
-    # with case(full_refresh.is_equal(True), False):
-    #     full_refresh_delete_false = Constant(None, name="delete_all_false")
+    with case(full_refresh.is_equal(True), True):
+        full_refresh_delete_true = full_refresh_delete_all_files(env=env)
+    with case(full_refresh.is_equal(True), False):
+        full_refresh_delete_false = Constant(None, name="delete_all_false")
 
-    # full_refresh_delete = merge(full_refresh_delete_true, full_refresh_delete_false)
+    full_refresh_delete = merge(full_refresh_delete_true, full_refresh_delete_false)
 
-    # export_bigquery = export_data_from_bq_to_gcs(
-    #     env=env,
-    #     timestamp=timestamp,
-    #     start_datetime=start_datetime,
-    #     full_refresh=full_refresh,
-    #     data_ordem_start=data_ordem_start,
-    #     data_ordem_end=data_ordem_end,
-    #     upstream_tasks=[full_refresh_delete],
-    # )
+    export_bigquery = export_data_from_bq_to_gcs(
+        env=env,
+        timestamp=timestamp,
+        start_datetime=start_datetime,
+        full_refresh=full_refresh,
+        data_ordem_start=data_ordem_start,
+        data_ordem_end=data_ordem_end,
+        upstream_tasks=[full_refresh_delete],
+    )
 
     upload = upload_files_postgres(
         env=env,
         full_refresh=full_refresh,
-        # upstream_tasks=[export_bigquery],
+        upstream_tasks=[export_bigquery],
     )
 
     save_upload_timestamp_redis(
