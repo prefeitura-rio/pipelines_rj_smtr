@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# """Flows de captura dos dados da CCT"""
+"""Flows de captura dos dados da CCT"""
 
 from pipelines.capture.cct.constants import constants
 from pipelines.capture.cct.tasks import create_cct_general_extractor
