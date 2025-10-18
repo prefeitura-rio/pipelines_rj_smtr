@@ -195,10 +195,6 @@ def upload_files_postgres(
                 log("Truncando tabela final")
                 cur.execute(f"TRUNCATE TABLE public.{table_name}")
 
-                sql = "DROP INDEX IF EXISTS public.idx_transacao_id_transacao"
-                log("Deletando índice da tabela final")
-                cur.execute(sql)
-
             for blob in blobs:
                 log("Truncando tabela temporária")
                 cur.execute(f"TRUNCATE TABLE public.{tmp_table_name}")
@@ -238,6 +234,10 @@ def upload_files_postgres(
                     cur.execute(f"DROP TABLE IF EXISTS public.{tmp_table_name}")
                     log("Tabela temporária deletada")
 
+                sql = "DROP INDEX IF EXISTS public.idx_transacao_id_transacao"
+                log("Deletando índice da tabela final")
+                cur.execute(sql)
+
                 log(f"Copiando arquivo {blob.name} para a tabela final")
                 sql = f"""
                     COPY public.{table_name}
@@ -247,17 +247,16 @@ def upload_files_postgres(
                     cur.copy_expert(sql, f)
                 log("Cópia completa")
 
-                log("Deletando arquivo do GCS")
-                blob.delete()
-                log("Arquivo do GCS deletado")
-
-            if full_refresh:
                 sql = f"""
-                        CREATE INDEX idx_transacao_id_transacao
-                        ON public.{tmp_table_name} (id_transacao)
+                    CREATE INDEX idx_transacao_id_transacao
+                    ON public.{table_name} (id_transacao)
                 """
                 log("Recriando índice tabela final")
                 cur.execute(sql)
+
+                log("Deletando arquivo do GCS")
+                blob.delete()
+                log("Arquivo do GCS deletado")
 
             sql = f"""
                 CREATE INDEX
