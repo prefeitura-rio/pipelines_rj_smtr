@@ -114,7 +114,7 @@ def export_data_from_bq_to_gcs(
             {project_id}.{constants.TRANSACAO_CCT_VIEW_NAME.value}
         WHERE
             {export_filter}
-        -- LIMIT {{count}}
+        LIMIT {{count}}
     """
 
     sql = transacao_select.format(cols="count(1) as ct", count=1)
