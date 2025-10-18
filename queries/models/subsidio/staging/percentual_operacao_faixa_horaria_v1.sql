@@ -10,6 +10,7 @@ with
             tipo_dia,
             consorcio,
             servico,
+            "Ônibus SPPO" as modo,
             faixa_horaria_inicio,
             faixa_horaria_fim,
             distancia_total_planejada as km_planejada
@@ -34,6 +35,7 @@ with
             p.faixa_horaria_fim,
             p.consorcio,
             p.servico,
+            p.modo,
             safe_cast(p.km_planejada as numeric) as km_planejada_faixa,
             safe_cast(coalesce(count(v.id_viagem), 0) as int64) as viagens_faixa,
             safe_cast(
@@ -89,6 +91,7 @@ with
             p.faixa_horaria_fim,
             p.consorcio,
             p.servico,
+            p.modo,
             p.km_planejada
     )
 select
@@ -98,6 +101,7 @@ select
     faixa_horaria_fim,
     consorcio,
     servico,
+    modo,
     viagens_faixa,
     km_apurada_faixa,
     km_planejada_faixa,
