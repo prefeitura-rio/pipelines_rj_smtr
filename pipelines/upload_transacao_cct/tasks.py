@@ -246,7 +246,7 @@ def upload_files_postgres(
                     cur.copy_expert(sql, f)
                 log("Cópia completa")
 
-                conn.commit()
+                # conn.commit()
 
                 log("Deletando arquivo do GCS")
                 blob.delete()
