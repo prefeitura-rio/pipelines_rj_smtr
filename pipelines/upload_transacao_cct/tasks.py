@@ -195,12 +195,12 @@ def upload_files_postgres(
                 log("Truncando tabela final")
                 cur.execute(f"TRUNCATE TABLE public.{table_name}")
 
-                sql = f"""
-                    ALTER TABLE public.{table_name}
-                    DROP CONSTRAINT IF EXISTS transacao_bigquery_pkey
-                """
-                log("Deletando chave primária da tabela final")
-                cur.execute(sql)
+            sql = f"""
+                ALTER TABLE public.{table_name}
+                DROP CONSTRAINT IF EXISTS transacao_bigquery_pkey
+            """
+            log("Deletando chave primária da tabela final")
+            cur.execute(sql)
 
             for blob in blobs:
                 log("Truncando tabela temporária")
@@ -256,13 +256,12 @@ def upload_files_postgres(
             cur.execute(f"DROP TABLE IF EXISTS public.{tmp_table_name}")
             log("Tabela temporária deletada")
 
-            if full_refresh:
-                sql = f"""
-                    ALTER TABLE public.{table_name}
-                    ADD CONSTRAINT transacao_bigquery_pkey PRIMARY KEY (id_transacao)
-                """
-                log("Recriando chave primária da tabela final")
-                cur.execute(sql)
+            sql = f"""
+                ALTER TABLE public.{table_name}
+                ADD CONSTRAINT transacao_bigquery_pkey PRIMARY KEY (id_transacao)
+            """
+            log("Recriando chave primária da tabela final")
+            cur.execute(sql)
 
             sql = f"""
                 CREATE INDEX
