@@ -98,8 +98,6 @@ class constants(Enum):  # pylint: disable=c0103
     ALERT_WEBHOOK = "alertas_bilhetagem"
     RESULTADO_VERIFICACAO_CAPTURA_TABLE_ID = "resultado_verificacao_captura_jae"
 
-    JAE_AUXILIAR_CAPTURE_PARAMS = {}
-
     TRANSACAO_TABLE_ID = "transacao"
     TRANSACAO_RIOCARD_TABLE_ID = "transacao_riocard"
     GPS_VALIDADOR_TABLE_ID = "gps_validador"
@@ -697,7 +695,10 @@ class constants(Enum):  # pylint: disable=c0103
             "source": LANCAMENTO_SOURCE,
             "datalake_table": "rj-smtr.bilhetagem_interno_staging.lancamento",
             "timestamp_column": "dt_lancamento",
-            "primary_keys": ["id_lancamento", "id_conta"],
+            "primary_keys": [
+                "ifnull(id_lancamento, concat(string(dt_lancamento), '_', id_movimento))",
+                "id_conta",
+            ],
         },
     }
 

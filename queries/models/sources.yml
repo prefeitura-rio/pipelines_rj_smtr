@@ -76,6 +76,7 @@ sources:
     tables:
       - name: consorcio_modo
       - name: modos
+      - name: operador_van_v2
 
   - name: br_rj_riodejaneiro_rdo_staging
     database: rj-smtr-staging
@@ -440,4 +441,15 @@ sources:
     tables:
       - name: curso
       - name: ies
+      - name: dicionario
+
+  - name: source_cct
+    database: rj-smtr-staging
+
+    tables:
+      - name: ordem_pagamento
+      - name: ordem_pagamento_agrupado
+      - name: ordem_pagamento_agrupado_historico
+      - name: user
+      - name: detalhe_a
       - name: dicionario

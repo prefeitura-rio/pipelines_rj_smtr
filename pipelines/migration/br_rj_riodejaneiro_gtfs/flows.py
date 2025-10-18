@@ -2,7 +2,7 @@
 """
 Flows for gtfs
 
-DBT 2025-08-08a
+DBT 2025-10-14
 """
 
 from prefect import Parameter, case, task
@@ -31,6 +31,8 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.tasks import (
     get_os_info,
     get_raw_gtfs_files,
     update_last_captured_os,
+    upload_raw_data_to_gcs,
+    upload_staging_data_to_gcs,
 )
 from pipelines.migration.tasks import (
     create_date_hour_partition,
@@ -42,13 +44,12 @@ from pipelines.migration.tasks import (
     rename_current_flow_run_now_time,
     transform_raw_to_nested_structure_chunked,
     unpack_mapped_results_nout2,
-    upload_raw_data_to_gcs,
-    upload_staging_data_to_gcs,
 )
 from pipelines.schedules import every_5_minutes
 from pipelines.tasks import (
     check_fail,
     check_run_dbt_success,
+    get_run_env,
     get_scheduled_timestamp,
     log_discord,
     parse_timestamp_to_string,
@@ -115,6 +116,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
     regular_sheet_index = Parameter("regular_sheet_index", default=None)
     data_versao_gtfs_param = Parameter("data_versao_gtfs", default=None)
 
+    env = get_run_env()
     mode = get_current_flow_mode()
     data_versao_gtfs_task = None
     last_captured_os_none = None
@@ -198,22 +200,21 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 mapped_results=transform_raw_to_nested_structure_results
             )
 
-            errors = upload_raw_data_to_gcs.map(
+            upload_raw = upload_raw_data_to_gcs.map(
+                env=unmapped(env),
                 dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
                 table_id=table_ids,
                 raw_filepath=raw_filepaths,
                 partitions=unmapped(partition),
-                error=unmapped(None),
             )
 
             wait_captura_true = upload_staging_data_to_gcs.map(
+                env=unmapped(env),
                 dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
                 table_id=table_ids,
                 staging_filepath=treated_filepaths,
                 partitions=unmapped(partition),
-                timestamp=unmapped(data_versao_gtfs_task),
-                error=errors,
-            )
+            ).set_upstream(upload_raw)
 
             upload_failed = check_fail(wait_captura_true)
 

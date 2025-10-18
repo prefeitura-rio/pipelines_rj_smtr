@@ -1,5 +1,22 @@
 # Changelog - source_jae
 
+## [3.0.3] - 2025-10-14
+
+### Alterado
+
+- Altera lógica da task `get_capture_gaps` para executar a contagem de registros do datalake quando a tabela não possui o parametro `primary_keys` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/949)
+- Altera primary key da verificação de captura da tabela `lancamento` para `["ifnull(id_lancamento, concat(string(dt_lancamento), '_', id_movimento))","id_conta"]` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/949)
+
+## [3.0.2] - 2025-10-14
+
+### Alterado
+
+- Altera primary key da verificação de captura da tabela `lancamento` para `["ifnull(id_lancamento, string(dt_lancamento))", "id_conta"]` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/948)
+
+### Corrigido
+
+- Corrige timezone da coluna data da tabela `resultado_verificacao_captura_jae` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/948)
+
 ## [3.0.1] - 2025-10-02
 
 ### Alterado

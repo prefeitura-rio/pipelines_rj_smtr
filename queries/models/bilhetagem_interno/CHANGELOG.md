@@ -1,5 +1,16 @@
 # Changelog - bilhetagem_interno
 
+## [1.1.6] - 2025-10-14
+
+### Alterado
+
+- Altera deduplicação da tabela `lancamento` para coluna `id_lancamento` nula no modelo `extrato_cliente_cartao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/949)
+
+## [1.1.5] - 2025-10-14
+
+### Alterado
+
+- Altera deduplicação da tabela `lancamento` para coluna `id_lancamento` nula no modelo `extrato_cliente_cartao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/948)
 
 ## [1.1.4] - 2025-09-22
 

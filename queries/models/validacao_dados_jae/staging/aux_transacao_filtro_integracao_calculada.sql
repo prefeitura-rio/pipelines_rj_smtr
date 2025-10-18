@@ -54,10 +54,16 @@ select
                 and ifnull(regexp_extract(servico_jae, r"[0-9]+"), "") like "2%"
             )
         then 'SPPO'
+        when modo = 'BRT' and ifnull(tarifa_ida, tarifa_volta) > 4.7
+        then 'BRT ESP'
         else modo
     end as modo_join
-from {{ ref("transacao") }}
-
+from {{ ref("transacao") }} t
+left join
+    {{ ref("aux_linha_tarifa") }} l
+    on t.id_servico_jae = l.cd_linha
+    and t.datetime_transacao >= l.dt_inicio_validade
+    and (l.data_fim_validade is null or t.datetime_transacao < l.data_fim_validade)
 where
     tipo_transacao != "Gratuidade" and tipo_transacao_jae != 'Botoeira'
     {% if not flags.FULL_REFRESH %}
