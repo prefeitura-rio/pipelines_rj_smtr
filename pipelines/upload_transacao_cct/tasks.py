@@ -195,11 +195,8 @@ def upload_files_postgres(
                 log("Truncando tabela final")
                 cur.execute(f"TRUNCATE TABLE public.{table_name}")
 
-                sql = f"""
-                    ALTER TABLE public.{table_name}
-                    DROP CONSTRAINT IF EXISTS transacao_bigquery_pkey
-                """
-                log("Deletando chave primária da tabela final")
+                sql = "DROP INDEX IF EXISTS public.idx_transacao_id_transacao"
+                log("Deletando índice da tabela final")
                 cur.execute(sql)
 
             for blob in blobs:
@@ -305,10 +302,10 @@ def upload_files_postgres(
 
             if full_refresh:
                 sql = f"""
-                    ALTER TABLE public.{table_name}
-                    ADD CONSTRAINT transacao_bigquery_pkey PRIMARY KEY (id_transacao)
+                        CREATE INDEX idx_transacao_id_transacao
+                        ON public.{tmp_table_name} (id_transacao)
                 """
-                log("Recriando chave primária da tabela final")
+                log("Recriando índice tabela final")
                 cur.execute(sql)
 
             sql = f"""
