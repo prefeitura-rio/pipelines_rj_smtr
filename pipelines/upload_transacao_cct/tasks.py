@@ -225,80 +225,31 @@ def upload_files_postgres(
                     log("Criando índice tabela temporária")
                     cur.execute(sql)
 
-                    sql = """
-                        MERGE INTO transacao_bigquery AS t
-                        USING tmp__transacao_bigquery AS s
-                        ON t.id_transacao = s.id_transacao
-
-                        -- Atualiza registros que já existem
-                        WHEN MATCHED THEN
-                            UPDATE SET
-                                data = s.data,
-                                datetime_transacao = s.datetime_transacao,
-                                consorcio = s.consorcio,
-                                tipo_transacao = s.tipo_transacao,
-                                valor_pagamento = s.valor_pagamento,
-                                data_ordem = s.data_ordem,
-                                id_ordem_pagamento = s.id_ordem_pagamento,
-                                id_ordem_pagamento_consorcio_operador_dia =
-                                s.id_ordem_pagamento_consorcio_operador_dia,
-                                datetime_ultima_atualizacao = s.datetime_ultima_atualizacao
-
-                        -- Insere registros novos
-                        WHEN NOT MATCHED THEN
-                            INSERT (
-                                id_transacao,
-                                data,
-                                datetime_transacao,
-                                consorcio,
-                                tipo_transacao,
-                                valor_pagamento,
-                                data_ordem,
-                                id_ordem_pagamento,
-                                id_ordem_pagamento_consorcio_operador_dia,
-                                datetime_ultima_atualizacao
-                            )
-                            VALUES (
-                                s.id_transacao,
-                                s.data,
-                                s.datetime_transacao,
-                                s.consorcio,
-                                s.tipo_transacao,
-                                s.valor_pagamento,
-                                s.data_ordem,
-                                s.id_ordem_pagamento,
-                                s.id_ordem_pagamento_consorcio_operador_dia,
-                                s.datetime_ultima_atualizacao
-                            )
+                    sql = f"""
+                        DELETE FROM public.{table_name} t
+                        USING public.{tmp_table_name} s
+                        WHERE t.id_transacao = s.id_transacao
                     """
-
-                    #     sql = f"""
-                    #         DELETE FROM public.{table_name} t
-                    #         USING public.{tmp_table_name} s
-                    #         WHERE t.id_transacao = s.id_transacao
-                    #     """
                     log("Deletando registros da tabela final")
                     cur.execute(sql)
-                #     log(f"{cur.rowcount} linhas deletadas")
+                    log(f"{cur.rowcount} linhas deletadas")
 
-                # log(f"Copiando arquivo {blob.name} para a tabela final")
-                # sql = f"""
-                #     COPY public.{table_name}
-                #     FROM STDIN WITH CSV HEADER
-                # """
-                # with blob.open("r") as f:
-                #     cur.copy_expert(sql, f)
-                # log("Cópia completa")
+                    log("Deletando tabela temporária")
+                    cur.execute(f"DROP TABLE IF EXISTS public.{tmp_table_name}")
+                    log("Tabela temporária deletada")
 
-                # conn.commit()
+                log(f"Copiando arquivo {blob.name} para a tabela final")
+                sql = f"""
+                    COPY public.{table_name}
+                    FROM STDIN WITH CSV HEADER
+                """
+                with blob.open("r") as f:
+                    cur.copy_expert(sql, f)
+                log("Cópia completa")
 
                 log("Deletando arquivo do GCS")
                 blob.delete()
                 log("Arquivo do GCS deletado")
-
-            log("Deletando tabela temporária")
-            cur.execute(f"DROP TABLE IF EXISTS public.{tmp_table_name}")
-            log("Tabela temporária deletada")
 
             if full_refresh:
                 sql = f"""
