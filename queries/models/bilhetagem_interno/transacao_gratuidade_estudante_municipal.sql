@@ -14,10 +14,6 @@
 {% set cliente_jae = ref("cliente_jae") %}
 {% set aux_gratuidade_info = ref("aux_gratuidade_info") %}
 
-{% set incremental_filter %}
-    ({{ generate_date_hour_partition_filter(var('date_range_start'), var('date_range_end')) }})
-    and datetime_transacao between datetime("{{var('date_range_start')}}") and datetime("{{var('date_range_end')}}")
-{% endset %}
 
 {% if execute and is_incremental() %}
     {% set columns = (
@@ -41,12 +37,22 @@
     {% endset %}
 
     {% set data_partitions_query %}
-            select distinct concat("'", date(datetime_transacao),  "'") as datatime_transacao
-            from {{ transacao }}
-            where {{ incremental_filter }}
+      SELECT
+        CONCAT("'", PARSE_DATE("%Y%m%d", partition_id), "'") AS data
+      FROM
+        `{{ transacao.database }}.{{ transacao.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+      WHERE
+        table_name = "{{ transacao.identifier }}"
+        AND partition_id != "__NULL__"
+        AND DATE(last_modified_time, "America/Sao_Paulo") = DATE_SUB(DATE("{{var('run_date')}}"), INTERVAL 1 DAY)
+
     {% endset %}
 
-    {% set data_partitions = run_query(data_partitions_query).columns[0].values() %}
+    {{ log("Running query: \n" ~ data_partitions_query, info=True) }}
+    {% set partitions = run_query(data_partitions_query) %}
+
+    {% set partition_list = partitions.columns[0].values() %}
+    {{ log("transacao partitions: \n" ~ partition_list, info=True) }}
 
 {% else %}
     {% set sha_column %}
@@ -70,7 +76,6 @@ with
             t.tipo_usuario,
             t.subtipo_usuario,
             t.meio_pagamento,
-            t.meio_pagamento_jae,
             t.id_cre_escola,
             a.nome_escola
         from {{ ref("transacao") }} t
@@ -82,37 +87,22 @@ with
             t.tipo_transacao_jae in ('Gratuidade', 'Integração gratuidade')
             and t.tipo_usuario = "Estudante"
             and t.subtipo_usuario = 'Ensino Básico Municipal'
-            {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
-    ),
-
-    {% if is_incremental() %}
-        dados_atuais as (
-            select * from {{ this }} where data in ({{ data_partitions | join(", ") }})
-        ),
-    {% endif %}
-    particoes_completas as (
-        select *, 0 as priority
-        from dados_novos
-
-        {% if is_incremental() %}
-            union all
-
-            select
-                * except (versao, datetime_ultima_atualizacao, id_execucao_dbt),
-                1 as priority
-            from dados_atuais
-
-        {% endif %}
+            {% if is_incremental() %}
+                {% if partition_list | length > 0 %}
+                    and data in ({{ partition_list | join(", ") }})
+                {% else %} and 1 = 0
+                {% endif %}
+            {% endif %}
     ),
     sha_dados_novos as (
         select *, {{ sha_column }} as sha_dado_novo
-        from particoes_completas
+        from dados_novos
         qualify
             row_number() over (
                 partition by id_transacao order by datetime_transacao desc
             )
             = 1
-    ),
+    )
     sha_dados_atuais as (
         {% if is_incremental() %}
 
@@ -121,7 +111,7 @@ with
                 {{ sha_column }} as sha_dado_atual,
                 datetime_ultima_atualizacao as datetime_ultima_atualizacao_atual,
                 id_execucao_dbt as id_execucao_dbt_atual
-            from dados_atuais
+            from {{ this }}
 
         {% else %}
             select
@@ -142,8 +132,7 @@ with
                 sha_dado_novo,
                 sha_dado_atual,
                 datetime_ultima_atualizacao_atual,
-                id_execucao_dbt_atual,
-                priority
+                id_execucao_dbt_atual
             ),
             '{{ var("version") }}' as versao,
             case
