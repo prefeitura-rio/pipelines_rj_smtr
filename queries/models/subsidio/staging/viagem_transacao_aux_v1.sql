@@ -294,8 +294,8 @@ with
             safe_cast(
                 trunc(countif(estado_equipamento = "ABERTO") / count(*), 5) as numeric
             ) as percentual_estado_equipamento_aberto,
-            countif(estado_equipamento = "ABERTO") / count(*)
-            >= 0.8 as indicador_estado_equipamento_aberto
+            (countif(estado_equipamento = "ABERTO") / count(*)
+            >= 0.8 or id_validador is null) as indicador_estado_equipamento_aberto
         from gps_validador_viagem
         left join transacao_contagem as t using (data, id_viagem)
         left join transacao_riocard_contagem as tr using (data, id_viagem)

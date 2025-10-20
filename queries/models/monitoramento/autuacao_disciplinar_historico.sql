@@ -28,13 +28,13 @@ with
             timestamp_captura,
             status
         from {{ ref("staging_infracao") }}
-        {% if is_incremental() %}
+        -- {% if is_incremental() %}
             where
                 date(data) between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
                 )
 
-        {% endif %}
+        -- {% endif %}
     ),
     aux_data_inclusao as (
         select

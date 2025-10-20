@@ -168,8 +168,8 @@ with
             countif(servico != servico_jae) > 0 as indicador_gps_servico_divergente,
             trunc(countif(estado_equipamento = "ABERTO") / count(*), 5)
             * 100 as percentual_estado_equipamento_aberto,
-            countif(estado_equipamento = "ABERTO") / count(*)
-            >= 0.8 as indicador_estado_equipamento_aberto
+            (countif(estado_equipamento = "ABERTO") / count(*)
+            >= 0.8 or id_validador is null) as indicador_estado_equipamento_aberto
         from gps_validador_bilhetagem_viagem
         group by 1, 2, 3
     ),

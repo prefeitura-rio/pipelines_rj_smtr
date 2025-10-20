@@ -428,6 +428,8 @@ selectors:
           value: aux_veiculo_gps_dia
         - method: fqn
           value: veiculo_dia
+        # - method: fqn
+        #   value: veiculo_licenciamento_dia
 
   - name: cadastro_veiculo
     definition:

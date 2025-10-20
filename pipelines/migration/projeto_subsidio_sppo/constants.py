@@ -978,5 +978,8 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todos os dados de `id_viagem` correspondem 1:1 entre as tabelas `viagem_classificada` e `viagem_regularidade_temperatura`."
             },
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "test_consistencia_indicadores_temperatura__viagem_regularidade_temperatura": {
+                "description": "Não há inconsistência entre os indicadores de temperatura das viagens"
+            },
         },
     }
