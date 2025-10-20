@@ -103,8 +103,12 @@ models:
         description: "{{ doc('tipo_documento_cliente') }}"
       - name: documento_cliente
         description: "{{ doc('documento_cliente') }}"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1101226827904472521'
       - name: nome_cliente
         description: "{{ doc('nome_cliente') }}"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1101226827904472521'
       - name: tipo_transacao_jae
         description: "{{ doc('tipo_transacao_jae') }}"
         data_type: string
@@ -117,8 +121,23 @@ models:
         quote: true
       - name: subtipo_usuario
         description: "{{ doc('subtipo_usuario') }}"
+      - name: meio_pagamento
+        description: "{{ doc('meio_pagamento') }}"
       - name: id_cre_escola
         description: "{{ doc('id_cre_escola') }} do cliente"
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1101226827904472521'
+      - name: nome_escola
+        description: Nome da escola
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1101226827904472521'
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+
   - name: extrato_cliente_cartao
     description: Tabela de extrato do cliente
     columns:
