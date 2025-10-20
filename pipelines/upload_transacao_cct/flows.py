@@ -15,6 +15,7 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 )
 
 from pipelines.constants import constants as smtr_constants
+from pipelines.schedules import every_day_hour_one
 from pipelines.tasks import get_run_env, get_scheduled_timestamp
 from pipelines.upload_transacao_cct.tasks import (
     export_data_from_bq_to_gcs,
@@ -97,3 +98,4 @@ upload_transacao_cct.state_handlers = [
     handler_initialize_sentry,
     handler_skip_if_running,
 ]
+upload_transacao_cct.schedule = every_day_hour_one
