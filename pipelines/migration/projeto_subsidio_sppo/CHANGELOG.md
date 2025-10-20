@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona testes dos indicadores do modelo `viagem_regularidade_temperatura` no discord (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/939)
+- Adiciona testes dos indicadores do modelo `viagem_regularidade_temperatura` no discord (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/962)
 
 ## [1.3.3] - 2025-10-14
 
