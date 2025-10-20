@@ -3,6 +3,7 @@
     {"table": "passageiro_gratuidade", "indicator": "Gratuidades por mês", "field": "quantidade_passageiro_gratuidade_mes"},
     {"table": "frota_operante", "indicator": "Frota operante por mês", "field": "quantidade_veiculo_mes"},
     {"table": "idade_media_frota_operante_onibus", "indicator": "Idade média da frota operante por mês", "field": "idade_media_veiculo_mes"}
+    {"table": "percentual_frota_euro_vi", "indicator": "Percentual de frota Euro VI", "field": "percentual_veiculos_euro_vi"}
 ] %}
 
 {% for query in queries %}

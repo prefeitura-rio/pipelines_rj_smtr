@@ -86,3 +86,20 @@ models:
         description: "{{ doc('data_ultima_atualizacao') }}"
       - name: versao
         description: "{{ doc('versao') }}"
+  - name: percentual_frota_euro_vi
+    description: "Indicador de passageiros pagantes por mês"
+    columns:
+      - name: data
+        description: "Data de referência para partição"
+      - name: ano
+        description: "{{ doc('ano_indicador') }}"
+      - name: mes
+        description: "{{ doc('mes') }}"
+      - name: modo
+        description: "Modo de transporte (se aplicável)"
+      - name: percentual_veiculos_euro_vi
+        description: "Indicador de percentual da frota Euro VI por mês"
+      - name: data_ultima_atualizacao
+        description: "{{ doc('data_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
