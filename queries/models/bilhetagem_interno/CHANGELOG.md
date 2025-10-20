@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Altera o modelo de view para modelo incremental `transacao_gratuidade_estudante_municipal..sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/958)
+- Altera o modelo de view para modelo incremental `transacao_gratuidade_estudante_municipal.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/958)
 
 ## [1.1.6] - 2025-10-14
 
