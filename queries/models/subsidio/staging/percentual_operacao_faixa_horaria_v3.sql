@@ -1,26 +1,34 @@
 {{ config(materialized="ephemeral") }}
 {% set incremental_filter %}
-    data between date("{{var('start_date')}}") and date("{{ var('end_date') }}") and data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+    data between greatest(date("{{var('start_date')}}"), date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")) and date("{{ var('end_date') }}")
 {% endset %}
 with
     -- 1. Viagens planejadas
     planejado as (
-        select distinct
+        select
             data,
             tipo_dia,
             consorcio,
             servico,
+            sentido,
+            modo,
             faixa_horaria_inicio,
             faixa_horaria_fim,
-            distancia_total_planejada as km_planejada
-        from {{ ref("viagem_planejada") }}
-        -- from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
-        where {{ incremental_filter }} and distancia_total_planejada > 0
+            quilometragem as km_planejada
+        from {{ ref("servico_planejado_faixa_horaria") }}
+        where quilometragem > 0 and {{ incremental_filter }}
     ),
     -- 2. Viagens realizadas
     viagem as (
         select
-            data, servico, id_viagem, tipo_viagem, datetime_partida, distancia_planejada
+            data,
+            servico,
+            sentido,
+            modo,
+            id_viagem,
+            tipo_viagem,
+            datetime_partida,
+            distancia_planejada
         from {{ ref("viagem_transacao") }}
         -- from `rj-smtr.subsidio.viagem_transacao`
         where {{ incremental_filter }}
@@ -34,6 +42,7 @@ with
             p.faixa_horaria_fim,
             p.consorcio,
             p.servico,
+            p.sentido,
             safe_cast(p.km_planejada as numeric) as km_planejada_faixa,
             safe_cast(coalesce(count(v.id_viagem), 0) as int64) as viagens_faixa,
             safe_cast(
@@ -46,12 +55,7 @@ with
                             if(
                                 (
                                     p.data
-                                    between date(
-                                        '{{ var("DATA_SUBSIDIO_V9A_INICIO")}}'
-                                    ) and date_sub(
-                                        date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}'),
-                                        interval 1 day
-                                    )
+                                    < date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
                                     and v.tipo_viagem
                                     in ('Não licenciado', 'Não vistoriado')
                                 )
@@ -80,6 +84,8 @@ with
             viagem as v
             on p.data = v.data
             and p.servico = v.servico
+            and p.sentido = v.sentido
+            and p.modo = v.modo
             and v.datetime_partida
             between p.faixa_horaria_inicio and p.faixa_horaria_fim
         group by
@@ -89,6 +95,7 @@ with
             p.faixa_horaria_fim,
             p.consorcio,
             p.servico,
+            p.sentido,
             p.km_planejada
     )
 select
@@ -98,6 +105,7 @@ select
     faixa_horaria_fim,
     consorcio,
     servico,
+    sentido,
     viagens_faixa,
     km_apurada_faixa,
     km_planejada_faixa,

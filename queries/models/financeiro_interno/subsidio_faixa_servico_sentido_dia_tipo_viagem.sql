@@ -28,6 +28,8 @@ select
     tipo_viagem,
     tecnologia_apurada,
     tecnologia_remunerada,
+    subsidio_km,
+    subsidio_km_teto,
     coalesce(count(id_viagem), 0) as viagens_faixa,
     coalesce(sum(km_apurada), 0) as km_apurada_faixa,
     coalesce(sum(km_subsidiada), 0) as km_subsidiada_faixa,
@@ -36,7 +38,8 @@ select
     coalesce(sum(valor_acima_limite), 0) as valor_acima_limite,
     coalesce(sum(valor_sem_glosa), 0) as valor_total_sem_glosa,
     '{{ var("version") }}' as versao,
-    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+    '{{ invocation_id }}' as id_execucao_dbt
 from viagem_remunerada
 group by
     data,
@@ -51,4 +54,6 @@ group by
     indicador_viagem_dentro_limite,
     tipo_viagem,
     tecnologia_apurada,
-    tecnologia_remunerada
+    tecnologia_remunerada,
+    subsidio_km,
+    subsidio_km_teto

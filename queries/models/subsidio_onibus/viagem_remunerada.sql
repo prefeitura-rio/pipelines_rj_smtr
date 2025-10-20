@@ -18,7 +18,7 @@ select
     tipo_viagem,
     tecnologia_apurada,
     tecnologia_remunerada,
-    distancia_planejada as km_apurada,
+    km_apurada,
     pof,
     km_subsidiada,
     indicador_viagem_dentro_limite,
@@ -26,8 +26,8 @@ select
     indicador_penalidade_tecnologia as indicador_tecnologia_inferior_minima,
     (
         indicador_viagem_dentro_limite
-        and not indicador_pof_inferior_80
-        and not indicador_tecnologia_inferior_minima
+        and not pof < 80
+        and not indicador_penalidade_tecnologia
     ) as indicador_viagem_remunerada,
     valor_apurado as valor_pago,
     valor_glosado_tecnologia,
@@ -35,7 +35,8 @@ select
     valor_sem_glosa,
     valor_sem_glosa - valor_glosado_tecnologia as valor_total_sem_glosa,
     '{{ var("version") }}' as versao,
-    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+    '{{ invocation_id }}' as id_execucao_dbt
 from {{ ref("subsidio_viagem_remunerada") }}
 where
     data between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')

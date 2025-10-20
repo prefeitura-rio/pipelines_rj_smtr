@@ -159,6 +159,8 @@ vars:
   DATA_SUBSIDIO_V19_INICIO: "2025-11-01"
   # Feature Inciso IV Climatização
   DATA_SUBSIDIO_V20_INICIO: "2025-08-16"
+  # Feature Vianges 2.0
+  DATA_SUBSIDIO_V21_INICIO: "2025-10-01"
   # Feature Associação de servicos corretamente (email da SUBTT do dia 2025-07-31 às 18:10)
   DATA_SUBSIDIO_V99_INICIO: "3000-01-01"
 
@@ -481,10 +483,10 @@ models:
       staging:
         +materialized: view
         +schema: dashboard_operacao_onibus_staging
-    dashboard_subsidio:
+    subsidio_onibus:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
-      +schema: dashboard_subsidio
+      +schema: subsidio_onibus
     monitoramento_interno:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
