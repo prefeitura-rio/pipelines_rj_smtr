@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Module containing general purpose tasks"""
 from datetime import datetime, timedelta
-from typing import Any, Union
+from typing import Any, List, Union
 
 import prefect
 from prefect import task
@@ -13,7 +13,12 @@ from pytz import timezone
 
 from pipelines.constants import constants
 from pipelines.utils.discord import send_discord_message
-from pipelines.utils.prefect import FailedSubFlow, create_subflow_run, wait_subflow_run
+from pipelines.utils.prefect import (
+    FailedSubFlow,
+    create_subflow_run,
+    flow_is_running_local,
+    wait_subflow_run,
+)
 from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import convert_timezone
 
@@ -270,6 +275,8 @@ def log_discord(message: str, key: str, dados_tag: bool = False):
         key (str): Key to secret path storing the webhook to channel.
         dados_tag (bool): Indicates whether the message will tag the data team
     """
+    if flow_is_running_local():
+        message = "[DEV] " + message
     if dados_tag:
         message = (
             message + f" - <@&{constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>\n"
@@ -279,18 +286,23 @@ def log_discord(message: str, key: str, dados_tag: bool = False):
 
 
 @task
-def remove_key_from_dict(data: dict, key: str) -> dict:
+def remove_key_from_dict(data: dict, key: Union[List[str], str]) -> dict:
     """Removes a specific key from a dictionary.
 
     Args:
         data (dict): The original dictionary.
-        key (str): The key to be removed.
+        key (Union[List[str], str]): The key or list of keys tobe removed to be removed.
 
     Returns:
         dict: The dictionary without the specified key.
     """
     data_copy = data.copy()
-    data_copy.pop(key, None)
+
+    if isinstance(key, list):
+        for k in key:
+            data_copy.pop(k, None)
+    else:
+        data_copy.pop(key, None)
     return data_copy
 
 
