@@ -11,9 +11,6 @@
 }}
 
 {% set transacao = ref("transacao") %}
-{% set cliente_jae = ref("cliente_jae") %}
-{% set aux_gratuidade_info = ref("aux_gratuidade_info") %}
-
 
 {% if execute and is_incremental() %}
     {% set columns = (
@@ -37,22 +34,16 @@
     {% endset %}
 
     {% set data_partitions_query %}
-      SELECT
-        CONCAT("'", PARSE_DATE("%Y%m%d", partition_id), "'") AS data
-      FROM
-        `{{ transacao.database }}.{{ transacao.schema }}.INFORMATION_SCHEMA.PARTITIONS`
-      WHERE
+    select concat("'", parse_date("%Y%m%d", partition_id), "'") as data
+    from `{{ transacao.database }}.{{ transacao.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+    where
         table_name = "{{ transacao.identifier }}"
-        AND partition_id != "__NULL__"
-        AND DATE(last_modified_time, "America/Sao_Paulo") = DATE_SUB(DATE("{{var('run_date')}}"), INTERVAL 1 DAY)
-
+        and partition_id != "__NULL__"
+        and datetime(last_modified_time, "America/Sao_Paulo") between
+            datetime("{{var('date_range_start')}}") and datetime("{{var('date_range_end')}}")
     {% endset %}
 
-    {{ log("Running query: \n" ~ data_partitions_query, info=True) }}
-    {% set partitions = run_query(data_partitions_query) %}
-
-    {% set partition_list = partitions.columns[0].values() %}
-    {{ log("transacao partitions: \n" ~ partition_list, info=True) }}
+    {% set partitions = run_query(data_partitions_query).columns[0].values() %}
 
 {% else %}
     {% set sha_column %}
@@ -83,28 +74,25 @@ with
         join
             {{ ref("aux_gratuidade_info") }} a
             on cast(a.id_cliente as string) = t.id_cliente
+            and t.datetime_transacao >= a.datetime_inicio_validade
+            and (
+                t.datetime_transacao < a.datetime_fim_validade
+                or a.datetime_fim_validade is null
+            )
         where
             t.tipo_transacao_jae in ('Gratuidade', 'Integração gratuidade')
             and t.tipo_usuario = "Estudante"
             and t.subtipo_usuario = 'Ensino Básico Municipal'
             {% if is_incremental() %}
-                {% if partition_list | length > 0 %}
-                    and data in ({{ partition_list | join(", ") }})
-                {% else %} and 1 = 0
+                {% if partitions | length > 0 %}
+                    and data in ({{ partitions | join(", ") }})
+                {% else %} and false
                 {% endif %}
             {% endif %}
     ),
-    sha_dados_novos as (
-        select *, {{ sha_column }} as sha_dado_novo
-        from dados_novos
-        qualify
-            row_number() over (
-                partition by id_transacao order by datetime_transacao desc
-            )
-            = 1
-    )
+    sha_dados_novos as (select *, {{ sha_column }} as sha_dado_novo from dados_novos),
     sha_dados_atuais as (
-        {% if is_incremental() %}
+        {% if is_incremental() and partitions | length > 0 %}
 
             select
                 id_transacao,
@@ -112,7 +100,7 @@ with
                 datetime_ultima_atualizacao as datetime_ultima_atualizacao_atual,
                 id_execucao_dbt as id_execucao_dbt_atual
             from {{ this }}
-
+            where data in ({{ partitions | join(", ") }})
         {% else %}
             select
                 cast(null as string) as id_transacao,
