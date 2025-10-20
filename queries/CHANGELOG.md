@@ -1,5 +1,11 @@
 # Changelog - queries
 
+## [1.1.2] - 2025-10-20
+
+### Alterado
+
+- Altera selector `passageiro_hora` adicionando o modelo  `transacao_gratuidade_estudante_municipal` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/958)
+
 ## [1.1.1] - 2025-09-23
 
 ### Alterado
