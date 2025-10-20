@@ -122,7 +122,7 @@ models:
       - name: subtipo_usuario
         description: "{{ doc('subtipo_usuario') }}"
       - name: meio_pagamento
-        description: "{{ doc(' meio_pagamento') }}"
+        description: "{{ doc('meio_pagamento') }}"
       - name: id_cre_escola
         description: "{{ doc('id_cre_escola') }} do cliente"
         policy_tags:
