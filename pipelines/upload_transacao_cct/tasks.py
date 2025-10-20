@@ -156,6 +156,7 @@ def export_data_from_bq_to_gcs(
     export_uri = (
         f"gs://{CCT_PRIVATE_BUCKET_NAMES[env]}/{constants.EXPORT_GCS_PREFIX.value}/{file_name}"
     )
+    cols = "*, current_datetime('America/Sao_Paulo') as datetime_export"
     sql = f"""
         EXPORT DATA
         OPTIONS(uri='{export_uri}',
@@ -163,7 +164,7 @@ def export_data_from_bq_to_gcs(
         OVERWRITE=TRUE,
         header=TRUE) AS
 
-        {transacao_select.format(cols="*", count=limit)}
+        {transacao_select.format(cols=cols, count=limit)}
     """
     log(f"Executando query:\n{sql}")
     pandas_gbq.read_gbq(sql, project_id=project_id)
@@ -210,6 +211,11 @@ def upload_files_postgres(
             cur.execute(sql)
             log("Índice deletado")
 
+            sql = f"DROP INDEX IF EXISTS public.{constants.FINAL_TABLE_EXPORT_INDEX_NAME.value}"
+            log("Deletando índice datetime export da tabela final")
+            cur.execute(sql)
+            log("Índice deletado")
+
             if full_refresh:
                 log("Truncando tabela final")
                 cur.execute(f"TRUNCATE TABLE public.{table_name}")
@@ -230,6 +236,15 @@ def upload_files_postgres(
                 ON public.{table_name} (id_ordem_pagamento_consorcio_operador_dia)
             """
             log("Recriando índice ordem pagamento da tabela final")
+            cur.execute(sql)
+            log("Índice recriado")
+
+            sql = f"""
+                CREATE INDEX
+                {constants.FINAL_TABLE_EXPORT_INDEX_NAME.value}
+                ON public.{table_name} (datetime_export)
+            """
+            log("Recriando índice datetime export da tabela final")
             cur.execute(sql)
             log("Índice recriado")
 

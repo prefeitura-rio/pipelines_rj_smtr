@@ -148,7 +148,8 @@ def create_temp_table(cur: cursor, blob: Blob, full_refresh: bool):
                 data_ordem date,
                 id_ordem_pagamento integer,
                 id_ordem_pagamento_consorcio_operador_dia integer,
-                datetime_ultima_atualizacao timestamp
+                datetime_ultima_atualizacao timestamp,
+                datetime_export timestamp
             )
         """
         log("Criando tabela temporária")
