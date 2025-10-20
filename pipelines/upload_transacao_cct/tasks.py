@@ -14,8 +14,10 @@ from pipelines.capture.cct.constants import constants as cct_constants
 from pipelines.constants import constants as smtr_constants
 from pipelines.upload_transacao_cct.constants import constants
 from pipelines.upload_transacao_cct.utils import (
+    create_temp_table,
     get_modified_partitions,
     get_partition_using_data_ordem,
+    merge_final_data,
 )
 from pipelines.utils.gcp.storage import Storage
 from pipelines.utils.secret import get_secret
@@ -26,9 +28,22 @@ from pipelines.utils.utils import convert_timezone
 def get_start_datetime(
     env: str,
     full_refresh: bool,
-    data_ordem_start: str,
-    data_ordem_end: str,
+    data_ordem_start: Optional[str],
+    data_ordem_end: Optional[str],
 ) -> tuple[Optional[datetime], bool]:
+    """
+    Obtém o timestamp da última execução a partir do Redis, ajustando o modo de execução.
+
+    Args:
+        env (str): dev ou prod.
+        full_refresh (bool): Indica se a execução é um carregamento completo.
+        data_ordem_start (Optional[str]): Data inicial do filtro de ordem.
+        data_ordem_end (Optional[str]): Data final do filtro de ordem.
+
+    Returns:
+        tuple[Optional[datetime], bool]: Timestamp inicial e flag indicando se é full refresh.
+    """
+
     if (data_ordem_start is None) != (data_ordem_end is None):
         raise ValueError("Filtro de data ordem com inicio ou fim nulo")
 
@@ -50,6 +65,13 @@ def get_start_datetime(
 
 @task
 def full_refresh_delete_all_files(env: str):
+    """
+    Remove todos os arquivos exportados do GCS.
+
+    Args:
+        env (str): dev ou prod.
+    """
+
     log("FULL REFRESH: Deletando todos os arquivos do GCS")
     storage = Storage(
         env=env,
@@ -67,9 +89,20 @@ def export_data_from_bq_to_gcs(
     timestamp: datetime,
     start_datetime: datetime,
     full_refresh: bool,
-    data_ordem_start: str,
-    data_ordem_end: str,
+    data_ordem_start: Optional[str],
+    data_ordem_end: Optional[str],
 ):
+    """
+    Exporta dados do BigQuery para o GCS aplicando filtros conforme o tipo de execução.
+
+    Args:
+        env (str): dev ou prod.
+        timestamp (datetime): Timestamp de referência da execução.
+        start_datetime (datetime): Timestamp inicial para filtragem incremental.
+        full_refresh (bool): Indica se o carregamento é completo.
+        data_ordem_start (Optional[str]): Data inicial do filtro de ordem.
+        data_ordem_end (Optional[str]): Data final do filtro de ordem.
+    """
     project_id = smtr_constants.PROJECT_NAME.value[env]
 
     file_name = f"{timestamp.strftime('%Y-%m-%d-%H-%M-%S')}-*.csv"
@@ -141,9 +174,14 @@ def upload_files_postgres(
     env: str,
     full_refresh: bool,
 ):
-    table_name = constants.TRANSACAO_POSTGRES_TABLE_NAME.value
+    """
+    Carrega os arquivos CSV das transações no GCS para o PostgreSQL
 
-    tmp_table_name = f"tmp__{table_name}"
+    Args:
+        env (str): dev ou prod.
+        full_refresh (bool): Indica se o carregamento é completo (truncate + reload) ou incremental.
+    """
+    table_name = constants.TRANSACAO_POSTGRES_TABLE_NAME.value
 
     credentials = (
         get_secret(cct_constants.CCT_SECRET_PATH.value)
@@ -167,92 +205,20 @@ def upload_files_postgres(
 
         with conn.cursor() as cur:
 
-            sql = "DROP INDEX IF EXISTS public.idx_transacao_id_ordem"
-            log("Deletando índice da tabela final")
+            sql = f"DROP INDEX IF EXISTS public.{constants.FINAL_TABLE_ID_ORDEM_INDEX_NAME.value}"
+            log("Deletando índice ordem pagamento da tabela final")
             cur.execute(sql)
             log("Índice deletado")
-
-            sql = f"""
-                CREATE TABLE IF NOT EXISTS public.{tmp_table_name}
-                (
-                    id_transacao character varying(60),
-                    data date,
-                    datetime_transacao timestamp,
-                    consorcio character varying(20),
-                    tipo_transacao character varying(50),
-                    valor_pagamento numeric(13,5),
-                    data_ordem date,
-                    id_ordem_pagamento integer,
-                    id_ordem_pagamento_consorcio_operador_dia integer,
-                    datetime_ultima_atualizacao timestamp
-                )
-            """
-            log("Criando tabela temporária")
-            cur.execute(sql)
-            log("Tabela temporária criada")
 
             if full_refresh:
                 log("Truncando tabela final")
                 cur.execute(f"TRUNCATE TABLE public.{table_name}")
 
             for blob in blobs:
-                log("Truncando tabela temporária")
-                cur.execute(f"TRUNCATE TABLE public.{tmp_table_name}")
 
-                sql = "DROP INDEX IF EXISTS public.idx_tmp_id_transacao"
-                log("Deletando índice da tabela temporária")
-                cur.execute(sql)
+                create_temp_table(cur=cur, blob=blob, full_refresh=full_refresh)
 
-                log(f"Copiando arquivo {blob.name} para a tabela temporária")
-                sql = f"""
-                    COPY public.{tmp_table_name}
-                    FROM STDIN WITH CSV HEADER
-                """
-
-                with blob.open("r") as f:
-                    cur.copy_expert(sql, f)
-                log("Cópia completa")
-
-                if not full_refresh:
-                    sql = f"""
-                        CREATE INDEX idx_tmp_id_transacao
-                        ON public.{tmp_table_name} (id_transacao)
-                    """
-                    log("Criando índice tabela temporária")
-                    cur.execute(sql)
-
-                    sql = f"""
-                        DELETE FROM public.{table_name} t
-                        USING public.{tmp_table_name} s
-                        WHERE t.id_transacao = s.id_transacao
-                    """
-                    log("Deletando registros da tabela final")
-                    cur.execute(sql)
-                    log(f"{cur.rowcount} linhas deletadas")
-
-                    log("Deletando tabela temporária")
-                    cur.execute(f"DROP TABLE IF EXISTS public.{tmp_table_name}")
-                    log("Tabela temporária deletada")
-
-                sql = "DROP INDEX IF EXISTS public.idx_transacao_id_transacao"
-                log("Deletando índice da tabela final")
-                cur.execute(sql)
-
-                log(f"Copiando arquivo {blob.name} para a tabela final")
-                sql = f"""
-                    COPY public.{table_name}
-                    FROM STDIN WITH CSV HEADER
-                """
-                with blob.open("r") as f:
-                    cur.copy_expert(sql, f)
-                log("Cópia completa")
-
-                sql = f"""
-                    CREATE INDEX idx_transacao_id_transacao
-                    ON public.{table_name} (id_transacao)
-                """
-                log("Recriando índice tabela final")
-                cur.execute(sql)
+                merge_final_data(cur=cur, blob=blob, full_refresh=full_refresh)
 
                 log("Deletando arquivo do GCS")
                 blob.delete()
@@ -260,10 +226,10 @@ def upload_files_postgres(
 
             sql = f"""
                 CREATE INDEX
-                idx_transacao_id_ordem
+                {constants.FINAL_TABLE_ID_ORDEM_INDEX_NAME.value}
                 ON public.{table_name} (id_ordem_pagamento_consorcio_operador_dia)
             """
-            log("Recriando índice tabela final")
+            log("Recriando índice ordem pagamento da tabela final")
             cur.execute(sql)
             log("Índice recriado")
 
@@ -276,6 +242,15 @@ def save_upload_timestamp_redis(
     timestamp: datetime,
     data_ordem_start: Optional[str],
 ):
+    """
+    Atualiza o timestamp da execução no Redis.
+
+    Args:
+        env (str): dev ou prod.
+        timestamp (datetime): Timestamp de referência da execução.
+        data_ordem_start (Optional[str]): Data inicial do parâmetro de filtro de ordem.
+    """
+
     if data_ordem_start is not None:
         return
 
