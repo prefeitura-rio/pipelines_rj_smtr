@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
+
 import pandas_gbq
 from google.cloud.storage import Blob
 from prefeitura_rio.pipelines_utils.logging import log
@@ -81,6 +83,12 @@ def get_partition_using_data_ordem(
     Returns:
         list[str]: Lista de partições correspondentes ao intervalo de datas de ordem.
     """
+
+    try:
+        datetime.strptime(data_ordem_start, "%Y-%m-%d")
+        datetime.strptime(data_ordem_end, "%Y-%m-%d")
+    except ValueError as e:
+        raise ValueError(f"Formato de data_ordem inválido: {e}")
 
     sql = f"""
     SELECT

@@ -56,9 +56,9 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
         data_ordem_end=data_ordem_end,
     )
 
-    with case(full_refresh.is_equal(True), True):
+    with case(full_refresh, True):
         full_refresh_delete_true = full_refresh_delete_all_files(env=env)
-    with case(full_refresh.is_equal(True), False):
+    with case(full_refresh, False):
         full_refresh_delete_false = Constant(None, name="delete_all_false")
 
     full_refresh_delete = merge(full_refresh_delete_true, full_refresh_delete_false)
