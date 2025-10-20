@@ -265,8 +265,6 @@ selectors:
           value: transacao_riocard
         - method: fqn
           value: view_transacao
-        - method: fqn
-          value: transacao_gratuidade_estudante_municipal
 
   - name: extrato_cliente_cartao
     description: Materialização da tabela de extrato do cliente
@@ -348,6 +346,8 @@ selectors:
           value: view_passageiro_hora
         - method: fqn
           value: view_passageiro_tile_hora
+        - method: fqn
+          value: transacao_gratuidade_estudante_municipal
 
   - name: infraestrutura
     description: Materialização das tabelas com informações sobre a infraestrutura de nuvem
