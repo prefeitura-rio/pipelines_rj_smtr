@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Module containing general purpose tasks"""
 from datetime import datetime, timedelta
-from typing import Any, List, Union
+from typing import Any, Union
 
 import prefect
 from prefect import task
@@ -286,23 +286,18 @@ def log_discord(message: str, key: str, dados_tag: bool = False):
 
 
 @task
-def remove_key_from_dict(data: dict, key: Union[List[str], str]) -> dict:
+def remove_key_from_dict(data: dict, key: str) -> dict:
     """Removes a specific key from a dictionary.
 
     Args:
         data (dict): The original dictionary.
-        key (Union[List[str], str]): The key or list of keys tobe removed to be removed.
+        key (str): The key to be removed.
 
     Returns:
         dict: The dictionary without the specified key.
     """
     data_copy = data.copy()
-
-    if isinstance(key, list):
-        for k in key:
-            data_copy.pop(k, None)
-    else:
-        data_copy.pop(key, None)
+    data_copy.pop(key, None)
     return data_copy
 
 

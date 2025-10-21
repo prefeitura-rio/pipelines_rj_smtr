@@ -165,7 +165,7 @@ def get_raw_gtfs_files(
     regular_sheet_index: int = None,
     upload_from_gcs: bool = False,
     data_versao_gtfs: str = None,
-    dict_gtfs: dict = None,
+    dict_gtfs: dict | None = None,
 ):
     """
     Downloads raw files and processes them.
@@ -311,7 +311,16 @@ def upload_staging_data_to_gcs(
 
 @task
 def filter_gtfs_table_ids(data_versao_gtfs_str, gtfs_table_capture_params):
-
+    """
+    +    Filtra os IDs de tabelas GTFS com base na versão dos dados.
+    +
+    +    Args:
+    +        data_versao_gtfs_str (str): Data de versão do GTFS no formato 'YYYY-MM-DD'.
+    +        gtfs_table_capture_params (dict): Dicionário com os parâmetros de captura das tabelas.
+    +
+    +    Returns:
+    +        dict: Dicionário filtrado com os parâmetros de captura das tabelas.
+    +"""
     if data_versao_gtfs_str >= constants.DATA_GTFS_V2_INICIO.value:
         gtfs_table_capture_params.pop("ordem_servico", None)
         gtfs_table_capture_params.pop("ordem_servico_trajeto_alternativo_sentido", None)

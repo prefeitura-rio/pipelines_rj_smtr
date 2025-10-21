@@ -360,17 +360,6 @@ def processa_ordem_servico_trajeto_alternativo(
         "tipo_os": "tipo_os",
     }
 
-    alt_sentido_columns = {
-        "Serviço": "servico",
-        "Vista": "vista",
-        "Consórcio": "consorcio",
-        "Sentido": "sentido",
-        "Extensão": "extensao",
-        "Evento": "evento",
-        "Ativação": "ativacao",
-        "tipo_os": "tipo_os",
-    }
-
     for sheet_index, sheet_name in sheets:
         log(f"########## {sheet_name} ##########")
         match = re.search(r"\((.*?)\)", sheet_name)
