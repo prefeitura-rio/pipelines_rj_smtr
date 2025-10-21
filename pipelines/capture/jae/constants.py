@@ -33,7 +33,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "transacao_db": {
             "engine": "postgresql",
-            "host": "10.5.112.48",
+            "host": "10.5.114.104",
         },
         "tracking_db": {
             "engine": "postgresql",
