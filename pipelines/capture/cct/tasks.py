@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# """Tasks de captura dos dados da CCT"""
+"""Tasks de captura dos dados da CCT"""
 from datetime import datetime, timedelta
 from functools import partial
 
