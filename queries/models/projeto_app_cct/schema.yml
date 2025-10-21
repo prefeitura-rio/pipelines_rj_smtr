@@ -16,6 +16,8 @@ models:
         description: "{{ doc('tipo_transacao') }}"
       - name: valor_pagamento
         description: "{{ doc('valor_pagamento') }}"
+      - name: data_ordem
+        description: "{{ doc('data_ordem') }}"
       - name: id_ordem_pagamento
         description: "{{ doc('id_ordem_pagamento') }}"
       - name: id_ordem_pagamento_consorcio_operador_dia
