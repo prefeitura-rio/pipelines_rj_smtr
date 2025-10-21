@@ -139,6 +139,11 @@ with
             data_inclusao_datalake as data_inclusao_datalake_autuacao_ar_condicionado
         from autuacao_disciplinar
         where id_infracao = "023.II"
+        qualify
+            row_number() over (
+                partition by data, placa order by data_inclusao_datalake desc
+            )
+            = 1
     ),
     autuacao_completa as (
         select distinct
