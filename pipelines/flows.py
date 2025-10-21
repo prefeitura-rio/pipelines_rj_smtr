@@ -41,3 +41,4 @@ from pipelines.treatment.monitoramento.flows import *  # noqa
 from pipelines.treatment.planejamento.flows import *  # noqa
 from pipelines.treatment.transito.flows import *  # noqa
 from pipelines.treatment.validacao_dados_jae.flows import *  # noqa
+from pipelines.upload_transacao_cct.flows import *  # noqa
