@@ -246,10 +246,10 @@ def upload_files_postgres(
 
         conn.commit()
 
-        for blob in blobs:
-            log("Deletando arquivo do GCS")
-            blob.delete()
-            log("Arquivo do GCS deletado")
+    for blob in blobs:
+        log("Deletando arquivo do GCS")
+        blob.delete()
+        log("Arquivo do GCS deletado")
 
 
 @task
