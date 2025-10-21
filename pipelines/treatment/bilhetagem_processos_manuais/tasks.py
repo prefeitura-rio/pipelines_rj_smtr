@@ -9,15 +9,18 @@ from pipelines.capture.jae.constants import JAE_SOURCE_NAME
 from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.constants import constants as smtr_constants
 from pipelines.treatment.bilhetagem_processos_manuais.constants import constants
-from pipelines.utils.utils import convert_timezone
 
 
 @task
-def create_transacao_ordem_capture_params(timestamp: str) -> dict:
+def create_transacao_ordem_integracao_capture_params(timestamp: datetime, table_id: str) -> dict:
+    source_map = {
+        jae_constants.TRANSACAO_ORDEM_TABLE_ID.value: jae_constants.TRANSACAO_ORDEM_SOURCE.value,
+        jae_constants.INTEGRACAO_TABLE_ID.value: jae_constants.INTEGRACAO_SOURCE.value,
+    }
     return {
-        "timestamp": jae_constants.TRANSACAO_ORDEM_SOURCE.value.get_last_scheduled_timestamp(
-            timestamp=convert_timezone(datetime.fromisoformat(timestamp))
-        ).strftime("%Y-%m-%d %H:%M:%S"),
+        "timestamp": source_map[table_id]
+        .get_last_scheduled_timestamp(timestamp=timestamp)
+        .strftime("%Y-%m-%d %H:%M:%S"),
         "recapture": False,
     }
 
