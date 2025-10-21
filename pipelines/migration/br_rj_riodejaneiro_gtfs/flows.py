@@ -9,7 +9,6 @@ from prefect import Parameter, case, task
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.tasks.control_flow import merge
-from prefect.tasks.core.operators import GreaterThanOrEqual
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
 
@@ -54,7 +53,6 @@ from pipelines.tasks import (
     get_scheduled_timestamp,
     log_discord,
     parse_timestamp_to_string,
-    remove_key_from_dict,
 )
 from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt
 
