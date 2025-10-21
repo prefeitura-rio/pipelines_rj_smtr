@@ -1,5 +1,11 @@
 # Changelog - bilhetagem_processos_manuais
 
+## [1.2.1] - 2025-10-21
+
+### Adicionado
+
+- Adiciona recaptura de integrações no flow `ordem_atrasada`  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/959)
+
 ## [1.2.0] - 2025-10-03
 
 ### Adicionado
