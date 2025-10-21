@@ -226,10 +226,6 @@ def upload_files_postgres(
 
                 merge_final_data(cur=cur, blob=blob, full_refresh=full_refresh)
 
-                log("Deletando arquivo do GCS")
-                blob.delete()
-                log("Arquivo do GCS deletado")
-
             sql = f"""
                 CREATE INDEX
                 {constants.FINAL_TABLE_ID_ORDEM_INDEX_NAME.value}
@@ -249,6 +245,11 @@ def upload_files_postgres(
             log("Índice recriado")
 
         conn.commit()
+
+        for blob in blobs:
+            log("Deletando arquivo do GCS")
+            blob.delete()
+            log("Arquivo do GCS deletado")
 
 
 @task
