@@ -1,5 +1,11 @@
 # Changelog - subsidio
 
+## [2.2.0] - 2025-10-22
+
+### Alterado
+
+- Altera nome da CTE `temperatura_inmet` para `temperatura_inmet_alertario` no modelo `aux_viagem_temperatura` e troca referência para utilizar o modelo `temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/977)
+
 ## [2.1.9] - 2025-10-06
 
 ### Adicionado
