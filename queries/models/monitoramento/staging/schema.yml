@@ -138,3 +138,55 @@ models:
         description: "{{ doc('versao') }}"
       - name: id_execucao_dbt
         description: "{{ doc('id_execucao_dbt') }}"
+  - name: temperatura_inmet
+    description: "Tabela com dados de temperatura das estações meteorológicas do INMET"
+    columns:
+      - name: data
+        description: "{{ doc('data') }} [partição]"
+        tests:
+          - not_null:
+              name: not_null__data__temperatura_inmet
+      - name: hora
+        description: "Hora da medição meteorológica"
+        tests:
+          - not_null:
+              name: not_null__hora__temperatura_inmet
+      - name: id_estacao
+        description: "Identificador da estação meteorológica do INMET"
+        tests:
+          - not_null:
+              name: not_null__id_estacao__temperatura_inmet
+      - name: temperatura
+        description: "Temperatura medida pela estação meteorológica (°C)"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+  - name: temperatura_alertario
+    description: "Tabela com dados de temperatura das estações meteorológicas do Sistema de Alerta Rio"
+    columns:
+      - name: data
+        description: "{{ doc('data') }} [partição]"
+        tests:
+          - not_null:
+              name: not_null__data__temperatura_alertario
+      - name: hora
+        description: "Hora da medição meteorológica"
+        tests:
+          - not_null:
+              name: not_null__hora__temperatura_alertario
+      - name: id_estacao
+        description: "Identificador da estação meteorológica do Sistema de Alerta Rio"
+        tests:
+          - not_null:
+              name: not_null__id_estacao__temperatura_alertario
+      - name: temperatura
+        description: "Temperatura medida pela estação meteorológica (°C)"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
