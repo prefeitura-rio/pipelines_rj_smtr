@@ -465,15 +465,19 @@ selectors:
         - method: fqn
           value: temperatura_inmet
         - method: fqn
-          value: viagem_classificada
+          value: temperatura_alertario
         - method: fqn
-          value: aux_viagem_temperatura
-        - method: fqn
-          value: aux_veiculo_falha_ar_condicionado
-        - method: fqn
-          value: veiculo_regularidade_temperatura_dia
-        - method: fqn
-          value: dicionario_subsidio
+          value: temperatura
+        # - method: fqn
+        #   value: viagem_classificada
+        # - method: fqn
+        #   value: aux_viagem_temperatura
+        # - method: fqn
+        #   value: aux_veiculo_falha_ar_condicionado
+        # - method: fqn
+        #   value: veiculo_regularidade_temperatura_dia
+        # - method: fqn
+        #   value: dicionario_subsidio
 
   - name: snapshot_temperatura
     definition:
@@ -484,6 +488,10 @@ selectors:
           value: snapshot_viagem_regularidade_temperatura
         - method: fqn
           value: snapshot_temperatura_inmet
+        - method: fqn
+          value: snapshot_temperatura_alertario
+        - method: fqn
+          value: snapshot_temperatura
 
   - name: pagamento_cct
     description: Materialização dos dados de pagamento da CCT

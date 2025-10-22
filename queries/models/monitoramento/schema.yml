@@ -783,28 +783,28 @@ models:
         description: "{{ doc('datetime_chegada') }}"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
-  - name: temperatura_inmet
-    description: "Tabela com dados de temperatura das estações meteorológicas do INMET"
+  - name: temperatura
+    description: "Tabela com dados de temperatura das estações meteorológicas do INMET e do Sistema Alerta Rio"
     tests:
-      - test_completude_temperatura_inmet:
-          name: test_completude__temperatura_inmet
+      - test_completude_temperatura:
+          name: test_completude__temperatura
           where: "data between date('{date_range_start}') and date_sub(date('{date_range_end}'), interval 1 day)"
     columns:
       - name: data
         description: "{{ doc('data') }} [partição]"
         tests:
           - not_null:
-              name: not_null__data__temperatura_inmet
+              name: not_null__data__temperatura
       - name: hora
         description: "Hora da medição meteorológica"
         tests:
           - not_null:
-              name: not_null__hora__temperatura_inmet
+              name: not_null__hora__temperatura
       - name: id_estacao
-        description: "Identificador da estação meteorológica do INMET"
+        description: "Identificador da estação meteorológica do INMET e do Sistema Alerta Rio"
         tests:
           - not_null:
-              name: not_null__id_estacao__temperatura_inmet
+              name: not_null__id_estacao__temperatura
       - name: temperatura
         description: "Temperatura medida pela estação meteorológica (°C)"
       - name: datetime_ultima_atualizacao
