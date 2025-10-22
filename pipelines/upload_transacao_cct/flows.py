@@ -21,6 +21,7 @@ from pipelines.upload_transacao_cct.tasks import (  # save_upload_timestamp_redi
     delete_all_files,
     export_data_from_bq_to_gcs,
     get_start_datetime,
+    merge_test,
     upload_files_postgres,
     upload_postgres_modified_data_to_bq,
 )
@@ -102,16 +103,14 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
     #     upstream_tasks=[upload],
     # )
 
-    upload_postgres_modified_data_to_bq(
+    upload_test_bq = upload_postgres_modified_data_to_bq(
         env=env,
         timestamp=timestamp,
         dates=test_dates,
         full_refresh=full_refresh,
     )
 
-    # pegar datas modificadas
-    # extrair dados do postgres
-    # subir no bq
+    merge_test(env=env, upstream_tasks=[upload_test_bq])
 
 
 upload_transacao_cct.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
