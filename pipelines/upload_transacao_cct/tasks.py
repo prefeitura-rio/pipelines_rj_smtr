@@ -343,16 +343,12 @@ def upload_postgres_modified_data_to_bq(
         database=credentials["dbname"],
     ) as conn:
         with conn.cursor() as cur, open(filepath, "w", encoding="utf-8") as f:
+            log(f"exportando dados para arquivo {filepath}")
             cur.copy_expert(f"COPY ({sql}) TO STDOUT WITH CSV HEADER", f)
+            log("arquivo exportado")
 
-    storage = Storage(
-        env=env,
-        dataset_id=table_name,
-        bucket_names=CCT_PRIVATE_BUCKET_NAMES,
-    )
     project_id = smtr_constants.PREFECT_DEFAULT_PROJECT[env]
 
-    storage.upload_file(mode="upload", filepath=filepath)
     bq = bigquery.Client()
     bq_config = bigquery.LoadJobConfig(
         source_format=bigquery.SourceFormat.CSV,
@@ -363,6 +359,7 @@ def upload_postgres_modified_data_to_bq(
     filepath_zip = filepath + ".gz"
 
     with open(filepath, "rb") as f_in, gzip.open(filepath_zip, "wb") as f_out:
+        log(f"Criando arquivo compactado: {filepath_zip}")
         shutil.copyfileobj(f_in, f_out)
 
     with open(filepath_zip, "rb") as f:
