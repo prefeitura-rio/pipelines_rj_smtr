@@ -33,7 +33,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "transacao_db": {
             "engine": "postgresql",
-            "host": "10.5.112.48",
+            "host": "10.5.114.104",
         },
         "tracking_db": {
             "engine": "postgresql",
@@ -745,6 +745,11 @@ class constants(Enum):  # pylint: disable=c0103
                 "temp_requisicao_pedido_ticketeira",
                 "temp_estudante_27082025",
                 "temp_pedido_VT_12092025",
+                "temp_estudante_02102025",
+                "temp_VT_sem_retorno_16102025",
+                "temp_cliente_fraudes_14102025",
+                "temp_vt_sem_retorno_13102025",
+                "temp_bloqueio_cliente_14102025",
             ],
             "filter": {
                 "ITEM_PEDIDO": ["DT_INCLUSAO"],
@@ -1111,6 +1116,7 @@ class constants(Enum):  # pylint: disable=c0103
         #     },
         # },
         "vendas_db": {
+            "exclude": ["nsu_temp_venda", "vendas_piu"],
             "filter": {
                 "venda": [
                     "dt_cancelamento",
@@ -1118,7 +1124,7 @@ class constants(Enum):  # pylint: disable=c0103
                     "dt_credito",
                     "dt_venda",
                 ]
-            }
+            },
         },
     }
 
