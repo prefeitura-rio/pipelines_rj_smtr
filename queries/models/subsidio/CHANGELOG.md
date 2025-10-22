@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Altera CTE `temperatura_inmet` do modelo `aux_viagem_temperatura` para utilizar o modelo `temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/977)
+- Altera nome da CTE `temperatura_inmet` para `temperatura_inmet_alertario` no modelo `aux_viagem_temperatura` e troca refência para utilizar o modelo `temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/977)
 
 ## [2.1.9] - 2025-10-06
 

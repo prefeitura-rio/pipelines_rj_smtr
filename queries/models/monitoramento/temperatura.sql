@@ -45,4 +45,4 @@ select
     "{{ var('version') }}" as versao,
     '{{ invocation_id }}' as id_execucao_dbt
 from inmet i
-full outer join alertario a on i.data = a.data and i.hora = a.hora
+left join alertario a using (data, hora)
