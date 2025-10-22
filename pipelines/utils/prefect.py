@@ -9,6 +9,7 @@ from prefect import unmapped
 from prefect.backend.flow_run import FlowRunView, FlowView, watch_flow_run
 from prefect.client import Client
 from prefect.engine.state import Skipped, State
+from prefect.executors import LocalDaskExecutor
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.prefect import get_flow_run_mode
@@ -43,7 +44,9 @@ class TypedParameter(prefect.Parameter):
         return param_value
 
 
-def run_local(flow: prefect.Flow, parameters: Dict[str, Any] = None):
+def run_local(
+    flow: prefect.Flow, parameters: Dict[str, Any] = None, parallel_execution: bool = True
+):
     """
     Executa um flow localmente
     """
@@ -52,8 +55,9 @@ def run_local(flow: prefect.Flow, parameters: Dict[str, Any] = None):
     flow.run_config = None
     flow.schedule = None
     flow.state_handlers = []
-
     bd.config.from_file = False
+
+    flow.executor = LocalDaskExecutor(scheduler="processes") if parallel_execution else None
 
     # Run flow
     return flow.run(parameters=parameters) if parameters else flow.run()
