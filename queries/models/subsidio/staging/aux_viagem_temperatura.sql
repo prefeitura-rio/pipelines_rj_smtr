@@ -210,12 +210,10 @@ with
         where indicador_ar_condicionado
         group by 1, 2, 3
     ),
-    temperatura_inmet as (  -- Dados de temperatura externa do INMET
-        select data, extract(hour from hora) as hora, max(temperatura) as temperatura
-        from {{ ref("temperatura_inmet") }}
-        where
-            {{ incremental_filter }} and id_estacao in ("A621", "A652", "A636", "A602")  -- Estações do Rio de Janeiro
-        group by 1, 2
+    temperatura_inmet_alertario as (  -- Dados de temperatura externa
+        select data, hora, temperatura
+        from {{ ref("temperatura") }}
+        where {{ incremental_filter }}
     ),
     metricas_base as (  -- 1 e 3 quartil da temperatura por hora e dia
         select
@@ -331,7 +329,7 @@ with
             and f.datetime_gps = i.datetime_gps
             and f.id_validador = i.id_validador
         left join
-            temperatura_inmet as e
+            temperatura_inmet_alertario as e
             on e.data = extract(date from i.datetime_gps)
             and e.hora = extract(hour from i.datetime_gps)
     ),
