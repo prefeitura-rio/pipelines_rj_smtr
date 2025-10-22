@@ -11,7 +11,6 @@ from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
 from pipelines.capture.cct.constants import CCT_PRIVATE_BUCKET_NAMES
 from pipelines.capture.cct.constants import constants as cct_constants
-from pipelines.constants import constants as smtr_constants
 from pipelines.upload_transacao_cct.constants import constants
 from pipelines.upload_transacao_cct.utils import (
     create_temp_table,
@@ -103,7 +102,7 @@ def export_data_from_bq_to_gcs(
         data_ordem_start (Optional[str]): Data inicial do filtro de ordem.
         data_ordem_end (Optional[str]): Data final do filtro de ordem.
     """
-    project_id = smtr_constants.PROJECT_NAME.value[env]
+    project_id = {"prod": "rj-smtr", "dev": "rj-smtr-dev"}[env]
 
     file_name = f"{timestamp.strftime('%Y-%m-%d-%H-%M-%S')}-*.csv"
 
