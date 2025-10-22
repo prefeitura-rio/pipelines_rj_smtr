@@ -3,7 +3,7 @@
     {{
         config(
             target_schema="monitoramento_staging",
-            unique_key="concat(data, '-', hora, '-', id_estacao)",
+            unique_key="concat(data, '-', hora)",
             strategy="timestamp",
             updated_at="timestamp_ultima_atualizacao",
             invalidate_hard_deletes=True,
