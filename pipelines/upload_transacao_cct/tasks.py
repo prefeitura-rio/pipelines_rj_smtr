@@ -15,6 +15,7 @@ from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
 from pipelines.capture.cct.constants import CCT_PRIVATE_BUCKET_NAMES
 from pipelines.capture.cct.constants import constants as cct_constants
+from pipelines.constants import constants as smtr_constants
 from pipelines.upload_transacao_cct.constants import constants
 from pipelines.upload_transacao_cct.utils import (
     create_temp_table,
