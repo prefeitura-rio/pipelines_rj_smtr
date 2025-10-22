@@ -169,7 +169,9 @@ with
         {% if is_incremental() and partitions | length > 0 %}
             union all
 
-            select * except (modo, versao, datetime_ultima_atualizacao), 1 as priority
+            select
+                * except (modo, versao, datetime_ultima_atualizacao, id_execucao_dbt),
+                1 as priority
             from {{ this }}
             where data in ({{ partitions | join(", ") }})
         {% endif %}
