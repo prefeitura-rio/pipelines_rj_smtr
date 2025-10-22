@@ -64,7 +64,7 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
 
     with case(test_only, False):
 
-        start_datetime, full_refresh = get_start_datetime(
+        start_datetime, full_refresh_false = get_start_datetime(
             env=env,
             full_refresh=full_refresh,
             data_ordem_start=data_ordem_start,
@@ -77,7 +77,7 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
             env=env,
             timestamp=timestamp,
             start_datetime=start_datetime,
-            full_refresh=full_refresh,
+            full_refresh=full_refresh_false,
             data_ordem_start=data_ordem_start,
             data_ordem_end=data_ordem_end,
             upstream_tasks=[delete_files],
@@ -85,7 +85,7 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
 
         upload_false = upload_files_postgres(
             env=env,
-            full_refresh=full_refresh,
+            full_refresh=full_refresh_false,
             upstream_tasks=[export_bigquery_dates],
         )
 
@@ -93,6 +93,7 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
         upload_true = Constant(None, name="upload_true")
 
     upload = merge(upload_true, upload_false)
+    full_refresh = merge(full_refresh, full_refresh_false)
 
     # save_redis_upload = save_upload_timestamp_redis(
     #     env=env,

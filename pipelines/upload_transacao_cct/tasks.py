@@ -312,7 +312,7 @@ def upload_postgres_modified_data_to_bq(
     dates: list[str],
     full_refresh: bool,
 ):
-    where = "true" if full_refresh else ", ".join(dates)
+    where = "1=1" if full_refresh else f'data IN ({", ".join(dates)})'
     sql = f"""
         SELECT
             *,
@@ -320,7 +320,7 @@ def upload_postgres_modified_data_to_bq(
         FROM
             public.{constants.TRANSACAO_POSTGRES_TABLE_NAME.value}
         WHERE
-            data IN ({where})
+            {where}
     """
 
     table_name = constants.TESTE_SINCRONIZACAO_TABLE_NAME.value
