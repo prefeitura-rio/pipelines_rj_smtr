@@ -336,6 +336,9 @@ def upload_postgres_modified_data_to_bq(
         if env == "prod"
         else get_secret(cct_constants.CCT_HMG_SECRET_PATH.value)
     )
+
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+
     with psycopg2.connect(
         host=credentials["host"],
         user=credentials["user"],
