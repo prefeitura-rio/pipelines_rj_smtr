@@ -211,8 +211,8 @@ with
         group by 1, 2, 3
     ),
     temperatura_inmet_alertario as (  -- Dados de temperatura externa
-        select data, hora, temperatura
-        from {{ ref("temperatura") }}
+        select t.data, t.hora, t.temperatura
+        from {{ ref("temperatura") }} as t
         where {{ incremental_filter }}
     ),
     metricas_base as (  -- 1 e 3 quartil da temperatura por hora e dia
