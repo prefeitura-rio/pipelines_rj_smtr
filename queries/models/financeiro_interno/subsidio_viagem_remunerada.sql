@@ -13,8 +13,8 @@
 with
     servico_km_apuracao as (
         select *
-        {# from {{ ref("viagem_conformidade_limite") }} #}
-        from `rj-smtr-dev.botelho__subsidio.viagem_conformidade_limite`
+        from {{ ref("viagem_conformidade_limite") }}
+        {# from `rj-smtr-dev.botelho__subsidio.viagem_conformidade_limite` #}
         where {{ incremental_filter }}
     ),
     indicador_ar as (
@@ -36,6 +36,7 @@ with
             s.faixa_horaria_fim,
             s.consorcio,
             s.servico,
+            s.sentido,
             s.modo,
             s.pof,
             s.id_veiculo,
@@ -65,6 +66,7 @@ select
     faixa_horaria_fim,
     consorcio,
     servico,
+    sentido,
     modo,
     id_veiculo,
     id_viagem,
@@ -77,6 +79,8 @@ select
     tecnologia_apurada,
     tecnologia_remunerada,
     distancia_planejada as km_apurada,
+    subsidio_km,
+    subsidio_km_teto,
     pof,
     safe_cast(
         coalesce(

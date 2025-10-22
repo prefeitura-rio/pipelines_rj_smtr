@@ -27,8 +27,9 @@ with
             sentido
         from {{ ref("viagem_completa") }}
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
-        where {{ incremental_filter }}
-        and data < date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
+        where
+            {{ incremental_filter }}
+            and data < date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
 
         union all by name
 
@@ -42,9 +43,10 @@ with
             distancia_planejada,
             sentido
         from {{ ref("viagem_valida") }}
-        -- from `rj-smtr.monitoramento.viagem_valida`
-        where {{ incremental_filter }}
-        and data >= date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
+        {# from `rj-smtr-dev.botelho__monitoramento.viagem_valida` #}
+        where
+            {{ incremental_filter }}
+            and data >= date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
     ),
     veiculos as (
         select data, id_veiculo, placa, ano_fabricacao, tecnologia, status, indicadores

@@ -16,6 +16,7 @@ with
             faixa_horaria_fim,
             quilometragem as km_planejada
         from {{ ref("servico_planejado_faixa_horaria") }}
+        {# from `rj-smtr-dev`.`botelho__planejamento`.`servico_planejado_faixa_horaria` #}
         where quilometragem > 0 and {{ incremental_filter }}
     ),
     -- 2. Viagens realizadas
@@ -42,6 +43,7 @@ with
             p.faixa_horaria_fim,
             p.consorcio,
             p.servico,
+            p.modo,
             p.sentido,
             safe_cast(p.km_planejada as numeric) as km_planejada_faixa,
             safe_cast(coalesce(count(v.id_viagem), 0) as int64) as viagens_faixa,
@@ -95,6 +97,7 @@ with
             p.faixa_horaria_fim,
             p.consorcio,
             p.servico,
+            p.modo,
             p.sentido,
             p.km_planejada
     )
@@ -105,6 +108,7 @@ select
     faixa_horaria_fim,
     consorcio,
     servico,
+    modo,
     sentido,
     viagens_faixa,
     km_apurada_faixa,
