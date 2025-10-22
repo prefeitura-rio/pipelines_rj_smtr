@@ -1,6 +1,6 @@
 {{
     config(
-        alias="temperatura_inmet",
+        materialized="view",
     )
 }}
 
