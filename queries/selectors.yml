@@ -468,16 +468,16 @@ selectors:
           value: temperatura_alertario
         - method: fqn
           value: temperatura
-        # - method: fqn
-        #   value: viagem_classificada
-        # - method: fqn
-        #   value: aux_viagem_temperatura
-        # - method: fqn
-        #   value: aux_veiculo_falha_ar_condicionado
-        # - method: fqn
-        #   value: veiculo_regularidade_temperatura_dia
-        # - method: fqn
-        #   value: dicionario_subsidio
+        - method: fqn
+          value: viagem_classificada
+        - method: fqn
+          value: aux_viagem_temperatura
+        - method: fqn
+          value: aux_veiculo_falha_ar_condicionado
+        - method: fqn
+          value: veiculo_regularidade_temperatura_dia
+        - method: fqn
+          value: dicionario_subsidio
 
   - name: snapshot_temperatura
     definition:
