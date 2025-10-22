@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 """Tasks para exportação das transações do BQ para o Postgres"""
+import gzip
+import os
+import shutil
 from datetime import datetime
 from typing import Optional
 
 import pandas_gbq
 import psycopg2
+from google.cloud import bigquery
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
@@ -19,6 +23,7 @@ from pipelines.upload_transacao_cct.utils import (
     get_partition_using_data_ordem,
     merge_final_data,
 )
+from pipelines.utils.fs import get_data_folder_path
 from pipelines.utils.gcp.storage import Storage
 from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import convert_timezone
@@ -91,7 +96,7 @@ def export_data_from_bq_to_gcs(
     full_refresh: bool,
     data_ordem_start: Optional[str],
     data_ordem_end: Optional[str],
-):
+) -> list[str]:
     """
     Exporta dados do BigQuery para o GCS aplicando filtros conforme o tipo de execução.
 
@@ -102,6 +107,9 @@ def export_data_from_bq_to_gcs(
         full_refresh (bool): Indica se o carregamento é completo.
         data_ordem_start (Optional[str]): Data inicial do filtro de ordem.
         data_ordem_end (Optional[str]): Data final do filtro de ordem.
+
+    Returns:
+        list[str]: Lista com as datas exportadas (vazia em caso de full refresh).
     """
     project_id = smtr_constants.PROJECT_NAME.value[env]
 
@@ -110,19 +118,20 @@ def export_data_from_bq_to_gcs(
     export_filter = "true"
 
     end_ts = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+    partitions = []
 
     if full_refresh:
         export_filter = f"datetime_ultima_atualizacao <= DATETIME('{end_ts}')"
     else:
         if data_ordem_start is None:
             start_ts = start_datetime.strftime("%Y-%m-%d %H:%M:%S")
-            modified_partitions = get_modified_partitions(
+            partitions = get_modified_partitions(
                 project_id=project_id,
                 start_ts=start_ts,
                 end_ts=end_ts,
             )
             export_filter = f"""
-            data IN ({', '.join(modified_partitions)})
+            data IN ({', '.join(partitions)})
             AND datetime_ultima_atualizacao
                 BETWEEN DATETIME("{start_ts}")
                 AND DATETIME("{end_ts}")
@@ -168,6 +177,8 @@ def export_data_from_bq_to_gcs(
     """
     log(f"Executando query:\n{sql}")
     pandas_gbq.read_gbq(sql, project_id=project_id)
+
+    return partitions
 
 
 @task
@@ -290,3 +301,71 @@ def save_upload_timestamp_redis(
             content[constants.LAST_UPLOAD_TIMESTAMP_KEY_NAME.value] = value
             log("Timestamp salva no Redis")
             redis_client.set(redis_key, content)
+
+
+@task
+def upload_postgres_modified_data_to_bq(
+    env: str,
+    timestamp: datetime,
+    dates: list[str],
+    full_refresh: bool,
+):
+    where = "true" if full_refresh else ", ".join(dates)
+    sql = f"""
+        SELECT
+            *,
+            NOW() AS datetime_extracao_teste
+        FROM
+            public.{constants.TRANSACAO_POSTGRES_TABLE_NAME.value}
+        WHERE
+            data IN ({where})
+    """
+
+    table_name = constants.TESTE_SINCRONIZACAO_TABLE_NAME.value
+
+    filepath = os.path.join(
+        get_data_folder_path(),
+        "upload",
+        table_name,
+        f"{timestamp.strftime('%Y-%m-%d-%H-%M-%S')}.csv",
+    )
+    credentials = (
+        get_secret(cct_constants.CCT_SECRET_PATH.value)
+        if env == "prod"
+        else get_secret(cct_constants.CCT_HMG_SECRET_PATH.value)
+    )
+    with psycopg2.connect(
+        host=credentials["host"],
+        user=credentials["user"],
+        password=credentials["password"],
+        database=credentials["dbname"],
+    ) as conn:
+        with conn.cursor() as cur, open(filepath, "w", encoding="utf-8") as f:
+            cur.copy_expert(f"COPY ({sql}) TO STDOUT WITH CSV HEADER", f)
+
+    storage = Storage(
+        env=env,
+        dataset_id=table_name,
+        bucket_names=CCT_PRIVATE_BUCKET_NAMES,
+    )
+    project_id = smtr_constants.PREFECT_DEFAULT_PROJECT[env]
+
+    storage.upload_file(mode="upload", filepath=filepath)
+    bq = bigquery.Client()
+    bq_config = bigquery.LoadJobConfig(
+        source_format=bigquery.SourceFormat.CSV,
+        autodetect=True,
+        skip_leading_rows=1,
+        write_disposition="WRITE_APPEND",
+    )
+    filepath_zip = filepath + ".gz"
+
+    with open(filepath, "rb") as f_in, gzip.open(filepath_zip, "wb") as f_out:
+        shutil.copyfileobj(f_in, f_out)
+
+    with open(filepath_zip, "rb") as f:
+        bq.load_table_from_file(
+            f,
+            f"{project_id}.source_cct.{table_name}",
+            job_config=bq_config,
+        ).result()

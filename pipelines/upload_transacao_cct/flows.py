@@ -17,12 +17,12 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 from pipelines.constants import constants as smtr_constants
 from pipelines.schedules import every_day_hour_one
 from pipelines.tasks import get_run_env, get_scheduled_timestamp
-from pipelines.upload_transacao_cct.tasks import (
+from pipelines.upload_transacao_cct.tasks import (  # save_upload_timestamp_redis,
     delete_all_files,
     export_data_from_bq_to_gcs,
     get_start_datetime,
-    save_upload_timestamp_redis,
     upload_files_postgres,
+    upload_postgres_modified_data_to_bq,
 )
 from pipelines.utils.prefect import TypedParameter
 
@@ -47,9 +47,15 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
     )
 
     test_only = TypedParameter(
-        name="data_ordem_end",
+        name="test_only",
         default=False,
         accepted_types=bool,
+    )
+
+    test_dates = TypedParameter(
+        name="test_dates",
+        default=None,
+        accepted_types=(list, NoneType),
     )
 
     env = get_run_env()
@@ -67,7 +73,7 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
 
         delete_files = delete_all_files(env=env)
 
-        export_bigquery = export_data_from_bq_to_gcs(
+        export_bigquery_dates = export_data_from_bq_to_gcs(
             env=env,
             timestamp=timestamp,
             start_datetime=start_datetime,
@@ -80,7 +86,7 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
         upload_false = upload_files_postgres(
             env=env,
             full_refresh=full_refresh,
-            upstream_tasks=[export_bigquery],
+            upstream_tasks=[export_bigquery_dates],
         )
 
     with case(test_only, True):
@@ -88,11 +94,18 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
 
     upload = merge(upload_true, upload_false)
 
-    save_redis_upload = save_upload_timestamp_redis(
+    # save_redis_upload = save_upload_timestamp_redis(
+    #     env=env,
+    #     timestamp=timestamp,
+    #     data_ordem_start=data_ordem_start,
+    #     upstream_tasks=[upload],
+    # )
+
+    upload_postgres_modified_data_to_bq(
         env=env,
         timestamp=timestamp,
-        data_ordem_start=data_ordem_start,
-        upstream_tasks=[upload],
+        dates=test_dates,
+        full_refresh=full_refresh,
     )
 
     # pegar datas modificadas

@@ -22,3 +22,4 @@ class constants(Enum):  # pylint: disable=c0103
     FINAL_TABLE_ID_TRANSACAO_INDEX_NAME = "idx_transacao_id_transacao"
     FINAL_TABLE_ID_ORDEM_INDEX_NAME = "idx_transacao_id_ordem"
     FINAL_TABLE_EXPORT_INDEX_NAME = "idx_transacao_datetime_export"
+    TESTE_SINCRONIZACAO_TABLE_NAME = "teste_sincronizacao_transacao_cct"
