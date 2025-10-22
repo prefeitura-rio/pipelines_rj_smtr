@@ -189,11 +189,13 @@ def upload_files_postgres(
         else get_secret(cct_constants.CCT_HMG_SECRET_PATH.value)
     )
 
-    blobs = Storage(
-        env=env,
-        dataset_id="transacao_cct",
-        bucket_names=CCT_PRIVATE_BUCKET_NAMES,
-    ).bucket.list_blobs(prefix=f"{constants.EXPORT_GCS_PREFIX.value}/")
+    blobs = list(
+        Storage(
+            env=env,
+            dataset_id="transacao_cct",
+            bucket_names=CCT_PRIVATE_BUCKET_NAMES,
+        ).bucket.list_blobs(prefix=f"{constants.EXPORT_GCS_PREFIX.value}/")
+    )
 
     with psycopg2.connect(
         host=credentials["host"],
