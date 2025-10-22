@@ -800,13 +800,8 @@ models:
         tests:
           - not_null:
               name: not_null__hora__temperatura
-      - name: id_estacao
-        description: "Identificador da estação meteorológica do INMET e do Sistema Alerta Rio"
-        tests:
-          - not_null:
-              name: not_null__id_estacao__temperatura
       - name: temperatura
-        description: "Temperatura medida pela estação meteorológica (°C)"
+        description: "Temperatura máxima medida pela estação meteorológica (°C)"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
       - name: versao
