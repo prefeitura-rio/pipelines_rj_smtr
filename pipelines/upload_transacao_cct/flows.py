@@ -18,8 +18,8 @@ from pipelines.constants import constants as smtr_constants
 from pipelines.schedules import every_day_hour_one
 from pipelines.tasks import get_run_env, get_scheduled_timestamp
 from pipelines.upload_transacao_cct.tasks import (
+    delete_all_files,
     export_data_from_bq_to_gcs,
-    full_refresh_delete_all_files,
     get_start_datetime,
     save_upload_timestamp_redis,
     upload_files_postgres,
@@ -46,46 +46,58 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
         accepted_types=(str, NoneType),
     )
 
+    test_only = TypedParameter(
+        name="data_ordem_end",
+        default=False,
+        accepted_types=bool,
+    )
+
     env = get_run_env()
 
     timestamp = get_scheduled_timestamp()
 
-    start_datetime, full_refresh = get_start_datetime(
-        env=env,
-        full_refresh=full_refresh,
-        data_ordem_start=data_ordem_start,
-        data_ordem_end=data_ordem_end,
-    )
+    with case(test_only, False):
 
-    with case(full_refresh, True):
-        full_refresh_delete_true = full_refresh_delete_all_files(env=env)
-    with case(full_refresh, False):
-        full_refresh_delete_false = Constant(None, name="delete_all_false")
+        start_datetime, full_refresh = get_start_datetime(
+            env=env,
+            full_refresh=full_refresh,
+            data_ordem_start=data_ordem_start,
+            data_ordem_end=data_ordem_end,
+        )
 
-    full_refresh_delete = merge(full_refresh_delete_true, full_refresh_delete_false)
+        delete_files = delete_all_files(env=env)
 
-    export_bigquery = export_data_from_bq_to_gcs(
-        env=env,
-        timestamp=timestamp,
-        start_datetime=start_datetime,
-        full_refresh=full_refresh,
-        data_ordem_start=data_ordem_start,
-        data_ordem_end=data_ordem_end,
-        upstream_tasks=[full_refresh_delete],
-    )
+        export_bigquery = export_data_from_bq_to_gcs(
+            env=env,
+            timestamp=timestamp,
+            start_datetime=start_datetime,
+            full_refresh=full_refresh,
+            data_ordem_start=data_ordem_start,
+            data_ordem_end=data_ordem_end,
+            upstream_tasks=[delete_files],
+        )
 
-    upload = upload_files_postgres(
-        env=env,
-        full_refresh=full_refresh,
-        upstream_tasks=[export_bigquery],
-    )
+        upload_false = upload_files_postgres(
+            env=env,
+            full_refresh=full_refresh,
+            upstream_tasks=[export_bigquery],
+        )
 
-    save_upload_timestamp_redis(
+    with case(test_only, True):
+        upload_true = Constant(None, name="upload_true")
+
+    upload = merge(upload_true, upload_false)
+
+    save_redis_upload = save_upload_timestamp_redis(
         env=env,
         timestamp=timestamp,
         data_ordem_start=data_ordem_start,
         upstream_tasks=[upload],
     )
+
+    # pegar datas modificadas
+    # extrair dados do postgres
+    # subir no bq
 
 
 upload_transacao_cct.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)

@@ -64,7 +64,7 @@ def get_start_datetime(
 
 
 @task
-def full_refresh_delete_all_files(env: str):
+def delete_all_files(env: str):
     """
     Remove todos os arquivos exportados do GCS.
 
@@ -72,7 +72,7 @@ def full_refresh_delete_all_files(env: str):
         env (str): dev ou prod.
     """
 
-    log("FULL REFRESH: Deletando todos os arquivos do GCS")
+    log("Deletando todos os arquivos do GCS")
     storage = Storage(
         env=env,
         dataset_id=constants.TRANSACAO_CCT_FOLDER.value,
