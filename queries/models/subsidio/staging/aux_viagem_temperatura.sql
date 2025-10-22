@@ -243,7 +243,9 @@ with
             *,
             percentile_cont(temperatura, 0.5) over (partition by data, hora) as mediana
         from metricas_iqr
-        where temperatura >= (iqr_limite_inferior) and temperatura <= (iqr_limite_superior) 
+        where
+            temperatura >= (iqr_limite_inferior)
+            and temperatura <= (iqr_limite_superior)
     ),
     metrica_mediana as (  -- Métrica base para Robust Z-Score - Desvio Absoluto
         select *, abs(temperatura - mediana) as desvio_abs from temperatura_filtrada_iqr
@@ -316,13 +318,10 @@ with
             f.temperatura as temperatura_int,
             e.temperatura as temperatura_ext,
 
-
             f.temperatura <= 24.5
             or (
                 (e.temperatura - f.temperatura) >= 7.5
             ) as classificacao_temperatura_regular,
-
-
 
             f.temperatura <= 24.5 as indicador_temperatura_menor_igual_24,
             (
