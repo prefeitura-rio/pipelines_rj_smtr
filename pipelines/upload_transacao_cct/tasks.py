@@ -350,7 +350,7 @@ def upload_postgres_modified_data_to_bq(
             cur.copy_expert(f"COPY ({sql}) TO STDOUT WITH CSV HEADER", f)
             log("arquivo exportado")
 
-    project_id = smtr_constants.PREFECT_DEFAULT_PROJECT[env]
+    project_id = smtr_constants.PREFECT_DEFAULT_PROJECT.value[env]
 
     bq = bigquery.Client()
     bq_config = bigquery.LoadJobConfig(
