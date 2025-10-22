@@ -15,7 +15,6 @@ from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
 
 from pipelines.capture.cct.constants import CCT_PRIVATE_BUCKET_NAMES
 from pipelines.capture.cct.constants import constants as cct_constants
-from pipelines.constants import constants as smtr_constants
 from pipelines.upload_transacao_cct.constants import constants
 from pipelines.upload_transacao_cct.utils import (
     create_temp_table,
@@ -111,7 +110,7 @@ def export_data_from_bq_to_gcs(
     Returns:
         list[str]: Lista com as datas exportadas (vazia em caso de full refresh).
     """
-    project_id = smtr_constants.PROJECT_NAME.value[env]
+    project_id = {"prod": "rj-smtr", "dev": "rj-smtr-dev"}[env]
 
     file_name = f"{timestamp.strftime('%Y-%m-%d-%H-%M-%S')}-*.csv"
 
@@ -201,11 +200,13 @@ def upload_files_postgres(
         else get_secret(cct_constants.CCT_HMG_SECRET_PATH.value)
     )
 
-    blobs = Storage(
-        env=env,
-        dataset_id="transacao_cct",
-        bucket_names=CCT_PRIVATE_BUCKET_NAMES,
-    ).bucket.list_blobs(prefix=f"{constants.EXPORT_GCS_PREFIX.value}/")
+    blobs = list(
+        Storage(
+            env=env,
+            dataset_id="transacao_cct",
+            bucket_names=CCT_PRIVATE_BUCKET_NAMES,
+        ).bucket.list_blobs(prefix=f"{constants.EXPORT_GCS_PREFIX.value}/")
+    )
 
     with psycopg2.connect(
         host=credentials["host"],
