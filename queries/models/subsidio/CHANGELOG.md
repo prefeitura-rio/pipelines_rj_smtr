@@ -1,5 +1,11 @@
 # Changelog - subsidio
 
+## [2.2.1] - 2025-10-23
+
+### Corrigido
+
+- Corrige o `indicador_estado_equipamento_aberto` quando o `id_validador` é nulo nos modelos `viagem_transacao_aux_v1` e `aux_viagem_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/985)
+
 ## [2.2.0] - 2025-10-22
 
 ### Alterado
