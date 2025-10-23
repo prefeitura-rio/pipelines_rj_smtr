@@ -94,7 +94,7 @@ with
                 then "Dia Atípico"  -- Processo.Rio MTR-PRO-2025/04520
                 when data = date(2025, 05, 24)
                 then "Dia Atípico"
-                when data between date(2025, 10, 04) and data = date(2025, 10, 05)
+                when data between date(2025, 10, 04) and date(2025, 10, 05)
                 then "Atípico"  -- MTR-DES-2025/89230 - Acionamento do Plano Verão
                 when data = date(2025, 10, 12)
                 then "Atípico"  -- MTR-DES-2025/89230 - Acionamento do Plano Verão (somente domingo)
