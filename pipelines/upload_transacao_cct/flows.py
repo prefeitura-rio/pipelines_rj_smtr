@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Flows para exportação das transações do BQ para o Postgres"""
 
+# a
 from types import NoneType
 
 from prefect.run_configs import KubernetesRun
