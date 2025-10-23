@@ -32,7 +32,7 @@ from pipelines.upload_transacao_cct.tasks import (
     upload_files_postgres,
     upload_postgres_modified_data_to_bq,
 )
-from pipelines.utils.prefect import TypedParameter
+from pipelines.utils.prefect import TypedParameter, handler_notify_failure
 
 with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct:
 
@@ -142,5 +142,6 @@ upload_transacao_cct.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
     handler_skip_if_running,
+    handler_notify_failure(webhook="alertas_bilhetagem"),
 ]
 upload_transacao_cct.schedule = every_day_hour_one
