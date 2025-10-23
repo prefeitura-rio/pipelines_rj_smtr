@@ -34,7 +34,7 @@ with
             and data < date_trunc(current_date("America/Sao_Paulo"), month)
             and {{ incremental_filter }}
     ),
-    /* 
+    /*
         2. veiculo_licenciamento_dia_backup
         Dados de licenciamento dos veículos por dia recuperados por backup [2025-04-01 a 2025-07-24]
         [Temporário enquanto não for reprocessado desde Abril/2025]
@@ -47,7 +47,7 @@ with
             between date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}") and date("2025-07-24")
             and {{ incremental_filter }}
     ),
-    /* 
+    /*
         3. veiculo_licenciamento_dia_prod
         Dados de licenciamento dos veículos por dia em produção [Após 2025-07-24]
     */
@@ -60,9 +60,9 @@ with
             and data > "2025-07-24"
             and {{ incremental_filter }}
     ),
-    /* 
+    /*
         4. veiculo_licenciamento_dia
-        União dos dados de licenciamento dos veículos por dia 
+        União dos dados de licenciamento dos veículos por dia
         [veiculo_licenciamento_dia_backup + veiculo_licenciamento_dia_prod]
     */
     veiculo_licenciamento_dia as (
