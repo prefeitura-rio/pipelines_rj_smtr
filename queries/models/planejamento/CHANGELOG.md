@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.5.3] - 2025-10-23
+
+### Corrigido
+
+- Corrigida a coluna `sentido` no modelo `ordem_servico_faixa_horaria_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/987)
+
 ## [1.5.2] - 2025-10-23
 
 ### Alterado
