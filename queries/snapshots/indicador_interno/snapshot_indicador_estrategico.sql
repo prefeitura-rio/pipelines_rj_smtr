@@ -7,7 +7,11 @@
             strategy="timestamp",
             updated_at="timestamp_ultima_atualizacao",
             invalidate_hard_deletes=True,
-            partition_by={"field": "data_inicial_mes", "data_type": "date", "granularity": "day"},
+            partition_by={
+                "field": "data_inicial_mes",
+                "data_type": "date",
+                "granularity": "day",
+            },
         )
     }}
 
