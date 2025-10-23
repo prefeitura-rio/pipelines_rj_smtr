@@ -99,7 +99,7 @@ with
                 when data = date(2025, 10, 05)
                 then "Atípico"
                 when data = date(2025, 10, 12)
-                then "Atípico"    -- [processo]
+                then "Atípico"  -- [processo]
             end as tipo_os
         from
             unnest(
