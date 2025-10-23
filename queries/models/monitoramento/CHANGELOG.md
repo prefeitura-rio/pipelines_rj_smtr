@@ -1,5 +1,21 @@
 # Changelog - monitoramento
 
+## [1.7.6] - 2025-10-22
+
+### Adicionado
+
+- Cria modelos `temperatura_alertario` e `temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/977)
+
+### Alterado
+
+- Move modelo `temperatura_inmet` para staging (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/977)
+
+## [1.7.5] - 2025-10-21
+
+### Corrigido
+
+-  Corrigida a duplicidade de autuações de ar-condicionado(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/967)
+
 ## [1.7.4] - 2025-10-06
 
 ### Adicionado

@@ -467,6 +467,10 @@ selectors:
         - method: fqn
           value: temperatura_inmet
         - method: fqn
+          value: temperatura_alertario
+        - method: fqn
+          value: temperatura
+        - method: fqn
           value: viagem_classificada
         - method: fqn
           value: aux_viagem_temperatura
@@ -486,6 +490,10 @@ selectors:
           value: snapshot_viagem_regularidade_temperatura
         - method: fqn
           value: snapshot_temperatura_inmet
+        - method: fqn
+          value: snapshot_temperatura_alertario
+        - method: fqn
+          value: snapshot_temperatura
 
   - name: pagamento_cct
     description: Materialização dos dados de pagamento da CCT

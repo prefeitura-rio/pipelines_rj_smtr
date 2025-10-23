@@ -1,12 +1,10 @@
-{% test test_completude_temperatura_inmet(model) %}
+{% test test_completude_temperatura(model) %}
 
     with
         validation as (
             select data, count(distinct hora) as qtd
             from {{ model }}
-            where
-                id_estacao in ('A621', 'A652', 'A636', 'A602')
-                and temperatura is not null
+            where temperatura is not null
             group by data
         )
 
