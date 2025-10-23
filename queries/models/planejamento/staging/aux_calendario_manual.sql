@@ -93,7 +93,13 @@ with
                 when data between date(2025, 05, 03) and date(2025, 05, 04)
                 then "Dia Atípico"  -- Processo.Rio MTR-PRO-2025/04520
                 when data = date(2025, 05, 24)
-                then "Dia Atípico"  -- [processo]
+                then "Dia Atípico"
+                when data = date(2025, 10, 04)
+                then "Atípico"
+                when data = date(2025, 10, 05)
+                then "Atípico"
+                when data = date(2025, 10, 12)
+                then "Atípico"    -- [processo]
             end as tipo_os
         from
             unnest(
