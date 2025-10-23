@@ -165,6 +165,7 @@ def get_raw_gtfs_files(
     regular_sheet_index: int = None,
     upload_from_gcs: bool = False,
     data_versao_gtfs: str = None,
+    dict_gtfs: dict | None = None,
 ):
     """
     Downloads raw files and processes them.
@@ -221,12 +222,6 @@ def get_raw_gtfs_files(
     sheetnames = [name for name in sheetnames if "ANEXO" in name]
     log(f"tabs encontradas na planilha Controle OS: {sheetnames}")
 
-    data_novo_modelo = datetime.strptime(constants.DATA_GTFS_V2_INICIO.value, "%Y-%m-%d").date()
-    data_versao = datetime.strptime(data_versao_gtfs, "%Y-%m-%d").date()
-    dict_gtfs = constants.GTFS_TABLE_CAPTURE_PARAMS.value
-    if data_versao >= data_novo_modelo:
-        dict_gtfs.pop("ordem_servico", None)
-
     with zipfile.ZipFile(file_bytes_gtfs, "r") as zipped_file:
         for filename in list(dict_gtfs.keys()):
             if filename == "ordem_servico":
@@ -237,14 +232,14 @@ def get_raw_gtfs_files(
                     raw_filepaths=raw_filepaths,
                     regular_sheet_index=regular_sheet_index,
                 )
-            elif filename == "ordem_servico_trajeto_alternativo":
+            elif "ordem_servico_trajeto_alternativo" in filename:
                 processa_ordem_servico_trajeto_alternativo(
                     sheetnames=sheetnames,
                     file_bytes=file_bytes_os,
                     local_filepath=local_filepath,
                     raw_filepaths=raw_filepaths,
                 )
-            elif filename == "ordem_servico_faixa_horaria":
+            elif "ordem_servico_faixa_horaria" in filename:
                 processa_ordem_servico_faixa_horaria(
                     sheetnames=sheetnames,
                     file_bytes=file_bytes_os,
@@ -312,3 +307,28 @@ def upload_staging_data_to_gcs(
         log(f"Tabela {tb_obj.table_full_name} já existe.")
         append_func()
         log(f"Tabela {tb_obj.table_full_name} atualizada com sucesso.")
+
+
+@task
+def filter_gtfs_table_ids(data_versao_gtfs_str, gtfs_table_capture_params):
+    """
+    +    Filtra os IDs de tabelas GTFS com base na versão dos dados.
+    +
+    +    Args:
+    +        data_versao_gtfs_str (str): Data de versão do GTFS no formato 'YYYY-MM-DD'.
+    +        gtfs_table_capture_params (dict): Dicionário com os parâmetros de captura das tabelas.
+    +
+    +    Returns:
+    +        dict: Dicionário filtrado com os parâmetros de captura das tabelas.
+    +"""
+    if data_versao_gtfs_str >= constants.DATA_GTFS_V2_INICIO.value:
+        gtfs_table_capture_params.pop("ordem_servico", None)
+        gtfs_table_capture_params.pop("ordem_servico_trajeto_alternativo_sentido", None)
+
+    if data_versao_gtfs_str < constants.DATA_GTFS_V4_INICIO.value:
+        gtfs_table_capture_params.pop("ordem_servico_faixa_horaria_sentido", None)
+
+    if data_versao_gtfs_str >= constants.DATA_GTFS_V4_INICIO.value:
+        gtfs_table_capture_params.pop("ordem_servico_faixa_horaria", None)
+
+    return gtfs_table_capture_params
