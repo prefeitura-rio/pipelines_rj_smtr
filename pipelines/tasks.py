@@ -13,7 +13,12 @@ from pytz import timezone
 
 from pipelines.constants import constants
 from pipelines.utils.discord import send_discord_message
-from pipelines.utils.prefect import FailedSubFlow, create_subflow_run, wait_subflow_run
+from pipelines.utils.prefect import (
+    FailedSubFlow,
+    create_subflow_run,
+    flow_is_running_local,
+    wait_subflow_run,
+)
 from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import convert_timezone
 
@@ -270,6 +275,8 @@ def log_discord(message: str, key: str, dados_tag: bool = False):
         key (str): Key to secret path storing the webhook to channel.
         dados_tag (bool): Indicates whether the message will tag the data team
     """
+    if flow_is_running_local():
+        message = "[DEV] " + message
     if dados_tag:
         message = (
             message + f" - <@&{constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>\n"
