@@ -62,7 +62,8 @@ with
         from
             {{
                 source(
-                    "br_rj_riodejaneiro_gtfs_staging", "ordem_servico_faixa_horaria"
+                    "br_rj_riodejaneiro_gtfs_staging",
+                    "ordem_servico_faixa_horaria_sentido",
                 )
             }}
         {% if is_incremental() -%}
