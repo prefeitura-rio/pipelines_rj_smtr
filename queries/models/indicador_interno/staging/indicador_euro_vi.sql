@@ -14,7 +14,7 @@
 
 {% set incremental_filter %}
     {% if is_incremental() %}
-    data between date_trunc(date("{{ var(" start_date ") }}"), month) and last_day(date("{{ var(" end_date ") }}"), month)
+    data between date_trunc(date("{{ var('start_date') }}"), month) and last_day(date("{{ var('end_date') }}"), month)
     and data < date_trunc(current_date("America/Sao_Paulo"), month)
     {% else %}
     data < date_trunc(current_date("America/Sao_Paulo"), month)

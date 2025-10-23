@@ -1,3 +1,12 @@
+{% set incremental_filter %}
+    {% if is_incremental() %}
+    data between date_trunc(date("{{ var('start_date') }}"), month) and last_day(date("{{ var('end_date') }}"), month)
+    and data < date_trunc(current_date("America/Sao_Paulo"), month)
+    {% else %}
+    data < date_trunc(current_date("America/Sao_Paulo"), month)
+    {% endif %}
+{% endset %}
+
 with
     ipveuroiv_quantidade_geral as (
         select
@@ -7,6 +16,7 @@ with
             extract(month from data) as mes,
             count(distinct id_veiculo) as denominador,
         from {{ ref("indicador_euro_vi") }}
+        where {{ incremental_filter }}
         group by 1, 2, 3, 4
     ),
     ipveuroiv_quantidade_euro_iv as (
@@ -17,7 +27,7 @@ with
             extract(month from data) as mes,
             count(distinct id_veiculo) as numerador,
         from {{ ref("indicador_euro_vi") }} as iev
-        where iev.indicador_euro_vi
+        where {{ incremental_filter }} and iev.indicador_euro_vi is true
         group by 1, 2, 3, 4
     ),
     indicador_euro_vi as (
@@ -35,7 +45,7 @@ with
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
             '{{ invocation_id }}' as id_execucao_dbt
         from ipveuroiv_quantidade_geral
-        full join
+        left join
             ipveuroiv_quantidade_euro_iv using (
                 data_inicial_mes, data_final_mes, ano, mes
             )
