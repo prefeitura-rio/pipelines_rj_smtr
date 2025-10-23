@@ -7,7 +7,7 @@ models:
       - name: id_transacao
         description: "{{ doc('id_transacao') }}"
       - name: data
-        description: "{{ doc('data') }}"
+        description: "{{ doc('data_transacao') }} [partição]"
       - name: datetime_transacao
         description: "{{ doc('datetime_transacao') }}"
       - name: consorcio
@@ -29,16 +29,22 @@ models:
     description: "Tabela para testar a sincronia entre as transações do BigQuery e as transações salvas no DB do App CCT."
     tests:
       - dbt_utils.expression_is_true:
-          expression: "sha_dados_bigquery = sha_dados_postgres"
+          expression: "count(*) = 0"
           where: "true"
           name: dbt_utils.expression_is_true__teste_sincronizacao_transacao_cct
     columns:
       - name: data
-        description: "{{ doc('data') }} [particao]"
+        description: "{{ doc('data_transacao') }}, prioritariamente o valor do BigQuery [particao]"
+      - name: data_bigquery
+        description: "{{ doc('data_transacao') }} no BigQuery [particao]"
+      - name: data_postgres
+        description: "{{ doc('data_transacao') }} no Postgres [particao]"
+      - name: id_transacao
+        description: "{{ doc('id_transacao') }}"
       - name: sha_dados_bigquery
-        description: Hash do conjunto de transações presentes no BigQuery
+        description: Hash dos dados da transação no BigQuery
       - name: sha_dados_postgres
-        description: Hash do conjunto de transações presentes no DB do App CCT
+        description: Hash dos dados da transação no DB do App CCT
       - name: versao
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
