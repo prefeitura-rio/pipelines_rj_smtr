@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.2.8] - 2025-10-20
+
+### Alterado
+
+- Alterado o flow `gtfs_captura_nova` para a geração da tabela externa `ordem_servico_trajeto_alternativo_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/961)
+
 ## [1.2.7] - 2025-10-14
 
 ### Alterado
