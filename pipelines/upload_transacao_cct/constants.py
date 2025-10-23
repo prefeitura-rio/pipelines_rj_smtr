@@ -24,3 +24,11 @@ class constants(Enum):  # pylint: disable=c0103
     FINAL_TABLE_ID_ORDEM_INDEX_NAME = "idx_transacao_id_ordem"
     FINAL_TABLE_EXPORT_INDEX_NAME = "idx_transacao_datetime_export"
     TESTE_SINCRONIZACAO_TABLE_NAME = "teste_sincronizacao_transacao_cct"
+
+    SINCRONIZACAO_CHECKS_LIST = {
+        TESTE_SINCRONIZACAO_TABLE_NAME: {
+            "dbt_utils.expression_is_true__teste_sincronizacao_transacao_cct": {
+                "description": "Todas as datas estão com os dados sincronizados"
+            },
+        }
+    }

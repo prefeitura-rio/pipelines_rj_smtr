@@ -17,11 +17,17 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 from pipelines.constants import constants as smtr_constants
 from pipelines.schedules import every_day_hour_one
 from pipelines.tasks import get_run_env, get_scheduled_timestamp
-from pipelines.upload_transacao_cct.tasks import (  # save_upload_timestamp_redis,
+from pipelines.treatment.templates.tasks import (
+    dbt_data_quality_checks,
+    get_repo_version,
+    run_dbt,
+)
+from pipelines.upload_transacao_cct.constants import constants
+from pipelines.upload_transacao_cct.tasks import (
     delete_all_files,
     export_data_from_bq_to_gcs,
     get_start_datetime,
-    merge_test,
+    save_upload_timestamp_redis,
     upload_files_postgres,
     upload_postgres_modified_data_to_bq,
 )
@@ -47,12 +53,6 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
         accepted_types=(str, NoneType),
     )
 
-    test_only = TypedParameter(
-        name="test_only",
-        default=False,
-        accepted_types=bool,
-    )
-
     test_dates = TypedParameter(
         name="test_dates",
         default=None,
@@ -63,9 +63,9 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
 
     timestamp = get_scheduled_timestamp()
 
-    with case(test_only, False):
+    with case(test_dates, None):
 
-        start_datetime, full_refresh_false = get_start_datetime(
+        start_datetime, full_refresh_test_none = get_start_datetime(
             env=env,
             full_refresh=full_refresh,
             data_ordem_start=data_ordem_start,
@@ -78,39 +78,58 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
             env=env,
             timestamp=timestamp,
             start_datetime=start_datetime,
-            full_refresh=full_refresh_false,
+            full_refresh=full_refresh_test_none,
             data_ordem_start=data_ordem_start,
             data_ordem_end=data_ordem_end,
             upstream_tasks=[delete_files],
         )
 
-        upload_false = upload_files_postgres(
+        upload_postgres_test_none = upload_files_postgres(
             env=env,
-            full_refresh=full_refresh_false,
+            full_refresh=full_refresh_test_none,
             upstream_tasks=[export_bigquery_dates],
         )
 
-    with case(test_only, True):
-        upload_true = Constant(None, name="upload_true")
+    with case(test_dates.is_not_equal(None), True):
+        upload_postgres_test_not_none = Constant(None, name="upload_postgres_test_not_none")
 
-    upload = merge(upload_true, upload_false)
-    full_refresh = merge(full_refresh, full_refresh_false)
-
-    # save_redis_upload = save_upload_timestamp_redis(
-    #     env=env,
-    #     timestamp=timestamp,
-    #     data_ordem_start=data_ordem_start,
-    #     upstream_tasks=[upload],
-    # )
+    upload_postgres = merge(upload_postgres_test_not_none, upload_postgres_test_none)
+    full_refresh = merge(full_refresh, full_refresh_test_none)
 
     upload_test_bq = upload_postgres_modified_data_to_bq(
         env=env,
         timestamp=timestamp,
         dates=test_dates,
         full_refresh=full_refresh,
+        upstream_tasks=[upload_postgres],
     )
 
-    merge_test(env=env, upstream_tasks=[upload_test_bq])
+    run_sincronizacao_model = run_dbt(
+        resource="model",
+        model=constants.TESTE_SINCRONIZACAO_TABLE_NAME.value,
+        _vars={"version": get_repo_version()},
+        upstream_tasks=[upload_test_bq],
+    )
+
+    run_sincronizacao_test = run_dbt(
+        resource="test",
+        model=constants.TESTE_SINCRONIZACAO_TABLE_NAME.value,
+        upstream_tasks=[run_sincronizacao_model],
+    )
+
+    notify_discord = dbt_data_quality_checks(
+        dbt_logs=run_sincronizacao_test,
+        checks_list=constants.SINCRONIZACAO_CHECKS_LIST.value,
+        params={},
+        webhook_key="alertas_bilhetagem",
+    )
+
+    save_redis_upload = save_upload_timestamp_redis(
+        env=env,
+        timestamp=timestamp,
+        data_ordem_start=data_ordem_start,
+        upstream_tasks=[upload_postgres_test_none, notify_discord],
+    )
 
 
 upload_transacao_cct.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)

@@ -24,3 +24,28 @@ models:
         description: "{{ doc('id_ordem_pagamento_consorcio_operador_dia') }}"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
+
+  - name: teste_sincronizacao_transacao_cct
+    description: "Tabela para testar a sincronia entre as transações do BigQuery e as transações salvas no DB do App CCT."
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: "sha_dados_bigquery = sha_dados_postgres"
+          where: "true"
+          name: dbt_utils.expression_is_true__teste_sincronizacao_transacao_cct
+    columns:
+      - name: data
+        description: "{{ doc('data') }} [particao]"
+      - name: sha_dados_bigquery
+        description: Hash do conjunto de transações presentes no BigQuery
+      - name: sha_dados_postgres
+        description: Hash do conjunto de transações presentes no DB do App CCT
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true

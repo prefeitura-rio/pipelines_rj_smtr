@@ -444,7 +444,7 @@ sources:
       - name: dicionario
 
   - name: source_cct
-    database: rj-smtr-staging
+    database: rj-smtr-dev
 
     tables:
       - name: ordem_pagamento
@@ -453,3 +453,4 @@ sources:
       - name: user
       - name: detalhe_a
       - name: dicionario
+      - name: teste_sincronizacao_transacao_cct

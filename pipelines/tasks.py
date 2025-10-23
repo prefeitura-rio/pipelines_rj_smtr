@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Module containing general purpose tasks"""
 from datetime import datetime, timedelta
-from typing import Any, Union
+from typing import Any, Iterable, Union
 
 import prefect
 from prefect import task
@@ -315,3 +315,20 @@ def add_days_to_date(
     dt = datetime.strptime(date_str, pattern)
     new_dt = dt + timedelta(days=days)
     return new_dt.strftime(pattern)
+
+
+@task(checkpoint=False)
+def coalesce_task(value_list: Iterable) -> Any:
+    """
+    Retorna o primeiro valor não nulo de um Iterable
+
+    Args:
+        value_list (Iterable): o Iterable com os valores
+    Returns:
+        Any: o primeiro valor não nulo
+    """
+
+    try:
+        return next(value for value in value_list if value is not None)
+    except StopIteration:
+        return None
