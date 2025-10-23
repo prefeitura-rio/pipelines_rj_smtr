@@ -357,7 +357,7 @@ def upload_postgres_modified_data_to_bq(
         source_format=bigquery.SourceFormat.CSV,
         autodetect=True,
         skip_leading_rows=1,
-        write_disposition="WRITE_APPEND",
+        write_disposition="WRITE_TRUNCATE",
     )
     filepath_zip = filepath + ".gz"
 
