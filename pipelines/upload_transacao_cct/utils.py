@@ -252,7 +252,7 @@ def merge_final_data(
     log("Recriando índice id_transacao da tabela final")
     cur.execute(sql)
 
-    date_values = [f"({d})" for d in export_bigquery_dates]
+    date_values = [f"(DATE({d}))" for d in export_bigquery_dates]
     sql = f"""
         MERGE INTO public.{constants.LOG_TABLE_NAME.value} AS t
         USING (
