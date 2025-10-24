@@ -280,7 +280,11 @@ def upload_files_postgres(
 
 
 @task
-def get_postgres_modified_dates(env: str, start_datetime: datetime) -> list[str]:
+def get_postgres_modified_dates(
+    env: str, start_datetime: datetime, full_refresh: bool
+) -> list[str]:
+    if full_refresh:
+        return []
     start_ts_str = start_datetime.astimezone(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S")
     with create_postgres_connection(env=env)() as conn:
         with conn.cursor() as cur:
