@@ -965,6 +965,9 @@ class constants(Enum):  # pylint: disable=c0103
             "dbt_utils.unique_combination_of_columns__viagem_classificada": {
                 "description": "Todos os registros são únicos"
             },
+            "test_check_tecnologia_minima__viagem_classificada": {
+                "description": "Todas as viagens com tecnologia inferior à mínima permitida foram classificadas corretamente"
+            },
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
         },
         "viagem_regularidade_temperatura": {
