@@ -27,6 +27,7 @@ from pipelines.upload_transacao_cct.constants import constants
 from pipelines.upload_transacao_cct.tasks import (
     delete_all_files,
     export_data_from_bq_to_gcs,
+    get_postgres_modified_dates,
     get_start_datetime,
     save_upload_timestamp_redis,
     upload_files_postgres,
@@ -54,7 +55,7 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
         accepted_types=(str, NoneType),
     )
 
-    test_dates = TypedParameter(
+    param_test_dates = TypedParameter(
         name="test_dates",
         default=None,
         accepted_types=(list, NoneType),
@@ -64,7 +65,7 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
 
     timestamp = get_scheduled_timestamp()
 
-    with case(test_dates, None):
+    with case(param_test_dates, None):
 
         start_datetime, full_refresh_test_none = get_start_datetime(
             env=env,
@@ -88,14 +89,18 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
         upload_postgres_test_none = upload_files_postgres(
             env=env,
             full_refresh=full_refresh_test_none,
-            upstream_tasks=[export_bigquery_dates],
+            export_bigquery_dates=export_bigquery_dates,
         )
 
-    with case(test_dates.is_not_equal(None), True):
+        test_dates_test_none = get_postgres_modified_dates(env=env, start_datetime=start_datetime)
+
+    with case(param_test_dates.is_not_equal(None), True):
         upload_postgres_test_not_none = Constant(None, name="upload_postgres_test_not_none")
+        test_dates_test_not_none = param_test_dates
 
     upload_postgres = merge(upload_postgres_test_not_none, upload_postgres_test_none)
     full_refresh = merge(full_refresh, full_refresh_test_none)
+    test_dates = merge(test_dates_test_not_none, test_dates_test_none)
 
     upload_test_bq = upload_postgres_modified_data_to_bq(
         env=env,

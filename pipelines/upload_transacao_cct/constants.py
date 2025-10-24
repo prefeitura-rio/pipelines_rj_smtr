@@ -22,7 +22,10 @@ class constants(Enum):  # pylint: disable=c0103
     TMP_TABLE_INDEX_NAME = "idx_tmp_id_transacao"
     FINAL_TABLE_ID_TRANSACAO_INDEX_NAME = "idx_transacao_id_transacao"
     FINAL_TABLE_ID_ORDEM_INDEX_NAME = "idx_transacao_id_ordem"
-    FINAL_TABLE_EXPORT_INDEX_NAME = "idx_transacao_datetime_export"
+    FINAL_TABLE_DATA_INDEX_NAME = "idx_transacao_data"
+    LOG_TABLE_NAME = "transacao_bigquery_data_alteracao"
+    LOG_TRIGGER_NAME = "trg_transacao_bigquery_data_alteracao"
+    LOG_FUNCTION_NAME = "log_transacao_bigquery_data_alteracao"
     TESTE_SINCRONIZACAO_TABLE_NAME = "teste_sincronizacao_transacao_cct"
 
     SINCRONIZACAO_CHECKS_LIST = {

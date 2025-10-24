@@ -7,17 +7,18 @@ from datetime import datetime
 from typing import Optional
 
 import pandas_gbq
-import psycopg2
 from google.cloud import bigquery
 from prefect import task
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
+from pytz import timezone
 
 from pipelines.capture.cct.constants import CCT_PRIVATE_BUCKET_NAMES
-from pipelines.capture.cct.constants import constants as cct_constants
 from pipelines.constants import constants as smtr_constants
 from pipelines.upload_transacao_cct.constants import constants
 from pipelines.upload_transacao_cct.utils import (
+    create_log_trigger,
+    create_postgres_connection,
     create_temp_table,
     get_modified_partitions,
     get_partition_using_data_ordem,
@@ -25,7 +26,6 @@ from pipelines.upload_transacao_cct.utils import (
 )
 from pipelines.utils.fs import get_data_folder_path
 from pipelines.utils.gcp.storage import Storage
-from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import convert_timezone
 
 
@@ -120,8 +120,17 @@ def export_data_from_bq_to_gcs(
     end_ts = timestamp.strftime("%Y-%m-%d %H:%M:%S")
     partitions = []
 
+    table_full_name = f"{project_id}.{constants.TRANSACAO_CCT_VIEW_FULL_NAME.value}"
     if full_refresh:
         export_filter = f"datetime_ultima_atualizacao <= DATETIME('{end_ts}')"
+        partitions = pandas_gbq.read_gbq(
+            f"""
+                SELECT DISTINCT CONCAT("'", data, "'") AS particao
+                FROM {table_full_name}
+                WHERE {export_filter}
+            """,
+            project_id=project_id,
+        )["particao"].tolist()
     else:
         if data_ordem_start is None:
             start_ts = start_datetime.strftime("%Y-%m-%d %H:%M:%S")
@@ -153,7 +162,7 @@ def export_data_from_bq_to_gcs(
         SELECT
             {{cols}}
         FROM
-            {project_id}.{constants.TRANSACAO_CCT_VIEW_FULL_NAME.value}
+            {table_full_name}
         WHERE
             {export_filter}
         LIMIT {{count}}
@@ -185,6 +194,7 @@ def export_data_from_bq_to_gcs(
 def upload_files_postgres(
     env: str,
     full_refresh: bool,
+    export_bigquery_dates=list[str],
 ):
     """
     Carrega os arquivos CSV das transações no GCS para o PostgreSQL
@@ -195,12 +205,6 @@ def upload_files_postgres(
     """
     table_name = constants.TRANSACAO_POSTGRES_TABLE_NAME.value
 
-    credentials = (
-        get_secret(cct_constants.CCT_SECRET_PATH.value)
-        if env == "prod"
-        else get_secret(cct_constants.CCT_HMG_SECRET_PATH.value)
-    )
-
     blobs = list(
         Storage(
             env=env,
@@ -209,12 +213,7 @@ def upload_files_postgres(
         ).bucket.list_blobs(prefix=f"{constants.EXPORT_GCS_PREFIX.value}/")
     )
 
-    with psycopg2.connect(
-        host=credentials["host"],
-        user=credentials["user"],
-        password=credentials["password"],
-        database=credentials["dbname"],
-    ) as conn:
+    with create_postgres_connection(env=env)() as conn:
         conn.autocommit = False
 
         with conn.cursor() as cur:
@@ -224,10 +223,18 @@ def upload_files_postgres(
             cur.execute(sql)
             log("Índice deletado")
 
-            sql = f"DROP INDEX IF EXISTS public.{constants.FINAL_TABLE_EXPORT_INDEX_NAME.value}"
-            log("Deletando índice datetime export da tabela final")
+            sql = f"DROP INDEX IF EXISTS public.{constants.FINAL_TABLE_DATA_INDEX_NAME.value}"
+            log("Deletando índice data da tabela final")
             cur.execute(sql)
             log("Índice deletado")
+
+            sql = f"""
+                DROP TRIGGER IF EXISTS {constants.LOG_TRIGGER_NAME.value}
+                ON public.{table_name}
+            """
+            log("Deletando trigger de log da tabela final")
+            cur.execute(sql)
+            log("Trigger deletado")
 
             if full_refresh:
                 log("Truncando tabela final")
@@ -237,7 +244,12 @@ def upload_files_postgres(
 
                 create_temp_table(cur=cur, blob=blob, full_refresh=full_refresh)
 
-                merge_final_data(cur=cur, blob=blob, full_refresh=full_refresh)
+                merge_final_data(
+                    cur=cur,
+                    blob=blob,
+                    full_refresh=full_refresh,
+                    export_bigquery_dates=export_bigquery_dates,
+                )
 
             sql = f"""
                 CREATE INDEX
@@ -250,12 +262,14 @@ def upload_files_postgres(
 
             sql = f"""
                 CREATE INDEX
-                {constants.FINAL_TABLE_EXPORT_INDEX_NAME.value}
-                ON public.{table_name} (datetime_export)
+                {constants.FINAL_TABLE_DATA_INDEX_NAME.value}
+                ON public.{table_name} (data)
             """
             log("Recriando índice datetime export da tabela final")
             cur.execute(sql)
             log("Índice recriado")
+
+            create_log_trigger(cur=cur)
 
         conn.commit()
 
@@ -263,6 +277,26 @@ def upload_files_postgres(
         log("Deletando arquivo do GCS")
         blob.delete()
         log("Arquivo do GCS deletado")
+
+
+@task
+def get_postgres_modified_dates(env: str, start_datetime: datetime) -> list[str]:
+    start_ts_str = start_datetime.astimezone(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S")
+    with create_postgres_connection(env=env)() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                f"""
+                    SELECT data
+                    FROM {constants.LOG_TABLE_NAME.value}
+                    WHERE datetime_alteracao
+                    BETWEEN '{start_ts_str}'
+                    AND NOW()
+                """
+            )
+
+            rows = cur.fetchall()
+
+    return [f"'{str(r[0])}'" for r in rows]
 
 
 @task
@@ -331,20 +365,10 @@ def upload_postgres_modified_data_to_bq(
         table_name,
         f"{timestamp.strftime('%Y-%m-%d-%H-%M-%S')}.csv",
     )
-    credentials = (
-        get_secret(cct_constants.CCT_SECRET_PATH.value)
-        if env == "prod"
-        else get_secret(cct_constants.CCT_HMG_SECRET_PATH.value)
-    )
 
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
 
-    with psycopg2.connect(
-        host=credentials["host"],
-        user=credentials["user"],
-        password=credentials["password"],
-        database=credentials["dbname"],
-    ) as conn:
+    with create_postgres_connection(env=env)() as conn:
         with conn.cursor() as cur, open(filepath, "w", encoding="utf-8") as f:
             log(f"exportando dados para arquivo {filepath}")
             cur.copy_expert(f"COPY ({sql}) TO STDOUT WITH CSV HEADER", f)
