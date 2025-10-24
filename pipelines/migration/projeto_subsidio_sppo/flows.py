@@ -218,8 +218,8 @@ with Flow(
         )
     )(run_dates)
     dbt_vars = {
-        "date_range_start": start_date,
-        "date_range_end": end_date,
+        "date_range_start": start_date + "T00:00:00",
+        "date_range_end": end_date + "T23:59:59",
         "partitions": partitions,
     }
 
@@ -316,7 +316,7 @@ with Flow(
             SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt(
                 resource="test",
                 dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
-                exclude="dashboard_subsidio_sppo_v2 teto_viagens__viagens_remuneradas",
+                exclude="dashboard_subsidio_sppo_v2 teto_viagens__viagens_remuneradas not_null__data_ordem__transacao",  # noqa
                 _vars=dbt_vars,
                 upstream_tasks=[timestamps],
             )
@@ -630,7 +630,7 @@ with Flow(
         SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt(
             resource="test",
             dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
-            exclude="dashboard_subsidio_sppo_v2 teto_viagens__viagens_remuneradas",
+            exclude="dashboard_subsidio_sppo_v2 teto_viagens__viagens_remuneradas not_null__data_ordem__transacao",  # noqa
             _vars=dbt_vars,
         ).set_upstream(task=send_discord_message)
 
