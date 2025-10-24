@@ -1,5 +1,15 @@
 # Changelog - subsidio
 
+## [2.2.2] - 2025-10-24
+
+### Adicionado
+
+- Adiciona o teste `test_check_tecnologia_minima` no modelo `viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/990)
+
+### Corrigido
+
+- Corrige variável `DATA_SUBSIDIO_V17_INICIO` para `DATA_SUBSIDIO_V16_INICIO` no modelo `viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/990)
+
 ## [2.2.1] - 2025-10-23
 
 ### Corrigido
