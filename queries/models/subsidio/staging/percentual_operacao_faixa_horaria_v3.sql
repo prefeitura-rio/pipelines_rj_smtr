@@ -15,8 +15,8 @@ with
             faixa_horaria_inicio,
             faixa_horaria_fim,
             quilometragem as km_planejada
-        from {{ ref("servico_planejado_faixa_horaria") }}
-        {# from `rj-smtr-dev`.`botelho__planejamento`.`servico_planejado_faixa_horaria` #}
+        {# from {{ ref("servico_planejado_faixa_horaria") }} #}
+        from `rj-smtr-dev`.`botelho__planejamento`.`servico_planejado_faixa_horaria`
         where quilometragem > 0 and {{ incremental_filter }}
     ),
     -- 2. Viagens realizadas

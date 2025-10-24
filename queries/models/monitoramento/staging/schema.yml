@@ -138,7 +138,6 @@ models:
         description: "{{ doc('versao') }}"
       - name: id_execucao_dbt
         description: "{{ doc('id_execucao_dbt') }}"
-<<<<<<< HEAD
   - name: gps_segmento_viagem
     description: "Segmentos de viagem associados a sinais de GPS"
     columns:
@@ -234,7 +233,6 @@ models:
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
         quote: true
-=======
   - name: temperatura_inmet
     description: "Tabela com dados de temperatura das estações meteorológicas do INMET"
     columns:
@@ -287,4 +285,3 @@ models:
         description: "{{ doc('versao') }}"
       - name: id_execucao_dbt
         description: "{{ doc('id_execucao_dbt') }}"
->>>>>>> main

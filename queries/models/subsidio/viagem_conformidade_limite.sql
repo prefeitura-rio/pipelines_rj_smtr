@@ -25,7 +25,8 @@ with
             faixa_horaria_fim,
             partidas as viagens_planejadas,
             quilometragem as km_planejada
-        from {{ ref("servico_planejado_faixa_horaria") }}
+        {# from {{ ref("servico_planejado_faixa_horaria") }} #}
+        from `rj-smtr-dev`.`botelho__planejamento`.`servico_planejado_faixa_horaria`
         where quilometragem > 0 and {{ incremental_filter }}
     ),
     subsidio_parametros as (
@@ -185,9 +186,3 @@ from
             and v.datetime_partida
             between p.faixa_horaria_inicio and p.faixa_horaria_fim
     ) as v
-left join
-    servico_faixa_km_apuracao as s
-    on s.data = v.data
-    and s.servico = v.servico
-    and s.sentido = v.sentido
-    and v.datetime_partida between s.faixa_horaria_inicio and s.faixa_horaria_fim

@@ -16,7 +16,7 @@
 
 with
     viagens as (
-        select
+        {# select
             data,
             servico_realizado as servico,
             datetime_partida,
@@ -31,8 +31,7 @@ with
             {{ incremental_filter }}
             and data < date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
 
-        union all by name
-
+        union all by name #}
         select
             data,
             servico,
@@ -42,8 +41,8 @@ with
             id_viagem,
             distancia_planejada,
             sentido
-        from {{ ref("viagem_valida") }}
-        {# from `rj-smtr-dev.botelho__monitoramento.viagem_valida` #}
+        {# from {{ ref("viagem_valida") }} #}
+        from `rj-smtr-dev.botelho__monitoramento.viagem_valida`
         where
             {{ incremental_filter }}
             and data >= date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
