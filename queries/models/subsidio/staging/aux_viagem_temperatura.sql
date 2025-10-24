@@ -315,13 +315,13 @@ with
             i.datetime_gps,
             f.temperatura as temperatura_int,
             e.temperatura as temperatura_ext,
-            f.temperatura <= 24
+            f.temperatura <= 24.5
             or (
-                (e.temperatura - f.temperatura) >= 8
+                (e.temperatura - f.temperatura) >= 7.5
             ) as classificacao_temperatura_regular,
-            f.temperatura <= 24 as indicador_temperatura_menor_igual_24,
+            f.temperatura <= 24.5 as indicador_temperatura_menor_igual_24,
             (
-                (e.temperatura - f.temperatura) >= 8
+                (e.temperatura - f.temperatura) >= 7.5
             ) as indicador_diferenca_temperatura_externa_interna
         from gps_validador_viagem as i
         left join
