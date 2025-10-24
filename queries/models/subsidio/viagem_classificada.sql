@@ -191,7 +191,7 @@ with
                 then "Não autorizado por ausência de ar-condicionado"
                 when
                     vt.indicador_penalidade_tecnologia
-                    and vt.data >= date('{{ var("DATA_SUBSIDIO_V17_INICIO") }}')
+                    and vt.data >= date('{{ var("DATA_SUBSIDIO_V16_INICIO") }}')
                 then "Não autorizado por capacidade"
                 when vt.status = "Autuado por ar inoperante"
                 then "Autuado por ar inoperante"

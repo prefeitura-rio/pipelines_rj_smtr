@@ -1911,11 +1911,11 @@ def split_date_range(start_date: str, end_date: str, comparison_date: str) -> di
 
     return {
         "first_range": {
-            "start_date": start_date,
+            "start_date": start_date.split("T")[0],
             "end_date": (comparison_date - timedelta(days=1)).strftime("%Y-%m-%d"),
         },
         "second_range": {
             "start_date": comparison_date.strftime("%Y-%m-%d"),
-            "end_date": end_date,
+            "end_date": end_date.split("T")[0],
         },
     }
