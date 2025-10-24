@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Cria modelos `temperatura_alertario` e `temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/977)
+- Cria modelos `temperatura_alertario` e `temperatura`, alteração conforme `MTR-MEM-2025/02796` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/977)
 
 ### Alterado
 
