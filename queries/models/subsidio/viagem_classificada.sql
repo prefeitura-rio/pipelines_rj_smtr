@@ -36,7 +36,7 @@ with
     ),
     autuacao_disciplinar as (
         select data, datetime_autuacao, id_infracao, servico, placa
-        from `rj-smtr-dev.monitoramento.autuacao_disciplinar_historico` 
+        from `rj-smtr-dev.janaina__reprocessamento__monitoramento.autuacao_disciplinar_historico` 
         where
             (
                 data_inclusao_datalake <= date_add(data, interval 7 day)
