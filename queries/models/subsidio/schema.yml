@@ -128,6 +128,9 @@ models:
           - id_veiculo
           name: dbt_utils.unique_combination_of_columns__viagem_classificada
           where: "data between date('{date_range_start}') and date('{date_range_end}') and data >= date('{DATA_SUBSIDIO_V15_INICIO}')"
+      - test_check_tecnologia_minima:
+          name: test_check_tecnologia_minima__viagem_classificada
+          where: "data between date('{date_range_start}') and date('{date_range_end}') and data >= date('{DATA_SUBSIDIO_V16_INICIO}')"
     columns:
       - name: data
         description: "{{ doc('data_viagem') }} [partição]"
