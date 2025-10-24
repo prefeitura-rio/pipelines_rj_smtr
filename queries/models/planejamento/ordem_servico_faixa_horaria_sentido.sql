@@ -37,10 +37,10 @@ with
             safe_cast(data_versao as date) as data_versao,
             safe_cast(tipo_os as string) as tipo_os,
             safe_cast(servico as string) as servico,
+            safe_cast(sentido as string) as sentido,
             safe_cast(json_value(content, '$.vista') as string) as vista,
             safe_cast(json_value(content, '$.consorcio') as string) as consorcio,
             safe_cast(json_value(content, '$.extensao') as float64) as extensao,
-            safe_cast(json_value(content, '$.sentido') as string) as sentido,
             {% for dia in dias %}
                 {% for intervalo in intervalos %}
                     safe_cast(
@@ -62,7 +62,8 @@ with
         from
             {{
                 source(
-                    "br_rj_riodejaneiro_gtfs_staging", "ordem_servico_faixa_horaria"
+                    "br_rj_riodejaneiro_gtfs_staging",
+                    "ordem_servico_faixa_horaria_sentido",
                 )
             }}
         {% if is_incremental() -%}

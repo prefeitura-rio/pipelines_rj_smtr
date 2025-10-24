@@ -1,5 +1,17 @@
 # Changelog - planejamento
 
+## [1.5.3] - 2025-10-23
+
+### Corrigido
+
+- Corrigida a coluna `sentido` no modelo `ordem_servico_faixa_horaria_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/987)
+
+## [1.5.2] - 2025-10-23
+
+### Alterado
+
+- Alterados o `tipo_dia` no modelo `aux_calendario_manual.sql` de `2025-10-04`, `2025-10-05`  e `2025-10-12` -> `Atípico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/987)
+
 ## [1.5.1] - 2025-10-14
 
 ### Adicionado
