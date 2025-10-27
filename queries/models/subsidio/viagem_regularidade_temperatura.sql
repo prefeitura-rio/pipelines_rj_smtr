@@ -122,6 +122,7 @@ with
                         and not vt.indicador_temperatura_zero_viagem
                         and vt.indicador_temperatura_transmitida_viagem
                         and vt.indicador_temperatura_regular_viagem
+                        and vt.indicador_temperatura_nula_viagem
                     )
                 else null
             end as indicador_regularidade_ar_condicionado_viagem,
