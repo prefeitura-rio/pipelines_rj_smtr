@@ -374,3 +374,30 @@ models:
         description: "{{ doc('modo') }}"
       - name: fonte
         description: Fonte de origem dos dados
+  - name: garagem
+    description: "Tabela com informações das garagens dos operadores"
+    columns:
+      - name: inicio_vigencia
+        description: "Data de inicio da vigência"
+      - name: fim_vigencia
+        description: "Data de fim da vigência"
+      - name: operador
+        description: "Nome da empresa operadora de transporte público"
+      - name: endereco
+        description: "Endereço completo da garagem do operador"
+      - name: bairro
+        description: "Nome do bairro onde está localizada a garagem"
+      - name: oficial
+        description: "Indicador se a garagem é oficial"
+      - name: ativa
+        description: "Status operacional da garagem"
+      - name: uso
+        description: "Tipo de uso da garagem"
+      - name: obs
+        description: "Observações adicionais sobre a garagem"
+      - name: area_m2
+        description: "Área total da garagem (m²)"
+      - name: geometry_wkt
+        description: "Geometria da garagem em formato WKT"
+      - name: geometry
+        description: "Geometria da garagem em formato geográfico"

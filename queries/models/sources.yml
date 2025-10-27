@@ -386,11 +386,11 @@ sources:
     tables:
       - name: veiculo_fiscalizacao_lacre
 
-  - name: monitoramento_staging
+  - name: cadastro_staging
     database: rj-smtr-staging
 
     tables:
-      - name: garagens
+      - name: garagem
 
   - name: source_cittati
     database: rj-smtr-staging

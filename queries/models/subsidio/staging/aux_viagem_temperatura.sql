@@ -89,6 +89,31 @@ with
         {# from `rj-smtr.subsidio.viagem_classificada` #}
         where {{ partition_filter }}
     ),
+    endereco_manutencao_validador as (  -- Geometria correspondente ao endereço de manutenção dos validadores conforme Ofício nº 165/2025/CBD
+        select st_buffer(geometry, 10) as geometry
+        from datario.dados_mestres.lote
+        where id_lote = "287B01604"
+    ),
+    garagens as (  -- Geometrias das garagens válidas no período de apuração
+        select inicio_vigencia, fim_vigencia, st_union_agg(geometry) as geometry
+        from {{ ref("garagem") }}
+        {# from `rj-smtr.cadastro.garagem` #}
+        where
+            inicio_vigencia <= date('{{ var("date_range_end") }}')
+            and (
+                fim_vigencia is null
+                or fim_vigencia >= date('{{ var("date_range_start") }}')
+            )
+        group by all
+    ),
+    agg_garagens_manutencao as (  -- Agrega geometrias de garagens e endereço de manutenção dos validadores
+        select
+            g.inicio_vigencia,
+            g.fim_vigencia,
+            st_union(g.geometry, e.geometry) as geometry
+        from garagens g
+        cross join endereco_manutencao_validador e
+    ),
     gps_validador as (  -- Dados base de GPS, temperatura, etc
         select distinct
             data,
@@ -152,6 +177,7 @@ with
             e.estado_equipamento,
             e.latitude,
             e.longitude,
+            st_geogpoint(e.longitude, e.latitude) as posicao_geo,
             v.servico,
             e.servico_jae
         from viagens as v
@@ -160,6 +186,21 @@ with
             on e.id_veiculo = substr(v.id_veiculo, 2)
             and e.datetime_gps between v.datetime_partida and v.datetime_chegada
     ),
+    gps_validador_bilhetagem_viagem_filtrada as (  -- Filtra pontos de GPS fora das garagens e endereços de manutenção dos validadores
+        select v.*
+        from gps_validador_bilhetagem_viagem v
+        cross join agg_garagens_manutencao g
+        where
+            v.data < date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
+            or (
+                v.data >= date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
+                and (
+                    (v.data between g.inicio_vigencia and g.fim_vigencia)
+                    or (v.data >= g.inicio_vigencia and g.fim_vigencia is null)
+                )
+                and not st_intersects(v.posicao_geo, g.geometry)
+            )
+    )
     indicador_equipamento_bilhetagem as (  -- Indicadores de estado do equipamento do validador por viagem
         select
             data,
@@ -172,7 +213,7 @@ with
                 countif(estado_equipamento = "ABERTO") / count(*) >= 0.8
                 or id_validador is null
             ) as indicador_estado_equipamento_aberto
-        from gps_validador_bilhetagem_viagem
+        from gps_validador_bilhetagem_viagem_filtrada
         group by 1, 2, 3
     ),
     gps_validador_viagem as (  -- Dados completos de GPS, temperatura e bilhetagem por viagem realizada
