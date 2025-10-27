@@ -1,5 +1,11 @@
 # Changelog - projeto_app_cct
 
+## [1.1.0] - 2025-10-27
+
+### Adicionado
+
+- Cria modelo `teste_sincronizacao_transacao_cct.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/974)
+
 ## [1.0.3] - 2025-10-20
 
 ### Adicionado

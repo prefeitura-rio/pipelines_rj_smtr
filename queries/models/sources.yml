@@ -455,3 +455,4 @@ sources:
       - name: user
       - name: detalhe_a
       - name: dicionario
+      - name: teste_sincronizacao_transacao_cct
