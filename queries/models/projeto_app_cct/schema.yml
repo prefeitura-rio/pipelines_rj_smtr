@@ -36,9 +36,9 @@ models:
       - name: data
         description: "{{ doc('data_transacao') }}, prioritariamente o valor do BigQuery [particao]"
       - name: data_bigquery
-        description: "{{ doc('data_transacao') }} no BigQuery [particao]"
+        description: "{{ doc('data_transacao') }} no BigQuery"
       - name: data_postgres
-        description: "{{ doc('data_transacao') }} no Postgres [particao]"
+        description: "{{ doc('data_transacao') }} no Postgres"
       - name: id_transacao
         description: "{{ doc('id_transacao') }}"
       - name: sha_dados_bigquery
