@@ -2,6 +2,20 @@
 
 ## [2.2.2] - 2025-10-24
 
+### Alterado
+
+- Alterada a data de inicio das glosas `Validador fechado` e `Validador associado incorretamente` para `2025-10-01` no modelo `vagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
+- Criada exceção para os tipo_viagem `Validador fechado` e `Validador associado incorretamente` no dia `2025-10-10` no modelo `vagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
+## [2.2.2] - 2025-10-24
+
+### Adicionado
+
+- Adiciona o teste `test_check_tecnologia_minima` no modelo `viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/990)
+
+## [2.2.2] - 2025-10-24
+
 ### Adicionado
 
 - Adiciona o teste `test_check_tecnologia_minima` no modelo `viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/990)
