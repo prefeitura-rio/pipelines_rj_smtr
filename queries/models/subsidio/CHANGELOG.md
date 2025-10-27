@@ -1,5 +1,11 @@
 # Changelog - subsidio
 
+## [2.2.3] - 2025-10-27
+
+### Alterado
+
+- Ajusta o cálculo do `indicador_regularidade_ar_condicionado_viagem`no modelo `viagem_regularidade_temperatura`, incluindo a condição em que `indicador_temperatura_nula_viagem` é igual a True. (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/993)
+
 ## [2.2.2] - 2025-10-24
 
 ### Adicionado
