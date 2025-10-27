@@ -210,7 +210,6 @@ with
                         )
                         or (
                             data >= date('{{ var("DATA_SUBSIDIO_V21_INICIO") }}')
-                            and data != date('2025-10-10')
                             and (
                                 quantidade_transacao_riocard = 0
                                 and quantidade_transacao = 0
@@ -221,12 +220,16 @@ with
 
                 when
                     data >= date('{{ var("DATA_SUBSIDIO_V21_INICIO") }}')
-                    and data != date('2025-10-10')
                     and not indicador_estado_equipamento_aberto
                 then 'Validador fechado'
 
                 when
                     data >= date('{{ var("DATA_SUBSIDIO_V21_INICIO") }}')
+                    /*
+                    Exceção por interrupçao na conexão com a internet nos validadores 
+                    impedindo a associação correta dos validadores de acordo com o 
+                    inciso IV do artigo 7° da resolução SMTR n° 3843/25
+                    */
                     and data != date('2025-10-10')
                     and (
                         quantidade_transacao_riocard_servico_divergente > 0
