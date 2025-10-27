@@ -159,6 +159,8 @@ vars:
   DATA_SUBSIDIO_V19_INICIO: "2025-11-01"
   # Feature Inciso IV Climatização
   DATA_SUBSIDIO_V20_INICIO: "2025-08-16"
+  # Feature Validador associado incorretamente
+  DATA_SUBSIDIO_V21_INICIO: "2025-10-01"
   # Feature Associação de servicos corretamente (email da SUBTT do dia 2025-07-31 às 18:10)
   DATA_SUBSIDIO_V99_INICIO: "3000-01-01"
 

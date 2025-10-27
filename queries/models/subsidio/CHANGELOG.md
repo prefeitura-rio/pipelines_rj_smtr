@@ -1,18 +1,12 @@
 # Changelog - subsidio
 
-## [2.2.4] - 2025-10-27
+## [2.2.3] - 2025-10-27
 
 ### Alterado
 
 - Alterada a data de início das glosas `Validador fechado` e `Validador associado incorretamente` para `2025-10-01` no modelo `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/995)
 
 - Criada exceção para os tipo_viagem `Validador associado incorretamente` no dia `2025-10-10` no modelo `viagem_transacao_aux_v2` conforme o email `2025-10-10T15:08` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/995)
-
-## [2.2.3] - 2025-10-24
-
-### Adicionado
-
-- Adiciona o teste `test_check_tecnologia_minima` no modelo `viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/990)
 
 ## [2.2.2] - 2025-10-24
 
