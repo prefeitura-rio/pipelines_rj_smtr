@@ -225,11 +225,7 @@ with
 
                 when
                     data >= date('{{ var("DATA_SUBSIDIO_V21_INICIO") }}')
-                    /*
-                    Exceção por interrupçao na conexão com a internet nos validadores 
-                    impedindo a associação correta dos validadores de acordo com o 
-                    inciso IV do artigo 7° da resolução SMTR n° 3843/25
-                    */
+                    -- Exceção conforme email de 2025-10-10T15:08
                     and data != date('2025-10-10')
                     and (
                         quantidade_transacao_riocard_servico_divergente > 0
