@@ -93,7 +93,7 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
         )
 
         test_dates_test_none = get_postgres_modified_dates(
-            env=env, start_datetime=start_datetime, full_refresh=full_refresh
+            env=env, start_datetime=start_datetime, full_refresh=full_refresh_test_none
         )
 
     with case(param_test_dates.is_not_equal(None), True):
@@ -101,7 +101,7 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
         test_dates_test_not_none = param_test_dates
 
     upload_postgres = merge(upload_postgres_test_not_none, upload_postgres_test_none)
-    full_refresh = merge(full_refresh, full_refresh_test_none)
+    full_refresh = merge(full_refresh_test_none, full_refresh)
     test_dates = merge(test_dates_test_not_none, test_dates_test_none)
 
     upload_test_bq = upload_postgres_modified_data_to_bq(

@@ -15,6 +15,15 @@ from pipelines.utils.secret import get_secret
 
 
 def create_postgres_connection(env: str) -> Callable[[], connection]:
+    """
+    Cria uma função de conexão com o banco Postgres para o ambiente especificado.
+
+    Args:
+        env (str): dev ou prod.
+
+    Returns:
+        Callable[[], connection]: Função que, ao ser chamada, retorna aconexão com o Postgres.
+    """
     credentials = (
         get_secret(cct_constants.CCT_SECRET_PATH.value)
         if env == "prod"
@@ -72,7 +81,7 @@ def get_modified_partitions(
         SELECT
             DISTINCT CONCAT("'", data, "'") AS particao
         FROM
-            {project_id}.{constants.TRANSACAO_CCT_VIEW_NAME.value}
+            {project_id}.{constants.TRANSACAO_CCT_VIEW_FULL_NAME.value}
         WHERE
         data IN ({', '.join(modified_partitions)})
         AND datetime_ultima_atualizacao
@@ -131,7 +140,7 @@ def get_partition_using_data_ordem(
         SELECT
             DISTINCT CONCAT("'", data, "'") AS particao
         FROM
-            {project_id}.{constants.TRANSACAO_CCT_VIEW_NAME.value}
+            {project_id}.{constants.TRANSACAO_CCT_VIEW_FULL_NAME.value}
 
         WHERE
         data IN ({', '.join(partitions)})
@@ -213,6 +222,7 @@ def merge_final_data(
         cur (cursor): Cursor ativo da conexão PostgreSQL.
         blob (Blob): Objeto Blob que representa o arquivo CSV no GCS.
         full_refresh (bool): Indica se o carregamento é completo (True) ou incremental (False).
+        export_bigquery_dates (list[str]): Lista de datas das transações exportadas do BigQuery
     """
 
     table_name = constants.TRANSACAO_POSTGRES_TABLE_NAME.value

@@ -202,6 +202,7 @@ def upload_files_postgres(
     Args:
         env (str): dev ou prod.
         full_refresh (bool): Indica se o carregamento é completo (truncate + reload) ou incremental.
+        export_bigquery_dates (list[str]): Lista de datas das transações exportadas do BigQuery
     """
     table_name = constants.TRANSACAO_POSTGRES_TABLE_NAME.value
 
@@ -283,6 +284,17 @@ def upload_files_postgres(
 def get_postgres_modified_dates(
     env: str, start_datetime: datetime, full_refresh: bool
 ) -> list[str]:
+    """
+    Retorna as datas modificadas no Postgres desde um timestamp inicial.
+
+    Args:
+        env (str): dev ou prod.
+        start_datetime (datetime): Data e hora inicial para filtrar modificações.
+        full_refresh (bool): Indica se o carregamento é completo ou incremental.
+
+    Returns:
+        list[str]: Lista de datas modificadas formatadas como strings SQL.
+    """
     if full_refresh:
         return []
     start_ts_str = start_datetime.astimezone(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S")
@@ -350,6 +362,15 @@ def upload_postgres_modified_data_to_bq(
     dates: list[str],
     full_refresh: bool,
 ):
+    """
+    Exporta dados modificados do Postgres e faz upload para o BigQuery.
+
+    Args:
+        env (str): dev ou prod.
+        timestamp (datetime): Data e hora de referência para nomear o arquivo exportado.
+        dates (list[str]): Lista de datas a serem filtradas na exportação.
+        full_refresh (bool): Indica se o carregamento é completo ou incremental.
+    """
     where = "1=1" if full_refresh else f'data IN ({", ".join(dates)})'
     sql = f"""
         SELECT
