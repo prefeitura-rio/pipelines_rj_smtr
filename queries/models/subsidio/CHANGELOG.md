@@ -4,9 +4,9 @@
 
 ### Alterado
 
-- Alterada a data de inicio das glosas `Validador fechado` e `Validador associado incorretamente` para `2025-10-01` no modelo `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/996)
+- Alterada a data de inicio das glosas `Validador fechado` e `Validador associado incorretamente` para `2025-10-01` no modelo `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/995)
 
-- Criada exceção para os tipo_viagem `Validador fechado` e `Validador associado incorretamente` no dia `2025-10-10` no modelo `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/996)
+- Criada exceção para os tipo_viagem `Validador fechado` e `Validador associado incorretamente` no dia `2025-10-10` no modelo `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/995)
 
 ## [2.2.2] - 2025-10-24
 
