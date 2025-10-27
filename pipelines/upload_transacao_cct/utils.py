@@ -1,12 +1,42 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
+from functools import partial
+from typing import Callable
 
 import pandas_gbq
+import psycopg2
 from google.cloud.storage import Blob
 from prefeitura_rio.pipelines_utils.logging import log
-from psycopg2._psycopg import cursor
+from psycopg2._psycopg import connection, cursor
 
+from pipelines.capture.cct.constants import constants as cct_constants
 from pipelines.upload_transacao_cct.constants import constants
+from pipelines.utils.secret import get_secret
+
+
+def create_postgres_connection(env: str) -> Callable[[], connection]:
+    """
+    Cria uma função de conexão com o banco Postgres para o ambiente especificado.
+
+    Args:
+        env (str): dev ou prod.
+
+    Returns:
+        Callable[[], connection]: Função que, ao ser chamada, retorna aconexão com o Postgres.
+    """
+    credentials = (
+        get_secret(cct_constants.CCT_SECRET_PATH.value)
+        if env == "prod"
+        else get_secret(cct_constants.CCT_HMG_SECRET_PATH.value)
+    )
+
+    return partial(
+        psycopg2.connect,
+        host=credentials["host"],
+        user=credentials["user"],
+        password=credentials["password"],
+        database=credentials["dbname"],
+    )
 
 
 def get_modified_partitions(
@@ -51,7 +81,7 @@ def get_modified_partitions(
         SELECT
             DISTINCT CONCAT("'", data, "'") AS particao
         FROM
-            {project_id}.{constants.TRANSACAO_CCT_VIEW_NAME.value}
+            {project_id}.{constants.TRANSACAO_CCT_VIEW_FULL_NAME.value}
         WHERE
         data IN ({', '.join(modified_partitions)})
         AND datetime_ultima_atualizacao
@@ -110,7 +140,7 @@ def get_partition_using_data_ordem(
         SELECT
             DISTINCT CONCAT("'", data, "'") AS particao
         FROM
-            {project_id}.{constants.TRANSACAO_CCT_VIEW_NAME.value}
+            {project_id}.{constants.TRANSACAO_CCT_VIEW_FULL_NAME.value}
 
         WHERE
         data IN ({', '.join(partitions)})
@@ -178,7 +208,12 @@ def create_temp_table(cur: cursor, blob: Blob, full_refresh: bool):
         cur.execute(sql)
 
 
-def merge_final_data(cur: cursor, blob: Blob, full_refresh: bool):
+def merge_final_data(
+    cur: cursor,
+    blob: Blob,
+    full_refresh: bool,
+    export_bigquery_dates: list[str],
+):
     """
     Atualiza a tabela final no PostgreSQL com base em um arquivo CSV no GCS,
     substituindo registros existentes.
@@ -187,6 +222,7 @@ def merge_final_data(cur: cursor, blob: Blob, full_refresh: bool):
         cur (cursor): Cursor ativo da conexão PostgreSQL.
         blob (Blob): Objeto Blob que representa o arquivo CSV no GCS.
         full_refresh (bool): Indica se o carregamento é completo (True) ou incremental (False).
+        export_bigquery_dates (list[str]): Lista de datas das transações exportadas do BigQuery
     """
 
     table_name = constants.TRANSACAO_POSTGRES_TABLE_NAME.value
@@ -225,3 +261,103 @@ def merge_final_data(cur: cursor, blob: Blob, full_refresh: bool):
     """
     log("Recriando índice id_transacao da tabela final")
     cur.execute(sql)
+
+    date_values = [f"(DATE({d}))" for d in export_bigquery_dates]
+    sql = f"""
+        MERGE INTO public.{constants.LOG_TABLE_NAME.value} AS t
+        USING (
+            VALUES
+            {','.join(date_values)}
+        ) AS s(data)
+        ON t.data = s.data
+        WHEN MATCHED THEN
+            UPDATE SET datetime_alteracao = now()
+        WHEN NOT MATCHED THEN
+            INSERT (data, datetime_alteracao)
+            VALUES (s.data, now());
+    """
+    log("Atualizando tabela de log de modificações")
+    cur.execute(sql)
+
+
+def create_log_trigger(cur: cursor):
+    log("Recriando Trigger na tabela final")
+
+    log_table_name = constants.LOG_TABLE_NAME.value
+    sql = f"""
+        CREATE OR REPLACE FUNCTION public.{constants.LOG_FUNCTION_NAME.value}()
+        RETURNS TRIGGER
+        SECURITY DEFINER
+        AS $$
+        DECLARE
+            v_now timestamptz := now();
+        BEGIN
+            IF TG_OP = 'DELETE' THEN
+                MERGE INTO public.{log_table_name} AS t
+                USING (SELECT OLD.data AS data, v_now AS datetime_alteracao) AS s
+                ON (t.data = s.data)
+                WHEN MATCHED THEN
+                    UPDATE SET datetime_alteracao = s.datetime_alteracao
+                WHEN NOT MATCHED THEN
+                    INSERT (data, datetime_alteracao) VALUES (s.data, s.datetime_alteracao);
+
+            ELSIF TG_OP = 'INSERT' THEN
+                -- Atualiza/inclui a data nova
+                MERGE INTO public.{log_table_name} AS t
+                USING (SELECT NEW.data AS data, v_now AS datetime_alteracao) AS s
+                ON (t.data = s.data)
+                WHEN MATCHED THEN
+                    UPDATE SET datetime_alteracao = s.datetime_alteracao
+                WHEN NOT MATCHED THEN
+                    INSERT (data, datetime_alteracao) VALUES (s.data, s.datetime_alteracao);
+
+            ELSIF TG_OP = 'UPDATE' THEN
+                -- Caso a data tenha mudado, atualiza as duas (antiga e nova)
+                IF OLD.data IS DISTINCT FROM NEW.data THEN
+                    -- Atualiza a data antiga
+                    MERGE INTO public.{log_table_name} AS t
+                    USING (SELECT OLD.data AS data, v_now AS datetime_alteracao) AS s
+                    ON (t.data = s.data)
+                    WHEN MATCHED THEN
+                        UPDATE SET datetime_alteracao = s.datetime_alteracao
+                    WHEN NOT MATCHED THEN
+                        INSERT (data, datetime_alteracao) VALUES (s.data, s.datetime_alteracao);
+
+                    -- Atualiza a data nova
+                    MERGE INTO public.{log_table_name} AS t
+                    USING (SELECT NEW.data AS data, v_now AS datetime_alteracao) AS s
+                    ON (t.data = s.data)
+                    WHEN MATCHED THEN
+                        UPDATE SET datetime_alteracao = s.datetime_alteracao
+                    WHEN NOT MATCHED THEN
+                        INSERT (data, datetime_alteracao) VALUES (s.data, s.datetime_alteracao);
+                ELSE
+                    -- Caso a data não tenha mudado, só atualiza a nova
+                    MERGE INTO public.{log_table_name} AS t
+                    USING (SELECT NEW.data AS data, v_now AS datetime_alteracao) AS s
+                    ON (t.data = s.data)
+                    WHEN MATCHED THEN
+                        UPDATE SET datetime_alteracao = s.datetime_alteracao
+                    WHEN NOT MATCHED THEN
+                        INSERT (data, datetime_alteracao) VALUES (s.data, s.datetime_alteracao);
+                END IF;
+            END IF;
+
+            RETURN NEW;
+        END;
+        $$ LANGUAGE plpgsql;
+    """
+
+    cur.execute(sql)
+
+    sql = f"""
+        CREATE TRIGGER {constants.LOG_TRIGGER_NAME.value}
+        AFTER INSERT OR UPDATE OR DELETE
+        ON public.{constants.TRANSACAO_POSTGRES_TABLE_NAME.value}
+        FOR EACH ROW
+        EXECUTE FUNCTION public.{constants.LOG_FUNCTION_NAME.value}();
+    """
+
+    cur.execute(sql)
+
+    log("Trigger criado")
