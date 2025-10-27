@@ -265,7 +265,7 @@ def upload_files_postgres(
                 {constants.FINAL_TABLE_DATA_INDEX_NAME.value}
                 ON public.{table_name} (data)
             """
-            log("Recriando índice datetime export da tabela final")
+            log("Recriando índice data da tabela final")
             cur.execute(sql)
             log("Índice recriado")
 

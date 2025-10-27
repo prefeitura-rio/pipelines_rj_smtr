@@ -1,8 +1,7 @@
 {{
     config(
-        materialized="incremental",
+        materialized="table",
         partition_by={"field": "data", "data_type": "date", "granularity": "day"},
-        incremental_strategy="insert_overwrite",
     )
 }}
 
@@ -76,17 +75,34 @@ with
         select *, {{ sha_column }} as sha_dados_bigquery
         from {{ transacao_cct }}
         where data in ({{ partitions | join(", ") }})
+    ),
+    dados_novos as (
+        select
+            ifnull(b.data, p.data) as data,
+            b.data as data_bigquery,
+            p.data as data_postgres,
+            id_transacao,
+            sha_dados_bigquery,
+            sha_dados_postgres,
+        from bq b
+        full outer join postgres p using (id_transacao)
+    ),
+    dados_completos as (
+        select *
+        from dados_novos
+        {% if table_exists(this) %}
+            union all
+
+            select * except (versao, datetime_ultima_atualizacao, id_execucao_dbt)
+            from {{ this }}
+            where id_transacao not in (select id_transacao from dados_novos)
+        {% endif %}
     )
+
 select
-    ifnull(b.data, p.data) as data,
-    b.data as data_bigquery,
-    p.data as data_postgres,
-    id_transacao,
-    sha_dados_bigquery,
-    sha_dados_postgres,
+    *,
     '{{ var("version") }}' as versao,
     current_datetime('America/Sao_Paulo') as datetime_ultima_atualizacao,
     '{{ invocation_id }}' as id_execucao_dbt
-from bq b
-full outer join postgres p using (id_transacao)
+from dados_completos
 where ifnull(to_hex(sha_dados_bigquery), '') != ifnull(to_hex(sha_dados_postgres), '')
