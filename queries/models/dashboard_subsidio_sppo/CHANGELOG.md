@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrigida a classificação de viagens acima do limite o modelo `viagens_remuneradas_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Corrigida a classificação de viagens acima do limite o modelo `viagens_remuneradas_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1005)
 
 ## [8.0.4] - 2025-10-07
 
