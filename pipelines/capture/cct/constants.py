@@ -34,7 +34,7 @@ class constants(Enum):  # pylint: disable=c0103
                     AND '{end}'
                     OR "updatedAt" BETWEEN '{start}'
                     AND '{end}'*/
-                ORDER BY createdat
+                ORDER BY "createdAt"
             """,
             "primary_keys": ["id"],
             "capture_flow": "pagamento",
