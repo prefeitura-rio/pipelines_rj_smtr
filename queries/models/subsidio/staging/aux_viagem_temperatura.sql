@@ -196,18 +196,23 @@ with
     gps_validador_bilhetagem_viagem_filtrada as (  -- Filtra pontos de GPS fora das garagens e endereços de manutenção dos validadores
         select v.*
         from gps_validador_bilhetagem_viagem v
-        cross join agg_garagens_manutencao g
         where
             v.data < date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
             or (
                 v.data >= date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
-                and (
-                    (v.data between g.inicio_vigencia and g.fim_vigencia)
-                    or (v.data >= g.inicio_vigencia and g.fim_vigencia is null)
+                and not exists (
+                    select 1
+                    from agg_garagens_manutencao g
+                    where
+                        (
+                            v.data between g.inicio_vigencia and coalesce(
+                                g.fim_vigencia, v.data
+                            )
+                        )
+                        and st_intersects(v.posicao_geo, g.geometry)
                 )
-                and not st_intersects(v.posicao_geo, g.geometry)
             )
-    )
+    ),
     indicador_equipamento_bilhetagem as (  -- Indicadores de estado do equipamento do validador por viagem
         select
             data,
