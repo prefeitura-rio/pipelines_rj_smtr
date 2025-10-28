@@ -1,5 +1,11 @@
 # Changelog - cadastro
 
+## [1.6.7] - 2025-10-27
+
+### Adicionado
+
+- Adiciona modelos `staging_garagem` e `garagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/996)
+
 ## [1.6.6] - 2025-10-14
 
 ### Corrigido

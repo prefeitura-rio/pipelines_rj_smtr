@@ -89,6 +89,38 @@ with
         {# from `rj-smtr.subsidio.viagem_classificada` #}
         where {{ partition_filter }}
     ),
+    endereco_manutencao_validador as (  -- Geometria correspondente ao endereço de manutenção dos validadores conforme Ofício nº 165/2025/CBD
+        select
+            st_buffer(
+                st_geogfromtext(
+                    "POLYGON((-43.1809263629012 -22.9023415400994, -43.1809355158356 -22.9023188980249, -43.1809499203212 -22.9022832575615, -43.1809751620823 -22.9022207928068, -43.181136469863 -22.9022726961659, -43.1811457018491 -22.9022806583809, -43.1811533860381 -22.902289957837, -43.1811593104274 -22.9023003289061, -43.1811632944557 -22.9023114728602, -43.1811652249352 -22.9023230901438, -43.1811650686283 -22.9023348365165, -43.1810535167347 -22.9025089202062, -43.1810234734783 -22.9024966649362, -43.1808862935479 -22.9024406953277, -43.1808894789739 -22.9024328125621, -43.1809057097345 -22.902392650667, -43.1809263629012 -22.9023415400994))"
+                ),
+                10
+            ) as geometry
+    {# select st_buffer(geometry, 10) as geometry
+        from datario.dados_mestres.lote
+        where id_lote = "287B01604" #}
+    ),
+    garagens as (  -- Geometrias das garagens válidas no período de apuração
+        select inicio_vigencia, fim_vigencia, st_union_agg(geometry) as geometry
+        from {{ ref("garagem") }}
+        {# from `rj-smtr.cadastro.garagem` #}
+        where
+            inicio_vigencia <= date('{{ var("date_range_end") }}')
+            and (
+                fim_vigencia is null
+                or fim_vigencia >= date('{{ var("date_range_start") }}')
+            )
+        group by all
+    ),
+    agg_garagens_manutencao as (  -- Agrega geometrias de garagens e endereço de manutenção dos validadores
+        select
+            g.inicio_vigencia,
+            g.fim_vigencia,
+            st_union(g.geometry, e.geometry) as geometry
+        from garagens g
+        cross join endereco_manutencao_validador e
+    ),
     gps_validador as (  -- Dados base de GPS, temperatura, etc
         select distinct
             data,
@@ -152,6 +184,7 @@ with
             e.estado_equipamento,
             e.latitude,
             e.longitude,
+            st_geogpoint(e.longitude, e.latitude) as posicao_geo,
             v.servico,
             e.servico_jae
         from viagens as v
@@ -159,6 +192,26 @@ with
             estado_equipamento_aux as e
             on e.id_veiculo = substr(v.id_veiculo, 2)
             and e.datetime_gps between v.datetime_partida and v.datetime_chegada
+    ),
+    gps_validador_bilhetagem_viagem_filtrada as (  -- Filtra pontos de GPS fora das garagens e endereços de manutenção dos validadores
+        select v.*
+        from gps_validador_bilhetagem_viagem v
+        where
+            v.data < date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
+            or (
+                v.data >= date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
+                and not exists (
+                    select 1
+                    from agg_garagens_manutencao g
+                    where
+                        (
+                            v.data between g.inicio_vigencia and coalesce(
+                                g.fim_vigencia, v.data
+                            )
+                        )
+                        and st_intersects(v.posicao_geo, g.geometry)
+                )
+            )
     ),
     indicador_equipamento_bilhetagem as (  -- Indicadores de estado do equipamento do validador por viagem
         select
@@ -172,7 +225,7 @@ with
                 countif(estado_equipamento = "ABERTO") / count(*) >= 0.8
                 or id_validador is null
             ) as indicador_estado_equipamento_aberto
-        from gps_validador_bilhetagem_viagem
+        from gps_validador_bilhetagem_viagem_filtrada
         group by 1, 2, 3
     ),
     gps_validador_viagem as (  -- Dados completos de GPS, temperatura e bilhetagem por viagem realizada
