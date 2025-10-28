@@ -67,29 +67,6 @@ models:
         description: "{{ doc('datetime_processamento') }}"
       - name: datetime_captura
         description: "{{ doc('datetime_captura') }}"
-  - name: staging_garagens
-    description: "Tabela com informações das garagens dos operadores"
-    columns:
-      - name: data
-        description: "{{ doc('data_captura') }}"
-      - name: operador
-        description: "Nome da empresa operadora de transporte público"
-      - name: endereco
-        description: "Endereço completo da garagem do operador"
-      - name: bairro
-        description: "Nome do bairro onde está localizada a garagem"
-      - name: oficial
-        description: "Indicador se a garagem é oficial"
-      - name: ativa
-        description: "Status operacional da garagem"
-      - name: uso
-        description: "Tipo de uso da garagem"
-      - name: obs
-        description: "Observações adicionais sobre a garagem"
-      - name: area_m2
-        description: "Área total da garagem (m²)"
-      - name: geometry_wkt
-        description: "Geometria da garagem em formato WKT"
   - name: aux_veiculo_falha_ar_condicionado
     description: "Tabela auxiliar para controle de falhas consecutivas de ar condicionado por veículo"
     columns:
