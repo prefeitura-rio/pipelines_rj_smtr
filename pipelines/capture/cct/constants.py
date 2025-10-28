@@ -37,6 +37,7 @@ class constants(Enum):  # pylint: disable=c0103
             """,
             "primary_keys": ["id"],
             "capture_flow": "pagamento",
+            "file_chunk_size": 30000,
         },
         "ordem_pagamento_agrupado": {
             "query": """
