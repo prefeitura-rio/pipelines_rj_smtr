@@ -207,7 +207,7 @@ with
                 )
                 and not st_intersects(v.posicao_geo, g.geometry)
             )
-    )
+    ),
     indicador_equipamento_bilhetagem as (  -- Indicadores de estado do equipamento do validador por viagem
         select
             data,
