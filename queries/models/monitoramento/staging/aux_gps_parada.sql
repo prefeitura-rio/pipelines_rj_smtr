@@ -33,7 +33,7 @@ with
             st_geogfromtext(geometry_wkt, make_valid => true) as geometry,
             operador as nome_parada,
             'garagem' as tipo_parada
-        from {{ ref("staging_garagens") }}
+        from {{ ref("garagem") }}
         where
             ativa
             and inicio_vigencia <= date('{{ var("date_range_end") }}')

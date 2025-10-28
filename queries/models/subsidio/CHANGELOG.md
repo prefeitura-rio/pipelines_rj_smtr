@@ -8,6 +8,8 @@
 
 - Criada exceção para os tipo_viagem `Validador associado incorretamente` no dia `2025-10-10` no modelo `viagem_transacao_aux_v2` conforme o email `2025-10-10T15:08` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/995)
 
+- Altera lógica do modelo `aux_viagem_temperatura` para filtrar pontos de GPS fora das garagens e endereços de manutenção dos validadores no cálculo do `indicador_gps_servico_divergente` e `indicador_estado_equipamento_aberto` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/996)
+
 ## [2.2.2] - 2025-10-24
 
 ### Adicionado
