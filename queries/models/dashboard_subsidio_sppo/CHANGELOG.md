@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [8.0.5] - 2025-10-28
+
+### Corrigido
+
+- Corrigida a classificação de viagens acima do limite nos modelos `viagens_remuneradas_v1` e `viagens_remuneradas_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1005)
+
 ## [8.0.4] - 2025-10-07
 
 ### Alterado
