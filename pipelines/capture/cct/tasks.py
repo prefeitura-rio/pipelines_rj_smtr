@@ -8,7 +8,7 @@ from pytz import timezone
 
 from pipelines.capture.cct.constants import constants
 from pipelines.constants import constants as smtr_constants
-from pipelines.utils.extractors.db import get_raw_db
+from pipelines.utils.extractors.db import get_raw_db, get_raw_db_paginated
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.secret import get_secret
 
@@ -46,4 +46,8 @@ def create_cct_general_extractor(source: SourceTable, timestamp: datetime):
         "max_retries": 3,
     }
 
+    if source.file_chunk_size is not None:
+        return partial(
+            get_raw_db_paginated, page_size=source.file_chunk_size, **general_func_arguments
+        )
     return partial(get_raw_db, **general_func_arguments)
