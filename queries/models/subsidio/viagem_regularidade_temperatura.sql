@@ -63,7 +63,7 @@ with
             servico,
             sentido,
             distancia_planejada
-        from {{ ref("aux_viagem_temperatura") }}
+        from `rj-smtr-dev.janaina__subsidio_staging.aux_viagem_temperatura`
         where {{ incremental_filter }}
     ),
     veiculo_regularidade as (

@@ -103,8 +103,8 @@ with
     ),
     garagens as (  -- Geometrias das garagens válidas no período de apuração
         select inicio_vigencia, fim_vigencia, st_union_agg(geometry) as geometry
-        from {{ ref("garagem") }}
-        {# from `rj-smtr.cadastro.garagem` #}
+        -- from {{ ref("garagem") }}
+        from `rj-smtr.cadastro.garagem`
         where
             inicio_vigencia <= date('{{ var("date_range_end") }}')
             and (
