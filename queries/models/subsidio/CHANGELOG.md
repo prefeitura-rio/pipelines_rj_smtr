@@ -4,6 +4,8 @@
 
 ### Alterado
 
+- Ajusta o cálculo do `indicador_regularidade_ar_condicionado_viagem`no modelo `viagem_regularidade_temperatura`, incluindo a condição em que `indicador_temperatura_nula_viagem` é igual a True. (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/993)
+
 - Revertida a alteração da data de início das glosas `Validador fechado` e `Validador associado incorretamente` no modelo `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1002)
 
 ## [2.2.3] - 2025-10-27
