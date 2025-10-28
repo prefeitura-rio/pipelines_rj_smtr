@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Revertida a alteração da data de início das glosas `Validador fechado` e `Validador associado incorretamente` no modelo `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/998)
+- Revertida a alteração da data de início das glosas `Validador fechado` e `Validador associado incorretamente` no modelo `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1002)
 
 ## [2.2.3] - 2025-10-27
 
