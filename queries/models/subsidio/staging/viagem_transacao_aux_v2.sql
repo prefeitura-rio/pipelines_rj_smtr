@@ -199,7 +199,7 @@ with
                         )
                         or (
                             data >= date('{{ var("DATA_SUBSIDIO_V12_INICIO") }}')
-                            and data < date('{{ var("DATA_SUBSIDIO_V21_INICIO") }}')
+                            and data < date('{{ var("DATA_SUBSIDIO_V99_INICIO") }}')
                             and (
                                 (
                                     quantidade_transacao_riocard = 0
@@ -209,7 +209,7 @@ with
                             )
                         )
                         or (
-                            data >= date('{{ var("DATA_SUBSIDIO_V21_INICIO") }}')
+                            data >= date('{{ var("DATA_SUBSIDIO_V99_INICIO") }}')
                             and (
                                 quantidade_transacao_riocard = 0
                                 and quantidade_transacao = 0
@@ -219,14 +219,12 @@ with
                 then 'Sem transação'
 
                 when
-                    data >= date('{{ var("DATA_SUBSIDIO_V21_INICIO") }}')
+                    data >= date('{{ var("DATA_SUBSIDIO_V99_INICIO") }}')
                     and not indicador_estado_equipamento_aberto
                 then 'Validador fechado'
 
                 when
-                    data >= date('{{ var("DATA_SUBSIDIO_V21_INICIO") }}')
-                    -- Exceção conforme email de 2025-10-10T15:08
-                    and data != date('2025-10-10')
+                    data >= date('{{ var("DATA_SUBSIDIO_V99_INICIO") }}')
                     and (
                         quantidade_transacao_riocard_servico_divergente > 0
                         or quantidade_transacao_servico_divergente > 0
