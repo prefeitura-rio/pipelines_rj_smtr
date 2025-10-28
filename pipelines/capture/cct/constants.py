@@ -59,14 +59,14 @@ class constants(Enum):  # pylint: disable=c0103
                     oph.*
                 FROM
                     ordem_pagamento_agrupado_historico oph
-                JOIN
+                /*JOIN
                     detalhe_a da
                 ON da."ordemPagamentoAgrupadoHistoricoId" = oph.id
                 WHERE
                     da."createdAt" BETWEEN '{start}'
                     AND '{end}'
                     OR da."updatedAt" BETWEEN '{start}'
-                    AND '{end}'
+                    AND '{end}'*/
             """,
             "primary_keys": ["id"],
             "capture_flow": "pagamento",
