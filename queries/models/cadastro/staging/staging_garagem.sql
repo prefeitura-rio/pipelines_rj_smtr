@@ -28,9 +28,9 @@ select
         when upper(trim(ativa_ou_inativa)) = "INATIVA"
         then false
         else null
-    end as ativa,
-    lower(trim(uso)) as uso,
+    end as indicador_ativa,
+    lower(trim(uso)) as tipo_uso,
     trim(obs) as observacao,
-    area_m2,
+    area_m2 as area,
     geometry_wkt
 from {{ source("cadastro_staging", "garagem") }}
