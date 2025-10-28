@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Flows para exportação das transações do BQ para o Postgres"""
+"""Flows para exportação das transações do BQ para o Postgres
+
+DBT 2025-10-27
+"""
 
 from types import NoneType
 
