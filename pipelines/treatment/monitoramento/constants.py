@@ -191,14 +191,13 @@ class constants(Enum):  # pylint: disable=c0103
             "dbt_utils.unique_combination_of_columns__veiculo_regularidade_temperatura_dia": {
                 "description": "Todos os registros são únicos"
             },
-                },
-        "temperatura_alertario":{
-            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
-
         },
-        "temperatura":{
+        "temperatura_alertario": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
-        }
+        },
+        "temperatura": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+        },
     }
 
     MONITORAMENTO_TEMPERATURA_SELECTOR = DBTSelector(
