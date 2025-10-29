@@ -170,8 +170,7 @@ class constants(Enum):  # pylint: disable=c0103
     MONITORAMENTO_TEMPERATURA_CHECKS_LIST = {
         "temperatura_inmet": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
-                  },
-
+        },
         "aux_viagem_temperatura": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
             "dbt_utils.unique_combination_of_columns__aux_viagem_temperatura": {
@@ -195,10 +194,10 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "temperatura": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
-             "test_completude__temperatura": {
-            "description": "Há pelo menos uma temperatura não nula registrada em alguma das estações do Rio de Janeiro em cada uma das 24 horas do dia"  # noqa
-        }
-    }
+            "test_completude__temperatura": {
+                "description": "Há pelo menos uma temperatura não nula registrada em alguma das estações do Rio de Janeiro em cada uma das 24 horas do dia"  # noqa
+            },
+        },
     }
 
     MONITORAMENTO_TEMPERATURA_SELECTOR = DBTSelector(
