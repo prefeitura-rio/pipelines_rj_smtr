@@ -272,6 +272,13 @@ def upload_files_postgres(
 
             create_log_trigger(cur=cur)
 
+            conn.commit()
+
+            sql = f"""
+                ANALYZE public.{table_name}
+            """
+            cur.execute(sql)
+
         conn.commit()
 
     for blob in blobs:
