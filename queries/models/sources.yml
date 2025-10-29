@@ -456,3 +456,11 @@ sources:
       - name: detalhe_a
       - name: dicionario
       - name: teste_sincronizacao_transacao_cct
+
+  - name: source_stu
+    database: rj-smtr-staging
+
+    tables:
+      - name: pessoa_fisica
+      - name: permissao
+      - name: vistoria
