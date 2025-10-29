@@ -61,13 +61,16 @@ with
                     data between "2025-09-01" and "2025-09-25"  -- Exceção para lacres adicionados após o prazo em 2025-09-Q1
                     and data_processamento between "2025-09-01" and "2025-09-25"
                 )
+                or (
+                    data between "2025-04-01" and "2025-09-30"  -- Exceção para lacres adicionados após o prazo em 2025-09-Q1
+                    and data_processamento between "2025-04-01" and "2025-09-30"                )
             )
-            {% if is_incremental() %}
+            -- {% if is_incremental() %}
                 and data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
                 )
 
-            {% endif %}
+            -- {% endif %}
         qualify
             row_number() over (
                 partition by data, id_veiculo, placa order by data_processamento desc
@@ -82,35 +85,35 @@ with
                 data_inclusao_datalake <= date_add(data, interval 7 day)
                 or data_inclusao_datalake
                 = date("{{var('data_inclusao_autuacao_disciplinar')}}")  -- Primeira data de inclusão dos dados de autuações disciplinares
-            )
-            {% if is_incremental() %}
+            ) and status != 'Cancelada'
+            -- {% if is_incremental() %}
                 and data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
                 )
 
-            {% endif %}
+            -- {% endif %}
     ),
     gps as (
         select *
         from {{ ref("aux_veiculo_gps_dia") }}
-        {% if is_incremental() %}
+        -- {% if is_incremental() %}
             where
                 data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
                 )
 
-        {% endif %}
+        -- {% endif %}
     ),
     registros_agente_verao as (
         select distinct data, id_veiculo
         from {{ ref("sppo_registro_agente_verao") }}
         {# from `rj-smtr.veiculo.sppo_registro_agente_verao` #}
-        {% if is_incremental() %}
+        -- {% if is_incremental() %}
             where
                 data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
                 )
-        {% endif %}
+        -- {% endif %}
     ),
     gps_licenciamento as (
         select
