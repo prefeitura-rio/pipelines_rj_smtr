@@ -23,7 +23,7 @@ with
     planejado as (
         select distinct
             data,
-            tipo_dia,
+            split(tipo_dia, " - ")[0] as tipo_dia,
             consorcio,
             servico,
             sentido,
