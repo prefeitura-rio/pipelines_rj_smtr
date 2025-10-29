@@ -75,10 +75,15 @@ class constants(Enum):  # pylint: disable=c0103
         "passageiro_tile_hora": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
         },
+        "transacao_gratuidade_estudante_municipal": {
+            "sincronizacao_tabelas__transacao_gratuidade_estudante_municipal": {
+                "description": "Tabela `transacao_gratuidade_estudante_municipal` sincronizada"
+            }
+        },
     }
 
     PASSAGEIRO_HORA_DAILY_TEST = DBTTest(
-        model="passageiro_hora passageiro_tile_hora",
+        model="passageiro_hora passageiro_tile_hora transacao_gratuidade_estudante_municipal",
         checks_list=PASSAGEIRO_HORA_POST_CHECKS_LIST,
         truncate_date=True,
     )
