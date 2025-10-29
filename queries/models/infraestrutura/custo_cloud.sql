@@ -18,7 +18,7 @@
 {% if execute %}
     {% if is_incremental() %}
         {% set partitions_query %}
-            select distinct concat("'", date(usage_start_time), "'") as data
+            select distinct concat("'", date(usage_start_time, "America/Sao_Paulo"), "'") as data
             from {{ billing_staging }}
             where
                 {{ incremental_filter }}
