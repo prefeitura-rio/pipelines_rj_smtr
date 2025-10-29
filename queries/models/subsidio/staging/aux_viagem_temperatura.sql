@@ -103,8 +103,8 @@ with
     ),
     garagens as (  -- Geometrias das garagens válidas no período de apuração
         select inicio_vigencia, fim_vigencia, st_union_agg(geometry) as geometry
-        from {{ ref("garagem") }}
-        {# from `rj-smtr.cadastro.garagem` #}
+        -- from {{ ref("garagem") }}
+        from `rj-smtr.cadastro.garagem`
         where
             inicio_vigencia <= date('{{ var("date_range_end") }}')
             and (
@@ -368,13 +368,13 @@ with
             i.datetime_gps,
             f.temperatura as temperatura_int,
             e.temperatura as temperatura_ext,
-            f.temperatura <= 24
+            f.temperatura <= 24.5
             or (
-                (e.temperatura - f.temperatura) >= 8
+                (e.temperatura - f.temperatura) >= 7.5
             ) as classificacao_temperatura_regular,
-            f.temperatura <= 24 as indicador_temperatura_menor_igual_24,
+            f.temperatura <= 24.5 as indicador_temperatura_menor_igual_24,
             (
-                (e.temperatura - f.temperatura) >= 8
+                (e.temperatura - f.temperatura) >= 7.5
             ) as indicador_diferenca_temperatura_externa_interna
         from gps_validador_viagem as i
         left join
