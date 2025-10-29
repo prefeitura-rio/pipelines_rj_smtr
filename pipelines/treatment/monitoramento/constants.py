@@ -168,12 +168,10 @@ class constants(Enum):  # pylint: disable=c0103
     )
 
     MONITORAMENTO_TEMPERATURA_CHECKS_LIST = {
-        "temperatura": {
+        "temperatura_inmet": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
-            "test_completude_temperatura__temperatura": {
-                "description": "Há pelo menos uma temperatura não nula registrada em alguma das estações do Rio de Janeiro em cada uma das 24 horas do dia"  # noqa
-            },
-        },
+                  },
+
         "aux_viagem_temperatura": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
             "dbt_utils.unique_combination_of_columns__aux_viagem_temperatura": {
@@ -195,6 +193,12 @@ class constants(Enum):  # pylint: disable=c0103
         "temperatura_alertario": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
         },
+        "temperatura": {
+            "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+             "test_completude__temperatura": {
+            "description": "Há pelo menos uma temperatura não nula registrada em alguma das estações do Rio de Janeiro em cada uma das 24 horas do dia"  # noqa
+        }
+    }
     }
 
     MONITORAMENTO_TEMPERATURA_SELECTOR = DBTSelector(
@@ -204,7 +208,7 @@ class constants(Enum):  # pylint: disable=c0103
     )
 
     MONITORAMENTO_TEMPERATURA_TEST = DBTTest(
-        model="teste_completude_temperatura temperatura_alertario aux_viagem_temperatura aux_veiculo_falha_ar_condicionado veiculo_regularidade_temperatura_dia temperatura",  # noqa
+        model="temperatura_inmet temperatura_alertario aux_viagem_temperatura aux_veiculo_falha_ar_condicionado veiculo_regularidade_temperatura_dia temperatura",  # noqa
         exclude="test_check_regularidade_temperatura__viagem_regularidade_temperatura test_consistencia_indicadores_temperatura__viagem_regularidade_temperatura",  # noqa
         checks_list=MONITORAMENTO_TEMPERATURA_CHECKS_LIST,
         truncate_date=True,
