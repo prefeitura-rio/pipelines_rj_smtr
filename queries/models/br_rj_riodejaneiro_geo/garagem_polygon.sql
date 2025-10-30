@@ -5,4 +5,4 @@
 }}
 
 select *
-from {{ source("br_rj_riodejaneiro_geo", "h3_res8") }}
+from {{ source("br_rj_riodejaneiro_geo", "garagem_polygon") }}

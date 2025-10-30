@@ -5,4 +5,4 @@
 }}
 
 select *
-from {{ ref("h3_res9_table") }}
+from {{ source("br_rj_riodejaneiro_geo", "h3_res9") }}
