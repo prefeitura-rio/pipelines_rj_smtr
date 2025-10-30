@@ -315,12 +315,6 @@ sources:
       - name: tecnologia_servico
       - name: tuneis
 
-  - name: cloudcosts
-    database: rj-smtr
-
-    tables:
-      - name: cloud_pricing_export
-
   - name: infraestrutura_staging
     database: rj-smtr-staging
 
