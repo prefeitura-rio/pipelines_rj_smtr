@@ -462,7 +462,7 @@ sources:
       - name: teste_sincronizacao_transacao_cct
  
   - name: br_rj_riodejaneiro_brt_gps
-  - database: rj-smtr
+    database: rj-smtr
 
     tables:
-    - name: registros_historico
+      - name: registros_historico
