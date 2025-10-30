@@ -171,8 +171,8 @@ sources:
     tables:
       - name: h3_res9
       - name: h3_res8
-      - name: limites_geo_caixa
-      - name: garagens_polygon
+      - name: limite_geo_caixa
+      - name: garagem_polygon
       - name: area_planejamento
 
   - name: br_rj_riodejaneiro_viagem_zirix_staging
