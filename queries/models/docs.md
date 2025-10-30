@@ -1468,3 +1468,7 @@ Data e hora do cadastro do endereco no sistema da Jaé
 {% docs datetime_inativacao_endereco_jae %}
 Data e hora da inativação do cadastro do endereco no sistema da Jaé
 {% enddocs %}
+
+{% docs data_ordem_servico %}
+Data da ordem de serviço
+{% enddocs %}

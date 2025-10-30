@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.2.7] - 2025-10-30
+
+### Adicionado
+
+- Cria modelos `ordem_servico_diaria_gtfs.sql`, `ordem_servico_viagens_planejadas.sql` e `servicos_sentido_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1016)
+
 ## [1.2.6] - 2025-08-08
 
 ### Alterado
