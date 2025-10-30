@@ -170,6 +170,10 @@ sources:
 
     tables:
       - name: h3_res9
+      - name: h3_res8
+      - name: limites_geo_caixa
+      - name: garagens_polygon
+      - name: area_planejamento
 
   - name: br_rj_riodejaneiro_viagem_zirix_staging
     database: rj-smtr-staging
@@ -456,3 +460,9 @@ sources:
       - name: detalhe_a
       - name: dicionario
       - name: teste_sincronizacao_transacao_cct
+ 
+  - name: br_rj_riodejaneiro_brt_gps
+    database: rj-smtr
+
+    tables:
+        - name: registros_historico
