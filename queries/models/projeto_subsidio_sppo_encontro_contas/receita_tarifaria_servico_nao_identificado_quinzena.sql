@@ -45,9 +45,7 @@
     from quinzenas qz
     left join
         (
-            select *
-            from {{ ref("aux_balanco_rdo_servico_dia", v=1) }}
-            where servico is null
+            select * from {{ ref("aux_balanco_rdo_servico_dia") }} where servico is null
         ) bs
         on bs.data_rdo between qz.data_inicial_quinzena and qz.data_final_quinzena
     group by 1, 2, 3, 4, 5, 6, 7, 8

@@ -37,7 +37,8 @@ with
         from {{ rdo40_registros }}
         where
             data >= "{{ var('encontro_contas_datas_v2_inicio') }}"
-            and data between "{{ var('start_date') }}" and "{{ var('end_date') }}"
+            and data
+            between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
             and consorcio in ("Internorte", "Intersul", "Santa Cruz", "Transcarioca")
             and not (
                 length(ifnull(regexp_extract(linha, r"[0-9]+"), "")) = 4
