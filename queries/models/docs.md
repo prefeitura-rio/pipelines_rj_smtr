@@ -1468,3 +1468,39 @@ Data e hora do cadastro do endereco no sistema da Jaé
 {% docs datetime_inativacao_endereco_jae %}
 Data e hora da inativação do cadastro do endereco no sistema da Jaé
 {% enddocs %}
+
+{% docs resolution %}
+Resolução do h3
+{% enddocs %}
+
+{% docs parent_id %}
+Resolução do h3 referente 
+{% enddocs %}
+
+{% docs geometry %}
+Polígono com a geometria
+{% enddocs %}
+
+{% docs max_latitude %}
+Latitude limitrófe do município
+{% enddocs %}
+
+{% docs max_longitude %}
+Longitude limitrófe do município
+{% enddocs %}
+
+{% docs min_latitude %}
+Latitude limitrófe do município
+{% enddocs %}
+
+{% docs min_longitude %}
+Longitude limitrófe do município
+{% enddocs %}
+
+{% docs municipio %}
+Nome do município
+{% enddocs %}
+
+{% docs geocmu %}
+???
+{% enddocs %}

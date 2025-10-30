@@ -1,0 +1,90 @@
+version: 1
+
+models:
+  - name: h3_res8
+    description: "Tabela com a resolução 8 do h3"
+    columns:
+      - name: tile_id
+        description: "{{ doc ('tile_id') }}"
+        # tests:
+        #   - not_null:
+        #       partition_column: data
+      - name: resolution
+        description: "{{ doc ('resolution') }}"
+        # tests:
+        #   - not_null:
+        #       partition_column: data
+      - name: parent_id
+        description: "{{ doc('parent_id') }}"
+        # tests:
+        #   - not_null:
+        #       partition_column: data
+      - name: geometry
+        description: "{{ doc('geometry') }}"
+        # tests:
+        #   - not_null:
+        #       partition_column: data
+  - name: h3_res9
+    description: "Tabela com a resolução 9 do h3"
+    columns:
+      - name: tile_id
+        description: "{{ doc ('tile_id') }}"
+        # tests:
+        #   - not_null:
+        #       partition_column: data
+      - name: resolution
+        description: "{{ doc ('resolution') }}"
+        # tests:
+        #   - not_null:
+        #       partition_column: data
+      - name: parent_id
+        description: "{{ doc('parent_id') }}"
+        # tests:
+        #   - not_null:
+        #       partition_column: data
+      - name: geometry
+        description: "{{ doc('geometry') }}"
+        # tests:
+        #   - not_null:
+        #       partition_column: data
+  - name: limites_geo_caixa
+    description: "Coordenadas geograficas dos limites do Rio de Janeiro"
+    columns:
+      - name: max_latitude
+        description: "{{ doc ('max_latitude') }}"
+        # tests:
+        #   - not_null:
+        #       partition_column: data
+      - name: min_latitude
+        description: "{{ doc ('min_latitude') }}"
+        # tests:
+        #   - not_null:
+        #       partition_column: data
+      - name: max_longitude
+        description: "{{ doc('max_longitude') }}"
+        # tests:
+        #   - not_null:
+        #       partition_column: data
+      - name: min_longitude
+        description: "{{ doc('min_longitude') }}"
+        # tests:
+        #   - not_null:
+        #       partition_column: data
+  - name: garanes_polygon
+    description: "Informações geográficas das garagens de ônibus do Rio de Janeiro"
+    columns:
+      - name: WKT
+        description: "{{ doc ('geometry') }}"
+        # tests:
+        #   - not_null:
+        #       partition_column: data
+      - name: NM_MUNICIP
+        description: "{{ doc ('municipio') }}"
+        # tests:
+        #   - not_null:
+        #       partition_column: data
+      - name: CD_GEOCMU
+        description: "{{ doc('geocmu') }}"
+        # tests:
+        #   - not_null:
+        #       partition_column: data
