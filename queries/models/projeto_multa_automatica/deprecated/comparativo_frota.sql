@@ -1,12 +1,8 @@
-{{
-    config(
-        materialized="view",
-    )
-}}
+{{ config(materialized="view") }}
 
 with
-    planejada as (select * from `rj-smtr.projeto_multa_automatica.frota_planejada`),
-    realizada as (select * from `rj-smtr.projeto_multa_automatica.frota_realizada`),
+    planejada as (select * from {{ ref("frota_planejada") }}),
+    realizada as (select * from {{ ref("frota_realizada") }}),
     merged as (
         select
             realizada.data as data,
