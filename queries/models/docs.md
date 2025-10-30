@@ -1474,33 +1474,9 @@ Resolução do h3
 {% enddocs %}
 
 {% docs parent_id %}
-Resolução do h3 referente 
+Resolução do h3, parent cell
 {% enddocs %}
 
 {% docs geometry %}
-Polígono com a geometria
-{% enddocs %}
-
-{% docs max_latitude %}
-Latitude limitrófe do município
-{% enddocs %}
-
-{% docs max_longitude %}
-Longitude limitrófe do município
-{% enddocs %}
-
-{% docs min_latitude %}
-Latitude limitrófe do município
-{% enddocs %}
-
-{% docs min_longitude %}
-Longitude limitrófe do município
-{% enddocs %}
-
-{% docs municipio %}
-Nome do município
-{% enddocs %}
-
-{% docs geocmu %}
-???
+Polígono em formato WKT
 {% enddocs %}
