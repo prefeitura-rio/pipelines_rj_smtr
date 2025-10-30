@@ -1468,3 +1468,23 @@ Data e hora do cadastro do endereco no sistema da Jaé
 {% docs datetime_inativacao_endereco_jae %}
 Data e hora da inativação do cadastro do endereco no sistema da Jaé
 {% enddocs %}
+
+{% docs pico_multa_automatica %}
+Período de pico de operação, dividido em 'manhã' (5h-8h) e 'noite' (16h-19h).
+{% enddocs %}
+
+{% docs frota_operante_media_multa_automatica %}
+Média de veículos em operação na linha no período de pico.
+{% enddocs %}
+
+{% docs frota_planejada_multa_automatica %}
+Frota planejada para a linha no período de pico.
+{% enddocs %}
+
+{% docs porcentagem_operacao_multa_automatica %}
+Razão entre a frota realizada e a frota planejada.
+{% enddocs %}
+
+{% docs multavel_multa_automatica %}
+Indica se a linha é passível de multa por operar com frota abaixo de 80% do planejado.
+{% enddocs %}
