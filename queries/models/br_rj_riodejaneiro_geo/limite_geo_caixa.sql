@@ -5,4 +5,4 @@
 }}
 
 select *
-from {{ source("br_rj_riodejaneiro_geo", "limite_geo_caixa") }}
+from {{ source("br_rj_riodejaneiro_geo", "limites_geograficos_caixa") }}
