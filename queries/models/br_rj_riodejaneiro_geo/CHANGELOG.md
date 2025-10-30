@@ -4,4 +4,5 @@
 
 #### Adicionado
 
-- Adiciona modelos `h3_res8` `h3_res9` `limites_geo_caixa` `garagens_polygon` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1015)
+- Adiciona modelos `h3_res8` `h3_res9` `limites_geo_caixa` `garagens_polygon` `area_planejamento`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1015)
+- Adiciona o schema aos modelos `h3_res8` `h3_res9` `limites_geo_caixa` `garagens_polygon` `area_planejamento`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1015)
