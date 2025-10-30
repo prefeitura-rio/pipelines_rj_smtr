@@ -83,7 +83,7 @@ models:
       - name: velocidade
         description: "{{ doc('velocidade_instantanea') }}"
       - name: id_migracao_trajeto
-        description: ""
+        description: "Identificador de migração do trajeto"
       - name: sentido
         description: "{{ doc('sentido') }}"
       - name: trajeto
