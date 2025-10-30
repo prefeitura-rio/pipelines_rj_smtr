@@ -42,10 +42,6 @@ vars:
   15_minutos: false
   modo_gps: "onibus"
   fonte_gps: "conecta"
-
-  ### Geo ###
-  h3_res8_table: "rj-smtr.br_rj_riodejaneiro_geo.h3_res8" # registros_com_h3_res8
-  h3_res9_table: "rj-smtr.br_rj_riodejaneiro_geo.h3_res9" # registros_com_h3_res9
   
 
   # Parametros de intersecção do ônibus com rota
