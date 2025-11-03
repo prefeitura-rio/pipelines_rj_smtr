@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # import os
 
-from queries.dev.utils import run_dbt_model
+from queries.dev.utils import run_dbt_model, run_dbt_tests, run_dbt_selector
 
 # Veja os parâmetros disponíveis da função run_dbt_model em util.py
 
