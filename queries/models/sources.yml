@@ -174,6 +174,12 @@ sources:
       - name: limites_geograficos_caixa
       - name: garagens_polygon
       - name: area_planejamento
+  
+  - name: br_rj_riodejaneiro_brt_gps
+    database: rj-smtr
+
+    tables:
+      - name: registros_historico
 
   - name: br_rj_riodejaneiro_viagem_zirix_staging
     database: rj-smtr-staging
