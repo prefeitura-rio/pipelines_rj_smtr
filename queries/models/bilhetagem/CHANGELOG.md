@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [3.3.2] - 2025-11-03
+
+### Alterado
+
+Altera filtro dos testes not null das colunas `id_validador` e `data_ordem` no modelo `transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1022)
+
 ## [3.3.1] - 2025-09-29
 
 ### Alterado
