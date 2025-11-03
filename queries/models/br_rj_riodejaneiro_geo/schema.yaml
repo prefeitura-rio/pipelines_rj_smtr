@@ -6,98 +6,47 @@ models:
     columns:
       - name: tile_id
         description: "{{ doc ('tile_id') }}"
-        # tests:
-        #   - not_null:
-        #       partition_column: data
       - name: resolution
         description: "{{ doc ('resolution') }}"
-        # tests:
-        #   - not_null:
-        #       partition_column: data
       - name: parent_id
         description: "{{ doc('parent_id') }}"
-        # tests:
-        #   - not_null:
-        #       partition_column: data
-      - name: geometry
+      - name: geometry_wkt
         description: "{{ doc('geometry') }}"
-        # tests:
-        #   - not_null:
-        #       partition_column: data
   - name: h3_res9
     description: "Tabela com a resolução 9 do h3"
     columns:
       - name: tile_id
         description: "{{ doc ('tile_id') }}"
-        # tests:
-        #   - not_null:
-        #       partition_column: data
       - name: resolution
         description: "{{ doc ('resolution') }}"
-        # tests:
-        #   - not_null:
-        #       partition_column: data
       - name: parent_id
         description: "{{ doc('parent_id') }}"
-        # tests:
-        #   - not_null:
-        #       partition_column: data
-      - name: geometry
+      - name: geometry_wkt
         description: "{{ doc('geometry') }}"
-        # tests:
-        #   - not_null:
-        #       partition_column: data
   - name: limites_geograficos_caixa
     description: "Coordenadas geograficas dos limites do Rio de Janeiro"
     columns:
       - name: max_latitude
         description: "Latitude limitrófe do município do Rio de Janeiro"
-        # tests:
-        #   - not_null:
-        #       partition_column: data
       - name: min_latitude
         description: "Latitude limitrófe do município do Rio de Janeiro"
-        # tests:
-        #   - not_null:
-        #       partition_column: data
       - name: max_longitude
         description: "Longitude limitrófe do município do Rio de Janeiro"
-        # tests:
-        #   - not_null:
-        #       partition_column: data
       - name: min_longitude
         description: "Longitude limitrófe do município do Rio de Janeiro"
-        # tests:
-        #   - not_null:
-        #       partition_column: data
-  - name: garagem_polygon
+  - name: garagens_polygon
     description: "Informações geográficas das garagens de ônibus do Rio de Janeiro"
     columns:
       - name: WKT
         description: "{{ doc('geometry') }}"
-        # tests:
-        #   - not_null:
-        #       partition_column: data
       - name: NM_MUNICIP
         description: "Nome do município"
-        # tests:
-        #   - not_null:
-        #       partition_column: data
       - name: CD_GEOCMU
         description: "Código geográfico do município"
-        # tests:
-        #   - not_null:
-        #       partition_column: data
   - name: area_planejamento
     description: "Informações geográficas das garagens de ônibus do Rio de Janeiro"
     columns:
       - name: area_planejamento
         description: "Área de seleção do planejamento"
-        # tests:
-        #   - not_null:
-        #       partition_column: data
       - name: geometria
         description: "{{ doc('geometry') }}"
-        # tests:
-        #   - not_null:
-        #       partition_column: data

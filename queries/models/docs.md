@@ -1477,6 +1477,6 @@ Resolução do h3
 Resolução do h3, parent cell
 {% enddocs %}
 
-{% docs geometry %}
-Polígono em formato WKT
+{% docs geometry_wkt %}
+Geometria em formato WKT
 {% enddocs %}

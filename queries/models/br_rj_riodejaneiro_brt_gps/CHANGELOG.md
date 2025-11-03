@@ -1,11 +1,5 @@
 # Changelog - brt_gps
 
-## [1.0.2] - 2025-10-30
-
-### Adicionado
-- Adiciona modelo `registros_historico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1015)
-- Retira o comentário do modelo `registros_historico` no schema (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1015)
-
 ## [1.0.1] - 2025-02-21
 
 ### Alterado
