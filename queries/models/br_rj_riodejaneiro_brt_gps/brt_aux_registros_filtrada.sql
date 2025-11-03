@@ -66,3 +66,4 @@ where
     rn = 1
 
     -- trigger sqlfmt again
+    
