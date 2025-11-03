@@ -175,8 +175,8 @@ sources:
       - name: garagens_polygon
       - name: area_planejamento
   
-  - name: br_rj_riodejaneiro_brt_gps
-    database: rj-smtr
+  - name: br_rj_riodejaneiro_brt_gps_staging
+    database: rj-smtr-staging
     
     tables:
       - name: registros_historico
