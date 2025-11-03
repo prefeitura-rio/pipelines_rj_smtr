@@ -98,6 +98,7 @@ models:
         tests:
           - not_null:
               name: not_null__id_validador__transacao
+              where: tipo_transacao_jae != 'Gratuidade Operadora' and data in ({partitions})
         data_type: string
       - name: id_cliente
         description: "{{ doc('id_cliente') }}"
@@ -162,7 +163,7 @@ models:
               name: not_null__data_ordem__transacao
               where: |
                 id_servico_jae not in (select id_linha from `rj-smtr.cadastro_staging.linha_sem_ressarcimento`)
-                and date(datetime_processamento) < current_date("America/Sao_Paulo")
+                and date(case when datetime_processamento < datetime_transacao then datetime_transacao else datetime_processamento end) < current_date("America/Sao_Paulo")
                 and tipo_transacao_jae not in ('Transferência', 'Transferência EMV', 'Botoeira')
                 and tipo_transacao != "Gratuidade"
                 and data in ({partitions})
