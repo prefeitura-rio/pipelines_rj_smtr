@@ -68,3 +68,49 @@ models:
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
         quote: true
+  - name: monitoramento_sumario_servico_dia_historico
+    description: "Sumário histórico do subsídio dos serviços de ônibus [SPPO] por dia [Dados entre 2022-06-01 e 2024-08-16]"
+    columns:
+      - name: data
+        description: "{{ doc('data_viagem') }} [partição]"
+      - name: tipo_dia
+        description: "{{ doc ('tipo_dia') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: vista
+        description: "{{ doc ('vista') }}"
+      - name: viagens
+        description: "Viagens realizadas no dia"
+      - name: km_apurada
+        description: "{{ doc ('km_apurada') }}"
+      - name: km_planejada
+        description: "{{ doc ('km_planejada') }}"
+      - name: per_km_planejada
+        description: "Percentual da km planejada"
+      - name: valor_subsidio_pago
+        description: "{{ doc ('valor_subsidio_pago') }}"
+      - name: valor_penalidade
+        description: "{{ doc ('valor_penalidade') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+  - name: monitoramento_sumario_servico_dia_tipo_viagem_historico
+    description: "Sumário histórico do subsídio dos serviços de ônibus [SPPO] por dia [Dados entre 2022-06-01 e 2024-08-16]"
+    columns:
+      - name: data
+        description: "{{ doc('data_viagem') }} [partição]"
+      - name: tipo_dia
+        description: "{{ doc ('tipo_dia') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: tipo_viagem
+        description: " "
+      - name: indicador_ar_condicionado
+        description: "{{ doc('indicador_ar_condicionado') }}"
+      - name: viagens
+        description: "Viagens realizadas no dia"
+      - name: km_apurada
+        description: "{{ doc ('km_apurada') }}"
