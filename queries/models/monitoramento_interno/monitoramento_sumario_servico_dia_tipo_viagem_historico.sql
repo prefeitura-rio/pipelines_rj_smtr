@@ -10,7 +10,7 @@
 {% if var("start_date") < var('DATA_SUBSIDIO_V9_INICIO') %}
     select *
     from {{ ref("monitoramento_servico_dia_tipo_viagem") }}
-    where data < date("{{ var('DATA_SUBSIDIO_V9_INICIO')) }}")
+    where data < date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}")
     union all
 {% endif %}
 select *
