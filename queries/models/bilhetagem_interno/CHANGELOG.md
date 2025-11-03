@@ -1,5 +1,11 @@
 # Changelog - bilhetagem_interno
 
+## [1.1.8] - 2025-11-03
+
+### Adicionado
+
+- Adiciona teste de sincronia dos dados no modelo `transacao_gratuidade_estudante_municipal.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1011)
+
 ## [1.1.7] - 2025-10-20
 
 ### Alterado
