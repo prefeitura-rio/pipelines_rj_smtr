@@ -16,7 +16,8 @@ Filtragem e tratamento básico de registros de gps.
 with
     box as (
         /* 1. Geometria de caixa que contém a área do município de Rio de Janeiro.*/
-        select * from {{ source("br_rj_riodejaneiro_geo", "limites_geograficos_caixa") }}
+        select *
+        from {{ source("br_rj_riodejaneiro_geo", "limites_geograficos_caixa") }}
     ),
     gps as (
         /* 1. Filtra registros antigos. Remove registros que tem diferença maior
@@ -65,4 +66,4 @@ where
     rn = 1
 
     -- trigger sqlfmt again
-
+    
