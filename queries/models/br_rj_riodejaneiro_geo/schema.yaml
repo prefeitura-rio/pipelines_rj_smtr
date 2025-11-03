@@ -47,7 +47,7 @@ models:
         # tests:
         #   - not_null:
         #       partition_column: data
-  - name: limite_geo_caixa
+  - name: limite_geografico_caixa
     description: "Coordenadas geograficas dos limites do Rio de Janeiro"
     columns:
       - name: max_latitude
