@@ -11,7 +11,7 @@ models:
       - name: parent_id
         description: "{{ doc('parent_id') }}"
       - name: geometry_wkt
-        description: "{{ doc('geometry') }}"
+        description: "{{ doc('geometry_wkt') }}"
   - name: h3_res9
     description: "Tabela com a resolução 9 do h3"
     columns:
@@ -22,7 +22,7 @@ models:
       - name: parent_id
         description: "{{ doc('parent_id') }}"
       - name: geometry_wkt
-        description: "{{ doc('geometry') }}"
+        description: "{{ doc('geometry_wkt') }}"
   - name: limites_geograficos_caixa
     description: "Coordenadas geograficas dos limites do Rio de Janeiro"
     columns:
@@ -38,7 +38,7 @@ models:
     description: "Informações geográficas das garagens de ônibus do Rio de Janeiro"
     columns:
       - name: WKT
-        description: "{{ doc('geometry') }}"
+        description: "{{ doc('geometry_wkt') }}"
       - name: NM_MUNICIP
         description: "Nome do município"
       - name: CD_GEOCMU
@@ -49,4 +49,4 @@ models:
       - name: area_planejamento
         description: "Área de seleção do planejamento"
       - name: geometria
-        description: "{{ doc('geometry') }}"
+        description: "{{ doc('geometry_wkt') }}"
