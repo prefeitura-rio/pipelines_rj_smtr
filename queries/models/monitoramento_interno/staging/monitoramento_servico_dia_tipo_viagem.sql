@@ -1,4 +1,4 @@
-{% if var("start_date") >= var("DATA_SUBSIDIO_V9_INICIO") %} {{ config(enabled=false) }}
+{% if var("start_date") >= var('DATA_SUBSIDIO_V9_INICIO') %} {{ config(enabled=false) }}
 {% else %} {{ config(materialized="ephemeral") }}
 {% endif %}
 
@@ -14,7 +14,7 @@ select
 from {{ ref("sumario_servico_tipo_viagem_dia") }}
 -- `rj-smtr.dashboard_subsidio_sppo.sumario_servico_tipo_viagem_dia`
 where
-    data < date("{{ var(" data_subsidio_v9_inicio ") }}")
+    data < date("{{ var('DATA_SUBSIDIO_V9_INICIO') }}")
     {% if is_incremental() %}
         and data between date("{{ var(" start_date ") }}") and date_add(
             date("{{ var(" end_date ") }}"), interval 1 day
