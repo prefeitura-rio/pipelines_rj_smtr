@@ -460,9 +460,3 @@ sources:
       - name: detalhe_a
       - name: dicionario
       - name: teste_sincronizacao_transacao_cct
-
-  - name: br_rj_riodejaneiro_brt_gps
-    database: rj-smtr
-
-    tables:
-      - name: registros_historico
