@@ -98,7 +98,7 @@ models:
         tests:
           - not_null:
               name: not_null__id_validador__transacao
-              where: tipo_transacao_jae != 'Gratuidade Operadora' and data in ({partitions})
+              where: tipo_transacao_jae != 'Gratuidade operadora' and data in ({partitions})
         data_type: string
       - name: id_cliente
         description: "{{ doc('id_cliente') }}"
