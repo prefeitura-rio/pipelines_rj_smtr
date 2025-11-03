@@ -177,7 +177,7 @@ sources:
   
   - name: br_rj_riodejaneiro_brt_gps
     database: rj-smtr
-
+    
     tables:
       - name: registros_historico
 
