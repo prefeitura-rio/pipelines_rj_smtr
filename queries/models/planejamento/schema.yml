@@ -243,7 +243,7 @@ models:
         data_type: string
         quote: true
       - name: subtipo_dia
-        description: "Subtipo de dia (ex: 'Verão')"
+        description: "{{ doc('subtipo_dia') }}"
         data_type: string
         quote: true
       - name: tipo_os
@@ -278,7 +278,7 @@ models:
         data_type: string
         quote: true
       - name: subtipo_dia
-        description: "Subtipo de dia (ex: 'Verão')"
+        description: "{{ doc('subtipo_dia') }}"
         data_type: string
         quote: true
       - name: tipo_os
@@ -452,6 +452,10 @@ models:
         quote: true
       - name: tipo_dia
         description: "{{ doc('tipo_dia') }}"
+        data_type: string
+        quote: true
+      - name: subtipo_dia
+        description: "{{ doc('subtipo_dia') }}"
         data_type: string
         quote: true
       - name: tipo_os

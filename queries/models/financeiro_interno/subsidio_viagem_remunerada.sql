@@ -32,6 +32,7 @@ with
         select
             s.data,
             s.tipo_dia,
+            s.subtipo_dia,
             s.faixa_horaria_inicio,
             s.faixa_horaria_fim,
             s.consorcio,
@@ -62,6 +63,7 @@ with
 select
     data,
     tipo_dia,
+    subtipo_dia,
     faixa_horaria_inicio,
     faixa_horaria_fim,
     consorcio,

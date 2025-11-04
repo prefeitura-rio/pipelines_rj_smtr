@@ -7,6 +7,7 @@
 select
     data,
     tipo_dia,
+    subtipo_dia,
     faixa_horaria_inicio,
     faixa_horaria_fim,
     consorcio,

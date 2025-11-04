@@ -18,6 +18,7 @@ with
         select
             data,
             tipo_dia,
+            subtipo_dia,
             consorcio,
             servico,
             sentido,
