@@ -79,28 +79,6 @@ with
         -- from `rj-smtr.financeiro.subsidio_penalidade_servico_faixa`
         where {{ incremental_filter }}
     ),
-    subsidio_parametros as (
-        select distinct
-            data_inicio,
-            data_fim,
-            status,
-            tecnologia,
-            subsidio_km,
-            case
-                when tecnologia is null
-                then
-                    max(subsidio_km) over (
-                        partition by date_trunc(data_inicio, year), data_fim
-                    )
-                when tecnologia is not null
-                then
-                    max(subsidio_km) over (
-                        partition by date_trunc(data_inicio, year), data_fim, tecnologia
-                    )
-            end as subsidio_km_teto
-        from {{ ref("valor_km_tipo_viagem") }}
-    -- from `rj-smtr.subsidio.valor_km_tipo_viagem`
-    ),
     subsidio_faixa_agg as (
         select
             data,
@@ -146,10 +124,8 @@ with
                     )
             end as valor_judicial,
             p.valor_penalidade
-        from {{ ref("subsidio_faixa_servico_sentido_dia_tipo_viagem") }} as s
-        -- from
-        -- `rj-smtr.financeiro_interno.subsidio_faixa_servico_sentido_dia_tipo_viagem`
-        -- as s
+        from {{ ref("subsidio_faixa_servico_dia_tipo_viagem") }} as s
+        -- from `rj-smtr.financeiro_interno.subsidio_faixa_servico_dia_tipo_viagem` as s
         left join
             penalidade as p using (
                 data,
