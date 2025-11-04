@@ -10,7 +10,7 @@ with
         select *
         from {{ ref("percentual_operacao_faixa_horaria_v3") }}
         where
-            data >= date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
+            data >= date("{{ var('DATA_SUBSIDIO_V22_INICIO') }}")
         -- fmt: off
         full outer union all by name
         -- fmt: on
@@ -18,7 +18,7 @@ with
         from {{ ref("percentual_operacao_faixa_horaria_v2") }}
         where
             data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
-            and data < date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
+            and data < date("{{ var('DATA_SUBSIDIO_V22_INICIO') }}")
         -- fmt: off
         full outer union all by name
         -- fmt: on

@@ -29,7 +29,7 @@ with
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         where
             {{ incremental_filter }}
-            and data < date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
+            and data < date("{{ var('DATA_SUBSIDIO_V22_INICIO') }}")
 
         union all by name #}
         select
@@ -45,7 +45,7 @@ with
         from `rj-smtr-dev.botelho__monitoramento.viagem_valida`
         where
             {{ incremental_filter }}
-            and data >= date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
+            and data >= date("{{ var('DATA_SUBSIDIO_V22_INICIO') }}")
     ),
     veiculos as (
         select data, id_veiculo, placa, ano_fabricacao, tecnologia, status, indicadores
