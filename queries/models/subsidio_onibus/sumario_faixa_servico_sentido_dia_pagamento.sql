@@ -6,6 +6,7 @@
     )
 }}
 
+-- depends_on: {{ ref('valor_km_tipo_viagem') }}
 {%- if execute -%}
     {%- set results = generate_km_columns() -%}
     {%- set tipos_viagem = results.columns[0].values() -%}
