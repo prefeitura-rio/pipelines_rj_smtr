@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Flows para exportação das transações do BQ para o Postgres"""
+"""Flows para exportação das transações do BQ para o Postgres
+
+DBT 2025-10-27
+"""
 
 from types import NoneType
 
@@ -17,14 +20,22 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 from pipelines.constants import constants as smtr_constants
 from pipelines.schedules import every_day_hour_one
 from pipelines.tasks import get_run_env, get_scheduled_timestamp
+from pipelines.treatment.templates.tasks import (
+    dbt_data_quality_checks,
+    get_repo_version,
+    run_dbt,
+)
+from pipelines.upload_transacao_cct.constants import constants
 from pipelines.upload_transacao_cct.tasks import (
+    delete_all_files,
     export_data_from_bq_to_gcs,
-    full_refresh_delete_all_files,
+    get_postgres_modified_dates,
     get_start_datetime,
     save_upload_timestamp_redis,
     upload_files_postgres,
+    upload_postgres_modified_data_to_bq,
 )
-from pipelines.utils.prefect import TypedParameter
+from pipelines.utils.prefect import TypedParameter, handler_notify_failure
 
 with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct:
 
@@ -46,45 +57,91 @@ with Flow(name="cct: transacao_cct postgresql - upload") as upload_transacao_cct
         accepted_types=(str, NoneType),
     )
 
+    param_test_dates = TypedParameter(
+        name="test_dates",
+        default=None,
+        accepted_types=(list, NoneType),
+    )
+
     env = get_run_env()
 
     timestamp = get_scheduled_timestamp()
 
-    start_datetime, full_refresh = get_start_datetime(
-        env=env,
-        full_refresh=full_refresh,
-        data_ordem_start=data_ordem_start,
-        data_ordem_end=data_ordem_end,
-    )
+    with case(param_test_dates, None):
 
-    with case(full_refresh, True):
-        full_refresh_delete_true = full_refresh_delete_all_files(env=env)
-    with case(full_refresh, False):
-        full_refresh_delete_false = Constant(None, name="delete_all_false")
+        start_datetime, full_refresh_test_none = get_start_datetime(
+            env=env,
+            full_refresh=full_refresh,
+            data_ordem_start=data_ordem_start,
+            data_ordem_end=data_ordem_end,
+        )
 
-    full_refresh_delete = merge(full_refresh_delete_true, full_refresh_delete_false)
+        delete_files = delete_all_files(env=env)
 
-    export_bigquery = export_data_from_bq_to_gcs(
+        export_bigquery_dates = export_data_from_bq_to_gcs(
+            env=env,
+            timestamp=timestamp,
+            start_datetime=start_datetime,
+            full_refresh=full_refresh_test_none,
+            data_ordem_start=data_ordem_start,
+            data_ordem_end=data_ordem_end,
+            upstream_tasks=[delete_files],
+        )
+
+        upload_postgres_test_none = upload_files_postgres(
+            env=env,
+            full_refresh=full_refresh_test_none,
+            export_bigquery_dates=export_bigquery_dates,
+        )
+
+        test_dates_test_none = get_postgres_modified_dates(
+            env=env,
+            start_datetime=start_datetime,
+            full_refresh=full_refresh_test_none,
+            upstream_tasks=[upload_postgres_test_none],
+        )
+
+    with case(param_test_dates.is_not_equal(None), True):
+        upload_postgres_test_not_none = Constant(None, name="upload_postgres_test_not_none")
+        test_dates_test_not_none = param_test_dates
+
+    upload_postgres = merge(upload_postgres_test_not_none, upload_postgres_test_none)
+    full_refresh = merge(full_refresh_test_none, full_refresh)
+    test_dates = merge(test_dates_test_not_none, test_dates_test_none)
+
+    upload_test_bq = upload_postgres_modified_data_to_bq(
         env=env,
         timestamp=timestamp,
-        start_datetime=start_datetime,
+        dates=test_dates,
         full_refresh=full_refresh,
-        data_ordem_start=data_ordem_start,
-        data_ordem_end=data_ordem_end,
-        upstream_tasks=[full_refresh_delete],
+        upstream_tasks=[upload_postgres],
     )
 
-    upload = upload_files_postgres(
-        env=env,
-        full_refresh=full_refresh,
-        upstream_tasks=[export_bigquery],
+    run_sincronizacao_model = run_dbt(
+        resource="model",
+        model=constants.TESTE_SINCRONIZACAO_TABLE_NAME.value,
+        _vars={"version": get_repo_version()},
+        upstream_tasks=[upload_test_bq],
     )
 
-    save_upload_timestamp_redis(
+    run_sincronizacao_test = run_dbt(
+        resource="test",
+        model=constants.TESTE_SINCRONIZACAO_TABLE_NAME.value,
+        upstream_tasks=[run_sincronizacao_model],
+    )
+
+    notify_discord = dbt_data_quality_checks(
+        dbt_logs=run_sincronizacao_test,
+        checks_list=constants.SINCRONIZACAO_CHECKS_LIST.value,
+        params={},
+        webhook_key="alertas_bilhetagem",
+    )
+
+    save_redis_upload = save_upload_timestamp_redis(
         env=env,
         timestamp=timestamp,
         data_ordem_start=data_ordem_start,
-        upstream_tasks=[upload],
+        upstream_tasks=[upload_postgres_test_none, notify_discord],
     )
 
 
@@ -97,5 +154,6 @@ upload_transacao_cct.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
     handler_skip_if_running,
+    handler_notify_failure(webhook="alertas_bilhetagem"),
 ]
 upload_transacao_cct.schedule = every_day_hour_one
