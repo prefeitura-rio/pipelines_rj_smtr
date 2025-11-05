@@ -1,5 +1,10 @@
 # Changelog - bilhetagem_processos_manuais
 
+## [1.2.2] - 2025-11-05
+
+### Adicionado
+- Adiciona recaptura da tabela `cliente` no flow `timestamp_divergente_jae_recaptura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1029)
+
 ## [1.2.1] - 2025-10-21
 
 ### Adicionado
