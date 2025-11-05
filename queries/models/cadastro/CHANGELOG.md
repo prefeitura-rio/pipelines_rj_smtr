@@ -1,5 +1,11 @@
 # Changelog - cadastro
 
+## [1.6.8] - 2025-11-04
+
+### Removido
+
+- Remoção das colunas `operador`, `indicador_ativa`, `tipo_uso` e `area` no modelo `garagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1025)
+
 ## [1.6.7] - 2025-10-27
 
 ### Adicionado
