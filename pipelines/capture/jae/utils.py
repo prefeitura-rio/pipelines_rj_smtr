@@ -252,7 +252,7 @@ def get_jae_timestamp_captura_count_query(
         ts_trunc_column = f"""
             TIMESTAMP(
                 DATE_FORMAT({timestamp_column}, '%%Y-%%m-%%d %%H:00:00')
-                + INTERVAL FLOOR(MINUTE(dt_cadastro)
+                + INTERVAL FLOOR(MINUTE({timestamp_column})
                 / {capture_interval_minutes}) * {capture_interval_minutes} MINUTE
             )
         """
