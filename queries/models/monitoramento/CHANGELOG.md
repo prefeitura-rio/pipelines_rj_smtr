@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.7.7] - 2025-11-04
+
+### Alterado
+
+- Remoção do filtro `indicador_ativa` da CTE `garagens` no modelo `aux_gps_parada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1025)
+
 ## [1.7.6] - 2025-10-22
 
 ### Adicionado
