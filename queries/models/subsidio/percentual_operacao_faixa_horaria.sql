@@ -8,9 +8,20 @@
 with
     percentual_operacao_faixa_horaria as (
         select *
-        from {{ ref("percentual_operacao_faixa_horaria_v2") }}
-        where data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+        from {{ ref("percentual_operacao_faixa_horaria_v3") }}
+        where
+            data >= date("{{ var('DATA_SUBSIDIO_V22_INICIO') }}")
+        -- fmt: off
         full outer union all by name
+        -- fmt: on
+        select *
+        from {{ ref("percentual_operacao_faixa_horaria_v2") }}
+        where
+            data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+            and data < date("{{ var('DATA_SUBSIDIO_V22_INICIO') }}")
+        -- fmt: off
+        full outer union all by name
+        -- fmt: on
         select *
         from {{ ref("percentual_operacao_faixa_horaria_v1") }}
         where data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")

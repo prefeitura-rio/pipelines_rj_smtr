@@ -14,8 +14,8 @@
         and date('{{ var("date_range_end") }}')
 {% endset %}
 
-{% set calendario = ref("calendario") %}
-{# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
+{# {% set calendario = ref("calendario") %} #}
+{% set calendario = "rj-smtr.planejamento.calendario" %}
 {% if execute %}
     {% set gtfs_feeds_query %}
             select distinct concat("'", feed_start_date, "'") as feed_start_date
@@ -48,8 +48,8 @@ with
             case
                 when evento is not null then true else false
             end as indicador_trajeto_alternativo
-        from {{ ref("viagem_planejada_planejamento") }}
-        {# from `rj-smtr.planejamento.viagem_planejada` #}
+        {# from {{ ref("viagem_planejada_planejamento") }} #}
+        from `rj-smtr.planejamento.viagem_planejada`
         where
             {{ incremental_filter }}
             and feed_start_date in ({{ gtfs_feeds | join(", ") }})
@@ -60,6 +60,7 @@ with
             o.feed_version,
             o.feed_start_date,
             o.tipo_dia,
+            o.subtipo_dia,
             o.tipo_os,
             o.servico,
             o.consorcio,
@@ -69,7 +70,24 @@ with
             o.quilometragem,
             o.faixa_horaria_inicio,
             o.faixa_horaria_fim,
-            v.modo,
+            case
+                when
+                    coalesce(
+                        v.modo,
+                        first_value(v.modo ignore nulls) over (
+                            partition by o.servico order by v.modo desc
+                        )
+                    )
+                    = 'Ônibus'
+                then 'Ônibus SPPO'
+                else
+                    coalesce(
+                        v.modo,
+                        first_value(v.modo ignore nulls) over (
+                            partition by o.servico order by v.modo desc
+                        )
+                    )
+            end as modo,
             v.trip_id,
             v.route_id,
             v.shape_id,
@@ -99,6 +117,7 @@ with
             feed_version,
             feed_start_date,
             tipo_dia,
+            subtipo_dia,
             tipo_os,
             servico,
             consorcio,
@@ -139,6 +158,7 @@ with
             feed_version,
             feed_start_date,
             tipo_dia,
+            subtipo_dia,
             tipo_os,
             servico,
             consorcio,
@@ -167,6 +187,7 @@ with
             feed_version,
             feed_start_date,
             tipo_dia,
+            subtipo_dia,
             tipo_os,
             servico,
             consorcio,
@@ -184,6 +205,7 @@ select
     feed_version,
     feed_start_date,
     tipo_dia,
+    subtipo_dia,
     tipo_os,
     servico,
     consorcio,
@@ -197,5 +219,6 @@ select
     trip_info,
     trajetos_alternativos,
     '{{ var("version") }}' as versao,
-    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
+    '{{ invocation_id }}' as id_execucao_dbt
 from viagens_agrupadas
