@@ -197,6 +197,19 @@ def get_jae_timestamp_captura_count_query(
     capture_query: str,
     timestamp_column: str,
 ) -> str:
+    """
+    Gera uma query SQL para contar os dados da Jaé adaptada para PostgreSQL ou MySQL.
+
+    Args:
+        engine (str): Nome do banco de dados ('postgresql' ou 'mysql').
+        delay_query (str): Expressão SQL usada para calcular o delay da captura.
+        capture_interval_minutes (int): Intervalo de captura em minutos.
+        capture_query (str): Query base que retorna os dados de captura.
+        timestamp_column (str): Nome da coluna de timestamp da tabela.
+
+    Returns:
+        str: Query SQL completa para contar registros agrupados por timestamp_captura.
+    """
 
     if engine == "postgresql":
         cte_start = "WITH"
@@ -283,6 +296,15 @@ def get_jae_timestamp_captura_count_query(
 
 
 def get_capture_interval_minutes(source: SourceTable) -> int:
+    """
+    Retorna o intervalo de captura em minutos calculado a partir do cron do SourceTable.
+
+    Args:
+        source (SourceTable): Objeto que contém a expressão cron na propriedade `schedule_cron`.
+
+    Returns:
+        int: Intervalo entre capturas, em minutos.
+    """
     cron_expr = source.schedule_cron
     base_time = datetime.now()
     iterador = croniter(cron_expr, base_time)

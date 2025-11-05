@@ -192,6 +192,7 @@ GPS_VALIDADOR_MATERIALIZACAO = create_default_materialization_flow(
     ],
     post_tests=constants.GPS_VALIDADOR_DAILY_TEST.value,
     test_scheduled_time=time(1, 15, 0),
+    skip_if_running_tolerance=10,
 )
 
 GPS_VALIDADOR_MATERIALIZACAO.state_handlers.append(

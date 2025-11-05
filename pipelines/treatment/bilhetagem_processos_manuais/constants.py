@@ -19,6 +19,8 @@ from pipelines.treatment.bilhetagem.flows import (
     EXTRATO_CLIENTE_CARTAO_MATERIALIZACAO,
     TRANSACAO_MATERIALIZACAO,
 )
+from pipelines.treatment.cadastro.constants import constants as cadastro_constants
+from pipelines.treatment.cadastro.flows import CADASTRO_MATERIALIZACAO
 from pipelines.treatment.monitoramento.constants import (
     constants as monitoramento_constants,
 )
@@ -39,6 +41,10 @@ class constants(Enum):  # pylint: disable=c0103
     }
 
     CAPTURE_GAP_SELECTORS = {
+        cadastro_constants.CADASTRO_SELECTOR.value.name: {
+            "flow_name": CADASTRO_MATERIALIZACAO.name,
+            "capture_tables": [CLIENTE_TABLE_ID],
+        },
         bilhetagem_constants.TRANSACAO_SELECTOR.value.name: {
             "flow_name": TRANSACAO_MATERIALIZACAO.name,
             "capture_tables": [
