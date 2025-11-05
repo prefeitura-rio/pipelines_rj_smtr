@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona tolerancia no handler skip if running da materializacao do `cadastro` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/855)
+- Adiciona tolerância no handler skip if running da materialização do `cadastro` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/855)
 
 ## [1.1.2] - 2025-07-08
 
