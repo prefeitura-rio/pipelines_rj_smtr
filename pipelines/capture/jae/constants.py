@@ -15,6 +15,7 @@ from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.pretreatment import raise_if_column_isna
 
 JAE_SOURCE_NAME = "jae"
+CLIENTE_TABLE_ID = "cliente"
 
 
 class constants(Enum):  # pylint: disable=c0103
@@ -271,7 +272,7 @@ class constants(Enum):  # pylint: disable=c0103
             "primary_keys": ["CD_OPERADORA_TRANSPORTE"],
             "capture_flow": "auxiliar",
         },
-        "cliente": {
+        CLIENTE_TABLE_ID: {
             "query": """
                 SELECT
                     c.*
@@ -672,6 +673,8 @@ class constants(Enum):  # pylint: disable=c0103
         file_chunk_size=200000,
     )
 
+    CLIENTE_SOURCE = [s for s in JAE_AUXILIAR_SOURCES if s.table_id == CLIENTE_TABLE_ID][0]
+
     CHECK_CAPTURE_PARAMS = {
         TRANSACAO_TABLE_ID: {
             "source": TRANSACAO_SOURCE,
@@ -699,6 +702,12 @@ class constants(Enum):  # pylint: disable=c0103
                 "ifnull(id_lancamento, concat(string(dt_lancamento), '_', id_movimento))",
                 "id_conta",
             ],
+        },
+        CLIENTE_TABLE_ID: {
+            "source": CLIENTE_SOURCE,
+            "datalake_table": "rj-smtr.cadastro_interno_staging.cliente",
+            "timestamp_column": "dt_cadastro",
+            "primary_keys": CLIENTE_SOURCE.primary_keys,
         },
     }
 
