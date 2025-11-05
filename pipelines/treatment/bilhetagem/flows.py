@@ -35,6 +35,7 @@ TRANSACAO_MATERIALIZACAO = create_default_materialization_flow(
     ],
     post_tests=constants.TRANSACAO_DAILY_TEST.value,
     test_scheduled_time=time(12, 15, 0),
+    skip_if_running_tolerance=10,
 )
 
 TRANSACAO_MATERIALIZACAO.state_handlers.append(handler_notify_failure(webhook="alertas_bilhetagem"))
@@ -151,4 +152,5 @@ EXTRATO_CLIENTE_CARTAO_MATERIALIZACAO = create_default_materialization_flow(
         cadastro_constants.CADASTRO_SELECTOR.value,
         jae_constants.LANCAMENTO_SOURCE.value,
     ],
+    skip_if_running_tolerance=10,
 )
