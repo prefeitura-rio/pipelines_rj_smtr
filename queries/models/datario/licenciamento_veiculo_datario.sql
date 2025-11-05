@@ -1,4 +1,7 @@
 {{ config(alias="licenciamento_veiculo") }}
+
 select *
-from {{ ref("licenciamento") }}
-{# from `rj-smtr.veiculo.licenciamento` #}
+from {{ ref("licenciamento") }} full outer
+union all by name
+select *
+from {{ ref("veiculo_licenciamento_dia") }}
