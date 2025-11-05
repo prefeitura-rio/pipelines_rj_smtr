@@ -1,5 +1,9 @@
 # Changelog - monitoramento
 
+## [1.2.10] - 2025-11-05
+
+- Adiciona tolerância no handler skip if running da materialização do `gps_validador` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/855)
+
 ## [1.2.9] - 2025-10-02
 
 ### Adicionado
