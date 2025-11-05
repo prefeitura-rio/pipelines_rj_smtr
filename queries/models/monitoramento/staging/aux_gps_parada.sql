@@ -34,8 +34,7 @@ with
             'garagem' as tipo_parada
         from {{ ref("garagem") }}
         where
-            indicador_ativa
-            and inicio_vigencia <= date('{{ var("date_range_end") }}')
+            inicio_vigencia <= date('{{ var("date_range_end") }}')
             and (
                 fim_vigencia is null
                 or fim_vigencia >= date('{{ var("date_range_start") }}')
