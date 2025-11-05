@@ -1,5 +1,12 @@
 # Changelog - source_jae
 
+## [3.1.0] - 2025-11-05
+
+### Adicionado
+
+- Cria possibilidade de verificar as capturas no MySQL e de capturas com intervalos diferentes de 1 minuto (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1029)
+- Adiciona verificação da captura da tabela `cliente` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1029)
+
 ## [3.0.3] - 2025-10-14
 
 ### Alterado
