@@ -1,6 +1,7 @@
 {{ config(alias="permissao") }}
 
 select
+    data,
     tptran,
     tpperm,
     termo,

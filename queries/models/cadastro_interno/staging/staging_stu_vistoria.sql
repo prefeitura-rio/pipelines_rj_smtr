@@ -1,6 +1,7 @@
 {{ config(alias="vistoria") }}
 
 select
+    data,
     id_vistoria,
     anoexe as ano_exercicio,
     safe_cast(json_value(content, '$.tptran1') as string) as id_tipo_transporte,

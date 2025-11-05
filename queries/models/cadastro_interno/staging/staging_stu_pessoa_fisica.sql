@@ -1,6 +1,7 @@
 {{ config(alias="pessoa_fisica") }}
 
 select
+    data,
     ratr,
     safe_cast(json_value(content, '$.cod_estado') as string) as cod_estado,
     safe_cast(json_value(content, '$.cod_estado_civil') as string) as cod_estado_civil,
