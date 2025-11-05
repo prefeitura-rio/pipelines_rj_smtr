@@ -1,5 +1,11 @@
 # Changelog - treatment
 
+## [1.2.3] - 2025-10-05
+
+### Adicionado
+
+- Adiciona parâmetro `skip_if_running_tolerance` na função de criação de flow genérico de materialização (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1029)
+
 ## [1.2.2] - 2025-10-02
 
 ### Alterado
