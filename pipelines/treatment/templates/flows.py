@@ -31,7 +31,7 @@ from pipelines.treatment.templates.tasks import (
     wait_data_sources,
 )
 from pipelines.treatment.templates.utils import DBTSelector, DBTTest
-from pipelines.utils.prefect import TypedParameter
+from pipelines.utils.prefect import TypedParameter, handler_skip_if_running_tolerant
 
 
 def create_default_materialization_flow(
@@ -44,6 +44,7 @@ def create_default_materialization_flow(
     test_scheduled_time: time = None,
     pre_tests: DBTTest = None,
     post_tests: DBTTest = None,
+    skip_if_running_tolerance: int = 0,
 ) -> Flow:
     """
     Cria um flow de materialização
@@ -59,6 +60,8 @@ def create_default_materialization_flow(
         test_scheduled_time (time): Horário para rodar o test no formato "HH:MM:SS"
         pre_tests (DBTTest): Configuração para testes pré-materialização
         post_tests (DBTTest): Configuração para testes pós-materialização
+        skip_if_running_tolerance (int): Quantidade de tempo em minutos para esperar antes de
+            cancelar a execução se outra run já estiver rodando
 
         Returns:
             Flow: Flow de materialização
@@ -253,8 +256,14 @@ def create_default_materialization_flow(
 
     default_materialization_flow.state_handlers = [
         handler_inject_bd_credentials,
-        handler_skip_if_running,
     ]
+
+    if skip_if_running_tolerance > 0:
+        default_materialization_flow.state_handlers.append(
+            handler_skip_if_running_tolerant(tolerance_minutes=skip_if_running_tolerance)
+        )
+    else:
+        default_materialization_flow.state_handlers.append(handler_skip_if_running)
 
     if generate_schedule:
 
