@@ -5,6 +5,7 @@ from typing import Union
 
 import pandas as pd
 import pandas_gbq
+from croniter import croniter
 from google.cloud import bigquery
 from prefeitura_rio.pipelines_utils.logging import log
 from prefeitura_rio.pipelines_utils.redis_pal import get_redis_client
@@ -56,7 +57,7 @@ def get_capture_delay_minutes(capture_delay_minutes: dict[str, int], timestamp: 
         if timestamp >= t:
             delay = capture_delay_minutes[t.strftime("%Y-%m-%d %H:%M:%S")]
 
-    return delay
+    return int(delay)
 
 
 def create_billingpay_backup_filepath(
@@ -189,6 +190,108 @@ def get_table_data_backup_billingpay(
     return filepaths
 
 
+def get_jae_timestamp_captura_count_query(
+    engine: str,
+    delay_query: str,
+    capture_interval_minutes: int,
+    capture_query: str,
+    timestamp_column: str,
+) -> str:
+
+    if engine == "postgresql":
+        cte_start = "WITH"
+        timestamp_captura_query = f"""
+            SELECT timestamp_captura, {delay_query} AS delay
+            FROM (SELECT generate_series(
+                timestamp '{{timestamp_captura_start}}',
+                timestamp '{{timestamp_captura_end}}',
+                interval '{capture_interval_minutes} minute'
+            ) AS timestamp_captura)
+        """
+        ts_trunc_column = f"""
+            TO_TIMESTAMP(
+                FLOOR(
+                    EXTRACT(EPOCH FROM {timestamp_column}) / ({capture_interval_minutes} * 60)
+                ) * ({capture_interval_minutes} * 60)
+            )  AT TIME ZONE 'UTC'
+        """
+
+        join_condition = f"""
+            tc.timestamp_captura = c.datetime_truncado
+                + (tc.delay + {capture_interval_minutes} || ' minutes')::interval
+            """
+    elif engine == "mysql":
+        cte_start = "WITH RECURSIVE"
+        timestamp_captura_query = f"""
+            SELECT
+                TIMESTAMP('{{timestamp_captura_start}}') AS timestamp_captura,
+                {delay_query} AS delay
+            UNION ALL
+            SELECT
+                timestamp_captura + INTERVAL {capture_interval_minutes} MINUTE,
+                delay
+            FROM timestamps_captura
+            WHERE
+                timestamp_captura
+                + INTERVAL {capture_interval_minutes} MINUTE
+                <= TIMESTAMP('{{timestamp_captura_end}}')
+        """
+        ts_trunc_column = f"""
+            TIMESTAMP(
+                DATE_FORMAT({timestamp_column}, '%%Y-%%m-%%d %%H:00:00')
+                + INTERVAL FLOOR(MINUTE(dt_cadastro)
+                / {capture_interval_minutes}) * {capture_interval_minutes} MINUTE
+            )
+        """
+
+        join_condition = f"""
+            tc.timestamp_captura = DATE_ADD(
+                c.datetime_truncado,
+                INTERVAL (tc.delay + {capture_interval_minutes}) MINUTE
+            )
+        """
+
+    else:
+        raise NotImplementedError(f"Engine {engine} não implementada")
+
+    return f"""
+        {cte_start} timestamps_captura AS (
+            {timestamp_captura_query}
+        ),
+        dados_jae AS (
+            {capture_query}
+        ),
+        contagens AS (
+            SELECT
+                {ts_trunc_column} AS datetime_truncado,
+                COUNT(1) AS total_jae
+            FROM
+                dados_jae
+            GROUP BY
+                1
+        )
+        SELECT
+            tc.timestamp_captura,
+            COALESCE(c.total_jae, 0) AS total_jae
+        FROM
+            timestamps_captura tc
+        LEFT JOIN
+            contagens c
+        ON
+            {join_condition}
+    """
+
+
+def get_capture_interval_minutes(source: SourceTable) -> int:
+    cron_expr = source.schedule_cron
+    base_time = datetime.now()
+    iterador = croniter(cron_expr, base_time)
+    next_time = iterador.get_next(datetime)
+    prev_time = iterador.get_prev(datetime)
+
+    return (next_time - prev_time).total_seconds() / 60
+
+
 def get_jae_timestamp_captura_count(
     source: SourceTable,
     timestamp_column: str,
@@ -213,8 +316,9 @@ def get_jae_timestamp_captura_count(
     database = table_capture_params["database"]
     credentials = get_secret(constants.JAE_SECRET_PATH.value)
     database_settings = constants.JAE_DATABASE_SETTINGS.value[database]
+    engine = database_settings["engine"]
     url = create_database_url(
-        engine=database_settings["engine"],
+        engine=engine,
         host=database_settings["host"],
         user=credentials["user"],
         password=credentials["password"],
@@ -244,39 +348,13 @@ def get_jae_timestamp_captura_count(
         else capture_delay_minutes["0"]
     )
 
-    base_query_jae = f"""
-        WITH timestamps_captura AS (
-            SELECT timestamp_captura, {delay_query} AS delay
-            FROM (SELECT generate_series(
-                timestamp '{{timestamp_captura_start}}',
-                timestamp '{{timestamp_captura_end}}',
-                interval '1 minute'
-            ) AS timestamp_captura)
-        ),
-        dados_jae AS (
-            {table_capture_params["query"]}
-        ),
-        contagens AS (
-            SELECT
-                date_trunc(
-                    'minute', {timestamp_column}
-                ) AS datetime_truncado,
-                COUNT(1) AS total_jae
-            FROM
-                dados_jae
-            GROUP BY
-                1
-        )
-        SELECT
-            tc.timestamp_captura,
-            COALESCE(c.total_jae, 0) AS total_jae
-        FROM
-            timestamps_captura tc
-        LEFT JOIN
-            contagens c
-        ON
-            tc.timestamp_captura = c.datetime_truncado + (tc.delay + 1 || ' minutes')::interval
-    """
+    base_query_jae = get_jae_timestamp_captura_count_query(
+        engine=engine,
+        delay_query=delay_query,
+        capture_interval_minutes=get_capture_interval_minutes(source=source),
+        capture_query=table_capture_params["query"],
+        timestamp_column=timestamp_column,
+    )
 
     jae_start_ts = timestamp_captura_start
     jae_result = []
