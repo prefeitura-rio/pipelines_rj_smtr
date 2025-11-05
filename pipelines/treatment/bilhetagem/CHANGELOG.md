@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [2.0.13] - 2025-11-05
+
+### Adicionado
+
+- Adiciona tolerância no handler skip if running da materialização da`transacao` e do `extrato_cliente_cartao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/855)
+
 ## [2.0.12] - 2025-10-02
 
 ### Adicionado
