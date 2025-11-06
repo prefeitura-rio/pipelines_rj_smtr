@@ -969,6 +969,8 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todas as viagens com tecnologia inferior à mínima permitida foram classificadas corretamente"
             },
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "test_tecnologia_servico_planejada__viagem_classificada": {
+                "description": "Todas as viagens possuem tecnologia compatível com a planejada"
         },
         "viagem_regularidade_temperatura": {
             "dbt_utils.unique_combination_of_columns__viagem_regularidade_temperatura": {
