@@ -1501,3 +1501,6 @@ Valor geográfico da latitude do ponto.
 Valor geográfico da longitude do ponto.
 {% enddocs %}
 
+{% docs hora %}
+Horário do registro
+{% enddocs %}

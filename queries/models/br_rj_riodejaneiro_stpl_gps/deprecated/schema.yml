@@ -8,7 +8,7 @@ models:
       - name: hora
         description: "{{ doc('hora') }}"
       - name: codigo
-        description: "{{ doc('codigo') }}"
+        description: código registrado
       - name: placa
         description: "{{ doc('placa') }}"
       - name: linha
@@ -20,7 +20,7 @@ models:
       - name: timestamp_gps
         description: "{{ doc('timestamp_gps') }}"
       - name: velocidade
-        description: "{{ doc('velocidade') }}"
+        description: Velocidade registrada
       - name: id_migracao_trajeto
         description: Identificador de migração do trajeto
       - name: sentido
