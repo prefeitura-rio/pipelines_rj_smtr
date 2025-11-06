@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [3.1.1] - 2025-11-06
+
+### Corrigido
+
+- Corrige query de captura de gratuidades (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1035)
+
 ## [3.1.0] - 2025-11-05
 
 ### Adicionado
