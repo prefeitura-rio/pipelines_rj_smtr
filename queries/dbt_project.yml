@@ -513,3 +513,12 @@ models:
       deprecated:
         +materialized: view
         +schema: dashboard_subsidio_van
+    dashboard_gps_sppo:
+      +materialized: view
+      +schema: dashboard_gps_sppo
+      deprecated:
+        +materialized: view
+        +schema: dashboard_gps_sppo
+    dashboards:
+      +materialized: view
+      +schema: dashboards
