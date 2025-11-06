@@ -504,3 +504,6 @@ models:
     br_rj_riodejaneiro_stpl_gps:
       +materialized: view
       +schema: br_rj_riodejaneiro_stpl_gps
+    br_rj_riodejaneiro_transporte:
+      +materialized: table
+      +schema: br_rj_riodejaneiro_transporte
