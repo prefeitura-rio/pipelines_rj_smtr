@@ -1469,6 +1469,10 @@ Data e hora do cadastro do endereco no sistema da Jaé
 Data e hora da inativação do cadastro do endereco no sistema da Jaé
 {% enddocs %}
 
+{% docs data_ordem_servico %}
+Data da ordem de serviço
+{% enddocs %}
+
 {% docs pico_multa_automatica %}
 Período de pico de operação, dividido em 'manhã' [5h-8h] e 'noite' [16h-19h]
 {% enddocs %}
