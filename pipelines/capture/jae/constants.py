@@ -311,7 +311,7 @@ class constants(Enum):  # pylint: disable=c0103
         "gratuidade": {
             "query": """
                 SELECT
-                    *,
+                    g.*,
                     t.descricao AS tipo_gratuidade
                 FROM
                     gratuidade g
