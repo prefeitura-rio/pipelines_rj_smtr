@@ -33,7 +33,7 @@ models:
     description: Tabela materializada para acesso geral aos dados do RHO STPL
     columns:
       - name: id_veiculo
-        description: "{{ doc('data_transacao') }}"
+        description: "{{ doc('id_veiculo') }}"
       - name: data
         description: "{{ doc('data') }}"
       - name: hora
