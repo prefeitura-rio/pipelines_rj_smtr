@@ -3,7 +3,7 @@
     with
         left_table as (
             select distinct servico, data
-            from rj - smtr.projeto_subsidio_sppo.viagem_planejada
+            from {{ model }}
             where
                 data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
@@ -14,13 +14,13 @@
 
         right_table as (
             select servico, inicio_vigencia, fim_vigencia
-            from rj - smtr.planejamento.tecnologia_servico
+            from {{ ref('tecnologia_servico') }}
             where
                 servico is not null
                 and inicio_vigencia <= date("{{ var('date_range_start') }}")
                 and (
                     fim_vigencia is null or fim_vigencia >= date
-                    "{{ var('date_range_end') }}"
+                    ("{{ var('date_range_end') }}")
                 )
         ),
         exceptions as (
