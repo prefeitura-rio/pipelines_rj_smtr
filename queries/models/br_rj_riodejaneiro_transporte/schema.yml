@@ -8,7 +8,7 @@ models:
       - name: nome_terminal
         description: Nome do terminal
       - name: longitude
-        description: "{{ doc('longitude') }}
+        description: "{{ doc('longitude') }}"
       - name: latitude
         description: "{{ doc('latitude') }}"
   - name: registros_v2

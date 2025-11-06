@@ -4,11 +4,11 @@ models:
     description: Tabela materializada para acesso geral aos dados do RHO SPPO
     columns:
       - name: data
-        description: "{{ doc('data') }}
+        description: "{{ doc('data') }}"
       - name: hora
-        description: "{{ doc('hora') }}
+        description: "{{ doc('hora') }}"
       - name: codigo
-        description: "{{ doc('codigo') }}
+        description: "{{ doc('codigo') }}"
       - name: placa
         description: "{{ doc('placa') }}"
       - name: linha
@@ -33,7 +33,7 @@ models:
     description: Tabela materializada para acesso geral aos dados do RHO STPL
     columns:
       - name: id_veiculo
-        description: "{{ doc('data_transacao') }}
+        description: "{{ doc('data_transacao') }}"
       - name: data
         description: "{{ doc('data') }}"
       - name: hora
@@ -48,28 +48,28 @@ models:
     description: Tabela materializada para acesso geral aos dados do RHO STPL
     columns:
       - name: data
-        description: "{{ doc('data_transacao') }}
+        description: "{{ doc('data_transacao') }}"
       - name: hora
         description: "{{ doc('hora_transacao') }}"
       - name: id_veiculo
-        description: "{{ doc('data_transacao') }}
+        description: "{{ doc('id_veiculo') }}"
       - name: timestamp_captura
-        description: "{{ doc('hora_transacao') }}"
+        description: "{{ doc('timestamp_captura') }}"
       - name: timestamp_gps
-        description: "{{ doc('data_transacao') }}
+        description: "{{ doc('timestamp_gps') }}"
       - name: latitude
-        description: "{{ doc('hora_transacao') }}"
+        description: "{{ doc('latitude') }}"
       - name: longitude
-        description: "{{ doc('data_transacao') }}
+        description: "{{ doc('longitude') }}"
       - name: linha
-        description: "{{ doc('hora_transacao') }}"
+        description: "{{ doc('linha') }}"
       - name: velocidade
-        description: "{{ doc('data_transacao') }}
+        description: Velocidade permitida
       - name: id_migracao_trajeto
-        description: "{{ doc('hora_transacao') }}"
+        description: Identificador de migração de trajeto
       - name: sentido
-        description: "{{ doc('data_transacao') }}
+        description: "{{ doc('sentido') }}"
       - name: trajeto
-        description: "{{ doc('hora_transacao') }}"
+        description: "{{ doc('trajeto') }}"
       - name: hodometro
-        description: "{{ doc('data_transacao') }}
+        description: Instrumento de medição da distância percorrida seja parcial ou total
