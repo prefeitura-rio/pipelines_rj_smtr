@@ -44,13 +44,13 @@ models:
         description: "{{ doc('timestamp_captura') }}"
       - name: content
         description: Conteúdo
-  - name: registros
+  - name: registros_desaninhada
     description: Tabela materializada para acesso geral aos dados do RHO STPL
     columns:
       - name: data
-        description: "{{ doc('data_transacao') }}"
+        description: "{{ doc('data') }}"
       - name: hora
-        description: "{{ doc('hora_transacao') }}"
+        description: "{{ doc('hora') }}"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: timestamp_captura
