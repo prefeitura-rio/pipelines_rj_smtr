@@ -522,3 +522,15 @@ models:
     dashboards:
       +materialized: view
       +schema: dashboards
+    operacao:
+      +materialized: view
+      +schema: operacao
+      deprecated:
+        +materialized: view
+        +schema: operacao
+    projeto_multa_automatica:
+      +materialized: view
+      +schema: projeto_multa_automatica
+      deprecated:
+        +materialized: view
+        +schema: projeto_multa_automatica
