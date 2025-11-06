@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Flows de tratamento do datario
-data: 2025-11-05
+DBT: 2025-11-06
 """
 
 
