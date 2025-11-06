@@ -46,8 +46,8 @@ models:
         tests:
           - not_null:
               name: not_null__servico__viagem_planejada
-          - tecnologia_servico_planejada:
-              name: test_tecnologia_servico_planejada__viagem_planejada
+          - teste_tecnologia_servico_planejada:
+              name: tecnologia_servico_planejada__viagem_planejada
               where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: vista
         description: "Itinerário do serviço [ex: Bananal ↔ Saens Peña]"
