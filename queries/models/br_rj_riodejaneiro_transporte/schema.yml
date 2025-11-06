@@ -11,7 +11,7 @@ models:
         description: "{{ doc('longitude') }}"
       - name: latitude
         description: "{{ doc('latitude') }}"
-  - name: registros_v2
+  - name: terminais_onibus_coordenadas
     description: Tabela materializada para acesso geral aos dados do RHO STPL
     columns:
       - name: codigo_estacao
