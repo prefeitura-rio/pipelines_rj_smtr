@@ -21,7 +21,7 @@
                 and (
                     fim_vigencia is null or fim_vigencia >= date
                     ("{{ var('date_range_end') }}")
-                )
+                )  
         ),
         exceptions as (
             select l.data, l.servico
@@ -29,7 +29,7 @@
             left join
                 right_table r
                 on l.servico = r.servico
-                and l.data between r.inicio_vigencia and r.fim_vigencia
+                and l.data between r.inicio_vigencia and coalesce(r.fim_vigencia, date('3000-01-01'))
             where r.servico is null
         )
     select *
