@@ -1,4 +1,4 @@
-# Changelog - dashboard_gps_sppo
+# Changelog - dashboards
 
 ## [1.0.0] - 2025-11-06
 
