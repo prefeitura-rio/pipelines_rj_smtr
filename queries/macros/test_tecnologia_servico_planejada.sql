@@ -14,14 +14,14 @@
 
         right_table as (
             select servico, inicio_vigencia, fim_vigencia
-            from {{ ref('tecnologia_servico') }}
+            from {{ ref("tecnologia_servico") }}
             where
                 servico is not null
                 and inicio_vigencia <= date("{{ var('date_range_start') }}")
                 and (
                     fim_vigencia is null or fim_vigencia >= date
                     ("{{ var('date_range_end') }}")
-                )  
+                )
         ),
         exceptions as (
             select l.data, l.servico
@@ -29,7 +29,9 @@
             left join
                 right_table r
                 on l.servico = r.servico
-                and l.data between r.inicio_vigencia and coalesce(r.fim_vigencia, date('3000-01-01'))
+                and l.data between r.inicio_vigencia and coalesce(
+                    r.fim_vigencia, date('3000-01-01')
+                )
             where r.servico is null
         )
     select *
