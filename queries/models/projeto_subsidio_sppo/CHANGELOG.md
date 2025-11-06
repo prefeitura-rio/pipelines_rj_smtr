@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.3.6] - 2025-10-30
+
+### Adicionado
+
+- Cria modelo `subsidio_ordem_servico.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1016)
+
 ## [9.3.5] - 2025-10-01
 
 ### Removido
