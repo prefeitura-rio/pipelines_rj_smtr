@@ -15,7 +15,7 @@ with
     licenciamento_raw as (
         select
             id_operadora, safe_cast(ultimo_ano_vistoria as int64) as ultimo_ano_vistoria
-        from rj - smtr.dashboard_subsidio_van_staging .20241017 _licenciamento_van
+        from `rj-smtr.dashboard_subsidio_van_staging.20241017 _licenciamento_van`
     ),
     licenciamento as (
         select
