@@ -1,4 +1,4 @@
-{% test tecnologia_servico(model) %}
+{% test test_tecnologia_servico_planejado(model) %}
 
     with
         left_table as (
@@ -17,10 +17,10 @@
             from {{ ref("tecnologia_servico") }}
             where
                 servico is not null
-                and inicio_vigencia <= date("{{ var('date_range_start') }}")
+                and inicio_vigencia <= date("{{ var('date_range_end') }}")
                 and (
                     fim_vigencia is null or fim_vigencia >= date
-                    ("{{ var('date_range_end') }}")
+                    ("{{ var('date_range_start') }}")  
                 )
         ),
         exceptions as (
@@ -30,7 +30,7 @@
                 right_table r
                 on l.servico = r.servico
                 and l.data between r.inicio_vigencia and coalesce(
-                    r.fim_vigencia, date('3000-01-01')
+                    r.fim_vigencia, date ("{{var('DATA_SUBSIDIO_V99_INICIO')}}")
                 )
             where r.servico is null
         )
