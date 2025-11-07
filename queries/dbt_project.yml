@@ -544,5 +544,5 @@ models:
         +schema: projeto_multa_automatica
     brt_manutencao:
       deprecated:
-        +materialized:  view
+        +materialized: view
         +schema: brt_manutencao
