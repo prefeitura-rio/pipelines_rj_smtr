@@ -16,6 +16,9 @@ from pipelines.utils.pretreatment import raise_if_column_isna
 
 JAE_SOURCE_NAME = "jae"
 CLIENTE_TABLE_ID = "cliente"
+GRATUIDADE_TABLE_ID = "gratuidade"
+ESTUDANTE_TABLE_ID = "estudante"
+LAUDO_PCD_TABLE_ID = "laudo_pcd"
 
 
 class constants(Enum):  # pylint: disable=c0103
@@ -308,7 +311,7 @@ class constants(Enum):  # pylint: disable=c0103
             "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
             "capture_flow": "auxiliar",
         },
-        "gratuidade": {
+        GRATUIDADE_TABLE_ID: {
             "query": """
                 SELECT
                     g.*,
@@ -432,7 +435,7 @@ class constants(Enum):  # pylint: disable=c0103
             "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
             "capture_flow": "auxiliar",
         },
-        "estudante": {
+        ESTUDANTE_TABLE_ID: {
             "query": """
                 SELECT
                     *
@@ -464,7 +467,7 @@ class constants(Enum):  # pylint: disable=c0103
             "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
             "first_timestamp": datetime(2025, 9, 16, 0, 0, 0),
         },
-        "laudo_pcd": {
+        LAUDO_PCD_TABLE_ID: {
             "query": """
                 SELECT
                     *
@@ -674,6 +677,9 @@ class constants(Enum):  # pylint: disable=c0103
     )
 
     CLIENTE_SOURCE = [s for s in JAE_AUXILIAR_SOURCES if s.table_id == CLIENTE_TABLE_ID][0]
+    GRATUIDADE_SOURCE = [s for s in JAE_AUXILIAR_SOURCES if s.table_id == GRATUIDADE_TABLE_ID][0]
+    ESTUDANTE_SOURCE = [s for s in JAE_AUXILIAR_SOURCES if s.table_id == ESTUDANTE_TABLE_ID][0]
+    LAUDO_PCD_SOURCE = [s for s in JAE_AUXILIAR_SOURCES if s.table_id == LAUDO_PCD_TABLE_ID][0]
 
     CHECK_CAPTURE_PARAMS = {
         TRANSACAO_TABLE_ID: {
@@ -708,6 +714,24 @@ class constants(Enum):  # pylint: disable=c0103
             "datalake_table": "rj-smtr.cadastro_interno_staging.cliente",
             "timestamp_column": "dt_cadastro",
             "primary_keys": CLIENTE_SOURCE.primary_keys,
+        },
+        GRATUIDADE_TABLE_ID: {
+            "source": GRATUIDADE_SOURCE,
+            "datalake_table": "rj-smtr.bilhetagem_staging.gratuidade",
+            "timestamp_column": "data_inclusao",
+            "primary_keys": GRATUIDADE_SOURCE.primary_keys,
+        },
+        ESTUDANTE_TABLE_ID: {
+            "source": ESTUDANTE_SOURCE,
+            "datalake_table": "rj-smtr.bilhetagem_staging.estudante",
+            "timestamp_column": "data_inclusao",
+            "primary_keys": ESTUDANTE_SOURCE.primary_keys,
+        },
+        LAUDO_PCD_TABLE_ID: {
+            "source": LAUDO_PCD_SOURCE,
+            "datalake_table": "rj-smtr.bilhetagem_staging.laudo_pcd",
+            "timestamp_column": "data_inclusao",
+            "primary_keys": LAUDO_PCD_SOURCE.primary_keys,
         },
     }
 

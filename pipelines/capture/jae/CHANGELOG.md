@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [3.1.2] - 2025-11-10
+
+### Adicionado
+
+- Adiciona verificação da captura das tabelas `gratuidade`, `estudante` e `laudo_pcd`
+
 ## [3.1.1] - 2025-11-06
 
 ### Corrigido
