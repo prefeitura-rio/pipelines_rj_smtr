@@ -82,6 +82,7 @@ def get_gaps_from_result_table(
                 for i in range(0, len(timestamps), 20)
             ],
             "flag_has_gaps": not df.empty,
+            "table_id": table_id,
         }
     return result
 

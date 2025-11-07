@@ -315,12 +315,6 @@ sources:
       - name: tecnologia_servico
       - name: tuneis
 
-  - name: cloudcosts
-    database: rj-smtr
-
-    tables:
-      - name: cloud_pricing_export
-
   - name: infraestrutura_staging
     database: rj-smtr-staging
 
@@ -464,3 +458,9 @@ sources:
       - name: pessoa_fisica
       - name: permissao
       - name: vistoria
+
+  - name: projeto_subsidio_sppo_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: ordem_servico
