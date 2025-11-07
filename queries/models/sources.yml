@@ -458,6 +458,10 @@ sources:
       - name: pessoa_fisica
       - name: permissao
       - name: vistoria
+      - name: veiculo
+      - name: mod_chassi
+      - name: mod_carroceria
+      - name: planta
 
   - name: projeto_subsidio_sppo_staging
     database: rj-smtr-staging

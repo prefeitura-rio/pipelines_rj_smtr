@@ -17,7 +17,7 @@ select
     safe_cast(json_value(content, '$.tptran') as string) as tptran,
     safe_cast(json_value(content, '$.tpperm') as string) as tpperm,
     safe_cast(json_value(content, '$.termo') as string) as termo,
-    safe_cast(json_value(content, '$.ratr') as string) as ratr,
+    replace(safe_cast(json_value(content, '$.ratr') as string), '.0', '') as ratr,
     safe_cast(json_value(content, '$.visobrig') as string) as vistoria_obrigatoria,
     safe_cast(json_value(content, '$.num_vistoria') as string) as numero_vistoria,
     date(
