@@ -24,7 +24,7 @@ with
     garagem_polygon as (
         -- 1. Selecionamos o polígono das garagens.
         select st_geogfromtext(wkt, make_valid => true) as poly
-        from {{ source("br_rj_riodejaneiro_geo", "garagens_polygon") }}
+        from {{ ref("garagens_polygon") }}
     ),
     distancia as (
         -- 2. Calculamos as distâncias e definimos nrow
