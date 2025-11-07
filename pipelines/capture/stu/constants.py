@@ -51,7 +51,7 @@ class constants(Enum):  # pylint: disable=c0103
             "primary_keys": ["cod_mod_carroceria"],
         },
         STU_MOD_CHASSI_TABLE_ID: {
-            "primary_keys": ["cod_fab_chassi"],
+            "primary_keys": ["cod_mod_chassi"],
         },
         STU_MULTA_TABLE_ID: {
             "primary_keys": ["serie", "cm"],
