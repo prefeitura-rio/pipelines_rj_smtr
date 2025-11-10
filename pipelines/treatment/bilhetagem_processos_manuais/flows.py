@@ -169,7 +169,7 @@ with Flow(
 
         with case(gaps[k]["flag_has_gaps"].is_equal(True), True):
             run_recapture_true = run_subflow(
-                flow_name=v,
+                flow_name=v["flow_name"],
                 parameters=gaps[k]["recapture_params"],
                 upstream_tasks=[upstream_task],
             )
@@ -185,7 +185,7 @@ with Flow(
         upstream_task = run_recapture
 
     materialization_params = create_gap_materialization_params(
-        gaps=gaps, upstream_tasks=[upstream_task]
+        gaps=gaps, env=env, upstream_tasks=[upstream_task]
     )
 
     selectors = constants.CAPTURE_GAP_SELECTORS.value
