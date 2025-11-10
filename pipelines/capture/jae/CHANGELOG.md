@@ -1,5 +1,12 @@
 # Changelog - source_jae
 
+## [3.1.2] - 2025-11-10
+
+### Adicionado
+
+- Adiciona verificação da captura das tabelas `gratuidade`, `estudante` e `laudo_pcd` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1037)
+- Cria parâmetro `final_timestamp_exclusive` para o teste de captura (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1037)
+
 ## [3.1.1] - 2025-11-06
 
 ### Corrigido
