@@ -124,7 +124,9 @@ def create_gap_materialization_params(gaps: dict, env: str) -> dict:
             result[k] = {
                 "initial_datetime": min(ts_list),
                 "end_datetime": (
-                    v["selector"].get_last_materialized_datetime(env=env)
+                    v["selector"]
+                    .get_last_materialized_datetime(env=env)
+                    .strftime("%Y-%m-%d %H:%M:%S")
                     if reprocess_all
                     else max(ts_list)
                 ),
