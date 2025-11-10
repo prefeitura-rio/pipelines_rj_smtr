@@ -1,4 +1,3 @@
-{% if var("data_versao_gtfs") < var("DATA_GTFS_V2_INICIO") %}
     {{
         config(
             partition_by={
@@ -122,5 +121,4 @@
                 ) as 'Domingo'
             )
         )
-{% else %} {{ config(enabled=false) }}
-{% endif %}
+        where var("data_versao_gtfs") < var("DATA_GTFS_V2_INICIO")
