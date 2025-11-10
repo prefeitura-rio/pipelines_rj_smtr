@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.2.8] - 2025-11-10
+
+### Corrigido
+
+- Corrigida a `distancia_planejada` dos trajetos alternativos do modelo `ordem_servico_trips_shapes_gtfs_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1040)
+
 ## [1.2.7] - 2025-10-30
 
 ### Adicionado
