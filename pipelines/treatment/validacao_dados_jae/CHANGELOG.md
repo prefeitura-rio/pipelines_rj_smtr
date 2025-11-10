@@ -1,5 +1,11 @@
 # Changelog - validacao_dados_jae
 
+## [1.1.1] - 2025-10-13
+
+### Alterado
+
+- Altera schedule do flow `VALIDACAO_DADOS_JAE_MATERIALIZACAO`
+
 ## [1.1.0] - 2025-10-13
 
 ### Adicionado
