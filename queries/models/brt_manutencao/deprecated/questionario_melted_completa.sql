@@ -33,7 +33,7 @@ select
     coalesce(t3.id_problema, t4.id_problema) id_problema,
     id_responsavel,
     coalesce(split(t3.seriedade, ' ')[safe_offset(0)], 'Sem Avaliação') seriedade
-from `rj-smtr.brt_manutencao.questionario_melted` t3
+from {{ source ("brt_manutencao_staging", "questionario_melted")}} t3
 full join
     todos_problemas_estacoes t4
     on t3.estacoes_brt = t4.nome_estacao

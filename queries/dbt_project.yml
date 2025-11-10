@@ -512,12 +512,8 @@ models:
         +materialized: view
         +schema: br_rj_riodejaneiro_stpl_gps
     br_rj_riodejaneiro_transporte:
-      deprecated:
         +materialized: table
         +schema: br_rj_riodejaneiro_transporte
-        staging:
-          +materialized: table
-          +schema: br_rj_riodejaneiro_transporte_staging
     dashboard_subsidio_van:
       +materialized: view
       +schema: dashboard_subsidio_van
