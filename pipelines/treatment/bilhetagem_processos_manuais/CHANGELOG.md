@@ -4,7 +4,8 @@
 
 ### Corrigido
 
-- Corrige parâmetro `table_id` na recaptura de gaps
+- Corrige parâmetro `table_id` na recaptura de gaps (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1037)
+- Reprocessa dados até a data atual no caso de timestamp divergente de clientes (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1037)
 
 ## [1.2.2] - 2025-11-05
 
