@@ -118,7 +118,7 @@ def create_gap_materialization_params(gaps: dict, env: str) -> dict:
         if any(gaps[a]["flag_has_gaps"] for a in v["capture_tables"]):
             for t in v["capture_tables"]:
                 ts_list = ts_list + gaps[t]["timestamps"]
-                if gaps[t]["reprocess_all"]:
+                if gaps[t]["reprocess_all"] and gaps[t]["flag_has_gaps"]:
                     reprocess_all = True
 
             result[k] = {
