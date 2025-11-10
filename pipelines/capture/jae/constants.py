@@ -687,18 +687,21 @@ class constants(Enum):  # pylint: disable=c0103
             "datalake_table": "rj-smtr.bilhetagem_staging.transacao",
             "timestamp_column": "data_processamento",
             "primary_keys": TRANSACAO_SOURCE.primary_keys,
+            "final_timestamp_exclusive": True,
         },
         TRANSACAO_RIOCARD_TABLE_ID: {
             "source": TRANSACAO_RIOCARD_SOURCE,
             "datalake_table": "rj-smtr.bilhetagem_staging.transacao_riocard",
             "timestamp_column": "data_processamento",
             "primary_keys": TRANSACAO_RIOCARD_SOURCE.primary_keys,
+            "final_timestamp_exclusive": True,
         },
         GPS_VALIDADOR_TABLE_ID: {
             "source": GPS_VALIDADOR_SOURCE,
             "datalake_table": "rj-smtr.monitoramento_staging.gps_validador",
             "timestamp_column": "data_tracking",
             "primary_keys": GPS_VALIDADOR_SOURCE.primary_keys,
+            "final_timestamp_exclusive": True,
         },
         LANCAMENTO_TABLE_ID: {
             "source": LANCAMENTO_SOURCE,
@@ -708,30 +711,35 @@ class constants(Enum):  # pylint: disable=c0103
                 "ifnull(id_lancamento, concat(string(dt_lancamento), '_', id_movimento))",
                 "id_conta",
             ],
+            "final_timestamp_exclusive": True,
         },
         CLIENTE_TABLE_ID: {
             "source": CLIENTE_SOURCE,
             "datalake_table": "rj-smtr.cadastro_interno_staging.cliente",
             "timestamp_column": "dt_cadastro",
             "primary_keys": CLIENTE_SOURCE.primary_keys,
+            "final_timestamp_exclusive": False,
         },
         GRATUIDADE_TABLE_ID: {
             "source": GRATUIDADE_SOURCE,
             "datalake_table": "rj-smtr.bilhetagem_staging.gratuidade",
             "timestamp_column": "data_inclusao",
             "primary_keys": GRATUIDADE_SOURCE.primary_keys,
+            "final_timestamp_exclusive": False,
         },
         ESTUDANTE_TABLE_ID: {
             "source": ESTUDANTE_SOURCE,
             "datalake_table": "rj-smtr.bilhetagem_staging.estudante",
             "timestamp_column": "data_inclusao",
             "primary_keys": ESTUDANTE_SOURCE.primary_keys,
+            "final_timestamp_exclusive": False,
         },
         LAUDO_PCD_TABLE_ID: {
             "source": LAUDO_PCD_SOURCE,
             "datalake_table": "rj-smtr.bilhetagem_staging.laudo_pcd",
             "timestamp_column": "data_inclusao",
             "primary_keys": LAUDO_PCD_SOURCE.primary_keys,
+            "final_timestamp_exclusive": False,
         },
     }
 
