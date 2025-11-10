@@ -1477,10 +1477,6 @@ Resolução do h3
 Resolução do h3, parent cell
 {% enddocs %}
 
-{% docs geometry_wkt %}
-Geometria em formato WKT
-{% enddocs %}
-=======
 {% docs data_ordem_servico %}
 Data da ordem de serviço
 {% enddocs %}
