@@ -95,6 +95,8 @@ models:
         description: "Indica se a transação foi feita em um serviço fora de vigência"
       - name: indicador_processamento_anterior_transacao
         description: "Indica se a data da transação e maior que a data de processamento"
+      - name: indicador_integracao_fora_tabela
+        description: "Indica se a transação é do tipo Integração e está fora da tabela bilhetagem.integracao"
       - name: versao
         description: "{{ doc('versao') }}"
         data_type: string

@@ -5,18 +5,31 @@
     )
 }}
 {% set transacao_table = ref("transacao") %}
+{% set integracao_table = ref("integracao") %}
 
 {% if execute and is_incremental() %}
 
     {% set partitions_query %}
-      SELECT
-        CONCAT("'", PARSE_DATE("%Y%m%d", partition_id), "'") AS data
-      FROM
-        `{{ transacao_table.database }}.{{ transacao_table.schema }}.INFORMATION_SCHEMA.PARTITIONS`
-      WHERE
-        table_name = "{{ transacao_table.identifier }}"
-        AND partition_id != "__NULL__"
-        AND DATE(last_modified_time, "America/Sao_Paulo") = DATE_SUB(DATE("{{var('run_date')}}"), INTERVAL 1 DAY)
+        SELECT
+            CONCAT("'", PARSE_DATE("%Y%m%d", partition_id), "'") AS data
+        FROM
+            `{{ transacao_table.database }}.{{ transacao_table.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+        WHERE
+            table_name = "{{ transacao_table.identifier }}"
+            AND partition_id != "__NULL__"
+            AND DATE(last_modified_time, "America/Sao_Paulo") = DATE_SUB(DATE("{{var('run_date')}}"), INTERVAL 1 DAY)
+
+        UNION DISTINCT
+
+        SELECT
+            CONCAT("'", PARSE_DATE("%Y%m%d", partition_id), "'") AS data
+        FROM
+            `{{ integracao_table.database }}.{{ integracao_table.schema }}.INFORMATION_SCHEMA.PARTITIONS`
+        WHERE
+            table_name = "{{ integracao_table.identifier }}"
+            AND partition_id != "__NULL__"
+            AND DATE(last_modified_time, "America/Sao_Paulo") = DATE_SUB(DATE("{{var('run_date')}}"), INTERVAL 1 DAY)
+
     {% endset %}
 
     {% set partitions = run_query(partitions_query).columns[0].values() %}
@@ -36,6 +49,16 @@
 
 
 with
+    integracao as (
+        select id_transacao, id_integracao
+        from {{ integracao_table }}
+        {% if is_incremental() %}
+            where
+                {% if partitions | length > 0 %} data in ({{ partitions | join(", ") }})
+                {% else %} false
+                {% endif %}
+        {% endif %}
+    ),
     transacao as (
         select
             t.data,
@@ -52,6 +75,7 @@ with
             t.servico_jae,
             t.descricao_servico_jae,
             t.id_transacao,
+            t.tipo_transacao,
             t.longitude,
             t.latitude,
             ifnull(t.longitude, 0) as longitude_tratada,
@@ -60,13 +84,15 @@ with
             s.latitude as latitude_servico,
             s.id_servico_gtfs,
             s.id_servico_jae as id_servico_jae_cadastro,
-            s.tabela_origem_gtfs
-        from {{ ref("transacao") }} t
+            s.tabela_origem_gtfs,
+            i.id_integracao
+        from {{ transacao_table }} t
         left join
             {{ ref("servicos") }} s
             on t.id_servico_jae = s.id_servico_jae
             and t.data >= s.data_inicio_vigencia
             and (t.data <= s.data_fim_vigencia or s.data_fim_vigencia is null)
+        left join integracao using (id_transacao)
         {% if is_incremental() %}
             where
                 {% if partitions | length > 0 %} data in ({{ partitions | join(", ") }})
@@ -81,7 +107,9 @@ with
                 latitude_tratada,
                 longitude_tratada,
                 id_servico_jae_cadastro,
-                tabela_origem_gtfs
+                tabela_origem_gtfs,
+                tipo_transacao,
+                id_integracao
             ),
             latitude_tratada = 0
             or longitude_tratada = 0 as indicador_geolocalizacao_zerada,
@@ -111,7 +139,11 @@ with
             id_servico_gtfs is null
             and id_servico_jae_cadastro is not null
             and modo in ("Ônibus", "BRT") as indicador_servico_fora_gtfs,
-            id_servico_jae_cadastro is null as indicador_servico_fora_vigencia
+            id_servico_jae_cadastro is null as indicador_servico_fora_vigencia,
+            datetime_transacao
+            > datetime_processamento as indicador_processamento_anterior_transacao,
+            tipo_transacao = "Integração"
+            and id_integracao is null as indicador_integracao_fora_tabela
         from transacao
     ),
     dados_novos as (
@@ -127,8 +159,8 @@ with
             end as descricao_geolocalizacao_invalida,
             indicador_servico_fora_gtfs,
             indicador_servico_fora_vigencia,
-            datetime_transacao
-            > datetime_processamento as indicador_processamento_anterior_transacao
+            indicador_processamento_anterior_transacao,
+            indicador_integracao_fora_tabela,
             '{{ var("version") }}' as versao
         from indicadores
         where
@@ -138,6 +170,7 @@ with
             or indicador_servico_fora_gtfs
             or indicador_servico_fora_vigencia
             or indicador_processamento_anterior_transacao
+            or indicador_integracao_fora_tabela
     ),
     {% if is_incremental() %}
 
