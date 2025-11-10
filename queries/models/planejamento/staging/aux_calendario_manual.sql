@@ -40,7 +40,7 @@ with
                 then "Ponto Facultativo"  -- LEI Nº 8.881, DE 14 DE ABRIL DE 2025 / MTR-PRO-2025/16278
                 when data = date(2025, 07, 07)
                 then "Ponto Facultativo"  -- LEI Nº 8.881, DE 14 DE ABRIL DE 2025 / MTR-PRO-2025/16278
-                when data = date(2025,10,20)
+                when data = date(2025, 10, 20)
                 then "Ponto Facultativo"  -- MTR-MEM-2025/02734 - Indicação de tipo dia "Ponto Facultativo" para o feriado do dia do comerciário
             end as tipo_dia,
             case
