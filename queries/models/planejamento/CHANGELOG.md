@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.5.4] - 2025-11-10
+
+### Alterado
+
+- Alterados o `tipo_dia` no modelo `aux_calendario_manual.sql` de `2025-10-20` -> `Ponto Facultativo` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1042)
+
 ## [1.5.3] - 2025-10-23
 
 ### Corrigido
