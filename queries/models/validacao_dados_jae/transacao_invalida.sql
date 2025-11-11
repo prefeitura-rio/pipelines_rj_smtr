@@ -44,6 +44,10 @@
             )
         )
     {% endset %}
+{% else %}
+    {% set sha_column %}
+        cast(null as bytes)
+    {% endset %}
 
 {% endif %}
 
