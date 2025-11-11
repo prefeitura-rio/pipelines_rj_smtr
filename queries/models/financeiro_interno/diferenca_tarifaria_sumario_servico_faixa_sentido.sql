@@ -6,13 +6,14 @@
     )
 }}
 
-with 
+with
     percentual_operacao as (
         select
             data,
             tipo_dia,
             faixa_horaria_inicio,
             faixa_horaria_fim,
+            km_planejada_faixa,
             consorcio,
             servico,
             sentido,
@@ -30,7 +31,7 @@ with
             servico,
             sentido,
             id_viagem,
-            safe_cast(distancia_planejada as numeric) as km_planejada,
+            safe_cast(distancia_planejada as numeric) as distancia_planejada,
             receita_tarifa_publica,
             irk,
             indicador_viagem_dentro_limite,
@@ -55,7 +56,8 @@ with
             irk,
             v.id_viagem,
             receita_tarifa_publica,
-            km_planejada,
+            p.km_planejada_faixa,
+            distancia_planejada,
             v.indicador_viagem_dentro_limite,
             indicador_conformidade,
             indicador_validade
@@ -67,8 +69,9 @@ with
             and p.sentido = v.sentido
             and v.datetime_partida
             between p.faixa_horaria_inicio and p.faixa_horaria_fim
-    ), subsidio_km as (
-        select 
+    ),
+    subsidio_km as (
+        select
             data,
             tipo_dia,
             faixa_horaria_inicio,
@@ -79,15 +82,16 @@ with
             pof,
             irk,
             count(*) as viagens_faixa,
-            sum(km_planejada) as km_planejada_faixa,
-            sum(if(indicador_conformidade, km_planejada, 0)) as km_conforme_faixa,
-            sum(if(indicador_validade, km_planejada, 0)) as km_atendida_faixa,
+            any_value(km_planejada_faixa) as km_planejada_faixa,
+            sum(
+                if(indicador_conformidade, distancia_planejada, 0)
+            ) as km_conforme_faixa,
+            sum(if(indicador_validade, distancia_planejada, 0)) as km_atendida_faixa,
             sum(receita_tarifa_publica) as receita_tarifa_publica_faixa,
         from subsidio_servico
-        group by
-            1,2,3,4,5,6,7,8,9
+        group by 1, 2, 3, 4, 5, 6, 7, 8, 9
     )
-select 
+select
     data,
     tipo_dia,
     faixa_horaria_inicio,
@@ -102,9 +106,13 @@ select
     km_conforme_faixa,
     km_atendida_faixa,
     receita_tarifa_publica_faixa,
-    km_conforme_faixa*irk as receita_irk_faixa,
-    if(pof >= 80, km_conforme_faixa*irk - receita_tarifa_publica_faixa, greatest((km_planejada_faixa*irk)-receita_tarifa_publica_faixa, 0)) as delta_tr,
+    km_conforme_faixa * irk as receita_irk_faixa,
+    if(
+        pof >= 80,
+        km_conforme_faixa * irk - receita_tarifa_publica_faixa,
+        greatest((km_planejada_faixa * irk) - receita_tarifa_publica_faixa, 0)
+    ) as delta_tr,
     '{{ var("version") }}' as versao,
-    CURRENT_DATETIME("America/Sao_Paulo") as datetime_ultima_atualizacao,
+    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     '{{ invocation_id }}' as id_execucao_dbt
 from subsidio_km
