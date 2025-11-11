@@ -12,7 +12,7 @@ with
                 offset(0)
             ] seriedade,
             max(ordem_seriedade) ordem_seriedade
-        from `rj-smtr.brt_manutencao.questionario_recentes` t3
+        from ref{{ ("questionario_recentes") }} t3
         join `rj-smtr.brt_manutencao.seriedade` t4 on t3.seriedade = t4.nome_seriedade
         group by t3.id_responsavel, t3.nome_estacao
         order by t3.id_responsavel, nome_estacao

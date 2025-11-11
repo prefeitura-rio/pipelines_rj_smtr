@@ -463,9 +463,3 @@ sources:
     tables:
       - name: estacoes_e_terminais_brt
       - name: terminais_onibus_coordenadas
-
-  - name: brt_manutencao_staging
-    database: rj-smtr-staging
-
-    tables:
-      - name: questionario_melted
