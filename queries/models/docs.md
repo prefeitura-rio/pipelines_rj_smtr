@@ -1504,3 +1504,15 @@ Razão entre a frota realizada e a frota planejada
 {% docs multavel_multa_automatica %}
 Indica se a linha é passível de multa por operar com frota abaixo de 80% do planejado
 {% enddocs %}
+
+{% docs latitude %}
+Valor geográfico da latitude do ponto.
+{% enddocs %}
+
+{% docs longitude %}
+Valor geográfico da longitude do ponto.
+{% enddocs %}
+
+{% docs hora %}
+Horário do registro
+{% enddocs %}
