@@ -456,3 +456,10 @@ sources:
 
     tables:
       - name: ordem_servico
+
+  - name: br_rj_riodejaneiro_transporte_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: estacoes_e_terminais_brt
+      - name: terminais_onibus_coordenadas
