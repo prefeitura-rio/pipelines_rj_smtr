@@ -114,4 +114,4 @@ from
             ) as 'Domingo'
         )
     )
-where var("data_versao_gtfs") < var("DATA_GTFS_V2_INICIO")
+where feed_start_date < {{ var("DATA_GTFS_V2_INICIO") }}
