@@ -70,7 +70,7 @@ with
                         o.vista || " " || ot.evento as vista,
                         o.consorcio,
                         sentido,
-                        extensao as distancia_planejada,
+                        ot.distancia_planejada,
                         quilometragem as distancia_total_planejada,
                         cast(null as string) as inicio_periodo,
                         cast(null as string) as fim_periodo,
