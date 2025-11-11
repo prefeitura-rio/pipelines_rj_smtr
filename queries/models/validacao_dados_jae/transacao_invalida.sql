@@ -44,6 +44,10 @@
             )
         )
     {% endset %}
+{% else %}
+    {% set sha_column %}
+        cast(null as bytes)
+    {% endset %}
 
 {% endif %}
 
@@ -92,7 +96,7 @@ with
             on t.id_servico_jae = s.id_servico_jae
             and t.data >= s.data_inicio_vigencia
             and (t.data <= s.data_fim_vigencia or s.data_fim_vigencia is null)
-        left join integracao using (id_transacao)
+        left join integracao i using (id_transacao)
         {% if is_incremental() %}
             where
                 {% if partitions | length > 0 %} data in ({{ partitions | join(", ") }})
@@ -148,7 +152,12 @@ with
     ),
     dados_novos as (
         select
-            * except (indicador_servico_fora_gtfs, indicador_servico_fora_vigencia),
+            * except (
+                indicador_servico_fora_gtfs,
+                indicador_servico_fora_vigencia,
+                indicador_processamento_anterior_transacao,
+                indicador_integracao_fora_tabela
+            ),
             case
                 when indicador_geolocalizacao_zerada
                 then "Geolocalização zerada"
@@ -160,8 +169,7 @@ with
             indicador_servico_fora_gtfs,
             indicador_servico_fora_vigencia,
             indicador_processamento_anterior_transacao,
-            indicador_integracao_fora_tabela,
-            '{{ var("version") }}' as versao
+            indicador_integracao_fora_tabela
         from indicadores
         where
             indicador_geolocalizacao_zerada
