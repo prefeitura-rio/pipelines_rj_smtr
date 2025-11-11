@@ -169,8 +169,7 @@ with
             indicador_servico_fora_gtfs,
             indicador_servico_fora_vigencia,
             indicador_processamento_anterior_transacao,
-            indicador_integracao_fora_tabela,
-            '{{ var("version") }}' as versao
+            indicador_integracao_fora_tabela
         from indicadores
         where
             indicador_geolocalizacao_zerada
