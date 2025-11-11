@@ -731,7 +731,7 @@ class constants(Enum):  # pylint: disable=c0103
             "source": ESTUDANTE_SOURCE,
             "datalake_table": "rj-smtr.bilhetagem_staging.estudante",
             "timestamp_column": "data_inclusao",
-            "primary_keys": ESTUDANTE_SOURCE.primary_keys,
+            "primary_keys": ["cd_cliente", "data_inclusao"],
             "final_timestamp_exclusive": False,
         },
         LAUDO_PCD_TABLE_ID: {
