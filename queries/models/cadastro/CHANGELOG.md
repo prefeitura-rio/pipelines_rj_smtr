@@ -1,5 +1,12 @@
 # Changelog - cadastro
 
+## [1.6.9] - 2025-11-11
+
+### Adicionado
+
+- Adiciona tratamento da `data_ultima_vistoria` para veículos que trocaram de placa no modelo `veiculo_licenciamento_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1048)
+- Adiciona coluna `indicador_data_ultima_vistoria_tratada` no modelo `veiculo_licenciamento_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1048)
+
 ## [1.6.8] - 2025-11-04
 
 ### Removido

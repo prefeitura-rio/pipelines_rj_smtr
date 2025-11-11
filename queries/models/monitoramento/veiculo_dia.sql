@@ -61,6 +61,19 @@ with
                     data between "2025-09-01" and "2025-09-25"  -- Exceção para lacres adicionados após o prazo em 2025-09-Q1
                     and data_processamento between "2025-09-01" and "2025-09-25"
                 )
+                or (  -- Exceção para tratamento da data_ultima_vistoria [Troca placa Mercosul]
+                    data_processamento = date("2025-11-11")
+                    and (
+                        (
+                            data between "2025-07-10" and "2025-07-20"
+                            and id_veiculo = "B58188"
+                        )
+                        or (
+                            data between "2025-07-30" and "2025-08-31"
+                            and id_veiculo = "A29139"
+                        )
+                    )
+                )
             )
             {% if is_incremental() %}
                 and data between date("{{ var('date_range_start') }}") and date(
