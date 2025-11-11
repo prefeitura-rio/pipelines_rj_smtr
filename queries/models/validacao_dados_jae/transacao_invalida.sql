@@ -152,7 +152,12 @@ with
     ),
     dados_novos as (
         select
-            * except (indicador_servico_fora_gtfs, indicador_servico_fora_vigencia),
+            * except (
+                indicador_servico_fora_gtfs,
+                indicador_servico_fora_vigencia,
+                indicador_processamento_anterior_transacao,
+                indicador_integracao_fora_tabela
+            ),
             case
                 when indicador_geolocalizacao_zerada
                 then "Geolocalização zerada"
