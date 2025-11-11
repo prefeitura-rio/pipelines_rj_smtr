@@ -166,6 +166,40 @@ with
                 )
             {% endif %}
     ),
+    veiculo_chassi as (
+        select distinct placa, trim(chassi) as chassi
+        from {{ ref("staging_stu_veiculo") }}
+        where chassi is not null
+    ),
+    licenciamento_chassi as (
+        select
+            l.* except (data_ultima_vistoria, ano_ultima_vistoria),
+            v.chassi,
+            coalesce(
+                l.data_ultima_vistoria,
+                last_value(l.data_ultima_vistoria ignore nulls) over w
+            ) as data_ultima_vistoria,
+            coalesce(
+                l.ano_ultima_vistoria,
+                last_value(l.ano_ultima_vistoria ignore nulls) over w
+            ) as ano_ultima_vistoria,
+            case
+                when
+                    l.data_ultima_vistoria is null
+                    and last_value(l.data_ultima_vistoria ignore nulls) over w
+                    is not null
+                then true
+                else false
+            end as indicador_data_ultima_vistoria_tratada
+        from licenciamento_staging l
+        left join veiculo_chassi v using (placa)
+        window
+            w as (
+                partition by l.id_veiculo, v.chassi
+                order by l.data
+                rows between unbounded preceding and current row
+            )
+    ),
     datas_faltantes as (
         select distinct
             data,
@@ -188,12 +222,12 @@ with
                     )
                 {% endif %}
             ) as data
-        full outer join licenciamento_staging l using (data)
+        full outer join licenciamento_chassi l using (data)
         where data > '{{ var("data_final_veiculo_arquitetura_1") }}'
     ),
     licenciamento_datas_preenchidas as (
         select df.data, l.* except (data)
-        from licenciamento_staging l
+        from licenciamento_chassi l
         left join datas_faltantes df using (data_arquivo_fonte)
     ),
     veiculo_fiscalizacao_lacre as (
@@ -202,7 +236,7 @@ with
     inicio_vinculo_preenchido as (
         select data_corrigida as data, s.* except (data)
         from
-            licenciamento_staging s,
+            licenciamento_chassi s,
             unnest(
                 generate_date_array(s.data_inicio_vinculo, data, interval 1 day)
             ) as data_corrigida
@@ -250,11 +284,11 @@ with
                 {% endif %}
         ),
         dados_novos_lacre_vistoria as (
-            select * except (ultima_data, primeira_data)
+            select * except (chassi, ultima_data, primeira_data)
             from dados_novos
 
             {% if lacre_partitions | length > 0 or vistoria_partitions | length > 0 %}
-                union all
+                union all by name
 
                 select
                     da.data,
@@ -324,6 +358,7 @@ with
             date(data) as data,
             id_veiculo,
             placa,
+            chassi,
             data_ultima_vistoria,
             ano_ultima_vistoria
         from dados_novos
@@ -333,7 +368,7 @@ with
                 and data_ultima_vistoria is not null
             )
             or lag(data_ultima_vistoria) over (win) != data_ultima_vistoria
-        window win as (partition by id_veiculo, placa order by data)
+        window win as (partition by id_veiculo, chassi order by data)
 
     ),
     nova_data_ultima_vistoria as (
@@ -341,6 +376,7 @@ with
             nova_data as data,
             id_veiculo,
             placa,
+            chassi,
             data_ultima_vistoria,
             ano_ultima_vistoria
         from
@@ -350,7 +386,7 @@ with
             ) as nova_data
         qualify
             row_number() over (
-                partition by nova_data, id_veiculo, placa order by d.data desc
+                partition by nova_data, id_veiculo, chassi order by d.data desc
             )
             = 1
     ),
@@ -478,6 +514,7 @@ select
     indicador_usb,
     indicador_wifi,
     indicador_veiculo_lacrado,
+    indicador_data_ultima_vistoria_tratada,
     data_arquivo_fonte,
     versao,
     datetime_ultima_atualizacao,
