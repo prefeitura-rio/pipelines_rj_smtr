@@ -96,7 +96,7 @@ with
             on t.id_servico_jae = s.id_servico_jae
             and t.data >= s.data_inicio_vigencia
             and (t.data <= s.data_fim_vigencia or s.data_fim_vigencia is null)
-        left join integracao using (id_transacao)
+        left join integracao i using (id_transacao)
         {% if is_incremental() %}
             where
                 {% if partitions | length > 0 %} data in ({{ partitions | join(", ") }})
