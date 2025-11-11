@@ -1,4 +1,5 @@
 version: 2
+
 models:
   - name: satisfacao_geral_estacao
     description: Tabela de satisfação geral de cada estação
