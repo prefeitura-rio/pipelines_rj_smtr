@@ -13,7 +13,7 @@ models:
           compare_group_by: [ feed_start_date, tipo_os ]
           row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
           compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
-          where: "1=1"
+          where: "feed_start_date < date('{DATA_GTFS_V2_INICIO}')"
     columns:
       - name: feed_version
         description: "{{ doc('feed_version') }}"
