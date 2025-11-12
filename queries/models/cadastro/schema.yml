@@ -199,6 +199,7 @@ models:
           - id_veiculo
           - data_processamento
           name: dbt_utils.unique_combination_of_columns__veiculo_licenciamento_dia
+          where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - test_check_data_arquivo_licenciamento:
           name: test_check_data_arquivo_licenciamento__veiculo_licenciamento_dia
     columns:
@@ -209,6 +210,7 @@ models:
         tests:
           - not_null:
               name: not_null__data__veiculo_licenciamento_dia
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: data_processamento
         description: Data em que as informações do veículo foram atualizadas nesta tabela
         data_type: date
@@ -216,6 +218,7 @@ models:
         tests:
           - not_null:
               name: not_null__data_processamento__veiculo_licenciamento_dia
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
         data_type: string
@@ -223,6 +226,7 @@ models:
         tests:
           - not_null:
               name: not_null__id_veiculo__veiculo_licenciamento_dia
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: placa
         description: "{{ doc('placa') }}"
         data_type: string
@@ -230,6 +234,7 @@ models:
         tests:
           - not_null:
               name: not_null__placa__veiculo_licenciamento_dia
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: modo
         description: "{{ doc('modo') }}"
         data_type: string
@@ -237,6 +242,7 @@ models:
         tests:
           - not_null:
               name: not_null__modo__veiculo_licenciamento_dia
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: permissao
         description: "{{ doc('permissao') }}"
         data_type: string
@@ -248,6 +254,7 @@ models:
         tests:
           - not_null:
               name: not_null__ano_fabricacao__veiculo_licenciamento_dia
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: id_carroceria
         description: "{{ doc('id_carroceria') }}"
         data_type: int64
@@ -283,7 +290,7 @@ models:
         tests:
           - not_null:
               name: not_null__tipo_veiculo__veiculo_licenciamento_dia
-              where: "data between date('{date_range_start}') and date('{date_range_end}') and modo = 'ONIBUS'"
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: status
         description: Status do veículo
         data_type: string
@@ -295,14 +302,23 @@ models:
         tests:
           - not_null:
               name: not_null__data_inicio_vinculo__veiculo_licenciamento_dia
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: data_ultima_vistoria
         description: "{{ doc('data_ultima_vistoria') }}"
         data_type: date
         quote: true
+        tests:
+          - not_null:
+              name: not_null__data_ultima_vistoria__veiculo_licenciamento_dia
+              where: "data between date('{date_range_start}') and date('{date_range_end}') and tipo_veiculo not like '%ROD%' and tipo_veiculo not like '%BRT%'"
       - name: ano_ultima_vistoria
         description: "{{ doc('ano_ultima_vistoria_atualizado') }}"
         data_type: int64
         quote: true
+        tests:
+          - not_null:
+              name: not_null__ano_ultima_vistoria__veiculo_licenciamento_dia
+              where: "data between date('{date_range_start}') and date('{date_range_end}') and tipo_veiculo not like '%ROD%' and tipo_veiculo not like '%BRT%'"
       - name: ultima_situacao
         description: Última situação do veículo na data atual
         data_type: string
@@ -310,6 +326,7 @@ models:
         tests:
           - not_null:
               name: not_null__ultima_situacao__veiculo_licenciamento_dia
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: tecnologia
         description: "{{ doc('tecnologia') }}"
         data_type: string
@@ -357,6 +374,7 @@ models:
         tests:
           - not_null:
               name: not_null__data_arquivo_fonte__veiculo_licenciamento_dia
+              where: "data between date('{date_range_start}') and date('{date_range_end}')"
       - name: versao
         description: "{{ doc('versao') }}"
         data_type: string
