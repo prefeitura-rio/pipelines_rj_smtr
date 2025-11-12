@@ -33,7 +33,14 @@
     {% endset %}
 
     {% set partitions = run_query(partitions_query).columns[0].values() %}
-
+    {% set columns = (
+        list_columns()
+        | reject(
+            "in",
+            ["versao", "datetime_ultima_atualizacao", "id_execucao_dbt"],
+        )
+        | list
+    ) %}
     {% set sha_column %}
         sha256(
             concat(
