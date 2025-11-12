@@ -320,6 +320,7 @@ models:
       deprecated:
         +materialized: view
         +schema: dashboard_subsidio_sppo
+        +enabled: false
     dashboard_subsidio_sppo_staging:
       +materialized: view
       +schema: dashboard_subsidio_sppo_staging
