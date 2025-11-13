@@ -34,8 +34,8 @@ repos:
     # - id: dbt-parse
     #   args: ["--cmd-flags", "++profiles-dir", "./queries"]
     - id: check-model-has-description
-      name: Check model description - example
-      files: ^queries/models/bilhetagem/staging
+      name: Check model description
+      files: ^queries/models/[^/]+/[^/]+\.(yml|yaml)$
 
 # -   repo: https://github.com/tconbeer/sqlfmt
 #     rev: v0.23.2
