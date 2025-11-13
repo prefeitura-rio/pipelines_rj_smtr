@@ -2,7 +2,6 @@ version: 2
 
 models:
   - name: ed_metadado_coluna
-    description: "Catálogo de dados de geolocalização e identificação do data lake da SMTR destinados ao Escritório de Dados (GP/ED)"
     columns:
       - name: project_id
         description: "{{ doc('project_id') }}"
