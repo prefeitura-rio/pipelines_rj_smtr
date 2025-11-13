@@ -78,17 +78,21 @@ def get_gaps_from_result_table(
         result[table_id] = {
             "timestamps": timestamps,
             "recapture_params": [
-                {"recapture": True, "recapture_timestamps": timestamps[i : i + 20]}  # noqa
+                {
+                    "table_id": table_id,
+                    "recapture": True,
+                    "recapture_timestamps": timestamps[i : i + 20],  # noqa
+                }
                 for i in range(0, len(timestamps), 20)
             ],
+            "reprocess_all": constants.CAPTURE_GAP_TABLES.value[table_id]["reprocess_all"],
             "flag_has_gaps": not df.empty,
-            "table_id": table_id,
         }
     return result
 
 
 @task
-def create_gap_materialization_params(gaps: dict) -> dict:
+def create_gap_materialization_params(gaps: dict, env: str) -> dict:
     """
     Cria parâmetros de materialização a partir das falhas de captura identificadas
 
@@ -101,18 +105,31 @@ def create_gap_materialization_params(gaps: dict) -> dict:
                 },
                 ...
             }
+        env (str): prod ou dev
+
+    Returns:
+        dict: Parâmetros para execução do flow de materialização
     """
     result = {}
     for k, v in constants.CAPTURE_GAP_SELECTORS.value.items():
         ts_list = []
+        reprocess_all = False
 
         if any(gaps[a]["flag_has_gaps"] for a in v["capture_tables"]):
             for t in v["capture_tables"]:
                 ts_list = ts_list + gaps[t]["timestamps"]
+                if gaps[t]["reprocess_all"] and gaps[t]["flag_has_gaps"]:
+                    reprocess_all = True
 
             result[k] = {
                 "initial_datetime": min(ts_list),
-                "end_datetime": max(ts_list),
+                "end_datetime": (
+                    v["selector"]
+                    .get_last_materialized_datetime(env=env)
+                    .strftime("%Y-%m-%d %H:%M:%S")
+                    if reprocess_all
+                    else max(ts_list)
+                ),
             }
         else:
             result[k] = None

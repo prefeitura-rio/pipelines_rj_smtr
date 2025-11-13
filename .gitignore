@@ -156,5 +156,5 @@ dmypy.json
 # VSCode project settings
 .vscode/
 
-# Gemini context file
+# AI agent contexts
 GEMINI.md
