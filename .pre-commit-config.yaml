@@ -35,7 +35,7 @@ repos:
     #   args: ["--cmd-flags", "++profiles-dir", "./queries"]
     - id: check-model-has-description
       name: Check model description - example
-      files: ^queries/models/catalogo
+      files: ^queries/models
 
 # -   repo: https://github.com/tconbeer/sqlfmt
 #     rev: v0.23.2
