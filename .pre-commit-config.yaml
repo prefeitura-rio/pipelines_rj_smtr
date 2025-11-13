@@ -36,7 +36,6 @@ repos:
     - id: check-script-semicolon
     - id: check-script-has-no-table-name
     - id: check-model-has-description
-      name: Check model description - example
       files: ^models/example
 
 # -   repo: https://github.com/tconbeer/sqlfmt
