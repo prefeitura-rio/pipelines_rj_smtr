@@ -37,7 +37,7 @@ repos:
     - id: check-script-has-no-table-name
     - id: check-model-has-description
       name: Check model description - example
-      files: ^queries/models/example/.*\.(yml)$
+      files: ^queries/models/example
       always_run: true
 
 # -   repo: https://github.com/tconbeer/sqlfmt
