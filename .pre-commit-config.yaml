@@ -30,14 +30,12 @@ repos:
 -   repo: https://github.com/dbt-checkpoint/dbt-checkpoint
     rev: v2.0.7
     hooks:
-    # - id: dbt-deps
-    # - id: dbt-parse
-    #   args: ["--cmd-flags", "++profiles-dir", "./queries"]
+    - id: dbt-deps
+    - id: dbt-parse
+      args: ["--cmd-flags", "++profiles-dir", "./queries"]
     - id: check-model-has-description
       name: Check model description
       files: ^queries/models/[^/]+/[^/]+\.(yml|yaml)$
-      always_run: true
-      pass_filenames: true
 
 # -   repo: https://github.com/tconbeer/sqlfmt
 #     rev: v0.23.2
