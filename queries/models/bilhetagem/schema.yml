@@ -1,6 +1,5 @@
 models:
   - name: transacao
-    description: "Tabela com informações da Jaé sobre as transações realizadas no sistema de transporte municipal"
     columns:
       - name: data
         description: "{{ doc('data_transacao') }} [partição]"
