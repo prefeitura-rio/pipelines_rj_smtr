@@ -1,5 +1,11 @@
 # Changelog - infraestrutura
 
+## [1.0.1] - 2025-11-14
+
+### Corrigido
+
+-  Corrige filtro das partições do modelo `custo_cloud` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1027)
+
 ## [1.0.0] - 2025-06-26
 
 ### Adicionado
