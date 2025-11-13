@@ -17,7 +17,6 @@ models:
       - name: description
         description: "{{ doc('metadado_descricao') }}"
   - name: metadado_coluna
-    description: "Catálogo de dados do data lake da SMTR"
     columns:
       - name: project_id
         description: "{{ doc('project_id') }}"
