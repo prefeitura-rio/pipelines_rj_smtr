@@ -43,6 +43,20 @@ with
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
     ),
+    penalidade as (
+        select
+            data,
+            tipo_dia,
+            servico,
+            sentido,
+            faixa_horaria_inicio,
+            faixa_horaria_fim,
+            valor_penalidade
+        from {{ ref("subsidio_penalidade_servico_faixa") }}
+        where
+            data
+            between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
+    ),
     subsidio_servico as (
         select
             p.data,
@@ -107,12 +121,22 @@ select
     km_atendida_faixa,
     receita_tarifa_publica_faixa,
     km_conforme_faixa * irk as receita_irk_faixa,
+    valor_penalidade,
     if(
         pof >= 80,
-        km_conforme_faixa * irk - receita_tarifa_publica_faixa,
-        greatest((km_planejada_faixa * irk) - receita_tarifa_publica_faixa, 0)
+        km_conforme_faixa * irk - receita_tarifa_publica_faixa + valor_penalidade,
+        greatest(
+            (km_planejada_faixa * irk)
+            - receita_tarifa_publica_faixa
+            + valor_penalidade,
+            0
+        )
     ) as delta_tr,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     '{{ invocation_id }}' as id_execucao_dbt
 from subsidio_km
+left join
+    penalidade using (
+        data, tipo_dia, faixa_horaria_inicio, faixa_horaria_fim, servico, sentido
+    )

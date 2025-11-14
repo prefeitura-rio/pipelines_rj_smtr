@@ -26,7 +26,11 @@ with
             data,
             consorcio,
             sum(
-                if(id_viagem is null, valor_pagamento, 0)
+                if(
+                    id_viagem is null or faixa_horaria_inicio is null,
+                    valor_pagamento,
+                    0
+                )
             ) as receita_tarifa_publica_nao_associada
         from transacao_viagem
         group by 1, 2
