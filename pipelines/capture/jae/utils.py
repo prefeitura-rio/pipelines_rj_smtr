@@ -246,7 +246,7 @@ def get_jae_timestamp_captura_count_query(
                                 )
                                 / ({capture_interval_minutes} * 60)
                             ) * ({capture_interval_minutes} * 60)
-                        )  AT TIME ZONE 'UTC' AS datetime_truncado,
+                        )  AT TIME ZONE 'UTC' AS datetime_truncado
                     FROM dados_jae
 
                     UNION ALL
@@ -259,7 +259,7 @@ def get_jae_timestamp_captura_count_query(
                                 ) / ({capture_interval_minutes} * 60
                                 )
                             ) * ({capture_interval_minutes} * 60)
-                        )  AT TIME ZONE 'UTC' AS datetime_truncado,
+                        )  AT TIME ZONE 'UTC' AS datetime_truncado
                         COUNT(1) AS total_jae
                     FROM
                         dados_jae
