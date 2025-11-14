@@ -213,23 +213,8 @@ def get_jae_timestamp_captura_count_query(
     """
 
     if engine == "postgresql":
-        if not final_timestamp_exclusive:
-            raise NotImplementedError(
-                "final_timestamp_exclusive False não implementado para Postgres"
-            )
-        return f"""
-            WITH timestamps_captura AS (
-                SELECT timestamp_captura, {delay_query} AS delay
-                FROM (SELECT generate_series(
-                    timestamp '{{timestamp_captura_start}}',
-                    timestamp '{{timestamp_captura_end}}',
-                    interval '{capture_interval_minutes} minute'
-                ) AS timestamp_captura)
-            ),
-            dados_jae AS (
-                {capture_query}
-            ),
-            contagens AS (
+        if final_timestamp_exclusive:
+            count_query = f"""
                 SELECT
                     TO_TIMESTAMP(
                         FLOOR(
@@ -243,6 +228,68 @@ def get_jae_timestamp_captura_count_query(
                     dados_jae
                 GROUP BY
                     1
+
+            """
+        else:
+            count_query = f"""
+                SELECT
+                    datetime_truncado,
+                    COUNT(1) AS total_jae
+                FROM
+                (
+                    SELECT
+                        *,
+                        TO_TIMESTAMP(
+                            FLOOR(
+                                EXTRACT(
+                                    EPOCH FROM {timestamp_column}
+                                )
+                                / ({capture_interval_minutes} * 60)
+                            ) * ({capture_interval_minutes} * 60)
+                        )  AT TIME ZONE 'UTC' AS datetime_truncado,
+                    FROM dados_jae
+
+                    UNION ALL
+
+                    SELECT
+                        TO_TIMESTAMP(
+                            FLOOR(
+                                EXTRACT(
+                                    EPOCH FROM {timestamp_column} - interval '1 second'
+                                ) / ({capture_interval_minutes} * 60
+                                )
+                            ) * ({capture_interval_minutes} * 60)
+                        )  AT TIME ZONE 'UTC' AS datetime_truncado,
+                        COUNT(1) AS total_jae
+                    FROM
+                        dados_jae
+                    WHERE
+                        TO_TIMESTAMP(
+                            FLOOR(
+                                EXTRACT(
+                                    EPOCH FROM {timestamp_column})
+                                    / ({capture_interval_minutes} * 60
+                                )
+                            ) * ({capture_interval_minutes} * 60)
+                        )  AT TIME ZONE 'UTC' = {timestamp_column}
+                    GROUP BY
+                        1
+                )
+            """
+        return f"""
+            WITH timestamps_captura AS (
+                SELECT timestamp_captura, {delay_query} AS delay
+                FROM (SELECT generate_series(
+                    timestamp '{{timestamp_captura_start}}',
+                    timestamp '{{timestamp_captura_end}}',
+                    interval '{capture_interval_minutes} minute'
+                ) AS timestamp_captura)
+            ),
+            dados_jae AS (
+                {capture_query}
+            ),
+            contagens AS (
+                {count_query}
             )
             SELECT
                 tc.timestamp_captura,
