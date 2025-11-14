@@ -210,7 +210,7 @@ def get_raw_gtfs_files(
         drive_service = get_google_api_service(service_name="drive", version="v3")
 
         # Baixa planilha de OS
-        file_link = os_control["Link da OS"]
+        file_link = "https://docs.google.com/spreadsheets/d/1uPdeIJW2qiRbL4f4Z2DeC3YPGBLYOFnKqUPnzXBWcFA/edit?gid=143191933#gid=143191933"
         file_bytes_os = download_xlsx(file_link=file_link, drive_service=drive_service)
 
         # Baixa GTFS
@@ -327,8 +327,10 @@ def filter_gtfs_table_ids(data_versao_gtfs_str, gtfs_table_capture_params):
 
     if data_versao_gtfs_str < constants.DATA_GTFS_V4_INICIO.value:
         gtfs_table_capture_params.pop("ordem_servico_faixa_horaria_sentido", None)
+        gtfs_table_capture_params.pop("ordem_servico_trajeto_alternativo_sentido", None)
 
     if data_versao_gtfs_str >= constants.DATA_GTFS_V4_INICIO.value:
         gtfs_table_capture_params.pop("ordem_servico_faixa_horaria", None)
+        gtfs_table_capture_params.pop("ordem_servico_trajeto_alternativo", None)
 
     return gtfs_table_capture_params
