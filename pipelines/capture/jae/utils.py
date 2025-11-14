@@ -246,12 +246,13 @@ def get_jae_timestamp_captura_count_query(
                                 )
                                 / ({capture_interval_minutes} * 60)
                             ) * ({capture_interval_minutes} * 60)
-                        )  AT TIME ZONE 'UTC' AS datetime_truncado,
+                        )  AT TIME ZONE 'UTC' AS datetime_truncado
                     FROM dados_jae
 
                     UNION ALL
 
                     SELECT
+                        *,
                         TO_TIMESTAMP(
                             FLOOR(
                                 EXTRACT(
@@ -259,8 +260,7 @@ def get_jae_timestamp_captura_count_query(
                                 ) / ({capture_interval_minutes} * 60
                                 )
                             ) * ({capture_interval_minutes} * 60)
-                        )  AT TIME ZONE 'UTC' AS datetime_truncado,
-                        COUNT(1) AS total_jae
+                        )  AT TIME ZONE 'UTC' AS datetime_truncado
                     FROM
                         dados_jae
                     WHERE
@@ -272,9 +272,9 @@ def get_jae_timestamp_captura_count_query(
                                 )
                             ) * ({capture_interval_minutes} * 60)
                         )  AT TIME ZONE 'UTC' = {timestamp_column}
-                    GROUP BY
-                        1
                 )
+                GROUP BY
+                        1
             """
         return f"""
             WITH timestamps_captura AS (
