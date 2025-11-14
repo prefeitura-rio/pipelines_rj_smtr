@@ -1,5 +1,12 @@
 # Changelog - cadastro
 
+## [1.7.0] - 2025-11-13
+
+### Adicionado
+
+- Adiciona filtro nos testes do modelo `veiculo_licenciamento_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1056)
+- Adiciona teste de nulidade nas colunas `data_ultima_vistoria` e `ano_ultima_vistoria` do modelo `veiculo_licenciamento_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1056)
+
 ## [1.6.9] - 2025-11-11
 
 ### Adicionado
