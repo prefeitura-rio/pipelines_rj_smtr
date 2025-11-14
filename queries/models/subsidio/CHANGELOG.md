@@ -1,5 +1,11 @@
 # Changelog - subsidio
 
+## [2.2.5] - 2025-11-14
+
+### Alterado
+
+- Altera referência dos modelos `servico_contrato_abreviado` e `valor_km_tipo_viagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1058)
+
 ## [2.2.4] - 2025-10-28
 
 ### Alterado
