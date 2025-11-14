@@ -65,33 +65,33 @@ models:
       - name: velocidade
         description: "{{ doc('velocidade_instantanea') }}"
 
-  # - name: registros_historico
-  #   description: "View para os dados históricos capturados em staging com tratamento básico e conversão de valores"
-  #   columns:
-  #     - name: codigo
-  #       description: "{{ doc('numero_veiculo') }}"
-  #     - name: placa
-  #       description: "{{ doc('placa') }}"
-  #     - name: linha
-  #       description: "{{ doc('linha') }}"
-  #     - name: latitude
-  #       description: "{{ doc('latitude_gps') }}"
-  #     - name: longitude
-  #       description: "{{ doc('longitude_gps') }}"
-  #     - name: timestamp_gps
-  #       description: "{{ doc('timestamp_gps') }}"
-  #     - name: velocidade
-  #       description: "{{ doc('velocidade_instantanea') }}"
-  #     - name: id_migracao_trajeto
-  #       description: ""
-  #     - name: sentido
-  #       description: "{{ doc('sentido') }}"
-  #     - name: trajeto
-  #       description: "{{ doc('trajeto') }}"
-  #     - name: timestamp_captura
-  #       description: "{{ doc('timestamp_captura') }}"
-  #     - name: data
-  #       description: "{{ doc('data_captura') }}"
-  #     - name: hora
-  #       description: "Hora do 'timestamp_captura'"
+  - name: registros_historico
+    description: "View para os dados históricos capturados em staging com tratamento básico e conversão de valores"
+    columns:
+      - name: codigo
+        description: "{{ doc('numero_veiculo') }}"
+      - name: placa
+        description: "{{ doc('placa') }}"
+      - name: linha
+        description: "{{ doc('linha') }}"
+      - name: latitude
+        description: "{{ doc('latitude_gps') }}"
+      - name: longitude
+        description: "{{ doc('longitude_gps') }}"
+      - name: timestamp_gps
+        description: "{{ doc('timestamp_gps') }}"
+      - name: velocidade
+        description: "{{ doc('velocidade_instantanea') }}"
+      - name: id_migracao_trajeto
+        description: "Identificador de migração do trajeto"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+      - name: trajeto
+        description: "{{ doc('trajeto') }}"
+      - name: timestamp_captura
+        description: "{{ doc('timestamp_captura') }}"
+      - name: data
+        description: "{{ doc('data_captura') }}"
+      - name: hora
+        description: "Hora do 'timestamp_captura'"
 

@@ -166,10 +166,21 @@ sources:
       - name: rdo_correcao_rioonibus_servico_quinzena
 
   - name: br_rj_riodejaneiro_geo
-    database: rj-smtr
+    database: rj-smtr-staging
 
     tables:
       - name: h3_res9
+      - name: h3_res8
+      - name: limites_geograficos_caixa
+      - name: garagens_polygon
+      - name: area_planejamento
+      - name: bairros
+
+  - name: br_rj_riodejaneiro_brt_gps_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: registros_historico
 
   - name: br_rj_riodejaneiro_viagem_zirix_staging
     database: rj-smtr-staging
