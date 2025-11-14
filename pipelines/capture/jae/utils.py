@@ -213,93 +213,115 @@ def get_jae_timestamp_captura_count_query(
     """
 
     if engine == "postgresql":
-        cte_start = "WITH"
-        timestamp_captura_query = f"""
-            SELECT
-                timestamp_captura,
-                timestamp_captura
-                    - ({delay_query} + {capture_interval_minutes} || ' minutes')::interval
-                AS timestamp_inicial,
-                timestamp_captura
-                    - ({delay_query} || ' minutes')::interval
-                AS timestamp_final
-            FROM (SELECT generate_series(
-                timestamp '{{timestamp_captura_start}}',
-                timestamp '{{timestamp_captura_end}}',
-                interval '{capture_interval_minutes} minute'
-            ) AS timestamp_captura)
-        """
-
-    elif engine == "mysql":
-        cte_start = "WITH RECURSIVE"
-        timestamp_captura_query = f"""
-            SELECT
-                TIMESTAMP('{{timestamp_captura_start}}') AS timestamp_captura,
-                DATE_SUB(
-                    TIMESTAMP('{{timestamp_captura_start}}'),
-                    INTERVAL ({delay_query} + {capture_interval_minutes}) MINUTE
-                ) AS timestamp_inicial,
-                DATE_SUB(
-                    TIMESTAMP('{{timestamp_captura_start}}'),
-                    INTERVAL ({delay_query}) MINUTE
-                ) AS timestamp_final
-            UNION ALL
-            SELECT
-                timestamp_captura + INTERVAL {capture_interval_minutes} MINUTE,
-                DATE_SUB(
-                    timestamp_captura  + INTERVAL {capture_interval_minutes} MINUTE,
-                    INTERVAL ({delay_query} + {capture_interval_minutes}) MINUTE
-                ) AS timestamp_inicial,
-                DATE_SUB(
-                    timestamp_captura  + INTERVAL {capture_interval_minutes} MINUTE,
-                    INTERVAL ({delay_query}) MINUTE
-                ) AS timestamp_final
-            FROM timestamps_captura
-            WHERE
-                timestamp_captura
-                + INTERVAL {capture_interval_minutes} MINUTE
-                <= TIMESTAMP('{{timestamp_captura_end}}')
-        """
-
-    else:
-        raise NotImplementedError(f"Engine {engine} não implementada")
-
-    if final_timestamp_exclusive:
-        join_condition = f"""
-            d.{timestamp_column} >= tc.timestamp_inicial AND
-            d.{timestamp_column} < tc.timestamp_final
-        """
-    else:
-        join_condition = f"""
-            d.{timestamp_column} BETWEEN tc.timestamp_inicial
-                AND tc.timestamp_final
-        """
-
-    return f"""
-        {cte_start} timestamps_captura AS (
-            {timestamp_captura_query}
-        ),
-        dados_jae AS (
-            {capture_query}
-        ),
-        jae_timestamp_captura AS (
+        if not final_timestamp_exclusive:
+            raise NotImplementedError(
+                "final_timestamp_exclusive False não implementado para Postgres"
+            )
+        return f"""
+            WITH timestamps_captura AS (
+                SELECT timestamp_captura, {delay_query} AS delay
+                FROM (SELECT generate_series(
+                    timestamp '{{timestamp_captura_start}}',
+                    timestamp '{{timestamp_captura_end}}',
+                    interval '{capture_interval_minutes} minute'
+                ) AS timestamp_captura)
+            ),
+            dados_jae AS (
+                {capture_query}
+            ),
+            contagens AS (
+                SELECT
+                    TO_TIMESTAMP(
+                        FLOOR(
+                            EXTRACT(
+                                EPOCH FROM {timestamp_column}) / ({capture_interval_minutes} * 60
+                            )
+                        ) * ({capture_interval_minutes} * 60)
+                    )  AT TIME ZONE 'UTC' AS datetime_truncado,
+                    COUNT(1) AS total_jae
+                FROM
+                    dados_jae
+                GROUP BY
+                    1
+            )
             SELECT
                 tc.timestamp_captura,
-                d.{timestamp_column} as col
+                COALESCE(c.total_jae, 0) AS total_jae
             FROM
                 timestamps_captura tc
             LEFT JOIN
-                dados_jae d
-            ON {join_condition}
-        )
-        SELECT
-            timestamp_captura,
-            count(col) AS total_jae
-        FROM
-            jae_timestamp_captura
-        GROUP BY
-            timestamp_captura
-    """
+                contagens c
+            ON
+                tc.timestamp_captura = c.datetime_truncado
+                + (tc.delay + {capture_interval_minutes} || ' minutes')::interval
+        """
+
+    elif engine == "mysql":
+
+        if final_timestamp_exclusive:
+            join_condition = f"""
+                d.{timestamp_column} >= tc.timestamp_inicial AND
+                d.{timestamp_column} < tc.timestamp_final
+            """
+        else:
+            join_condition = f"""
+                d.{timestamp_column} BETWEEN tc.timestamp_inicial
+                    AND tc.timestamp_final
+            """
+
+            return f"""
+                WITH RECURSIVE timestamps_captura AS (
+                    SELECT
+                        TIMESTAMP('{{timestamp_captura_start}}') AS timestamp_captura,
+                        DATE_SUB(
+                            TIMESTAMP('{{timestamp_captura_start}}'),
+                            INTERVAL ({delay_query} + {capture_interval_minutes}) MINUTE
+                        ) AS timestamp_inicial,
+                        DATE_SUB(
+                            TIMESTAMP('{{timestamp_captura_start}}'),
+                            INTERVAL ({delay_query}) MINUTE
+                        ) AS timestamp_final
+                    UNION ALL
+                    SELECT
+                        timestamp_captura + INTERVAL {capture_interval_minutes} MINUTE,
+                        DATE_SUB(
+                            timestamp_captura  + INTERVAL {capture_interval_minutes} MINUTE,
+                            INTERVAL ({delay_query} + {capture_interval_minutes}) MINUTE
+                        ) AS timestamp_inicial,
+                        DATE_SUB(
+                            timestamp_captura  + INTERVAL {capture_interval_minutes} MINUTE,
+                            INTERVAL ({delay_query}) MINUTE
+                        ) AS timestamp_final
+                    FROM timestamps_captura
+                    WHERE
+                        timestamp_captura
+                        + INTERVAL {capture_interval_minutes} MINUTE
+                        <= TIMESTAMP('{{timestamp_captura_end}}')
+                ),
+                dados_jae AS (
+                    {capture_query}
+                ),
+                jae_timestamp_captura AS (
+                    SELECT
+                        tc.timestamp_captura,
+                        d.{timestamp_column} as col
+                    FROM
+                        timestamps_captura tc
+                    LEFT JOIN
+                        dados_jae d
+                    ON {join_condition}
+                )
+                SELECT
+                    timestamp_captura,
+                    count(col) AS total_jae
+                FROM
+                    jae_timestamp_captura
+                GROUP BY
+                    timestamp_captura
+            """
+
+    else:
+        raise NotImplementedError(f"Engine {engine} não implementada")
 
 
 def get_capture_interval_minutes(source: SourceTable) -> int:
