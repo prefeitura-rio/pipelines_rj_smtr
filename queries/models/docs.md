@@ -1469,6 +1469,18 @@ Data e hora do cadastro do endereco no sistema da Jaé
 Data e hora da inativação do cadastro do endereco no sistema da Jaé
 {% enddocs %}
 
+{% docs resolution %}
+Resolução do h3
+{% enddocs %}
+
+{% docs parent_id %}
+Resolução do h3, parent cell
+{% enddocs %}
+
+{% docs geometry_wkt %}
+Geometria em formato WKT
+{% enddocs %}
+
 {% docs data_ordem_servico %}
 Data da ordem de serviço
 {% enddocs %}
