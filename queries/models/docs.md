@@ -1469,6 +1469,10 @@ Data e hora do cadastro do endereco no sistema da Jaé
 Data e hora da inativação do cadastro do endereco no sistema da Jaé
 {% enddocs %}
 
+{% docs data_ordem_servico %}
+Data da ordem de serviço
+{% enddocs %}
+
 {% docs pico_multa_automatica %}
 Período de pico de operação, dividido em 'manhã' [5h-8h] e 'noite' [16h-19h]
 {% enddocs %}
@@ -1487,4 +1491,16 @@ Razão entre a frota realizada e a frota planejada
 
 {% docs multavel_multa_automatica %}
 Indica se a linha é passível de multa por operar com frota abaixo de 80% do planejado
+{% enddocs %}
+
+{% docs latitude %}
+Valor geográfico da latitude do ponto.
+{% enddocs %}
+
+{% docs longitude %}
+Valor geográfico da longitude do ponto.
+{% enddocs %}
+
+{% docs hora %}
+Horário do registro
 {% enddocs %}

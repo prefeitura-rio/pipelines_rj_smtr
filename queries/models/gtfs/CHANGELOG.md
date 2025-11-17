@@ -1,5 +1,21 @@
 # Changelog - gtfs
 
+## [1.2.8] - 2025-11-10
+
+### Corrigido
+
+- Corrigida a `distancia_planejada` dos trajetos alternativos do modelo `ordem_servico_trips_shapes_gtfs_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1040)
+
+### Alterado
+
+- Alterada a condição de `data_versao_gtfs` para o modelo `ordem-servico_gtfs` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1042)
+
+## [1.2.7] - 2025-10-30
+
+### Adicionado
+
+- Cria modelos `ordem_servico_diaria_gtfs.sql`, `ordem_servico_viagens_planejadas.sql` e `servicos_sentido_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1016)
+
 ## [1.2.6] - 2025-08-08
 
 ### Alterado

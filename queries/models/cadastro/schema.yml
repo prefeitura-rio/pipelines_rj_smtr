@@ -346,6 +346,10 @@ models:
         description: Indicador se o veículo estava lacrado na data atual [Verdadeiro/Falso]
         data_type: boolean
         quote: true
+      - name: indicador_data_ultima_vistoria_tratada
+        description: Indicador se a data da última vistoria do veículo foi tratada [Verdadeiro/Falso]
+        data_type: boolean
+        quote: true
       - name: data_arquivo_fonte
         description: data do arquivo do STU com os dados utilizados
         data_type: date
