@@ -105,7 +105,7 @@ models:
       - name: servico
         description: "{{ doc('servico') }}"
       - name: tipo_viagem
-        description: "Tipo da viagem"
+        description: "{{ doc('tipo_viagem_status') }}" 
       - name: indicador_ar_condicionado
         description: "{{ doc('indicador_ar_condicionado') }}"
       - name: viagens
