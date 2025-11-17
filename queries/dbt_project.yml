@@ -315,7 +315,7 @@ models:
       +schema: br_rj_riodejaneiro_geo
       deprecated:
         +materialized: view
-        +schema: area_planejamento
+        +schema: br_rj_riodejaneiro_geo
         +enabled: false
     br_rj_riodejaneiro_veiculos:
       +materialized: view
