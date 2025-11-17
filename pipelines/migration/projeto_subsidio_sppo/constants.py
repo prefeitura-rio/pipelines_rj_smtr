@@ -780,7 +780,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "dbt_expectations.expect_table_aggregation_to_equal_other_table__viagem_planejada": {
                     "description": "Todos os dados de `tipo_os` correspondem 1:1 entre as tabelas `subsidio_data_versao_efetiva` e `viagem_planejada`."  # noqa
                 },
-                "dbt_utils.relationships_where__servico__viagem_planejada": {
+                "test_tecnologia_servico_planejado__viagem_planejada": {
                     "description": "Todos os serviços planejados possuem tecnologia permitida."  # noqa
                 },
                 "check_km_planejada": {
