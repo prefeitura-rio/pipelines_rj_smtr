@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de infraestrutura
 
-DBT: 2025-10-30
+DBT: 2025-11-17
 """
 
 from pipelines.constants import constants as smtr_constants
