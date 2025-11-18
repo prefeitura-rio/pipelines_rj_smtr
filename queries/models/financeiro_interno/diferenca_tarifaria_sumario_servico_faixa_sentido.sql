@@ -125,7 +125,7 @@ select
     if(
         pof >= 80,
         km_conforme_faixa * irk - receita_tarifa_publica_faixa + valor_penalidade,
-        greatest(
+        least(
             (km_planejada_faixa * irk)
             - receita_tarifa_publica_faixa
             + valor_penalidade,
