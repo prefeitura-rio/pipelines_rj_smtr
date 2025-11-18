@@ -313,12 +313,6 @@ sources:
       - name: matriz_integracao_excecao
       - name: dicionario_subsidio
 
-  - name: subsidio_staging
-    database: rj-smtr
-
-    tables:
-      - name: valor_km_tipo_viagem
-
   - name: planejamento_staging
     database: rj-smtr-staging
 
@@ -486,3 +480,10 @@ sources:
     tables:
       - name: estacoes_e_terminais_brt
       - name: terminais_onibus_coordenadas
+
+  - name: subsidio_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: servico_contrato_abreviado
+      - name: valor_km_tipo_viagem
