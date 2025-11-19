@@ -791,6 +791,10 @@ class constants(Enum):  # pylint: disable=c0103
                 "temp_cliente_fraudes_14102025",
                 "temp_vt_sem_retorno_13102025",
                 "temp_bloqueio_cliente_14102025",
+                "temp_estudante_31102025",
+                "temp_logistica_limbo_25102025",
+                "temp_cartoes_transferidos_valorados_18112025",
+                "temp_vt_limbo_24102025",
             ],
             "filter": {
                 "ITEM_PEDIDO": ["DT_INCLUSAO"],
