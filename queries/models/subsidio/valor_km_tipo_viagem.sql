@@ -18,5 +18,4 @@ select
     indicador_validade,
     legislacao,
     ordem
-{# from {{ ref("staging_valor_km_tipo_viagem") }} #}
-from `rj-smtr-dev.victor__subsidio_staging.valor_km_tipo_viagem`
+from {{ ref("staging_valor_km_tipo_viagem") }}

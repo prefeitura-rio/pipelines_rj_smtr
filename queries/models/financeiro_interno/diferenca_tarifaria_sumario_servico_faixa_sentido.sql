@@ -67,7 +67,7 @@ with
             p.servico,
             p.sentido,
             p.pof,
-            irk,
+            any_value(irk) over (partition by p.data) as irk,
             v.id_viagem,
             receita_tarifa_publica,
             p.km_planejada_faixa,
@@ -98,10 +98,14 @@ with
             count(*) as viagens_faixa,
             any_value(km_planejada_faixa) as km_planejada_faixa,
             sum(
-                if(indicador_conformidade, distancia_planejada, 0)
+                if(
+                    indicador_conformidade and indicador_viagem_dentro_limite,
+                    distancia_planejada,
+                    0
+                )
             ) as km_conforme_faixa,
             sum(if(indicador_validade, distancia_planejada, 0)) as km_atendida_faixa,
-            sum(receita_tarifa_publica) as receita_tarifa_publica_faixa,
+            coalesce(sum(receita_tarifa_publica), 0) as receita_tarifa_publica_faixa,
         from subsidio_servico
         group by 1, 2, 3, 4, 5, 6, 7, 8, 9
     )
@@ -124,14 +128,10 @@ select
     valor_penalidade,
     if(
         pof >= 80,
-        km_conforme_faixa * irk - receita_tarifa_publica_faixa + valor_penalidade,
-        least(
-            (km_planejada_faixa * irk)
-            - receita_tarifa_publica_faixa
-            + valor_penalidade,
-            0
-        )
-    ) as delta_tr,
+        km_conforme_faixa * irk - receita_tarifa_publica_faixa,
+        least((km_planejada_faixa * irk) - receita_tarifa_publica_faixa, 0)
+    )
+    + valor_penalidade as delta_tr,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     '{{ invocation_id }}' as id_execucao_dbt
