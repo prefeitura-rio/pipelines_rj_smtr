@@ -130,6 +130,7 @@ with
     )
 select
     concat(id_cliente, '-', id_laudo_pcd) as id_unico,
+    id_laudo_pcd,
     id_cliente,
     row_number() over (
         partition by id_cliente order by datetime_inicio_validade
