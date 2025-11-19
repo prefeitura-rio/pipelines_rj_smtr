@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: area_planejamento
+    description: "Informações geográficas do Rio de Janeiro"
+    columns:
+      - name: area_planejamento
+        description: "Área de seleção do planejamento"
+      - name: geometria
+        description: "Geometria da região do Rio de Janeiro em WKT"
