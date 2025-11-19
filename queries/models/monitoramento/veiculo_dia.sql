@@ -58,8 +58,8 @@ with
                     and data_processamento between "2025-08-01" and "2025-08-26"
                 )
                 or (
-                    data between "2025-09-01" and "2025-09-25"  -- Exceção para lacres adicionados após o prazo em 2025-09-Q1
-                    and data_processamento between "2025-09-01" and "2025-09-25"
+                    data between "2025-09-01" and "2025-09-26"  -- Exceção para lacres adicionados após o prazo em 2025-09-Q1
+                    and data_processamento between "2025-09-01" and "2025-09-26"
                 )
                 or (  -- Exceção para tratamento da data_ultima_vistoria [Troca placa Mercosul]
                     data_processamento = date("2025-11-13")
