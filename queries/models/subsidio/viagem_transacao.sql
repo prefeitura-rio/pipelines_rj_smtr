@@ -29,8 +29,9 @@ select
     datetime_chegada,
     datetime_ultima_atualizacao
 from {{ ref("viagem_transacao_aux_v2") }}
-where data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}") 
-{# full outer union all by name
+where
+    data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+    {# full outer union all by name
 select
     data,
     id_viagem,
@@ -53,3 +54,4 @@ select
     datetime_ultima_atualizacao
 from {{ ref("viagem_transacao_aux_v1") }}
 where data < date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}") #}
+
