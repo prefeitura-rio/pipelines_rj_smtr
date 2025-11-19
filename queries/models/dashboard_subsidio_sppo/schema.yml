@@ -720,7 +720,7 @@ models:
         description: "{{ doc('column_name') }}"
       - name: valor
         description: "Valor"
-  - name: painel_climatizacao
+  - name: viagens_climatizacao
     description: "Dados do status dos veículos para o painel de climatização do Subsídio SPPO"
     columns:
       - name: consorcio
