@@ -44,6 +44,7 @@ def create_default_materialization_flow(
     test_scheduled_time: time = None,
     pre_tests: DBTTest = None,
     post_tests: DBTTest = None,
+    test_webhook_key: str = "dataplex",
     skip_if_running_tolerance: int = 0,
 ) -> Flow:
     """
@@ -60,6 +61,7 @@ def create_default_materialization_flow(
         test_scheduled_time (time): Horário para rodar o test no formato "HH:MM:SS"
         pre_tests (DBTTest): Configuração para testes pré-materialização
         post_tests (DBTTest): Configuração para testes pós-materialização
+        test_webhook_key (str): Key do secret do webhook para enviar a notificação do teste
         skip_if_running_tolerance (int): Quantidade de tempo em minutos para esperar antes de
             cancelar a execução se outra run já estiver rodando
 
@@ -223,6 +225,7 @@ def create_default_materialization_flow(
                     notify_post_test = dbt_data_quality_checks(
                         dbt_logs=dbt_post_test,
                         checks_list=post_tests["checks_list"],
+                        webhook_key=test_webhook_key,
                         params=post_test_vars,
                     )
                     wait_post_test = notify_post_test
