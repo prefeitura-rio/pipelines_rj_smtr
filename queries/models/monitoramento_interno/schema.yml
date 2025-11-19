@@ -68,3 +68,47 @@ models:
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
         quote: true
+  - name: monitoramento_sumario_servico_dia_historico
+    description: "Viagens sumario serviço dia histórico"
+    columns:
+      - name: data
+        description: "{{ doc('data_viagem') }} [partição]"
+      - name: tipo_dia
+        description: "{{ doc('tipo_dia') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: vista
+        description: "{{ doc('vista') }}"
+      - name: viagens
+        description: "Viagens realizadas"
+      - name: km_apurada
+        description: "{{ doc('km_apurada') }}"
+      - name: km_planejada
+        description: "{{ doc('km_planejada') }}"
+      - name: perc_km_planejada
+        description: "{{ doc('perc_km_planejada') }}"
+      - name: valor_subsidio_pago
+        description: "{{ doc('valor_subsidio_pago') }}"
+      - name: valor_penalidade
+        description: "{{ doc('valor_penalidade') }}"
+  - name: monitoramento_sumario_servico_dia_tipo_viagem_historico
+    description: "Viagens sumario serviço dia tipo viagem histórico"
+    columns:
+      - name: data
+        description: "{{ doc('data_viagem') }} [partição]"
+      - name: tipo_dia
+        description: "{{ doc('tipo_dia') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: tipo_viagem
+        description: "{{ doc('tipo_viagem_status') }}"
+      - name: indicador_ar_condicionado
+        description: "{{ doc('indicador_ar_condicionado') }}"
+      - name: viagens
+        description: "Viagens realizadas"
+      - name: km_apurada
+        description: "{{ doc('km_apurada') }}"
