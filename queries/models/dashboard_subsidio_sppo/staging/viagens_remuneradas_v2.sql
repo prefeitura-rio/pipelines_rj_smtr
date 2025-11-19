@@ -169,13 +169,7 @@ with
 -- Flag de viagens que serão consideradas ou não para fins de remuneração (apuração de
 -- valor de subsídio) - RESOLUÇÃO SMTR Nº 3645/2023
 select
-    v.* except (
-        rn,
-        viagens_planejadas,
-        km_planejada,
-        tipo_dia,
-        consorcio
-    ),
+    v.* except (rn, viagens_planejadas, km_planejada, tipo_dia, consorcio),
     case
         when
             v.data = date('2025-09-16')
