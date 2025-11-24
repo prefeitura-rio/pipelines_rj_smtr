@@ -186,6 +186,8 @@ CAPTURA_TRANSACAO_ORDEM.schedule = Schedule(
     ]
 )
 
+# Flows de controle para captura.
+
 with Flow("jae: verifica ip do banco de dados") as verificacao_ip:
     success, failed_connections = test_jae_databases_connections()
     with case(success, False):
