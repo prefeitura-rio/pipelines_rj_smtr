@@ -99,7 +99,7 @@ with
                 when data between date(2025, 10, 04) and date(2025, 10, 05)
                 then "Atípico"  -- MTR-DES-2025/89230 - Acionamento do Plano Verão
                 when data = date(2025, 10, 12)
-                then "Atípico"  -- MTR-DES-2025/89230 - Acionamento do Plano Verão (somente domingo
+                then "Atípico"  -- MTR-DES-2025/89230 - Acionamento do Plano Verão (somente domingo)
                 when data = date(2025, 11, 09)
                 then "Dia Atípico"  -- Operação especial em horário de prova do ENEM
             end as tipo_os
