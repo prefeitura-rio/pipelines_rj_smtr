@@ -69,61 +69,58 @@ with
                 and safe_cast(
                     json_value(indicadores, '$.indicador_ar_condicionado.valor') as bool
                 )
-                is true)
-                qualify
-                    row_number() over (
-                        partition by data, id_viagem
-                        order by
-                            indicador_regularidade_temperatura desc,
-                            percentual_temperatura_regular desc,
-                            quantidade_pos_tratamento desc,
-                            indicador_temperatura_transmitida_viagem desc,
-                            safe_cast(
-                                json_value(validador, '$.id_validador') as string
-                            ) asc
-                    )
-                    = 1
-            ),
-
-            veiculo as (
-                select
-                    data,
-                    id_veiculo,
-                    ano_fabricacao,
-                    indicadores.indicador_ar_condicionado.valor
-                    as indicador_ar_condicionado,
-                    indicadores.indicador_falha_recorrente.valor
-                    as indicador_falha_recorrente
-                from {{ ref("veiculo_regularidade_temperatura_dia") }}
-                where indicadores.indicador_ar_condicionado.valor is true
-
-            ),
-
-            viagem_planejada as (
-                select servico, data, any_value(consorcio) as consorcio
-                from {{ ref("viagem_planejada") }}
-                group by servico, data
+                is true
             )
+        qualify
+            row_number() over (
+                partition by data, id_viagem
+                order by
+                    indicador_regularidade_temperatura desc,
+                    percentual_temperatura_regular desc,
+                    quantidade_pos_tratamento desc,
+                    indicador_temperatura_transmitida_viagem desc,
+                    safe_cast(json_value(validador, '$.id_validador') as string) asc
+            )
+            = 1
+    ),
 
+    veiculo as (
         select
-            vp.consorcio,
-            v.data,
-            v.servico,
-            v.id_validador,
-            v.hora,
-            v.id_viagem,
-            v.datetime_partida,
-            v.ano_fabricacao,
-            v.id_veiculo,
-            case
-                when
-                    v.indicador_temperatura_transmitida_viagem is true
-                    and v.indicador_temperatura_zero_viagem is false
-                    and v.indicador_temperatura_regular_viagem is true
-                    and coalesce(ve.indicador_falha_recorrente, false) is false
-                then true
-                else false
-            end as regularidade_temperatura
-        from viagem v
-        left join veiculo ve using (data, id_veiculo)
-        left join viagem_planejada vp using (servico, data)
+            data,
+            id_veiculo,
+            ano_fabricacao,
+            indicadores.indicador_ar_condicionado.valor as indicador_ar_condicionado,
+            indicadores.indicador_falha_recorrente.valor as indicador_falha_recorrente
+        from {{ ref("veiculo_regularidade_temperatura_dia") }}
+        where indicadores.indicador_ar_condicionado.valor is true
+
+    ),
+
+    viagem_planejada as (
+        select servico, data, any_value(consorcio) as consorcio
+        from {{ ref("viagem_planejada") }}
+        group by servico, data
+    )
+
+select
+    vp.consorcio,
+    v.data,
+    v.servico,
+    v.id_validador,
+    v.hora,
+    v.id_viagem,
+    v.datetime_partida,
+    v.ano_fabricacao,
+    v.id_veiculo,
+    case
+        when
+            v.indicador_temperatura_transmitida_viagem is true
+            and v.indicador_temperatura_zero_viagem is false
+            and v.indicador_temperatura_regular_viagem is true
+            and coalesce(ve.indicador_falha_recorrente, false) is false
+        then true
+        else false
+    end as regularidade_temperatura
+from viagem v
+left join veiculo ve using (data, id_veiculo)
+left join viagem_planejada vp using (servico, data)
