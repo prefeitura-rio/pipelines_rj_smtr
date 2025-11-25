@@ -92,7 +92,6 @@ with
             indicadores.indicador_falha_recorrente.valor as indicador_falha_recorrente
         from {{ ref("veiculo_regularidade_temperatura_dia") }}
         where indicadores.indicador_ar_condicionado.valor is true
-
     ),
     viagem_planejada as (
         select servico, data, any_value(consorcio) as consorcio
