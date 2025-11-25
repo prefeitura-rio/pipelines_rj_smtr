@@ -63,7 +63,6 @@ with
                 json_query_array(indicadores, '$.indicador_validador.valores')
             ) as validador
         where
-
             (
                 ano_fabricacao <= 2019
                 or data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}')
@@ -72,7 +71,6 @@ with
                 json_value(indicadores, '$.indicador_ar_condicionado.valor') as bool
             )
             is true
-
         qualify
             row_number() over (
                 partition by data, id_viagem
@@ -85,7 +83,6 @@ with
             )
             = 1
     ),
-
     veiculo as (
         select
             data,
@@ -97,13 +94,11 @@ with
         where indicadores.indicador_ar_condicionado.valor is true
 
     ),
-
     viagem_planejada as (
         select servico, data, any_value(consorcio) as consorcio
         from {{ ref("viagem_planejada") }}
         group by servico, data
     )
-
 select
     vp.consorcio,
     v.data,
