@@ -726,7 +726,7 @@ models:
       - name: consorcio
         description: "{{ doc('nome_consorcio') }}"
       - name: data
-        description: "{{ doc('nome_consorcio') }}"
+        description: "Data da viagem"
       - name: servico
         description: "{{ doc('servico') }}"
       - name: id_validador
