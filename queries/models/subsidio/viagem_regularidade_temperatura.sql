@@ -11,7 +11,8 @@
 {% endset %}
 
 {% set condicao_veiculo %}
-    (vt.data <= date('{{ var("DATA_SUBSIDIO_V22_INICIO") }}'))
+    vt.ano_fabricacao <= 2019
+    and not vt.indicador_temperatura_nula_viagem and (vt.data <= date('{{ var("DATA_SUBSIDIO_V22_INICIO") }}'))
 {% endset %}
 
 with
