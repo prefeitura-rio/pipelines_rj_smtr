@@ -197,7 +197,7 @@ with
         select v.*
         from gps_validador_bilhetagem_viagem v
         where
-            v.data < date("{{ var('DATA_SUBSIDIO_V99_INICIO') }}")
+            v.data < date("{{ var('DATA_SUBSIDIO_V19_INICIO') }}")
             or (
                 v.data >= date("{{ var('DATA_SUBSIDIO_V99_INICIO') }}")
                 and not exists (
