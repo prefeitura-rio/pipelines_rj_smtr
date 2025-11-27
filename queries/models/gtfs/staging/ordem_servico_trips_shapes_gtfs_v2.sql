@@ -51,6 +51,12 @@ with
                                 o.tipo_dia = "Ponto Facultativo"
                                 and t.tipo_dia = "Dia Útil"
                             )
+                            or (
+                                o.feed_start_date = "2025-11-08"
+                                and o.tipo_os = "ENEM"
+                                and o.tipo_dia = "Domingo"
+                                and t.tipo_dia = "Dia Útil"
+                            )
                         )
                         and (
                             (o.sentido in ("I", "C") and t.direction_id = "0")
