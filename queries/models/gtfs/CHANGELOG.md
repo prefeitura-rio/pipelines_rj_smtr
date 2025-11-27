@@ -1,9 +1,11 @@
 # Changelog - gtfs
+
 ## [1.2.9] - 2025-11-27
 
 ### Adicionado
 
-- Adiciona exceção para tipo de dia ENEM no modelo `ordem_servico_trips_shapes_gtfs_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1070)
+- Adiciona exceção para tipo de dia `ENEM` no modelo `ordem_servico_trips_shapes_gtfs_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1070)
+- Corrigida a alteração para tipo de dia `ENEM` e `V+ENEM` no modelo `ordem_servico_trips_shapes_gtfs_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1070)
 
 ## [1.2.8] - 2025-11-10
 
