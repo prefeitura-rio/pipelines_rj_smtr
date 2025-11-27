@@ -200,6 +200,7 @@ with
             v.data < date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
             or (
                 v.data >= date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
+                and v.data < date("{{ var('DATA_SUBSIDIO_V19_INICIO') }}")
                 and not exists (
                     select 1
                     from agg_garagens_manutencao g
@@ -212,6 +213,7 @@ with
                         and st_intersects(v.posicao_geo, g.geometry)
                 )
             )
+            or v.data >= date("{{ var('DATA_SUBSIDIO_V19_INICIO') }}")
     ),
     indicador_equipamento_bilhetagem as (  -- Indicadores de estado do equipamento do validador por viagem
         select
