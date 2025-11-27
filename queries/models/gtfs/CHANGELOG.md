@@ -1,4 +1,5 @@
 # Changelog - gtfs
+## [1.2.9] - 2025-11-27
 
 ### Adicionado
 
