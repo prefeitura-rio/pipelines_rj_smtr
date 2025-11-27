@@ -53,9 +53,9 @@ with
                             )
                             or (
                                 o.feed_start_date = "2025-11-08"
-                                and o.tipo_os = "ENEM"
+                                and o.tipo_os in ("ENEM", "V+ENEM")
                                 and o.tipo_dia = "Domingo"
-                                and t.tipo_dia = "Dia Útil"
+                                and t.tipo_dia = "Sábado"
                             )
                         )
                         and (
@@ -109,9 +109,9 @@ with
                             )
                             or (
                                 o.feed_start_date = "2025-11-08"
-                                and o.tipo_os = "ENEM"
+                                and o.tipo_os in ("ENEM", "V+ENEM")
                                 and o.tipo_dia = "Domingo"
-                                and t.tipo_dia = "Dia Útil"
+                                and t.tipo_dia = "Sábado"
                             )
                             or (t.tipo_dia = "EXCEP")
                         )  -- Inclui trips do service_id/tipo_dia "EXCEP"
