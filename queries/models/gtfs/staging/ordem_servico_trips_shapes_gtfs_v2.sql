@@ -46,9 +46,15 @@ with
                         on t.feed_version = o.feed_version
                         and o.servico = t.trip_short_name
                         and (
-                            o.tipo_dia = t.tipo_dia
+                            (o.tipo_dia = t.tipo_dia and o.tipo_os not in ("ENEM"))
                             or (
                                 o.tipo_dia = "Ponto Facultativo"
+                                and t.tipo_dia = "Dia Útil"
+                            )
+                            or (
+                                o.feed_start_date = "2025-11-08"
+                                and o.tipo_os = "ENEM"
+                                and o.tipo_dia = "Domingo"
                                 and t.tipo_dia = "Dia Útil"
                             )
                         )
@@ -96,9 +102,15 @@ with
                         on t.feed_version = o.feed_version
                         and o.servico = t.trip_short_name
                         and (
-                            o.tipo_dia = t.tipo_dia
+                            (o.tipo_dia = t.tipo_dia and o.tipo_os not in ("ENEM"))
                             or (
                                 o.tipo_dia = "Ponto Facultativo"
+                                and t.tipo_dia = "Dia Útil"
+                            )
+                            or (
+                                o.feed_start_date = "2025-11-08"
+                                and o.tipo_os = "ENEM"
+                                and o.tipo_dia = "Domingo"
                                 and t.tipo_dia = "Dia Útil"
                             )
                             or (t.tipo_dia = "EXCEP")
