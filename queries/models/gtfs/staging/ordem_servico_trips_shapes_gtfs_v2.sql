@@ -115,7 +115,7 @@ with
                         {{ associacao_ordem_servico_trips }}
                         and ({{ associacao_tipo_dia }} or (t.tipo_dia = "EXCEP"))
                         and t.trip_headsign like concat("%", ot.evento, "%")
-                    where indicador_trajeto_alternativo is true and trip_id is not null -- Remove serviços de tipo_dia sem planejamento
+                    where indicador_trajeto_alternativo is true and trip_id is not null  -- Remove serviços de tipo_dia sem planejamento
                 )
             )
     ),
