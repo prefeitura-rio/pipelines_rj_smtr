@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de cadastro
 
-DBT: 2025-09-30
+DBT: 2025-11-13
 """
 
 from pipelines.capture.jae.constants import constants as jae_constants
@@ -29,6 +29,7 @@ CADASTRO_MATERIALIZACAO = create_default_materialization_flow(
             "cliente",
         ]
     ],
+    skip_if_running_tolerance=10,
 )
 
 CADASTRO_VEICULO_MATERIALIZACAO = create_default_materialization_flow(

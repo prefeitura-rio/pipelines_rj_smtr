@@ -1,5 +1,69 @@
 # Changelog - subsidio
 
+## [2.2.7] - 2025-11-27
+
+### Alterado
+
+- Altera variável do modelo `aux_viagem_temperatura`  de `DATA_SUBSIDIO_V21_INICIO` para `DATA_SUBSIDIO_V99_INICIO`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1068)
+
+## [2.2.6] - 2025-11-26
+
+### Alterado
+
+- Altera data do modelo `viagem_regularidade_temperatura` para interrupção das glosas por climatização (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1069)
+
+## [2.2.5] - 2025-11-14
+
+### Alterado
+
+- Altera referência dos modelos `servico_contrato_abreviado` e `valor_km_tipo_viagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1058)
+
+## [2.2.4] - 2025-10-28
+
+### Alterado
+
+- Ajusta o cálculo do `indicador_regularidade_ar_condicionado_viagem`no modelo `viagem_regularidade_temperatura`, incluindo a condição em que `indicador_temperatura_nula_viagem` é igual a True. (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/993)
+
+- Revertida a alteração da data de início das glosas `Validador fechado` e `Validador associado incorretamente` no modelo `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1002)
+
+## [2.2.3] - 2025-10-27
+
+### Alterado
+
+- Alterada a data de início das glosas `Validador fechado` e `Validador associado incorretamente` para `2025-10-01` no modelo `viagem_transacao_aux_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/995)
+
+- Criada exceção para os tipo_viagem `Validador associado incorretamente` no dia `2025-10-10` no modelo `viagem_transacao_aux_v2` conforme o email `2025-10-10T15:08` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/995)
+
+- Altera lógica do modelo `aux_viagem_temperatura` para filtrar pontos de GPS fora das garagens e endereços de manutenção dos validadores no cálculo do `indicador_gps_servico_divergente` e `indicador_estado_equipamento_aberto` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/996)
+
+## [2.2.2] - 2025-10-24
+
+### Adicionado
+
+- Adiciona o teste `test_check_tecnologia_minima` no modelo `viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/990)
+
+### Corrigido
+
+- Corrige variável `DATA_SUBSIDIO_V17_INICIO` para `DATA_SUBSIDIO_V16_INICIO` no modelo `viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/990)
+
+## [2.2.1] - 2025-10-23
+
+### Corrigido
+
+- Corrige o `indicador_estado_equipamento_aberto` quando o `id_validador` é nulo nos modelos `viagem_transacao_aux_v1` e `aux_viagem_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/985)
+
+## [2.2.0] - 2025-10-22
+
+### Alterado
+
+- Altera nome da CTE `temperatura_inmet` para `temperatura_inmet_alertario` no modelo `aux_viagem_temperatura` e troca referência para utilizar o modelo `temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/977)
+
+## [2.1.9] - 2025-10-06
+
+### Adicionado
+
+- Adicionado o modelo de dicionário `dicionario_subsidio` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/926)
+
 ## [2.1.8] - 2025-09-29
 
 ### Corrigido

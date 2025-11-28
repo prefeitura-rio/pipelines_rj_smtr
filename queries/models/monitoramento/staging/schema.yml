@@ -67,29 +67,6 @@ models:
         description: "{{ doc('datetime_processamento') }}"
       - name: datetime_captura
         description: "{{ doc('datetime_captura') }}"
-  - name: staging_garagens
-    description: "Tabela com informações das garagens dos operadores"
-    columns:
-      - name: data
-        description: "{{ doc('data_captura') }}"
-      - name: operador
-        description: "Nome da empresa operadora de transporte público"
-      - name: endereco
-        description: "Endereço completo da garagem do operador"
-      - name: bairro
-        description: "Nome do bairro onde está localizada a garagem"
-      - name: oficial
-        description: "Indicador se a garagem é oficial"
-      - name: ativa
-        description: "Status operacional da garagem"
-      - name: uso
-        description: "Tipo de uso da garagem"
-      - name: obs
-        description: "Observações adicionais sobre a garagem"
-      - name: area_m2
-        description: "Área total da garagem (m²)"
-      - name: geometry_wkt
-        description: "Geometria da garagem em formato WKT"
   - name: aux_veiculo_falha_ar_condicionado
     description: "Tabela auxiliar para controle de falhas consecutivas de ar condicionado por veículo"
     columns:
@@ -132,6 +109,58 @@ models:
         tests:
           - not_null:
               name: not_null__quantidade_dia_falha_operacional__aux_veiculo_falha_ar_condicionado
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+  - name: temperatura_inmet
+    description: "Tabela com dados de temperatura das estações meteorológicas do INMET"
+    columns:
+      - name: data
+        description: "{{ doc('data') }} [partição]"
+        tests:
+          - not_null:
+              name: not_null__data__temperatura_inmet
+      - name: hora
+        description: "Hora da medição meteorológica"
+        tests:
+          - not_null:
+              name: not_null__hora__temperatura_inmet
+      - name: id_estacao
+        description: "Identificador da estação meteorológica do INMET"
+        tests:
+          - not_null:
+              name: not_null__id_estacao__temperatura_inmet
+      - name: temperatura
+        description: "Temperatura medida pela estação meteorológica (°C)"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+  - name: temperatura_alertario
+    description: "Tabela com dados de temperatura das estações meteorológicas do Sistema de Alerta Rio"
+    columns:
+      - name: data
+        description: "{{ doc('data') }} [partição]"
+        tests:
+          - not_null:
+              name: not_null__data__temperatura_alertario
+      - name: hora
+        description: "Hora da medição meteorológica"
+        tests:
+          - not_null:
+              name: not_null__hora__temperatura_alertario
+      - name: id_estacao
+        description: "Identificador da estação meteorológica do Sistema de Alerta Rio"
+        tests:
+          - not_null:
+              name: not_null__id_estacao__temperatura_alertario
+      - name: temperatura
+        description: "Temperatura medida pela estação meteorológica (°C)"
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
       - name: versao

@@ -1,5 +1,28 @@
 # Changelog - bilhetagem_interno
 
+## [1.1.8] - 2025-11-03
+
+### Adicionado
+
+- Adiciona teste de sincronia dos dados no modelo `transacao_gratuidade_estudante_municipal.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1011)
+
+## [1.1.7] - 2025-10-20
+
+### Alterado
+
+- Altera o modelo de view para modelo incremental `transacao_gratuidade_estudante_municipal.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/958)
+
+## [1.1.6] - 2025-10-14
+
+### Alterado
+
+- Altera deduplicação da tabela `lancamento` para coluna `id_lancamento` nula no modelo `extrato_cliente_cartao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/949)
+
+## [1.1.5] - 2025-10-14
+
+### Alterado
+
+- Altera deduplicação da tabela `lancamento` para coluna `id_lancamento` nula no modelo `extrato_cliente_cartao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/948)
 
 ## [1.1.4] - 2025-09-22
 

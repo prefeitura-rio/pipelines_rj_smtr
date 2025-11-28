@@ -37,7 +37,7 @@ class constants(Enum):  # pylint: disable=c0103
     SUBSIDIO_SPPO_DASHBOARD_TABLE_ID = "sumario_servico_dia"
     SUBSIDIO_SPPO_DASHBOARD_SUMARIO_TABLE_ID = "sumario_servico_dia_tipo"
     SUBSIDIO_SPPO_DASHBOARD_SUMARIO_TABLE_ID_V2 = "sumario_servico_dia_pagamento"
-    SUBSIDIO_SPPO_PRE_TEST = "sppo_registros sppo_realocacao check_gps_treatment__gps_sppo sppo_veiculo_dia veiculo_dia tecnologia_servico viagem_planejada transacao transacao_riocard gps_validador test_completude__temperatura_inmet"  # noqa
+    SUBSIDIO_SPPO_PRE_TEST = "sppo_registros sppo_realocacao check_gps_treatment__gps_sppo sppo_veiculo_dia veiculo_dia tecnologia_servico viagem_planejada transacao transacao_riocard gps_validador test_completude__temperatura"  # noqa
     SUBSIDIO_SPPO_DATA_CHECKS_PARAMS = {
         "check_trips_processing": {
             "query": """SELECT
@@ -780,7 +780,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "dbt_expectations.expect_table_aggregation_to_equal_other_table__viagem_planejada": {
                     "description": "Todos os dados de `tipo_os` correspondem 1:1 entre as tabelas `subsidio_data_versao_efetiva` e `viagem_planejada`."  # noqa
                 },
-                "dbt_utils.relationships_where__servico__viagem_planejada": {
+                "test_tecnologia_servico_planejado__viagem_planejada": {
                     "description": "Todos os serviços planejados possuem tecnologia permitida."  # noqa
                 },
                 "check_km_planejada": {
@@ -791,7 +791,7 @@ class constants(Enum):  # pylint: disable=c0103
                 },
             },
             "temperatura_inmet": {
-                "test_completude__temperatura_inmet": {
+                "test_completude__temperatura": {
                     "description": "Há pelo menos uma temperatura não nula registrada em alguma das estações do Rio de Janeiro em cada uma das 24 horas do dia"  # noqa
                 },
             },
@@ -965,6 +965,9 @@ class constants(Enum):  # pylint: disable=c0103
             "dbt_utils.unique_combination_of_columns__viagem_classificada": {
                 "description": "Todos os registros são únicos"
             },
+            "test_check_tecnologia_minima__viagem_classificada": {
+                "description": "Todas as viagens com tecnologia inferior à mínima permitida foram classificadas corretamente"
+            },
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
         },
         "viagem_regularidade_temperatura": {
@@ -978,5 +981,8 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "Todos os dados de `id_viagem` correspondem 1:1 entre as tabelas `viagem_classificada` e `viagem_regularidade_temperatura`."
             },
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
+            "test_consistencia_indicadores_temperatura__viagem_regularidade_temperatura": {
+                "description": "Todos os registros têm os indicadores de temperatura consistentes entre si."
+            },
         },
     }

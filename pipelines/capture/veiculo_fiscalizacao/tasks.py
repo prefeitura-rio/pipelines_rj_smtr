@@ -20,25 +20,9 @@ def create_veiculo_fiscalizacao_lacre_extractor(
     timestamp: datetime,
 ):
     """Cria a extração da planilha de controle de lacre dos veículos"""
-    filter_expr = None
-
-    if source.exists():
-
-        # last_capture = source.get_last_scheduled_timestamp(timestamp=timestamp).strftime(
-        #     "%Y-%m-%d %H:%M:%S"
-        # )
-        timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
-        ninety_days = (timestamp - timedelta(days=90)).strftime("%Y-%m-%d %H:%M:%S")
-
-        filter_expr = (
-            f"ultima_atualizacao.isnull() or "
-            f"(ultima_atualizacao >= '{ninety_days}' and "
-            f"ultima_atualizacao <= '{timestamp_str}')"
-        )
 
     return partial(
         get_google_sheet_xlsx,
         spread_sheet_id=constants.VEICULO_LACRE_SHEET_ID.value,
         sheet_name=constants.VEICULO_LACRE_SHEET_NAME.value,
-        filter_expr=filter_expr,
     )

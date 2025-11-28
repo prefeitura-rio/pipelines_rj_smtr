@@ -2,7 +2,7 @@
 """
 Valores constantes gerais para pipelines da rj-smtr
 
-DBT 2025-09-12
+DBT 2025-11-14
 """
 
 from enum import Enum
@@ -231,7 +231,9 @@ class constants(Enum):  # pylint: disable=c0103
     GTFS_TABLE_CAPTURE_PARAMS = {
         "ordem_servico": ["servico", "tipo_os"],
         "ordem_servico_trajeto_alternativo": ["servico", "tipo_os", "evento"],
+        "ordem_servico_trajeto_alternativo_sentido": ["servico", "sentido", "tipo_os", "evento"],
         "ordem_servico_faixa_horaria": ["servico", "tipo_os"],
+        "ordem_servico_faixa_horaria_sentido": ["servico", "sentido", "tipo_os"],
         "shapes": ["shape_id", "shape_pt_sequence"],
         "agency": ["agency_id"],
         "calendar_dates": ["service_id", "date"],

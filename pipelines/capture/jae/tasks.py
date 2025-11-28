@@ -782,20 +782,22 @@ def get_capture_gaps(
         timestamp_column=timestamp_column,
         timestamp_captura_start=timestamp_captura_start,
         timestamp_captura_end=timestamp_captura_end,
+        final_timestamp_exclusive=params["final_timestamp_exclusive"],
     )
 
-    primary_keys = params["primary_keys"]
-    primary_keys = (
-        primary_keys[0]
-        if len(primary_keys) == 1
-        else f"TO_JSON_STRING(STRUCT({', '.join(primary_keys)}))"
-    )
+    primary_keys = params.get("primary_keys")
+    if primary_keys is None:
+        primary_keys = "1"
+    elif len(primary_keys) == 1:
+        primary_keys = f"DISTINCT {primary_keys[0]}"
+    else:
+        primary_keys = f"DISTINCT TO_JSON_STRING(STRUCT({', '.join(primary_keys)}))"
 
     query_datalake = f"""
     WITH contagens AS (
         SELECT
             timestamp_captura,
-            COUNT(DISTINCT {primary_keys}) AS total_datalake
+            COUNT({primary_keys}) AS total_datalake
         FROM
             {params['datalake_table']}
         WHERE

@@ -29,14 +29,10 @@ with
     ),
     garagens as (
         select
-            * except (geometry_wkt, operador),
-            st_geogfromtext(geometry_wkt, make_valid => true) as geometry,
-            operador as nome_parada,
-            'garagem' as tipo_parada
-        from {{ ref("staging_garagens") }}
+            * except (geometry_wkt), 'garagem' as nome_parada, 'garagem' as tipo_parada
+        from {{ ref("garagem") }}
         where
-            ativa
-            and inicio_vigencia <= date('{{ var("date_range_end") }}')
+            inicio_vigencia <= date('{{ var("date_range_end") }}')
             and (
                 fim_vigencia is null
                 or fim_vigencia >= date('{{ var("date_range_start") }}')

@@ -12,7 +12,7 @@
 
 {% set condicao_veiculo %}
     (vt.ano_fabricacao <= 2019 or vt.data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}'))
-    and not vt.indicador_temperatura_nula_viagem
+    and not vt.indicador_temperatura_nula_viagem and (vt.data < date('{{ var("DATA_SUBSIDIO_V22_INICIO") }}'))
 {% endset %}
 
 with
@@ -123,6 +123,8 @@ with
                         and vt.indicador_temperatura_transmitida_viagem
                         and vt.indicador_temperatura_regular_viagem
                     )
+                when indicador_temperatura_nula_viagem = true
+                then true
                 else null
             end as indicador_regularidade_ar_condicionado_viagem,
             indicador_falha_recorrente,

@@ -9,15 +9,18 @@ from pipelines.capture.jae.constants import JAE_SOURCE_NAME
 from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.constants import constants as smtr_constants
 from pipelines.treatment.bilhetagem_processos_manuais.constants import constants
-from pipelines.utils.utils import convert_timezone
 
 
 @task
-def create_transacao_ordem_capture_params(timestamp: str) -> dict:
+def create_transacao_ordem_integracao_capture_params(timestamp: datetime, table_id: str) -> dict:
+    source_map = {
+        jae_constants.TRANSACAO_ORDEM_TABLE_ID.value: jae_constants.TRANSACAO_ORDEM_SOURCE.value,
+        jae_constants.INTEGRACAO_TABLE_ID.value: jae_constants.INTEGRACAO_SOURCE.value,
+    }
     return {
-        "timestamp": jae_constants.TRANSACAO_ORDEM_SOURCE.value.get_last_scheduled_timestamp(
-            timestamp=convert_timezone(datetime.fromisoformat(timestamp))
-        ).strftime("%Y-%m-%d %H:%M:%S"),
+        "timestamp": source_map[table_id]
+        .get_last_scheduled_timestamp(timestamp=timestamp)
+        .strftime("%Y-%m-%d %H:%M:%S"),
         "recapture": False,
     }
 
@@ -75,16 +78,21 @@ def get_gaps_from_result_table(
         result[table_id] = {
             "timestamps": timestamps,
             "recapture_params": [
-                {"recapture": True, "recapture_timestamps": timestamps[i : i + 20]}  # noqa
+                {
+                    "table_id": table_id,
+                    "recapture": True,
+                    "recapture_timestamps": timestamps[i : i + 20],  # noqa
+                }
                 for i in range(0, len(timestamps), 20)
             ],
+            "reprocess_all": constants.CAPTURE_GAP_TABLES.value[table_id]["reprocess_all"],
             "flag_has_gaps": not df.empty,
         }
     return result
 
 
 @task
-def create_gap_materialization_params(gaps: dict) -> dict:
+def create_gap_materialization_params(gaps: dict, env: str) -> dict:
     """
     Cria parâmetros de materialização a partir das falhas de captura identificadas
 
@@ -97,18 +105,31 @@ def create_gap_materialization_params(gaps: dict) -> dict:
                 },
                 ...
             }
+        env (str): prod ou dev
+
+    Returns:
+        dict: Parâmetros para execução do flow de materialização
     """
     result = {}
     for k, v in constants.CAPTURE_GAP_SELECTORS.value.items():
         ts_list = []
+        reprocess_all = False
 
         if any(gaps[a]["flag_has_gaps"] for a in v["capture_tables"]):
             for t in v["capture_tables"]:
                 ts_list = ts_list + gaps[t]["timestamps"]
+                if gaps[t]["reprocess_all"] and gaps[t]["flag_has_gaps"]:
+                    reprocess_all = True
 
             result[k] = {
                 "initial_datetime": min(ts_list),
-                "end_datetime": max(ts_list),
+                "end_datetime": (
+                    v["selector"]
+                    .get_last_materialized_datetime(env=env)
+                    .strftime("%Y-%m-%d %H:%M:%S")
+                    if reprocess_all
+                    else max(ts_list)
+                ),
             }
         else:
             result[k] = None

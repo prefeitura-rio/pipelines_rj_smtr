@@ -1,5 +1,35 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [8.0.7] - 2025-11-25
+
+### Adicionado
+
+- Cria view `viagem_climatizacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1064)
+
+## [8.0.6] - 2025-10-30
+
+### Adicionado
+
+- Cria modelo `sumario_servico_glosa_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1016)
+
+## [8.0.5] - 2025-10-28
+
+### Corrigido
+
+- Corrigida a classificação de viagens acima do limite nos modelos `viagens_remuneradas_v1` e `viagens_remuneradas_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1005)
+
+## [8.0.4] - 2025-10-07
+
+### Alterado
+
+- Alterado o modelo `viagens_remuneradas_v2` para adicionar uma exceção para o limite de viagens dos servicos `161`, `LECD110`, `583`, `584` e `109` de acordo com o Processo.rio MTR-OFI-2025/06240 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/936)
+
+## [8.0.3] - 2025-10-06
+
+### Adicionado
+
+- Adicionado o modelo de dicionário `dicionario_dashboard_subsidio_sppo` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/926)
+
 ## [8.0.2] - 2025-09-15
 
 ### Corrigido

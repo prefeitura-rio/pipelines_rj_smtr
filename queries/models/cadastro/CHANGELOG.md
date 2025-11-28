@@ -1,5 +1,37 @@
 # Changelog - cadastro
 
+## [1.7.0] - 2025-11-13
+
+### Adicionado
+
+- Adiciona filtro nos testes do modelo `veiculo_licenciamento_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1056)
+- Adiciona teste de nulidade nas colunas `data_ultima_vistoria` e `ano_ultima_vistoria` do modelo `veiculo_licenciamento_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1056)
+
+## [1.6.9] - 2025-11-11
+
+### Adicionado
+
+- Adiciona tratamento da `data_ultima_vistoria` para veículos que trocaram de placa no modelo `veiculo_licenciamento_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1048)
+- Adiciona coluna `indicador_data_ultima_vistoria_tratada` no modelo `veiculo_licenciamento_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1048)
+
+## [1.6.8] - 2025-11-04
+
+### Removido
+
+- Remoção das colunas `operador`, `indicador_ativa`, `tipo_uso` e `area` no modelo `garagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1025)
+
+## [1.6.7] - 2025-10-27
+
+### Adicionado
+
+- Adiciona modelos `staging_garagem` e `garagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/996)
+
+## [1.6.6] - 2025-10-14
+
+### Corrigido
+
+- Corrigir tratamento de data inicial retroativa no modelo `veiculo_licenciamento_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/939)
+
 ## [1.6.5] - 2025-09-29
 
 ### Alterado

@@ -1,5 +1,39 @@
 # Changelog - monitoramento
 
+## [1.7.8] - 2025-11-11
+
+### Adicionado
+
+- Adicionada exceção para tratamento da data_ultima_vistoria no modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1048)
+
+## [1.7.7] - 2025-11-04
+
+### Alterado
+
+- Remoção do filtro `indicador_ativa` da CTE `garagens` no modelo `aux_gps_parada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1025)
+
+## [1.7.6] - 2025-10-22
+
+### Adicionado
+
+- Cria modelos `temperatura_alertario` e `temperatura`, alteração conforme `MTR-MEM-2025/02796` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/977)
+
+### Alterado
+
+- Move modelo `temperatura_inmet` para staging (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/977)
+
+## [1.7.5] - 2025-10-21
+
+### Corrigido
+
+-  Corrigida a duplicidade de autuações de ar-condicionado(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/967)
+
+## [1.7.4] - 2025-10-06
+
+### Adicionado
+
+- Adicionado o modelo de dicionário `dicionario_monitoramento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/926)
+
 ## [1.7.3] - 2025-10-01
 
 ### Adicionado

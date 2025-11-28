@@ -128,6 +128,9 @@ models:
           - id_veiculo
           name: dbt_utils.unique_combination_of_columns__viagem_classificada
           where: "data between date('{date_range_start}') and date('{date_range_end}') and data >= date('{DATA_SUBSIDIO_V15_INICIO}')"
+      - test_check_tecnologia_minima:
+          name: test_check_tecnologia_minima__viagem_classificada
+          where: "data between date('{date_range_start}') and date('{date_range_end}') and data >= date('{DATA_SUBSIDIO_V16_INICIO}')"
     columns:
       - name: data
         description: "{{ doc('data_viagem') }} [partição]"
@@ -209,6 +212,9 @@ models:
           where: "data between date('{date_range_start}') and date('{date_range_end}') and data >= date('{DATA_SUBSIDIO_V17_INICIO}')"
       - test_check_regularidade_temperatura:
           name: test_check_regularidade_temperatura__viagem_regularidade_temperatura
+          where: "data between date('{date_range_start}') and date('{date_range_end}') and data >= date('{DATA_SUBSIDIO_V17_INICIO}')"
+      - test_consistencia_indicadores_temperatura:
+          name: test_consistencia_indicadores_temperatura__viagem_regularidade_temperatura
           where: "data between date('{date_range_start}') and date('{date_range_end}') and data >= date('{DATA_SUBSIDIO_V17_INICIO}')"
     columns:
       - name: data

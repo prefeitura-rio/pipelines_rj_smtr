@@ -1,5 +1,48 @@
 # Changelog - source_jae
 
+## [3.1.3] - 2025-11-27
+
+### Alterado
+
+- Altera IP do banco principal_db (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1071)
+
+## [3.1.2] - 2025-11-10
+
+### Adicionado
+
+- Adiciona verificação da captura das tabelas `gratuidade`, `estudante` e `laudo_pcd` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1037)
+- Cria parâmetro `final_timestamp_exclusive` para o teste de captura (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1037)
+
+## [3.1.1] - 2025-11-06
+
+### Corrigido
+
+- Corrige query de captura de gratuidades (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1035)
+
+## [3.1.0] - 2025-11-05
+
+### Adicionado
+
+- Cria possibilidade de verificar as capturas no MySQL e de capturas com intervalos diferentes de 1 minuto (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1029)
+- Adiciona verificação da captura da tabela `cliente` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1029)
+
+## [3.0.3] - 2025-10-14
+
+### Alterado
+
+- Altera lógica da task `get_capture_gaps` para executar a contagem de registros do datalake quando a tabela não possui o parametro `primary_keys` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/949)
+- Altera primary key da verificação de captura da tabela `lancamento` para `["ifnull(id_lancamento, concat(string(dt_lancamento), '_', id_movimento))","id_conta"]` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/949)
+
+## [3.0.2] - 2025-10-14
+
+### Alterado
+
+- Altera primary key da verificação de captura da tabela `lancamento` para `["ifnull(id_lancamento, string(dt_lancamento))", "id_conta"]` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/948)
+
+### Corrigido
+
+- Corrige timezone da coluna data da tabela `resultado_verificacao_captura_jae` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/948)
+
 ## [3.0.1] - 2025-10-02
 
 ### Alterado

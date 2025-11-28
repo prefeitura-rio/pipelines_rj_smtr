@@ -40,6 +40,8 @@ with
                 then "Ponto Facultativo"  -- LEI Nº 8.881, DE 14 DE ABRIL DE 2025 / MTR-PRO-2025/16278
                 when data = date(2025, 07, 07)
                 then "Ponto Facultativo"  -- LEI Nº 8.881, DE 14 DE ABRIL DE 2025 / MTR-PRO-2025/16278
+                when data = date(2025, 10, 20)
+                then "Ponto Facultativo"  -- MTR-MEM-2025/02734 - Indicação de tipo dia "Ponto Facultativo" para o feriado do dia do comerciário
             end as tipo_dia,
             case
                 when data between date(2024, 09, 14) and date(2024, 09, 15)
@@ -93,7 +95,13 @@ with
                 when data between date(2025, 05, 03) and date(2025, 05, 04)
                 then "Dia Atípico"  -- Processo.Rio MTR-PRO-2025/04520
                 when data = date(2025, 05, 24)
-                then "Dia Atípico"  -- [processo]
+                then "Dia Atípico"
+                when data between date(2025, 10, 04) and date(2025, 10, 05)
+                then "Atípico"  -- MTR-DES-2025/89230 - Acionamento do Plano Verão
+                when data = date(2025, 10, 12)
+                then "Atípico"  -- MTR-DES-2025/89230 - Acionamento do Plano Verão (somente domingo)
+                when data = date(2025, 11, 09)
+                then "ENEM"  -- Operação especial em horário de prova do ENEM
             end as tipo_os
         from
             unnest(

@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados financeiros
 
-DBT 2025-09-02
+DBT 2025-10-14
 """
 from types import NoneType
 
@@ -19,6 +19,7 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 
 from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.capture.jae.flows import (
+    CAPTURA_INTEGRACAO,
     CAPTURA_ORDEM_PAGAMENTO,
     CAPTURA_TRANSACAO_ORDEM,
     verifica_captura,
@@ -37,7 +38,7 @@ from pipelines.treatment.bilhetagem.flows import (
 from pipelines.treatment.bilhetagem_processos_manuais.constants import constants
 from pipelines.treatment.bilhetagem_processos_manuais.tasks import (
     create_gap_materialization_params,
-    create_transacao_ordem_capture_params,
+    create_transacao_ordem_integracao_capture_params,
     create_verify_capture_params,
     get_gaps_from_result_table,
 )
@@ -93,13 +94,25 @@ with Flow(name="financeiro_bilhetagem: ordem atrasada - captura/tratamento") as 
         upstream_tasks=[run_materializacao_financeiro_bilhetagem],
     )
 
-    run_materializacao_integracao = run_subflow(
-        flow_name=INTEGRACAO_MATERIALIZACAO.name,
+    integracao_capture_params = create_transacao_ordem_integracao_capture_params(
+        timestamp=timestamp,
+        table_id=jae_constants.INTEGRACAO_TABLE_ID.value,
         upstream_tasks=[run_ordem_quality_check],
     )
 
-    transacao_ordem_capture_params = create_transacao_ordem_capture_params(
+    run_captura_integracao = run_subflow(
+        flow_name=CAPTURA_INTEGRACAO.name,
+        parameters=integracao_capture_params,
+    )
+
+    run_materializacao_integracao = run_subflow(
+        flow_name=INTEGRACAO_MATERIALIZACAO.name,
+        upstream_tasks=[run_captura_integracao],
+    )
+
+    transacao_ordem_capture_params = create_transacao_ordem_integracao_capture_params(
         timestamp=timestamp,
+        table_id=jae_constants.TRANSACAO_ORDEM_TABLE_ID.value,
         upstream_tasks=[run_materializacao_integracao],
     )
 
@@ -156,7 +169,7 @@ with Flow(
 
         with case(gaps[k]["flag_has_gaps"].is_equal(True), True):
             run_recapture_true = run_subflow(
-                flow_name=v,
+                flow_name=v["flow_name"],
                 parameters=gaps[k]["recapture_params"],
                 upstream_tasks=[upstream_task],
             )
@@ -172,7 +185,7 @@ with Flow(
         upstream_task = run_recapture
 
     materialization_params = create_gap_materialization_params(
-        gaps=gaps, upstream_tasks=[upstream_task]
+        gaps=gaps, env=env, upstream_tasks=[upstream_task]
     )
 
     selectors = constants.CAPTURE_GAP_SELECTORS.value
@@ -180,7 +193,7 @@ with Flow(
     upstream_task = materialization_params
     for k, v in selectors.items():
         params = materialization_params[k]
-        with case(NotEqual().run(params, None), True):
+        with case(params.is_not_equal(None), True):
             run_rematerialize_true = run_subflow(
                 flow_name=v["flow_name"],
                 parameters=params,

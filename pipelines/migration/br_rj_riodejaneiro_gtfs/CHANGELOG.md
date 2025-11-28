@@ -1,5 +1,18 @@
 # Changelog - gtfs
 
+## [1.2.8] - 2025-10-20
+
+### Alterado
+
+- Alterado o flow `gtfs_captura_nova` para a geração da tabela externa `ordem_servico_trajeto_alternativo_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/961)
+
+## [1.2.7] - 2025-10-14
+
+### Alterado
+
+- Altera `get_raw_gtfs_files` para usar a função `get_google_api_service` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/943)
+- Altera tratamento das colunas `quilometragem`,`viagens` e `partidas` para substituir `-` por `0` na `processa_ordem_servico_faixa_horaria` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/943)
+
 ## [1.2.6] - 2025-10-06
 
 ### Corrigido

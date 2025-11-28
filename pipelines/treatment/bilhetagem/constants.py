@@ -34,10 +34,11 @@ class constants(Enum):  # pylint: disable=c0103
     }
 
     TRANSACAO_DAILY_TEST = DBTTest(
-        model="transacao transacao_riocard",
+        model="aux_gratuidade_info transacao transacao_riocard",
         checks_list=TRANSACAO_POST_CHECKS_LIST,
         truncate_date=True,
         delay_days_start=1,
+        exclude="sincronizacao_tabelas__transacao_gratuidade_estudante_municipal",
     )
 
     INTEGRACAO_SELECTOR = DBTSelector(
@@ -64,7 +65,7 @@ class constants(Enum):  # pylint: disable=c0103
 
     PASSAGEIRO_HORA_SELECTOR = DBTSelector(
         name="passageiro_hora",
-        schedule_cron=create_hourly_cron(minute=25),
+        schedule_cron=create_hourly_cron(minute=35),
         initial_datetime=datetime(2025, 3, 26, 0, 0, 0),
     )
 
@@ -75,10 +76,15 @@ class constants(Enum):  # pylint: disable=c0103
         "passageiro_tile_hora": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
         },
+        "transacao_gratuidade_estudante_municipal": {
+            "sincronizacao_tabelas__transacao_gratuidade_estudante_municipal": {
+                "description": "Tabela `transacao_gratuidade_estudante_municipal` sincronizada"
+            }
+        },
     }
 
     PASSAGEIRO_HORA_DAILY_TEST = DBTTest(
-        model="passageiro_hora passageiro_tile_hora",
+        model="passageiro_hora passageiro_tile_hora transacao_gratuidade_estudante_municipal",
         checks_list=PASSAGEIRO_HORA_POST_CHECKS_LIST,
         truncate_date=True,
     )

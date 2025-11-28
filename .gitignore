@@ -161,3 +161,5 @@ dmypy.json
 
 # Documentação gerada localmente
 
+# AI agent contexts
+GEMINI.md
