@@ -187,9 +187,6 @@ with
         where
             datetime_inicio_validade_gratuidade < datetime_fim_validade_gratuidade
             or datetime_fim_validade_gratuidade is null
-        qualify
-            datetime_inicio_validade_gratuidade != datetime_fim_validade_gratuidade
-            or datetime_fim_validade_gratuidade is null
     ),
     gratuidade_saude_com_cadastro as (
         select
@@ -248,9 +245,6 @@ with
         from gratuidade_saude_completo
         where
             datetime_inicio_validade_gratuidade < datetime_fim_validade_gratuidade
-            or datetime_fim_validade_gratuidade is null
-        qualify
-            datetime_inicio_validade_gratuidade != datetime_fim_validade_gratuidade
             or datetime_fim_validade_gratuidade is null
     ),
     outras_gratuidades as (
