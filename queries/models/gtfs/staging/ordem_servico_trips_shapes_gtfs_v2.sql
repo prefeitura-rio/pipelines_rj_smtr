@@ -17,7 +17,7 @@
     )
     or (
         o.feed_start_date = "2025-11-08"
-        and o.tipo_os in ("ENEM", "V+ENEM")
+              and o.tipo_os in ("ENEM", "V+ENEM")
         and o.tipo_dia = "Domingo"
         and t.tipo_dia = "Dia Útil"
         and o.servico not in ("LECD126", "SE867")
