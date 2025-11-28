@@ -111,6 +111,7 @@ with
                     left join
                         {{ ref("trips_filtrada_aux_gtfs") }} as t
                         {{ associacao_ordem_servico_trips }}
+                        or (t.tipo_dia = "EXCEP")
                         and t.trip_headsign like concat("%", ot.evento, "%")
                     where indicador_trajeto_alternativo is true and trip_id is not null  -- Remove serviços de tipo_dia sem planejamento
                 )
