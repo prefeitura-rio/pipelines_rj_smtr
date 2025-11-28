@@ -21,7 +21,7 @@
             and o.tipo_os in ("ENEM", "V+ENEM")
             and o.tipo_dia = t.tipo_dia
             and o.servico in ("LECD126", "SE867")
-        )      
+        )
     )
     and (
         (o.sentido in ("I", "C") and t.direction_id = "0")
