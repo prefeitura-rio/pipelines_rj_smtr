@@ -1,5 +1,21 @@
 # Changelog - gtfs
 
+## [1.3.0] - 2025-11-28
+
+### Corrigido
+
+- Corrige exceção para tipo OS `ENEM` e `V+ENEM` e refatora o modelo (DRY) `ordem_servico_trips_shapes_gtfs_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1073)
+
+## [1.2.9] - 2025-11-27
+
+### Adicionado
+
+- Adiciona exceção para tipo OS `ENEM` e `V+ENEM` no modelo `ordem_servico_trips_shapes_gtfs_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1070)
+
+### Corrigido
+
+- Corrigida a alteração para tipo OS `ENEM` e `V+ENEM` no modelo `ordem_servico_trips_shapes_gtfs_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1072)
+
 ## [1.2.8] - 2025-11-10
 
 ### Corrigido

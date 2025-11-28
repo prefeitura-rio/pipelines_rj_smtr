@@ -1,5 +1,17 @@
 # Changelog - subsidio
 
+## [2.2.7] - 2025-11-27
+
+### Alterado
+
+- Altera variável do modelo `aux_viagem_temperatura`  de `DATA_SUBSIDIO_V21_INICIO` para `DATA_SUBSIDIO_V99_INICIO`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1068)
+
+## [2.2.6] - 2025-11-26
+
+### Alterado
+
+- Altera data do modelo `viagem_regularidade_temperatura` para interrupção das glosas por climatização (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1069)
+
 ## [2.2.5] - 2025-11-14
 
 ### Alterado
