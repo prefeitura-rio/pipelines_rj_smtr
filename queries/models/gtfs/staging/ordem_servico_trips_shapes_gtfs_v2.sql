@@ -4,28 +4,29 @@
     on t.feed_version = o.feed_version
     and o.servico = t.trip_short_name
     and (
-        (o.tipo_dia = t.tipo_dia and o.tipo_os not in ("ENEM", "V+ENEM"))
-        or (
-            o.tipo_dia = "Ponto Facultativo"
-            and t.tipo_dia = "Dia Útil"
-        )
-        or (
-            o.feed_start_date = "2025-11-08"
-            and o.tipo_os in ("ENEM", "V+ENEM")
-            and o.tipo_dia = "Domingo"
-            and t.tipo_dia = "Dia Útil"
-            and o.servico not in ("LECD126", "SE867")
-        )
-        or (
-            o.feed_start_date = "2025-11-08"
-            and o.tipo_os in ("ENEM", "V+ENEM")
-            and o.tipo_dia = t.tipo_dia
-            and o.servico in ("LECD126", "SE867")
-        )
-    )
-    and (
         (o.sentido in ("I", "C") and t.direction_id = "0")
         or (o.sentido = "V" and t.direction_id = "1")
+    )
+{% endset %}
+
+{% set associacao_tipo_dia %}
+    (o.tipo_dia = t.tipo_dia and o.tipo_os not in ("ENEM", "V+ENEM"))
+    or (
+        o.tipo_dia = "Ponto Facultativo"
+        and t.tipo_dia = "Dia Útil"
+    )
+    or (
+        o.feed_start_date = "2025-11-08"
+        and o.tipo_os in ("ENEM", "V+ENEM")
+        and o.tipo_dia = "Domingo"
+        and t.tipo_dia = "Dia Útil"
+        and o.servico not in ("LECD126", "SE867")
+    )
+    or (
+        o.feed_start_date = "2025-11-08"
+        and o.tipo_os in ("ENEM", "V+ENEM")
+        and o.tipo_dia = t.tipo_dia
+        and o.servico in ("LECD126", "SE867")
     )
 {% endset %}
 
@@ -73,6 +74,7 @@ with
                     left join
                         {{ ref("trips_filtrada_aux_gtfs") }} as t
                         {{ associacao_ordem_servico_trips }}
+                        and ({{ associacao_tipo_dia }})
                     where indicador_trajeto_alternativo is false
                 )
                 union all
@@ -111,7 +113,7 @@ with
                     left join
                         {{ ref("trips_filtrada_aux_gtfs") }} as t
                         {{ associacao_ordem_servico_trips }}
-                        or (t.tipo_dia = "EXCEP")
+                        and ({{ associacao_tipo_dia }} or (t.tipo_dia = "EXCEP"))
                         and t.trip_headsign like concat("%", ot.evento, "%")
                     where indicador_trajeto_alternativo is true and trip_id is not null  -- Remove serviços de tipo_dia sem planejamento
                 )
