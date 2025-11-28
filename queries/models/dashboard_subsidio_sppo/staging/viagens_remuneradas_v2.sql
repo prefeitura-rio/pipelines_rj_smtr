@@ -53,6 +53,7 @@ with
             status,
             tecnologia,
             subsidio_km,
+            irk,
             case
                 when tecnologia is null
                 then
@@ -66,6 +67,8 @@ with
                     )
             end as subsidio_km_teto,
             indicador_penalidade_judicial,
+            indicador_conformidade,
+            indicador_validade,
             ordem
         from {{ ref("valor_km_tipo_viagem") }}
     ),
@@ -101,6 +104,7 @@ with
             vt.tecnologia_remunerada,
             vt.id_viagem,
             vt.datetime_partida,
+            valor_transacao + valor_transacao_riocard as receita_tarifa_publica,
             vt.distancia_planejada,
             case
                 when vt.tipo_viagem = "Não autorizado por capacidade"
@@ -129,6 +133,9 @@ with
                 vt.tipo_viagem = "Não autorizado por capacidade", true, false
             ) as indicador_penalidade_tecnologia,
             sp.indicador_penalidade_judicial,
+            sp.indicador_conformidade,
+            sp.indicador_validade,
+            sp.irk,
             sp.ordem
         from viagem_transacao as vt
         left join
@@ -162,16 +169,7 @@ with
 -- Flag de viagens que serão consideradas ou não para fins de remuneração (apuração de
 -- valor de subsídio) - RESOLUÇÃO SMTR Nº 3645/2023
 select
-    v.* except (
-        rn,
-        datetime_partida,
-        viagens_planejadas,
-        km_planejada,
-        tipo_dia,
-        consorcio,
-        faixa_horaria_inicio,
-        faixa_horaria_fim
-    ),
+    v.* except (rn, viagens_planejadas, km_planejada, tipo_dia, consorcio),
     case
         when
             v.data = date('2025-09-16')
