@@ -41,7 +41,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "tracking_db": {
             "engine": "postgresql",
-            "host": "10.5.14.235",
+            "host": "10.5.15.23",
         },
         "ressarcimento_db": {
             "engine": "postgresql",
