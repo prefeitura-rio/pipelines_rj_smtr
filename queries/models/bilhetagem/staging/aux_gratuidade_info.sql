@@ -187,9 +187,6 @@ with
         where
             datetime_inicio_validade_gratuidade < datetime_fim_validade_gratuidade
             or datetime_fim_validade_gratuidade is null
-        qualify
-            datetime_inicio_validade_gratuidade != datetime_fim_validade_gratuidade
-            or datetime_fim_validade_gratuidade is null
     ),
     gratuidade_saude_com_cadastro as (
         select
@@ -248,9 +245,6 @@ with
         from gratuidade_saude_completo
         where
             datetime_inicio_validade_gratuidade < datetime_fim_validade_gratuidade
-            or datetime_fim_validade_gratuidade is null
-        qualify
-            datetime_inicio_validade_gratuidade != datetime_fim_validade_gratuidade
             or datetime_fim_validade_gratuidade is null
     ),
     outras_gratuidades as (
@@ -318,22 +312,14 @@ with
             2 as priority
         from outras_gratuidades
     ),
-    gratuidade_filtrada as (
-        select * except (priority)
-        from union_gratuidade
-        qualify
-            row_number() over (
-                partition by id_cliente, datetime_inicio_validade order by priority
-            )
-            = 1
-    ),
     nova_validade as (
         select
-            * except (datetime_fim_validade),
+            * except (datetime_fim_validade, priority),
             lead(datetime_inicio_validade) over (
-                partition by id_cliente order by datetime_inicio_validade
+                partition by id_cliente
+                order by datetime_inicio_validade, priority, id_unico
             ) as datetime_fim_validade
-        from gratuidade_filtrada
+        from union_gratuidade
     )
 select *
 from nova_validade
