@@ -3,7 +3,7 @@
 """
 Flows for projeto_subsidio_sppo
 
-DBT: 2025-11-26
+DBT: 2025-12-01
 
 """
 
