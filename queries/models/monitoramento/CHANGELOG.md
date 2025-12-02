@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.7.9] - 2025-12-02
+
+### Alterado
+
+- Acrescenta data de processamento para a exceção de ajuste no modelo `veiculo_dia`para correção de tecnologia (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1078)
+
 ## [1.7.8] - 2025-11-11
 
 ### Adicionado
