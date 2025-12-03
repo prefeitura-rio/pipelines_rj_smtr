@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.8.0] - 2025-12-03
+
+### Alterado
+
+- Altera data de processamento para a exceção de ajuste no modelo `veiculo_dia`para correção de tecnologia, conforme MTR-CAP-2025/59482 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1079)
+
 ## [1.7.9] - 2025-12-02
 
 ### Alterado
