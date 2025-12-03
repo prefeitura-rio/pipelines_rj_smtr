@@ -10,7 +10,7 @@
     )
 }}
 
-{% set regex_filter %} regexp_contains(no_do_auto, r'/') {% endset %}
+{% set regex_filter %} regexp_contains(no_do_auto, r'[/-]') {% endset %}
 
 {% set incremental_filter %}
     date(data) between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
@@ -178,12 +178,24 @@ with
         where
             da.data_fim_lacre is distinct from dc.data_fim_lacre
             and dc.data_fim_lacre <= '{{ var("data_final_veiculo_arquitetura_1") }}'
+    ),
+
+    dados_finais as (
+        select *
+        from dados_completos
+        where
+            data_fim_lacre > '{{ var("data_final_veiculo_arquitetura_1") }}'
+            or data_fim_lacre is null
+        union all by name
+        select *
+        from lacre_atualizado
     )
+
 select *
-from dados_completos
+from dados_finais
 where
-    data_fim_lacre > '{{ var("data_final_veiculo_arquitetura_1") }}'
-    or data_fim_lacre is null
-union all by name
-select *
-from lacre_atualizado
+    not (  -- veículos com placa corrigida
+        id_veiculo in ("D17039", "D17037")
+        and data_fim_lacre is null
+        and data_inicio_lacre = "2025-10-14"
+    )
