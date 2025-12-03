@@ -64,13 +64,35 @@
                     "{{ var('date_range_end') }}"
                 )
         ),
+        veiculo_chassi as (
+            select distinct placa, trim(chassi) as chassi
+            from {{ ref("staging_stu_veiculo") }}
+            where chassi is not null
+        ),
+        licenciamento_chassi as (
+            select
+                l.* except (data_ultima_vistoria),
+                v.chassi,
+                coalesce(
+                    l.data_ultima_vistoria,
+                    last_value(l.data_ultima_vistoria ignore nulls) over w
+                ) as data_ultima_vistoria
+            from staging l
+            left join veiculo_chassi v using (placa)
+            window
+                w as (
+                    partition by l.id_veiculo, v.chassi
+                    order by l.data
+                    rows between unbounded preceding and current row
+                )
+        ),
         veiculos_vistoriados as (
             select *
-            from staging
+            from licenciamento_chassi
             qualify
                 (lag(data_ultima_vistoria) over(win) is null and data_ultima_vistoria is not null)
                 or lag(data_ultima_vistoria) over(win) != data_ultima_vistoria
-            window win as (partition by id_veiculo, placa order by data)
+            window win as (partition by id_veiculo, chassi order by data)
         ),
         menor_data_vistoria as (
             select
@@ -152,9 +174,6 @@ with
             indicador_elevador,
             indicador_usb,
             indicador_wifi,
-            lag(date(data)) over (
-                partition by id_veiculo, placa order by data
-            ) as ultima_data,
             min(date(data)) over (order by data) as primeira_data,
             date(data) as data_arquivo_fonte
         from {{ ref("staging_licenciamento_stu") }}
@@ -175,6 +194,9 @@ with
         select
             l.* except (data_ultima_vistoria, ano_ultima_vistoria),
             v.chassi,
+            lag(date(l.data)) over (
+                partition by l.id_veiculo, v.chassi order by l.data
+            ) as ultima_data,
             coalesce(
                 l.data_ultima_vistoria,
                 last_value(l.data_ultima_vistoria ignore nulls) over w
