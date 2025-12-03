@@ -8,7 +8,7 @@
 
 ### Corrigido
 
-- Corrigido modelo `veiculo_fiscalizacao_lacre`ao adicionar o hífen ao regex e filtrando os veículos com placa corrigida. (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1079)
+- Corrigido modelo `veiculo_fiscalizacao_lacre`ao adicionar o hífen ao regex e filtrando os veículos com placa corrigida. (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1081)
 
 ## [1.7.9] - 2025-12-02
 
