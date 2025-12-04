@@ -62,7 +62,7 @@ with
                     and data_processamento between "2025-09-01" and "2025-09-25"
                 )
                 or (  -- Exceção para tratamento da data_ultima_vistoria [Troca placa Mercosul]
-                    data_processamento = date("2025-11-13")
+                    data_processamento between "2025-07-10" and "2025-12-04"
                     and (
                         (
                             data between "2025-07-10" and "2025-07-20"
