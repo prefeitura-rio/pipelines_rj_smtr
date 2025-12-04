@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.8.1] - 2025-12-04
+
+### Alterado
+
+- Altera exceção para tratamento da data_ultima_vistoria no modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1082)
+
 ## [1.8.0] - 2025-12-03
 
 ### Alterado

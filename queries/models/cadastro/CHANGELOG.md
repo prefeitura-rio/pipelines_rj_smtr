@@ -1,5 +1,11 @@
 # Changelog - cadastro
 
+## [1.7.2] - 2025-12-04
+
+### Corrigido
+
+- Corrige tratamento da `data_ultima_vistoria` para veículos que trocaram de placa no modelo `veiculo_licenciamento_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1082)
+
 ## [1.7.1] - 2025-12-02
 
 ### Alterado
