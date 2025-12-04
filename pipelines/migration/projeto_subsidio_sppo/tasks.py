@@ -113,7 +113,7 @@ def subsidio_data_quality_check(
             for check in checks["general"]
         )
 
-    format_send_discord_message(formatted_messages, webhook_url)
+    # format_send_discord_message(formatted_messages, webhook_url)
 
     for table_id, checks_ in checks.items():
         if table_id != "general":

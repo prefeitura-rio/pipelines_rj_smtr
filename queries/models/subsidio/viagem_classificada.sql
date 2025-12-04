@@ -42,7 +42,7 @@ with
                 data_inclusao_datalake <= date_add(data, interval 7 day)
                 or data_inclusao_datalake
                 = date("{{var('data_inclusao_autuacao_disciplinar')}}")  -- Primeira data de inclusão dos dados de autuações disciplinares
-            )
+            )   
             and {{ incremental_filter }}
             and modo = "ONIBUS" and status != 'Cancelada'),
     ordem_status as (
