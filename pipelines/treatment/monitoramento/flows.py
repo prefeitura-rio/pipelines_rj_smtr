@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de monitoramento
 
-DBT: 2025-12-04
+DBT 2025-12-04
 """
 
 from copy import deepcopy
