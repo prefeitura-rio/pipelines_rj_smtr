@@ -5,6 +5,7 @@
 ### Alterado
 
 - Altera exceção para tratamento da data_ultima_vistoria no modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1082)
+- Altera a data de processamento no modelo `veiculo_dia` para corrigir a tecnologia apurada no período compreendido entre 2025-11-01 e 2025-11-15 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1083)
 
 ## [1.8.0] - 2025-12-03
 
