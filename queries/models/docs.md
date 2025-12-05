@@ -1518,5 +1518,5 @@ Horário do registro
 {% enddocs %}
 
 {% docs datetime_gps %}
-Data e hora do geração da transmissão do GPS [GMT-3]
+Data e hora de geração da transmissão do GPS [GMT-3]
 {% enddocs %}
