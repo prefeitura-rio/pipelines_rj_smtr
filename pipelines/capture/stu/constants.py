@@ -97,12 +97,15 @@ class constants(Enum):  # pylint: disable=c0103
         },
         STU_GUIA_TABLE_ID: {
             "primary_keys": ["guia"],
+            "first_timestamp": datetime(2025, 12, 5, 0, 0, 0),
         },
         STU_PERMIS_EMPRESA_ESCOLA_TABLE_ID: {
             "primary_keys": ["tptran", "tpperm", "termo"],
+            "first_timestamp": datetime(2025, 12, 5, 0, 0, 0),
         },
         STU_MODELO_TABLE_ID: {
             "primary_keys": ["cod_modelo"],
+            "first_timestamp": datetime(2025, 12, 5, 0, 0, 0),
         },
     }
 
