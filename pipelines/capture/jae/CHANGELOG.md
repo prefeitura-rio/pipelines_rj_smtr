@@ -1,5 +1,15 @@
 # Changelog - source_jae
 
+## [3.1.5] - 2025-12-08
+
+### Adicionado
+
+- Adiciona tabelas no exclude do backup dos dados da BillingPay (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1087)
+
+### Alterado
+
+- Altera IP do banco tracking_db (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1087)
+
 ## [3.1.4] - 2025-11-28
 
 ### Alterado
