@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.5.6] - 2025-12-08
+
+### Alterado
+
+- Alterados o `tipo_dia` de `2025-11-21` -> `Ponto Facultativo` e o `tipo_os` de `2025-11-16` -> `ENEM` e os dias `2025-11-22`, `2025-11-23`, `2025-11-29`,`2025-11-20` -> `Verão` no modelo `aux_calendario_manual.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
 ## [1.5.4] - 2025-11-10
 
 ### Alterado
