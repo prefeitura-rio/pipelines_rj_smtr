@@ -316,7 +316,7 @@ models:
       - name: hora
         description: "{{ doc('hora_gps') }}"
       - name: datetime_gps
-        description: "{{ doc('timestamp_gps') }}"
+        description: "{{ doc('datetime_gps') }}"
         tests:
           - not_null:
               name: not_null__datetime_gps__gps
@@ -364,7 +364,7 @@ models:
       - name: hora
         description: "{{ doc('hora_gps') }}"
       - name: datetime_gps
-        description: "{{ doc('timestamp_gps') }}"
+        description: "{{ doc('datetime_gps') }}"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: servico
@@ -891,7 +891,7 @@ models:
       - name: hora
         description: "Hora do recebimento da transmissão do GPS"
       - name: datetime_gps
-        description: "Data e hora do recebimento da transmissão do GPS [GMT-3]"
+        description: "{{ doc('datetime_gps') }}"
         tests:
           - not_null:
               name: not_null__datetime_gps__gps_validador
@@ -981,7 +981,7 @@ models:
       - name: hora
         description: "Hora do recebimento da transmissão do GPS"
       - name: datetime_gps
-        description: "Data e hora do recebimento da transmissão do GPS [GMT-3]"
+        description: "{{ doc('datetime_gps') }}"
       - name: datetime_captura
         description: "Data e hora da captura do dado de GPS [GMT-3]"
       - name: id_operadora
