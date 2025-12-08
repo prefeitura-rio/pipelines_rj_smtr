@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Alterados o `tipo_dia` de `2025-11-21` -> `Ponto Facultativo` e o `tipo_os` de `2025-11-16` -> `ENEM` e os dias `2025-11-22`, `2025-11-23`, `2025-11-29`,`2025-11-20` -> `Verão` no modelo `aux_calendario_manual.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1093)
+- Alterados o `tipo_dia` de `2025-11-21` -> `Ponto Facultativo` e o `tipo_os` do dia `2025-11-16` -> `ENEM` e o `tipo_os` dos dias `2025-11-22`, `2025-11-23`, `2025-11-29`,`2025-11-30` -> `Verão` no modelo `aux_calendario_manual.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1093)
 
 ## [1.5.4] - 2025-11-10
 
