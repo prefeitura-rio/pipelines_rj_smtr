@@ -1,6 +1,6 @@
 # Changelog - planejamento
 
-## [1.5.6] - 2025-12-08
+## [1.5.5] - 2025-12-08
 
 ### Alterado
 
