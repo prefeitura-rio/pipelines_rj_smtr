@@ -1,5 +1,16 @@
 # Changelog - source_jae
 
+## [3.1.5] - 2025-12-08
+
+### Adicionado
+
+- Adiciona tabelas no exclude do backup dos dados da BillingPay
+
+### Alterado
+
+- Altera IP do banco tracking_db
+
+
 ## [3.1.4] - 2025-11-28
 
 ### Alterado
