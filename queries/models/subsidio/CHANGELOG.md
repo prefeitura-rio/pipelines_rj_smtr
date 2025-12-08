@@ -1,5 +1,11 @@
 # Changelog - subsidio
 
+## [2.2.8] - 2025-12-08
+
+### Alterado
+
+- Altera modelo `staging_servico_contrato_abreviado` de acordo com alterações na planilha de serviços com contrato abreviado (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1089)
+
 ## [2.2.7] - 2025-11-27
 
 ### Alterado
