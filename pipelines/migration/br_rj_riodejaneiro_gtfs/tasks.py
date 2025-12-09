@@ -323,7 +323,7 @@ def filter_gtfs_table_ids(data_versao_gtfs_str, gtfs_table_capture_params):
     +"""
     if data_versao_gtfs_str >= constants.DATA_GTFS_V2_INICIO.value:
         gtfs_table_capture_params.pop("ordem_servico", None)
-        gtfs_table_capture_params.pop("ordem_servico_trajeto_alternativo_sentido", None)
+        # gtfs_table_capture_params.pop("ordem_servico_trajeto_alternativo_sentido", None)
 
     if data_versao_gtfs_str < constants.DATA_GTFS_V4_INICIO.value:
         gtfs_table_capture_params.pop("ordem_servico_faixa_horaria_sentido", None)

@@ -14,7 +14,6 @@ WITH ordem_servico_trajeto_alternativo AS (
     SAFE_CAST(o.data_versao AS DATE) feed_start_date,
     fi.feed_end_date,
     SAFE_CAST(tipo_os AS STRING) tipo_os,
-    SAFE_CAST(evento AS STRING) evento,
     SAFE_CAST(o.servico AS STRING) servico,
     SAFE_CAST(JSON_VALUE(o.content, "$.ativacao") AS STRING) ativacao,
     SAFE_CAST(JSON_VALUE(o.content, "$.consorcio") AS STRING) consorcio,
@@ -23,7 +22,7 @@ WITH ordem_servico_trajeto_alternativo AS (
     SAFE_CAST(JSON_VALUE(o.content, "$.evento") AS STRING) evento,
     SAFE_CAST(JSON_VALUE(o.content, "$.vista") AS STRING) vista,
   FROM
-    {{ source("br_rj_riodejaneiro_gtfs_staging", "ordem_servico_trajeto_alternativo_sentido") }} O
+    rj-smtr-dev.br_rj_riodejaneiro_gtfs_staging.ordem_servico_trajeto_alternativo_sentido O
   LEFT JOIN
     {{ ref("feed_info_gtfs") }} fi
   ON

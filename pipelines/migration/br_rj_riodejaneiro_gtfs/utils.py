@@ -344,17 +344,28 @@ def processa_ordem_servico_trajeto_alternativo(
         raise ValueError("Nenhuma aba 'ANEXO II' encontrada no arquivo.")
     sheets_data = []
 
+    # alt_columns = {
+    #     "Serviço": "servico",
+    #     "Vista": "vista",
+    #     "Consórcio": "consorcio",
+    #     "Extensão de Ida": "extensao_ida",
+    #     "Extensão\nde Ida": "extensao_ida",
+    #     "Extensão de Volta": "extensao_volta",
+    #     "Extensão\nde Volta": "extensao_volta",
+    #     "Evento": "evento",
+    #     "Horário Inicial Interdição": "inicio_periodo",
+    #     "Horário Final Interdição": "fim_periodo",
+    #     "Descrição": "descricao",
+    #     "Ativação": "ativacao",
+    #     "tipo_os": "tipo_os",
+    # }
     alt_columns = {
         "Serviço": "servico",
         "Vista": "vista",
+        "Sentido": "sentido",
+        "Extensão": "extensao",
         "Consórcio": "consorcio",
-        "Extensão de Ida": "extensao_ida",
-        "Extensão\nde Ida": "extensao_ida",
-        "Extensão de Volta": "extensao_volta",
-        "Extensão\nde Volta": "extensao_volta",
         "Evento": "evento",
-        "Horário Inicial Interdição": "inicio_periodo",
-        "Horário Final Interdição": "fim_periodo",
         "Descrição": "descricao",
         "Ativação": "ativacao",
         "tipo_os": "tipo_os",
