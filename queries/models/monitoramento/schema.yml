@@ -659,7 +659,8 @@ models:
           combination_of_columns:
           - data
           - id_veiculo
-          name: dbt_utils.unique_combination_of_columns__data_id_veiculo__veiculo_dia
+          - placa
+          name: dbt_utils.unique_combination_of_columns__data_id_veiculo_placa__veiculo_dia
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data
           row_condition: "1=1"
