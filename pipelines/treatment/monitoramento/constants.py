@@ -149,7 +149,7 @@ class constants(Enum):  # pylint: disable=c0103
     VEICULO_DIA_CHECKS_LIST = {
         "veiculo_dia": {
             "not_null": {"description": "Todos os valores da coluna `{column_name}` não nulos"},
-            "dbt_utils.unique_combination_of_columns__data_id_veiculo__veiculo_dia": {
+            "dbt_utils.unique_combination_of_columns__data_id_veiculo_placa__veiculo_dia": {
                 "description": "Todos os registros são únicos"
             },
             "dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__veiculo_dia": {
