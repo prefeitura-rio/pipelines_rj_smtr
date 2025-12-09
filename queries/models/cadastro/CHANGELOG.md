@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Altera exceção de ajuste no modelo `veiculo_licenciamento_dia` para correção de tecnologia para novembro Q2, conforme MTR-CAP-2025/59482 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1078)
+- Altera exceção de ajuste no modelo `veiculo_licenciamento_dia` para correção de tecnologia para novembro Q2, conforme MTR-CAP-2025/59482 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1095)
 
 ## [1.7.2] - 2025-12-04
 
