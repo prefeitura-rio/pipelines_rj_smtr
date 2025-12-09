@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Altera modelo `viagem_regularidade_temperatura` para retomada dos descontos por inoperabilidade da climatização, conforme Evento 112 do PROCEDIMENTO COMUM CÍVEL Nº 3019687-30.2025.8.19.0001/RJ (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1069)
+- Altera modelo `viagem_regularidade_temperatura` para retomada dos descontos por inoperabilidade da climatização, conforme Evento 112 do PROCEDIMENTO COMUM CÍVEL Nº 3019687-30.2025.8.19.0001/RJ (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1096)
 
 ## [2.2.8] - 2025-12-08
 
