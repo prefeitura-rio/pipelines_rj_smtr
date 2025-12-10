@@ -90,7 +90,7 @@ with
         from dados_novos
         qualify
             row_number() over (
-                partition by id_unico_lancamento, l.id_conta
+                partition by id_unico_lancamento, id_conta
                 order by datetime_captura desc
             )
             = 1
