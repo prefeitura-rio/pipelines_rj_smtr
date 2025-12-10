@@ -32,8 +32,8 @@ with
     ),
     ordem_servico_trips_shapes as (
         select *
-        from  --{ ref("ordem_servico_trips_shapes_gtfs") }}
-             `rj-smtr-dev.victor__gtfs.ordem_servico_trips_shapes`
+        from  {{ ref("ordem_servico_trips_shapes_gtfs") }}
+            -- `rj-smtr.gtfs.ordem_servico_trips_shapes`
         where feed_start_date in ("{{ feed_start_dates | join('", "') }}")
     ),
     dia_atual as (

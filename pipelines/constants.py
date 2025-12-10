@@ -23,10 +23,8 @@ class constants(Enum):  # pylint: disable=c0103
     DOCKER_FEDORA_IMAGE_NAME = "AUTO_REPLACE_FEDORA_IMAGE"
     DOCKER_IMAGE_FEDORA = f"{DOCKER_FEDORA_IMAGE_NAME}:{DOCKER_FEDORA_TAG}"
     GCS_FLOWS_BUCKET = "datario-public"
-    # PROJECT_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr"}
-    # DEFAULT_BUCKET_NAME = {"dev": "br-rj-smtr-dev", "prod": "br-rj-smtr"}
-    PROJECT_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr-staging"}
-    DEFAULT_BUCKET_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr-staging"}
+    PROJECT_NAME = {"dev": "rj-smtr-dev", "prod": "rj-smtr"}
+    DEFAULT_BUCKET_NAME = {"dev": "br-rj-smtr-dev", "prod": "br-rj-smtr"}
     FILE_MAX_SIZE = 20_000
     PREFECT_DEFAULT_PROJECT = "production"
 
@@ -215,6 +213,7 @@ class constants(Enum):  # pylint: disable=c0103
     DATA_GTFS_V2_INICIO = "2025-04-30"
     DATA_GTFS_V3_INICIO = "2024-11-06"
     DATA_GTFS_V4_INICIO = "2025-07-16"
+    DATA_GTFS_V5_INICIO = "2025-12-31"
     GTFS_CONTROLE_OS_URL = "https://docs.google.com/spreadsheets/d/\
 1Jn7fmaDOhuHMdMqHo5SGWHCRuerXNWJRmhRjnHxJ9O4\
 /pub?gid=0&single=true&output=csv"
