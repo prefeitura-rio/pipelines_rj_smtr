@@ -75,8 +75,8 @@ with
                     )
                 )
                 or (
-                    data between "2025-11-01" and "2025-11-15"  -- Exceção para ajuste na tecnologia MTR-CAP-2025/59482
-                    and data_processamento between "2025-11-01" and "2025-12-02"
+                    data between "2025-11-01" and "2025-11-30"  -- Exceção para ajuste na tecnologia MTR-CAP-2025/59482
+                    and data_processamento between "2025-11-01" and "2025-12-10"
                 )
             )
             {% if is_incremental() %}
@@ -87,7 +87,7 @@ with
             {% endif %}
         qualify
             row_number() over (
-                partition by data, id_veiculo, placa order by data_processamento desc
+                partition by data, id_veiculo order by data_processamento desc
             )
             = 1
     ),
