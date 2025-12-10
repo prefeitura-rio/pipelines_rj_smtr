@@ -4,8 +4,8 @@
 
 ### Alterado
 
-- Altera o filtro no modelo `veiculo_dia` para considerar `data` e `id_veiculo`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1079)
-- Altera o teste `unique_combination_of_columns`para considerar `data`e `id_veiculo` do modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1079)
+- Altera o filtro no modelo `veiculo_dia` para considerar `data` e `id_veiculo`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1100)
+- Altera o teste `unique_combination_of_columns`para considerar `data`e `id_veiculo` do modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1100)
 
 ## [1.8.1] - 2025-12-04
 
