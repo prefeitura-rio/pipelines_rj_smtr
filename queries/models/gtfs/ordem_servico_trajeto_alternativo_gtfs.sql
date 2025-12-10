@@ -32,9 +32,9 @@ WITH ordem_servico_trajeto_alternativo AS (
   ON
     o.data_versao = CAST(fi.feed_start_date AS STRING)
     WHERE
-      o.data_versao <
+      o.data_versao < date("{{ var('DATA_GTFS_V5_INICIO') }}")
   {% if is_incremental() -%}
-      o.data_versao = "{{ var('data_versao_gtfs') }}"
+      AND o.data_versao = "{{ var('data_versao_gtfs') }}"
       AND fi.feed_start_date = "{{ var('data_versao_gtfs') }}"
   {%- endif %}
 )
