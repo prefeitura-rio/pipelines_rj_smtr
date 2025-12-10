@@ -422,8 +422,9 @@ selectors:
           value: staging_veiculo_fiscalizacao_lacre
         - method: fqn
           value: staging_infracao
-        - method: fqn
-          value: veiculo_fiscalizacao_lacre
+        - exclude:
+          - method: fqn
+            value: veiculo_fiscalizacao_lacre
         - method: fqn
           value: autuacao_disciplinar_historico
         - method: fqn
@@ -472,8 +473,9 @@ selectors:
           value: temperatura
         - method: fqn
           value: viagem_classificada
-        - method: fqn
-          value: aux_viagem_temperatura
+        - exclude:
+          - method: fqn
+            value: aux_viagem_temperatura
         - method: fqn
           value: aux_veiculo_falha_ar_condicionado
         - method: fqn
