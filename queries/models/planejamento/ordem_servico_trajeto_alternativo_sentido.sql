@@ -1,54 +1,59 @@
 {{
-  config(
-    partition_by = {
-      "field": "feed_start_date",
-      "data_type": "date",
-      "granularity": "day"
-    }
-  )
+    config(
+        partition_by={
+            "field": "feed_start_date",
+            "data_type": "date",
+            "granularity": "day",
+        }
+    )
 }}
 
-WITH ordem_servico_trajeto_alternativo AS (
-  SELECT
-    fi.feed_version,
-    SAFE_CAST(o.data_versao AS DATE) feed_start_date,
-    fi.feed_end_date,
-    SAFE_CAST(tipo_os AS STRING) tipo_os,
-    SAFE_CAST(o.servico AS STRING) servico,
-    SAFE_CAST(JSON_VALUE(o.content, "$.ativacao") AS STRING) ativacao,
-    SAFE_CAST(JSON_VALUE(o.content, "$.consorcio") AS STRING) consorcio,
-    SAFE_CAST(JSON_VALUE(o.content, "$.sentido") AS STRING) sentido,
-    SAFE_CAST(JSON_VALUE(o.content, "$.extensao") AS FLOAT64) extensao,
-    SAFE_CAST(JSON_VALUE(o.content, "$.evento") AS STRING) evento,
-    SAFE_CAST(JSON_VALUE(o.content, "$.vista") AS STRING) vista,
-  FROM
-    rj-smtr-dev.br_rj_riodejaneiro_gtfs_staging.ordem_servico_trajeto_alternativo_sentido O
-  LEFT JOIN
-    {{ ref("feed_info_gtfs") }} fi
-  ON
-    o.data_versao = CAST(fi.feed_start_date AS STRING)
-  {% if is_incremental() -%}
-    WHERE
-      o.data_versao = "{{ var('data_versao_gtfs') }}"
-      AND fi.feed_start_date = "{{ var('data_versao_gtfs') }}"
-  {%- endif %}
-)
+with
+    ordem_servico_trajeto_alternativo as (
+        select
+            fi.feed_version,
+            safe_cast(o.data_versao as date) feed_start_date,
+            fi.feed_end_date,
+            safe_cast(tipo_os as string) tipo_os,
+            safe_cast(o.servico as string) servico,
+            safe_cast(json_value(o.content, "$.ativacao") as string) ativacao,
+            safe_cast(json_value(o.content, "$.consorcio") as string) consorcio,
+            safe_cast(json_value(o.content, "$.sentido") as string) sentido,
+            safe_cast(json_value(o.content, "$.extensao") as float64) extensao,
+            safe_cast(json_value(o.content, "$.evento") as string) evento,
+            safe_cast(json_value(o.content, "$.vista") as string) vista,
+        from
+            {{
+                source(
+                    "br_rj_riodejaneiro_gtfs_staging",
+                    "ordem_servico_trajeto_alternativo_sentido",
+                )
+            }} o
+        left join
+            {{ ref("feed_info_gtfs") }} fi
+            on o.data_versao = cast(fi.feed_start_date as string)
+        {% if is_incremental() -%}
+            where
+                o.data_versao = "{{ var('data_versao_gtfs') }}"
+                and fi.feed_start_date = "{{ var('data_versao_gtfs') }}"
+        {%- endif %}
+    )
 
-SELECT
-  feed_version,
-  feed_start_date,
-  feed_end_date,
-  tipo_os,
-  servico,
-  consorcio,
-  sentido
-  vista,
-  ativacao,
-  CASE
-    WHEN evento LIKE '[%]' THEN LOWER(evento)
-    ELSE REGEXP_REPLACE(LOWER(evento), r"([a-záéíóúñüç]+)", r"[\1]")
-  END AS evento,
-  extensao/1000 AS extensao,
-  '{{ var("version") }}' AS versao_modelo
-FROM
-  ordem_servico_trajeto_alternativo
+select
+    feed_version,
+    feed_start_date,
+    feed_end_date,
+    tipo_os,
+    servico,
+    consorcio,
+    sentido
+    vista,
+    ativacao,
+    case
+        when evento like '[%]'
+        then lower(evento)
+        else regexp_replace(lower(evento), r"([a-záéíóúñüç]+)", r"[\1]")
+    end as evento,
+    extensao / 1000 as extensao,
+    '{{ var("version") }}' as versao_modelo
+from ordem_servico_trajeto_alternativo

@@ -12,8 +12,11 @@ with
     ordem_servico_trips_shapes_gtfs as (
         select *
         from {{ ref("ordem_servico_trips_shapes_gtfs_v1") }}
-        where feed_start_date < date("{{ var('DATA_GTFS_V4_INICIO') }}")
+        where
+            feed_start_date < date("{{ var('DATA_GTFS_V4_INICIO') }}")
+        --fmt:off
         full outer union all by name
+        --fmt:on
         select *
         from {{ ref("ordem_servico_trips_shapes_gtfs_v2") }}
         where feed_start_date >= date("{{ var('DATA_GTFS_V4_INICIO') }}")
