@@ -65,6 +65,9 @@ with
                 when regexp_contains(l.id_conta, r'^2\.2\.3\.[A-Za-z0-9]+\.1$')
                 then split(l.id_conta, ".")[offset(3)]
             end as hash_cartao,
+            ifnull(
+                l.id_lancamento, concat(string(l.dt_lancamento), '_', l.id_movimento)
+            ) as id_unico_lancamento,
             l.id_lancamento,
             l.cd_cliente as id_cliente,
             j.nome as nome_cliente,
@@ -81,14 +84,13 @@ with
                 or regexp_contains(l.id_conta, r'^2\.2\.3\.[A-Za-z0-9]+\.1$')
             )
             {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
+    ),
+    dados_novos_deduplicado as (
+        select *
+        from dados_novos
         qualify
             row_number() over (
-                partition by
-                    ifnull(
-                        l.id_lancamento,
-                        concat(string(l.dt_lancamento), '_', l.id_movimento)
-                    ),
-                    l.id_conta
+                partition by id_unico_lancamento, id_conta
                 order by datetime_captura desc
             )
             = 1
@@ -108,7 +110,7 @@ with
     {% endif %}
     particoes_completas as (
         select *, 0 as priority
-        from dados_novos
+        from dados_novos_deduplicado
 
         {% if is_incremental() %}
             union all
@@ -125,7 +127,7 @@ with
         from particoes_completas
         qualify
             row_number() over (
-                partition by id_lancamento, id_conta
+                partition by id_unico_lancamento, id_conta
                 order by priority, datetime_lancamento desc
             )
             = 1
@@ -134,7 +136,7 @@ with
         {% if is_incremental() %}
 
             select
-                id_lancamento,
+                id_unico_lancamento,
                 id_conta,
                 {{ sha_column }} as sha_dado_atual,
                 datetime_ultima_atualizacao as datetime_ultima_atualizacao_atual,
@@ -143,7 +145,7 @@ with
 
         {% else %}
             select
-                cast(null as string) as id_lancamento,
+                cast(null as string) as id_unico_lancamento,
                 cast(null as string) as id_conta,
                 cast(null as bytes) as sha_dado_atual,
                 datetime(null) as datetime_ultima_atualizacao_atual,
@@ -151,9 +153,9 @@ with
         {% endif %}
     ),
     sha_dados_completos as (
-        select n.*, a.* except (id_lancamento, id_conta)
+        select n.*, a.* except (id_unico_lancamento, id_conta)
         from sha_dados_novos n
-        left join sha_dados_atuais a using (id_lancamento, id_conta)
+        left join sha_dados_atuais a using (id_unico_lancamento, id_conta)
     ),
     extrato_colunas_controle as (
         select
