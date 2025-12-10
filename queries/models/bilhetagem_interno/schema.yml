@@ -122,6 +122,10 @@ models:
         description: "{{ doc('documento_cliente') }}"
         policy_tags:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1101226827904472521'
+      - name: numero_matricula
+        description: Número da matrícula do estudante
+        policy_tags:
+          - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1101226827904472521'
       - name: nome_cliente
         description: "{{ doc('nome_cliente') }}"
         policy_tags:
@@ -172,6 +176,8 @@ models:
           - 'projects/rj-smtr/locations/us/taxonomies/6071707853840412174/policyTags/1168584191451386864'
       - name: id_lancamento
         description: Identificador único do lançamento da transferência
+      - name: id_unico_lancamento
+        description: Identificador único do lançamento da transferência com tratamento em caso de valor nulo
       - name: id_cliente
         description: "{{ doc('id_cliente') }}"
         policy_tags:
