@@ -102,6 +102,7 @@ with Flow(
         dataset_id=DATASET_ID,
         table_id=TABLE_ID,
         test_name=test_name,
+        exclude="transacao_valor_ordem_completa__transacao_valor_ordem",
         _vars=dbt_vars,
     )
 

@@ -67,3 +67,34 @@ models:
         description: "Distância total planejada do serviço em km (junta ida+volta multiplicado pela quantidade de viagens)"
       - name: versao_modelo
         description: "{{ doc('versao') }}"
+  - name: subsidio_ordem_servico
+    description: "Dados das linhas presentes no município [Descontinuada a partir de 2024-08-16]"
+    columns:
+      - name: data_versao
+        description: "{{ doc('data_versao') }}"
+      - name: timestamp_captura
+        description: "{{ doc('timestamp_captura') }}"
+      - name: servico
+        description: "Número da linha de ônibus"
+      - name: vista
+        description: "{{ doc('vista') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: horario_inicio
+        description: "{{ doc('horario_inicio') }}"
+      - name: horario_fim
+        description: "Horário da última viagem"
+      - name: extensao_ida
+        description: "{{ doc('extensao_ida') }}"
+      - name: extensao_volta
+        description: "{{ doc('extensao_volta') }}"
+      - name: partidas_ida
+        description: "Quantidade de partidas no sentido ida"
+      - name: partidas_volta
+        description: "Quantidade de partidas no sentido volta"
+      - name: viagens_planejadas
+        description: "Quantidade de viagens realizadas"
+      - name: distancia_total_planejada
+        description: "Distância total planejada diária para o serviço"
+      - name: tipo_dia
+        description: "{{ doc('tipo_dia') }}"

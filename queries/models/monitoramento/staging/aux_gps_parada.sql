@@ -29,9 +29,7 @@ with
     ),
     garagens as (
         select
-            * except (geometry_wkt, operador),
-            operador as nome_parada,
-            'garagem' as tipo_parada
+            * except (geometry_wkt), 'garagem' as nome_parada, 'garagem' as tipo_parada
         from {{ ref("garagem") }}
         where
             inicio_vigencia <= date('{{ var("date_range_end") }}')

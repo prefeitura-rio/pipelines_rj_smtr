@@ -42,7 +42,6 @@ vars:
   15_minutos: false
   modo_gps: "onibus"
   fonte_gps: "conecta"
-
   # Parametros de intersecção do ônibus com rota
   ## Tamanho do buffer da rota
   tamanho_buffer_metros: 500 # flag_trajeto_correto
@@ -161,10 +160,11 @@ vars:
   DATA_SUBSIDIO_V20_INICIO: "2025-08-16"
   # Feature RESOLUÇÃO SMTR 3878/2025
   DATA_SUBSIDIO_V21_INICIO: "2025-10-01"
+  # Suspensão da glosa por ar-condicionado a partir de 16/10/2025
+  DATA_SUBSIDIO_V22_INICIO: "2025-10-16"
   # Placeholder feature
   DATA_SUBSIDIO_V99_INICIO: "3000-01-01"
-
-  # Recursos #
+   # Recursos #
   recurso_staging: "rj-smtr-staging.projeto_subsidio_sppo_staging.recurso"
   recurso_prazo: "rj-smtr.projeto_subsidio_sppo.recurso_prazo"
   recurso_julgamento: "rj-smtr.projeto_subsidio_sppo.recurso_julgamento"
@@ -311,12 +311,23 @@ models:
     br_rj_riodejaneiro_brt_gps:
       +materialized: view
       +schema: br_rj_riodejaneiro_brt_gps
+    br_rj_riodejaneiro_geo:
+      +materialized: view
+      +schema: br_rj_riodejaneiro_geo
+      deprecated:
+        +materialized: view
+        +schema: br_rj_riodejaneiro_geo
+        +enabled: false
     br_rj_riodejaneiro_veiculos:
       +materialized: view
       +schema: br_rj_riodejaneiro_veiculos
     dashboard_subsidio_sppo:
       +materialized: view
       +schema: dashboard_subsidio_sppo
+      deprecated:
+        +materialized: view
+        +schema: dashboard_subsidio_sppo
+        +enabled: false
     dashboard_subsidio_sppo_staging:
       +materialized: view
       +schema: dashboard_subsidio_sppo_staging
@@ -361,6 +372,9 @@ models:
       +materialized: incremental
       +incremental_strategy: insert_overwrite
       +schema: gtfs
+      deprecated:
+        +materialized: view
+        +schema: dashboard_subsidio_van
     indicadores_continuados_egp:
       +materialized: view
       +schema: indicadores_continuados_egp
@@ -501,6 +515,44 @@ models:
       staging:
         +materialized: view
         +schema: cadastro_interno_staging
+    br_rj_riodejaneiro_stpl_gps:
+      deprecated:
+        +materialized: view
+        +schema: br_rj_riodejaneiro_stpl_gps
+    br_rj_riodejaneiro_transporte:
+        +materialized: table
+        +schema: br_rj_riodejaneiro_transporte
+    dashboard_subsidio_van:
+      +materialized: view
+      +schema: dashboard_subsidio_van
+      deprecated:
+        +materialized: view
+        +schema: dashboard_subsidio_van
+    dashboard_gps_sppo:
+      +materialized: view
+      +schema: dashboard_gps_sppo
+      deprecated:
+        +materialized: view
+        +schema: dashboard_gps_sppo
+    dashboards:
+      +materialized: view
+      +schema: dashboards
+    operacao:
+      +materialized: view
+      +schema: operacao
+      deprecated:
+        +materialized: view
+        +schema: operacao
+    projeto_multa_automatica:
+      +materialized: view
+      +schema: projeto_multa_automatica
+      deprecated:
+        +materialized: view
+        +schema: projeto_multa_automatica
+    brt_manutencao:
+      deprecated:
+        +materialized: view
+        +schema: brt_manutencao
     indicador_interno:
       +materialized: incremental
       +incremental_strategy: insert_overwrite

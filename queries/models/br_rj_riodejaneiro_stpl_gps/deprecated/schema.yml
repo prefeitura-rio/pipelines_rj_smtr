@@ -1,0 +1,75 @@
+version: 2
+models:
+  - name: registros
+    description: Tabela materializada para acesso geral aos dados do RHO SPPO
+    columns:
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: hora
+        description: "{{ doc('hora') }}"
+      - name: codigo
+        description: código registrado
+      - name: placa
+        description: "{{ doc('placa') }}"
+      - name: linha
+        description: "{{ doc('linha') }}"
+      - name: latitude
+        description: "{{ doc('latitude') }}"
+      - name: longitude
+        description: "{{ doc('longitude') }}"
+      - name: timestamp_gps
+        description: "{{ doc('timestamp_gps') }}"
+      - name: velocidade
+        description: Velocidade registrada
+      - name: id_migracao_trajeto
+        description: Identificador de migração do trajeto
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+      - name: trajeto
+        description: "{{ doc('trajeto') }}"
+      - name: timestamp_captura
+        description: "{{ doc('timestamp_captura') }}"
+  - name: registros_v2
+    description: Tabela materializada para acesso geral aos dados do RHO STPL
+    columns:
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: hora
+        description: "{{ doc('hora') }}"
+      - name: timestamp_gps
+        description: "{{ doc('timestamp_gps') }}"
+      - name: timestamp_captura
+        description: "{{ doc('timestamp_captura') }}"
+      - name: content
+        description: Conteúdo
+  - name: registros_desaninhada
+    description: Tabela materializada para acesso geral aos dados do RHO STPL
+    columns:
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: hora
+        description: "{{ doc('hora') }}"
+      - name: id_veiculo
+        description: "{{ doc('id_veiculo') }}"
+      - name: timestamp_captura
+        description: "{{ doc('timestamp_captura') }}"
+      - name: timestamp_gps
+        description: "{{ doc('timestamp_gps') }}"
+      - name: latitude
+        description: "{{ doc('latitude') }}"
+      - name: longitude
+        description: "{{ doc('longitude') }}"
+      - name: linha
+        description: "{{ doc('linha') }}"
+      - name: velocidade
+        description: Velocidade permitida
+      - name: id_migracao_trajeto
+        description: Identificador de migração de trajeto
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+      - name: trajeto
+        description: "{{ doc('trajeto') }}"
+      - name: hodometro
+        description: Instrumento de medição da distância percorrida seja parcial ou total

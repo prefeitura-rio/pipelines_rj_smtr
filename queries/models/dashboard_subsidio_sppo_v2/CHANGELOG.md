@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo_v2
 
+## [1.1.2] - 2025-10-30
+
+### Adicionado
+
+- Cria modelo `sumario_servico_dia_pagamento_historico.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1016)
+
 ## [1.1.1] - 2025-08-07
 
 ### Alterado

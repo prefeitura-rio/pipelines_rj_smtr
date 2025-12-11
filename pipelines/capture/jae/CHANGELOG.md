@@ -1,5 +1,40 @@
 # Changelog - source_jae
 
+## [3.1.5] - 2025-12-08
+
+### Adicionado
+
+- Adiciona tabelas no exclude do backup dos dados da BillingPay (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1087)
+
+### Alterado
+
+- Altera IP do banco tracking_db (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1087)
+
+## [3.1.4] - 2025-11-28
+
+### Alterado
+
+- Altera IP do banco tracking_db (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1074)
+
+## [3.1.3] - 2025-11-27
+
+### Alterado
+
+- Altera IP do banco principal_db (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1071)
+
+## [3.1.2] - 2025-11-10
+
+### Adicionado
+
+- Adiciona verificação da captura das tabelas `gratuidade`, `estudante` e `laudo_pcd` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1037)
+- Cria parâmetro `final_timestamp_exclusive` para o teste de captura (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1037)
+
+## [3.1.1] - 2025-11-06
+
+### Corrigido
+
+- Corrige query de captura de gratuidades (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1035)
+
 ## [3.1.0] - 2025-11-05
 
 ### Adicionado

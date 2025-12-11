@@ -1,5 +1,11 @@
 # Changelog - treatment
 
+## [1.2.4] - 2025-11-19
+
+### Adicionado
+
+- Adiciona parâmetro `test_webhook_key` na função de criação da materialização genérica (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1066)
+
 ## [1.2.3] - 2025-10-05
 
 ### Adicionado

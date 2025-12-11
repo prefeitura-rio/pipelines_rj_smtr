@@ -61,6 +61,7 @@
 with
     laudo_pcd as (
         select
+            id as id_laudo_pcd,
             cast(cd_cliente as int64) as id_cliente,
             deficiencia_permanente,
             data_inclusao as datetime_inclusao,
@@ -75,6 +76,7 @@ with
         {% if is_incremental() and partitions | length > 0 %}
             union all
             select
+                id_laudo_pcd,
                 id_cliente,
                 deficiencia_permanente,
                 datetime_inclusao,
@@ -90,7 +92,7 @@ with
         from dados_completos
         qualify
             row_number() over (
-                partition by id_cliente, datetime_inclusao
+                partition by id_cliente, id_laudo_pcd
                 order by datetime_captura desc, priority
             )
             = 1
@@ -127,7 +129,8 @@ with
         from inicio_validade
     )
 select
-    concat(id_cliente, '-', datetime_inclusao) as id_unico,
+    concat(id_cliente, '-', id_laudo_pcd) as id_unico,
+    id_laudo_pcd,
     id_cliente,
     row_number() over (
         partition by id_cliente order by datetime_inicio_validade

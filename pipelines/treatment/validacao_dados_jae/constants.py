@@ -17,7 +17,7 @@ class constants(Enum):  # pylint: disable=c0103
 
     VALIDACAO_DADOS_JAE_SELECTOR = DBTSelector(
         name="validacao_dados_jae",
-        schedule_cron=create_daily_cron(hour=10),
+        schedule_cron=create_daily_cron(hour=12),
         initial_datetime=datetime(2024, 12, 30, 0, 0, 0),
     )
 

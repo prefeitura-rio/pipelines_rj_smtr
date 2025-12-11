@@ -5,7 +5,7 @@ models:
     description: "Dados diários das linhas presentes no município"
     columns:
       - name: DATA
-        description: "Data da ordem de serviço"
+        description: "{{ doc('data_ordem_servico') }}"
       - name: tipo_dia
         description: "{{ doc('tipo_dia') }}"
       - name: servico

@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de bilhetagem
 
-DBT: 2025-11-03
+DBT: 2025-12-10
 """
 from datetime import datetime, time, timedelta
 
@@ -34,6 +34,7 @@ TRANSACAO_MATERIALIZACAO = create_default_materialization_flow(
         if s.table_id in ["gratuidade", "escola", "laudo_pcd", "estudante"]
     ],
     post_tests=constants.TRANSACAO_DAILY_TEST.value,
+    test_webhook_key=jae_constants.ALERT_WEBHOOK.value,
     test_scheduled_time=time(12, 15, 0),
     skip_if_running_tolerance=10,
 )
@@ -49,6 +50,7 @@ INTEGRACAO_MATERIALIZACAO = create_default_materialization_flow(
         jae_constants.INTEGRACAO_SOURCE.value,
     ]
     + [s for s in jae_constants.ORDEM_PAGAMENTO_SOURCES.value if s.table_id in ["ordem_rateio"]],
+    test_webhook_key=jae_constants.ALERT_WEBHOOK.value,
     post_tests=constants.INTEGRACAO_DAILY_TEST.value,
 )
 
@@ -87,6 +89,7 @@ PASSAGEIRO_HORA_MATERIALIZACAO = create_default_materialization_flow(
     selector=constants.PASSAGEIRO_HORA_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[constants.TRANSACAO_SELECTOR.value],
+    test_webhook_key=jae_constants.ALERT_WEBHOOK.value,
     post_tests=constants.PASSAGEIRO_HORA_DAILY_TEST.value,
     test_scheduled_time=time(0, 25, 0),
 )
@@ -141,6 +144,7 @@ TRANSACAO_VALOR_ORDEM_MATERIALIZACAO = create_default_materialization_flow(
         constants.TRANSACAO_SELECTOR.value,
         constants.INTEGRACAO_SELECTOR.value,
     ],
+    test_webhook_key=jae_constants.ALERT_WEBHOOK.value,
     post_tests=constants.TRANSACAO_VALOR_ORDEM_DAILY_TEST.value,
 )
 

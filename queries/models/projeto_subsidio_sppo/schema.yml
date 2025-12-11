@@ -33,6 +33,9 @@ models:
           name: check_km_planejada__viagem_planejada
       - check_partidas_planejadas:
           name: check_partidas_planejadas__viagem_planejada
+      - test_tecnologia_servico_planejado:
+          name: test_tecnologia_servico_planejado__viagem_planejada
+          where: "data BETWEEN greatest(date('{date_range_start}'), date('{DATA_SUBSIDIO_V16_INICIO}')) and date('{date_range_end}')"
     columns:
       - name: data
         description: "{{ doc('data') }}"
@@ -46,12 +49,6 @@ models:
         tests:
           - not_null:
               name: not_null__servico__viagem_planejada
-          - dbt_utils.relationships_where:
-              name: dbt_utils.relationships_where__servico__viagem_planejada
-              to: ref('tecnologia_servico')
-              field: servico
-              to_condition: "inicio_vigencia <= date('{{ var('date_range_end') }}') and (fim_vigencia is null OR fim_vigencia >= date('{{ var('date_range_start') }}'))"
-              where: "data BETWEEN greatest(date('{date_range_start}'), date('{DATA_SUBSIDIO_V16_INICIO}')) and date('{date_range_end}')"
       - name: vista
         description: "Itinerário do serviço [ex: Bananal ↔ Saens Peña]"
         tests:

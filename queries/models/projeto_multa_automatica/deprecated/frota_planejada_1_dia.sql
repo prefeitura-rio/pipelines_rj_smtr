@@ -1,0 +1,19 @@
+{{
+    config(
+        materialized="view",
+    )
+}}
+
+select
+    data,
+    linha,
+    45.0 as frota_planejada,
+    case
+        when hora between 5 and 8 then "manhã" when hora between 16 and 19 then "noite"
+    end as pico,
+from `rj-smtr.br_rj_riodejaneiro_onibus_gps.registros_agg_data_hora_linha` as t
+where
+    (t.hora between 5 and 8 or t.hora between 16 and 19)
+    and t.data = date_sub(current_date(), interval 1 day)
+group by pico, data, linha
+order by linha

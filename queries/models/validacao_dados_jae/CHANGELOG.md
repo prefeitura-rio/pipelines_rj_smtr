@@ -1,5 +1,16 @@
 # Changelog - validacao_dados_jae
 
+## [3.1.1] - 2025-11-10
+
+### Adicionado
+
+- Adiciona colunas no modelo `transacao_invalida.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1038):
+  - `indicador_processamento_anterior_transacao`
+  - `indicador_integracao_fora_tabela`
+  - `versao`
+  - `datetime_ultima_atualizacao`
+  - `id_execucao_dbt`
+
 ## [3.1.0] - 2025-10-13
 
 ### Adicionado

@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: operacao_sppo_infracao
+    description: "Tabela histórica de todas as multas aplicadas aos modos de transporte no município do Rio de Janeiro, com qualquer situação"
+    columns:
+      - name: data
+        description: "{{ doc('data_captura') }} [partição]"
+      - name: timestamp_captura
+        description: "{{ doc('timestamp_captura_infracao') }}"
+      - name: modo
+        description: "{{ doc('modo_onibus') }}"
+      - name: permissao
+        description: "{{ doc('permissao') }}"
+      - name: placa
+        description: "{{ doc('placa') }}"
+      - name: id_auto_infracao
+        description: "{{ doc('id_auto_infracao') }}"
+      - name: data_infracao
+        description: "{{ doc('data_infracao') }}"
+      - name: valor
+        description: "{{ doc('valor') }}"
+      - name: id_infracao
+        description: "{{ doc('id_infracao') }}"
+      - name: infracao
+        description: "{{ doc('infracao') }}"
+      - name: status
+        description: "{{ doc('status_veiculo_infracao') }}"
+      - name: data_pagamento
+        description: "{{ doc('data_pagamento') }}"

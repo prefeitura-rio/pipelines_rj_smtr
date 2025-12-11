@@ -782,6 +782,7 @@ def get_capture_gaps(
         timestamp_column=timestamp_column,
         timestamp_captura_start=timestamp_captura_start,
         timestamp_captura_end=timestamp_captura_end,
+        final_timestamp_exclusive=params["final_timestamp_exclusive"],
     )
 
     primary_keys = params.get("primary_keys")

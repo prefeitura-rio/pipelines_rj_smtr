@@ -61,6 +61,7 @@ with
             t.modo,
             t.tipo_documento_cliente,
             t.documento_cliente,
+            a.numero_matricula,
             c.nome as nome_cliente,
             t.tipo_transacao,
             t.tipo_transacao_jae,

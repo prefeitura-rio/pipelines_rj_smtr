@@ -166,10 +166,21 @@ sources:
       - name: rdo_correcao_rioonibus_servico_quinzena
 
   - name: br_rj_riodejaneiro_geo
-    database: rj-smtr
+    database: rj-smtr-staging
 
     tables:
       - name: h3_res9
+      - name: h3_res8
+      - name: limites_geograficos_caixa
+      - name: garagens_polygon
+      - name: area_planejamento
+      - name: bairros
+
+  - name: br_rj_riodejaneiro_brt_gps_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: registros_historico
 
   - name: br_rj_riodejaneiro_viagem_zirix_staging
     database: rj-smtr-staging
@@ -302,24 +313,12 @@ sources:
       - name: matriz_integracao_excecao
       - name: dicionario_subsidio
 
-  - name: subsidio_staging
-    database: rj-smtr
-
-    tables:
-      - name: valor_km_tipo_viagem
-
   - name: planejamento_staging
     database: rj-smtr-staging
 
     tables:
       - name: tecnologia_servico
       - name: tuneis
-
-  - name: cloudcosts
-    database: rj-smtr
-
-    tables:
-      - name: cloud_pricing_export
 
   - name: infraestrutura_staging
     database: rj-smtr-staging
@@ -456,3 +455,35 @@ sources:
       - name: detalhe_a
       - name: dicionario
       - name: teste_sincronizacao_transacao_cct
+
+  - name: source_stu
+    database: rj-smtr-staging
+
+    tables:
+      - name: pessoa_fisica
+      - name: permissao
+      - name: vistoria
+      - name: veiculo
+      - name: mod_chassi
+      - name: mod_carroceria
+      - name: planta
+
+  - name: projeto_subsidio_sppo_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: ordem_servico
+
+  - name: br_rj_riodejaneiro_transporte_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: estacoes_e_terminais_brt
+      - name: terminais_onibus_coordenadas
+
+  - name: subsidio_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: servico_contrato_abreviado
+      - name: valor_km_tipo_viagem

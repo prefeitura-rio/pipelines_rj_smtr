@@ -3,7 +3,8 @@
 """
 Flows for projeto_subsidio_sppo
 
-DBT: 2025-10-28
+DBT  2025-12-09
+
 """
 
 from datetime import datetime
@@ -316,7 +317,7 @@ with Flow(
             SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt(
                 resource="test",
                 dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
-                exclude="dashboard_subsidio_sppo_v2 teto_viagens__viagens_remuneradas not_null__data_ordem__transacao",  # noqa
+                exclude="dashboard_subsidio_sppo_v2 teto_viagens__viagens_remuneradas not_null__data_ordem__transacao sincronizacao_tabelas__transacao_gratuidade_estudante_municipal",  # noqa
                 _vars=dbt_vars,
                 upstream_tasks=[timestamps],
             )
@@ -630,7 +631,7 @@ with Flow(
         SUBSIDIO_SPPO_DATA_QUALITY_PRE = run_dbt(
             resource="test",
             dataset_id=constants.SUBSIDIO_SPPO_PRE_TEST.value,
-            exclude="dashboard_subsidio_sppo_v2 teto_viagens__viagens_remuneradas not_null__data_ordem__transacao",  # noqa
+            exclude="dashboard_subsidio_sppo_v2 teto_viagens__viagens_remuneradas not_null__data_ordem__transacao sincronizacao_tabelas__transacao_gratuidade_estudante_municipal",  # noqa
             _vars=dbt_vars,
         ).set_upstream(task=send_discord_message)
 
