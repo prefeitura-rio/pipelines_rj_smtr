@@ -36,6 +36,9 @@ class constants(Enum):  # pylint: disable=c0103
     STU_VEICULO_TABLE_ID = "veiculo"
     STU_VEICULO_ATIVO_TABLE_ID = "veiculo_ativo"
     STU_VISTORIA_TABLE_ID = "vistoria"
+    STU_GUIA_TABLE_ID = "guia"
+    STU_PERMIS_EMPRESA_ESCOLA_TABLE_ID = "permissao_empresa_escola"
+    STU_MODELO_TABLE_ID = "modelo"
 
     STU_TABLE_CAPTURE_PARAMS = {
         STU_COMBUSTIVEL_TABLE_ID: {
@@ -91,6 +94,18 @@ class constants(Enum):  # pylint: disable=c0103
         },
         STU_VISTORIA_TABLE_ID: {
             "primary_keys": ["id_vistoria", "anoexe"],
+        },
+        STU_GUIA_TABLE_ID: {
+            "primary_keys": ["guia"],
+            "first_timestamp": datetime(2025, 12, 5, 0, 0, 0),
+        },
+        STU_PERMIS_EMPRESA_ESCOLA_TABLE_ID: {
+            "primary_keys": ["tptran", "tpperm", "termo"],
+            "first_timestamp": datetime(2025, 12, 5, 0, 0, 0),
+        },
+        STU_MODELO_TABLE_ID: {
+            "primary_keys": ["cod_modelo"],
+            "first_timestamp": datetime(2025, 12, 5, 0, 0, 0),
         },
     }
 
