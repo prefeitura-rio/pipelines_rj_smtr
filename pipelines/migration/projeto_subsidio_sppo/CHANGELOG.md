@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- adicionado o teste `sincronizacao_tabelas__transacao_gratuidade_estudante_municipal` ao exclude do pre teste do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Adiciona o teste `sincronizacao_tabelas__transacao_gratuidade_estudante_municipal` ao exclude do pré teste do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1101)
 
 ## [1.3.5] - 2025-10-24
 
