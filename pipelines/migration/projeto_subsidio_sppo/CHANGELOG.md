@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.3.6] - 2025-12-10
+
+### Alterado
+
+- Adiciona o teste `sincronizacao_tabelas__transacao_gratuidade_estudante_municipal` ao exclude do pré teste do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1101)
+
 ## [1.3.5] - 2025-10-24
 
 ### Adicionado
