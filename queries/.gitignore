@@ -5,3 +5,4 @@ logs/
 *dev/
 target-base/
 package-lock.yml
+dbt_internal_packages/
