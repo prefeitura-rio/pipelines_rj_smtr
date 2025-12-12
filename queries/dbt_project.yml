@@ -554,3 +554,21 @@ models:
       deprecated:
         +materialized: view
         +schema: brt_manutencao
+    indicador_interno:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: indicador_interno
+      +description: "Indicadores Internos"
+      +partition_by:
+        field: "data_inicial_mes"
+        data_type: "date"
+        granularity: "day"
+      staging:
+        +materialized: incremental
+        +incremental_strategy: insert_overwrite
+        +schema: indicador_interno_staging
+        +description: "Indicadores Internos [Tratamento]"
+        +partition_by:
+          field: "data"
+          data_type: "date"
+          granularity: "day"
