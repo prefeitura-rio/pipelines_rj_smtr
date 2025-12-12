@@ -55,6 +55,12 @@ with
                 "{{ var('end_date') }}"
             )
             and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+        {% if target.name in ("dev", "hmg") %}
+            union all by name
+            select *
+            from {{ ref("viagem_completa") }}
+            where data = date_sub(date("{{ var('start_date') }}"), interval 1 day)
+        {% endif %}
     ),
     -- Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
     -- limitada pela viagem anterior
