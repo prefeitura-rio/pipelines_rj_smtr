@@ -40,7 +40,7 @@ with
         [Temporário enquanto não for reprocessado desde Abril/2025]
     */
     veiculo_licenciamento_dia_backup as (
-        select data, data_processamento, id_veiculo, ano_fabricacao
+        select data, data_processamento, id_veiculo, ano_fabricacao, placa
         from `rj-smtr-dev`.`cadastro`.`veiculo_licenciamento_dia_2025_07_24`
         where
             data
@@ -52,7 +52,7 @@ with
         Dados de licenciamento dos veículos por dia em produção [Após 2025-07-24]
     */
     veiculo_licenciamento_dia_prod as (
-        select data, data_processamento, id_veiculo, ano_fabricacao
+        select data, data_processamento, id_veiculo, ano_fabricacao, placa
         from {{ ref("veiculo_licenciamento_dia") }}
         where
             data >= "{{ var('DATA_SUBSIDIO_V13_INICIO') }}"
@@ -82,12 +82,13 @@ with
             id_veiculo,
             tipo_veiculo,
             ano_fabricacao,
+            placa,
             safe_cast(
                 json_value(
                     indicadores,
                     '$.indicador_licenciado.data_processamento_licenciamento'
                 ) as date
-            ) as data_processamento
+            ) as data_processamento,
         from {{ ref("veiculo_dia") }}
         where
             data >= date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
@@ -100,7 +101,7 @@ with
         [Entre 2025-01-01 e 2025-03-31]
     */
     veiculo_v1 as (
-        select svd.data, svd.id_veiculo, tipo_veiculo, ano_fabricacao,
+        select svd.data, svd.id_veiculo, tipo_veiculo, ano_fabricacao, l.placa
         from {{ ref("sppo_veiculo_dia") }} as svd
         left join {{ ref("licenciamento_data_versao_efetiva") }} as ldvf using (data)
         left join
@@ -121,7 +122,8 @@ with
             data,
             id_veiculo,
             tipo_veiculo,
-            coalesce(vd.ano_fabricacao, vld.ano_fabricacao) as ano_fabricacao
+            coalesce(vd.ano_fabricacao, vld.ano_fabricacao) as ano_fabricacao,
+            coalesce(vd.placa, vld.placa) as placa
         from veiculo_dia as vd
         left join
             veiculo_licenciamento_dia as vld using (
@@ -144,12 +146,7 @@ with
         Une os dados de veículos com os dados de viagens completas e aplica os filtros de tipo e ano de fabricação
     */
     veiculo_viagem as (
-        select
-            extract(year from data) as ano,
-            extract(month from data) as mes,
-            date_trunc(data, month) as data_inicial_mes,
-            last_day(data, month) as data_final_mes,
-            *
+        select *
         from viagem_completa
         left join veiculo_raw using (data, id_veiculo)
         where
@@ -165,6 +162,8 @@ with
 select
     data,
     id_veiculo,
+    placa,
+    ano_fabricacao,
     ano_fabricacao >= 2023 as indicador_euro_vi,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
