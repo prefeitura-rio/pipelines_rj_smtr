@@ -159,6 +159,10 @@ models:
         description: "{{ doc('id_transacao') }}"
         data_type: string
         quote: true
+        tests:
+          - unique:
+              name: unique__id_transacao__integracao_nao_realizada
+              where: data in ({partitions})
       - name: datetime_transacao
         description: "{{ doc('datetime_transacao') }}"
         data_type: datetime
@@ -250,6 +254,10 @@ models:
       - name: valor_transacao
         description: "{{ doc('valor_transacao') }}"
         data_type: float64
+        quote: true
+      - name: classificacao_integracao_nao_realizada
+        description: "Classificação da falha no processo de integração"
+        data_type: string
         quote: true
       - name: versao
         description: "{{ doc('versao') }}"
