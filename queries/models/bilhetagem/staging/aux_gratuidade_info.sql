@@ -130,6 +130,7 @@ with
             g.id_gratuidade,
             g.id_cliente_gratuidade,
             g.tipo_gratuidade,
+            e.numero_matricula,
             e.codigo_escola,
             e.nome_escola,
             e.rede_ensino,
@@ -153,6 +154,7 @@ with
             g.id_gratuidade,
             g.id_cliente_gratuidade,
             g.tipo_gratuidade,
+            cast(null as string) as numero_matricula,
             cast(null as string) as codigo_escola,
             cast(null as string) as nome_escola,
             cast(null as string) as rede_ensino,
@@ -186,9 +188,6 @@ with
         from gratuidade_estudante_completo
         where
             datetime_inicio_validade_gratuidade < datetime_fim_validade_gratuidade
-            or datetime_fim_validade_gratuidade is null
-        qualify
-            datetime_inicio_validade_gratuidade != datetime_fim_validade_gratuidade
             or datetime_fim_validade_gratuidade is null
     ),
     gratuidade_saude_com_cadastro as (
@@ -249,9 +248,6 @@ with
         where
             datetime_inicio_validade_gratuidade < datetime_fim_validade_gratuidade
             or datetime_fim_validade_gratuidade is null
-        qualify
-            datetime_inicio_validade_gratuidade != datetime_fim_validade_gratuidade
-            or datetime_fim_validade_gratuidade is null
     ),
     outras_gratuidades as (
         select
@@ -272,6 +268,7 @@ with
             id_gratuidade,
             id_cliente_gratuidade,
             tipo_gratuidade,
+            numero_matricula,
             codigo_escola,
             nome_escola,
             rede_ensino,
@@ -290,6 +287,7 @@ with
             id_gratuidade,
             id_cliente_gratuidade,
             tipo_gratuidade,
+            cast(null as string) as numero_matricula,
             cast(null as string) as codigo_escola,
             cast(null as string) as nome_escola,
             cast(null as string) as rede_ensino,
@@ -308,6 +306,7 @@ with
             id_gratuidade,
             id_cliente_gratuidade,
             tipo_gratuidade,
+            cast(null as string) as numero_matricula,
             cast(null as string) as codigo_escola,
             cast(null as string) as nome_escola,
             cast(null as string) as rede_ensino,
@@ -318,22 +317,14 @@ with
             2 as priority
         from outras_gratuidades
     ),
-    gratuidade_filtrada as (
-        select * except (priority)
-        from union_gratuidade
-        qualify
-            row_number() over (
-                partition by id_cliente, datetime_inicio_validade order by priority
-            )
-            = 1
-    ),
     nova_validade as (
         select
-            * except (datetime_fim_validade),
+            * except (datetime_fim_validade, priority),
             lead(datetime_inicio_validade) over (
-                partition by id_cliente order by datetime_inicio_validade
+                partition by id_cliente
+                order by datetime_inicio_validade, priority, id_unico
             ) as datetime_fim_validade
-        from gratuidade_filtrada
+        from union_gratuidade
     )
 select *
 from nova_validade

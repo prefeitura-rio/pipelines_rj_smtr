@@ -62,7 +62,7 @@ with
                     and data_processamento between "2025-09-01" and "2025-09-25"
                 )
                 or (  -- Exceção para tratamento da data_ultima_vistoria [Troca placa Mercosul]
-                    data_processamento = date("2025-11-13")
+                    data_processamento between "2025-07-10" and "2025-12-04"
                     and (
                         (
                             data between "2025-07-10" and "2025-07-20"
@@ -74,6 +74,10 @@ with
                         )
                     )
                 )
+                or (
+                    data between "2025-11-01" and "2025-11-30"  -- Exceção para ajuste na tecnologia MTR-CAP-2025/59482
+                    and data_processamento between "2025-11-01" and "2025-12-10"
+                )
             )
             {% if is_incremental() %}
                 and data between date("{{ var('date_range_start') }}") and date(
@@ -83,7 +87,7 @@ with
             {% endif %}
         qualify
             row_number() over (
-                partition by data, id_veiculo, placa order by data_processamento desc
+                partition by data, id_veiculo order by data_processamento desc
             )
             = 1
     ),

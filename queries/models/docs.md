@@ -1516,3 +1516,7 @@ Valor geográfico da longitude do ponto.
 {% docs hora %}
 Horário do registro
 {% enddocs %}
+
+{% docs datetime_gps %}
+Data e hora de geração da transmissão do GPS [GMT-3]
+{% enddocs %}

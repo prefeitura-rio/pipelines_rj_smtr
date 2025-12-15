@@ -14,7 +14,7 @@ models:
       - name: hora
         description: "{{ doc('hora_captura') }}"
       - name: datetime_gps
-        description: "{{ doc('timestamp_gps') }}"
+        description: "{{ doc('datetime_gps') }}"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: servico

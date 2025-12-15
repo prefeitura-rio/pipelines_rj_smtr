@@ -41,7 +41,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "tracking_db": {
             "engine": "postgresql",
-            "host": "10.5.14.235",
+            "host": "10.5.12.106",
         },
         "ressarcimento_db": {
             "engine": "postgresql",
@@ -968,6 +968,9 @@ class constants(Enum):  # pylint: disable=c0103
                 "estudante_seeduc_27062025",
                 "estudante_seeduc_07082025",
                 "estudante_universitario_10092025",
+                "estudante_seeduc_22102025",
+                "temp_estudante_seeduc_inativos_02122025",
+                "estudante_universitario_24112025",
             ],
             "filter": {
                 "lancamento_conta_gratuidade": ["data_inclusao"],
@@ -1095,6 +1098,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "temp_midia_limbo_09072025",
                 "temp_uids_01",
                 "temp_cartoes_duplicados_14082025",
+                "temp_limbo_25102025",
             ],
             "filter": {
                 "midia_evento": ["dt_inclusao"],

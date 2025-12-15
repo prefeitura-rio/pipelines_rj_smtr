@@ -1,5 +1,16 @@
 # Changelog - bilhetagem_interno
 
+## [1.1.9] - 2025-12-10
+
+### Adicionado
+
+- Adiciona coluna `numero_matricula` nos modelos `aux_gratuidade_info.sql` e `transacao_gratuidade_estudante_municipal.sql`
+- Adiciona coluna `id_unico_lancamento` no modelo `extrato_cliente_cartao.sql`
+
+### Alterado
+
+- Altera deduplicação no modelo `extrato_cliente_cartao.sql`
+
 ## [1.1.8] - 2025-11-03
 
 ### Adicionado
