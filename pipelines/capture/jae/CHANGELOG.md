@@ -4,11 +4,11 @@
 
 ### Adicionado
 
-- Adiciona tabelas no exclude do backup dos dados da BillingPay
+- Adiciona tabelas no exclude do backup dos dados da BillingPay ((https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1111)
 
 ### Alterado
 
-- Altera delay de captura da tabela lancamento para 24h
+- Altera delay de captura da tabela lancamento para 24h ((https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1111)
 
 ## [3.1.5] - 2025-12-08
 
