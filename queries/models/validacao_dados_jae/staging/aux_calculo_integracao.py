@@ -24,8 +24,6 @@ def model(dbt, session):
         modo_destino,
         servico_origem,
         servico_destino,
-        sentido_destino,
-        servico_sentido_list,
         datetime_inicio_integracao,
         datetime_transacao,
     ):
@@ -34,7 +32,7 @@ def model(dbt, session):
             - datetime.fromisoformat(datetime_inicio_integracao)
         ).total_seconds() / 60
 
-        return f"{servico_destino}_{sentido_destino}" not in servico_sentido_list and not (
+        return not (
             df_matriz_integracao[
                 (df_matriz_integracao["modo_integracao_origem"] == integracao_origem)
                 & (df_matriz_integracao["modo_destino"] == modo_destino)
@@ -97,7 +95,6 @@ def model(dbt, session):
         integracao_origem = ""
         modo_origem = ""
         servico_origem = ""
-        servico_sentido_list = []
         id_integracao = ""
         sequencia_integracao_origem = 0
         datetime_transacao_anterior = None
@@ -117,7 +114,6 @@ def model(dbt, session):
                 novo_row.append(datetime_inicio_integracao)
 
                 integracao_origem = row.modo_join
-                servico_sentido_list.append(f"{row.id_servico_jae}_{row.sentido}")
 
             elif is_transferencia(
                 modo_origem=modo_origem,
@@ -144,8 +140,6 @@ def model(dbt, session):
                 modo_destino=row.modo_join,
                 servico_origem=servico_origem,
                 servico_destino=row.id_servico_jae,
-                sentido_destino=row.sentido,
-                servico_sentido_list=servico_sentido_list,
                 datetime_inicio_integracao=datetime_inicio_integracao,
                 datetime_transacao=row.datetime_transacao,
             ):
@@ -157,7 +151,6 @@ def model(dbt, session):
 
                 integracao_origem += f"-{row.modo_join}"
 
-                servico_sentido_list.append(f"{row.id_servico_jae}_{row.sentido}")
                 flag_transferencia = False
                 datetime_inicio_transferencia = None
 
@@ -165,7 +158,6 @@ def model(dbt, session):
                 sequencia_integracao = 1
                 id_integracao = row.id_transacao
                 datetime_inicio_integracao = row.datetime_transacao
-                servico_sentido_list = []
                 integracao_origem = row.modo_join
                 novo_row.append(id_integracao)
                 novo_row.append(sequencia_integracao)

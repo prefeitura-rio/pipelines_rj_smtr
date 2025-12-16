@@ -99,8 +99,12 @@ with
             from {{ this }} o
             left join integracao_filtrada n using (id_transacao)
             where
-                o.data in ({{ partitions | join(", ") }})
-                or o.data in ({{ adjacent_partitions | join(", ") }})
+                (
+                    o.data in ({{ partitions | join(", ") }})
+                    or o.data in ({{ adjacent_partitions | join(", ") }})
+                )
+                and o.id_integracao
+                not in (select id_integracao from integracao_filtrada)
             qualify max(n.id_transacao is null) over (partition by id_integracao)
 
         {% endif %}
