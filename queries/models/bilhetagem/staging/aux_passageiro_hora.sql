@@ -50,14 +50,17 @@ select
     "RioCard" as tipo_usuario,
     "RioCard" as meio_pagamento,
     st_geogpoint(t.longitude, t.latitude) as geo_point_transacao,
-    case
-        when t.data < "2025-08-02"
-        then null
-        when t.sentido = "0"
-        then lt.tarifa_ida
-        when t.sentido = "1"
-        then lt.tarifa_volta
-    end as valor_pagamento,
+    (
+        case
+            when t.data < "2025-08-02"
+            then null
+            when t.sentido = "0"
+            then lt.tarifa_ida
+            when t.sentido = "1"
+            then lt.tarifa_volta
+        end
+    )
+    / 0.96 as valor_pagamento,
 from {{ ref("transacao_riocard") }} t
 left join
     {{ ref("aux_linha_tarifa") }} lt
