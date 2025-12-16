@@ -15,6 +15,7 @@ VALIDACAO_DADOS_JAE_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="validacao_dados_jae - materializacao",
     selector=constants.VALIDACAO_DADOS_JAE_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    post_tests=constants.VALIDACAO_DADOS_JAE_DAILY_TEST.value,
     wait=[
         bilhetagem_constants.TRANSACAO_SELECTOR.value,
         bilhetagem_constants.INTEGRACAO_SELECTOR.value,
