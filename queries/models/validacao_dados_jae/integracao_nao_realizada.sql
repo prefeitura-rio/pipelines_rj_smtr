@@ -135,7 +135,7 @@ with
                 then c.array_classificacao[0]
                 when (array_length(c.array_classificacao) = 3)
                 then
-                    'Integração realizada parcialmente e incompleta da tabela integracao'
+                    'Integração realizada parcialmente e incompleta na tabela integracao'
                 when
                     'Integração não realizada' in unnest(c.array_classificacao)
                     and 'Integração realizada fora da tabela integracao'
@@ -151,7 +151,7 @@ with
                     in unnest(c.array_classificacao)
                     and 'Integração realizada e incompleta na tabela integracao'
                     in unnest(c.array_classificacao)
-                then 'Integração realizada e incompleta da tabela integracao'
+                then 'Integração realizada e incompleta na tabela integracao'
             end as classificacao_integracao_nao_realizada,
             '{{ var("version") }}' as versao,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
