@@ -16,7 +16,7 @@ select
     tipo_usuario,
     meio_pagamento,
     geo_point_transacao,
-    valor_pagamento
+    valor_pagamento / 0.96 as valor_pagamento
 from {{ ref("transacao") }}
 where
     id_servico_jae not in ("140", "142")
