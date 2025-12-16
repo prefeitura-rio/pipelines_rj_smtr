@@ -1,5 +1,20 @@
 # Changelog - validacao_dados_jae
 
+## [3.1.2] - 2025-12-15
+
+### Adicionado
+
+- Adiciona coluna `classificacao_integracao_nao_realizada` no modelo `integracao_nao_realizada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1110)
+
+### Removido
+
+- Remove regra de serviço e sentido igual no modelo `aux_calculo_integracao.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1110)
+
+### Corrigido
+
+- Corrige incremental dos modelos `aux_integracao_calculada.sql` e `integracao_nao_realizada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1110)
+
+
 ## [3.1.1] - 2025-11-10
 
 ### Adicionado
