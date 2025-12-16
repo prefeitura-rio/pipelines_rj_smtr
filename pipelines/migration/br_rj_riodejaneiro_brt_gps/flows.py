@@ -193,7 +193,7 @@ with Flow(
 captura_brt.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 captura_brt.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
-    labels=[smtr_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
+    labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 captura_brt.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 captura_brt.schedule = every_minute
