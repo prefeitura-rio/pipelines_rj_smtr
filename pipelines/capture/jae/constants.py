@@ -229,7 +229,7 @@ class constants(Enum):  # pylint: disable=c0103
 
             """,
             "database": "financeiro_db",
-            "capture_delay_minutes": {"0": 5},
+            "capture_delay_minutes": {"0": 5, "2025-12-12 22:53:00": 1440},
         },
         "linha": {
             "query": """
@@ -795,6 +795,8 @@ class constants(Enum):  # pylint: disable=c0103
                 "temp_logistica_limbo_25102025",
                 "temp_cartoes_transferidos_valorados_18112025",
                 "temp_vt_limbo_24102025",
+                "temp_estudante_05122025",
+                "temp_midias_transferidas_04122025",
             ],
             "filter": {
                 "ITEM_PEDIDO": ["DT_INCLUSAO"],
