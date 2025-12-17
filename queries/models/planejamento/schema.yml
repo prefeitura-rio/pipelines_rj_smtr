@@ -596,3 +596,51 @@ models:
         description: "Geometria do túnel em formato WKT"
       - name: geometry
         description: "Geometria do túnel em formato geográfico"
+  - name: ordem_servico_faixa_horaria_sentido
+    description: "Quantidade de viagens planejadas por faixa horária"
+    # tests:
+    #   - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+    #       name: dbt_expectations.expect_table_aggregation_to_equal_other_table__ordem_servico_faixa_horaria
+    #       expression: count(distinct tipo_os)
+    #       compare_model: ref("ordem_servico_gtfs")
+    #       compare_expression: count(distinct tipo_os)
+    #       group_by: [ feed_start_date, tipo_os ]
+    #       compare_group_by: [ feed_start_date, tipo_os ]
+    #       row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+    #       compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+    #       where: "feed_start_date < date('{DATA_GTFS_V2_INICIO}')"
+    columns:
+      - name: feed_version
+        description: "{{ doc('feed_version') }}"
+      - name: feed_start_date
+        description: "{{ doc('feed_start_date') }}"
+      - name: feed_end_date
+        description: "{{ doc('feed_end_date') }}"
+      - name: tipo_os
+        description: "{{ doc('tipo_os') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: vista
+        description: "{{ doc('vista') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}" # verificar
+      - name: extensao
+        description: "Distância percorrida"
+      - name: tipo_dia
+        description: "{{ doc('tipo_dia') }}"
+      - name: faixa_horaria_inicio
+        description: "{{ doc('faixa_horaria_inicio') }}"
+      - name: faixa_horaria_fim
+        description: "{{ doc('faixa_horaria_fim') }}"
+      - name: partidas
+        description: "{{ doc('partidas') }}"
+      - name: quilometragem
+        description: "{{ doc('quilometragem') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
