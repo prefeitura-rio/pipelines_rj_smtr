@@ -82,7 +82,13 @@ with
         {% if is_incremental() and partitions | length > 0 %}
             union all
 
-            select o.* except (versao, datetime_ultima_atualizacao, id_execucao_dbt)
+            select
+                o.* except (
+                    classificacao_integracao_nao_realizada,
+                    versao,
+                    datetime_ultima_atualizacao,
+                    id_execucao_dbt
+                )
             from {{ this }} o
             left join integracao_transferencia_calculada n using (id_transacao)
             where
