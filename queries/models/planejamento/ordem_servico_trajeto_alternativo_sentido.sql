@@ -46,7 +46,7 @@ select
     tipo_os,
     servico,
     consorcio,
-    sentido
+    sentido,
     vista,
     ativacao,
     case
