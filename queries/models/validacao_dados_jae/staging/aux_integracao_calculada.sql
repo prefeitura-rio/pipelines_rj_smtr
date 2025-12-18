@@ -105,7 +105,8 @@ with
                 )
                 and o.id_integracao
                 not in (select id_integracao from integracao_filtrada)
-            qualify max(n.id_transacao is null) over (partition by id_integracao)
+            qualify
+                not max(n.id_transacao is not null) over (partition by o.id_integracao)
 
         {% endif %}
     )
