@@ -42,7 +42,9 @@ with
     autuacao_ids as (
         select data, id_autuacao, id_auto_infracao, fonte
         from {{ ref("aux_autuacao_id") }}
-        {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
+        {% if is_incremental() and partitions | length > 0 %}
+            where data in ({{ partitions | join(", ") }})
+        {% endif %}
     ),
     citran as (
         select
@@ -105,6 +107,14 @@ with
             safe_cast(null as string) as uf_principal_condutor,
             if(uf_proprietario != "", uf_proprietario, null) as uf_proprietario,
             if(cep_proprietario != "", cep_proprietario, null) as cep_proprietario,
+            safe_cast(null as string) as nome_possuidor_veiculo,
+            safe_cast(null as string) as documento_possuidor_veiculo,
+            safe_cast(null as string) as cnh_possuidor_veiculo,
+            safe_cast(null as string) as endereco_possuidor_veiculo,
+            safe_cast(null as string) as bairro_possuidor_veiculo,
+            safe_cast(null as string) as municipio_possuidor_veiculo,
+            safe_cast(null as string) as cep_possuidor_veiculo,
+            safe_cast(null as string) as uf_possuidor_veiculo,
             valor_infracao / 100 as valor_infracao,
             valor_pago / 100 as valor_pago,
             data_pagamento,
@@ -211,14 +221,16 @@ with
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
         from {{ ref("autuacao_serpro") }}
         {% if is_incremental() %} where {{ incremental_filter }} {% endif %}
+        qualify
+            row_number() over (
+                partition by id_auto_infracao order by data_atualizacao_dl desc
+            )
+            = 1
     ),
     autuacao as (
         select *
-        from
-            serpro
-        --fmt:off
-         full outer union all by name
-        --fmt:on
+        from serpro
+        union all by name
         select *
         from citran
     ),
