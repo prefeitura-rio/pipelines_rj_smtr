@@ -164,6 +164,14 @@ with
             uf_principal_condutor,
             if(uf_proprietario != "", uf_proprietario, null) as uf_proprietario,
             safe_cast(null as string) as cep_proprietario,
+            nome_possuidor_veiculo,
+            documento_possuidor_veiculo,
+            cnh_possuidor_veiculo,
+            endereco_possuidor_veiculo,
+            bairro_possuidor_veiculo,
+            municipio_possuidor_veiculo,
+            cep_possuidor_veiculo,
+            uf_possuidor_veiculo,
             valor_infracao,
             valor_pago,
             data_pagamento,
@@ -206,10 +214,13 @@ with
     ),
     autuacao as (
         select *
-        from citran
-        union all
+        from
+            serpro
+        --fmt:off
+         full outer union all by name
+        --fmt:on
         select *
-        from serpro
+        from citran
     ),
     complete_partitions as (
         select *
@@ -247,6 +258,14 @@ with
             c.uf_principal_condutor,
             c.uf_proprietario,
             c.cep_proprietario,
+            c.nome_possuidor_veiculo,
+            c.documento_possuidor_veiculo,
+            c.cnh_possuidor_veiculo,
+            c.endereco_possuidor_veiculo,
+            c.bairro_possuidor_veiculo,
+            c.municipio_possuidor_veiculo,
+            c.cep_possuidor_veiculo,
+            c.uf_possuidor_veiculo,
             c.valor_infracao,
             c.valor_pago,
             c.data_pagamento,
@@ -272,5 +291,5 @@ with
             )
             = 1
     )
-select *
+select *, '{{ var("version") }}' as versao, '{{ invocation_id }}' as id_execucao_dbt
 from final
