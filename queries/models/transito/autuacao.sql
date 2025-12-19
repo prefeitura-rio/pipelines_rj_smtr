@@ -105,6 +105,9 @@ with
             end as especie_veiculo,
             safe_cast(null as string) as uf_infrator,
             safe_cast(null as string) as uf_principal_condutor,
+            safe_cast(null as string) as nome_proprietario,
+            safe_cast(null as string) as documento_proprietario,
+            safe_cast(null as string) as cnh_proprietario,
             if(uf_proprietario != "", uf_proprietario, null) as uf_proprietario,
             if(cep_proprietario != "", cep_proprietario, null) as cep_proprietario,
             safe_cast(null as string) as nome_possuidor_veiculo,
@@ -172,6 +175,9 @@ with
             especie_veiculo,
             uf_infrator,
             uf_principal_condutor,
+            nome_proprietario,
+            documento_proprietario,
+            cnh_proprietario,
             if(uf_proprietario != "", uf_proprietario, null) as uf_proprietario,
             safe_cast(null as string) as cep_proprietario,
             nome_possuidor_veiculo,
@@ -239,7 +245,14 @@ with
         from autuacao
         {% if is_incremental() and partitions | length > 0 %}
             union all
-            select * except (id_autuacao, tipificacao_resumida, amparo_legal, versao, id_execucao_dbt)
+            select
+                * except (
+                    id_autuacao,
+                    tipificacao_resumida,
+                    amparo_legal,
+                    versao,
+                    id_execucao_dbt
+                )
             from {{ this }}
             where data in ({{ partitions | join(", ") }})
         {% endif %}
@@ -268,6 +281,9 @@ with
             c.especie_veiculo,
             c.uf_infrator,
             c.uf_principal_condutor,
+            c.nome_proprietario,
+            c.documento_proprietario,
+            c.cnh_proprietario,
             c.uf_proprietario,
             c.cep_proprietario,
             c.nome_possuidor_veiculo,
