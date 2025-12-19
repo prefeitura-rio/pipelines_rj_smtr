@@ -75,6 +75,10 @@ with
                     )
                 )
                 or (
+                    data between "2025-04-01" and "2025-04-30"  -- Reprocessamernto
+                    and data_processamento between "2025-04-01" and "2025-12-09"
+                )
+                or (
                     data between "2025-11-01" and "2025-11-30"  -- Exceção para ajuste na tecnologia MTR-CAP-2025/59482
                     and data_processamento between "2025-11-01" and "2025-12-15"
                 )
@@ -93,13 +97,13 @@ with
     ),
     autuacao_disciplinar as (
         select *
-        from {{ ref("autuacao_disciplinar_historico") }}
+        from `rj-smtr-dev.janaina__reprocessamento__monitoramento.autuacao_disciplinar_historico`
         where
             (
                 data_inclusao_datalake <= date_add(data, interval 7 day)
                 or data_inclusao_datalake
                 = date("{{var('data_inclusao_autuacao_disciplinar')}}")  -- Primeira data de inclusão dos dados de autuações disciplinares
-            )
+            ) and status != "Cancelada"
             {% if is_incremental() %}
                 and data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
