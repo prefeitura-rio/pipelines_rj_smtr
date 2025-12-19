@@ -480,7 +480,7 @@ with
                     )
                 then "BASICO"  -- MTR-CAP-2025/59482
                 when
-                    data between "2025-11-20" and "2025-11-30"
+                    data between "2025-11-20" and "2025-12-15"
                     and id_veiculo in (
                         'A29084',
                         'A29092',

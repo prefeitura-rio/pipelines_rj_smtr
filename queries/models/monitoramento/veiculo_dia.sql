@@ -78,6 +78,10 @@ with
                     data between "2025-11-01" and "2025-11-30"  -- Exceção para ajuste na tecnologia MTR-CAP-2025/59482
                     and data_processamento between "2025-11-01" and "2025-12-15"
                 )
+                or (
+                    data between "2025-11-20" and "2025-12-15"  -- Exceção para ajuste na tecnologia MTR-CAP-2025/59482
+                    and data_processamento between "2025-11-20" and "2025-12-19"
+                )
             )
             {% if is_incremental() %}
                 and data between date("{{ var('date_range_start') }}") and date(

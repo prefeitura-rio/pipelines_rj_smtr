@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de cadastro
 
-DBT 2025-12-15
+DBT 2025-12-19
 """
 
 from pipelines.capture.jae.constants import constants as jae_constants
