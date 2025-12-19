@@ -114,6 +114,10 @@ with
                 then "Verão"  -- MTR-DES-2025/116337 - Acionamento do Plano Verão
                 when data = date(2025, 11, 30)
                 then "Verão"  -- MTR-DES-2025/116337 - Acionamento do Plano Verão
+                when data between date(2025, 12, 06) and date(2025, 12, 07)
+                then "Verão"  -- 000399.000386/2025-90 - Acionamento do Plano Verão
+                when data between date(2025, 12, 13) and date(2025, 12, 14)
+                then "Verão"  -- 000399.000386/2025-90 - Acionamento do Plano Verão
             end as tipo_os
         from
             unnest(
