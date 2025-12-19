@@ -239,7 +239,7 @@ with
         from autuacao
         {% if is_incremental() and partitions | length > 0 %}
             union all
-            select * except (id_autuacao, tipificacao_resumida, amparo_legal)
+            select * except (id_autuacao, tipificacao_resumida, amparo_legal, versao, id_execucao_dbt)
             from {{ this }}
             where data in ({{ partitions | join(", ") }})
         {% endif %}
