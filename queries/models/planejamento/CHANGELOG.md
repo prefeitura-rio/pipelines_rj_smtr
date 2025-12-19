@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Alterados no modelo `aux_calendario_manual` o `tipo_os` de `2025-12-06`, `2025-12-07`, `2025-12-13` e `2025-12-14` para `Verão` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Alterados no modelo `aux_calendario_manual` o `tipo_os` de `2025-12-06`, `2025-12-07`, `2025-12-13` e `2025-12-14` para `Verão` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1128)
 
 ## [1.5.5] - 2025-12-08
 
