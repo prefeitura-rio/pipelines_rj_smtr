@@ -82,7 +82,13 @@ with
         {% if is_incremental() and partitions | length > 0 %}
             union all
 
-            select o.* except (versao, datetime_ultima_atualizacao, id_execucao_dbt)
+            select
+                o.* except (
+                    classificacao_integracao_nao_realizada,
+                    versao,
+                    datetime_ultima_atualizacao,
+                    id_execucao_dbt
+                )
             from {{ this }} o
             left join integracao_transferencia_calculada n using (id_transacao)
             where
@@ -92,7 +98,8 @@ with
                 )
                 and o.id_integracao
                 not in (select id_integracao from integracao_transferencia_calculada)
-            qualify max(n.id_transacao is null) over (partition by id_integracao)
+            qualify
+                not max(n.id_transacao is not null) over (partition by o.id_integracao)
 
         {% endif %}
     ),
