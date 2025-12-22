@@ -157,7 +157,7 @@ with
             ultima_situacao,
             case
                 when
-                    data between "2025-11-01" and "2025-11-30"
+                    data between "2025-11-12" and "2025-12-01"
                     and id_veiculo in (
                         'C50003',
                         'C50007',
@@ -480,7 +480,7 @@ with
                     )
                 then "BASICO"  -- MTR-CAP-2025/59482
                 when
-                    data between "2025-11-20" and "2025-11-30"
+                    data between "2025-11-20" and "2025-12-16"
                     and id_veiculo in (
                         'A29084',
                         'A29092',
