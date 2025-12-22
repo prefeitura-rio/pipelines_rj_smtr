@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona exceção para tipo OS `Verão` no modelo `ordem_servico_trips_shapes_gtfs_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Adiciona exceção para tipo OS `Verão` no modelo `ordem_servico_trips_shapes_gtfs_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1132)
 
 ## [1.3.1] - 2025-12-22
 
