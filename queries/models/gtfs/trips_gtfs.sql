@@ -19,7 +19,7 @@ SELECT
     SAFE_CAST(t.trip_id AS STRING) trip_id,
     SAFE_CAST(JSON_VALUE(t.content, '$.trip_headsign') AS STRING) trip_headsign,
     SAFE_CAST(JSON_VALUE(t.content, '$.trip_short_name') AS STRING) trip_short_name,
-    SAFE_CAST(JSON_VALUE(t.content, '$.direction_id') AS STRING) direction_id,
+    REGEXP_REPLACE(SAFE_CAST(JSON_VALUE(t.content, '$.direction_id') AS STRING), r'\.0$','') as direction_id,
     SAFE_CAST(JSON_VALUE(t.content, '$.block_id') AS STRING) block_id,
     SAFE_CAST(JSON_VALUE(t.content, '$.shape_id') AS STRING) shape_id,
     SAFE_CAST(JSON_VALUE(t.content, '$.wheelchair_accessible') AS STRING) wheelchair_accessible,

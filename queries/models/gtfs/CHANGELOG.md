@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.3.1] - 2025-12-22
+
+### Corrigido
+
+- Corrige a coluna `direction_id` no modelo `trips_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
 ## [1.3.0] - 2025-11-28
 
 ### Corrigido
