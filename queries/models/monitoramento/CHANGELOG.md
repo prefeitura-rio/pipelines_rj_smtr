@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Altera o modelo `veiculo_fiscalizacao_lacre` para correção duplicação de veiculo (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1131)
+- Altera o modelo `veiculo_fiscalizacao_lacre` para correção duplicação de veículo (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1131)
 
 ## [1.8.4] - 2025-12-19
 

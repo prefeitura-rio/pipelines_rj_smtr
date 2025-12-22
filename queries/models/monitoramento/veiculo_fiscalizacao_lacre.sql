@@ -195,11 +195,15 @@ select *
 from dados_finais
 where
     not (  -- veículos com placa corrigida
-        (id_veiculo in ("D17039", "D17037")
-        and data_fim_lacre is null
-        and data_inicio_lacre = "2025-10-14")
-           -- Correção de duplicação de lacre por alteração no id_veiculo
-        or (id_veiculo = "B11579"
-        and data_fim_lacre is null
-        and data_inicio_lacre = "2025-12-09")
+        (
+            id_veiculo in ("D17039", "D17037")
+            and data_fim_lacre is null
+            and data_inicio_lacre = "2025-10-14"
+        )
+        -- Correção de duplicação de lacre por alteração no id_veiculo
+        or (
+            id_veiculo = "B11579"
+            and data_fim_lacre is null
+            and data_inicio_lacre = "2025-12-09"
+        )
     )
