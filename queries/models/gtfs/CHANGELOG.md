@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrige a coluna `direction_id` no modelo `trips_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Corrige a coluna `direction_id` no modelo `trips_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1130)
 
 ## [1.3.0] - 2025-11-28
 
