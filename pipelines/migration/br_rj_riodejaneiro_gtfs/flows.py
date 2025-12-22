@@ -2,7 +2,7 @@
 """
 Flows for gtfs
 
-DBT 2025-12-22
+DBT: 2025-12-22
 """
 
 from prefect import Parameter, case, task
