@@ -157,7 +157,7 @@ with
             ultima_situacao,
             case
                 when
-                    data between "2025-11-01" and "2025-12-01"
+                    data between "2025-11-12" and "2025-12-01"
                     and id_veiculo in (
                         'C50003',
                         'C50007',
