@@ -31,9 +31,11 @@
     or (
         o.feed_start_date = "2025-12-21"
         and o.tipo_os = "Verão"
-        and o.tipo_dia in ("Sabado", "Domingo")
         and t.tipo_dia = "Dia Útil"
-        and o.servico in ("616", "913")
+        and (
+            (o.servico = '616' AND o.tipo_dia IN ('Sabado', 'Domingo'))
+            or (o.servico = '913' AND o.tipo_dia = 'Domingo')
+        )
     )
 {% endset %}
 
