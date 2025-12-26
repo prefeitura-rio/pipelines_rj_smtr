@@ -35,6 +35,7 @@
         and (
             (o.servico = '616' AND o.tipo_dia IN ('Sabado', 'Domingo'))
             or (o.servico = '913' AND o.tipo_dia = 'Domingo')
+            or (o.servico = '485' AND o.tipo_dia = 'Sabado')
         )
     )
 {% endset %}
