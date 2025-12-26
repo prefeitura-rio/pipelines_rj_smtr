@@ -63,7 +63,7 @@ with
                     '$.indicador_temperatura_pos_tratamento_descartada_viagem.datetime_verificacao_regularidade'
                 ) as datetime
             ) as datetime_verificacao_regularidade,
-        from {{ ref("aux_viagem_temperatura") }}
+        from `rj-smtr-dev.janaina__subsidio_staging.aux_viagem_temperatura`
         where
             {{ incremental_filter }}
             and (
