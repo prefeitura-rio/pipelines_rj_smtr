@@ -215,6 +215,7 @@ class constants(Enum):  # pylint: disable=c0103
     DATA_GTFS_V2_INICIO = "2025-04-30"
     DATA_GTFS_V3_INICIO = "2024-11-06"
     DATA_GTFS_V4_INICIO = "2025-07-16"
+    DATA_GTFS_V5_INICIO = "2025-12-21"
     GTFS_CONTROLE_OS_URL = "https://docs.google.com/spreadsheets/d/\
 1Jn7fmaDOhuHMdMqHo5SGWHCRuerXNWJRmhRjnHxJ9O4\
 /pub?gid=0&single=true&output=csv"
