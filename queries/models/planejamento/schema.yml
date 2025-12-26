@@ -627,7 +627,7 @@ models:
       - name: ativacao
         description: "Modo de ativação do trajeto alternativo"
       - name: descricao
-        description: "Descriação sobre o trajeto alternativo"
+        description: "Descrição sobre o trajeto alternativo"
       - name: evento
         description: "Evento relacionado ao trajeto alternativo"
       - name: extensao
@@ -636,3 +636,36 @@ models:
         description: "{{ doc('versao') }}"
       - name: tipo_os
         description: "{{ doc('tipo_os') }}"
+  - name: ordem_servico_faixa_horaria_sentido
+    description: "Quantidade de viagens planejadas por faixa horária e sentido"
+    columns:
+      - name: feed_version
+        description: "{{ doc('feed_version') }}"
+      - name: tipo_os
+        description: "{{ doc('tipo_os') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: vista
+        description: "{{ doc('vista') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+      - name: extensao
+        description: "{{ doc('extensao') }}"
+      - name: tipo_dia
+        description: "{{ doc('tipo_dia') }}"
+      - name: faixa_horaria_inicio
+        description: "{{ doc('faixa_horaria_inicio') }}"
+      - name: faixa_horaria_fim
+        description: "{{ doc('faixa_horaria_fim') }}"
+      - name: partidas
+        description: "{{ doc('partidas') }}"
+      - name: quilometragem
+        description: "{{ doc('quilometragem') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"

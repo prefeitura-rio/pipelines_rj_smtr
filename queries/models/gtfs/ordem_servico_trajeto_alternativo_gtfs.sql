@@ -41,10 +41,10 @@ with
             {{ ref("feed_info_gtfs") }} fi
             on o.data_versao = cast(fi.feed_start_date as string)
         where
-            o.data_versao < date("{{ var('DATA_GTFS_V5_INICIO') }}")
+            date(o.data_versao) < date("{{ var('DATA_GTFS_V5_INICIO') }}")
             {% if is_incremental() -%}
-                and o.data_versao = "{{ var('data_versao_gtfs') }}"
-                and fi.feed_start_date = "{{ var('data_versao_gtfs') }}"
+                and date(o.data_versao) = date("{{ var('data_versao_gtfs') }}")
+                and date(fi.feed_start_date) = date("{{ var('data_versao_gtfs') }}")
             {%- endif %}
     )
 
