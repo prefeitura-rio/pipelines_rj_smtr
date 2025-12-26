@@ -1,5 +1,18 @@
 # Changelog - gtfs
 
+
+## [1.3.4] - 2025-12-26
+
+### Adicionado
+
+- Criado o modelo `ordem_servico_trajeto_alternativo_sentido_atualizado_aux_gtfs_v3.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1050)
+
+### Alterado
+
+- Alterado o modelo `ordem_servico_trips_shapes_gtfs.sql` para utilizar o `full outer union` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1050)
+- Alterado o modelo `ordem_servico_trajeto_alternativo_sentido_atualizado_aux_gtfs.sql` para incluir o modelo `ordem_servico_trajeto_alternativo_sentido_atualizado_aux_gtfs_v3.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1050)
+- Alterado o modelo `ordem_servico_trajeto_alternativo_gtfs.sql` para limitar a materialização dos dado pela variavel `queries/models/gtfs/DATA_GTFS_V5_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1050)
+
 ## [1.3.3] - 2025-12-23
 
 ### Alterado
@@ -17,6 +30,7 @@
 ### Corrigido
 
 - Corrige a coluna `direction_id` no modelo `trips_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1130)
+
 
 ## [1.3.0] - 2025-11-28
 
