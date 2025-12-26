@@ -1,5 +1,11 @@
 # Changelog - subsidio
 
+## [2.3.0] - 2025-12-26
+
+### Alterado
+
+- Altera modelo `viagem_regularidade_temperatura` para reprocessamento dos descontos por inoperabilidade da climatização em OUT/Q2 e NOV/Q1 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
 ## [2.2.9] - 2025-12-09
 
 ### Alterado
