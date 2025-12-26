@@ -627,7 +627,7 @@ models:
       - name: ativacao
         description: "Modo de ativação do trajeto alternativo"
       - name: descricao
-        description: "Descriação sobre o trajeto alternativo"
+        description: "Descrição sobre o trajeto alternativo"
       - name: evento
         description: "Evento relacionado ao trajeto alternativo"
       - name: extensao
