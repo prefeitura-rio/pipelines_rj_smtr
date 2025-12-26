@@ -600,15 +600,15 @@ models:
     description: "Anexo da Ordem de Serviço [OS] com trajetos alternativos de serviços"
     tests:
       - dbt_expectations.expect_table_aggregation_to_equal_other_table:
-          name: dbt_expectations.expect_table_aggregation_to_equal_other_table__ordem_servico_trajeto_alternativo_gtfs
+          name: dbt_expectations.expect_table_aggregation_to_equal_other_table__ordem_servico_trajeto_alternativo_sentido
           expression: count(distinct tipo_os)
-          compare_model: ref("ordem_servico_faixa_horaria") if var('data_versao_gtfs') < var('DATA_GTFS_V4_INICIO') else ref("ordem_servico_faixa_horaria_sentido")
+          compare_model: ref("ordem_servico_faixa_horaria_sentido")
           compare_expression: count(distinct tipo_os)
           group_by: [feed_start_date, tipo_os]
           compare_group_by: [feed_start_date, tipo_os]
           row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
           compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
-          where: "1=1"
+          where: "feed_start_date >= date('{{ var('DATA_GTFS_V5_INICIO') }}')"
     columns:
       - name: feed_start_date
         description: "{{ doc('feed_start_date') }}"
