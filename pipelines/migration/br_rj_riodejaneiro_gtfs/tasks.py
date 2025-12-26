@@ -238,6 +238,7 @@ def get_raw_gtfs_files(
                     file_bytes=file_bytes_os,
                     local_filepath=local_filepath,
                     raw_filepaths=raw_filepaths,
+                    data_versao_gtfs=data_versao_gtfs,
                 )
             elif "ordem_servico_faixa_horaria" in filename:
                 processa_ordem_servico_faixa_horaria(
@@ -323,12 +324,17 @@ def filter_gtfs_table_ids(data_versao_gtfs_str, gtfs_table_capture_params):
     +"""
     if data_versao_gtfs_str >= constants.DATA_GTFS_V2_INICIO.value:
         gtfs_table_capture_params.pop("ordem_servico", None)
-        gtfs_table_capture_params.pop("ordem_servico_trajeto_alternativo_sentido", None)
 
     if data_versao_gtfs_str < constants.DATA_GTFS_V4_INICIO.value:
         gtfs_table_capture_params.pop("ordem_servico_faixa_horaria_sentido", None)
 
     if data_versao_gtfs_str >= constants.DATA_GTFS_V4_INICIO.value:
         gtfs_table_capture_params.pop("ordem_servico_faixa_horaria", None)
+
+    if data_versao_gtfs_str < constants.DATA_GTFS_V5_INICIO.value:
+        gtfs_table_capture_params.pop("ordem_servico_trajeto_alternativo_sentido", None)
+
+    if data_versao_gtfs_str >= constants.DATA_GTFS_V5_INICIO.value:
+        gtfs_table_capture_params.pop("ordem_servico_trajeto_alternativo", None)
 
     return gtfs_table_capture_params
