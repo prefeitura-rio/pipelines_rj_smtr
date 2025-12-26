@@ -647,7 +647,7 @@
             from
                 unnest(
                     generate_date_array(
-                        "{{var('DATA_SUBSIDIO_V6_INICIO')}}", "2025-12-31"
+                        "{{var('DATA_SUBSIDIO_V6_INICIO')}}", greatest("2025-12-31", date("{{ var('run_date') }}"))
                     )
                 ) as data
         ),
