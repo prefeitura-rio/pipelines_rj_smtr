@@ -47,7 +47,7 @@ with
                 when data = date(2025, 12, 24)
                 then "Sabado"  -- 000399.001368/2025-25 - Véspera de Natal
                 when data = date(2025, 12, 25)
-                then "Domingo" -- 000399.001368/2025-25 - Feriado de Natal
+                then "Domingo"  -- 000399.001368/2025-25 - Feriado de Natal
                 when data = date(2025, 12, 26)
                 then "Ponto Facultativo"  -- 000399.001368/2025-25 - Ponto Facultativo referente às festas de fim de ano
                 when data = date(2025, 12, 29)
