@@ -21,4 +21,4 @@ full outer union all by name
 --fmt:on
 select *
 from {{ ref("ordem_servico_trajeto_alternativo_sentido_atualizado_aux_gtfs_v3") }}
-where feed_start_date > date("{{ var('DATA_GTFS_V5_INICIO') }}")
+where feed_start_date >= date("{{ var('DATA_GTFS_V5_INICIO') }}")

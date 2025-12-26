@@ -596,7 +596,7 @@ models:
         description: "Geometria do túnel em formato WKT"
       - name: geometry
         description: "Geometria do túnel em formato geográfico"
-  - name: ordem_servico_trajeto_alternativo_gtfs
+  - name: ordem_servico_trajeto_alternativo_sentido
     description: "Anexo da Ordem de Serviço [OS] com trajetos alternativos de serviços"
     tests:
       - dbt_expectations.expect_table_aggregation_to_equal_other_table:
