@@ -4,7 +4,21 @@
     )
 }}
 
-with
+WITH
+  validador_max AS (
+    SELECT data, operadora, id_validador, count(*) as quantidade_gps
+    FROM {{ ref("gps_validador") }}
+    WHERE data BETWEEN "2025-11-16" AND "2025-11-30"
+    GROUP BY ALL
+  ),
+    validador AS (
+    SELECT data, operadora, id_validador
+    FROM validador_max
+    QUALIFY
+      ROW_NUMBER()
+        OVER (PARTITION BY data, operadora, id_validador ORDER BY quantidade_gps DESC)
+      = 1
+    ),
     viagem as (
         select
             data,
@@ -100,6 +114,7 @@ with
     )
 select
     vp.consorcio,
+    vl.operadora,
     v.data,
     v.servico,
     v.id_validador,
@@ -120,3 +135,4 @@ select
 from viagem v
 left join veiculo ve using (data, id_veiculo)
 left join viagem_planejada vp using (servico, data)
+left join validador vl using (data, id_validador)
