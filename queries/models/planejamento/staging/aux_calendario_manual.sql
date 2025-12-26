@@ -138,7 +138,7 @@ with
                 then "Natal"  -- 000399.001368/2025-25 - Véspera de Natal
                 when data = date(2025, 12, 31)
                 then "Reveillon_31-12"  -- 000399.001368/2025-25 - Operação Especial Réveillon
-                when data = date(2025, 12, 31)
+                when data = date(2026, 12, 01)
                 then "Reveillon_01-01"  -- 000399.001368/2025-25 - Operação Especial Réveillon
             end as tipo_os
         from

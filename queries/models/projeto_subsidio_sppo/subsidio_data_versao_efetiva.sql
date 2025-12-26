@@ -647,7 +647,7 @@
             from
                 unnest(
                     generate_date_array(
-                        "{{var('DATA_SUBSIDIO_V6_INICIO')}}", greatest("2025-12-31", date("{{ var('run_date') }}"))
+                        "{{var('DATA_SUBSIDIO_V6_INICIO')}}", "{{ var('run_date') }}"
                     )
                 ) as data
         ),
@@ -670,6 +670,18 @@
                         data = date(2025, 05, 24)
                         and ifnull(c.tipo_os, d.tipo_os) = "Dia Atípico"
                     then "Marcha para Jesus"  -- [processo] [Operação especial evento "Marcha para Jesus"]
+                    when
+                        data = date(2025, 12, 24)
+                        and ifnull(c.tipo_os, d.tipo_os) = "Natal"
+                    then "Véspera de Natal"  -- 
+                    when
+                        data = date(2025, 12, 24)
+                        and ifnull(c.tipo_os, d.tipo_os) = "Natal"
+                    then "Véspera de Natal"  -- 
+                    when
+                        data between date(2025, 12, 31) and date(2026, 01, 01)
+                        and ifnull(c.tipo_os, d.tipo_os) in ("Reveillon_31-12", "Reveillon_01-01")
+                    then "Ano novo"  -- 
                     when ifnull(c.tipo_os, d.tipo_os) = "Regular"
                     then null
                     else ifnull(c.tipo_os, d.tipo_os)
