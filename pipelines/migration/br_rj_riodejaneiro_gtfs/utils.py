@@ -348,7 +348,7 @@ def processa_ordem_servico_trajeto_alternativo(
         raise ValueError("Nenhuma aba 'ANEXO II' encontrada no arquivo.")
     sheets_data = []
 
-    alt_columns = ""
+    alt_columns = {}
 
     if data_versao_gtfs < constants.DATA_GTFS_V5_INICIO.value:
         alt_columns = {
