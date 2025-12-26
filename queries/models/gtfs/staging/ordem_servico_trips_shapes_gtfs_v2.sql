@@ -28,6 +28,15 @@
         and o.tipo_dia = t.tipo_dia
         and o.servico in ("LECD126", "SE867")
     )
+    or (
+        o.feed_start_date = "2025-12-21"
+        and o.tipo_os = "Verão"
+        and t.tipo_dia = "Dia Útil"
+        and (
+            (o.servico = '616' AND o.tipo_dia IN ('Sabado', 'Domingo'))
+            or (o.servico = '913' AND o.tipo_dia = 'Domingo')
+        )
+    )
 {% endset %}
 
 with
