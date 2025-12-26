@@ -321,7 +321,11 @@ def processa_ordem_servico(
 
 
 def processa_ordem_servico_trajeto_alternativo(
-    sheetnames, file_bytes, local_filepath, raw_filepaths
+    sheetnames,
+    file_bytes,
+    local_filepath,
+    raw_filepaths,
+    data_versao_gtfs,
 ):
     """
     Process 'Trajetos Alternativos' from an Excel file.
@@ -344,21 +348,36 @@ def processa_ordem_servico_trajeto_alternativo(
         raise ValueError("Nenhuma aba 'ANEXO II' encontrada no arquivo.")
     sheets_data = []
 
-    alt_columns = {
-        "Serviço": "servico",
-        "Vista": "vista",
-        "Consórcio": "consorcio",
-        "Extensão de Ida": "extensao_ida",
-        "Extensão\nde Ida": "extensao_ida",
-        "Extensão de Volta": "extensao_volta",
-        "Extensão\nde Volta": "extensao_volta",
-        "Evento": "evento",
-        "Horário Inicial Interdição": "inicio_periodo",
-        "Horário Final Interdição": "fim_periodo",
-        "Descrição": "descricao",
-        "Ativação": "ativacao",
-        "tipo_os": "tipo_os",
-    }
+    alt_columns = {}
+
+    if data_versao_gtfs < constants.DATA_GTFS_V5_INICIO.value:
+        alt_columns = {
+            "Serviço": "servico",
+            "Vista": "vista",
+            "Consórcio": "consorcio",
+            "Extensão de Ida": "extensao_ida",
+            "Extensão\nde Ida": "extensao_ida",
+            "Extensão de Volta": "extensao_volta",
+            "Extensão\nde Volta": "extensao_volta",
+            "Evento": "evento",
+            "Horário Inicial Interdição": "inicio_periodo",
+            "Horário Final Interdição": "fim_periodo",
+            "Descrição": "descricao",
+            "Ativação": "ativacao",
+            "tipo_os": "tipo_os",
+        }
+    else:
+        alt_columns = {
+            "Serviço": "servico",
+            "Vista": "vista",
+            "Sentido": "sentido",
+            "Extensão": "extensao",
+            "Consórcio": "consorcio",
+            "Evento": "evento",
+            "Descrição": "descricao",
+            "Ativação": "ativacao",
+            "tipo_os": "tipo_os",
+        }
 
     for sheet_index, sheet_name in sheets:
         log(f"########## {sheet_name} ##########")
