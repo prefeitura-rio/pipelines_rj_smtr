@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [9.3.7] - 2025-12-26
+
+### Alterado
+
+- Altera o modelo `subsidio_data_versao_efetiva` para gerar datas após `2025-12-31` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1016)
+
 ## [9.3.6] - 2025-10-30
 
 ### Adicionado
