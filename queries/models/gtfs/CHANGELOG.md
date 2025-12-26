@@ -1,5 +1,23 @@
 # Changelog - gtfs
 
+## [1.3.3] - 2025-12-23
+
+### Alterado
+
+- Altera a lógica de associação para o tipo OS "Verão" no modelo `ordem_servico_trips_shapes_gtfs_v2` para considerar serviços que geralmente não operam no dia. (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1133)
+
+## [1.3.2] - 2025-12-21
+
+### Adicionado
+
+- Adiciona exceção para tipo OS `Verão` no modelo `ordem_servico_trips_shapes_gtfs_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1132)
+
+## [1.3.1] - 2025-12-22
+
+### Corrigido
+
+- Corrige a coluna `direction_id` no modelo `trips_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1130)
+
 ## [1.3.0] - 2025-11-28
 
 ### Corrigido
