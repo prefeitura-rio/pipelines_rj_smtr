@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Altera a lógica de associação para o tipo OS "Verão" no modelo `ordem_servico_trips_shapes_gtfs_v2` para considerar o servico `485` no sabado (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Altera a lógica de associação para o tipo OS "Verão" no modelo `ordem_servico_trips_shapes_gtfs_v2` para considerar o servico `485` no sabado (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1141)
 
 ## [1.3.4] - 2025-12-26
 
