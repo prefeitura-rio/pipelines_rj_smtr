@@ -673,11 +673,11 @@
                     when
                         data = date(2025, 12, 24)
                         and ifnull(c.tipo_os, d.tipo_os) = "Natal"
-                    then "Véspera de Natal"  -- 000399.001368/2025-25 - Véspera de Natal 
-                    
+                    then "Véspera de Natal"  -- 000399.001368/2025-25 - Véspera de Natal
                     when
                         data between date(2025, 12, 31) and date(2026, 01, 01)
-                        and ifnull(c.tipo_os, d.tipo_os) in ("Reveillon_31-12", "Reveillon_01-01")
+                        and ifnull(c.tipo_os, d.tipo_os)
+                        in ("Reveillon_31-12", "Reveillon_01-01")
                     then "Ano Novo"  -- 000399.001368/2025-25 - Operação Especial Réveillon
                     when ifnull(c.tipo_os, d.tipo_os) = "Regular"
                     then null
