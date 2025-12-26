@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.5.7] - 2025-12-26
+
+### Adicionado
+
+- Adiciona as descrições do modelo `ordem_servico_faixa_horaria_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
 ## [1.5.6] - 2025-12-19
 
 ### Alterado
