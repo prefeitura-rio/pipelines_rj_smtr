@@ -161,8 +161,6 @@ vars:
   DATA_SUBSIDIO_V20_INICIO: "2025-08-16"
   # Feature RESOLUÇÃO SMTR 3878/2025
   DATA_SUBSIDIO_V21_INICIO: "2025-10-01"
-  # Suspensão da glosa por ar-condicionado a partir de 16/10/2025
-  DATA_SUBSIDIO_V22_INICIO: "2025-10-16"
   # Placeholder feature
   DATA_SUBSIDIO_V99_INICIO: "3000-01-01"
    # Recursos #

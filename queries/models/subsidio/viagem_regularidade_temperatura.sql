@@ -12,7 +12,7 @@
 
 {% set condicao_veiculo %}
     (vt.ano_fabricacao <= 2019 or vt.data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}'))
-    and not vt.indicador_temperatura_nula_viagem and (vt.data not between date('{{ var("DATA_SUBSIDIO_V22_INICIO") }}') and date("2025-11-15")) --Período de interrupção dos descontos por inoperabilidade do ar-condicionado
+    and not vt.indicador_temperatura_nula_viagem
 {% endset %}
 
 with
