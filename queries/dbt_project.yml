@@ -382,25 +382,13 @@ models:
         +incremental_strategy: insert_overwrite
         +schema: indicadores_continuados_egp_staging
     projeto_subsidio_sppo_encontro_contas:
-      v1:
-        +materialized: table
-        +schema: projeto_subsidio_sppo_encontro_contas
-        +enabled: false
-        staging:
-          +materialized: view
-          +schema: projeto_subsidio_sppo_encontro_contas_staging
-      v2:
-        +materialized: incremental
-        +incremental_strategy: insert_overwrite
-        +schema: projeto_subsidio_sppo_encontro_contas_v2
-        +description: "Encontro de Contas SPPO [Serviço Público de Transporte de Passageiros por Ônibus] de 2024-01-01 a 2025-03-31 [Processo.Rio MTR-PRO-2025/18086]"
-        +partition_by:
-          field: "data"
-          data_type: "date"
-          granularity: "day"
-        staging:
-          +materialized: view
-          +schema: projeto_subsidio_sppo_encontro_contas_staging_v2
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: projeto_subsidio_sppo_encontro_contas
+      +description: "Encontro de Contas SPPO [Serviço Público de Transporte de Passageiros por Ônibus] de 2024-01-01 a 2025-03-31 [Processo.Rio MTR-PRO-2025/18086]"
+      staging:
+        +materialized: view
+        +schema: projeto_subsidio_sppo_encontro_contas_staging
     dashboard_controle_vinculo_jae_riocard:
       +materialized: incremental
       +schema: dashboard_controle_vinculo_jae_riocard
