@@ -8,8 +8,8 @@ with
     -- Transações Jaé
     transacao as (
         select id_veiculo, servico_jae, datetime_transacao
-        from {{ ref("transacao") }}
-        -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
+        -- from {{ ref("transacao") }}
+        from rj-smtr.bilhetagem.transacao
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
@@ -21,8 +21,8 @@ with
     -- Transações RioCard
     transacao_riocard as (
         select id_veiculo, servico_jae, datetime_transacao
-        from {{ ref("transacao_riocard") }}
-        -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard`
+        -- from {{ ref("transacao_riocard") }}
+        from rj-smtr.bilhetagem.transacao_riocard
         where
             data between date("{{ var('start_date') }}") and date_add(
                 date("{{ var('end_date') }}"), interval 1 day
