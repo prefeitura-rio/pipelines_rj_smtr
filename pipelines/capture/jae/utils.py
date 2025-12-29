@@ -478,9 +478,9 @@ def get_jae_timestamp_captura_count(
                 jae_start_ts_utc.replace(hour=0, minute=0, second=0, microsecond=0)
                 - timedelta(minutes=delay + 1)
             ).strftime("%Y-%m-%d %H:%M:%S"),
-            end=jae_end_ts_utc.replace(hour=23, minute=59, second=59, microsecond=59).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            ),
+            end=(jae_end_ts_utc + timedelta(minutes=delay))
+            .replace(hour=23, minute=59, second=59, microsecond=59)
+            .strftime("%Y-%m-%d %H:%M:%S"),
             delay=delay,
         )
 
