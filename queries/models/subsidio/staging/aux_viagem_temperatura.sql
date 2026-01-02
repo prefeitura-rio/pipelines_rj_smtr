@@ -201,7 +201,7 @@ with
             or (
                 v.data >= date("{{ var('DATA_SUBSIDIO_V21_INICIO') }}")
                 and v.data < date("{{ var('DATA_SUBSIDIO_V19_INICIO') }}")
-                and not exists (
+                and not exists (    
                     select 1
                     from agg_garagens_manutencao g
                     where
