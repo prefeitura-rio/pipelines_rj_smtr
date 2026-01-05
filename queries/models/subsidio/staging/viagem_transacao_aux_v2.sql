@@ -56,13 +56,18 @@ with
             )
             and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
         {% if target.name in ("dev", "hmg") %}
-            left outer union all by name
-            select *,
-                2 as prioridade
+                left outer
+            union all by name
+            select *, 2 as prioridade
             from {{ ref("viagem_completa") }}
             where data = date_sub(date("{{ var('start_date') }}"), interval 1 day)
         {% endif %}
-        qualify row_number() over (partition by id_veiculo, datetime_partida order by prioridade, datetime_partida desc) = 1
+        qualify
+            row_number() over (
+                partition by id_veiculo, datetime_partida
+                order by prioridade, datetime_partida desc
+            )
+            = 1
     ),
     -- Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
     -- limitada pela viagem anterior
