@@ -46,9 +46,9 @@ with
             indicadores,
             servico,
             sentido,
-            distancia_planejada
+            distancia_planejada,
+            1 as prioridade
         from {{ ref("viagem_regularidade_temperatura") }}
-        -- from `rj-smtr.subsidio.viagem_regularidade_temperatura`
         where
             data
             between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
@@ -56,11 +56,13 @@ with
             )
             and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
         {% if target.name in ("dev", "hmg") %}
-            union all by name
-            select *
+            left outer union all by name
+            select *,
+                2 as prioridade
             from {{ ref("viagem_completa") }}
             where data = date_sub(date("{{ var('start_date') }}"), interval 1 day)
         {% endif %}
+        qualify row_number() over (partition by id_veiculo, datetime_partida order by prioridade, datetime_partida desc) = 1
     ),
     -- Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
     -- limitada pela viagem anterior
