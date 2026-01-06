@@ -44,7 +44,8 @@ with
                 = date("{{var('data_inclusao_autuacao_disciplinar')}}")  -- Primeira data de inclusão dos dados de autuações disciplinares
             )
             and {{ incremental_filter }}
-            and modo = "ONIBUS" and status != "Cancelada"
+            and modo = "ONIBUS"
+            and status != "Cancelada"
     ),
     ordem_status as (
         select distinct data_inicio, data_fim, status, ordem
