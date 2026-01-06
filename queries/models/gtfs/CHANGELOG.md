@@ -1,5 +1,14 @@
 # Changelog - gtfs
 
+## [1.3.6] - 2026-01-06
+
+### Alterado
+
+- Altera os testes do gtfs dos modelos que não são mais utilizados (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1146)
+
+- Altera o modelo `ordem_servico_trips_shapes_gtfs_v2.sql` apara considerar os serviços de `Sabado` no `Domingo` no feed do dia `2025-12-27` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1146)
+
+
 ## [1.3.5] - 2025-12-26
 
 ### Alterado
