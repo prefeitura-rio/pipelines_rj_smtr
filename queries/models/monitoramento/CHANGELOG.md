@@ -1,5 +1,15 @@
 # Changelog - monitoramento
 
+## [1.8.6] - 2026-01-06
+
+### Adicionado
+
+- Adiciona ao modelo `autuacao_disciplinar_historico` a coluna `status` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1147)
+
+### Alterado
+
+- Altera o modelo `veiculo_dia` para exclusão de registros de autuações com `status` igual a "cancelado" (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1147)
+
 ## [1.8.5] - 2025-12-22
 
 ### Alterado
