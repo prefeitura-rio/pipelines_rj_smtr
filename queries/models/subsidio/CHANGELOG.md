@@ -1,5 +1,11 @@
 # Changelog - subsidio
 
+## [2.3.1] - 2026-01-06
+
+### Alterado
+
+- Altera modelo `viagem_transacao_aux_v2` para incluir viagens do dia anterior fora do ambiente de produção (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1108)
+
 ## [2.3.0] - 2025-12-26
 
 ### Alterado

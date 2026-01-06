@@ -61,12 +61,7 @@ with
             from {{ ref("viagem_completa") }}
             where data = date_sub(date("{{ var('start_date') }}"), interval 1 day)
         {% endif %}
-        qualify
-            row_number() over (
-                partition by id_veiculo, datetime_partida
-                order by prioridade, datetime_partida desc
-            )
-            = 1
+        qualify row_number() over (partition by data, id_viagem order by prioridade) = 1
     ),
     -- Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
     -- limitada pela viagem anterior
