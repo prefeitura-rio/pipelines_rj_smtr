@@ -620,6 +620,10 @@ models:
         description: "{{ doc('valor') }}"
         data_type: float64
         quote: true
+      - name: status
+        description: "{{ doc('status_infracao') }}"
+        data_type: string
+        quote: true
       - name: data_pagamento
         description: "{{ doc('data_pagamento') }}"
         data_type: date
