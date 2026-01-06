@@ -22,6 +22,7 @@ with
             permissao,
             placa,
             valor,
+            status,
             data_pagamento,
             date(data) as data_inclusao_stu,
             current_date("America/Sao_Paulo") as data_inclusao_datalake,
