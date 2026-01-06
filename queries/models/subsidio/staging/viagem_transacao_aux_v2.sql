@@ -56,8 +56,7 @@ with
             )
             and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
         {% if target.name in ("dev", "hmg") %}
-                left outer
-            union all by name
+            left outer union all by name
             select *, 2 as prioridade
             from {{ ref("viagem_completa") }}
             where data = date_sub(date("{{ var('start_date') }}"), interval 1 day)
