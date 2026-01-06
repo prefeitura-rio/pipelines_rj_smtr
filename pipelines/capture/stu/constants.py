@@ -120,7 +120,7 @@ class constants(Enum):  # pylint: disable=c0103
             pretreat_funcs=v.get("pretreat_funcs"),
             bucket_names=STU_PRIVATE_BUCKET_NAMES,
             partition_date_only=True,
-            max_recaptures=v.get("max_recaptures", 2),
+            max_recaptures=v.get("max_recaptures"),
             raw_filetype=v.get("raw_filetype", "csv"),
         )
         for k, v in STU_TABLE_CAPTURE_PARAMS.items()
