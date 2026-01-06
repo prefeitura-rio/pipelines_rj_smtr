@@ -25,7 +25,8 @@ with
             data_pagamento,
             date(data) as data_inclusao_stu,
             current_date("America/Sao_Paulo") as data_inclusao_datalake,
-            timestamp_captura
+            timestamp_captura,
+            status
         from {{ ref("staging_infracao") }}
         {% if is_incremental() %}
             where

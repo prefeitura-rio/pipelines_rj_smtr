@@ -103,7 +103,7 @@ with
                 data_inclusao_datalake <= date_add(data, interval 7 day)
                 or data_inclusao_datalake
                 = date("{{var('data_inclusao_autuacao_disciplinar')}}")  -- Primeira data de inclusão dos dados de autuações disciplinares
-            )
+            ) and status != "Cancelada"
             {% if is_incremental() %}
                 and data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
