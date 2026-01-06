@@ -570,3 +570,5 @@ models:
           field: "data"
           data_type: "date"
           granularity: "day"
+    dashboard_monitoramento_interno:
+      +materialized: view
