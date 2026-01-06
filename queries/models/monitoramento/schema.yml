@@ -623,7 +623,7 @@ models:
       - name: status
         description: "{{ doc('status_infracao') }}"
         data_type: string
-        quote: true  
+        quote: true
       - name: data_pagamento
         description: "{{ doc('data_pagamento') }}"
         data_type: date
