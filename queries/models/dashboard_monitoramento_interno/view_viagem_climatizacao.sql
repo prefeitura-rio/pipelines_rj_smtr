@@ -4,20 +4,21 @@
     )
 }}
 
-WITH
-  validador_max AS (
-    SELECT data, operadora, id_validador, count(*) as quantidade_gps
-    FROM {{ ref("gps_validador") }}
-    WHERE data BETWEEN "2025-11-16" AND "2025-11-30"
-    GROUP BY ALL
-  ),
-    validador AS (
-    SELECT data, operadora, id_validador
-    FROM validador_max
-    QUALIFY
-      ROW_NUMBER()
-        OVER (PARTITION BY data, operadora, id_validador ORDER BY quantidade_gps DESC)
-      = 1
+with
+    validador_max as (
+        select data, operadora, id_validador, count(*) as quantidade_gps
+        from {{ ref("gps_validador") }}
+        where data between "2025-11-16" and "2025-11-30"
+        group by all
+    ),
+    validador as (
+        select data, operadora, id_validador
+        from validador_max
+        qualify
+            row_number() over (
+                partition by data, operadora, id_validador order by quantidade_gps desc
+            )
+            = 1
     ),
     viagem as (
         select
@@ -113,16 +114,16 @@ WITH
         group by servico, data
     )
 select
+    v.data,
+    v.hora,
+    v.servico,
     vp.consorcio,
     vl.operadora,
-    v.data,
-    v.servico,
+    v.id_veiculo,
+    v.ano_fabricacao,
     v.id_validador,
-    v.hora,
     v.id_viagem,
     v.datetime_partida,
-    v.ano_fabricacao,
-    v.id_veiculo,
     case
         when
             v.indicador_temperatura_transmitida_viagem is true
@@ -131,7 +132,7 @@ select
             and coalesce(ve.indicador_falha_recorrente, false) is false
         then true
         else false
-    end as regularidade_temperatura
+    end as indicador_regularidade_temperatura
 from viagem v
 left join veiculo ve using (data, id_veiculo)
 left join viagem_planejada vp using (servico, data)
