@@ -79,8 +79,9 @@
                     servico,
                     faixa_horaria_inicio,
                     km_planejada_faixa,
-                    {% if var("date_range_end") >= var("DATA_SUBSIDIO_V17_INICIO")
-                     and "pagamento" in model %}
+                    {% if var("date_range_end") >= var(
+                        "DATA_SUBSIDIO_V17_INICIO"
+                    ) and "pagamento" in model %}
                         sentido,
                     {% else %} cast(null as string) as sentido
                     {% endif %}
