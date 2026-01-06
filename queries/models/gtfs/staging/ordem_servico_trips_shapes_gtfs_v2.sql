@@ -38,6 +38,36 @@
             or (o.servico = '485' AND o.tipo_dia = 'Sabado')
         )
     )
+    or (
+        o.feed_start_date = "2025-12-27"
+        and o.tipo_os = "Reveillon_01-01"
+        and t.tipo_dia = "Sabado"
+        and (
+            (o.servico in (
+                "SE457",
+                "SE474",
+                "SE553",
+                "SE397",
+                "SE388",
+                "SE100",
+                "SE298",
+                "SE355",
+                "SE363",
+                "SE265",
+                "SE169",
+                "SE483",
+                "SE324",
+                "SE383",
+                "SE554",
+                "SE238",
+                "SE399",
+                "SEB232",
+                "SE312",
+                "SE328",
+                "SE368"
+                ) AND o.tipo_dia = 'Domingo')
+        )
+    )
 {% endset %}
 
 with
