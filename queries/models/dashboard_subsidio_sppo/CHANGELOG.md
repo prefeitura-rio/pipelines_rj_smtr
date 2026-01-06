@@ -1,6 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+
 ## [8.0.8] - 2026-01-06
+
+### Adicionado
+
+- Adiciona exceção para greve de dezembro de 2025 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1049)
 
 ### Alterado
 
