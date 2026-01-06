@@ -197,9 +197,16 @@ def extract_stu_data(source: SourceTable, timestamp: datetime) -> pd.DataFrame:
     max_days_back = 30
     df_anterior = pd.DataFrame()
 
+    dates = {
+        "_".join(b.name.split("/")[-1].split("_")[:3]) for b in blobs if b.name.endswith(".csv")
+    }
+
     for days_back in range(1, max_days_back + 1):
         data_anterior = hoje - timedelta(days=days_back)
         data_anterior_str = data_anterior.strftime("%Y_%m_%d")
+
+        if data_anterior_str not in dates:
+            continue
 
         log(f"Buscando dados de {data_anterior_str} ({days_back} dia(s) atrás)")
         df_anterior = processa_dados(blobs, data_anterior_str)
