@@ -147,8 +147,8 @@ def extract_stu_data(source: SourceTable, timestamp: datetime) -> pd.DataFrame:
     """
     Extrai dados do STU a partir dos arquivos do Airbyte no GCS.
 
-    Compara os dados de hoje com os de ontem e retorna apenas os registros
-    que são novos ou foram alterados.
+    Compara os dados de hoje com o dia anterior mais recente que tenha dados
+    e retorna apenas os registros que são novos ou foram alterados.
 
     Args:
         source: Objeto SourceTable com configurações da tabela
@@ -193,21 +193,30 @@ def extract_stu_data(source: SourceTable, timestamp: datetime) -> pd.DataFrame:
     if first_run:
         return df_hoje
 
-    ontem = hoje - timedelta(days=1)
-    ontem_str = ontem.strftime("%Y_%m_%d")
+    # Busca dados do dia anterior mais recente com dados
+    max_days_back = 30
+    df_anterior = pd.DataFrame()
 
-    # Carrega dados de ontem para comparação
-    log(f"Buscando dados de ontem ({ontem_str})")
-    df_ontem = processa_dados(blobs, ontem_str)
-    log(f"Registros de ontem: {len(df_ontem)}")
+    for days_back in range(1, max_days_back + 1):
+        data_anterior = hoje - timedelta(days=days_back)
+        data_anterior_str = data_anterior.strftime("%Y_%m_%d")
+
+        log(f"Buscando dados de {data_anterior_str} ({days_back} dia(s) atrás)")
+        df_anterior = processa_dados(blobs, data_anterior_str)
+
+        if not df_anterior.empty:
+            log(f"Encontrados {len(df_anterior)} registros em {data_anterior_str}")
+            break
 
     # Identifica novos registros ou alterados
-    if df_ontem.empty:
-        log("Sem dados de ontem - todos os registros são considerados novos")
+    if df_anterior.empty:
+        log(
+            f"Sem dados nos últimos {max_days_back} dias - todos os registros são considerados novos"  # noqa
+        )
         new_records = df_hoje
     else:
-        log("Comparando dados de hoje vs ontem...")
-        new_records = compara_dataframes(df_hoje, df_ontem)
+        log("Comparando dados de hoje vs dia anterior encontrado...")
+        new_records = compara_dataframes(df_hoje, df_anterior)
 
     log(f"Total de registros novos/alterados: {len(new_records)}")
 
