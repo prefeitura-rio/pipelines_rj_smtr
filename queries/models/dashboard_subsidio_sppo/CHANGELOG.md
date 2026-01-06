@@ -2,7 +2,7 @@
 
 ## [8.0.8] - 2026-01-06
 
-### Adicionado
+### Alterado
 
 - Move a view `viagem_climatizacao.sql` para `dashboard_monitoramento_interno` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1121)
 

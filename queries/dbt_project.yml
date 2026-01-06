@@ -572,3 +572,5 @@ models:
           granularity: "day"
     dashboard_monitoramento_interno:
       +materialized: view
+      +schema: dashboard_monitoramento_interno
+      +description: "Dashboards de Monitoramento Internos"
