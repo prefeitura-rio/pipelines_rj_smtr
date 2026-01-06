@@ -1,5 +1,11 @@
 # Changelog - subsidio
 
+## [2.3.1] - 2026-01-06
+
+### Alterado
+
+- Altera o modelo `viagem_classificada` para exclusão de registros de autuações com `status` igual a "cancelado" (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1147)
+
 ## [2.3.0] - 2025-12-26
 
 ### Alterado
