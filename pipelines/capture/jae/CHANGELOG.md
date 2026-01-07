@@ -4,7 +4,7 @@
 
 ### Removido
 
-- Remove schedule do flow `CAPTURA_AUXILIAR`
+- Remove schedule do flow `CAPTURA_AUXILIAR` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1155)
 
 ## [3.1.6] - 2025-12-15
 
