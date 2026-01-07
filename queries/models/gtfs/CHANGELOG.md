@@ -1,19 +1,19 @@
 # Changelog - gtfs
 
-## [1.3.6] - 2026-01-06
+## [1.3.6] - 2026-01-07
+
+### Corrigido
+
+- Corrige o modelo `trips_filtrada_aux_gtfs` para buscar os eventos de `ordem_servico_trajeto_alternativo_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1156)
+
+## [1.3.5] - 2026-01-06
 
 ### Alterado
 
 - Altera os testes do gtfs dos modelos que não são mais utilizados (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1146)
 
-- Altera o modelo `ordem_servico_trips_shapes_gtfs_v2.sql` apara considerar os serviços de `Sabado` no `Domingo` no feed do dia `2025-12-27` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1146)
+- Altera o modelo `ordem_servico_trips_shapes_gtfs_v2.sql` para considerar os serviços de `Sabado` no `Domingo` no feed do dia `2025-12-27` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1146)
 
-
-## [1.3.5] - 2025-12-26
-
-### Alterado
-
-- Altera a lógica de associação para o tipo OS "Verão" no modelo `ordem_servico_trips_shapes_gtfs_v2` para considerar o servico `485` no sabado (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1141)
 
 ## [1.3.4] - 2025-12-26
 
@@ -24,8 +24,12 @@
 ### Alterado
 
 - Alterado o modelo `ordem_servico_trips_shapes_gtfs.sql` para utilizar o `full outer union` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1050)
+
 - Alterado o modelo `ordem_servico_trajeto_alternativo_sentido_atualizado_aux_gtfs.sql` para incluir o modelo `ordem_servico_trajeto_alternativo_sentido_atualizado_aux_gtfs_v3.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1050)
+
 - Alterado o modelo `ordem_servico_trajeto_alternativo_gtfs.sql` para limitar a materialização dos dado pela variavel `queries/models/gtfs/DATA_GTFS_V5_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1050)
+
+- Altera a lógica de associação para o tipo OS "Verão" no modelo `ordem_servico_trips_shapes_gtfs_v2` para considerar o servico `485` no sabado (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1141)
 
 ## [1.3.3] - 2025-12-23
 

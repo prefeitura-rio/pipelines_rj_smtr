@@ -18,9 +18,9 @@ with
             safe_cast(o.servico as string) servico,
             safe_cast(json_value(o.content, "$.ativacao") as string) ativacao,
             safe_cast(json_value(o.content, "$.consorcio") as string) consorcio,
-            safe_cast(json_value(o.content, "$.sentido") as string) sentido,
+            safe_cast(sentido as string) sentido,
             safe_cast(json_value(o.content, "$.extensao") as float64) extensao,
-            safe_cast(json_value(o.content, "$.evento") as string) evento,
+            safe_cast(evento as string) evento,
             safe_cast(json_value(o.content, "$.vista") as string) vista,
         from
             {{
