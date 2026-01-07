@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [3.1.7] - 2026-01-07
+
+### Removido
+
+- Remove schedule do flow `CAPTURA_AUXILIAR`
+
 ## [3.1.6] - 2025-12-15
 
 ### Adicionado
