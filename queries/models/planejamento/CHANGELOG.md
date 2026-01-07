@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- corrige as colunas `sentido` e `evento` no modelo `ordem_servico_trajeto_alternativo_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1156)
+- Corrige as colunas `sentido` e `evento` no modelo `ordem_servico_trajeto_alternativo_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1156)
 
 ## [1.5.7] - 2025-12-26
 
