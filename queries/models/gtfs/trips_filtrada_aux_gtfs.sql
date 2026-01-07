@@ -13,7 +13,7 @@ Identificação de todas as trips de referência para os trajetos alternativos
         ~ " WHERE feed_start_date = '"
         ~ var("data_versao_gtfs")
         ~ "'"
-        ~ " union distinct"
+        ~ " UNION DISTINCT"
         ~ " SELECT DISTINCT evento FROM "
         ~ ref("ordem_servico_trajeto_alternativo_sentido")
         ~ " WHERE feed_start_date = '"
