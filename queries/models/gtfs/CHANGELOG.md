@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- corrige o modelo `trips_filtrada_aux_gtfs` para buscar os eventos de `ordem_servico_trajeto_alternativo_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- corrige o modelo `trips_filtrada_aux_gtfs` para buscar os eventos de `ordem_servico_trajeto_alternativo_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1156)
 
 ## [1.3.6] - 2026-01-06
 
