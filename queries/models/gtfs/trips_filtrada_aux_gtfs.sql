@@ -12,6 +12,12 @@ Identificação de todas as trips de referência para os trajetos alternativos
         ~ " WHERE feed_start_date = '"
         ~ var("data_versao_gtfs")
         ~ "'"
+        ~ " union distinct"
+        ~ " SELECT DISTINCT evento FROM "
+        ~ ref("ordem_servico_trajeto_alternativo_sentido")
+        ~ " WHERE feed_start_date = '"
+        ~ var("data_versao_gtfs")
+        ~ "'"
     ) -%}
     {%- set eventos_trajetos_alternativos = run_query(query).columns[0].values() -%}
 {% endif %}

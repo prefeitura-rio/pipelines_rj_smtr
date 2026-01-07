@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.5.8] - 2026-01-07
+
+### Adicionado
+
+- corrige as colunas `sentido` e `evento` no modelo `ordem_servico_trajeto_alternativo_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
 ## [1.5.7] - 2025-12-26
 
 ### Adicionado
