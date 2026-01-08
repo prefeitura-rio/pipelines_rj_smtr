@@ -68,7 +68,8 @@ with
                         when
                             (
                                 feed_start_date = "2025-12-27"
-                                and trip_short_name in ("SE553", "SE554", "SE550", "SE410")
+                                and trip_short_name
+                                in ("SE553", "SE554", "SE550", "SE410")
                             )
                         then false
                         when
