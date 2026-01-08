@@ -4,8 +4,8 @@
 
 ### Alterado
 
-- Altera o nome no `schema` para `view_viagem_climatizacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1121)
-- Ajusta a data para incluir a variável `("{{ var('start_date') }}")` e `("{{ var('end_date') }}")` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1121)
+- Altera o nome no `schema` para `view_viagem_climatizacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1157)
+- Ajusta a data para incluir a variável `("{{ var('start_date') }}")` e `("{{ var('end_date') }}")` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1157)
 
 ## [1.0.0] - 2026-01-06
 
