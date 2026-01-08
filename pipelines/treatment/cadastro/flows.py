@@ -30,6 +30,7 @@ CADASTRO_MATERIALIZACAO = create_default_materialization_flow(
         ]
     ],
     skip_if_running_tolerance=10,
+    generate_schedule=False,
 )
 
 CADASTRO_VEICULO_MATERIALIZACAO = create_default_materialization_flow(
