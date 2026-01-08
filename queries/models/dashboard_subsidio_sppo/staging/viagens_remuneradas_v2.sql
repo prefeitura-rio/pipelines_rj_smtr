@@ -174,8 +174,8 @@ select
     ),
     case
         when
-            v.data between date('2025-12-22') and date('2025-12-26')
-            or v.data >= date('2025-12-29')
+            (v.data between date('2025-12-22') and date('2025-12-26')
+            or v.data >= date('2025-12-29'))
             and v.servico in (
                 "232",
                 "552",
