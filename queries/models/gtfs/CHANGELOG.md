@@ -4,9 +4,9 @@
 
 ### Adicionado
 
-- Adiciona exceção ao modelo `trips_filtrada_aux` para não considerar trajeto alternativo nos serviços `SE410`, `SE550`, `SE553` e `SE554`, pois não constam na Ordem de Serviço como trajeto alternativo (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1058)
+- Adiciona exceção ao modelo `trips_filtrada_aux` para não considerar trajeto alternativo nos serviços `SE410`, `SE550`, `SE553` e `SE554`, pois não constam na Ordem de Serviço como trajeto alternativo (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1158)
 
-- Adiciona ao modelo `ordem_servico_trips_shapes_gtfs_v2` para considerar os serviços `SE393` e `SE550` no `Domingo` no feed do dia `2025-12-27` ` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1058)
+- Adiciona ao modelo `ordem_servico_trips_shapes_gtfs_v2` para considerar os serviços `SE393` e `SE550` no `Domingo` no feed do dia `2025-12-27` ` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1158)
 
 ### Corrigido
 
