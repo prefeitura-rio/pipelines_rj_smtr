@@ -1,5 +1,11 @@
 # Changelog - source_stu
 
+## [1.0.2] - 2026-01-07
+
+### Alterado
+
+- Altera lógica da função `extract_stu_data` para comparar os dados de hoje com o dia anterior mais recente que tenha dados (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1150)
+
 ## [1.0.1] - 2025-12-11
 
 ### Adicionado
