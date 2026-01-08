@@ -64,15 +64,17 @@ with
                         then "Domingo"
                         else service_id
                     end as tipo_dia,
-                when
-                    (
-                        {% for evento in eventos_trajetos_alternativos %}
-                            trip_headsign like "%{{evento}}%" or
-                        {% endfor %} service_id
-                        = "EXCEP"
-                    )
-                then true
-                else false end as indicador_trajeto_alternativo,
+                    case
+                        when
+                            (
+                                {% for evento in eventos_trajetos_alternativos %}
+                                    trip_headsign like "%{{evento}}%" or
+                                {% endfor %} service_id
+                                = "EXCEP"
+                            )
+                        then true
+                        else false
+                    end as indicador_trajeto_alternativo,
                 from {{ ref("trips_gtfs") }}
                 left join shapes using (feed_start_date, feed_version, shape_id)
                 where
