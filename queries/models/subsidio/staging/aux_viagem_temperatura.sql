@@ -647,12 +647,18 @@ with
             * except (indicadores_str, indicadores_novos),
             to_json_string(
                 (
+                    -- TODO: AVALIAR A MELHOR CORREÇÃO
                     parse_json(
-                        concat(
-                            left(indicadores_str, length(indicadores_str) - 1),
-                            ',',
-                            substr(indicadores_novos, 2)
-                        )
+                        case
+                            when indicadores_str = "null"
+                            then indicadores_novos
+                            else
+                                concat(
+                                    left(indicadores_str, length(indicadores_str) - 1),
+                                    ',',
+                                    substr(indicadores_novos, 2)
+                                )
+                        end
                     )
                 )
             ) as indicadores_str
