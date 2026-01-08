@@ -232,24 +232,6 @@ selectors:
         - method: fqn
           value: dicionario_bilhetagem
         - method: fqn
-          value: staging_gratuidade
-        - method: fqn
-          value: staging_estudante
-        - method: fqn
-          value: staging_laudo_pcd
-        - method: fqn
-          value: staging_escola
-        - method: fqn
-          value: staging_produto
-        - method: fqn
-          value: aux_estudante
-        - method: fqn
-          value: aux_laudo_pcd
-        - method: fqn
-          value: aux_escola_rede_ensino_atualizado
-        - method: fqn
-          value: aux_gratuidade
-        - method: fqn
           value: aux_gratuidade_info
         - method: fqn
           value: staging_transacao
