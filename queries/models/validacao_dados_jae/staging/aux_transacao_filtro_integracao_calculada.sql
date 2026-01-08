@@ -54,7 +54,15 @@ select
                 and ifnull(regexp_extract(servico_jae, r"[0-9]+"), "") like "2%"
             )
         then 'SPPO'
-        when modo = 'BRT' and ifnull(tarifa_ida, tarifa_volta) > 4.7
+        when
+            modo = 'BRT'
+            and ifnull(tarifa_ida, tarifa_volta) > 4.7
+            and data < '2026-01-04'
+        then 'BRT ESP'
+        when
+            modo = 'BRT'
+            and ifnull(tarifa_ida, tarifa_volta) > 5.0
+            and data >= '2026-01-04'
         then 'BRT ESP'
         else modo
     end as modo_join

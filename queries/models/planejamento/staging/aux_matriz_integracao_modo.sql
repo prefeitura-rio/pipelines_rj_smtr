@@ -44,7 +44,7 @@ select
     cast(null as string) as id_servico_gtfs_destino,
     cast(null as string) as tabela_gtfs_destino,
     tempo_integracao_minutos,
-    cast(4.7 as numeric) as valor_integracao,
+    cast(5.0 as numeric) as valor_integracao,
     'Integração' as tipo_integracao,
     true as indicador_integracao
 from modos_origem_destino

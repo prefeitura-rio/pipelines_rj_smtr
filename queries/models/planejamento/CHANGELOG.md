@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.5.9] - 2025-01-08
+
+### Alterado
+
+- Mudança de tarifa para R$ 5,00
+
 ## [1.5.8] - 2026-01-07
 
 ### Adicionado
