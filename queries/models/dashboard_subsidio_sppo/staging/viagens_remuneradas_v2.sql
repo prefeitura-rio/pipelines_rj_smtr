@@ -174,8 +174,10 @@ select
     ),
     case
         when
-            (v.data between date('2025-12-22') and date('2025-12-26')
-            or v.data >= date('2025-12-29'))
+            (
+                v.data between date('2025-12-22') and date('2025-12-26')
+                or v.data >= date('2025-12-29')
+            )
             and v.servico in (
                 "232",
                 "552",
@@ -192,7 +194,7 @@ select
                 "583",
                 "584",
                 "109"
-            )  --Processo nº 000399.001525/2025-01
+            )  -- Processo nº 000399.001525/2025-01
         then true
         when
             v.data = date('2025-09-16')
