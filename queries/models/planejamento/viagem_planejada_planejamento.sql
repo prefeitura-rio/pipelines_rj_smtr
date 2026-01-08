@@ -6,15 +6,7 @@
             "granularity": "day",
         },
         alias="viagem_planejada",
-        incremental_strategy="merge",
-        unique_key="id_viagem",
-        incremental_predicates=[
-            "DBT_INTERNAL_DEST.data between date('"
-            + var("date_range_start")
-            + "') and date_add(date('"
-            + var("date_range_end")
-            + "'), interval 1 day)"
-        ],
+        incremental_strategy="insert_overwrite",
     )
 }}
 
