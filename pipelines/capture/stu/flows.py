@@ -13,6 +13,7 @@ CAPTURA_STU = create_default_capture_flow(
     source=constants.STU_SOURCES.value,
     create_extractor_task=create_stu_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    recapture_days=5,
 )
 set_default_parameters(CAPTURA_STU, {"recapture": True})
 
