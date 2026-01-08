@@ -64,14 +64,6 @@ with
                         then "Domingo"
                         else service_id
                     end as tipo_dia,
-                    case
-                        when
-                            (
-                                feed_start_date = "2025-12-27"
-                                and trip_short_name
-                                in ("SE553", "SE554", "SE550", "SE410")
-                            )
-                        then false
                         when
                             (
                                 {% for evento in eventos_trajetos_alternativos %}
