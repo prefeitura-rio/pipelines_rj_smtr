@@ -1,5 +1,11 @@
 # Changelog - cadastro
 
+## [1.1.4] - 2026-01-08
+
+### Removido
+
+- Remove schedule do flow `CADASTRO_MATERIALIZACAO`
+
 ## [1.1.3] - 2025-11-05
 
 ### Adicionado
