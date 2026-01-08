@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Mudança de tarifa para R$ 5,00
+- Mudança de tarifa para R$ 5,00 nos modelos `aux_matriz_integracao_modo.sql` e `matriz_integracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1162)
 
 ## [1.5.8] - 2026-01-07
 
