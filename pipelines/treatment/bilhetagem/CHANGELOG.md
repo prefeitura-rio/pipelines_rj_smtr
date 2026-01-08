@@ -1,5 +1,22 @@
 # Changelog - bilhetagem
 
+## [2.0.14] - 2025-11-19
+
+### Adicionado
+
+- Adiciona `aux_gratuidade_info` nos testes diários da transação e `sincronizacao_tabelas__transacao_gratuidade_estudante_municipal` no exclude (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1066)
+- Adiciona parâmetro `test_webhook_key` nos flows de materialização (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1066)
+
+### Alterado
+
+- Altera schedule da materialização da `passageiro_hora` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1066)
+
+## [2.0.13] - 2025-11-05
+
+### Adicionado
+
+- Adiciona tolerância no handler skip if running da materialização da`transacao` e do `extrato_cliente_cartao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/855)
+
 ## [2.0.12] - 2025-10-02
 
 ### Adicionado

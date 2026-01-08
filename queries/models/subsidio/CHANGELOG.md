@@ -1,5 +1,47 @@
 # Changelog - subsidio
 
+## [2.3.1] - 2026-01-06
+
+### Alterado
+
+- Altera o modelo `viagem_classificada` para exclusão de registros de autuações com `status` igual a "cancelado" (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1147)
+
+## [2.3.0] - 2025-12-26
+
+### Alterado
+
+- Altera modelo `viagem_regularidade_temperatura` para reprocessamento dos descontos por inoperabilidade da climatização em OUT/Q2 e NOV/Q1 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1134)
+
+## [2.2.9] - 2025-12-09
+
+### Alterado
+
+- Altera modelo `viagem_regularidade_temperatura` para retomada dos descontos por inoperabilidade da climatização, conforme Evento 112 do PROCEDIMENTO COMUM CÍVEL Nº 3019687-30.2025.8.19.0001/RJ (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1096)
+
+## [2.2.8] - 2025-12-08
+
+### Alterado
+
+- Altera modelo `staging_servico_contrato_abreviado` de acordo com alterações na planilha de serviços com contrato abreviado (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1089)
+
+## [2.2.7] - 2025-11-27
+
+### Alterado
+
+- Altera variável do modelo `aux_viagem_temperatura`  de `DATA_SUBSIDIO_V21_INICIO` para `DATA_SUBSIDIO_V99_INICIO`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1068)
+
+## [2.2.6] - 2025-11-26
+
+### Alterado
+
+- Altera data do modelo `viagem_regularidade_temperatura` para interrupção das glosas por climatização (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1069)
+
+## [2.2.5] - 2025-11-14
+
+### Alterado
+
+- Altera referência dos modelos `servico_contrato_abreviado` e `valor_km_tipo_viagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1058)
+
 ## [2.2.4] - 2025-10-28
 
 ### Alterado

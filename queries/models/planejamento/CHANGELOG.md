@@ -1,5 +1,36 @@
 # Changelog - planejamento
 
+## [1.5.8] - 2026-01-07
+
+### Adicionado
+
+- Corrige as colunas `sentido` e `evento` no modelo `ordem_servico_trajeto_alternativo_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1156)
+
+## [1.5.7] - 2025-12-26
+
+### Adicionado
+
+- Adiciona as descrições do modelo `ordem_servico_faixa_horaria_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1119)
+- Criado o modelo `ordem_servico_trajeto_alternativo_sentido`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1050)
+
+## [1.5.6] - 2025-12-19
+
+### Alterado
+
+- Alterados no modelo `aux_calendario_manual` o `tipo_os` de `2025-12-06`, `2025-12-07`, `2025-12-13` e `2025-12-14` para `Verão` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1128)
+
+## [1.5.5] - 2025-12-08
+
+### Alterado
+
+- Alterados no modelo `aux_calendario_manual` o tipo_dia de `2025-11-21` para `Ponto Facultativo`, o `tipo_os` de `2025-11-16` para `ENEM`, e o `tipo_os` dos dias `2025-11-22`, `2025-11-23`, `2025-11-29` e `2025-11-30` para `Verão` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1093)
+
+## [1.5.4] - 2025-11-10
+
+### Alterado
+
+- Alterados o `tipo_dia` no modelo `aux_calendario_manual.sql` de `2025-10-20` -> `Ponto Facultativo` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1042)
+
 ## [1.5.3] - 2025-10-23
 
 ### Corrigido

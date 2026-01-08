@@ -40,6 +40,26 @@ with
                 then "Ponto Facultativo"  -- LEI Nº 8.881, DE 14 DE ABRIL DE 2025 / MTR-PRO-2025/16278
                 when data = date(2025, 07, 07)
                 then "Ponto Facultativo"  -- LEI Nº 8.881, DE 14 DE ABRIL DE 2025 / MTR-PRO-2025/16278
+                when data = date(2025, 10, 20)
+                then "Ponto Facultativo"  -- MTR-MEM-2025/02734 - Indicação de tipo dia "Ponto Facultativo" para o feriado do dia do comerciário
+                when data = date(2025, 11, 21)
+                then "Ponto Facultativo"  -- Decreto Rio nº 57.139, de 10 de novembro de 2025.
+                when data = date(2025, 12, 24)
+                then "Sabado"  -- 000399.001368/2025-25 - Véspera de Natal
+                when data = date(2025, 12, 25)
+                then "Domingo"  -- 000399.001368/2025-25 - Feriado de Natal
+                when data = date(2025, 12, 26)
+                then "Ponto Facultativo"  -- 000399.001368/2025-25 - Ponto Facultativo referente às festas de fim de ano
+                when data = date(2025, 12, 29)
+                then "Ponto Facultativo"  -- 000399.001368/2025-25 - Ponto Facultativo referente às festas de fim de ano
+                when data = date(2025, 12, 30)
+                then "Ponto Facultativo"  -- 000399.001368/2025-25 - Ponto Facultativo referente às festas de fim de ano
+                when data = date(2025, 12, 31)
+                then "Sabado"  -- 000399.001368/2025-25 - Operação Especial Réveillon
+                when data = date(2026, 01, 01)
+                then "Domingo"  -- 000399.001368/2025-25 - Operação Especial Réveillon
+                when data = date(2026, 01, 02)
+                then "Ponto Facultativo"  -- 000399.001368/2025-25 - Ponto Facultativo referente às festas de fim de ano
             end as tipo_dia,
             case
                 when data between date(2024, 09, 14) and date(2024, 09, 15)
@@ -98,6 +118,28 @@ with
                 then "Atípico"  -- MTR-DES-2025/89230 - Acionamento do Plano Verão
                 when data = date(2025, 10, 12)
                 then "Atípico"  -- MTR-DES-2025/89230 - Acionamento do Plano Verão (somente domingo)
+                when data = date(2025, 11, 09)
+                then "ENEM"  -- Operação especial em horário de prova do ENEM
+                when data = date(2025, 11, 16)
+                then "ENEM"  -- Operação especial em horário de prova do ENEM
+                when data = date(2025, 11, 22)
+                then "Verão"  -- MTR-DES-2025/110742 - Acionamento do Plano Verão
+                when data = date(2025, 11, 23)
+                then "Verão"  -- MTR-DES-2025/110742 - Acionamento do Plano Verão
+                when data = date(2025, 11, 29)
+                then "Verão"  -- MTR-DES-2025/116337 - Acionamento do Plano Verão
+                when data = date(2025, 11, 30)
+                then "Verão"  -- MTR-DES-2025/116337 - Acionamento do Plano Verão
+                when data between date(2025, 12, 06) and date(2025, 12, 07)
+                then "Verão"  -- 000399.000386/2025-90 - Acionamento do Plano Verão
+                when data between date(2025, 12, 13) and date(2025, 12, 14)
+                then "Verão"  -- 000399.000386/2025-90 - Acionamento do Plano Verão
+                when data = date(2025, 12, 24)
+                then "Natal"  -- 000399.001368/2025-25 - Véspera de Natal
+                when data = date(2025, 12, 31)
+                then "Reveillon_31-12"  -- 000399.001368/2025-25 - Operação Especial Réveillon
+                when data = date(2026, 01, 01)
+                then "Reveillon_01-01"  -- 000399.001368/2025-25 - Operação Especial Réveillon
             end as tipo_os
         from
             unnest(

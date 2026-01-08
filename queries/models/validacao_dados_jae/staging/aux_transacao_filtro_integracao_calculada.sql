@@ -65,7 +65,9 @@ left join
     and t.datetime_transacao >= l.dt_inicio_validade
     and (l.data_fim_validade is null or t.datetime_transacao < l.data_fim_validade)
 where
-    tipo_transacao != "Gratuidade" and tipo_transacao_jae != 'Botoeira'
+    tipo_transacao != "Gratuidade"
+    and tipo_transacao_jae != 'Botoeira'
+    and date(datetime_processamento) < current_date('America/Sao_Paulo')
     {% if not flags.FULL_REFRESH %}
         {% if partitions | length > 0 %} and data in ({{ partitions | join(", ") }})
         {% else %} and false

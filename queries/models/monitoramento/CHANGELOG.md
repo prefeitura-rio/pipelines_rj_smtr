@@ -1,5 +1,75 @@
 # Changelog - monitoramento
 
+## [1.8.6] - 2026-01-06
+
+### Adicionado
+
+- Adiciona ao modelo `autuacao_disciplinar_historico` a coluna `status` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1147)
+
+### Alterado
+
+- Altera o modelo `veiculo_dia` para exclusão de registros de autuações com `status` igual a "cancelado" (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1147)
+
+## [1.8.5] - 2025-12-22
+
+### Alterado
+
+- Altera o modelo `veiculo_fiscalizacao_lacre` para correção duplicação de veículo (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1131)
+
+## [1.8.4] - 2025-12-19
+
+### Alterado
+
+- Altera data de processamento para a exceção de ajuste no modelo `veiculo_dia` para correção de tecnologia, conforme MTR-CAP-2025/59482 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1129)
+
+## [1.8.3] - 2025-12-15
+
+### Alterado
+
+- Altera data de processamento para a exceção de ajuste no modelo `veiculo_dia` para correção de tecnologia, conforme MTR-CAP-2025/59482 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1149)
+
+## [1.8.2] - 2025-12-10
+
+### Alterado
+
+- Altera o filtro no modelo `veiculo_dia` para considerar `data` e `id_veiculo`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1100)
+- Altera o teste `unique_combination_of_columns`para considerar `data`e `id_veiculo` do modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1100)
+
+## [1.8.1] - 2025-12-04
+
+### Alterado
+
+- Altera exceção para tratamento da data_ultima_vistoria no modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1082)
+- Altera a data de processamento no modelo `veiculo_dia` para corrigir a tecnologia apurada no período compreendido entre 2025-11-01 e 2025-11-15 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1083)
+
+## [1.8.0] - 2025-12-03
+
+### Alterado
+
+- Altera data de processamento para a exceção de ajuste no modelo `veiculo_dia` para correção de tecnologia, conforme MTR-CAP-2025/59482 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1079)
+
+### Corrigido
+
+- Corrigido modelo `veiculo_fiscalizacao_lacre`ao adicionar o hífen ao regex e filtrando os veículos com placa corrigida. (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1081)
+
+## [1.7.9] - 2025-12-02
+
+### Alterado
+
+- Acrescenta data de processamento para a exceção de ajuste no modelo `veiculo_dia` para correção de tecnologia, conforme MTR-CAP-2025/59482 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1078)
+
+## [1.7.8] - 2025-11-11
+
+### Adicionado
+
+- Adicionada exceção para tratamento da data_ultima_vistoria no modelo `veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1048)
+
+## [1.7.7] - 2025-11-04
+
+### Alterado
+
+- Remoção do filtro `indicador_ativa` da CTE `garagens` no modelo `aux_gps_parada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1025)
+
 ## [1.7.6] - 2025-10-22
 
 ### Adicionado

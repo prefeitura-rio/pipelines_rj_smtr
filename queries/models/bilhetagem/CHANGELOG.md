@@ -1,5 +1,27 @@
 # Changelog - bilhetagem
 
+## [3.3.4] - 2025-12-15
+
+### Corrigido
+
+- Corrige adição de 4% em transações RioCard nos flows `aux_passageiro_hora.sql` e `passageiro_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1111)
+
+
+## [3.3.3] - 2025-11-19
+
+### Adicionado
+
+- Adiciona coluna `id_laudo_pcd` no modelo `aux_laudo_pcd.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1066)
+
+### Alterado
+
+- Altera lógica do `id_unico` do modelo `aux_gratuidade_info.sql` para utilizar os ids unicos das outras tabelas auxiliares anteriores (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1066)
+- Altera deduplicação e `id_unico` do modelo `aux_laudo_pcd.sql` trocando `datetime_inclusao` por `id_laudo_pcd` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1066)
+
+### Corrigido
+
+- Corrige range de inicio e fim de validade do modelo `aux_gratuidade_info.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1066)
+
 ## [3.3.2] - 2025-11-03
 
 ### Alterado

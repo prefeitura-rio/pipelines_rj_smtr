@@ -63,7 +63,6 @@ models:
         description: "{{ doc('id_consorcio') }}"
       - name: consorcio
         description: "{{ doc('consorcio') }}"
-
       - name: operadora
         description: "{{ doc('operadora') }}"
       - name: id_servico_jae
@@ -72,8 +71,6 @@ models:
         description: "{{ doc('servico_variacao') }} ou código da estação de BRT na Jaé"
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
-      # - name: servico
-      #   description: "{{ doc('servico_variacao') }} ou código da estação no caso de BRT"
       - name: id_transacao
         description: "Identificador único da transação"
       - name: longitude
@@ -96,8 +93,22 @@ models:
         description: "Indica se o serviço não tem correspondência com as tabela 'trips' ou 'stops' do GTFS"
       - name: indicador_servico_fora_vigencia
         description: "Indica se a transação foi feita em um serviço fora de vigência"
+      - name: indicador_processamento_anterior_transacao
+        description: "Indica se a data da transação e maior que a data de processamento"
+      - name: indicador_integracao_fora_tabela
+        description: "Indica se a transação é do tipo Integração e está fora da tabela bilhetagem.integracao"
       - name: versao
         description: "{{ doc('versao') }}"
+        data_type: string
+        quote: true
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+        data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
+        quote: true
   - name: ordem_pagamento_invalida
     description: "Tabela para validação dos dados da ordem de pagamento da Jaé"
     columns:
@@ -148,6 +159,10 @@ models:
         description: "{{ doc('id_transacao') }}"
         data_type: string
         quote: true
+        tests:
+          - unique:
+              name: unique__id_transacao__integracao_nao_realizada
+              where: data in ({partitions})
       - name: datetime_transacao
         description: "{{ doc('datetime_transacao') }}"
         data_type: datetime
@@ -239,6 +254,10 @@ models:
       - name: valor_transacao
         description: "{{ doc('valor_transacao') }}"
         data_type: float64
+        quote: true
+      - name: classificacao_integracao_nao_realizada
+        description: "Classificação da falha no processo de integração"
+        data_type: string
         quote: true
       - name: versao
         description: "{{ doc('versao') }}"

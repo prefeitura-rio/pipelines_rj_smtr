@@ -64,13 +64,35 @@
                     "{{ var('date_range_end') }}"
                 )
         ),
+        veiculo_chassi as (
+            select distinct placa, trim(chassi) as chassi
+            from {{ ref("staging_stu_veiculo") }}
+            where chassi is not null
+        ),
+        licenciamento_chassi as (
+            select
+                l.* except (data_ultima_vistoria),
+                v.chassi,
+                coalesce(
+                    l.data_ultima_vistoria,
+                    last_value(l.data_ultima_vistoria ignore nulls) over w
+                ) as data_ultima_vistoria
+            from staging l
+            left join veiculo_chassi v using (placa)
+            window
+                w as (
+                    partition by l.id_veiculo, v.chassi
+                    order by l.data
+                    rows between unbounded preceding and current row
+                )
+        ),
         veiculos_vistoriados as (
             select *
-            from staging
+            from licenciamento_chassi
             qualify
                 (lag(data_ultima_vistoria) over(win) is null and data_ultima_vistoria is not null)
                 or lag(data_ultima_vistoria) over(win) != data_ultima_vistoria
-            window win as (partition by id_veiculo, placa order by data)
+            window win as (partition by id_veiculo, chassi order by data)
         ),
         menor_data_vistoria as (
             select
@@ -134,6 +156,344 @@ with
             ano_ultima_vistoria,
             ultima_situacao,
             case
+                when
+                    data between "2025-11-12" and "2025-12-01"
+                    and id_veiculo in (
+                        'C50003',
+                        'C50007',
+                        'C50015',
+                        'C50016',
+                        'C50017',
+                        'C50020',
+                        'C50022',
+                        'C50027',
+                        'C50038',
+                        'C50039',
+                        'C50041',
+                        'C50042',
+                        'C50043',
+                        'C50044',
+                        'C50055',
+                        'C50058',
+                        'C50059',
+                        'C50060',
+                        'C50062',
+                        'C50063',
+                        'C50064',
+                        'C50067',
+                        'C50074',
+                        'C50120',
+                        'C50122',
+                        'A41251',
+                        'A41252',
+                        'A41253',
+                        'A41254',
+                        'A41255',
+                        'A41256',
+                        'B27055',
+                        'B27060',
+                        'B27066',
+                        'B27132',
+                        'B27133',
+                        'B27138',
+                        'B27139',
+                        'B27140',
+                        'B44570',
+                        'B44585',
+                        'B44590',
+                        'B44646',
+                        'B44659',
+                        'D13082',
+                        'D13095',
+                        'D17030',
+                        'D17034',
+                        'D17041',
+                        'D17042',
+                        'D17045',
+                        'D17069',
+                        'D17096',
+                        'D17099',
+                        'D86114',
+                        'D86117',
+                        'C27029',
+                        'C27049',
+                        'C27067',
+                        'C27073',
+                        'C27081',
+                        'C27089',
+                        'C27165',
+                        'C27166',
+                        'C27167',
+                        'B27001',
+                        'B27024',
+                        'B27027',
+                        'B27031',
+                        'B27032',
+                        'B27033',
+                        'B27037',
+                        'B27039',
+                        'B27043',
+                        'B27064',
+                        'B27092',
+                        'B27096',
+                        'B27098',
+                        'B27100',
+                        'B27103',
+                        'B27107',
+                        'B27108',
+                        'B27111',
+                        'B27114',
+                        'B27134',
+                        'B27135',
+                        'B27137',
+                        'B27143',
+                        'B27144',
+                        'B27145',
+                        'B27146',
+                        'B27147',
+                        'B27148',
+                        'B27149',
+                        'B27150',
+                        'B27152',
+                        'B27155',
+                        'B27156',
+                        'B27157',
+                        'B27160',
+                        'B27162',
+                        'B27163',
+                        'B27164',
+                        'B27184',
+                        'B27185',
+                        'B27187',
+                        'B27188',
+                        'B27189',
+                        'B27190',
+                        'B27230',
+                        'B27231',
+                        'B27232',
+                        'B27233',
+                        'B27234',
+                        'B27235',
+                        'B27236',
+                        'B27237',
+                        'B27238',
+                        'B27239',
+                        'B27240',
+                        'B27241',
+                        'B27242',
+                        'B27243',
+                        'B27244',
+                        'B27245',
+                        'B27246',
+                        'B27247',
+                        'B27248',
+                        'B27249',
+                        'B27250',
+                        'B27251',
+                        'D33028',
+                        'D33029',
+                        'D33030',
+                        'D33031',
+                        'D33032',
+                        'D33033',
+                        'D33034',
+                        'D33035',
+                        'D33036',
+                        'D33037',
+                        'D33038',
+                        'D33039',
+                        'D33041',
+                        'D33042',
+                        'D33043',
+                        'D33044',
+                        'D33063',
+                        'D33064',
+                        'D86005',
+                        'D86008',
+                        'D86010',
+                        'D86018',
+                        'D86021',
+                        'D86022',
+                        'D86024',
+                        'D86025',
+                        'D86026',
+                        'D86028',
+                        'D86031',
+                        'D86032',
+                        'D86034',
+                        'D86035',
+                        'D86036',
+                        'D86037',
+                        'D86038',
+                        'D86039',
+                        'D86040',
+                        'D86041',
+                        'D86043',
+                        'D86044',
+                        'D86046',
+                        'D86047',
+                        'D86049',
+                        'D86051',
+                        'D86054',
+                        'D86057',
+                        'D86059',
+                        'D86061',
+                        'D86070',
+                        'D86075',
+                        'D86076',
+                        'D86077',
+                        'D86079',
+                        'D86081',
+                        'D86082',
+                        'D86083',
+                        'D86084',
+                        'D86086',
+                        'D86088',
+                        'D86090',
+                        'D86091',
+                        'D86092',
+                        'D86093',
+                        'D86094',
+                        'D86095',
+                        'D86097',
+                        'D86101',
+                        'D86102',
+                        'D86103',
+                        'D86110',
+                        'D86113',
+                        'D86118',
+                        'D86119',
+                        'D86120',
+                        'D86122',
+                        'D86125',
+                        'D86127',
+                        'D86129',
+                        'D86133',
+                        'D86136',
+                        'D86144',
+                        'D86145',
+                        'D86148',
+                        'D86155',
+                        'D86157',
+                        'D86165',
+                        'D86168',
+                        'D86171',
+                        'D86172',
+                        'D86173',
+                        'D86174',
+                        'D86175',
+                        'D86180',
+                        'D86181',
+                        'D86182',
+                        'D86185',
+                        'D86186',
+                        'D86218',
+                        'D86236',
+                        'D86254',
+                        'D86255',
+                        'D86257',
+                        'D86258',
+                        'D86259',
+                        'D86263',
+                        'D86264',
+                        'D86265',
+                        'D86266',
+                        'D86267',
+                        'D86268',
+                        'D86269',
+                        'D86271',
+                        'D86272',
+                        'D86273',
+                        'D86274',
+                        'D86275',
+                        'D86276',
+                        'D86277',
+                        'D86278',
+                        'D86279',
+                        'D86289',
+                        'D86290',
+                        'D86291',
+                        'D86292',
+                        'D86293',
+                        'D86294',
+                        'D86295',
+                        'D86296',
+                        'D86297',
+                        'D86298',
+                        'D86299',
+                        'D86300',
+                        'D86301',
+                        'D86302',
+                        'D86303',
+                        'D86304',
+                        'D86305',
+                        'D86306',
+                        'D86307',
+                        'D86308',
+                        'D86309',
+                        'D86310',
+                        'D86311',
+                        'D86312',
+                        'D86313',
+                        'D86314',
+                        'D86316',
+                        'B32513',
+                        'B32541',
+                        'B32542',
+                        'B32525',
+                        'B32547',
+                        'B32670',
+                        'B32668',
+                        'B32644',
+                        'B32502',
+                        'B32503',
+                        'B32506',
+                        'B32523',
+                        'B32525',
+                        'B32526',
+                        'B32547',
+                        'B32548',
+                        'B32551',
+                        'B32552',
+                        'B32554',
+                        'B32555',
+                        'B32612',
+                        'B32616',
+                        'B32644',
+                        'B32654',
+                        'B32668',
+                        'B32669',
+                        'B32670',
+                        'B32672',
+                        'B32679',
+                        'B32684',
+                        'B32691',
+                        'B32698',
+                        'B32699',
+                        'B32700',
+                        'B32701',
+                        'B32708',
+                        'B32715',
+                        'D33198',
+                        'D33200',
+                        'D33199'
+                    )
+                then "BASICO"  -- MTR-CAP-2025/59482
+                when
+                    data between "2025-11-20" and "2025-12-16"
+                    and id_veiculo in (
+                        'A29084',
+                        'A29092',
+                        'A29106',
+                        'A29171',
+                        'B27007',
+                        'B27125',
+                        'B27130',
+                        'B27136',
+                        'C27129'
+
+                    )
+                then "BASICO"  -- MTR-CAP-2025/59482
                 when tipo_veiculo like "%BASIC%" or tipo_veiculo like "%BS%"
                 then "BASICO"
                 when tipo_veiculo like "%MIDI%"
@@ -152,9 +512,6 @@ with
             indicador_elevador,
             indicador_usb,
             indicador_wifi,
-            lag(date(data)) over (
-                partition by id_veiculo, placa order by data
-            ) as ultima_data,
             min(date(data)) over (order by data) as primeira_data,
             date(data) as data_arquivo_fonte
         from {{ ref("staging_licenciamento_stu") }}
@@ -165,6 +522,43 @@ with
                     "{{ var('date_range_end') }}"
                 )
             {% endif %}
+    ),
+    veiculo_chassi as (
+        select distinct placa, trim(chassi) as chassi
+        from {{ ref("staging_stu_veiculo") }}
+        where chassi is not null
+    ),
+    licenciamento_chassi as (
+        select
+            l.* except (data_ultima_vistoria, ano_ultima_vistoria),
+            v.chassi,
+            lag(date(l.data)) over (
+                partition by l.id_veiculo, v.chassi order by l.data
+            ) as ultima_data,
+            coalesce(
+                l.data_ultima_vistoria,
+                last_value(l.data_ultima_vistoria ignore nulls) over w
+            ) as data_ultima_vistoria,
+            coalesce(
+                l.ano_ultima_vistoria,
+                last_value(l.ano_ultima_vistoria ignore nulls) over w
+            ) as ano_ultima_vistoria,
+            case
+                when
+                    l.data_ultima_vistoria is null
+                    and last_value(l.data_ultima_vistoria ignore nulls) over w
+                    is not null
+                then true
+                else false
+            end as indicador_data_ultima_vistoria_tratada
+        from licenciamento_staging l
+        left join veiculo_chassi v using (placa)
+        window
+            w as (
+                partition by l.id_veiculo, v.chassi
+                order by l.data
+                rows between unbounded preceding and current row
+            )
     ),
     datas_faltantes as (
         select distinct
@@ -188,12 +582,12 @@ with
                     )
                 {% endif %}
             ) as data
-        full outer join licenciamento_staging l using (data)
+        full outer join licenciamento_chassi l using (data)
         where data > '{{ var("data_final_veiculo_arquitetura_1") }}'
     ),
     licenciamento_datas_preenchidas as (
         select df.data, l.* except (data)
-        from licenciamento_staging l
+        from licenciamento_chassi l
         left join datas_faltantes df using (data_arquivo_fonte)
     ),
     veiculo_fiscalizacao_lacre as (
@@ -202,7 +596,7 @@ with
     inicio_vinculo_preenchido as (
         select data_corrigida as data, s.* except (data)
         from
-            licenciamento_staging s,
+            licenciamento_chassi s,
             unnest(
                 generate_date_array(s.data_inicio_vinculo, data, interval 1 day)
             ) as data_corrigida
@@ -250,11 +644,11 @@ with
                 {% endif %}
         ),
         dados_novos_lacre_vistoria as (
-            select * except (ultima_data, primeira_data)
+            select * except (chassi, ultima_data, primeira_data)
             from dados_novos
 
             {% if lacre_partitions | length > 0 or vistoria_partitions | length > 0 %}
-                union all
+                union all by name
 
                 select
                     da.data,
@@ -324,6 +718,7 @@ with
             date(data) as data,
             id_veiculo,
             placa,
+            chassi,
             data_ultima_vistoria,
             ano_ultima_vistoria
         from dados_novos
@@ -333,7 +728,7 @@ with
                 and data_ultima_vistoria is not null
             )
             or lag(data_ultima_vistoria) over (win) != data_ultima_vistoria
-        window win as (partition by id_veiculo, placa order by data)
+        window win as (partition by id_veiculo, chassi order by data)
 
     ),
     nova_data_ultima_vistoria as (
@@ -341,6 +736,7 @@ with
             nova_data as data,
             id_veiculo,
             placa,
+            chassi,
             data_ultima_vistoria,
             ano_ultima_vistoria
         from
@@ -350,7 +746,7 @@ with
             ) as nova_data
         qualify
             row_number() over (
-                partition by nova_data, id_veiculo, placa order by d.data desc
+                partition by nova_data, id_veiculo, chassi order by d.data desc
             )
             = 1
     ),
@@ -478,6 +874,7 @@ select
     indicador_usb,
     indicador_wifi,
     indicador_veiculo_lacrado,
+    indicador_data_ultima_vistoria_tratada,
     data_arquivo_fonte,
     versao,
     datetime_ultima_atualizacao,

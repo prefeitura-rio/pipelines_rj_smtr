@@ -1472,3 +1472,55 @@ Data e hora da inativação do cadastro do endereco no sistema da Jaé
 {% docs subtipo_dia %}
 Subtipo de dia [ex: Verão, Atípico, Enem]
 {% enddocs %}
+
+{% docs resolution %}
+Resolução do h3
+{% enddocs %}
+
+{% docs parent_id %}
+Resolução do h3, parent cell
+{% enddocs %}
+
+{% docs geometry_wkt %}
+Geometria em formato WKT
+{% enddocs %}
+
+{% docs data_ordem_servico %}
+Data da ordem de serviço
+{% enddocs %}
+
+{% docs pico_multa_automatica %}
+Período de pico de operação, dividido em 'manhã' [5h-8h] e 'noite' [16h-19h]
+{% enddocs %}
+
+{% docs frota_operante_media_multa_automatica %}
+Média de veículos em operação na linha no período de pico
+{% enddocs %}
+
+{% docs frota_planejada_multa_automatica %}
+Frota planejada para a linha no período de pico
+{% enddocs %}
+
+{% docs porcentagem_operacao_multa_automatica %}
+Razão entre a frota realizada e a frota planejada
+{% enddocs %}
+
+{% docs multavel_multa_automatica %}
+Indica se a linha é passível de multa por operar com frota abaixo de 80% do planejado
+{% enddocs %}
+
+{% docs latitude %}
+Valor geográfico da latitude do ponto.
+{% enddocs %}
+
+{% docs longitude %}
+Valor geográfico da longitude do ponto.
+{% enddocs %}
+
+{% docs hora %}
+Horário do registro
+{% enddocs %}
+
+{% docs datetime_gps %}
+Data e hora de geração da transmissão do GPS [GMT-3]
+{% enddocs %}

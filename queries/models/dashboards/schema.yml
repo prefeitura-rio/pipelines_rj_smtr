@@ -1,0 +1,13 @@
+version: 2
+
+models:
+  - name: rdo40_tratado_bi_do_bem_get5
+    description: "Tabela de operadoras de transporte"
+    columns:
+      - name: ano
+        description: "{{ doc('ano') }}"
+      - name: mes
+        description: "Mês"
+      - name: percentual_de_integracoes
+        description: "Percentual de Integrações - razão entre o total de Bilhetes Únicos Carioca e Supervia utilizados e o total de gratuidades e passageiros pagantes"
+

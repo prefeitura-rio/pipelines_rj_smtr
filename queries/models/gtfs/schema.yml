@@ -416,12 +416,12 @@ models:
       - dbt_expectations.expect_table_aggregation_to_equal_other_table:
           name: dbt_expectations.expect_table_aggregation_to_equal_other_table__ordem_servico_trajeto_alternativo_gtfs
           expression: count(distinct tipo_os)
-          compare_model: ref("ordem_servico_gtfs")
+          compare_model: ref("ordem_servico_faixa_horaria") if var('data_versao_gtfs') < var('DATA_GTFS_V4_INICIO') else ref("ordem_servico_faixa_horaria_sentido")
           compare_expression: count(distinct tipo_os)
           group_by: [feed_start_date, tipo_os]
           compare_group_by: [feed_start_date, tipo_os]
-          row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
-          compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+          row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}' and feed_start_date < '{{ var('DATA_GTFS_V5_INICIO') }}'"
+          compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}' and feed_start_date < '{{ var('DATA_GTFS_V5_INICIO') }}'"
           where: "1=1"
     columns:
       - name: feed_start_date

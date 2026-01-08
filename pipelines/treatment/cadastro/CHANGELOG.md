@@ -1,5 +1,11 @@
 # Changelog - cadastro
 
+## [1.1.3] - 2025-11-05
+
+### Adicionado
+
+- Adiciona tolerância no handler skip if running da materialização do `cadastro` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/855)
+
 ## [1.1.2] - 2025-07-08
 
 ### Adicionado

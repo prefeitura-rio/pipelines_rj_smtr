@@ -1,0 +1,30 @@
+version: 2
+models:
+  - name: estacoes_e_terminais_brt
+    description: Tabela com informações acerca das estações e terminais do BRT
+    columns:
+      - name: num_identificacao
+        description: Número de identificação
+      - name: nome_terminal
+        description: Nome do terminal
+      - name: longitude
+        description: "{{ doc('longitude') }}"
+      - name: latitude
+        description: "{{ doc('latitude') }}"
+  - name: terminais_onibus_coordenadas
+    description: Tabela materializada para acesso geral aos dados do RHO STPL
+    columns:
+      - name: codigo_estacao
+        description: Código de identificação da estação
+      - name: nome_estacao
+        description: Nome da estação
+      - name: corredor
+        description: Corredor de funcionamento
+      - name: longitude
+        description: "{{ doc('longitude') }}"
+      - name: latitude
+        description: "{{ doc('latitude') }}"
+      - name: depara_estacao_avaliada
+        description: De para das estações para validação
+      - name: ativa_estacao
+        description: Indica se a estação está em funcionamento

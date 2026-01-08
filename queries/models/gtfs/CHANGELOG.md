@@ -1,5 +1,87 @@
 # Changelog - gtfs
 
+## [1.3.6] - 2026-01-07
+
+### Corrigido
+
+- Corrige o modelo `trips_filtrada_aux_gtfs` para buscar os eventos de `ordem_servico_trajeto_alternativo_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1156)
+
+## [1.3.5] - 2026-01-06
+
+### Alterado
+
+- Altera os testes do gtfs dos modelos que não são mais utilizados (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1146)
+
+- Altera o modelo `ordem_servico_trips_shapes_gtfs_v2.sql` para considerar os serviços de `Sabado` no `Domingo` no feed do dia `2025-12-27` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1146)
+
+
+## [1.3.4] - 2025-12-26
+
+### Adicionado
+
+- Criado o modelo `ordem_servico_trajeto_alternativo_sentido_atualizado_aux_gtfs_v3.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1050)
+
+### Alterado
+
+- Alterado o modelo `ordem_servico_trips_shapes_gtfs.sql` para utilizar o `full outer union` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1050)
+
+- Alterado o modelo `ordem_servico_trajeto_alternativo_sentido_atualizado_aux_gtfs.sql` para incluir o modelo `ordem_servico_trajeto_alternativo_sentido_atualizado_aux_gtfs_v3.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1050)
+
+- Alterado o modelo `ordem_servico_trajeto_alternativo_gtfs.sql` para limitar a materialização dos dado pela variavel `queries/models/gtfs/DATA_GTFS_V5_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1050)
+
+- Altera a lógica de associação para o tipo OS "Verão" no modelo `ordem_servico_trips_shapes_gtfs_v2` para considerar o servico `485` no sabado (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1141)
+
+## [1.3.3] - 2025-12-23
+
+### Alterado
+
+- Altera a lógica de associação para o tipo OS "Verão" no modelo `ordem_servico_trips_shapes_gtfs_v2` para considerar serviços que geralmente não operam no dia. (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1133)
+
+## [1.3.2] - 2025-12-21
+
+### Adicionado
+
+- Adiciona exceção para tipo OS `Verão` no modelo `ordem_servico_trips_shapes_gtfs_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1132)
+
+## [1.3.1] - 2025-12-22
+
+### Corrigido
+
+- Corrige a coluna `direction_id` no modelo `trips_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1130)
+
+
+## [1.3.0] - 2025-11-28
+
+### Corrigido
+
+- Corrige exceção para tipo OS `ENEM` e `V+ENEM` e refatora o modelo (DRY) `ordem_servico_trips_shapes_gtfs_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1073)
+
+## [1.2.9] - 2025-11-27
+
+### Adicionado
+
+- Adiciona exceção para tipo OS `ENEM` e `V+ENEM` no modelo `ordem_servico_trips_shapes_gtfs_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1070)
+
+### Corrigido
+
+- Corrigida a alteração para tipo OS `ENEM` e `V+ENEM` no modelo `ordem_servico_trips_shapes_gtfs_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1072)
+
+## [1.2.8] - 2025-11-10
+
+### Corrigido
+
+- Corrigida a `distancia_planejada` dos trajetos alternativos do modelo `ordem_servico_trips_shapes_gtfs_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1040)
+
+### Alterado
+
+- Alterada a condição de `data_versao_gtfs` para o modelo `ordem-servico_gtfs` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1042)
+
+## [1.2.7] - 2025-10-30
+
+### Adicionado
+
+- Cria modelos `ordem_servico_diaria_gtfs.sql`, `ordem_servico_viagens_planejadas.sql` e `servicos_sentido_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1016)
+
 ## [1.2.6] - 2025-08-08
 
 ### Alterado

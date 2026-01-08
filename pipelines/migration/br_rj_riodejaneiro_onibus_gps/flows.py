@@ -2,7 +2,7 @@
 """
 Flows for br_rj_riodejaneiro_onibus_gps
 
-DBT 2025-09-10
+DBT 2025-11-17
 """
 
 from copy import deepcopy
@@ -639,7 +639,7 @@ with Flow("SMTR: GPS SPPO 15 Minutos - Tratamento") as recaptura_15min:
 recaptura_15min.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 recaptura_15min.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
+    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 recaptura_15min.schedule = every_15_minutes
 recaptura_15min.state_handlers = [

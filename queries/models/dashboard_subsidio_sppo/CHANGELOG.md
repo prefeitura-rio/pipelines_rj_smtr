@@ -1,5 +1,23 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [8.0.8] - 2026-01-06
+
+### Alterado
+
+- Move a view `viagem_climatizacao.sql` para `dashboard_monitoramento_interno` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1121)
+
+## [8.0.7] - 2025-11-25
+
+### Adicionado
+
+- Cria view `viagem_climatizacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1064)
+
+## [8.0.6] - 2025-10-30
+
+### Adicionado
+
+- Cria modelo `sumario_servico_glosa_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1016)
+
 ## [8.0.5] - 2025-10-28
 
 ### Corrigido

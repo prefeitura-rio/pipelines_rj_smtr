@@ -1,4 +1,5 @@
 -- depends_on: {{ ref('ordem_servico_trajeto_alternativo_gtfs') }}
+-- depends_on: {{ ref('ordem_servico_trajeto_alternativo_sentido') }}
 /*
 Identificação de um trip de referência para cada serviço e sentido regular
 Identificação de todas as trips de referência para os trajetos alternativos
@@ -9,6 +10,12 @@ Identificação de todas as trips de referência para os trajetos alternativos
     {%- set query = (
         "SELECT DISTINCT evento FROM "
         ~ ref("ordem_servico_trajeto_alternativo_gtfs")
+        ~ " WHERE feed_start_date = '"
+        ~ var("data_versao_gtfs")
+        ~ "'"
+        ~ " UNION DISTINCT"
+        ~ " SELECT DISTINCT evento FROM "
+        ~ ref("ordem_servico_trajeto_alternativo_sentido")
         ~ " WHERE feed_start_date = '"
         ~ var("data_versao_gtfs")
         ~ "'"

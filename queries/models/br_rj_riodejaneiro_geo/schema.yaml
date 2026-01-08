@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: h3_res8
+    description: "Tabela com a resolução 8 do h3"
+    columns:
+      - name: tile_id
+        description: "{{ doc ('tile_id') }}"
+      - name: resolution
+        description: "{{ doc ('resolution') }}"
+      - name: parent_id
+        description: "{{ doc('parent_id') }}"
+      - name: geometry_wkt
+        description: "{{ doc('geometry_wkt') }}"
+  - name: h3_res9
+    description: "Tabela com a resolução 9 do h3"
+    columns:
+      - name: tile_id
+        description: "{{ doc ('tile_id') }}"
+      - name: resolution
+        description: "{{ doc ('resolution') }}"
+      - name: parent_id
+        description: "{{ doc('parent_id') }}"
+      - name: geometry_wkt
+        description: "{{ doc('geometry_wkt') }}"
+  - name: limites_geograficos_caixa
+    description: "Coordenadas geograficas dos limites do Rio de Janeiro"
+    columns:
+      - name: max_latitude
+        description: "Latitude limitrófe do município do Rio de Janeiro"
+      - name: min_latitude
+        description: "Latitude limitrófe do município do Rio de Janeiro"
+      - name: max_longitude
+        description: "Longitude limitrófe do município do Rio de Janeiro"
+      - name: min_longitude
+        description: "Longitude limitrófe do município do Rio de Janeiro"
+  - name: garagens_polygon
+    description: "Informações geográficas das garagens de ônibus do Rio de Janeiro"
+    columns:
+      - name: WKT
+        description: "{{ doc('geometry_wkt') }}"
+      - name: NM_MUNICIP
+        description: "Nome do município"
+      - name: CD_GEOCMU
+        description: "Código geográfico do município"
