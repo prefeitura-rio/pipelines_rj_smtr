@@ -192,7 +192,7 @@ select
                 "583",
                 "584",
                 "109"
-            )  -- Processo.rio
+            )  --Processo nº 000399.001525/2025-01
         then true
         when
             v.data = date('2025-09-16')
