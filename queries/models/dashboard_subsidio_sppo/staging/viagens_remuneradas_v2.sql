@@ -174,6 +174,12 @@ select
     ),
     case
         when
+            v.data between date('2025-12-22') and date('2025-12-26')
+            and v.servico in (
+                "232", "552", "SP805", "361", "104", "107", "161", "169", "409", "410", "435", "473", "583", "584", "109"
+            )  -- Processo.rio 
+        then true
+        when
             v.data = date('2025-09-16')
             and v.servico in ("161", "LECD110", "583", "584", "109")  -- Processo.rio MTR-OFI-2025/06240
         then true
