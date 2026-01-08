@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.3.7] - 2026-01-08
+
+### Corrigido
+
+- Corrige o nome da coluna `extensao`para `distancia_planejada`do modelo  `ordem_servico_trajeto_alternativo_sentido_atualizado_aux_v3` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1156)
+
 ## [1.3.6] - 2026-01-07
 
 ### Corrigido
