@@ -1,5 +1,15 @@
 # Changelog - gtfs
 
+## [1.3.7] - 2026-01-08
+
+### Adicionado
+
+- Adiciona ao modelo `ordem_servico_trips_shapes_gtfs_v2` para considerar os serviços `SE393` e `SE550` no `Domingo` no feed do dia `2025-12-27` ` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1158)
+
+### Corrigido
+
+- Corrige o nome da coluna `extensao` para `distancia_planejada` do modelo  `ordem_servico_trajeto_alternativo_sentido_atualizado_aux_v3` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1158)
+
 ## [1.3.6] - 2026-01-07
 
 ### Corrigido
