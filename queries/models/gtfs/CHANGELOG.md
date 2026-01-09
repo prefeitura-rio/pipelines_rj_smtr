@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona ao modelo `shapes_geom_gtfs` exceção para os `shape_id` "iz18" e "ycug" no feed do dia `2025-12-27` ` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1158)
+- Adiciona ao modelo `shapes_geom_gtfs` exceção para os `shape_id` "iz18" e "ycug" no feed do dia `2025-12-27` ` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1165)
 
 ## [1.3.7] - 2026-01-08
 
