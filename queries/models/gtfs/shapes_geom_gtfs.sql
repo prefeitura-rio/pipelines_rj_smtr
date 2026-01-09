@@ -20,7 +20,6 @@
 {% set feed_info_gtfs = ref("feed_info_gtfs") %}
 {# {% set feed_info_gtfs = "rj-smtr.gtfs.feed_info" %} #}
 {# {% set shapes_gtfs = "rj-smtr.gtfs.shapes" %} #}
-
 with
     contents as (
         select
@@ -29,9 +28,9 @@ with
             shape_pt_sequence,
             feed_start_date,
         from {{ shapes_gtfs }} s
-            where
-                feed_start_date
-                in ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
+        where
+            feed_start_date
+            in ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
     ),
     pts as (
         select
@@ -125,7 +124,8 @@ with
                     and trunc(st_x(i.start_pt), 4) = trunc(st_x(i.end_pt), 4)
                 )
                 or (
-                    feed_start_date in ("2025-05-01", "2025-12-27") and shape_id in ("iz18", "ycug")    
+                    feed_start_date in ("2025-05-01", "2025-12-27")
+                    and shape_id in ("iz18", "ycug")
                 )  -- Operação Especial "Todo Mundo no Rio" - Lady Gaga e Reveillon 2025
         )
     )
@@ -141,6 +141,4 @@ select
     '{{ var("version") }}' as versao_modelo
 from union_shapes as m
 left join {{ feed_info_gtfs }} as fi using (feed_start_date)
-    where
-        fi.feed_start_date
-        in ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
+where fi.feed_start_date in ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
