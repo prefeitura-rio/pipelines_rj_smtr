@@ -97,6 +97,7 @@ vars:
   data_versao_gtfs: "2024-12-31" # fixada última data disponível
   DATA_GTFS_V2_INICIO: "2025-04-30"
   DATA_GTFS_V4_INICIO: "2025-07-16"
+  DATA_GTFS_V5_INICIO: "2025-12-21"
 
   ### Subsídio SPPO (Ônibus) ###
   buffer: 500 # distância em metros para buffer
@@ -160,8 +161,6 @@ vars:
   DATA_SUBSIDIO_V20_INICIO: "2025-08-16"
   # Feature RESOLUÇÃO SMTR 3878/2025
   DATA_SUBSIDIO_V21_INICIO: "2025-10-01"
-  # Suspensão da glosa por ar-condicionado a partir de 16/10/2025
-  DATA_SUBSIDIO_V22_INICIO: "2025-10-16"
   # Placeholder feature
   DATA_SUBSIDIO_V99_INICIO: "3000-01-01"
    # Recursos #
@@ -571,3 +570,7 @@ models:
           field: "data"
           data_type: "date"
           granularity: "day"
+    dashboard_monitoramento_interno:
+      +materialized: view
+      +schema: dashboard_monitoramento_interno
+      +description: "Dashboards de Monitoramento Internos"

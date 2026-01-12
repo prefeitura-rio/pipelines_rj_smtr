@@ -1,5 +1,17 @@
 # Changelog - subsidio
 
+## [2.3.1] - 2026-01-06
+
+### Alterado
+
+- Altera o modelo `viagem_classificada` para exclusão de registros de autuações com `status` igual a "cancelado" (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1147)
+
+## [2.3.0] - 2025-12-26
+
+### Alterado
+
+- Altera modelo `viagem_regularidade_temperatura` para reprocessamento dos descontos por inoperabilidade da climatização em OUT/Q2 e NOV/Q1 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1134)
+
 ## [2.2.9] - 2025-12-09
 
 ### Alterado

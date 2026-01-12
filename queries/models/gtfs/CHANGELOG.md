@@ -1,5 +1,65 @@
 # Changelog - gtfs
 
+## [1.3.7] - 2026-01-08
+
+### Adicionado
+
+- Adiciona ao modelo `ordem_servico_trips_shapes_gtfs_v2` para considerar os serviços `SE393` e `SE550` no `Domingo` no feed do dia `2025-12-27` ` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1158)
+
+### Corrigido
+
+- Corrige o nome da coluna `extensao` para `distancia_planejada` do modelo  `ordem_servico_trajeto_alternativo_sentido_atualizado_aux_v3` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1158)
+
+## [1.3.6] - 2026-01-07
+
+### Corrigido
+
+- Corrige o modelo `trips_filtrada_aux_gtfs` para buscar os eventos de `ordem_servico_trajeto_alternativo_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1156)
+
+## [1.3.5] - 2026-01-06
+
+### Alterado
+
+- Altera os testes do gtfs dos modelos que não são mais utilizados (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1146)
+
+- Altera o modelo `ordem_servico_trips_shapes_gtfs_v2.sql` para considerar os serviços de `Sabado` no `Domingo` no feed do dia `2025-12-27` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1146)
+
+
+## [1.3.4] - 2025-12-26
+
+### Adicionado
+
+- Criado o modelo `ordem_servico_trajeto_alternativo_sentido_atualizado_aux_gtfs_v3.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1050)
+
+### Alterado
+
+- Alterado o modelo `ordem_servico_trips_shapes_gtfs.sql` para utilizar o `full outer union` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1050)
+
+- Alterado o modelo `ordem_servico_trajeto_alternativo_sentido_atualizado_aux_gtfs.sql` para incluir o modelo `ordem_servico_trajeto_alternativo_sentido_atualizado_aux_gtfs_v3.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1050)
+
+- Alterado o modelo `ordem_servico_trajeto_alternativo_gtfs.sql` para limitar a materialização dos dado pela variavel `queries/models/gtfs/DATA_GTFS_V5_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1050)
+
+- Altera a lógica de associação para o tipo OS "Verão" no modelo `ordem_servico_trips_shapes_gtfs_v2` para considerar o servico `485` no sabado (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1141)
+
+## [1.3.3] - 2025-12-23
+
+### Alterado
+
+- Altera a lógica de associação para o tipo OS "Verão" no modelo `ordem_servico_trips_shapes_gtfs_v2` para considerar serviços que geralmente não operam no dia. (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1133)
+
+## [1.3.2] - 2025-12-21
+
+### Adicionado
+
+- Adiciona exceção para tipo OS `Verão` no modelo `ordem_servico_trips_shapes_gtfs_v2.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1132)
+
+## [1.3.1] - 2025-12-22
+
+### Corrigido
+
+- Corrige a coluna `direction_id` no modelo `trips_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1130)
+
+
 ## [1.3.0] - 2025-11-28
 
 ### Corrigido

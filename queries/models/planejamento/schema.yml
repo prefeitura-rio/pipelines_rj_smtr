@@ -596,3 +596,76 @@ models:
         description: "Geometria do túnel em formato WKT"
       - name: geometry
         description: "Geometria do túnel em formato geográfico"
+  - name: ordem_servico_trajeto_alternativo_sentido
+    description: "Anexo da Ordem de Serviço [OS] com trajetos alternativos de serviços"
+    tests:
+      - dbt_expectations.expect_table_aggregation_to_equal_other_table:
+          name: dbt_expectations.expect_table_aggregation_to_equal_other_table__ordem_servico_trajeto_alternativo_sentido
+          expression: count(distinct tipo_os)
+          compare_model: ref("ordem_servico_faixa_horaria_sentido")
+          compare_expression: count(distinct tipo_os)
+          group_by: [feed_start_date, tipo_os]
+          compare_group_by: [feed_start_date, tipo_os]
+          row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+          compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+          where: "feed_start_date >= date('{{ var('DATA_GTFS_V5_INICIO') }}')"
+    columns:
+      - name: feed_start_date
+        description: "{{ doc('feed_start_date') }}"
+      - name: feed_end_date
+        description: "{{ doc('feed_end_date') }}"
+      - name: feed_version
+        description: "{{ doc('feed_version') }}"
+      - name: servico
+        description: "{{ doc('servico_variacao') }}"
+      - name: consorcio
+        description: "Nome do consórcio responsável pelo serviço"
+      - name: vista
+        description: "{{ doc('vista') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+      - name: ativacao
+        description: "Modo de ativação do trajeto alternativo"
+      - name: descricao
+        description: "Descrição sobre o trajeto alternativo"
+      - name: evento
+        description: "Evento relacionado ao trajeto alternativo"
+      - name: extensao
+        description: "{{ doc('extensao') }}"
+      - name: versao_modelo
+        description: "{{ doc('versao') }}"
+      - name: tipo_os
+        description: "{{ doc('tipo_os') }}"
+  - name: ordem_servico_faixa_horaria_sentido
+    description: "Quantidade de viagens planejadas por faixa horária e sentido"
+    columns:
+      - name: feed_version
+        description: "{{ doc('feed_version') }}"
+      - name: tipo_os
+        description: "{{ doc('tipo_os') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: vista
+        description: "{{ doc('vista') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+      - name: extensao
+        description: "{{ doc('extensao') }}"
+      - name: tipo_dia
+        description: "{{ doc('tipo_dia') }}"
+      - name: faixa_horaria_inicio
+        description: "{{ doc('faixa_horaria_inicio') }}"
+      - name: faixa_horaria_fim
+        description: "{{ doc('faixa_horaria_fim') }}"
+      - name: partidas
+        description: "{{ doc('partidas') }}"
+      - name: quilometragem
+        description: "{{ doc('quilometragem') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"

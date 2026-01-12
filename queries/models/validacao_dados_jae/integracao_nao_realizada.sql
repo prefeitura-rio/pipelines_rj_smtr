@@ -1,6 +1,6 @@
 {{
     config(
-        materilized="incremental",
+        materialized="incremental",
         incremental_strategy="insert_overwrite",
         partition_by={"field": "data", "data_type": "date", "granularity": "day"},
     )
@@ -55,9 +55,7 @@ with
             {% endif %}
     ),
     integracao_jae as (
-        select
-            id_integracao,
-            string_agg(id_transacao, '_' order by sequencia_integracao) as id_join
+        select id_integracao, id_transacao, sequencia_integracao
         from {{ ref("integracao") }}
         {% if is_incremental() %}
             where
@@ -69,6 +67,12 @@ with
                 {% else %} false
                 {% endif %}
         {% endif %}
+    ),
+    integracao_jae_agg as (
+        select
+            id_integracao,
+            string_agg(id_transacao, '_' order by sequencia_integracao) as id_join
+        from integracao_jae
         group by 1
     ),
     particao_completa as (
@@ -78,13 +82,24 @@ with
         {% if is_incremental() and partitions | length > 0 %}
             union all
 
-            select o.* except (versao, datetime_ultima_atualizacao, id_execucao_dbt)
+            select
+                o.* except (
+                    classificacao_integracao_nao_realizada,
+                    versao,
+                    datetime_ultima_atualizacao,
+                    id_execucao_dbt
+                )
             from {{ this }} o
             left join integracao_transferencia_calculada n using (id_transacao)
             where
-                o.data in ({{ partitions | join(", ") }})
-                or o.data in ({{ adjacent_partitions | join(", ") }})
-            qualify max(n.id_transacao is null) over (partition by id_integracao)
+                (
+                    o.data in ({{ partitions | join(", ") }})
+                    or o.data in ({{ adjacent_partitions | join(", ") }})
+                )
+                and o.id_integracao
+                not in (select id_integracao from integracao_transferencia_calculada)
+            qualify
+                not max(n.id_transacao is not null) over (partition by o.id_integracao)
 
         {% endif %}
     ),
@@ -98,13 +113,58 @@ with
     integracao_nao_realizada as (
         select
             pc.*,
+            case
+                when
+                    pc.tipo_transacao in ('Integração', 'Transferência')
+                    and pc.id_transacao in (select id_transacao from integracao_jae)
+                then 'Integração realizada e incompleta na tabela integracao'
+                when pc.tipo_transacao in ('Integração', 'Transferência')
+                then 'Integração realizada fora da tabela integracao'
+                else 'Integração não realizada'
+            end as pre_classificacao_transacao
+        from particao_completa pc
+        join integracao_calculada_id_join id using (id_integracao)
+        left join integracao_jae_agg j using (id_join)
+        where j.id_join is null
+    ),
+    integracao_nao_realizada_classificacao_agg as (
+        select
+            id_integracao,
+            array_agg(distinct pre_classificacao_transacao) as array_classificacao
+        from integracao_nao_realizada
+        group by 1
+    ),
+    integracao_nao_realizada_classificacao as (
+        select
+            i.* except (pre_classificacao_transacao),
+            case
+                when array_length(c.array_classificacao) = 1
+                then c.array_classificacao[0]
+                when (array_length(c.array_classificacao) = 3)
+                then
+                    'Integração realizada parcialmente e incompleta na tabela integracao'
+                when
+                    'Integração não realizada' in unnest(c.array_classificacao)
+                    and 'Integração realizada fora da tabela integracao'
+                    in unnest(c.array_classificacao)
+                then 'Integração realizada parcialmente e fora da tabela integracao'
+                when
+                    'Integração não realizada' in unnest(c.array_classificacao)
+                    and 'Integração realizada e incompleta na tabela integracao'
+                    in unnest(c.array_classificacao)
+                then 'Integração realizada parcialmente'
+                when
+                    'Integração realizada fora da tabela integracao'
+                    in unnest(c.array_classificacao)
+                    and 'Integração realizada e incompleta na tabela integracao'
+                    in unnest(c.array_classificacao)
+                then 'Integração realizada e incompleta na tabela integracao'
+            end as classificacao_integracao_nao_realizada,
             '{{ var("version") }}' as versao,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
             '{{ invocation_id }}' as id_execucao_dbt
-        from particao_completa pc
-        join integracao_calculada_id_join id using (id_integracao)
-        left join integracao_jae j using (id_join)
-        where j.id_join is null
+        from integracao_nao_realizada i
+        join integracao_nao_realizada_classificacao_agg c using (id_integracao)
     )
 select *
-from integracao_nao_realizada
+from integracao_nao_realizada_classificacao

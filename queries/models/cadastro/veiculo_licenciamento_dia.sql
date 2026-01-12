@@ -157,7 +157,7 @@ with
             ultima_situacao,
             case
                 when
-                    data between "2025-11-01" and "2025-11-30"
+                    data between "2025-11-12" and "2025-12-01"
                     and id_veiculo in (
                         'C50003',
                         'C50007',
@@ -477,6 +477,21 @@ with
                         'D33198',
                         'D33200',
                         'D33199'
+                    )
+                then "BASICO"  -- MTR-CAP-2025/59482
+                when
+                    data between "2025-11-20" and "2025-12-16"
+                    and id_veiculo in (
+                        'A29084',
+                        'A29092',
+                        'A29106',
+                        'A29171',
+                        'B27007',
+                        'B27125',
+                        'B27130',
+                        'B27136',
+                        'C27129'
+
                     )
                 then "BASICO"  -- MTR-CAP-2025/59482
                 when tipo_veiculo like "%BASIC%" or tipo_veiculo like "%BS%"

@@ -75,8 +75,12 @@ with
                     )
                 )
                 or (
-                    data between "2025-11-01" and "2025-11-30"  -- Exceção para ajuste na tecnologia MTR-CAP-2025/59482
-                    and data_processamento between "2025-11-01" and "2025-12-10"
+                    data between "2025-11-12" and "2025-12-01"  -- Exceção para ajuste na tecnologia MTR-CAP-2025/59482
+                    and data_processamento between "2025-11-12" and "2025-12-22"
+                )
+                or (
+                    data between "2025-11-20" and "2025-12-16"  -- Exceção para ajuste na tecnologia MTR-CAP-2025/59482
+                    and data_processamento between "2025-11-20" and "2025-12-22"
                 )
             )
             {% if is_incremental() %}
@@ -100,6 +104,7 @@ with
                 or data_inclusao_datalake
                 = date("{{var('data_inclusao_autuacao_disciplinar')}}")  -- Primeira data de inclusão dos dados de autuações disciplinares
             )
+            and status != "Cancelada"
             {% if is_incremental() %}
                 and data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"

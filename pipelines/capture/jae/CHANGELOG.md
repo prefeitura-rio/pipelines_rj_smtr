@@ -1,5 +1,21 @@
 # Changelog - source_jae
 
+## [3.1.7] - 2026-01-07
+
+### Removido
+
+- Remove schedule do flow `CAPTURA_AUXILIAR` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1155)
+
+## [3.1.6] - 2025-12-15
+
+### Adicionado
+
+- Adiciona tabelas no exclude do backup dos dados da BillingPay (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1111)
+
+### Alterado
+
+- Altera delay de captura da tabela lancamento para 24h (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1111)
+
 ## [3.1.5] - 2025-12-08
 
 ### Adicionado

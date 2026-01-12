@@ -1,5 +1,24 @@
 # Changelog - planejamento
 
+## [1.5.8] - 2026-01-07
+
+### Adicionado
+
+- Corrige as colunas `sentido` e `evento` no modelo `ordem_servico_trajeto_alternativo_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1156)
+
+## [1.5.7] - 2025-12-26
+
+### Adicionado
+
+- Adiciona as descrições do modelo `ordem_servico_faixa_horaria_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1119)
+- Criado o modelo `ordem_servico_trajeto_alternativo_sentido`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1050)
+
+## [1.5.6] - 2025-12-19
+
+### Alterado
+
+- Alterados no modelo `aux_calendario_manual` o `tipo_os` de `2025-12-06`, `2025-12-07`, `2025-12-13` e `2025-12-14` para `Verão` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1128)
+
 ## [1.5.5] - 2025-12-08
 
 ### Alterado

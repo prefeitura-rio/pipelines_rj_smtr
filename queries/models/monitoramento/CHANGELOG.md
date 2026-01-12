@@ -1,5 +1,33 @@
 # Changelog - monitoramento
 
+## [1.8.6] - 2026-01-06
+
+### Adicionado
+
+- Adiciona ao modelo `autuacao_disciplinar_historico` a coluna `status` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1147)
+
+### Alterado
+
+- Altera o modelo `veiculo_dia` para exclusão de registros de autuações com `status` igual a "cancelado" (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1147)
+
+## [1.8.5] - 2025-12-22
+
+### Alterado
+
+- Altera o modelo `veiculo_fiscalizacao_lacre` para correção duplicação de veículo (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1131)
+
+## [1.8.4] - 2025-12-19
+
+### Alterado
+
+- Altera data de processamento para a exceção de ajuste no modelo `veiculo_dia` para correção de tecnologia, conforme MTR-CAP-2025/59482 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1129)
+
+## [1.8.3] - 2025-12-15
+
+### Alterado
+
+- Altera data de processamento para a exceção de ajuste no modelo `veiculo_dia` para correção de tecnologia, conforme MTR-CAP-2025/59482 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1149)
+
 ## [1.8.2] - 2025-12-10
 
 ### Alterado

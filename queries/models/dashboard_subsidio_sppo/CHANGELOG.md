@@ -1,5 +1,17 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [8.0.9] - 2026-01-08
+
+### Alterado
+
+- Alterado o modelo `viagens_remuneradas_v2` para adicionar uma exceção para o limite de viagens dos servicos `232`,`552`, `SP805`, `361`, `104`, `107`, `161`, `169`, `409`, `410`, `435`, `473`,   `583`,`584`, `109` de acordo com o Processo nº 000399.001525/2025-01 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1158)
+
+## [8.0.8] - 2026-01-06
+
+### Alterado
+
+- Move a view `viagem_climatizacao.sql` para `dashboard_monitoramento_interno` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1121)
+
 ## [8.0.7] - 2025-11-25
 
 ### Adicionado
