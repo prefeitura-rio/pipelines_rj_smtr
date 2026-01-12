@@ -172,10 +172,7 @@ select
     v.* except (rn, viagens_planejadas, km_planejada, tipo_dia, consorcio),
     case
         when
-            (
-                v.data between date('2025-12-22') and date('2025-12-26')
-                or v.data >= date('2025-12-29')
-            )
+            (v.data between date('2025-12-22') and date('2025-12-26'))
             and v.servico in (
                 "232",
                 "552",
@@ -191,8 +188,32 @@ select
                 "473",
                 "583",
                 "584",
-                "109"
-            )  -- Processo nº 000399.001525/2025-01
+                "109",
+            )  -- Processo nº 000300.000641/2026-27
+        then true
+        when
+            (v.data between date('2025-12-29') and date('2025-12-31'))
+            and v.servico in (
+                "232",
+                "552",
+                "SP805",
+                "361",
+                "104",
+                "107",
+                "161",
+                "169",
+                "409",
+                "410",
+                "435",
+                "473",
+                "583",
+                "584",
+                "109",
+                "167",
+                "LECD127",
+                "LECD128",
+                "LECD129"
+            )  -- Processo nº 000300.000641/2026-27
         then true
         when
             v.data = date('2025-09-16')
