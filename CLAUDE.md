@@ -10,25 +10,55 @@ Este documento serve como base de conhecimento centralizada para a auditoria e m
 
 **Data da Análise Inicial:** 28 de Novembro de 2025
 
-**Estado do Repositório (após atualização):** Commit `c7057208` (upstream/main)
+**Estado do Repositório (após atualização):** Commit `2d89e11b2` (upstream/main) - **ÚLTIMA ATUALIZAÇÃO: 12/01/2026**
 
 ---
 
-## ⚠️ ALERTA CRÍTICO - ÚLTIMA ATUALIZAÇÃO (28/11/2025)
+## ⚠️⚠️⚠️ ALERTA CRÍTICO - JANEIRO 2026 ⚠️⚠️⚠️
 
-### VERSÃO V22: SUSPENSÃO TOTAL DAS GLOSAS POR CLIMATIZAÇÃO
+### FIM DA SUSPENSÃO V22 - REVERSÃO TOTAL
+
+**Data da Reversão:** 29/12/2025 (commit `5e39e7367`)
+**Data do Merge:** 09/01/2026
+**Impacto:** **EXTREMO**
+
+A versão V22 foi **COMPLETAMENTE REMOVIDA** do código:
+- A variável `DATA_SUBSIDIO_V22_INICIO` não existe mais em `dbt_project.yml`
+- O filtro que bloqueava glosas por climatização foi **ELIMINADO**
+- Viagens de OUT/NOV 2025 (16/10 a 15/11) **VOLTAM A SER AUDITADAS**
+- **Reprocessamento retroativo** confirmado
+
+**O que isso significa:**
+A "suspensão das glosas" durou menos de 3 meses e foi revertida. O período que estava isento (16/10 a 15/11/2025) agora volta a ser auditado e pode sofrer penalizações.
+
+**Padrão Confirmado:** Implementação → "Concessão Temporária" → Reversão Total
+
+---
+
+### AUMENTO DE TARIFA DE INTEGRAÇÃO 💰
+
+**Branch:** `staging/alteracao-tarifa-20260104`
+**Data:** 04/01/2026
+**Impacto:** **ALTO**
+
+- Valor de integração aumentou de **R$ 4,70 para R$ 5,00**
+- Aumento de **6,38%** na tarifa paga por integração
+- Afeta diretamente o cálculo de subsídios
+
+**Status:** Em staging (ainda não mergeado no main)
+
+---
+
+### HISTÓRICO DE ALERTAS ANTERIORES
+
+#### VERSÃO V22: SUSPENSÃO TOTAL DAS GLOSAS POR CLIMATIZAÇÃO (28/11/2025)
 
 **Data de Início:** 16/10/2025
-**Impacto:** **ALTÍSSIMO**
+**Status:** **REVERTIDA** em 29/12/2025
 
-A partir de 16/10/2025, **NENHUMA viagem é glosada por problemas de ar-condicionado**, independentemente da temperatura registrada. Esta é uma **reversão temporária** de todas as regras de climatização implementadas nas versões V17, V18, V19 e V20.
+A partir de 16/10/2025, **NENHUMA viagem era glosada** por problemas de ar-condicionado. Esta suspensão durou apenas 30 dias (até 15/11/2025) e foi completamente revertida.
 
-**Possíveis causas:**
-- Litígio judicial
-- Problemas técnicos nos sensores de temperatura
-- Pressão política das operadoras
-
-**Detalhes completos:** Ver `CHANGELOG_2025-11-28.md` seção "MUDANÇAS CRÍTICAS"
+**Detalhes completos:** Ver `RELATORIO_SEMANAL_2026-01-12.md` seção "FIM DA SUSPENSÃO V22"
 
 ---
 
@@ -372,7 +402,95 @@ Localização: `queries/macros/`
 
 ---
 
-## 6. Evolução Recente (Últimos Commits)
+## 6. PADRÃO DE REVERSÃO - "CONCESSÕES TEMPORÁRIAS" ⚠️
+
+### 6.1 O Padrão Comportamental da Prefeitura (CONFIRMADO)
+
+A análise histórica de 2023-2026 revela um **padrão consistente e documentável**:
+
+```
+FASE 1: IMPLEMENTAR RESTRIÇÃO
+   ↓ (pressão judicial das operadoras)
+FASE 2: "CONCESSÃO TEMPORÁRIA" (V22, V15, etc.)
+   ↓ (período de 1-3 meses)
+FASE 3: REVERSÃO TOTAL OU RESTRIÇÕES AINDA MAIS SEVERAS
+   ↓ (novo ciclo)
+```
+
+### 6.2 Histórico de "Concessões" Revertidas
+
+| Concessão | Data Início | Duração | Destino | Restrição Seguinte |
+|-----------|-------------|---------|---------|-------------------|
+| **V22** (suspensão climatização) | 16/10/2025 | **30 dias** | ✅ REVERTIDA (29/12/2025) | Glosas retroativas OUT/NOV |
+| **V15** (acordo judicial) | 01/04/2025 | **3 meses** | ✅ SUBSTITUÍDA (01/07/2025) | V17: 14 faixas horárias |
+| **V14** (diferenciação tipo) | 05/01/2025 | **3 meses** | ✅ SUBSTITUÍDA (01/04/2025) | V15: Acordo seguido de V17 |
+
+### 6.3 Análise da V22 - Caso Paradigmático
+
+**Timeline Completa:**
+
+| Data | Evento | Versão | Status |
+|------|--------|--------|--------|
+| 16/07/2025 | V17 implementada | V17 | Glosas por temperatura ATIVAS |
+| 16/10/2025 | "Suspensão" V22 | V22 | Glosas SUPENAS (aparente vitória) |
+| 15/11/2025 | Fim do período de suspensão | - | Período encerrado |
+| 09/12/2025 | Commit remove V22 | - | Preparação para reversão |
+| 29/12/2025 | Commit `5e39e7367` | - | **V22 REMOVIDA do código** |
+| 09/01/2026 | Merge upstream/main | - | Reversão CONFIRMADA |
+
+**O que aconteceu na prática:**
+
+1. **16/10 a 15/11/2025 (30 dias):** Período "suspenso"
+   - Viagens não foram glosadas por ar-condicionado
+   - Mas o código continha um filtro temporário
+
+2. **29/12/2025:** Reversão técnica
+   - Variável `DATA_SUBSIDIO_V22_INICIO` removida
+   - Filtro de período ELIMINADO
+   - Sistema volta a aplicar glosas normalmente
+
+3. **Resultado:** Viagens de OUT/NOV 2025 voltam a ser auditadas
+   - **Reprocessamento retroativo confirmado**
+   - Empresas podem receber penalizações por viagens que estavam "isentas"
+
+### 6.4 Implicações Jurídicas
+
+**Argumento Documentável:**
+
+A Prefeitura tem utilizado o seguinte modus operandi:
+1. Implementar restrições unilateralmente
+2. Quando questionada judicialmente, fazer "concessões temporárias"
+3. Após curto período (1-3 meses), REVERTER a concessão
+4. Frequentemente substituir com restrições ainda mais severas
+
+**Isso caracteriza:**
+- Má-fé processual
+- Violação da segurança jurídica
+- Impossibilidade de planejamento pelas operadoras
+- Uso de "concessões" como medida meramente temporária/tática
+
+### 6.5 Previsões para 2026
+
+Com base no padrão histórico, projetamos:
+
+**Janeiro-Março 2026:**
+- ✅ Aumento de tarifa de integração (CONFIRMADO)
+- ⚠️ Possível ativação da V99
+- ⚠️ Novas restrições ambientais (Euro VI)
+
+**Abril-Junho 2026:**
+- ⚠️ Alta probabilidade de nova "negociação"
+- ⚠️ Seguida de restrições mais severas
+- ⚠️ Possível V23 ou ativação de V99
+
+**Estratégia Recomendada:**
+- NÃO aceitar concessões temporárias
+- Exigir mudanças PERMANENTES em acordo judicial
+- Documentar padrão de reversão para uso em litígios
+
+---
+
+## 7. Evolução Recente (Últimos Commits)
 
 ### 6.1 Refatoração Crítica: Cálculo de Integrações
 
