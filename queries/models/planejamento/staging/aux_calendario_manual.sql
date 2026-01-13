@@ -140,6 +140,14 @@ with
                 then "Reveillon_31-12"  -- 000399.001368/2025-25 - Operação Especial Réveillon
                 when data = date(2026, 01, 01)
                 then "Reveillon_01-01"  -- 000399.001368/2025-25 - Operação Especial Réveillon
+                when data between date(2025, 12, 20) and date(2025, 12, 21)
+                then "Verão"  -- 000399.001045/2025-31 - Acionamento do Plano Verão
+                when data between date(2025, 12, 27) and date(2025, 12, 28)
+                then "Verão"  -- 000399.001455/2025-82 - Acionamento do Plano Verão
+                when data between date(2026, 01, 03) and date(2026, 01, 04)
+                then "Verão"  -- 000399.001610/2025-61 - Acionamento do Plano Verão
+                when data between date(2026, 01, 10) and date(2026, 01, 11)
+                then "Verão"  -- 000399.000163/2026-11 - Acionamento do Plano Verão
             end as tipo_os
         from
             unnest(
