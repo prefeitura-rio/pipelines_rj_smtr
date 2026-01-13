@@ -14,9 +14,7 @@ with
             integracao,
             modo,
             tempo_integracao_minutos
-        from
-            `rj-smtr`.`planejamento`.`matriz_reparticao_tarifaria`,
-            unnest(sequencia_modo) as modo
+        from {{ ref("matriz_reparticao_tarifaria") }}, unnest(sequencia_modo) as modo
         where integracao not like "%Metrô%"
 
     ),
