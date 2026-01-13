@@ -677,7 +677,7 @@ models:
         data_type: date
         quote: true
       - name: data_fim
-        description: Data de fim do valor da tarifa
+        description: Data de fim de vigência do valor da tarifa
         data_type: date
         quote: true
       - name: valor_tarifa
