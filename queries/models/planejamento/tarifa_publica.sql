@@ -9,7 +9,7 @@ select
     date_sub(
         date(lead(a.data_inicio) over (order by a.data_inicio)), interval 1 day
     ) as data_fim,
-    a.valor_tarifa,
+    cast(a.valor_tarifa as numeric) as valor_tarifa,
     a.legislacao
 from
     unnest(
@@ -17,17 +17,17 @@ from
             struct(
                 "2023-01-07" as data_inicio,
                 4.3 as valor_tarifa,
-                "Decreto No 51.914" as legislacao
+                "DECRETO RIO Nº 51914 DE 2 DE JANEIRO DE 2023" as legislacao
             ),
             struct(
                 "2025-01-05" as data_inicio,
                 4.7 as valor_tarifa,
-                "Decreto No 55.631" as legislacao
+                "DECRETO RIO Nº 55631 DE 1º DE JANEIRO DE 2025" as legislacao
             ),
             struct(
                 "2026-01-04" as data_inicio,
                 5.0 as valor_tarifa,
-                "Decreto No 57.473" as legislacao
+                "DECRETO RIO Nº 57473 DE 29 DE DEZEMBRO DE 2025" as legislacao
             )
         ]
     ) as a
