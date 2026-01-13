@@ -1,10 +1,11 @@
 # Changelog - validacao_dados_jae
 
-## [3.1.3] - 2025-01-08
+## [3.1.3] - 2025-01-13
 
 ### Alterado
 
-- Mudança de tarifa do BRT para R$ 5,00 a partir de 2026-01-04 no modelo `aux_transacao_filtro_integracao_calculada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1162)
+- Altera tarifa hardcoded no modelo `aux_transacao_filtro_integracao_calculada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1162)
+- Cria lógica para reconhecer a versão na matriz de integração com base na data da transação no modelo `aux_calculo_integracao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1162)
 
 ## [3.1.2] - 2025-12-15
 
