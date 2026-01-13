@@ -18,32 +18,37 @@
 {% endif %}
 
 select
-    data,
-    id_transacao,
-    datetime_transacao,
-    datetime_processamento,
-    modo,
-    id_consorcio,
-    consorcio,
-    id_servico_jae,
-    servico_jae,
-    descricao_servico_jae,
-    sentido,
-    id_veiculo,
-    id_validador,
-    id_cliente,
-    hash_cartao,
-    cadastro_cliente,
-    produto,
-    produto_jae,
-    tipo_transacao_jae,
-    tipo_transacao,
-    tipo_usuario,
-    meio_pagamento,
-    meio_pagamento_jae,
-    valor_transacao,
+    t.data,
+    t.id_transacao,
+    t.datetime_transacao,
+    t.datetime_processamento,
+    t.modo,
+    t.id_consorcio,
+    t.consorcio,
+    t.id_servico_jae,
+    t.servico_jae,
+    t.descricao_servico_jae,
+    t.sentido,
+    t.id_veiculo,
+    t.id_validador,
+    t.id_cliente,
+    t.hash_cartao,
+    t.cadastro_cliente,
+    t.produto,
+    t.produto_jae,
+    t.tipo_transacao_jae,
+    t.tipo_transacao,
+    t.tipo_usuario,
+    t.meio_pagamento,
+    t.meio_pagamento_jae,
+    t.valor_transacao,
+    l.tarifa_ida,
+    l.tarifa_volta,
+    tp.valor_tarifa,
     if
-    (cadastro_cliente = 'Não Cadastrado', hash_cartao, id_cliente) as cliente_cartao,
+    (
+        t.cadastro_cliente = 'Não Cadastrado', t.hash_cartao, t.id_cliente
+    ) as cliente_cartao,
     case
         when modo = 'Van'
         then consorcio
@@ -54,17 +59,9 @@ select
                 and ifnull(regexp_extract(servico_jae, r"[0-9]+"), "") like "2%"
             )
         then 'SPPO'
-        when
-            modo = 'BRT'
-            and ifnull(tarifa_ida, tarifa_volta) > 4.7
-            and data < '2026-01-04'
+        when t.modo = 'BRT' and ifnull(l.tarifa_ida, l.tarifa_volta) > tp.valor_tarifa
         then 'BRT ESP'
-        when
-            modo = 'BRT'
-            and ifnull(tarifa_ida, tarifa_volta) > 5.0
-            and data >= '2026-01-04'
-        then 'BRT ESP'
-        else modo
+        else t.modo
     end as modo_join
 from {{ ref("transacao") }} t
 left join
@@ -72,12 +69,16 @@ left join
     on t.id_servico_jae = l.cd_linha
     and t.datetime_transacao >= l.dt_inicio_validade
     and (l.data_fim_validade is null or t.datetime_transacao < l.data_fim_validade)
+join
+    {{ ref("tarifa_publica") }} tp
+    on t.data >= tp.data_inicio
+    and (t.data <= tp.data_fim or tp.data_fim is null)
 where
-    tipo_transacao != "Gratuidade"
-    and tipo_transacao_jae != 'Botoeira'
-    and date(datetime_processamento) < current_date('America/Sao_Paulo')
+    t.tipo_transacao != "Gratuidade"
+    and t.tipo_transacao_jae != 'Botoeira'
+    and date(t.datetime_processamento) < current_date('America/Sao_Paulo')
     {% if not flags.FULL_REFRESH %}
-        {% if partitions | length > 0 %} and data in ({{ partitions | join(", ") }})
+        {% if partitions | length > 0 %} and t.data in ({{ partitions | join(", ") }})
         {% else %} and false
         {% endif %}
     {% endif %}
