@@ -117,6 +117,8 @@ selectors:
     definition:
       union:
         - method: fqn
+          value: tarifa_publica
+        - method: fqn
           value: matriz_reparticao_tarifaria
         - method: fqn
           value: matriz_integracao

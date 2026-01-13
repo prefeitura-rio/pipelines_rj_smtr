@@ -393,8 +393,8 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-          - inicio_vigencia
-          - servico
+            - inicio_vigencia
+            - servico
           name: dbt_utils.unique_combination_of_columns__tecnologia_servico
           where: "1=1"
     columns:
@@ -604,8 +604,8 @@ models:
           expression: count(distinct tipo_os)
           compare_model: ref("ordem_servico_faixa_horaria_sentido")
           compare_expression: count(distinct tipo_os)
-          group_by: [feed_start_date, tipo_os]
-          compare_group_by: [feed_start_date, tipo_os]
+          group_by: [ feed_start_date, tipo_os ]
+          compare_group_by: [ feed_start_date, tipo_os ]
           row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
           compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
           where: "feed_start_date >= date('{{ var('DATA_GTFS_V5_INICIO') }}')"
@@ -669,3 +669,18 @@ models:
         description: "{{ doc('versao') }}"
       - name: id_execucao_dbt
         description: "{{ doc('id_execucao_dbt') }}"
+  - name: tarifa_publica
+    description: Tabela contendo o histórico da tarifa dos transportes municipais a partir de 2023-01-07
+    columns:
+      - name: data_inicio
+        description: Data de inicio do valor da tarifa
+        data_type: date
+        quote: true
+      - name: data_fim
+        description: Data de fim do valor da tarifa
+        data_type: date
+        quote: true
+      - name: valor_tarifa
+        description: "{{ doc('tarifa_valor') }}"
+        data_type: float64
+        quote: true
