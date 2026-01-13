@@ -55,8 +55,8 @@ select
         when
             modo = 'Ônibus'
             and not (
-                length(ifnull(regexp_extract(servico_jae, r"[0-9]+"), "")) = 4
-                and ifnull(regexp_extract(servico_jae, r"[0-9]+"), "") like "2%"
+                length(ifnull(regexp_extract(servico_jae, r'[0-9]+'), '')) = 4
+                and ifnull(regexp_extract(servico_jae, r'[0-9]+'), '') like '2%'
             )
         then 'SPPO'
         when t.modo = 'BRT' and ifnull(l.tarifa_ida, l.tarifa_volta) > tp.valor_tarifa
@@ -74,7 +74,7 @@ join
     on t.data >= tp.data_inicio
     and (t.data <= tp.data_fim or tp.data_fim is null)
 where
-    t.tipo_transacao != "Gratuidade"
+    t.tipo_transacao != 'Gratuidade'
     and t.tipo_transacao_jae != 'Botoeira'
     and date(t.datetime_processamento) < current_date('America/Sao_Paulo')
     {% if not flags.FULL_REFRESH %}

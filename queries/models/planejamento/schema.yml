@@ -684,3 +684,8 @@ models:
         description: "{{ doc('tarifa_valor') }}"
         data_type: float64
         quote: true
+      - name: legislacao
+        description: Decreto que alterou o valor da tarifa
+        data_type: string
+        quote: true
+
