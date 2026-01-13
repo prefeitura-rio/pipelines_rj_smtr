@@ -27,7 +27,7 @@ from
             struct(
                 "2026-01-04" as data_inicio,
                 5.0 as valor_tarifa,
-                "Decreto No 57.473" as legislacao
+                "DECRETO RIO Nº 57473 DE 29 DE DEZEMBRO DE 2025" as legislacao
             )
         ]
     ) as a
