@@ -1,5 +1,15 @@
 # Changelog - planejamento
 
+## [1.6.0] - 2026-01-13
+
+### Adicionado
+
+- Cria modelos `tarifa_publica.sql` e `aux_matriz_transferencia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1162)
+
+### Alterado
+
+- Altera tarifa hardcoded no modelo `aux_matriz_integracao_modo.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1162)
+
 ## [1.5.9] - 2026-01-09
 
 ### Alterado
