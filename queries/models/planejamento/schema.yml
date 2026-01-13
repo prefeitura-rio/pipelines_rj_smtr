@@ -673,11 +673,11 @@ models:
     description: Tabela contendo o histórico da tarifa dos transportes municipais a partir de 2023-01-07
     columns:
       - name: data_inicio
-        description: Data de inicio do valor da tarifa
+        description: Data de início de vigência do valor da tarifa
         data_type: date
         quote: true
       - name: data_fim
-        description: Data de fim do valor da tarifa
+        description: Data de fim de vigência do valor da tarifa
         data_type: date
         quote: true
       - name: valor_tarifa
