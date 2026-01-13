@@ -17,7 +17,7 @@ from
             struct(
                 "2023-01-07" as data_inicio,
                 4.3 as valor_tarifa,
-                "Decreto No 51.914" as legislacao
+                "DECRETO RIO Nº 51914 DE 2 DE JANEIRO DE 2023" as legislacao
             ),
             struct(
                 "2025-01-05" as data_inicio,
