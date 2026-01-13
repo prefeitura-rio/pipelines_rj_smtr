@@ -149,4 +149,4 @@ left join
         m.id_servico_gtfs_destino = sd.id_servico_gtfs
         and m.id_servico_jae_destino is null
     )
-where m.data_inicio < m.data_fim,
+where m.data_inicio < m.data_fim
