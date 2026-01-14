@@ -308,7 +308,21 @@ gtfs_captura_nova.state_handlers = [
 ]
 gtfs_captura_nova.schedule = every_5_minutes
 
+with Flow("SMTR: GTFS - atualiza redis") as gtfs_atualiza_redis:
+    data_index_param = Parameter("data_index", default=None)
+    update_last_captured_os(
+        dataset_id=constants.GTFS_DATASET_ID.value,
+        data_index=data_index_param,
+    )
 
+gtfs_atualiza_redis.storage = GCS(constants.GCS_FLOWS_BUCKET.value)
+gtfs_atualiza_redis.run_config = KubernetesRun(
+    image=constants.DOCKER_IMAGE.value, labels=[constants.RJ_SMTR_AGENT_LABEL.value]
+)
+gtfs_atualiza_redis.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+]
 # with Flow(
 #     "SMTR: GTFS - Captura/Tratamento",
 #     # code_owners=["rodrigo", "carolinagomes"],
