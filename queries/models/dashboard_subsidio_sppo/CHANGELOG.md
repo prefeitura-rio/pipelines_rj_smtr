@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [8.1.1] - 2026-01-14
+
+### Alterado
+
+- Alterado o modelo `valor_tipo_penalidade` para view (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1165)
+
 ## [8.1.0] - 2026-01-09
 
 ### Alterado
