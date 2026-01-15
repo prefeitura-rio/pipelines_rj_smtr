@@ -1,6 +1,6 @@
 {{
     config(
-        materialized="view",
+        materialized="ephemeral",
         alias="valor_tipo_penalidade",
     )
 }}
@@ -12,7 +12,5 @@ select
     safe_cast(perc_km_superior as integer) as perc_km_superior,
     nullif(safe_cast(tipo_penalidade as string), '') as tipo_penalidade,
     safe_cast(nullif(trim(valor), '') as numeric) as valor,
-    current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
-    "{{ var('version') }}" as versao,
-    '{{ invocation_id }}' as id_execucao_dbt
+    nullif(safe_cast(legislacao as string), '') as tipo_penalidade,
 from {{ source("subsidio_staging", "valor_tipo_penalidade") }}
