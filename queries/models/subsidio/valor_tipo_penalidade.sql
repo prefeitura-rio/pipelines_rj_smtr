@@ -11,7 +11,7 @@ select
     perc_km_superior,
     tipo_penalidade,
     valor,
-    legislacao, --ver, se, tá, na, ordem, certa,nao, esquecer do ,schema
+    legislacao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     "{{ var('version') }}" as versao,
     '{{ invocation_id }}' as id_execucao_dbt
