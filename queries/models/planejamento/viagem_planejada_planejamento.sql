@@ -6,18 +6,15 @@
             "granularity": "day",
         },
         alias="viagem_planejada",
-        incremental_strategy="merge",
-        unique_key="id_viagem",
-        incremental_predicates=[
-            "DBT_INTERNAL_DEST.data between date('"
-            + var("date_range_start")
-            + "') and date_add(date('"
-            + var("date_range_end")
-            + "'), interval 1 day)"
-        ],
+        incremental_strategy="insert_overwrite",
     )
 }}
 
+{% set incremental_filter %}
+    data between
+        date('{{ var("date_range_start") }}')
+        and date('{{ var("date_range_end") }}')
+{% endset %}
 
 {% set calendario = ref("calendario") %}
 {# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
@@ -26,9 +23,7 @@
         {% set gtfs_feeds_query %}
             select distinct concat("'", feed_start_date, "'") as feed_start_date
             from {{ calendario }}
-            where
-                data between date("{{ var('date_range_start') }}")
-                and date("{{ var('date_range_end') }}")
+            where {{ incremental_filter }}
         {% endset %}
 
         {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
@@ -43,9 +38,7 @@ with
             feed_start_date >= '{{ var("feed_inicial_viagem_planejada") }}'
             {% if is_incremental() %}
                 and feed_start_date in ({{ gtfs_feeds | join(", ") }})
-                and data between date("{{ var('date_range_start') }}") and date(
-                    "{{ var('date_range_end') }}"
-                )
+                and {{ incremental_filter }}
             {% endif %}
     ),
     frequencies_tratada as (
@@ -225,4 +218,6 @@ from
             ) as rn
         from viagem_planejada_id
     )
-where rn = 1 and data is not null
+where
+    rn = 1 and data is not null
+    {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
