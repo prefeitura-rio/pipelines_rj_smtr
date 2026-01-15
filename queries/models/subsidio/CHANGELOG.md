@@ -1,11 +1,5 @@
 # Changelog - subsidio
 
-## [2.3.3] - 2026-01-15
-
-### Alterado
-
-- Altera o modelo `viagem_transacao_aux_v2` para incluir viagens do dia anterior fora do ambiente de produção (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1108)
-
 ## [2.3.2] - 2026-01-15
 
 ### Adicionado
@@ -15,6 +9,7 @@
 ### Alterado
 
 - Move o modelo `valor_tipo_penalidade` do `dashboard_subsidio_sppo` para o `subsidio` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1171)
+- Altera o modelo `viagem_transacao_aux_v2` para incluir viagens do dia anterior fora do ambiente de produção (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1108)
 
 ## [2.3.1] - 2026-01-06
 
