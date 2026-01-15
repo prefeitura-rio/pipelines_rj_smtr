@@ -31,7 +31,7 @@ with
             <= interval 6 day
             and modo = "Ônibus"
     ),
-    -- Viagens realizadas
+    -- -- Viagens realizadas
     viagem as (
         select
             data,
@@ -49,26 +49,28 @@ with
             distancia_planejada,
         from {{ ref("viagem_regularidade_temperatura") }}
         where
-            {% if target.name == "prod" %}
-                (
-            {% endif %}
+            data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+            and (
                 data between date("{{ var('start_date') }}") and date(
                     "{{ var('end_date') }}"
                 )
-
-            {% if target.name == "prod" %}
-                    or data = date_sub(date("{{ var('start_date') }}"), interval 1 day))
-            {% endif %}
+                {% if target.name == "prod" %}
+                    or data = date_sub(date("{{ var('start_date') }}"), interval 1 day)
+                {% endif %}
+            )
 
         {% if target.name in ("dev", "hmg") %}
+            --fmt:off
             left outer union all by name
+             --fmt:on
             select id_veiculo, datetime_partida, datetime_chegada
             from {{ ref("viagem_completa") }}
-            where data = date_sub(date("{{ var('start_date') }}"), interval 1 day)
-        {% endif %} and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+            where
+                data = date_sub(date("{{ var('start_date') }}"), interval 1 day)
+                and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+        {% endif %}
     ),
-    -- Viagem, para fins de contagem de passageiros, com tolerância de 30
-    -- minutos,
+    -- Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
     -- limitada pela viagem anterior
     viagem_com_tolerancia_previa as (
         select
