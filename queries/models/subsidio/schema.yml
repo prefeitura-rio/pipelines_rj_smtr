@@ -335,3 +335,4 @@ models:
       - name: versao
         description: "{{ doc('versao') }}"
       - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
