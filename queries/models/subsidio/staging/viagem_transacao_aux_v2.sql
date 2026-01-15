@@ -61,8 +61,7 @@ with
             {% endif %}
 
         {% if target.name in ("dev", "hmg") %}
-            left outer
-            union all by name
+            left outer union all by name
             select id_veiculo, datetime_partida, datetime_chegada
             from {{ ref("viagem_completa") }}
             where data = date_sub(date("{{ var('start_date') }}"), interval 1 day)
