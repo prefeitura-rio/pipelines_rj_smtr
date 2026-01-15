@@ -12,5 +12,5 @@ select
     safe_cast(perc_km_superior as integer) as perc_km_superior,
     nullif(safe_cast(tipo_penalidade as string), '') as tipo_penalidade,
     safe_cast(nullif(trim(valor), '') as numeric) as valor,
-    nullif(safe_cast(legislacao as string), '') as tipo_penalidade,
+    nullif(safe_cast(legislacao as string), '') as legislacao,
 from {{ source("subsidio_staging", "valor_tipo_penalidade") }}
