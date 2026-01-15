@@ -488,3 +488,4 @@ sources:
     tables:
       - name: servico_contrato_abreviado
       - name: valor_km_tipo_viagem
+      - name: valor_tipo_penalidade
