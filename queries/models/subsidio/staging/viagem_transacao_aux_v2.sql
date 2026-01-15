@@ -47,23 +47,29 @@ with
             servico,
             sentido,
             distancia_planejada,
-            1 as prioridade
         from {{ ref("viagem_regularidade_temperatura") }}
         where
-            data
-            between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
-                "{{ var('end_date') }}"
-            )
-            and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+            {% if target.name == "prod" %}
+                (
+            {% endif %}
+                data between date("{{ var('start_date') }}") and date(
+                    "{{ var('end_date') }}"
+                )
+
+            {% if target.name == "prod" %}
+                    or data = date_sub(date("{{ var('start_date') }}"), interval 1 day))
+            {% endif %}
+
         {% if target.name in ("dev", "hmg") %}
-            left outer union all by name
-            select *, 2 as prioridade
+            left outer
+            union all by name
+            select id_veiculo, datetime_partida, datetime_chegada
             from {{ ref("viagem_completa") }}
             where data = date_sub(date("{{ var('start_date') }}"), interval 1 day)
-        {% endif %}
-        qualify row_number() over (partition by data, id_viagem order by prioridade) = 1
+        {% endif %} and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
     ),
-    -- Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
+    -- Viagem, para fins de contagem de passageiros, com tolerância de 30
+    -- minutos,
     -- limitada pela viagem anterior
     viagem_com_tolerancia_previa as (
         select
@@ -145,7 +151,8 @@ with
             between v.datetime_partida_com_tolerancia and v.datetime_chegada
         group by 1, 2
     ),
-    -- Calcula a porcentagem de estado do equipamento "ABERTO" por validador e
+    -- Calcula a porcentagem de estado do equipamento "ABERTO" por
+    -- validador e
     -- viagem
     estado_equipamento_perc as (
         select
