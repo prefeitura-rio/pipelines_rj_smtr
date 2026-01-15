@@ -8,7 +8,7 @@
 
 ### Alterado
 
-- Move o modelo `valor_tipo_penalidade` para o `subsídio` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1171)
+- Move o modelo `valor_tipo_penalidade` para o `subsidio` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1171)
 
 ## [2.3.1] - 2026-01-06
 
