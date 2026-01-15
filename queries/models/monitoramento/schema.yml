@@ -23,7 +23,7 @@ models:
         data_type: string
         quote: true
       - name: id_veiculo
-        description: "{{ doc('id_veiculo') }}"
+        description: "descrição diferente"
         data_type: string
         quote: true
       - name: trip_id
@@ -35,7 +35,7 @@ models:
         data_type: string
         quote: true
       - name: shape_id
-        description: Identificador de um shape da tabela shapes do GTFS
+        description: ""
         data_type: string
         quote: true
       - name: servico
