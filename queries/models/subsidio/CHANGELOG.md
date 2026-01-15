@@ -1,5 +1,15 @@
 # Changelog - subsidio
 
+## [2.3.2] - 2026-01-15
+
+### Adicionado
+
+- Adiciona o modelo em staging `staging_valor_tipo_penalidade` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1171)
+
+### Alterado
+
+- Move o modelo `valor_tipo_penalidade` do `dashboard_subsidio_sppo` para o `subsidio` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1171)
+
 ## [2.3.1] - 2026-01-06
 
 ### Alterado
