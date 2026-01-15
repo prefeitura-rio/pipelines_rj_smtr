@@ -1,5 +1,28 @@
 # Changelog - planejamento
 
+## [1.6.0] - 2026-01-13
+
+### Adicionado
+
+- Cria modelos `tarifa_publica.sql` e `aux_matriz_transferencia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1162)
+
+### Alterado
+
+- Altera tarifa hardcoded no modelo `aux_matriz_integracao_modo.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1162)
+
+## [1.5.9] - 2026-01-09
+
+### Alterado
+
+- Alterados no modelo `aux_calendario_manual` o `tipo_os` de `2025-12-20`, `2025-12-21`, `2025-12-27`, `2025-12-28`, `2026-01-03`, `2026-01-04`, `2026-01-10` e `2026-01-11` para `Verão` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1165)
+
+
+## [1.5.8] - 2026-01-07
+
+### Adicionado
+
+- Corrige as colunas `sentido` e `evento` no modelo `ordem_servico_trajeto_alternativo_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1156)
+
 ## [1.5.7] - 2025-12-26
 
 ### Adicionado

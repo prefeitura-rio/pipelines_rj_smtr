@@ -45,6 +45,7 @@ with
             )
             and {{ incremental_filter }}
             and modo = "ONIBUS"
+            and status != "Cancelada"
     ),
     ordem_status as (
         select distinct data_inicio, data_fim, status, ordem

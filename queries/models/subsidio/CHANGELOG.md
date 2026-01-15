@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Altera modelo `viagem_transacao_aux_v2` para incluir viagens do dia anterior fora do ambiente de produção (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1108)
+- Altera o modelo `viagem_classificada` para exclusão de registros de autuações com `status` igual a "cancelado" (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1147)
 
 ## [2.3.0] - 2025-12-26
 
