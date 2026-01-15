@@ -8,10 +8,6 @@ with
     validador_max as (
         select data, operadora, id_validador, count(*) as quantidade_gps
         from {{ ref("gps_validador") }}
-        where
-            data between (date("{{ var('start_date') }}")) and (
-                date("{{ var('end_date') }}")
-            )
         group by all
     ),
     validador as (
