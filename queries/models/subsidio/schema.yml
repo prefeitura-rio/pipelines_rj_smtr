@@ -309,3 +309,27 @@ models:
         description: "{{ doc('versao') }}"
       - name: id_execucao_dbt
         description: "{{ doc('id_execucao_dbt') }}"
+
+  - name: valor_tipo_penalidade
+    description: "Valores de penalidades de subsídio"
+    columns:
+      - name: data_inicio
+        description: "{{ doc('data_inicio_parametros') }}"
+      - name: data_fim
+        description: "{{ doc('data_fim') }}"
+      - name: perc_km_inferior
+        description: "Extremidade inferior de intervalo do indicador percentual de quilometragem apurada em relação à planejada da linha"
+      - name: perc_km_superior
+        description: "Extremidade superior de intervalo do indicador percentual de quilometragem apurada em relação à planejada da linha"
+      - name: tipo_penalidade
+        description: "Classificação da penalidade"
+      - name: valor
+        description: "Valor da penalidade imposta (R$)"
+      - name: legislacao
+        description: "{{ doc('legislacao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
