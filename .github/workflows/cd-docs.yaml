@@ -1,11 +1,11 @@
 name: CD-docs
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - "queries/**/*.sql"
+  # pull_request:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - "queries/**/*.sql"
   push:
     branches:
       - main
