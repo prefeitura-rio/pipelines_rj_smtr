@@ -1,7 +1,6 @@
 {{
     config(
-        materialized="ephemeral",
-        alias="valor_tipo_penalidade",
+        materialized="ephemeral"
     )
 }}
 
