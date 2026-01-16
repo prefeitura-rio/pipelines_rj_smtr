@@ -42,5 +42,5 @@ class constants(Enum):  # pylint: disable=c0103
             "test_shape_id_gtfs__trips_gtfs": {
                 "description": "Todos os dados de 'shape_id' da tabela trips_gtfs constam na tabela shapes_gtfs"
             },
-        }
+        },
     }
