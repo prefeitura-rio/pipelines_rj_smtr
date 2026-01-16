@@ -359,6 +359,9 @@ models:
         description: "Identifica o bloco ao qual pertence a viagem"
       - name: shape_id
         description: "{{ doc('shape_id') }}"
+        tests:
+          - test_shape_id_gtfs:
+              name: test_shape_id_gtfs__trips_gtfs
       - name: wheelchair_accessible
         description: "Indica acessibilidade para cadeiras de rodas"
       - name: bikes_allowed
