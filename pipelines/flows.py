@@ -7,6 +7,7 @@ from pipelines.capture.cittati.flows import *  # noqa
 from pipelines.capture.conecta.flows import *  # noqa
 from pipelines.capture.inmet.flows import *  # noqa
 from pipelines.capture.jae.flows import *  # noqa
+from pipelines.capture.movidesk.flows import *  # noqa
 from pipelines.capture.rioonibus.flows import *  # noqa
 from pipelines.capture.serpro.flows import *  # noqa
 from pipelines.capture.sonda.flows import *  # noqa
