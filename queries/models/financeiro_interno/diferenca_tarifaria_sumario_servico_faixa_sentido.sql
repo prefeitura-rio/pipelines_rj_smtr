@@ -120,6 +120,7 @@ select
     viagens_faixa,
     pof as percentual_atendimento,
     irk,
+    receita_tarifa_publica_faixa / km_conforme_faixa as irk_calculado,
     km_planejada_faixa,
     km_conforme_faixa,
     km_atendida_faixa,
@@ -131,7 +132,22 @@ select
         km_conforme_faixa * irk - receita_tarifa_publica_faixa,
         least((km_planejada_faixa * irk) - receita_tarifa_publica_faixa, 0)
     )
-    + valor_penalidade as delta_tr,
+    + valor_penalidade as delta_tr_a,
+    if(
+        pof >= 80,
+        km_conforme_faixa * irk - receita_tarifa_publica_faixa,
+        least((km_planejada_faixa * irk * 0.8) - receita_tarifa_publica_faixa, 0)
+    )
+    + valor_penalidade as delta_tr_b,
+    if(
+        pof >= 80,
+        km_conforme_faixa * irk - receita_tarifa_publica_faixa,
+        if((km_conforme_faixa * irk) - receita_tarifa_publica_faixa - valor_penalidade < 0,
+            greatest((km_conforme_faixa * irk) - receita_tarifa_publica_faixa - valor_penalidade, valor_penalidade),
+            (km_conforme_faixa * irk) - receita_tarifa_publica_faixa + valor_penalidade 
+        )
+    )
+    as delta_tr_c,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     '{{ invocation_id }}' as id_execucao_dbt
