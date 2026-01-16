@@ -3,7 +3,7 @@
 ## [1.3.0] - 2026-01-16
 
 ### Adicionado
-- Adicionado teste no modelo `trips_gtfs`para verificar se existe o `shape_id` no modelo `shapes_gtfs` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1174)
+- Adicionado teste no modelo `trips_gtfs` para verificar se existe o `shape_id` no modelo `shapes_gtfs` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1174)
 
 ## [1.2.9] - 2025-12-10
 
