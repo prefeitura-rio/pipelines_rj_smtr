@@ -38,9 +38,9 @@ class constants(Enum):  # pylint: disable=c0103
                 "description": "A quantidade de registros de 'feed_start_date', 'tipo_dia', 'tipo_os', 'servico', 'faixa_horaria_inicio' e 'shape_id' está dentro do intervalo esperado."  # noqa
             },
         },
-        "trips_gtfs": {  
-            "test_shape_id_gtfs__trips_gtfs": {  
-                "description": "Todos os dados de 'shape_id' da tabela trips_gtfs constam na tabela shapes_gtfs"  
-            },  
-        }  
+        "trips_gtfs": {
+            "test_shape_id_gtfs__trips_gtfs": {
+                "description": "Todos os dados de 'shape_id' da tabela trips_gtfs constam na tabela shapes_gtfs"
+            },
+        }
     }
