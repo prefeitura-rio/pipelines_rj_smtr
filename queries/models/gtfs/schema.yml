@@ -7,7 +7,7 @@ models:
     description: "Agência de transporte público com serviços representados neste conjunto de dados"
     columns:
       - name: agency_id
-        description:  "Identifica uma marca de transporte público que geralmente é sinônimo de agência de transporte público"
+        description: "Identifica uma marca de transporte público que geralmente é sinônimo de agência de transporte público"
       - name: agency_name
         description: "Nome completo da agência de transporte público"
       - name: agency_url
@@ -362,6 +362,7 @@ models:
         tests:
           - test_shape_id_gtfs:
               name: test_shape_id_gtfs__trips_gtfs
+              where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
       - name: wheelchair_accessible
         description: "Indica acessibilidade para cadeiras de rodas"
       - name: bikes_allowed
@@ -465,8 +466,10 @@ models:
           expression: count(distinct feed_start_date)
           compare_model: ref("ordem_servico_faixa_horaria") if var('data_versao_gtfs') < var('DATA_GTFS_V4_INICIO') else ref("ordem_servico_faixa_horaria_sentido")
           compare_expression: count(distinct feed_start_date)
-          group_by: [feed_start_date, tipo_os, tipo_dia, servico, faixa_horaria_inicio]
-          compare_group_by: [feed_start_date, tipo_os, tipo_dia, servico, faixa_horaria_inicio]
+          group_by:
+            [feed_start_date, tipo_os, tipo_dia, servico, faixa_horaria_inicio]
+          compare_group_by:
+            [feed_start_date, tipo_os, tipo_dia, servico, faixa_horaria_inicio]
           row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
           compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}' AND (quilometragem != 0 AND (partidas != 0 OR partidas IS NULL))"
           where: "1=1"
@@ -485,7 +488,15 @@ models:
           name: dbt_expectations.expect_table_row_count_to_be_between__ordem_servico_trips_shapes_gtfs
           min_value: 1
           max_value: 2
-          group_by: [feed_start_date, tipo_dia, tipo_os, servico, faixa_horaria_inicio, shape_id]
+          group_by:
+            [
+              feed_start_date,
+              tipo_dia,
+              tipo_os,
+              servico,
+              faixa_horaria_inicio,
+              shape_id,
+            ]
           row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
           strictly: false
           where: "1=1"
