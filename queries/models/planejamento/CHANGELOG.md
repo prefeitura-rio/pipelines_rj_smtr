@@ -1,15 +1,5 @@
 # Changelog - planejamento
 
-## [1.6.1] - 2026-01-19
-
-### Removido
-
-- Remove do modelo `aux_calendario_manual` a alteração do tipo_dia de `2025-10-31` como `Ponto Facultativo` que consta no PR 1178. (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1180)
-
-### Adicionado
-
-- Adiciona ao modelo `aux_calendario_manual` o tipo_dia de `2025-10-31` como `Ponto Facultativo` conforme DECRETO RIO Nº 56869 DE 29 DE SETEMBRO DE 2025 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1178)
-
 ## [1.6.0] - 2026-01-13
 
 ### Adicionado
