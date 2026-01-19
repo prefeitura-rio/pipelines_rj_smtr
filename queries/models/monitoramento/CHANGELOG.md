@@ -1,11 +1,16 @@
 # Changelog - monitoramento
 
+## [1.8.8] - 2026-01-19
+
+### Corrigido
+
+- Corrige o modelo `temperatura`, ajustando a lógica do join para utilizar dados do Alerta Rio quando não houver dados do INMET (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1176)
+
 ## [1.8.7] - 2026-01-13
 
 ### Alterado
 
 - Altera data de processamento para a exceção de ajuste no modelo `veiculo_dia` para correção de tecnologia, conforme MTR-CAP-2025/59482 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1169)
-
 
 ## [1.8.6] - 2026-01-06
 
@@ -91,7 +96,7 @@
 
 ### Corrigido
 
--  Corrigida a duplicidade de autuações de ar-condicionado(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/967)
+- Corrigida a duplicidade de autuações de ar-condicionado(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/967)
 
 ## [1.7.4] - 2025-10-06
 
@@ -107,7 +112,7 @@
 
 ### Corrigido
 
-- Corrige `indicador_campos_obrigatorios` no modelo `viagem_validacao` para invalidar viagens com `datetime_partida` maior que  `datetime_chegada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/910)
+- Corrige `indicador_campos_obrigatorios` no modelo `viagem_validacao` para invalidar viagens com `datetime_partida` maior que `datetime_chegada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/910)
 - Corrige divisão por 0 no cálculo da `velocidade_media` no modelo `viagem_validacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/910)
 
 ### Removido
@@ -283,7 +288,6 @@
 
 - Adiciona `exclusion_condition` no teste `dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__veiculo_dia` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/653)
 
-
 ## [1.5.2] - 2025-06-27
 
 ### Adicionado
@@ -296,7 +300,6 @@
 ### Removido
 
 - Remove a coluna `modo` do modelo `aux_veiculo_dia_consolidada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/648)
-
 
 ## [1.5.0] - 2025-06-25
 
@@ -314,7 +317,7 @@
 ### Alterado
 
 - Alterado o cálculo da `km_apurada` no modelo `monitoramento_servico_dia_v2.sql` para somar a quilometragem dos veículos não licenciados e não vistoriados (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/629)
-- Altera lógica do modelo  `gps_segmento_viagem` para considerar vigência da camada dos túneis (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/617)
+- Altera lógica do modelo `gps_segmento_viagem` para considerar vigência da camada dos túneis (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/617)
 
 ## [1.4.1] - 2025-06-06
 
@@ -337,10 +340,9 @@
 
 ## [1.3.8] - 2025-05-28
 
-
 ### Adicionado
 
- - Cria modelo `gps_15_minutos_union` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/586)
+- Cria modelo `gps_15_minutos_union` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/586)
 
 ### Alterado
 
@@ -350,7 +352,7 @@
 
 ### Adicionado
 
- - Cria modelos `gps`, `gps_15_minutos`, `aux_gps`, `aux_gps_filtrada`, `aux_gps_parada`, `aux_gps_realocacao`, `aux_gps_trajeto_correto`, `aux_gps_velocidade` ,`aux_realocacao` e `staging_garagens`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/297)
+- Cria modelos `gps`, `gps_15_minutos`, `aux_gps`, `aux_gps_filtrada`, `aux_gps_parada`, `aux_gps_realocacao`, `aux_gps_trajeto_correto`, `aux_gps_velocidade` ,`aux_realocacao` e `staging_garagens`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/297)
 
 ## [1.3.6] - 2025-05-13
 
@@ -367,11 +369,13 @@
 ## [1.3.4] - 2025-02-27
 
 ### Corrigido
+
 - Corrige os valores as colunas `valor_subsidio_pago` e `valor_penalidade` antes da apuração por faixa no modelo `monitoramento_servico_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/465)
 
 ## [1.3.2] - 2025-02-21
 
 ### Alterado
+
 - Torna filtro de partição obrigatório no modelo `gps_viagem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/448)
 
 ## [1.3.1] - 2025-02-03
@@ -407,14 +411,17 @@
 ## [1.2.1] - 2025-01-03
 
 ### Adicionado
+
 - Cria modelo `monitoramento_viagem_transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/372)
 
 ## [1.2.0] - 2024-11-28
 
 ### Adicionado
+
 - Cria modelo `staging_viagem_informada_brt.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/337)
 
 ### Alterado
+
 - Adiciona viagens BRT no modelo: `gps_viagem.sql` e `viagem_informada_monitoramento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/337)
 - Altera data hardcoded por variável no modelo `gps_viagem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/337)
 - Cria corte de viagens na execução full nos modelos `gps_viagem.sql` e `gps_segmento_viagem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/337)
@@ -422,17 +429,21 @@
 ## [1.1.0] - 2024-11-08
 
 ### Adicionado
+
 - Cria modelos de validação de viagens: `gps_viagem.sql`, `gps_segmento_viagem.sql` e `viagem_validacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/237)
 
 ### Alterado
+
 - Adiciona coluna `modo` no modelo `viagem_informada_monitoramento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/237)
 
 ## [1.0.1] - 2024-10-23
 
 ### Corrigido
+
 - Remove fuso horário na conversão para data do campo data_viagem no modelo `staging_viagem_informada_rioonibus.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/284)
 
 ## [1.0.0] - 2024-10-21
 
 ### Adicionado
+
 - Cria modelos para tratamento de viagens informadas: `staging_viagem_informada_rioonibus.sql` e `viagem_informada_monitoramento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/276)
