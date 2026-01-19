@@ -1,5 +1,10 @@
 # Changelog - dashboard_monitoramento_interno
 
+## [1.0.2] - 2026-01-12
+
+### Corrigido
+
+- Corrige `view_viagem_climatizacao.sql` retirando o filtro de data da tabela `gps_validador` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1157)
 ## [1.0.1] - 2026-01-08
 
 ### Alterado
