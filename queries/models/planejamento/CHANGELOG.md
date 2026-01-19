@@ -8,7 +8,7 @@
 
 ### Removido
 
-- Remove do modelo `aux_calendario_manual` a alteração do PR 1178. (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1178)
+- Remove do modelo `aux_calendario_manual` a alteração do tipo_dia de `2025-10-31` como `Ponto Facultativo` que consta no PR 1178. (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1178)
 
 ## [1.6.0] - 2026-01-13
 
