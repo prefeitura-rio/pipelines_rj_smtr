@@ -37,12 +37,12 @@ with
         group by 1, 2
     )
 select
-    i.data,
-    i.hora,
+    coalesce(i.data, a.data) as data,
+    coalesce(i.hora, a.hora) as hora,
     coalesce(i.temperatura, a.temperatura) as temperatura,
     case when i.temperatura is not null then i.fonte else a.fonte end as fonte,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     "{{ var('version') }}" as versao,
     '{{ invocation_id }}' as id_execucao_dbt
 from inmet i
-left join alertario a using (data, hora)
+full outer join alertario a using (data, hora)
