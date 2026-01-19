@@ -42,8 +42,6 @@ with
                 then "Ponto Facultativo"  -- LEI Nº 8.881, DE 14 DE ABRIL DE 2025 / MTR-PRO-2025/16278
                 when data = date(2025, 10, 20)
                 then "Ponto Facultativo"  -- MTR-MEM-2025/02734 - Indicação de tipo dia "Ponto Facultativo" para o feriado do dia do comerciário
-                when data = date(2025, 10, 31)
-                then "Ponto Facultativo"  -- DECRETO RIO Nº 56869 DE 29 DE SETEMBRO DE 2025
                 when data = date(2025, 11, 21)
                 then "Ponto Facultativo"  -- Decreto Rio nº 57.139, de 10 de novembro de 2025.
                 when data = date(2025, 12, 24)
