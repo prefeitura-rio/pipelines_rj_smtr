@@ -126,4 +126,10 @@ select
 from viagem v
 left join veiculo ve using (data, id_veiculo)
 left join viagem_planejada vp using (servico, data)
-left join validador vl on v.id_validador = vl.id_validador and (datetime_fim_validade is null or v.data between vl.datetime_inicio_validade and vl.datetime_fim_validade)
+left join
+    validador vl
+    on v.id_validador = vl.id_validador
+    and (
+        datetime_fim_validade is null
+        or v.data between vl.datetime_inicio_validade and vl.datetime_fim_validade
+    )
