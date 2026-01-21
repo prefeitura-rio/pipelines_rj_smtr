@@ -419,7 +419,7 @@ models:
         description: "Data e hora do início da vinculação entre a operadora de transporte e o validador da Jaé"
       - name: datetime_fim_validade
         description: "Data e hora do fim da vinculação entre a operadora de transporte e o validador da Jaé"
-      - name: id_validador 
+      - name: id_validador
         description: "{{ doc('id_validador') }}"
       - name: versao
         description: "{{ doc('versao') }}"

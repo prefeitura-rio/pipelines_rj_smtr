@@ -492,6 +492,6 @@ sources:
   
   - name: cadastro
     database: rj-smtr
-
+    
     tables:
       - name: validador_operadora
