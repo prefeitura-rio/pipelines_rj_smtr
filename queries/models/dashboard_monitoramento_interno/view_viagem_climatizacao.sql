@@ -8,7 +8,7 @@ with
 
     validador as (
         select operadora, id_validador
-        from {{ source("cadastro", "validador_operadora") }}   
+        from {{ source("cadastro", "validador_operadora") }}
     ),
     viagem as (
         select
