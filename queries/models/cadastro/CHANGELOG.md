@@ -1,12 +1,5 @@
 # Changelog - cadastro
 
-## [1.7.6] - 2026-01-21
-
-### Adicionado
-
-- Adiciona view do modelo `validador_operadora` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1181)
-- Adiciona ao `schema` o modelo `validador_operadora` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1181)
-
 ## [1.7.5] - 2025-12-19
 
 ### Alterado

@@ -400,15 +400,3 @@ models:
         description: "Geometria da garagem em formato WKT"
       - name: geometry
         description: "Geometria da garagem em formato geográfico"
-  - name: validador_operadora
-    description: "Tabela de relacionamento entre validador da Jaé e operadora de transporte"
-    columns:
-      - name: modo
-        description: "{{ doc('modo') }}"
-      - name: operadora
-        description: "{{ doc('operadora') }}"
-      - name: datetime_inicio_validade
-        description: "Data e hora do início da vinculação entre a operadora de transporte e o validador da Jaé"
-      - name: datetime_fim_validade
-        description: "Data e hora do fim da vinculação entre a operadora de transporte e o validador da Jaé"
-      - name: id_validador
