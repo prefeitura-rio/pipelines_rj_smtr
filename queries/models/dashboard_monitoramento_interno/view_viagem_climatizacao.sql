@@ -5,23 +5,10 @@
 }}
 
 with
-    validador_max as (
-        select data, operadora, id_validador, count(*) as quantidade_gps
-        from {{ ref("gps_validador") }}
-        where
-            data between (date("{{ var('start_date') }}")) and (
-                date("{{ var('end_date') }}")
-            )
-        group by all
-    ),
+
     validador as (
-        select data, operadora, id_validador
-        from validador_max
-        qualify
-            row_number() over (
-                partition by data, operadora, id_validador order by quantidade_gps desc
-            )
-            = 1
+        select operadora, id_validador
+        from {{ source("cadastro", "validador_operadora") }}   
     ),
     viagem as (
         select
@@ -139,4 +126,4 @@ select
 from viagem v
 left join veiculo ve using (data, id_veiculo)
 left join viagem_planejada vp using (servico, data)
-left join validador vl using (data, id_validador)
+left join validador vl using (id_validador)

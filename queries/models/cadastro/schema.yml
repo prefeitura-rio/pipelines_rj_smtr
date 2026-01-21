@@ -400,3 +400,30 @@ models:
         description: "Geometria da garagem em formato WKT"
       - name: geometry
         description: "Geometria da garagem em formato geográfico"
+  - name: validador_operadora
+    description: "Tabela de relacionamento entre validador da Jaé e operadora de transporte"
+    columns:
+      - name: id_device_operadora
+        description: "Identificador do relacionamento entre o validador da Jaé e a operadora de transporte"
+      - name: id_operadora_jae
+        description: "Identificador único do operador, podendo ser o código de permissionário ou código da Jaé"
+      - name: operadora
+        description: "{{ doc('operadora') }}"
+      - name: operadora_completo
+        description: "Nome do operador de transporte [protegido]"
+      - name: tipo_documento
+        description: "{{ doc('tipo_documento_operadora') }}"
+      - name: documento
+        description: "{{ doc('documento_operadora') }}"
+      - name: datetime_inicio_validade
+        description: "Data e hora do início da vinculação entre a operadora de transporte e o validador da Jaé"
+      - name: datetime_fim_validade
+        description: "Data e hora do fim da vinculação entre a operadora de transporte e o validador da Jaé"
+      - name: id_validador 
+        description: "{{ doc('id_validador') }}"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
