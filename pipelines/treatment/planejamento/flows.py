@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de planejamento
 
-DBT: 2026-01-13
+DBT 2026-01-19
 """
 
 from pipelines.constants import constants as smtr_constants
