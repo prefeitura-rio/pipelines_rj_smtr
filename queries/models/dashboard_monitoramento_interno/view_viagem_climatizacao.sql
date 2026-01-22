@@ -133,3 +133,8 @@ left join
         datetime_fim_validade is null
         or v.data between vl.datetime_inicio_validade and vl.datetime_fim_validade
     )
+qualify
+    row_number() over (
+        partition by v.data, v.id_viagem order by vl.datetime_inicio_validade asc
+    )
+    = 1
