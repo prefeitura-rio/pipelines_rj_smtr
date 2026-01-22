@@ -1520,3 +1520,11 @@ Horário do registro
 {% docs datetime_gps %}
 Data e hora de geração da transmissão do GPS [GMT-3]
 {% enddocs %}
+
+{% docs tempo_integracao_minutos_matriz %}
+Tempo máximo entre a primeira e a última perna para a integração ser realizada
+{% enddocs %}
+
+{% docs sequencia_rateio_matriz %}
+Array contendo os percentuais de rateio para cada perna da integração
+{% enddocs %}
