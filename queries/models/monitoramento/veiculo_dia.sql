@@ -36,6 +36,10 @@ with
                     and date_diff(date(data), data_inicio_vinculo, day)
                     <= {{ var("sppo_licenciamento_tolerancia_primeira_vistoria_dia") }}
                 then true  -- Caso o veículo seja novo, existe a tolerância de 15 dias para a primeira vistoria
+                when
+                    date(data) between ('2026-01-01') and ('2026-01-31')
+                    and ano_ultima_vistoria >= extract(year from date(data)) - 2
+                then true --RESOLUÇÃO SMTR Nº 3894 DE 29 DE DEZEMBRO DE 2025 que altera o prazo final de vistoria para 31 de janeiro de 2026
                 else false
             end as indicador_vistoriado,
         from {{ ref("veiculo_licenciamento_dia") }}
