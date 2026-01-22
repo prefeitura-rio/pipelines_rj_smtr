@@ -1,6 +1,12 @@
 # Changelog - validacao_dados_jae
 
-## [3.1.3] - 2025-01-13
+## [3.1.4] - 2026-01-22
+
+### Alterado
+
+- Adapta query do modelo `integracao_invalida.sql` para o novo formato da matriz de integração (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1182)
+
+## [3.1.3] - 2026-01-13
 
 ### Alterado
 
