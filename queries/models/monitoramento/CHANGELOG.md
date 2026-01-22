@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona ao modelo `veiculo_dia` exceção ao prazo final de vistoria para o período entre `2026-01-01`e `2026-01-31` conforme RESOLUÇÃO SMTR Nº 3894 DE 29 DE DEZEMBRO DE 2025  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1169)
+- Adiciona ao modelo `veiculo_dia` exceção ao prazo final de vistoria para o período entre `2026-01-01`e `2026-01-31` conforme RESOLUÇÃO SMTR Nº 3894 DE 29 DE DEZEMBRO DE 2025  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1183)
 
 ## [1.8.8] - 2026-01-19
 
