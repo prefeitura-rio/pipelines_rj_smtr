@@ -534,7 +534,7 @@ models:
         data_type: numeric
         quote: true
       - name: tempo_integracao_minutos
-        description: Tempo máximo entre a primeira e a última perna para a integração ser realizada
+        description: "{{ doc('tempo_integracao_minutos_matriz') }}"
         data_type: float64
         quote: true
       - name: versao
