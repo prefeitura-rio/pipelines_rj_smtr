@@ -6,12 +6,15 @@
 
 - Adiciona obrigatoriedade do filtro de partição nos modelos das tabelas `transacao.sql`, `integracao.sql`, `transacao_riocard.sql`, `transacao_valor_ordem.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1186)
 
+### Corrigido
+
+- Corrige adição de 4% em transações RioCard no modelo `aux_passageiro_hora.sql`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1185)
+
 ## [3.3.4] - 2025-12-15
 
 ### Corrigido
 
-- Corrige adição de 4% em transações RioCard nos flows `aux_passageiro_hora.sql` e `passageiro_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1111)
-
+- Corrige adição de 4% em transações RioCard nos modelos `aux_passageiro_hora.sql` e `passageiro_hora.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1111)
 
 ## [3.3.3] - 2025-11-19
 

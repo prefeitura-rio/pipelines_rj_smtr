@@ -59,8 +59,7 @@ select
             when t.sentido = "1"
             then lt.tarifa_volta
         end
-    )
-    / 0.96 as valor_pagamento,
+    ) as valor_pagamento,
 from {{ ref("transacao_riocard") }} t
 left join
     {{ ref("aux_linha_tarifa") }} lt
