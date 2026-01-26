@@ -207,8 +207,6 @@ selectors:
         - method: fqn
           value: dicionario_bilhetagem
         - method: fqn
-          value: aux_gratuidade_info
-        - method: fqn
           value: staging_transacao
         - method: fqn
           value: staging_transacao_riocard
