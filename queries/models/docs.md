@@ -1520,3 +1520,7 @@ Horário do registro
 {% docs datetime_gps %}
 Data e hora de geração da transmissão do GPS [GMT-3]
 {% enddocs %}
+
+{% docs agency_id %}
+Identificador único de uma agência de transporte
+{% enddocs %}

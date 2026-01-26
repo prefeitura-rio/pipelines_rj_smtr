@@ -7,7 +7,7 @@ models:
     description: "Agência de transporte público com serviços representados neste conjunto de dados"
     columns:
       - name: agency_id
-        description: "Identifica uma marca de transporte público que geralmente é sinônimo de agência de transporte público"
+        description: "{{ doc('agency_id') }}"
       - name: agency_name
         description: "Nome completo da agência de transporte público"
       - name: agency_url
@@ -94,7 +94,7 @@ models:
       - name: transfers
         description: "Indica o número de transferências permitidas nesta tarifa"
       - name: agency_id
-        description: "Identifica a agência relevante para uma tarifa"
+        description: "{{ doc('agency_id') }}"
       - name: transfer_duration
         description: "Período de tempo em segundos antes que uma transferência expire"
       - name: feed_start_date
@@ -184,7 +184,7 @@ models:
       - name: route_id
         description: "{{ doc('route_id') }}"
       - name: agency_id
-        description: "Agência para a rota especificada"
+        description: "{{ doc('agency_id') }}"
       - name: route_short_name
         description: "Nome abreviado de uma rota"
       - name: route_long_name
