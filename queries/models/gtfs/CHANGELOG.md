@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrige a descrição da coluna `agency_id` no schema ao pardronizar no `docs.md`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1192)
+- Corrige a descrição da coluna `agency_id` no schema ao padronizar no `docs.md`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1192)
 
 ## [1.3.8] - 2026-01-09
 
