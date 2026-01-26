@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrige o teste `test_completude_temperatura`, ajustando a lógica para o intervalo a ser testado. (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1176)
+- Corrige o teste `test_completude_temperatura`, ajustando a lógica para o intervalo a ser testado. (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1189)
 
 ## [1.8.9] - 2026-01-22
 
