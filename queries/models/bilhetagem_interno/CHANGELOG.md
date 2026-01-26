@@ -1,10 +1,10 @@
 # Changelog - bilhetagem_interno
 
-## [1.2.0] - 2026-01-23
+## [1.2.0] - 2026-01-26
 
 ### Adicionado
 
-- - Adiciona obrigatoriedade no filtro de partição no modelo da tabelas `extrato_cliente_cartao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1186)
+- Adiciona obrigatoriedade no filtro de partição no modelo da tabela `extrato_cliente_cartao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1186)
 
 ## [1.1.9] - 2025-12-10
 

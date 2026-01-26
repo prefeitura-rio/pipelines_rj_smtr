@@ -1,8 +1,9 @@
 # Changelog - monitoramento
 
-## [1.9.0] - 2026-01-23
+## [1.9.0] - 2026-01-26
 
 ### Adicionado
+
 - Adiciona obrigatoriedade no filtro de partição nos modelos das tabelas `gps_validador.sql` e `gps_validador_van.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1186)
 
 ## [1.8.9] - 2026-01-22

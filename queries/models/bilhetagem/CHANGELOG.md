@@ -1,6 +1,6 @@
 # Changelog - bilhetagem
 
-## [3.3.5] - 2026-01-23
+## [3.3.5] - 2026-01-26
 
 ### Adicionado
 
