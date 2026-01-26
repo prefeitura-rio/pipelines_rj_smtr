@@ -1,10 +1,10 @@
 # Changelog - bilhetagem
 
-## [3.3.5] - 2026-01-22
+## [3.3.5] - 2026-01-26
 
 ### Corrigido
 
-- Corrige adição de 4% em transações RioCard no modelo `aux_passageiro_hora.sql`()
+- Corrige adição de 4% em transações RioCard no modelo `aux_passageiro_hora.sql`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1185)
 
 ## [3.3.4] - 2025-12-15
 
