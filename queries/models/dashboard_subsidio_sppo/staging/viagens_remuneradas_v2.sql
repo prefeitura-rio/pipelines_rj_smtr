@@ -174,6 +174,30 @@ select
     ),
     case
         when
+            (v.data between date('2026-01-01') and date('2026-01-15'))
+            and v.servico in (
+                "104",
+                "107",
+                "109",
+                "161",
+                "167",
+                "169",
+                "409",
+                "410",
+                "435",
+                "473",
+                "583",
+                "584",
+                "LECD127",
+                "LECD128",
+                "552",
+                "SP805",
+                "361",
+                "LECD129",
+                "232"
+            )  -- Processo n° 000300.001720/2026-55
+        then true
+        when
             (v.data between date('2025-12-22') and date('2025-12-26'))
             and v.servico in (
                 "232",
