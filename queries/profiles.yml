@@ -2,7 +2,7 @@ queries:
   outputs:
     dev:
       dataset: dbt
-      job_execution_timeout_seconds: 5400
+      job_execution_timeout_seconds: 14400
       job_retries: 1
       keyfile: /tmp/credentials.json
       location: us
