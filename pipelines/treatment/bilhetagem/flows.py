@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de bilhetagem
 
-DBT: 2026-01-08
+DBT: 2026-01-26
 """
 from datetime import datetime, time, timedelta
 
