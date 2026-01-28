@@ -1,6 +1,6 @@
 # Changelog - validacao_dados_jae
 
-## [3.1.4] - 2026-01-22
+## [3.1.4] - 2026-01-28
 
 ### Alterado
 
