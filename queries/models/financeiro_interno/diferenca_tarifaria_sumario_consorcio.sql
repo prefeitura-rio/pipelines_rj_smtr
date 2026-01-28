@@ -10,6 +10,7 @@ with
     transacao_viagem as (
         select *
         from {{ ref("transacao_viagem_consorcio_planejamento") }}
+        {# `rj-smtr-dev.rodrigo__subsidio_staging.transacao_viagem_consorcio_planejamento` #}
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
@@ -17,6 +18,7 @@ with
     diferenca_tarifaria as (
         select *
         from {{ ref("diferenca_tarifaria_sumario_servico_faixa_sentido") }}
+        {# `rj-smtr-dev.rodrigo__financeiro_interno.diferenca_tarifaria_sumario_servico_faixa_sentido` #}
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
@@ -36,7 +38,7 @@ with
         group by 1, 2
     ),
     diferenca_tarifaria_cosorcio_agg as (
-        select data, consorcio, sum(delta_tr) as delta_tr,
+        select data, consorcio, sum(delta_tr_a) as delta_tr,
         from diferenca_tarifaria
         group by 1, 2
     )
