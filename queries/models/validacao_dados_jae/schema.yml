@@ -2,47 +2,71 @@ version: 2
 
 models:
   - name: integracao_invalida
-    description: "Tabela para validação dos dados de integração da Jaé"
+    description: "Tabela contendo as integrações inválidas da Jaé"
     columns:
       - name: data
-        description: "Data de processamento da integração (partição)"
+        description: "Data de processamento da integração [partição]"
         data_type: date
       - name: id_integracao
         description: "{{ doc('id_integracao') }}"
         data_type: string
-      - name: modos
-        description: "Sequência modos das transações presentes na integração (separado por ', ')"
+      - name: integracao_realizada
+        description: String representando a integração realizada [sequência modos da integração separados por "-"]
         data_type: string
-      - name: indicador_fora_matriz
-        description: "Indica se a sequência de modos não aparece na tabela planejamento.matriz_integracao"
+        quote: true
+      - name: tempo_integracao_minutos_realizado
+        description: Tempo entre a primeira e a última perna da integração
+        data_type: int64
+        quote: true
+      - name: tempo_integracao_minutos_matriz
+        description: "{{ doc('tempo_integracao_minutos_matriz') }} [de acordo com a matriz de integração]"
+        data_type: float64
+        quote: true
+      - name: rateio_realizado
+        description: Array contendo os percentuais de rateio para cada perna realizados na integração
+        data_type: numeric
+        quote: true
+      - name: rateio_matriz
+        description: "{{ doc('sequencia_rateio_matriz') }} [de acordo com a matriz]"
+        data_type: string
+        quote: true
+      - name: transferencias_realizadas
+        description: Array contendo as informações das transferências realizadas dentro da integração
+        data_type: record
+        quote: true
+      - name: indicador_integracao_fora_matriz
+        description: Indica se a integração não estava prevista na matriz de integração
         data_type: boolean
+        quote: true
       - name: indicador_tempo_integracao_invalido
         description: "Indica se o tempo entre a primeira e a última transação da integração é maior que o tempo limite de integração"
         data_type: boolean
-      - name: indicador_intervalo_transacao_suspeito
-        description: "Indica se existe algum intervalo entre transações menor que 5 minutos dentro da integração"
-      - name: versao
-        description: "{{ doc('versao') }}"
-        data_type: string
       - name: indicador_rateio_invalido
         description: Indica se o rateio não foi feito de acordo com os valores estipulados na matriz
         data_type: boolean
         quote: true
-      - name: rateio
-        description: String no formato JSON com os valores de rateio praticados na integração
-        data_type: string
+      - name: indicador_transferencia_fora_matriz
+        description: Indica se houve alguma transferência que não estava prevista na matriz
+        data_type: boolean
         quote: true
-      - name: rateio_matriz
-        description: String no formato JSON com os valores de rateio estipulados pela matriz
-        data_type: string
+      - name: indicador_tempo_transferencia_invalido
+        description: Indica se houve alguma transferência em que o tempo entre a primeira e a última transação foi maior que o tempo limite de transferência
+        data_type: boolean
         quote: true
-      - name: data_inicio_matriz
-        description: "{{ doc('data_inicio_matriz') }}"
+      - name: datas_transacoes
+        description: Array contendo as datas distintas das transações presentes na integração [e transferências]
         data_type: date
         quote: true
+      - name: versao
+        description: "{{ doc('versao') }}"
+        data_type: string
       - name: datetime_ultima_atualizacao
         description: "{{ doc('datetime_ultima_atualizacao') }}"
         data_type: datetime
+        quote: true
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"
+        data_type: string
         quote: true
   - name: transacao_invalida
     description: "Tabela para validação dos dados de transação da Jaé"
