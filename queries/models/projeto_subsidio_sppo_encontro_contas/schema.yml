@@ -6,11 +6,16 @@ models:
     versions:
       - v: 1
         config:
+          materialized: table
           deprecation_date: 2023-12-31
           description: "Balanço da receita aferida e esperada por consórcio e ano para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
       - v: 2
         config:
           alias: balanco_consorcio_ano
+          partition_by:
+            field: data
+            data_type: date
+            granularity: day
           description: "Balanço da receita aferida e esperada por consórcio e ano para pares data-serviço subsidiados [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: ano
@@ -68,11 +73,16 @@ models:
     versions:
       - v: 1
         config:
+          materialized: table
           deprecation_date: 2023-12-31
           description: "Balanço da receita aferida e esperada por consórcio e dia para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
       - v: 2
         config:
           alias: balanco_consorcio_dia
+          partition_by:
+            field: data
+            data_type: date
+            granularity: day
           description: "Balanço da receita aferida e esperada por consórcio e dia para pares data-serviço subsidiados [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: data
@@ -108,11 +118,16 @@ models:
     versions:
       - v: 1
         config:
+          materialized: table
           deprecation_date: 2023-12-31
           description: "Balanço da receita aferida e esperada por serviço e ano para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
       - v: 2
         config:
           alias: balanco_servico_ano
+          partition_by:
+            field: data
+            data_type: date
+            granularity: day
           description: "Balanço da receita aferida e esperada por serviço e ano para pares data-serviço subsidiados [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: ano
@@ -152,11 +167,16 @@ models:
     versions:
       - v: 1
         config:
+          materialized: table
           deprecation_date: 2023-12-31
           description: "Balanço da receita aferida e esperada por servico e dia para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
       - v: 2
         config:
           alias: balanco_servico_dia
+          partition_by:
+            field: data
+            data_type: date
+            granularity: day
           description: "Balanço da receita aferida e esperada por servico e dia para pares data-serviço subsidiados [Processo.Rio MTR-PRO-2025/18086]"
     tests:
       - dbt_utils.unique_combination_of_columns:
@@ -232,11 +252,16 @@ models:
     versions:
       - v: 1
         config:
+          materialized: table
           deprecation_date: 2023-12-31
           description: "Balanço da receita aferida e esperada por serviço e quinzena para serviços-dia subsidiados. Ver metodologia em NOTA TÉCNICA TR/SUBTT Nº 01/2024"
       - v: 2
         config:
           alias: balanco_servico_quinzena
+          partition_by:
+            field: data
+            data_type: date
+            granularity: day
           description: "Balanço da receita aferida e esperada por serviço e quinzena para pares data-serviço subsidiados [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: quinzena
@@ -307,6 +332,10 @@ models:
       - v: 2
         config:
           alias: servico_dia_atipico
+          partition_by:
+            field: data
+            data_type: date
+            granularity: day
     description: "Pares data-serviço com ocorrências que impactam a apuração [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: data
@@ -329,6 +358,10 @@ models:
       - v: 2
         config:
           alias: aux_rdo_servico_dia
+          partition_by:
+            field: data
+            data_type: date
+            granularity: day
     description: "Receita tarifária aferida por serviço-dia a partir dos registros do RDO com correção dos serviços sem planejamento [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: data
@@ -353,6 +386,10 @@ models:
       - v: 2
         config:
           alias: aux_subsidio_servico_dia
+          partition_by:
+            field: data
+            data_type: date
+            granularity: day
     description: "Quilometragem apurada e subsídio pago por serviço-dia a partir com correção dos serviços sem receita [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: data
@@ -375,6 +412,10 @@ models:
       - v: 2
         config:
           alias: balanco_consorcio_mes
+          partition_by:
+            field: data
+            data_type: date
+            granularity: day
     description: "Balanço da receita aferida e esperada por consórcio, mês e ano para pares data-serviço subsidiados [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: ano_mes
@@ -437,6 +478,10 @@ models:
       - v: 2
         config:
           alias: correcao_servico_rdo
+          partition_by:
+            field: data
+            data_type: date
+            granularity: day
     description: "Correção de pares data-serviço sem planejamento porém com receita tarifária e com subsídio pago, mas sem receita tarifária [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: data
@@ -459,6 +504,10 @@ models:
       - v: 2
         config:
           alias: receita_tarifaria_servico_dia_sem_associacao
+          partition_by:
+            field: data
+            data_type: date
+            granularity: day
     description: "Pares data-serviço sem planejamento porém com receita tarifária e com subsídio pago, mas sem receita tarifária mesmo após as correções [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: tipo
@@ -497,6 +546,10 @@ models:
       - v: 2
         config:
           alias: encontro_contas_subsidio_sumario_servico_dia
+          partition_by:
+            field: data
+            data_type: date
+            granularity: day
     description: "Sumário do subsídio do SPPO [Serviço Público de Transporte de Passageiros por Ônibus] por dia para fins do Encontro de Contas [Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: data
@@ -527,6 +580,10 @@ models:
       - v: 2
         config:
           alias: encontro_contas_parametros
+          partition_by:
+            field: data
+            data_type: date
+            granularity: day
     description: "Parâmetros utilizados para o cálculo do Encontro de Contas do SPPO [Serviço Público de Transporte de Passageiros por Ônibus - Processo.Rio MTR-PRO-2025/18086]"
     columns:
       - name: data_inicio

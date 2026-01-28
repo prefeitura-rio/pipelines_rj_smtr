@@ -13,7 +13,8 @@ with
         from {{ ref("encontro_contas_subsidio_sumario_servico_dia") }}
         where
             data >= "{{ var('encontro_contas_datas_v2_inicio') }}"
-            and data between "{{ var('start_date') }}" and "{{ var('end_date') }}"
+            and data
+            between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
     )
 -- 3. Associa serviço corrigido aos pares data-serviço do subsídio
 select
