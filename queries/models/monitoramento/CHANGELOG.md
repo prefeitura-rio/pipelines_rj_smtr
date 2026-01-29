@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.9.1] - 2026-01-29
+
+### Adicionado
+
+- Adiciona `status` de Não licenciado para `tipo_veiculo` rodoviario no modelo `aux_veiculo_dia_consolidada`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1198)
+
 ## [1.9.0] - 2026-01-26
 
 ### Adicionado
