@@ -4,7 +4,11 @@
 
 ### Adicionado
 
+<<<<<<< HEAD
 - Adiciona `status` de Não licenciado para `tipo_veiculo` rodoviario no modelo `aux_veiculo_dia_consolidada`  [Processo n. X] (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1198)
+=======
+- Adiciona `status` de Não licenciado para `tipo_veiculo` rodoviário no modelo `aux_veiculo_dia_consolidada` [Processo n. X] (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1198)
+>>>>>>> f9a6aa38c042d185ecbd008b1bbe2ccd8fda7c4f
 
 ## [1.9.0] - 2026-01-26
 
