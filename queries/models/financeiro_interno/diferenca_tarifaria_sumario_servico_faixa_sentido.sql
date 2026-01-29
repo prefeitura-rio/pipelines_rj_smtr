@@ -119,14 +119,14 @@ select
     servico,
     sentido,
     viagens_faixa,
-    pof as percentual_atendimento,
+    pof as percentual_atendimento_faixa,
     irk,
     km_planejada_faixa,
     km_conforme_faixa,
     km_atendida_faixa,
     receita_tarifa_publica_faixa,
     km_conforme_faixa * irk as receita_irk_faixa,
-    valor_penalidade,
+    valor_penalidade as valor_penalidade_faixa,
     -- Cenário A: Cenário Base
     if(
         pof >= 80,
@@ -195,6 +195,18 @@ select
                     )
             end
     end as delta_tr_d,
+    if(
+        pof >= 80,
+        km_conforme_faixa * irk - receita_tarifa_publica_faixa,
+        km_conforme_faixa * (irk-4.08) - receita_tarifa_publica_faixa
+    )
+    + valor_penalidade as delta_tr_e,
+    if(
+        pof >= 80,
+        km_conforme_faixa * irk - receita_tarifa_publica_faixa,
+        0
+    )
+    as delta_tr_f,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     '{{ invocation_id }}' as id_execucao_dbt
