@@ -19,4 +19,4 @@ select
     if(tipo_veiculo like '%ROD%', "Não licenciado", status) as status,
     indicadores
 from {{ ref("veiculo_dia") }}
-where modo is null or  modo = 'ONIBUS'
+where modo is null or modo = 'ONIBUS'
