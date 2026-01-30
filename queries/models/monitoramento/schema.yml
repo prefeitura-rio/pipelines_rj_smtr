@@ -793,18 +793,18 @@ models:
       - test_completude_temperatura:
           name: test_completude__temperatura
           where: |
-            data between
-              date('{{ var("date_range_start") }}')
-            and
-              case
-                when date_diff(
-                  date('{{ var("date_range_end") }}'),
-                  date('{{ var("date_range_start") }}'),
-                  day
-                ) = 1
-                then date_sub(date('{{ var("date_range_end") }}'), interval 1 day)
-                else date('{{ var("date_range_end") }}')
-              end
+                      data between 
+                        date('{{ var("date_range_start") }}')
+                      and
+                        if(
+                          date_diff(
+                            date('{{ var("date_range_end") }}'),
+                            date('{{ var("date_range_start") }}'),
+                            day
+                          ) = 1,
+                          date_sub(date('{{ var("date_range_end") }}'), interval 1 day),
+                          date('{{ var("date_range_end") }}')
+                        )
     columns:
       - name: data
         description: "{{ doc('data') }} [partição]"
