@@ -8,6 +8,10 @@
 
 ## [1.9.0] - 2026-01-26
 
+### Corrigido
+
+- Corrige o teste `test_completude_temperatura`, ajustando a lógica para o intervalo de datas. (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1189)
+
 ### Adicionado
 
 - Adiciona obrigatoriedade no filtro de partição nos modelos das tabelas `gps_validador.sql` e `gps_validador_van.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1186)
