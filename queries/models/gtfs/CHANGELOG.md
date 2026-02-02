@@ -1,5 +1,17 @@
 # Changelog - gtfs
 
+## [1.4.0] - 2026-01-30
+
+### Corrigido
+
+- Corrige a descrição da coluna `feed_start_date` no modelo `feed_info_gtfs`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1199)
+
+## [1.3.9] - 2026-01-26
+
+### Corrigido
+
+- Corrige a descrição da coluna `agency_id` no schema ao padronizar no `docs.md`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1192)
+
 ## [1.3.8] - 2026-01-09
 
 ### Adicionado
