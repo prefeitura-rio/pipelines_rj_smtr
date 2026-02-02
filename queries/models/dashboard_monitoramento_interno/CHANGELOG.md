@@ -1,6 +1,6 @@
 # Changelog - dashboard_monitoramento_interno
 
-## [1.0.2] - 2026-01-21
+## [1.0.2] - 2026-02-02
 
 ### Alterado
 
