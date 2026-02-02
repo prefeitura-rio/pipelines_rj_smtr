@@ -148,6 +148,10 @@ with
                 then "Verão"  -- 000399.001610/2025-61 - Acionamento do Plano Verão
                 when data between date(2026, 01, 10) and date(2026, 01, 11)
                 then "Verão"  -- 000399.000163/2026-11 - Acionamento do Plano Verão
+                when data between date(2026, 01, 17) and date(2026, 01, 18)
+                then "Verão"  -- 000399.000456/2026-91 - Acionamento do Plano Verão
+                when data between date(2026, 01, 31) and date(2026, 02, 01)
+                then "Verão"  -- 000399.001025/2026-41 - Acionamento do Plano Verão
             end as tipo_os
         from
             unnest(
