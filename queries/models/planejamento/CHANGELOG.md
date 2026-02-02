@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.6.1] - 2026-02-02
+
+### Alterado
+
+- Alterados no modelo `aux_calendario_manual` o `tipo_os` de `2026-01-17`, `2026-01-18`, `2026-01-31` e `2026-02-01` para `Verão` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1165)
+
 ## [1.6.0] - 2026-01-13
 
 ### Adicionado
