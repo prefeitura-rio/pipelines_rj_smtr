@@ -413,6 +413,13 @@ sources:
       - name: registros
       - name: realocacao
 
+  - name: clima_estacao_meteorologica
+    database: rj-cor
+
+    tables:
+      - name: meteorologia_inmet
+      - name: meteorologia_alertario
+
   - name: source_inmet
     database: rj-smtr-staging
 
