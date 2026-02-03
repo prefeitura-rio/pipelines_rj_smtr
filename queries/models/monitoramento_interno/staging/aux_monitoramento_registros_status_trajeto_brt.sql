@@ -61,7 +61,7 @@ with
     ),
     servico_planejado as (
         select
-            data, feed_version, feed_start_date, servico, sentido, extensao, trip_info
+            data, feed_version, feed_start_date, servico, sentido, extensao, viagens, trip_info
         -- from {{ ref("servico_planejado_faixa_horaria_brt") }}
         from rj-smtr-dev.victor__planejamento.servico_planejado_faixa_horaria_brt
         where {{ incremental_filter }}
@@ -73,7 +73,7 @@ with
             feed_start_date,
             servico,
             sentido,
-            extensao,
+            extensao / viagens as extensao,
             trip_info.trip_id,
             trip_info.route_id,
             trip_info.shape_id

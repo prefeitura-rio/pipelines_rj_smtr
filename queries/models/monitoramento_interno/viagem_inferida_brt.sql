@@ -92,3 +92,4 @@ with
     )
 select *
 from viagens v
+where TIMESTAMP_DIFF(datetime_chegada, datetime_partida, MINUTE) < 180

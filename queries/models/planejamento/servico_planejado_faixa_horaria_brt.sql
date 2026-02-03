@@ -95,6 +95,7 @@ select
     "MobiRio" as consorcio,
     sentido,
     sum(extensao) as extensao,
+    count(distinct id_viagem) as viagens,
     primeiro_horario as faixa_horaria_inicio,
     ultimo_horario as faixa_horaria_fim,
     modo,
