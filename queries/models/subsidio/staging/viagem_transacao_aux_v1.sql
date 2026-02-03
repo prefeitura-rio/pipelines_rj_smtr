@@ -188,7 +188,7 @@ with
             estado_equipamento,
             latitude,
             longitude
-        from {{ ref("gps_validador") }}
+        from rj-smtr.monitoramento.gps_validador
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador`
         where
             {{ incremental_filter }}
