@@ -37,8 +37,8 @@ with
             indicador_viagem_dentro_limite,
             indicador_conformidade,
             indicador_validade
-        from {{ ref("viagens_remuneradas") }}
-        {# from `rj-smtr-dev`.`rodrigo__dashboard_subsidio_sppo`.`viagens_remuneradas` #}
+        {# from {{ ref("viagens_remuneradas") }} #}
+        from `rj-smtr-dev`.`rodrigo__dashboard_subsidio_sppo`.`viagens_remuneradas`
         -- `rj-smtr.dashboard_subsidio_sppo.viagens_remuneradas`
         where
             data
@@ -127,86 +127,20 @@ select
     receita_tarifa_publica_faixa,
     km_conforme_faixa * irk as receita_irk_faixa,
     valor_penalidade as valor_penalidade_faixa,
-    -- Cenário A: Cenário Base
-    if(
-        pof >= 80,
-        km_conforme_faixa * irk - receita_tarifa_publica_faixa,
-        least((km_planejada_faixa * irk) - receita_tarifa_publica_faixa, 0)
-    )
-    + valor_penalidade as delta_tr_a,
-    -- Cenário B: Cenário A, mas quando o POF < 80, calcula-se o delta considerando
-    -- 80% da km_planejada_faixa (o mínimo que ele deveria cumprir)
-    if(
-        pof >= 80,
-        km_conforme_faixa * irk - receita_tarifa_publica_faixa,
-        least((km_planejada_faixa * irk * 0.8) - receita_tarifa_publica_faixa, 0)
-    )
-    + valor_penalidade as delta_tr_b,
-    -- Cenário C: Cenário A, mas quando o POF < 80 e S < 0, calcula-se o delta
-    -- abatendo o valor_penalidade no saldo negativo
-    case
-        /*
-        S = (km_conforme_faixa * irk) - receita_tarifa_publica_faixa
-        P = valor_penalidade
-    */
-        -- Regime normal: pode haver pagamento ao operador
-        when pof >= 80
-        then (km_conforme_faixa * irk) - receita_tarifa_publica_faixa
-
-        -- POF < 80
-        else
-            case
-                -- Se S >= 0, subsídio não entra no encontro: Δ = P
-                when (km_planejada_faixa * irk) - receita_tarifa_publica_faixa >= 0
-                then valor_penalidade
-
-                -- Se S < 0, saldo negativo compensa a penalidade
-                else
-                    - abs(
-                        abs((km_planejada_faixa * irk) - receita_tarifa_publica_faixa)
-                        - abs(valor_penalidade)
-                    )
-            end
-    end as delta_tr_c,
-    -- Cenário D: Cenário A, mas quando o POF < 80, Cenário B quando e S < 0,
-    -- calcula-se o delta abatendo o valor_penalidade no saldo negativo (a mesma
-    -- lógica do C, mas com 80% da km_planejada_faixa)
-    case
-        -- Regime normal: pode haver pagamento ao operador
-        when pof >= 80
-        then (km_conforme_faixa * irk) - receita_tarifa_publica_faixa
-
-        -- POF < 80
-        else
-            case
-                -- Se S >= 0, subsídio não entra no encontro: Δ = P
-                when
-                    (km_planejada_faixa * irk * 0.8) - receita_tarifa_publica_faixa >= 0
-                then valor_penalidade
-
-                -- Se S < 0, saldo negativo compensa a penalidade
-                else
-                    - abs(
-                        abs(
-                            (km_planejada_faixa * irk * 0.8)
-                            - receita_tarifa_publica_faixa
-                        )
-                        - abs(valor_penalidade)
-                    )
-            end
-    end as delta_tr_d,
-    if(
-        pof >= 80,
-        km_conforme_faixa * irk - receita_tarifa_publica_faixa,
-        km_conforme_faixa * (irk-4.08) - receita_tarifa_publica_faixa
-    )
-    + valor_penalidade as delta_tr_e,
+    -- Cenário C1 - Resultado final ADT por faixa horária, ignorando abaixo de 80%
     if(
         pof >= 80,
         km_conforme_faixa * irk - receita_tarifa_publica_faixa,
         0
     )
-    as delta_tr_f,
+    + valor_penalidade as delta_tr_c1,
+    -- Cenário C2 - Resultado final ADT por faixa horária, incluindo os dias abaixo de 80%, comparando com a km conforme*IRK. Não paga quando for positivo.
+    if(
+        pof >= 80,
+        km_conforme_faixa * irk - receita_tarifa_publica_faixa,
+        least((km_conforme_faixa * irk) - receita_tarifa_publica_faixa, 0)
+    )
+    + valor_penalidade as delta_tr_c2,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     '{{ invocation_id }}' as id_execucao_dbt
