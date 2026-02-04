@@ -4,7 +4,7 @@
 
 ### Removido
 
-- Remove schedule do flow `CAPTURA_GPS_VALIDADOR`
+- Remove schedule do flow `CAPTURA_GPS_VALIDADOR` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1211)
 
 ## [3.1.7] - 2026-01-07
 
