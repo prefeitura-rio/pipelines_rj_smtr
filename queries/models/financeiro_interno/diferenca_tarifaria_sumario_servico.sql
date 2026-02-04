@@ -45,6 +45,7 @@ select
     servico,
     irk,
     viagens_dia,
+    km_atendida_dia,
     km_conforme_dia,
     km_planejada_dia,
     percentual_atendimento_dia,
