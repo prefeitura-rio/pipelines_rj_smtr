@@ -9,16 +9,16 @@
 with
     transacao_viagem as (
         select *
-        {# from {{ ref("transacao_viagem_consorcio_planejamento") }} #}
-        from `rj-smtr-dev.rodrigo__subsidio_staging.transacao_viagem_consorcio_planejamento`
+        from {{ ref("transacao_viagem_consorcio_planejamento") }}
+        {# from `rj-smtr-dev.rodrigo__subsidio_staging.transacao_viagem_consorcio_planejamento` #}
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
     ),
     diferenca_tarifaria as (
         select *
-        {# from {{ ref("diferenca_tarifaria_sumario_servico_faixa_sentido") }} #}
-        from `rj-smtr-dev.rodrigo__financeiro_interno.diferenca_tarifaria_sumario_servico_faixa_sentido`
+        from {{ ref("diferenca_tarifaria_sumario_servico_faixa_sentido") }}
+        {# from `rj-smtr-dev.rodrigo__financeiro_interno.diferenca_tarifaria_sumario_servico_faixa_sentido` #}
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')

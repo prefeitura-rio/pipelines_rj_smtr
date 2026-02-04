@@ -18,8 +18,8 @@ with
             servico,
             sentido,
             pof
-        from {{ ref("percentual_operacao_faixa_horaria") }}
-        -- from `rj-smtr.subsidio.percentual_operacao_faixa_horaria`
+        -- from {{ ref("percentual_operacao_faixa_horaria") }}
+        from `rj-smtr.subsidio.percentual_operacao_faixa_horaria`
         where
             data
             between date('{{ var("start_date") }}') and date('{{ var("end_date") }}')
@@ -34,11 +34,12 @@ with
             safe_cast(distancia_planejada as numeric) as distancia_planejada,
             receita_tarifa_publica,
             irk,
+            subsidio_km,
             indicador_viagem_dentro_limite,
             indicador_conformidade,
             indicador_validade
-        {# from {{ ref("viagens_remuneradas") }} #}
-        from `rj-smtr-dev`.`rodrigo__dashboard_subsidio_sppo`.`viagens_remuneradas`
+        from {{ ref("viagens_remuneradas") }}
+        {# from `rj-smtr-dev`.`rodrigo__dashboard_subsidio_sppo`.`viagens_remuneradas` #}
         -- `rj-smtr.dashboard_subsidio_sppo.viagens_remuneradas`
         where
             data
@@ -69,6 +70,7 @@ with
             p.sentido,
             p.pof,
             any_value(irk) over (partition by p.data) as irk,
+            any_value(subsidio_km) over (partition by p.data) as subsidio_km,
             v.id_viagem,
             receita_tarifa_publica,
             p.km_planejada_faixa,
@@ -96,6 +98,7 @@ with
             sentido,
             pof,
             irk,
+            subsidio_km,
             count(*) as viagens_faixa,
             any_value(km_planejada_faixa) as km_planejada_faixa,
             sum(
@@ -108,7 +111,7 @@ with
             sum(if(indicador_validade, distancia_planejada, 0)) as km_atendida_faixa,
             coalesce(sum(receita_tarifa_publica), 0) as receita_tarifa_publica_faixa,
         from subsidio_servico
-        group by 1, 2, 3, 4, 5, 6, 7, 8, 9
+        group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
     )
 select
     data,
@@ -121,6 +124,7 @@ select
     viagens_faixa,
     pof as percentual_atendimento_faixa,
     irk,
+    subsidio_km,
     km_planejada_faixa,
     km_conforme_faixa,
     km_atendida_faixa,
@@ -130,21 +134,23 @@ select
     -- Cenário C1 - Resultado final ADT por faixa horária, ignorando abaixo de 80%
     if(
         pof >= 80,
-        km_conforme_faixa * irk - receita_tarifa_publica_faixa,
+        (km_conforme_faixa * s.subsidio_km) + (km_atendida_faixa * (irk - s.subsidio_km)) - receita_tarifa_publica_faixa,
         0
     )
     + valor_penalidade as delta_tr_c1,
+    
     -- Cenário C2 - Resultado final ADT por faixa horária, incluindo os dias abaixo de 80%, comparando com a km conforme*IRK. Não paga quando for positivo.
+    
     if(
         pof >= 80,
-        km_conforme_faixa * irk - receita_tarifa_publica_faixa,
-        least((km_conforme_faixa * irk) - receita_tarifa_publica_faixa, 0)
+        (km_conforme_faixa * s.subsidio_km) + (km_atendida_faixa * (irk - s.subsidio_km)) - receita_tarifa_publica_faixa,
+        (km_atendida_faixa * (irk - s.subsidio_km)) - receita_tarifa_publica_faixa
     )
     + valor_penalidade as delta_tr_c2,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
     '{{ invocation_id }}' as id_execucao_dbt
-from subsidio_km
+from subsidio_km s
 left join
     penalidade using (
         data, tipo_dia, faixa_horaria_inicio, faixa_horaria_fim, servico, sentido
