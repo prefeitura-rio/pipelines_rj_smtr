@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [3.1.8] - 2026-02-04
+
+### Removido
+
+- Remove schedule do flow `CAPTURA_GPS_VALIDADOR` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1211)
+
 ## [3.1.7] - 2026-01-07
 
 ### Removido
