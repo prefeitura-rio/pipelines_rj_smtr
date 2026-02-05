@@ -3,7 +3,7 @@
 {%- if execute %}
     {% set query = (
         "SELECT DISTINCT feed_start_date FROM "
-        ~ ref("subsidio_data_versao_efetiva")
+        ~ "`rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`"
         ~ " WHERE data BETWEEN DATE('"
         ~ var("start_date")
         ~ "') AND DATE('"
@@ -31,8 +31,8 @@ with
             faixa_horaria_fim,
             partidas_total_planejada as viagens_planejadas,
             distancia_total_planejada as km_planejada,
-        from {{ ref("viagem_planejada") }}
-        -- from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
+        {# from {{ ref("viagem_planejada") }} #}
+        from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
         where
             {{ incremental_filter }}
             and (distancia_total_planejada > 0 or distancia_total_planejada is null)
@@ -40,8 +40,8 @@ with
     ),
     data_versao_efetiva as (
         select data, tipo_dia, tipo_os, feed_start_date
-        from {{ ref("subsidio_data_versao_efetiva") }}
-        -- from `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
+        {# from {{ ref("subsidio_data_versao_efetiva") }} #}
+        from `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
         -- (alterar também query no bloco execute)
         where {{ incremental_filter }}
     ),
@@ -53,6 +53,7 @@ with
             status,
             tecnologia,
             subsidio_km,
+            irk,
             case
                 when tecnologia is null
                 then
@@ -66,6 +67,8 @@ with
                     )
             end as subsidio_km_teto,
             indicador_penalidade_judicial,
+            indicador_conformidade,
+            indicador_validade,
             ordem
         from {{ ref("valor_km_tipo_viagem") }}
     ),
@@ -101,6 +104,7 @@ with
             vt.tecnologia_remunerada,
             vt.id_viagem,
             vt.datetime_partida,
+            valor_transacao + valor_transacao_riocard as receita_tarifa_publica,
             vt.distancia_planejada,
             case
                 when vt.tipo_viagem = "Não autorizado por capacidade"
@@ -129,6 +133,9 @@ with
                 vt.tipo_viagem = "Não autorizado por capacidade", true, false
             ) as indicador_penalidade_tecnologia,
             sp.indicador_penalidade_judicial,
+            sp.indicador_conformidade,
+            sp.indicador_validade,
+            sp.irk,
             sp.ordem
         from viagem_transacao as vt
         left join
@@ -162,16 +169,7 @@ with
 -- Flag de viagens que serão consideradas ou não para fins de remuneração (apuração de
 -- valor de subsídio) - RESOLUÇÃO SMTR Nº 3645/2023
 select
-    v.* except (
-        rn,
-        datetime_partida,
-        viagens_planejadas,
-        km_planejada,
-        tipo_dia,
-        consorcio,
-        faixa_horaria_inicio,
-        faixa_horaria_fim
-    ),
+    v.* except (rn, viagens_planejadas, km_planejada, tipo_dia, consorcio),
     case
         when
             (v.data between date('2026-01-01') and date('2026-01-15'))
