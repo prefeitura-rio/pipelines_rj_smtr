@@ -49,11 +49,12 @@ models:
           name: check_gps_treatment__gps_sppo
       - dbt_utils.unique_combination_of_columns:
           name: dbt_utils.unique_combination_of_columns__gps_sppo
-          combination_of_columns:
-            - timestamp_gps
-            - id_veiculo
-            - latitude
-            - longitude
+          arguments:
+            combination_of_columns:
+              - timestamp_gps
+              - id_veiculo
+              - latitude
+              - longitude
     columns:
       - name: modo
         description: "{{ doc('modo_sppo') }}"
