@@ -37,7 +37,9 @@
         sha256(
             concat(
                 {% for c in columns %}
-                    ifnull(cast({{ c }} as string), 'n/a')
+                    {% if c == "trajetos_alternativos" %}ifnull(to_json_string({{ c }}), 'n/a')
+                    {% else %}ifnull(cast({{ c }} as string), 'n/a')
+                    {% endif %}
                     {% if not loop.last %}, {% endif %}
                 {% endfor %}
             )
@@ -247,9 +249,7 @@ with
             {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
     ),
     {% if is_incremental() %}
-        dados_atuais as (
-            select * from {{ this }} where {{ incremental_filter }}
-        ),
+        dados_atuais as (select * from {{ this }} where {{ incremental_filter }}),
     {% endif %}
     sha_dados_atuais as (
         {% if is_incremental() %}
