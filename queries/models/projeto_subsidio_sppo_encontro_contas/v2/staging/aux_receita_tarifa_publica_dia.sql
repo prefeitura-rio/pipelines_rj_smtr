@@ -8,7 +8,7 @@ with
     ),
     aux_jae_servico_dia as (
         select data, servico, receita_tarifaria_aferida
-        from {{ ref("aux_rdo_servico_dia") }}
+        from {{ ref("aux_jae_servico_dia") }}
         where data >= date("{{ var('DATA_SUBSIDIO_V18A_INICIO') }}")
     )
 select *
