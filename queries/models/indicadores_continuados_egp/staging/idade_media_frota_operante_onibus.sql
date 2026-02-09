@@ -7,7 +7,40 @@
     },
 )}}
 
+{% set incremental_filter %}
+  {% if is_incremental() %}
+    data BETWEEN DATE_TRUNC(DATE("{{ var('start_date') }}"), MONTH)
+    AND LAST_DAY(DATE("{{ var('end_date') }}"), MONTH)
+    AND data < DATE_TRUNC(CURRENT_DATE("America/Sao_Paulo"), MONTH)
+    AND data >= DATE_TRUNC(DATE("{{ var('DATA_SUBSIDIO_V15_INICIO') }}"), MONTH)
+  {% else %}
+    data < DATE_TRUNC(CURRENT_DATE("America/Sao_Paulo"), MONTH)
+  {% endif %}
+{% endset%}
+
 WITH
+  licenciamento AS (
+    SELECT
+    data,
+    id_veiculo,
+    ano_fabricacao
+  FROM
+    {{ ref("veiculo_dia") }}
+    WHERE
+      {{ incremental_filter }}
+      AND data >= DATE_TRUNC(DATE("{{ var('DATA_SUBSIDIO_V15_INICIO') }}"), MONTH)
+  union distinct
+  SELECT
+    data,
+    id_veiculo,
+    ano_fabricacao
+  FROM
+    {{ ref("sppo_licenciamento") }}
+    --rj-smtr.veiculo.sppo_licenciamento
+    WHERE
+      {{ incremental_filter }}
+      AND data < DATE_TRUNC(DATE("{{ var('DATA_SUBSIDIO_V15_INICIO') }}"), MONTH)
+  ),
   -- 1. Seleciona a última data disponível de cada mês
   datas AS (
   SELECT
@@ -15,16 +48,7 @@ WITH
     EXTRACT(YEAR FROM data) AS ano,
     MAX(data) AS data
   FROM
-    {{ ref("sppo_licenciamento") }}
-    --rj-smtr.veiculo.sppo_licenciamento
-  WHERE
-  {% if is_incremental() %}
-    data BETWEEN DATE_TRUNC(DATE("{{ var("start_date") }}"), MONTH)
-    AND LAST_DAY(DATE("{{ var("end_date") }}"), MONTH)
-    AND data < DATE_TRUNC(CURRENT_DATE("America/Sao_Paulo"), MONTH)
-  {% else %}
-    data < DATE_TRUNC(CURRENT_DATE("America/Sao_Paulo"), MONTH)
-  {% endif %}
+    licenciamento
   GROUP BY
     1,
     2),
@@ -38,13 +62,7 @@ WITH
     {{ ref('viagem_completa') }}
     --rj-smtr.projeto_subsidio_sppo.viagem_completa
   WHERE
-  {% if is_incremental() %}
-    data BETWEEN DATE_TRUNC(DATE("{{ var("start_date") }}"), MONTH)
-    AND LAST_DAY(DATE("{{ var("end_date") }}"), MONTH)
-    AND data < DATE_TRUNC(CURRENT_DATE("America/Sao_Paulo"), MONTH)
-  {% else %}
-    data < DATE_TRUNC(CURRENT_DATE("America/Sao_Paulo"), MONTH)
-  {% endif %}
+  {{ incremental_filter }}
   ),
   -- 3. Calcula a idade de todos os veículos para a data de referência
   idade_frota AS (
@@ -54,7 +72,7 @@ WITH
   FROM
     datas AS d
   LEFT JOIN
-    {{ ref("sppo_licenciamento") }}
+    licenciamento
     --rj-smtr.veiculo.sppo_licenciamento AS l
   USING
     (data)
