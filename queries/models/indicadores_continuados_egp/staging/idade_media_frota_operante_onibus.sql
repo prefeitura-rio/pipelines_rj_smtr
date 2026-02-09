@@ -54,10 +54,7 @@ with
     idade_frota as (
         select data, extract(year from data) - cast(ano_fabricacao as int64) as idade
         from datas
-        left join
-            licenciamento
-            -- rj-smtr.veiculo.sppo_licenciamento AS l
-            on datas.data = licenciamento.data
+        left join licenciamento using (data)
         left join frota_operante as f using (id_veiculo, mes, ano)
         where f.id_veiculo is not null
     )
