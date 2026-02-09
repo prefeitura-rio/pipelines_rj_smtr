@@ -1,11 +1,8 @@
 {{
-  config(
-    partition_by = {
-    "field": "data",
-    "data_type": "date",
-    "granularity": "month"
-    },
-) }}
+    config(
+        partition_by={"field": "data", "data_type": "date", "granularity": "month"},
+    )
+}}
 
 {% set incremental_filter %}
   {% if is_incremental() %}
@@ -18,87 +15,61 @@
   {% endif %}
 {% endset %}
 
-WITH
-licenciamento AS (
-  SELECT
-    data,
-    id_veiculo,
-    ano_fabricacao
-  FROM
-    {{ ref("veiculo_dia") }}
-  WHERE
-    {{ incremental_filter }}
-    AND data >= DATE_TRUNC(DATE("{{ var('DATA_SUBSIDIO_V15_INICIO') }}"), month)
-  UNION DISTINCT
-  SELECT
-    data,
-    id_veiculo,
-    ano_fabricacao
-  FROM
-    {{ ref("sppo_licenciamento") }}
-    --rj-smtr.veiculo.sppo_licenciamento
-  WHERE
-    {{ incremental_filter }}
-    AND data < DATE_TRUNC(DATE("{{ var('DATA_SUBSIDIO_V15_INICIO') }}"), month)
-),
+with
+    licenciamento as (
+        select data, id_veiculo, ano_fabricacao
+        from {{ ref("veiculo_dia") }}
+        where
+            {{ incremental_filter }}
+            and data >= date_trunc(date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}"), month)
+        union distinct
+        select data, id_veiculo, ano_fabricacao
+        from {{ ref("sppo_licenciamento") }}
+        -- rj-smtr.veiculo.sppo_licenciamento
+        where
+            {{ incremental_filter }}
+            and data < date_trunc(date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}"), month)
+    ),
 
--- 1. Seleciona a última data disponível de cada mês
-datas AS (
-  SELECT
-    EXTRACT(MONTH FROM data) AS mes,
-    EXTRACT(YEAR FROM data) AS ano,
-    MAX(data) AS data
-  FROM
-    licenciamento
-  GROUP BY
-    1,
-    2
-),
+    -- 1. Seleciona a última data disponível de cada mês
+    datas as (
+        select
+            extract(month from data) as mes,
+            extract(year from data) as ano,
+            max(data) as data
+        from licenciamento
+        group by 1, 2
+    ),
 
--- 2. Verifica frota operante
-frota_operante AS (
-  SELECT DISTINCT
-    id_veiculo,
-    EXTRACT(MONTH FROM data) AS mes,
-    EXTRACT(YEAR FROM data) AS ano
-  FROM
-    {{ ref('viagem_completa') }}
-    --rj-smtr.projeto_subsidio_sppo.viagem_completa
-  WHERE
-    {{ incremental_filter }}
-),
+    -- 2. Verifica frota operante
+    frota_operante as (
+        select distinct
+            id_veiculo, extract(month from data) as mes, extract(year from data) as ano
+        from {{ ref("viagem_completa") }}
+        -- rj-smtr.projeto_subsidio_sppo.viagem_completa
+        where {{ incremental_filter }}
+    ),
 
--- 3. Calcula a idade de todos os veículos para a data de referência
-idade_frota AS (
-  SELECT
-    data,
-    EXTRACT(YEAR FROM data) - CAST(ano_fabricacao AS INT64) AS idade
-  FROM
-    datas
-  LEFT JOIN
-    licenciamento
-    --rj-smtr.veiculo.sppo_licenciamento AS l
-    ON datas.data = licenciamento.data
-  LEFT JOIN
-    frota_operante AS f
-    USING
-      (id_veiculo, mes, ano)
-  WHERE
-    f.id_veiculo IS NOT NULL
-)
+    -- 3. Calcula a idade de todos os veículos para a data de referência
+    idade_frota as (
+        select data, extract(year from data) - cast(ano_fabricacao as int64) as idade
+        from datas
+        left join
+            licenciamento
+            -- rj-smtr.veiculo.sppo_licenciamento AS l
+            on datas.data = licenciamento.data
+        left join frota_operante as f using (id_veiculo, mes, ano)
+        where f.id_veiculo is not null
+    )
 
 -- 4. Calcula a idade média
-SELECT
-  data,
-  EXTRACT(YEAR FROM data) AS ano,
-  EXTRACT(MONTH FROM data) AS mes,
-  "Ônibus" AS modo,
-  ROUND(AVG(idade), 2) AS idade_media_veiculo_mes,
-  CURRENT_DATE("America/Sao_Paulo") AS data_ultima_atualizacao,
-  '{{ var("version") }}' AS versao
-FROM
-  idade_frota
-GROUP BY
-  1,
-  2,
-  3
+select
+    data,
+    extract(year from data) as ano,
+    extract(month from data) as mes,
+    "Ônibus" as modo,
+    round(avg(idade), 2) as idade_media_veiculo_mes,
+    current_date("America/Sao_Paulo") as data_ultima_atualizacao,
+    '{{ var("version") }}' as versao
+from idade_frota
+group by 1, 2, 3
