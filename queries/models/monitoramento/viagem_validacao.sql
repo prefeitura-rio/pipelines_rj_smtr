@@ -57,7 +57,7 @@ with
             shape_id,
             servico,
             sentido,
-            countif(id_segmento is not null) as quantidade_segmentos_verificados,
+            countif(id_segmento is not null) as quantidade_segmentos_considerados,
             countif(quantidade_gps > 0) as quantidade_segmentos_validos,
             round(
                 countif(id_segmento is not null)
@@ -114,15 +114,15 @@ with
             shape_id,
             servico,
             sentido,
-            quantidade_segmentos_verificados,
+            quantidade_segmentos_considerados,
             quantidade_segmentos_validos,
             case
                 when quantidade_segmentos_tolerados >= 1
-                then quantidade_segmentos_verificados - quantidade_segmentos_tolerados
-                else abs(quantidade_segmentos_verificados - 1)
+                then quantidade_segmentos_considerados - quantidade_segmentos_tolerados
+                else abs(quantidade_segmentos_considerados - 1)
             end as quantidade_segmentos_necessarios,
             safe_divide(
-                quantidade_segmentos_validos, quantidade_segmentos_verificados
+                quantidade_segmentos_validos, quantidade_segmentos_considerados
             ) as indice_validacao,
             indicador_servico_divergente,
             indicador_shape_invalido,
@@ -317,7 +317,7 @@ with
             vm.sentido,
             vm.distancia_planejada,
             vm.velocidade_media,
-            vm.quantidade_segmentos_verificados,
+            vm.quantidade_segmentos_considerados,
             vm.quantidade_segmentos_validos,
             vm.quantidade_segmentos_necessarios,
             vm.indice_validacao,
@@ -421,7 +421,7 @@ select
     sentido,
     distancia_planejada,
     velocidade_media,
-    quantidade_segmentos_verificados,
+    quantidade_segmentos_considerados,
     quantidade_segmentos_validos,
     quantidade_segmentos_necessarios,
     indicador_viagem_sobreposta,

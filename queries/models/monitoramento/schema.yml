@@ -125,7 +125,7 @@ models:
         description: "Velocidade média da viagem (km/h)"
         data_type: float64
         quote: true
-      - name: quantidade_segmentos_verificados
+      - name: quantidade_segmentos_considerados
         description: "Quantidade de segmentos considerados na validação"
         data_type: int64
         quote: true
@@ -390,16 +390,16 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-          - id_veiculo
-          - data_inicio_lacre
-          - id_auto_infracao
+            - id_veiculo
+            - data_inicio_lacre
+            - id_auto_infracao
           name: dbt_utils.unique_combination_of_columns__id_veiculo__veiculo_fiscalizacao_lacre
           where: "1=1"
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-          - placa
-          - data_inicio_lacre
-          - id_auto_infracao
+            - placa
+            - data_inicio_lacre
+            - id_auto_infracao
           name: dbt_utils.unique_combination_of_columns__placa__veiculo_fiscalizacao_lacre
           where: "1=1"
     columns:
@@ -661,8 +661,8 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-          - data
-          - id_veiculo
+            - data
+            - id_veiculo
           name: dbt_utils.unique_combination_of_columns__data_id_veiculo__veiculo_dia
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: data
@@ -1029,11 +1029,11 @@ models:
       - name: latitude
         description: "Latitude do validador no momento da transmissão [protegido]"
         policy_tags:
-          - 'projects/rj-smtr/locations/us/taxonomies/388050497607535163/policyTags/5185403103447535390'
+          - "projects/rj-smtr/locations/us/taxonomies/388050497607535163/policyTags/5185403103447535390"
       - name: longitude
         description: "Longitude do validador no momento da transmissão [protegido]"
         policy_tags:
-          - 'projects/rj-smtr/locations/us/taxonomies/388050497607535163/policyTags/5185403103447535390'
+          - "projects/rj-smtr/locations/us/taxonomies/388050497607535163/policyTags/5185403103447535390"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
       - name: sentido
