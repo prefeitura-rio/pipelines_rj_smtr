@@ -11,6 +11,7 @@
 
 {% set associacao_tipo_dia %}
     (o.tipo_dia = t.tipo_dia and o.tipo_os not in ("ENEM", "V+ENEM"))
+    or(o.tipo_dia = "Ponto Facultativo" and t.tipo_dia = "Sabado" and o.servico in ("LECD126"))
     or (
         o.tipo_dia = "Ponto Facultativo"
         and t.tipo_dia = "Dia Útil"
