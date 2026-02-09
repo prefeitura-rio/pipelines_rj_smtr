@@ -7,6 +7,7 @@ with
             tipo_dia,
             consorcio,
             servico,
+            modo,
             faixa_horaria_inicio,
             faixa_horaria_fim,
             case
@@ -44,14 +45,15 @@ with
             perc_km_inferior,
             perc_km_superior,
             ifnull(- valor, 0) as valor_penalidade
-        from {{ ref("valor_tipo_penalidade") }}
-    -- from `rj-smtr.dashboard_subsidio_sppo.valor_tipo_penalidade`
+        {# from {{ ref("valor_tipo_penalidade") }} #}
+        from `rj-smtr.dashboard_subsidio_sppo.valor_tipo_penalidade`
     )
 select
     s.data,
     s.tipo_dia,
     s.consorcio,
     s.servico,
+    s.modo,
     faixa_horaria_inicio,
     faixa_horaria_fim,
     safe_cast(coalesce(pe.valor_penalidade, 0) as numeric) as valor_penalidade,

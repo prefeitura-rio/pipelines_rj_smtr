@@ -351,7 +351,7 @@ Sentido da linha
 {% enddocs %}
 
 {% docs indicador_viagem_dentro_limite %}
-Indica se a viagem foi remunerada por estar abaixo do teto de 120%/200%
+Indica se a viagem foi remunerada por estar abaixo do teto de 110%/120%/200%
 {% enddocs %}
 
 {% docs indicador_penalidade_judicial %}
@@ -1467,6 +1467,10 @@ Data e hora do cadastro do endereco no sistema da Jaé
 
 {% docs datetime_inativacao_endereco_jae %}
 Data e hora da inativação do cadastro do endereco no sistema da Jaé
+{% enddocs %}
+
+{% docs subtipo_dia %}
+Subtipo de dia [ex: Verão, Atípico, Enem]
 {% enddocs %}
 
 {% docs resolution %}

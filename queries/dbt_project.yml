@@ -161,6 +161,8 @@ vars:
   DATA_SUBSIDIO_V20_INICIO: "2025-08-16"
   # Feature RESOLUÇÃO SMTR 3878/2025
   DATA_SUBSIDIO_V21_INICIO: "2025-10-01"
+  # Feature Viagens 2.0
+  DATA_SUBSIDIO_V22_INICIO: "2025-09-01" #TBD
   # Placeholder feature
   DATA_SUBSIDIO_V99_INICIO: "3000-01-01"
    # Recursos #
@@ -496,6 +498,10 @@ models:
       staging:
         +materialized: view
         +schema: dashboard_operacao_onibus_staging
+    subsidio_onibus:
+      +materialized: incremental
+      +incremental_strategy: insert_overwrite
+      +schema: subsidio_onibus
     monitoramento_interno:
       +materialized: incremental
       +incremental_strategy: insert_overwrite

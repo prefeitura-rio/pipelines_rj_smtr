@@ -16,7 +16,7 @@
 
 with
     viagens as (
-        select
+        {# select
             data,
             servico_realizado as servico,
             datetime_partida,
@@ -27,7 +27,25 @@ with
             sentido
         from {{ ref("viagem_completa") }}
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
-        where {{ incremental_filter }}
+        where
+            {{ incremental_filter }}
+            and data < date("{{ var('DATA_SUBSIDIO_V22_INICIO') }}")
+
+        union all by name #}
+        select
+            data,
+            servico,
+            datetime_partida,
+            datetime_chegada,
+            id_veiculo,
+            id_viagem,
+            distancia_planejada,
+            sentido
+        {# from {{ ref("viagem_valida") }} #}
+        from `rj-smtr-dev.botelho__monitoramento.viagem_valida`
+        where
+            {{ incremental_filter }}
+            and data >= date("{{ var('DATA_SUBSIDIO_V22_INICIO') }}")
     ),
     veiculos as (
         select data, id_veiculo, placa, ano_fabricacao, tecnologia, status, indicadores

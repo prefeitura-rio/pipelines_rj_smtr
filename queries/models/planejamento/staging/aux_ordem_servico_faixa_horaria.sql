@@ -1,7 +1,7 @@
 {{ config(materialized="view") }}
 
-{% set calendario = ref("calendario") %}
-{# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
+{# {% set calendario = ref("calendario") %} #}
+{% set calendario = "rj-smtr.planejamento.calendario" %}
 {% if execute %}
     {% set gtfs_feeds_query %}
         select distinct concat("'", feed_start_date, "'") as feed_start_date
@@ -19,8 +19,9 @@ with
     {# from `rj-smtr.gtfs.ordem_servico` #}
     ),
     faixa as (
-        select * from {{ ref("ordem_servico_faixa_horaria") }}
-    {# from `rj-smtr.planejamento.ordem_servico_faixa_horaria` #}
+        select *
+        {# from {{ ref("ordem_servico_faixa_horaria") }} #}
+        from `rj-smtr.planejamento.ordem_servico_faixa_horaria`
     )
 select
     f.feed_version,

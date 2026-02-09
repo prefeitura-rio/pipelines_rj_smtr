@@ -8,11 +8,7 @@ select
     data,
     safe_cast(id_viagem as string) as id_viagem,
     datetime(
-        parse_timestamp(
-            '%Y-%m-%d %H:%M:%S%Ez',
-            safe_cast(json_value(content, '$.timestamp_captura') as string)
-        ),
-        'America/Sao_Paulo'
+        parse_timestamp('%Y-%m-%d %H:%M:%S%Ez', timestamp_captura), 'America/Sao_Paulo'
     ) as datetime_captura,
     date(
         parse_timestamp(
