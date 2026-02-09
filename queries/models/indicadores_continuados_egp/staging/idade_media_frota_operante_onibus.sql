@@ -5,14 +5,14 @@
 }}
 
 {% set incremental_filter %}
-  {% if is_incremental() %}
-    data BETWEEN DATE_TRUNC(DATE("{{ var('start_date') }}"), MONTH)
-    AND LAST_DAY(DATE("{{ var('end_date') }}"), MONTH)
-    AND data < DATE_TRUNC(CURRENT_DATE("America/Sao_Paulo"), MONTH)
-    AND data >= DATE_TRUNC(DATE("{{ var('DATA_SUBSIDIO_V15_INICIO') }}"), MONTH)
-  {% else %}
-    data < DATE_TRUNC(CURRENT_DATE("America/Sao_Paulo"), MONTH)
-  {% endif %}
+    {% if is_incremental() %}
+        data
+        between date_trunc(date("{{ var('start_date') }}"), month) and last_day(
+            date("{{ var('end_date') }}"), month
+        )
+        and
+    {% endif %}
+    data < date_trunc(current_date("America/Sao_Paulo"), month)
 {% endset %}
 
 with
