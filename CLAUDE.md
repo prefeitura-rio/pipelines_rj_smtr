@@ -10,7 +10,7 @@ Este documento serve como base de conhecimento centralizada para a auditoria e m
 
 **Data da Análise Inicial:** 28 de Novembro de 2025
 
-**Estado do Repositório (após atualização):** Commit `2d89e11b2` (upstream/main) - **ÚLTIMA ATUALIZAÇÃO: 12/01/2026**
+**Estado do Repositório (após atualização):** Commit `2068fc362` (merge upstream/main) - **ÚLTIMA ATUALIZAÇÃO: 06/02/2026**
 
 ---
 
@@ -35,17 +35,36 @@ A "suspensão das glosas" durou menos de 3 meses e foi revertida. O período que
 
 ---
 
-### AUMENTO DE TARIFA DE INTEGRAÇÃO 💰
+### AUMENTO DE TARIFA DE INTEGRAÇÃO 💰 ✅ IMPLEMENTADO
 
-**Branch:** `staging/alteracao-tarifa-20260104`
-**Data:** 04/01/2026
+**Data:** 04/01/2026 (DECRETO RIO Nº 57473/2025)
+**Commit:** `22d4617d5` - PR #1162
 **Impacto:** **ALTO**
 
 - Valor de integração aumentou de **R$ 4,70 para R$ 5,00**
 - Aumento de **6,38%** na tarifa paga por integração
-- Afeta diretamente o cálculo de subsídios
+- Nova tabela `tarifa_publica.sql` criada para gerenciar histórico
+- **Status:** ✅ Mergeado no main (válido desde 04/01/2026)
 
-**Status:** Em staging (ainda não mergeado no main)
+**Base Legal:**
+```sql
+-- Histórico completo de tarifas:
+2023-01-07: R$ 4,30 (DECRETO RIO 51914/2023)
+2025-01-05: R$ 4,70 (DECRETO RIO 55631/2025)
+2026-01-04: R$ 5,00 (DECRETO RIO 57473/2025) ← VIGENTE
+```
+
+### PRORROGAÇÃO VISTORIA ATÉ 31/01/2026 🔧
+
+**Data:** 23/01/2026
+**Commit:** `721061f82` - PR #1183
+**Base Legal:** RESOLUÇÃO SMTR Nº 3894 (29/12/2025)
+**Impacto:** **MÉDIO** - Redução temporária de glosas
+
+- Prazo de vistoria estendido de 1 ano → **2 anos** (veículos 2024+)
+- Período: 01/01/2026 a 31/01/2026
+- Modelo: `veiculo_dia.sql`
+- **Status:** ✅ Mergeado (válido apenas para JAN/2026)
 
 ---
 
@@ -580,6 +599,7 @@ Com base no padrão histórico, projetamos:
 |------|-----------|
 | 2025-11-28 | Criação inicial - Estado as-is do repositório (commit `f9f4f3ff`) |
 | 2025-11-28 | **ATUALIZAÇÃO: 139 commits do upstream** - Análise completa em `CHANGELOG_2025-11-28.md` |
+| 2026-02-06 | **ATUALIZAÇÃO: 27 commits** - Aumento tarifa integração (R$ 4,70→R$ 5,00), prorrogação vistoria até 31/01, reativação integracao_invalida |
 |  | • Novas versões: **V21** (01/10/2025) e **V22** (16/10/2025) |
 |  | • **CRÍTICO: V22 suspende TODAS as glosas por climatização** |
 |  | • Novos tipos de dia: ENEM, dias atípicos |
