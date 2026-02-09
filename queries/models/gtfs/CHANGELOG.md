@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona ao modelo `ordem_servico_trips_shapes_gtfs_v2` para considerar o serviço `LECD126` no `Ponto Facultativo` como `Sabado` no feed do dia `2025-01-26` ` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1217)
+- Adiciona ao modelo `ordem_servico_trips_shapes_gtfs_v2` para considerar o serviço `LECD126` no `Ponto Facultativo` como `Sabado` no feed do dia `2025-01-26` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1217)
 
 ## [1.4.0] - 2026-01-30
 
