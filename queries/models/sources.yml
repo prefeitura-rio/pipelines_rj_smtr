@@ -418,17 +418,6 @@ sources:
 
     tables:
       - name: meteorologia_inmet
-        freshness:
-          warn_after:
-            count: 2
-            period: hour
-          filter: |
-            {% set now = modules.datetime.datetime.now(
-              modules.pytz.timezone("America/Sao_Paulo")
-            ) %}
-
-            data_particao = date("{{ now.date() }}")
-        loaded_at_field: timestamp(datetime(data_particao, horario), 'America/Sao_Paulo')
       - name: meteorologia_alertario
 
   - name: source_inmet
@@ -488,3 +477,4 @@ sources:
     tables:
       - name: servico_contrato_abreviado
       - name: valor_km_tipo_viagem
+      - name: valor_tipo_penalidade

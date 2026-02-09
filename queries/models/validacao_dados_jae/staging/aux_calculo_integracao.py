@@ -24,6 +24,7 @@ def model(dbt, session):
         modo_destino,
         servico_origem,
         servico_destino,
+        data_transacao,
         datetime_inicio_integracao,
         datetime_transacao,
     ):
@@ -34,7 +35,12 @@ def model(dbt, session):
 
         return not (
             df_matriz_integracao[
-                (df_matriz_integracao["modo_integracao_origem"] == integracao_origem)
+                (df_matriz_integracao["data_inicio"] <= data_transacao)
+                & (
+                    (df_matriz_integracao["data_fim"] >= data_transacao)
+                    | (df_matriz_integracao["data_fim"].isna())
+                )
+                & (df_matriz_integracao["modo_integracao_origem"] == integracao_origem)
                 & (df_matriz_integracao["modo_destino"] == modo_destino)
                 & (
                     (
@@ -59,6 +65,7 @@ def model(dbt, session):
         servico_origem,
         servico_destino,
         datetime_inicio_transferencia,
+        data_transacao,
         datetime_transacao,
         datetime_transacao_anterior,
     ):
@@ -72,7 +79,12 @@ def model(dbt, session):
 
         return servico_origem != servico_destino and not (
             df_matriz_transferencia[
-                (df_matriz_transferencia["modo_origem"] == modo_origem)
+                (df_matriz_transferencia["data_inicio"] <= data_transacao)
+                & (
+                    (df_matriz_transferencia["data_fim"] >= data_transacao)
+                    | (df_matriz_transferencia["data_fim"].isna())
+                )
+                & (df_matriz_transferencia["modo_origem"] == modo_origem)
                 & (df_matriz_transferencia["modo_destino"] == modo_destino)
                 & (
                     (
@@ -120,6 +132,7 @@ def model(dbt, session):
                 modo_destino=row.modo_join,
                 servico_origem=servico_origem,
                 servico_destino=row.id_servico_jae,
+                data_transacao=row.data,
                 datetime_inicio_transferencia=datetime_inicio_transferencia,
                 datetime_transacao=row.datetime_transacao,
                 datetime_transacao_anterior=datetime_transacao_anterior,
@@ -140,6 +153,7 @@ def model(dbt, session):
                 modo_destino=row.modo_join,
                 servico_origem=servico_origem,
                 servico_destino=row.id_servico_jae,
+                data_transacao=row.data,
                 datetime_inicio_integracao=datetime_inicio_integracao,
                 datetime_transacao=row.datetime_transacao,
             ):

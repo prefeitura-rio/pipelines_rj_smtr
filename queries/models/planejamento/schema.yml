@@ -309,7 +309,7 @@ models:
     description: "Matriz de integração no sistema de transporte municipal"
     columns:
       - name: tempo_integracao_minutos
-        description: Tempo máximo entre a primeira e a última perna para a integração ser realizada
+        description: "{{ doc('tempo_integracao_minutos_matriz') }}"
         data_type: float64
         quote: true
       - name: data_inicio
@@ -393,8 +393,8 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-          - inicio_vigencia
-          - servico
+            - inicio_vigencia
+            - servico
           name: dbt_utils.unique_combination_of_columns__tecnologia_servico
           where: "1=1"
     columns:
@@ -530,11 +530,11 @@ models:
         data_type: string
         quote: true
       - name: sequencia_rateio
-        description: Array contendo os percentuais de rateio para cada perna da integração
+        description: "{{ doc('sequencia_rateio_matriz') }}"
         data_type: numeric
         quote: true
       - name: tempo_integracao_minutos
-        description: Tempo máximo entre a primeira e a última perna para a integração ser realizada
+        description: "{{ doc('tempo_integracao_minutos_matriz') }}"
         data_type: float64
         quote: true
       - name: versao
@@ -604,8 +604,8 @@ models:
           expression: count(distinct tipo_os)
           compare_model: ref("ordem_servico_faixa_horaria_sentido")
           compare_expression: count(distinct tipo_os)
-          group_by: [feed_start_date, tipo_os]
-          compare_group_by: [feed_start_date, tipo_os]
+          group_by: [ feed_start_date, tipo_os ]
+          compare_group_by: [ feed_start_date, tipo_os ]
           row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
           compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
           where: "feed_start_date >= date('{{ var('DATA_GTFS_V5_INICIO') }}')"
@@ -669,3 +669,23 @@ models:
         description: "{{ doc('versao') }}"
       - name: id_execucao_dbt
         description: "{{ doc('id_execucao_dbt') }}"
+  - name: tarifa_publica
+    description: Tabela contendo o histórico da tarifa dos transportes municipais a partir de 2023-01-07
+    columns:
+      - name: data_inicio
+        description: Data de início de vigência do valor da tarifa
+        data_type: date
+        quote: true
+      - name: data_fim
+        description: Data de fim de vigência do valor da tarifa
+        data_type: date
+        quote: true
+      - name: valor_tarifa
+        description: "{{ doc('tarifa_valor') }}"
+        data_type: float64
+        quote: true
+      - name: legislacao
+        description: Decreto que alterou o valor da tarifa
+        data_type: string
+        quote: true
+

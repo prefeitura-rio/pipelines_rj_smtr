@@ -117,6 +117,8 @@ selectors:
     definition:
       union:
         - method: fqn
+          value: tarifa_publica
+        - method: fqn
           value: matriz_reparticao_tarifaria
         - method: fqn
           value: matriz_integracao
@@ -135,6 +137,8 @@ selectors:
           value: aux_integracao_calculada
         - method: fqn
           value: integracao_nao_realizada
+        - method: fqn
+          value: integracao_invalida
         - method: fqn
           value: transacao_invalida
 
@@ -204,8 +208,6 @@ selectors:
       union:
         - method: fqn
           value: dicionario_bilhetagem
-        - method: fqn
-          value: aux_gratuidade_info
         - method: fqn
           value: staging_transacao
         - method: fqn

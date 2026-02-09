@@ -1,5 +1,18 @@
 # Changelog - validacao_dados_jae
 
+## [3.1.4] - 2026-01-28
+
+### Alterado
+
+- Adapta query do modelo `integracao_invalida.sql` para o novo formato da matriz de integração (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1182)
+
+## [3.1.3] - 2026-01-13
+
+### Alterado
+
+- Altera tarifa hardcoded no modelo `aux_transacao_filtro_integracao_calculada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1162)
+- Cria lógica para reconhecer a versão na matriz de integração com base na data da transação no modelo `aux_calculo_integracao.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1162)
+
 ## [3.1.2] - 2025-12-15
 
 ### Adicionado
