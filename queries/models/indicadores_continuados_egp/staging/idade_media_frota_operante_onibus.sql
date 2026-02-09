@@ -79,26 +79,26 @@ idade_frota AS (
     licenciamento
     --rj-smtr.veiculo.sppo_licenciamento AS l
     ON datas.data = licenciamento.data
-LEFT JOIN
-  frota_operante AS f
-  USING
-    (id_veiculo, mes, ano)
-WHERE
-  f.id_veiculo IS NOT NULL
+  LEFT JOIN
+    frota_operante AS f
+    USING
+      (id_veiculo, mes, ano)
+  WHERE
+    f.id_veiculo IS NOT NULL
 )
 
 -- 4. Calcula a idade média
 SELECT
-data,
-EXTRACT(YEAR FROM data) AS ano,
-EXTRACT(MONTH FROM data) AS mes,
-"Ônibus" AS modo,
-ROUND(AVG(idade), 2) AS idade_media_veiculo_mes,
-CURRENT_DATE("America/Sao_Paulo") AS data_ultima_atualizacao,
-'{{ var("version") }}' AS versao
+  data,
+  EXTRACT(YEAR FROM data) AS ano,
+  EXTRACT(MONTH FROM data) AS mes,
+  "Ônibus" AS modo,
+  ROUND(AVG(idade), 2) AS idade_media_veiculo_mes,
+  CURRENT_DATE("America/Sao_Paulo") AS data_ultima_atualizacao,
+  '{{ var("version") }}' AS versao
 FROM
-idade_frota
+  idade_frota
 GROUP BY
-1,
-2,
-3
+  1,
+  2,
+  3
