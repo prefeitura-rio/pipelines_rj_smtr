@@ -81,12 +81,28 @@ models:
         description: "{{ doc('id_viagem') }} [datetime partida em UTC]"
         data_type: string
         quote: true
-      - name: datetime_partida
-        description: "{{ doc('datetime_partida') }}"
+      - name: datetime_partida_informada
+        description: "{{ doc('datetime_partida_informada') }}"
         data_type: datetime
         quote: true
-      - name: datetime_chegada
-        description: "{{ doc('datetime_chegada') }}"
+      - name: datetime_chegada_informada
+        description: "{{ doc('datetime_chegada_informada') }}"
+        data_type: datetime
+        quote: true
+      - name: datetime_partida_automatica
+        description: "{{ doc('datetime_partida_automatica') }}"
+        data_type: datetime
+        quote: true
+      - name: datetime_chegada_automatica
+        description: "{{ doc('datetime_chegada_automatica') }}"
+        data_type: datetime
+        quote: true
+      - name: datetime_partida_considerada
+        description: "{{ doc('datetime_partida_considerada') }}"
+        data_type: datetime
+        quote: true
+      - name: datetime_chegada_considerada
+        description: "{{ doc('datetime_chegada_considerada') }}"
         data_type: datetime
         quote: true
       - name: modo
@@ -213,12 +229,28 @@ models:
         description: "{{ doc('id_viagem') }}"
         data_type: string
         quote: true
-      - name: datetime_partida
-        description: "{{ doc('datetime_partida') }}"
+      - name: datetime_partida_informada
+        description: "{{ doc('datetime_partida_informada') }}"
         data_type: datetime
         quote: true
-      - name: datetime_chegada
-        description: "{{ doc('datetime_chegada') }}"
+      - name: datetime_chegada_informada
+        description: "{{ doc('datetime_chegada_informada') }}"
+        data_type: datetime
+        quote: true
+      - name: datetime_partida_automatica
+        description: "{{ doc('datetime_partida_automatica') }}"
+        data_type: datetime
+        quote: true
+      - name: datetime_chegada_automatica
+        description: "{{ doc('datetime_chegada_automatica') }}"
+        data_type: datetime
+        quote: true
+      - name: datetime_partida_considerada
+        description: "{{ doc('datetime_partida_considerada') }}"
+        data_type: datetime
+        quote: true
+      - name: datetime_chegada_considerada
+        description: "{{ doc('datetime_chegada_considerada') }}"
         data_type: datetime
         quote: true
       - name: modo
@@ -1097,12 +1129,12 @@ models:
         description: "{{ doc('ano_fabricacao') }}"
         data_type: int64
         quote: true
-      - name: datetime_partida
-        description: "{{ doc('datetime_partida') }}"
+      - name: datetime_partida_informada
+        description: "{{ doc('datetime_partida_informada') }}"
         data_type: datetime
         quote: true
-      - name: datetime_chegada
-        description: "{{ doc('datetime_chegada') }}"
+      - name: datetime_chegada_informada
+        description: "{{ doc('datetime_chegada_informada') }}"
         data_type: datetime
         quote: true
       - name: modo

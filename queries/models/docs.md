@@ -22,6 +22,30 @@ Horário de início da viagem
 Horário de fim da viagem
 {% enddocs %}
 
+{% docs datetime_partida_informada %}
+Horário de partida informado pela operadora
+{% enddocs %}
+
+{% docs datetime_chegada_informada %}
+Horário de chegada informado pela operadora
+{% enddocs %}
+
+{% docs datetime_partida_automatica %}
+Horário de partida automática [primeiro GPS fora da cerca eletrônica inicial e dentro do buffer de um segmento]
+{% enddocs %}
+
+{% docs datetime_chegada_automatica %}
+Horário de chegada automática [último GPS fora da cerca eletrônica final e dentro do buffer de um segmento]
+{% enddocs %}
+
+{% docs datetime_partida_considerada %}
+Horário de partida considerado para validação [automática se diferença > 10 min, senão informada]
+{% enddocs %}
+
+{% docs datetime_chegada_considerada %}
+Horário de chegada considerado para validação [automática se diferença > 10 min, senão informada]
+{% enddocs %}
+
 {% docs distancia_planejada %}
 Distância do shape [trajeto] planejado (km)
 {% enddocs %}

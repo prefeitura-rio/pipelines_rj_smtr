@@ -48,8 +48,12 @@ with
         select
             data,
             id_viagem,
-            datetime_partida,
-            datetime_chegada,
+            datetime_partida_informada,
+            datetime_chegada_informada,
+            datetime_partida_automatica,
+            datetime_chegada_automatica,
+            datetime_partida_considerada,
+            datetime_chegada_considerada,
             modo,
             id_veiculo,
             trip_id,
@@ -83,8 +87,12 @@ with
         group by
             data,
             id_viagem,
-            datetime_partida,
-            datetime_chegada,
+            datetime_partida_informada,
+            datetime_chegada_informada,
+            datetime_partida_automatica,
+            datetime_chegada_automatica,
+            datetime_partida_considerada,
+            datetime_chegada_considerada,
             modo,
             id_veiculo,
             trip_id,
@@ -105,8 +113,12 @@ with
         select
             data,
             id_viagem,
-            datetime_partida,
-            datetime_chegada,
+            datetime_partida_informada,
+            datetime_chegada_informada,
+            datetime_partida_automatica,
+            datetime_chegada_automatica,
+            datetime_partida_considerada,
+            datetime_chegada_considerada,
             modo,
             id_veiculo,
             trip_id,
@@ -128,9 +140,9 @@ with
             indicador_shape_invalido,
             (
                 id_viagem is not null
-                and datetime_partida is not null
-                and datetime_chegada is not null
-                and datetime_chegada > datetime_partida
+                and datetime_partida_informada is not null
+                and datetime_chegada_informada is not null
+                and datetime_chegada_informada > datetime_partida_informada
                 and shape_id is not null
                 and route_id is not null
                 and id_veiculo is not null
@@ -225,7 +237,7 @@ with
             spu.extensao as distancia_planejada,
             spu.indicador_trajeto_alternativo,
             -- fmt: off
-            safe_divide(spu.extensao*3600, datetime_diff(datetime_chegada, datetime_partida, second)) as velocidade_media,
+            safe_divide(spu.extensao*3600, datetime_diff(datetime_chegada_informada, datetime_partida_informada, second)) as velocidade_media,
             -- fmt: on
             case
                 when spu.quilometragem is not null and spu.quilometragem > 0
@@ -241,7 +253,7 @@ with
             on spu.servico = spg.servico
             and spu.data = spg.data
             and spu.shape_id = spg.shape_id
-            and spg.datetime_partida
+            and spg.datetime_partida_informada
             between spu.faixa_horaria_inicio and spu.faixa_horaria_fim
     ),
     /*
@@ -263,8 +275,8 @@ with
             v1.data,
             v1.id_viagem,
             v1.id_veiculo,
-            v1.datetime_partida,
-            v1.datetime_chegada,
+            v1.datetime_partida_informada,
+            v1.datetime_chegada_informada,
             v1.datetime_captura_viagem,
             v2.id_viagem as id_viagem_sobreposta,
             v2.datetime_captura_viagem as datetime_captura_viagem_sobreposta,
@@ -290,12 +302,14 @@ with
             )
             and v1.id_veiculo = v2.id_veiculo
             and v1.id_viagem != v2.id_viagem
-            and v1.datetime_partida < v2.datetime_chegada
-            and v1.datetime_chegada > v2.datetime_partida
+            and v1.datetime_partida_informada < v2.datetime_chegada_informada
+            and v1.datetime_chegada_informada > v2.datetime_partida_informada
         qualify
             row_number() over (
                 partition by v1.id_viagem
-                order by v2.datetime_captura_viagem desc, v2.datetime_partida
+                order by
+                    v2.datetime_captura_viagem desc,
+                    v2.datetime_partida_informada
             )
             = 1
     ),
@@ -306,8 +320,12 @@ with
         select
             vm.data,
             vm.id_viagem,
-            vm.datetime_partida,
-            vm.datetime_chegada,
+            vm.datetime_partida_informada,
+            vm.datetime_chegada_informada,
+            vm.datetime_partida_automatica,
+            vm.datetime_chegada_automatica,
+            vm.datetime_partida_considerada,
+            vm.datetime_chegada_considerada,
             vm.modo,
             vm.id_veiculo,
             vm.trip_id,
@@ -373,7 +391,10 @@ with
         from viagens
         qualify
             row_number() over (
-                partition by id_veiculo, datetime_partida, datetime_chegada
+                partition by
+                    id_veiculo,
+                    datetime_partida_informada,
+                    datetime_chegada_informada
                 order by
                     indice_validacao desc,
                     indicador_trajeto_alternativo,
@@ -389,7 +410,7 @@ with
         from filtro_desvio
         qualify
             row_number() over (
-                partition by id_veiculo, datetime_partida
+                partition by id_veiculo, datetime_partida_informada
                 order by distancia_planejada desc
             )
             = 1
@@ -402,7 +423,7 @@ with
         from filtro_partida
         qualify
             row_number() over (
-                partition by id_veiculo, datetime_chegada
+                partition by id_veiculo, datetime_chegada_informada
                 order by distancia_planejada desc
             )
             = 1
@@ -410,8 +431,12 @@ with
 select
     data,
     id_viagem,
-    datetime_partida,
-    datetime_chegada,
+    datetime_partida_informada,
+    datetime_chegada_informada,
+    datetime_partida_automatica,
+    datetime_chegada_automatica,
+    datetime_partida_considerada,
+    datetime_chegada_considerada,
     modo,
     id_veiculo,
     trip_id,
