@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.2.12] - 2026-02-10
+
+### Removido
+
+- Remove schedule do flow de materialização da `gps_validador`
+
 ## [1.2.11] - 2025-11-19
 
 ### Adicionado
