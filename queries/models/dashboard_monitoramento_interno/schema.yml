@@ -22,5 +22,7 @@ models:
         description: "{{ doc('ano_fabricacao') }}"
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
-      - name: regularidade_temperatura
-        description: "Indicador com a regularidade da temperatura"
+      - name: indicador_regularidade_temperatura
+        description: "Indicador de regularidade da temperatura da viagem"
+      - name: operadora
+        description: "{{ doc('operadora') }}"
