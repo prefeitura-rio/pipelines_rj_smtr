@@ -446,6 +446,7 @@ models:
               name: dbt_utils.relationships_where__id_auto_infracao__veiculo_fiscalizacao_lacre
               to: ref('autuacao_disciplinar_historico')
               field: id_auto_infracao
+              from_condition: "datetime_ultima_atualizacao <= date_sub(current_date(), interval 5 day)"
               where: "1=1"
           - not_null:
               name: not_null__id_auto_infracao__veiculo_fiscalizacao_lacre
