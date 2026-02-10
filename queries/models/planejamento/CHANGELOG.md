@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.6.2] - 2026-02-09
+
+### Alterado
+
+- Altera lógica incremental do modelo `viagem_planejada_planejamento` para `insert_overwrite` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1161)
+
 ## [1.6.1] - 2026-02-02
 
 ### Alterado
@@ -21,7 +27,6 @@
 ### Alterado
 
 - Alterados no modelo `aux_calendario_manual` o `tipo_os` de `2025-12-20`, `2025-12-21`, `2025-12-27`, `2025-12-28`, `2026-01-03`, `2026-01-04`, `2026-01-10` e `2026-01-11` para `Verão` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1165)
-
 
 ## [1.5.8] - 2026-01-07
 
@@ -64,7 +69,7 @@
 
 ### Alterado
 
-- Alterados o `tipo_dia` no modelo `aux_calendario_manual.sql` de `2025-10-04`, `2025-10-05`  e `2025-10-12` -> `Atípico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/987)
+- Alterados o `tipo_dia` no modelo `aux_calendario_manual.sql` de `2025-10-04`, `2025-10-05` e `2025-10-12` -> `Atípico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/987)
 
 ## [1.5.1] - 2025-10-14
 
@@ -130,13 +135,13 @@
 
 ### Adicionado
 
-- Adiciona os dias `2025-05-02` como Ponto facultativo e `2025-05-03` e `2025-05-04` como  Dia Atípico no modelo `aux_calendario_manual` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/597)
+- Adiciona os dias `2025-05-02` como Ponto facultativo e `2025-05-03` e `2025-05-04` como Dia Atípico no modelo `aux_calendario_manual` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/597)
 
 ## [1.4.3] - 2025-05-12
 
 ### Adicionado
 
-- Adiciona os dias `2025-04-18` como Feriado e `2025-04-22` como  Ponto Facultativo no modelo `aux_calendario_manual` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/573)
+- Adiciona os dias `2025-04-18` como Feriado e `2025-04-22` como Ponto Facultativo no modelo `aux_calendario_manual` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/573)
 
 ## [1.4.2] - 2025-04-30
 
@@ -208,6 +213,7 @@
 ### Adicionado
 
 - Adiciona novas datas no modelo `aux_calendario_manual.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/480)
+
 ## [1.3.2] - 2025-03-10
 
 ### Alterado
@@ -237,6 +243,7 @@
   - `viagem_planejada_planejamento.sql`
 
 ### Alterado
+
 - Adiciona colunas start_pt e end_pt no modelo `shapes_geom_planejamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/352)
 
 ## [1.1.0] - 2024-11-08
