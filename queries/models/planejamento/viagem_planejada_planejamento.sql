@@ -6,33 +6,55 @@
             "granularity": "day",
         },
         alias="viagem_planejada",
-        incremental_strategy="merge",
-        unique_key="id_viagem",
-        incremental_predicates=[
-            "DBT_INTERNAL_DEST.data between date('"
-            + var("date_range_start")
-            + "') and date_add(date('"
-            + var("date_range_end")
-            + "'), interval 1 day)"
-        ],
+        incremental_strategy="insert_overwrite",
     )
 }}
 
+{% set incremental_filter %}
+    data between
+        date('{{ var("date_range_start") }}')
+        and date('{{ var("date_range_end") }}')
+{% endset %}
+
+{% set source_filter %}
+    data between
+        date_sub(date('{{ var("date_range_start") }}'), interval 1 day)
+        and date('{{ var("date_range_end") }}')
+{% endset %}
 
 {% set calendario = ref("calendario") %}
 {# {% set calendario = "rj-smtr.planejamento.calendario" %} #}
-{% if execute %}
-    {% if is_incremental() %}
-        {% set gtfs_feeds_query %}
-            select distinct concat("'", feed_start_date, "'") as feed_start_date
-            from {{ calendario }}
-            where
-                data between date("{{ var('date_range_start') }}")
-                and date("{{ var('date_range_end') }}")
-        {% endset %}
-
-        {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
-    {% endif %}
+{% if execute and is_incremental() %}
+    {% set columns = (
+        list_columns()
+        | reject(
+            "in",
+            ["versao", "datetime_ultima_atualizacao", "id_execucao_dbt"],
+        )
+        | list
+    ) %}
+    {% set sha_column %}
+        sha256(
+            concat(
+                {% for c in columns %}
+                    {% if c == "trajetos_alternativos" %}ifnull(to_json_string({{ c }}), 'n/a')
+                    {% else %}ifnull(cast({{ c }} as string), 'n/a')
+                    {% endif %}
+                    {% if not loop.last %}, {% endif %}
+                {% endfor %}
+            )
+        )
+    {% endset %}
+    {% set gtfs_feeds_query %}
+        select distinct concat("'", feed_start_date, "'") as feed_start_date
+        from {{ calendario }}
+        where {{ source_filter }}
+    {% endset %}
+    {% set gtfs_feeds = run_query(gtfs_feeds_query).columns[0].values() %}
+{% else %}
+    {% set sha_column %}
+        cast(null as bytes)
+    {% endset %}
 {% endif %}
 
 with
@@ -43,9 +65,7 @@ with
             feed_start_date >= '{{ var("feed_inicial_viagem_planejada") }}'
             {% if is_incremental() %}
                 and feed_start_date in ({{ gtfs_feeds | join(", ") }})
-                and data between date("{{ var('date_range_start') }}") and date(
-                    "{{ var('date_range_end') }}"
-                )
+                and {{ source_filter }}
             {% endif %}
     ),
     frequencies_tratada as (
@@ -195,9 +215,7 @@ with
             subtipo_dia,
             tipo_os,
             feed_version,
-            feed_start_date,
-            '{{ var("version") }}' as versao,
-            current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
+            feed_start_date
         from viagem_filtrada v
         left join servico_circular c using (shape_id, feed_version, feed_start_date)
     ),
@@ -214,15 +232,66 @@ with
                 format_datetime("%Y%m%d%H%M%S", datetime_partida)
             ) as id_viagem
         from viagem_planejada
-    )
-select data, id_viagem, * except (data, id_viagem, rn)
-from
-    (
+    ),
+    dados_novos as (
+        select data, id_viagem, * except (data, id_viagem, rn)
+        from
+            (
+                select
+                    *,
+                    row_number() over (
+                        partition by id_viagem order by data_referencia desc
+                    ) as rn
+                from viagem_planejada_id
+            )
+        where
+            rn = 1 and data is not null
+            {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
+    ),
+    {% if is_incremental() %}
+        dados_atuais as (select * from {{ this }} where {{ incremental_filter }}),
+    {% endif %}
+    sha_dados_atuais as (
+        {% if is_incremental() %}
+            select
+                id_viagem,
+                {{ sha_column }} as sha_dado_atual,
+                datetime_ultima_atualizacao as datetime_ultima_atualizacao_atual,
+                id_execucao_dbt as id_execucao_dbt_atual
+            from dados_atuais
+        {% else %}
+            select
+                cast(null as string) as id_viagem,
+                cast(null as bytes) as sha_dado_atual,
+                datetime(null) as datetime_ultima_atualizacao_atual,
+                cast(null as string) as id_execucao_dbt_atual
+        {% endif %}
+    ),
+    sha_dados_completos as (
+        select n.*, {{ sha_column }} as sha_dado_novo, a.* except (id_viagem)
+        from dados_novos n
+        left join sha_dados_atuais a using (id_viagem)
+    ),
+    colunas_controle as (
         select
-            *,
-            row_number() over (
-                partition by id_viagem order by data_referencia desc
-            ) as rn
-        from viagem_planejada_id
+            * except (
+                sha_dado_novo,
+                sha_dado_atual,
+                datetime_ultima_atualizacao_atual,
+                id_execucao_dbt_atual
+            ),
+            '{{ var("version") }}' as versao,
+            case
+                when sha_dado_atual is null or sha_dado_novo != sha_dado_atual
+                then current_datetime("America/Sao_Paulo")
+                else datetime_ultima_atualizacao_atual
+            end as datetime_ultima_atualizacao,
+            case
+                when sha_dado_atual is null or sha_dado_novo != sha_dado_atual
+                then '{{ invocation_id }}'
+                else id_execucao_dbt_atual
+            end as id_execucao_dbt
+        from sha_dados_completos
     )
-where rn = 1 and data is not null
+select *
+from colunas_controle
