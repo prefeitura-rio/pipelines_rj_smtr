@@ -1,5 +1,11 @@
 # Changelog - queries
 
+## [1.1.4] - 2026-02-11
+
+### Alterado
+
+- Movido o modelo `monitoramento_viagem_transacao` do selector `monitoramento_subsidio` para o selector `monitoramento_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1236)
+
 ## [1.1.3] - 2026-01-27
 
 ### Alterado

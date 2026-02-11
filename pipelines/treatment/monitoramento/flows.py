@@ -182,6 +182,11 @@ MONITORAMENTO_TEMPERATURA_MATERIALIZACAO = create_default_materialization_flow(
     post_tests=constants.MONITORAMENTO_TEMPERATURA_TEST.value,
 )
 
+set_default_parameters(
+    MONITORAMENTO_TEMPERATURA_MATERIALIZACAO,
+    {"additional_vars": {"tipo_materializacao": "monitoramento"}},
+)
+
 GPS_VALIDADOR_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps_validador - materializacao",
     selector=constants.GPS_VALIDADOR_SELECTOR.value,
