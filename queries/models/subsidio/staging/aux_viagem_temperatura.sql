@@ -133,7 +133,7 @@ with
             longitude,
             safe_cast(temperatura as numeric) as temperatura,
             datetime_captura
-        from {{ ref("gps_validador") }}
+        from rj-smtr.monitoramento.gps_validador
         where {{ incremental_filter }} and modo = "Ônibus"
     ),
     estado_equipamento_aux as (  -- Dados de estado do equipamento do validador
