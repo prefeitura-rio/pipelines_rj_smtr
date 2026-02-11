@@ -1,10 +1,16 @@
 # Changelog - monitoramento
 
-## [1.3.1] - 2026-02-11
+## [1.2.13] - 2026-02-11
 
 ### Adicionado
 
 - Adiciona parâmetro `tipo_materializacao` no flow `MONITORAMENTO_TEMPERATURA_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1236)
+
+## [1.2.12] - 2026-02-10
+
+### Removido
+
+- Remove schedule do flow de materialização da `gps_validador` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1219)
 
 ## [1.2.11] - 2025-11-19
 

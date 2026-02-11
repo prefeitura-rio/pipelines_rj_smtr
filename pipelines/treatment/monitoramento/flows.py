@@ -199,6 +199,7 @@ GPS_VALIDADOR_MATERIALIZACAO = create_default_materialization_flow(
     test_webhook_key=jae_constants.ALERT_WEBHOOK.value,
     test_scheduled_time=time(1, 15, 0),
     skip_if_running_tolerance=10,
+    generate_schedule=False,
 )
 
 GPS_VALIDADOR_MATERIALIZACAO.state_handlers.append(
