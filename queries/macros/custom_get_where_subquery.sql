@@ -4,10 +4,9 @@
         {% set re = modules.re %}
         {% set final_where = namespace(value=where) %}
 
-        {% set matches = re.finditer("\{([^}]+)\}", where) %}
+        {% set var_names = re.findall("\\{([^}]+)\\}", where) %}
 
-        {% for match in matches %}
-            {% set var_name = match.group(1) %}
+        {% for var_name in var_names %}
             {% set var_replace = "{" ~ var_name ~ "}" %}
             {% if var_name == "partitions" and var(var_name) == "" %}
                 {% set partition_query %}

@@ -74,7 +74,7 @@ with
                 + receita_cartoes_perna_unica_e_demais
                 + receita_especie
             ) as receita_tarifaria_total
-            {{ source("br_rj_riodejaneiro_rdo", "rdo40_tratado") }} as rdo
+        from {{ source("br_rj_riodejaneiro_rdo", "rdo40_tratado") }} as rdo
         left join consorcios cs on rdo.termo = cs.id_consorcio
         group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
     ),

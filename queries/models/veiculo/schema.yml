@@ -6,14 +6,16 @@ models:
     tests:
       - dbt_expectations.expect_table_aggregation_to_equal_other_table:
           name: dbt_expectations.expect_table_aggregation_to_equal_other_table__infracao
-          expression: count(distinct data)
-          compare_model: ref('staging_infracao')
-          compare_expression: count(distinct data)
-          group_by: [data]
-          compare_group_by: [Date(data)]
-          row_condition: "DATE(data) between DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_start')) + modules.datetime.timedelta(7) }}') AND DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(8) }}')"
-          compare_row_condition: "DATE(data) between DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_start')) + modules.datetime.timedelta(7) }}') AND DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(8) }}')"
-          where: "DATE(data) between DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_start')) + modules.datetime.timedelta(7) }}') AND DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(8) }}')"
+          config:
+            where: "DATE(data) between DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_start')) + modules.datetime.timedelta(7) }}') AND DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(8) }}')"
+          arguments:
+            expression: count(distinct data)
+            compare_model: ref('staging_infracao')
+            compare_expression: count(distinct data)
+            group_by: [data]
+            compare_group_by: [Date(data)]
+            row_condition: "DATE(data) between DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_start')) + modules.datetime.timedelta(7) }}') AND DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(8) }}')"
+            compare_row_condition: "DATE(data) between DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_start')) + modules.datetime.timedelta(7) }}') AND DATE('{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(8) }}')"
     columns:
       - name: data
         description: "{{ doc('data_captura') }} [partição]"
@@ -46,9 +48,7 @@ models:
       - name: versao
         description: "{{ doc('versao') }}"
   - name: licenciamento
-    description: "Tabela histórica de dados cadastrais dos veículos que operam o sistema de transporte rodoviário,
-                  considerando tanto os licenciados no Sistema de Transporte Urbano [STU] quanto as solicitações
-                  válidas em andamento para ingresso no sistema [contém dados até 2025-03-31]"
+    description: "Tabela histórica de dados cadastrais dos veículos que operam o sistema de transporte rodoviário, considerando tanto os licenciados no Sistema de Transporte Urbano [STU] quanto as solicitações válidas em andamento para ingresso no sistema [contém dados até 2025-03-31]"
     columns:
       - name: data
         description: "{{ doc('data_captura') }} [partição]"
@@ -156,25 +156,25 @@ models:
       - name: status
         description: "{{ doc('status') }}"
       - name: solicitacao
-        description: "Inclusão - Solicitação de ingresso de veículo no STU\n
-                      Baixa - Solicitação de baixa de veículo já incluído no STU\n
-                      Renumeração - Solicitação de alteração de número de ordem de veículo já incluído no STU"
+        description: "Inclusão - Solicitação de ingresso de veículo no STU\n Baixa - Solicitação de baixa de veículo já incluído no STU\n Renumeração - Solicitação de alteração de número de ordem de veículo já incluído no STU"
   - name: sppo_veiculo_dia
     description: "Tabela resumo dos veículos que operaram no SPPO e seus respectivos indicadores [contém dados até 2025-03-31]"
     tests:
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-          - data
-          - id_veiculo
           name: dbt_utils.unique_combination_of_columns__data_id_veiculo__sppo_veiculo_dia
+          arguments:
+            combination_of_columns:
+              - data
+              - id_veiculo
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
-          date_col: data
-          row_condition: "1=1"
-          test_start_date: "{{ var('date_range_start') }}"
-          test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(days=1) }}"
-          exclusion_condition: |
-            date_day < date('{{ var("data_final_veiculo_arquitetura_1") }}')
           name: dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart__sppo_veiculo_dia
+          arguments:
+            date_col: data
+            row_condition: "1=1"
+            test_start_date: "{{ var('date_range_start') }}"
+            test_end_date: "{{ modules.datetime.datetime.fromisoformat(var('date_range_end')) + modules.datetime.timedelta(days=1) }}"
+            exclusion_condition: |
+              date_day < date('{{ var("data_final_veiculo_arquitetura_1") }}')
     columns:
       - name: data
         description: "{{ doc('data_operacao') }}"

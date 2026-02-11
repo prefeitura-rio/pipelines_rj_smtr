@@ -65,21 +65,24 @@ models:
         tests:
           - not_null:
               name: not_null__id_servico_jae__transacao
-              where: data in ({partitions}) and extract(year from data) > 2023
+              config:
+                where: data in ({partitions}) and extract(year from data) > 2023
       - name: servico_jae
         description: "{{ doc('servico_jae') }}"
         data_type: string
         tests:
           - not_null:
               name: not_null__servico_jae__transacao
-              where: data in ({partitions}) and extract(year from data) > 2023
+              config:
+                where: data in ({partitions}) and extract(year from data) > 2023
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
         data_type: string
         tests:
           - not_null:
               name: not_null__descricao_servico_jae__transacao
-              where: data in ({partitions}) and extract(year from data) > 2023
+              config:
+                where: data in ({partitions}) and extract(year from data) > 2023
       - name: sentido
         description: "{{ doc('sentido') }}"
         tests:
@@ -92,13 +95,15 @@ models:
         tests:
           - not_null:
               name: not_null__id_veiculo__transacao
-              where: modo != 'BRT' and data in ({partitions})
+              config:
+                where: modo != 'BRT' and data in ({partitions})
       - name: id_validador
         description: "{{ doc('id_validador') }}"
         tests:
           - not_null:
               name: not_null__id_validador__transacao
-              where: tipo_transacao_jae != 'Gratuidade operadora' and data in ({partitions})
+              config:
+                where: tipo_transacao_jae != 'Gratuidade operadora' and data in ({partitions})
         data_type: string
       - name: id_cliente
         description: "{{ doc('id_cliente') }}"
@@ -161,12 +166,13 @@ models:
         tests:
           - not_null:
               name: not_null__data_ordem__transacao
-              where: |
-                id_servico_jae not in (select id_linha from `rj-smtr.cadastro_staging.linha_sem_ressarcimento`)
-                and date(case when datetime_processamento < datetime_transacao then datetime_transacao else datetime_processamento end) < current_date("America/Sao_Paulo")
-                and tipo_transacao_jae not in ('Transferência', 'Transferência EMV', 'Botoeira')
-                and tipo_transacao != "Gratuidade"
-                and data in ({partitions})
+              config:
+                where: |
+                  id_servico_jae not in (select id_linha from `rj-smtr.cadastro_staging.linha_sem_ressarcimento`)
+                  and date(case when datetime_processamento < datetime_transacao then datetime_transacao else datetime_processamento end) < current_date("America/Sao_Paulo")
+                  and tipo_transacao_jae not in ('Transferência', 'Transferência EMV', 'Botoeira')
+                  and tipo_transacao != "Gratuidade"
+                  and data in ({partitions})
       - name: id_ordem_pagamento_servico_operador_dia
         description: "{{ doc('id_ordem_pagamento_servico_operador_dia') }}"
         data_type: string
@@ -176,7 +182,8 @@ models:
         tests:
           - not_null:
               name: not_null__id_ordem_pagamento_consorcio_operador_dia__transacao
-              where: data_ordem is not null and data in ({partitions})
+              config:
+                where: data_ordem is not null and data in ({partitions})
       - name: id_ordem_pagamento_consorcio_dia
         description: "{{ doc('id_ordem_pagamento_consorcio_dia') }}"
         data_type: string
@@ -234,7 +241,8 @@ models:
         tests:
           - not_null:
               name: not_null__meio_pagamento__transacao
-              where: tipo_transacao_jae != 'Gratuidade operadora' and data in ({partitions})
+              config:
+                where: tipo_transacao_jae != 'Gratuidade operadora' and data in ({partitions})
         data_type: string
         quote: true
       - name: meio_pagamento_jae
@@ -242,7 +250,8 @@ models:
         tests:
           - not_null:
               name: not_null__meio_pagamento_jae__transacao
-              where: tipo_transacao_jae != 'Gratuidade operadora' and data in ({partitions})
+              config:
+                where: tipo_transacao_jae != 'Gratuidade operadora' and data in ({partitions})
         data_type: string
         quote: true
       - name: id_cre_escola
@@ -263,9 +272,10 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           name: dbt_utils.unique_combination_of_columns__integracao
-          combination_of_columns:
-            - id_integracao
-            - id_transacao
+          arguments:
+            combination_of_columns:
+              - id_integracao
+              - id_transacao
     columns:
       - name: data
         description: "{{ doc('data_transacao') }} [partição]"
@@ -315,19 +325,22 @@ models:
         tests:
           - not_null:
               name: not_null__id_servico_jae__integracao
-              where: data in ({partitions}) and extract(year from data) > 2023
+              config:
+                where: data in ({partitions}) and extract(year from data) > 2023
       - name: servico_jae
         description: "{{ doc('servico_jae') }}"
         tests:
           - not_null:
               name: not_null__servico_jae__integracao
-              where: data in ({partitions}) and extract(year from data) > 2023
+              config:
+                where: data in ({partitions}) and extract(year from data) > 2023
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
         tests:
           - not_null:
               name: not_null__descricao_servico_jae__integracao
-              where: data in ({partitions}) and extract(year from data) > 2023
+              config:
+                where: data in ({partitions}) and extract(year from data) > 2023
       - name: id_transacao
         description: "{{ doc('id_transacao') }}"
         tests:
@@ -456,10 +469,12 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           name: dbt_utils.unique_combination_of_columns__transacao_valor_ordem
-          combination_of_columns:
-            - data_ordem
-            - id_transacao
-          where: data_ordem in ({partitions})
+          config:
+            where: data_ordem in ({partitions})
+          arguments:
+            combination_of_columns:
+              - data_ordem
+              - id_transacao
       - transacao_valor_ordem_completa:
           name: transacao_valor_ordem_completa__transacao_valor_ordem
     columns:
@@ -474,7 +489,8 @@ models:
         tests:
           - not_null:
               name: not_null__data_transacao__transacao_valor_ordem
-              where: data_ordem in ({partitions})
+              config:
+                where: data_ordem in ({partitions})
       - name: id_transacao
         description: "{{ doc('id_transacao') }}"
         data_type: string
@@ -482,7 +498,8 @@ models:
         tests:
           - not_null:
               name: not_null__id_transacao__transacao_valor_ordem
-              where: data_ordem in ({partitions})
+              config:
+                where: data_ordem in ({partitions})
       - name: modo
         description: "{{ doc('modo') }}"
         data_type: string
@@ -490,7 +507,8 @@ models:
         tests:
           - not_null:
               name: not_null__modo__transacao_valor_ordem
-              where: data_ordem in ({partitions})
+              config:
+                where: data_ordem in ({partitions})
       - name: consorcio
         description: "{{  doc('consorcio') }}"
         data_type: string
@@ -502,7 +520,8 @@ models:
         tests:
           - not_null:
               name: not_null__id_operadora__transacao_valor_ordem
-              where: data_ordem in ({partitions})
+              config:
+                where: data_ordem in ({partitions})
       - name: id_servico_jae
         description: "{{ doc('id_servico_jae') }}"
         data_type: string
@@ -510,7 +529,8 @@ models:
         tests:
           - not_null:
               name: not_null__id_servico_jae__transacao_valor_ordem
-              where: data_ordem in ({partitions}) and extract(year from data_transacao) > 2023
+              config:
+                where: data_ordem in ({partitions}) and extract(year from data_transacao) > 2023
       - name: valor_transacao_rateio
         description: Valor da transação com o rateio [se houver] (R$)
         data_type: float64
@@ -518,7 +538,8 @@ models:
         tests:
           - not_null:
               name: not_null__valor_transacao_rateio__transacao_valor_ordem
-              where: data_ordem in ({partitions})
+              config:
+                where: data_ordem in ({partitions})
       - name: id_ordem_pagamento
         description: "{{ doc('id_ordem_pagamento') }}"
         data_type: string
@@ -559,19 +580,22 @@ models:
         tests:
           - not_null:
               name: not_null__id_servico_jae__passageiro_hora
-              where: data in ({partitions}) and extract(year from data) > 2023
+              config:
+                where: data in ({partitions}) and extract(year from data) > 2023
       - name: servico_jae
         description: "{{ doc('servico_jae') }}"
         tests:
           - not_null:
               name: not_null__servico_jae__passageiro_hora
-              where: data in ({partitions}) and extract(year from data) > 2023
+              config:
+                where: data in ({partitions}) and extract(year from data) > 2023
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
         tests:
           - not_null:
               name: not_null__descricao_servico_jae__passageiro_hora
-              where: data in ({partitions}) and extract(year from data) > 2023
+              config:
+                where: data in ({partitions}) and extract(year from data) > 2023
       - name: sentido
         description: "{{ doc('sentido') }}"
         tests:
@@ -632,19 +656,22 @@ models:
         tests:
           - not_null:
               name: not_null__id_servico_jae__passageiro_tile_hora
-              where: data in ({partitions}) and extract(year from data) > 2023
+              config:
+                where: data in ({partitions}) and extract(year from data) > 2023
       - name: servico_jae
         description: "{{ doc('servico_jae') }}"
         tests:
           - not_null:
               name: not_null__servico_jae__passageiro_tile_hora
-              where: data in ({partitions}) and extract(year from data) > 2023
+              config:
+                where: data in ({partitions}) and extract(year from data) > 2023
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
         tests:
           - not_null:
               name: not_null__descricao_servico_jae__passageiro_tile_hora
-              where: data in ({partitions}) and extract(year from data) > 2023
+              config:
+                where: data in ({partitions}) and extract(year from data) > 2023
       - name: sentido
         description: "{{ doc('sentido') }}"
         tests:
