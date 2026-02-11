@@ -464,6 +464,8 @@ selectors:
           value: veiculo_regularidade_temperatura_dia
         - method: fqn
           value: dicionario_subsidio
+        - method: fqn
+          value: monitoramento_viagem_transacao
 
   - name: snapshot_temperatura
     definition:
