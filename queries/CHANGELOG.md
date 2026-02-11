@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Altera selector `monitoramento_temperatura` adicionando o modelo  `viagem_transacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Altera selector `monitoramento_temperatura` adicionando o modelo  `viagem_transacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1236)
 
 ## [1.1.3] - 2026-01-27
 

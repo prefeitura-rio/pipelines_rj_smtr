@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona parâmetro `tipo_materializacao` no flow `MONITORAMENTO_TEMPERATURA_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Adiciona parâmetro `tipo_materializacao` no flow `MONITORAMENTO_TEMPERATURA_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1236)
 
 ## [1.2.11] - 2025-11-19
 
