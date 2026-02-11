@@ -1,5 +1,11 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.3.7] - 2026-02-11
+
+### Alterado
+
+- Alterado o flow `subsidio_sppo_apuracao` para remover a execução do modelo `monitoramento_viagem_transacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1101)
+
 ## [1.3.6] - 2025-12-10
 
 ### Alterado

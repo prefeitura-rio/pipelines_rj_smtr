@@ -147,8 +147,6 @@ selectors:
     definition:
       union:
         - method: fqn
-          value: monitoramento_viagem_transacao
-        - method: fqn
           value: monitoramento_sumario_servico_dia_historico
         - method: fqn
           value: monitoramento_sumario_servico_dia_tipo_viagem_historico

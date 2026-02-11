@@ -3,7 +3,7 @@
 """
 Flows for projeto_subsidio_sppo
 
-DBT 2026-02-09
+DBT 2026-02-11
 
 """
 
@@ -395,17 +395,12 @@ with Flow(
                     _vars=dbt_vars_second_range,
                     upstream_tasks=[dbt_vars_second_range],
                 )
-                dbt_vars_monitoramento = get_join_dict(
-                    dict_list=[dbt_vars_second_range],
-                    new_dict={"tipo_materializacao": "monitoramento"},
-                    upstream_tasks=[APURACAO_SECOND_RANGE],
-                )[0]
 
                 MONITORAMENTO_RUN = run_dbt(
                     resource="model",
                     selector_name="monitoramento_subsidio",
-                    _vars=dbt_vars_monitoramento,
-                    upstream_tasks=[dbt_vars_monitoramento],
+                    _vars=dbt_vars_second_range,
+                    upstream_tasks=[APURACAO_SECOND_RANGE],
                 )
 
                 # POST-DATA QUALITY CHECK #
@@ -463,17 +458,11 @@ with Flow(
                         _vars=_vars,
                     )
 
-                    _vars_v9 = get_join_dict(
-                        dict_list=[_vars],
-                        new_dict={"tipo_materializacao": "monitoramento"},
-                        upstream_tasks=[APURACAO_V9_RUN],
-                    )[0]
-
                     MONITORAMENTO_V9_RUN = run_dbt(
                         resource="model",
                         selector_name="monitoramento_subsidio",
-                        _vars=_vars_v9,
-                        upstream_tasks=[_vars_v9],
+                        _vars=_vars,
+                        upstream_tasks=[APURACAO_V9_RUN],
                     )
                     # POST-DATA QUALITY CHECK #
                     date_in_range_v14 = check_date_in_range(
