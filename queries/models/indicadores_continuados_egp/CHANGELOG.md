@@ -1,5 +1,11 @@
 # Changelog - indicadores_continuados_egp
 
+## [1.0.1] - 2025-02-09
+
+### Corrigido
+
+- Corrigida a fonte dos dados de licenciamento no modelo `idade_media_frota_operante_onibus.sql`  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1214)
+
 ## [1.0.0] - 2024-07-16
 
 ### Alterado
