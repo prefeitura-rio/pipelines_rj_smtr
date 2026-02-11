@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [3.1.9] - 2026-02-11
+
+### Adicionado
+
+- Adiciona tabelas `transacao_erro`, `temp_cancelamento_estudante_08122025` e `temp_cancelamento_estudante_sme_08122025` no exclude do backup dos dados da BillingPay
+
 ## [3.1.8] - 2026-02-04
 
 ### Removido
