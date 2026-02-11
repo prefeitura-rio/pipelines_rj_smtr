@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona tabelas `transacao_erro`, `temp_cancelamento_estudante_08122025` e `temp_cancelamento_estudante_sme_08122025` no exclude do backup dos dados da BillingPay
+- Adiciona tabelas `transacao_erro`, `temp_cancelamento_estudante_08122025` e `temp_cancelamento_estudante_sme_08122025` no exclude do backup dos dados da BillingPay (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1241)
 
 ## [3.1.8] - 2026-02-04
 
