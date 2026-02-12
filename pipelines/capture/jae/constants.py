@@ -973,6 +973,8 @@ class constants(Enum):  # pylint: disable=c0103
                 "estudante_seeduc_22102025",
                 "temp_estudante_seeduc_inativos_02122025",
                 "estudante_universitario_24112025",
+                "temp_cancelamento_estudante_08122025",
+                "temp_cancelamento_estudante_sme_08122025",
             ],
             "filter": {
                 "lancamento_conta_gratuidade": ["data_inclusao"],
@@ -1137,11 +1139,13 @@ class constants(Enum):  # pylint: disable=c0103
             },
         },
         "processador_transacao_db": {
+            "exclude": [
+                "transacao_erro",
+            ],
             "filter": {
-                "transacao_erro": ["dt_inclusao"],
                 "transacao_processada": ["dt_inclusao"],
                 "transacao_recebida": ["dt_inclusao"],
-            }
+            },
         },
         "atendimento_db": {},
         "gateway_pagamento_db": {
