@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.9.2] - 2026-02-12
+
+### Alterado
+
+- Alterados os testes do modelo `gps_validados` para testar apenas o modo `ônibus` quando executado pelo flow do subsidio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
 ## [1.9.1] - 2026-01-29
 
 ### Adicionado
