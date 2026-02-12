@@ -222,6 +222,7 @@ with Flow(
         "date_range_start": start_date + "T00:00:00",
         "date_range_end": end_date + "T23:59:59",
         "partitions": partitions,
+        "tipo_teste": "subsidio",
     }
 
     # Rename flow run #
