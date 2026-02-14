@@ -6,7 +6,15 @@
       "Bash(git log:*)",
       "Bash(git merge:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(git reset:*)",
+      "Bash(ls:*)",
+      "Bash(pandoc:*)",
+      "Bash(node:*)",
+      "Bash(find:*)",
+      "Bash(git show:*)"
     ],
     "deny": [],
     "ask": []
