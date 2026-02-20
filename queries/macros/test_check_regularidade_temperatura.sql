@@ -134,7 +134,6 @@
                             and coalesce(indicador_falha_recorrente, false)
                         )
                         or indicador_temperatura_zero_viagem
-                        or not indicador_temperatura_transmitida_viagem
                         or (
                             not indicador_temperatura_transmitida_viagem
                             and not indicador_temperatura_nula_viagem
