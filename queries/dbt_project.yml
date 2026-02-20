@@ -248,8 +248,10 @@ vars:
   ### Viagens 2.0 ###
 
   limite_reducao_area_buffer:  0.5
+  limite_validacao_inicio_fim_minutos: 10
   comprimento_minimo_segmento_shape: 990
   buffer_segmento_metros: 30
+  buffer_validacao_inicio_fim_metros: 250
   buffer_tunel_metros: 50
   parametro_validacao: 0.9
   comprimento_shape: 1000
