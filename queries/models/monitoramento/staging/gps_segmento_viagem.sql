@@ -113,7 +113,7 @@ with
         window
             w as (
                 partition by feed_version, feed_start_date, shape_id
-                order by id_segmento asc
+                order by cast(id_segmento as int64) asc
             ),
             w_frame as (w rows between unbounded preceding and unbounded following)
     ),
