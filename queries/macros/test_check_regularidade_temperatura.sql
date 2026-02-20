@@ -22,6 +22,11 @@
                 ) as indicador_temperatura_transmitida_viagem,
                 safe_cast(
                     json_value(
+                        indicadores, '$.indicador_temperatura_nula_viagem.valor'
+                    ) as bool
+                ) as indicador_temperatura_nula_viagem,
+                safe_cast(
+                    json_value(
                         indicadores, '$.indicador_temperatura_regular_viagem.valor'
                     ) as bool
                 ) as indicador_temperatura_regular_viagem
@@ -65,6 +70,7 @@
                 t.indicador_temperatura_zero_viagem,
                 t.indicador_temperatura_transmitida_viagem,
                 t.indicador_temperatura_regular_viagem,
+                t.indicador_temperatura_nula_viagem,
                 v.indicador_falha_recorrente
             from indicadores i
             left join
@@ -129,6 +135,10 @@
                         )
                         or indicador_temperatura_zero_viagem
                         or not indicador_temperatura_transmitida_viagem
+                        or (
+                            not indicador_temperatura_transmitida_viagem
+                            and not indicador_temperatura_nula_viagem
+                        )
                         or not indicador_temperatura_regular_viagem
                     )
                     and coalesce(indicador_regularidade_ar_condicionado_viagem, false)
