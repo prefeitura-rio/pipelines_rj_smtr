@@ -158,3 +158,11 @@ dmypy.json
 
 # AI agent contexts
 GEMINI.md
+
+# Auditoria SMTR - NÃO COMMITAR PARA GITHUB PÚBLICO
+CLAUDE.md
+RELATORIO*.md
+analise_integracao*.sql
+auditoria/
+AUDITORIA.md
+CHANGELOG_*.md
