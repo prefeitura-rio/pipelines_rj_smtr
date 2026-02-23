@@ -180,7 +180,9 @@
                             )
                             and indicador_ar_condicionado
                             and p.test_percentual_temperatura_nula_descartada = 100
-                            and not coalesce(i.indicador_regularidade_ar_condicionado_viagem, false)
+                            and not coalesce(
+                                i.indicador_regularidade_ar_condicionado_viagem, false
+                            )
                             is not null
                         )
                     then
