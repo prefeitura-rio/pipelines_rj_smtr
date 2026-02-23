@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [3.3.6] - 2026-02-12
+
+### Alterado
+
+- Alterados os testes dos modelos `transacao` e `transacao_riocard` para testar apenas o modo `Ônibus` quando executado pelo flow do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1247)
+
 ## [3.3.5] - 2026-01-26
 
 ### Adicionado
