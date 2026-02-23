@@ -201,6 +201,7 @@ with
         join
             shape_geom sh
             on g.feed_version = sh.feed_version
+            and g.feed_start_date = sh.feed_start_date
             and g.shape_id = sh.shape_id
         join
             segmento_primeiro_ultimo spu
@@ -300,6 +301,7 @@ with
         join
             segmento s
             on g.feed_version = s.feed_version
+            and g.feed_start_date = s.feed_start_date
             and g.shape_id = s.shape_id
             and st_intersects(s.buffer, g.geo_point_gps)
             and (
