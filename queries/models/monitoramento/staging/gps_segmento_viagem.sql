@@ -45,6 +45,46 @@
 
 with
     /*
+    Transações Jaé para contagem de passageiros por segmento
+    */
+    transacao as (
+        select id_veiculo, datetime_transacao
+        from {{ ref("transacao") }}
+        where
+            data between date("{{ var('date_range_start') }}") and date_add(
+                date("{{ var('date_range_end') }}"), interval 1 day
+            )
+            and date(datetime_processamento) - date(datetime_transacao)
+            <= interval 6 day
+            and modo = "Ônibus"
+    ),
+    /*
+    Transações RioCard para contagem de passageiros por segmento
+    */
+    transacao_riocard as (
+        select id_veiculo, datetime_transacao
+        from {{ ref("transacao_riocard") }}
+        where
+            data between date("{{ var('date_range_start') }}") and date_add(
+                date("{{ var('date_range_end') }}"), interval 1 day
+            )
+            and date(datetime_processamento) - date(datetime_transacao)
+            <= interval 6 day
+            and modo = "Ônibus"
+    ),
+    /*
+    União de transações Jaé e RioCard
+    */
+    transacao_unificada as (
+        select *
+        from transacao
+
+        union all
+
+        select *
+        from transacao_riocard
+    ),
+    /*
     Dados do calendário com informações sobre feeds do GTFS, tipos de dia e service_ids
     */
     calendario as (
@@ -233,6 +273,10 @@ with
         select
             data,
             v.id_viagem,
+            {% if var("tipo_materializacao") == "monitoramento" %}
+                cast(null as string) as id_viagem_planejada,
+            {% else %} v.id_viagem_planejada,
+            {% endif %}
             v.datetime_partida as datetime_partida_informada,
             v.datetime_chegada as datetime_chegada_informada,
             pca.datetime_partida_automatica,
@@ -296,7 +340,13 @@ with
     filtrando apenas GPS entre partida e chegada consideradas (Art. 5, par. 1)
     */
     gps_servico_segmento as (
-        select g.id_viagem, g.shape_id, s.id_segmento, count(*) as quantidade_gps
+        select
+            g.id_viagem,
+            g.shape_id,
+            s.id_segmento,
+            count(*) as quantidade_gps,
+            min(g.datetime_gps) as datetime_primeiro_gps_segmento,
+            max(g.datetime_gps) as datetime_ultimo_gps_segmento
         from gps_viagem g
         join
             segmento s
@@ -334,6 +384,7 @@ with
         select
             v.data,
             v.id_viagem,
+            v.id_viagem_planejada,
             v.datetime_partida_informada,
             v.datetime_chegada_informada,
             v.datetime_partida_automatica,
@@ -379,10 +430,57 @@ with
                 )
                 or (s.inicio_vigencia_tunel is null and s.fim_vigencia_tunel is null)
             )
+    ),
+    /*
+    Associação dos segmentos com dados de GPS e cálculo de datetime de início/fim por segmento
+    */
+    segmento_com_datetime as (
+        select
+            v.*,
+            ifnull(g.quantidade_gps, 0) as quantidade_gps,
+            g.datetime_primeiro_gps_segmento,
+            g.datetime_ultimo_gps_segmento,
+            case
+                when
+                    cast(v.id_segmento as int64)
+                    = min(cast(v.id_segmento as int64)) over (partition by v.id_viagem)
+                then v.datetime_partida_considerada
+                else g.datetime_primeiro_gps_segmento
+            end as datetime_inicio_segmento,
+            case
+                when
+                    cast(v.id_segmento as int64)
+                    = max(cast(v.id_segmento as int64)) over (partition by v.id_viagem)
+                then v.datetime_chegada_considerada
+                else g.datetime_ultimo_gps_segmento
+            end as datetime_fim_segmento
+        from viagem_segmento v
+        left join gps_servico_segmento g using (id_viagem, shape_id, id_segmento)
+    ),
+    /*
+    Contagem de passageiros por segmento com base nas transações unificadas
+    */
+    transacao_segmento as (
+        select
+            s.id_viagem,
+            s.shape_id,
+            s.id_segmento,
+            count(t.datetime_transacao) as quantidade_passageiros
+        from segmento_com_datetime s
+        left join
+            transacao_unificada t
+            on t.id_veiculo = substr(s.id_veiculo, 2)
+            and t.datetime_transacao
+            between s.datetime_inicio_segmento and s.datetime_fim_segmento
+        where
+            s.datetime_inicio_segmento is not null
+            and s.datetime_fim_segmento is not null
+        group by 1, 2, 3
     )
 select
     v.data,
-    id_viagem,
+    v.id_viagem,
+    v.id_viagem_planejada,
     v.datetime_partida_informada,
     v.datetime_chegada_informada,
     v.datetime_partida_automatica,
@@ -393,13 +491,16 @@ select
     v.id_veiculo,
     v.trip_id,
     v.route_id,
-    shape_id,
-    id_segmento,
+    v.shape_id,
+    v.id_segmento,
     v.servico,
     v.sentido,
-    ifnull(g.quantidade_gps, 0) as quantidade_gps,
+    v.quantidade_gps,
     v.indicador_segmento_desconsiderado,
     s.indicador_servico_divergente,
+    v.datetime_inicio_segmento,
+    v.datetime_fim_segmento,
+    ifnull(ts.quantidade_passageiros, 0) as quantidade_passageiros,
     v.feed_version,
     v.feed_start_date,
     v.service_ids,
@@ -410,8 +511,8 @@ select
     v.datetime_captura_viagem,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
-from viagem_segmento v
-left join gps_servico_segmento g using (id_viagem, shape_id, id_segmento)
+from segmento_com_datetime v
+left join transacao_segmento ts using (id_viagem, shape_id, id_segmento)
 left join servico_divergente s using (id_viagem)
 {% if not is_incremental() and var("tipo_materializacao") != "monitoramento" %}
     where v.data <= date_sub(current_date("America/Sao_Paulo"), interval 2 day)
