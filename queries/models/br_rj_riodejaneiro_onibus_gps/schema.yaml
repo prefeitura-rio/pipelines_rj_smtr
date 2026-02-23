@@ -239,9 +239,10 @@ models:
     description: "Tabela com todas as realocações de linha informadas"
     tests:
       - check_gps_capture:
-          table_id: realocacao
-          interval: 10
           name: check_gps_capture__sppo_realocacao
+          arguments:
+            table_id: realocacao
+            interval: 10
     columns:
       - name: id_veiculo
         description: "{{ doc('id_veiculo') }}"
@@ -291,9 +292,10 @@ models:
     description: "Tabela com todos os registros de GPS"
     tests:
       - check_gps_capture:
-          table_id: registros
-          interval: 1
           name: check_gps_capture__sppo_registros
+          arguments:
+            table_id: registros
+            interval: 1
     columns:
       - name: ordem
         description: "{{ doc('id_veiculo') }}"

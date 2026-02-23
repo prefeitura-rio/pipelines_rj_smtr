@@ -2,17 +2,17 @@
 
 with
     gps_conecta as (
-        select data, timestamp_gps, servico, id_veiculo, latitude, longitude
+        select data, datetime_gps, servico, id_veiculo, latitude, longitude
         {# from `rj-smtr.monitoramento.gps_15_minutos_onibus_conecta` #}
         from {{ source("monitoramento", "gps_15_minutos_onibus_conecta") }}
     ),
     gps_zirix as (
-        select data, timestamp_gps, servico, id_veiculo, latitude, longitude
+        select data, datetime_gps, servico, id_veiculo, latitude, longitude
         {# from `rj-smtr.monitoramento.gps_15_minutos_onibus_zirix` #}
         from {{ source("monitoramento", "gps_15_minutos_onibus_zirix") }}
     ),
     gps_cittati as (
-        select data, timestamp_gps, servico, id_veiculo, latitude, longitude
+        select data, datetime_gps, servico, id_veiculo, latitude, longitude
         {# from `rj-smtr.monitoramento.gps_15_minutos_onibus_cittati` #}
         from {{ source("monitoramento", "gps_15_minutos_onibus_cittati") }}
     ),

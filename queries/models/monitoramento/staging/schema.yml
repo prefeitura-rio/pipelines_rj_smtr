@@ -5,9 +5,10 @@ models:
     description: "Tabela com todos os registros de GPS da API {{ var('fonte_gps') }}"
     tests:
       - check_gps_capture:
-          table_id: registros
-          interval: 1
           name: check_gps_capture__staging_gps
+          arguments:
+            table_id: registros
+            interval: 1
     columns:
       - name: data
         description: "{{ doc('data_captura') }}"
@@ -45,9 +46,10 @@ models:
     description: "Tabela com todas as realocações de linha informadas pela API {{ var('fonte_gps') }}"
     tests:
       - check_gps_capture:
-          table_id: realocacao
-          interval: 10
           name: check_gps_capture__staging_realocacao
+          arguments:
+            table_id: realocacao
+            interval: 10
     columns:
       - name: data
         description: "{{ doc('data_captura') }}"
