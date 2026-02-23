@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.6.3] - 2026-02-23
+
+### Alterado
+
+- Alterados no modelo `aux_calendario_manual` o `tipo_os` de `2026-02-07`, `2026-02-08`, `2026-02-14`, `2026-02-15`, `2026-02-16`, `2026-02-17` e `2026-02-18` para `Verão`, dia `2026-02-13` o `tipo_dia` para `Ponto Facultativo`, dias `2026-02-16` e `2026-02-17` o `tipo_dia` para `Domingo` e dia `2026-02-18` o `tipo_dia` para `Sabado`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1258)
+
 ## [1.6.2] - 2026-02-09
 
 ### Alterado
