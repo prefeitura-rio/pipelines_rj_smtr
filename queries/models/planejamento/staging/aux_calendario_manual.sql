@@ -63,9 +63,9 @@ with
                 when data = date(2026, 02, 13)
                 then "Ponto Facultativo"  -- 000399.001590/2026-17 - Determinação de tipos dia de Carnaval
                 when data between date(2026, 02, 16) and date(2026, 02, 17)
-                then "Domingo" -- 000399.001590/2026-17 - Determinação de tipos dia de Carnaval
+                then "Domingo"  -- 000399.001590/2026-17 - Determinação de tipos dia de Carnaval
                 when data = date(2026, 02, 18)
-                then "Sabado" -- 000399.001590/2026-17 - Determinação de tipos dia de Carnaval
+                then "Sabado"  -- 000399.001590/2026-17 - Determinação de tipos dia de Carnaval
             end as tipo_dia,
             case
                 when data between date(2024, 09, 14) and date(2024, 09, 15)
