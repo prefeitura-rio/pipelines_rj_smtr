@@ -114,6 +114,7 @@ vars:
   shapes_version: "YYYY-MM-DD"
   frequencies_version: "YYYY-MM-DD"
   tipo_materializacao: "subsidio"
+  tipo_teste: ""
   data_inicio_trips_shapes: "2023-04-01"
   data_inclusao_autuacao_disciplinar: "2025-07-10"
   data_processamento_veiculo_licenciamento_dia: ["'2025-07-10'", "'2025-07-24'", "'2025-10-16'"]
