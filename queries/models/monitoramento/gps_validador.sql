@@ -8,7 +8,7 @@
     )
 }}
 
-{% set gps_validador_aux = ref("gps_validador_aux") %}
+{% set aux_gps_validador = ref("aux_gps_validador") %}
 
 
 {% set incremental_filter %}
@@ -39,7 +39,7 @@
     {% set partitions_query %}
             select distinct
                 concat("'", date(datetime_gps), "'") as data
-            from {{ gps_validador_aux }}
+            from {{ aux_gps_validador }}
             where {{ incremental_filter }}
 
     {% endset %}
@@ -81,7 +81,7 @@ with
             estado_equipamento,
             temperatura,
             versao_app
-        from {{ gps_validador_aux }}
+        from {{ aux_gps_validador }}
         where
             modo != "Van"
             {% if is_incremental() %} and {{ incremental_filter }} {% endif %}
