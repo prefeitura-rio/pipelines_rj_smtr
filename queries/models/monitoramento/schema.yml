@@ -539,7 +539,7 @@ models:
                   '026.XIII',
                   '026.XIV'
                 )
-                and modo = 'ÔNIBUS'
+                and modo = 'ONIBUS'
               field: id_auto_infracao
               where: |
                 data_inclusao_datalake between date('{date_range_start}') and date('{date_range_end}')
@@ -555,7 +555,7 @@ models:
               name: not_null__id_infracao__autuacao_disciplinar_historico
               where: "data_inclusao_datalake between date('{date_range_start}') and date('{date_range_end}')"
       - name: modo
-        description: "{{ doc('modo_Ônibus') }}"
+        description: "{{ doc('modo_onibus') }}"
         data_type: string
         quote: true
       - name: servico
@@ -615,7 +615,7 @@ models:
                   "023.IX",
                   "024.X"
                 )
-                and modo = 'ÔNIBUS'
+                and modo = 'ONIBUS'
       - name: valor
         description: "{{ doc('valor') }}"
         data_type: float64
