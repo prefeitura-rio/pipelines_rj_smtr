@@ -226,7 +226,20 @@ with
             if(trim(v.sentido) = '', null, v.sentido) as sentido,
             if(trim(v.fonte_gps) = '', null, v.fonte_gps) as fonte_gps,
             v.datetime_processamento,
-            v.datetime_captura
+            v.datetime_captura,
+            v.datetime_processamento
+            > v.datetime_captura as indicador_processamento_posterior_captura,
+            v.datetime_processamento
+            < v.datetime_chegada as indicador_processamento_anterior_chegada,
+            ifnull(
+                (
+                    select countif(tipo_dia = 'Dia Útil')
+                    from {{ calendario }}
+                    where data > v.data and data <= date(v.datetime_processamento)
+                )
+                <= 2,
+                false
+            ) as indicador_prazo_envio
         from deduplicado v
         join calendario c using (data)
         left join routes r using (route_id, feed_start_date, feed_version)

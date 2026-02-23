@@ -1007,6 +1007,42 @@ Data da última atualização
 Data e hora do processamento da viagem
 {% enddocs %}
 
+{% docs indicador_prazo_envio %}
+Indica se a viagem foi enviada dentro do prazo de até 2 dias úteis após a data de partida
+{% enddocs %}
+
+{% docs indicador_viagem_sobreposta %}
+Indica se a viagem se sobrepõe a outra viagem do mesmo veículo
+{% enddocs %}
+
+{% docs id_transmissao_gps %}
+Identificador único da tabela de GPS dos validadores
+{% enddocs %}
+
+{% docs temperatura_validador %}
+Temperatura do local, medida pelo sensor do validador (ºC)
+{% enddocs %}
+
+{% docs versao_app_validador %}
+Versão do Software do validador
+{% enddocs %}
+
+{% docs data_recebimento_gps %}
+Data do recebimento da transmissão do GPS
+{% enddocs %}
+
+{% docs hora_recebimento_gps %}
+Hora do recebimento da transmissão do GPS
+{% enddocs %}
+
+{% docs indicador_processamento_posterior_captura %}
+Indica se o datetime de processamento é posterior ao datetime de captura, caracterizando alteração retroativa indevida [Art. 8º, I]
+{% enddocs %}
+
+{% docs indicador_processamento_anterior_chegada %}
+Indica se o datetime de processamento é anterior ao datetime de chegada, indicando processamento antes da conclusão da viagem [Art. 8º, II]
+{% enddocs %}
+
 {% docs especie_veiculo %}
 Espécie do veículo
 {% enddocs %}

@@ -272,9 +272,15 @@ with
             c.feed_start_date,
             c.feed_version,
         {% if var("tipo_materializacao") == "monitoramento" %}
+                false as indicador_processamento_posterior_captura,
+                false as indicador_processamento_anterior_chegada,
+                true as indicador_prazo_envio,
                 v.datetime_ultima_atualizacao as datetime_captura_viagem
             from {{ ref("viagem_inferida") }} v
         {% else %}
+                v.indicador_processamento_posterior_captura,
+                v.indicador_processamento_anterior_chegada,
+                v.indicador_prazo_envio,
                 v.datetime_captura as datetime_captura_viagem
             from {{ ref("viagem_informada_monitoramento") }} v
         {% endif %}
@@ -345,6 +351,9 @@ with
             v.tipo_dia,
             v.feed_version,
             v.feed_start_date,
+            v.indicador_processamento_posterior_captura,
+            v.indicador_processamento_anterior_chegada,
+            v.indicador_prazo_envio,
             v.datetime_captura_viagem
         from viagem v
         left join
@@ -393,6 +402,9 @@ select
     v.feed_start_date,
     v.service_ids,
     v.tipo_dia,
+    v.indicador_processamento_posterior_captura,
+    v.indicador_processamento_anterior_chegada,
+    v.indicador_prazo_envio,
     v.datetime_captura_viagem,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao

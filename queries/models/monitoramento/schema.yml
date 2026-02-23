@@ -35,7 +35,7 @@ models:
         data_type: string
         quote: true
       - name: shape_id
-        description: Identificador de um shape da tabela shapes do GTFS
+        description: "{{ doc('shape_id') }}"
         data_type: string
         quote: true
       - name: servico
@@ -53,6 +53,18 @@ models:
       - name: datetime_processamento
         description: "{{ doc('datetime_processamento_viagem') }} [GMT-3]"
         data_type: datetime
+        quote: true
+      - name: indicador_processamento_posterior_captura
+        description: "{{ doc('indicador_processamento_posterior_captura') }}"
+        data_type: boolean
+        quote: true
+      - name: indicador_processamento_anterior_chegada
+        description: "{{ doc('indicador_processamento_anterior_chegada') }}"
+        data_type: boolean
+        quote: true
+      - name: indicador_prazo_envio
+        description: "{{ doc('indicador_prazo_envio') }}"
+        data_type: boolean
         quote: true
       - name: datetime_captura
         description: Data e hora da captura da integração [GMT-3]
@@ -122,7 +134,7 @@ models:
         data_type: string
         quote: true
       - name: shape_id
-        description: "Identificador de um shape da tabela shapes do GTFS"
+        description: "{{ doc('shape_id') }}"
         data_type: string
         quote: true
       - name: servico
@@ -154,7 +166,7 @@ models:
         data_type: int64
         quote: true
       - name: indicador_viagem_sobreposta
-        description: "Indica se a viagem se sobrepõe a outra viagem do mesmo veículo"
+        description: "{{ doc('indicador_viagem_sobreposta') }}"
         data_type: boolean
         quote: true
       - name: indicador_trajeto_valido
@@ -187,6 +199,18 @@ models:
         quote: true
       - name: indicador_acima_velocidade_max
         description: "Indica se a velocidade média da viagem está acima do limite estabelecido"
+        data_type: boolean
+        quote: true
+      - name: indicador_processamento_posterior_captura
+        description: "{{ doc('indicador_processamento_posterior_captura') }}"
+        data_type: boolean
+        quote: true
+      - name: indicador_processamento_anterior_chegada
+        description: "{{ doc('indicador_processamento_anterior_chegada') }}"
+        data_type: boolean
+        quote: true
+      - name: indicador_prazo_envio
+        description: "{{ doc('indicador_prazo_envio') }}"
         data_type: boolean
         quote: true
       - name: indicador_viagem_valida
@@ -270,7 +294,7 @@ models:
         data_type: string
         quote: true
       - name: shape_id
-        description: "Identificador de um shape da tabela shapes do GTFS"
+        description: "{{ doc('shape_id') }}"
         data_type: string
         quote: true
       - name: id_segmento
@@ -290,7 +314,7 @@ models:
         data_type: int64
         quote: true
       - name: indicador_viagem_sobreposta
-        description: "Indica se a viagem se sobrepõe a outra viagem do mesmo veículo"
+        description: "{{ doc('indicador_viagem_sobreposta') }}"
         data_type: boolean
         quote: true
       - name: indicador_segmento_desconsiderado
@@ -923,9 +947,9 @@ models:
           - not_null:
               name: not_null__modo__gps_validador
       - name: data
-        description: "Data do recebimento da transmissão do GPS (partição)"
+        description: "{{ doc('data_recebimento_gps') }} (partição)"
       - name: hora
-        description: "Hora do recebimento da transmissão do GPS"
+        description: "{{ doc('hora_recebimento_gps') }}"
       - name: datetime_gps
         description: "{{ doc('datetime_gps') }}"
         tests:
@@ -968,7 +992,7 @@ models:
           - not_null:
               name: not_null__id_validador__gps_validador
       - name: id_transmissao_gps
-        description: "Identificador único da tabela de GPS dos validadores"
+        description: "{{ doc('id_transmissao_gps') }}"
         tests:
           - not_null:
               name: not_null__id_transmissao_gps__gps_validador
@@ -991,9 +1015,9 @@ models:
           - not_null:
               name: not_null__estado_equipamento__gps_validador
       - name: temperatura
-        description: "Temperatura do local, medida pelo sensor do validador (ºC)"
+        description: "{{ doc('temperatura_validador') }}"
       - name: versao_app
-        description: "Versão do Software do validador"
+        description: "{{ doc('versao_app_validador') }}"
       - name: versao
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao
@@ -1013,9 +1037,9 @@ models:
           - not_null:
               name: not_null__modo__gps_validador_van
       - name: data
-        description: "Data do recebimento da transmissão do GPS (partição)"
+        description: "{{ doc('data_recebimento_gps') }} (partição)"
       - name: hora
-        description: "Hora do recebimento da transmissão do GPS"
+        description: "{{ doc('hora_recebimento_gps') }}"
       - name: datetime_gps
         description: "{{ doc('datetime_gps') }}"
       - name: datetime_captura
@@ -1052,7 +1076,7 @@ models:
           - not_null:
               name: not_null__id_validador__gps_validador_van
       - name: id_transmissao_gps
-        description: "Identificador único da tabela de GPS dos validadores"
+        description: "{{ doc('id_transmissao_gps') }}"
         tests:
           - not_null:
               name: not_null__id_transmissao_gps__gps_validador_van
@@ -1079,9 +1103,9 @@ models:
           - not_null:
               name: not_null__estado_equipamento__gps_validador_van
       - name: temperatura
-        description: "Temperatura do local, medida pelo sensor do validador (ºC)"
+        description: "{{ doc('temperatura_validador') }}"
       - name: versao_app
-        description: "Versão do Software do validador"
+        description: "{{ doc('versao_app_validador') }}"
       - name: versao
         description: "{{ doc('versao') }}"
       - name: datetime_ultima_atualizacao

@@ -69,6 +69,9 @@ with
             ) as quantidade_segmentos_tolerados,
             max(indicador_servico_divergente) as indicador_servico_divergente,
             max(id_segmento is null) as indicador_shape_invalido,
+            indicador_processamento_posterior_captura,
+            indicador_processamento_anterior_chegada,
+            indicador_prazo_envio,
             service_ids,
             tipo_dia,
             feed_version,
@@ -100,6 +103,9 @@ with
             shape_id,
             servico,
             sentido,
+            indicador_processamento_posterior_captura,
+            indicador_processamento_anterior_chegada,
+            indicador_prazo_envio,
             service_ids,
             tipo_dia,
             feed_version,
@@ -148,6 +154,9 @@ with
                 and id_veiculo is not null
                 and id_veiculo != ""
             ) as indicador_campos_obrigatorios,
+            indicador_processamento_posterior_captura,
+            indicador_processamento_anterior_chegada,
+            indicador_prazo_envio,
             service_ids,
             tipo_dia,
             feed_version,
@@ -350,6 +359,9 @@ with
             vm.indicador_campos_obrigatorios,
             vm.indicador_trajeto_alternativo,
             vm.indicador_acima_velocidade_max,
+            vm.indicador_processamento_posterior_captura,
+            vm.indicador_processamento_anterior_chegada,
+            vm.indicador_prazo_envio,
             (
                 vm.indicador_campos_obrigatorios and not vm.indicador_shape_invalido
                 -- fmt: off
@@ -361,6 +373,9 @@ with
                 {% endif %}
                 and not vm.indicador_acima_velocidade_max
                 and ifnull(vm.indicador_servico_planejado_os, true)
+                and not vm.indicador_processamento_posterior_captura
+                and not vm.indicador_processamento_anterior_chegada
+                and vm.indicador_prazo_envio
             ) as indicador_viagem_valida,
             vm.tipo_dia,
             vm.feed_version,
@@ -458,6 +473,9 @@ select
     indicador_campos_obrigatorios,
     indicador_trajeto_alternativo,
     indicador_acima_velocidade_max,
+    indicador_processamento_posterior_captura,
+    indicador_processamento_anterior_chegada,
+    indicador_prazo_envio,
     indicador_viagem_valida,
     tipo_dia,
     feed_version,
