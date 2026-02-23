@@ -48,6 +48,7 @@ with
         select
             data,
             id_viagem,
+            id_viagem_planejada,
             datetime_partida_informada,
             datetime_chegada_informada,
             datetime_partida_automatica,
@@ -90,6 +91,7 @@ with
         group by
             data,
             id_viagem,
+            id_viagem_planejada,
             datetime_partida_informada,
             datetime_chegada_informada,
             datetime_partida_automatica,
@@ -119,6 +121,7 @@ with
         select
             data,
             id_viagem,
+            id_viagem_planejada,
             datetime_partida_informada,
             datetime_chegada_informada,
             datetime_partida_automatica,
@@ -316,9 +319,7 @@ with
         qualify
             row_number() over (
                 partition by v1.id_viagem
-                order by
-                    v2.datetime_captura_viagem desc,
-                    v2.datetime_partida_informada
+                order by v2.datetime_captura_viagem desc, v2.datetime_partida_informada
             )
             = 1
     ),
@@ -329,6 +330,7 @@ with
         select
             vm.data,
             vm.id_viagem,
+            vm.id_viagem_planejada,
             vm.datetime_partida_informada,
             vm.datetime_chegada_informada,
             vm.datetime_partida_automatica,
@@ -407,9 +409,7 @@ with
         qualify
             row_number() over (
                 partition by
-                    id_veiculo,
-                    datetime_partida_informada,
-                    datetime_chegada_informada
+                    id_veiculo, datetime_partida_informada, datetime_chegada_informada
                 order by
                     indice_validacao desc,
                     indicador_trajeto_alternativo,
@@ -446,6 +446,7 @@ with
 select
     data,
     id_viagem,
+    id_viagem_planejada,
     datetime_partida_informada,
     datetime_chegada_informada,
     datetime_partida_automatica,
@@ -464,6 +465,7 @@ select
     quantidade_segmentos_considerados,
     quantidade_segmentos_validos,
     quantidade_segmentos_necessarios,
+    indice_validacao,
     indicador_viagem_sobreposta,
     indicador_trajeto_valido,
     indicador_servico_planejado_gtfs,

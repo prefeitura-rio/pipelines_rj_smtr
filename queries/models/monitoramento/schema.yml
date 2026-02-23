@@ -10,6 +10,10 @@ models:
         description: "{{ doc('id_viagem') }} [datetime partida em UTC]"
         data_type: string
         quote: true
+      - name: id_viagem_planejada
+        description: "{{ doc('id_viagem_planejada') }}"
+        data_type: string
+        quote: true
       - name: datetime_partida
         description: "{{ doc('datetime_partida') }}"
         data_type: datetime
@@ -93,6 +97,10 @@ models:
         description: "{{ doc('id_viagem') }} [datetime partida em UTC]"
         data_type: string
         quote: true
+      - name: id_viagem_planejada
+        description: "{{ doc('id_viagem_planejada') }}"
+        data_type: string
+        quote: true
       - name: datetime_partida_informada
         description: "{{ doc('datetime_partida_informada') }}"
         data_type: datetime
@@ -164,6 +172,10 @@ models:
       - name: quantidade_segmentos_necessarios
         description: "Quantidade mínima de segmentos para que a viagem seja validada"
         data_type: int64
+        quote: true
+      - name: indice_validacao
+        description: "{{ doc('indice_validacao') }}"
+        data_type: float64
         quote: true
       - name: indicador_viagem_sobreposta
         description: "{{ doc('indicador_viagem_sobreposta') }}"
@@ -253,6 +265,10 @@ models:
         description: "{{ doc('id_viagem') }}"
         data_type: string
         quote: true
+      - name: id_viagem_planejada
+        description: "{{ doc('id_viagem_planejada') }}"
+        data_type: string
+        quote: true
       - name: datetime_partida_informada
         description: "{{ doc('datetime_partida_informada') }}"
         data_type: datetime
@@ -324,6 +340,18 @@ models:
       - name: indicador_servico_divergente
         description: "{{ doc('indicador_servico_divergente') }}"
         data_type: boolean
+        quote: true
+      - name: datetime_inicio_segmento
+        description: "{{ doc('datetime_inicio_segmento') }}"
+        data_type: datetime
+        quote: true
+      - name: datetime_fim_segmento
+        description: "{{ doc('datetime_fim_segmento') }}"
+        data_type: datetime
+        quote: true
+      - name: quantidade_passageiros
+        description: "{{ doc('quantidade_passageiros') }}"
+        data_type: int64
         quote: true
       - name: feed_version
         description: "{{ doc('feed_version') }}"
@@ -1149,6 +1177,10 @@ models:
         quote: true
       - name: id_viagem
         description: "{{ doc('id_viagem') }} [datetime partida em UTC]"
+        data_type: string
+        quote: true
+      - name: id_viagem_planejada
+        description: "{{ doc('id_viagem_planejada') }}"
         data_type: string
         quote: true
       - name: id_veiculo

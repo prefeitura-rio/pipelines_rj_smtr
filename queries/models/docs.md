@@ -1592,3 +1592,19 @@ Array contendo os percentuais de rateio para cada perna da integração
 {% docs agency_id %}
 Identificador único de uma agência de transporte
 {% enddocs %}
+
+{% docs id_viagem_planejada %}
+Código identificador da viagem planejada associada
+{% enddocs %}
+
+{% docs indice_validacao %}
+Índice de validação da viagem [razão entre segmentos válidos e segmentos considerados]
+{% enddocs %}
+
+{% docs datetime_inicio_segmento %}
+Data e hora de início do segmento [partida considerada para o primeiro segmento, primeiro GPS para os demais]
+{% enddocs %}
+
+{% docs datetime_fim_segmento %}
+Data e hora de fim do segmento [chegada considerada para o último segmento, último GPS para os demais]
+{% enddocs %}
