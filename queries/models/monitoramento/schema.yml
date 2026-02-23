@@ -891,6 +891,7 @@ models:
         tests:
           - not_null:
               name: not_null__modo__gps_validador
+              where: data in ({partitions}) and ('{{ var('tipo_teste','') }}' <> 'subsidio' or modo = 'Ônibus')
       - name: data
         description: "Data do recebimento da transmissão do GPS (partição)"
       - name: hora
@@ -900,16 +901,19 @@ models:
         tests:
           - not_null:
               name: not_null__datetime_gps__gps_validador
+              where: data in ({partitions}) and ('{{ var('tipo_teste','') }}' <> 'subsidio' or modo = 'Ônibus')
       - name: datetime_captura
         description: "{{ doc('datetime_captura') }}"
         tests:
           - not_null:
               name: not_null__datetime_captura__gps_validador
+              where: data in ({partitions}) and ('{{ var('tipo_teste','') }}' <> 'subsidio' or modo = 'Ônibus')
       - name: id_operadora
         description: "{{ doc('id_operadora') }}"
         tests:
           - not_null:
               name: not_null__id_operadora__gps_validador
+              where: data in ({partitions}) and ('{{ var('tipo_teste','') }}' <> 'subsidio' or modo = 'Ônibus')
       - name: id_operadora_jae
         description: "{{ doc('id_operadora_jae') }}"
       - name: operadora
@@ -917,18 +921,19 @@ models:
         tests:
           - not_null:
               name: not_null__operadora__gps_validador
+              where: data in ({partitions}) and ('{{ var('tipo_teste','') }}' <> 'subsidio' or modo = 'Ônibus')
       - name: id_servico_jae
         description: "{{ doc('id_servico_jae') }}"
         tests:
           - not_null:
               name: not_null__id_servico_jae__gps_validador
-              where: "data in ({partitions}) and estado_equipamento != 'FECHADO'"
+              where: "data in ({partitions}) and estado_equipamento != 'FECHADO' and ('{{ var('tipo_teste','') }}' <> 'subsidio' or modo = 'Ônibus')"
       - name: servico_jae
         description: "{{ doc('servico_jae') }}"
         tests:
           - not_null:
               name: not_null__servico_jae__gps_validador
-              where: "data in ({partitions}) and estado_equipamento != 'FECHADO'"
+              where: "data in ({partitions}) and estado_equipamento != 'FECHADO' and ('{{ var('tipo_teste','') }}' <> 'subsidio' or modo = 'Ônibus')"
       - name: descricao_servico_jae
         description: "{{ doc('descricao_servico_jae') }}"
       - name: id_validador
@@ -936,13 +941,16 @@ models:
         tests:
           - not_null:
               name: not_null__id_validador__gps_validador
+              where: data in ({partitions}) and ('{{ var('tipo_teste','') }}' <> 'subsidio' or modo = 'Ônibus')
       - name: id_transmissao_gps
         description: "Identificador único da tabela de GPS dos validadores"
         tests:
           - not_null:
               name: not_null__id_transmissao_gps__gps_validador
+              where: data in ({partitions}) and ('{{ var('tipo_teste','') }}' <> 'subsidio' or modo = 'Ônibus')
           - unique:
               name: unique__id_transmissao_gps__gps_validador
+              where: data in ({partitions}) and ('{{ var('tipo_teste','') }}' <> 'subsidio' or modo = 'Ônibus')
       - name: latitude
         description: "Latitude do validador no momento da transmissão"
       - name: longitude
@@ -954,11 +962,13 @@ models:
         tests:
           - not_null:
               name: not_null__sentido__gps_validador
+              where: data in ({partitions}) and ('{{ var('tipo_teste','') }}' <> 'subsidio' or modo = 'Ônibus')
       - name: estado_equipamento
         description: "Validador aberto ou fechado no momento da transmissão"
         tests:
           - not_null:
               name: not_null__estado_equipamento__gps_validador
+              where: data in ({partitions}) and ('{{ var('tipo_teste','') }}' <> 'subsidio' or modo = 'Ônibus')
       - name: temperatura
         description: "Temperatura do local, medida pelo sensor do validador (ºC)"
       - name: versao_app
