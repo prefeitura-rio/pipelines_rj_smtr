@@ -31,6 +31,7 @@ with
 select
     vv.data,
     vv.id_viagem,
+    vv.id_viagem_planejada,
     vv.id_veiculo,
     ve.placa,
     ve.ano_fabricacao,

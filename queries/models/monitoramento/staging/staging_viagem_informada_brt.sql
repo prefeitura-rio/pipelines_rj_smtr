@@ -7,6 +7,9 @@
 select
     data,
     safe_cast(id_viagem as string) as id_viagem,
+    safe_cast(
+        json_value(content, '$.id_viagem_planejada') as string
+    ) as id_viagem_planejada,
     datetime(
         parse_timestamp(
             '%Y-%m-%d %H:%M:%S%Ez',
