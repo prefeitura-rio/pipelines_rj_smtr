@@ -62,6 +62,10 @@ with
                 then "Ponto Facultativo"  -- 000399.001368/2025-25 - Ponto Facultativo referente às festas de fim de ano
                 when data = date(2026, 02, 13)
                 then "Ponto Facultativo"  -- 000399.001590/2026-17 - Determinação de tipos dia de Carnaval
+                when data between date(2026, 02, 16) and date(2026, 02, 17)
+                then "Domingo" -- 000399.001590/2026-17 - Determinação de tipos dia de Carnaval
+                when data = date(2026, 02, 18)
+                then "Sabado" -- 000399.001590/2026-17 - Determinação de tipos dia de Carnaval
             end as tipo_dia,
             case
                 when data between date(2024, 09, 14) and date(2024, 09, 15)
@@ -156,7 +160,7 @@ with
                 then "Verão"  -- 000399.001025/2026-41 - Acionamento do Plano Verão
                 when data between date(2026, 02, 07) and date(2026, 02, 08)
                 then "Verão"  -- 000399.001320/2026-06 - Acionamento do Plano Verão
-                when data between date(2026, 02, 14) and date(2026, 02, 15)
+                when data between date(2026, 02, 14) and date(2026, 02, 18)
                 then "Verão"  -- 000399.001536/2026-63 - Acionamento do Plano Verão                
             end as tipo_os
         from
