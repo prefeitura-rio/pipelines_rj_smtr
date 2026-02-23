@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.2.13] - 2026-02-11
+
+### Adicionado
+
+- Adiciona parâmetro `tipo_materializacao` no flow `MONITORAMENTO_TEMPERATURA_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1236)
+
 ## [1.2.12] - 2026-02-10
 
 ### Removido

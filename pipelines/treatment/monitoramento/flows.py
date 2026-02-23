@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de monitoramento
 
-DBT 2026-02-02
+DBT: 2026-02-23
 """
 
 from copy import deepcopy
@@ -180,6 +180,11 @@ MONITORAMENTO_TEMPERATURA_MATERIALIZACAO = create_default_materialization_flow(
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[constants.MONITORAMENTO_VEICULO_SELECTOR.value],
     post_tests=constants.MONITORAMENTO_TEMPERATURA_TEST.value,
+)
+
+set_default_parameters(
+    MONITORAMENTO_TEMPERATURA_MATERIALIZACAO,
+    {"additional_vars": {"tipo_materializacao": "monitoramento"}},
 )
 
 GPS_VALIDADOR_MATERIALIZACAO = create_default_materialization_flow(
