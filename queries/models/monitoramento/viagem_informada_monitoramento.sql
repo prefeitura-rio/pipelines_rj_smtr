@@ -173,7 +173,15 @@ with
             union all
 
             select
-                * except (modo, versao, datetime_ultima_atualizacao, id_execucao_dbt),
+                * except (
+                    modo,
+                    indicador_processamento_posterior_captura,
+                    indicador_processamento_anterior_chegada,
+                    indicador_prazo_envio,
+                    versao,
+                    datetime_ultima_atualizacao,
+                    id_execucao_dbt
+                ),
                 1 as priority
             from {{ this }}
             where data in ({{ partitions | join(", ") }})
