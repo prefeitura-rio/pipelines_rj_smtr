@@ -4,7 +4,7 @@
 
 ### Removido
 
-- Remove schedule do flow `CAPTURA_LANCAMENTO`
+- Remove schedule do flow `CAPTURA_LANCAMENTO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1267)
 
 ## [3.1.9] - 2026-02-11
 
