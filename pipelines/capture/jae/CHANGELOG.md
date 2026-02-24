@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [3.1.10] - 2026-02-24
+
+### Removido
+
+- Remove schedule do flow `CAPTURA_LANCAMENTO`
+
 ## [3.1.9] - 2026-02-11
 
 ### Adicionado
