@@ -249,7 +249,7 @@ with
             spu.extensao as distancia_planejada,
             spu.indicador_trajeto_alternativo,
             -- fmt: off
-            safe_divide(spu.extensao*3600, datetime_diff(datetime_chegada_informada, datetime_partida_informada, second)) as velocidade_media,
+            safe_divide(spu.extensao*3600, datetime_diff(datetime_chegada_considerada, datetime_partida_considerada, second)) as velocidade_media,
             -- fmt: on
             case
                 when spu.quilometragem is not null and spu.quilometragem > 0
@@ -265,7 +265,7 @@ with
             on spu.servico = spg.servico
             and spu.data = spg.data
             and spu.shape_id = spg.shape_id
-            and spg.datetime_partida_informada
+            and spg.datetime_partida_considerada
             between spu.faixa_horaria_inicio and spu.faixa_horaria_fim
     ),
     /*
@@ -409,7 +409,9 @@ with
         qualify
             row_number() over (
                 partition by
-                    id_veiculo, datetime_partida_informada, datetime_chegada_informada
+                    id_veiculo,
+                    datetime_partida_considerada,
+                    datetime_chegada_considerada
                 order by
                     indice_validacao desc,
                     indicador_trajeto_alternativo,
@@ -425,7 +427,7 @@ with
         from filtro_desvio
         qualify
             row_number() over (
-                partition by id_veiculo, datetime_partida_informada
+                partition by id_veiculo, datetime_partida_considerada
                 order by distancia_planejada desc
             )
             = 1
@@ -438,7 +440,7 @@ with
         from filtro_partida
         qualify
             row_number() over (
-                partition by id_veiculo, datetime_chegada_informada
+                partition by id_veiculo, datetime_chegada_considerada
                 order by distancia_planejada desc
             )
             = 1
