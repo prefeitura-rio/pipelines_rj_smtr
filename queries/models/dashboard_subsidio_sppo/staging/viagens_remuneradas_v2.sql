@@ -200,7 +200,7 @@ select
                 "LECD137",
                 "232",
                 "LECD132"
-            )  -- Processo n° 000300.001720/2026-55
+            )  -- Processo n° 000300.005989/2026-19
         then true
         when
             (v.data between date('2026-01-01') and date('2026-01-15'))
