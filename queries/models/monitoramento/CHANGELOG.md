@@ -1,5 +1,12 @@
 # Changelog - monitoramento
 
+## [1.9.3] - 2026-02-23
+
+### Corrigido
+
+- Corrige o teste `test_check_regularidade_temperatura`, ajustando a lógica para o `indicador_temperatura_transmitida_viagem` quando o `indicador_temperatura_nula_viagem` for `false`. (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1254)
+- Corrige o teste `test_consistencia_indicadores_temperatura`para considerar o `indicador_regularidade_ar_condicionado_viagem`como true quando a temperatura for nula.(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1254)
+
 ## [1.9.2] - 2026-02-12
 
 ### Alterado
