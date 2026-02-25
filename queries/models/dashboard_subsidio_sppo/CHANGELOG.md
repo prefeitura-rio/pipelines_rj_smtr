@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [8.1.3] - 2026-02-24
+
+### Alterado
+
+- Alterado o modelo `viagens_remuneradas_v2` para adicionar exceção no limite de viagens em serviços especificados no Processo n°000300.005989/2026-19 no período entre  `2026-02-01` e `2026-02-15` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1266)
+
 ## [8.1.2] - 2026-01-27
 
 ### Alterado
