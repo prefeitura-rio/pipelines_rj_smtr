@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [2.0.15] - 2026-02-25
+
+### Removido
+
+- Remove schedule do flow `EXTRATO_CLIENTE_CARTAO_MATERIALIZACAO`
+
 ## [2.0.14] - 2025-11-19
 
 ### Adicionado
