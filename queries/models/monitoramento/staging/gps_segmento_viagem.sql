@@ -139,13 +139,15 @@ with
         {% endif %}
     ),
     /*
-    Identificação do primeiro e último segmento de cada shape com seus respectivos buffers
+    Identificação do primeiro e último segmento de cada shape com seus respectivos IDs e buffers
     */
     segmento_primeiro_ultimo as (
         select
             feed_version,
             feed_start_date,
             shape_id,
+            first_value(cast(id_segmento as int64)) over w as primeiro_segmento,
+            last_value(cast(id_segmento as int64)) over w_frame as ultimo_segmento,
             first_value(buffer) over w as buffer_primeiro_segmento,
             last_value(buffer) over w_frame as buffer_ultimo_segmento
         from segmento
@@ -336,6 +338,26 @@ with
         {% endif %}
     ),
     /*
+    Ponto médio temporal de cada viagem para desambiguação
+    de GPS em rotas circulares (primeiro e último segmento se sobrepõem)
+    */
+    midpoint_viagem as (
+        select
+            id_viagem,
+            datetime_add(
+                datetime_partida_considerada,
+                interval cast(
+                    datetime_diff(
+                        datetime_chegada_considerada,
+                        datetime_partida_considerada,
+                        second
+                    )
+                    / 2 as int64
+                ) second
+            ) as datetime_midpoint
+        from viagem
+    ),
+    /*
     Contagem de registros de GPS por segmento da viagem, aplicando regras de vigência para túneis,
     filtrando apenas GPS entre partida e chegada consideradas (Art. 5, par. 1)
     */
@@ -371,10 +393,35 @@ with
                 or (s.inicio_vigencia_tunel is null and s.fim_vigencia_tunel is null)
             )
         join viagem v on g.id_viagem = v.id_viagem
+        join
+            segmento_primeiro_ultimo spu
+            on s.feed_version = spu.feed_version
+            and s.feed_start_date = spu.feed_start_date
+            and s.shape_id = spu.shape_id
+        join midpoint_viagem mp on g.id_viagem = mp.id_viagem
         where
             g.servico_gps = g.servico_viagem
             and g.datetime_gps
             between v.datetime_partida_considerada and v.datetime_chegada_considerada
+            -- Desambiguação temporal para rotas circulares
+            -- (primeiro e último segmento se sobrepõem geograficamente)
+            and (
+                -- Segmentos do meio: sem restrição temporal
+                (
+                    cast(s.id_segmento as int64) != spu.primeiro_segmento
+                    and cast(s.id_segmento as int64) != spu.ultimo_segmento
+                )
+                -- Primeiro segmento: GPS antes do ponto médio da viagem
+                or (
+                    cast(s.id_segmento as int64) = spu.primeiro_segmento
+                    and g.datetime_gps < mp.datetime_midpoint
+                )
+                -- Último segmento: GPS a partir do ponto médio da viagem
+                or (
+                    cast(s.id_segmento as int64) = spu.ultimo_segmento
+                    and g.datetime_gps >= mp.datetime_midpoint
+                )
+            )
         group by all
     ),
     /*

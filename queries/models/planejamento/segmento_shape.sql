@@ -45,25 +45,44 @@ with
             or (date('{{ last_feed_version }}') <= inicio_vigencia)
         group by 1, 2
     ),
+    segmento_primeiro_ultimo as (
+        select
+            shape_id,
+            min(cast(id_segmento as integer)) as primeiro_segmento,
+            max(cast(id_segmento as integer)) as ultimo_segmento
+        from aux_segmento
+        group by 1
+    ),
     intercessao_segmento as (
         select
             s1.shape_id,
             s1.id_segmento,
-            st_union(array_agg(s2.buffer_completo)) as buffer_segmento_posterior
+            st_union(array_agg(s2.buffer_completo)) as buffer_segmento_prioritario
         from aux_segmento s1
+        join segmento_primeiro_ultimo l on s1.shape_id = l.shape_id
         join
             aux_segmento s2
             on s1.shape_id = s2.shape_id
-            and s1.id_segmento < s2.id_segmento
+            and s1.id_segmento != s2.id_segmento
             and st_intersects(s1.buffer_completo, s2.buffer_completo)
+            and (
+                -- segmentos posteriores (logica atual)
+                s1.id_segmento < s2.id_segmento
+                -- primeiro segmento tem prioridade sobre os do meio
+                or cast(s2.id_segmento as integer) = l.primeiro_segmento
+            )
+        where
+            -- apenas segmentos do meio sao recortados
+            cast(s1.id_segmento as integer) != l.primeiro_segmento
+            and cast(s1.id_segmento as integer) != l.ultimo_segmento
         group by 1, 2
     ),
     buffer_segmento_recortado as (
         select
             s.*,
             coalesce(
-                st_difference(buffer_completo, i.buffer_segmento_posterior),
-                buffer_completo
+                st_difference(s.buffer_completo, i.buffer_segmento_prioritario),
+                s.buffer_completo
             ) as buffer
         from aux_segmento s
         left join intercessao_segmento i using (shape_id, id_segmento)
