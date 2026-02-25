@@ -157,4 +157,5 @@ EXTRATO_CLIENTE_CARTAO_MATERIALIZACAO = create_default_materialization_flow(
         jae_constants.LANCAMENTO_SOURCE.value,
     ],
     skip_if_running_tolerance=10,
+    generate_schedule=False,
 )
