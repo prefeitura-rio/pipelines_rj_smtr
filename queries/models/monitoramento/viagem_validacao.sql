@@ -314,12 +314,13 @@ with
             )
             and v1.id_veiculo = v2.id_veiculo
             and v1.id_viagem != v2.id_viagem
-            and v1.datetime_partida_informada < v2.datetime_chegada_informada
-            and v1.datetime_chegada_informada > v2.datetime_partida_informada
+            and v1.datetime_partida_considerada < v2.datetime_chegada_considerada
+            and v1.datetime_chegada_considerada > v2.datetime_partida_considerada
         qualify
             row_number() over (
                 partition by v1.id_viagem
-                order by v2.datetime_captura_viagem desc, v2.datetime_partida_informada
+                order by
+                    v2.datetime_captura_viagem desc, v2.datetime_partida_considerada
             )
             = 1
     ),
