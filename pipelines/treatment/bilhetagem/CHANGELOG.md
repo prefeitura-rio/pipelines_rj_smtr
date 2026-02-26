@@ -4,7 +4,7 @@
 
 ### Removido
 
-- Remove schedule do flow `PASSAGEIRO_HORA_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1270)
+- Remove schedule do flow `PASSAGEIRO_HORA_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1273)
 
 ## [2.0.15] - 2026-02-25
 
