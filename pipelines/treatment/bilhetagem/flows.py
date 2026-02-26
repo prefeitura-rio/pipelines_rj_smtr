@@ -92,6 +92,7 @@ PASSAGEIRO_HORA_MATERIALIZACAO = create_default_materialization_flow(
     test_webhook_key=jae_constants.ALERT_WEBHOOK.value,
     post_tests=constants.PASSAGEIRO_HORA_DAILY_TEST.value,
     test_scheduled_time=time(0, 25, 0),
+    generate_schedule=False,
 )
 
 
