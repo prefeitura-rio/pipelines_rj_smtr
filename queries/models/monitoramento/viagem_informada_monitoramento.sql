@@ -173,15 +173,7 @@ with
             union all
 
             select
-                * except (
-                    modo,
-                    indicador_processamento_posterior_captura,
-                    indicador_processamento_anterior_chegada,
-                    indicador_prazo_envio,
-                    versao,
-                    datetime_ultima_atualizacao,
-                    id_execucao_dbt
-                ),
+                * except (modo, versao, datetime_ultima_atualizacao, id_execucao_dbt),
                 1 as priority
             from {{ this }}
             where data in ({{ partitions | join(", ") }})
@@ -238,20 +230,7 @@ with
             if(trim(v.sentido) = '', null, v.sentido) as sentido,
             if(trim(v.fonte_gps) = '', null, v.fonte_gps) as fonte_gps,
             v.datetime_processamento,
-            v.datetime_captura,
-            v.datetime_processamento
-            > v.datetime_captura as indicador_processamento_posterior_captura,
-            v.datetime_processamento
-            < v.datetime_chegada as indicador_processamento_anterior_chegada,
-            ifnull(
-                (
-                    select countif(tipo_dia = 'Dia Útil')
-                    from {{ calendario }}
-                    where data > v.data and data <= date(v.datetime_processamento)
-                )
-                <= 2,
-                false
-            ) as indicador_prazo_envio
+            v.datetime_captura
         from deduplicado v
         join calendario c using (data)
         left join routes r using (route_id, feed_start_date, feed_version)
