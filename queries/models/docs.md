@@ -351,7 +351,7 @@ Sentido da linha
 {% enddocs %}
 
 {% docs indicador_viagem_dentro_limite %}
-Indica se a viagem foi remunerada por estar abaixo do teto de 120%/200%
+Indica se a viagem foi remunerada por estar abaixo do teto de 110% / 120% / 200%
 {% enddocs %}
 
 {% docs indicador_penalidade_judicial %}
@@ -632,7 +632,7 @@ Valor efetivo de pagamento [valor_total_apurado - valor_acima_limite - valor_glo
 {% enddocs %}
 
 {% docs valor_acima_limite %}
-Valor apurado das viagens que não foram remuneradas por estar acima do teto de 120% / 200%
+Valor apurado das viagens que não foram remuneradas por estar acima do teto de 110% / 120% / 200%
 {% enddocs %}
 
 {% docs valor_pago %}
