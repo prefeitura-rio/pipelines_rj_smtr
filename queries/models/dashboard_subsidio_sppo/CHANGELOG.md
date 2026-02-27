@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [8.1.4] - 2026-02-27
+
+### Alterado
+
+- Altera a descrição da coluna `indicador_viagem_dentro_limite` adicionando limite de 110% (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1275)
+
 ## [8.1.3] - 2026-02-24
 
 ### Alterado
