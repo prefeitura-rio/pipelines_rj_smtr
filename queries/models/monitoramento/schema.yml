@@ -58,18 +58,6 @@ models:
         description: "{{ doc('datetime_processamento_viagem') }} [GMT-3]"
         data_type: datetime
         quote: true
-      - name: indicador_processamento_posterior_captura
-        description: "{{ doc('indicador_processamento_posterior_captura') }}"
-        data_type: boolean
-        quote: true
-      - name: indicador_processamento_anterior_chegada
-        description: "{{ doc('indicador_processamento_anterior_chegada') }}"
-        data_type: boolean
-        quote: true
-      - name: indicador_prazo_envio
-        description: "{{ doc('indicador_prazo_envio') }}"
-        data_type: boolean
-        quote: true
       - name: datetime_captura
         description: Data e hora da captura da integração [GMT-3]
         data_type: datetime
@@ -329,10 +317,6 @@ models:
         description: "Quantidade de sinais GPS detectados no segmento"
         data_type: int64
         quote: true
-      - name: indicador_viagem_sobreposta
-        description: "{{ doc('indicador_viagem_sobreposta') }}"
-        data_type: boolean
-        quote: true
       - name: indicador_segmento_desconsiderado
         description: "Indica se o segmento deve ser desconsiderado na validação"
         data_type: boolean
@@ -349,10 +333,6 @@ models:
         description: "{{ doc('datetime_fim_segmento') }}"
         data_type: datetime
         quote: true
-      - name: quantidade_passageiros
-        description: "{{ doc('quantidade_passageiros') }}"
-        data_type: int64
-        quote: true
       - name: feed_version
         description: "{{ doc('feed_version') }}"
         data_type: string
@@ -368,6 +348,10 @@ models:
       - name: tipo_dia
         description: "{{ doc('tipo_dia') }}"
         data_type: string
+        quote: true
+      - name: datetime_processamento
+        description: "{{ doc('datetime_processamento_viagem') }}"
+        data_type: datetime
         quote: true
       - name: datetime_captura_viagem
         description: "Data e hora da captura da viagem"

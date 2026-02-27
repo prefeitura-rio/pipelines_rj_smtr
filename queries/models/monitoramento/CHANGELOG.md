@@ -5,13 +5,13 @@
 ### Adicionado
 
 - Adiciona colunas `datetime_partida_informada`, `datetime_chegada_informada`, `datetime_partida_automatica`, `datetime_chegada_automatica`, `datetime_partida_considerada` e `datetime_chegada_considerada` nos modelos `gps_segmento_viagem`, `viagem_validacao` e `viagem_informada_monitoramento` para validação de início e fim de viagem com base em cerca eletrônica (Art. 3º, XIII e XVI) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
-- Adiciona colunas `indicador_processamento_posterior_captura`, `indicador_processamento_anterior_chegada` e `indicador_prazo_envio` nos modelos `viagem_informada_monitoramento`, `gps_segmento_viagem` e `viagem_validacao` para validação de inconsistências temporais (Art. 8º, I, II e III) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Adiciona colunas `indicador_processamento_posterior_captura`, `indicador_processamento_anterior_chegada` e `indicador_prazo_envio` no modelo `viagem_validacao` para validação de inconsistências temporais (Art. 8º, I, II e III) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
 - Adiciona coluna `indicador_viagem_sobreposta` no modelo `viagem_validacao` utilizando `datetime_partida_considerada` e `datetime_chegada_considerada` para detecção de sobreposição temporal (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
 - Adiciona coluna `id_viagem_planejada` nos modelos `staging_viagem_informada_rioonibus`, `staging_viagem_informada_brt`, `viagem_informada_monitoramento`, `gps_segmento_viagem`, `viagem_validacao` e `viagem_valida` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
 - Adiciona coluna `indice_validacao` na saída do modelo `viagem_validacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
-- Adiciona colunas `datetime_inicio_segmento`, `datetime_fim_segmento` e `quantidade_passageiros` no modelo `gps_segmento_viagem` com contagem de passageiros por segmento baseada em transações Jaé e RioCard (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
-- Adiciona colunas `datetime_primeiro_gps_segmento` e `datetime_ultimo_gps_segmento` no modelo `gps_segmento_viagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Adiciona colunas `datetime_inicio_segmento`, `datetime_fim_segmento` e `datetime_processamento` no modelo `gps_segmento_viagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
 - Adiciona desambiguação temporal para rotas circulares no modelo `gps_segmento_viagem` utilizando ponto médio da viagem para distinguir primeiro e último segmento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Adiciona macro `partida_chegada_automatica_case` para cálculo de partida e chegada automáticas com base em cerca eletrônica (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
 
 ### Alterado
 
@@ -40,7 +40,7 @@
 
 ### Adicionado
 
-- Adiciona `status` de Não licenciado para `tipo_veiculo` rodoviário no modelo `aux_veiculo_dia_consolidada`  [Processo nº 000300.003323/2026-18] (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1198)
+- Adiciona `status` de Não licenciado para `tipo_veiculo` rodoviário no modelo `aux_veiculo_dia_consolidada` [Processo nº 000300.003323/2026-18] (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1198)
 
 ## [1.9.0] - 2026-01-26
 
