@@ -10,4 +10,4 @@
 
 ### Adicionado
 
-- Move modelos das tabelas do subsidio de `rj-smtr.financeiro` para `rj-smtr.financeiro_interno` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/893)
+- Move modelos das tabelas do subsídio de `rj-smtr.financeiro` para `rj-smtr.financeiro_interno` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/893)
