@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [3.1.11] - 2026-02-27
+
+### Removido
+
+- Remove schedules do flow `CAPTURA_INTEGRACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1274)
+
 ## [3.1.10] - 2026-02-24
 
 ### Removido
