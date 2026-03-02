@@ -17,9 +17,9 @@
 
 {% set condicao_falha %}
     (not indicador_temperatura_variacao_veiculo
-    or not indicador_temperatura_transmitida_veiculo
     or indicador_temperatura_descartada_veiculo
-    or indicador_viagem_temperatura_descartada_veiculo)
+    or indicador_viagem_temperatura_descartada_veiculo
+) and (not indicador_temperatura_nula_viagem and not indicador_temperatura_transmitida_veiculo)
 {% endset %}
 
 with
@@ -53,6 +53,11 @@ with
             ) as indicador_temperatura_transmitida_viagem,
             safe_cast(
                 json_value(
+                    indicadores, '$.indicador_temperatura_nula_viagem.valor'
+                ) as bool
+            ) as indicador_temperatura_nula_viagem,
+            safe_cast(
+                json_value(
                     indicadores,
                     '$.indicador_temperatura_pos_tratamento_descartada_viagem.percentual_temperatura_pos_tratamento_descartada'
                 ) as numeric
@@ -79,6 +84,7 @@ with
             ano_fabricacao,
             indicador_ar_condicionado,
             data_processamento_licenciamento,
+            indicador_temperatura_nula_viagem,
             max(
                 indicador_temperatura_variacao_viagem
             ) as indicador_temperatura_variacao_veiculo,
@@ -130,6 +136,7 @@ with
             indicador_temperatura_variacao_veiculo,
             indicador_temperatura_transmitida_veiculo,
             percentual_temperatura_pos_tratamento_descartada,
+            indicador_temperatura_nula_viagem,
             percentual_temperatura_pos_tratamento_descartada
             > 50 as indicador_temperatura_descartada_veiculo,
             percentual_viagem_temperatura_pos_tratamento_descartada,
