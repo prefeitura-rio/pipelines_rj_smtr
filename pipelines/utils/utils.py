@@ -5,8 +5,8 @@ import uuid
 from datetime import date, datetime
 from typing import Any
 
-import basedosdados as bd
 import pandas as pd
+import pandas_gbq
 import pendulum
 import pytz
 from croniter import croniter
@@ -15,9 +15,6 @@ from prefeitura_rio.pipelines_utils.logging import log
 from pytz import timezone
 
 from pipelines.constants import constants
-
-# Set BD config to run on cloud #
-bd.config.from_file = True
 
 
 def custom_serialization(obj: Any) -> Any:
@@ -136,7 +133,7 @@ def create_sql_update_filter(
             `{project}.{dataset_id}.{table_id}`
         """
         log(query)
-        last_values = bd.read_sql(query=query, billing_project_id=project)
+        last_values = pandas_gbq.read_gbq(query, project_id=project)
 
         last_values = last_values.iloc[:, 0].to_list()
         last_values = ", ".join(last_values)

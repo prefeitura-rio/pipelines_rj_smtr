@@ -4,6 +4,7 @@
         materialized="incremental",
         incremental_strategy="insert_overwrite",
         partition_by={"field": "data", "data_type": "date", "granularity": "day"},
+        require_partition_filter=true,
     )
 }}
 
@@ -157,9 +158,9 @@ with
             do.id_operadora,
             i.id_operadora as id_operadora_jae,
             do.operadora,
-            i.id_linha as id_servico_jae,
-            l.nr_linha as servico_jae,
-            l.nm_linha as descricao_servico_jae,
+            l.id_servico_jae,
+            l.servico_jae,
+            l.descricao_servico_jae,
             i.id_transacao,
             i.sentido,
             i.perc_rateio as percentual_rateio,
@@ -176,17 +177,19 @@ with
             as id_ordem_pagamento_consorcio_operador_dia
         from integracao_melt i
         left join
-            {{ source("cadastro", "modos") }} m
-            on i.id_tipo_modal = m.id_modo
-            and m.fonte = "jae"
+            {{ ref("modos") }} m on i.id_tipo_modal = m.id_modo and m.fonte = "jae"
         left join {{ ref("operadoras") }} do on i.id_operadora = do.id_operadora_jae
         {# `rj-smtr.cadastro.operadoras` do on i.id_operadora = do.id_operadora_jae #}
         left join {{ ref("consorcios") }} dc on i.id_consorcio = dc.id_consorcio_jae
         {# `rj-smtr.cadastro.consorcios` dc on i.id_consorcio = dc.id_consorcio_jae #}
         left join
-            {{ ref("staging_linha") }} l
-            {# `rj-smtr.br_rj_riodejaneiro_bilhetagem_staging.linha` l #}
-            on i.id_linha = l.cd_linha
+            {{ ref("aux_servico_jae") }} l
+            on i.id_linha = l.id_servico_jae
+            and i.datetime_transacao >= l.datetime_inicio_validade
+            and (
+                i.datetime_transacao < l.datetime_fim_validade
+                or l.datetime_fim_validade is null
+            )
         left join {{ ref("staging_ordem_rateio") }} o using (id_ordem_rateio)
         where i.id_transacao is not null
     ),

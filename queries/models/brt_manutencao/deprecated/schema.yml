@@ -1,0 +1,110 @@
+version: 2
+
+models:
+  - name: satisfacao_geral_estacao
+    description: Tabela de satisfação geral de cada estação
+    columns:
+      - name: corredor_estacao
+        description: Corredor de localização da estação.
+      - name: nome_estacao
+        description: Nome da estação.
+      - name: seriedade
+        description: Nível de seriedade mais grave encontrado para a estação.
+      - name: seriedade_simples
+        description: Nível de seriedade mais simples.
+      - name: ordem_seriedade
+        description: Valor numérico da ordem/ranking de seriedade.
+  - name: questionario_melted_completa
+    description: Tabela de questionário (formato 'derretido' ou longo) completo
+    columns:
+      - name: dt
+        description: Data da ocorrência ou registro.
+      - name: idade_resposta_dia
+        description: Idade da resposta em dias.
+      - name: idade_resposta_semana
+        description: Idade da resposta em semanas.
+      - name: nome_estacao
+        description: Nome da estação relacionada.
+      - name: ativa_estacao
+        description: Indica se a estação está ativa.
+      - name: corredor_estacao
+        description: Corredor ou local da estação.
+      - name: categoria_problema
+        description: Categoria à qual o problema pertence.
+      - name: nome_problema
+        description: Nome ou título do problema.
+      - name: id_problema
+        description: Identificador único do problema.
+      - name: id_responsavel
+        description: Identificação do responsável.
+      - name: seriedade
+        description: Nível de seriedade ou gravidade do problema.
+
+  - name: questionario_melted
+    description: Tabela de questionário (formato 'derretido' ou longo)
+    columns:
+      - name: timestamp
+        description: Timestamp da submissão do questionário
+      - name: estacoes_brt
+        description: Nome da estação
+      - name: id_problema
+        description: Identificador único do problema reportado na estação
+      - name: seriedade
+        description: Nível de seriedade ou gravidade do problema reportado
+  - name: satisfacao_geral_problema
+    description: Tabela com a satisfação geral por problema da estação
+    columns:
+      - name: nome_problema
+        description: Nome do problema
+      - name: categoria_problema
+        description: Categoria à qual o problema pertence
+      - name: id_responsavel
+        description: Identificador do responsável pela solução ou gestão do problema.
+      - name: nome_exibicao_responsavel
+        description: Nome completo do responsável
+      - name: satisfacao
+        description: Nível de satisfação
+  - name: satisfacao_geral_responsavel
+    description: Tabela com a satisfação geral do responsável pela estação
+    columns:
+      - name: id_responsavel
+        description: Identificador do responsável
+      - name: nome_exibicao_responsavel
+        description: Nome completo do responsável
+      - name: email_responsavel
+        description: Endereço de e-mail do responsável
+      - name: telefone_responsavel
+        description: Número de telefone do responsável
+      - name: nome_estacao
+        description: Nome da estação
+      - name: seriedade
+        description: Nível de seriedade mais grave encontrado
+      - name: seriedade_simples
+        description: Nível de seriedade mais simples
+      - name: ordem_seriedade
+        description: Valor numérico da ordem de seriedade
+  - name: questionario_recentes
+    description: Tabela contendo os questionários recentes
+    columns:
+      - name: dt
+        description: Data do registro mais recente
+      - name: idade_resposta_dia
+        description: Idade da resposta em dias
+      - name: idade_resposta_semana
+        description: Idade da resposta em semanas
+      - name: nome_estacao
+        description: Nome da estação
+      - name: ativa_estacao
+        description: Indica se a estação estava ativa no momento do registro
+      - name: corredor_estacao
+        description: Corredor de localização da estação
+      - name: categoria_problema
+        description: Categoria à qual o problema pertence
+      - name: nome_problema
+        description: Nome do problema
+      - name: id_problema
+        description: Identificador único do problema reportado
+      - name: id_responsavel
+        description: Identificador do responsável
+      - name: seriedade
+        description: Nível de seriedade/gravidade do registro mais recente

@@ -1,5 +1,46 @@
 # Changelog - gtfs
 
+## [1.3.0] - 2026-01-16
+
+### Adicionado
+- Adicionado teste no modelo `trips_gtfs` para verificar se existe o `shape_id` no modelo `shapes_gtfs` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1174)
+
+## [1.2.9] - 2025-12-10
+
+### Alterado
+
+- Alterado o flow `gtfs_captura_nova` para a captura da `ordem_servico_trajeto_alternativo_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1050)
+
+## [1.2.8] - 2025-10-20
+
+### Alterado
+
+- Alterado o flow `gtfs_captura_nova` para a geração da tabela externa `ordem_servico_trajeto_alternativo_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/961)
+
+## [1.2.7] - 2025-10-14
+
+### Alterado
+
+- Altera `get_raw_gtfs_files` para usar a função `get_google_api_service` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/943)
+- Altera tratamento das colunas `quilometragem`,`viagens` e `partidas` para substituir `-` por `0` na `processa_ordem_servico_faixa_horaria` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/943)
+
+## [1.2.6] - 2025-10-06
+
+### Corrigido
+
+- Corrige checagem de falha da materialização do GTFS no flow `gtfs_captura_nova` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/922)
+
+## [1.2.5] - 2025-07-21
+
+### Alterado
+
+- Altera as tasks `run_dbt_model` e `run_dbt_tests` pela task genérica `run_dbt` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/715)
+
+## [1.2.4] - 2025-07-16
+
+### Alterado
+- Altera o flow `gtfs_captura_nova` para o novo modelo de OS (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/704)
+
 ## [1.2.3] - 2025-05-06
 
 ### Corrigido

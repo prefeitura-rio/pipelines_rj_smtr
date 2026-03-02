@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 """Module to get data from databases"""
+import os
+
 import pandas as pd
 from prefeitura_rio.pipelines_utils.logging import log
 from sqlalchemy import create_engine
 
 from pipelines.utils.database import create_database_url
+from pipelines.utils.fs import save_local_file
 
 
 def get_raw_db(
@@ -65,6 +68,7 @@ def get_raw_db_paginated(
     password: str,
     database: str,
     page_size: int,
+    raw_filepath: str,
     max_retries: int = 10,
 ) -> list[list[str]]:
     """
@@ -78,6 +82,7 @@ def get_raw_db_paginated(
         password (str): A senha do usuário
         database (str): O nome da base (schema)
         page_size (int): Número máximo de registros em uma página
+        raw_filepath (int): Caminho para salvar os arquivos
         max_retries (int): Quantidades de retries para efetuar a query
     Returns:
         list[list[str]]: Lista de páginas, onde cada página contém dados em formato JSON
@@ -86,8 +91,8 @@ def get_raw_db_paginated(
     base_query = f"{query} LIMIT {page_size}"
     query = f"{base_query} OFFSET 0"
     page_data_len = page_size
-    data = []
     current_page = 0
+    filepaths = []
     while page_data_len == page_size:
         page_data = get_raw_db(
             query=query,
@@ -98,7 +103,10 @@ def get_raw_db_paginated(
             database=database,
             max_retries=max_retries,
         )
-        data.append(page_data)
+        base_path, ext = os.path.splitext(raw_filepath)
+        filepath = f"{base_path}_{current_page}{ext}"
+        save_local_file(filepath=filepath, filetype="json", data=page_data)
+        filepaths.append(filepath)
         page_data_len = len(page_data)
         log(
             f"""
@@ -110,4 +118,4 @@ def get_raw_db_paginated(
         offset = current_page * page_size
         query = f"{base_query} OFFSET {offset}"
 
-    return data
+    return filepaths

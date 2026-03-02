@@ -1,5 +1,10 @@
 # Changelog - datario
 
+## [1.0.2] - 2025-11-05
+
+### Alterado
+- Atualiza os modelos `licenciamento_veiculo_datario.sql` e `gps_onibus_datario.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1030)
+
 ## [1.0.1] - 2025-02-12
 
 ### Adicionado

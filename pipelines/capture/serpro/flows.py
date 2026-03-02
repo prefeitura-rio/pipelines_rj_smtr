@@ -16,6 +16,7 @@ CAPTURA_SERPRO = create_default_capture_flow(
     flow_name="SMTR: SERPRO - Captura",
     source=constants.AUTUACAO_SOURCE.value,
     create_extractor_task=create_serpro_extractor,
+    generate_schedule=False,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
 )
 set_default_parameters(CAPTURA_SERPRO, {"recapture": True})

@@ -1,5 +1,98 @@
 # Changelog - projeto_subsidio_sppo
 
+## [1.3.7] - 2026-02-11
+
+### Alterado
+
+- Alterado o flow `subsidio_sppo_apuracao` para remover a execução do modelo `monitoramento_viagem_transacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1236)
+
+## [1.3.6] - 2025-12-10
+
+### Alterado
+
+- Adiciona o teste `sincronizacao_tabelas__transacao_gratuidade_estudante_municipal` ao exclude do pré teste do subsídio (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1101)
+
+## [1.3.5] - 2025-10-24
+
+### Adicionado
+
+- Adiciona horário no `dbt_vars` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/990)
+- Adiciona descrição do teste `test_check_tecnologia_minima__viagem_classificada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/990)
+
+### Removido
+
+- Remove o pre teste `not_null__data_ordem__transacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/990)
+
+## [1.3.4] - 2025-10-20
+
+### Adicionado
+
+- Adiciona testes dos indicadores do modelo `viagem_regularidade_temperatura` no discord (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/962)
+
+## [1.3.3] - 2025-10-14
+
+### Adicionado
+
+- Adiciona testes dos indicadores do modelo `viagem_regularidade_temperatura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/928)
+
+## [1.3.2] - 2025-09-23
+
+### Alterado
+
+- Altera o default do parâmetro `table_ids_jae` para ["transacao","transacao_riocard","gps_validador"] no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/888)
+
+## [1.3.1] - 2025-09-22
+
+### Corrigido
+
+- Corrigido o argumento `env` na task `get_capture_gaps` no caso de test only (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/885)
+
+## [1.3.0] - 2025-09-10
+
+### Adicionado
+
+- Adiciona argumento `env` na task `get_capture_gaps` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/848)
+
+## [1.2.9] - 2025-09-08
+
+### Adicionado
+
+- Adiciona variável `partitions` no `dbt_vars` do flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/833)
+
+### Alterado
+
+- Padroniza upstream tasks no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/833)
+
+### Corrigido
+
+- Corrige lógica do `skip_materialization` no flow `subsidio_sppo_apuracao` para não materializar no test_only (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/833)
+
+## [1.2.8] - 2025-09-01
+
+### Adicionado
+
+- Adiciona testes dos modelos `viagem_classificada` e `viagem_regularidade_temperatura` no `SUBSIDIO_SPPO_V14_POS_CHECKS_DATASET_ID` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/818)
+- Adiciona parâmetro `skip_pre_test` no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/818)
+- Adiciona testes de bilhetagem no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/833)
+
+## [1.2.7] - 2025-08-11
+
+### Adicionado
+
+- Adiciona verificação da captura dos dados de bilhetagem no flow `subsidio_sppo_apuracao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/765)
+
+## [1.2.6] - 2025-07-22
+
+### Adicionado
+
+- Alterado o flow `viagens_sppo` para fazer duas apurações por dia às 05h e 14h (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/713)
+
+## [1.2.5] - 2025-07-21
+
+### Alterado
+
+- Altera as tasks `run_dbt_model`, `run_dbt_selector` e `run_dbt_tests` pela task genérica `run_dbt` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/715)
+
 ## [1.2.4] - 2025-06-30
 
 ### Adicionado

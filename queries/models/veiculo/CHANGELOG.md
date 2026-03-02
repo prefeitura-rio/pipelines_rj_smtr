@@ -1,6 +1,6 @@
 # Changelog - veiculo
 
-## [2.1.4] - 2025-07-07
+## [2.1.4] - 2026-03-02
 
 ### Corrigido
 
@@ -13,6 +13,18 @@
 ### Adicionado
 
 - Adicionada exceção no período de `2024-08-16` a `2024-10-15` para utilizar a `data_versao` `2024-10-22` no modelo `infracao_data_versao_efetiva.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/510)
+
+## [2.1.5] - 2025-07-08
+
+### Corrigido
+
+- Corrigido a coluna `status` no modelo `sppo_veiculo_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/677)
+
+## [2.1.4] - 2025-07-08
+
+### Corrigido
+
+- Corrigida a coluna `ano_ultima_vistoria` no modelo `licenciamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/676)
 
 ## [2.1.3] - 2025-07-02
 

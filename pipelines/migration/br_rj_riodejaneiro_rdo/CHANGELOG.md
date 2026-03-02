@@ -1,5 +1,11 @@
 # Changelog - br_rj_riodejaneiro_rdo
 
+## [1.0.1] - 2025-07-21
+
+### Alterado
+
+- Altera a task `run_dbt_model` pela task genérica `run_dbt` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/715)
+
 ## [1.0.0] - 2024-10-02
 
 ### Alterado

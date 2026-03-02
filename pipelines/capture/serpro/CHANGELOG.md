@@ -1,5 +1,11 @@
 # Changelog - source_serpro
 
+## [1.0.2] - 2025-12-26
+
+### Alterado
+
+- Desativa schedule do flow `CAPTURA_SERPRO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1135)
+
 ## [1.0.1] - 2025-04-15
 
 ### Alterado

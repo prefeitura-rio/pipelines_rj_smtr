@@ -12,8 +12,13 @@ from pipelines.schedules import (
     create_minute_cron,
 )
 from pipelines.utils.gcp.bigquery import SourceTable
+from pipelines.utils.pretreatment import raise_if_column_isna
 
 JAE_SOURCE_NAME = "jae"
+CLIENTE_TABLE_ID = "cliente"
+GRATUIDADE_TABLE_ID = "gratuidade"
+ESTUDANTE_TABLE_ID = "estudante"
+LAUDO_PCD_TABLE_ID = "laudo_pcd"
 
 
 class constants(Enum):  # pylint: disable=c0103
@@ -24,7 +29,7 @@ class constants(Enum):  # pylint: disable=c0103
     JAE_DATABASE_SETTINGS = {
         "principal_db": {
             "engine": "mysql",
-            "host": "10.5.112.98",
+            "host": "10.5.113.205",
         },
         "tarifa_db": {
             "engine": "postgresql",
@@ -32,11 +37,11 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "transacao_db": {
             "engine": "postgresql",
-            "host": "10.5.112.48",
+            "host": "10.5.114.104",
         },
         "tracking_db": {
             "engine": "postgresql",
-            "host": "10.5.14.235",
+            "host": "10.5.12.106",
         },
         "ressarcimento_db": {
             "engine": "postgresql",
@@ -44,7 +49,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "gratuidade_db": {
             "engine": "postgresql",
-            "host": "10.5.14.15",
+            "host": "10.5.14.19",
         },
         "fiscalizacao_db": {
             "engine": "postgresql",
@@ -52,7 +57,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "atm_gateway_db": {
             "engine": "postgresql",
-            "host": "10.5.14.128",
+            "host": "10.5.15.127",
         },
         "device_db": {
             "engine": "postgresql",
@@ -64,15 +69,15 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "financeiro_db": {
             "engine": "postgresql",
-            "host": "10.5.14.99",
+            "host": "10.5.12.109",
         },
         "midia_db": {
             "engine": "postgresql",
-            "host": "10.5.15.251",
+            "host": "10.5.12.52",
         },
         "processador_transacao_db": {
             "engine": "postgresql",
-            "host": "10.5.13.169",
+            "host": "10.5.14.59",
         },
         "atendimento_db": {
             "engine": "postgresql",
@@ -80,7 +85,7 @@ class constants(Enum):  # pylint: disable=c0103
         },
         "gateway_pagamento_db": {
             "engine": "postgresql",
-            "host": "10.5.112.246",
+            "host": "10.5.113.130",
         },
         # "iam_db": {
         #     "engine": "mysql",
@@ -88,15 +93,14 @@ class constants(Enum):  # pylint: disable=c0103
         # },
         "vendas_db": {
             "engine": "postgresql",
-            "host": "10.5.112.154",
+            "host": "10.5.114.15",
         },
     }
 
     JAE_SECRET_PATH = "smtr_jae_access_data"
     JAE_PRIVATE_BUCKET_NAMES = {"prod": "rj-smtr-jae-private", "dev": "rj-smtr-dev-private"}
     ALERT_WEBHOOK = "alertas_bilhetagem"
-
-    JAE_AUXILIAR_CAPTURE_PARAMS = {}
+    RESULTADO_VERIFICACAO_CAPTURA_TABLE_ID = "resultado_verificacao_captura_jae"
 
     TRANSACAO_TABLE_ID = "transacao"
     TRANSACAO_RIOCARD_TABLE_ID = "transacao_riocard"
@@ -104,6 +108,7 @@ class constants(Enum):  # pylint: disable=c0103
     INTEGRACAO_TABLE_ID = "integracao_transacao"
     TRANSACAO_ORDEM_TABLE_ID = "transacao_ordem"
     TRANSACAO_RETIFICADA_TABLE_ID = "transacao_retificada"
+    LANCAMENTO_TABLE_ID = "lancamento"
 
     JAE_TABLE_CAPTURE_PARAMS = {
         TRANSACAO_TABLE_ID: {
@@ -113,10 +118,11 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     transacao
                 WHERE
-                    data_processamento >= timestamp '{start}' - INTERVAL '5 minutes'
-                    AND data_processamento < timestamp '{end}' - INTERVAL '5 minutes'
+                    data_processamento >= timestamp '{start}' - INTERVAL '{delay} minutes'
+                    AND data_processamento < timestamp '{end}' - INTERVAL '{delay} minutes'
             """,
             "database": "transacao_db",
+            "capture_delay_minutes": {"0": 0, "2025-03-26 15:36:00": 5},
         },
         TRANSACAO_RETIFICADA_TABLE_ID: {
             "query": """
@@ -139,10 +145,11 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     transacao_riocard
                 WHERE
-                    data_processamento >= timestamp '{start}' - INTERVAL '5 minutes'
-                    AND data_processamento < timestamp '{end}' - INTERVAL '5 minutes'
+                    data_processamento >= timestamp '{start}' - INTERVAL '{delay} minutes'
+                    AND data_processamento < timestamp '{end}' - INTERVAL '{delay} minutes'
             """,
             "database": "transacao_db",
+            "capture_delay_minutes": {"0": 0, "2025-03-26 15:36:00": 5},
         },
         GPS_VALIDADOR_TABLE_ID: {
             "query": """
@@ -151,10 +158,11 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     tracking_detalhe
                 WHERE
-                    data_tracking >= timestamp '{start}' - INTERVAL '10 minutes'
-                    AND data_tracking < timestamp '{end}' - INTERVAL '10 minutes'
+                    data_tracking >= timestamp '{start}' - INTERVAL '{delay} minutes'
+                    AND data_tracking < timestamp '{end}' - INTERVAL '{delay} minutes'
             """,
             "database": "tracking_db",
+            "capture_delay_minutes": {"0": 0, "2025-03-26 15:31:00": 10},
         },
         INTEGRACAO_TABLE_ID: {
             "database": "ressarcimento_db",
@@ -179,11 +187,49 @@ class constants(Enum):  # pylint: disable=c0103
                 FROM
                     transacao
                 WHERE
-                    DATE(data_processamento) >= DATE('{start}')
-                    AND DATE(data_processamento) <= DATE('{end}')
+                    data_processamento >= '{start}'
+                    AND data_processamento <= '{end}'
                     AND id_ordem_ressarcimento IS NOT NULL
+                ORDER BY data_processamento
             """,
             "database": "transacao_db",
+        },
+        LANCAMENTO_TABLE_ID: {
+            "query": """
+                SELECT
+                    l.*,
+                    m.cd_tipo_movimento,
+                    tm.ds_tipo_movimento,
+                    tc.ds_tipo_conta,
+                    tc.id_tipo_moeda,
+                    tmo.descricao as tipo_moeda,
+                    c.cd_cliente,
+                    c.nr_logico_midia
+                FROM
+                    lancamento l
+                LEFT JOIN
+                    movimento m
+                USING(id_movimento)
+                LEFT JOIN
+                    tipo_movimento tm
+                USING(cd_tipo_movimento)
+                LEFT JOIN
+                    conta c
+                USING(id_conta)
+                LEFT JOIN
+                    tipo_conta tc
+                USING(cd_tipo_conta)
+                LEFT JOIN
+                    tipo_moeda tmo
+                ON tc.id_tipo_moeda = tmo.id
+                WHERE
+                    l.dt_lancamento >= timestamp '{start}' - INTERVAL '{delay} minutes'
+                    AND l.dt_lancamento < timestamp '{end}' - INTERVAL '{delay} minutes'
+                ORDER BY l.dt_lancamento DESC
+
+            """,
+            "database": "financeiro_db",
+            "capture_delay_minutes": {"0": 5, "2025-12-12 22:53:00": 1440},
         },
         "linha": {
             "query": """
@@ -191,9 +237,6 @@ class constants(Enum):  # pylint: disable=c0103
                     *
                 FROM
                     LINHA
-                WHERE
-                    DT_INCLUSAO BETWEEN '{start}'
-                    AND '{end}'
             """,
             "database": "principal_db",
             "primary_keys": ["CD_LINHA"],
@@ -232,7 +275,7 @@ class constants(Enum):  # pylint: disable=c0103
             "primary_keys": ["CD_OPERADORA_TRANSPORTE"],
             "capture_flow": "auxiliar",
         },
-        "cliente": {
+        CLIENTE_TABLE_ID: {
             "query": """
                 SELECT
                     c.*
@@ -268,61 +311,19 @@ class constants(Enum):  # pylint: disable=c0103
             "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
             "capture_flow": "auxiliar",
         },
-        "gratuidade": {
+        GRATUIDADE_TABLE_ID: {
             "query": """
-                with cte_laudo_pdc AS (
-                    SELECT
-                        cd_cliente,
-                        data_inclusao AS data_inicio_validade,
-                        LEAD(data_inclusao) OVER(
-                            PARTITION BY cd_cliente ORDER BY data_inclusao
-                        ) AS data_fim_validade,
-                        deficiencia_permanente
-                    FROM laudo_pcd
-                ),
-                cte_estudante AS (
-                    SELECT
-                        cd_cliente,
-                        data_inclusao AS data_inicio_validade,
-                        LEAD(data_inclusao) OVER(
-                            PARTITION BY cd_cliente ORDER BY data_inclusao
-                        ) AS data_fim_validade,
-                        codigo_escola
-                    FROM estudante
-                )
                 SELECT
                     g.*,
-                    t.descricao AS tipo_gratuidade,
-                    lp.data_inicio_validade,
-                    lp.data_fim_validade,
-                    lp.deficiencia_permanente,
-                    re.descricao AS rede_ensino
+                    t.descricao AS tipo_gratuidade
                 FROM
                     gratuidade g
                 LEFT JOIN
                     tipo_gratuidade t
                 ON
                     g.id_tipo_gratuidade = t.id
-                LEFT JOIN
-                    cte_laudo_pdc lp
-                ON
-                    g.cd_cliente = lp.cd_cliente
-                    AND g.data_inclusao >= lp.data_inicio_validade
-                    AND (g.data_inclusao < lp.data_fim_validade OR lp.data_fim_validade IS NULL)
-                LEFT JOIN
-                    cte_estudante e
-                ON
-                    g.cd_cliente = e.cd_cliente
-                    AND g.data_inclusao >= e.data_inicio_validade
-                    AND (g.data_inclusao < e.data_fim_validade OR e.data_fim_validade IS NULL)
-                LEFT JOIN
-                    escola ec
-                USING(codigo_escola)
-                LEFT JOIN
-                    rede_ensino re
-                ON ec.id_rede_ensino = re.id
                 WHERE
-                    g.data_inclusao BETWEEN '{start}'
+                    data_inclusao BETWEEN '{start}'
                     AND '{end}'
             """,
             "database": "gratuidade_db",
@@ -434,6 +435,54 @@ class constants(Enum):  # pylint: disable=c0103
             "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
             "capture_flow": "auxiliar",
         },
+        ESTUDANTE_TABLE_ID: {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    estudante
+                WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'
+            """,
+            "database": "gratuidade_db",
+            "primary_keys": [],
+            "capture_flow": "auxiliar",
+            "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
+            "first_timestamp": datetime(2025, 9, 16, 0, 0, 0),
+        },
+        "escola": {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    escola
+                WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'
+            """,
+            "database": "gratuidade_db",
+            "primary_keys": ["codigo_escola"],
+            "capture_flow": "auxiliar",
+            "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
+            "first_timestamp": datetime(2025, 9, 16, 0, 0, 0),
+        },
+        LAUDO_PCD_TABLE_ID: {
+            "query": """
+                SELECT
+                    *
+                FROM
+                    laudo_pcd
+                WHERE
+                    data_inclusao BETWEEN '{start}'
+                    AND '{end}'
+            """,
+            "database": "gratuidade_db",
+            "primary_keys": ["id"],
+            "capture_flow": "auxiliar",
+            "save_bucket_names": JAE_PRIVATE_BUCKET_NAMES,
+            "first_timestamp": datetime(2025, 9, 16, 0, 0, 0),
+        },
         "ordem_ressarcimento": {
             "query": """
                 SELECT
@@ -447,6 +496,7 @@ class constants(Enum):  # pylint: disable=c0103
             "database": "ressarcimento_db",
             "primary_keys": ["id"],
             "capture_flow": "ordem_pagamento",
+            "pretreat_funcs": [raise_if_column_isna(column_name="id_ordem_pagamento")],
         },
         "ordem_pagamento": {
             "query": """
@@ -503,6 +553,7 @@ class constants(Enum):  # pylint: disable=c0103
             "database": "ressarcimento_db",
             "primary_keys": ["id"],
             "capture_flow": "ordem_pagamento",
+            "pretreat_funcs": [raise_if_column_isna(column_name="id_ordem_pagamento")],
         },
         "linha_sem_ressarcimento": {
             "query": """
@@ -553,6 +604,15 @@ class constants(Enum):  # pylint: disable=c0103
         primary_keys=["id"],
     )
 
+    LANCAMENTO_SOURCE = SourceTable(
+        source_name=JAE_SOURCE_NAME,
+        table_id=LANCAMENTO_TABLE_ID,
+        first_timestamp=datetime(2025, 7, 21, 0, 0, 0),
+        schedule_cron=create_minute_cron(),
+        primary_keys=["id_lancamento"],
+        bucket_names=JAE_PRIVATE_BUCKET_NAMES,
+    )
+
     INTEGRACAO_SOURCE = SourceTable(
         source_name=JAE_SOURCE_NAME,
         table_id=INTEGRACAO_TABLE_ID,
@@ -567,7 +627,7 @@ class constants(Enum):  # pylint: disable=c0103
         SourceTable(
             source_name=JAE_SOURCE_NAME,
             table_id=k,
-            first_timestamp=datetime(2024, 1, 7, 0, 0, 0),
+            first_timestamp=v.get("first_timestamp", datetime(2024, 1, 7, 0, 0, 0)),
             schedule_cron=create_hourly_cron(),
             primary_keys=v["primary_keys"],
             pretreatment_reader_args=v.get("pre_treatment_reader_args"),
@@ -576,6 +636,7 @@ class constants(Enum):  # pylint: disable=c0103
             partition_date_only=v.get("partition_date_only", True),
             max_recaptures=v.get("max_recaptures", 60),
             raw_filetype=v.get("raw_filetype", "json"),
+            file_chunk_size=v.get("file_chunk_size"),
         )
         for k, v in JAE_TABLE_CAPTURE_PARAMS.items()
         if v.get("capture_flow") == "auxiliar"
@@ -586,7 +647,7 @@ class constants(Enum):  # pylint: disable=c0103
             source_name=JAE_SOURCE_NAME,
             table_id=k,
             first_timestamp=datetime(2024, 12, 30, 0, 0, 0),
-            schedule_cron=create_daily_cron(hour=5),
+            schedule_cron=create_daily_cron(hour=10),
             primary_keys=v["primary_keys"],
             pretreatment_reader_args=v.get("pretreatment_reader_args"),
             pretreat_funcs=v.get("pretreat_funcs"),
@@ -603,7 +664,7 @@ class constants(Enum):  # pylint: disable=c0103
         source_name=JAE_SOURCE_NAME,
         table_id=TRANSACAO_ORDEM_TABLE_ID,
         first_timestamp=datetime(2024, 11, 21, 0, 0, 0),
-        schedule_cron=create_daily_cron(hour=6),
+        schedule_cron=create_daily_cron(hour=10),
         partition_date_only=True,
         max_recaptures=5,
         primary_keys=[
@@ -612,7 +673,75 @@ class constants(Enum):  # pylint: disable=c0103
             "data_processamento",
             "data_transacao",
         ],
+        file_chunk_size=200000,
     )
+
+    CLIENTE_SOURCE = [s for s in JAE_AUXILIAR_SOURCES if s.table_id == CLIENTE_TABLE_ID][0]
+    GRATUIDADE_SOURCE = [s for s in JAE_AUXILIAR_SOURCES if s.table_id == GRATUIDADE_TABLE_ID][0]
+    ESTUDANTE_SOURCE = [s for s in JAE_AUXILIAR_SOURCES if s.table_id == ESTUDANTE_TABLE_ID][0]
+    LAUDO_PCD_SOURCE = [s for s in JAE_AUXILIAR_SOURCES if s.table_id == LAUDO_PCD_TABLE_ID][0]
+
+    CHECK_CAPTURE_PARAMS = {
+        TRANSACAO_TABLE_ID: {
+            "source": TRANSACAO_SOURCE,
+            "datalake_table": "rj-smtr.bilhetagem_staging.transacao",
+            "timestamp_column": "data_processamento",
+            "primary_keys": TRANSACAO_SOURCE.primary_keys,
+            "final_timestamp_exclusive": True,
+        },
+        TRANSACAO_RIOCARD_TABLE_ID: {
+            "source": TRANSACAO_RIOCARD_SOURCE,
+            "datalake_table": "rj-smtr.bilhetagem_staging.transacao_riocard",
+            "timestamp_column": "data_processamento",
+            "primary_keys": TRANSACAO_RIOCARD_SOURCE.primary_keys,
+            "final_timestamp_exclusive": True,
+        },
+        GPS_VALIDADOR_TABLE_ID: {
+            "source": GPS_VALIDADOR_SOURCE,
+            "datalake_table": "rj-smtr.monitoramento_staging.gps_validador",
+            "timestamp_column": "data_tracking",
+            "primary_keys": GPS_VALIDADOR_SOURCE.primary_keys,
+            "final_timestamp_exclusive": True,
+        },
+        LANCAMENTO_TABLE_ID: {
+            "source": LANCAMENTO_SOURCE,
+            "datalake_table": "rj-smtr.bilhetagem_interno_staging.lancamento",
+            "timestamp_column": "dt_lancamento",
+            "primary_keys": [
+                "ifnull(id_lancamento, concat(string(dt_lancamento), '_', id_movimento))",
+                "id_conta",
+            ],
+            "final_timestamp_exclusive": True,
+        },
+        CLIENTE_TABLE_ID: {
+            "source": CLIENTE_SOURCE,
+            "datalake_table": "rj-smtr.cadastro_interno_staging.cliente",
+            "timestamp_column": "dt_cadastro",
+            "primary_keys": CLIENTE_SOURCE.primary_keys,
+            "final_timestamp_exclusive": False,
+        },
+        GRATUIDADE_TABLE_ID: {
+            "source": GRATUIDADE_SOURCE,
+            "datalake_table": "rj-smtr.bilhetagem_staging.gratuidade",
+            "timestamp_column": "data_inclusao",
+            "primary_keys": GRATUIDADE_SOURCE.primary_keys,
+            "final_timestamp_exclusive": False,
+        },
+        ESTUDANTE_TABLE_ID: {
+            "source": ESTUDANTE_SOURCE,
+            "datalake_table": "rj-smtr.bilhetagem_staging.estudante",
+            "timestamp_column": "data_inclusao",
+            "primary_keys": ["cd_cliente", "data_inclusao"],
+            "final_timestamp_exclusive": False,
+        },
+        LAUDO_PCD_TABLE_ID: {
+            "source": LAUDO_PCD_SOURCE,
+            "datalake_table": "rj-smtr.bilhetagem_staging.laudo_pcd",
+            "timestamp_column": "data_inclusao",
+            "primary_keys": LAUDO_PCD_SOURCE.primary_keys,
+            "final_timestamp_exclusive": False,
+        },
+    }
 
     BACKUP_BILLING_PAY_FOLDER = "backup_jae_billingpay"
 
@@ -651,6 +780,23 @@ class constants(Enum):  # pylint: disable=c0103
                 "estudante_24062025",
                 "estudante_20062025",
                 "producao_20250617081705_02_VT",
+                "temp_estudante_15082025",
+                "estudante_11072025",
+                "temp_cliente_02082025",
+                "temp_requisicao_pedido_ticketeira",
+                "temp_estudante_27082025",
+                "temp_pedido_VT_12092025",
+                "temp_estudante_02102025",
+                "temp_VT_sem_retorno_16102025",
+                "temp_cliente_fraudes_14102025",
+                "temp_vt_sem_retorno_13102025",
+                "temp_bloqueio_cliente_14102025",
+                "temp_estudante_31102025",
+                "temp_logistica_limbo_25102025",
+                "temp_cartoes_transferidos_valorados_18112025",
+                "temp_vt_limbo_24102025",
+                "temp_estudante_05122025",
+                "temp_midias_transferidas_04122025",
             ],
             "filter": {
                 "ITEM_PEDIDO": ["DT_INCLUSAO"],
@@ -816,6 +962,19 @@ class constants(Enum):  # pylint: disable=c0103
                 "estudante_sme_21022025",
                 "temp_estudante_acerto_20032025",
                 "estudante_universitario_24012025",
+                "estudante_sme_17032025",
+                "estudante_sme_31032025",
+                "estudante_universitario_25032025",
+                "estudante_universitario_25042025",
+                "estudante_universitario_12032025",
+                "estudante_seeduc_27062025",
+                "estudante_seeduc_07082025",
+                "estudante_universitario_10092025",
+                "estudante_seeduc_22102025",
+                "temp_estudante_seeduc_inativos_02122025",
+                "estudante_universitario_24112025",
+                "temp_cancelamento_estudante_08122025",
+                "temp_cancelamento_estudante_sme_08122025",
             ],
             "filter": {
                 "lancamento_conta_gratuidade": ["data_inclusao"],
@@ -865,6 +1024,7 @@ class constants(Enum):  # pylint: disable=c0103
                 "sequencia_lancamento",
                 "cliente_fraude_05092024",
                 "cargas_garota_vip_18082023",
+                "lancamento",
             ],
             "filter": {
                 "conta": [
@@ -877,7 +1037,6 @@ class constants(Enum):  # pylint: disable=c0103
                     "dt_fechamento",
                     "dt_inclusao",
                 ],
-                "lancamento": ["dt_lancamento"],
                 "evento_recebido": ["dt_inclusao"],
                 "movimento": ["dt_movimento"],
                 "evento_processado": ["dt_inclusao"],
@@ -938,6 +1097,12 @@ class constants(Enum):  # pylint: disable=c0103
                 "temp_estudante_cpfduplicado_13032025",
                 "temp_estudante_cpfduplicado_14032025",
                 "temp_estudante_cpfduplicado_17032025",
+                "temp_midias_gratuidade_utilizacao_0107a1208",
+                "temp_midia_limbo_nv",
+                "temp_midia_limbo_09072025",
+                "temp_uids_01",
+                "temp_cartoes_duplicados_14082025",
+                "temp_limbo_25102025",
             ],
             "filter": {
                 "midia_evento": ["dt_inclusao"],
@@ -974,11 +1139,13 @@ class constants(Enum):  # pylint: disable=c0103
             },
         },
         "processador_transacao_db": {
+            "exclude": [
+                "transacao_erro",
+            ],
             "filter": {
-                "transacao_erro": ["dt_inclusao"],
                 "transacao_processada": ["dt_inclusao"],
                 "transacao_recebida": ["dt_inclusao"],
-            }
+            },
         },
         "atendimento_db": {},
         "gateway_pagamento_db": {
@@ -1004,6 +1171,7 @@ class constants(Enum):  # pylint: disable=c0103
         #     },
         # },
         "vendas_db": {
+            "exclude": ["nsu_temp_venda", "vendas_piu"],
             "filter": {
                 "venda": [
                     "dt_cancelamento",
@@ -1011,7 +1179,7 @@ class constants(Enum):  # pylint: disable=c0103
                     "dt_credito",
                     "dt_venda",
                 ]
-            }
+            },
         },
     }
 

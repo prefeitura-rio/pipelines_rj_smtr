@@ -4,13 +4,9 @@
 from dataclasses import dataclass
 from typing import Union
 
-import basedosdados as bd
 from google.cloud import bigquery, storage
 
 from pipelines.constants import constants
-
-# Set BD config to run on cloud #
-bd.config.from_file = True
 
 
 @dataclass

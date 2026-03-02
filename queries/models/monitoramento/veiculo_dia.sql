@@ -16,6 +16,10 @@ with
             *,
             case
                 when
+                    date(data) between ('2026-01-01') and ('2026-01-31')
+                    and ano_ultima_vistoria >= extract(year from date(data)) - 2
+                then true  -- RESOLUÇÃO SMTR Nº 3894 DE 29 DE DEZEMBRO DE 2025 que altera o prazo final de vistoria para 31 de janeiro de 2026
+                when
                     ano_ultima_vistoria >= cast(
                         extract(
                             year
@@ -42,7 +46,46 @@ with
         where
             (
                 data_processamento <= date_add(data, interval 7 day)
-                or data_processamento = '2025-06-25'
+                or data_processamento in (
+                    {{
+                        var("data_processamento_veiculo_licenciamento_dia") | join(
+                            ", "
+                        )
+                    }}
+                )
+                or (
+                    data between "2025-07-16" and "2025-07-31"  -- Exceção para lacres adicionados após o prazo em 2025-07-Q2
+                    and data_processamento between "2025-07-16" and "2025-08-13"
+                )
+                or (
+                    data between "2025-08-01" and "2025-08-18"  -- Exceção para falha do arquivo de licenciamento no ftp
+                    and data_processamento between "2025-08-01" and "2025-08-26"
+                )
+                or (
+                    data between "2025-09-01" and "2025-09-25"  -- Exceção para lacres adicionados após o prazo em 2025-09-Q1
+                    and data_processamento between "2025-09-01" and "2025-09-25"
+                )
+                or (  -- Exceção para tratamento da data_ultima_vistoria [Troca placa Mercosul]
+                    data_processamento between "2025-07-10" and "2025-12-04"
+                    and (
+                        (
+                            data between "2025-07-10" and "2025-07-20"
+                            and id_veiculo = "B58188"
+                        )
+                        or (
+                            data between "2025-07-30" and "2025-08-31"
+                            and id_veiculo = "A29139"
+                        )
+                    )
+                )
+                or (
+                    data between "2025-11-12" and "2025-12-01"  -- Exceção para ajuste na tecnologia MTR-CAP-2025/59482
+                    and data_processamento between "2025-11-12" and "2025-12-22"
+                )
+                or (
+                    data between "2025-11-20" and "2025-12-16"  -- Exceção para ajuste na tecnologia MTR-CAP-2025/59482
+                    and data_processamento between "2025-11-20" and "2026-01-13"
+                )
             )
             {% if is_incremental() %}
                 and data between date("{{ var('date_range_start') }}") and date(
@@ -52,7 +95,7 @@ with
             {% endif %}
         qualify
             row_number() over (
-                partition by data, id_veiculo, placa order by data_processamento desc
+                partition by data, id_veiculo order by data_processamento desc
             )
             = 1
     ),
@@ -60,8 +103,12 @@ with
         select *
         from {{ ref("autuacao_disciplinar_historico") }}
         where
-            data_inclusao_datalake <= date_add(data, interval 7 day)
-            or data_inclusao_datalake = "2025-06-25" -- Primeira data de inclusão dos dados de autuações disciplinares
+            (
+                data_inclusao_datalake <= date_add(data, interval 7 day)
+                or data_inclusao_datalake
+                = date("{{var('data_inclusao_autuacao_disciplinar')}}")  -- Primeira data de inclusão dos dados de autuações disciplinares
+            )
+            and status != "Cancelada"
             {% if is_incremental() %}
                 and data between date("{{ var('date_range_start') }}") and date(
                     "{{ var('date_range_end') }}"
@@ -99,6 +146,7 @@ with
             l.modo,
             l.tecnologia,
             l.tipo_veiculo,
+            l.ano_fabricacao,
             l.id_veiculo is not null as indicador_licenciado,
             l.indicador_vistoriado,
             l.indicador_ar_condicionado,
@@ -117,6 +165,11 @@ with
             data_inclusao_datalake as data_inclusao_datalake_autuacao_ar_condicionado
         from autuacao_disciplinar
         where id_infracao = "023.II"
+        qualify
+            row_number() over (
+                partition by data, placa order by data_inclusao_datalake desc
+            )
+            = 1
     ),
     autuacao_completa as (
         select distinct
@@ -134,6 +187,7 @@ with
             gl.modo,
             gl.tecnologia,
             gl.tipo_veiculo,
+            gl.ano_fabricacao,
             struct(
                 struct(
                     gl.indicador_licenciado as valor,
@@ -156,7 +210,7 @@ with
                     as data_processamento_licenciamento
                 ) as indicador_veiculo_lacrado,
                 struct(
-                    a.indicador_autuacao_ar_condicionado as valor,
+                    coalesce(a.indicador_autuacao_ar_condicionado, false) as valor,
                     a.data_inclusao_datalake_autuacao_ar_condicionado
                     as data_inclusao_datalake_autuacao
                 ) as indicador_autuacao_ar_condicionado,
@@ -177,6 +231,7 @@ with
             modo,
             tecnologia,
             tipo_veiculo,
+            ano_fabricacao,
             case
                 when indicadores.indicador_licenciado.valor is false
                 then "Não licenciado"

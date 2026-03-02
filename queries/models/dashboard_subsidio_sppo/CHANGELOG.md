@@ -1,11 +1,115 @@
 # Changelog - dashboard_subsidio_sppo
-## [7.2.1] - 2025-07-07
+
+## [7.2.1] - 2026-03-02
 
 ### Alterado
 
 - Altera o modelo `viagens_remuneradas.sql` para desconsiderar a `distancia_planejada` para o cálculo de `pof` de viagens do tipo `Não licenciado` e `Não vistoriado` a partir e `2024-09-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/510)
 
-## [7.2.0] - 2025-06-25
+## [8.1.4] - 2026-02-27
+
+### Alterado
+
+- Altera a descrição da coluna `indicador_viagem_dentro_limite` adicionando limite de 110% (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1275)
+
+## [8.1.3] - 2026-02-24
+
+### Alterado
+
+- Alterado o modelo `viagens_remuneradas_v2` para adicionar exceção no limite de viagens em serviços especificados no Processo n°000300.005989/2026-19 no período entre  `2026-02-01` e `2026-02-15` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1266)
+
+## [8.1.2] - 2026-01-27
+
+### Alterado
+
+- Alterado o modelo `viagens_remuneradas_v2` para adicionar exceção no limite de viagens em serviços especificados no Processo n° 000300.001720/2026-55 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1195)
+
+## [8.1.1] - 2026-01-15
+
+### Alterado
+
+- Move o modelo `valor_tipo_penalidade` para `subsidio` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1171)
+
+## [8.1.0] - 2026-01-09
+
+### Alterado
+
+- Alterado o modelo `viagens_remuneradas_v2` para adicionar exceção no limite de viagens em serviços especificados no Processo nº 000300.000641/2026-27 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1165)
+
+## [8.0.9] - 2026-01-08
+
+### Alterado
+
+- Alterado o modelo `viagens_remuneradas_v2` para adicionar uma exceção para o limite de viagens dos servicos `232`,`552`, `SP805`, `361`, `104`, `107`, `161`, `169`, `409`, `410`, `435`, `473`,   `583`,`584`, `109` de acordo com o Processo nº 000300.000641/2026-27 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1158)
+
+## [8.0.8] - 2026-01-06
+
+### Alterado
+
+- Move a view `viagem_climatizacao.sql` para `dashboard_monitoramento_interno` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1121)
+
+## [8.0.7] - 2025-11-25
+
+### Adicionado
+
+- Cria view `viagem_climatizacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1064)
+
+## [8.0.6] - 2025-10-30
+
+### Adicionado
+
+- Cria modelo `sumario_servico_glosa_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1016)
+
+## [8.0.5] - 2025-10-28
+
+### Corrigido
+
+- Corrigida a classificação de viagens acima do limite nos modelos `viagens_remuneradas_v1` e `viagens_remuneradas_v2` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1005)
+
+## [8.0.4] - 2025-10-07
+
+### Alterado
+
+- Alterado o modelo `viagens_remuneradas_v2` para adicionar uma exceção para o limite de viagens dos servicos `161`, `LECD110`, `583`, `584` e `109` de acordo com o Processo.rio MTR-OFI-2025/06240 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/936)
+
+## [8.0.3] - 2025-10-06
+
+### Adicionado
+
+- Adicionado o modelo de dicionário `dicionario_dashboard_subsidio_sppo` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/926)
+
+## [8.0.2] - 2025-09-15
+
+### Corrigido
+
+- Corrigido modelo `sumario_servico_dia` para datas antes de `2023-09-16` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/790)
+- Corrigida a utilização dos modelos `sumario_dia` e `sumario_servico_dia` no modelo `sumario_servico_dia_historico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/790)
+
+## [8.0.1] - 2025-08-08
+
+### Alterado
+
+- Movidos os modelos `viagens_remuneradas_v1` e `viagens_remuneradas_v2` para a pasta staging (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/776)
+
+## [8.0.0] - 2025-08-07
+
+### Alterado
+
+- Alterado o modelo `viagens_remuneradas` para apuração por sentido e para utilização do versionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+
+## [7.2.1] - 2025-07-31
+
+### Alterado
+
+- Alterado variável `DATA_SUBSIDIO_V15A_INICIO` por `DATA_SUBSIDIO_V17_INICIO` no modelo `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
+
+## [7.2.0] - 2025-07-08
+
+### Adicionado
+
+- Adiciona lógica condicional no modelo `viagens_remuneradas` para definir e utilizar a CTE `viagem_tecnologia` apenas quando `start_date` for anterior a `DATA_SUBSIDIO_V15_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/649)
+
+## [7.1.9] - 2025-06-25
 
 ### Alterado
 

@@ -4,8 +4,8 @@ import csv
 from datetime import datetime, timedelta
 from typing import Callable, Optional
 
-import basedosdados as bd
 import pandas as pd
+import pandas_gbq
 from google.api_core.exceptions import NotFound
 from google.cloud import bigquery
 from google.cloud.bigquery.external_config import HivePartitioningOptions
@@ -136,7 +136,7 @@ class BQTable(GCPBase):
             {kind}({field_name})
         FROM {self.table_full_name}
         """
-        result = bd.read_sql(query=query)
+        result = pandas_gbq.read_gbq(query, project_id=constants.PROJECT_NAME.value[self.env])
 
         return result.iloc[0][0]
 
@@ -278,7 +278,7 @@ class SourceTable(BQTable):
             files = files + [
                 convert_timezone(datetime.strptime(b.name.split("/")[-1], "%Y-%m-%d-%H-%M-%S.csv"))
                 for b in st.bucket.list_blobs(prefix=prefix)
-                if ".csv" in b.name
+                if ".csv" in b.name and len(b.name.split("/")[-1]) == 23
             ]
 
         return [d for d in full_range if d not in files][: self.max_recaptures]

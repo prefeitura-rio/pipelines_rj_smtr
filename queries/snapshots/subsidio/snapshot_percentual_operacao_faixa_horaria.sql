@@ -3,7 +3,7 @@
     {{
         config(
             target_schema="subsidio_staging",
-            unique_key="concat(data, '-', faixa_horaria_inicio, '-', servico)",
+            unique_key="concat(data, '-', faixa_horaria_inicio, '-', servico, ifnull(concat('-', cast(sentido as string)), ''))",
             strategy="timestamp",
             updated_at="timestamp_ultima_atualizacao",
             invalidate_hard_deletes=True,

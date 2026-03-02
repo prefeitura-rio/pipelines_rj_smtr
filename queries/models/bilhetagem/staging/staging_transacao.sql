@@ -14,12 +14,18 @@ select
     safe_cast(json_value(content, '$.assinatura') as string) as assinatura,
     safe_cast(json_value(content, '$.cd_aplicacao') as string) as cd_aplicacao,
     safe_cast(json_value(content, '$.cd_emissor') as string) as cd_emissor,
-    safe_cast(json_value(content, '$.cd_consorcio') as string) as cd_consorcio,
-    safe_cast(json_value(content, '$.cd_linha') as string) as cd_linha,
+    replace(
+        safe_cast(json_value(content, '$.cd_consorcio') as string), ".0", ""
+    ) as cd_consorcio,
+    replace(
+        safe_cast(json_value(content, '$.cd_linha') as string), ".0", ""
+    ) as cd_linha,
     safe_cast(
         json_value(content, '$.cd_matriz_integracao') as string
     ) as cd_matriz_integracao,
-    safe_cast(json_value(content, '$.cd_operadora') as string) as cd_operadora,
+    replace(
+        safe_cast(json_value(content, '$.cd_operadora') as string), ".0", ""
+    ) as cd_operadora,
     safe_cast(json_value(content, '$.cd_secao') as string) as cd_secao,
     safe_cast(
         json_value(content, '$.cd_status_transacao') as string
@@ -45,7 +51,9 @@ select
         safe_cast(json_value(content, '$.id_produto') as string), ".0", ""
     ) as id_produto,
     safe_cast(json_value(content, '$.id_servico') as string) as id_servico,
-    safe_cast(json_value(content, '$.id_tipo_midia') as string) as id_tipo_midia,
+    replace(
+        safe_cast(json_value(content, '$.id_tipo_midia') as string), ".0", ""
+    ) as id_tipo_midia,
     safe_cast(json_value(content, '$.is_abt') as bool) as is_abt,
     safe_cast(json_value(content, '$.latitude_trx') as float64) as latitude_trx,
     safe_cast(json_value(content, '$.longitude_trx') as float64) as longitude_trx,
@@ -65,7 +73,11 @@ select
     safe_cast(json_value(content, '$.uid_origem') as string) as uid_origem,
     safe_cast(json_value(content, '$.valor_tarifa') as float64) as valor_tarifa,
     safe_cast(json_value(content, '$.valor_transacao') as float64) as valor_transacao,
-    safe_cast(json_value(content, '$.veiculo_id') as string) as veiculo_id,
+    replace(
+        safe_cast(json_value(content, '$.veiculo_id') as string), ".0", ""
+    ) as veiculo_id,
     safe_cast(json_value(content, '$.vl_saldo') as float64) as vl_saldo,
-    safe_cast(json_value(content, '$.id_tipo_modal') as string) as id_tipo_modal
+    replace(
+        safe_cast(json_value(content, '$.id_tipo_modal') as string), ".0", ""
+    ) as id_tipo_modal,
 from {{ source("source_jae", "transacao") }}

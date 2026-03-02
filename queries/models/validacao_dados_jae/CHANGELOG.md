@@ -1,5 +1,73 @@
 # Changelog - validacao_dados_jae
 
+## [3.1.4] - 2026-01-28
+
+### Alterado
+
+- Adapta query do modelo `integracao_invalida.sql` para o novo formato da matriz de integração (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1182)
+
+## [3.1.3] - 2026-01-13
+
+### Alterado
+
+- Altera tarifa hardcoded no modelo `aux_transacao_filtro_integracao_calculada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1162)
+- Cria lógica para reconhecer a versão na matriz de integração com base na data da transação no modelo `aux_calculo_integracao.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1162)
+
+## [3.1.2] - 2025-12-15
+
+### Adicionado
+
+- Adiciona coluna `classificacao_integracao_nao_realizada` no modelo `integracao_nao_realizada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1110)
+
+### Removido
+
+- Remove regra de serviço e sentido igual no modelo `aux_calculo_integracao.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1110)
+
+### Corrigido
+
+- Corrige incremental dos modelos `aux_integracao_calculada.sql` e `integracao_nao_realizada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1110)
+
+
+## [3.1.1] - 2025-11-10
+
+### Adicionado
+
+- Adiciona colunas no modelo `transacao_invalida.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1038):
+  - `indicador_processamento_anterior_transacao`
+  - `indicador_integracao_fora_tabela`
+  - `versao`
+  - `datetime_ultima_atualizacao`
+  - `id_execucao_dbt`
+
+## [3.1.0] - 2025-10-13
+
+### Adicionado
+
+- Cria modelo `alerta_transacao.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/944)
+
+## [3.0.2] - 2025-10-09
+
+### Alterado
+
+- Altera regra da coluna `modo` do modelo `aux_transacao_filtro_integracao_calculada` adicionando `BRT ESP` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/822)
+
+## [3.0.1] - 2025-09-01
+
+### Alterado
+
+- Altera referências dos modelos de ordem de pagamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/822)
+
+## [3.0.0] - 2025-08-19
+
+### Adicionado
+
+- Cria nova lógica para o cálculo de integrações não realizadas (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/793):
+  - `aux_particao_calculo_integracao.sql`
+  - `aux_transacao_filtro_integracao_calculada.sql`
+  - `aux_calculo_integracao.py`
+  - `aux_integracao_calculada.sql`
+  - `integracao_nao_realizada.sql`
+
 ## [2.0.0] - 2024-12-30
 
 ### Alterado

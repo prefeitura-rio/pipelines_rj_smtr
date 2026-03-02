@@ -2,7 +2,8 @@
 """
 Flows de tratamento dos dados de monitoramento
 
-DBT 2025-07-01
+DBT: 2026-02-25
+
 """
 
 from copy import deepcopy
@@ -10,6 +11,7 @@ from datetime import time
 
 from pipelines.capture.cittati.constants import constants as cittati_constants
 from pipelines.capture.conecta.constants import constants as conecta_constants
+from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.capture.rioonibus.constants import (
     constants as rioonibus_source_constants,
 )
@@ -18,9 +20,6 @@ from pipelines.capture.veiculo_fiscalizacao.constants import (
 )
 from pipelines.capture.zirix.constants import constants as zirix_constants
 from pipelines.constants import constants as smtr_constants
-from pipelines.migration.br_rj_riodejaneiro_onibus_gps_zirix.constants import (
-    constants as gps_zirix_constants,
-)
 from pipelines.schedules import create_hourly_cron
 from pipelines.treatment.cadastro.constants import constants as cadastro_constants
 from pipelines.treatment.monitoramento.constants import constants
@@ -28,7 +27,7 @@ from pipelines.treatment.planejamento.constants import (
     constants as planejamento_constants,
 )
 from pipelines.treatment.templates.flows import create_default_materialization_flow
-from pipelines.utils.prefect import set_default_parameters
+from pipelines.utils.prefect import handler_notify_failure, set_default_parameters
 
 cron_every_hour_minute_6 = create_hourly_cron(minute=6)
 
@@ -54,22 +53,9 @@ VIAGEM_VALIDACAO_MATERIALIZACAO = create_default_materialization_flow(
     wait=[
         wait_viagem_informada,
         planejamento_constants.PLANEJAMENTO_DIARIO_SELECTOR.value,
-        {
-            "redis_key": f"{smtr_constants.GPS_SPPO_DATASET_ID.value}\
-.{smtr_constants.GPS_SPPO_TREATED_TABLE_ID.value}",
-            "dict_key": "last_run_timestamp",
-            "datetime_format": "%Y-%m-%dT%H:%M:%S",
-            "delay_hours": smtr_constants.GPS_SPPO_MATERIALIZE_DELAY_HOURS.value,
-            "schedule_cron": cron_every_hour_minute_6,
-        },
-        {
-            "redis_key": f"{gps_zirix_constants.GPS_SPPO_ZIRIX_RAW_DATASET_ID.value}\
-.{smtr_constants.GPS_SPPO_TREATED_TABLE_ID.value}",
-            "dict_key": "last_run_timestamp",
-            "datetime_format": "%Y-%m-%dT%H:%M:%S",
-            "delay_hours": smtr_constants.GPS_SPPO_MATERIALIZE_DELAY_HOURS.value,
-            "schedule_cron": cron_every_hour_minute_6,
-        },
+        constants.GPS_CONECTA_SELECTOR.value,
+        constants.GPS_CITTATI_SELECTOR.value,
+        constants.GPS_ZIRIX_SELECTOR.value,
     ],
 )
 
@@ -77,7 +63,7 @@ GPS_TEST_SCHEDULE_TIME = time(2, 6, 0)
 
 GPS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps conecta - materializacao",
-    selector=constants.GPS_SELECTOR.value,
+    selector=constants.GPS_CONECTA_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[
         conecta_constants.CONECTA_REGISTROS_SOURCE.value,
@@ -91,7 +77,7 @@ set_default_parameters(GPS_CONECTA_MATERIALIZACAO, {"additional_vars": gps_vars_
 
 GPS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps cittati - materializacao",
-    selector=constants.GPS_SELECTOR.value,
+    selector=constants.GPS_CITTATI_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[
         cittati_constants.CITTATI_REGISTROS_SOURCE.value,
@@ -105,7 +91,7 @@ set_default_parameters(GPS_CITTATI_MATERIALIZACAO, {"additional_vars": gps_vars_
 
 GPS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps zirix - materializacao",
-    selector=constants.GPS_SELECTOR.value,
+    selector=constants.GPS_ZIRIX_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[
         zirix_constants.ZIRIX_REGISTROS_SOURCE.value,
@@ -119,7 +105,7 @@ set_default_parameters(GPS_ZIRIX_MATERIALIZACAO, {"additional_vars": gps_vars_zi
 
 GPS_15_MINUTOS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps_15_minutos conecta - materializacao",
-    selector=constants.GPS_15_MINUTOS_SELECTOR.value,
+    selector=constants.GPS_15_MINUTOS_CONECTA_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[
         conecta_constants.CONECTA_REGISTROS_SOURCE.value,
@@ -133,7 +119,7 @@ set_default_parameters(
 
 GPS_15_MINUTOS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps_15_minutos cittati - materializacao",
-    selector=constants.GPS_15_MINUTOS_SELECTOR.value,
+    selector=constants.GPS_15_MINUTOS_CITTATI_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[
         cittati_constants.CITTATI_REGISTROS_SOURCE.value,
@@ -147,7 +133,7 @@ set_default_parameters(
 
 GPS_15_MINUTOS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps_15_minutos zirix - materializacao",
-    selector=constants.GPS_15_MINUTOS_SELECTOR.value,
+    selector=constants.GPS_15_MINUTOS_ZIRIX_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[
         zirix_constants.ZIRIX_REGISTROS_SOURCE.value,
@@ -160,6 +146,7 @@ set_default_parameters(GPS_15_MINUTOS_ZIRIX_MATERIALIZACAO, {"additional_vars": 
 MONITORAMENTO_VEICULO_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="monitoramento_veiculo - materializacao",
     selector=constants.MONITORAMENTO_VEICULO_SELECTOR.value,
+    snapshot_selector=constants.SNAPSHOT_VEICULO_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[veiculo_fiscalizacao_constants.VEICULO_LACRE_SOURCE.value],
     post_tests=constants.MONITORAMENTO_VEICULO_TEST.value,
@@ -178,10 +165,44 @@ wait_cadastro_veiculo.incremental_delay_hours = (
 VEICULO_DIA_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="veiculo_dia - materializacao",
     selector=constants.VEICULO_DIA_SELECTOR.value,
+    snapshot_selector=constants.SNAPSHOT_VEICULO_DIA_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[
         wait_monitoramento_veiculo,
         wait_cadastro_veiculo,
     ],
     post_tests=constants.VEICULO_DIA_TEST.value,
+)
+
+MONITORAMENTO_TEMPERATURA_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="monitoramento_temperatura - materializacao",
+    selector=constants.MONITORAMENTO_TEMPERATURA_SELECTOR.value,
+    snapshot_selector=constants.SNAPSHOT_TEMPERATURA_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[constants.MONITORAMENTO_VEICULO_SELECTOR.value],
+    post_tests=constants.MONITORAMENTO_TEMPERATURA_TEST.value,
+)
+
+set_default_parameters(
+    MONITORAMENTO_TEMPERATURA_MATERIALIZACAO,
+    {"additional_vars": {"tipo_materializacao": "monitoramento"}},
+)
+
+GPS_VALIDADOR_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="gps_validador - materializacao",
+    selector=constants.GPS_VALIDADOR_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=[
+        cadastro_constants.CADASTRO_SELECTOR.value,
+        jae_constants.GPS_VALIDADOR_SOURCE.value,
+    ],
+    post_tests=constants.GPS_VALIDADOR_DAILY_TEST.value,
+    test_webhook_key=jae_constants.ALERT_WEBHOOK.value,
+    test_scheduled_time=time(1, 15, 0),
+    skip_if_running_tolerance=10,
+    generate_schedule=False,
+)
+
+GPS_VALIDADOR_MATERIALIZACAO.state_handlers.append(
+    handler_notify_failure(webhook="alertas_bilhetagem")
 )

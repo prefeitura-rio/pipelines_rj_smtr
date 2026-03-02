@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Flows de tratamento dos dados financeiros
+
+DBT 2025-09-02
 """
 from types import NoneType
 
@@ -12,9 +14,10 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_inject_bd_credentials,
 )
 
+from pipelines.capture.cct.constants import constants as cct_constants
 from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.constants import constants as smtr_constants
-from pipelines.schedules import every_day_hour_six_minute_fifty
+from pipelines.schedules import every_day_hour_ten_fifteen
 from pipelines.tasks import get_run_env, get_scheduled_timestamp
 from pipelines.treatment.cadastro.constants import constants as cadastro_constants
 from pipelines.treatment.financeiro.constants import constants
@@ -42,8 +45,15 @@ FINANCEIRO_BILHETAGEM_MATERIALIZACAO.state_handlers.append(
     handler_notify_failure(webhook="alertas_bilhetagem")
 )
 
+PAGAMENTO_CCT_MATERIALIZACAO = create_default_materialization_flow(
+    flow_name="pagamento_cct - materializacao",
+    selector=constants.PAGAMENTO_CCT_SELECTOR.value,
+    agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    wait=cct_constants.PAGAMENTO_SOURCES.value,
+)
+
 with Flow(
-    name="ordem_pagamento_consorcio_operador_dia - quality check"
+    name="bilhetagem_consorcio_operador_dia - quality check"
 ) as ordem_pagamento_quality_check:
     start_datetime = TypedParameter(
         name="start_datetime",
@@ -60,8 +70,8 @@ with Flow(
         default=None,
         accepted_types=(NoneType, list),
     )
-    DATASET_ID = smtr_constants.BILHETAGEM_DATASET_ID.value
-    TABLE_ID = "ordem_pagamento_consorcio_operador_dia"
+    DATASET_ID = constants.FINANCEIRO_DATASET_ID.value
+    TABLE_ID = "bilhetagem_consorcio_operador_dia"
 
     env = get_run_env()
     timestamp = get_scheduled_timestamp()
@@ -81,6 +91,7 @@ with Flow(
     )
 
     dbt_vars, test_name = get_ordem_pagamento_modified_partitions(
+        env=env,
         start_datetime=start_datetime,
         end_datetime=end_datetime,
         partitions=partitions,
@@ -91,25 +102,28 @@ with Flow(
         dataset_id=DATASET_ID,
         table_id=TABLE_ID,
         test_name=test_name,
+        exclude="transacao_valor_ordem_completa__transacao_valor_ordem",
         _vars=dbt_vars,
     )
 
     notify_discord = dbt_data_quality_checks(
         dbt_logs=test_result,
         checks_list=constants.ORDEM_PAGAMENTO_CHECKS_LIST.value,
-        webhook_key="alertas_bilhetagem",
+        webhook_key="alertas_bilhetagem_ordem_pagamento",
         params=dbt_vars,
         raise_check_error=False,
         additional_mentions=["devs_smtr"],
     )
 
-    set_redis_quality_check_datetime(
+    set_redis = set_redis_quality_check_datetime(
         env=env,
         dataset_id=DATASET_ID,
         table_id=TABLE_ID,
         end_datetime=end_datetime,
         upstream_tasks=[notify_discord],
     )
+
+    ordem_pagamento_quality_check.set_reference_tasks([set_redis, notify_discord, test_result])
 
 ordem_pagamento_quality_check.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 ordem_pagamento_quality_check.run_config = KubernetesRun(
@@ -120,7 +134,4 @@ ordem_pagamento_quality_check.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
 ]
-ordem_pagamento_quality_check.schedule = every_day_hour_six_minute_fifty
-
-
-# ordem pagamento
+ordem_pagamento_quality_check.schedule = every_day_hour_ten_fifteen

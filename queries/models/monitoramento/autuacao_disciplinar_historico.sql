@@ -14,7 +14,7 @@ with
     autuacao_disciplinar_staging as (
         select
             data_infracao as data,
-            datetime(null) as datetime_autuacao,
+            datetime_infracao as datetime_autuacao,
             id_auto_infracao,
             id_infracao,
             modo,
@@ -22,6 +22,7 @@ with
             permissao,
             placa,
             valor,
+            status,
             data_pagamento,
             date(data) as data_inclusao_stu,
             current_date("America/Sao_Paulo") as data_inclusao_datalake,

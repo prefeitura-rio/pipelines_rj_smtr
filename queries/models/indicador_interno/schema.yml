@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: indicador_estrategico
+    description: "Indicadores estratégicos internos"
+    columns:
+      - name: data_inicial_mes
+        description: "Data inicial do mês de apuração"
+      - name: data_final_mes
+        description: "Data final do mês de apuração"
+      - name: ano
+        description: "Ano de apuração"
+      - name: mes
+        description: "Mês de apuração"
+      - name: indicador_codigo
+        description: "Código do indicador"
+      - name: indicador_versao
+        description: "Versão apurada do indicador"
+      - name: indicador_numerador
+        description: "Numerador apurado do indicador"
+      - name: indicador_denominador
+        description: "Denominador apurado do indicador"
+      - name: indicador_valor
+        description: "Valor apurado do indicador"
+      - name: versao
+        description: "{{ doc('versao') }}"
+      - name: datetime_ultima_atualizacao
+        description: "{{ doc('datetime_ultima_atualizacao') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"

@@ -21,7 +21,11 @@ from pipelines.utils.fs import (
 from pipelines.utils.gcp.bigquery import SourceTable
 from pipelines.utils.prefect import rename_current_flow_run
 from pipelines.utils.pretreatment import transform_to_nested_structure
-from pipelines.utils.utils import create_timestamp_captura, data_info_str
+from pipelines.utils.utils import (
+    convert_timezone,
+    create_timestamp_captura,
+    data_info_str,
+)
 
 ############################
 # Flow Configuration Tasks #
@@ -87,6 +91,7 @@ def get_capture_timestamps(
     timestamp: datetime,
     recapture: bool,
     recapture_days: int,
+    recapture_timestamps: list[str],
 ) -> list[datetime]:
     """
     Retorna os timestamps que serão capturados pelo flow
@@ -97,11 +102,15 @@ def get_capture_timestamps(
         recapture (bool): Se a execução é uma recaptura ou não
         recapture_days (int): A quantidade de dias que serão considerados para achar datas
             a serem recapturadas
+        recapture_timestamps (list[str]): Lista manual de timestamps a serem recapturadas
 
     Returns:
         list[datetime]: Lista de datetimes para executar a captura
     """
     if recapture:
+        if recapture_timestamps:
+            return [convert_timezone(datetime.fromisoformat(t)) for t in recapture_timestamps]
+
         return source.get_uncaptured_timestamps(
             timestamp=timestamp,
             retroactive_days=recapture_days,
@@ -184,18 +193,16 @@ def get_raw_data(data_extractor: Callable, filepaths: dict, raw_filetype: str, s
         raw_filetype (str): tipo de dado raw
         source (SourceTable): Objeto representando a fonte de dados capturados
     """
-    data = data_extractor()
     raw_filepath = filepaths["raw"]
 
-    if source.file_chunk_size is None:
-        data = [data]
-
-    raw_filepaths = []
-    for idx, file in enumerate(data):
+    if source.file_chunk_size is not None:
+        raw_filepaths = data_extractor(raw_filepath=raw_filepath)
+    else:
+        data = data_extractor()
         base_path, ext = os.path.splitext(raw_filepath)
-        filepath = f"{base_path}_{idx}{ext}"
-        save_local_file(filepath=filepath, filetype=raw_filetype, data=file)
-        raw_filepaths.append(filepath)
+        filepath = f"{base_path}_0{ext}"
+        save_local_file(filepath=filepath, filetype=raw_filetype, data=data)
+        raw_filepaths = [filepath]
 
     return raw_filepaths
 

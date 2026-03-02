@@ -7,7 +7,9 @@
 }}
 
 {% set incremental_filter %}
-  date(_PARTITIONTIME, "America/Sao_Paulo") between date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
+  date(_PARTITIONTIME, "America/Sao_Paulo") between
+    date_sub(date("{{var('date_range_start')}}"), interval 1 day) and
+    date_add(date("{{var('date_range_end')}}"), interval 1 day)
 {% endset %}
 
 {% set billing_staging = source(
@@ -18,15 +20,13 @@
 {% if execute %}
     {% if is_incremental() %}
         {% set partitions_query %}
-            select distinct concat("'", date(usage_start_time), "'") as data
+            select distinct concat("'", date(usage_start_time, "America/Sao_Paulo"), "'") as data
             from {{ billing_staging }}
-            where
-                {{ incremental_filter }}
-
+            where {{ incremental_filter }}
+              and date(usage_start_time, "America/Sao_Paulo") between
+                date("{{var('date_range_start')}}") and date("{{var('date_range_end')}}")
         {% endset %}
-
         {% set partitions = run_query(partitions_query).columns[0].values() %}
-
     {% endif %}
 {% endif %}
 
@@ -52,7 +52,14 @@ with
             '{{ var("version") }}' as versao,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
         from billing
-        where usage_start_time >= '{{ var("data_inicial_custo_cloud") }}'
+        where
+            usage_start_time >= '{{ var("data_inicial_custo_cloud") }}'
+            and date(
+                usage_start_time,
+                "America/Sao_Paulo"
+            ) between date("{{var('date_range_start')}}") and date(
+                "{{var('date_range_end')}}"
+            )
     )
 select *
 from novos_dados

@@ -120,7 +120,7 @@ models:
     description: "View para os dados capturados em staging do cadastro das agências de transporte público (Descontinuada a partir de 2022-09-13)."
     columns:
       - name: agency_id
-        description: "Identificador único para uma agência"
+        description: "{{ doc('agency_id') }}"
       - name: content
         description: "{{ doc('content') }}"
       - name: data_versao

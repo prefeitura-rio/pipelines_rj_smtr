@@ -99,9 +99,9 @@ def get_raw_api_top_skip(
     return data
 
 
-def get_raw_api_params_list(
-    url: str,
-    params_list: list[dict],
+def get_raw_api_list(
+    url: Union[str, list[str]],
+    params_list: Union[None, list[dict]] = None,
     headers: Union[None, dict] = None,
 ) -> list[dict]:
     """
@@ -117,7 +117,18 @@ def get_raw_api_params_list(
         list[dict]: Dados capturados da API
     """
     data = []
-    for params in params_list:
-        page_data = get_raw_api(url=url, headers=headers, params=params, raw_filetype="json")
-        data += page_data
+    if isinstance(url, list):
+        for single_url in url:
+            page_data = get_raw_api(url=single_url, headers=headers, raw_filetype="json")
+            data += page_data
+    else:
+        if params_list is None:
+            raise ValueError(
+                "Quando 'url' é uma string, 'params_list' deve ser fornecido. "
+                "Para uma única chamada de API sem parâmetros, use 'get_raw_api'."
+            )
+
+        for params in params_list:
+            page_data = get_raw_api(url=url, headers=headers, params=params, raw_filetype="json")
+            data += page_data
     return data

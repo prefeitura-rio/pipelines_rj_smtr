@@ -1,76 +1,64 @@
 -- depends_on: {{ ref("ordem_pagamento_servico_operador_dia_invalida") }}
 {{
-  config(
-    incremental_strategy="insert_overwrite",
-    partition_by={
-      "field": "data_ordem",
-      "data_type": "date",
-      "granularity": "day"
-    },
-  )
+    config(
+        incremental_strategy="insert_overwrite",
+        partition_by={
+            "field": "data_ordem",
+            "data_type": "date",
+            "granularity": "day",
+        },
+    )
 }}
 
-WITH ordem_pagamento_servico_operador_dia AS (
-  SELECT
-    data_ordem,
-    id_consorcio,
-    id_operadora,
-    id_ordem_pagamento,
-    SUM(quantidade_total_transacao) AS quantidade_total_transacao,
-    SUM(valor_total_transacao_liquido) AS valor_total_transacao_liquido,
-  FROM
-    {{ ref("ordem_pagamento_servico_operador_dia") }}
-  {% if is_incremental() %}
-    WHERE
-      data_ordem = DATE("{{var('run_date')}}")
-  {% endif %}
-  GROUP BY
-    1,
-    2,
-    3,
-    4
-),
-ordem_pagamento_consorcio_operador_dia AS (
-  SELECT
-    data_ordem,
-    id_consorcio,
-    id_operadora,
-    id_ordem_pagamento,
-    quantidade_total_transacao,
-    valor_total_transacao_liquido_ordem AS valor_total_transacao_liquido
-  FROM
-    {{ ref("ordem_pagamento_consorcio_operador_dia") }}
-  {% if is_incremental() %}
-    WHERE
-      data_ordem = DATE("{{var('run_date')}}")
-  {% endif %}
-),
-indicadores AS (
-  SELECT
-    cod.data_ordem,
-    cod.id_consorcio,
-    cod.id_operadora,
-    cod.id_ordem_pagamento,
-    cod.quantidade_total_transacao,
-    sod.quantidade_total_transacao AS quantidade_total_transacao_agregacao,
-    cod.valor_total_transacao_liquido,
-    sod.valor_total_transacao_liquido AS valor_total_transacao_liquido_agregacao,
-    ROUND(cod.valor_total_transacao_liquido, 2) != ROUND(sod.valor_total_transacao_liquido, 2) OR cod.quantidade_total_transacao != sod.quantidade_total_transacao AS indicador_agregacao_invalida
-  FROM
-    ordem_pagamento_consorcio_operador_dia cod
-  LEFT JOIN
-    ordem_pagamento_servico_operador_dia sod
-  USING(
-    data_ordem,
-    id_consorcio,
-    id_operadora,
-    id_ordem_pagamento
-  )
-)
-SELECT
-  *,
-  '{{ var("version") }}' AS versao
-FROM
-  indicadores
-WHERE
-  indicador_agregacao_invalida = TRUE
+with
+    ordem_pagamento_servico_operador_dia as (
+        select
+            data_ordem,
+            id_consorcio,
+            id_operadora,
+            id_ordem_pagamento,
+            sum(quantidade_total_transacao) as quantidade_total_transacao,
+            sum(valor_total_transacao_liquido) as valor_total_transacao_liquido,
+        from {{ ref("bilhetagem_servico_operador_dia") }}
+        {% if is_incremental() %}
+            where data_ordem = date("{{var('run_date')}}")
+        {% endif %}
+        group by 1, 2, 3, 4
+    ),
+    ordem_pagamento_consorcio_operador_dia as (
+        select
+            data_ordem,
+            id_consorcio,
+            id_operadora,
+            id_ordem_pagamento,
+            quantidade_total_transacao,
+            valor_total_transacao_liquido_ordem as valor_total_transacao_liquido
+        from {{ ref("bilhetagem_consorcio_operador_dia") }}
+        {% if is_incremental() %}
+            where data_ordem = date("{{var('run_date')}}")
+        {% endif %}
+    ),
+    indicadores as (
+        select
+            cod.data_ordem,
+            cod.id_consorcio,
+            cod.id_operadora,
+            cod.id_ordem_pagamento,
+            cod.quantidade_total_transacao,
+            sod.quantidade_total_transacao as quantidade_total_transacao_agregacao,
+            cod.valor_total_transacao_liquido,
+            sod.valor_total_transacao_liquido
+            as valor_total_transacao_liquido_agregacao,
+            round(cod.valor_total_transacao_liquido, 2)
+            != round(sod.valor_total_transacao_liquido, 2)
+            or cod.quantidade_total_transacao
+            != sod.quantidade_total_transacao as indicador_agregacao_invalida
+        from ordem_pagamento_consorcio_operador_dia cod
+        left join
+            ordem_pagamento_servico_operador_dia sod using (
+                data_ordem, id_consorcio, id_operadora, id_ordem_pagamento
+            )
+    )
+select *, '{{ var("version") }}' as versao
+from indicadores
+where indicador_agregacao_invalida = true

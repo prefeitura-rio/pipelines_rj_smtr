@@ -1,5 +1,11 @@
 # Changelog - br_rj_riodejaneiro_onibus_gps_zirix
 
+## [1.1.1] - 2025-07-21
+
+### Alterado
+
+- Altera a task `run_dbt_model` pela task genérica `run_dbt` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/715)
+
 ## [1.1.0] - 2024-11-12
 
 ### Adicionado

@@ -1,41 +1,44 @@
-{{config(
-    partition_by = { 'field' :'feed_start_date',
-    'data_type' :'date',
-    'granularity': 'day' },
-    unique_key = ['trip_id','feed_start_date'],
-    alias = 'trips'
-)}}
+{{
+    config(
+        partition_by={
+            "field": "feed_start_date",
+            "data_type": "date",
+            "granularity": "day",
+        },
+        unique_key=["trip_id", "feed_start_date"],
+        alias="trips",
+    )
+}}
 
 {% if execute and is_incremental() %}
-  {% set last_feed_version = get_last_feed_start_date(var("data_versao_gtfs")) %}
+    {% set last_feed_version = get_last_feed_start_date(var("data_versao_gtfs")) %}
 {% endif %}
 
-SELECT
+select
     fi.feed_version,
-    SAFE_CAST(t.data_versao AS DATE) as feed_start_date,
+    safe_cast(t.data_versao as date) as feed_start_date,
     fi.feed_end_date,
-    SAFE_CAST(JSON_VALUE(t.content, '$.route_id') AS STRING) route_id,
-    SAFE_CAST(JSON_VALUE(t.content, '$.service_id') AS STRING) service_id,
-    SAFE_CAST(t.trip_id AS STRING) trip_id,
-    SAFE_CAST(JSON_VALUE(t.content, '$.trip_headsign') AS STRING) trip_headsign,
-    SAFE_CAST(JSON_VALUE(t.content, '$.trip_short_name') AS STRING) trip_short_name,
-    SAFE_CAST(JSON_VALUE(t.content, '$.direction_id') AS STRING) direction_id,
-    SAFE_CAST(JSON_VALUE(t.content, '$.block_id') AS STRING) block_id,
-    SAFE_CAST(JSON_VALUE(t.content, '$.shape_id') AS STRING) shape_id,
-    SAFE_CAST(JSON_VALUE(t.content, '$.wheelchair_accessible') AS STRING) wheelchair_accessible,
-    SAFE_CAST(JSON_VALUE(t.content, '$.bikes_allowed') AS STRING) bikes_allowed,
+    safe_cast(json_value(t.content, '$.route_id') as string) route_id,
+    safe_cast(json_value(t.content, '$.service_id') as string) service_id,
+    safe_cast(t.trip_id as string) trip_id,
+    safe_cast(json_value(t.content, '$.trip_headsign') as string) trip_headsign,
+    safe_cast(json_value(t.content, '$.trip_short_name') as string) trip_short_name,
+    regexp_replace(
+        safe_cast(json_value(t.content, '$.direction_id') as string), r'\.0$', ''
+    ) as direction_id,
+    safe_cast(json_value(t.content, '$.block_id') as string) block_id,
+    safe_cast(json_value(t.content, '$.shape_id') as string) shape_id,
+    safe_cast(
+        json_value(t.content, '$.wheelchair_accessible') as string
+    ) wheelchair_accessible,
+    safe_cast(json_value(t.content, '$.bikes_allowed') as string) bikes_allowed,
     '{{ var("version") }}' as versao_modelo
-FROM
-    {{ source(
-        'br_rj_riodejaneiro_gtfs_staging',
-        'trips'
-    ) }} t
-JOIN
-    {{ ref('feed_info_gtfs') }} fi
-ON
-    t.data_versao = CAST(fi.feed_start_date AS STRING)
+from {{ source("br_rj_riodejaneiro_gtfs_staging", "trips") }} t
+join
+    {{ ref("feed_info_gtfs") }} fi on t.data_versao = cast(fi.feed_start_date as string)
 {% if is_incremental() -%}
-    WHERE
-        t.data_versao IN ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
-        AND fi.feed_start_date IN ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
+    where
+        t.data_versao in ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
+        and fi.feed_start_date
+        in ('{{ last_feed_version }}', '{{ var("data_versao_gtfs") }}')
 {%- endif %}

@@ -1,0 +1,45 @@
+
+version: 2
+
+models:
+  - name: ordem_servico_diaria_gtfs
+    description: "Dados diários das linhas presentes no município"
+    columns:
+      - name: data
+        description: "{{ doc('data_ordem_servico') }}"
+      - name: tipo_dia
+        description: "{{ doc('tipo_dia') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: vista
+        description: "{{ doc('vista') }}"
+      - name: consorcio
+        description: "{{ doc('consorcio') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"
+      - name: viagens_planejadas
+        description: "{{ doc('viagens_planejadas') }}"
+      - name: inicio_periodo
+        description: "{{ doc('inicio_periodo') }}"
+      - name: fim_periodo
+        description: "{{ doc('fim_periodo') }}"
+  - name: ordem_servico_viagens_planejadas
+    description: "Viagens planejadas das linhas presentes no município"
+    columns:
+      - name: data
+        description: "{{ doc('data_ordem_servico') }}"
+      - name: tipo_dia
+        description: "{{ doc('tipo_dia') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: viagens_planejadas
+        description: "{{ doc('viagens_planejadas') }}"
+  - name: servicos_sentido_gtfs
+    description: "Sentido dos serviços (I - Ida, V - Volta, C - Circular)"
+    columns:
+      - name: feed_start_date
+        description: "{{ doc('feed_start_date') }}"
+      - name: servico
+        description: "{{ doc('servico') }}"
+      - name: sentido
+        description: "{{ doc('sentido') }}"

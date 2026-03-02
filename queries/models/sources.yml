@@ -52,6 +52,8 @@ sources:
       - name: ordem_servico
       - name: ordem_servico_trajeto_alternativo
       - name: ordem_servico_faixa_horaria
+      - name: ordem_servico_faixa_horaria_sentido
+      - name: ordem_servico_trajeto_alternativo_sentido
 
   - name: br_rj_riodejaneiro_stu_staging
     database: rj-smtr-staging
@@ -70,17 +72,13 @@ sources:
       - name: recursos_sppo_servico_dia_avaliacao
       - name: recursos_sppo_servico_dia_pago
 
-  - name: cadastro
-    database: rj-smtr
-
-    tables:
-      - name: modos
-
   - name: cadastro_staging
-    database: rj-smtr
+    database: rj-smtr-staging
 
     tables:
       - name: consorcio_modo
+      - name: modos
+      - name: operador_van_v2
 
   - name: br_rj_riodejaneiro_rdo_staging
     database: rj-smtr-staging
@@ -90,6 +88,9 @@ sources:
       - name: rho_registros_stpl
       - name: rdo_registros_stpl
       - name: dicionario
+      - name: rdo5_registros_stpl
+      - name: rdo5_registros_sppo
+      - name: rdo5_registros
 
   - name: br_rj_riodejaneiro_rdo
     database: rj-smtr
@@ -100,9 +101,16 @@ sources:
 
   - name: projeto_subsidio_sppo_encontro_contas
     database: rj-smtr
+    tables:
+      - name: parametros_km
+
+  - name: projeto_subsidio_sppo_encontro_contas_staging
+    database: rj-smtr
 
     tables:
       - name: parametros_km
+      - name: rdo_rioonibus_correcao_servico_2024_2025
+      - name: subtt_cmo_recurso_encontro_contas
 
   - name: veiculo_staging_rj-smtr
     database: rj-smtr
@@ -159,10 +167,21 @@ sources:
       - name: rdo_correcao_rioonibus_servico_quinzena
 
   - name: br_rj_riodejaneiro_geo
-    database: rj-smtr
+    database: rj-smtr-staging
 
     tables:
       - name: h3_res9
+      - name: h3_res8
+      - name: limites_geograficos_caixa
+      - name: garagens_polygon
+      - name: area_planejamento
+      - name: bairros
+
+  - name: br_rj_riodejaneiro_brt_gps_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: registros_historico
 
   - name: br_rj_riodejaneiro_viagem_zirix_staging
     database: rj-smtr-staging
@@ -274,6 +293,11 @@ sources:
       - name: produto
       - name: linha_tarifa
       - name: transacao_retificada
+      - name: lancamento
+      - name: estudante
+      - name: escola
+      - name: laudo_pcd
+      - name: resultado_verificacao_captura_jae
 
   - name: source_sonda
     database: rj-smtr-staging
@@ -288,12 +312,7 @@ sources:
       - name: matriz_reparticao_tarifaria
       - name: matriz_transferencia
       - name: matriz_integracao_excecao
-
-  - name: subsidio_staging
-    database: rj-smtr
-
-    tables:
-      - name: valor_km_tipo_viagem
+      - name: dicionario_subsidio
 
   - name: planejamento_staging
     database: rj-smtr-staging
@@ -301,12 +320,6 @@ sources:
     tables:
       - name: tecnologia_servico
       - name: tuneis
-
-  - name: cloudcosts
-    database: rj-smtr
-
-    tables:
-      - name: cloud_pricing_export
 
   - name: infraestrutura_staging
     database: rj-smtr-staging
@@ -373,11 +386,11 @@ sources:
     tables:
       - name: veiculo_fiscalizacao_lacre
 
-  - name: monitoramento_staging
+  - name: cadastro_staging
     database: rj-smtr-staging
 
     tables:
-      - name: garagens
+      - name: garagem
 
   - name: source_cittati
     database: rj-smtr-staging
@@ -399,3 +412,69 @@ sources:
     tables:
       - name: registros
       - name: realocacao
+
+  - name: clima_estacao_meteorologica
+    database: rj-cor
+
+    tables:
+      - name: meteorologia_inmet
+      - name: meteorologia_alertario
+
+  - name: source_inmet
+    database: rj-smtr-staging
+
+    tables:
+      - name: meteorologia
+
+  - name: br_inep_censo_educacao_superior
+    database: basedosdados
+
+    tables:
+      - name: curso
+      - name: ies
+      - name: dicionario
+
+  - name: source_cct
+    database: rj-smtr-staging
+
+    tables:
+      - name: ordem_pagamento
+      - name: ordem_pagamento_agrupado
+      - name: ordem_pagamento_agrupado_historico
+      - name: user
+      - name: detalhe_a
+      - name: dicionario
+      - name: teste_sincronizacao_transacao_cct
+
+  - name: source_stu
+    database: rj-smtr-staging
+
+    tables:
+      - name: pessoa_fisica
+      - name: permissao
+      - name: vistoria
+      - name: veiculo
+      - name: mod_chassi
+      - name: mod_carroceria
+      - name: planta
+
+  - name: projeto_subsidio_sppo_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: ordem_servico
+
+  - name: br_rj_riodejaneiro_transporte_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: estacoes_e_terminais_brt
+      - name: terminais_onibus_coordenadas
+
+  - name: subsidio_staging
+    database: rj-smtr-staging
+
+    tables:
+      - name: servico_contrato_abreviado
+      - name: valor_km_tipo_viagem
+      - name: valor_tipo_penalidade

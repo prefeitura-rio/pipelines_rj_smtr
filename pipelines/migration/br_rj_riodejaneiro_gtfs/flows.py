@@ -2,14 +2,13 @@
 """
 Flows for gtfs
 
-DBT 2025-07-07
+DBT 2026-03-02
 """
 
 from prefect import Parameter, case, task
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.tasks.control_flow import merge
-from prefect.tasks.core.operators import GreaterThanOrEqual
 from prefect.utilities.edges import unmapped
 from prefeitura_rio.pipelines_utils.custom import Flow
 
@@ -27,10 +26,13 @@ from pipelines.migration.br_rj_riodejaneiro_gtfs.constants import (
 
 # SMTR Imports #
 from pipelines.migration.br_rj_riodejaneiro_gtfs.tasks import (
+    filter_gtfs_table_ids,
     get_last_capture_os,
     get_os_info,
     get_raw_gtfs_files,
     update_last_captured_os,
+    upload_raw_data_to_gcs,
+    upload_staging_data_to_gcs,
 )
 from pipelines.migration.tasks import (
     create_date_hour_partition,
@@ -40,22 +42,19 @@ from pipelines.migration.tasks import (
     get_current_timestamp,
     get_join_dict,
     rename_current_flow_run_now_time,
-    run_dbt_model,
     transform_raw_to_nested_structure_chunked,
     unpack_mapped_results_nout2,
-    upload_raw_data_to_gcs,
-    upload_staging_data_to_gcs,
 )
 from pipelines.schedules import every_5_minutes
 from pipelines.tasks import (
     check_fail,
+    check_run_dbt_success,
+    get_run_env,
     get_scheduled_timestamp,
     log_discord,
     parse_timestamp_to_string,
-    remove_key_from_dict,
-    task_value_is_none,
 )
-from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt_tests
+from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt
 
 # from pipelines.capture.templates.flows import create_default_capture_flow
 
@@ -116,6 +115,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
     regular_sheet_index = Parameter("regular_sheet_index", default=None)
     data_versao_gtfs_param = Parameter("data_versao_gtfs", default=None)
 
+    env = get_run_env()
     mode = get_current_flow_mode()
     data_versao_gtfs_task = None
     last_captured_os_none = None
@@ -154,20 +154,11 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
             filename = parse_timestamp_to_string(data_versao_gtfs_task)
 
-            gte = GreaterThanOrEqual()
-            modelo_novo_os = gte.run(data_versao_gtfs_str, constants.DATA_GTFS_V2_INICIO.value)
-            with case(modelo_novo_os, False):
-                table_ids_false = task(
-                    lambda: list(constants.GTFS_TABLE_CAPTURE_PARAMS.value.keys())
-                )()
+            dict_gtfs = filter_gtfs_table_ids(
+                data_versao_gtfs_str, constants.GTFS_TABLE_CAPTURE_PARAMS.value
+            )
 
-            with case(modelo_novo_os, True):
-                dict_gtfs = remove_key_from_dict(
-                    constants.GTFS_TABLE_CAPTURE_PARAMS.value, "ordem_servico"
-                ).set_upstream(task=modelo_novo_os)
-                table_ids_true = task(lambda x: list(x.keys()))(dict_gtfs)
-
-            table_ids = merge(table_ids_false, table_ids_true)
+            table_ids = task(lambda x: list(x.keys()))(dict_gtfs)
 
             local_filepaths = create_local_partition_path.map(
                 dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
@@ -182,6 +173,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 regular_sheet_index=regular_sheet_index,
                 upload_from_gcs=upload_from_gcs,
                 data_versao_gtfs=data_versao_gtfs_str,
+                dict_gtfs=dict_gtfs,
             )
 
             transform_raw_to_nested_structure_results = (
@@ -199,22 +191,21 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                 mapped_results=transform_raw_to_nested_structure_results
             )
 
-            errors = upload_raw_data_to_gcs.map(
+            upload_raw = upload_raw_data_to_gcs.map(
+                env=unmapped(env),
                 dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
                 table_id=table_ids,
                 raw_filepath=raw_filepaths,
                 partitions=unmapped(partition),
-                error=unmapped(None),
             )
 
             wait_captura_true = upload_staging_data_to_gcs.map(
+                env=unmapped(env),
                 dataset_id=unmapped(constants.GTFS_DATASET_ID.value),
                 table_id=table_ids,
                 staging_filepath=treated_filepaths,
                 partitions=unmapped(partition),
-                timestamp=unmapped(data_versao_gtfs_task),
-                error=errors,
-            )
+            ).set_upstream(upload_raw)
 
             upload_failed = check_fail(wait_captura_true)
 
@@ -247,7 +238,8 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
         version = fetch_dataset_sha(dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value)
         dbt_vars = get_join_dict([{"data_versao_gtfs": data_versao_gtfs}], version)[0]
 
-        wait_run_dbt_model = run_dbt_model(
+        wait_run_dbt_model = run_dbt(
+            resource="model",
             dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value
             + " "
             + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,
@@ -257,14 +249,14 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
                      servico_planejado_faixa_horaria",
         ).set_upstream(task=wait_captura)
 
-        run_dbt_failed = task_value_is_none(wait_run_dbt_model)
+        run_dbt_success = check_run_dbt_success(wait_run_dbt_model)
 
-        with case(run_dbt_failed, False):
+        with case(run_dbt_success, False):
             log_discord(
                 "Falha na materialização dos dados do GTFS " + data_versao_gtfs, "gtfs", True
             )
 
-        with case(run_dbt_failed, True):
+        with case(run_dbt_success, True):
             log_discord(
                 "Captura e materialização do GTFS " + data_versao_gtfs + " finalizada com sucesso!",
                 "gtfs",
@@ -276,12 +268,13 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             mode=mode,
         ).set_upstream(task=wait_run_dbt_model)
 
-        gtfs_data_quality = run_dbt_tests(
+        gtfs_data_quality = run_dbt(
+            resource="test",
             dataset_id=constants.GTFS_MATERIALIZACAO_DATASET_ID.value
             + " "
             + constants.PLANEJAMENTO_MATERIALIZACAO_DATASET_ID.value,
             _vars=dbt_vars,
-            exclude="tecnologia_servico",
+            exclude="tecnologia_servico sumario_faixa_servico_dia sumario_faixa_servico_dia_pagamento viagem_planejada viagens_remuneradas sumario_servico_dia_historico",  # noqa
         ).set_upstream(task=wait_run_dbt_model)
 
         gtfs_data_quality_results = dbt_data_quality_checks(

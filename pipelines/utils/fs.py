@@ -8,6 +8,7 @@ from typing import Union
 
 import pandas as pd
 import pytz
+from prefeitura_rio.pipelines_utils.io import get_root_path
 from prefeitura_rio.pipelines_utils.logging import log
 
 from pipelines.constants import constants
@@ -21,7 +22,7 @@ def get_data_folder_path() -> str:
     Returns:
         str: Caminho para a pasta data
     """
-    return os.path.join(os.getcwd(), os.getenv("DATA_FOLDER", "data"))
+    return os.path.join(get_root_path(), os.getenv("DATA_FOLDER", "data"))
 
 
 def create_partition(

@@ -1,0 +1,33 @@
+name: CD-update-table-metadata
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-container:
+    name: Update table metadata
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Python version
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+
+      - run: |-
+          pip install --no-cache-dir -r requirements.txt
+
+      - name: Gera manifest.json
+        run: |
+          cd queries
+          dbt deps && dbt parse
+
+      - name: Atualiza metadados das tabelas
+        run: python3 queries/update_table_metadata.py
+        env:
+          BQ_AUTH_SA: ${{ secrets.BQ_AUTH_SA }}

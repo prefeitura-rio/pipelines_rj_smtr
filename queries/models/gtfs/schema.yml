@@ -7,7 +7,7 @@ models:
     description: "Agência de transporte público com serviços representados neste conjunto de dados"
     columns:
       - name: agency_id
-        description:  "Identifica uma marca de transporte público que geralmente é sinônimo de agência de transporte público"
+        description: "{{ doc('agency_id') }}"
       - name: agency_name
         description: "Nome completo da agência de transporte público"
       - name: agency_url
@@ -94,7 +94,7 @@ models:
       - name: transfers
         description: "Indica o número de transferências permitidas nesta tarifa"
       - name: agency_id
-        description: "Identifica a agência relevante para uma tarifa"
+        description: "{{ doc('agency_id') }}"
       - name: transfer_duration
         description: "Período de tempo em segundos antes que uma transferência expire"
       - name: feed_start_date
@@ -140,7 +140,7 @@ models:
       - name: default_lang
         description: "Define o idioma que deve ser usado quando o consumidor de dados não conhece o idioma do passageiro"
       - name: feed_start_date
-        description: "O conjunto de dados fornece informações de programação completas e confiáveis ​​para serviço no período que vai do início do dia feed_start_date até o final do dia feed_end_date"
+        description: "{{ doc('feed_start_date') }}"
       - name: feed_end_date
         description: "{{ doc('feed_end_date') }}"
       - name: feed_version
@@ -149,8 +149,6 @@ models:
         description: "Endereço de e-mail para comunicação sobre o conjunto de dados GTFS e práticas de publicação de dados"
       - name: feed_contact_url
         description: "URL para informações de contato, um formulário web, uma mesa de suporte ou outras ferramentas de comunicação relativas ao conjunto de dados GTFS e práticas de publicação de dados"
-      - name: feed_start_date
-        description: "Data de referência do feed (versão)"
       - name: feed_update_datetime
         description: "Data e hora da última atualização do feed"
       - name: versao_modelo
@@ -184,7 +182,7 @@ models:
       - name: route_id
         description: "{{ doc('route_id') }}"
       - name: agency_id
-        description: "Agência para a rota especificada"
+        description: "{{ doc('agency_id') }}"
       - name: route_short_name
         description: "Nome abreviado de uma rota"
       - name: route_long_name
@@ -230,7 +228,7 @@ models:
       - name: shape
         description: "{{ doc('shape') }}"
       - name: shape_distance
-        description: "Extensão do shape"
+        description: "{{ doc('shape_distance') }}"
       - name: start_pt
         description: "{{ doc('start_pt') }}"
       - name: end_pt
@@ -359,6 +357,10 @@ models:
         description: "Identifica o bloco ao qual pertence a viagem"
       - name: shape_id
         description: "{{ doc('shape_id') }}"
+        tests:
+          - test_shape_id_gtfs:
+              name: test_shape_id_gtfs__trips_gtfs
+              where: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
       - name: wheelchair_accessible
         description: "Indica acessibilidade para cadeiras de rodas"
       - name: bikes_allowed
@@ -382,7 +384,7 @@ models:
       - name: consorcio
         description: "Nome do consórcio responsável pela linha"
       - name: horario_inicio
-        description: "Horário inicial de funcionamento"
+        description: "{{ doc('horario_inicio') }}"
       - name: horario_fim
         description: "Horário da última viagem"
       - name: extensao_ida
@@ -398,7 +400,7 @@ models:
       - name: distancia_total_planejada
         description: "{{ doc('distancia_total_planejada') }}"
       - name: tipo_dia
-        description: "Tipo de dia, se dia útil, sábado, domingo ou ponto facultativo"
+        description: "{{ doc('tipo_dia') }}"
       - name: feed_start_date
         description: "{{ doc('feed_start_date') }}"
       - name: feed_end_date
@@ -416,12 +418,12 @@ models:
       - dbt_expectations.expect_table_aggregation_to_equal_other_table:
           name: dbt_expectations.expect_table_aggregation_to_equal_other_table__ordem_servico_trajeto_alternativo_gtfs
           expression: count(distinct tipo_os)
-          compare_model: ref("ordem_servico_gtfs")
+          compare_model: ref("ordem_servico_faixa_horaria") if var('data_versao_gtfs') < var('DATA_GTFS_V4_INICIO') else ref("ordem_servico_faixa_horaria_sentido")
           compare_expression: count(distinct tipo_os)
           group_by: [feed_start_date, tipo_os]
           compare_group_by: [feed_start_date, tipo_os]
-          row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
-          compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
+          row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}' and feed_start_date < '{{ var('DATA_GTFS_V5_INICIO') }}'"
+          compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}' and feed_start_date < '{{ var('DATA_GTFS_V5_INICIO') }}'"
           where: "1=1"
     columns:
       - name: feed_start_date
@@ -447,7 +449,7 @@ models:
       - name: extensao_volta
         description: "Distância planejada de volta do trajeto alternativo (km)"
       - name: inicio_periodo
-        description: "Horário inicial de funcionamento do trajeto alternativo"
+        description: "{{ doc('horario_inicio') }} do trajeto alternativo"
       - name: fim_periodo
         description: "Horário final de funcionamento do trajeto alternativo"
       - name: versao_modelo
@@ -460,10 +462,12 @@ models:
       - dbt_expectations.expect_table_aggregation_to_equal_other_table:
           name: dbt_expectations.expect_table_aggregation_to_equal_other_table__ordem_servico_trips_shapes_gtfs
           expression: count(distinct feed_start_date)
-          compare_model: ref("ordem_servico_faixa_horaria")
+          compare_model: ref("ordem_servico_faixa_horaria") if var('data_versao_gtfs') < var('DATA_GTFS_V4_INICIO') else ref("ordem_servico_faixa_horaria_sentido")
           compare_expression: count(distinct feed_start_date)
-          group_by: [feed_start_date, tipo_os, tipo_dia, servico, faixa_horaria_inicio]
-          compare_group_by: [feed_start_date, tipo_os, tipo_dia, servico, faixa_horaria_inicio]
+          group_by:
+            [feed_start_date, tipo_os, tipo_dia, servico, faixa_horaria_inicio]
+          compare_group_by:
+            [feed_start_date, tipo_os, tipo_dia, servico, faixa_horaria_inicio]
           row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
           compare_row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}' AND (quilometragem != 0 AND (partidas != 0 OR partidas IS NULL))"
           where: "1=1"
@@ -482,7 +486,15 @@ models:
           name: dbt_expectations.expect_table_row_count_to_be_between__ordem_servico_trips_shapes_gtfs
           min_value: 1
           max_value: 2
-          group_by: [feed_start_date, tipo_dia, tipo_os, servico, faixa_horaria_inicio, shape_id]
+          group_by:
+            [
+              feed_start_date,
+              tipo_dia,
+              tipo_os,
+              servico,
+              faixa_horaria_inicio,
+              shape_id,
+            ]
           row_condition: "feed_start_date = '{{ var('data_versao_gtfs') }}'"
           strictly: false
           where: "1=1"
@@ -494,7 +506,7 @@ models:
       - name: feed_version
         description: "{{ doc('feed_version') }}"
       - name: tipo_dia
-        description: "Dia da semana - categorias: Dia Útil, Sabado, Domingo e Ponto Facultativo"
+        description: "{{ doc('tipo_dia') }}"
       - name: servico
         description: "{{ doc('servico_variacao') }}"
       - name: vista
@@ -510,7 +522,7 @@ models:
       - name: distancia_total_planejada
         description: "{{ doc('distancia_total_planejada') }}"
       - name: inicio_periodo
-        description: "Horário inicial de funcionamento do serviço"
+        description: "{{ doc('horario_inicio') }}"
       - name: fim_periodo
         description: "Horário da final de funcionamento do serviço"
       - name: faixa_horaria_inicio
@@ -537,3 +549,5 @@ models:
         description: "Tipo de trajeto (0 - Regular, 1 - Alternativo)"
       - name: tipo_os
         description: "{{ doc('tipo_os') }}"
+      - name: id_execucao_dbt
+        description: "{{ doc('id_execucao_dbt') }}"

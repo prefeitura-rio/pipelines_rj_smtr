@@ -33,7 +33,7 @@ with Flow(
 janitor_flow.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 janitor_flow.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
-    labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
+    labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 janitor_flow.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
 janitor_flow.schedule = every_5_minutes
@@ -45,6 +45,6 @@ janitor_flow.schedule = every_5_minutes
 # test_flow.storage = GCS(emd_constants.GCS_FLOWS_BUCKET.value)
 # test_flow.run_config = KubernetesRun(
 #     image=emd_constants.DOCKER_IMAGE.value,
-#     labels=[emd_constants.RJ_SMTR_DEV_AGENT_LABEL.value],
+#     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 # )
 # test_flow.state_handlers = [handler_initialize_sentry]

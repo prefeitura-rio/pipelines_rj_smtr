@@ -3,6 +3,7 @@
         materialized="incremental",
         partition_by={"field": "data", "data_type": "date", "granularity": "day"},
         incremental_strategy="insert_overwrite",
+        require_partition_filter=true,
     )
 }}
 
@@ -65,7 +66,10 @@
             where
                 table_name = "{{ transacao_ordem.identifier }}"
                 and partition_id != "__NULL__"
-                and datetime(last_modified_time, "America/Sao_Paulo") between datetime("{{var('date_range_start')}}") and (datetime("{{var('date_range_end')}}"))
+                and
+                    datetime(last_modified_time, "America/Sao_Paulo")
+                    between datetime_add(datetime("{{var('date_range_start')}}"), interval 1 hour)
+                    and datetime_add(datetime("{{var('date_range_end')}}"), interval 1 hour)
 
             union distinct
 
@@ -76,7 +80,10 @@
             where
                 table_name = "{{ transacao_retificada.identifier }}"
                 and partition_id != "__NULL__"
-                and datetime(last_modified_time, "America/Sao_Paulo") between datetime("{{var('date_range_start')}}") and (datetime("{{var('date_range_end')}}"))
+                and
+                    datetime(last_modified_time, "America/Sao_Paulo")
+                    between datetime_add(datetime("{{var('date_range_start')}}"), interval 1 hour)
+                    and datetime_add(datetime("{{var('date_range_end')}}"), interval 1 hour)
 
     {% endset %}
 
@@ -111,10 +118,11 @@ with
             cast(id_cliente as string) as id_cliente,
             tipo_gratuidade,
             rede_ensino,
+            id_cre_escola,
             deficiencia_permanente,
-            data_inicio_validade,
-            data_fim_validade
-        from {{ ref("aux_gratuidade") }}
+            datetime_inicio_validade,
+            datetime_fim_validade
+        from {{ ref("aux_gratuidade_info") }}
     ),
     tipo_pagamento as (
         select chave as id_tipo_pagamento, valor as tipo_pagamento
@@ -167,9 +175,9 @@ with
             do.operadora,
             do.documento as documento_operadora,
             do.tipo_documento as tipo_documento_operadora,
-            t.cd_linha as id_servico_jae,
-            l.nr_linha as servico_jae,
-            l.nm_linha as descricao_servico_jae,
+            s.id_servico_jae,
+            s.servico_jae,
+            s.descricao_servico_jae,
             sentido,
             case
                 when m.modo = "VLT"
@@ -181,8 +189,8 @@ with
             t.numero_serie_validador as id_validador,
             t.id_cliente as id_cliente,
             sha256(t.id_cliente) as hash_cliente,
-            c.nr_documento as documento_cliente,
-            tdc.tipo_documento as tipo_documento_cliente,
+            c.documento as documento_cliente,
+            c.tipo_documento as tipo_documento_cliente,
             t.pan_hash as hash_cartao,
             t.vl_saldo as saldo_cartao,
             tp.tipo_pagamento as meio_pagamento_jae,
@@ -194,17 +202,21 @@ with
             valor_transacao
         from transacao_staging as t
         left join
-            {{ source("cadastro", "modos") }} m
-            on t.id_tipo_modal = m.id_modo
-            and m.fonte = "jae"
+            {{ ref("modos") }} m on t.id_tipo_modal = m.id_modo and m.fonte = "jae"
         left join {{ ref("operadoras") }} do on t.cd_operadora = do.id_operadora_jae
         left join {{ ref("consorcios") }} dc on t.cd_consorcio = dc.id_consorcio_jae
-        left join {{ ref("staging_linha") }} l on t.cd_linha = l.cd_linha
+        left join
+            {{ ref("aux_servico_jae") }} s
+            on t.cd_linha = s.id_servico_jae
+            and t.data_transacao >= s.datetime_inicio_validade
+            and (
+                t.data_transacao < s.datetime_fim_validade
+                or s.datetime_fim_validade is null
+            )
         left join {{ ref("staging_produto") }} p on t.id_produto = p.cd_produto
-        left join {{ ref("staging_cliente") }} c on t.id_cliente = c.cd_cliente
+        left join {{ ref("cliente_jae") }} c using (id_cliente)
         left join tipo_transacao tt on tt.id_tipo_transacao = t.tipo_transacao
         left join tipo_pagamento tp on t.id_tipo_midia = tp.id_tipo_pagamento
-        left join tipo_documento tdc on c.cd_tipo_documento = tdc.cd_tipo_documento
         left join
             {{ ref("staging_linha_sem_ressarcimento") }} lsr
             on t.cd_linha = lsr.id_linha
@@ -339,7 +351,11 @@ with
             case
                 when
                     t.tipo_transacao_jae in ("Integração", "Integração EMV")
-                    or i.id_transacao is not null
+                    or (
+                        i.id_transacao is not null
+                        and t.tipo_transacao_jae
+                        not in ("Transferência EMV", "Transferência")
+                    )
                 then "Integração"
                 when
                     t.tipo_transacao_jae in (
@@ -348,6 +364,17 @@ with
                 then "Integral"
                 when t.tipo_transacao_jae = "Transferência EMV"
                 then "Transferência"
+                when
+                    t.tipo_transacao_jae in (
+                        "Gratuidade acompanhante",
+                        "Gratuidade operadora",
+                        "Gratuidade operador sênior",
+                        "Gratuidade operador pcd",
+                        "Gratuidade operador estudante",
+                        "Gratuidade operador menor 5 anos",
+                        "Gratuidade operador policial"
+                    )
+                then "Gratuidade"
                 else t.tipo_transacao_jae
             end as tipo_transacao_atualizado,
             case
@@ -355,7 +382,7 @@ with
                     i.id_transacao is not null
                     or o.id_transacao is not null
                     or date(t.datetime_processamento)
-                    < (select max(data_ordem) from {{ ref("ordem_pagamento_dia") }})
+                    < (select max(data_ordem) from {{ ref("bilhetagem_dia") }})
                 then coalesce(i.valor_rateio, t.valor_transacao) * 0.96
             end as valor_pagamento,
             o.data_ordem,
@@ -391,6 +418,8 @@ with
                 then "Visa Internacional"
                 when t.tipo_transacao_jae = "Botoeira"
                 then "Dinheiro (Botoeira)"
+                when tipo_transacao_jae like "Gratuidade operador%"
+                then "Gratuidade Operadora"
             end as produto,
             case
                 when t.produto_jae = "Conta Jaé Gratuidade"
@@ -399,41 +428,79 @@ with
             end as tipo_transacao,
             case
                 when
-                    t.tipo_transacao_jae != "Gratuidade"
-                    and t.produto_jae != "Conta Jaé Gratuidade"
-                    or t.produto_jae is null
+                    t.tipo_transacao_jae not like "%Gratuidade%"
+                    and (
+                        t.produto_jae != "Conta Jaé Gratuidade" or t.produto_jae is null
+                    )
                 then "Pagante"
-                when g.tipo_gratuidade = "Sênior"
+                when
+                    t.tipo_transacao_jae
+                    in ("Gratuidade operador pcd", "Gratuidade acompanhante")
+                    or g.tipo_gratuidade = "PCD"
+                then "Saúde"
+                when t.tipo_transacao_jae = "Gratuidade operador estudante"
+                then "Estudante"
+                when
+                    g.tipo_gratuidade = "Sênior"
+                    or t.tipo_transacao_jae = "Gratuidade operador sênior"
                 then "Idoso"
-                else ifnull(g.tipo_gratuidade, "Não Identificado")
+                when tipo_transacao_jae like "Gratuidade operador%"
+                then "Operadora"
+                else g.tipo_gratuidade
             end as tipo_usuario,
             case
-                when g.tipo_gratuidade = "Estudante" and g.rede_ensino = "Universidade"
-                then "Estudante Passe Livre"
+                when
+                    t.tipo_transacao_jae = "Gratuidade acompanhante"
+                    or (
+                        t.tipo_transacao_jae not like "%Gratuidade%"
+                        and (
+                            t.produto_jae != "Conta Jaé Gratuidade"
+                            or t.produto_jae is null
+                        )
+
+                    )
+                then null
+                when
+                    g.tipo_gratuidade = "Estudante"
+                    and g.rede_ensino like "Universidade%"
+                then "Ensino Superior"
                 when g.tipo_gratuidade = "Estudante" and g.rede_ensino is not null
-                then concat("Estudante ", split(g.rede_ensino, " - ")[0])
-                when g.tipo_gratuidade = "Estudante"
-                then "Estudante Não Identificado"
+                then concat("Ensino Básico ", split(g.rede_ensino, " - ")[0])
+            end as subtipo_usuario,
+            case
+                when t.tipo_transacao_jae = "Gratuidade acompanhante"
+                then "Acompanhante"
+                when
+                    t.tipo_transacao_jae != "Gratuidade"
+                    and t.produto_jae != "Conta Jaé Gratuidade"
+                then null
+                when
+                    g.tipo_gratuidade = "Estudante"
+                    and g.rede_ensino like "Universidade%"
+                then concat("Ensino Superior ", g.rede_ensino)
+                when g.tipo_gratuidade = "Estudante" and g.rede_ensino is not null
+                then concat("Ensino Básico ", split(g.rede_ensino, " - ")[0])
                 when g.tipo_gratuidade = "PCD" and g.deficiencia_permanente
                 then "PCD"
                 when g.tipo_gratuidade = "PCD" and not g.deficiencia_permanente
                 then "DC"
-            end as subtipo_usuario,
+            end as subtipo_usuario_protegido,
             case
-                when t.meio_pagamento_jae like "Cartão%"
-                then "Cartão"
                 when t.tipo_transacao_jae = "Botoeira"
                 then "Dinheiro"
+                when t.meio_pagamento_jae like "Cartão%"
+                then "Cartão"
                 else t.meio_pagamento_jae
-            end as meio_pagamento
+            end as meio_pagamento,
+            g.id_cre_escola
         from transacao_info_posterior t
         left join
             gratuidade g
             on t.id_cliente = g.id_cliente
-            and t.datetime_transacao >= g.data_inicio_validade
+            and t.datetime_transacao >= g.datetime_inicio_validade
             and (
-                t.datetime_transacao < g.data_fim_validade
-                or g.data_fim_validade is null
+                t.datetime_transacao < g.datetime_fim_validade
+                or g.datetime_fim_validade is null
             )
     ),
     transacao_colunas_ordenadas as (
@@ -471,8 +538,10 @@ with
             tipo_transacao_jae,
             tipo_usuario,
             subtipo_usuario,
+            subtipo_usuario_protegido,
             meio_pagamento,
             meio_pagamento_jae,
+            id_cre_escola,
             latitude,
             longitude,
             geo_point_transacao,

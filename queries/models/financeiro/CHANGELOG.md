@@ -1,5 +1,35 @@
 # Changelog - financeiro
 
+## [1.2.0] - 2025-10-09
+
+### Adicionado
+
+- Cria modelos (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/934):
+  - `staging_detalhe_a_cct.sql`
+  - `staging_ordem_pagamento_agrupado_cct.sql`
+  - `staging_ordem_pagamento_agrupado_historico_cct.sql`
+  - `staging_ordem_pagamento_cct.sql`
+  - `staging_user_cct.sql`
+  - `dicionario_financeiro.sql`
+
+## [1.1.1] - 2025-09-24
+
+### Alterado
+
+- Move modelos das tabelas do subsidio de `rj-smtr.financeiro` para `rj-smtr.financeiro_interno` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/893)
+
+## [1.1.0] - 2025-09-01
+
+### Alterado
+
+- Move modelos do dataset `br_rj_riodejaneiro_bilhetagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/822)
+
+## [1.0.5] - 2025-08-07
+
+### Alterado
+
+- Alterados os modelos `subsidio_faixa_servico_dia_tipo_viagem` e `subsidio_penalidade_servico_faixa` para utilizar o versionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
+
 ## [1.0.4] - 2025-06-25
 
 ### Alterado

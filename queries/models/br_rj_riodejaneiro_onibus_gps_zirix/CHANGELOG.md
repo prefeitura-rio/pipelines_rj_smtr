@@ -1,5 +1,10 @@
 # Changelog - onibus_gps_zirix
 
+## [1.0.6] - 2025-07-28
+
+### Alterado
+- Move todos os modelos para a pasta `deprecated` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/727)
+
 ## [1.0.5] - 2025-02-21
 
 ### Alterado

@@ -17,5 +17,6 @@
             datetime_ultima_atualizacao, "America/Sao_Paulo"
         ) as timestamp_ultima_atualizacao
     from {{ ref("sppo_veiculo_dia") }}
+    where data < date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}")
 
 {% endsnapshot %}

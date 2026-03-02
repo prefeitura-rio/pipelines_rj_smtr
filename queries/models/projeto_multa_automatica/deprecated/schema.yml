@@ -1,0 +1,102 @@
+version: 2
+
+models:
+  - name: comparativo_frota
+    description: "Tabela que compara a frota de ônibus planejada com a frota realizada em períodos de pico"
+    columns:
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: linha
+        description: "{{ doc('linha') }}"
+      - name: pico
+        description: "{{ doc('pico_multa_automatica') }}"
+      - name: frota_realizada
+        description: "{{ doc('frota_operante_media_multa_automatica') }}"
+      - name: frota_planejada
+        description: "{{ doc('frota_planejada_multa_automatica') }}"
+      - name: porcentagem_operacao
+        description: "{{ doc('porcentagem_operacao_multa_automatica') }}"
+      - name: multavel
+        description: "{{ doc('multavel_multa_automatica') }}"
+
+  - name: comparativo_frota_1_dia
+    description: "Tabela que compara a frota de ônibus planejada com a frota realizada no dia anterior, em períodos de pico"
+    columns:
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: linha
+        description: "{{ doc('linha') }}"
+      - name: pico
+        description: "{{ doc('pico_multa_automatica') }}"
+      - name: frota_realizada
+        description: "{{ doc('frota_operante_media_multa_automatica') }}"
+      - name: frota_planejada
+        description: "{{ doc('frota_planejada_multa_automatica') }}"
+      - name: porcentagem_operacao
+        description: "{{ doc('porcentagem_operacao_multa_automatica') }}"
+      - name: multavel
+        description: "{{ doc('multavel_multa_automatica') }}"
+
+  - name: frota_planejada
+    description: "Tabela que define a frota de ônibus planejada para cada linha em períodos de pico"
+    columns:
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: linha
+        description: "{{ doc('linha') }}"
+      - name: frota_planejada
+        description: "{{ doc('frota_planejada_multa_automatica') }}"
+      - name: pico
+        description: "{{ doc('pico_multa_automatica') }}"
+
+  - name: frota_planejada_1_dia
+    description: "Tabela que define a frota de ônibus planejada para cada linha no dia anterior, em períodos de pico"
+    columns:
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: linha
+        description: "{{ doc('linha') }}"
+      - name: frota_planejada
+        description: "{{ doc('frota_planejada_multa_automatica') }}"
+      - name: pico
+        description: "{{ doc('pico_multa_automatica') }}"
+
+  - name: frota_realizada
+    description: "Tabela que calcula a frota de ônibus média em operação para cada linha em períodos de pico"
+    columns:
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: linha
+        description: "{{ doc('linha') }}"
+      - name: frota_operante_media
+        description: "{{ doc('frota_operante_media_multa_automatica') }}"
+      - name: pico
+        description: "{{ doc('pico_multa_automatica') }}"
+
+  - name: frota_realizada_1_dia
+    description: "Tabela que calcula a frota de ônibus média em operação para cada linha no dia anterior, em períodos de pico"
+    columns:
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: linha
+        description: "{{ doc('linha') }}"
+      - name: frota_operante_media
+        description: "{{ doc('frota_operante_media_multa_automatica') }}"
+      - name: pico
+        description: "{{ doc('pico_multa_automatica') }}"
+
+  - name: sumario_multa_gps_onibus
+    description: "Tabela que sumariza as multas de GPS para ônibus, indicando falhas de operação"
+    columns:
+      - name: data
+        description: "{{ doc('data') }}"
+      - name: timestamp_captura
+        description: "{{ doc('timestamp_captura') }}"
+      - name: erro
+        description: "Descrição do erro retornado pela API de GPS."
+      - name: flag_multa
+        description: "Indica se a condição para multa foi atingida [True/False]"
+      - name: tipo_multa
+        description: "Descrição do tipo de multa"
+      - name: artigo_multa
+        description: "Artigo da legislação em que a multa se baseia"

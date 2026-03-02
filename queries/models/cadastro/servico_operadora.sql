@@ -1,16 +1,15 @@
 {{ config(materialized="table") }}
 
+
 with
-    linha_tarifa as (
-        select
-            cd_linha,
-            vl_tarifa_ida as tarifa_ida,
-            vl_tarifa_volta as tarifa_volta,
-            dt_inicio_validade,
-            lead(dt_inicio_validade) over (
-                partition by cd_linha order by nr_sequencia
-            ) as data_fim_validade
-        from {{ ref("staging_linha_tarifa") }}
+    linha_jae as (
+        select *
+        from {{ ref("aux_servico_jae") }}
+        qualify
+            row_number() over (
+                partition by id_servico_jae order by datetime_inicio_validade desc
+            )
+            = 1
     ),
     tratado as (
         select
@@ -20,8 +19,8 @@ with
             o.id_operadora,
             o.operadora,
             lco.cd_linha as id_servico_jae,
-            l.nr_linha as servico_jae,
-            l.nm_linha as descricao_servico_jae,
+            l.servico_jae,
+            l.descricao_servico_jae,
             coalesce(l.gtfs_route_id, l.gtfs_stop_id) as id_servico_gtfs,
             case
                 when l.gtfs_route_id is not null
@@ -51,8 +50,8 @@ with
             {{ ref("operadoras") }} o
             on lco.cd_operadora_transporte = o.id_operadora_jae
         join {{ ref("consorcios") }} c on lco.cd_consorcio = c.id_consorcio_jae
-        join {{ ref("staging_linha") }} l on lco.cd_linha = l.cd_linha
-        left join linha_tarifa lt on lco.cd_linha = lt.cd_linha
+        join linha_jae l on lco.cd_linha = l.id_servico_jae
+        left join {{ ref("aux_linha_tarifa") }} lt on lco.cd_linha = lt.cd_linha
         where
             (
                 (

@@ -1,12 +1,17 @@
 {{
     config(
         materialized="table",
+        alias="tunel",
     )
 }}
 
 select
-    parse_date('%d/%m/%Y', nullif(trim(safe_cast(inicio_vigencia as string)), "")) as inicio_vigencia,
-    parse_date('%d/%m/%Y', nullif(trim(safe_cast(fim_vigencia as string)), "")) as fim_vigencia,
+    parse_date(
+        '%d/%m/%Y', nullif(trim(safe_cast(inicio_vigencia as string)), "")
+    ) as inicio_vigencia,
+    parse_date(
+        '%d/%m/%Y', nullif(trim(safe_cast(fim_vigencia as string)), "")
+    ) as fim_vigencia,
     safe_cast(regexp_replace(ltrim(cl, '0'), r'\.0$', '') as string) as id_logradouro,
     safe_cast(trim(bairro) as string) as bairro,
     safe_cast(trim(nome_parcial) as string) as nome_parcial,

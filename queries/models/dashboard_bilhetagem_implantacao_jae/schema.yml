@@ -67,7 +67,7 @@ models:
     description: "Tabela com registros de GPS das Vans utilizada no dashboard de acompanhamento da implantação dos validadores da Jaé [Contem apenas dados do dia atual]"
     columns:
       - name: id_operadora
-        description: "Identificador da operadora na tabela cadastro.operadoras"
+        description: "{{ doc('id_operadora') }}"
       - name: id_validador
         description: "{{ doc('id_validador') }}"
       - name: data

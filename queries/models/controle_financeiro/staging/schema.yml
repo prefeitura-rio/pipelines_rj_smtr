@@ -31,7 +31,7 @@ models:
       - name: isPago
         description: "Indica se foi pago com sucesso"
       - name: nomeConsorcio
-        description: "Nome do consórcio"
+        description: "{{ doc('nome_consorcio') }}"
       - name: nomeOperadora
         description: "Nome da operadora"
       - name: ocorrencias

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Module containing general purpose tasks"""
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Union
 
 import prefect
@@ -13,7 +13,12 @@ from pytz import timezone
 
 from pipelines.constants import constants
 from pipelines.utils.discord import send_discord_message
-from pipelines.utils.prefect import FailedSubFlow, create_subflow_run, wait_subflow_run
+from pipelines.utils.prefect import (
+    FailedSubFlow,
+    create_subflow_run,
+    flow_is_running_local,
+    wait_subflow_run,
+)
 from pipelines.utils.secret import get_secret
 from pipelines.utils.utils import convert_timezone
 
@@ -29,6 +34,21 @@ def task_value_is_none(task_value: Union[Any, None]) -> bool:
         bool: Se o valor é None ou não
     """
     return task_value is None
+
+
+@task(trigger=all_finished)
+def check_run_dbt_success(task_value: Union[Any, None]) -> bool:
+    """Verifica se a execução do DBT falhou
+
+    Args:
+         task_value (Union[Any, None]): Logs retornados pela execução do DBT
+
+    Returns:
+        bool: True se a execução foi bem-sucedida (contém "Completed successfully"),
+        False caso contrário
+    """
+    log(task_value)
+    return "Completed successfully" in task_value
 
 
 @task
@@ -150,7 +170,7 @@ def flow_log(msg, level: str = "info"):
 @task
 def run_subflow(
     flow_name: str,
-    parameters: Union[list[dict], dict],
+    parameters: Union[list[dict], dict] = None,
     project_name: str = None,
     labels: list[str] = None,
     maximum_parallelism: int = None,
@@ -168,7 +188,8 @@ def run_subflow(
             se não for especificado, são utilizadas as labels do flow atual
         maximum_parallelism (int): Número máximo de runs a serem executadas de uma vez
     """
-
+    if parameters is None:
+        parameters = [{}]
     if not isinstance(parameters, (dict, list)):
         raise ValueError("parameters must be a list or a dict")
 
@@ -254,6 +275,8 @@ def log_discord(message: str, key: str, dados_tag: bool = False):
         key (str): Key to secret path storing the webhook to channel.
         dados_tag (bool): Indicates whether the message will tag the data team
     """
+    if flow_is_running_local():
+        message = "[DEV] " + message
     if dados_tag:
         message = (
             message + f" - <@&{constants.OWNERS_DISCORD_MENTIONS.value['dados_smtr']['user_id']}>\n"
@@ -276,3 +299,26 @@ def remove_key_from_dict(data: dict, key: str) -> dict:
     data_copy = data.copy()
     data_copy.pop(key, None)
     return data_copy
+
+
+@task
+def add_days_to_date(
+    date_str: str, days: int = 1, pattern: str = constants.DATE_PATTERN.value
+) -> str:
+    """
+    Adiciona `days` a uma data em formato string.
+
+    Args:
+        date_str (str): Data no formato especificado (default: "YYYY-MM-DD").
+        days (int): Número de dias a adicionar (pode ser negativo).
+        pattern (str): Formato da data (default: "%Y-%m-%d").
+
+    Returns:
+        str: Nova data como string.
+    """
+    if date_str is None:
+        return None
+
+    dt = datetime.strptime(date_str, pattern)
+    new_dt = dt + timedelta(days=days)
+    return new_dt.strftime(pattern)

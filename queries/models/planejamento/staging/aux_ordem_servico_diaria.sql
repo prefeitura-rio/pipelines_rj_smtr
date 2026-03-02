@@ -1,6 +1,6 @@
 {{ config(materialized="ephemeral") }}
 
-select *
+select * except (versao_modelo)
 from {{ source("gtfs", "ordem_servico") }}
 where feed_start_date < date('{{ var("DATA_GTFS_V2_INICIO") }}')
 union all
@@ -20,8 +20,7 @@ select
     partidas_volta_dia as partidas_volta,
     viagens_dia as viagens_planejadas,
     sum(quilometragem) as distancia_total_planejada,
-    tipo_dia,
-    versao_modelo
+    tipo_dia
 from {{ ref("ordem_servico_faixa_horaria") }}
 where feed_start_date >= date('{{ var("DATA_GTFS_V2_INICIO") }}')
-group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17
+group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16

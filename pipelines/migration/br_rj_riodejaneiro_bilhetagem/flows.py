@@ -2,7 +2,7 @@
 """
 Flows for br_rj_riodejaneiro_bilhetagem
 
-DBT: 2025-02-17
+DBT: 2026-02-12
 """
 
 from copy import deepcopy
@@ -727,6 +727,7 @@ with Flow(
             ],
             initial_timestamp=timestamp,
             upstream_tasks=[wait_materializacao],
+            env="prod",
         )
 
     bilhetagem_ordem_pagamento_captura_tratamento.set_reference_tasks(

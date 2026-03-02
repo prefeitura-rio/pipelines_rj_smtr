@@ -51,7 +51,6 @@ with
         inner join
             realocacao r
             on g.ordem = r.id_veiculo
-            and g.linha != r.servico
             and g.timestamp_gps between r.datetime_entrada and r.datetime_saida
     )
 -- Filtra realocacao mais recente para cada timestamp

@@ -8,7 +8,7 @@ with
     consorcio as (
         select
             data,
-            safe_cast(cd_consorcio as string) as cd_consorcio,
+            replace(safe_cast(cd_consorcio as string), '.0', '') as cd_consorcio,
             timestamp_captura,
             datetime(
                 parse_timestamp(
