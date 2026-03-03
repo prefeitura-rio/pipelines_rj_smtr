@@ -21,7 +21,7 @@
 - Altera modelo `viagem_valida` para expor `datetime_partida_considerada` e `datetime_chegada_considerada` como `datetime_partida` e `datetime_chegada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
 - Renomeia coluna `quantidade_segmentos_verificados` para `quantidade_segmentos_considerados` no modelo `viagem_validacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
 - Altera critérios de `indicador_viagem_valida` no modelo `viagem_validacao` para incluir validações de `indicador_processamento_posterior_captura`, `indicador_processamento_anterior_chegada` e `indicador_prazo_envio` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
-- Separa validação `datetime_chegada_considerada > datetime_partida_considerada` do `indicador_campos_obrigatorios` em novo indicador `indicador_chegada_posterior_partida` no modelo `viagem_validacao`
+- Separa validação `datetime_chegada_considerada > datetime_partida_considerada` do `indicador_campos_obrigatorios` em novo indicador `indicador_chegada_posterior_partida` no modelo `viagem_validacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
 - Altera parsing de `datetime_captura` nos modelos `staging_viagem_informada_rioonibus` e `staging_viagem_informada_brt` para utilizar coluna `timestamp_captura` diretamente (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
 
 ## [1.9.3] - 2026-02-23
