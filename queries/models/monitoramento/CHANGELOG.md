@@ -4,8 +4,8 @@
 
 ### Adicionado
 
-- Adiciona colunas `datetime_partida_informada`, `datetime_chegada_informada`, `datetime_partida_automatica`, `datetime_chegada_automatica`, `datetime_partida_considerada` e `datetime_chegada_considerada` nos modelos `gps_segmento_viagem`, `viagem_validacao` e `viagem_informada_monitoramento` para validação de início e fim de viagem com base em cerca eletrônica (Art. 3º, XIII e XVI) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
-- Adiciona colunas `indicador_processamento_posterior_captura`, `indicador_processamento_anterior_chegada` e `indicador_prazo_envio` no modelo `viagem_validacao` para validação de inconsistências temporais (Art. 8º, I, II e III) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Adiciona colunas `datetime_partida_informada`, `datetime_chegada_informada`, `datetime_partida_automatica`, `datetime_chegada_automatica`, `datetime_partida_considerada` e `datetime_chegada_considerada` nos modelos `gps_segmento_viagem`, `viagem_validacao` e `viagem_informada_monitoramento` para validação de início e fim de viagem com base em cerca eletrônica (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Adiciona colunas `indicador_processamento_posterior_captura`, `indicador_processamento_anterior_chegada` e `indicador_prazo_envio` no modelo `viagem_validacao` para validação de inconsistências temporais (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
 - Adiciona coluna `indicador_viagem_sobreposta` no modelo `viagem_validacao` utilizando `datetime_partida_considerada` e `datetime_chegada_considerada` para detecção de sobreposição temporal (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
 - Adiciona coluna `id_viagem_planejada` nos modelos `staging_viagem_informada_rioonibus`, `staging_viagem_informada_brt`, `viagem_informada_monitoramento`, `gps_segmento_viagem`, `viagem_validacao` e `viagem_valida` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
 - Adiciona coluna `indice_validacao` na saída do modelo `viagem_validacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
@@ -15,7 +15,7 @@
 
 ### Alterado
 
-- Altera modelo `gps_segmento_viagem` para filtrar GPS apenas entre `datetime_partida_considerada` e `datetime_chegada_considerada` (Art. 5, par. 1) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Altera modelo `gps_segmento_viagem` para filtrar GPS apenas entre `datetime_partida_considerada` e `datetime_chegada_considerada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
 - Altera cálculo de `velocidade_media` no modelo `viagem_validacao` para utilizar `datetime_partida_considerada` e `datetime_chegada_considerada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
 - Altera filtros de deduplicação no modelo `viagem_validacao` para particionar por `datetime_partida_considerada` e `datetime_chegada_considerada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
 - Altera modelo `viagem_valida` para expor `datetime_partida_considerada` e `datetime_chegada_considerada` como `datetime_partida` e `datetime_chegada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
