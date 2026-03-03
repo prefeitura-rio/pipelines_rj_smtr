@@ -47,22 +47,28 @@ with
     ),
     segmento_primeiro_ultimo as (
         select
+            feed_start_date,
             shape_id,
             min(cast(id_segmento as integer)) as primeiro_segmento,
             max(cast(id_segmento as integer)) as ultimo_segmento
         from aux_segmento
-        group by 1
+        group by 1, 2
     ),
     intercessao_segmento as (
         select
+            s1.feed_start_date,
             s1.shape_id,
             s1.id_segmento,
             st_union(array_agg(s2.buffer_completo)) as buffer_segmento_prioritario
         from aux_segmento s1
-        join segmento_primeiro_ultimo l on s1.shape_id = l.shape_id
+        join
+            segmento_primeiro_ultimo l
+            on s1.shape_id = l.shape_id
+            and s1.feed_start_date = l.feed_start_date
         join
             aux_segmento s2
-            on s1.shape_id = s2.shape_id
+            on s1.feed_start_date = s2.feed_start_date
+            and s1.shape_id = s2.shape_id
             and s1.id_segmento != s2.id_segmento
             and st_intersects(s1.buffer_completo, s2.buffer_completo)
             and (
@@ -75,7 +81,7 @@ with
             -- apenas segmentos do meio sao recortados
             cast(s1.id_segmento as integer) != l.primeiro_segmento
             and cast(s1.id_segmento as integer) != l.ultimo_segmento
-        group by 1, 2
+        group by 1, 2, 3
     ),
     buffer_segmento_recortado as (
         select
@@ -85,7 +91,7 @@ with
                 s.buffer_completo
             ) as buffer
         from aux_segmento s
-        left join intercessao_segmento i using (shape_id, id_segmento)
+        left join intercessao_segmento i using (feed_start_date, shape_id, id_segmento)
     ),
     indicador_validacao_shape as (
         select
