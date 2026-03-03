@@ -125,11 +125,12 @@ with
                 id_viagem is not null
                 and datetime_partida_considerada is not null
                 and datetime_chegada_considerada is not null
-                and datetime_chegada_considerada > datetime_partida_considerada
                 and shape_id is not null
                 and route_id is not null
                 and id_veiculo is not null
             ) as indicador_campos_obrigatorios,
+            datetime_chegada_considerada
+            > datetime_partida_considerada as indicador_chegada_posterior_partida,
             service_ids,
             tipo_dia,
             feed_version,
@@ -352,13 +353,16 @@ with
             vm.indicador_servico_divergente,
             vm.indicador_shape_invalido,
             vm.indicador_campos_obrigatorios,
+            vm.indicador_chegada_posterior_partida,
             vm.indicador_trajeto_alternativo,
             vm.indicador_acima_velocidade_max,
             vi.indicador_processamento_posterior_captura,
             vi.indicador_processamento_anterior_chegada,
             vi.indicador_prazo_envio,
             (
-                vm.indicador_campos_obrigatorios and not vm.indicador_shape_invalido
+                vm.indicador_campos_obrigatorios
+                and vm.indicador_chegada_posterior_partida
+                and not vm.indicador_shape_invalido
                 -- fmt: off
                 and vm.quantidade_segmentos_validos >= vm.quantidade_segmentos_necessarios
                 -- fmt: on
@@ -469,6 +473,7 @@ select
     indicador_servico_divergente,
     indicador_shape_invalido,
     indicador_campos_obrigatorios,
+    indicador_chegada_posterior_partida,
     indicador_trajeto_alternativo,
     indicador_acima_velocidade_max,
     indicador_processamento_posterior_captura,

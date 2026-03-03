@@ -193,6 +193,10 @@ models:
         description: "Indica se os campos obrigatórios para validação da viagem estão preenchidos corretamente"
         data_type: boolean
         quote: true
+      - name: indicador_chegada_posterior_partida
+        description: "Indica se o datetime de chegada considerada é posterior ao datetime de partida considerada"
+        data_type: boolean
+        quote: true
       - name: indicador_trajeto_alternativo
         description: "Indica se o shape é um trajeto alternativo"
         data_type: boolean
