@@ -54,8 +54,8 @@ with
                             or (
                                 o.feed_start_date in ("2024-09-29", "2024-11-06")
                                 and o.tipo_os in ("Enem", "Eleição")
-                                and o.tipo_dia = "Domingo"
-                                and t.tipo_dia = "Sabado"
+                                and o.tipo_dia in ("Domingo", "Dia Útil", "Sabado")
+                                and t.tipo_dia in ("Sabado", "Dia Útil")
                             )
                         )  -- Domingo Enem/Eleição
                         and (
