@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.9.4] - 2026-03-03
+
+### Alterado
+
+- Alterado o modelo `aux_veiculo_falha_ar_condiconado` para considerar em `condicao_falha`o `indicador_temperatura_nula_viagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1279)
+
 ## [1.9.3] - 2026-02-23
 
 ### Corrigido
