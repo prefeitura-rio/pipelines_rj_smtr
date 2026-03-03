@@ -2,7 +2,7 @@
 """
 Flows for gtfs
 
-DBT 2026-02-09
+DBT 2026-03-03
 """
 
 from prefect import Parameter, case, task
@@ -211,7 +211,9 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
             with case(upload_failed, True):
                 log_discord(
-                    "Falha na subida dos dados do GTFS " + data_versao_gtfs_str, "gtfs", True
+                    "Falha na subida dos dados do GTFS " + data_versao_gtfs_str,
+                    "gtfs",
+                    True,
                 )
 
     with case(materialize_only, True):
@@ -253,7 +255,9 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
 
         with case(run_dbt_success, False):
             log_discord(
-                "Falha na materialização dos dados do GTFS " + data_versao_gtfs, "gtfs", True
+                "Falha na materialização dos dados do GTFS " + data_versao_gtfs,
+                "gtfs",
+                True,
             )
 
         with case(run_dbt_success, True):
