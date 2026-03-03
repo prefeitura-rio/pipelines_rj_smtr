@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.4.2] - 2026-03-03
+
+### Corrigido
+
+- Corrige a coluna `arrival_time` no modelo `stop_times_gtfs` para utilizar `make_interval` e tratar horários maiores que 24 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1284)
+
 ## [1.4.1] - 2026-02-09
 
 ### Adicionado
@@ -32,7 +38,7 @@
 
 ### Corrigido
 
-- Corrige o nome da coluna `extensao` para `distancia_planejada` do modelo  `ordem_servico_trajeto_alternativo_sentido_atualizado_aux_v3` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1158)
+- Corrige o nome da coluna `extensao` para `distancia_planejada` do modelo `ordem_servico_trajeto_alternativo_sentido_atualizado_aux_v3` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1158)
 
 ## [1.3.6] - 2026-01-07
 
@@ -47,7 +53,6 @@
 - Altera os testes do gtfs dos modelos que não são mais utilizados (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1146)
 
 - Altera o modelo `ordem_servico_trips_shapes_gtfs_v2.sql` para considerar os serviços de `Sabado` no `Domingo` no feed do dia `2025-12-27` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1146)
-
 
 ## [1.3.4] - 2025-12-26
 
@@ -82,7 +87,6 @@
 ### Corrigido
 
 - Corrige a coluna `direction_id` no modelo `trips_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1130)
-
 
 ## [1.3.0] - 2025-11-28
 
@@ -183,11 +187,13 @@
 - Altera modelo `ordem_servico_trips_shapes_gtfs` em razão da apuração por faixa horária (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/114)
 
 ### Corrigido
+
 - Corrigido `schema.yml` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/202)
 
 ## [1.1.8] - 2024-08-02
 
 ### Alterado
+
 - Adiciona tag `geolocalizacao` aos modelos `shapes_geom_gtfs.sql`, `shapes_gtfs.sql` e `stops_gtfs.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/127)
 
 ## [1.1.7] - 2024-07-23
@@ -195,7 +201,6 @@
 ### Adicionado
 
 - Adiciona descrição da coluna `feed_update_datetime` em `feed_info` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/119)
-
 
 ## [1.1.6] - 2024-07-22
 
@@ -223,6 +228,7 @@
 ## [1.1.3] - 2024-05-21
 
 ### Corrigido
+
 - Corrige atualização incremental da coluna `feed_end_date` nos modelos (https://github.com/prefeitura-rio/queries-rj-smtr/pull/321):
   - `agency_gtfs.sql`
   - `calendar_dates_gtfs.sql`
@@ -235,7 +241,6 @@
   - `stop_times_gtfs.sql`
   - `stops_gtfs.sql`
   - `trips_gtfs.sql`
-
 
 ## [1.1.2] - 2024-05-21
 
