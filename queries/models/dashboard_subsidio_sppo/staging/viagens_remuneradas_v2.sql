@@ -205,11 +205,7 @@ select
         then true
         when
             (v.data between date('2026-02-01') and date('2026-02-15'))
-            and v.servico in (
-                "805",
-                "LECD136",
-                "LECD137"
-            )  -- Processo n° 000300.005989/2026-19
+            and v.servico in ("805", "LECD136", "LECD137")  -- Processo n° 000300.005989/2026-19
         then true
         when
             (v.data between date('2026-01-01') and date('2026-01-15'))
