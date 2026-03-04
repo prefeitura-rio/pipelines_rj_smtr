@@ -72,7 +72,7 @@ with
     viagem as (
         select
             data, servico_realizado as servico, id_veiculo, id_viagem, datetime_partida
-        from {{ ref("viagem_completa") }}
+        from `rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.viagem_completa`
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         where
             data

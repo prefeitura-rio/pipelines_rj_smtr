@@ -6,7 +6,7 @@
 {% if execute %}
     {% set result = run_query(
         "SELECT tipo_os, feed_version, feed_start_date, tipo_dia FROM "
-        ~ ref("subsidio_data_versao_efetiva")
+        ~ "rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.subsidio_data_versao_efetiva"
         ~ " WHERE data BETWEEN DATE_SUB(DATE('"
         ~ var("run_date")
         ~ "'), INTERVAL 2 DAY) AND DATE_SUB(DATE('"
@@ -23,7 +23,7 @@ with
     -- 1. Define datas do período planejado
     data_versao_efetiva as (
         select data, tipo_dia, subtipo_dia, feed_version, feed_start_date, tipo_os,
-        from {{ ref("subsidio_data_versao_efetiva") }}
+        from `rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.subsidio_data_versao_efetiva`
         -- `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
         where
             data between date_sub("{{ var('run_date') }}", interval 2 day) and date_sub(

@@ -6,7 +6,7 @@
 {%- if execute %}
     {% set query = (
         "SELECT DISTINCT COALESCE(feed_start_date, data_versao_trips, data_versao_shapes, data_versao_frequencies) FROM "
-        ~ ref("subsidio_data_versao_efetiva")
+        ~ "rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.subsidio_data_versao_efetiva"
         ~ " WHERE data BETWEEN DATE('"
         ~ var("start_date")
         ~ "') AND DATE('"
@@ -33,7 +33,7 @@ with
             partidas_total_planejada,
             distancia_total_planejada as km_planejada,
             if(sentido = "C", true, false) as indicador_circular
-        from {{ ref("viagem_planejada") }}
+        from `rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.viagem_planejada` 
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
         where
             {{ incremental_filter }}
@@ -69,7 +69,7 @@ with
                 data_versao_shapes,
                 data_versao_frequencies
             ) as feed_start_date
-        from {{ ref("subsidio_data_versao_efetiva") }}
+        from `rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.subsidio_data_versao_efetiva`
         -- from `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
         -- (alterar também query no bloco execute)
         where

@@ -441,7 +441,7 @@ select
     "{{ var('version') }}" as versao,
     '{{ invocation_id }}' as id_execucao_dbt
 {% if var("tipo_materializacao") == "monitoramento" %} from filtro_chegada
-{% else %} from viagem_completa
+{% else %} from `rj-smtr-dev`.`projeto_subsidio_sppo`.`viagem_completa`
 {% endif %}
 where
     data between date('{{ var("date_range_start") }}') and date(

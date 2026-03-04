@@ -1,6 +1,6 @@
 -- depends_on: {{ ref('subsidio_data_versao_efetiva') }}
 {% if execute %}
-    {% set result = run_query("SELECT feed_start_date FROM " ~ ref('subsidio_data_versao_efetiva') ~ " WHERE data BETWEEN DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 2 DAY) AND DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 1 DAY)") %}
+    {% set result = run_query("SELECT feed_start_date FROM " ~ "rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.subsidio_data_versao_efetiva" ~ " WHERE data BETWEEN DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 2 DAY) AND DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 1 DAY)") %}
     {% set feed_start_dates =  result.columns[0].values() %}
 {% endif %}
 
@@ -90,7 +90,7 @@ status_viagem as (
         select
             *
         from
-            {{ ref("viagem_planejada") }}
+            `rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.viagem_planejada`  
         where
             {% if var("run_date") > var("DATA_SUBSIDIO_V6_INICIO") %}
             data = date_sub(date("{{ var("run_date") }}"), interval 1 day)
