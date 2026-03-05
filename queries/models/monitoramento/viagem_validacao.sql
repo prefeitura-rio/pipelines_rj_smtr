@@ -48,16 +48,21 @@ with
         select
             data,
             id_viagem,
-            datetime_partida,
-            datetime_chegada,
-            modo,
-            id_veiculo,
-            trip_id,
-            route_id,
-            shape_id,
-            servico,
-            sentido,
-            countif(id_segmento is not null) as quantidade_segmentos_verificados,
+            any_value(id_viagem_planejada) as id_viagem_planejada,
+            any_value(datetime_partida_informada) as datetime_partida_informada,
+            any_value(datetime_chegada_informada) as datetime_chegada_informada,
+            any_value(datetime_partida_automatica) as datetime_partida_automatica,
+            any_value(datetime_chegada_automatica) as datetime_chegada_automatica,
+            any_value(datetime_partida_considerada) as datetime_partida_considerada,
+            any_value(datetime_chegada_considerada) as datetime_chegada_considerada,
+            any_value(modo) as modo,
+            any_value(id_veiculo) as id_veiculo,
+            any_value(trip_id) as trip_id,
+            any_value(route_id) as route_id,
+            any_value(shape_id) as shape_id,
+            any_value(servico) as servico,
+            any_value(sentido) as sentido,
+            countif(id_segmento is not null) as quantidade_segmentos_considerados,
             countif(quantidade_gps > 0) as quantidade_segmentos_validos,
             round(
                 countif(id_segmento is not null)
@@ -65,11 +70,12 @@ with
             ) as quantidade_segmentos_tolerados,
             max(indicador_servico_divergente) as indicador_servico_divergente,
             max(id_segmento is null) as indicador_shape_invalido,
-            service_ids,
-            tipo_dia,
-            feed_version,
-            feed_start_date,
-            datetime_captura_viagem
+            any_value(service_ids) as service_ids,
+            any_value(tipo_dia) as tipo_dia,
+            any_value(feed_version) as feed_version,
+            any_value(feed_start_date) as feed_start_date,
+            any_value(datetime_processamento) as datetime_processamento,
+            any_value(datetime_captura_viagem) as datetime_captura_viagem
         from {{ ref("gps_segmento_viagem") }}
         {# from `rj-smtr`.`monitoramento_staging`.`gps_segmento_viagem` #}
         where
@@ -80,23 +86,7 @@ with
             {% if is_incremental() or var("tipo_materializacao") == "monitoramento" %}
                 and {{ incremental_filter }}
             {% endif %}
-        group by
-            data,
-            id_viagem,
-            datetime_partida,
-            datetime_chegada,
-            modo,
-            id_veiculo,
-            trip_id,
-            route_id,
-            shape_id,
-            servico,
-            sentido,
-            service_ids,
-            tipo_dia,
-            feed_version,
-            feed_start_date,
-            datetime_captura_viagem
+        group by data, id_viagem
     ),
     /*
     Calcula o índice de validação, quantidade mínima de segmentos necessários e indicador de campos obrigatórios por viagem
@@ -105,8 +95,13 @@ with
         select
             data,
             id_viagem,
-            datetime_partida,
-            datetime_chegada,
+            id_viagem_planejada,
+            datetime_partida_informada,
+            datetime_chegada_informada,
+            datetime_partida_automatica,
+            datetime_chegada_automatica,
+            datetime_partida_considerada,
+            datetime_chegada_considerada,
             modo,
             id_veiculo,
             trip_id,
@@ -114,32 +109,33 @@ with
             shape_id,
             servico,
             sentido,
-            quantidade_segmentos_verificados,
+            quantidade_segmentos_considerados,
             quantidade_segmentos_validos,
             case
                 when quantidade_segmentos_tolerados >= 1
-                then quantidade_segmentos_verificados - quantidade_segmentos_tolerados
-                else abs(quantidade_segmentos_verificados - 1)
+                then quantidade_segmentos_considerados - quantidade_segmentos_tolerados
+                else abs(quantidade_segmentos_considerados - 1)
             end as quantidade_segmentos_necessarios,
             safe_divide(
-                quantidade_segmentos_validos, quantidade_segmentos_verificados
+                quantidade_segmentos_validos, quantidade_segmentos_considerados
             ) as indice_validacao,
             indicador_servico_divergente,
             indicador_shape_invalido,
             (
                 id_viagem is not null
-                and datetime_partida is not null
-                and datetime_chegada is not null
-                and datetime_chegada > datetime_partida
+                and datetime_partida_considerada is not null
+                and datetime_chegada_considerada is not null
                 and shape_id is not null
                 and route_id is not null
                 and id_veiculo is not null
-                and id_veiculo != ""
             ) as indicador_campos_obrigatorios,
+            datetime_chegada_considerada
+            > datetime_partida_considerada as indicador_chegada_posterior_partida,
             service_ids,
             tipo_dia,
             feed_version,
             feed_start_date,
+            datetime_processamento,
             datetime_captura_viagem
         from contagem
     ),
@@ -225,7 +221,7 @@ with
             spu.extensao as distancia_planejada,
             spu.indicador_trajeto_alternativo,
             -- fmt: off
-            safe_divide(spu.extensao*3600, datetime_diff(datetime_chegada, datetime_partida, second)) as velocidade_media,
+            safe_divide(spu.extensao*3600, datetime_diff(datetime_chegada_considerada, datetime_partida_considerada, second)) as velocidade_media,
             -- fmt: on
             case
                 when spu.quilometragem is not null and spu.quilometragem > 0
@@ -241,7 +237,7 @@ with
             on spu.servico = spg.servico
             and spu.data = spg.data
             and spu.shape_id = spg.shape_id
-            and spg.datetime_partida
+            and spg.datetime_partida_considerada
             between spu.faixa_horaria_inicio and spu.faixa_horaria_fim
     ),
     /*
@@ -263,9 +259,6 @@ with
             v1.data,
             v1.id_viagem,
             v1.id_veiculo,
-            v1.datetime_partida,
-            v1.datetime_chegada,
-            v1.datetime_captura_viagem,
             v2.id_viagem as id_viagem_sobreposta,
             v2.datetime_captura_viagem as datetime_captura_viagem_sobreposta,
             case
@@ -290,14 +283,39 @@ with
             )
             and v1.id_veiculo = v2.id_veiculo
             and v1.id_viagem != v2.id_viagem
-            and v1.datetime_partida < v2.datetime_chegada
-            and v1.datetime_chegada > v2.datetime_partida
+            and v1.datetime_partida_considerada < v2.datetime_chegada_considerada
+            and v1.datetime_chegada_considerada > v2.datetime_partida_considerada
         qualify
             row_number() over (
                 partition by v1.id_viagem
-                order by v2.datetime_captura_viagem desc, v2.datetime_partida
+                order by
+                    v2.datetime_captura_viagem desc, v2.datetime_partida_considerada
             )
             = 1
+    ),
+    /*
+    Indicadores de processamento e prazo de envio da viagem informada
+    */
+    viagem_informada_indicadores as (
+        select
+            id_viagem,
+            ifnull(
+                datetime_processamento > datetime_captura_viagem, false
+            ) as indicador_processamento_posterior_captura,
+            ifnull(
+                datetime_processamento < datetime_chegada_considerada, false
+            ) as indicador_processamento_anterior_chegada,
+            ifnull(
+                datetime_processamento is not null
+                and (
+                    select countif(tipo_dia = 'Dia Útil')
+                    from {{ calendario }}
+                    where data > v.data and data <= date(v.datetime_processamento)
+                )
+                <= 2,
+                false
+            ) as indicador_prazo_envio
+        from viagens_velocidade_media v
     ),
     /*
     Agregação dos indicadores de validação da viagem
@@ -306,8 +324,13 @@ with
         select
             vm.data,
             vm.id_viagem,
-            vm.datetime_partida,
-            vm.datetime_chegada,
+            vm.id_viagem_planejada,
+            vm.datetime_partida_informada,
+            vm.datetime_chegada_informada,
+            vm.datetime_partida_automatica,
+            vm.datetime_chegada_automatica,
+            vm.datetime_partida_considerada,
+            vm.datetime_chegada_considerada,
             vm.modo,
             vm.id_veiculo,
             vm.trip_id,
@@ -317,7 +340,7 @@ with
             vm.sentido,
             vm.distancia_planejada,
             vm.velocidade_media,
-            vm.quantidade_segmentos_verificados,
+            vm.quantidade_segmentos_considerados,
             vm.quantidade_segmentos_validos,
             vm.quantidade_segmentos_necessarios,
             vm.indice_validacao,
@@ -330,10 +353,16 @@ with
             vm.indicador_servico_divergente,
             vm.indicador_shape_invalido,
             vm.indicador_campos_obrigatorios,
+            vm.indicador_chegada_posterior_partida,
             vm.indicador_trajeto_alternativo,
             vm.indicador_acima_velocidade_max,
+            vi.indicador_processamento_posterior_captura,
+            vi.indicador_processamento_anterior_chegada,
+            vi.indicador_prazo_envio,
             (
-                vm.indicador_campos_obrigatorios and not vm.indicador_shape_invalido
+                vm.indicador_campos_obrigatorios
+                and vm.indicador_chegada_posterior_partida
+                and not vm.indicador_shape_invalido
                 -- fmt: off
                 and vm.quantidade_segmentos_validos >= vm.quantidade_segmentos_necessarios
                 -- fmt: on
@@ -343,12 +372,16 @@ with
                 {% endif %}
                 and not vm.indicador_acima_velocidade_max
                 and ifnull(vm.indicador_servico_planejado_os, true)
+                and not vi.indicador_processamento_posterior_captura
+                and not vi.indicador_processamento_anterior_chegada
+                and vi.indicador_prazo_envio
             ) as indicador_viagem_valida,
             vm.tipo_dia,
             vm.feed_version,
             vm.feed_start_date
         from viagens_velocidade_media vm
         left join viagens_sobrepostas vs using (id_viagem)
+        left join viagem_informada_indicadores vi using (id_viagem)
     ),
     -- fmt: off
     /*
@@ -373,7 +406,10 @@ with
         from viagens
         qualify
             row_number() over (
-                partition by id_veiculo, datetime_partida, datetime_chegada
+                partition by
+                    id_veiculo,
+                    datetime_partida_considerada,
+                    datetime_chegada_considerada
                 order by
                     indice_validacao desc,
                     indicador_trajeto_alternativo,
@@ -389,7 +425,7 @@ with
         from filtro_desvio
         qualify
             row_number() over (
-                partition by id_veiculo, datetime_partida
+                partition by id_veiculo, datetime_partida_considerada
                 order by distancia_planejada desc
             )
             = 1
@@ -402,7 +438,7 @@ with
         from filtro_partida
         qualify
             row_number() over (
-                partition by id_veiculo, datetime_chegada
+                partition by id_veiculo, datetime_chegada_considerada
                 order by distancia_planejada desc
             )
             = 1
@@ -410,8 +446,13 @@ with
 select
     data,
     id_viagem,
-    datetime_partida,
-    datetime_chegada,
+    id_viagem_planejada,
+    datetime_partida_informada,
+    datetime_chegada_informada,
+    datetime_partida_automatica,
+    datetime_chegada_automatica,
+    datetime_partida_considerada,
+    datetime_chegada_considerada,
     modo,
     id_veiculo,
     trip_id,
@@ -421,9 +462,10 @@ select
     sentido,
     distancia_planejada,
     velocidade_media,
-    quantidade_segmentos_verificados,
+    quantidade_segmentos_considerados,
     quantidade_segmentos_validos,
     quantidade_segmentos_necessarios,
+    indice_validacao,
     indicador_viagem_sobreposta,
     indicador_trajeto_valido,
     indicador_servico_planejado_gtfs,
@@ -431,8 +473,12 @@ select
     indicador_servico_divergente,
     indicador_shape_invalido,
     indicador_campos_obrigatorios,
+    indicador_chegada_posterior_partida,
     indicador_trajeto_alternativo,
     indicador_acima_velocidade_max,
+    indicador_processamento_posterior_captura,
+    indicador_processamento_anterior_chegada,
+    indicador_prazo_envio,
     indicador_viagem_valida,
     tipo_dia,
     feed_version,

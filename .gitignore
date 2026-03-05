@@ -92,7 +92,7 @@ instance/
 docs/_build/
 
 # PyBuilder
-target/
+target
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -158,3 +158,5 @@ dmypy.json
 
 # AI agent contexts
 GEMINI.md
+CLAUDE.md
+.gitnexus
