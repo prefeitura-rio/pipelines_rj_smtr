@@ -1,5 +1,29 @@
 # Changelog - monitoramento
 
+## [2.0.0] - 2026-02-25
+
+### Adicionado
+
+- Adiciona colunas `datetime_partida_informada`, `datetime_chegada_informada`, `datetime_partida_automatica`, `datetime_chegada_automatica`, `datetime_partida_considerada` e `datetime_chegada_considerada` nos modelos `gps_segmento_viagem`, `viagem_validacao` e `viagem_informada_monitoramento` para validação de início e fim de viagem com base em cerca eletrônica (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Adiciona colunas `indicador_processamento_posterior_captura`, `indicador_processamento_anterior_chegada` e `indicador_prazo_envio` no modelo `viagem_validacao` para validação de inconsistências temporais (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Adiciona coluna `indicador_viagem_sobreposta` no modelo `viagem_validacao` utilizando `datetime_partida_considerada` e `datetime_chegada_considerada` para detecção de sobreposição temporal (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Adiciona coluna `id_viagem_planejada` nos modelos `staging_viagem_informada_rioonibus`, `staging_viagem_informada_brt`, `viagem_informada_monitoramento`, `gps_segmento_viagem`, `viagem_validacao` e `viagem_valida` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Adiciona coluna `indice_validacao` na saída do modelo `viagem_validacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Adiciona colunas `datetime_inicio_segmento`, `datetime_fim_segmento` e `datetime_processamento` no modelo `gps_segmento_viagem` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Adiciona desambiguação temporal para rotas circulares no modelo `gps_segmento_viagem` utilizando ponto médio da viagem para distinguir primeiro e último segmento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Adiciona macro `partida_chegada_automatica_case` para cálculo de partida e chegada automáticas com base em cerca eletrônica (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+
+### Alterado
+
+- Altera modelo `gps_segmento_viagem` para filtrar GPS apenas entre `datetime_partida_considerada` e `datetime_chegada_considerada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Altera cálculo de `velocidade_media` no modelo `viagem_validacao` para utilizar `datetime_partida_considerada` e `datetime_chegada_considerada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Altera filtros de deduplicação no modelo `viagem_validacao` para particionar por `datetime_partida_considerada` e `datetime_chegada_considerada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Altera modelo `viagem_valida` para expor `datetime_partida_considerada` e `datetime_chegada_considerada` como `datetime_partida` e `datetime_chegada` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Renomeia coluna `quantidade_segmentos_verificados` para `quantidade_segmentos_considerados` no modelo `viagem_validacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Altera critérios de `indicador_viagem_valida` no modelo `viagem_validacao` para incluir validações de `indicador_processamento_posterior_captura`, `indicador_processamento_anterior_chegada` e `indicador_prazo_envio` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Separa validação `datetime_chegada_considerada > datetime_partida_considerada` do `indicador_campos_obrigatorios` em novo indicador `indicador_chegada_posterior_partida` no modelo `viagem_validacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+- Altera parsing de `datetime_captura` nos modelos `staging_viagem_informada_rioonibus` e `staging_viagem_informada_brt` para utilizar coluna `timestamp_captura` diretamente (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+
 ## [1.9.3] - 2026-02-23
 
 ### Corrigido
@@ -17,7 +41,7 @@
 
 ### Adicionado
 
-- Adiciona `status` de Não licenciado para `tipo_veiculo` rodoviário no modelo `aux_veiculo_dia_consolidada`  [Processo nº 000300.003323/2026-18] (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1198)
+- Adiciona `status` de Não licenciado para `tipo_veiculo` rodoviário no modelo `aux_veiculo_dia_consolidada` [Processo nº 000300.003323/2026-18] (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1198)
 
 ## [1.9.0] - 2026-01-26
 
