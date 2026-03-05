@@ -22,6 +22,30 @@ Horário de início da viagem
 Horário de fim da viagem
 {% enddocs %}
 
+{% docs datetime_partida_informada %}
+Horário de partida informado pela operadora
+{% enddocs %}
+
+{% docs datetime_chegada_informada %}
+Horário de chegada informado pela operadora
+{% enddocs %}
+
+{% docs datetime_partida_automatica %}
+Horário de partida automática [primeiro GPS fora da cerca eletrônica inicial e dentro do buffer de um segmento]
+{% enddocs %}
+
+{% docs datetime_chegada_automatica %}
+Horário de chegada automática [último GPS fora da cerca eletrônica final e dentro do buffer de um segmento]
+{% enddocs %}
+
+{% docs datetime_partida_considerada %}
+Horário de partida considerado para validação [automática se diferença > 10 min, senão informada]
+{% enddocs %}
+
+{% docs datetime_chegada_considerada %}
+Horário de chegada considerado para validação [automática se diferença > 10 min, senão informada]
+{% enddocs %}
+
 {% docs distancia_planejada %}
 Distância do shape [trajeto] planejado (km)
 {% enddocs %}
@@ -983,6 +1007,42 @@ Data da última atualização
 Data e hora do processamento da viagem
 {% enddocs %}
 
+{% docs indicador_prazo_envio %}
+Indica se a viagem foi enviada dentro do prazo de até 2 dias úteis após a data de partida
+{% enddocs %}
+
+{% docs indicador_viagem_sobreposta %}
+Indica se a viagem se sobrepõe a outra viagem do mesmo veículo
+{% enddocs %}
+
+{% docs id_transmissao_gps %}
+Identificador único da tabela de GPS dos validadores
+{% enddocs %}
+
+{% docs temperatura_validador %}
+Temperatura do local, medida pelo sensor do validador (ºC)
+{% enddocs %}
+
+{% docs versao_app_validador %}
+Versão do Software do validador
+{% enddocs %}
+
+{% docs data_recebimento_gps %}
+Data do recebimento da transmissão do GPS
+{% enddocs %}
+
+{% docs hora_recebimento_gps %}
+Hora do recebimento da transmissão do GPS
+{% enddocs %}
+
+{% docs indicador_processamento_posterior_captura %}
+Indica se o datetime de processamento é posterior ao datetime de captura, caracterizando alteração retroativa indevida [Art. 8º, I]
+{% enddocs %}
+
+{% docs indicador_processamento_anterior_chegada %}
+Indica se o datetime de processamento é anterior ao datetime de chegada, indicando processamento antes da conclusão da viagem [Art. 8º, II]
+{% enddocs %}
+
 {% docs especie_veiculo %}
 Espécie do veículo
 {% enddocs %}
@@ -1531,4 +1591,20 @@ Array contendo os percentuais de rateio para cada perna da integração
 
 {% docs agency_id %}
 Identificador único de uma agência de transporte
+{% enddocs %}
+
+{% docs id_viagem_planejada %}
+Código identificador da viagem planejada associada
+{% enddocs %}
+
+{% docs indice_validacao %}
+Índice de validação da viagem [razão entre segmentos válidos e segmentos considerados]
+{% enddocs %}
+
+{% docs datetime_inicio_segmento %}
+Data e hora de início do segmento [partida considerada para o primeiro segmento, primeiro GPS para os demais]
+{% enddocs %}
+
+{% docs datetime_fim_segmento %}
+Data e hora de fim do segmento [chegada considerada para o último segmento, último GPS para os demais]
 {% enddocs %}
