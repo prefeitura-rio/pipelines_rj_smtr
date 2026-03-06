@@ -38,6 +38,7 @@ VIAGEM_INFORMADA_MATERIALIZACAO = create_default_materialization_flow(
         planejamento_constants.PLANEJAMENTO_DIARIO_SELECTOR.value,
         rioonibus_source_constants.VIAGEM_INFORMADA_SOURCE.value,
     ],
+    generate_schedule=False,
 )
 
 wait_viagem_informada = deepcopy(constants.VIAGEM_INFORMADA_SELECTOR.value)
