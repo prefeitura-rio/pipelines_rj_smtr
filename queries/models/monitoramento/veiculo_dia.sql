@@ -16,6 +16,10 @@ with
             *,
             case
                 when
+                    date(data) between ('2026-01-01') and ('2026-01-31')
+                    and ano_ultima_vistoria >= extract(year from date(data)) - 2
+                then true  -- RESOLUÇÃO SMTR Nº 3894 DE 29 DE DEZEMBRO DE 2025 que altera o prazo final de vistoria para 31 de janeiro de 2026
+                when
                     ano_ultima_vistoria >= cast(
                         extract(
                             year
@@ -80,7 +84,7 @@ with
                 )
                 or (
                     data between "2025-11-20" and "2025-12-16"  -- Exceção para ajuste na tecnologia MTR-CAP-2025/59482
-                    and data_processamento between "2025-11-20" and "2025-12-22"
+                    and data_processamento between "2025-11-20" and "2026-01-13"
                 )
             )
             {% if is_incremental() %}

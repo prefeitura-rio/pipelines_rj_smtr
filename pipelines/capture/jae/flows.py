@@ -51,6 +51,7 @@ CAPTURA_TRANSACAO = create_default_capture_flow(
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     recapture_schedule_cron=create_hourly_cron(),
     get_raw_max_retries=0,
+    generate_schedule=False,
 )
 
 CAPTURA_TRANSACAO_RIOCARD = create_default_capture_flow(
@@ -69,6 +70,7 @@ CAPTURA_GPS_VALIDADOR = create_default_capture_flow(
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     recapture_schedule_cron=create_hourly_cron(),
     get_raw_max_retries=0,
+    generate_schedule=False,
 )
 
 CAPTURA_LANCAMENTO = create_default_capture_flow(
@@ -78,6 +80,7 @@ CAPTURA_LANCAMENTO = create_default_capture_flow(
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     recapture_schedule_cron=create_hourly_cron(),
     get_raw_max_retries=0,
+    generate_schedule=False,
 )
 
 # Capturas a cada 10 minutos
@@ -111,30 +114,32 @@ CAPTURA_INTEGRACAO = create_default_capture_flow(
     create_extractor_task=create_jae_general_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     get_raw_max_retries=0,
+    generate_schedule=False,
 )
 set_default_parameters(CAPTURA_INTEGRACAO, {"recapture": True})
 
-CAPTURA_INTEGRACAO.schedule = Schedule(
-    CAPTURA_INTEGRACAO.schedule.clocks
-    + [
-        IntervalClock(
-            interval=timedelta(days=1),
-            start_date=datetime(2022, 11, 30, 7, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)),
-            labels=[
-                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
-            ],
-        ),
-        IntervalClock(
-            interval=timedelta(days=1),
-            start_date=datetime(
-                2022, 11, 30, 10, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
-            ),
-            labels=[
-                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
-            ],
-        ),
-    ]
-)
+# CAPTURA_INTEGRACAO.schedule = Schedule(
+#     CAPTURA_INTEGRACAO.schedule.clocks
+#     + [
+#         IntervalClock(
+#             interval=timedelta(days=1),
+#             start_date=datetime(2022, 11, 30, 7, 0
+#  tzinfo=timezone(smtr_constants.TIMEZONE.value)),
+#             labels=[
+#                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+#             ],
+#         ),
+#         IntervalClock(
+#             interval=timedelta(days=1),
+#             start_date=datetime(
+#                 2022, 11, 30, 10, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+#             ),
+#             labels=[
+#                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+#             ],
+#         ),
+#     ]
+# )
 
 CAPTURA_INTEGRACAO.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,

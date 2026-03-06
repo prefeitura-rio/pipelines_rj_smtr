@@ -1,5 +1,35 @@
 # Changelog - source_jae
 
+## [3.1.12] - 2026-03-02
+
+### Removido
+
+- Remove schedules do flow `CAPTURA_TRANSACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1277)
+
+## [3.1.11] - 2026-02-27
+
+### Removido
+
+- Remove schedules do flow `CAPTURA_INTEGRACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1274)
+
+## [3.1.10] - 2026-02-24
+
+### Removido
+
+- Remove schedule do flow `CAPTURA_LANCAMENTO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1267)
+
+## [3.1.9] - 2026-02-11
+
+### Adicionado
+
+- Adiciona tabelas `transacao_erro`, `temp_cancelamento_estudante_08122025` e `temp_cancelamento_estudante_sme_08122025` no exclude do backup dos dados da BillingPay (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1241)
+
+## [3.1.8] - 2026-02-04
+
+### Removido
+
+- Remove schedule do flow `CAPTURA_GPS_VALIDADOR` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1211)
+
 ## [3.1.7] - 2026-01-07
 
 ### Removido

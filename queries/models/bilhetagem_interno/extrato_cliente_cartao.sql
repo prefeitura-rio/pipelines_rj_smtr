@@ -7,6 +7,7 @@
             "data_type": "date",
             "granularity": "day",
         },
+        require_partition_filter=true,
     )
 }}
 

@@ -1,5 +1,45 @@
 # Changelog - planejamento
 
+## [1.6.4] - 2026-02-25
+
+### Alterado
+
+- Altera lógica de interseção no modelo `segmento_shape` para impedir redução de buffer no primeiro e último segmento, recortando apenas segmentos intermediários (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+
+## [1.6.3] - 2026-02-23
+
+### Alterado
+
+- Alterados no modelo `aux_calendario_manual` o `tipo_os` de `2026-02-07`, `2026-02-08`, `2026-02-14`, `2026-02-15`, `2026-02-16`, `2026-02-17` e `2026-02-18` para `Verão`, dia `2026-02-13` o `tipo_dia` para `Ponto Facultativo`, dias `2026-02-16` e `2026-02-17` o `tipo_dia` para `Domingo` e dia `2026-02-18` o `tipo_dia` para `Sabado`(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1258)
+
+## [1.6.2] - 2026-02-09
+
+### Alterado
+
+- Altera lógica incremental do modelo `viagem_planejada_planejamento` para `insert_overwrite` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1161)
+
+## [1.6.1] - 2026-02-02
+
+### Alterado
+
+- Alterados no modelo `aux_calendario_manual` o `tipo_os` de `2026-01-17`, `2026-01-18`, `2026-01-31` e `2026-02-01` para `Verão` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1203)
+
+## [1.6.0] - 2026-01-13
+
+### Adicionado
+
+- Cria modelos `tarifa_publica.sql` e `aux_matriz_transferencia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1162)
+
+### Alterado
+
+- Altera tarifa hardcoded no modelo `aux_matriz_integracao_modo.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1162)
+
+## [1.5.9] - 2026-01-09
+
+### Alterado
+
+- Alterados no modelo `aux_calendario_manual` o `tipo_os` de `2025-12-20`, `2025-12-21`, `2025-12-27`, `2025-12-28`, `2026-01-03`, `2026-01-04`, `2026-01-10` e `2026-01-11` para `Verão` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1165)
+
 ## [1.5.8] - 2026-01-07
 
 ### Adicionado
@@ -41,7 +81,7 @@
 
 ### Alterado
 
-- Alterados o `tipo_dia` no modelo `aux_calendario_manual.sql` de `2025-10-04`, `2025-10-05`  e `2025-10-12` -> `Atípico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/987)
+- Alterados o `tipo_dia` no modelo `aux_calendario_manual.sql` de `2025-10-04`, `2025-10-05` e `2025-10-12` -> `Atípico` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/987)
 
 ## [1.5.1] - 2025-10-14
 
@@ -107,13 +147,13 @@
 
 ### Adicionado
 
-- Adiciona os dias `2025-05-02` como Ponto facultativo e `2025-05-03` e `2025-05-04` como  Dia Atípico no modelo `aux_calendario_manual` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/597)
+- Adiciona os dias `2025-05-02` como Ponto facultativo e `2025-05-03` e `2025-05-04` como Dia Atípico no modelo `aux_calendario_manual` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/597)
 
 ## [1.4.3] - 2025-05-12
 
 ### Adicionado
 
-- Adiciona os dias `2025-04-18` como Feriado e `2025-04-22` como  Ponto Facultativo no modelo `aux_calendario_manual` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/573)
+- Adiciona os dias `2025-04-18` como Feriado e `2025-04-22` como Ponto Facultativo no modelo `aux_calendario_manual` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/573)
 
 ## [1.4.2] - 2025-04-30
 
@@ -185,6 +225,7 @@
 ### Adicionado
 
 - Adiciona novas datas no modelo `aux_calendario_manual.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/480)
+
 ## [1.3.2] - 2025-03-10
 
 ### Alterado
@@ -214,6 +255,7 @@
   - `viagem_planejada_planejamento.sql`
 
 ### Alterado
+
 - Adiciona colunas start_pt e end_pt no modelo `shapes_geom_planejamento.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/352)
 
 ## [1.1.0] - 2024-11-08

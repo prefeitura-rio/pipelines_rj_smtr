@@ -31,7 +31,7 @@ with
             <= interval 6 day
             and modo = "Ônibus"
     ),
-    -- Viagens realizadas
+    -- -- Viagens realizadas
     viagem as (
         select
             data,
@@ -46,15 +46,29 @@ with
             indicadores,
             servico,
             sentido,
-            distancia_planejada
+            distancia_planejada,
         from {{ ref("viagem_regularidade_temperatura") }}
-        -- from `rj-smtr.subsidio.viagem_regularidade_temperatura`
         where
-            data
-            between date_sub(date("{{ var('start_date') }}"), interval 1 day) and date(
-                "{{ var('end_date') }}"
+            data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+            and (
+                data between date("{{ var('start_date') }}") and date(
+                    "{{ var('end_date') }}"
+                )
+                {% if target.name == "prod" %}
+                    or data = date_sub(date("{{ var('start_date') }}"), interval 1 day)
+                {% endif %}
             )
-            and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+
+        {% if target.name in ("dev", "hmg") %}
+            --fmt:off
+            left outer union all by name
+             --fmt:on
+            select id_veiculo, datetime_partida, datetime_chegada
+            from {{ ref("viagem_completa") }}
+            where
+                data = date_sub(date("{{ var('start_date') }}"), interval 1 day)
+                and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
+        {% endif %}
     ),
     -- Viagem, para fins de contagem de passageiros, com tolerância de 30 minutos,
     -- limitada pela viagem anterior
@@ -138,7 +152,8 @@ with
             between v.datetime_partida_com_tolerancia and v.datetime_chegada
         group by 1, 2
     ),
-    -- Calcula a porcentagem de estado do equipamento "ABERTO" por validador e
+    -- Calcula a porcentagem de estado do equipamento "ABERTO" por
+    -- validador e
     -- viagem
     estado_equipamento_perc as (
         select

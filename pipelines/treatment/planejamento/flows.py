@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de planejamento
 
-DBT 2026-01-08
+DBT 2026-02-25
 """
 
 from pipelines.constants import constants as smtr_constants
@@ -13,6 +13,7 @@ PLANEJAMENTO_DIARIO_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="planejamento_diario - materializacao",
     selector=constants.PLANEJAMENTO_DIARIO_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+    generate_schedule=False,
 )
 
 MATRIZ_INTEGRACAO_SMTR_MATERIALIZACAO = create_default_materialization_flow(

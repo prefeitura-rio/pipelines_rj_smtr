@@ -1,8 +1,15 @@
 # Changelog - source_rioonibus
 
+## [1.2.1] - 2026-03-03
+
+### Removido
+
+- Remove schedule do flow `CAPTURA_VIAGEM_INFORMADA` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1282)
+
 ## [1.2.0] - 2024-11-28
 
 ### Alterado
+
 - Altera a captura da viagem_informada para pegar o range D-2 até D+0 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/337)
 
 ## [1.0.1] - 2024-11-25

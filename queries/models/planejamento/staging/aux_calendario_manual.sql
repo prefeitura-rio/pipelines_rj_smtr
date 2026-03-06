@@ -60,6 +60,12 @@ with
                 then "Domingo"  -- 000399.001368/2025-25 - Operação Especial Réveillon
                 when data = date(2026, 01, 02)
                 then "Ponto Facultativo"  -- 000399.001368/2025-25 - Ponto Facultativo referente às festas de fim de ano
+                when data = date(2026, 02, 13)
+                then "Ponto Facultativo"  -- 000399.001590/2026-17 - Determinação de tipos dia de Carnaval
+                when data between date(2026, 02, 16) and date(2026, 02, 17)
+                then "Domingo"  -- 000399.001590/2026-17 - Determinação de tipos dia de Carnaval
+                when data = date(2026, 02, 18)
+                then "Sabado"  -- 000399.001590/2026-17 - Determinação de tipos dia de Carnaval
             end as tipo_dia,
             case
                 when data between date(2024, 09, 14) and date(2024, 09, 15)
@@ -140,6 +146,22 @@ with
                 then "Reveillon_31-12"  -- 000399.001368/2025-25 - Operação Especial Réveillon
                 when data = date(2026, 01, 01)
                 then "Reveillon_01-01"  -- 000399.001368/2025-25 - Operação Especial Réveillon
+                when data between date(2025, 12, 20) and date(2025, 12, 21)
+                then "Verão"  -- 000399.001045/2025-31 - Acionamento do Plano Verão
+                when data between date(2025, 12, 27) and date(2025, 12, 28)
+                then "Verão"  -- 000399.001455/2025-82 - Acionamento do Plano Verão
+                when data between date(2026, 01, 03) and date(2026, 01, 04)
+                then "Verão"  -- 000399.001610/2025-61 - Acionamento do Plano Verão
+                when data between date(2026, 01, 10) and date(2026, 01, 11)
+                then "Verão"  -- 000399.000163/2026-11 - Acionamento do Plano Verão
+                when data between date(2026, 01, 17) and date(2026, 01, 18)
+                then "Verão"  -- 000399.000456/2026-91 - Acionamento do Plano Verão
+                when data between date(2026, 01, 31) and date(2026, 02, 01)
+                then "Verão"  -- 000399.001025/2026-41 - Acionamento do Plano Verão
+                when data between date(2026, 02, 07) and date(2026, 02, 08)
+                then "Verão"  -- 000399.001320/2026-06 - Acionamento do Plano Verão
+                when data between date(2026, 02, 14) and date(2026, 02, 18)
+                then "Verão"  -- 000399.001536/2026-63 - Acionamento do Plano Verão                
             end as tipo_os
         from
             unnest(

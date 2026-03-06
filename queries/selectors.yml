@@ -144,6 +144,8 @@ selectors:
     definition:
       union:
         - method: fqn
+          value: tarifa_publica
+        - method: fqn
           value: matriz_reparticao_tarifaria
         - method: fqn
           value: matriz_integracao
@@ -163,14 +165,14 @@ selectors:
         - method: fqn
           value: integracao_nao_realizada
         - method: fqn
+          value: integracao_invalida
+        - method: fqn
           value: transacao_invalida
 
   - name: monitoramento_subsidio
     description: Materialização das tabelas utilizadas nos dashboards do subsidio
     definition:
       union:
-        - method: fqn
-          value: monitoramento_viagem_transacao
         - method: fqn
           value: monitoramento_sumario_servico_dia_historico
         - method: fqn
@@ -232,8 +234,6 @@ selectors:
         - method: fqn
           value: dicionario_bilhetagem
         - method: fqn
-          value: aux_gratuidade_info
-        - method: fqn
           value: staging_transacao
         - method: fqn
           value: staging_transacao_riocard
@@ -277,7 +277,7 @@ selectors:
         - method: fqn
           value: staging_gps_validador
         - method: fqn
-          value: gps_validador_aux
+          value: aux_gps_validador
         - method: fqn
           value: gps_validador
         - method: fqn
@@ -489,6 +489,8 @@ selectors:
           value: veiculo_regularidade_temperatura_dia
         - method: fqn
           value: dicionario_subsidio
+        - method: fqn
+          value: monitoramento_viagem_transacao
 
   - name: snapshot_temperatura
     definition:

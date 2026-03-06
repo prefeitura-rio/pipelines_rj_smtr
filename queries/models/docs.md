@@ -22,6 +22,30 @@ Horário de início da viagem
 Horário de fim da viagem
 {% enddocs %}
 
+{% docs datetime_partida_informada %}
+Horário de partida informado pela operadora
+{% enddocs %}
+
+{% docs datetime_chegada_informada %}
+Horário de chegada informado pela operadora
+{% enddocs %}
+
+{% docs datetime_partida_automatica %}
+Horário de partida automática [primeiro GPS fora da cerca eletrônica inicial e dentro do buffer de um segmento]
+{% enddocs %}
+
+{% docs datetime_chegada_automatica %}
+Horário de chegada automática [último GPS fora da cerca eletrônica final e dentro do buffer de um segmento]
+{% enddocs %}
+
+{% docs datetime_partida_considerada %}
+Horário de partida considerado para validação [automática se diferença > 10 min, senão informada]
+{% enddocs %}
+
+{% docs datetime_chegada_considerada %}
+Horário de chegada considerado para validação [automática se diferença > 10 min, senão informada]
+{% enddocs %}
+
 {% docs distancia_planejada %}
 Distância do shape [trajeto] planejado (km)
 {% enddocs %}
@@ -117,14 +141,15 @@ Flag de verificação se o ponto de GPS encontra-se até o limite de 'tamanho_bu
 
 "Parado": Quando 'flag_em_movimento' é false:
 
- - Se 'tipo_parada' não é nulo, o veículo é considerado "Parado" seguido pelo tipo de parada [ex.: "Parado terminal"]
+- Se 'tipo_parada' não é nulo, o veículo é considerado "Parado" seguido pelo tipo de parada [ex.: "Parado terminal"]
 
- - Se 'tipo_parada' é nulo:
+- Se 'tipo_parada' é nulo:
 
-    - Se 'flag_trajeto_correto_hist' é true, o status é "Parado trajeto correto"
+      - Se 'flag_trajeto_correto_hist' é true, o status é "Parado trajeto correto"
 
-    - Se 'flag_trajeto_correto_hist' é false, o status é "Parado fora trajeto"
-{% enddocs %}
+      - Se 'flag_trajeto_correto_hist' é false, o status é "Parado fora trajeto"
+
+  {% enddocs %}
 
 {% docs velocidade_instantanea %}
 Velocidade instantânea do veículo, conforme informado pelo GPS (km/h)
@@ -351,7 +376,7 @@ Sentido da linha
 {% enddocs %}
 
 {% docs indicador_viagem_dentro_limite %}
-Indica se a viagem foi remunerada por estar abaixo do teto de 110%/120%/200%
+Indica se a viagem foi remunerada por estar abaixo do teto de 110% / 120% / 200%
 {% enddocs %}
 
 {% docs indicador_penalidade_judicial %}
@@ -632,7 +657,7 @@ Valor efetivo de pagamento [valor_total_apurado - valor_acima_limite - valor_glo
 {% enddocs %}
 
 {% docs valor_acima_limite %}
-Valor apurado das viagens que não foram remuneradas por estar acima do teto de 120% / 200%
+Valor apurado das viagens que não foram remuneradas por estar acima do teto de 110% / 120% / 200%
 {% enddocs %}
 
 {% docs valor_pago %}
@@ -942,18 +967,18 @@ Data de operação
 {% docs status_veiculo %}
 Classificação, observados os demais parâmetros - Categorias:
 
-  - Não licenciado - Veículo que operou, mas não é licenciado
+- Não licenciado - Veículo que operou, mas não é licenciado
 
-  - Autuado por ar inoperante - Veículo que operou, foi licenciado com ar condicionado e foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado [023.II]
+- Autuado por ar inoperante - Veículo que operou, foi licenciado com ar condicionado e foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado [023.II]
 
-  - Autuado por segurança - Veículo que operou, foi licenciado, mas foi autuado por infração relacionada à segurança do veículo
+- Autuado por segurança - Veículo que operou, foi licenciado, mas foi autuado por infração relacionada à segurança do veículo
 
-  - Autuado por limpeza/equipamento - Veículo que operou, foi licenciado, mas foi autuado cumulativamente por infrações relacionadas à limpeza e equipamentos do veículo
+- Autuado por limpeza/equipamento - Veículo que operou, foi licenciado, mas foi autuado cumulativamente por infrações relacionadas à limpeza e equipamentos do veículo
 
-  - Sem ar e não autuado - Veículo que operou, foi licenciado sem ar condicionado e não foi autuado
+- Sem ar e não autuado - Veículo que operou, foi licenciado sem ar condicionado e não foi autuado
 
-  - Com ar e não autuado - Veículo que operou, foi licenciado com ar condicionado e não foi autuado
-{% enddocs %}
+- Com ar e não autuado - Veículo que operou, foi licenciado com ar condicionado e não foi autuado
+  {% enddocs %}
 
 {% docs indicadores_veiculo %}
 Indicadores para caraterização do status do veículo
@@ -981,6 +1006,42 @@ Data da última atualização
 
 {% docs datetime_processamento_viagem %}
 Data e hora do processamento da viagem
+{% enddocs %}
+
+{% docs indicador_prazo_envio %}
+Indica se a viagem foi enviada dentro do prazo de até 2 dias úteis após a data de partida
+{% enddocs %}
+
+{% docs indicador_viagem_sobreposta %}
+Indica se a viagem se sobrepõe a outra viagem do mesmo veículo
+{% enddocs %}
+
+{% docs id_transmissao_gps %}
+Identificador único da tabela de GPS dos validadores
+{% enddocs %}
+
+{% docs temperatura_validador %}
+Temperatura do local, medida pelo sensor do validador (ºC)
+{% enddocs %}
+
+{% docs versao_app_validador %}
+Versão do Software do validador
+{% enddocs %}
+
+{% docs data_recebimento_gps %}
+Data do recebimento da transmissão do GPS
+{% enddocs %}
+
+{% docs hora_recebimento_gps %}
+Hora do recebimento da transmissão do GPS
+{% enddocs %}
+
+{% docs indicador_processamento_posterior_captura %}
+Indica se o datetime de processamento é posterior ao datetime de captura, caracterizando alteração retroativa indevida [Art. 8º, I]
+{% enddocs %}
+
+{% docs indicador_processamento_anterior_chegada %}
+Indica se o datetime de processamento é anterior ao datetime de chegada, indicando processamento antes da conclusão da viagem [Art. 8º, II]
 {% enddocs %}
 
 {% docs especie_veiculo %}
@@ -1523,4 +1584,32 @@ Horário do registro
 
 {% docs datetime_gps %}
 Data e hora de geração da transmissão do GPS [GMT-3]
+{% enddocs %}
+
+{% docs tempo_integracao_minutos_matriz %}
+Tempo máximo entre a primeira e a última perna para a integração ser realizada
+{% enddocs %}
+
+{% docs sequencia_rateio_matriz %}
+Array contendo os percentuais de rateio para cada perna da integração
+{% enddocs %}
+
+{% docs agency_id %}
+Identificador único de uma agência de transporte
+{% enddocs %}
+
+{% docs id_viagem_planejada %}
+Código identificador da viagem planejada associada
+{% enddocs %}
+
+{% docs indice_validacao %}
+Índice de validação da viagem [razão entre segmentos válidos e segmentos considerados]
+{% enddocs %}
+
+{% docs datetime_inicio_segmento %}
+Data e hora de início do segmento [partida considerada para o primeiro segmento, primeiro GPS para os demais]
+{% enddocs %}
+
+{% docs datetime_fim_segmento %}
+Data e hora de fim do segmento [chegada considerada para o último segmento, último GPS para os demais]
 {% enddocs %}

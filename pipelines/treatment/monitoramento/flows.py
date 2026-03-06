@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de monitoramento
 
-DBT: 2026-01-06
+DBT: 2026-02-25
 """
 
 from copy import deepcopy
@@ -182,6 +182,11 @@ MONITORAMENTO_TEMPERATURA_MATERIALIZACAO = create_default_materialization_flow(
     post_tests=constants.MONITORAMENTO_TEMPERATURA_TEST.value,
 )
 
+set_default_parameters(
+    MONITORAMENTO_TEMPERATURA_MATERIALIZACAO,
+    {"additional_vars": {"tipo_materializacao": "monitoramento"}},
+)
+
 GPS_VALIDADOR_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="gps_validador - materializacao",
     selector=constants.GPS_VALIDADOR_SELECTOR.value,
@@ -194,6 +199,7 @@ GPS_VALIDADOR_MATERIALIZACAO = create_default_materialization_flow(
     test_webhook_key=jae_constants.ALERT_WEBHOOK.value,
     test_scheduled_time=time(1, 15, 0),
     skip_if_running_tolerance=10,
+    generate_schedule=False,
 )
 
 GPS_VALIDADOR_MATERIALIZACAO.state_handlers.append(

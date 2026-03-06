@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Flows de captura dos dados da CITTATI"""
+
 from pipelines.capture.cittati.constants import constants
 from pipelines.capture.cittati.tasks import create_gps_extractor
 from pipelines.capture.templates.flows import create_default_capture_flow
