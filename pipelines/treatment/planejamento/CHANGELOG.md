@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.1.1] - 2026-03-06
+
+### Removido
+
+- Remove schedule do flow `PLANEJAMENTO_DIARIO_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1294)
+
 ## [1.1.0] - 2024-12-30
 
 ### Adicionado
