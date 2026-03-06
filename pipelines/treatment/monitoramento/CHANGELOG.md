@@ -4,7 +4,7 @@
 
 ### Removido
 
-- Remove schedule do flow de materialização da `viagem_informada_monitoramento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1219)
+- Remove schedule do flow de materialização da `viagem_informada_monitoramento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1297)
 
 ## [1.2.13] - 2026-02-11
 
