@@ -61,6 +61,7 @@ CAPTURA_TRANSACAO_RIOCARD = create_default_capture_flow(
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     recapture_schedule_cron=create_hourly_cron(),
     get_raw_max_retries=0,
+    generate_schedule=False,
 )
 
 CAPTURA_GPS_VALIDADOR = create_default_capture_flow(
