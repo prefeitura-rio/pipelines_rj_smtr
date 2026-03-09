@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.2.14] - 2026-03-06
+
+### Removido
+
+- Remove schedule do flow de materialização da `viagem_informada_monitoramento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1297)
+
 ## [1.2.13] - 2026-02-11
 
 ### Adicionado
@@ -76,7 +82,7 @@
 
 ### Adicionado
 
-- Adiciona novos testes em  `MONITORAMENTO_VEICULO_CHECKS_LIST` e `VEICULO_DIA_CHECKS_LIST` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/668)
+- Adiciona novos testes em `MONITORAMENTO_VEICULO_CHECKS_LIST` e `VEICULO_DIA_CHECKS_LIST` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/668)
 
 ## [1.2.1] - 2025-06-30
 
