@@ -4,7 +4,7 @@
 
 ### Removido
 
-- Remove schedules do flow `CAPTURA_TRANSACAO_RETIFICADA` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1296)
+- Remove schedules do flow `CAPTURA_TRANSACAO_RETIFICADA` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1303)
 
 ## [3.1.13] - 2026-03-09
 
