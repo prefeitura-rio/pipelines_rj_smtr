@@ -23,6 +23,7 @@ with
             {{ incremental_filter }}
             and data >= date_trunc(date("{{ var('DATA_SUBSIDIO_V15_INICIO') }}"), month)
             and ano_fabricacao is not null
+            and modo = "ONIBUS"
         union distinct
         select data, id_veiculo, ano_fabricacao
         from {{ ref("sppo_licenciamento") }}
