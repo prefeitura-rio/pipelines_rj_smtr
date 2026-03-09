@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Alterados no modelo `aux_calendario_manual` o `tipo_os` de `2026-02-21`, `2026-02-22` para `Verão` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Alterados no modelo `aux_calendario_manual` o `tipo_os` de `2026-02-21`, `2026-02-22` para `Verão` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1304)
 
 ## [1.6.4] - 2026-02-25
 
