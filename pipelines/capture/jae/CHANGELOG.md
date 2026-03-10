@@ -4,7 +4,7 @@
 
 ### Removido
 
-- Remove schedules do flow `CAPTURA_ORDEM_PAGAMENTO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1303)
+- Remove schedules do flow `CAPTURA_ORDEM_PAGAMENTO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1308)
 
 ## [3.1.14] - 2026-03-09
 
