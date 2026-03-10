@@ -1,5 +1,11 @@
 # Changelog - dashboard_subsidio_sppo
 
+## [8.1.5] - 2026-03-04
+
+### Alterado
+
+- Altera o modelo `viagens_remuneradas_v2` para adicionar os servicos `104`, `107`, `161`, `167`, `169`, `232`, `361`, `409`, `410`, `416`, `435`, `461`, `473`, `552`, `583`, `584`, `SP805`, `LECD127`, `LECD128`, `LECD129`, `LECD130`, `LECD131`, `LECD132`, `LECD133`, `LECD134` na exceção do limite de viagens em serviços especificados no período entre  `2026-01-16` e `2026-02-15` e os serviços `805`, `LECD136`, `LECD137` no período entre `2026-02-01` e `2026-02-15` conforme Processo n°000300.005989/2026-19  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1292)
+
 ## [8.1.4] - 2026-02-27
 
 ### Alterado

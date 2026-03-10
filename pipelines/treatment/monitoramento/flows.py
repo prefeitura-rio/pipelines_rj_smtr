@@ -2,7 +2,7 @@
 """
 Flows de tratamento dos dados de monitoramento
 
-DBT: 2026-02-25
+DBT: 2026-03-06
 
 """
 
@@ -39,6 +39,7 @@ VIAGEM_INFORMADA_MATERIALIZACAO = create_default_materialization_flow(
         planejamento_constants.PLANEJAMENTO_DIARIO_SELECTOR.value,
         rioonibus_source_constants.VIAGEM_INFORMADA_SOURCE.value,
     ],
+    generate_schedule=False,
 )
 
 wait_viagem_informada = deepcopy(constants.VIAGEM_INFORMADA_SELECTOR.value)
