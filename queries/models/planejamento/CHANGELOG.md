@@ -1,5 +1,17 @@
 # Changelog - planejamento
 
+## [1.6.5] - 2026-03-09
+
+### Alterado
+
+- Alterados no modelo `aux_calendario_manual` o `tipo_os` de `2026-02-21`, `2026-02-22` para `Verão` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1304)
+
+## [1.6.4] - 2026-02-25
+
+### Alterado
+
+- Altera lógica de interseção no modelo `segmento_shape` para impedir redução de buffer no primeiro e último segmento, recortando apenas segmentos intermediários (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1240)
+
 ## [1.6.3] - 2026-02-23
 
 ### Alterado
