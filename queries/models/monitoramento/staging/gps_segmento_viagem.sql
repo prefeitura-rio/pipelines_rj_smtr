@@ -367,6 +367,8 @@ with
             v.shape_id,
             s.id_segmento,
             s.indicador_segmento_desconsiderado,
+            spu.primeiro_segmento,
+            spu.ultimo_segmento,
             v.servico,
             v.sentido,
             v.service_ids,
@@ -397,6 +399,11 @@ with
                 )
                 or (s.inicio_vigencia_tunel is null and s.fim_vigencia_tunel is null)
             )
+        left join
+            segmento_primeiro_ultimo spu
+            on v.feed_version = spu.feed_version
+            and v.feed_start_date = spu.feed_start_date
+            and v.shape_id = spu.shape_id
     ),
     /*
     Associação dos segmentos com dados de GPS e cálculo de datetime de início/fim por segmento
@@ -428,7 +435,11 @@ with
                         - interval 1 second,
                         g.datetime_ultimo_gps_segmento
                     )
-            end as datetime_fim_segmento
+            end as datetime_fim_segmento,
+            cast(v.id_segmento as int64) = v.primeiro_segmento
+            and ifnull(g.quantidade_gps, 0) > 0 as indicador_primeiro_segmento_valido,
+            cast(v.id_segmento as int64) = v.ultimo_segmento
+            and ifnull(g.quantidade_gps, 0) > 0 as indicador_ultimo_segmento_valido
         from viagem_segmento v
         left join gps_servico_segmento g using (id_viagem, shape_id, id_segmento)
     )
@@ -452,6 +463,8 @@ select
     v.sentido,
     v.quantidade_gps,
     v.indicador_segmento_desconsiderado,
+    v.indicador_primeiro_segmento_valido,
+    v.indicador_ultimo_segmento_valido,
     s.indicador_servico_divergente,
     v.datetime_inicio_segmento,
     v.datetime_fim_segmento,
