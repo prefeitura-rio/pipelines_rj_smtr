@@ -202,7 +202,6 @@ select
                 "LECD132",
                 "LECD133",
                 "LECD134",
-                "LECD135",
                 "LECD136",
                 "LECD137",
                 "LECD138"
