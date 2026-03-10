@@ -437,10 +437,8 @@ with
                     )
             end as datetime_fim_segmento,
             cast(v.id_segmento as int64) = v.primeiro_segmento
-            and not v.indicador_segmento_desconsiderado
             and ifnull(g.quantidade_gps, 0) > 0 as indicador_primeiro_segmento_valido,
             cast(v.id_segmento as int64) = v.ultimo_segmento
-            and not v.indicador_segmento_desconsiderado
             and ifnull(g.quantidade_gps, 0) > 0 as indicador_ultimo_segmento_valido
         from viagem_segmento v
         left join gps_servico_segmento g using (id_viagem, shape_id, id_segmento)
