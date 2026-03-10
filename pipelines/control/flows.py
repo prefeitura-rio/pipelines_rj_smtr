@@ -3,6 +3,7 @@
 
 DBT 2026-02-02
 """
+
 from prefect import Parameter, case
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
@@ -18,7 +19,6 @@ from pipelines.control.tasks import (
     set_redis_keys,
     source_freshness_notify_discord,
 )
-from pipelines.schedules import every_hour
 from pipelines.treatment.templates.tasks import run_dbt
 
 with Flow("redis: alterar valor de key") as flow_set_key_redis:
@@ -32,11 +32,13 @@ flow_set_key_redis.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-flow_set_key_redis.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
+flow_set_key_redis.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+]
 
 
 with Flow("dbt: teste source freshness") as flow_source_freshness:
-
     dbt_output = run_dbt(resource="source freshness")
     flag_notify_discord, failed_sources = parse_source_freshness_output(dbt_output=dbt_output)
     with case(flag_notify_discord, True):
@@ -55,5 +57,7 @@ flow_source_freshness.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-flow_source_freshness.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
-flow_source_freshness.schedule = every_hour
+flow_source_freshness.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+]
