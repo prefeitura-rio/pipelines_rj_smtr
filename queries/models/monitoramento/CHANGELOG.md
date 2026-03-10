@@ -1,5 +1,12 @@
 # Changelog - monitoramento
 
+## [2.0.1] - 2026-03-09
+
+### Adicionado
+
+- Adiciona colunas `indicador_primeiro_segmento_valido` e `indicador_ultimo_segmento_valido` no modelo `gps_segmento_viagem` para validar se o primeiro e último segmento da viagem são considerados e possuem registros de GPS (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1302)
+- Adiciona colunas `indicador_primeiro_segmento_valido` e `indicador_ultimo_segmento_valido` no modelo `viagem_validacao` e inclui na composição do `indicador_viagem_valida` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1302)
+
 ## [2.0.0] - 2026-02-25
 
 ### Adicionado
