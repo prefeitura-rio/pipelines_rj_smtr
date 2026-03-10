@@ -8,7 +8,7 @@
 {% endset %}
 
 with
-    ipveuroiv_quantidade_geral as (
+    ipveurovi_quantidade_geral as (
         select
             date_trunc(data, month) as data_inicial_mes,
             last_day(data, month) as data_final_mes,
@@ -19,7 +19,7 @@ with
         where {{ incremental_filter }}
         group by 1, 2, 3, 4
     ),
-    ipveuroiv_quantidade_euro_iv as (
+    ipveurovi_quantidade_euro_vi as (
         select
             date_trunc(data, month) as data_inicial_mes,
             last_day(data, month) as data_final_mes,
@@ -36,7 +36,7 @@ with
             data_final_mes,
             ano,
             mes,
-            "PVEUROIV" as indicador_codigo,
+            "PVEUROVI" as indicador_codigo,
             "1.1" as indicador_versao,
             numerador as indicador_numerador,
             denominador as indicador_denominador,
@@ -44,9 +44,9 @@ with
             '{{ var("version") }}' as versao,
             current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao,
             '{{ invocation_id }}' as id_execucao_dbt
-        from ipveuroiv_quantidade_geral
+        from ipveurovi_quantidade_geral
         left join
-            ipveuroiv_quantidade_euro_iv using (
+            ipveurovi_quantidade_euro_vi using (
                 data_inicial_mes, data_final_mes, ano, mes
             )
     )

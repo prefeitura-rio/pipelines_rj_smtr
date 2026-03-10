@@ -2,7 +2,7 @@
     config(
         meta={
             "data_product": "Indicador: Percentual de Veículos Operantes Euro VI ou Superior",
-            "data_product_code": "PVEUROIV",
+            "data_product_code": "PVEUROVI",
             "ted": "TED_001-25_DTDI/SUBTT-SUBPCT",
             "chief_data_owner": "lauro.silvestre@prefeitura.rio",
             "business_data_owner": "rebeca.bittencourt@prefeitura.rio",
