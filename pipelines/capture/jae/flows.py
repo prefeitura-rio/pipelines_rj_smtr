@@ -158,6 +158,7 @@ CAPTURA_ORDEM_PAGAMENTO = create_default_capture_flow(
     create_extractor_task=create_ressarcimento_db_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     get_raw_max_retries=0,
+    generate_schedule=False,
 )
 set_default_parameters(CAPTURA_ORDEM_PAGAMENTO, {"recapture": True})
 
