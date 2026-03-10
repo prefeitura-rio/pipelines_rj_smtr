@@ -1,6 +1,6 @@
 {{ config(materialized="view", alias="sppo_registro_agente_verao") }}
 
-SELECT
+select
     safe_cast(parse_datetime("%d/%m/%Y %H:%M:%S", datetime_registro) as date) as data,
     safe_cast(
         parse_datetime("%d/%m/%Y %H:%M:%S", datetime_registro) as datetime
