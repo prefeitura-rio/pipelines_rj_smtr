@@ -683,6 +683,14 @@ Quantidade de partidas no sentido volta
 Distância do shape [trajeto] planejado (km)
 {% enddocs %}
 
+{% docs indicador_primeiro_segmento_valido %}
+Indica se o primeiro segmento da viagem é considerado e possui registros de GPS
+{% enddocs %}
+
+{% docs indicador_ultimo_segmento_valido %}
+Indica se o último segmento da viagem é considerado e possui registros de GPS
+{% enddocs %}
+
 {% docs indicador_servico_divergente %}
 Indica se o serviço indicado nos dados de GPS estava diferente do serviço informado na viagem
 {% enddocs %}
