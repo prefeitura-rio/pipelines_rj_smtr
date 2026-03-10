@@ -68,6 +68,12 @@ with
                 countif(id_segmento is not null)
                 * safe_cast((1 - {{ var("parametro_validacao") }}) as numeric)
             ) as quantidade_segmentos_tolerados,
+            logical_or(
+                indicador_primeiro_segmento_valido
+            ) as indicador_primeiro_segmento_valido,
+            logical_or(
+                indicador_ultimo_segmento_valido
+            ) as indicador_ultimo_segmento_valido,
             max(indicador_servico_divergente) as indicador_servico_divergente,
             max(id_segmento is null) as indicador_shape_invalido,
             any_value(service_ids) as service_ids,
@@ -119,6 +125,8 @@ with
             safe_divide(
                 quantidade_segmentos_validos, quantidade_segmentos_considerados
             ) as indice_validacao,
+            indicador_primeiro_segmento_valido,
+            indicador_ultimo_segmento_valido,
             indicador_servico_divergente,
             indicador_shape_invalido,
             (
@@ -350,6 +358,8 @@ with
             -- fmt: on
             vm.indicador_servico_planejado_gtfs,
             vm.indicador_servico_planejado_os,
+            vm.indicador_primeiro_segmento_valido,
+            vm.indicador_ultimo_segmento_valido,
             vm.indicador_servico_divergente,
             vm.indicador_shape_invalido,
             vm.indicador_campos_obrigatorios,
@@ -371,6 +381,8 @@ with
                     and not vs.indicador_viagem_sobreposta
                 {% endif %}
                 and not vm.indicador_acima_velocidade_max
+                and ifnull(vm.indicador_primeiro_segmento_valido, false)
+                and ifnull(vm.indicador_ultimo_segmento_valido, false)
                 and ifnull(vm.indicador_servico_planejado_os, true)
                 and not vi.indicador_processamento_posterior_captura
                 and not vi.indicador_processamento_anterior_chegada
@@ -470,6 +482,8 @@ select
     indicador_trajeto_valido,
     indicador_servico_planejado_gtfs,
     indicador_servico_planejado_os,
+    indicador_primeiro_segmento_valido,
+    indicador_ultimo_segmento_valido,
     indicador_servico_divergente,
     indicador_shape_invalido,
     indicador_campos_obrigatorios,
