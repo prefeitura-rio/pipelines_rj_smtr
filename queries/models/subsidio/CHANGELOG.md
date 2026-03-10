@@ -1,11 +1,5 @@
 # Changelog - subsidio
 
-## [2.0.6] - 2026-03-02
-
-### Alterado
-
-- Altera o modelo `percentual_operacao_faixa_horaria.sql` para desconsiderar a `distancia_planejada` no cálculo de `pof` de viagens do tipo `Não licenciado` e `Não vistoriado` a partir de `2024-09-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/510)
-
 ## [2.3.2] - 2026-01-15
 
 ### Adicionado

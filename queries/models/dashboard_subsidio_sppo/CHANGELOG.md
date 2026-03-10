@@ -1,11 +1,5 @@
 # Changelog - dashboard_subsidio_sppo
 
-## [7.2.1] - 2026-03-02
-
-### Alterado
-
-- Altera o modelo `viagens_remuneradas.sql` para desconsiderar a `distancia_planejada` para o cálculo de `pof` de viagens do tipo `Não licenciado` e `Não vistoriado` a partir e `2024-09-01` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/510)
-
 ## [8.1.4] - 2026-02-27
 
 ### Alterado
@@ -97,19 +91,19 @@
 
 - Alterado o modelo `viagens_remuneradas` para apuração por sentido e para utilização do versionamento (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/752)
 
-## [7.2.1] - 2025-07-31
+## [7.2.2] - 2025-07-31
 
 ### Alterado
 
 - Alterado variável `DATA_SUBSIDIO_V15A_INICIO` por `DATA_SUBSIDIO_V17_INICIO` no modelo `viagens_remuneradas` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/703)
 
-## [7.2.0] - 2025-07-08
+## [7.2.1] - 2025-07-08
 
 ### Adicionado
 
 - Adiciona lógica condicional no modelo `viagens_remuneradas` para definir e utilizar a CTE `viagem_tecnologia` apenas quando `start_date` for anterior a `DATA_SUBSIDIO_V15_INICIO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/649)
 
-## [7.1.9] - 2025-06-25
+## [7.2.0] - 2025-06-25
 
 ### Alterado
 
