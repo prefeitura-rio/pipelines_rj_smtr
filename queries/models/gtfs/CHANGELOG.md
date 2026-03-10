@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.2.5] - 2026-03-10
+
+### Alterado
+
+- Corrige o modelo `ordem_servico_trips_shapes_gtfs.sql` para o tipo_os `Eleição` no feed `2024-09-29` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1313)
+
 ## [1.2.4] - 2026-03-02
 
 ### Alterado
