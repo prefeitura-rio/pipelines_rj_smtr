@@ -173,7 +173,7 @@ select
         faixa_horaria_fim
     ),
     case
-     when
+        when
             (v.data between date('2026-02-16') and date('2026-02-28'))
             and v.servico in (
                 "104",
@@ -204,7 +204,7 @@ select
                 "LECD136",
                 "LECD137",
                 "LECD138"
-        
+
             )  -- Processo n° 000300.005989/2026-19
         then true
         when
