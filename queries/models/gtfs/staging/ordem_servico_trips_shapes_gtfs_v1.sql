@@ -53,9 +53,15 @@ with
                             )  -- Domingo CNU
                             or (
                                 o.feed_start_date in ("2024-09-29", "2024-11-06")
-                                and o.tipo_os in ("Enem", "Eleição")
-                                and o.tipo_dia in ("Domingo", "Dia Útil", "Sabado")
-                                and t.tipo_dia in ("Sabado", "Dia Útil")
+                                and o.tipo_os = "Enem"
+                                and o.tipo_dia = "Domingo"
+                                and t.tipo_dia = "Sabado"
+                            )
+                            or (
+                                o.feed_start_date in ("2024-09-29")
+                                and o.tipo_os = "Eleição"
+                                and o.tipo_dia in ("Domingo", "Sabado", "Dia Útil")
+                                and t.tipo_dia in ("Dia Útil")
                             )
                         )  -- Domingo Enem/Eleição
                         and (
