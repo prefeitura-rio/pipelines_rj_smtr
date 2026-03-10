@@ -204,7 +204,6 @@ select
                 "LECD136",
                 "LECD137",
                 "LECD138"
-
             )  -- Processo n° 000300.005989/2026-19
         then true
         when
