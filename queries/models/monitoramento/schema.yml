@@ -181,6 +181,14 @@ models:
         description: "Indica se o serviço estava planejado para a faixa horária na OS [apenas para SPPO]"
         data_type: boolean
         quote: true
+      - name: indicador_primeiro_segmento_valido
+        description: "{{ doc('indicador_primeiro_segmento_valido') }}"
+        data_type: boolean
+        quote: true
+      - name: indicador_ultimo_segmento_valido
+        description: "{{ doc('indicador_ultimo_segmento_valido') }}"
+        data_type: boolean
+        quote: true
       - name: indicador_servico_divergente
         description: "{{ doc('indicador_servico_divergente') }}"
         data_type: boolean
@@ -323,6 +331,14 @@ models:
         quote: true
       - name: indicador_segmento_desconsiderado
         description: "Indica se o segmento deve ser desconsiderado na validação"
+        data_type: boolean
+        quote: true
+      - name: indicador_primeiro_segmento_valido
+        description: "{{ doc('indicador_primeiro_segmento_valido') }}"
+        data_type: boolean
+        quote: true
+      - name: indicador_ultimo_segmento_valido
+        description: "{{ doc('indicador_ultimo_segmento_valido') }}"
         data_type: boolean
         quote: true
       - name: indicador_servico_divergente
