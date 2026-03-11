@@ -168,6 +168,7 @@ CAPTURA_TRANSACAO_ORDEM = create_default_capture_flow(
     create_extractor_task=create_jae_general_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     get_raw_max_retries=0,
+    generate_schedule=False,
 )
 set_default_parameters(CAPTURA_TRANSACAO_ORDEM, {"recapture": True})
 
