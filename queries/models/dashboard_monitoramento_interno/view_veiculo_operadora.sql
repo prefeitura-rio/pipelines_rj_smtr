@@ -17,7 +17,7 @@ with
             permissao,
             placa,
             tipo_veiculo,
-            substr(id_veiculo, 2, 3) as cod_veiculo
+            safe_cast(substr(id_veiculo, 2, 3) as int64) as cod_veiculo
         from `rj-smtr.veiculo.licenciamento`
         where
             permissao in ("22.100002-3", "22.100003-2", "22.100001-4", "22.100004-1")
@@ -36,7 +36,7 @@ with
             permissao,
             placa,
             tipo_veiculo,
-            substr(id_veiculo, 2, 3) as cod_veiculo
+            safe_cast(substr(id_veiculo, 2, 3) as int64) as cod_veiculo
         from `rj-smtr.cadastro.veiculo_licenciamento_dia`
         where
             permissao in ("22.100002-3", "22.100003-2", "22.100001-4", "22.100004-1")
@@ -60,249 +60,67 @@ with
             d.*,
 
             case
-                when cod_veiculo in ('100', '101', '102', '103', '104')
+                when cod_veiculo between 100 and 104
                 then '220100007'
-                when cod_veiculo in ('105', '106', '107', '108', '109')
+                when cod_veiculo between 105 and 109
                 then '220105002'
-                when cod_veiculo in ('115', '116', '117', '118', '119')
+                when cod_veiculo between 115 and 119
                 then '220115003'
-                when cod_veiculo in ('120', '121', '122', '123', '124')
+                when cod_veiculo between 120 and 124
                 then '220120000'
-                when cod_veiculo in ('125', '126', '127', '128', '129')
+                when cod_veiculo between 125 and 129
                 then '220125004'
-                when
-                    cod_veiculo
-                    in ('130', '131', '132', '133', '135', '136', '137', '138', '139')
+                when ((cod_veiculo between 130 and 139) and (cod_veiculo <> 134))
                 then '220130000'
-                when
-                    cod_veiculo in (
-                        '170',
-                        '171',
-                        '172',
-                        '173',
-                        '174',
-                        '175',
-                        '176',
-                        '177',
-                        '178',
-                        '179'
-                    )
+                when cod_veiculo between 170 and 179
                 then '31'
-                when
-                    cod_veiculo in (
-                        '180',
-                        '181',
-                        '182',
-                        '183',
-                        '184',
-                        '185',
-                        '186',
-                        '187',
-                        '188',
-                        '189'
-                    )
+                when cod_veiculo between 180 and 189
                 then '2645'
-                when cod_veiculo in ('255', '256', '257', '258', '259')
+                when cod_veiculo between 255 and 259
                 then '220255006'
-                when cod_veiculo in ('270', '271', '272', '273', '274')
+                when cod_veiculo between 270 and 274
                 then '220270003'
-                when cod_veiculo in ('275', '276', '277', '278', '279')
+                when cod_veiculo between 275 and 279
                 then '220275008'
-                when cod_veiculo in ('285', '286', '287', '288', '289')
+                when cod_veiculo between 285 and 289
                 then '220285009'
-                when
-                    cod_veiculo in (
-                        '290',
-                        '291',
-                        '292',
-                        '293',
-                        '294',
-                        '295',
-                        '296',
-                        '297',
-                        '298',
-                        '299'
-                    )
+                when cod_veiculo between 290 and 299
                 then '220290005'
-                when
-                    cod_veiculo in (
-                        '300',
-                        '301',
-                        '302',
-                        '303',
-                        '304',
-                        '305',
-                        '306',
-                        '307',
-                        '308',
-                        '309'
-                    )
+                when cod_veiculo between 300 and 309
                 then '220300005'
-                when
-                    cod_veiculo in (
-                        '310',
-                        '311',
-                        '312',
-                        '313',
-                        '314',
-                        '315',
-                        '316',
-                        '317',
-                        '318',
-                        '319'
-                    )
+                when cod_veiculo between 310 and 319
                 then '220310006'
-                when cod_veiculo in ('325', '326', '327', '328', '329')
+                when cod_veiculo between 325 and 329
                 then '220325002'
-                when
-                    cod_veiculo in (
-                        '330',
-                        '331',
-                        '332',
-                        '333',
-                        '334',
-                        '335',
-                        '336',
-                        '337',
-                        '338',
-                        '339'
-                    )
+                when cod_veiculo between 330 and 339
                 then '2677'
-                when
-                    cod_veiculo in (
-                        '410',
-                        '411',
-                        '412',
-                        '413',
-                        '414',
-                        '415',
-                        '416',
-                        '417',
-                        '418',
-                        '419'
-                    )
+                when cod_veiculo between 410 and 419
                 then '220410005'
-                when cod_veiculo in ('445', '446', '447', '448', '449')
+                when cod_veiculo between 445 and 449
                 then '220445003'
-                when
-                    cod_veiculo in (
-                        '470',
-                        '471',
-                        '472',
-                        '473',
-                        '474',
-                        '475',
-                        '476',
-                        '477',
-                        '478',
-                        '479'
-                    )
+                when cod_veiculo between 470 and 479
                 then '220475006'
-                when
-                    cod_veiculo in (
-                        '480',
-                        '481',
-                        '482',
-                        '483',
-                        '484',
-                        '485',
-                        '486',
-                        '487',
-                        '488',
-                        '489'
-                    )
+                when cod_veiculo between 480 and 489
                 then '220480002'
-                when
-                    cod_veiculo in (
-                        '500',
-                        '501',
-                        '502',
-                        '503',
-                        '504',
-                        '505',
-                        '506',
-                        '507',
-                        '508',
-                        '509'
-                    )
+                when cod_veiculo between 500 and 509
                 then '220500003'
-                when cod_veiculo in ('515', '516', '517', '518', '519')
+                when cod_veiculo between 515 and 519
                 then '220515009'
-                when cod_veiculo in ('535', '536', '537', '538', '539')
+                when cod_veiculo between 535 and 539
                 then '220535001'
-                when
-                    cod_veiculo in (
-                        '580',
-                        '581',
-                        '582',
-                        '583',
-                        '584',
-                        '585',
-                        '586',
-                        '587',
-                        '588',
-                        '589'
-                    )
+                when cod_veiculo between 580 and 589
                 then '220580001'
-                when
-                    cod_veiculo in (
-                        '630',
-                        '631',
-                        '632',
-                        '633',
-                        '634',
-                        '635',
-                        '636',
-                        '637',
-                        '638',
-                        '639'
-                    )
+                when cod_veiculo between 630 and 639
                 then '220630005'
-                when cod_veiculo in ('710', '711', '712', '713', '714')
+                when cod_veiculo between 710 and 714
                 then '220710002'
-                when cod_veiculo in ('715', '716', '717', '718', '719')
+                when cod_veiculo between 715 and 719
                 then '220715007'
-                when
-                    cod_veiculo in (
-                        '720',
-                        '721',
-                        '722',
-                        '723',
-                        '724',
-                        '725',
-                        '726',
-                        '727',
-                        '728',
-                        '729'
-                    )
+                when cod_veiculo between 720 and 729
                 then '220720003'
-                when
-                    cod_veiculo in (
-                        '860',
-                        '861',
-                        '862',
-                        '863',
-                        '864',
-                        '865',
-                        '866',
-                        '867',
-                        '868',
-                        '869'
-                    )
+                when cod_veiculo between 860 and 869
                 then '220860006'
-                when
-                    cod_veiculo in (
-                        '870',
-                        '871',
-                        '872',
-                        '873',
-                        '874',
-                        '875',
-                        '876',
-                        '877',
-                        '878',
-                        '879'
-                    )
+                when cod_veiculo between 870 and 879
                 then '220870007'
                 else null
             end as id_operadora
@@ -325,4 +143,4 @@ select
 
 from classificacao_operadora c
 
-left join operadoras_onibus o on c.id_operadora = o.id_operadora
+left join operadoras_onibus o using(id_operadora)
