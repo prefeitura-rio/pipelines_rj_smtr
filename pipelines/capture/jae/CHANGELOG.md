@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [3.1.17] - 2026-03-12
+
+### Removido
+
+- Remove schedules do flow `backup_billingpay` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1318)
+
 ## [3.1.16] - 2026-03-11
 
 ### Removido
