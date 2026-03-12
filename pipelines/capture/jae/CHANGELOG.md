@@ -1,5 +1,11 @@
 # Changelog - source_jae
 
+## [3.1.16] - 2026-03-11
+
+### Removido
+
+- Remove schedules do flow `CAPTURA_TRANSACAO_ORDEM` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1318)
+
 ## [3.1.15] - 2026-03-10
 
 ### Removido
