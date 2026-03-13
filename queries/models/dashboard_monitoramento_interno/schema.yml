@@ -52,3 +52,6 @@ models:
         description: " Identificação da empresa operadora obtida através da extração dos três caracteres numéricos após a primeira letra do prefixo do veículo"
       - name: operadora
         description: "{{ doc('operadora') }}"
+    tests:
+      - not_null
+      - unique
