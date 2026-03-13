@@ -4,7 +4,7 @@
 
 ### Corrigido
 
-- Corrigida a conversão do valor da coluna `partidas` para int64 no modelo `ordem_servico_faixa_horaria_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Corrigida a conversão do valor da coluna `partidas` para int64 no modelo `ordem_servico_faixa_horaria_sentido` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1324)
 
 ## [1.6.5] - 2026-03-09
 
