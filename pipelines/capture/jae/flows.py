@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 """Flows de captura dos dados da Jaé"""
-from datetime import datetime, timedelta
+# from datetime import datetime, timedelta
 
 from prefect import Parameter, case, unmapped
 from prefect.run_configs import KubernetesRun
-from prefect.schedules import Schedule
-from prefect.schedules.clocks import IntervalClock
+
+# from prefect.schedules import Schedule
+# from prefect.schedules.clocks import IntervalClock
 from prefect.storage import GCS
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
     handler_inject_bd_credentials,
 )
-from pytz import timezone
 
 from pipelines.capture.jae.constants import constants
 from pipelines.capture.jae.tasks import (
@@ -41,6 +41,9 @@ from pipelines.constants import constants as smtr_constants
 from pipelines.schedules import create_hourly_cron, every_day_hour_five, every_hour
 from pipelines.tasks import get_run_env, get_scheduled_timestamp, log_discord
 from pipelines.utils.prefect import set_default_parameters
+
+# from pytz import timezone
+
 
 # Capturas minuto a minuto
 
@@ -168,32 +171,33 @@ CAPTURA_TRANSACAO_ORDEM = create_default_capture_flow(
     create_extractor_task=create_jae_general_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     get_raw_max_retries=0,
+    generate_schedule=False,
 )
 set_default_parameters(CAPTURA_TRANSACAO_ORDEM, {"recapture": True})
 
-CAPTURA_TRANSACAO_ORDEM.schedule = Schedule(
-    CAPTURA_TRANSACAO_ORDEM.schedule.clocks
-    + [
-        IntervalClock(
-            interval=timedelta(days=1),
-            start_date=datetime(
-                2022, 11, 30, 12, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
-            ),
-            labels=[
-                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
-            ],
-        ),
-        IntervalClock(
-            interval=timedelta(days=1),
-            start_date=datetime(
-                2022, 11, 30, 14, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
-            ),
-            labels=[
-                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
-            ],
-        ),
-    ]
-)
+# CAPTURA_TRANSACAO_ORDEM.schedule = Schedule(
+#     CAPTURA_TRANSACAO_ORDEM.schedule.clocks
+#     + [
+#         IntervalClock(
+#             interval=timedelta(days=1),
+#             start_date=datetime(
+#                 2022, 11, 30, 12, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+#             ),
+#             labels=[
+#                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+#             ],
+#         ),
+#         IntervalClock(
+#             interval=timedelta(days=1),
+#             start_date=datetime(
+#                 2022, 11, 30, 14, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+#             ),
+#             labels=[
+#                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+#             ],
+#         ),
+#     ]
+# )
 
 # Flows de controle para captura.
 
@@ -280,20 +284,21 @@ backup_billingpay.state_handlers = [handler_inject_bd_credentials, handler_initi
 
 multiple_execution_dbs = ["processador_transacao_db", "financeiro_db", "midia_db"]
 
-backup_billingpay.schedule = Schedule(
-    [
-        IntervalClock(
-            interval=timedelta(hours=6) if db in multiple_execution_dbs else timedelta(days=1),
-            start_date=datetime(2021, 1, 1, 0, 0, 0, tzinfo=timezone(smtr_constants.TIMEZONE.value))
-            + timedelta(minutes=30 * idx),
-            labels=[
-                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
-            ],
-            parameter_defaults={"database_name": db},
-        )
-        for idx, db in enumerate(constants.BACKUP_JAE_BILLING_PAY.value.keys())
-    ]
-)
+# backup_billingpay.schedule = Schedule(
+#     [
+#         IntervalClock(
+#             interval=timedelta(hours=6) if db in multiple_execution_dbs else timedelta(days=1),
+#             start_date=datetime(2021, 1, 1, 0, 0, 0,
+# tzinfo=timezone(smtr_constants.TIMEZONE.value))
+#             + timedelta(minutes=30 * idx),
+#             labels=[
+#                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+#             ],
+#             parameter_defaults={"database_name": db},
+#         )
+#         for idx, db in enumerate(constants.BACKUP_JAE_BILLING_PAY.value.keys())
+#     ]
+# )
 
 with Flow("jae: backup historico BillingPay") as backup_billingpay_historico:
 
