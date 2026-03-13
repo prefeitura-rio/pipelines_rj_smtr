@@ -82,7 +82,7 @@ with
     ),
     ordem_servico_faixa_horaria_sentido as (
         select * except (sentido), left(sentido, 1) as sentido
-        from {{ ref("ordem_servico_faixa_horaria_sentido") }}
+        from rj-smtr-dev.victor__planejamento.ordem_servico_faixa_horaria_sentido
         where
             feed_start_date = '{{ var("data_versao_gtfs") }}'
             and (quilometragem != 0 and (partidas != 0 or partidas is null))
