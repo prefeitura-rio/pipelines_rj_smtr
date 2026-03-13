@@ -36,7 +36,7 @@ WITH
     distancia_planejada
   FROM
     -- rj-smtr.subsidio.viagem_transacao
-    {{ ref("viagem_transacao") }}
+    `rj-smtr-dev.janaina__SMTR202511005101__subsidio.viagem_transacao`
   WHERE
     DATA >= DATE( "{{ var("DATA_SUBSIDIO_V2_INICIO") }}" )
     {% if is_incremental() %}

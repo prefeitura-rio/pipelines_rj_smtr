@@ -18,7 +18,7 @@ with
     ),
     planejada as (
         select distinct data, consorcio, servico, vista
-        from `rj-smtr`.`projeto_subsidio_sppo`.`viagem_planejada`
+        from `rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.viagem_planejada` 
         -- `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
         where
             data >= "2024-08-16"

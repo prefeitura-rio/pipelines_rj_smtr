@@ -13,10 +13,10 @@ with
     viagem_planejada as (
         (
             select distinct v.data, v.servico, o.vista
-            from {{ ref("viagem_planejada") }} as v
+            from `rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.viagem_planejada` as v
             -- `rj-smtr`.`projeto_subsidio_sppo`.`viagem_planejada` AS v
             left join
-                {{ ref("subsidio_data_versao_efetiva") }} as sdve
+                `rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.subsidio_data_versao_efetiva` as sdve
                 -- rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva AS sdve
                 using (data)
             left join
@@ -30,7 +30,7 @@ with
         union all
         (
             select distinct `data`, servico, vista
-            from {{ ref("viagem_planejada") }}
+            from `rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.viagem_planejada`
             -- `rj-smtr`.`projeto_subsidio_sppo`.`viagem_planejada`
             where
                 (id_tipo_trajeto = 0 or id_tipo_trajeto is null)

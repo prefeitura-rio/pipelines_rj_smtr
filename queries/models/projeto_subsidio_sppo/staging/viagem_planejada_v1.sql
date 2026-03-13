@@ -12,7 +12,7 @@ with
             data_versao_shapes,
             data_versao_trips,
             data_versao_frequencies
-        from {{ ref("subsidio_data_versao_efetiva") }}
+        from `rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.subsidio_data_versao_efetiva`
         where
             data between date_sub("{{ var('run_date') }}", interval 1 day) and date(
                 "{{ var('run_date') }}"

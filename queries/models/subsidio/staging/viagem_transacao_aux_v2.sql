@@ -47,7 +47,7 @@ with
             servico,
             sentido,
             distancia_planejada,
-        from {{ ref("viagem_regularidade_temperatura") }}
+        from `rj-smtr-dev.janaina__SMTR202511005101__subsidio.viagem_regularidade_temperatura` 
         where
             data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
             and (
@@ -64,7 +64,7 @@ with
             left outer union all by name
              --fmt:on
             select id_veiculo, datetime_partida, datetime_chegada
-            from {{ ref("viagem_completa") }}
+            from `rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.viagem_completa`
             where
                 data = date_sub(date("{{ var('start_date') }}"), interval 1 day)
                 and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
