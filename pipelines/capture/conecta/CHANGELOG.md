@@ -4,7 +4,7 @@
 
 ### Removido
 
-- Remove schedules do flows `CAPTURA_REGISTROS_CONECTA` e `CAPTURA_REGISTROS_CONECTA` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1328)
+- Remove schedule dos flows `CAPTURA_REGISTROS_CONECTA` e `CAPTURA_REALOCACAO_CONECTA` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1328)
 
 ## [1.0.1] - 2025-06-17
 
