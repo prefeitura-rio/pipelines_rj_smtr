@@ -1,5 +1,11 @@
 # Changelog - source_cittati
 
+## [1.0.2] - 2026-03-16
+
+### Removido
+
+- Remove schedules do flows `CAPTURA_REGISTROS_CITTATI` e `CAPTURA_REGISTROS_CITTATI` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1328)
+
 ## [1.0.1] - 2025-06-17
 
 ### Adicionado
