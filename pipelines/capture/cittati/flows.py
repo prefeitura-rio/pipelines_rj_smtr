@@ -14,6 +14,7 @@ CAPTURA_REGISTROS_CITTATI = create_default_capture_flow(
     create_extractor_task=create_gps_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     recapture_schedule_cron=create_hourly_cron(),
+    generate_schedule=False,
 )
 CAPTURA_REGISTROS_CITTATI.state_handlers.append(
     handler_notify_failure(webhook="alertas_gps_onibus")
@@ -25,6 +26,7 @@ CAPTURA_REALOCACAO_CITTATI = create_default_capture_flow(
     create_extractor_task=create_gps_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     recapture_schedule_cron=create_hourly_cron(),
+    generate_schedule=False,
 )
 CAPTURA_REALOCACAO_CITTATI.state_handlers.append(
     handler_notify_failure(webhook="alertas_gps_onibus")
