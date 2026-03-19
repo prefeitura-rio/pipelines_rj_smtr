@@ -26,7 +26,7 @@ models:
         description: "Indicador de regularidade da temperatura da viagem"
       - name: operadora
         description: "{{ doc('operadora') }}"
-models:
+
   - name: view_veiculo_operadora
     description: "Monitoramento da distribuição da frota operante do SPPO e subsídio a ações de fiscalização conduzidas pela SMTR"
     columns:
