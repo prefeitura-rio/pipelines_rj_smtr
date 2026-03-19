@@ -1,6 +1,6 @@
 exposures:
 
-  - name: Painel de Gestão da Frota
+  - name: painel_gestao_frota
     label: FROTA
     type: dashboard
     maturity:

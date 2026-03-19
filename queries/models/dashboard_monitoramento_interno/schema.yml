@@ -53,5 +53,7 @@ models:
       - name: operadora
         description: "{{ doc('operadora') }}"
     tests:
-      - not_null
-      - unique
+        - dbt_utils.unique_combination_of_columns:
+            combination_of_columns:
+              - placa
+              - operadora
