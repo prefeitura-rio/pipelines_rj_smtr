@@ -143,4 +143,4 @@ select
 
 from classificacao_operadora c
 
-left join operadoras_onibus o using(id_operadora)
+left join operadoras_onibus o using (id_operadora)
