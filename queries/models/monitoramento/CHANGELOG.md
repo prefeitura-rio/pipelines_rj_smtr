@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [2.0.2] - 2026-03-19
+
+### Alterado
+
+- Alterado o teste `dbt_utils.relationships_where__id_auto_infracao__veiculo_fiscalizacao_lacre` para adicionar um atraso de 5 dias ao teste (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
 ## [2.0.1] - 2026-03-09
 
 ### Adicionado
