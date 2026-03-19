@@ -72,6 +72,7 @@ GPS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
     ],
     test_scheduled_time=GPS_TEST_SCHEDULE_TIME,
     post_tests=constants.GPS_DAILY_TEST.value,
+    generate_schedule=False,
 )
 gps_vars_conecta = {"modo_gps": "onibus", "fonte_gps": "conecta", "15_minutos": False}
 set_default_parameters(GPS_CONECTA_MATERIALIZACAO, {"additional_vars": gps_vars_conecta})
@@ -86,6 +87,7 @@ GPS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
     ],
     test_scheduled_time=GPS_TEST_SCHEDULE_TIME,
     post_tests=constants.GPS_DAILY_TEST.value,
+    generate_schedule=False,
 )
 gps_vars_cittati = {"modo_gps": "onibus", "fonte_gps": "cittati", "15_minutos": False}
 set_default_parameters(GPS_CITTATI_MATERIALIZACAO, {"additional_vars": gps_vars_cittati})
@@ -100,6 +102,7 @@ GPS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
     ],
     test_scheduled_time=GPS_TEST_SCHEDULE_TIME,
     post_tests=constants.GPS_DAILY_TEST.value,
+    generate_schedule=False,
 )
 gps_vars_zirix = {"modo_gps": "onibus", "fonte_gps": "zirix", "15_minutos": False}
 set_default_parameters(GPS_ZIRIX_MATERIALIZACAO, {"additional_vars": gps_vars_zirix})
@@ -112,6 +115,7 @@ GPS_15_MINUTOS_CONECTA_MATERIALIZACAO = create_default_materialization_flow(
         conecta_constants.CONECTA_REGISTROS_SOURCE.value,
         conecta_constants.CONECTA_REALOCACAO_SOURCE.value,
     ],
+    generate_schedule=False,
 )
 gps_15_vars_conecta = {"modo_gps": "onibus", "fonte_gps": "conecta", "15_minutos": True}
 set_default_parameters(
@@ -126,6 +130,7 @@ GPS_15_MINUTOS_CITTATI_MATERIALIZACAO = create_default_materialization_flow(
         cittati_constants.CITTATI_REGISTROS_SOURCE.value,
         cittati_constants.CITTATI_REALOCACAO_SOURCE.value,
     ],
+    generate_schedule=False,
 )
 gps_15_vars_cittati = {"modo_gps": "onibus", "fonte_gps": "cittati", "15_minutos": True}
 set_default_parameters(
@@ -140,6 +145,7 @@ GPS_15_MINUTOS_ZIRIX_MATERIALIZACAO = create_default_materialization_flow(
         zirix_constants.ZIRIX_REGISTROS_SOURCE.value,
         zirix_constants.ZIRIX_REALOCACAO_SOURCE.value,
     ],
+    generate_schedule=False,
 )
 gps_15_vars_zirix = {"modo_gps": "onibus", "fonte_gps": "zirix", "15_minutos": True}
 set_default_parameters(GPS_15_MINUTOS_ZIRIX_MATERIALIZACAO, {"additional_vars": gps_15_vars_zirix})
