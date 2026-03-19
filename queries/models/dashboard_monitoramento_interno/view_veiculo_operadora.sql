@@ -18,7 +18,7 @@ with
             placa,
             tipo_veiculo,
             safe_cast(substr(id_veiculo, 2, 3) as int64) as cod_veiculo
-        from `rj-smtr.veiculo.licenciamento`
+        from {{ ref("sppo_licenciamento") }}
         where
             permissao in ("22.100002-3", "22.100003-2", "22.100001-4", "22.100004-1")
             and data <= "2025-03-31"
@@ -37,7 +37,7 @@ with
             placa,
             tipo_veiculo,
             safe_cast(substr(id_veiculo, 2, 3) as int64) as cod_veiculo
-        from `rj-smtr.cadastro.veiculo_licenciamento_dia`
+        from {{ ref("veiculo_licenciamento_dia") }}
         where
             permissao in ("22.100002-3", "22.100003-2", "22.100001-4", "22.100004-1")
             and data >= "2025-04-01"
@@ -51,7 +51,7 @@ with
 
     operadoras_onibus as (
         select distinct id_operadora, operadora
-        from `rj-smtr.cadastro.operadoras`
+        from {{ ref("operadoras") }}
         where modo = "Ônibus"
     ),
 
