@@ -21,7 +21,7 @@ with
         from {{ ref("sppo_licenciamento") }}
         where
             permissao in ("22.100002-3", "22.100003-2", "22.100001-4", "22.100004-1")
-            and data <= "2025-03-31"
+            and data < date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
             and lower(tipo_veiculo) not like "%rod%"
 
         union all
@@ -40,7 +40,7 @@ with
         from {{ ref("veiculo_licenciamento_dia") }}
         where
             permissao in ("22.100002-3", "22.100003-2", "22.100001-4", "22.100004-1")
-            and data >= "2025-04-01"
+            and data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
             and lower(tipo_veiculo) not like "%rod%"
         qualify
             row_number() over (
