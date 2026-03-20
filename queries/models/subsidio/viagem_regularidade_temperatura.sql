@@ -16,14 +16,9 @@
      or vt.data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}')
     )
     and
-    {% if vt.data < date(2026,03,01) %}
-        not vt.indicador_temperatura_nula_viagem
-    {% else %}
-        (
-            not vt.indicador_temperatura_nula_viagem 
-            and not vr.indicador_falha_recorrente
-        )
-    {% endif %}
+    not vt.indicador_temperatura_nula_viagem
+    or (vt.data >= date('{{ var("DATA_SUBSIDIO_V22_INICIO") }}')
+    and coalesce(vr.indicador_falha_recorrente, false))
 )
 {% endset %}
 
