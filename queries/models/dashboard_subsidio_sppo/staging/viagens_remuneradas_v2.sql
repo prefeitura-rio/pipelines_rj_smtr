@@ -174,7 +174,11 @@ select
     ),
     case
         when
-            (v.data between date('2026-02-16') and date('2026-02-28'))
+            (v.data = date('2026-03-05'))
+            and v.servico in ("321", "324", "325", "326", "329", "616")
+        then true  -- Processo: 000399.002687/2026-39
+        when
+            (v.data between date('2026-02-16') and date('2026-03-15'))
             and v.servico in (
                 "104",
                 "107",
@@ -205,7 +209,7 @@ select
                 "LECD136",
                 "LECD137",
                 "LECD138"
-            )  -- Processo n° 000300.005989/2026-19
+            )  -- Processo n° 000300.005989/2026-19 e Processo SEI: 000300.009756/2026-87
         then true
         when
             (v.data between date('2026-01-16') and date('2026-02-15'))
