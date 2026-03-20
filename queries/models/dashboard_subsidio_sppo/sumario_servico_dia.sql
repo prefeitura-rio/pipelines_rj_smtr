@@ -16,7 +16,7 @@ with
             consorcio,
             servico,
             distancia_total_planejada as km_planejada
-        from {{ ref("viagem_planejada") }}
+        from `rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.viagem_planejada` 
         where
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
@@ -30,7 +30,7 @@ with
             id_veiculo,
             id_viagem,
             distancia_planejada
-        from {{ ref("viagem_completa") }}
+        from `rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.viagem_completa`
         where
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")

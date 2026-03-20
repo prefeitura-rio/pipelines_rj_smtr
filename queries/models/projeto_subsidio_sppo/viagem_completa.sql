@@ -14,7 +14,7 @@ config(
 }}
 
 {% if execute %}
-  {% set result = run_query("SELECT coalesce(data_versao_shapes, feed_start_date) FROM " ~ ref('subsidio_data_versao_efetiva') ~ " WHERE data = DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 1 DAY)") %}
+  {% set result = run_query("SELECT coalesce(data_versao_shapes, feed_start_date) FROM " ~ "rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.subsidio_data_versao_efetiva" ~ " WHERE data = DATE_SUB(DATE('" ~ var("run_date") ~ "'), INTERVAL 1 DAY)") %}
   {% set feed_start_date =  result.columns[0].values()[0] %}
 {% endif %}
 -- 1. Identifica viagens que estão dentro do quadro planejado (por
@@ -41,7 +41,7 @@ with viagem_periodo as (
             fim_periodo,
             id_tipo_trajeto
         from
-            {{ ref("viagem_planejada") }}
+            `rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.viagem_planejada` 
         {% if is_incremental() %}
         WHERE
             data = date_sub(date("{{ var("run_date") }}"), interval 1 day)

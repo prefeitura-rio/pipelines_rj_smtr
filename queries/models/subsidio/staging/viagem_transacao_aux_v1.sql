@@ -55,7 +55,7 @@ with
             "Ônibus SPPO" as modo,
             ve.status as tipo_viagem,
             ve.tecnologia as tecnologia_apurada
-        from {{ ref("viagem_completa") }}
+        from `rj-smtr-dev.janaina__SMTR202511005101__projeto_subsidio_sppo.viagem_completa`
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         left join veiculos as ve using (data, id_veiculo)
         where
