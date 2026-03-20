@@ -70,7 +70,7 @@ with
                 then '220120000'
                 when cod_veiculo between 125 and 129
                 then '220125004'
-                when ((cod_veiculo between 130 and 139) and (cod_veiculo <> 134))
+                when ((cod_veiculo between 130 and 139) and (cod_veiculo != 134))
                 then '220130000'
                 when cod_veiculo between 170 and 179
                 then '31'

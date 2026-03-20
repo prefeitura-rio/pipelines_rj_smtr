@@ -49,7 +49,7 @@ models:
       - name: tipo_veiculo
         description: "{{ doc('tipo_veiculo') }}"
       - name: cod_veiculo
-        description: " Identificação da empresa operadora obtida através da extração dos três caracteres numéricos após a primeira letra do prefixo do veículo"
+        description: "Identificação da empresa operadora obtida através da extração dos três caracteres numéricos após a primeira letra do prefixo do veículo"
       - name: operadora
         description: "{{ doc('operadora') }}"
     tests:
