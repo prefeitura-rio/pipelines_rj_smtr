@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.6.7] - 2026-03-19
+
+### Alterado
+
+- Alterados no modelo `aux_calendario_manual` o `tipo_os` de `2026-03-14` para `Term_Marg` conforme `Processo 000399.003413/2026-67` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1334)
+
 ## [1.6.6] - 2026-03-13
 
 ### Corrigido
