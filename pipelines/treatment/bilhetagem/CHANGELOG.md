@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona wait do selector `financeiro_bilhetagem` no flow `INTEGRACAO_MATERIALIZACAO`
+- Adiciona wait do selector `financeiro_bilhetagem` no flow `INTEGRACAO_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1338)
 
 ## [2.0.16] - 2026-02-26
 

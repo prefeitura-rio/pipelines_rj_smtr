@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Altera fonte da coluna `data_ordem` no modelo `integracao.sql` de `staging_ordem_rateio.sql` para `bilhetagem_consorcio_operador_dia.sql`
+- Altera fonte da coluna `data_ordem` no modelo `integracao.sql` de `staging_ordem_rateio.sql` para `bilhetagem_consorcio_operador_dia.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1338)
 
 ## [3.3.6] - 2026-02-12
 
