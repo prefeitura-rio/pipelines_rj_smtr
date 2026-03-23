@@ -92,7 +92,8 @@
             where
                 (
                     {# Quando deveria `indicador_regularidade_ar_condicionado_viagem` ser TRUE, mas não é #}
-                        ((
+                    (
+                        (
                             vt.ano_fabricacao <= 2019
                             or vt.data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}')
                         )
