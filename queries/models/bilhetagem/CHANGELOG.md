@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [3.3.7] - 2026-03-23
+
+### Alterado
+
+- Altera fonte da coluna `data_ordem` no modelo `integracao.sql` de `staging_ordem_rateio.sql` para `bilhetagem_consorcio_operador_dia.sql`
+
 ## [3.3.6] - 2026-02-12
 
 ### Alterado
