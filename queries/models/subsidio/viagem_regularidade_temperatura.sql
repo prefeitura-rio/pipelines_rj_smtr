@@ -131,7 +131,7 @@ with
                         and vt.indicador_temperatura_regular_viagem
                     )
                 when indicador_temperatura_nula_viagem = true
-                then true                    
+                then true
                 else null
             end as indicador_regularidade_ar_condicionado_viagem,
             indicador_falha_recorrente,
