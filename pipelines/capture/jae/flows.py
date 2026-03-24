@@ -38,7 +38,7 @@ from pipelines.capture.jae.tasks import (
 )
 from pipelines.capture.templates.flows import create_default_capture_flow
 from pipelines.constants import constants as smtr_constants
-from pipelines.schedules import create_hourly_cron, every_day_hour_five
+from pipelines.schedules import create_hourly_cron
 from pipelines.tasks import get_run_env, get_scheduled_timestamp, log_discord
 from pipelines.utils.prefect import set_default_parameters
 
@@ -437,4 +437,4 @@ verifica_captura.state_handlers = [
     handler_initialize_sentry,
 ]
 
-verifica_captura.schedule = every_day_hour_five
+# verifica_captura.schedule = every_day_hour_five
