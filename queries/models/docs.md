@@ -141,14 +141,15 @@ Flag de verificação se o ponto de GPS encontra-se até o limite de 'tamanho_bu
 
 "Parado": Quando 'flag_em_movimento' é false:
 
- - Se 'tipo_parada' não é nulo, o veículo é considerado "Parado" seguido pelo tipo de parada [ex.: "Parado terminal"]
+- Se 'tipo_parada' não é nulo, o veículo é considerado "Parado" seguido pelo tipo de parada [ex.: "Parado terminal"]
 
- - Se 'tipo_parada' é nulo:
+- Se 'tipo_parada' é nulo:
 
-    - Se 'flag_trajeto_correto_hist' é true, o status é "Parado trajeto correto"
+      - Se 'flag_trajeto_correto_hist' é true, o status é "Parado trajeto correto"
 
-    - Se 'flag_trajeto_correto_hist' é false, o status é "Parado fora trajeto"
-{% enddocs %}
+      - Se 'flag_trajeto_correto_hist' é false, o status é "Parado fora trajeto"
+
+  {% enddocs %}
 
 {% docs velocidade_instantanea %}
 Velocidade instantânea do veículo, conforme informado pelo GPS (km/h)
@@ -974,18 +975,18 @@ Data de operação
 {% docs status_veiculo %}
 Classificação, observados os demais parâmetros - Categorias:
 
-  - Não licenciado - Veículo que operou, mas não é licenciado
+- Não licenciado - Veículo que operou, mas não é licenciado
 
-  - Autuado por ar inoperante - Veículo que operou, foi licenciado com ar condicionado e foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado [023.II]
+- Autuado por ar inoperante - Veículo que operou, foi licenciado com ar condicionado e foi autuado por inoperância ou mau funcionamento do sistema de ar condicionado [023.II]
 
-  - Autuado por segurança - Veículo que operou, foi licenciado, mas foi autuado por infração relacionada à segurança do veículo
+- Autuado por segurança - Veículo que operou, foi licenciado, mas foi autuado por infração relacionada à segurança do veículo
 
-  - Autuado por limpeza/equipamento - Veículo que operou, foi licenciado, mas foi autuado cumulativamente por infrações relacionadas à limpeza e equipamentos do veículo
+- Autuado por limpeza/equipamento - Veículo que operou, foi licenciado, mas foi autuado cumulativamente por infrações relacionadas à limpeza e equipamentos do veículo
 
-  - Sem ar e não autuado - Veículo que operou, foi licenciado sem ar condicionado e não foi autuado
+- Sem ar e não autuado - Veículo que operou, foi licenciado sem ar condicionado e não foi autuado
 
-  - Com ar e não autuado - Veículo que operou, foi licenciado com ar condicionado e não foi autuado
-{% enddocs %}
+- Com ar e não autuado - Veículo que operou, foi licenciado com ar condicionado e não foi autuado
+  {% enddocs %}
 
 {% docs indicadores_veiculo %}
 Indicadores para caraterização do status do veículo
@@ -1535,6 +1536,10 @@ Data e hora do cadastro do endereco no sistema da Jaé
 
 {% docs datetime_inativacao_endereco_jae %}
 Data e hora da inativação do cadastro do endereco no sistema da Jaé
+{% enddocs %}
+
+{% docs subtipo_dia %}
+Subtipo de dia [ex: Verão, Atípico, Enem]
 {% enddocs %}
 
 {% docs resolution %}

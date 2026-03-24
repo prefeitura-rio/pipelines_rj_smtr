@@ -63,7 +63,8 @@ with
             servico,
             sentido,
             distancia_planejada
-        from {{ ref("aux_viagem_temperatura") }}
+        {# from {{ ref("aux_viagem_temperatura") }} #}
+        from `rj-smtr-dev.botelho__subsidio_staging.aux_viagem_temperatura`
         where {{ incremental_filter }}
     ),
     veiculo_regularidade as (
@@ -73,7 +74,8 @@ with
             indicadores.indicador_falha_recorrente.valor as indicador_falha_recorrente,
             indicadores.indicador_falha_recorrente.data_verificacao_falha
             as data_verificacao_falha
-        from {{ ref("veiculo_regularidade_temperatura_dia") }}
+        {# from {{ ref("veiculo_regularidade_temperatura_dia") }} #}
+        from `rj-smtr-dev.botelho__monitoramento.veiculo_regularidade_temperatura_dia`
         where {{ incremental_filter }}
     ),
     regularidade_temperatura as (
