@@ -38,7 +38,7 @@ from pipelines.capture.jae.tasks import (
 )
 from pipelines.capture.templates.flows import create_default_capture_flow
 from pipelines.constants import constants as smtr_constants
-from pipelines.schedules import create_hourly_cron, every_day_hour_five, every_hour
+from pipelines.schedules import create_hourly_cron, every_day_hour_five
 from pipelines.tasks import get_run_env, get_scheduled_timestamp, log_discord
 from pipelines.utils.prefect import set_default_parameters
 
@@ -218,7 +218,7 @@ verificacao_ip.run_config = KubernetesRun(
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 verificacao_ip.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
-verificacao_ip.schedule = every_hour
+# verificacao_ip.schedule = every_hour
 
 with Flow("jae: backup dados BillingPay") as backup_billingpay:
 
