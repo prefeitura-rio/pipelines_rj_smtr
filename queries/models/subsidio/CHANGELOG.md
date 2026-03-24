@@ -1,5 +1,11 @@
 # Changelog - subsidio
 
+## [2.3.3] - 2026-03-24
+
+### Alterado
+
+- Alterado o modelo `viagem_regularidade_temperatura` para considerar o `indicador_temperatura_nula_viagem` quando o `indicador_falha_recorente` for igual a `True` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1335)
+
 ## [2.3.2] - 2026-01-15
 
 ### Adicionado
