@@ -16,10 +16,12 @@
         vt.ano_fabricacao <= 2019
         or vt.data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}')
     )
-    and not vt.indicador_temperatura_nula_viagem
-    or (
-        vt.data >= date('{{ var("DATA_SUBSIDIO_V22_INICIO") }}')
-        and coalesce(vr.indicador_falha_recorrente, false)
+    and (
+        not vt.indicador_temperatura_nula_viagem
+        or (
+            vt.data >= date('{{ var("DATA_SUBSIDIO_V22_INICIO") }}')
+            and coalesce(vr.indicador_falha_recorrente, false)
+        )
     )
 )
 {% endset %}

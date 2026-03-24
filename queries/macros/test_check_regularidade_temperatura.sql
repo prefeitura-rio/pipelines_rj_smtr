@@ -37,8 +37,7 @@
             select
                 data,
                 id_veiculo,
-                indicadores.indicador_falha_recorrente.valor
-                as indicador_falha_recorrente
+                indicadores.indicador_falha_recorrente.valor as indicador_falha_recorrente
             from {{ ref("veiculo_regularidade_temperatura_dia") }}
             where {{ incremental_filter }}
         ),
@@ -53,8 +52,7 @@
                 ) as indicador_ar_condicionado,
                 safe_cast(
                     json_value(
-                        indicadores,
-                        '$.indicador_regularidade_ar_condicionado_viagem.valor'
+                        indicadores, '$.indicador_regularidade_ar_condicionado_viagem.valor'
                     ) as bool
                 ) as indicador_regularidade_ar_condicionado_viagem
             from {{ model }}
@@ -76,9 +74,7 @@
             left join
                 indicadores_aux_viagem_temperatura t using (data, id_veiculo, id_viagem)
             left join
-                indicadores_veiculo_regularidade_temperatura_dia v using (
-                    data, id_veiculo
-                )
+                indicadores_veiculo_regularidade_temperatura_dia v using (data, id_veiculo)
         ),
         teste_1_falha as (
             select
@@ -97,10 +93,12 @@
                             ano_fabricacao <= 2019
                             or data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}')
                         )
-                        and not indicador_temperatura_nula_viagem
-                        or (
-                            data >= date('{{ var("DATA_SUBSIDIO_V22_INICIO") }}')
-                            and coalesce(indicador_falha_recorrente, false)
+                        and (
+                            not indicador_temperatura_nula_viagem
+                            or (
+                                data >= date('{{ var("DATA_SUBSIDIO_V22_INICIO") }}')
+                                and coalesce(indicador_falha_recorrente, false)
+                            )
                         )
                     )
                     and indicador_ar_condicionado
@@ -114,9 +112,7 @@
                     and not indicador_temperatura_zero_viagem
                     and indicador_temperatura_transmitida_viagem
                     and indicador_temperatura_regular_viagem
-                    and not coalesce(
-                        indicador_regularidade_ar_condicionado_viagem, false
-                    )
+                    and not coalesce(indicador_regularidade_ar_condicionado_viagem, false)
                 )
         ),
         teste_2_falha as (
@@ -136,10 +132,12 @@
                             ano_fabricacao <= 2019
                             or data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}')
                         )
-                        and not indicador_temperatura_nula_viagem
-                        or (
-                            data >= date('{{ var("DATA_SUBSIDIO_V22_INICIO") }}')
-                            and coalesce(indicador_falha_recorrente, false)
+                        and (
+                            not indicador_temperatura_nula_viagem
+                            or (
+                                data >= date('{{ var("DATA_SUBSIDIO_V22_INICIO") }}')
+                                and coalesce(indicador_falha_recorrente, false)
+                            )
                         )
                     )
 
