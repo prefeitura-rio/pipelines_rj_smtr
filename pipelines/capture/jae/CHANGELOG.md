@@ -2,7 +2,7 @@
 
 ## [3.1.18] - 2026-03-24
 
-- Remove schedules do flow `verificacao_ip` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1321)
+- Remove schedules do flow `verificacao_ip` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1343)
 
 ## [3.1.17] - 2026-03-12
 
