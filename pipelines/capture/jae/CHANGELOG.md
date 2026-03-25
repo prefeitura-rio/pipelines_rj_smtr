@@ -1,5 +1,12 @@
 # Changelog - source_jae
 
+## [3.1.18] - 2026-03-24
+
+### Removido
+
+- Remove schedules do flow `verificacao_ip` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1343)
+- Remove schedules do flow `verifica_captura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1343)
+
 ## [3.1.17] - 2026-03-12
 
 ### Removido
