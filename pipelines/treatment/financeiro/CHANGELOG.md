@@ -4,7 +4,7 @@
 
 ### Removido
 
-- Remove schedules dos flows `FINANCEIRO_BILHETAGEM_MATERIALIZACAO` e `ordem_pagamento_quality_check`
+- Remove schedules dos flows `FINANCEIRO_BILHETAGEM_MATERIALIZACAO` e `ordem_pagamento_quality_check` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1346)
 
 ## [2.1.1] - 2025-11-19
 
