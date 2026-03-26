@@ -23,15 +23,36 @@ vars = {
 # run_dbt_model(
 #     dataset_id="ordem_servico_trips_shapes_gtfs",
 #     # table_id="ordem_servico_diaria",
-#     _vars={"data_versao_gtfs": "2024-09-29"},
+#     _vars={"data_versao_gtfs": "2026-01-26"},
 #     # flags="--target hmg",
 #     flags="--target hmg --defer --state target-base --favor-state",
 # )
+
+
+# run_dbt_model(
+#     dataset_id="ordem_servico_trips_shapes_gtfs",
+#     # table_id="ordem_servico_diaria",
+#     _vars={"data_versao_gtfs": "2026-02-02"},
+#     # flags="--target hmg",
+#     flags="--target hmg --defer --state target-base --favor-state",
+# )
+
+# run_dbt_model(
+#     dataset_id="ordem_servico_trips_shapes_gtfs",
+#     # table_id="ordem_servico_diaria",
+#     _vars={"data_versao_gtfs": "2026-02-11"},
+#     # flags="--target hmg",
+#     flags="--target hmg --defer --state target-base --favor-state",
+# )
+
+
+
+
 # run_dbt_tests(
 #     dataset_id="ordem_servico_trips_shapes_gtfs",
-#     _vars={"data_versao_gtfs": "2024-09-29"},
+#     _vars={"data_versao_gtfs": "2026-01-26"},
 #     flags="--target hmg",
-#     # flags="--target prod",
+    # flags="--target prod",
 # )
 
 # for run_date in run_dates_list:
@@ -42,18 +63,31 @@ vars = {
 #         # exclude="+gps_sppo +gtfs +ordem_servico_trips_shapes_gtfs subsidio_shapes_geom",
 #         _vars={"run_date": run_date},
 #         # flags="--target hmg",
-#         flags="--target hmg --defer --state target-base --favor-state",
+#         flags="--target hmg --defer --state target-base",
 #     )
 # for run_date in run_dates_list:
 #     # print(run_date)
 #     run_dbt_model(
 #         dataset_id="viagem_completa",
 #         upstream=True,
-#         exclude="+gps_sppo +gtfs +ordem_servico_trips_shapes_gtfs subsidio_shapes_geom",
+#         exclude="+gps_sppo +gtfs",
 #         _vars={"run_date": run_date},
 #         # flags="--target hmg",
-#         flags="--target hmg --defer --state target-base --favor-state",
+#         flags="--target hmg --defer --state target-base",
 #     )
+
+# for run_date in run_dates_list:
+#     # print(run_date)
+#     run_dbt_model(
+#         dataset_id="subsidio_data_versao_efetiva",
+#         # upstream=True,
+#         # exclude="+gps_sppo +gtfs +ordem_servico_trips_shapes_gtfs subsidio_shapes_geom",
+#         _vars={"run_date": run_date},
+#         # flags="--target hmg",
+#         flags="--target hmg --defer --state target-base",
+#     )
+
+
 # run_dbt_tests(
 #     dataset_id="viagem_planejada",
 #     _vars=vars,
@@ -87,17 +121,28 @@ vars = {
 #     _vars=vars,
 #     flags="--target hmg",
 # )
-run_dbt_selector(
-    selector_name="monitoramento_temperatura",
+
+
+run_dbt_model(
+    dataset_id="viagem_regularidade_temperatura",
     _vars=vars,
-    flags="--target hmg --defer --state target-base --favor-state",
+    # exclude="+licenciamento +infracao",
+    # flags="--target hmg",
+    flags="--target hmg --defer --state target-base",
 )
+
+
+# run_dbt_selector(
+#     selector_name="monitoramento_temperatura",
+#     _vars=vars,
+#     flags="--target hmg --defer --state target-base --favor-state",
+# )
 run_dbt(
     resource="model",
     selector_name="apuracao_subsidio_v9",
     _vars=vars,
     # flags="--target hmg",
-    flags="--target hmg",
+    flags="--target hmg --defer --state target-base --favor-state",
 )
 run_dbt_tests(
     dataset_id="viagem_classificada viagem_regularidade_temperatura viagens_remuneradas sumario_faixa_servico_dia_pagamento valor_km_tipo_viagem",

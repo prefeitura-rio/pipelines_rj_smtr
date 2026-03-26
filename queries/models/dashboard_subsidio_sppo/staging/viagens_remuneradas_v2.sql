@@ -3,7 +3,7 @@
 {%- if execute %}
     {% set query = (
         "SELECT DISTINCT feed_start_date FROM "
-        ~ ref("subsidio_data_versao_efetiva")
+        ~ "`rj-smtr-dev.projeto_subsidio_sppo.subsidio_data_versao_efetiva`"
         ~ " WHERE data BETWEEN DATE('"
         ~ var("start_date")
         ~ "') AND DATE('"
@@ -31,7 +31,7 @@ with
             faixa_horaria_fim,
             partidas_total_planejada as viagens_planejadas,
             distancia_total_planejada as km_planejada,
-        from {{ ref("viagem_planejada") }}
+        from `rj-smtr-dev.projeto_subsidio_sppo.viagem_planejada`
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
         where
             {{ incremental_filter }}
@@ -40,7 +40,7 @@ with
     ),
     data_versao_efetiva as (
         select data, tipo_dia, tipo_os, feed_start_date
-        from {{ ref("subsidio_data_versao_efetiva") }}
+        from `rj-smtr-dev.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
         -- from `rj-smtr.projeto_subsidio_sppo.subsidio_data_versao_efetiva`
         -- (alterar também query no bloco execute)
         where {{ incremental_filter }}
@@ -72,7 +72,7 @@ with
     -- Viagens com quantidades de transações
     viagem_transacao as (
         select *
-        from {{ ref("viagem_transacao") }}
+        from `rj-smtr-dev.subsidio.viagem_transacao`
         -- from `rj-smtr.subsidio.viagem_transacao`
         where {{ incremental_filter }}
     ),

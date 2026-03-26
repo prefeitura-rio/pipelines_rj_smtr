@@ -25,7 +25,7 @@ with
             id_viagem,
             distancia_planejada,
             sentido
-        from {{ ref("viagem_completa") }}
+        from `rj-smtr-dev.projeto_subsidio_sppo.viagem_completa`
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         where {{ incremental_filter }}
     ),
@@ -60,7 +60,7 @@ with
             codigo_tecnologia,
             maior_tecnologia_permitida,
             menor_tecnologia_permitida
-        from {{ ref("tecnologia_servico") }}
+        from rj-smtr.planejamento.tecnologia_servico
     ),
     prioridade_tecnologia as (select * from {{ ref("tecnologia_prioridade") }}),
     veiculo_autuacao as (
