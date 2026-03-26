@@ -25,7 +25,7 @@
     )
 )
 {% endset %}
-
+---
 with
     viagem_temperatura as (
         select
