@@ -1,5 +1,11 @@
 # Changelog - financeiro
 
+## [2.1.2] - 2026-03-26
+
+### Removido
+
+- Remove schedules dos flows `FINANCEIRO_BILHETAGEM_MATERIALIZACAO` e `ordem_pagamento_quality_check`
+
 ## [2.1.1] - 2025-11-19
 
 ### Adicionado
