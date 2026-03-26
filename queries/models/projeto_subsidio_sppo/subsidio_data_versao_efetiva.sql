@@ -689,7 +689,8 @@
             from dates as d
             left join {{ ref("feed_info_gtfs") }} as i using (feed_version)
             {# `rj-smtr.gtfs.feed_info` as i using (feed_version) #}
-            left join {{ ref("aux_calendario_manual") }} as c using (data)
+            {# left join {{ ref("aux_calendario_manual") }} as c using (data) #}
+            left join rj-smtr-dev.planejamento_staging.aux_calendario_manual as c using (data)
             where
                 {% if is_incremental() %}
                     data = date_sub(date("{{ var('run_date') }}"), interval 1 day)
