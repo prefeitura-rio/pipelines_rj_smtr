@@ -30,7 +30,7 @@ with
             percentual_viagem_temperatura_pos_tratamento_descartada,
             indicador_viagem_temperatura_descartada_veiculo,
             quantidade_dia_falha_operacional
-        from rj-smtr-dev.monitoramento_staging.aux_veiculo_falha_ar_condicionado
+        from rj-smtr-dev.monitoramento_staging_dbt.aux_veiculo_falha_ar_condicionado
         where {{ incremental_filter }} and indicio_falha
     ),
     indicador_motivo as (
