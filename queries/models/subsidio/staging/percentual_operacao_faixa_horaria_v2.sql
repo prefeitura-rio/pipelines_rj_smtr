@@ -14,7 +14,7 @@ with
             faixa_horaria_inicio,
             faixa_horaria_fim,
             distancia_total_planejada as km_planejada
-        from {{ ref("viagem_planejada") }}
+        from `rj-smtr-dev.janaina__revisaoLECD__projeto_subsidio_sppo.viagem_planejada`
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
         where {{ incremental_filter }} and distancia_total_planejada > 0
     ),
@@ -28,7 +28,7 @@ with
             tipo_viagem,
             datetime_partida,
             distancia_planejada
-        from {{ ref("viagem_transacao") }}
+        from `rj-smtr-dev.janaina__revisaoLECD__subsidio.viagem_transacao`
         -- from `rj-smtr.subsidio.viagem_transacao`
         where {{ incremental_filter }}
     ),

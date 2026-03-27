@@ -54,7 +54,7 @@
 
         {% set partitions_query %}
             select distinct concat("'", data, "'") as data
-            from {{ ref("viagem_classificada") }}
+            from rj-smtr-dev.janaina__revisaoLECD__subsidio.viagem_classificada
             where {{ partition_filter }}
         {% endset %}
 
@@ -85,7 +85,7 @@ with
             tecnologia_remunerada,
             sentido,
             modo
-        from {{ ref("viagem_classificada") }}
+        from rj-smtr-dev.janaina__revisaoLECD__subsidio.viagem_classificada
         {# from `rj-smtr.subsidio.viagem_classificada` #}
         where {{ partition_filter }}
     ),
@@ -103,7 +103,7 @@ with
     ),
     garagens as (  -- Geometrias das garagens válidas no período de apuração
         select inicio_vigencia, fim_vigencia, st_union_agg(geometry) as geometry
-        from {{ ref("garagem") }}
+        from `rj-smtr.cadastro.garagem`
         {# from `rj-smtr.cadastro.garagem` #}
         where
             inicio_vigencia <= date('{{ var("date_range_end") }}')
@@ -133,7 +133,7 @@ with
             longitude,
             safe_cast(temperatura as numeric) as temperatura,
             datetime_captura
-        from {{ ref("gps_validador") }}
+        from rj-smtr.monitoramento.gps_validador
         where {{ incremental_filter }} and modo = "Ônibus"
     ),
     estado_equipamento_aux as (  -- Dados de estado do equipamento do validador
