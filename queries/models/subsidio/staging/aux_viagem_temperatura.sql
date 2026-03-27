@@ -269,7 +269,7 @@ with
     ),
     temperatura_inmet_alertario as (  -- Dados de temperatura externa
         select t.data, t.hora, t.temperatura
-        from {{ ref("temperatura") }} as t
+        from rj-smtr.monitoramento.temperatura t
         where {{ incremental_filter }}
     ),
     metricas_base as (  -- 1 e 3 quartil da temperatura por hora e dia

@@ -23,23 +23,23 @@ vars = {
     }
 
 
-run_dbt_model(
-dataset_id="viagem_regularidade_temperatura",
-_vars= vars,
-    flags = "--target dev --defer --state target-base --favor-state")
+# run_dbt_model(
+# dataset_id="aux_viagem_temperatura",
+# _vars= vars,
+#     flags = "--target dev --defer --state target-base")
 
 # run_dbt_selector(
 #     selector_name="monitoramento_temperatura", _vars=vars,
-#     flags = "--target dev --defer --state target-base")
+#     flags = "--target dev --defer --state target-base --favor-state")
 
 
 run_dbt_selector(
     selector_name="apuracao_subsidio_v9", _vars=vars,
-    flags = "--target dev --defer --state target-base --favor-state ")
+    flags = "--target dev --defer --state target-base")
 
 
 
-run_dbt_tests(
-    dataset_id="viagem_classificada viagem_regularidade_temperatura viagens_remuneradas sumario_faixa_servico_dia_pagamento valor_km_tipo_viagem",
-      _vars=vars, 
-    flags = "--target dev")
+# run_dbt_tests(
+#     dataset_id="viagem_classificada viagem_regularidade_temperatura viagens_remuneradas sumario_faixa_servico_dia_pagamento valor_km_tipo_viagem",
+#       _vars=vars, 
+#     flags = "--target dev")
