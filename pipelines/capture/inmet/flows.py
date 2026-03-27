@@ -2,7 +2,7 @@
 """
 Flows de captura dos dados do INMET
 
-DBT: 2025-09-23
+DBT: 2025-09-29
 """
 from pipelines.capture.inmet.constants import constants
 from pipelines.capture.inmet.tasks import create_temperatura_extractor
