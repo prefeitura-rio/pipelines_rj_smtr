@@ -270,7 +270,7 @@ with
     ),
     shapes as (
         select shape_id, shape, start_pt, end_pt
-        from {{ ref("shapes_geom_gtfs") }}
+        from `rj-smtr.gtfs.shapes_geom`
         -- `rj-smtr.gtfs.shapes_geom`
         where feed_start_date in ("{{ feed_start_dates | join('", "') }}")
         qualify
