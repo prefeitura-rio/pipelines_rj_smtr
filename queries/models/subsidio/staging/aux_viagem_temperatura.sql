@@ -72,6 +72,7 @@ with
             datetime_partida,
             datetime_chegada,
             id_veiculo,
+            substr(v.id_veiculo, 2) as id_veiculo_join,
             placa,
             ano_fabricacao,
             id_viagem,
@@ -190,7 +191,8 @@ with
         from viagens as v
         left join
             estado_equipamento_aux as e
-            on e.id_veiculo = substr(v.id_veiculo, 2)
+            on e.data = v.data
+            and e.id_veiculo = v.id_veiculo_join
             and e.datetime_gps between v.datetime_partida and v.datetime_chegada
     ),
     gps_validador_bilhetagem_viagem_filtrada as (  -- Filtra pontos de GPS fora das garagens e endereços de manutenção dos validadores
@@ -249,7 +251,8 @@ with
         from viagens as v
         left join
             gps_validador as e
-            on e.id_veiculo = substr(v.id_veiculo, 2)
+            on e.data = v.data
+            and e.id_veiculo = v.id_veiculo_join
             and e.datetime_gps between v.datetime_partida and v.datetime_chegada
     ),
     gps_validador_indicadores as (  -- Indicadores de temperatura por veículo
