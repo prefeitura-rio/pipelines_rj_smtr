@@ -1,5 +1,11 @@
 # Changelog - bilhetagem
 
+## [2.0.18] - 2026-03-30
+
+### Removido
+
+- Remove schedule do flow `TRANSACAO_ORDEM_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1350)
+
 ## [2.0.17] - 2026-03-23
 
 ### Adicionado
