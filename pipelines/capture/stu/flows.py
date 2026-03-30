@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Flows de captura dos dados do STU"""
+
 from prefect.run_configs import KubernetesRun
 
 from pipelines.capture.stu.constants import constants
@@ -14,6 +15,7 @@ CAPTURA_STU = create_default_capture_flow(
     create_extractor_task=create_stu_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     recapture_days=5,
+    generate_schedule=False,
 )
 set_default_parameters(CAPTURA_STU, {"recapture": True})
 
