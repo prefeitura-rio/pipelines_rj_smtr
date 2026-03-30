@@ -387,8 +387,9 @@ with
             and f.id_validador = i.id_validador
         left join
             temperatura_inmet_alertario as e
-            on e.data = extract(date from i.datetime_gps)
-            and e.hora = extract(hour from i.datetime_gps)
+            on e.data = extract(date from datetime_add(i.datetime_gps, interval 1 hour))
+            and e.hora
+            = extract(hour from datetime_add(i.datetime_gps, interval 1 hour))
     ),
     percentual_indicadores_validador_viagem as (  -- Indicadores de regularidade de temperatura por validador e viagem
         select
