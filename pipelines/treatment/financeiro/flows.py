@@ -17,7 +17,8 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 from pipelines.capture.cct.constants import constants as cct_constants
 from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.constants import constants as smtr_constants
-from pipelines.schedules import every_day_hour_ten_fifteen
+
+# from pipelines.schedules import every_day_hour_ten_fifteen
 from pipelines.tasks import get_run_env, get_scheduled_timestamp
 from pipelines.treatment.cadastro.constants import constants as cadastro_constants
 from pipelines.treatment.financeiro.constants import constants
@@ -39,6 +40,7 @@ FINANCEIRO_BILHETAGEM_MATERIALIZACAO = create_default_materialization_flow(
         cadastro_constants.CADASTRO_SELECTOR.value,
     ]
     + jae_constants.ORDEM_PAGAMENTO_SOURCES.value,
+    generate_schedule=False,
 )
 
 FINANCEIRO_BILHETAGEM_MATERIALIZACAO.state_handlers.append(
@@ -134,4 +136,4 @@ ordem_pagamento_quality_check.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
 ]
-ordem_pagamento_quality_check.schedule = every_day_hour_ten_fifteen
+# ordem_pagamento_quality_check.schedule = every_day_hour_ten_fifteen
