@@ -64,7 +64,7 @@ with
             left outer union all by name
              --fmt:on
             select id_veiculo, datetime_partida, datetime_chegada
-            from rj-smtr-dev.projeto_subsidio_sppo.viagem_completa
+            from rj-smtr.projeto_subsidio_sppo.viagem_completa
             where
                 data = date_sub(date("{{ var('start_date') }}"), interval 1 day)
                 and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
