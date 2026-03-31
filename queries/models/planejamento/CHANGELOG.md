@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.6.9] - 2026-03-31
+
+### Alterado
+
+- Altera lógica das colunas `data_inicio_matriz` e `data_fim_matriz` no modelo `matriz_reparticao_tarifaria.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1356)
+
 ## [1.6.8] - 2026-03-23
 
 ### Alterado
