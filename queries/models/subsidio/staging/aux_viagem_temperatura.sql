@@ -247,7 +247,13 @@ with
             e.latitude,
             e.longitude,
             temperatura,
-            extract(hour from datetime_gps) as hora
+            extract(hour from datetime_gps) as hora,
+            extract(
+                date from datetime_add(e.datetime_gps, interval 1 hour)
+            ) as data_gps_join,
+            extract(
+                hour from datetime_add(e.datetime_gps, interval 1 hour)
+            ) as hora_gps_join
         from viagens as v
         left join
             gps_validador as e
@@ -390,9 +396,8 @@ with
             and f.id_validador = i.id_validador
         left join
             temperatura_inmet_alertario as e
-            on e.data = extract(date from datetime_add(i.datetime_gps, interval 1 hour))
-            and e.hora
-            = extract(hour from datetime_add(i.datetime_gps, interval 1 hour))
+            on e.data = i.data_gps_join
+            and e.hora = i.hora_gps_join
     ),
     percentual_indicadores_validador_viagem as (  -- Indicadores de regularidade de temperatura por validador e viagem
         select
