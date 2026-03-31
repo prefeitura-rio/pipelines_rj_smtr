@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.2.15] - 2026-03-16
+
+### Removido
+
+- Remove schedule dos flows `GPS_CONECTA_MATERIALIZACAO`, `GPS_CITTATI_MATERIALIZACAO`, `GPS_ZIRIX_MATERIALIZACAO`, `GPS_15_MINUTOS_CONECTA_MATERIALIZACAO`, `GPS_15_MINUTOS_CITTATI_MATERIALIZACAO` e `GPS_15_MINUTOS_ZIRIX_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1331)
+
 ## [1.2.14] - 2026-03-06
 
 ### Removido
