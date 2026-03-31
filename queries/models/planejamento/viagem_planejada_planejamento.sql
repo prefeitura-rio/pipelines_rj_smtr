@@ -181,7 +181,7 @@ with
     servico_circular as (
         select feed_start_date, feed_version, shape_id
         {# from `rj-smtr.planejamento.shapes_geom` #}
-        from `rj-smtr.planejamento.shapes_geom`
+        from {{ ref("shapes_geom_planejamento") }}
         where
             feed_start_date >= '{{ var("feed_inicial_viagem_planejada") }}'
             {% if is_incremental() %}

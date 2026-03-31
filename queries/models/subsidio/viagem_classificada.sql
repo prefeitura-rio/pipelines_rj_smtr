@@ -25,7 +25,7 @@ with
             id_viagem,
             distancia_planejada,
             sentido
-        from `rj-smtr-dev.janaina__revisaoLECD__projeto_subsidio_sppo.viagem_completa`
+        from {{ ref("viagem_completa") }}
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         where {{ incremental_filter }}
     ),
@@ -49,7 +49,7 @@ with
     ),
     ordem_status as (
         select distinct data_inicio, data_fim, status, ordem
-        from {{ ref("valor_km_tipo_viagem") }}
+        from `rj-smtr.subsidio.valor_km_tipo_viagem`
     -- from `rj-smtr.subsidio.valor_km_tipo_viagem`
     ),
     tecnologias as (
@@ -60,9 +60,9 @@ with
             codigo_tecnologia,
             maior_tecnologia_permitida,
             menor_tecnologia_permitida
-        from rj-smtr.planejamento.tecnologia_servico
+        from {{ ref("tecnologia_servico") }}
     ),
-    prioridade_tecnologia as (select * from rj-smtr.planejamento.tecnologia_prioridade),
+    prioridade_tecnologia as (select * from {{ ref("tecnologia_prioridade") }}),
     veiculo_autuacao as (
         select
             ad.data,
