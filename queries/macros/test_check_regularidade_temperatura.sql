@@ -93,8 +93,17 @@
                 (
                     {# Quando deveria `indicador_regularidade_ar_condicionado_viagem` ser TRUE, mas não é #}
                     (
-                        ano_fabricacao <= 2019
-                        or data >= date("{{ var('DATA_SUBSIDIO_V19_INICIO') }}")
+                        (
+                            ano_fabricacao <= 2019
+                            or data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}')
+                        )
+                        and (
+                            not indicador_temperatura_nula_viagem
+                            or (
+                                data >= date('{{ var("DATA_SUBSIDIO_V22_INICIO") }}')
+                                and coalesce(indicador_falha_recorrente, false)
+                            )
+                        )
                     )
                     and indicador_ar_condicionado
                     and (
@@ -125,9 +134,19 @@
                 (
                     {# Quando `indicador_regularidade_ar_condicionado_viagem` deveria ser FALSE, mas não é #}
                     (
-                        ano_fabricacao <= 2019
-                        or data >= date("{{ var('DATA_SUBSIDIO_V19_INICIO') }}")
+                        (
+                            ano_fabricacao <= 2019
+                            or data >= date('{{ var("DATA_SUBSIDIO_V19_INICIO") }}')
+                        )
+                        and (
+                            not indicador_temperatura_nula_viagem
+                            or (
+                                data >= date('{{ var("DATA_SUBSIDIO_V22_INICIO") }}')
+                                and coalesce(indicador_falha_recorrente, false)
+                            )
+                        )
                     )
+
                     and (
                         (
                             data >= date("{{ var('DATA_SUBSIDIO_V20_INICIO') }}")
@@ -141,6 +160,7 @@
                         or not indicador_temperatura_regular_viagem
                     )
                     and coalesce(indicador_regularidade_ar_condicionado_viagem, false)
+
                 )
         ),
         teste_3_falha as (

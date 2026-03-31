@@ -170,10 +170,10 @@ with
             i.valor_transacao_total,
             i.texto_adicional,
             i.id_ordem_rateio,
-            o.data_ordem,
-            o.id_ordem_pagamento,
-            o.id_ordem_pagamento_consorcio as id_ordem_pagamento_consorcio_dia,
-            o.id_ordem_pagamento_consorcio_operadora
+            op.data_ordem,
+            orat.id_ordem_pagamento,
+            orat.id_ordem_pagamento_consorcio as id_ordem_pagamento_consorcio_dia,
+            orat.id_ordem_pagamento_consorcio_operadora
             as id_ordem_pagamento_consorcio_operador_dia
         from integracao_melt i
         left join
@@ -190,7 +190,11 @@ with
                 i.datetime_transacao < l.datetime_fim_validade
                 or l.datetime_fim_validade is null
             )
-        left join {{ ref("staging_ordem_rateio") }} o using (id_ordem_rateio)
+        left join {{ ref("staging_ordem_rateio") }} orat using (id_ordem_rateio)
+        left join
+            {{ ref("bilhetagem_consorcio_operador_dia") }} op
+            on op.id_ordem_pagamento_consorcio_operador_dia
+            = orat.id_ordem_pagamento_consorcio_operadora
         where i.id_transacao is not null
     ),
     {% if is_incremental() %}
