@@ -1,5 +1,11 @@
 # Changelog - source_stu
 
+## [1.0.3] - 2026-03-30
+
+### Alterado
+
+- Desativa schedule do flow `CAPTURA_STU` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1351)
+
 ## [1.0.2] - 2026-01-07
 
 ### Alterado
