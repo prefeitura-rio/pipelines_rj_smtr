@@ -1,5 +1,11 @@
 # Changelog - validacao_dados_jae
 
+## [3.1.5] - 2026-03-31
+
+### Adicionado
+
+- Adiciona modos `Ônibus BUM` e `SPPO MNS` no modelo `aux_transacao_filtro_integracao_calculada.sql` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1356)
+
 ## [3.1.4] - 2026-01-28
 
 ### Alterado
