@@ -52,7 +52,19 @@ select
     case
         when t.id_servico_jae = '1358'
         then 'Ônibus BUM'
-        when t.id_servico_jae in ("483", "1106", "486", "484", "307", "485", "492")
+        when
+            t.id_servico_jae in (
+                "483",
+                "1106",
+                "486",
+                "484",
+                "307",
+                "485",
+                "492",
+                "1301",
+                "1350",
+                "1354",
+            )
         then 'SPPO MNS'
         when modo = 'Van'
         then consorcio
