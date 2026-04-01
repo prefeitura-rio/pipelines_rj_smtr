@@ -54,16 +54,7 @@ select
         then 'Ônibus BUM'
         when
             t.id_servico_jae in (
-                "483",
-                "1106",
-                "486",
-                "484",
-                "307",
-                "485",
-                "492",
-                "1301",
-                "1350",
-                "1354",
+                "483", "1106", "486", "484", "307", "485", "492", "1301", "1350", "1354"
             )
         then 'SPPO MNS'
         when modo = 'Van'
@@ -95,7 +86,8 @@ where
     and date(t.datetime_processamento) < current_date('America/Sao_Paulo')
     {% if not flags.FULL_REFRESH %}
         {% if partitions | length > 0 %} and t.data in ({{ partitions | join(", ") }})
-        {% else %} and false
+        {% else %} and data = "2000-01-01"
         {% endif %}
+    {% else %} and data >= "2000-01-01"
     {% endif %}
 group by all
