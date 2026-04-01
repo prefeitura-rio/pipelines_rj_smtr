@@ -53,6 +53,7 @@ INTEGRACAO_MATERIALIZACAO = create_default_materialization_flow(
     + [s for s in jae_constants.ORDEM_PAGAMENTO_SOURCES.value if s.table_id in ["ordem_rateio"]],
     test_webhook_key=jae_constants.ALERT_WEBHOOK.value,
     post_tests=constants.INTEGRACAO_DAILY_TEST.value,
+    generate_schedule=False,
 )
 
 INTEGRACAO_MATERIALIZACAO.state_handlers.append(
