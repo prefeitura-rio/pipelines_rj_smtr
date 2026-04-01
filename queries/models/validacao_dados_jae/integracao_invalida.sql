@@ -119,15 +119,16 @@ with
             end as modo_tratado
         from {{ integracao_table }} i
         left join integracao_particao_modificada pm on i.data = pm.particao
+        where
         {% if is_incremental() %}
-            where
                 {% if partitions | length > 0 %}
                     data in ({{ partitions | join(", ") }})
                     or data in ({{ adjacent_partitions | join(", ") }})
-                {% else %} false
+                {% else %} data = "2000-01-01"
                 {% endif %}
             qualify max(pm.particao is not null) over (partition by id_integracao)
-        {% endif %}
+            {% else %} data >= "2000-01-01"
+            {% endif %}
     ),
     integracao_origem_destino as (
         /*
