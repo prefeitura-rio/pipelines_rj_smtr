@@ -4,11 +4,11 @@ Flows de tratamento dos dados de bilhetagem
 
 DBT: 2026-01-26
 """
-from datetime import datetime, time, timedelta
+from datetime import time#, datetime, timedelta
 
-from prefect.schedules import Schedule
-from prefect.schedules.clocks import IntervalClock
-from pytz import timezone
+# from prefect.schedules import Schedule
+# from prefect.schedules.clocks import IntervalClock
+# from pytz import timezone
 
 from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.constants import constants as smtr_constants
@@ -53,37 +53,38 @@ INTEGRACAO_MATERIALIZACAO = create_default_materialization_flow(
     + [s for s in jae_constants.ORDEM_PAGAMENTO_SOURCES.value if s.table_id in ["ordem_rateio"]],
     test_webhook_key=jae_constants.ALERT_WEBHOOK.value,
     post_tests=constants.INTEGRACAO_DAILY_TEST.value,
+    generate_schedule=False,
 )
 
 INTEGRACAO_MATERIALIZACAO.state_handlers.append(
     handler_notify_failure(webhook="alertas_bilhetagem")
 )
 
-INTEGRACAO_MATERIALIZACAO.schedule = Schedule(
-    INTEGRACAO_MATERIALIZACAO.schedule.clocks
-    + [
-        IntervalClock(
-            interval=timedelta(days=1),
-            start_date=datetime(
-                2022, 11, 30, 12, 15, tzinfo=timezone(smtr_constants.TIMEZONE.value)
-            ),
-            labels=[
-                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
-            ],
-            parameter_defaults={"fallback_run": True},
-        ),
-        IntervalClock(
-            interval=timedelta(days=1),
-            start_date=datetime(
-                2022, 11, 30, 14, 15, tzinfo=timezone(smtr_constants.TIMEZONE.value)
-            ),
-            labels=[
-                smtr_constants.RJ_SMTR_AGENT_LABEL.value,
-            ],
-            parameter_defaults={"fallback_run": True},
-        ),
-    ]
-)
+# INTEGRACAO_MATERIALIZACAO.schedule = Schedule(
+#     INTEGRACAO_MATERIALIZACAO.schedule.clocks
+#     + [
+#         IntervalClock(
+#             interval=timedelta(days=1),
+#             start_date=datetime(
+#                 2022, 11, 30, 12, 15, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+#             ),
+#             labels=[
+#                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+#             ],
+#             parameter_defaults={"fallback_run": True},
+#         ),
+#         IntervalClock(
+#             interval=timedelta(days=1),
+#             start_date=datetime(
+#                 2022, 11, 30, 14, 15, tzinfo=timezone(smtr_constants.TIMEZONE.value)
+#             ),
+#             labels=[
+#                 smtr_constants.RJ_SMTR_AGENT_LABEL.value,
+#             ],
+#             parameter_defaults={"fallback_run": True},
+#         ),
+#     ]
+# )
 
 PASSAGEIRO_HORA_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="passageiro_hora - materializacao",
