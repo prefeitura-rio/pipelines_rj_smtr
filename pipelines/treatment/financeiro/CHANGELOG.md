@@ -1,5 +1,11 @@
 # Changelog - financeiro
 
+## [2.1.3] - 2026-04-01
+
+### Removido
+
+- Remove schedule do flow `PAGAMENTO_CCT_MATERIALIZACAO`
+
 ## [2.1.2] - 2026-03-26
 
 ### Removido
