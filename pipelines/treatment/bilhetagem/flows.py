@@ -4,11 +4,11 @@ Flows de tratamento dos dados de bilhetagem
 
 DBT: 2026-01-26
 """
-from datetime import datetime, time, timedelta
+from datetime import time#, datetime, timedelta
 
-from prefect.schedules import Schedule
-from prefect.schedules.clocks import IntervalClock
-from pytz import timezone
+# from prefect.schedules import Schedule
+# from prefect.schedules.clocks import IntervalClock
+# from pytz import timezone
 
 from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.constants import constants as smtr_constants
