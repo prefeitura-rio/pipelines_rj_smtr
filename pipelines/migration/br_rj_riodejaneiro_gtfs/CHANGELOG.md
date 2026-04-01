@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.3.1] - 2026-04-01
+
+### Adicionado
+
+- Adiciona o modelo `matriz_reparticao_tarifaria` no exclude da materialização (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+
 ## [1.3.0] - 2026-01-16
 
 ### Adicionado
@@ -95,6 +101,8 @@
 - Corrige parâmetro `supportsAllDrives` na função `download_xlsx` arquivo `utils.py` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/359)
 
 ## [1.1.6] - 2024-12-04
+
+### Adicionado
 
 - Adiciona o modelo `viagem_planejada_planejamento` no exclude da materialização (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/352)
 
