@@ -57,16 +57,17 @@ with
     integracao_jae as (
         select id_integracao, id_transacao, sequencia_integracao
         from {{ ref("integracao") }}
-        {% if is_incremental() %}
-            where
+        where
+            {% if is_incremental() %}
                 {% if partitions | length > 0 %}
 
                     data in ({{ partitions | join(", ") }})
                     or data in ({{ adjacent_partitions | join(", ") }})
 
-                {% else %} false
+                {% else %} data = "2000-01-01"
                 {% endif %}
-        {% endif %}
+            {% else %} data >= "2000-01-01"
+            {% endif %}
     ),
     integracao_jae_agg as (
         select
