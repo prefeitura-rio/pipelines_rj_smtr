@@ -4,7 +4,7 @@
 
 ### Adicionado
 
-- Adiciona o modelo `matriz_reparticao_tarifaria` no exclude da materialização (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Adiciona o modelo `matriz_reparticao_tarifaria` no exclude da materialização (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1381)
 
 ## [1.3.0] - 2026-01-16
 
