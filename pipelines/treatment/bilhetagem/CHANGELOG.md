@@ -4,7 +4,7 @@
 
 ### Removido
 
-- Remove schedule do flow `TRANSACAO_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1361)
+- Remove schedule do flow `TRANSACAO_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1380)
 
 ## [2.0.19] - 2026-04-01
 
