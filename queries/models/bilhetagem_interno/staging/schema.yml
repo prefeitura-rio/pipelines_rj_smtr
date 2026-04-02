@@ -1,0 +1,16 @@
+models:
+  - name: aux_disparos_whatsapp_caso_1_2
+    description: ""
+    columns:
+      - name: cpf_particao
+        description: "[partição]"
+        policy_tags:
+            - 'projects/rj-smtr-dev/locations/us/taxonomies/1688927184371506251/policyTags/8698618633874150807'
+      - name: nome
+        description: ""
+        policy_tags:
+            - 'projects/rj-smtr-dev/locations/us/taxonomies/1688927184371506251/policyTags/8698618633874150807'
+      - name: telefone
+        description: ""
+        policy_tags:
+          - 'projects/rj-smtr-dev/locations/us/taxonomies/1688927184371506251/policyTags/8698618633874150807'
