@@ -246,7 +246,7 @@ with Flow("SMTR: GTFS - Captura/Tratamento") as gtfs_captura_nova:
             _vars=dbt_vars,
             exclude="calendario aux_calendario_manual viagem_planejada_planejamento \
                      matriz_integracao tecnologia_servico aux_ordem_servico_faixa_horaria \
-                     servico_planejado_faixa_horaria",
+                     servico_planejado_faixa_horaria matriz_reparticao_tarifaria",
         ).set_upstream(task=wait_captura)
 
         run_dbt_success = check_run_dbt_success(wait_run_dbt_model)
