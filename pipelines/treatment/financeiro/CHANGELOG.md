@@ -4,7 +4,7 @@
 
 ### Removido
 
-- Remove schedule do flow `PAGAMENTO_CCT_MATERIALIZACAO`
+- Remove schedule do flow `PAGAMENTO_CCT_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1383)
 
 ## [2.1.2] - 2026-03-26
 
