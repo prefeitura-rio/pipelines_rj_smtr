@@ -4,11 +4,7 @@ Flows de tratamento dos dados de bilhetagem
 
 DBT: 2026-01-26
 """
-from datetime import time#, datetime, timedelta
-
-# from prefect.schedules import Schedule
-# from prefect.schedules.clocks import IntervalClock
-# from pytz import timezone
+from datetime import time  # , datetime, timedelta
 
 from pipelines.capture.jae.constants import constants as jae_constants
 from pipelines.constants import constants as smtr_constants
@@ -17,6 +13,11 @@ from pipelines.treatment.cadastro.constants import constants as cadastro_constan
 from pipelines.treatment.financeiro.constants import constants as financeiro_constants
 from pipelines.treatment.templates.flows import create_default_materialization_flow
 from pipelines.utils.prefect import handler_notify_failure
+
+# from prefect.schedules import Schedule
+# from prefect.schedules.clocks import IntervalClock
+# from pytz import timezone
+
 
 TRANSACAO_MATERIALIZACAO = create_default_materialization_flow(
     flow_name="transacao - materializacao",
@@ -37,6 +38,7 @@ TRANSACAO_MATERIALIZACAO = create_default_materialization_flow(
     test_webhook_key=jae_constants.ALERT_WEBHOOK.value,
     test_scheduled_time=time(12, 15, 0),
     skip_if_running_tolerance=10,
+    generate_schedule=False,
 )
 
 TRANSACAO_MATERIALIZACAO.state_handlers.append(handler_notify_failure(webhook="alertas_bilhetagem"))
