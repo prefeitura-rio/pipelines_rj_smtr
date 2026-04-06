@@ -52,6 +52,7 @@ PAGAMENTO_CCT_MATERIALIZACAO = create_default_materialization_flow(
     selector=constants.PAGAMENTO_CCT_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=cct_constants.PAGAMENTO_SOURCES.value,
+    generate_schedule=False,
 )
 
 with Flow(
