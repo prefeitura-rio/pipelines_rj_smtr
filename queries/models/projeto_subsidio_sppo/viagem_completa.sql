@@ -62,7 +62,7 @@ shapes AS (
   SELECT
     *
   FROM
-    rj-smtr.gtfs.shapes_geom
+    rj-smtr-dev.janaina__fevq1__gtfs.shapes_geom
   WHERE
     feed_start_date = "{{ feed_start_date }}"
 ),
