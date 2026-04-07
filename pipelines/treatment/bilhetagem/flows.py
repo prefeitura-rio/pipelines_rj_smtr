@@ -152,6 +152,7 @@ TRANSACAO_VALOR_ORDEM_MATERIALIZACAO = create_default_materialization_flow(
     ],
     test_webhook_key=jae_constants.ALERT_WEBHOOK.value,
     post_tests=constants.TRANSACAO_VALOR_ORDEM_DAILY_TEST.value,
+    generate_schedule=False,
 )
 
 EXTRATO_CLIENTE_CARTAO_MATERIALIZACAO = create_default_materialization_flow(
