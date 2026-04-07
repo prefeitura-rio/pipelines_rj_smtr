@@ -1,5 +1,11 @@
 # Changelog - validacao_dados_jae
 
+## [1.1.3] - 2026-04-07
+
+### Removido
+
+- Remove schedule dos flows `VALIDACAO_DADOS_JAE_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1380)
+
 ## [1.1.2] - 2025-12-15
 
 ### Adicionado
