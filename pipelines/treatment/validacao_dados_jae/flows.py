@@ -20,6 +20,7 @@ VALIDACAO_DADOS_JAE_MATERIALIZACAO = create_default_materialization_flow(
         bilhetagem_constants.TRANSACAO_SELECTOR.value,
         bilhetagem_constants.INTEGRACAO_SELECTOR.value,
     ],
+    generate_schedule=False,
 )
 
 VALIDACAO_DADOS_JAE_MATERIALIZACAO.state_handlers.append(
