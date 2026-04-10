@@ -148,14 +148,11 @@ with
             on s.data between sp.data_inicio and sp.data_fim
             and s.tipo_viagem = sp.status
             and (
-                s.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
-                or (
                     s.data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
                     and (
                         s.tecnologia_remunerada = sp.tecnologia
-                        or (s.tecnologia_remunerada is null and sp.tecnologia is null)
+                        or (sp.tecnologia is null)
                     )
-                )
                 or (
                     s.data < date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
                     and sp.tecnologia is null

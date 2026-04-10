@@ -135,7 +135,7 @@ with
             {{ incremental_filter }}
             and data >= date('{{ var("DATA_SUBSIDIO_V3A_INICIO") }}')
     ),
-    {% if var("start_date") < var("DATA_SUBSIDIO_V15_INICIO") %}
+    {# {% if var("start_date") < var("DATA_SUBSIDIO_V15_INICIO") %} #}
         tecnologias as (
             select
                 inicio_vigencia,
@@ -184,7 +184,7 @@ with
                 prioridade_tecnologia as p_menor
                 on t.menor_tecnologia_permitida = p_menor.tecnologia
         ),
-    {% endif %}
+    {# {% endif %} #}
     -- Apuração de km realizado e Percentual de Operação por Faixa Horária (POF)
     servico_faixa_km_apuracao as (
         select
@@ -237,23 +237,23 @@ with
             ) as indicador_penalidade_tecnologia,
             sp.indicador_penalidade_judicial,
             sp.ordem
-        {% if var("start_date") < var("DATA_SUBSIDIO_V15_INICIO") %}
+        {# {% if var("start_date") < var("DATA_SUBSIDIO_V15_INICIO") %} #}
             from viagem_tecnologia as vt
-        {% else %} from viagem_transacao as vt
-        {% endif %}
+        {# {% else %} from viagem_transacao as vt
+        {% endif %} #}
         left join
             subsidio_parametros as sp
             on vt.data between sp.data_inicio and sp.data_fim
             and vt.tipo_viagem = sp.status
             and (
-                vt.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
-                or (
+                {# vt.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
+                or ( #}
                     vt.data >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
                     and (
                         vt.tecnologia_remunerada = sp.tecnologia
-                        or (vt.tecnologia_remunerada is null and sp.tecnologia is null)
+                        or (sp.tecnologia is null)
                     )
-                )
+                {# ) #}
                 or (
                     vt.data < date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}')
                     and sp.tecnologia is null
@@ -265,9 +265,7 @@ with
             and vt.tipo_viagem = ta.status
             and (
                 vt.data
-                between date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}') and date_sub(
-                    date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}'), interval 1 day
-                )
+                >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}') 
                 and (
                     vt.tecnologia_apurada = ta.tecnologia
                     or (vt.tecnologia_apurada is null and ta.tecnologia is null)
