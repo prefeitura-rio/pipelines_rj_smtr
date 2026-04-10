@@ -14,7 +14,7 @@ with
             faixa_horaria_inicio,
             faixa_horaria_fim,
             distancia_total_planejada as km_planejada
-        from {{ ref("viagem_planejada") }}
+        from rj-smtr.projeto_subsidio_sppo.viagem_planejada
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_planejada`
         where {{ incremental_filter }} and distancia_total_planejada > 0
     ),
