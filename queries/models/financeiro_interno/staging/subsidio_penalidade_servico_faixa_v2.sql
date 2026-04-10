@@ -56,9 +56,21 @@ select
     s.sentido,
     faixa_horaria_inicio,
     faixa_horaria_fim,
-    safe_cast(coalesce(pe.valor_penalidade, 0) as numeric) as valor_penalidade,
+    case
+        when
+            (
+                s.servico
+                in ("201", "202", "006", "133", "507", "426", "607", "711", "416")
+                and s.data = "2026-03-18"
+            )
+            or (s.servico in ("133", "607", "711") and s.data = "2026-03-19")
+            or (s.servico in ("133", "607") and s.data = "2026-03-20")
+        then 0 --Processo SEI_000301.005390_2026_67
+        else safe_cast(coalesce(pe.valor_penalidade, 0) as numeric)
+    end as valor_penalidade,
     '{{ var("version") }}' as versao,
     current_datetime("America/Sao_Paulo") as datetime_ultima_atualizacao
+
 from subsidio_dia as s
 left join
     penalidade as pe
