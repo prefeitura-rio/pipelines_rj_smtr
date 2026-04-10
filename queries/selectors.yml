@@ -20,19 +20,32 @@ selectors:
     description: Apuração com faixa horária
     definition:
       union:
-        - method: path
-          value: models/dashboard_subsidio_sppo_staging
-        - method: fqn
-          value: valor_tipo_penalidade
-        - method: fqn
-          value: staging_tecnologia_servico
-        - method: fqn
-          value: tecnologia_servico
-        - method: path
-          value: models/subsidio
-        - exclude:
-          - method: fqn
-            value: aux_viagem_temperatura
+        # - method: path
+        #   value: models/dashboard_subsidio_sppo_staging
+        # - method: fqn
+        #   value: valor_tipo_penalidade
+        # - method: fqn
+        #   value: staging_tecnologia_servico
+        # - method: fqn
+        #   value: tecnologia_servico
+        # - method: path
+        #   value: models/subsidio
+        # - exclude:
+        #   - method: fqn
+        #     value: aux_viagem_temperatura
+        # - method: fqn
+        #   value: viagens_remuneradas
+        # - method: fqn
+        #   value: subsidio_faixa_servico_dia_tipo_viagem
+        # - method: fqn
+        #   value: subsidio_penalidade_servico_faixa
+        # - method: fqn
+        #   value: subsidio_sumario_servico_dia_pagamento
+        # - method: path
+        #   value: models/dashboard_subsidio_sppo_v2
+        # - method: fqn
+        #   value: dicionario_dashboard_subsidio_sppo
+     
         - method: fqn
           value: viagens_remuneradas
         - method: fqn
@@ -45,6 +58,10 @@ selectors:
           value: models/dashboard_subsidio_sppo_v2
         - method: fqn
           value: dicionario_dashboard_subsidio_sppo
+        - method: fqn
+          value: staging_valor_km_tipo_viagem
+        - method: fqn
+          value: valor_km_tipo_viagem
 
 
   - name: viagem_informada

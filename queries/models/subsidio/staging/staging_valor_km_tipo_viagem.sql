@@ -19,4 +19,4 @@ select
     safe_cast(indicador_validade as bool) as indicador_validade,
     nullif(safe_cast(legislacao as string), '') as legislacao,
     safe_cast(ordem as int64) as ordem
-from {{ source("subsidio_staging", "valor_km_tipo_viagem") }}
+from `rj-smtr-dev.subsidio_staging.valor_km_tipo_viagem`
