@@ -25,7 +25,7 @@ with
             id_viagem,
             distancia_planejada,
             sentido
-        from {{ ref("viagem_completa") }}
+        from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         where {{ incremental_filter }}
     ),
@@ -36,7 +36,7 @@ with
     ),
     autuacao_disciplinar as (
         select data, datetime_autuacao, id_infracao, servico, placa
-        from {{ ref("autuacao_disciplinar_historico") }}
+        from `rj-smtr.monitoramento.autuacao_disciplinar_historico`
         where
             (
                 data_inclusao_datalake <= date_add(data, interval 7 day)
