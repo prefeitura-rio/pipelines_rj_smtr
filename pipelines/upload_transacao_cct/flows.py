@@ -18,7 +18,8 @@ from prefeitura_rio.pipelines_utils.state_handlers import (
 )
 
 from pipelines.constants import constants as smtr_constants
-from pipelines.schedules import every_day_hour_one
+
+# from pipelines.schedules import every_day_hour_one
 from pipelines.tasks import get_run_env, get_scheduled_timestamp
 from pipelines.treatment.templates.tasks import (
     dbt_data_quality_checks,
@@ -156,4 +157,4 @@ upload_transacao_cct.state_handlers = [
     handler_skip_if_running,
     handler_notify_failure(webhook="alertas_bilhetagem"),
 ]
-upload_transacao_cct.schedule = every_day_hour_one
+# upload_transacao_cct.schedule = every_day_hour_one
