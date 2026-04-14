@@ -1,5 +1,11 @@
 # Changelog - upload_transacao_cct
 
+## [2.1.1] - 2026-04-13
+
+### Removido
+
+- Remove schedule do flow `upload_transacao_cct`
+
 ## [2.1.0] - 2025-10-29
 
 ### Adicionado
