@@ -4,6 +4,21 @@
 {% elif var("tipo_materializacao") == "subsidio" %} {% set interval_minutes = 30 %}
 {% endif %}
 
+{% set date_range_start %}
+    {% if var("flow_name") == "monitoramento_temperatura - materializacao" %} 
+        "{{var('date_range_start')}}" 
+    {% else %}
+       "{{var('start_date')}}"
+    {% endif %}
+{% endset %}
+{% set date_range_end %}
+    {% if var("flow_name") == "monitoramento_temperatura - materializacao" %}
+        "{{var('date_range_end')}}" 
+    {% else %}
+       "{{var('end_date')}}"
+    {% endif %}
+{% endset %}
+
 with
     -- Transações Jaé
     transacao as (
@@ -11,8 +26,8 @@ with
         from rj-smtr.bilhetagem.transacao
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
         where
-            data between date("{{ var('start_date') }}") and date_add(
-                date("{{ var('end_date') }}"), interval 1 day
+            data between date({{ date_range_start }}) and date_add(
+                date({{ date_range_end }}), interval 1 day
             )
             and date(datetime_processamento) - date(datetime_transacao)
             <= interval 6 day
@@ -24,8 +39,8 @@ with
         from rj-smtr.bilhetagem.transacao_riocard
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard`
         where
-            data between date("{{ var('start_date') }}") and date_add(
-                date("{{ var('end_date') }}"), interval 1 day
+            data between date({{ date_range_start }}) and date_add(
+                date({{ date_range_end }}), interval 1 day
             )
             and date(datetime_processamento) - date(datetime_transacao)
             <= interval 6 day
@@ -51,11 +66,9 @@ with
         where
             data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
             and (
-                data between date("{{ var('start_date') }}") and date(
-                    "{{ var('end_date') }}"
-                )
+                data between date({{ date_range_start }}) and date({{ date_range_end }})
                 {% if target.name == "prod" %}
-                    or data = date_sub(date("{{ var('start_date') }}"), interval 1 day)
+                    or data = date_sub(date({{ date_range_start }}), interval 1 day)
                 {% endif %}
             )
 
@@ -66,7 +79,7 @@ with
             select id_veiculo, datetime_partida, datetime_chegada
             from {{ ref("viagem_completa") }}
             where
-                data = date_sub(date("{{ var('start_date') }}"), interval 1 day)
+                data = date_sub(date({{ date_range_start }}), interval 1 day)
                 and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")
         {% endif %}
     ),
@@ -113,9 +126,7 @@ with
     viagem_com_tolerancia as (
         select *
         from viagem_com_tolerancia_previa
-        where
-            data
-            between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
+        where data between date({{ date_range_start }}) and date({{ date_range_end }})
     ),
     -- Contagem de transações Jaé
     transacao_contagem as (
