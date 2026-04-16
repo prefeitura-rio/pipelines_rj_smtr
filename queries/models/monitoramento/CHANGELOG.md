@@ -1,5 +1,12 @@
 # Changelog - monitoramento
 
+## [2.0.3] - 2026-04-16
+
+### Alterado
+
+- Refatora o modelo `viagem_transacao_aux_v2` para corrigir a inconsistência na variável de data(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1399)
+
+
 ## [2.0.2] - 2026-03-19
 
 ### Alterado
