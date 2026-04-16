@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.7.0] - 2026-04-16
+
+### Alterado
+
+- Alterado o `tipo_dia` no modelo `aux_calendario_manual.sql` de `2026-04-02` -> `Ponto Facultativo` conforme DECRETO RIO Nº 57802 DE 30 DE MARÇO DE 2026 (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1398)
+
 ## [1.6.9] - 2026-03-31
 
 ### Alterado
