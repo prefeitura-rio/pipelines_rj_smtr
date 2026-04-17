@@ -248,12 +248,8 @@ with
             e.longitude,
             temperatura,
             extract(hour from datetime_gps) as hora,
-            extract(
-                date from datetime_add(e.datetime_gps, interval 1 hour)
-            ) as data_gps_join,
-            extract(
-                hour from datetime_add(e.datetime_gps, interval 1 hour)
-            ) as hora_gps_join
+            extract(date from e.datetime_gps) as data_gps_join,
+            extract(hour from e.datetime_gps) as hora_gps_join
         from viagens as v
         left join
             gps_validador as e
