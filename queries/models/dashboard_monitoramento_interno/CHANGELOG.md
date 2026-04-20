@@ -1,5 +1,11 @@
 # Changelog - dashboard_monitoramento_interno
 
+## [1.0.3] - 2026-04-17
+
+### Alterado
+
+- Refatora o modelo `view_viagem_climatizacao.sql` para atribuir o valor padrão `DESCONHECIDA` à coluna `validador_operadora` quando não houver correspondência para o id_validador. (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1402)
+
 ## [1.0.2] - 2026-02-02
 
 ### Alterado
