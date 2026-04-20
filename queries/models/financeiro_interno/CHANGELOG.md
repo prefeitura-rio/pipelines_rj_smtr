@@ -1,5 +1,11 @@
 # Changelog - financeiro_interno
 
+## [1.0.3] - 2026-04-20
+
+### Alterado
+
+- Adiciona exceção ao modelo `subsidio_penalidade_servico_faixa_v2` para suspensão das penalidades do percentual de operação por faixa horárias em virtude do desempenho da operação em `2026-04-02` entre a `faixa_horaria_inicio` `2026-04-02T18:00:00` e `faixa_horaria_fim` `2026-04-02T23:59:59` especificados no Processo: 000399006676/2026-28(https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1405)
+
 ## [1.0.2] - 2026-04-10
 
 ### Alterado
