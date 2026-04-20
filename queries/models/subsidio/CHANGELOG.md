@@ -1,5 +1,11 @@
 # Changelog - subsidio
 
+## [2.3.4] - 2026-04-20
+
+### Alterado
+
+- Altera modelo `aux_viagem_temperatura` para pré-computar colunas utilizadas nos joins (`id_veiculo_join`, `data_gps_join`, `hora_gps_join`) e adicionar chave de partição por data nas condições de join, otimizando a execução da query (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1357)
+
 ## [2.3.3] - 2026-03-24
 
 ### Alterado
