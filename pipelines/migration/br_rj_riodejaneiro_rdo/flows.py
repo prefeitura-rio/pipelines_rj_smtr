@@ -41,7 +41,8 @@ from pipelines.migration.tasks import (
     rename_current_flow_run_now_time,
     set_last_run_timestamp,
 )
-from pipelines.schedules import every_day
+
+# from pipelines.schedules import every_day
 from pipelines.treatment.templates.tasks import run_dbt
 
 # from pipelines.utils.execute_dbt_model.tasks import get_k8s_dbt_client
@@ -302,5 +303,5 @@ rdo_captura_tratamento.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-rdo_captura_tratamento.schedule = every_day
+# rdo_captura_tratamento.schedule = every_day
 rdo_captura_tratamento.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
