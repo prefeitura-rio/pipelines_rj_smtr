@@ -1,5 +1,11 @@
 # Changelog - br_rj_riodejaneiro_rdo
 
+## [1.0.2] - 2026-04-20
+
+### Removido
+
+- Remove schedules do flow `rdo_captura_tratamento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1343)
+
 ## [1.0.1] - 2025-07-21
 
 ### Alterado
