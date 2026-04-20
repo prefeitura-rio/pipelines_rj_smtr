@@ -4,7 +4,7 @@
 
 ### Removido
 
-- Remove schedules do flow `rdo_captura_tratamento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1343)
+- Remove schedules do flow `rdo_captura_tratamento` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1403)
 
 ## [1.0.1] - 2025-07-21
 
