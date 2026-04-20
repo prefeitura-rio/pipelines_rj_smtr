@@ -108,7 +108,7 @@ select
     v.hora,
     v.servico,
     vp.consorcio,
-    coalesce(vl.operadora, 'Desconhecida') as operadora,
+    coalesce(vl.operadora, 'DESCONHECIDA') as operadora,
     v.id_veiculo,
     v.ano_fabricacao,
     v.id_validador,
