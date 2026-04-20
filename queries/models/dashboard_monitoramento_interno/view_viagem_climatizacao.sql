@@ -108,12 +108,19 @@ select
     v.hora,
     v.servico,
     vp.consorcio,
-    vl.operadora,
     v.id_veiculo,
     v.ano_fabricacao,
     v.id_validador,
     v.id_viagem,
     v.datetime_partida,
+    case
+        when
+            vl.operadora is null
+            or upper(vl.operadora) like 'BILLING%'
+            or trim(vl.operadora) like '%**%'
+        then 'DESCONHECIDA'
+        else vl.operadora
+    end as operadora,
     case
         when
             v.indicador_temperatura_transmitida_viagem is true
