@@ -72,7 +72,7 @@ with
             datetime_partida,
             datetime_chegada,
             id_veiculo,
-            substr(v.id_veiculo, 2) as id_veiculo_join,
+            substr(id_veiculo, 2) as id_veiculo_join,
             placa,
             ano_fabricacao,
             id_viagem,
