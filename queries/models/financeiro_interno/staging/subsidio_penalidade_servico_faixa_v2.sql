@@ -65,14 +65,7 @@ select
             )
             or (s.servico in ("133", "607", "711") and s.data = "2026-03-19")
             or (s.servico in ("133", "607") and s.data = "2026-03-20")
-        then 0  -- Processo SEI_000301.005390_2026_67
-        when
-            (
-                s.data = "2026-04-02"
-                and faixa_horaria_inicio >= "2026-04-02T18:00:00"
-                and faixa_horaria_fim <= "2026-04-02T23:59:59"
-            )
-        then 0  -- Processo 000399006676/2026-28
+        then 0 --Processo SEI_000301.005390_2026_67
         else safe_cast(coalesce(pe.valor_penalidade, 0) as numeric)
     end as valor_penalidade,
     '{{ var("version") }}' as versao,
