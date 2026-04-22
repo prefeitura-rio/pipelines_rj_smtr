@@ -70,6 +70,8 @@ with
                 then "Sabado"  -- 000399.001590/2026-17 - Determinação de tipos dia de Carnaval
                 when data = date(2026, 04, 02)
                 then "Ponto Facultativo"  -- DECRETO RIO Nº 57802 DE 30 DE MARÇO DE 2026
+                when data = date(2026, 04, 03)
+                then "Domingo"  -- Feriado sexta-feira da Paixão
             end as tipo_dia,
             case
                 when data between date(2024, 09, 14) and date(2024, 09, 15)
