@@ -18,5 +18,5 @@ select
     tecnologia,
     if(tipo_veiculo like '%ROD%', "Não licenciado", status) as status,
     indicadores
-from {{ ref("veiculo_dia") }}
+from rj-smtr.monitoramento.veiculo_dia
 where modo is null or modo = 'ONIBUS'
