@@ -168,9 +168,7 @@ select
         viagens_planejadas,
         km_planejada,
         tipo_dia,
-        consorcio,
-        faixa_horaria_inicio,
-        faixa_horaria_fim
+        consorcio
     ),
     case
         when
