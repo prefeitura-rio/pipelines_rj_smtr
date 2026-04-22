@@ -17,7 +17,7 @@ with
                 ':00'
             ) as hora_utc,
             CD_ESTACAO as id_estacao,
-            safe_cast(json_value(content, '$.TEM_INS') as float64) as temperatura,
+            safe_cast(json_value(content, '$.TEM_MAX') as float64) as temperatura,
             datetime(
                 parse_timestamp(
                     '%Y-%m-%d %H:%M:%S%Ez',

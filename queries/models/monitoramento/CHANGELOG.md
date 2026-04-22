@@ -1,5 +1,13 @@
 # Changelog - monitoramento
 
+## [2.0.4] - 2026-04-20
+
+### Alterado
+
+- Altera modelo `staging_temperatura_inmet` para utilizar `TEM_MAX` (temperatura máxima) ao invés de `TEM_INS` (temperatura instantânea) (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1357)
+- Altera modelo `temperatura_inmet` para utilizar a coluna `temperatura_maxima` da fonte `meteorologia_inmet` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1357)
+- Altera modelo `temperatura` para aplicar deslocamento de 1 hora nos dados do INMET, ajustando a janela de referência da temperatura máxima (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1357)
+
 ## [2.0.3] - 2026-04-16
 
 ### Alterado
