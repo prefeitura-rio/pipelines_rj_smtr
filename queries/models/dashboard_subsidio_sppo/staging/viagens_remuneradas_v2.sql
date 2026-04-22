@@ -163,7 +163,14 @@ with
 -- valor de subsídio) - RESOLUÇÃO SMTR Nº 3645/2023
 select
     v.* except (
-        rn, datetime_partida, viagens_planejadas, km_planejada, tipo_dia, consorcio
+        rn,
+        datetime_partida,
+        viagens_planejadas,
+        km_planejada,
+        tipo_dia,
+        consorcio,
+        faixa_horaria_inicio,
+        faixa_horaria_fim
     ),
     case
         when
