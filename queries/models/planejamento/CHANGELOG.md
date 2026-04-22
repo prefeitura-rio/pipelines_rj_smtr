@@ -1,5 +1,11 @@
 # Changelog - planejamento
 
+## [1.7.1] - 2026-04-22
+
+### Alterado
+
+- Alterado o `tipo_dia` no modelo `aux_calendario_manual.sql` de `2026-04-03` -> `Domingo` por conta do feriado `sexta-feira da Paixão` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1398)
+
 ## [1.7.0] - 2026-04-16
 
 ### Alterado
