@@ -176,6 +176,13 @@ select
     ),
     case
         when
+            (
+                v.data = date('2026-04-02')
+                and v.faixa_horaria_inicio >= "2026-04-02T18:00:00"
+                and v.faixa_horaria_fim <= "2026-04-02T23:59:59"
+            )
+        then true  -- Processo 000399006676/2026-28
+        when
             (v.data between date('2026-04-01') and date('2026-04-15'))
             and v.servico in (
                 "104",
@@ -209,13 +216,6 @@ select
                 "LECD138"
             )  -- Processo n° 000300.014987/2026-11
         then true
-        when
-            (
-                v.data = date('2026-04-02')
-                and v.faixa_horaria_inicio >= "2026-04-02T18:00:00"
-                and v.faixa_horaria_fim <= "2026-04-02T23:59:59"
-            )
-        then true  -- Processo 000399006676/2026-28
         when
             (v.data between date('2026-03-16') and date('2026-03-31'))
             and v.servico in (
