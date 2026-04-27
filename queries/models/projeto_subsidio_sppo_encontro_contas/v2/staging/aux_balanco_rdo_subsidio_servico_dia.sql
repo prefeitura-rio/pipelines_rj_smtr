@@ -8,11 +8,9 @@ with
         select distinct data, servico from {{ ref("servico_dia_atipico") }}
     ),
     -- 2. Lista pares data-serviço corrigidos do RDO
-    rdo_corrigido_agg as (
-        select
-            data, servico, sum(receita_tarifaria_aferida) as receita_tarifaria_aferida
-        from {{ ref("aux_rdo_servico_dia") }}
-        group by all
+    receita_tarifa_publica as (
+        select data, servico, receita_tarifaria_aferida
+        from {{ ref("aux_receita_tarifa_publica_dia") }}
     ),
     -- 3. Adiciona indicador e faz tratamento em pares data-serviço corrigidos com POD
     -- >= 80%
@@ -63,7 +61,7 @@ with
                 {{ var("encontro_contas_datas_excecoes").keys() | join(", ") }}
             ) as indicador_data_excecao  -- Datas de exceção que serão desconsideradas no encontro de contas
         from subsidio_dia_corrigido_agg as sd
-        left join rdo_corrigido_agg as rdo using (data, servico)
+        left join receita_tarifa_publica using (data, servico)
     )
 -- 6. Inclui indicador de pares data-serviço atípicos
 select
