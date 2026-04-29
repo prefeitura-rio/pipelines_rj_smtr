@@ -57,12 +57,13 @@ from pipelines.migration.tasks import (  # get_local_dbt_client,
     upload_logs_to_bq,
 )
 from pipelines.migration.utils import set_default_parameters
-from pipelines.schedules import (
-    every_10_minutes,
-    every_15_minutes,
-    every_hour_minute_six,
-    every_minute,
-)
+
+# from pipelines.schedules import (
+#     every_10_minutes,
+#     every_15_minutes,
+#     every_hour_minute_six,
+#     every_minute,
+# )
 from pipelines.treatment.templates.tasks import (
     check_dbt_test_run,
     dbt_data_quality_checks,
@@ -143,8 +144,11 @@ realocacao_sppo.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-realocacao_sppo.schedule = every_10_minutes
-realocacao_sppo.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
+# realocacao_sppo.schedule = every_10_minutes
+realocacao_sppo.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+]
 
 
 with Flow(
@@ -248,7 +252,10 @@ with Flow(
             date_range_end = date_range["date_range_end"]
 
             RUN_TEST, datetime_start, datetime_end = check_dbt_test_run(
-                date_range_start, date_range_end, run_time_test, upstream_tasks=[RUN_FALSE]
+                date_range_start,
+                date_range_end,
+                run_time_test,
+                upstream_tasks=[RUN_FALSE],
             )
 
             _vars = {"date_range_start": datetime_start, "date_range_end": datetime_end}
@@ -288,8 +295,10 @@ with Flow(
 
         materialize_sppo.set_reference_tasks([RUN, RUN_CLEAN, SET])
     with case(test_only, True):
-
-        _vars = {"date_range_start": date_range_start_param, "date_range_end": date_range_end_param}
+        _vars = {
+            "date_range_start": date_range_start_param,
+            "date_range_end": date_range_end_param,
+        }
 
         gps_sppo_data_quality = run_dbt(
             resource="test",
@@ -374,7 +383,7 @@ captura_sppo_v2.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-captura_sppo_v2.schedule = every_minute
+# captura_sppo_v2.schedule = every_minute
 captura_sppo_v2.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
@@ -581,7 +590,7 @@ recaptura.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-recaptura.schedule = every_hour_minute_six
+# recaptura.schedule = every_hour_minute_six
 recaptura.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
@@ -641,7 +650,7 @@ recaptura_15min.run_config = KubernetesRun(
     image=emd_constants.DOCKER_IMAGE.value,
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-recaptura_15min.schedule = every_15_minutes
+# recaptura_15min.schedule = every_15_minutes
 recaptura_15min.state_handlers = [
     handler_inject_bd_credentials,
     handler_initialize_sentry,
