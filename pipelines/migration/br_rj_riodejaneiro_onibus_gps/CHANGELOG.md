@@ -1,5 +1,11 @@
 # Changelog - br_rj_riodejaneiro_onibus_gps
 
+## [1.1.0] - 2026-04-29
+
+### Alterado
+
+- Desativa flows do GPS SPPO (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1417)
+
 ## [1.0.5] - 2025-07-21
 
 ### Alterado
