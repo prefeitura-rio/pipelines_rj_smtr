@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.2.16] - 2026-04-29
+
+### Removido
+
+- Remove schedule dos flows `MONITORAMENTO_TEMPERATURA_MATERIALIZACAO` e `MONITORAMENTO_VEICULO_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1419)
+
 ## [1.2.15] - 2026-03-16
 
 ### Removido
