@@ -1,5 +1,11 @@
 # Changelog - gtfs
 
+## [1.3.2] - 2026-04-29
+
+### Removido
+
+- Remove schedule do flow `gtfs_captura_nova` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1419)
+
 ## [1.3.1] - 2026-04-01
 
 ### Adicionado
