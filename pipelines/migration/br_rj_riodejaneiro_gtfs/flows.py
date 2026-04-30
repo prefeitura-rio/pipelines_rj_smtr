@@ -45,7 +45,7 @@ from pipelines.migration.tasks import (
     transform_raw_to_nested_structure_chunked,
     unpack_mapped_results_nout2,
 )
-from pipelines.schedules import every_5_minutes
+# from pipelines.schedules import every_5_minutes
 from pipelines.tasks import (
     check_fail,
     check_run_dbt_success,
@@ -306,7 +306,7 @@ gtfs_captura_nova.state_handlers = [
     handler_initialize_sentry,
     handler_skip_if_running,
 ]
-gtfs_captura_nova.schedule = every_5_minutes
+# gtfs_captura_nova.schedule = every_5_minutes
 
 
 # with Flow(
