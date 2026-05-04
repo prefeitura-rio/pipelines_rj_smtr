@@ -12,7 +12,7 @@ from prefect import Parameter
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.tasks.control_flow import ifelse, merge
-from prefect.utilities.edges import unmapped
+
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
@@ -31,7 +31,6 @@ from pipelines.migration.tasks import (
     get_current_timestamp,
     get_join_dict,
     get_previous_date,
-    get_run_dates,
     parse_timestamp_to_string,
     rename_current_flow_run_now_time,
     save_raw_local,
@@ -46,7 +45,6 @@ from pipelines.migration.veiculo.tasks import (
     pre_treatment_sppo_infracao,
     pre_treatment_sppo_licenciamento,
 )
-from pipelines.schedules import every_day_hour_five, every_day_hour_seven
 from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt
 
 # Flows #
