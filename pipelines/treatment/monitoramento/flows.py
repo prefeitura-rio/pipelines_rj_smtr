@@ -58,6 +58,7 @@ VIAGEM_VALIDACAO_MATERIALIZACAO = create_default_materialization_flow(
         constants.GPS_CITTATI_SELECTOR.value,
         constants.GPS_ZIRIX_SELECTOR.value,
     ],
+    generate_schedule=False,
 )
 
 GPS_TEST_SCHEDULE_TIME = time(2, 6, 0)
