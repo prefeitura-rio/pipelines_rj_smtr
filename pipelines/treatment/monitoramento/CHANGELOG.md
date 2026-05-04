@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.2.17] - 2026-05-04
+
+### Removido
+
+- Remove schedule do flow `VIAGEM_VALIDACAO_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1429)
+
 ## [1.2.16] - 2026-04-29
 
 ### Removido
