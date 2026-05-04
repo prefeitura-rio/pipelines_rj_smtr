@@ -133,7 +133,6 @@ sppo_licenciamento_captura.state_handlers = [
     handler_initialize_sentry,
     handler_inject_bd_credentials,
 ]
-sppo_licenciamento_captura.schedule = every_day_hour_five
 
 with Flow(
     f"SMTR: {smtr_constants.VEICULO_DATASET_ID.value} \
@@ -211,7 +210,6 @@ sppo_infracao_captura.run_config = KubernetesRun(
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 sppo_infracao_captura.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
-sppo_infracao_captura.schedule = every_day_hour_five
 
 # flake8: noqa: E501
 with Flow(
@@ -305,5 +303,3 @@ veiculo_sppo_registro_agente_verao_captura.state_handlers = [
     handler_initialize_sentry,
     handler_inject_bd_credentials,
 ]
-
-veiculo_sppo_registro_agente_verao_captura.schedule = every_day_hour_seven
