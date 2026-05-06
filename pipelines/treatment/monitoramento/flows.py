@@ -157,7 +157,7 @@ MONITORAMENTO_VEICULO_MATERIALIZACAO = create_default_materialization_flow(
     snapshot_selector=constants.SNAPSHOT_VEICULO_SELECTOR.value,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     wait=[veiculo_fiscalizacao_constants.VEICULO_LACRE_SOURCE.value],
-    # generate_schedule=False,
+    generate_schedule=False,
     post_tests=constants.MONITORAMENTO_VEICULO_TEST.value,
 )
 
