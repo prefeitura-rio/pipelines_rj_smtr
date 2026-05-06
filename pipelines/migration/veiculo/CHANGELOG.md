@@ -1,5 +1,11 @@
 # Changelog - veiculo
 
+## [1.2.2] - 2026-04-05
+
+### Alterado
+
+- Desativa os schedules dos flows `sppo_infracao_captura`, `sppo_licenciamento_captura` e `sppo_registro_agente_verao_captura`  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1428)
+
 ## [1.2.1] - 2025-07-21
 
 ### Alterado
