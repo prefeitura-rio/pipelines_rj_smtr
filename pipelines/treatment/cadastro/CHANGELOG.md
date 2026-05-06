@@ -1,10 +1,16 @@
 # Changelog - cadastro
 
+## [1.1.5] - 2026-05-06
+
+### Removido
+
+- Remove schedule do flow `CADASTRO_VEICULO_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1439)
+
 ## [1.1.4] - 2026-01-08
 
 ### Removido
 
-- Remove schedule do flow `CADASTRO_MATERIALIZACAO`
+- Remove schedule do flow `CADASTRO_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1159)
 
 ## [1.1.3] - 2025-11-05
 
