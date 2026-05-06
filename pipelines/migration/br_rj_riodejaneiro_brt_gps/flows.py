@@ -51,7 +51,8 @@ from pipelines.migration.tasks import (  # get_local_dbt_client,; setup_task,
     set_last_run_timestamp,
     upload_logs_to_bq,
 )
-from pipelines.schedules import every_hour, every_minute
+
+# from pipelines.schedules import every_hour, every_minute
 from pipelines.treatment.templates.tasks import run_dbt
 
 # Flows #
@@ -133,8 +134,11 @@ materialize_brt.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value,
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-materialize_brt.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
-materialize_brt.schedule = every_hour
+materialize_brt.state_handlers = [
+    handler_inject_bd_credentials,
+    handler_initialize_sentry,
+]
+# materialize_brt.schedule = every_hour
 
 
 with Flow(
@@ -196,4 +200,4 @@ captura_brt.run_config = KubernetesRun(
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 captura_brt.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
-captura_brt.schedule = every_minute
+# captura_brt.schedule = every_minute
