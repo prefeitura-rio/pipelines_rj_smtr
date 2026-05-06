@@ -12,7 +12,7 @@ from prefect import Parameter
 from prefect.run_configs import KubernetesRun
 from prefect.storage import GCS
 from prefect.tasks.control_flow import ifelse, merge
-from prefect.utilities.edges import unmapped
+
 from prefeitura_rio.pipelines_utils.custom import Flow
 from prefeitura_rio.pipelines_utils.state_handlers import (
     handler_initialize_sentry,
@@ -31,7 +31,6 @@ from pipelines.migration.tasks import (
     get_current_timestamp,
     get_join_dict,
     get_previous_date,
-    get_run_dates,
     parse_timestamp_to_string,
     rename_current_flow_run_now_time,
     save_raw_local,
@@ -46,7 +45,6 @@ from pipelines.migration.veiculo.tasks import (
     pre_treatment_sppo_infracao,
     pre_treatment_sppo_licenciamento,
 )
-from pipelines.schedules import every_day_hour_five, every_day_hour_seven
 from pipelines.treatment.templates.tasks import dbt_data_quality_checks, run_dbt
 
 # Flows #
@@ -133,7 +131,6 @@ sppo_licenciamento_captura.state_handlers = [
     handler_initialize_sentry,
     handler_inject_bd_credentials,
 ]
-sppo_licenciamento_captura.schedule = every_day_hour_five
 
 with Flow(
     f"SMTR: {smtr_constants.VEICULO_DATASET_ID.value} \
@@ -211,7 +208,6 @@ sppo_infracao_captura.run_config = KubernetesRun(
     labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 sppo_infracao_captura.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
-sppo_infracao_captura.schedule = every_day_hour_five
 
 # flake8: noqa: E501
 with Flow(
@@ -305,5 +301,3 @@ veiculo_sppo_registro_agente_verao_captura.state_handlers = [
     handler_initialize_sentry,
     handler_inject_bd_credentials,
 ]
-
-veiculo_sppo_registro_agente_verao_captura.schedule = every_day_hour_seven
