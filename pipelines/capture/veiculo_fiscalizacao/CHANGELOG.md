@@ -1,5 +1,12 @@
 # Changelog - veiculo_fiscalizacao
 
+## [1.0.3] - 2026-05-07
+
+### Alterado
+
+- Desativa flow do `veiculo_fiscalizacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/912)
+
+
 ## [1.0.2] - 2025-10-16
 
 ### Alterado
