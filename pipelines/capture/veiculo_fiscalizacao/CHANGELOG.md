@@ -4,7 +4,7 @@
 
 ### Alterado
 
-- Desativa flow do `veiculo_fiscalizacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/912)
+- Desativa flow do `veiculo_fiscalizacao` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1443)
 
 
 ## [1.0.2] - 2025-10-16
