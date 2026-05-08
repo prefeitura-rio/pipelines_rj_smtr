@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Flows de captura dos dados de fiscalização de veiculos"""
+"""Flows de captura dos dados de fiscalização de veiculos
+
+Data 2025-07-26
+"""
 from pipelines.capture.templates.flows import create_default_capture_flow
 from pipelines.capture.veiculo_fiscalizacao.constants import constants
 from pipelines.capture.veiculo_fiscalizacao.tasks import (
@@ -14,5 +17,6 @@ CAPTURA_VEICULO_LACRE = create_default_capture_flow(
     create_extractor_task=create_veiculo_fiscalizacao_lacre_extractor,
     agent_label=smtr_constants.RJ_SMTR_AGENT_LABEL.value,
     recapture_days=7,
+    generate_schedule=False,
 )
 set_default_parameters(CAPTURA_VEICULO_LACRE, {"recapture": True})
