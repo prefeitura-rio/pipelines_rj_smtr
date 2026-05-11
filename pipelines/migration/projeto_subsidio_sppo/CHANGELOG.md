@@ -1,5 +1,12 @@
 # Changelog - projeto_subsidio_sppo
 
+
+## [1.3.8] - 2026-05-11
+
+### Alterado
+
+- Desativa os schedules do flow `viagens_sppo`  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1449)
+
 ## [1.3.7] - 2026-02-11
 
 ### Alterado
