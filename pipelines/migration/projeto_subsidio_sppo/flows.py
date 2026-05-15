@@ -3,7 +3,7 @@
 """
 Flows for projeto_subsidio_sppo
 
-DBT 2026-04-22
+DBT: 2026-05-08
 """
 
 from datetime import datetime
@@ -48,10 +48,7 @@ from pipelines.migration.tasks import (
     split_date_range,
 )
 from pipelines.migration.veiculo.flows import sppo_veiculo_dia
-from pipelines.schedules import (
-    every_day_hour_five_and_hour_fourteen,
-    every_day_hour_seven_minute_five,
-)
+from pipelines.schedules import every_day_hour_seven_minute_five
 from pipelines.tasks import (
     add_days_to_date,
     check_fail,
@@ -169,7 +166,6 @@ viagens_sppo.run_config = KubernetesRun(
     image=smtr_constants.DOCKER_IMAGE.value, labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value]
 )
 viagens_sppo.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
-viagens_sppo.schedule = every_day_hour_five_and_hour_fourteen
 
 with Flow(
     "SMTR: Subsídio SPPO Apuração - Tratamento",
