@@ -5,7 +5,7 @@
 
 ### Alterado
 
-- Desativa os schedule do flow `subsidio_sppo_apuracao`  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/)
+- Desativa os schedule do flow `subsidio_sppo_apuracao`  (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1461)
 
 ## [1.3.8] - 2026-05-11
 
