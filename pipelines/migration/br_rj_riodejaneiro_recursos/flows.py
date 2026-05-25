@@ -28,7 +28,8 @@ from pipelines.migration.tasks import (
     rename_current_flow_run_now_time,
 )
 from pipelines.migration.utils import set_default_parameters
-from pipelines.schedules import every_day
+
+# from pipelines.schedules import every_day
 
 # EMD Imports #
 
@@ -207,4 +208,4 @@ subsidio_sppo_recurso.run_config = KubernetesRun(
 subsidio_sppo_recurso.state_handlers = [handler_inject_bd_credentials, handler_initialize_sentry]
 
 # Schedule
-subsidio_sppo_recurso.schedule = every_day
+# subsidio_sppo_recurso.schedule = every_day
