@@ -36,7 +36,7 @@ with
     ),
     autuacao_disciplinar as (
         select data, datetime_autuacao, id_infracao, servico, placa
-        from {{ ref("autuacao_disciplinar_historico") }}
+        from rj-smtr.monitoramento.autuacao_disciplinar_historico
         where
             (
                 data_inclusao_datalake <= date_add(data, interval 7 day)
@@ -49,7 +49,7 @@ with
     ),
     ordem_status as (
         select distinct data_inicio, data_fim, status, ordem
-        from {{ ref("valor_km_tipo_viagem") }}
+        from `rj-smtr.subsidio.valor_km_tipo_viagem`
     -- from `rj-smtr.subsidio.valor_km_tipo_viagem`
     ),
     tecnologias as (
@@ -60,9 +60,9 @@ with
             codigo_tecnologia,
             maior_tecnologia_permitida,
             menor_tecnologia_permitida
-        from {{ ref("tecnologia_servico") }}
+        from `rj-smtr`.`planejamento`.`tecnologia_servico`
     ),
-    prioridade_tecnologia as (select * from {{ ref("tecnologia_prioridade") }}),
+    prioridade_tecnologia as (select * from `rj-smtr-dev`.`planejamento`.`tecnologia_prioridade`),
     veiculo_autuacao as (
         select
             ad.data,
@@ -169,7 +169,7 @@ with
                 when
                     vt.status = "Licenciado sem ar e não autuado"
                     and vt.servico
-                    not in (select servico from {{ ref("servico_contrato_abreviado") }})
+                    not in (select servico from `rj-smtr.subsidio.servico_contrato_abreviado`)
                     and vt.data >= date("{{ var('DATA_SUBSIDIO_V19_INICIO') }}")
                 then "Não autorizado por ausência de ar-condicionado"
                 when
