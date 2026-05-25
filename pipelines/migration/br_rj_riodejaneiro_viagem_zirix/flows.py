@@ -17,7 +17,8 @@ from pipelines.constants import constants as smtr_constants
 from pipelines.migration.br_rj_riodejaneiro_viagem_zirix.constants import constants
 from pipelines.migration.flows import default_capture_flow, default_materialization_flow
 from pipelines.migration.utils import set_default_parameters
-from pipelines.schedules import every_10_minutes, every_hour, every_hour_minute_thirty
+
+# from pipelines.schedules import every_10_minutes, every_hour, every_hour_minute_thirty
 
 # Flows #
 
@@ -35,7 +36,7 @@ viagens_captura = set_default_parameters(
     default_parameters=constants.VIAGEM_CAPTURE_PARAMETERS.value,
 )
 
-viagens_captura.schedule = every_10_minutes
+# viagens_captura.schedule = every_10_minutes
 
 
 viagens_recaptura = deepcopy(default_capture_flow)
@@ -52,7 +53,7 @@ viagens_recaptura = set_default_parameters(
     default_parameters=constants.VIAGEM_CAPTURE_PARAMETERS.value | {"recapture": True},
 )
 
-viagens_recaptura.schedule = every_hour
+# viagens_recaptura.schedule = every_hour
 
 
 viagem_zirix_materializacao = deepcopy(default_materialization_flow)
@@ -73,4 +74,4 @@ viagem_zirix_materializacao = set_default_parameters(
     default_parameters=constants.VIAGEM_MATERIALIZACAO_PARAMS.value,
 )
 
-viagem_zirix_materializacao.schedule = every_hour_minute_thirty
+# viagem_zirix_materializacao.schedule = every_hour_minute_thirty
