@@ -1,5 +1,11 @@
 # Changelog - monitoramento
 
+## [1.2.18] - 2026-05-25
+
+### Removido
+
+- Remove schedule do flow `VEICULO_DIA_MATERIALIZACAO` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1468)
+
 ## [1.2.17] - 2026-05-04
 
 ### Removido
