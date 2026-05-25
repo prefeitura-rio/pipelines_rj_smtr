@@ -48,7 +48,8 @@ from pipelines.migration.tasks import (
     split_date_range,
 )
 from pipelines.migration.veiculo.flows import sppo_veiculo_dia
-from pipelines.schedules import every_day_hour_seven_minute_five
+
+# from pipelines.schedules import every_day_hour_seven_minute_five
 from pipelines.tasks import (
     add_days_to_date,
     check_fail,
@@ -163,7 +164,8 @@ with Flow(
 
 viagens_sppo.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 viagens_sppo.run_config = KubernetesRun(
-    image=smtr_constants.DOCKER_IMAGE.value, labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value]
+    image=smtr_constants.DOCKER_IMAGE.value,
+    labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 viagens_sppo.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
 
@@ -340,12 +342,16 @@ with Flow(
         with case(skip_materialization, False):
             # 4. CALCULATE #
             date_in_range = check_date_in_range(
-                _vars["start_date"], _vars["end_date"], constants.DATA_SUBSIDIO_V9_INICIO.value
+                _vars["start_date"],
+                _vars["end_date"],
+                constants.DATA_SUBSIDIO_V9_INICIO.value,
             )
 
             with case(date_in_range, True):
                 date_intervals = split_date_range(
-                    _vars["start_date"], _vars["end_date"], constants.DATA_SUBSIDIO_V9_INICIO.value
+                    _vars["start_date"],
+                    _vars["end_date"],
+                    constants.DATA_SUBSIDIO_V9_INICIO.value,
                 )
 
                 dbt_vars_first_range = get_join_dict(
@@ -515,7 +521,8 @@ with Flow(
                         )
                     with case(date_in_range_v14, False):
                         data_maior_ou_igual_v14 = gte.run(
-                            _vars["start_date"], constants.DATA_SUBSIDIO_V14_INICIO.value
+                            _vars["start_date"],
+                            constants.DATA_SUBSIDIO_V14_INICIO.value,
                         )
 
                         with case(data_maior_ou_igual_v14, False):
@@ -628,12 +635,16 @@ with Flow(
         )
 
         date_in_range = check_date_in_range(
-            _vars["start_date"], _vars["end_date"], constants.DATA_SUBSIDIO_V9_INICIO.value
+            _vars["start_date"],
+            _vars["end_date"],
+            constants.DATA_SUBSIDIO_V9_INICIO.value,
         )
 
         with case(date_in_range, True):
             date_intervals = split_date_range(
-                _vars["start_date"], _vars["end_date"], constants.DATA_SUBSIDIO_V9_INICIO.value
+                _vars["start_date"],
+                _vars["end_date"],
+                constants.DATA_SUBSIDIO_V9_INICIO.value,
             )
 
             SUBSIDIO_SPPO_DATA_QUALITY_POS = run_dbt(
@@ -696,7 +707,9 @@ with Flow(
 
             with case(data_maior_ou_igual_v9, True):
                 date_in_range = check_date_in_range(
-                    _vars["start_date"], _vars["end_date"], constants.DATA_SUBSIDIO_V14_INICIO.value
+                    _vars["start_date"],
+                    _vars["end_date"],
+                    constants.DATA_SUBSIDIO_V14_INICIO.value,
                 )
 
                 with case(date_in_range, True):
@@ -771,7 +784,8 @@ with Flow(
                         )
 
                     SUBSIDIO_SPPO_DATA_QUALITY_POS = merge(
-                        SUBSIDIO_SPPO_DATA_QUALITY_POS_V9, SUBSIDIO_SPPO_DATA_QUALITY_POS_V14
+                        SUBSIDIO_SPPO_DATA_QUALITY_POS_V9,
+                        SUBSIDIO_SPPO_DATA_QUALITY_POS_V14,
                     )
 
                     DATA_QUALITY_POS = dbt_data_quality_checks(
@@ -782,6 +796,10 @@ with Flow(
                     )
 subsidio_sppo_apuracao.storage = GCS(smtr_constants.GCS_FLOWS_BUCKET.value)
 subsidio_sppo_apuracao.run_config = KubernetesRun(
-    image=smtr_constants.DOCKER_IMAGE.value, labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value]
+    image=smtr_constants.DOCKER_IMAGE.value,
+    labels=[smtr_constants.RJ_SMTR_AGENT_LABEL.value],
 )
-subsidio_sppo_apuracao.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
+subsidio_sppo_apuracao.state_handlers = [
+    handler_initialize_sentry,
+    handler_inject_bd_credentials,
+]

@@ -180,6 +180,7 @@ VEICULO_DIA_MATERIALIZACAO = create_default_materialization_flow(
         wait_monitoramento_veiculo,
         wait_cadastro_veiculo,
     ],
+    generate_schedule=False,
     post_tests=constants.VEICULO_DIA_TEST.value,
 )
 
