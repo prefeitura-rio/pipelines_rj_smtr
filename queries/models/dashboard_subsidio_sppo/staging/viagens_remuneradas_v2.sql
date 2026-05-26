@@ -136,18 +136,20 @@ with
             on vt.data between sp.data_inicio and sp.data_fim
             and vt.tipo_viagem = sp.status
             and vt.data >= date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}')
+            and (
+                    vt.tecnologia_apurada = sp.tecnologia
+                    or (sp.tecnologia is null)
+                )
         left join
             subsidio_parametros as ta
             on vt.data between ta.data_inicio and ta.data_fim
             and vt.tipo_viagem = ta.status
             and (
                 vt.data
-                between date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}') and date_sub(
-                    date('{{ var("DATA_SUBSIDIO_V15_INICIO") }}'), interval 1 day
-                )
+                >= date('{{ var("DATA_SUBSIDIO_V14_INICIO") }}') 
                 and (
                     vt.tecnologia_apurada = ta.tecnologia
-                    or (vt.tecnologia_apurada is null and ta.tecnologia is null)
+                    or (ta.tecnologia is null)
                 )
             )
         left join
