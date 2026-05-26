@@ -41,7 +41,8 @@ from pipelines.migration.tasks import (
     upload_staging_data_to_gcs,
 )
 from pipelines.migration.utils import set_default_parameters
-from pipelines.schedules import every_day, every_friday_seven_thirty
+
+# from pipelines.schedules import every_day, every_friday_seven_thirty
 
 # SMTR Imports #
 
@@ -67,7 +68,8 @@ controle_cct_cb_captura.state_handlers = [
     handler_initialize_sentry,
 ]
 
-controle_cct_cb_captura.schedule = every_day
+# Schedule
+# controle_cct_cb_captura.schedule = every_day
 
 controle_cct_cett_captura = deepcopy(default_capture_flow)
 controle_cct_cett_captura.name = "SMTR: Controle Financeiro CETT - Captura"
@@ -88,7 +90,8 @@ controle_cct_cett_captura.state_handlers = [
     handler_initialize_sentry,
 ]
 
-controle_cct_cett_captura.schedule = every_day
+# Schedule
+# controle_cct_cett_captura.schedule = every_day
 
 
 with Flow(
@@ -176,4 +179,5 @@ arquivo_retorno_captura.state_handlers = [
     handler_skip_if_running,
 ]
 
-arquivo_retorno_captura.schedule = every_friday_seven_thirty
+# Schedule
+# arquivo_retorno_captura.schedule = every_friday_seven_thirty
