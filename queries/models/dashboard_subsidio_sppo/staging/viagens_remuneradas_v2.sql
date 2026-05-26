@@ -67,7 +67,7 @@ with
             end as subsidio_km_teto,
             indicador_penalidade_judicial,
             ordem
-        from {{ ref("valor_km_tipo_viagem") }}
+        from rj-smtr.subsidio.valor_km_tipo_viagem
     ),
     -- Viagens com quantidades de transações
     viagem_transacao as (
