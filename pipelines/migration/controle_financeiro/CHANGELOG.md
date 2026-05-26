@@ -1,5 +1,11 @@
 # Changelog - controle_financeiro
 
+## [1.2.3] - 2026-05-26
+
+### Alterado
+
+- Desativa o schedule dos flows `SMTR: Controle Financeiro CB - Captura`, `SMTR: Controle Financeiro CETT - Captura` e `SMTR: Controle Financeiro Arquivo Retorno - Captura` (https://github.com/prefeitura-rio/pipelines_rj_smtr/pull/1472)
+
 ## [1.2.2] - 2024-10-10
 
 ### Alterado
