@@ -23,7 +23,7 @@ with
     -- Transações Jaé
     transacao as (
         select id_veiculo, servico_jae, datetime_transacao
-        from {{ ref("transacao") }}
+        from `rj-smtr.bilhetagem.transacao`
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
         where
             data between date({{ date_range_start }}) and date_add(
@@ -36,7 +36,7 @@ with
     -- Transações RioCard
     transacao_riocard as (
         select id_veiculo, servico_jae, datetime_transacao
-        from {{ ref("transacao_riocard") }}
+        from `rj-smtr.bilhetagem.transacao_riocard`
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard`
         where
             data between date({{ date_range_start }}) and date_add(
@@ -77,7 +77,7 @@ with
             left outer union all by name
              --fmt:on
             select id_veiculo, datetime_partida, datetime_chegada
-            from {{ ref("viagem_completa") }}
+            from `rj-smtr`.`projeto_subsidio_sppo`.`viagem_completa`
             where
                 data = date_sub(date({{ date_range_start }}), interval 1 day)
                 and data >= date("{{ var('DATA_SUBSIDIO_V17_INICIO') }}")

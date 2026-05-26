@@ -13,7 +13,7 @@ with
                 then lpad(servico, 3, '0')
                 else servico
             end as servico
-        from {{ ref("staging_tecnologia_servico") }}
+        from rj-smtr.planejamento_staging.tecnologia_servico
         where
             codigo_tecnologia != "0000"
             and codigo_tecnologia is not null
