@@ -25,7 +25,7 @@ with
             id_viagem,
             distancia_planejada,
             sentido
-        from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
+        from {{ ref("viagem_completa") }}
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         where {{ incremental_filter }}
     ),

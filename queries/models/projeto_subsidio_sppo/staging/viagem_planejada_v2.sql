@@ -62,10 +62,10 @@ with
             id_tipo_trajeto,
         from ordem_servico_trips_shapes
         where
-            tipo_os = "{{ tipo_oss[1] }}"
-            and feed_version = "{{ feed_versions[1] }}"
-            and feed_start_date = date("{{ feed_start_dates[1] }}")
-            and tipo_dia = "{{ tipo_dias[1] }}"
+            tipo_os = "{{ tipo_oss[0] }}"
+            and feed_version = "{{ feed_versions[0] }}"
+            and feed_start_date = date("{{ feed_start_dates[0] }}")
+            and tipo_dia = "{{ tipo_dias[0] }}"
     ),
     {% if var("run_date") < var("DATA_SUBSIDIO_V17_INICIO") %}
         -- 2. Busca partidas e quilometragem da faixa horaria (dia anterior)
