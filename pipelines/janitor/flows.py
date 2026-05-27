@@ -17,7 +17,8 @@ from pipelines.janitor.tasks import (
     query_not_active_flows,
 )
 from pipelines.migration.tasks import get_flow_project
-from pipelines.schedules import every_5_minutes
+
+# from pipelines.schedules import every_5_minutes
 
 with Flow(
     "SMTR: Desagendamento de runs arquivadas",
@@ -36,7 +37,8 @@ janitor_flow.run_config = KubernetesRun(
     labels=[emd_constants.RJ_SMTR_AGENT_LABEL.value],
 )
 janitor_flow.state_handlers = [handler_initialize_sentry, handler_inject_bd_credentials]
-janitor_flow.schedule = every_5_minutes
+# Schedule
+# janitor_flow.schedule = every_5_minutes
 
 # # trigger cd
 # with Flow("Teste Deploy Flow") as test_flow:
