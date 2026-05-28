@@ -711,10 +711,12 @@
     left join
         {{ ref("feed_info_gtfs") }} as i
         {# `rj-smtr.gtfs.feed_info` as i #}
-        on (
-            data between i.feed_start_date and i.feed_end_date
-            or (data >= i.feed_start_date and i.feed_end_date is null)
+         on (
+        d.data between i.feed_start_date and i.feed_end_date
+        or (
+            d.data >= i.feed_start_date
+            and i.feed_end_date is null
         )
-        and i.feed_version = d.feed_version
+    )
 
 {% endif %}
