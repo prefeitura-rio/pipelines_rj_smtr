@@ -34,7 +34,7 @@ with gps as (
         {% endif %}
     from
         -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo` g
-        {{ ref('gps_sppo') }} g
+        `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo` g
     where (
         data between date_sub(date("{{ var("run_date") }}"), interval 1 day) and date("{{ var("run_date") }}")
     )
@@ -124,7 +124,7 @@ with gps as (
         date_sub(date("{{ var("run_date") }}"), interval 1 day) as data_operacao
     from
         -- `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo` g
-        {{ ref('gps_sppo') }} g
+        `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo` g
     where (
         data between date_sub(date("{{ var("run_date") }}"), interval 1 day) and date("{{ var("run_date") }}")
     )

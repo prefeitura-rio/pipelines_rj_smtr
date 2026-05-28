@@ -42,7 +42,7 @@ with
                 then true  -- Caso o veículo seja novo, existe a tolerância de 15 dias para a primeira vistoria
                 else false
             end as indicador_vistoriado,
-        from {{ ref("veiculo_licenciamento_dia") }}
+        from `rj-smtr.cadastro.veiculo_licenciamento_dia`
         where
             (
                 data_processamento <= date_add(data, interval 7 day)
@@ -101,7 +101,7 @@ with
     ),
     autuacao_disciplinar as (
         select *
-        from {{ ref("autuacao_disciplinar_historico") }}
+        from rj-smtr.monitoramento.autuacao_disciplinar_historico
         where
             (
                 data_inclusao_datalake <= date_add(data, interval 7 day)
