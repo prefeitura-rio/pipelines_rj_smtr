@@ -101,7 +101,7 @@ with
     ),
     autuacao_disciplinar as (
         select *
-        from {{ ref("autuacao_disciplinar_historico") }}
+        from `rj-smtr.monitoramento.autuacao_disciplinar_historico`
         where
             (
                 data_inclusao_datalake <= date_add(data, interval 7 day)
@@ -118,7 +118,7 @@ with
     ),
     gps as (
         select *
-        from {{ ref("aux_veiculo_gps_dia") }}
+        from `rj-smtr.monitoramento_staging.aux_veiculo_gps_dia`
         {% if is_incremental() %}
             where
                 data between date("{{ var('date_range_start') }}") and date(
@@ -129,7 +129,7 @@ with
     ),
     registros_agente_verao as (
         select distinct data, id_veiculo
-        from {{ ref("sppo_registro_agente_verao") }}
+        from `rj-smtr.veiculo.sppo_registro_agente_verao`
         {# from `rj-smtr.veiculo.sppo_registro_agente_verao` #}
         {% if is_incremental() %}
             where

@@ -13,7 +13,7 @@ with
     -- Transações Jaé
     transacao as (
         select id_veiculo, servico_jae, datetime_transacao
-        from {{ ref("transacao") }}
+        from rj-smtr.bilhetagem.transacao
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao`
         where
             {{ incremental_filter }}
@@ -24,7 +24,7 @@ with
     -- Transações RioCard
     transacao_riocard as (
         select id_veiculo, servico_jae, datetime_transacao
-        from {{ ref("transacao_riocard") }}
+        from rj-smtr.bilhetagem.transacao_riocard
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao_riocard`
         where
             {{ incremental_filter }}
@@ -35,7 +35,7 @@ with
     -- Status dos veículos
     veiculos as (
         select data, id_veiculo, status, tecnologia
-        from {{ ref("aux_veiculo_dia_consolidada") }}
+        from `rj-smtr-dev.janaina__reprocessamento__monitoramento.veiculo_dia`
         where
             data
             between date("{{ var('start_date') }}") and date("{{ var('end_date') }}")
@@ -55,7 +55,7 @@ with
             "Ônibus SPPO" as modo,
             ve.status as tipo_viagem,
             ve.tecnologia as tecnologia_apurada
-        from {{ ref("viagem_completa") }}
+        from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         -- from `rj-smtr.projeto_subsidio_sppo.viagem_completa`
         left join veiculos as ve using (data, id_veiculo)
         where
@@ -80,7 +80,7 @@ with
             servico,
             sentido,
             distancia_planejada
-        from {{ ref("viagem_classificada") }}
+        from `rj-smtr-dev.janaina__reprocessamento__subsidio.viagem_classificada`
         -- from `rj-smtr-dev.victor__subsidio.viagem_classificada`
         where
             data
@@ -188,7 +188,7 @@ with
             estado_equipamento,
             latitude,
             longitude
-        from {{ ref("gps_validador") }}
+        from rj-smtr.monitoramento.gps_validador
         -- from `rj-smtr.br_rj_riodejaneiro_bilhetagem.gps_validador`
         where
             {{ incremental_filter }}
