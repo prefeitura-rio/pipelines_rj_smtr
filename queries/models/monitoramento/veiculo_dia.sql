@@ -118,7 +118,7 @@ with
     ),
     gps as (
         select *
-        from {{ ref("aux_veiculo_gps_dia") }}
+        from `rj-smtr.monitoramento_staging.aux_veiculo_gps_dia`
         {% if is_incremental() %}
             where
                 data between date("{{ var('date_range_start') }}") and date(
