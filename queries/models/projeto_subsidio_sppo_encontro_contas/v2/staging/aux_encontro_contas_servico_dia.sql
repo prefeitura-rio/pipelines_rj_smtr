@@ -39,7 +39,7 @@ with
                     case
                         when
                             data >= date("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}")
-                            and tipo_viagem not in ("Não licenciado", "Não vistoriado")
+                            and tipo_viagem not in ("Não licenciado", "Não vistoriado", "Lacrado", "Não autorizado por ausência de ar-condicionado")
                         then km_apurada_faixa
                         when
                             data < date("{{ var('DATA_SUBSIDIO_V9A_INICIO') }}")
